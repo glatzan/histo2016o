@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:layout styleClass="tabLayout" style="width: 100%;">
+		<p:layoutUnit styleClass="center" position="center">
+			
+			<p:panel style="width:100%;" header="#{msg['dialog.settings.user']}"
+				styleClass="contentPannel" />
+				
+			<p:dataTable var="user" value="#{settingsHandlerAction.users}"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll">
+				<p:column filterBy="#{user.userAcc.username}" headerText="#{msg['dialog.settings.user.username']}"
+					filterMatchMode="contains">
+					<h:outputText value="#{user.userAcc.username}" />
+				</p:column>
+
+				<p:column headerText="#{msg['dialog.settings.user.name']}">
+					<h:outputLabel value="-" />
+				</p:column>
+
+				<p:column headerText="#{msg['dialog.settings.user.surename']}">
+					<h:outputLabel value="-" />
+				</p:column>
+
+				<p:column headerText="#{msg['dialog.settings.user.role']}">
+					<p:selectOneMenu id="console" styleClass="smallerInput"
+						value="#{user.roleName}">
+						<f:selectItem itemLabel="#{msg['dialog.settings.user.role.guest']}" itemValue="guest" />
+						<f:selectItem itemLabel="#{msg['dialog.settings.user.role.user']}" itemValue="user" />
+						<f:selectItem itemLabel="#{msg['dialog.settings.user.role.mta']}" itemValue="mta" />
+						<f:selectItem itemLabel="#{msg['dialog.settings.user.role.researcher']}" itemValue="researcher" />
+						<f:selectItem itemLabel="#{msg['dialog.settings.user.role.moderator']}" itemValue="moderator" />
+						<f:selectItem itemLabel="#{msg['dialog.settings.user.role.scientist']}" itemValue="scientist" />
+						<p:ajax
+							listener="#{settingsHandlerAction.setRoleForUser(user.userAcc, user.roleName)}"></p:ajax>
+					</p:selectOneMenu>
+				</p:column>
+
+			</p:dataTable>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" styleClass="south">
+		</p:layoutUnit>
+	</p:layout>
+
+</ui:composition>

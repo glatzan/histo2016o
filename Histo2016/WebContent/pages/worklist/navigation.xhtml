@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<!-- Search -->
+	<h:panelGroup styleClass="searchContainer" layout="block">
+		<p:focus context="form" for="searchField" />
+		<p:inputText placeholder="#{msg.headSearch}" id="searchField"
+			styleClass="seachFiled" value="#{worklistHandlerAction.searchString}">
+			<p:ajax event="keyup"
+				listener="#{worklistHandlerAction.searchForExistingPatients()}" />
+		</p:inputText>
+	</h:panelGroup>
+
+	<!-- Nav Table -->
+	<p:dataTable var="patient" id="patientList"
+		value="#{worklistHandlerAction.restrictedWorkList}"
+		selectionMode="single"
+		selection="#{worklistHandlerAction.selectedPatient}"
+		rowKey="#{patient.id}" styleClass="navTable">
+		<p:ajax event="rowSelect" update=":contentForm, :headerForm"
+			listener="#{worklistHandlerAction.selectPatient(worklistHandlerAction.selectedPatient)}" />
+		<p:column>
+			<!-- Header -->
+			<f:facet name="header">
+				<h:panelGroup layout="block">
+					<h:outputLabel value="Arbeitsliste" style="float:left;"></h:outputLabel>
+					<h:panelGroup style="float: right">
+						<p:commandLink
+							actionListener="#{worklistHandlerAction.selectPreviouseTask()}"
+							update="navigationForm contentForm">
+							<i class="fa fa-arrow-circle-up"></i>
+						</p:commandLink>
+						<p:commandLink
+							actionListener="#{worklistHandlerAction.selectNextTask()}"
+							update="navigationForm contentForm">
+							<i class="fa fa-arrow-circle-down"></i>
+						</p:commandLink>
+
+						<p:commandLink
+							actionListener="#{worklistHandlerAction.prepareWorklistOptions()}">
+							<i class="fa fa-th-list"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+						<p:commandLink
+							actionListener="#{worklistHandlerAction.prepareWorklistOptions()}">
+							<i class="fa fa-cog"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</h:panelGroup>
+				</h:panelGroup>
+			</f:facet>
+
+			<!-- Data -->
+			<h:panelGrid columns="1" styleClass="contentTable">
+				<h:outputText
+					value="#{patient.person.name}, #{patient.person.sureName}" />
+
+				<h:outputLabel
+					value="#{helperHandlerAction.simpleDateFormatter(patient.person.birthday)}"
+					rendered="#{patient.person.birthday ne null}" />
+
+				<h:outputText
+					value="PIZ: #{patient.piz eq 0 ? patient.piz : 'none'}" />
+
+
+				<h:panelGroup styleClass="info">
+					<h:panelGroup rendered="#{patient.isNew()}">
+						<h:outputText value=" ("></h:outputText>
+						<h:outputText value="Neu" style="color:green;" />
+						<h:outputText value=") "></h:outputText>
+					</h:panelGroup>
+
+
+					<h:panelGroup
+						rendered="#{patient.isStainingNeeded() or patient.isReStainingNeeded()}">
+						<h:outputText value=" ("></h:outputText>
+						<h:outputText value="Färben" style="color:orange;" />
+						<h:outputText value=") "></h:outputText>
+					</h:panelGroup>
+
+					<h:panelGroup
+						rendered="#{patient.isDiagnosisNeeded() or patient.isReDiagnosisNeeded()}">
+						<h:outputText value=" ("></h:outputText>
+						<h:outputText value="Befundung" style="color:purple;" />
+						<h:outputText value=") "></h:outputText>
+					</h:panelGroup>
+
+				</h:panelGroup>
+			</h:panelGrid>
+		</p:column>
+
+	</p:dataTable>
+
+	<p:contextMenu for="patientList">
+		<p:menuitem value="Entfernen" icon="ui-icon-close"
+			actionListener="#{worklistHandlerAction.removeFromWorklist(worklistHandlerAction.selectedPatient)}"
+			update="navigationForm contentForm" />
+	</p:contextMenu>
+
+</ui:composition>

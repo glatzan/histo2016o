@@ -1,0 +1,107 @@
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns="http://www.w3.org/1999/xhtml" xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<!--  <ui:param name="person" value="#{bean.foo}" /> -->
+
+	<p:panelGrid styleClass="patientSearchTable" columns="2"
+		columnClasses="categoryColum,">
+		<h:outputLabel value="#{msg['dialog.person.person']}" />
+
+		<p:panelGrid columns="1" styleClass="inputTable"
+			style="float:left;margin-right:20px;">
+			<p:selectOneMenu style="width:100px" id="title" editable="true"
+				value="#{person.title}">
+				<f:selectItem itemLabel="" itemValue="" />
+				<f:selectItem itemLabel="#{msg['dialog.person.title.dr']}" itemValue="Dr." />
+				<f:selectItem itemLabel="#{msg['dialog.person.title.prof']}"
+					itemValue="Prof." />
+			</p:selectOneMenu>
+			<p:outputLabel value="#{msg['dialog.person.title']}" />
+		</p:panelGrid>
+
+		<h:outputLabel value="" />
+		<h:panelGroup>
+			<p:panelGrid columns="1" styleClass="inputTable"
+				style="float:left;margin-right:20px;">
+				<p:inputText id="name" value="#{person.name}" />
+				<p:outputLabel value="#{msg['dialog.person.name']}" />
+			</p:panelGrid>
+			<p:panelGrid columns="1" styleClass="inputTable">
+				<p:inputText id="firstName" value="#{person.sureName}" />
+				<p:outputLabel value="#{msg['dialog.person.surename']}" />
+			</p:panelGrid>
+		</h:panelGroup>
+
+		<h:outputLabel value="" />
+		<h:panelGroup>
+			<p:panelGrid columns="1" styleClass="inputTable"
+				style="float:left;margin-right:20px;">
+				<p:selectOneMenu id="gender" style="width:100px"
+					value="#{person.gender}">
+					<f:selectItem itemLabel="#{msg['dialog.person.gender.select']}" itemValue="" />
+					<f:selectItem itemLabel="#{msg['dialog.person.gender.male']}"
+						itemValue="m" />
+					<f:selectItem itemLabel="#{msg['dialog.person.gender.female']}"
+						itemValue="f" />
+				</p:selectOneMenu>
+				<p:outputLabel value="#{msg['dialog.person.gender']}" />
+			</p:panelGrid>
+			<p:panelGrid columns="1" styleClass="inputTable">
+				<p:calendar id="birthday" value="#{person.birthday}" locale="de"
+					navigator="true" pattern="dd.MM.yyyy" mask="true" />
+				<p:outputLabel value="#{msg['dialog.person.birthday']}" />
+			</p:panelGrid>
+		</h:panelGroup>
+
+		<h:outputLabel value="#{msg['dialog.person.adress']}" />
+		<h:panelGroup>
+			<p:panelGrid columns="1" styleClass="inputTable"
+				style="float:left;margin-right:20px;">
+				<p:inputText id="street" value="#{person.street}" />
+				<p:outputLabel value="#{msg['dialog.person.adress.street']}" />
+			</p:panelGrid>
+			<p:panelGrid columns="1" styleClass="inputTable">
+				<p:inputText style="width:75px;" value="#{person.houseNumber}" />
+				<p:outputLabel value="#{msg['dialog.person.adress.housenumber']}" />
+			</p:panelGrid>
+		</h:panelGroup>
+
+		<h:outputLabel value="" />
+		<h:panelGroup>
+			<p:panelGrid columns="1" styleClass="inputTable"
+				style="float:left;margin-right:20px;">
+				<p:inputText style="width:75px;" value="#{person.postcode}" />
+				<p:outputLabel value="#{msg['dialog.person.adress.plz']}" />
+			</p:panelGrid>
+			<p:panelGrid columns="1" styleClass="inputTable">
+				<p:inputText id="town" value="#{person.town}" />
+				<p:outputLabel value="#{msg['dialog.person.adress.town']}" />
+			</p:panelGrid>
+		</h:panelGroup>
+
+		<h:outputLabel value="Sonstiges" />
+		<h:panelGroup>
+			<p:panelGrid columns="1" styleClass="inputTable"
+				style="float:left;margin-right:20px;">
+				<p:inputText value="#{person.phoneNumber}" />
+				<p:outputLabel
+					value="#{msg['dialog.person.miscellaneous.phonenumber']}" />
+			</p:panelGrid>
+			<p:panelGrid columns="1" styleClass="inputTable">
+				<p:inputText id="email" value="#{person.email}" />
+				<p:outputLabel value="#{msg['dialog.person.miscellaneous.mail']}" />
+			</p:panelGrid>
+		</h:panelGroup>
+
+		<h:outputLabel value="" />
+		<h:panelGroup>
+			<p:panelGrid columns="1" styleClass="inputTable"
+				style="float:left;margin-right:20px;">
+				<p:inputText value="#{person.fax}" />
+				<p:outputLabel value="#{msg['dialog.person.miscellaneous.fax']}" />
+			</p:panelGrid>
+		</h:panelGroup>
+	</p:panelGrid>
+</ui:composition>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:layout styleClass="tabLayout">
+		<p:layoutUnit styleClass="center" position="center">
+			<p:panel style="width:100%;"
+				header="#{msg['dialog.settings.stainingList']} / #{settingsHandlerAction.originalStainingList eq null ? msg['dialog.settings.stainingList.new.new'] : msg['dialog.settings.stainingList.new.edit']}"
+				styleClass="contentPannel" />
+
+			<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll " style="width:100%">
+				<h:outputLabel
+					value="#{msg['dialog.settings.stainingList.new.name']}"></h:outputLabel>
+				<p:inputText style="width:390px"
+					value="#{settingsHandlerAction.editStainingList.name}" />
+
+				<h:outputLabel
+					value="#{msg['dialog.settings.stainingList.new.commentary']}"></h:outputLabel>
+				<p:inputTextarea rows="3" style="width:390px"
+					value="#{settingsHandlerAction.editStainingList.commentary}" />
+
+				<h:outputLabel
+					value="#{msg['dialog.settings.stainingList.new.stainings']}"></h:outputLabel>
+
+				<p:dataTable var="staining" style="width:400px" scrollable="true"
+					scrollHeight="150" styleClass="defaultDataTable"
+					value="#{settingsHandlerAction.editStainingList.stainingPrototypes}">
+
+					<p:column
+						headerText="#{msg['dialog.settings.stainingList.new.stainings.name']}"
+						sortBy="#{staining.name}" style="width:30%">
+						<h:outputText value="#{staining.name}" />
+					</p:column>
+
+					<p:column
+						headerText="#{msg['dialog.settings.stainingList.new.stainings.type']}"
+						sortBy="#{staining.type}">
+						<h:outputText value="#{staining.getTypeAsString()}" />
+					</p:column>
+
+					<p:column style="width:10%; text-align:center;">
+						<p:commandLink title="#{msg['general.remove']}"
+							actionListener="#{settingsHandlerAction.removeStainingFromStainingList(staining,settingsHandlerAction.editStainingList)}"
+							update="@form">
+							<i class="fa fa-trash-o" />
+						</p:commandLink>
+					</p:column>
+
+				</p:dataTable>
+
+			</p:panelGrid>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" styleClass="south">
+			<p:commandButton value="#{msg['general.save']}"
+				styleClass="smallerButton" icon="fa fa-fw fa-floppy-o"
+				actionListener="#{settingsHandlerAction.saveStainigList(settingsHandlerAction.editStainingList, settingsHandlerAction.originalStainingList)}"
+				update="@form"></p:commandButton>
+			<p:commandButton
+				value="#{msg['dialog.settings.stainingList.new.stainings.add']}"
+				style="margin-left:10px;" styleClass="smallerButton"
+				icon="fa fa-fw fa-plus-circle"
+				actionListener="#{settingsHandlerAction.prepareAddStainingToStainingList()}"
+				update="@form"></p:commandButton>
+			<p:commandButton value="#{msg['general.abort']}"
+				styleClass="smallerButton" style="margin-left:10px;"
+				icon="fa fa-fw fa-times-circle"
+				actionListener="#{settingsHandlerAction.discardChangesOfStainigList()}"
+				update="@form"></p:commandButton>
+		</p:layoutUnit>
+	</p:layout>
+
+</ui:composition>

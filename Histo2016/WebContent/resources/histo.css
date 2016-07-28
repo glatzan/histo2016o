@@ -1,0 +1,534 @@
+body {
+	margin: 0px !important;
+	font-size: 0.8em !important;
+}
+
+.noBorders>tr, .noBorders>td, .noBorders {
+	border: none !important;
+}
+
+.noBordersAll tr, .noBordersAll td, .noBordersAll {
+	border: none !important;
+}
+
+.collapsedBorders>tr, .collapsedBorders>td, .collapsedBorders {
+	border-collapse: collapse !important;
+}
+
+.collapsedBordersAll tr, .collapsedBordersAll td, .collapsedBordersAll {
+	border-collapse: collapse !important;
+}
+
+.noPaddingAll tr, .noPaddingAll td, .noPaddingAll {
+	padding: 0px !important;
+}
+
+.noPadding>tr, .noPadding>td, .noPadding {
+	padding: 0px !important;
+}
+
+.verticalAlignMiddleAll tr, .verticalAlignMiddleAll td,
+	.verticalAlignMiddleAll {
+	vertical-align: middle !important;
+}
+
+/* Kleiner Knopf */
+.smallButton .ui-button-text {
+	padding-top: 0.2em !important;
+	padding-bottom: 0.2em !important;
+}
+
+/* Kleines InputField */
+.smallInput .ui-inputfield {
+	padding: 2px 7px;
+}
+
+.smallCheckbox {
+	padding-top: 4px;
+	height: 16px !important;
+}
+
+.icon-green {
+	color: green;
+}
+
+.icon-orange {
+	color: orange;
+}
+
+.icon-red {
+	color: red;
+}
+
+/*
+	######################################## Navigatoin ########################################
+*/
+.navigation {
+	padding: 0px !important;
+}
+
+/* Search container */
+.navigation .searchContainer {
+	width: 100%;
+	text-align: center;
+	background: #e6e6e6
+		url("/Histo16/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness")
+		50% 50% repeat-x;
+}
+
+/* Search field in search container */
+.navigation .searchContainer .seachFiled {
+	width: 93%;
+	margin: 3px 0px;
+}
+
+/*
+	navigation Table
+*/
+.navigation .navTable .contentTable td {
+	border: 0px !important;
+	padding: 2px 0px !important;
+}
+
+/*
+	navigation Table
+*/
+.navigation .navTable th, .navigation .navTable  td {
+	padding: 4px 14px !important;
+}
+
+/*
+	navigation Table hover
+*/
+.navigation .navTable .ui-state-hover {
+	background: #e6e6e6 !important;
+}
+
+.navigation .navTable .contentTable .info {
+	font-size: 0.7em;
+}
+
+/*
+	######################################## Navigatoin ########################################
+*/
+
+/*
+	######################################## Content ########################################
+*/
+.content {
+	padding: 0px !important;
+}
+
+/*
+	################# Header #################
+*/
+/* Padding for header Layout */
+.content .header {
+	height: 33px;
+	padding: 0px !important;
+	background: #e6e6e6
+		url("/Histo16/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness")
+		50% 50% repeat-x;
+}
+
+/* Distance between buttons in header */
+.content .header .buttonMarginLeft {
+	margin-left: 10px
+}
+
+.content .header .headerRight {
+	float: right;
+}
+/*
+	################# Header #################
+*/
+
+/*
+	################# Body #################
+*/
+/* Body no padding */
+.content .body {
+	padding: 0px !important;
+}
+
+/* navigation background */
+.content .body .navigation {
+	width: 100%;
+	border: 1px solid #d3d3d3;
+	border-left: 0px;
+	border-right: 0px;
+	background: #e6e6e6
+		url("/Histo16/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness")
+		50% 50% repeat-x;
+}
+
+/* navigation hight*/
+.content .body .navigation td {
+	padding-left: 5px !important;
+	height: 19px !important;
+}
+
+/* remove underline from navigation*/
+.content .body .navigation a:-webkit-any-link {
+	text-decoration: none !important;
+}
+
+/* naigation text*/
+.content .body .navigation .navigationText {
+	font-size: 1.1em !important;
+	font-family: Verdana, Arial, sans-serif;
+	color: #555555;
+	font-weight: bold;
+}
+
+/* contentHolder settings*/
+.content .body .contentHolder {
+	padding: 0px;
+	border: none;
+	border-collapse: collapse;
+}
+
+/* 	################# AddContectTable ################# */
+/* Settings für die Kontaktübersicht einer Aufgabe*/
+.content .body .addedContactDataTable {
+	width:350px;
+}
+
+/* jede zweite zeile mit einem anderen Hintergrund */
+.content .body .addedContactDataTable tr:nth-child(even) td {
+	background-color: #f9f9f9;
+}
+
+.content .body .addedContactDataTable td:nth-child(1), .content .body .addedContactDataTable th:nth-child(1)
+	{
+	width: auto !important;
+}
+
+.content .body .addedContactDataTable td:nth-child(2), .content .body .addedContactDataTable th:nth-child(2)
+	{
+	width: auto !important;
+}
+
+.content .body .addedContactDataTable td:nth-child(3), .content .body .addedContactDataTable th:nth-child(3)
+	{
+	width: 15px !important;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.content .body .addedContactDataTable td:nth-child(4), .content .body .addedContactDataTable th:nth-child(4)
+	{
+	width: 15px !important;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.content .body .addedContactDataTable td:nth-child(5), .content .body .addedContactDataTable th:nth-child(5)
+	{
+	width: 15px !important;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+/* 	################# AddContectTable ################# */
+
+/* 	################# Body ################# */
+
+/* ################# Diagnoses ################# */
+/* content of the diagnosis body */
+.content .body .diagnosesAccordion .ui-accordion-content {
+	border: 1px solid #aaaaaa;
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+}
+
+/* ################# Diagnoses ################# */
+
+/* ################# Stainings ################# */
+
+/* TabView für Diangosen und Objekträger */
+.content .body .tabView .ui-tabs-panel {
+	padding: 2px 0px;
+}
+
+/* Tabelle für Färbungen */
+.content .body .stainingTable {
+	width: 100%;
+	border-collapse: collapse !important;
+}
+
+/* BorderRadius für header Zeile in Färbungstabelle */
+.content .body .stainingTable thead tr:first-child td:first-child,
+	.content .body .stainingTable thead tr:first-child td:last-child {
+	border-radius: 3px;
+}
+
+/* Alle Ränder für die Färbungstabelle entfernen*/
+.content .body .stainingTable  td, .content .body .stainingTable tr {
+	border-collapse: collapse !important;
+	border: none;
+}
+
+/* Größe des Auftragsfeldes */
+.content .body .stainingTable .columnSample {
+	width: 15%;
+}
+
+/* Größe des Blockfeldes*/
+.content .body .stainingTable .columnBlock {
+	width: 15%;
+}
+
+/* Größe des Choosefeldes*/
+.content .body .stainingTable .columnChoose {
+	width: auto;
+	padding: 2px 5px;
+}
+
+/* Größe des Objektträgerfeldes*/
+.content .body .stainingTable .columnStainingID {
+	width: 25%;
+}
+
+/* Größe des Färbungsfeldes*/
+.content .body .stainingTable .columnStaining {
+	width: 15%;
+}
+
+/* Größe des Statusfeldes*/
+.content .body .stainingTable .columnStatus {
+	width: 15%;
+	text-align: center;
+}
+
+/* Größe des Optionenfeldes*/
+.content .body .stainingTable .columnOptions {
+	width: 12%;
+}
+
+/* Größe der inplaceInput Felder*/
+.content .body   .inplaceInput .ui-inputfield {
+	padding: 0px 0px 0px 5px;
+	width: 60% !important;
+}
+
+/* Alle Unterstriche bei links interhalb der Färbungstabelle entfernen*/
+.content .body .stainingTable a:-webkit-any-link {
+	text-decoration: none !important;
+}
+
+/* Hintergrundfarbe für gerade proben*/
+.content .body .stainingTable .darkBackround {
+	background-color: #f9f9f9;
+}
+
+/*	################# Stainings ################# */
+
+/* ######################################## Content ######################################## */
+
+/*	######################################## Dialog ######################################## */
+.dialogLayout {
+	padding: 0.4em 0.4em 0.4em 0.4em !important;
+}
+
+/* Wenn kein layout verwendet wird sondern ein pannel, padding und rand entfernen*/
+.dialogLayout .pannelLayout, .dialogLayout .pannelLayout .ui-panel-content
+	{
+	padding: 0px !important;
+	border: none;
+}
+
+.dialogLayout .center, .dialogLayout .botton {
+	border: none;
+}
+
+.dialogLayout .dialogTable {
+	border: none;
+	width: 100%;
+}
+
+/*	################# BigDialog ################# */
+/* Layout for big dialogs*/
+.bigDialog, .bigDialog .dialogPannel {
+	padding: 0px !important;
+	border: 0px !important;
+	border-collapse: collapse;
+}
+
+.bigDialog .dialogPannel .ui-widget-content {
+	padding: 1px !important;
+	border: 0px !important;
+	border-collapse: collapse;
+}
+
+.bigDialog .dialogPannel .dialogLayout {
+	height: 500px;
+	width: 100%;
+	padding: 0px !important;
+}
+
+/* Layout in the tabview center tab, center column of layout*/
+.bigDialog .dialogPannel .dialogLayout .center, .bigDialog .dialogPannel .dialogLayout .center .ui-widget-content
+	{
+	padding: 0px !important;
+}
+
+/* Layout in the tabview center tab, south column of layout*/
+.bigDialog .dialogPannel .dialogLayout .south {
+	padding: 4px !important;
+}
+/*	################# BigDialog ################# */
+
+/*	################# Settings ################# */
+/* Settings Dialog*/
+.settingsDialogLayout {
+	padding: 0px !important;
+	margin: 0px !important;
+}
+
+/* Layout in the tabview center tab*/
+.settingsDialogLayout .settingsPannel .settingsTabView .tabLayout {
+	height: 490px;
+	width: 100%
+}
+
+/* Settings Pannel + tab view */
+.settingsDialogLayout .settingsPannel, .settingsDialogLayout .settingsPannel .ui-panel-content,
+	.settingsDialogLayout  .settingsPannel .ui-widget-content {
+	padding: 0px !important;
+	border: 0px !important;
+	border-collapse: collapse;
+}
+
+/* Settings tab view hight + width*/
+.settingsDialogLayout .settingsPannel .settingsTabView {
+	width: 100%;
+	height: 500px;
+}
+
+/* Layout in the tabview center tab, center column of layout*/
+.settingsDialogLayout .settingsPannel .settingsTabView .tabLayout .center
+	{
+	padding: 1px !important;
+	height: 400px;
+}
+
+/* Layout in the tabview center tab, south column of layout*/
+.settingsDialogLayout .settingsPannel .settingsTabView .tabLayout .south
+	{
+	padding: 1px !important;
+	height: 50px;
+	background-color: black;
+}
+
+/* Background Color tab view on the left sinde */
+.settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-nav {
+	background: none;
+}
+
+/* Tabs on the left side style */
+.settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-nav li {
+	border: 1px solid #a8a8a8;
+	border-radius: 3px;
+	float: left;
+	width: 99%;
+	margin-left: 1px !important;
+}
+
+/* withd of the tab content on the right*/
+.settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-panels {
+	width: 76% !important;
+	min-width: 780px;
+}
+
+/* Content Pannel on the right side, header style*/
+.settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-panels .contentPannel .ui-widget-header
+	{
+	padding: 4px 0px 4px 10px !important;
+	font-weight: bold !important;
+	color: #4f4f4f !important;
+	text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7) !important;
+	margin-bottom: 1px;
+}
+
+/* Log View : Datatable on the right */
+.settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-panels .historyDataTable
+	{
+	width: 100%;
+	font-size: 0.8em !important;
+}
+/*	################# Settings ################# */
+
+/*	################# Contact ################# */
+/* Layout für den ContactSelect Datatable */
+.contactDataTable {
+	width: 100%;
+}
+
+/* UL für Auflistung der standardrolle*/
+.contactDataTable .roleList {
+	padding-left: 20px !important;
+	margin: 0px !important;
+}
+
+/* jede zweite zeile mit einem anderen Hintergrund */
+.contactDataTable tr:nth-child(even) td {
+	background-color: #f9f9f9;
+}
+
+.contactDataTable td:nth-child(1), .contactDataTable th:nth-child(1) {
+	width: auto !important;
+}
+
+.contactDataTable td:nth-child(2), .contactDataTable th:nth-child(2) {
+	width: 250px !important;
+}
+
+.contactDataTable td:nth-child(3), .contactDataTable th:nth-child(3) {
+	width: 250px !important;
+}
+
+.contactDataTable td:nth-child(4), .contactDataTable th:nth-child(4) {
+	width: 20px !important;
+}
+
+.contactDataTable td:nth-child(5), .contactDataTable th:nth-child(5) {
+	width: 20px !important;
+}
+
+.contactDataTable td:nth-child(6), .contactDataTable th:nth-child(6) {
+	width: 20px !important;
+}
+/*	################# Contact ################# */
+
+/*	################# WorklistOptionsDilaog ################# */
+/* Layout for big dialogs*/
+.worklistOptionsDilaog, .worklistOptionsDilaog .dialogPannel {
+	padding: 0px !important;
+	border: 0px !important;
+	border-collapse: collapse;
+}
+
+.worklistOptionsDilaog .dialogPannel .ui-widget-content {
+	padding: 1px !important;
+	border: 0px !important;
+	border-collapse: collapse;
+}
+
+.worklistOptionsDilaog .dialogPannel .dialogLayout {
+	height: 450px;
+	width: 100%;
+	padding: 0px !important;
+}
+
+/* Layout in the tabview center tab, center column of layout*/
+.worklistOptionsDilaog .dialogPannel .dialogLayout .center, .worklistOptionsDilaog .dialogPannel .dialogLayout .center .ui-widget-content
+	{
+	padding: 0px !important;
+}
+
+/* Layout in the tabview center tab, south column of layout*/
+.worklistOptionsDilaog .dialogPannel .dialogLayout .south {
+	padding: 4px !important;
+}
+/*	################# WorklistOptionsDilaog ################# */
+/*	######################################## Dialog ######################################## */

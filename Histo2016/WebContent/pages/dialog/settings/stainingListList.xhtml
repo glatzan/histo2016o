@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:layout styleClass="tabLayout">
+		<p:layoutUnit styleClass="center" position="center">
+			<p:panel style="width:100%;"
+				header="#{msg['dialog.settings.stainingList']}"
+				styleClass="contentPannel" />
+
+			<p:dataTable var="stainingList" style="width:100%;" scrollable="true"
+				scrollHeight="380"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+				value="#{settingsHandlerAction.allAvailableStainingLists}">
+
+				<p:column headerText="#{msg['dialog.settings.stainingList.name']}"
+					sortBy="#{stainingList.name}" style="width:20%">
+					<h:outputText value="#{stainingList.name}" />
+				</p:column>
+
+				<p:column
+					headerText="#{msg['dialog.settings.stainingList.commentary']}"
+					style="width:53%">
+					<h:outputText value="#{stainingList.commentary}" />
+				</p:column>
+
+				<p:column style="width:7%; text-align:center;">
+					<f:facet name="header">
+						<i class="fa fa-cog" />
+					</f:facet>
+					<p:commandLink title="#{msg['dialog.settings.stainingList.edit']}"
+						actionListener="#{settingsHandlerAction.prepareEditStainingList(stainingList)}"
+						update="@form">
+						<i class="fa fa-fw fa-cog" />
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" styleClass="south">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2">
+					<p:commandButton value="#{msg['dialog.settings.stainingList.new']}"
+						styleClass="smallerButton" icon="fa fa-fw fa-plus-circle"
+						actionListener="#{settingsHandlerAction.prepareNewStainingList()}"
+						update="@form"></p:commandButton>
+
+					<h:panelGrid columns="2" style="margin-left: 20px;">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
+						<h:outputLabel
+							value="#{msg['dialog.settings.stainingList.archived']}"
+							style="margin-left:5px;"></h:outputLabel>
+					</h:panelGrid>
+				</h:panelGrid>
+			</h:panelGrid>
+
+		</p:layoutUnit>
+	</p:layout>
+
+</ui:composition>

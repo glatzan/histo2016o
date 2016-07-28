@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:layout styleClass="tabLayout">
+		<p:layoutUnit styleClass="center" position="center">
+			<p:panel style="width:100%;" header="Patient suchen"
+				styleClass="contentPannel" />
+
+			<p:panelGrid styleClass="patientSearchTable" columns="2"
+				columnClasses="categoryColum,">
+				<h:outputLabel value="Person" />
+				<h:panelGroup>
+					<p:panelGrid columns="1" styleClass="inputTable"
+						style="float:left;margin-right:20px;">
+						<p:inputText value="#{worklistHandlerAction.tmpPatient.piz}" />
+						<p:outputLabel value="PIZ" />
+					</p:panelGrid>
+					<p:panelGrid columns="1" styleClass="inputTable">
+						<p:calendar
+							value="#{worklistHandlerAction.tmpPatient.person.birthday}"
+							locale="de" navigator="true" pattern="dd-MMM-yyyy" />
+						<p:outputLabel value="Geburtstag" />
+					</p:panelGrid>
+				</h:panelGroup>
+
+				<h:outputLabel value="" />
+				<h:panelGroup>
+					<p:panelGrid columns="1" styleClass="inputTable"
+						style="float:left;margin-right:20px;">
+						<p:inputText
+							value="#{worklistHandlerAction.tmpPatient.person.name}" />
+						<p:outputLabel value="Name" />
+					</p:panelGrid>
+					<p:panelGrid columns="1" styleClass="inputTable">
+						<p:inputText
+							value="#{worklistHandlerAction.tmpPatient.person.sureName}" />
+						<p:outputLabel value="Vorname" />
+					</p:panelGrid>
+				</h:panelGroup>
+			</p:panelGrid>
+
+			<p:dataTable var="patient"
+				value="#{worklistHandlerAction.searchResults}">
+				<p:column headerText="PIZ">
+					<h:outputText value="#{patient.piz}" />
+				</p:column>
+				<p:column headerText="Name">
+					<h:outputText value="#{patient.name}" />
+				</p:column>
+				<p:column headerText="Vorname">
+					<h:outputText value="#{patient.sureName}" />
+				</p:column>
+				<p:column headerText="Geburtstag">
+					<h:outputText value="#{patient.birthday}" />
+				</p:column>
+				<p:column headerText="Geschlecht">
+				</p:column>
+			</p:dataTable>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" styleClass="south">
+			<p:commandButton value="Patient hinzufügen" tyleClass="smallerButton"
+				icon="fa fa-fw fa-user-plus"
+				actionListener="#{worklistHandlerAction.prepareCreateNewPatient()}" />
+		</p:layoutUnit>
+	</p:layout>
+</ui:composition>

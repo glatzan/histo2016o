@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+	<ui:param name="root" value="#{request.contextPath}/" />
+	<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body>
+
+	<div class="container">
+		<h:form>
+			<p:panel rendered="#{userHandlerAction.isUserAvailable() and !userHandlerAction.hasRole('user')}">
+				<p:panelGrid columns="2" columnClasses=",headlineRightColumn"
+					style="width:100%" styleClass="noBorders">
+					<h:outputLabel value="Bitte erst freischalten lassen!"></h:outputLabel>
+					<h:panelGroup>
+
+						<p:commandButton 
+							actionListener="#{userHandlerAction.setRoleForUser('moderator')}"
+							action="#{worklistHandlerAction.goToWorkList()}"
+							value="Freischalten"></p:commandButton>
+						<p:button href="/spring_logout" value="Logout"></p:button>
+					</h:panelGroup>
+				</p:panelGrid>
+			</p:panel>
+
+			
+		</h:form>
+	</div>
+</h:body>
+</html>

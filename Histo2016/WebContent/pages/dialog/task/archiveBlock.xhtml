@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.archiveBlock.Headline']}">
+			<f:param value="#{worklistHandlerAction.toArchive.textIdentifier}" />
+		</h:outputFormat></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="dialogLayout">
+	<h:form>
+		<p:layout fullPage="true">
+			<p:layoutUnit position="center" styleClass="center">
+				<h:outputFormat value="#{msg['dialog.archiveBlock.Text']}" escape="false">
+					<f:param value="#{worklistHandlerAction.toArchive.textIdentifier}" />
+				</h:outputFormat>
+			</p:layoutUnit>
+
+			<p:layoutUnit position="south" styleClass="botton"
+				resizable="false">
+				<p:commandButton value="#{msg['general.archive']}" actionListener="#{worklistHandlerAction.archiveObjectForStainingList(worklistHandlerAction.toArchive, true)}"></p:commandButton>
+				<p:commandButton value="#{msg['general.abort']}" actionListener="#{worklistHandlerAction.hideObjectForStainingListDialog()}"></p:commandButton>
+			</p:layoutUnit>
+		</p:layout>
+	</h:form>
+</h:body>
+</html>
+
+
+

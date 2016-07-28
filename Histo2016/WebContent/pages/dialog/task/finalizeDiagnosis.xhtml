@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Diagnose finalisieren</title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body>
+	<h:form>
+		<h:panelGrid columns="1">
+			<h:outputLabel
+				value="Soll diese Diagnose finalisiert werden? Nach diesem Schritt sind keine Änderungen mehr möglich!"
+				styleClass="boldTitle" />
+			<h:panelGrid columns="2">
+				<p:commandButton value="Finalisieren"
+					actionListener="#{worklistHandlerAction.finalizeDiagnosis( worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.tmpDiagnosis,true)}"></p:commandButton>
+				<p:commandButton value="Abbrechen"
+					actionListener="#{worklistHandlerAction.finalizeDiagnosis(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.tmpDiagnosis,false)}"></p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</h:form>
+</h:body>
+</html>
+
+

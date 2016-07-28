@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Abrechnung</title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="dialogStandard.css"
+		value="dialogStandard.css" />
+</h:head>
+
+<h:body styleClass="dialogLayout">
+	<h:form>
+
+		<h:panelGrid columns="1">
+			<p:panelGrid>
+				<f:facet name="header">
+					<p:row>
+						<p:column>Anzahl der Materialien</p:column>
+						<p:column>GOÄ</p:column>
+					</p:row>
+
+				</f:facet>
+
+				<p:row styleClass="noBorders">
+					<p:column>
+						<p:spinner min="0" max="100" />
+					</p:column>
+					<p:column>4800 einfach</p:column>
+				</p:row>
+				<p:row styleClass="noBorders">
+					<p:column>
+						<p:spinner min="0" max="100" />
+					</p:column>
+					<p:column>4802 schwierig</p:column>
+				</p:row>
+				<p:row styleClass="noBorders">
+					<p:column>
+						<p:spinner min="0" max="100" />
+					</p:column>
+					<p:column>4815 spezial</p:column>
+				</p:row>
+				<p:row styleClass="noBorders">
+					<p:column>
+						<p:spinner min="0" max="100" />
+					</p:column>
+					<p:column>4815 IHC</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:panelGrid>
+		<h:panelGrid columns="1" styleClass="noBorders">
+			<p:panelGrid columns="2" styleClass="noBorders">
+				<p:commandButton value="Speichern"
+					actionListener="#{worklistHandlerAction.hideAccountingDialog()}"></p:commandButton>
+
+				<p:commandButton value="Abbrechen"
+					actionListener="#{worklistHandlerAction.hideAccountingDialog()}"></p:commandButton>
+
+			</p:panelGrid>
+		</h:panelGrid>
+	</h:form>
+</h:body>
+</html>
+
+
+

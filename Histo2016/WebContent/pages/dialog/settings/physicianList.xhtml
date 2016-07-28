@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:layout styleClass="tabLayout">
+		<p:layoutUnit styleClass="center" position="center">
+
+			<p:panel style="width:100%;"
+				header="#{msg['dialog.settings.person']}" styleClass="contentPannel" />
+
+			<p:dataTable var="physician" id="physician"
+				value="#{settingsHandlerAction.physicians}"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll">
+
+				<!-- title -->
+				<p:column sortBy="#{physician.person.title}"
+					headerText="#{msg['dialog.settings.person.title']}"
+					style="width:20%">
+					<h:outputText value="#{physician.person.title}" />
+				</p:column>
+
+				<!-- Name -->
+				<p:column sortBy="#{physician.person.name}"
+					headerText="#{msg['dialog.settings.person.name']}"
+					style="width:20%">
+					<h:outputText value="#{physician.person.name}" />
+				</p:column>
+
+				<!-- Vorname -->
+				<p:column headerText="#{msg['dialog.settings.person.surename']}"
+					style="width:20%">
+					<h:outputText value="#{physician.person.sureName}" />
+				</p:column>
+
+				<!-- Operateur -->
+				<p:column headerText="#{msg['dialog.settings.person.surgeon']}"
+					style="text-align:center;">
+					<h:panelGroup rendered="#{physician.surgeon}">
+						<i class="fa fa-fw fa-check-circle icon-green" />
+					</h:panelGroup>
+				</p:column>
+
+				<!-- Einsender -->
+				<p:column headerText="#{msg['dialog.settings.person.extern']}"
+					style="text-align:center;">
+					<h:panelGroup rendered="#{physician.extern}">
+						<i class="fa fa-fw fa-check-circle icon-green" />
+					</h:panelGroup>
+				</p:column>
+
+				<!-- Andere -->
+				<p:column headerText="#{msg['dialog.settings.person.other']}"
+					style="text-align:center;">
+					<h:panelGroup rendered="#{physician.other}">
+						<i class="fa fa-fw fa-check-circle icon-green" />
+					</h:panelGroup>
+				</p:column>
+
+				<!-- Optionen -->
+				<p:column style="width:7%; text-align:center;">
+					<f:facet name="header">
+						<i class="fa fa-cog" />
+					</f:facet>
+					<p:commandLink title="#{msg['dialog.settings.person.edit']}"
+						actionListener="#{settingsHandlerAction.prepareEditPhysician(physician)}"
+						update="@form">
+						<i class="fa fa-fw fa-cog" />
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" styleClass="south">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2">
+					<p:commandButton value="#{msg['dialog.settings.person.new']}"
+						styleClass="smallerButton" icon="fa fa-fw fa-plus-circle"
+						actionListener="#{settingsHandlerAction.prepareNewPhysician()}"
+						update="@form"></p:commandButton>
+
+					<h:panelGrid columns="2" style="margin-left: 20px;">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
+						<h:outputLabel value="#{msg['dialog.settings.person.archived']}"
+							style="margin-left:5px;"></h:outputLabel>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="6" style="float:right; margin-right:10px;">
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						value="#{settingsHandlerAction.personSurgeon}">
+						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+							update="physician"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value="#{msg['dialog.settings.person.surgeon']}"
+						style="margin-left:5px;"></h:outputLabel>
+
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:10px;"
+						value="#{settingsHandlerAction.personExtern}">
+						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+							update="physician"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value="#{msg['dialog.settings.person.extern']}"
+						style="margin-left:5px;"></h:outputLabel>
+
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:10px;"
+						value="#{settingsHandlerAction.personOther}">
+						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+							update="physician"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value="#{msg['dialog.settings.person.other']}"
+						style="margin-left:5px;"></h:outputLabel>
+				</h:panelGrid>
+			</h:panelGrid>
+		</p:layoutUnit>
+	</p:layout>
+</ui:composition>

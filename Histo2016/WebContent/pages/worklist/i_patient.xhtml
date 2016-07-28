@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+
+	<!-- Übersicht -->
+	<h:panelGroup styleClass="contentHolder" layout="block">
+		<p:panelGrid columns="4" styleClass="noBorders"
+			columnClasses="patientTableTagRow,patientTableContentRow,patientTableTagRow,patientTableContentRow">
+			<p:outputLabel value="Name:" styleClass="boldTitle" />
+			<p:outputLabel
+				value="#{worklistHandlerAction.selectedPatient.person.name}, #{worklistHandlerAction.selectedPatient.person.sureName}" />
+
+			<p:outputLabel value="PIZ:" styleClass="boldTitle" />
+			<p:outputLabel value="#{worklistHandlerAction.selectedPatient.piz}" />
+
+			<p:outputLabel value="Straße:" styleClass="boldTitle" />
+			<p:outputLabel
+				value="#{worklistHandlerAction.selectedPatient.person.street}" />
+
+			<p:outputLabel value="Geburtsdatum:" styleClass="boldTitle" />
+			<p:outputLabel
+				value="#{worklistHandlerAction.selectedPatient.person.birthday}" />
+
+			<p:outputLabel value="Plz, Stadt:" styleClass="boldTitle" />
+			<p:outputLabel
+				value="#{worklistHandlerAction.selectedPatient.person.postcode} #{worklistHandlerAction.selectedPatient.person.town}" />
+
+			<p:outputLabel value="Telefon:" styleClass="boldTitle" />
+			<p:outputLabel
+				value="#{worklistHandlerAction.selectedPatient.person.phoneNumber}" />
+		</p:panelGrid>
+	</h:panelGroup>
+	
+	<p:panel styleClass="collapsedBorders noBorders">
+		<p:dataTable var="tasks" scrollable="true" scrollHeight="100"
+			id="taskList" value="#{worklistHandlerAction.selectedPatient.tasks}"
+			selectionMode="single" styleClass="orderTable"
+			rendered="#{worklistHandlerAction.selectedPatient != null}"
+			selection="#{worklistHandlerAction.selectedPatient.selectedTask}"
+			rowKey="#{tasks.id}">
+			<p:ajax event="rowSelect" update=":contentForm, :headerForm"
+				listener="#{worklistHandlerAction.selectTask(worklistHandlerAction.selectedPatient.selectedTask)}" />
+
+			<p:column>
+				<f:facet name="header">
+					<h:panelGrid columns="2" styleClass="collapsedBorders noPadding">
+						<h:outputLabel value="Aufträge" style="float:left;"></h:outputLabel>
+						<p:commandLink id="taskList"
+							actionListener="#{worklistHandlerAction.prepareNewTaskDialog()}">
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<i class="fa fa-plus" style="float: right"></i>
+
+						</p:commandLink>
+					</h:panelGrid>
+				</f:facet>
+
+				<h:outputText
+					value="#{tasks.taskID} - #{helperHandlerAction.simpleDateFormatterUnix(tasks.dateOfReceipt)}" />
+
+				<h:panelGroup rendered="#{tasks.isNew()}">
+					<h:outputText value=" ("></h:outputText>
+					<h:outputText value="Neu" style="color:green;" />
+					<h:outputText value=") "></h:outputText>
+				</h:panelGroup>
+
+				<h:panelGroup rendered="#{tasks.isStainingNeeded()}">
+					<h:outputText value=" ("></h:outputText>
+					<h:outputText value="Färben" style="color:orange;" />
+					<h:outputText value=") "></h:outputText>
+				</h:panelGroup>
+
+				<h:panelGroup rendered="#{tasks.isReStainingNeeded()}">
+					<h:outputText value=" ("></h:outputText>
+					<h:outputText value="Nachfärben" style="color:blue;" />
+					<h:outputText value=") "></h:outputText>
+				</h:panelGroup>
+
+				<h:panelGroup rendered="#{tasks.isDiagnosisNeeded()}">
+					<h:outputText value=" ("></h:outputText>
+					<h:outputText value="Befundung" style="color:purple;" />
+					<h:outputText value=") "></h:outputText>
+				</h:panelGroup>
+
+				<h:panelGroup rendered="#{tasks.isReDiagnosisNeeded()}">
+					<h:outputText value=" ("></h:outputText>
+					<h:outputText value="Nachbefundung" style="color:red;" />
+					<h:outputText value=")"></h:outputText>
+				</h:panelGroup>
+			</p:column>
+
+		</p:dataTable>
+	</p:panel>
+	<!-- Übersicht -->
+</ui:composition>

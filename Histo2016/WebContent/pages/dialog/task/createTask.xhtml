@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.createTask.Headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="dialogLayout">
+	<h:form>
+		<p:layout fullPage="true">
+			<p:layoutUnit position="center" styleClass="center">
+				<h:panelGrid columns="2" styleClass="dialogTable">
+					<h:outputLabel value="#{msg['dialog.createTask.Type']}"></h:outputLabel>
+					<p:selectOneMenu style="width:150px;" id="selectStainingList"
+						converter="#{worklistHandlerAction.stainingListTransformer}"
+						value="#{worklistHandlerAction.selectedStainingList}">
+						<f:selectItems
+							value="#{worklistHandlerAction.allAvailableStainingLists}"
+							var="stainingList" itemLabel="#{stainingList.name}"
+							itemValue="#{stainingList}">
+						</f:selectItems>
+
+					</p:selectOneMenu>
+					<h:outputLabel value="#{msg['dialog.createTask.Sample']}"></h:outputLabel>
+					<p:spinner value="#{worklistHandlerAction.sampleCount}" min="1"
+						size="13" />
+				</h:panelGrid>
+			</p:layoutUnit>
+
+			<p:layoutUnit position="south" styleClass="botton" resizable="false">
+				<p:commandButton value="#{msg['general.create']}" icon="fa fa-check-circle-o"
+					styleClass="smallButton"
+					actionListener="#{worklistHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,worklistHandlerAction.selectedStainingList,worklistHandlerAction.sampleCount)}"></p:commandButton>
+				<p:commandButton value="#{msg['general.abort']}" styleClass="smallButton"
+					style="margin-left:1em;" icon="fa fa-times-circle"
+					actionListener="#{worklistHandlerAction.hideNewTaskDialog()}"></p:commandButton>
+			</p:layoutUnit>
+		</p:layout>
+	</h:form>
+</h:body>
+</html>

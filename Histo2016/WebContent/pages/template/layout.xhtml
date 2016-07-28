@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<ui:param name="root" value="#{request.contextPath}/" />
+	<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="grid/grid.css" library="primefaces" />
+</h:head>
+
+<h:body>
+	<div class="ui-g container">
+		<div class="ui-g-2 navigation">
+			<!-- Nav -->
+			<h:form id="navigationForm">
+				<ui:insert name="navigation" />
+			</h:form>
+		</div>
+		<div class="ui-g-10 content">
+			<div class="ui-g-12 header">
+				<!-- Header -->
+				<h:form id="headerForm">
+					<ui:insert name="header" />
+				</h:form>
+			</div>
+
+			<div class="ui-g-12 body">
+				<!-- Conent -->
+				<h:form id="contentForm">
+					<ui:insert name="content" />
+				</h:form>
+			</div>
+
+		</div>
+	</div>
+
+	<h:form>
+		<p:idleMonitor timeout="900000">
+			<p:ajax event="idle" listener="#{helperHandlerAction.timeout()}"
+				oncomplete="alert('Session expired!')" />
+		</p:idleMonitor>
+	</h:form>
+</h:body>
+</html>

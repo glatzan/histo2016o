@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:layout styleClass="tabLayout">
+		<p:layoutUnit styleClass="center" position="center">
+			<p:panel style="width:100%;"
+				header="#{settingsHandlerAction.originalDiagnosisPrototype eq null ? 'Neue Diagnose erstellen' : 'Diagnose editieren'}"
+				styleClass="contentPannel" />
+
+			<p:panelGrid columns="2" styleClass="noBorders" style="width:100%">
+				<h:outputLabel value="Diagnose" />
+				<p:inputText
+					value="#{settingsHandlerAction.editDiagnosisPrototype.name}"
+					id="diagnosisName">
+					<p:watermark for="diagnosisName" value="Name der Diagnose" />
+				</p:inputText>
+
+				<h:outputLabel value="ICD 10 Nummer" />
+				<p:inputText
+					value="#{settingsHandlerAction.editDiagnosisPrototype.icd10}"
+					id="diagnosisICD">
+					<p:watermark for="diagnosisICD" value="ICD 10 Nummer" />
+				</p:inputText>
+
+				<h:outputLabel value="Malignität" />
+				<p:selectBooleanCheckbox
+					value="#{settingsHandlerAction.editDiagnosisPrototype.malign}" />
+
+				<h:outputLabel value="Diagnose Text" />
+				<p:inputTextarea id="diagnosisText"
+					value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosisText}">
+					<p:watermark for="diagnosisText" value="Text für die Befundung" />
+				</p:inputTextarea>
+
+				<h:outputLabel value="Kommentar" />
+				<p:inputTextarea id="diagnosisCommentary"
+					value="#{settingsHandlerAction.editDiagnosisPrototype.commentary}">
+					<p:watermark for="diagnosisCommentary" value="Kommentar/Anmerkung" />
+				</p:inputTextarea>
+			</p:panelGrid>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" styleClass="south">
+			<p:commandButton value="Speichern" styleClass="smallerButton"
+				icon="fa fa-fw fa-floppy-o" update="@form"
+				actionListener="#{settingsHandlerAction.saveDiagnosisPrototype(settingsHandlerAction.editDiagnosisPrototype,settingsHandlerAction.originalDiagnosisPrototype)}"></p:commandButton>
+			<p:commandButton value="Textvorlage editieren"
+				styleClass="smallerButton" icon="fa fa-fw fa-pencil-square-o"
+				update="@form" actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototypeTemplate()}"></p:commandButton>
+			<p:commandButton value="Abbrechen" styleClass="smallerButton"
+				icon="fa fa-fw fa-times-circle" update="@form"
+				actionListener="#{settingsHandlerAction.discardDiagnosisPrototype()}"></p:commandButton>
+		</p:layoutUnit>
+	</p:layout>
+
+</ui:composition>

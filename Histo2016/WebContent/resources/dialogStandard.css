@@ -1,0 +1,57 @@
+/*
+	######################################## Patient Dialog ########################################
+*/
+
+/*
+	Style for Form Table
+*/
+/* Table containing the search fiedls*/
+.patientSearchTable{
+	margin-top:5px;
+	margin-bottom:5px
+}
+
+.patientSearchTable tr, .patientSearchTable td {
+	border: none !important;
+}
+
+/* Table containing serach field, category column */
+.patientSearchTable .categoryColum{
+	vertical-align: top;
+	padding-top: 5px !important;
+	width: 100px;
+}
+
+/* Table containing the inputfields */
+.patientSearchTable .inputTable tr, .patientSearchTable .inputTable td {
+	border: none !important;
+}
+
+.patientSearchTable .inputTable td {
+	padding: 0px !important;
+	padding-left: 10px;
+	font-family: Arial, sans-serif;
+	font-size: 0.8em !important;
+	font-style: italic;
+}
+/*
+	######################################## Info Dialog ########################################
+*/
+.dialogLayout {
+	padding: 0.4em 0.1em 0.4em 0.1em !important;
+}
+
+.dialogLayout .dialogLayoutCenter {
+	border: none !important;
+	padding: 0.2em 1em !important;
+}
+
+.dialogLayout .dialogLayoutSouth {
+	border: none !important;
+	padding: 0em 1em !important;
+	overflow: hidden !important;
+}
+
+/*
+	######################################## Settings Dialog ########################################
+*/

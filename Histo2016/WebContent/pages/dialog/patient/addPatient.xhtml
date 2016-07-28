@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Patient hinzufügen</title>
+	<h:outputStylesheet name="dialogStandard.css"
+		value="dialogStandard.css" />
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="settingsDialogLayout">
+	<h:form>
+		<p:panel styleClass="collapsedBorders noBorders settingsPannel">
+			<p:tabView orientation="left"
+				activeIndex="#{worklistHandlerAction.activePatientDialogIndex}"
+				styleClass="settingsTabView">
+
+				<p:tab title="Patient suche">
+					<ui:include src="searchPatient.xhtml" />
+				</p:tab>
+
+				<p:tab title="Patient extern">
+					<ui:include src="externalPatient.xhtml" />
+				</p:tab>
+			</p:tabView>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.settings.headline']}">
+		</h:outputFormat></title>
+	<h:outputStylesheet name="dialogStandard.css"
+		value="dialogStandard.css" />
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="grid/grid.css" library="primefaces" />
+</h:head>
+
+<h:body styleClass="settingsDialogLayout">
+	<h:form id="adminForm">
+		<p:panel styleClass="settingsPannel">
+			<p:tabView orientation="left"
+				activeIndex="#{settingsHandlerAction.activeSettingsIndex}"
+				styleClass="settingsTabView">
+
+				<p:ajax event="tabChange"
+					listener="#{settingsHandlerAction.onSettingsTabChange}"
+					update="@form" />
+
+				<!-- ************************************************************** Benutzer ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.user']}">
+					<ui:include src="userList.xhtml" />
+				</p:tab>
+				<!-- ************************************************************** Benutzer ************************************************************** -->
+
+				<!-- ************************************************************** Stainings ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.stainings']}">
+					<!-- Staining List -->
+					<h:panelGroup rendered="#{!settingsHandlerAction.showStainingEdit}">
+						<ui:include src="stainingsList.xhtml" />
+					</h:panelGroup>
+					<!-- Staining List -->
+
+					<!-- Edit Staining -->
+					<h:panelGroup rendered="#{settingsHandlerAction.showStainingEdit}">
+						<ui:include src="stainingsEdit.xhtml" />
+					</h:panelGroup>
+					<!-- Edit Staining -->
+				</p:tab>
+				<!-- ************************************************************** Stainings ************************************************************** -->
+
+				<!-- ************************************************************** StainingList ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.stainingLists']}">
+
+					<!-- ******************* StainingsList List ******************* -->
+					<h:panelGroup
+						rendered="#{settingsHandlerAction.stainingListIndex eq 0}">
+						<ui:include src="stainingListList.xhtml" />
+					</h:panelGroup>
+					<!-- ******************* StainingsList List ******************* -->
+
+					<!-- ******************* StainingsList Edit/New ******************* -->
+					<h:panelGroup
+						rendered="#{settingsHandlerAction.stainingListIndex eq 1}">
+						<ui:include src="stainingListEdit.xhtml" />
+					</h:panelGroup>
+					<!-- ******************* StainingsList Edit/New ******************* -->
+
+					<!-- ******************* StainingsList Add Staining ******************* -->
+					<h:panelGroup
+						rendered="#{settingsHandlerAction.stainingListIndex eq 2}">
+						<ui:include src="stainingListAddStaining.xhtml" />
+					</h:panelGroup>
+					<!-- ******************* StainingsList Add Staining ******************* -->
+				</p:tab>
+				<!-- ************************************************************** StainingList ************************************************************** -->
+
+				<!-- ************************************************************** Diagnoses ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.diagnosis']}">
+					<h:panelGroup
+						rendered="#{settingsHandlerAction.diagnosisIndex eq 0}">
+						<ui:include src="diagnosisList.xhtml" />
+					</h:panelGroup>
+					<h:panelGroup
+						rendered="#{settingsHandlerAction.diagnosisIndex eq 1}">
+						<ui:include src="diagnosisEdit.xhtml" />
+					</h:panelGroup>
+					<h:panelGroup
+						rendered="#{settingsHandlerAction.diagnosisIndex eq 2}">
+						<ui:include src="diagnosisEditTemplate.xhtml" />
+					</h:panelGroup>
+				</p:tab>
+				<!-- ************************************************************** Diagnoses ************************************************************** -->
+
+				<!-- ************************************************************** Persons ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.persons']}">
+				<h:panelGroup
+						rendered="#{settingsHandlerAction.physicianIndex eq 0}">
+						<ui:include src="physicianList.xhtml" />
+					</h:panelGroup>
+						<h:panelGroup
+						rendered="#{settingsHandlerAction.physicianIndex eq 1}">
+						<ui:include src="physicianEdit.xhtml" />
+					</h:panelGroup>
+				</p:tab>
+				<!-- ************************************************************** Persons ************************************************************** -->
+
+				<p:tab title="#{msg['dialog.settings.miscellaneous']}">
+				</p:tab>
+
+				<!-- ************************************************************** Log ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.log']}">
+					<p:dataTable var="history" styleClass="historyDataTable"
+						scrollable="true" scrollHeight="450"
+						value="#{settingsHandlerAction.currentHistory}">
+
+						<p:column headerText="Datum" style="width:12%">
+							<h:outputText
+								value="#{helperHandlerAction.dateFormatterUnix(history.date, 'hh:mm:ss dd/MM/yyyy ')}" />
+						</p:column>
+						<p:column headerText="Benutzer" style="width:12%">
+							<h:outputText value="#{history.userAcc.username}" />
+						</p:column>
+						<p:column headerText="Patient" style="width:10%">
+							<h:outputText value="#{history.patient.piz}"
+								rendered="#{history.patient ne null}" />
+							<h:outputText value="-" rendered="#{history.patient eq null}" />
+						</p:column>
+						<p:column headerText="Level" style="width:10%">
+							<h:outputText value="#{history.level}" />
+						</p:column>
+						<p:column headerText="Nachricht" style="width:56%">
+							<h:outputText value="#{history.messages}" />
+						</p:column>
+					</p:dataTable>
+				</p:tab>
+				<!-- ************************************************************** Log ************************************************************** -->
+			</p:tabView>
+
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

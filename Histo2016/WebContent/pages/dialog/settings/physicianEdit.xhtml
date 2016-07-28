@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:layout styleClass="tabLayout">
+		<p:layoutUnit styleClass="center" position="center">
+
+			<p:panel style="width:100%;"
+				header="#{msg['dialog.settings.person']} / Erstellen TODO"
+				styleClass="contentPannel" />
+
+			<ui:include src="../../template/person.xhtml">
+				<ui:param name="person"
+					value="#{settingsHandlerAction.editPhysician.person}" />
+			</ui:include>
+
+			<p:panelGrid styleClass="patientSearchTable" columns="2"
+				columnClasses="categoryColum,">
+				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
+
+				<h:panelGrid columns="6"
+					styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+					<p:panelGrid columns="2">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{settingsHandlerAction.editPhysician.surgeon}" />
+						<p:outputLabel style="margin-left:5px;"
+							value="#{msg['dialog.settings.person.role.surgeon']}" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							style="margin-left:15px;"
+							value="#{settingsHandlerAction.editPhysician.extern}" />
+						<p:outputLabel style="margin-left:5px;"
+							value="#{msg['dialog.settings.person.role.extern']}" />
+					</p:panelGrid>
+					<p:panelGrid columns="2">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{settingsHandlerAction.editPhysician.other}"
+							style="margin-left:15px;" />
+						<p:outputLabel style="margin-left:5px;"
+							value="#{msg['dialog.settings.person.role.other']}" />
+					</p:panelGrid>
+				</h:panelGrid>
+			</p:panelGrid>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="south" styleClass="south">
+			<p:commandButton value="Speichern" styleClass="smallerButton"
+				icon="fa fa-fw fa-floppy-o"
+				actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.editPhysician)}"
+				update="@form"></p:commandButton>
+
+			<p:commandButton value="Abbrechen" styleClass="smallerButton"
+				icon="fa fa-fw fa-times-circle"
+				actionListener="#{settingsHandlerAction.discardEditPhysician()}"
+				update="@form"></p:commandButton>
+		</p:layoutUnit>
+	</p:layout>
+
+</ui:composition>
