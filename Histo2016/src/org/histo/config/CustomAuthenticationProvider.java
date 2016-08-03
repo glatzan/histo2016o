@@ -1,37 +1,25 @@
 package org.histo.config;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 
-import javax.naming.AuthenticationNotSupportedException;
 import javax.naming.Context;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
 
-import org.histo.action.WorklistHandlerAction;
-import org.histo.dao.GenericDAO;
-import org.histo.dao.HelperDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.UserAcc;
-import org.histo.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
-    @Lazy
     private UserDAO userDAO;
     
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {

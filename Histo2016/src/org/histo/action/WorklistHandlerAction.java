@@ -3,6 +3,7 @@ package org.histo.action;
 import java.awt.Paint;
 import java.awt.Robot;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,10 +37,16 @@ import org.histo.ui.StainingListTransformer;
 import org.histo.util.SearchOptions;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
+import org.histo.util.URLConnection;
+import org.primefaces.json.JSONArray;
+import org.primefaces.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
+import com.google.gson.annotations.JsonAdapter;
 
 import histo.model.util.ArchiveAble;
 import histo.model.util.StainingTreeParent;
@@ -355,6 +362,111 @@ public class WorklistHandlerAction implements Serializable {
 	helper.hideDialog("/pages/dialog/patient/addPatient");
     }
 
+    public void searchPatient(String piz){
+    	URLConnection con = new URLConnection();
+    	
+    	String test = con.getRequest(HistoSettings.PATIENT_GET_URL+"/"+piz);
+
+    	
+    	JSONObject obj = new JSONObject(test);
+    	String pageName = obj.getString("pageName");
+
+    	
+    	String name = obj.getString("name");
+    	String title = obj.getString("titel");
+    	String surname = obj.getString("vorname");
+    	String birthday = obj.getString("geburtsdatum");
+ 
+    	String land = obj.getString("land");
+    	String ade = obj.getString("anschrift");
+    	String town = obj.getString("ort");
+    	String plz = obj.getString("plz");
+    	
+    	String tel = obj.getString("tel");
+    	
+    	String insurance = obj.getString("krankenkasse");
+    	
+    	String gender = obj.getString("weiblich");
+    	
+    	Patient patient = new Patient();
+    	patient.setPerson(new Person());
+    }
+    
+//    {
+//    	   "vorname":"Andreas",
+//    	   "mode":null,
+//    	   "status":null,
+//    	   "piz":"20366346",
+//    	   "sonderinfo":null,
+//    	   "iknr":null,
+//    	   "kvnr":null,
+//    	   "titel":null,
+//    	   "versichertenstatus":" ",
+//    	   "tel":null,
+//    	   "anschrift":"Tannenweg 34",
+//    	   "wop":null,
+//    	   "plz":"79183",
+//    	   "name":"Glatz",
+//    	   "geburtsdatum":"1988-10-04",
+//    	   "gueltig_bis":null,
+//    	   "krankenkasse":null,
+//    	   "versnr":null,
+//    	   "land":"D",
+//    	   "weiblich":"",
+//    	   "ort":"Waldkirch",
+//    	   "status2":null
+//    	}
+//    {
+//    	   "vorname":"Daniel",
+//    	   "mode":"W",
+//    	   "status":null,
+//    	   "piz":"25201957",
+//    	   "sonderinfo":"",
+//    	   "iknr":"00190",
+//    	   "kvnr":null,
+//    	   "titel":"Prof. Dr. med.",
+//    	   "versichertenstatus":" ",
+//    	   "tel":"12-4085",
+//    	   "anschrift":"Grillenweg 4",
+//    	   "wop":null,
+//    	   "plz":"79110",
+//    	   "name":"Böhringer",
+//    	   "geburtsdatum":"1972-08-23",
+//    	   "gueltig_bis":null,
+//    	   "krankenkasse":"Wissenschaftliche Unters.",
+//    	   "versnr":null,
+//    	   "land":"D",
+//    	   "weiblich":"",
+//    	   "ort":"Freiburg",
+//    	   "status2":null
+//    	}
+//    {
+//
+//  +      "vorname":"Ioana Maria",
+// ->       "mode":"K",
+// ->       "status":"1000",
+//  ok      "piz":"29017379",
+//  ?      "sonderinfo":"",
+// ->      "iknr":"61125",
+// ->      "kvnr":"108018121",
+//  ok      "titel":null,
+// ->      "versichertenstatus":"1 ",
+//  ok     "tel":"0176 62346167",
+//  ok      "anschrift":"Habsburgerstr. 25",
+//  ?      "wop":"",
+//  ok      "plz":"79104",
+//  ok      "name":"Cazana",
+//  ok      "geburtsdatum":"1989-10-09",
+//   ?     "gueltig_bis":null,
+//  ok      "krankenkasse":"AOK Baden-Württemberg",
+//   ?     "versnr":"U367703198",
+//  ok      "land":"D",
+//  ok      "weiblich":"1",
+//  ok      "ort":"Freiburg",
+//        "status2":"1"
+//
+//    }
+    
     /******************************************************** Patient ********************************************************/
 
     /******************************************************** Task ********************************************************/

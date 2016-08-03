@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HistoSettings {
+	
+	// http://auginfo/piz?piz=xx 
+	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
+	public static final String PATIENT_GET_URL= "http://auginfo/piz";
 
     public static final String CENTER_INCLUDE_BLANK = "i_blank.xhtml";
     public static final String CENTER_INCLUDE_PATIENT = "i_patient.xhtml";
