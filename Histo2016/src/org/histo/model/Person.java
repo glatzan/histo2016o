@@ -23,10 +23,13 @@ import com.google.gson.annotations.Expose;
 @SequenceGenerator(name = "person_sequencegenerator", sequenceName = "person_sequence")
 public class Person {
 
+    public static final char GENDER_MALE = 'm';
+    public static final char GENDER_FEMALE = 'w';
+    
     @Expose
     private long id;
     @Expose
-    private String gender;
+    private char gender;
     @Expose
     private String title;
     @Expose
@@ -36,11 +39,11 @@ public class Person {
     @Expose
     private String houseNumber;
     @Expose
-    private int postcode;
+    private String postcode;
     @Expose
     private String town;
     @Expose
-    private String sureName;
+    private String surname;
     @Expose
     private Date birthday;
     @Expose
@@ -49,7 +52,8 @@ public class Person {
     private String fax;
     @Expose
     private String email;
-    
+    @Expose
+    private String land;
     
     public Person() {
     }
@@ -79,12 +83,12 @@ public class Person {
     }
 
     @Column
-    public String getSureName() {
-	return sureName;
+    public String getSurname() {
+	return surname;
     }
 
-    public void setSureName(String sureName) {
-	this.sureName = sureName;
+    public void setSurname(String surname) {
+	this.surname = surname;
     }
 
     @Column()
@@ -107,11 +111,11 @@ public class Person {
     }
 
     @Column
-    public String getGender() {
+    public char getGender() {
 	return gender;
     }
 
-    public void setGender(String geneder) {
+    public void setGender(char geneder) {
 	this.gender = geneder;
     }
 
@@ -125,11 +129,11 @@ public class Person {
     }
 
     @Column
-    public int getPostcode() {
+    public String getPostcode() {
 	return postcode;
     }
 
-    public void setPostcode(int postcode) {
+    public void setPostcode(String postcode) {
 	this.postcode = postcode;
     }
 
@@ -176,6 +180,14 @@ public class Person {
 
     public void setFax(String fax) {
         this.fax = fax;
+    }
+
+    public String getLand() {
+        return land;
+    }
+
+    public void setLand(String land) {
+        this.land = land;
     }
 
     @Transient
