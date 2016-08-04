@@ -1,6 +1,7 @@
 package org.histo.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -43,6 +44,12 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
     private String piz;
 
     /**
+     * Insurance of the patient
+     */
+    @Expose
+    private String insurance; 
+    
+    /**
      * True if patient was added as an external patient.
      */
     @Expose
@@ -52,7 +59,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
      * Date of adding to the database
      */
     @Expose
-    private long addDate;
+    private Date addDate;
 
     /**
      * Person data
@@ -135,13 +142,22 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	this.externalPatient = externalPatient;
     }
 
-    @Basic
-    public long getAddDate() {
+    @Column
+    public Date getAddDate() {
 	return addDate;
     }
 
-    public void setAddDate(long addDate) {
+    public void setAddDate(Date addDate) {
 	this.addDate = addDate;
+    }
+
+    @Column
+    public String getInsurance() {
+        return insurance;
+    }
+
+    public void setInsurance(String insurance) {
+        this.insurance = insurance;
     }
 
     @Transient
@@ -208,7 +224,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
     @Override
     @Transient
     public boolean isNew() {
-	if (TimeUtil.isDateOnSameDay(getAddDate(), System.currentTimeMillis()))
+	if (TimeUtil.isDateOnSameDay(getAddDate().getTime(), System.currentTimeMillis()))
 	    return true;
 
 	for (Task task : getTasks()) {
