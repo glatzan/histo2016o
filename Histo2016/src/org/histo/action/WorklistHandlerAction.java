@@ -1155,11 +1155,11 @@ public class WorklistHandlerAction implements Serializable {
 		this.searchForPatientSurname = searchForPatientSurname;
 	}
 
-	public String getSearchForPatientBirthday() {
+	public Date getSearchForPatientBirthday() {
 		return searchForPatientBirthday;
 	}
 
-	public void setSearchForPatientBirthday(String searchForPatientBirthday) {
+	public void setSearchForPatientBirthday(Date searchForPatientBirthday) {
 		this.searchForPatientBirthday = searchForPatientBirthday;
 	}
 
