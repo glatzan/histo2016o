@@ -18,46 +18,45 @@
 				<h:panelGroup>
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
-						<p:inputText value="#{worklistHandlerAction.tmpPatient.piz}" />
+						<p:inputText value="#{worklistHandlerAction.searchForPatientPiz}" />
 						<p:outputLabel value="PIZ" />
 					</p:panelGrid>
 					<p:panelGrid columns="1" styleClass="inputTable">
 						<p:calendar
-							value="#{worklistHandlerAction.tmpPatient.person.birthday}"
-							locale="de" navigator="true" pattern="dd-MMM-yyyy" />
+							value="#{worklistHandlerAction.searchForPatientBirthday}"
+							locale="de" navigator="true"  pattern="dd.MM.yyyy" mask="true" styleClass="taskCalendar" />
 						<p:outputLabel value="Geburtstag" />
 					</p:panelGrid>
 				</h:panelGroup>
-
 				<h:outputLabel value="" />
 				<h:panelGroup>
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
 						<p:inputText
-							value="#{worklistHandlerAction.tmpPatient.person.name}" />
+							value="#{worklistHandlerAction.searchForPatientName}" />
 						<p:outputLabel value="Name" />
 					</p:panelGrid>
 					<p:panelGrid columns="1" styleClass="inputTable">
 						<p:inputText
-							value="#{worklistHandlerAction.tmpPatient.person.sureName}" />
+							value="#{worklistHandlerAction.searchForPatientSurname}" />
 						<p:outputLabel value="Vorname" />
 					</p:panelGrid>
 				</h:panelGroup>
 			</p:panelGrid>
 
 			<p:dataTable var="patient"
-				value="#{worklistHandlerAction.searchResults}">
+				value="#{worklistHandlerAction.searchForPatientList}">
 				<p:column headerText="PIZ">
 					<h:outputText value="#{patient.piz}" />
 				</p:column>
 				<p:column headerText="Name">
-					<h:outputText value="#{patient.name}" />
+					<h:outputText value="#{patient.person.name}" />
 				</p:column>
 				<p:column headerText="Vorname">
-					<h:outputText value="#{patient.sureName}" />
+					<h:outputText value="#{patient.person.sureName}" />
 				</p:column>
 				<p:column headerText="Geburtstag">
-					<h:outputText value="#{patient.birthday}" />
+					<h:outputText value="#{patient.person.birthday}" />
 				</p:column>
 				<p:column headerText="Geschlecht">
 				</p:column>

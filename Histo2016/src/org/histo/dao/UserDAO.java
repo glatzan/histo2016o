@@ -19,33 +19,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserDAO extends AbstractDAO implements Serializable {
 
-    public List<UserAcc> loadAllUsers() {
-	Criteria c = getSession().createCriteria(UserAcc.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-	return c.list();
-    }
-
-    public UserAcc loadUserByName(String name) {
-	Criteria c = getSession().createCriteria(UserAcc.class);
-	c.add(Restrictions.eq("username", name)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-	List<UserAcc> res = c.list();
-	if (res.size() > 1) {
-	    System.out.println("Error more entrys");
-	    return null;
+	public List<UserAcc> loadAllUsers() {
+		Criteria c = getSession().createCriteria(UserAcc.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return c.list();
 	}
-	if (res.size() == 1)
-	    return res.get(0);
 
-	System.out.println("Creating new user");
+	public UserAcc loadUserByName(String name) {
+		Criteria c = getSession().createCriteria(UserAcc.class);
+		c.add(Restrictions.eq("username", name)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<UserAcc> res = c.list();
 
-	UserRole guestRole = UserUtil.createRole(UserRole.ROLE_LEVEL_GUEST);
-	getSession().save(guestRole);
-	UserAcc newUser = new UserAcc();
-	newUser.setUsername(name);
-	newUser.setRole(guestRole);
+		if (res.size() != 1) {
+			return null;
+		}
 
-	getSession().save(newUser);
-	getSession().flush();
-	return newUser;
-    }
+		return res.get(0);
+	}
+	
+	public void saveUser(UserAcc userAcc){
+		getSession().save(userAcc);
+		getSession().flush();
+	}
 
 }

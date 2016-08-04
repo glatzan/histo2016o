@@ -190,6 +190,8 @@ public class Person {
         this.land = land;
     }
 
+    
+    
     @Transient
     public String patienDataAsGson() {
 	final GsonBuilder builder = new GsonBuilder();
