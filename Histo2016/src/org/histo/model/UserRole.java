@@ -67,7 +67,7 @@ public class UserRole implements Serializable,Cloneable,GrantedAuthority {
         this.id = id;
     }
 
-    @Column
+    @Column(unique=true)
     public String getName() {
         return name;
     }

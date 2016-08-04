@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,111 +26,112 @@ import com.google.gson.reflect.TypeToken;
 @SequenceGenerator(name = "user_sequencegenerator", sequenceName = "user_sequence")
 public class UserAcc implements UserDetails, Serializable {
 
-    private long id;
+	private static final long serialVersionUID = 8292898827966568346L;
 
-    private String username;
-    private String password;
+	private long id;
 
-    private UserRole role;
-    
-    private Physician physician;
+	private String username;
 
-    private boolean accountNonExpired = true;
-    private boolean accountNonLocked = true;
-    private boolean credentialsNonExpired = true;
-    private boolean enabled = true;
+	private UserRole role;
 
-    @Id
-    @GeneratedValue(generator = "user_sequencegenerator")
-    @Column(unique = true, nullable = false)
-    public long getId() {
-	return id;
-    }
+	private Physician physician;
 
-    public void setId(long id) {
-	this.id = id;
-    }
+	private boolean accountNonExpired = true;
+	private boolean accountNonLocked = true;
+	private boolean credentialsNonExpired = true;
+	private boolean enabled = true;
 
-    @Column
-    public String getUsername() {
-	return username;
-    }
+	@Id
+	@GeneratedValue(generator = "user_sequencegenerator")
+	@Column(unique = true, nullable = false)
+	public long getId() {
+		return id;
+	}
 
-    public void setUsername(String username) {
-	this.username = username;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    @Column
-    public String getPassword() {
-	return password;
-    }
+	@Column
+	public String getUsername() {
+		return username;
+	}
 
-    public void setPassword(String password) {
-	this.password = password;
-    }
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
-    @OneToOne
-    public Physician getPhysician() {
-        return physician;
-    }
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	public Physician getPhysician() {
+		return physician;
+	}
 
-    public void setPhysician(Physician physician) {
-        this.physician = physician;
-    }
+	public void setPhysician(Physician physician) {
+		this.physician = physician;
+	}
 
-    @Transient
-    public boolean isAccountNonExpired() {
-	return accountNonExpired;
-    }
+	@Transient
+	public boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
 
-    public void setAccountNonExpired(boolean accountNonExpired) {
-	this.accountNonExpired = accountNonExpired;
-    }
+	public void setAccountNonExpired(boolean accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
+	}
 
-    @Transient
-    public boolean isAccountNonLocked() {
-	return accountNonLocked;
-    }
+	@Transient
+	public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
 
-    public void setAccountNonLocked(boolean accountNonLocked) {
-	this.accountNonLocked = accountNonLocked;
-    }
+	public void setAccountNonLocked(boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
 
-    @Transient
-    public boolean isCredentialsNonExpired() {
-	return credentialsNonExpired;
-    }
+	@Transient
+	public boolean isCredentialsNonExpired() {
+		return credentialsNonExpired;
+	}
 
-    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-	this.credentialsNonExpired = credentialsNonExpired;
-    }
+	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+		this.credentialsNonExpired = credentialsNonExpired;
+	}
 
-    @Column
-    public boolean isEnabled() {
-	return enabled;
-    }
+	@Column
+	public boolean isEnabled() {
+		return enabled;
+	}
 
-    public void setEnabled(boolean enabled) {
-	this.enabled = enabled;
-    }
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
-    @OneToOne
-    public UserRole getRole() {
-	return role;
-    }
+	@OneToOne(cascade = CascadeType.ALL)
+	public UserRole getRole() {
+		return role;
+	}
 
-    public void setRole(UserRole role) {
-	this.role = role;
-    }
+	public void setRole(UserRole role) {
+		this.role = role;
+	}
 
-    @Transient
-    public List<UserRole> getAuthorities() {
-	List<UserRole> result = new ArrayList<UserRole>();
-	result.add(role);
-	return result;
-    }
+	@Transient
+	public List<UserRole> getAuthorities() {
+		List<UserRole> result = new ArrayList<UserRole>();
+		result.add(role);
+		return result;
+	}
 
-    public void setAuthorities(List<UserRole> authorities) {
-    }
+	public void setAuthorities(List<UserRole> authorities) {
+	}
+
+	/**
+	 * Not used, LDAP Auth
+	 */
+	@Override
+	@Transient
+	public String getPassword() {
+		return null;
+	}
 
 }

@@ -45,18 +45,18 @@
 			</p:panelGrid>
 
 			<p:dataTable var="patient"
-				value="#{worklistHandlerAction.searchResults}">
+				value="#{worklistHandlerAction.searchForPatientList}">
 				<p:column headerText="PIZ">
 					<h:outputText value="#{patient.piz}" />
 				</p:column>
 				<p:column headerText="Name">
-					<h:outputText value="#{patient.name}" />
+					<h:outputText value="#{patient.person.name}" />
 				</p:column>
 				<p:column headerText="Vorname">
-					<h:outputText value="#{patient.sureName}" />
+					<h:outputText value="#{patient.person.sureName}" />
 				</p:column>
 				<p:column headerText="Geburtstag">
-					<h:outputText value="#{patient.birthday}" />
+					<h:outputText value="#{patient.person.birthday}" />
 				</p:column>
 				<p:column headerText="Geschlecht">
 				</p:column>

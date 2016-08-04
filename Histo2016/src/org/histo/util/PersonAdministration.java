@@ -7,12 +7,17 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.histo.model.Patient;
 import org.histo.model.Person;
+import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
+
+import com.google.gson.JsonArray;
 
 //    {
 //	   "vorname":"Andreas",
@@ -67,88 +72,125 @@ import org.primefaces.json.JSONObject;
 //}
 
 public class PersonAdministration {
-    private final String USER_AGENT = "Mozilla/5.0";
+	private final String USER_AGENT = "Mozilla/5.0";
 
-    public String getRequest(String url) {
+	public String getRequest(String url) {
 
-	StringBuffer response = new StringBuffer();
+		StringBuffer response = new StringBuffer();
 
-	try {
-	    URL obj = new URL(url);
-	    HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		try {
+			URL obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-	    // optional default is GET
-	    con.setRequestMethod("GET");
+			// optional default is GET
+			con.setRequestMethod("GET");
 
-	    // add request header
-	    con.setRequestProperty("User-Agent", USER_AGENT);
+			// add request header
+			con.setRequestProperty("User-Agent", USER_AGENT);
 
-	    BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-	    String inputLine;
-	    while ((inputLine = in.readLine()) != null) {
-		response.append(inputLine);
-	    }
-	    in.close();
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
 
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return "";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+
+		return response.toString();
 	}
 
-	return response.toString();
-    }
-
-    /**
-     * Updates a patient objekt with a given json array from the clinic backend
-     *
-     * { "vorname":"Test", "mode":"W", "status":null, "piz":"25201957", "sonderinfo":"", "iknr":"00190", "kvnr":null, "titel":"Prof. Dr. med.", "versichertenstatus":" ", "tel":"12-4085", "anschrift":
-     * "Gillenweg 4", "wop":null, "plz":"79110", "name":"Test", "geburtsdatum":"1972-08-22", "gueltig_bis":null, "krankenkasse":"Wissenschaftliche Unters.", "versnr":null, "land":"D", "weiblich":"",
-     * "ort":"Freiburg", "status2":null }
-     * 
-     * @param patient
-     * @param json
-     * @return
-     */
-    public Patient updatePatient(Patient patient, String json) {
-
-	if (patient.getPerson() == null)
-	    patient.setPerson(new Person());
-
-	Person person = patient.getPerson();
-
-	JSONObject obj = new JSONObject(json);
-
-	// Person data
-	person.setTitle(obj.getString("titel"));
-	person.setName(obj.getString("name"));
-	person.setSurname(obj.getString("vorname"));
-	// parsing date
-	DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
-	Date date;
-	try {
-	    date = format.parse(obj.getString("geburtsdatum"));
-	} catch (ParseException e) {
-	    date = new Date();
+	/**
+	 * Uses a search list from the clinic backend and creates a Patient list using these data.
+	 * @param json [{},{}]
+	 * @return
+	 */
+	public List<Patient> getPatientsFromClinicJson(String json) {
+		JSONArray arr = new JSONArray(json);
+		ArrayList<Patient> patients = new ArrayList<>();
+		for (int i = 0; i < arr.length(); i++) {
+			patients.add(getPatientFromClinicJson(arr.getJSONObject(i)));
+		}
+		return patients;
 	}
-	person.setBirthday(date);
 
-	person.setTown(obj.getString("ort"));
-	person.setLand(obj.getString("land"));
-	person.setPostcode(obj.getString("plz"));
-	person.setStreet(obj.getString("anschrift"));
-	person.setPhoneNumber(obj.getString("tel"));
-	// 1 equals female, empty equals male
-	person.setGender(obj.getString("weiblich").equals("1") ? Person.GENDER_FEMALE : Person.GENDER_MALE);
+	/**
+	 * Creates a new patient using data from the clinic backend. 
+	 * @param json
+	 * @return
+	 */
+	public Patient getPatientFromClinicJson(String json) {
+		JSONObject obj = new JSONObject(json);
+		return getPatientFromClinicJson(obj);
+	}
 
-	// TODO
-	person.setEmail("");
-	// todo
-	person.setHouseNumber("");
+	public Patient getPatientFromClinicJson(JSONObject json) {
+		Patient patient = new Patient();
+		patient.setPerson(new Person());
+		return updatePatientFromClinicJson(patient, json);
+	}
 
-	// patient data
-	patient.setInsurance(obj.getString("krankenkasse"));
-	patient.setAddDate(new Date(System.currentTimeMillis()));
+	public Patient updatePatientFromClinicJson(Patient patient, String json) {
+		JSONObject obj = new JSONObject(json);
+		return updatePatientFromClinicJson(patient, obj);
+	}
 
-	return patient;
-    }
+	/**
+	 * Updates a patient objekt with a given json array from the clinic backend
+	 *
+	 * { "vorname":"Test", "mode":"W", "status":null, "piz":"25201957",
+	 * "sonderinfo":"", "iknr":"00190", "kvnr":null, "titel":"Prof. Dr. med.",
+	 * "versichertenstatus":" ", "tel":"12-4085", "anschrift": "Gillenweg 4",
+	 * "wop":null, "plz":"79110", "name":"Test", "geburtsdatum":"1972-08-22",
+	 * "gueltig_bis":null, "krankenkasse":"Wissenschaftliche Unters.",
+	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg",
+	 * "status2":null }
+	 * 
+	 * @param patient
+	 * @param json
+	 * @return
+	 */
+	public Patient updatePatientFromClinicJson(Patient patient, JSONObject obj) {
+
+		if (patient.getPerson() == null)
+			patient.setPerson(new Person());
+
+		Person person = patient.getPerson();
+
+		// Person data
+		person.setTitle(obj.optString("titel"));
+		person.setName(obj.optString("name"));
+		person.setSurname(obj.optString("vorname"));
+		// parsing date
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
+		Date date;
+		try {
+			date = format.parse(obj.optString("geburtsdatum"));
+		} catch (ParseException e) {
+			date = new Date();
+		}
+		person.setBirthday(date);
+
+		person.setTown(obj.optString("ort"));
+		person.setLand(obj.optString("land"));
+		person.setPostcode(obj.optString("plz"));
+		person.setStreet(obj.optString("anschrift"));
+		person.setPhoneNumber(obj.optString("tel"));
+		// 1 equals female, empty equals male
+		person.setGender(obj.optString("weiblich").equals("1") ? Person.GENDER_FEMALE : Person.GENDER_MALE);
+
+		// TODO
+		person.setEmail("");
+		// todo
+		person.setHouseNumber("");
+
+		// patient data
+		patient.setInsurance(obj.optString("krankenkasse"));
+		patient.setAddDate(new Date(System.currentTimeMillis()));
+
+		return patient;
+	}
 }
