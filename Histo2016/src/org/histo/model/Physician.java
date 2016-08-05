@@ -1,25 +1,17 @@
 package org.histo.model;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 
 import com.google.gson.annotations.Expose;
 
 @Entity
-@SequenceGenerator(name = "physician_sequencegenerator", sequenceName = "physician_sequence")
-public class Physician {
+public class Physician extends Person {
 
-	private long id;
 
-	private Person person;
-
+	@Expose
+	private String fullName;
+	
 	@Expose
 	private String pager;
 	
@@ -40,26 +32,6 @@ public class Physician {
 	private boolean extern;
 
 	private boolean other;
-
-	@Id
-	@GeneratedValue(generator = "physician_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	public Person getPerson() {
-		return person;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
 
 	@Basic
 	public boolean isSurgeon() {
@@ -110,6 +82,14 @@ public class Physician {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 	
 }
