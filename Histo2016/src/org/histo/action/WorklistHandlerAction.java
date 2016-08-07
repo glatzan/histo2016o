@@ -714,14 +714,14 @@ public class WorklistHandlerAction implements Serializable {
 			}
 
 			// bei externen die eine Faxnummer haben fax bevorzugen
-			if (contact.getRole() == Contact.ROLE_EXTERN && contact.getPhysician().getPerson().getFax() != null
-					&& !contact.getPhysician().getPerson().getFax().isEmpty()) {
+			if (contact.getRole() == Contact.ROLE_EXTERN && contact.getPhysician().getFax() != null
+					&& !contact.getPhysician().getFax().isEmpty()) {
 				contact.setUseFax(true);
 				return;
 			}
 			// in allen anderen fällen email setzten
-			if (contact.getPhysician().getPerson().getEmail() != null
-					&& !contact.getPhysician().getPerson().getEmail().isEmpty())
+			if (contact.getPhysician().getEmail() != null
+					&& !contact.getPhysician().getEmail().isEmpty())
 				contact.setUseEmail(true);
 		}
 	}

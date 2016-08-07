@@ -75,19 +75,13 @@ public class UserUtil {
 		newUser.setUsername(name);
 		newUser.setRole(guestRole);
 		newUser.setPhysician(new Physician());
-		newUser.getPhysician().setPerson(new Person());
 		return newUser;
 	}
 
 	/**
-	 * cn: Dr. Michael Reich
-	 * ou: Klinik für Augenheilkunde
-	 * givenName: Andreas
-	 * mail: andreas.glatz@uniklinik-freiburg.de
-	 * sn: Glatz
-	 * title: Arzt
-	 * telephonenumber: +49 761 270 40010
-	 * pager: 12-4027
+	 * cn: Dr. Michael Reich ou: Klinik für Augenheilkunde givenName: Andreas
+	 * mail: andreas.glatz@uniklinik-freiburg.de sn: Glatz title: Arzt
+	 * telephonenumber: +49 761 270 40010 pager: 12-4027
 	 * 
 	 * @param acc
 	 * @param attrs
@@ -95,47 +89,51 @@ public class UserUtil {
 	 * @throws NamingException
 	 */
 	public static final UserAcc updateUserData(UserAcc acc, Attributes attrs) throws NamingException {
+
+		//name surname titale
+		Attribute attr = attrs.get("cn");
+		
+		if (attr != null && attr.size() == 1) {
+			acc.getPhysician().setFullName(attr.get().toString());
+		}
 		
 		// name
-		Attribute attr = attrs.get("sn");
+		attr = attrs.get("sn");
 
-		System.out.println(attr.size());
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().getPerson().setName(attr.toString());
-			System.out.println(attr.toString());
+			acc.getPhysician().setName(attr.get().toString());
 		}
-		
+
 		attr = attrs.get("givenName");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().getPerson().setSurname(attr.toString());
+			acc.getPhysician().setSurname(attr.get().toString());
 		}
-		
+
 		attr = attrs.get("mail");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().getPerson().setEmail(attr.toString());
+			acc.getPhysician().setEmail(attr.get().toString());
 		}
 
 		attr = attrs.get("telephonenumber");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().getPerson().setPhoneNumber(attr.toString());
+			acc.getPhysician().setPhoneNumber(attr.get().toString());
 		}
-		
+
 		attr = attrs.get("pager");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setPager(attr.toString());
+			acc.getPhysician().setPager(attr.get().toString());
 		}
-		
+
 		attr = attrs.get("title");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setTitle(attr.toString());
+			acc.getPhysician().setTitle(attr.get().toString());
 		}
-		
-		
+
 		attr = attrs.get("ou");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setDepartment(attr.toString());
+			acc.getPhysician().setDepartment(attr.get().toString());
 		}
-		
+
 		return acc;
 	}
 
