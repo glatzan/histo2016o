@@ -19,7 +19,7 @@ public class Physician extends Person {
 	 * clinic internal title
 	 */
 	@Expose
-	private String title;
+	private String clinicTitle;
 	
 	/**
 	 * clinic internal department
@@ -68,12 +68,13 @@ public class Physician extends Person {
 		this.pager = pager;
 	}
 
-	public String getTitle() {
-		return title;
+
+	public String getClinicTitle() {
+	    return clinicTitle;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setClinicTitle(String clinicTitle) {
+	    this.clinicTitle = clinicTitle;
 	}
 
 	public String getDepartment() {

@@ -19,7 +19,6 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 
 import com.google.gson.Gson;
