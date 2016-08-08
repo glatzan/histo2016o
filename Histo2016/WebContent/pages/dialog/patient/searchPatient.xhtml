@@ -12,61 +12,84 @@
 			<p:panel style="width:100%;" header="Patient suchen"
 				styleClass="contentPannel" />
 
-			<p:panelGrid styleClass="patientSearchTable" columns="2"
-				columnClasses="categoryColum,">
+			<p:panelGrid styleClass="patientSearchTable" columns="3"
+				id="submitGroup" columnClasses="categoryColum,">
 				<h:outputLabel value="Person" />
 				<h:panelGroup>
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
-						<p:inputText value="#{worklistHandlerAction.searchForPatientPiz}" />
-						<p:outputLabel value="PIZ" />
+						<p:inputMask value="#{worklistHandlerAction.searchForPatientPiz}"
+							mask="99999999">
+							<p:ajax event="keyup" process="submitGroup" update="patientList"
+								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
+						</p:inputMask>
+						<p:outputLabel value=" PIZ" />
 					</p:panelGrid>
 					<p:panelGrid columns="1" styleClass="inputTable">
 						<p:calendar
 							value="#{worklistHandlerAction.searchForPatientBirthday}"
-							locale="de" navigator="true"  pattern="dd.MM.yyyy" mask="true" styleClass="taskCalendar" />
+							locale="de" pattern="dd.MM.yyyy" mask="true">
+							<p:ajax event="keyup" process="submitGroup" update="patientList"
+								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
+
+						</p:calendar>
 						<p:outputLabel value="Geburtstag" />
 					</p:panelGrid>
 				</h:panelGroup>
-				<h:outputLabel value="" />
 				<h:panelGroup>
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
-						<p:inputText
-							value="#{worklistHandlerAction.searchForPatientName}" />
+						<p:inputText value="#{worklistHandlerAction.searchForPatientName}">
+							<p:ajax event="keyup" process="submitGroup" update="patientList"
+								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
+						</p:inputText>
 						<p:outputLabel value="Name" />
 					</p:panelGrid>
 					<p:panelGrid columns="1" styleClass="inputTable">
 						<p:inputText
-							value="#{worklistHandlerAction.searchForPatientSurname}" />
+							value="#{worklistHandlerAction.searchForPatientSurname}">
+							<p:ajax event="keyup" process="submitGroup" update="patientList"
+								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
+						</p:inputText>
 						<p:outputLabel value="Vorname" />
 					</p:panelGrid>
 				</h:panelGroup>
 			</p:panelGrid>
 
-			<p:dataTable var="patient"
+			<p:dataTable var="patientList" id="patientList" scrollHeight="280"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+				scrollable="true" selectionMode="single" rowKey="#{patientList.id}"
+				selection="#{worklistHandlerAction.selectedPatientFromSearchList}"
 				value="#{worklistHandlerAction.searchForPatientList}">
-				<p:column headerText="PIZ">
-					<h:outputText value="#{patient.piz}" />
-				</p:column>
-				<p:column headerText="Name">
-					<h:outputText value="#{patient.person.name}" />
+				<p:column headerText="Nachname">
+					<h:outputText value="#{patientList.patient.person.name}" />
 				</p:column>
 				<p:column headerText="Vorname">
-					<h:outputText value="#{patient.person.sureName}" />
+					<h:outputText value="#{patientList.patient.person.surname}" />
 				</p:column>
-				<p:column headerText="Geburtstag">
-					<h:outputText value="#{patient.person.birthday}" />
+				<p:column headerText="Geb.dat.">
+					<h:outputText
+						value="#{helperHandlerAction.dateFormatter(patientList.patient.person.birthday,'dd.MM.yyyy')}" />
 				</p:column>
-				<p:column headerText="Geschlecht">
+				<p:column headerText="G.">
+					<h:outputText value="#{patientList.patient.person.gender}" />
 				</p:column>
+				<p:column headerText="B.">
+					<h:graphicImage value="/resources/gfx/patientInHistoDatabase.png" rendered="#{!patientList.notHistoDatabase}" />
+					<h:graphicImage value="/resources/gfx/patientInClinicDatabase.png" rendered="#{patientList.notHistoDatabase}" />
+				</p:column>
+				<p:column headerText="PIZ">
+					<h:outputText value="#{patientList.patient.piz}" />
+				</p:column>
+				<p:ajax event="rowDblselect"
+					listener="#{worklistHandlerAction.addNewPatient(worklistHandlerAction.selectedPatientFromSearchList.patient)}" />
 			</p:dataTable>
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
 			<p:commandButton value="Patient hinzufügen" tyleClass="smallerButton"
 				icon="fa fa-fw fa-user-plus"
-				actionListener="#{worklistHandlerAction.prepareCreateNewPatient()}" />
+				actionListener="#{worklistHandlerAction.addNewPatient(worklistHandlerAction.selectedPatientFromSearchList.patient)}" />
 		</p:layoutUnit>
 	</p:layout>
 </ui:composition>

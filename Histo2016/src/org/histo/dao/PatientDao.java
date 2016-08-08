@@ -1,15 +1,20 @@
 package org.histo.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.Patient;
 import org.histo.model.Person;
+import org.histo.model.Physician;
 import org.histo.util.SearchOptions;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
@@ -32,6 +37,13 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		c.add(Restrictions.gt("tasks.taskOccoured", from)).add(Restrictions.lt("tasks.taskOccoured", to)).list();
 	}
 
+	/**
+	 * Returns a list of useres with the given piz. At least 6 numbers of the
+	 * piz are needed.
+	 * 
+	 * @param piz
+	 * @return
+	 */
 	public List<Patient> searchForPatientsPiz(String piz) {
 		Criteria c = getSession().createCriteria(Patient.class);
 		String regex = "";
@@ -40,6 +52,26 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		}
 		c.add(Restrictions.like("piz", piz + regex));
 		return c.list();
+	}
+
+	/**
+	 * Returns a patient object for a specific piz. The piz has to be 8
+	 * characters long.
+	 * 
+	 * @param piz
+	 * @return
+	 */
+	public Patient searchForPatientPiz(String piz) {
+		if (piz.length() != 8)
+			return null;
+
+		Criteria c = getSession().createCriteria(Patient.class);
+		c.add(Restrictions.eq("piz", piz));
+		List<Patient> result = c.list();
+		if (result != null && result.size() == 1)
+			return result.get(0);
+
+		return null;
 	}
 
 	public List<Patient> getPatientWithoutTasks(long fromDate, long toDate) {
@@ -102,4 +134,21 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		}
 	}
 
+	public List<Patient> getPatientsByParameter(String name, String surname, Date date) {
+
+		Criteria c = getSession().createCriteria(Patient.class, "patient");
+		c.createAlias("patient.person", "_person");
+
+		if (name != null && !name.isEmpty())
+			c.add(Restrictions.ilike("_person.name", name, MatchMode.ANYWHERE));
+		if (surname != null & !surname.isEmpty())
+			c.add(Restrictions.ilike("_person.surname", surname, MatchMode.ANYWHERE));
+		if (date != null)
+			c.add(Restrictions.eq("_person.birthday", date));
+
+		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+		List<Patient> result = (List<Patient>) c.list();
+		return result != null ? result : new ArrayList<>();
+	}
 }

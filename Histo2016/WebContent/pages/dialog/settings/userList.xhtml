@@ -21,11 +21,11 @@
 				</p:column>
 
 				<p:column headerText="#{msg['dialog.settings.user.name']}">
-					<h:outputLabel value="-" />
+					<h:outputLabel value="#{user.userAcc.physician.fullName}" />
 				</p:column>
 
-				<p:column headerText="#{msg['dialog.settings.user.surename']}">
-					<h:outputLabel value="-" />
+				<p:column headerText="#{msg['dialog.settings.user.function']}">
+					<h:outputLabel value="#{user.userAcc.physician.clinicTitle}" />
 				</p:column>
 
 				<p:column headerText="#{msg['dialog.settings.user.role']}">

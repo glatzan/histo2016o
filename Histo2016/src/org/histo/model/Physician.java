@@ -8,10 +8,17 @@ import com.google.gson.annotations.Expose;
 @Entity
 public class Physician extends Person {
 
+	private static final long serialVersionUID = 7358147861813210904L;
 
+	/**
+	 * Full name Title, Name, Surname
+	 */
 	@Expose
 	private String fullName;
 	
+	/**
+	 * Pager Number
+	 */
 	@Expose
 	private String pager;
 	
@@ -27,37 +34,64 @@ public class Physician extends Person {
 	@Expose
 	private String department;
 
-	private boolean surgeon;
+	/**
+	 * Is surgeon
+	 */
+	@Expose
+	private boolean roleSurgeon;
 
-	private boolean extern;
+	/**
+	 * Is external doctor
+	 */
+	@Expose
+	private boolean roleResidentDoctor;
 
-	private boolean other;
+	/**
+	 * Is internal doctor or clinical personnel
+	 */
+	@Expose
+	private boolean roleClinicDoctor;
+	
+	/**
+	 * Other
+	 */
+	@Expose
+	private boolean roleMiscellaneous;
+	
+	@Basic
+	public boolean isRoleSurgeon() {
+		return roleSurgeon;
+	}
+
+	public void setRoleSurgeon(boolean roleSurgeon) {
+		this.roleSurgeon = roleSurgeon;
+	}
 
 	@Basic
-	public boolean isSurgeon() {
-		return surgeon;
+	public boolean isRoleResidentDoctor() {
+		return roleResidentDoctor;
 	}
 
-	public void setSurgeon(boolean surgeon) {
-		this.surgeon = surgeon;
-	}
-
-	@Basic
-	public boolean isExtern() {
-		return extern;
-	}
-
-	public void setExtern(boolean extern) {
-		this.extern = extern;
+	public void setRoleResidentDoctor(boolean roleResidentDoctor) {
+		this.roleResidentDoctor = roleResidentDoctor;
 	}
 
 	@Basic
-	public boolean isOther() {
-		return other;
+	public boolean isRoleClinicDoctor() {
+		return roleClinicDoctor;
 	}
 
-	public void setOther(boolean other) {
-		this.other = other;
+	public void setRoleClinicDoctor(boolean roleClinicDoctor) {
+		this.roleClinicDoctor = roleClinicDoctor;
+	}
+
+	@Basic
+	public boolean isRoleMiscellaneous() {
+		return roleMiscellaneous;
+	}
+
+	public void setRoleMiscellaneous(boolean roleMiscellaneous) {
+		this.roleMiscellaneous = roleMiscellaneous;
 	}
 
 	public String getPager() {

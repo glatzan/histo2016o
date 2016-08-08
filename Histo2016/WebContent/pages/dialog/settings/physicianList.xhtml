@@ -18,29 +18,29 @@
 				styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 				<!-- title -->
-				<p:column sortBy="#{physician.person.title}"
+				<p:column sortBy="#{physician.title}"
 					headerText="#{msg['dialog.settings.person.title']}"
 					style="width:20%">
-					<h:outputText value="#{physician.person.title}" />
+					<h:outputText value="#{physician.title}" />
 				</p:column>
 
 				<!-- Name -->
-				<p:column sortBy="#{physician.person.name}"
+				<p:column sortBy="#{physician.name}"
 					headerText="#{msg['dialog.settings.person.name']}"
 					style="width:20%">
-					<h:outputText value="#{physician.person.name}" />
+					<h:outputText value="#{physician.name}" />
 				</p:column>
 
 				<!-- Vorname -->
-				<p:column headerText="#{msg['dialog.settings.person.surename']}"
+				<p:column headerText="#{msg['dialog.settings.person.surname']}"
 					style="width:20%">
-					<h:outputText value="#{physician.person.sureName}" />
+					<h:outputText value="#{physician.surname}" />
 				</p:column>
 
 				<!-- Operateur -->
 				<p:column headerText="#{msg['dialog.settings.person.surgeon']}"
 					style="text-align:center;">
-					<h:panelGroup rendered="#{physician.surgeon}">
+					<h:panelGroup rendered="#{physician.roleSurgeon}">
 						<i class="fa fa-fw fa-check-circle icon-green" />
 					</h:panelGroup>
 				</p:column>
@@ -48,15 +48,15 @@
 				<!-- Einsender -->
 				<p:column headerText="#{msg['dialog.settings.person.extern']}"
 					style="text-align:center;">
-					<h:panelGroup rendered="#{physician.extern}">
+					<h:panelGroup rendered="#{physician.roleResidentDoctor}">
 						<i class="fa fa-fw fa-check-circle icon-green" />
 					</h:panelGroup>
 				</p:column>
-
+				
 				<!-- Andere -->
 				<p:column headerText="#{msg['dialog.settings.person.other']}"
 					style="text-align:center;">
-					<h:panelGroup rendered="#{physician.other}">
+					<h:panelGroup rendered="#{physician.roleMiscellaneous}">
 						<i class="fa fa-fw fa-check-circle icon-green" />
 					</h:panelGroup>
 				</p:column>

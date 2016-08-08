@@ -29,19 +29,19 @@
 							filterBy="#{contact.physician.person.name}"
 							filterMatchMode="contains">
 							<h:outputLabel
-								value="#{contact.physician.person.title} #{contact.physician.person.name}, #{contact.physician.person.sureName}" />
+								value="#{contact.physician.title} #{contact.physician.name}, #{contact.physician.surname}" />
 						</p:column>
 
 						<p:column headerText="#{msg['dialog.contact.table.role']}">
 							<ul class="roleList">
-								<ui:fragment rendered="#{contact.physician.surgeon}">
+								<ui:fragment rendered="#{contact.physician.roleSurgeon}">
 									<li>#{msg['dialog.contact.table.role.surgeon']}</li>
 								</ui:fragment>
 								<ui:fragment rendered="#{contact.physician.extern}">
-									<li>#{msg['dialog.contact.table.role.extern']}</li>
+									<li>#{msg['dialog.contact.table.role.roleResidentDoctor']}</li>
 								</ui:fragment>
 								<ui:fragment rendered="#{contact.physician.other}">
-									<li>#{msg['dialog.contact.table.role.other']}</li>
+									<li>#{msg['dialog.contact.table.role.roleMiscellaneous']}</li>
 								</ui:fragment>
 							</ul>
 						</p:column>

@@ -16,7 +16,7 @@
 
 			<ui:include src="../../template/person.xhtml">
 				<ui:param name="person"
-					value="#{settingsHandlerAction.editPhysician.person}" />
+					value="#{settingsHandlerAction.editPhysician}" />
 			</ui:include>
 
 			<p:panelGrid styleClass="patientSearchTable" columns="2"
@@ -27,20 +27,20 @@
 					styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 					<p:panelGrid columns="2">
 						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							value="#{settingsHandlerAction.editPhysician.surgeon}" />
+							value="#{settingsHandlerAction.editPhysician.roleSurgeon}" />
 						<p:outputLabel style="margin-left:5px;"
 							value="#{msg['dialog.settings.person.role.surgeon']}" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:selectBooleanCheckbox styleClass="smallCheckbox"
 							style="margin-left:15px;"
-							value="#{settingsHandlerAction.editPhysician.extern}" />
+							value="#{settingsHandlerAction.editPhysician.roleResidentDoctor}" />
 						<p:outputLabel style="margin-left:5px;"
 							value="#{msg['dialog.settings.person.role.extern']}" />
 					</p:panelGrid>
 					<p:panelGrid columns="2">
 						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							value="#{settingsHandlerAction.editPhysician.other}"
+							value="#{settingsHandlerAction.editPhysician.roleMiscellaneous}"
 							style="margin-left:15px;" />
 						<p:outputLabel style="margin-left:5px;"
 							value="#{msg['dialog.settings.person.role.other']}" />

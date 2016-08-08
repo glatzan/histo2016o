@@ -104,8 +104,11 @@ public class PersonAdministration {
 	}
 
 	/**
-	 * Uses a search list from the clinic backend and creates a Patient list using these data.
-	 * @param json [{},{}]
+	 * Uses a search list from the clinic backend and creates a Patient list
+	 * using these data.
+	 * 
+	 * @param json
+	 *            [{},{}]
 	 * @return
 	 */
 	public List<Patient> getPatientsFromClinicJson(String json) {
@@ -118,7 +121,8 @@ public class PersonAdministration {
 	}
 
 	/**
-	 * Creates a new patient using data from the clinic backend. 
+	 * Creates a new patient using data from the clinic backend.
+	 * 
 	 * @param json
 	 * @return
 	 */
@@ -158,8 +162,11 @@ public class PersonAdministration {
 		if (patient.getPerson() == null)
 			patient.setPerson(new Person());
 
+		patient.setPiz(obj.optString("piz"));
+		System.out.println("PIZ = "+ obj.optString("piz") + " " + patient.getPiz());
+		
 		Person person = patient.getPerson();
-
+		
 		// Person data
 		person.setTitle(obj.optString("titel"));
 		person.setName(obj.optString("name"));
@@ -189,7 +196,6 @@ public class PersonAdministration {
 
 		// patient data
 		patient.setInsurance(obj.optString("krankenkasse"));
-		patient.setAddDate(new Date(System.currentTimeMillis()));
 
 		return patient;
 	}

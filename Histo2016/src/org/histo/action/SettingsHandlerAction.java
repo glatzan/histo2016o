@@ -493,8 +493,8 @@ public class SettingsHandlerAction {
 	}
 
 	public void savePhysician(Physician physician) {
-		if (!physician.isSurgeon() && !physician.isExtern())
-			physician.setOther(true);
+		if (!physician.isRoleSurgeon() && !physician.isRoleClinicDoctor() && !physician.isRoleResidentDoctor())
+			physician.setRoleMiscellaneous(true);
 
 		genericDAO.save(physician);
 		discardEditPhysician();

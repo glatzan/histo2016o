@@ -33,298 +33,317 @@ import histo.model.util.StainingTreeParent;
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, StainingStatus {
 
-    @Expose
-    private long id;
+	@Expose
+	private long id;
 
-    /**
-     * PIZ
-     */
-    @Expose
-    private String piz;
+	/**
+	 * PIZ
+	 */
+	@Expose
+	private String piz;
 
-    /**
-     * Insurance of the patient
-     */
-    @Expose
-    private String insurance; 
-    
-    /**
-     * True if patient was added as an external patient.
-     */
-    @Expose
-    private boolean externalPatient;
+	/**
+	 * Insurance of the patient
+	 */
+	@Expose
+	private String insurance;
 
-    /**
-     * Date of adding to the database
-     */
-    @Expose
-    private Date addDate;
+	/**
+	 * True if patient was added as an external patient.
+	 */
+	@Expose
+	private boolean externalPatient;
 
-    /**
-     * Person data
-     */
-    @Expose
-    private Person person;
+	/**
+	 * Date of adding to the database
+	 */
+	@Expose
+	private Date addDate;
 
-    /**
-     * Task for this patient
-     */
-    private List<Task> tasks;
+	/**
+	 * Person data
+	 */
+	@Expose
+	private Person person;
 
-    /**
-     * Currently selected task, transient
-     */
-    private Task selectedTask;
+	/**
+	 * Task for this patient
+	 */
+	private List<Task> tasks;
 
-    /**
-     * Wenn archived true ist, wird dieser patient nicht mehr angezeigt
-     */
-    private boolean archived;
+	/**
+	 * Currently selected task, transient
+	 */
+	private Task selectedTask;
 
-    @Transient
-    public String asGson() {
-	final GsonBuilder builder = new GsonBuilder();
-	builder.excludeFieldsWithoutExposeAnnotation();
-	final Gson gson = builder.create();
-	return gson.toJson(this);
-    }
+	/**
+	 * Wenn archived true ist, wird dieser patient nicht mehr angezeigt
+	 */
+	private boolean archived;
 
-    /******************************************************** Getter/Setter ********************************************************/
-    @Id
-    @GeneratedValue(generator = "patient_sequencegenerator")
-    @Column(unique = true, nullable = false)
-    public long getId() {
-	return id;
-    }
+	@Transient
+	public String asGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		final Gson gson = builder.create();
+		return gson.toJson(this);
+	}
 
-    public void setId(long id) {
-	this.id = id;
-    }
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+	@Id
+	@GeneratedValue(generator = "patient_sequencegenerator")
+	@Column(unique = true, nullable = false)
+	public long getId() {
+		return id;
+	}
 
-    @Column
-    public String getPiz() {
-	return piz;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public void setPiz(String piz) {
-	this.piz = piz;
-    }
+	@Column
+	public String getPiz() {
+		return piz;
+	}
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
-    @OrderBy("id DESC")
-    public List<Task> getTasks() {
-	if (tasks == null)
-	    tasks = new ArrayList<Task>();
-	return tasks;
-    }
+	public void setPiz(String piz) {
+		this.piz = piz;
+	}
 
-    public void setTasks(List<Task> tasks) {
-	this.tasks = tasks;
-    }
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("id DESC")
+	public List<Task> getTasks() {
+		if (tasks == null)
+			tasks = new ArrayList<Task>();
+		return tasks;
+	}
 
-    @OneToOne
-    public Person getPerson() {
-	return person;
-    }
+	public void setTasks(List<Task> tasks) {
+		this.tasks = tasks;
+	}
 
-    public void setPerson(Person person) {
-	this.person = person;
-    }
+	@OneToOne(cascade = CascadeType.ALL)
+	public Person getPerson() {
+		return person;
+	}
 
-    @Basic
-    public boolean isExternalPatient() {
-	return externalPatient;
-    }
+	public void setPerson(Person person) {
+		this.person = person;
+	}
 
-    public void setExternalPatient(boolean externalPatient) {
-	this.externalPatient = externalPatient;
-    }
+	@Basic
+	public boolean isExternalPatient() {
+		return externalPatient;
+	}
 
-    @Column
-    public Date getAddDate() {
-	return addDate;
-    }
+	public void setExternalPatient(boolean externalPatient) {
+		this.externalPatient = externalPatient;
+	}
 
-    public void setAddDate(Date addDate) {
-	this.addDate = addDate;
-    }
+	@Column
+	public Date getAddDate() {
+		return addDate;
+	}
 
-    @Column
-    public String getInsurance() {
-        return insurance;
-    }
+	public void setAddDate(Date addDate) {
+		this.addDate = addDate;
+	}
 
-    public void setInsurance(String insurance) {
-        this.insurance = insurance;
-    }
+	@Column
+	public String getInsurance() {
+		return insurance;
+	}
 
-    @Transient
-    public Task getSelectedTask() {
-	return selectedTask;
-    }
+	public void setInsurance(String insurance) {
+		this.insurance = insurance;
+	}
 
-    public void setSelectedTask(Task selectedTask) {
-	this.selectedTask = selectedTask;
-    }
+	@Transient
+	public Task getSelectedTask() {
+		return selectedTask;
+	}
 
-    /******************************************************** Getter/Setter ********************************************************/
+	public void setSelectedTask(Task selectedTask) {
+		this.selectedTask = selectedTask;
+	}
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
-    /******************************************************** Interface DiagnosisStatus ********************************************************/
-    /**
-     * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-     * Gibt true zurück wenn alle Diagnosen finalisiert wurden.
-     */
-    @Override
-    @Transient
-    public boolean isDiagnosisPerformed() {
-	for (Task task : tasks) {
-	    if (!task.isDiagnosisPerformed())
+
+	/********************************************************
+	 * Interface DiagnosisStatus
+	 ********************************************************/
+	/**
+	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
+	 * Gibt true zurück wenn alle Diagnosen finalisiert wurden.
+	 */
+	@Override
+	@Transient
+	public boolean isDiagnosisPerformed() {
+		for (Task task : tasks) {
+			if (!task.isDiagnosisPerformed())
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
+	 * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
+	 */
+	@Override
+	@Transient
+	public boolean isDiagnosisNeeded() {
+		for (Task task : tasks) {
+			if (task.isDiagnosisNeeded())
+				return true;
+		}
 		return false;
 	}
-	return true;
-    }
 
-    /**
-     * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-     * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
-     */
-    @Override
-    @Transient
-    public boolean isDiagnosisNeeded() {
-	for (Task task : tasks) {
-	    if (task.isDiagnosisNeeded())
-		return true;
-	}
-	return false;
-    }
-
-    /**
-     * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-     * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
-     */
-    @Override
-    @Transient
-    public boolean isReDiagnosisNeeded() {
-	for (Task task : tasks) {
-	    if (task.isReDiagnosisNeeded())
-		return true;
-	}
-	return false;
-    }
-
-    /******************************************************** Interface DiagnosisStatus ********************************************************/
-
-    /******************************************************** Interface StainingStauts ********************************************************/
-    /**
-     * Überschreibt Methode aus dem Interface StainingStauts <br>
-     * Gibt true zurück, wenn der Patient oder der Auftrag heute erstellt wurde.
-     */
-    @Override
-    @Transient
-    public boolean isNew() {
-	if (TimeUtil.isDateOnSameDay(getAddDate().getTime(), System.currentTimeMillis()))
-	    return true;
-
-	for (Task task : getTasks()) {
-	    if (task.isNew())
-		return true;
-	}
-	return false;
-    }
-
-    /**
-     * Überschreibt Methode aus dem Interface StainingStauts <br>
-     * Gibt true zurück, wenn die Probe am heutigen Tag erstellt wrude
-     */
-    @Transient
-    @Override
-    public boolean isStainingPerformed() {
-	for (Task task : getTasks()) {
-
-	    if (task.isArchived())
-		continue;
-
-	    if (!task.isStainingPerformed())
+	/**
+	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
+	 * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
+	 */
+	@Override
+	@Transient
+	public boolean isReDiagnosisNeeded() {
+		for (Task task : tasks) {
+			if (task.isReDiagnosisNeeded())
+				return true;
+		}
 		return false;
 	}
-	return true;
-    }
 
-    /**
-     * Überschreibt Methode aus dem Interface StainingStauts <br>
-     * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber == 0 ist.
-     */
-    @Override
-    @Transient
-    public boolean isStainingNeeded() {
-	for (Task task : getTasks()) {
+	/********************************************************
+	 * Interface DiagnosisStatus
+	 ********************************************************/
 
-	    if (task.isArchived())
-		continue;
+	/********************************************************
+	 * Interface StainingStauts
+	 ********************************************************/
+	/**
+	 * Überschreibt Methode aus dem Interface StainingStauts <br>
+	 * Gibt true zurück, wenn der Patient oder der Auftrag heute erstellt wurde.
+	 */
+	@Override
+	@Transient
+	public boolean isNew() {
+		if (TimeUtil.isDateOnSameDay(getAddDate().getTime(), System.currentTimeMillis()))
+			return true;
 
-	    if (task.isStainingNeeded())
+		for (Task task : getTasks()) {
+			if (task.isNew())
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Überschreibt Methode aus dem Interface StainingStauts <br>
+	 * Gibt true zurück, wenn die Probe am heutigen Tag erstellt wrude
+	 */
+	@Transient
+	@Override
+	public boolean isStainingPerformed() {
+		for (Task task : getTasks()) {
+
+			if (task.isArchived())
+				continue;
+
+			if (!task.isStainingPerformed())
+				return false;
+		}
 		return true;
 	}
-	return false;
-    }
 
-    /**
-     * Überschreibt Methode aus dem Interface StainingStauts <br>
-     * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber > 0 ist.
-     */
-    @Override
-    @Transient
-    public boolean isReStainingNeeded() {
-	for (Task task : getTasks()) {
+	/**
+	 * Überschreibt Methode aus dem Interface StainingStauts <br>
+	 * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber
+	 * == 0 ist.
+	 */
+	@Override
+	@Transient
+	public boolean isStainingNeeded() {
+		for (Task task : getTasks()) {
 
-	    if (task.isArchived())
-		continue;
+			if (task.isArchived())
+				continue;
 
-	    if (task.isReStainingNeeded())
-		return true;
+			if (task.isStainingNeeded())
+				return true;
+		}
+		return false;
 	}
-	return false;
-    }
-    /******************************************************** Interface StainingStauts ********************************************************/
 
-    /******************************************************** Interface StainingTreeParent ********************************************************/
-    @Transient
-    @Override
-    public Patient getPatient() {
-	return this;
-    }
+	/**
+	 * Überschreibt Methode aus dem Interface StainingStauts <br>
+	 * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber
+	 * > 0 ist.
+	 */
+	@Override
+	@Transient
+	public boolean isReStainingNeeded() {
+		for (Task task : getTasks()) {
 
-    @Override
-    public boolean isArchived() {
-	return archived;
-    }
+			if (task.isArchived())
+				continue;
 
-    @Override
-    public void setArchived(boolean archived) {
-	this.archived = archived;
-    }
+			if (task.isReStainingNeeded())
+				return true;
+		}
+		return false;
+	}
 
-    @Transient
-    @Override
-    public String getTextIdentifier() {
-	return null;
-    }
+	/********************************************************
+	 * Interface StainingStauts
+	 ********************************************************/
 
-    @Transient
-    @Override
-    public String getArchiveDialog() {
-	return null;
-    }
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
+	@Transient
+	@Override
+	public Patient getPatient() {
+		return this;
+	}
 
-    @Transient
-    @Override
-    public Patient getParent() {
-	return null;
-    }
+	@Override
+	public boolean isArchived() {
+		return archived;
+	}
 
-    @Override
-    public void setParent(Patient parent) {
-    }
-    /******************************************************** Interface StainingTreeParent ********************************************************/
+	@Override
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
+
+	@Transient
+	@Override
+	public String getTextIdentifier() {
+		return null;
+	}
+
+	@Transient
+	@Override
+	public String getArchiveDialog() {
+		return null;
+	}
+
+	@Transient
+	@Override
+	public Patient getParent() {
+		return null;
+	}
+
+	@Override
+	public void setParent(Patient parent) {
+	}
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
 }

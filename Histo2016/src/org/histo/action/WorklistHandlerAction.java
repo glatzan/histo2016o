@@ -37,6 +37,7 @@ import org.histo.model.StainingPrototype;
 import org.histo.model.StainingPrototypeList;
 import org.histo.model.Task;
 import org.histo.model.UserRole;
+import org.histo.ui.PatientList;
 import org.histo.ui.StainingListTransformer;
 import org.histo.util.PersonAdministration;
 import org.histo.util.SearchOptions;
@@ -121,15 +122,36 @@ public class WorklistHandlerAction implements Serializable {
 	 * Patientdummy for creating a new patient
 	 */
 	private Patient tmpPatient;
-	
-	private List<Patient> searchForPatientList;
 
+	/**
+	 * List of all found Patients of the patientSearchRequest, PatientList is
+	 * used instead of Patient because primefaces needs a unique row collum.
+	 */
+	private List<PatientList> searchForPatientList;
+
+	/**
+	 * Selected Patient, is used to add a patient to the worklist
+	 */
+	private PatientList selectedPatientFromSearchList;
+
+	/**
+	 * Patient to search for, piz
+	 */
 	private String searchForPatientPiz;
 
+	/**
+	 * Patient to search for, name
+	 */
 	private String searchForPatientName;
 
+	/**
+	 * Patient to search for, surname
+	 */
 	private String searchForPatientSurname;
 
+	/**
+	 * Patient to search for, birthday
+	 */
 	private Date searchForPatientBirthday;
 	/******************************************************** Patient ********************************************************/
 
@@ -371,6 +393,30 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	/**
+	 * Adds an Patient found in the clinic-backend or in the histo-backend to
+	 * the worklist.
+	 */
+	public void addNewPatient(Patient patient) {
+		if (patient != null) {
+
+			PersonAdministration admim = new PersonAdministration();
+
+			// add patient from the clinic-backend, get all data of this patient
+			if (!patient.getPiz().isEmpty()) {
+
+				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + patient.getPiz());
+				admim.updatePatientFromClinicJson(patient, userResult);
+
+				genericDAO.save(patient);
+			}
+
+			// add patient to worklist
+			getWorkList().add(patient);
+			hidePatientDialog();
+		}
+	}
+
+	/**
 	 * Hides the "/pages/dialog/patient/addPatient" dialog
 	 */
 	public void hidePatientDialog() {
@@ -379,38 +425,85 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	/**
-     * http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
-     * @param piz
-     */
-    public void searchPatient(String piz, String name, String surename, Date birthday){
-    	
-    	PersonAdministration admim = new PersonAdministration();
-    	
-    	// if piz is given ignore other parameters 
-    	if(piz != null && piz.matches("^[0-9]{6,8}$")){
-    		List<Patient> patients = patientDao.searchForPatientsPiz(piz);
-    		
-    		// updates all patients from the local database with data from the clinic backend
-    		for (Patient patient : patients) {
-    			String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL+"/"+patient.getPiz());
-    			admim.updatePatientFromClinicJson(patient, userResult);
+	 * http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
+	 * 
+	 * @param piz
+	 */
+	public void searchPatient(String piz, String name, String surname, Date birthday) {
+
+		PersonAdministration admim = new PersonAdministration();
+
+		// id for patientList, used by primefaces to get the selected row
+		int id = 0;
+
+		// if piz is given ignore other parameters
+		if (piz != null && piz.matches("^[0-9]{6,8}$")) {
+			ArrayList<PatientList> result = new ArrayList<PatientList>();
+			List<Patient> patients = patientDao.searchForPatientsPiz(piz);
+
+			// updates all patients from the local database with data from the
+			// clinic backend
+			for (Patient patient : patients) {
+				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + patient.getPiz());
+				admim.updatePatientFromClinicJson(patient, userResult);
+				result.add(new PatientList(id++, patient));
 			}
-    		
-    		// saves the results
-    		genericDAO.save(patients);
-    		
-    		// only get patient from clinic backend if piz is completely provided and was not added to the local database before
-    		if(piz.matches("^[0-9]{8}$") && patients.isEmpty()){
-    			String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL+"/"+piz);
-    			patients.add(admim.getPatientFromClinicJson(userResult));
-    		}
-    	
-    		setSearchForPatientList(patients);
-    		return;
-    	}
-    	
-    	return;
-    }
+
+			// saves the results
+			genericDAO.save(patients);
+
+			// only get patient from clinic backend if piz is completely
+			// provided and was not added to the local database before
+			if (piz.matches("^[0-9]{8}$") && patients.isEmpty()) {
+				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + piz);
+				result.add(new PatientList(id++, admim.getPatientFromClinicJson(userResult)));
+			}
+
+			setSearchForPatientList(result);
+		} else if ((name != null && !name.isEmpty()) || (surname != null && !surname.isEmpty()) || birthday != null) {
+			List<PatientList> result = new ArrayList<>();
+
+			// getting all patients with given parameters from the clinic
+			// backend
+			String requestURl = HistoSettings.PATIENT_GET_URL + "?name=" + name + "&vorname=" + surname
+					+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : "");
+
+			String userResult = admim.getRequest(requestURl);
+			List<Patient> clinicPatients = admim.getPatientsFromClinicJson(userResult);
+
+			for (Patient patient : clinicPatients) {
+				PatientList patientList;
+
+				Patient histoDatabase = patientDao.searchForPatientPiz(patient.getPiz());
+				if (histoDatabase != null) {
+					patientList = new PatientList(id++, histoDatabase);
+					// TODO update the patient in histo database
+				} else {
+					patientList = new PatientList(id++, patient);
+					patientList.setNotHistoDatabase(true);
+				}
+				result.add(patientList);
+			}
+
+			List<Patient> patients = patientDao.getPatientsByParameter(name, surname, birthday);
+
+			for (Patient patient : patients) {
+				boolean found = false;
+				for (PatientList patientL : result) {
+					if (patient.getPiz().equals(patientL.getPatient().getPiz())) {
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
+					result.add(new PatientList(id++, patient));
+				}
+			}
+
+			setSearchForPatientList(result);
+		}
+	}
 
 	/******************************************************** Patient ********************************************************/
 
@@ -720,8 +813,7 @@ public class WorklistHandlerAction implements Serializable {
 				return;
 			}
 			// in allen anderen fällen email setzten
-			if (contact.getPhysician().getEmail() != null
-					&& !contact.getPhysician().getEmail().isEmpty())
+			if (contact.getPhysician().getEmail() != null && !contact.getPhysician().getEmail().isEmpty())
 				contact.setUseEmail(true);
 		}
 	}
@@ -1228,12 +1320,20 @@ public class WorklistHandlerAction implements Serializable {
 		this.searchForPatientBirthday = searchForPatientBirthday;
 	}
 
-	public List<Patient> getSearchForPatientList() {
+	public List<PatientList> getSearchForPatientList() {
 		return searchForPatientList;
 	}
 
-	public void setSearchForPatientList(List<Patient> searchForPatientList) {
+	public void setSearchForPatientList(List<PatientList> searchForPatientList) {
 		this.searchForPatientList = searchForPatientList;
+	}
+
+	public PatientList getSelectedPatientFromSearchList() {
+		return selectedPatientFromSearchList;
+	}
+
+	public void setSelectedPatientFromSearchList(PatientList selectedPatientFromSearchList) {
+		this.selectedPatientFromSearchList = selectedPatientFromSearchList;
 	}
 
 	/********************************************************

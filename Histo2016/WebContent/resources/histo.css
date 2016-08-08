@@ -60,6 +60,20 @@ body {
 	color: red;
 }
 
+.defaultDataTable{
+	
+}
+
+.defaultDataTable tr:nth-child(even) td{
+	background-color: #f9f9f9;
+}
+
+.defaultDataTable .ui-state-highlight td{
+	background-color: inherit;
+	font-weight: bold;
+}
+
+	
 /*
 	######################################## Navigatoin ########################################
 */

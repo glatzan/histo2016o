@@ -60,14 +60,14 @@
 			<!-- Data -->
 			<h:panelGrid columns="1" styleClass="contentTable">
 				<h:outputText
-					value="#{patient.person.name}, #{patient.person.sureName}" />
+					value="#{patient.person.name}, #{patient.person.surname}" />
 
 				<h:outputLabel
 					value="#{helperHandlerAction.simpleDateFormatter(patient.person.birthday)}"
 					rendered="#{patient.person.birthday ne null}" />
 
 				<h:outputText
-					value="PIZ: #{patient.piz eq 0 ? patient.piz : 'none'}" />
+					value="PIZ: #{patient.piz ne 0 ? patient.piz : 'none'}" />
 
 
 				<h:panelGroup styleClass="info">

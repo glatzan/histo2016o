@@ -1,5 +1,6 @@
 package org.histo.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -20,10 +21,12 @@ import com.google.gson.annotations.Expose;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @SequenceGenerator(name = "person_sequencegenerator", sequenceName = "person_sequence")
-public class Person {
+public class Person implements Serializable {
 
-	public static final char GENDER_MALE = 'm';
-	public static final char GENDER_FEMALE = 'w';
+	private static final long serialVersionUID = 2533238775751991883L;
+	
+	public static final char GENDER_MALE = 'M';
+	public static final char GENDER_FEMALE = 'W';
 
 	@Expose
 	protected long id;
@@ -44,7 +47,7 @@ public class Person {
 	@Expose
 	protected String surname;
 	@Expose
-	protected Date birthday;
+	protected Date birthday = null;
 	@Expose
 	protected String phoneNumber;
 	@Expose

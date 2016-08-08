@@ -75,6 +75,8 @@ public class UserUtil {
 		newUser.setUsername(name);
 		newUser.setRole(guestRole);
 		newUser.setPhysician(new Physician());
+		// set role clinicalDoctor or clical personnel
+		newUser.getPhysician().setRoleClinicDoctor(true);
 		return newUser;
 	}
 
@@ -90,13 +92,13 @@ public class UserUtil {
 	 */
 	public static final UserAcc updateUserData(UserAcc acc, Attributes attrs) throws NamingException {
 
-		//name surname titale
+		// name surname title
 		Attribute attr = attrs.get("cn");
-		
+
 		if (attr != null && attr.size() == 1) {
 			acc.getPhysician().setFullName(attr.get().toString());
 		}
-		
+
 		// name
 		attr = attrs.get("sn");
 
@@ -124,16 +126,17 @@ public class UserUtil {
 			acc.getPhysician().setPager(attr.get().toString());
 		}
 
+		// role in clinic
 		attr = attrs.get("title");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setTitle(attr.get().toString());
+			acc.getPhysician().setClinicTitle(attr.get().toString());
 		}
 
+		// department
 		attr = attrs.get("ou");
 		if (attr != null && attr.size() == 1) {
 			acc.getPhysician().setDepartment(attr.get().toString());
 		}
-
 		return acc;
 	}
 

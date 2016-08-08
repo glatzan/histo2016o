@@ -13,6 +13,7 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.histo.dao.GenericDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.UserAcc;
 import org.histo.util.UserUtil;
@@ -37,7 +38,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private UserDAO userDAO;
-
+	
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String userName = authentication.getName().trim();
 		String password = authentication.getCredentials().toString().trim();

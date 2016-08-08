@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.Person;
 import org.histo.model.StainingPrototype;
@@ -35,10 +37,15 @@ public class UserDAO extends AbstractDAO implements Serializable {
 
 		return res.get(0);
 	}
-	
-	public void saveUser(UserAcc userAcc){
-		getSession().save(userAcc);
-		getSession().flush();
-	}
 
+	public UserAcc saveUser(UserAcc userAcc) {
+		Session session = getSession();
+		try {
+			session.saveOrUpdate(userAcc);
+		} catch (HibernateException hibernateException) {
+			userAcc = (UserAcc) session.merge(userAcc);
+			hibernateException.printStackTrace();
+		}
+		return userAcc;
+	}
 }
