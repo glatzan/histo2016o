@@ -39,12 +39,12 @@
 
 		<p:layoutUnit position="south" styleClass="south">
 			<p:commandButton value="#{msg['general.save']}"
-				styleClass="smallerButton" icon="fa fa-fw fa-floppy-o"
+				 icon="fa fa-fw fa-floppy-o"
 				actionListener="#{settingsHandlerAction.saveStainig(settingsHandlerAction.editStaining, settingsHandlerAction.originalStaining)}"
 				update="@form"></p:commandButton>
 
 			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="smallerButton" style="margin-left:10px;"
+				 style="margin-left:10px;"
 				icon="fa fa-fw fa-times-circle"
 				actionListener="#{settingsHandlerAction.discardChangesOfStainig()}"
 				update="@form"></p:commandButton>

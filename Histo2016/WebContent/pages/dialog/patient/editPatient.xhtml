@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>#{msg['dialog.addPatient.headline']}</title>
+	<h:outputStylesheet name="dialogStandard.css"
+		value="dialogStandard.css" />
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="settingsDialogLayout">
+	<h:form>
+		<p:panel styleClass="collapsedBorders noBorders settingsPannel">
+			<p:layout styleClass="tabLayout">
+				<p:layoutUnit styleClass="center" position="center">
+
+					<p:panel style="width:100%;"
+						header="#{msg['dialog.addPatient.add']}"
+						styleClass="contentPannel" />
+
+					<ui:include src="../../template/person.xhtml">
+						<ui:param name="person"
+							value="#{worklistHandlerAction.tmpPatient.person}" />
+					</ui:include>
+				</p:layoutUnit>
+
+				<p:layoutUnit position="south" styleClass="south">
+					<p:commandButton value="#{msg['dialog.addPatient.add']}"
+						process="@form" icon="fa fa-fw fa-user-plus"
+						actionListener="#{worklistHandlerAction.createNewPatient(worklistHandlerAction.tmpPatient)}">
+					</p:commandButton>
+				</p:layoutUnit>
+			</p:layout>
+		</p:panel>
+	</h:form>
+</h:body>
+</html>

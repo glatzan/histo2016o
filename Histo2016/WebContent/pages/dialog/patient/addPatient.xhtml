@@ -6,7 +6,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>Patient hinzufügen</title>
+	<title>#{msg['dialog.addPatient.headline']}</title>
 	<h:outputStylesheet name="dialogStandard.css"
 		value="dialogStandard.css" />
 	<h:outputStylesheet name="histo.css" value="histo.css" />
@@ -19,11 +19,11 @@
 				activeIndex="#{worklistHandlerAction.activePatientDialogIndex}"
 				styleClass="settingsTabView">
 
-				<p:tab title="Patient suche">
+				<p:tab title="#{msg['dialog.addPatient.search']}">
 					<ui:include src="searchPatient.xhtml" />
 				</p:tab>
 
-				<p:tab title="Patient extern">
+				<p:tab title="#{msg['dialog.addPatient.add']}">
 					<ui:include src="externalPatient.xhtml" />
 				</p:tab>
 			</p:tabView>

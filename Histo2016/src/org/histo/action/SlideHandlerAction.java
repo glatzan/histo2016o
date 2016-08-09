@@ -8,26 +8,19 @@ import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
-import org.histo.dao.PatientDao;
-import org.histo.dao.TaskDAO;
 import org.histo.model.Block;
-import org.histo.model.Diagnosis;
-import org.histo.model.History;
-import org.histo.model.Patient;
 import org.histo.model.Sample;
 import org.histo.model.Staining;
 import org.histo.model.StainingPrototype;
 import org.histo.model.Task;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
+import org.histo.util.Log;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
-import histo.model.util.StainingTreeParent;
 
 @Controller
 @Scope("session")
@@ -35,7 +28,6 @@ public class SlideHandlerAction implements Serializable {
 
     private static final long serialVersionUID = -7212398949353596573L;
 
-    private static Logger log = Logger.getLogger(SlideHandlerAction.class.getName());
 
     public final static byte STAININGLIST_ACTION_NONE = 0;
     public final static byte STAININGLIST_ACTION_PERFORMED = 1;
@@ -49,9 +41,10 @@ public class SlideHandlerAction implements Serializable {
     private HelperDAO helperDAO;
     @Autowired
     private HelperHandlerAction helper;
-    @Autowired
-    WorklistHandlerAction worklistHandlerAction;
 
+    @Autowired
+	private Log log;
+	
     /**
      * Temporäres Blockobjekt, wird verwendet um neue Objektträger zu erstellen.
      */
@@ -308,7 +301,7 @@ public class SlideHandlerAction implements Serializable {
 
 	genericDAO.save(block.getParent().getParent());
 
-	helper.log.info("Neue Färbung erstellt, ID:" + staining.getStainingID() + " - " + staining.getStainingType().getName(), log, block.getPatient());
+	log.info("Neue Färbung erstellt, ID:" + staining.getStainingID() + " - " + staining.getStainingType().getName(), block.getPatient());
 
 	// Updating Gui
 	block.getParent().getParent().setStainingCompleted(false);

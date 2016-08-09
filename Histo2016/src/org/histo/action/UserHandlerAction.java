@@ -1,7 +1,6 @@
 package org.histo.action;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.dao.GenericDAO;
@@ -9,7 +8,7 @@ import org.histo.dao.HelperDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.UserAcc;
 import org.histo.model.UserRole;
-import org.histo.util.UserAccRoleHolder;
+import org.histo.util.Log;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -20,19 +19,17 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session")
 public class UserHandlerAction implements Serializable {
 
-    private static Logger log = Logger.getLogger(UserHandlerAction.class.getName());
-    
-    @Autowired
-    HelperHandlerAction helperHandlerAction;
+	private static final long serialVersionUID = -8314968695816748306L;
+
+	@Autowired
+	private HelperHandlerAction helperHandlerAction;
 
     @Autowired
-    UserDAO userDAO;
+    private GenericDAO genericDAO;
+
 
     @Autowired
-    GenericDAO genericDAO;
-
-    @Autowired
-    private HelperDAO helperDAO;
+	private Log log;
     
     public boolean isUserAvailable(){
 	if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserAcc)

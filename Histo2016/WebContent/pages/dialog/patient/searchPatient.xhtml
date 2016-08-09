@@ -9,13 +9,15 @@
 
 	<p:layout styleClass="tabLayout">
 		<p:layoutUnit styleClass="center" position="center">
-			<p:panel style="width:100%;" header="Patient suchen"
+			<p:panel style="width:100%;"
+				header="#{msg['dialog.addPatient.search']}"
 				styleClass="contentPannel" />
 
 			<p:panelGrid styleClass="patientSearchTable" columns="3"
 				id="submitGroup" columnClasses="categoryColum,">
-				<h:outputLabel value="Person" />
+				<h:outputLabel value="#{msg['dialog.addPatient.search.person']}" />
 				<h:panelGroup>
+					<!-- Piz -->
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
 						<p:inputMask value="#{worklistHandlerAction.searchForPatientPiz}"
@@ -23,35 +25,37 @@
 							<p:ajax event="keyup" process="submitGroup" update="patientList"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
 						</p:inputMask>
-						<p:outputLabel value=" PIZ" />
+						<p:outputLabel value="#{msg['dialog.addPatient.search.piz']}" />
 					</p:panelGrid>
+					<!-- Birthday -->
 					<p:panelGrid columns="1" styleClass="inputTable">
 						<p:calendar
 							value="#{worklistHandlerAction.searchForPatientBirthday}"
 							locale="de" pattern="dd.MM.yyyy" mask="true">
 							<p:ajax event="keyup" process="submitGroup" update="patientList"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
-
 						</p:calendar>
-						<p:outputLabel value="Geburtstag" />
+						<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
 					</p:panelGrid>
 				</h:panelGroup>
 				<h:panelGroup>
+					<!-- Name -->
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
 						<p:inputText value="#{worklistHandlerAction.searchForPatientName}">
 							<p:ajax event="keyup" process="submitGroup" update="patientList"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
 						</p:inputText>
-						<p:outputLabel value="Name" />
+						<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
 					</p:panelGrid>
+					<!-- Surname -->
 					<p:panelGrid columns="1" styleClass="inputTable">
 						<p:inputText
 							value="#{worklistHandlerAction.searchForPatientSurname}">
 							<p:ajax event="keyup" process="submitGroup" update="patientList"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
 						</p:inputText>
-						<p:outputLabel value="Vorname" />
+						<p:outputLabel value="#{msg['dialog.addPatient.search.surname']}" />
 					</p:panelGrid>
 				</h:panelGroup>
 			</p:panelGrid>
@@ -61,24 +65,47 @@
 				scrollable="true" selectionMode="single" rowKey="#{patientList.id}"
 				selection="#{worklistHandlerAction.selectedPatientFromSearchList}"
 				value="#{worklistHandlerAction.searchForPatientList}">
-				<p:column headerText="Nachname">
+
+				<!-- Name -->
+				<p:column headerText="#{msg['dialog.addPatient.search.name']}">
 					<h:outputText value="#{patientList.patient.person.name}" />
 				</p:column>
-				<p:column headerText="Vorname">
+				<!-- Surname -->
+				<p:column headerText="#{msg['dialog.addPatient.search.surname']}"
+					sortBy="#{patientList.patient.person.surname}">
 					<h:outputText value="#{patientList.patient.person.surname}" />
 				</p:column>
-				<p:column headerText="Geb.dat.">
+				<!-- Birthday -->
+				<p:column
+					headerText="#{msg['dialog.addPatient.search.birthday.short']}"
+					sortBy="#{patientList.patient.person.birthday}">
 					<h:outputText
 						value="#{helperHandlerAction.dateFormatter(patientList.patient.person.birthday,'dd.MM.yyyy')}" />
 				</p:column>
-				<p:column headerText="G.">
+				<!-- gender -->
+				<p:column sortBy="#{patientList.patient.person.gender}">
+					<f:facet name="header">
+						<h:outputText value="#{msg['dialog.addPatient.search.gender']}"
+							title="#{msg['dialog.addPatient.search.gender.info']}" />
+					</f:facet>
 					<h:outputText value="#{patientList.patient.person.gender}" />
 				</p:column>
-				<p:column headerText="B.">
-					<h:graphicImage value="/resources/gfx/patientInHistoDatabase.png" rendered="#{!patientList.notHistoDatabase}" />
-					<h:graphicImage value="/resources/gfx/patientInClinicDatabase.png" rendered="#{patientList.notHistoDatabase}" />
+				<!-- databse -->
+				<p:column sortBy="#{patientList.notHistoDatabase}">
+					<f:facet name="header">
+						<h:outputText value="#{msg['dialog.addPatient.search.database']}"
+							title="#{msg['dialog.addPatient.search.database.info']}" />
+					</f:facet>
+					<h:graphicImage value="/resources/gfx/patientInHistoDatabase.png"
+						rendered="#{!patientList.notHistoDatabase}"
+						title="#{msg['dialog.addPatient.search.database.histo']}" />
+					<h:graphicImage value="/resources/gfx/patientInClinicDatabase.png"
+						rendered="#{patientList.notHistoDatabase}"
+						title="#{msg['dialog.addPatient.search.database.clinic']}" />
 				</p:column>
-				<p:column headerText="PIZ">
+				<!-- piz -->
+				<p:column headerText="#{msg['dialog.addPatient.search.piz']}"
+					sortBy="#{patientList.patient.piz}">
 					<h:outputText value="#{patientList.patient.piz}" />
 				</p:column>
 				<p:ajax event="rowDblselect"
@@ -87,7 +114,7 @@
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="Patient hinzufügen" tyleClass="smallerButton"
+			<p:commandButton value="#{msg['dialog.addPatient.add']}"
 				icon="fa fa-fw fa-user-plus"
 				actionListener="#{worklistHandlerAction.addNewPatient(worklistHandlerAction.selectedPatientFromSearchList.patient)}" />
 		</p:layoutUnit>

@@ -1,5 +1,7 @@
 package org.histo.model;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,9 +28,9 @@ public class Diagnosis {
     
     private long id;
 
-    private long generationDate;
+    private Date generationDate;
     
-    private long finalizedDate;
+    private Date finalizedDate;
     
     private boolean finalized;
     
@@ -68,11 +70,11 @@ public class Diagnosis {
     }
 
     @Basic
-    public long getGenerationDate() {
+    public Date getGenerationDate() {
 	return generationDate;
     }
 
-    public void setGenerationDate(long generationDate) {
+    public void setGenerationDate(Date generationDate) {
 	this.generationDate = generationDate;
     }
 
@@ -95,11 +97,11 @@ public class Diagnosis {
     }
 
     @Basic
-    public long getFinalizedDate() {
+    public Date getFinalizedDate() {
 	return finalizedDate;
     }
 
-    public void setFinalizedDate(long finalizedDate) {
+    public void setFinalizedDate(Date finalizedDate) {
 	this.finalizedDate = finalizedDate;
     }
 

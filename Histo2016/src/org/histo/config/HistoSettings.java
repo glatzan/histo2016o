@@ -6,12 +6,18 @@ import java.util.Map;
 
 public class HistoSettings {
 	
+	public static final String HISTO_BASE_URL = "/Histo2016";
+	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
+	
 	// http://auginfo/piz?piz=xx 
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 	public static final String PATIENT_GET_URL= "http://auginfo/piz";
+	
+	
 
     public static final String CENTER_INCLUDE_BLANK = "i_blank.xhtml";
     public static final String CENTER_INCLUDE_PATIENT = "i_patient.xhtml";
+    public static final String CENTER_INCLUDE_DIAGNOSIS_INTERN = "i_diagnosisIntern.xhtml";
     public static final String CENTER_INCLUDE_RECEIPTLOG = "i_receiptlog.xhtml";
     public static final String CENTER_INCLUDE_EXTERN_EXTENDED = "i_externextended.xhtml";
     
@@ -26,7 +32,8 @@ public class HistoSettings {
     public static final int DIALOG_WORKLIST_CONTACTS = 8;
     public static final int DIALOG_LOGOUT = 9;
     public static final int DIALOG_WORKLIST_OPTIONS = 10;
-    
+    public static final int DIALOG_PATIENT_EDIT = 11;
+    public static final int DIALOG_PATIENT_ADD = 12;
     
     // noch nicht drinnen
     public static final int DIALOG_TEST = 255;
@@ -47,6 +54,9 @@ public class HistoSettings {
 	tmpMap.put(DIALOG_WORKLIST_CONTACTS, "/pages/dialog/task/addContact");
 	tmpMap.put(DIALOG_LOGOUT, "/pages/dialog/logout");
 	tmpMap.put(DIALOG_WORKLIST_OPTIONS, "/pages/dialog/worklist/worklistOptions");
+	tmpMap.put(DIALOG_PATIENT_EDIT, "/pages/dialog/patient/editPatient");
+	tmpMap.put(DIALOG_PATIENT_ADD, "/pages/dialog/patient/addPatient");
+	
 	
 	tmpMap.put(DIALOG_TEST, "/pages/dialog/task/notification");
 	

@@ -23,86 +23,90 @@ import histo.model.util.EditAbleEntity;
 
 @Entity
 @SequenceGenerator(name = "stainingPrototypeList_sequencegenerator", sequenceName = "stainingPrototypeList_sequence")
-public class StainingPrototypeList implements EditAbleEntity<StainingPrototypeList>{
+public class StainingPrototypeList implements EditAbleEntity<StainingPrototypeList> {
 
-    @Expose
-    private long id;
-    
-    @Expose
-    private String name;
-    
-    @Expose
-    private String commentary;
-    
-    @Expose
-    private List<StainingPrototype> stainingPrototypes;
+	@Expose
+	private long id;
 
-    public StainingPrototypeList(){
-    }
-    
-    public StainingPrototypeList(StainingPrototypeList stainingPrototypeList){
-	this.id = stainingPrototypeList.getId();
-	update(stainingPrototypeList);
-    }
-    
-    /******************************************************** Getter/Setter ********************************************************/
-    @Id
-    @GeneratedValue(generator = "stainingPrototypeList_sequencegenerator")
-    @Column(unique = true, nullable = false)
-    public long getId() {
-	return id;
-    }
+	@Expose
+	private String name;
 
-    public void setId(long id) {
-	this.id = id;
-    }
+	@Expose
+	private String commentary;
 
-    @Column
-    public String getName() {
-        return name;
-    }
+	@Expose
+	private List<StainingPrototype> stainingPrototypes;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-    
-    @Column(columnDefinition = "text")
-    public String getCommentary() {
-        return commentary;
-    }
+	public StainingPrototypeList() {
+	}
 
-    public void setCommentary(String commentary) {
-        this.commentary = commentary;
-    }
+	public StainingPrototypeList(StainingPrototypeList stainingPrototypeList) {
+		this.id = stainingPrototypeList.getId();
+		update(stainingPrototypeList);
+	}
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
-    public List<StainingPrototype> getStainingPrototypes() {
-	if(stainingPrototypes == null)
-	    stainingPrototypes = new ArrayList<StainingPrototype>();
-	
-        return stainingPrototypes;
-    }
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+	@Id
+	@GeneratedValue(generator = "stainingPrototypeList_sequencegenerator")
+	@Column(unique = true, nullable = false)
+	public long getId() {
+		return id;
+	}
 
-    public void setStainingPrototypes(List<StainingPrototype> stainingPrototypes) {
-        this.stainingPrototypes = stainingPrototypes;
-    }
-    /******************************************************** Getter/Setter ********************************************************/
-    
-    @Transient
-    public void update(StainingPrototypeList stainingPrototypeList){
-	this.name = stainingPrototypeList.getName();
-	this.commentary = stainingPrototypeList.getCommentary();
-	this.stainingPrototypes = new ArrayList<StainingPrototype>(stainingPrototypeList.getStainingPrototypes());
-    }
-    
-    @Transient
-    public String asGson() {
-	final GsonBuilder builder = new GsonBuilder();
-	builder.excludeFieldsWithoutExposeAnnotation();
-	final Gson gson = builder.create();
-	return gson.toJson(this);
-    }
-    
-    
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	@Column
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Column(columnDefinition = "text")
+	public String getCommentary() {
+		return commentary;
+	}
+
+	public void setCommentary(String commentary) {
+		this.commentary = commentary;
+	}
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
+	public List<StainingPrototype> getStainingPrototypes() {
+		if (stainingPrototypes == null)
+			stainingPrototypes = new ArrayList<StainingPrototype>();
+
+		return stainingPrototypes;
+	}
+
+	public void setStainingPrototypes(List<StainingPrototype> stainingPrototypes) {
+		this.stainingPrototypes = stainingPrototypes;
+	}
+
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+
+	@Transient
+	public void update(StainingPrototypeList stainingPrototypeList) {
+		this.name = stainingPrototypeList.getName();
+		this.commentary = stainingPrototypeList.getCommentary();
+		this.stainingPrototypes = new ArrayList<StainingPrototype>(stainingPrototypeList.getStainingPrototypes());
+	}
+
+	@Transient
+	public String asGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		final Gson gson = builder.create();
+		return gson.toJson(this);
+	}
+
 }

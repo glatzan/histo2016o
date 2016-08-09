@@ -2,17 +2,12 @@ package org.histo.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
 
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.UserAcc;
 import org.histo.model.UserRole;

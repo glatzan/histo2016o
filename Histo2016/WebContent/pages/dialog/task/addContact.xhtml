@@ -102,12 +102,12 @@
 
 						<h:panelGrid columns="3">
 							<p:commandButton value="#{msg['general.save']}"
-								styleClass="smallerButton" icon="fa fa-fw fa-floppy-o"
+								 icon="fa fa-fw fa-floppy-o"
 								actionListener="#{worklistHandlerAction.updateContactList(worklistHandlerAction.allAvailableContact,worklistHandlerAction.selectedPatient.selectedTask)}"
 								update="@form"></p:commandButton>
 
 							<p:commandButton value="#{msg['general.abort']}"
-								styleClass="smallerButton" icon="fa fa-fw fa-times-circle"
+								 icon="fa fa-fw fa-times-circle"
 								actionListener="#{worklistHandlerAction.hideContactsDialog()}"
 								update="@form"></p:commandButton>
 

@@ -40,25 +40,25 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	 * PIZ
 	 */
 	@Expose
-	private String piz;
+	private String piz = "";
 
 	/**
 	 * Insurance of the patient
 	 */
 	@Expose
-	private String insurance;
+	private String insurance = "";
 
 	/**
 	 * True if patient was added as an external patient.
 	 */
 	@Expose
-	private boolean externalPatient;
+	private boolean externalPatient = false;
 
 	/**
 	 * Date of adding to the database
 	 */
 	@Expose
-	private Date addDate;
+	private Date addDate = null;
 
 	/**
 	 * Person data
@@ -233,7 +233,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(getAddDate().getTime(), System.currentTimeMillis()))
+		if (TimeUtil.isDateOnSameDay(getAddDate(), new Date(System.currentTimeMillis())))
 			return true;
 
 		for (Task task : getTasks()) {

@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.histo.action.WorklistHandlerAction;
 
 public class TimeUtil {
 
@@ -16,19 +15,19 @@ public class TimeUtil {
 		return year;
 	}
 
-	public static final long getDateInUnixTimestamp(int year, int month, int day, int hour, int minute, int second) {
+	public static final Date getDateInUnixTimestamp(int year, int month, int day, int hour, int minute, int second) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(0);
 		cal.set(year, month, day, hour, minute, second);
 		System.out.println(cal);
-		return cal.getTime().getTime();
+		return cal.getTime();
 	}
 
-	public static final boolean isDateOnSameDay(long date, long timeOfDay) {
+	public static final boolean isDateOnSameDay(Date date, Date timeOfDay) {
 		Calendar dateC = Calendar.getInstance();
-		dateC.setTimeInMillis(date);
+		dateC.setTime(date);
 		Calendar timeOfDayC = Calendar.getInstance();
-		timeOfDayC.setTimeInMillis(timeOfDay);
+		timeOfDayC.setTime(timeOfDay);
 
 		return (dateC.get(Calendar.YEAR) == timeOfDayC.get(Calendar.YEAR))
 				&& (dateC.get(Calendar.DAY_OF_YEAR) == timeOfDayC.get(Calendar.DAY_OF_YEAR));

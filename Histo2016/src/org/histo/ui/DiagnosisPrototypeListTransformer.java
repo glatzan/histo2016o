@@ -7,7 +7,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import org.histo.model.DiagnosisPrototype;
-import org.histo.model.StainingPrototypeList;
 
 public class DiagnosisPrototypeListTransformer implements Converter {
 

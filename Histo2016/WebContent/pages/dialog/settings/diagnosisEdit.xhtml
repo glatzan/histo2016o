@@ -47,13 +47,13 @@
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="Speichern" styleClass="smallerButton"
+			<p:commandButton value="Speichern" 
 				icon="fa fa-fw fa-floppy-o" update="@form"
 				actionListener="#{settingsHandlerAction.saveDiagnosisPrototype(settingsHandlerAction.editDiagnosisPrototype,settingsHandlerAction.originalDiagnosisPrototype)}"></p:commandButton>
 			<p:commandButton value="Textvorlage editieren"
-				styleClass="smallerButton" icon="fa fa-fw fa-pencil-square-o"
+				 icon="fa fa-fw fa-pencil-square-o"
 				update="@form" actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototypeTemplate()}"></p:commandButton>
-			<p:commandButton value="Abbrechen" styleClass="smallerButton"
+			<p:commandButton value="Abbrechen" 
 				icon="fa fa-fw fa-times-circle" update="@form"
 				actionListener="#{settingsHandlerAction.discardDiagnosisPrototype()}"></p:commandButton>
 		</p:layoutUnit>

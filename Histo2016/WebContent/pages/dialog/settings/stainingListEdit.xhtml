@@ -58,17 +58,17 @@
 
 		<p:layoutUnit position="south" styleClass="south">
 			<p:commandButton value="#{msg['general.save']}"
-				styleClass="smallerButton" icon="fa fa-fw fa-floppy-o"
+				 icon="fa fa-fw fa-floppy-o"
 				actionListener="#{settingsHandlerAction.saveStainigList(settingsHandlerAction.editStainingList, settingsHandlerAction.originalStainingList)}"
 				update="@form"></p:commandButton>
 			<p:commandButton
 				value="#{msg['dialog.settings.stainingList.new.stainings.add']}"
-				style="margin-left:10px;" styleClass="smallerButton"
+				style="margin-left:10px;" 
 				icon="fa fa-fw fa-plus-circle"
 				actionListener="#{settingsHandlerAction.prepareAddStainingToStainingList()}"
 				update="@form"></p:commandButton>
 			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="smallerButton" style="margin-left:10px;"
+				 style="margin-left:10px;"
 				icon="fa fa-fw fa-times-circle"
 				actionListener="#{settingsHandlerAction.discardChangesOfStainigList()}"
 				update="@form"></p:commandButton>

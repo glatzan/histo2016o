@@ -17,8 +17,6 @@ import org.histo.model.Person;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 
-import com.google.gson.JsonArray;
-
 //    {
 //	   "vorname":"Andreas",
 //	   "mode":null,
@@ -163,7 +161,6 @@ public class PersonAdministration {
 			patient.setPerson(new Person());
 
 		patient.setPiz(obj.optString("piz"));
-		System.out.println("PIZ = "+ obj.optString("piz") + " " + patient.getPiz());
 		
 		Person person = patient.getPerson();
 		

@@ -33,29 +33,29 @@ public class Person implements Serializable {
 	@Expose
 	protected char gender = ' ';
 	@Expose
-	protected String title;
+	protected String title = "";
 	@Expose
-	protected String name;
+	protected String name = "";
 	@Expose
-	protected String street;
+	protected String street = "";
 	@Expose
-	protected String houseNumber;
+	protected String houseNumber = "";
 	@Expose
-	protected String postcode;
+	protected String postcode = "";
 	@Expose
-	protected String town;
+	protected String town = "";
 	@Expose
-	protected String surname;
+	protected String surname = "";
 	@Expose
 	protected Date birthday = null;
 	@Expose
-	protected String phoneNumber;
+	protected String phoneNumber = "";
 	@Expose
-	protected String fax;
+	protected String fax= "";
 	@Expose
-	protected String email;
+	protected String email = "";
 	@Expose
-	protected String land;
+	protected String land= "";
 
 	public Person() {
 	}

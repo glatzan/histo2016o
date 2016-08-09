@@ -2,6 +2,7 @@ package org.histo.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,17 +11,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 @Entity
 @SequenceGenerator(name = "user_sequencegenerator", sequenceName = "user_sequence")
@@ -32,6 +27,8 @@ public class UserAcc implements UserDetails, Serializable {
 
 	private String username;
 
+	private Date lastLogin;
+	
 	private UserRole role;
 
 	private Physician physician;
@@ -132,6 +129,15 @@ public class UserAcc implements UserDetails, Serializable {
 	@Transient
 	public String getPassword() {
 		return null;
+	}
+
+	@Column
+	public Date getLastLogin() {
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin) {
+		this.lastLogin = lastLogin;
 	}
 
 }

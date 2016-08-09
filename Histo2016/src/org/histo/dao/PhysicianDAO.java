@@ -28,8 +28,8 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 			return new ArrayList<>();
 
 		Criteria c = getSession().createCriteria(Physician.class, "physician");
-		c.addOrder(Order.asc("surgeon"));
-		c.addOrder(Order.asc("extern"));
+		c.addOrder(Order.asc("roleSurgeon"));
+		c.addOrder(Order.asc("roleResidentDoctor"));
 
 		Disjunction objDisjunction = Restrictions.disjunction();
 

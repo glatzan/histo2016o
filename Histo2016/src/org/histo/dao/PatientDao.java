@@ -2,21 +2,16 @@ package org.histo.dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.Patient;
 import org.histo.model.Person;
-import org.histo.model.Physician;
 import org.histo.util.SearchOptions;
-import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +69,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 
-	public List<Patient> getPatientWithoutTasks(long fromDate, long toDate) {
+	public List<Patient> getPatientWithoutTasks(Date fromDate, Date toDate) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.add(Restrictions.ge("patient.addDate", fromDate)).add(Restrictions.le("patient.addDate", toDate));
 		c.add(Restrictions.isEmpty("patient.tasks"));
@@ -82,14 +77,14 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return c.list();
 	}
 
-	public List<Patient> getPatientByAddDateToWorklist(long fromDate, long toDate) {
+	public List<Patient> getPatientByAddDateToWorklist(Date fromDate, Date toDate) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.add(Restrictions.ge("patient.addDate", fromDate)).add(Restrictions.le("patient.addDate", toDate));
 		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return c.list();
 	}
 
-	public List<Patient> getPatientBySampleCreationDateBetweenDates(long fromDate, long toDate) {
+	public List<Patient> getPatientBySampleCreationDateBetweenDates(Date fromDate, Date toDate) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.createAlias("patient.tasks", "_tasks");
 		c.createAlias("_tasks.samples", "_samples");
@@ -99,7 +94,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return c.list();
 	}
 
-	public List<Patient> getPatientByStainingsBetweenDates(long fromDate, long toDate, boolean completed) {
+	public List<Patient> getPatientByStainingsBetweenDates(Date fromDate, Date toDate, boolean completed) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.createAlias("patient.tasks", "_tasks");
 		c.add(Restrictions.ge("_tasks.creationDate", fromDate)).add(Restrictions.le("_tasks.creationDate", toDate));
@@ -108,7 +103,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return c.list();
 	}
 
-	public List<Patient> getPatientByDiagnosBetweenDates(long fromDate, long toDate, boolean completed) {
+	public List<Patient> getPatientByDiagnosBetweenDates(Date fromDate, Date toDate, boolean completed) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.createAlias("patient.tasks", "_tasks");
 		c.add(Restrictions.ge("_tasks.stainingCompletionDate", fromDate))
@@ -119,7 +114,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return c.list();
 	}
 
-	public List<Patient> getWorklistDynamicallyByType(long fromDate, long toDate, int searchType) {
+	public List<Patient> getWorklistDynamicallyByType(Date fromDate, Date toDate, int searchType) {
 		switch (searchType) {
 		case SearchOptions.SEARCH_FILTER_ADDTOWORKLIST:
 			return getPatientByAddDateToWorklist(fromDate, toDate);

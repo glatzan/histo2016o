@@ -1,7 +1,5 @@
 package org.histo.ui;
 
-import javax.persistence.Transient;
-
 import org.histo.model.Patient;
 
 /**

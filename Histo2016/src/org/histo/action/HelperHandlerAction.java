@@ -2,25 +2,17 @@ package org.histo.action;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.HelperDAO;
-import org.histo.dao.PatientDao;
-import org.histo.dao.TaskDAO;
 import org.histo.model.History;
 import org.histo.model.Patient;
-import org.histo.model.StainingPrototype;
 import org.histo.model.UserAcc;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -31,19 +23,10 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @Scope("session")
-public class HelperHandlerAction {
+public class HelperHandlerAction implements Serializable {
 
-	@Autowired
-	private GenericDAO genericDAO;
-	@Autowired
-	private PatientDao patientDao;
-	@Autowired
-	private TaskDAO taskDAO;
-	@Autowired
-	private HelperDAO helperDAO;
-
-	public CustomLog log = new CustomLog();
-
+	private static final long serialVersionUID = -4083599293687828502L;
+	
 	/**
 	 * Shows a Dialog using no options
 	 * 
@@ -144,52 +127,10 @@ public class HelperHandlerAction {
 		return TimeUtil.formatDate(date, formatString);
 	}
 
-	/**
-	 * Login Class for storing log-data
-	 * 
-	 * @author andi
-	 *
-	 */
-	class CustomLog {
-
-		public void debug(String message, Logger log) {
-			log(message, log, null, History.LEVEL_DEBUG);
-		}
-
-		public void info(String message, Logger log) {
-			log(message, log, null, History.LEVEL_INFO);
-		}
-
-		public void info(String message, Logger log, Patient patient) {
-			log(message, log, patient, History.LEVEL_INFO);
-		}
-
-		public void log(String message, Logger log, Patient patient, int level) {
-			UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-			History newHistroy = new History();
-			newHistroy.setLevel(level);
-			newHistroy.setUserAcc(user);
-			newHistroy.setPatient(patient);
-			newHistroy.setMessages(message);
-			newHistroy.setDate(System.currentTimeMillis());
-
-			genericDAO.save(newHistroy);
-
-			log.info(user.getUsername() + " - " + message);
-		}
-
-		public void print(String message, Logger log) {
-			UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			log.info("#" + user.getUsername() + " - " + message);
-		}
-	};
-
 	public void timeout() throws IOException {
 		showDialog(HistoSettings.dialog(HistoSettings.DIALOG_LOGOUT));
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-		FacesContext.getCurrentInstance().getExternalContext().redirect("/Histo16/login.xhtml");
-
+		FacesContext.getCurrentInstance().getExternalContext().redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);
 	}
 
 }

@@ -10,17 +10,19 @@
 	<p:layout styleClass="tabLayout">
 		<p:layoutUnit styleClass="center" position="center">
 
-			<p:panel style="width:100%;" header="Patient hinzufügen"
+			<p:panel style="width:100%;" header="#{msg['dialog.addPatient.add']}"
 				styleClass="contentPannel" />
 
 			<ui:include src="../../template/person.xhtml">
-				<ui:param name="person" value="#{worklistHandlerAction.tmpPatient.person}" />
+				<ui:param name="person"
+					value="#{worklistHandlerAction.tmpPatient.person}" />
 			</ui:include>
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="Patienten erstellen" process="@form"
-				tyleClass="smallerButton" icon="fa fa-fw fa-user-plus"
+			<p:commandButton value="#{msg['dialog.addPatient.add']}"
+				process="@form"
+				icon="fa fa-fw fa-user-plus"
 				actionListener="#{worklistHandlerAction.createNewPatient(worklistHandlerAction.tmpPatient)}">
 			</p:commandButton>
 		</p:layoutUnit>

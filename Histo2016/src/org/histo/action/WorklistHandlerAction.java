@@ -1,17 +1,10 @@
 package org.histo.action;
 
-import java.awt.Paint;
-import java.awt.Robot;
 import java.io.Serializable;
-import java.net.HttpURLConnection;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,26 +25,21 @@ import org.histo.model.Patient;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.Sample;
-import org.histo.model.Staining;
 import org.histo.model.StainingPrototype;
 import org.histo.model.StainingPrototypeList;
 import org.histo.model.Task;
 import org.histo.model.UserRole;
 import org.histo.ui.PatientList;
 import org.histo.ui.StainingListTransformer;
+import org.histo.util.Log;
 import org.histo.util.PersonAdministration;
 import org.histo.util.SearchOptions;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
-import org.primefaces.json.JSONArray;
-import org.primefaces.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.google.gson.Gson;
-import com.google.gson.annotations.JsonAdapter;
 
 import histo.model.util.ArchiveAble;
 import histo.model.util.StainingTreeParent;
@@ -59,6 +47,8 @@ import histo.model.util.StainingTreeParent;
 @Component
 @Scope(value = "session")
 public class WorklistHandlerAction implements Serializable {
+
+	private static final long serialVersionUID = 7122206530891485336L;
 
 	public static String SEARCH_CURRENT = "%current%";
 	public static String SEARCH_YESTERDAY = "%yesterday%";
@@ -78,12 +68,11 @@ public class WorklistHandlerAction implements Serializable {
 
 	public final static int DISPLAY_PATIENT = 0;
 	public final static int DISPLAY_RECEIPTLOG = 1;
+	public final static int DISPLAY_DIAGNOSIS_INTERN = 10;
 	public final static int DISPLAY_EXTERNAL_RESULT_SHORT = 2;
 	public final static int DISPLAY_EXTERNAL_RESULT_EXTENDED = 3;
 	public final static int DISPLAY_INTERNAL_RESULT_SHORT = 4;
 	public final static int DISPLAY_INTERNAL_RESULT_EXTENDED = 5;
-
-	private static Logger log = Logger.getLogger(WorklistHandlerAction.class.getName());
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -106,6 +95,9 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	@Lazy
 	private SettingsHandlerAction settingsHandlerAction;
+
+	@Autowired
+	private Log log;
 
 	/******************************************************** Patient ********************************************************/
 	/**
@@ -258,13 +250,13 @@ public class WorklistHandlerAction implements Serializable {
 
 	@PostConstruct
 	public void goToLogin() {
-		helper.log.debug("Login erfolgreich", log);
+		log.debug("Login erfolgreich");
 		goToWorkList();
 	}
 
 	public String goToWorkList() {
 		if (getWorkList() == null) {
-			helper.log.debug("Standard Arbeitsliste geladen", log);
+			log.debug("Standard Arbeitsliste geladen");
 			Date currentDate = new Date(System.currentTimeMillis());
 			// standard settings patients for today
 			setWorkList(new ArrayList<Patient>());
@@ -325,10 +317,22 @@ public class WorklistHandlerAction implements Serializable {
 		case DISPLAY_RECEIPTLOG:
 			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
 				return HistoSettings.CENTER_INCLUDE_RECEIPTLOG;
+			else if (getSelectedPatient() != null) {
+				if (getSelectedPatient().getTasks() != null && getSelectedPatient().getTasks().size() > 0) {
+					getSelectedPatient().setSelectedTask(TaskUtil.getLastTask(getSelectedPatient().getTasks()));
+					return HistoSettings.CENTER_INCLUDE_RECEIPTLOG;
+				} else
+					return HistoSettings.CENTER_INCLUDE_PATIENT;
+			} else
+				return HistoSettings.CENTER_INCLUDE_BLANK;
+		case DISPLAY_DIAGNOSIS_INTERN:
+			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
+				return HistoSettings.CENTER_INCLUDE_DIAGNOSIS_INTERN;
 			else if (getSelectedPatient() != null)
 				return HistoSettings.CENTER_INCLUDE_PATIENT;
 			else
 				return HistoSettings.CENTER_INCLUDE_BLANK;
+
 		case DISPLAY_EXTERNAL_RESULT_EXTENDED:
 			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
 				return HistoSettings.CENTER_INCLUDE_EXTERN_EXTENDED;
@@ -368,7 +372,15 @@ public class WorklistHandlerAction implements Serializable {
 		setTmpPatient(new Patient());
 		getTmpPatient().setPerson(new Person());
 
-		helper.showDialog("/pages/dialog/patient/addPatient", 1024, 500, true, false, false);
+		// updating search list
+		if (getSearchForPatientPiz() != null || getSearchForPatientName() != null
+				|| getSearchForPatientSurname() != null || getSearchForPatientBirthday() != null)
+			searchPatient(getSearchForPatientPiz(), getSearchForPatientName(), getSearchForPatientSurname(),
+					getSearchForPatientBirthday());
+
+		setSelectedPatientFromSearchList(null);
+
+		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_PATIENT_ADD), 1024, 500, true, false, false);
 	}
 
 	/**
@@ -382,12 +394,11 @@ public class WorklistHandlerAction implements Serializable {
 		patient.setExternalPatient(true);
 		patient.setAddDate(new Date(System.currentTimeMillis()));
 
-		genericDAO.save(patient.getPerson());
 		genericDAO.save(patient);
-		getWorkList().add(tmpPatient);
-		setSelectedPatient(getTmpPatient());
+		getWorkList().add(patient);
+		setSelectedPatient(patient);
 
-		helper.log.info("Neuer externer Patient erstellt, " + patient.asGson(), log, patient);
+		log.info("Neuer externer Patient erstellt, " + patient.asGson(), patient);
 
 		hidePatientDialog();
 	}
@@ -401,17 +412,21 @@ public class WorklistHandlerAction implements Serializable {
 
 			PersonAdministration admim = new PersonAdministration();
 
+			// if patient is new and was not added to the histo database before
+			if (patient.getAddDate() == null)
+				patient.setAddDate(new Date(System.currentTimeMillis()));
+
 			// add patient from the clinic-backend, get all data of this patient
 			if (!patient.getPiz().isEmpty()) {
-
 				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + patient.getPiz());
 				admim.updatePatientFromClinicJson(patient, userResult);
-
-				genericDAO.save(patient);
 			}
+
+			genericDAO.save(patient);
 
 			// add patient to worklist
 			getWorkList().add(patient);
+
 			hidePatientDialog();
 		}
 	}
@@ -425,6 +440,8 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	/**
+	 * Searches for a patient with the given paramenters in the clinic and in
+	 * the histo backend.
 	 * http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 	 * 
 	 * @param piz
@@ -471,38 +488,60 @@ public class WorklistHandlerAction implements Serializable {
 			String userResult = admim.getRequest(requestURl);
 			List<Patient> clinicPatients = admim.getPatientsFromClinicJson(userResult);
 
-			for (Patient patient : clinicPatients) {
-				PatientList patientList;
+			List<Patient> histoPatients = patientDao.getPatientsByParameter(name, surname, birthday);
 
-				Patient histoDatabase = patientDao.searchForPatientPiz(patient.getPiz());
-				if (histoDatabase != null) {
-					patientList = new PatientList(id++, histoDatabase);
-					// TODO update the patient in histo database
-				} else {
-					patientList = new PatientList(id++, patient);
-					patientList.setNotHistoDatabase(true);
-				}
-				result.add(patientList);
-			}
+			for (Patient cPatient : clinicPatients) {
+				PatientList patientList = null;
 
-			List<Patient> patients = patientDao.getPatientsByParameter(name, surname, birthday);
-
-			for (Patient patient : patients) {
 				boolean found = false;
-				for (PatientList patientL : result) {
-					if (patient.getPiz().equals(patientL.getPatient().getPiz())) {
+
+				for (Patient hPatient : histoPatients) {
+					if (cPatient.getPiz().equals(hPatient.getPatient().getPiz())) {
+						patientList = new PatientList(id++, hPatient);
+						// removing histo patient from list
+						histoPatients.remove(hPatient);
+						// TODO update the patient in histo database
 						found = true;
 						break;
 					}
 				}
 
 				if (!found) {
-					result.add(new PatientList(id++, patient));
+					// checking explicitly for the piz
+					Patient histoDatabase = patientDao.searchForPatientPiz(cPatient.getPiz());
+
+					if (histoDatabase != null) {
+						patientList = new PatientList(id++, histoDatabase);
+					} else {
+						patientList = new PatientList(id++, cPatient);
+						patientList.setNotHistoDatabase(true);
+					}
+
 				}
+				// checking if a patient
+
+				result.add(patientList);
+			}
+
+			// adding external patient to the list, these patients are not in
+			// the clinic backend
+			for (Patient hPatient : histoPatients) {
+				result.add(new PatientList(id++, hPatient));
 			}
 
 			setSearchForPatientList(result);
 		}
+	}
+
+	/**
+	 * Shows a dialog for editing patients which are only stored in the histo
+	 * database (external patients)
+	 * 
+	 * @param patient
+	 */
+	public void editExternalPatient(Patient patient) {
+		setTmpPatient(patient);
+		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_PATIENT_EDIT), 1024, 500, true, false, false);
 	}
 
 	/******************************************************** Patient ********************************************************/
@@ -540,6 +579,7 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	public void deselectTask(Patient patient) {
+		setWorklistDisplay(DISPLAY_PATIENT);
 		patient.setSelectedTask(null);
 	}
 
@@ -580,7 +620,7 @@ public class WorklistHandlerAction implements Serializable {
 
 		genericDAO.save(patient);
 
-		helper.log.info("Neuer Auftrag erstell: TaskID:" + task.getTaskID(), log, patient);
+		log.info("Neuer Auftrag erstell: TaskID:" + task.getTaskID(), patient);
 
 		for (int i = 0; i < sampleCount; i++) {
 			// autogenerating first sample
@@ -607,8 +647,8 @@ public class WorklistHandlerAction implements Serializable {
 		// patient.selectedTask....
 		Sample newSample = TaskUtil.createNewSample(task);
 
-		helper.log.info("Neue Probe erstellt: TaskID: " + task.getTaskID() + ", SampleID: " + newSample.getSampleID(),
-				log, getSelectedPatient());
+		log.info("Neue Probe erstellt: TaskID: " + task.getTaskID() + ", SampleID: " + newSample.getSampleID(),
+				getSelectedPatient());
 
 		// creating first default diagnosis
 		createNewDiagnosis(newSample, Diagnosis.TYPE_DIAGNOSIS);
@@ -628,8 +668,8 @@ public class WorklistHandlerAction implements Serializable {
 	public void createNewBlock(Sample sample, StainingPrototypeList stainingPrototypeList) {
 		Block block = TaskUtil.createNewBlock(sample);
 
-		helper.log.info("Neuen Block erstellt: SampleID: " + sample.getSampleID() + ", BlockID: " + block.getBlockID(),
-				log, getSelectedPatient());
+		log.info("Neuen Block erstellt: SampleID: " + sample.getSampleID() + ", BlockID: " + block.getBlockID(),
+				getSelectedPatient());
 
 		genericDAO.save(block);
 
@@ -711,10 +751,10 @@ public class WorklistHandlerAction implements Serializable {
 
 		genericDAO.save(sample);
 
-		helper.log.info(
+		log.info(
 				"Neue Diagnose erstellt: SampleID: " + sample.getSampleID() + ", DiagnosisID/Name: "
 						+ newDiagnosis.getId() + " - " + TaskUtil.getDiagnosisName(sample, newDiagnosis),
-				log, sample.getPatient());
+				sample.getPatient());
 	}
 
 	/******************************************************** Diagnosis ********************************************************/
@@ -829,7 +869,7 @@ public class WorklistHandlerAction implements Serializable {
 
 	/******************************************************** Worklistoptions ********************************************************/
 	public void prepareWorklistOptions() {
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_OPTIONS), 635, 455, false, false, true);
+		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_OPTIONS), 650, 470, true, false, false);
 	}
 
 	public void hideWorklistOptions() {
@@ -850,17 +890,18 @@ public class WorklistHandlerAction implements Serializable {
 		case SearchOptions.SEARCH_INDEX_STAINING:
 			getWorkList().clear();
 
+			System.out.println(TimeUtil.setDayBeginning(cal).getTime() + " " + TimeUtil.setDayEnding(cal).getTime());
 			if (searchOptions.isStaining_new()) {
-				getWorkList().addAll(patientDao.getPatientWithoutTasks(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-						TimeUtil.setDayEnding(cal).getTimeInMillis()));
+				getWorkList().addAll(patientDao.getPatientWithoutTasks(TimeUtil.setDayBeginning(cal).getTime(),
+						TimeUtil.setDayEnding(cal).getTime()));
 			}
 
 			if (searchOptions.isStaining_staining() && searchOptions.isStaining_restaining()) {
-				getWorkList()
-						.addAll(patientDao.getPatientByStainingsBetweenDates(0, System.currentTimeMillis(), false));
+				getWorkList().addAll(patientDao.getPatientByStainingsBetweenDates(new Date(0),
+						new Date(System.currentTimeMillis()), false));
 			} else {
-				List<Patient> paints = patientDao.getPatientByStainingsBetweenDates(0, System.currentTimeMillis(),
-						false);
+				List<Patient> paints = patientDao.getPatientByStainingsBetweenDates(new Date(0),
+						new Date(System.currentTimeMillis()), false);
 				for (Patient patient : paints) {
 					if (searchOptions.isStaining_staining() && patient.isStainingNeeded()) {
 						getWorkList().add(patient);
@@ -875,9 +916,11 @@ public class WorklistHandlerAction implements Serializable {
 		case SearchOptions.SEARCH_INDEX_DIAGNOSIS:
 			getWorkList().clear();
 			if (searchOptions.isStaining_diagnosis() && searchOptions.isStaining_rediagnosis()) {
-				getWorkList().addAll(patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false));
+				getWorkList().addAll(patientDao.getPatientByDiagnosBetweenDates(new Date(0),
+						new Date(System.currentTimeMillis()), false));
 			} else {
-				List<Patient> paints = patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false);
+				List<Patient> paints = patientDao.getPatientByDiagnosBetweenDates(new Date(0),
+						new Date(System.currentTimeMillis()), false);
 				for (Patient patient : paints) {
 					if (searchOptions.isStaining_diagnosis() && patient.isDiagnosisNeeded()) {
 						getWorkList().add(patient);
@@ -890,73 +933,65 @@ public class WorklistHandlerAction implements Serializable {
 			break;
 		case SearchOptions.SEARCH_INDEX_TODAY:
 			getWorkList().clear();
-			getWorkList()
-					.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-							TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
-			log.info("Worklist today - " + new Date(TimeUtil.setDayBeginning(cal).getTimeInMillis()) + " "
-					+ new Date(TimeUtil.setDayEnding(cal).getTimeInMillis()));
+			getWorkList().addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTime(),
+					TimeUtil.setDayEnding(cal).getTime(), searchOptions.getFilterIndex()));
+			log.info("Worklist today - " + TimeUtil.setDayBeginning(cal).getTime() + " "
+					+ TimeUtil.setDayEnding(cal).getTime());
 			break;
 		case SearchOptions.SEARCH_INDEX_YESTERDAY:
 			getWorkList().clear();
 			cal.add(Calendar.DAY_OF_MONTH, -1);
-			getWorkList()
-					.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-							TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
-			log.info("Worklist yesterday - " + new Date(TimeUtil.setDayBeginning(cal).getTimeInMillis()) + " "
-					+ new Date(TimeUtil.setDayEnding(cal).getTimeInMillis()));
+			getWorkList().addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTime(),
+					TimeUtil.setDayEnding(cal).getTime(), searchOptions.getFilterIndex()));
+			log.info("Worklist yesterday - " + TimeUtil.setDayBeginning(cal).getTime() + " "
+					+ TimeUtil.setDayEnding(cal).getTime());
 			break;
 		case SearchOptions.SEARCH_INDEX_CURRENTWEEK:
 			getWorkList().clear();
-			getWorkList()
-					.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
-							TimeUtil.setWeekEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
-			log.info("Worklist current week - " + new Date(TimeUtil.setWeekBeginning(cal).getTimeInMillis()) + " "
-					+ new Date(TimeUtil.setWeekEnding(cal).getTimeInMillis()));
+			getWorkList().addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTime(),
+					TimeUtil.setWeekEnding(cal).getTime(), searchOptions.getFilterIndex()));
+			log.info("Worklist current week - " + TimeUtil.setWeekBeginning(cal).getTime() + " "
+					+ TimeUtil.setWeekEnding(cal).getTime());
 			break;
 		case SearchOptions.SEARCH_INDEX_LASTWEEK:
 			getWorkList().clear();
 			cal.add(Calendar.WEEK_OF_YEAR, -1);
-			getWorkList()
-					.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
-							TimeUtil.setWeekEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
-			log.info("Worklist last week - " + new Date(TimeUtil.setWeekBeginning(cal).getTimeInMillis()) + " "
-					+ new Date(TimeUtil.setWeekEnding(cal).getTimeInMillis()));
+			getWorkList().addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTime(),
+					TimeUtil.setWeekEnding(cal).getTime(), searchOptions.getFilterIndex()));
+			log.info("Worklist last week - " + TimeUtil.setWeekBeginning(cal).getTime() + " "
+					+ TimeUtil.setWeekEnding(cal).getTime());
 			break;
 		case SearchOptions.SEARCH_INDEX_LASTMONTH:
 			getWorkList().clear();
 			cal.add(Calendar.MONDAY, -1);
-			getWorkList()
-					.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
-							TimeUtil.setMonthEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
-			log.info("Worklist last month - " + new Date(TimeUtil.setMonthBeginning(cal).getTimeInMillis()) + " "
-					+ new Date(TimeUtil.setMonthEnding(cal).getTimeInMillis()));
+			getWorkList().addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTime(),
+					TimeUtil.setMonthEnding(cal).getTime(), searchOptions.getFilterIndex()));
+			log.info("Worklist last month - " + TimeUtil.setMonthBeginning(cal).getTime() + " "
+					+ TimeUtil.setMonthEnding(cal).getTime());
 			break;
 		case SearchOptions.SEARCH_INDEX_DAY:
 			cal.setTime(searchOptions.getDay());
 			getWorkList().clear();
-			getWorkList()
-					.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-							TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
-			log.info("Day - " + new Date(TimeUtil.setDayBeginning(cal).getTimeInMillis()) + " "
-					+ new Date(TimeUtil.setDayEnding(cal).getTimeInMillis()));
+			getWorkList().addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTime(),
+					TimeUtil.setDayEnding(cal).getTime(), searchOptions.getFilterIndex()));
+			log.info("Day - " + TimeUtil.setDayBeginning(cal).getTime() + " " + TimeUtil.setDayEnding(cal).getTime());
 			break;
 		case SearchOptions.SEARCH_INDEX_MONTH:
 			cal.set(Calendar.MONTH, searchOptions.getSearchMonth());
 			cal.set(Calendar.YEAR, searchOptions.getYear());
-			getWorkList()
-					.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
-							TimeUtil.setMonthEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
-			log.info("Worklist month - " + new Date(TimeUtil.setMonthBeginning(cal).getTimeInMillis()) + " "
-					+ new Date(TimeUtil.setMonthEnding(cal).getTimeInMillis()));
+			getWorkList().addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTime(),
+					TimeUtil.setMonthEnding(cal).getTime(), searchOptions.getFilterIndex()));
+			log.info("Worklist month - " + TimeUtil.setMonthBeginning(cal).getTime() + " "
+					+ TimeUtil.setMonthEnding(cal).getTime());
 			break;
 		case SearchOptions.SEARCH_INDEX_TIME:
 			cal.setTime(searchOptions.getSearchFrom());
-			long fromTime = TimeUtil.setDayBeginning(cal).getTimeInMillis();
+			Date fromTime = TimeUtil.setDayBeginning(cal).getTime();
 			cal.setTime(searchOptions.getSearchTo());
-			long toTime = TimeUtil.setDayEnding(cal).getTimeInMillis();
+			Date toTime = TimeUtil.setDayEnding(cal).getTime();
 			getWorkList()
 					.addAll(patientDao.getWorklistDynamicallyByType(fromTime, toTime, searchOptions.getFilterIndex()));
-			log.info("Worklist time - " + new Date(fromTime) + " " + new Date(toTime));
+			log.info("Worklist time - " + fromTime + " " + toTime);
 			break;
 		default:
 			break;

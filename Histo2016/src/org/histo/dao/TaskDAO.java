@@ -3,14 +3,9 @@ package org.histo.dao;
 import java.io.Serializable;
 
 import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.histo.model.Person;
-import org.histo.model.Sample;
 import org.histo.model.Task;
-import org.histo.model.Block;
-import org.histo.model.UserAcc;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

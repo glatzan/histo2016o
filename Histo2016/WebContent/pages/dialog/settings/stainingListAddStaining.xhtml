@@ -26,11 +26,11 @@
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="#{msg['dialog.settings.stainingList.new.stainings.add.add']}" styleClass="smallerButton"
+			<p:commandButton value="#{msg['dialog.settings.stainingList.new.stainings.add.add']}" 
 				icon="fa fa-fw fa-plus-circle"
 				actionListener="#{settingsHandlerAction.addStainingToStainingList(settingsHandlerAction.stainingListChooserForStainingList, settingsHandlerAction.editStainingList)}"
 				update="@form"></p:commandButton>
-			<p:commandButton value="#{msg['general.abort']}" styleClass="smallerButton"
+			<p:commandButton value="#{msg['general.abort']}" 
 				icon="fa fa-fw fa-times-circle"
 				actionListener="#{settingsHandlerAction.discardAddStainingToStainingList()}"
 				update="@form"></p:commandButton>

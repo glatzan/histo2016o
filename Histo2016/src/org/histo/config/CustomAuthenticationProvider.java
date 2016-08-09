@@ -1,19 +1,20 @@
 package org.histo.config;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.histo.dao.GenericDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.UserAcc;
 import org.histo.util.UserUtil;
@@ -25,8 +26,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-
-import javax.naming.directory.*;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -93,6 +92,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			} 
 			
 			ctx.close();
+			
+			userAcc.setLastLogin(new Date(System.currentTimeMillis()));
 			
 			userDAO.saveUser(userAcc);
 			

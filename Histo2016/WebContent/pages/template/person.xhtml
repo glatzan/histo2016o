@@ -8,21 +8,25 @@
 	<p:panelGrid styleClass="patientSearchTable" columns="2"
 		columnClasses="categoryColum,">
 		<h:outputLabel value="#{msg['dialog.person.person']}" />
+		<!-- title -->
+		<h:panelGrid>
+			<p:panelGrid columns="1" styleClass="inputTable"
+				style="float:left;margin-right:20px;">
+				<p:selectOneMenu style="width:100px" id="title" editable="true"
+					value="#{person.title}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItem itemLabel="#{msg['dialog.person.title.dr']}"
+						itemValue="Dr." />
+					<f:selectItem itemLabel="#{msg['dialog.person.title.prof']}"
+						itemValue="Prof." />
+				</p:selectOneMenu>
+				<p:outputLabel value="#{msg['dialog.person.title']}" />
+			</p:panelGrid>
+		</h:panelGrid>
 
-		<p:panelGrid columns="1" styleClass="inputTable"
-			style="float:left;margin-right:20px;">
-			<p:selectOneMenu style="width:100px" id="title" editable="true"
-				value="#{person.title}">
-				<f:selectItem itemLabel="" itemValue="" />
-				<f:selectItem itemLabel="#{msg['dialog.person.title.dr']}" itemValue="Dr." />
-				<f:selectItem itemLabel="#{msg['dialog.person.title.prof']}"
-					itemValue="Prof." />
-			</p:selectOneMenu>
-			<p:outputLabel value="#{msg['dialog.person.title']}" />
-		</p:panelGrid>
-
+		<!-- Name -->
 		<h:outputLabel value="" />
-		<h:panelGroup>
+		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText id="name" value="#{person.name}" />
@@ -32,15 +36,17 @@
 				<p:inputText id="firstName" value="#{person.surname}" />
 				<p:outputLabel value="#{msg['dialog.person.surname']}" />
 			</p:panelGrid>
-		</h:panelGroup>
+		</h:panelGrid>
 
+		<!-- gender, birthday -->
 		<h:outputLabel value="" />
-		<h:panelGroup>
+		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:selectOneMenu id="gender" style="width:100px"
 					value="#{person.gender}">
-					<f:selectItem itemLabel="#{msg['dialog.person.gender.select']}" itemValue="" />
+					<f:selectItem itemLabel="#{msg['dialog.person.gender.select']}"
+						itemValue=" " />
 					<f:selectItem itemLabel="#{msg['dialog.person.gender.male']}"
 						itemValue="m" />
 					<f:selectItem itemLabel="#{msg['dialog.person.gender.female']}"
@@ -53,10 +59,11 @@
 					navigator="true" pattern="dd.MM.yyyy" mask="true" />
 				<p:outputLabel value="#{msg['dialog.person.birthday']}" />
 			</p:panelGrid>
-		</h:panelGroup>
+		</h:panelGrid>
 
+		<!-- Adress -->
 		<h:outputLabel value="#{msg['dialog.person.adress']}" />
-		<h:panelGroup>
+		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText id="street" value="#{person.street}" />
@@ -66,10 +73,10 @@
 				<p:inputText style="width:75px;" value="#{person.houseNumber}" />
 				<p:outputLabel value="#{msg['dialog.person.adress.housenumber']}" />
 			</p:panelGrid>
-		</h:panelGroup>
+		</h:panelGrid>
 
 		<h:outputLabel value="" />
-		<h:panelGroup>
+		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText style="width:75px;" value="#{person.postcode}" />
@@ -79,10 +86,10 @@
 				<p:inputText id="town" value="#{person.town}" />
 				<p:outputLabel value="#{msg['dialog.person.adress.town']}" />
 			</p:panelGrid>
-		</h:panelGroup>
+		</h:panelGrid>
 
 		<h:outputLabel value="Sonstiges" />
-		<h:panelGroup>
+		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText value="#{person.phoneNumber}" />
@@ -93,15 +100,15 @@
 				<p:inputText id="email" value="#{person.email}" />
 				<p:outputLabel value="#{msg['dialog.person.miscellaneous.mail']}" />
 			</p:panelGrid>
-		</h:panelGroup>
+		</h:panelGrid>
 
 		<h:outputLabel value="" />
-		<h:panelGroup>
+		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText value="#{person.fax}" />
 				<p:outputLabel value="#{msg['dialog.person.miscellaneous.fax']}" />
 			</p:panelGrid>
-		</h:panelGroup>
+		</h:panelGrid>
 	</p:panelGrid>
 </ui:composition>

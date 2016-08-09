@@ -21,7 +21,7 @@
 				<p:column>
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
 						styleClass="taskCalendar"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}" />
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceipt}" />
 				</p:column>
 
 				<!-- Termin Datum -->
@@ -37,7 +37,7 @@
 						</p:selectBooleanCheckbox>
 						<p:calendar pattern="dd.MM.yyyy" mask="true"
 							styleClass="taskCalendar"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDate}"
 							disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}" />
 					</h:panelGrid>
 				</p:column>

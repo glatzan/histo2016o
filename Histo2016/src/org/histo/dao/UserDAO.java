@@ -1,19 +1,13 @@
 package org.histo.dao;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.histo.model.Person;
-import org.histo.model.StainingPrototype;
 import org.histo.model.UserAcc;
-import org.histo.model.UserRole;
-import org.histo.util.UserUtil;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
