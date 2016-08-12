@@ -480,6 +480,10 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	@Transient
 	public boolean isDiagnosisPerformed() {
 		for (Sample sample : samples) {
+
+			if (sample.isArchived())
+				continue;
+
 			if (!sample.isDiagnosisPerformed())
 				return false;
 		}
@@ -494,6 +498,10 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	@Transient
 	public boolean isDiagnosisNeeded() {
 		for (Sample sample : samples) {
+
+			if (sample.isArchived())
+				continue;
+
 			if (sample.isDiagnosisNeeded())
 				return true;
 		}
@@ -508,6 +516,10 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	@Transient
 	public boolean isReDiagnosisNeeded() {
 		for (Sample sample : samples) {
+
+			if (sample.isArchived())
+				continue;
+
 			if (sample.isReDiagnosisNeeded())
 				return true;
 		}
@@ -564,10 +576,10 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 			if (sample.isArchived())
 				continue;
 
-			if (!sample.isStainingNeeded())
-				return false;
+			if (sample.isStainingNeeded())
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -583,10 +595,10 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 			if (sample.isArchived())
 				continue;
 
-			if (!sample.isReStainingNeeded())
-				return false;
+			if (sample.isReStainingNeeded())
+				return true;
 		}
-		return true;
+		return false;
 	}
 
 	/********************************************************

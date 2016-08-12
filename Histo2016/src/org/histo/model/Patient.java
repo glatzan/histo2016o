@@ -185,6 +185,10 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	@Transient
 	public boolean isDiagnosisPerformed() {
 		for (Task task : tasks) {
+			
+			if (task.isArchived())
+				continue;
+
 			if (!task.isDiagnosisPerformed())
 				return false;
 		}
@@ -199,6 +203,10 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	@Transient
 	public boolean isDiagnosisNeeded() {
 		for (Task task : tasks) {
+			
+			if (task.isArchived())
+				continue;
+
 			if (task.isDiagnosisNeeded())
 				return true;
 		}
@@ -213,6 +221,10 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	@Transient
 	public boolean isReDiagnosisNeeded() {
 		for (Task task : tasks) {
+			
+			if (task.isArchived())
+				continue;
+
 			if (task.isReDiagnosisNeeded())
 				return true;
 		}
@@ -346,4 +358,17 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
+	@Transient
+	public ArrayList<Task> getActivTasks(){
+		ArrayList<Task> result = new ArrayList<>();
+		for (Task task : tasks) {
+			if(task.isArchived())
+				continue;
+			
+			if(task.isDiagnosisNeeded() || task.isReDiagnosisNeeded() || task.isStainingNeeded() || isReStainingNeeded())
+				result.add(task);
+		}
+		
+		return result;
+	}
 }

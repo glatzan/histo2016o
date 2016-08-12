@@ -30,25 +30,28 @@
 			<!-- Header -->
 			<f:facet name="header">
 				<h:panelGroup layout="block">
-					<h:outputLabel value="Arbeitsliste" style="float:left;"></h:outputLabel>
+					<h:outputLabel value="#{msg['body.worklist.navigation.headline']}"
+						style="float:left;"></h:outputLabel>
 					<h:panelGroup style="float: right">
-						<p:commandLink
+						<p:commandLink title="#{msg['body.worklist.navigation.up']}"
 							actionListener="#{worklistHandlerAction.selectPreviouseTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-up"></i>
 						</p:commandLink>
-						<p:commandLink
+						<p:commandLink title="#{msg['body.worklist.navigation.down']}"
 							actionListener="#{worklistHandlerAction.selectNextTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-down"></i>
 						</p:commandLink>
 
-						<p:commandLink
+						<p:commandLink title="#{msg['body.worklist.navigation.sort']}"
+							id="listOrder"
 							actionListener="#{worklistHandlerAction.prepareWorklistOptions()}">
 							<i class="fa fa-th-list"></i>
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
+
 						<p:commandLink
+							title="#{msg['body.worklist.navigation.changlist']}"
 							actionListener="#{worklistHandlerAction.prepareWorklistOptions()}">
 							<i class="fa fa-cog"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -58,42 +61,73 @@
 			</f:facet>
 
 			<!-- Data -->
-			<h:panelGrid columns="1" styleClass="contentTable">
-				<h:outputText
-					value="#{patient.person.name}, #{patient.person.surname}" />
+			<p:panelGrid styleClass="contentTable noBordersAll">
 
-				<h:outputLabel
-					value="#{helperHandlerAction.simpleDateFormatter(patient.person.birthday)}"
-					rendered="#{patient.person.birthday ne null}" />
+				<p:row>
+					<p:column>
+						<h:outputText
+							value="#{patient.person.name}, #{patient.person.surname}" />
 
-				<h:outputText
-					value="PIZ: #{patient.piz ne 0 ? patient.piz : 'none'}" />
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="PIZ: #{patient.piz ne 0 ? patient.piz : 'none'}" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputLabel
+							value="#{helperHandlerAction.simpleDateFormatter(patient.person.birthday)}"
+							rendered="#{patient.person.birthday ne null}" />
+					</p:column>
+					<p:column>
+					</p:column>
+				</p:row>
+				<!-- Tasks -->
+				<p:row>
+					<p:column style="vertical-align: top !important;">
+						<h:outputLabel
+							value="#{msg['body.worklist.navigation.activtasks']}" />
+					</p:column>
+					<p:column>
+						<!-- no tasks -->
+						<h:outputLabel rendered="#{patient.activTasks.size() eq 0}"
+							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
+						<!-- task list -->
+						<p:repeat var="task" value="#{patient.activTasks}">
+							<p:commandLink
+								actionListener="#{worklistHandlerAction.selectTaskOfPatient(task)}"
+								update="navigationForm contentForm"
+								styleClass="noUnderlineAtLink">
+								<h:outputLabel value="#{task.taskID}" />
 
-				<h:panelGroup styleClass="info">
-					<h:panelGroup rendered="#{patient.isNew()}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText value="Neu" style="color:green;" />
-						<h:outputText value=") "></h:outputText>
-					</h:panelGroup>
+								<!-- new task -->
+								<h:panelGroup rendered="#{task.isNew()}">
+									<i style="margin-left: 5px;" class="fa fa-child icon-green"
+										title="#{msg['body.worklist.navigation.activtasks.new']}" />
+								</h:panelGroup>
+								<!-- staining needed -->
+								<h:panelGroup
+									rendered="#{task.isStainingNeeded() or task.isReStainingNeeded()}">
+									<i style="margin-left: 5px;"
+										class="fa fa-image #{task.isStainingNeeded() ? 'icon-green' : 'icon-orange'}"
+										title="#{task.isStainingNeeded() eq true ? msg['body.worklist.navigation.activtasks.staining'] : msg['body.worklist.navigation.activtasks.restaining']}" />
+								</h:panelGroup>
+								<!-- diagnosis needed -->
+								<h:panelGroup
+									rendered="#{task.isStainingPerformed() and (task.isDiagnosisNeeded() or task.isReDiagnosisNeeded())}">
+									<i style="margin-left: 5px;"
+										class="fa fa-eye #{task.isDiagnosisNeeded() ? 'icon-green' : 'icon-orange'}"
+										title="#{task.isDiagnosisNeeded() ? msg['body.worklist.navigation.activtasks.diagnosis'] : msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+								</h:panelGroup>
+							</p:commandLink>
+							<br />
+						</p:repeat>
 
-
-					<h:panelGroup
-						rendered="#{patient.isStainingNeeded() or patient.isReStainingNeeded()}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText value="Färben" style="color:orange;" />
-						<h:outputText value=") "></h:outputText>
-					</h:panelGroup>
-
-					<h:panelGroup
-						rendered="#{patient.isDiagnosisNeeded() or patient.isReDiagnosisNeeded()}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText value="Befundung" style="color:purple;" />
-						<h:outputText value=") "></h:outputText>
-					</h:panelGroup>
-
-				</h:panelGroup>
-			</h:panelGrid>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
 		</p:column>
 
 	</p:dataTable>
@@ -103,5 +137,32 @@
 			actionListener="#{worklistHandlerAction.removeFromWorklist(worklistHandlerAction.selectedPatient)}"
 			update="navigationForm contentForm" />
 	</p:contextMenu>
+
+	<p:overlayPanel for="navigationForm:patientList:listOrder"
+		dynamic="true" style="width:600px">
+
+		<p:selectOneRadio id="customRadio" value="#{radioView.color}"
+			layout="custom">
+			<f:selectItem itemLabel="Red" itemValue="Red" />
+			<f:selectItem itemLabel="Green" itemValue="Green" />
+			<f:selectItem itemLabel="Blue" itemValue="Blue" />
+		</p:selectOneRadio>
+
+		<h:panelGrid columns="3" cellpadding="5">
+			<p:radioButton id="opt1" for="customRadio" itemIndex="0" />
+			<h:outputLabel for="opt1" value="Red" />
+			<p:spinner />
+
+			<p:radioButton id="opt2" for="customRadio" itemIndex="1" />
+			<h:outputLabel for="opt2" value="Green" />
+			<p:inputText />
+
+			<p:radioButton id="opt3" for="customRadio" itemIndex="2" />
+			<h:outputLabel for="opt3" value="Blue" />
+			<p:calendar />
+		</h:panelGrid>
+
+	</p:overlayPanel>
+
 
 </ui:composition>

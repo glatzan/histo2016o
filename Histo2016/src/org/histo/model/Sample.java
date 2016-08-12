@@ -272,7 +272,7 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	@Override
 	@Transient
 	public boolean isStainingNeeded() {
-		if (!isStainingPerformed() && isReStainingPhase())
+		if (!isStainingPerformed() && !isReStainingPhase())
 			return true;
 		return false;
 	}

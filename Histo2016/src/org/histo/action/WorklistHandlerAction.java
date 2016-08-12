@@ -63,7 +63,7 @@ public class WorklistHandlerAction implements Serializable {
 	public final static int TIME_CUSTOM = 5;
 	public final static int TIME_FAVOURITE = 6;
 
-	public final static int SORT_ORDER_ID = 0;
+	public final static int SORT_ORDER_TASK_ID = 0;
 	public final static int SORT_ORDER_NAME = 1;
 
 	public final static int DISPLAY_PATIENT = 0;
@@ -213,9 +213,9 @@ public class WorklistHandlerAction implements Serializable {
 	private List<Patient> restrictedWorkList;
 
 	/**
-	 * Art wie die Worklist sortiert werden soll
+	 * Order of the Worklist, either by id or by patient name
 	 */
-	private int worklistSortOrder = SORT_ORDER_ID;
+	private int worklistSortOrder = SORT_ORDER_TASK_ID;
 
 	/**
 	 *  
@@ -346,20 +346,19 @@ public class WorklistHandlerAction implements Serializable {
 		return "";
 	}
 
-	// <p:panel style="width:100%;"
-	// rendered="#{worklistHandlerAction.selectedPatient ne null and
-	// worklistHandlerAction.selectedPatient.selectedTask eq null}"
-	// styleClass=" collapsedBorders noPadding noBorders">
-	// <ui:include src="workListPatient.xhtml"></ui:include>
-	// </p:panel>
-	// <!-- Übersicht -->
-	//
-	// <!-- Auftrag -->
-	// <h:panelGroup styleClass="contentHolder" layout="block"
-	// rendered="#{worklistHandlerAction.selectedPatient !=null and
-	// worklistHandlerAction.selectedPatient.selectedTask !=null}">
-	// <ui:include src="workListTask.xhtml"></ui:include>
-	// </h:panelGroup>
+	/**
+	 * Sorts a list with patiens either by task id or name of the patient
+	 * @param patiens
+	 * @param order
+	 */
+	public void sortWordklist(List<Patient> patiens, int order) {
+		if(order == SORT_ORDER_TASK_ID){
+			
+		}else if(order == SORT_ORDER_NAME){
+			
+		}
+	}
+
 	/******************************************************** General ********************************************************/
 
 	/******************************************************** Patient ********************************************************/
@@ -407,6 +406,7 @@ public class WorklistHandlerAction implements Serializable {
 	 * Adds an Patient found in the clinic-backend or in the histo-backend to
 	 * the worklist.
 	 */
+	// TODO not add the same patient twice
 	public void addNewPatient(Patient patient) {
 		if (patient != null) {
 
@@ -547,6 +547,17 @@ public class WorklistHandlerAction implements Serializable {
 	/******************************************************** Patient ********************************************************/
 
 	/******************************************************** Task ********************************************************/
+	/**
+	 * Selects a task and sets the patient of this task as selectedPatient
+	 * 
+	 * @param task
+	 */
+	public void selectTaskOfPatient(Task task) {
+		setSelectedPatient(task.getParent());
+		selectPatient(getSelectedPatient());
+		selectTask(task);
+	}
+
 	/**
 	 * Task - Select and init
 	 */

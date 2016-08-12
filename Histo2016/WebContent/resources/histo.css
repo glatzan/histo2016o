@@ -61,22 +61,31 @@ body {
 }
 
 /* Background for even column should be different */
-.defaultDataTable{	
+.defaultDataTable {
+	
 }
 
-.defaultDataTable tr:nth-child(even) td{
+.defaultDataTable tr:nth-child(even) td {
 	background-color: #f9f9f9;
 }
 
-.defaultDataTable .ui-state-highlight td{
+.defaultDataTable .ui-state-highlight td {
 	background-color: inherit;
 	font-weight: bold;
 }
 
-.bold-text{
+.bold-text {
 	font-weight: bold;
 }
-	
+
+.noUnderlineAtLink{
+	text-decoration: none !important;
+}
+
+.noUnderlineAtLink:hover{
+	font-weight: bold;
+}
+
 /*
 	######################################## Navigatoin ########################################
 */
@@ -105,6 +114,10 @@ body {
 .navigation .navTable .contentTable td {
 	border: 0px !important;
 	padding: 2px 0px !important;
+}
+
+.navigation .navTable .contentTable tr {
+	background: none;
 }
 
 /*
@@ -208,7 +221,7 @@ body {
 /* 	################# AddContectTable ################# */
 /* Settings für die Kontaktübersicht einer Aufgabe*/
 .content .body .addedContactDataTable {
-	width:350px;
+	width: 350px;
 }
 
 /* jede zweite zeile mit einem anderen Hintergrund */
@@ -526,16 +539,15 @@ body {
 
 /*	################# WorklistOptionsDilaog ################# */
 
-
 /*	################# addPatient dialog ################# */
 
 /*
 	Style for Form Table
 */
 /* Table containing the search fiedls*/
-.patientSearchTable{
-	margin-top:5px;
-	margin-bottom:5px
+.patientSearchTable {
+	margin-top: 5px;
+	margin-bottom: 5px
 }
 
 .patientSearchTable tr, .patientSearchTable td {
@@ -543,7 +555,7 @@ body {
 }
 
 /* Table containing serach field, category column */
-.patientSearchTable .categoryColum{
+.patientSearchTable .categoryColum {
 	vertical-align: top;
 	padding-top: 5px !important;
 	width: 100px;
