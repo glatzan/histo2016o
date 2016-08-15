@@ -1,6 +1,7 @@
 package org.histo.action;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -26,6 +27,11 @@ import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import java.util.*;
+import java.io.*;
+
+import javax.naming.*;
+import javax.naming.directory.*;
 
 @Component
 @Scope(value = "session")
@@ -165,10 +171,30 @@ public class SettingsHandlerAction {
 	 ********************************************************/
 
 	/********************************************************
-	 * Person Diagnosis
+	 * Physician
 	 ********************************************************/
+	/**
+	 * List containing all physicians known in the histo database
+	 */
 	private List<Physician> physicians;
 
+	/**
+	 * List containing all physicians available from ldap
+	 */
+	private List<Physician> ldapPhysicians;
+
+	/**
+	 * If true a ldap list will be shown to select the physicain from. If false
+	 * a inputmask is to add an external physician.
+	 */
+	private boolean internalPhysician = true;
+
+	/**
+	 * String is used for searching for internal physicians 
+	 */
+	private String internalPhysicianSearchString;
+	
+	
 	private Physician editPhysician;
 
 	private int physicianIndex = 0;
@@ -180,7 +206,7 @@ public class SettingsHandlerAction {
 	private boolean personOther = true;
 
 	/********************************************************
-	 * Person Diagnosis
+	 * Physician
 	 ********************************************************/
 
 	/**
@@ -189,7 +215,7 @@ public class SettingsHandlerAction {
 	public void prepareSettingsDialog() {
 		// custom header Element
 		HashMap<String, Object> options = new HashMap<String, Object>();
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_SETTINGS), 1024, 500, false, false, true, options);
+		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_SETTINGS), 1024, 600, false, false, true, options);
 
 		// init users
 		setUsers(UserUtil.getUserAndRoles(userDAO.loadAllUsers()));
@@ -485,6 +511,27 @@ public class SettingsHandlerAction {
 		setPhysicianIndex(PHYSICIAN_EDIT);
 	}
 
+	public void searchForPhysician(String name) {
+		System.out.println("searching for name " + name);
+		// removing multiple spaces an commas and replacing them with one space, splitting the whole thing into an array
+		String[] arr = name.replaceAll("[ ,]+", " ").split(" ");
+		StringBuffer request = new StringBuffer("(&");
+		for (int i = 0; i < arr.length; i++) {
+			request.append("(cn=*"+arr[i]+"*)");
+		}
+		request.append(")");
+		System.out.println(request);
+		
+		List<Physician> listP = UserUtil.getPhysiciansFromLDAP(request.toString());
+		
+		for (Physician physician : listP) {
+			System.out.println(physician.getFullName());
+			
+		}
+		
+		setLdapPhysicians(listP);
+	}
+
 	public void prepareEditPhysician(Physician physician) {
 		setEditPhysician(physician);
 		setPhysicianIndex(PHYSICIAN_EDIT);
@@ -730,6 +777,30 @@ public class SettingsHandlerAction {
 
 	public void setEditPhysician(Physician editPhysician) {
 		this.editPhysician = editPhysician;
+	}
+
+	public boolean isInternalPhysician() {
+		return internalPhysician;
+	}
+
+	public void setInternalPhysician(boolean internalPhysician) {
+		this.internalPhysician = internalPhysician;
+	}
+
+	public List<Physician> getLdapPhysicians() {
+		return ldapPhysicians;
+	}
+
+	public void setLdapPhysicians(List<Physician> ldapPhysicians) {
+		this.ldapPhysicians = ldapPhysicians;
+	}
+
+	public String getInternalPhysicianSearchString() {
+		return internalPhysicianSearchString;
+	}
+
+	public void setInternalPhysicianSearchString(String internalPhysicianSearchString) {
+		this.internalPhysicianSearchString = internalPhysicianSearchString;
 	}
 
 	/********************************************************

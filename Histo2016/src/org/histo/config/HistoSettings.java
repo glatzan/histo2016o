@@ -13,7 +13,11 @@ public class HistoSettings {
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 	public static final String PATIENT_GET_URL= "http://auginfo/piz";
 	
-	
+    public static final String LDAP_HOST = "ldap.ukl.uni-freiburg.de";
+    public static final String LDAP_PORT = "389";
+    public static final String LDAP_SUFFIX = "dc=ukl,dc=uni-freiburg,dc=de";
+    public static final String LDAP_BASE = "ou=people";
+    
 
     public static final String CENTER_INCLUDE_BLANK = "i_blank.xhtml";
     public static final String CENTER_INCLUDE_PATIENT = "i_patient.xhtml";
@@ -34,6 +38,8 @@ public class HistoSettings {
     public static final int DIALOG_WORKLIST_OPTIONS = 10;
     public static final int DIALOG_PATIENT_EDIT = 11;
     public static final int DIALOG_PATIENT_ADD = 12;
+    public static final int DIALOG_WORKLIST_ORDER = 13;
+    
     
     // noch nicht drinnen
     public static final int DIALOG_TEST = 255;
@@ -56,6 +62,7 @@ public class HistoSettings {
 	tmpMap.put(DIALOG_WORKLIST_OPTIONS, "/pages/dialog/worklist/worklistOptions");
 	tmpMap.put(DIALOG_PATIENT_EDIT, "/pages/dialog/patient/editPatient");
 	tmpMap.put(DIALOG_PATIENT_ADD, "/pages/dialog/patient/addPatient");
+	tmpMap.put(DIALOG_WORKLIST_ORDER, "/pages/dialog/worklist/worklistOrder");
 	
 	
 	tmpMap.put(DIALOG_TEST, "/pages/dialog/task/notification");

@@ -1,6 +1,5 @@
 package org.histo.model;
 
-import javax.persistence.Basic;
 import javax.persistence.Entity;
 
 import com.google.gson.annotations.Expose;
@@ -27,6 +26,12 @@ public class Physician extends Person {
 	 */
 	@Expose
 	private String clinicTitle;
+	
+	/**
+	 * Number of the employee
+	 */
+	@Expose
+	private String employeeNumber;
 	
 	/**
 	 * clinic internal department
@@ -58,7 +63,7 @@ public class Physician extends Person {
 	@Expose
 	private boolean roleMiscellaneous;
 	
-	@Basic
+	
 	public boolean isRoleSurgeon() {
 		return roleSurgeon;
 	}
@@ -67,7 +72,6 @@ public class Physician extends Person {
 		this.roleSurgeon = roleSurgeon;
 	}
 
-	@Basic
 	public boolean isRoleResidentDoctor() {
 		return roleResidentDoctor;
 	}
@@ -76,7 +80,6 @@ public class Physician extends Person {
 		this.roleResidentDoctor = roleResidentDoctor;
 	}
 
-	@Basic
 	public boolean isRoleClinicDoctor() {
 		return roleClinicDoctor;
 	}
@@ -85,7 +88,6 @@ public class Physician extends Person {
 		this.roleClinicDoctor = roleClinicDoctor;
 	}
 
-	@Basic
 	public boolean isRoleMiscellaneous() {
 		return roleMiscellaneous;
 	}
@@ -126,5 +128,12 @@ public class Physician extends Person {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}
-	
+
+	public String getEmployeeNumber() {
+		return employeeNumber;
+	}
+
+	public void setEmployeeNumber(String employeeNumber) {
+		this.employeeNumber = employeeNumber;
+	}
 }

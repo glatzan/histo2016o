@@ -88,7 +88,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			}
 			
 			if (attrs != null) {
-				UserUtil.updateUserData(userAcc, attrs);
+				UserUtil.updateUserData(userAcc.getPhysician(), attrs);
 			} 
 			
 			ctx.close();

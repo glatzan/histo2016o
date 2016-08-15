@@ -33,25 +33,25 @@
 					<h:outputLabel value="#{msg['body.worklist.navigation.headline']}"
 						style="float:left;"></h:outputLabel>
 					<h:panelGroup style="float: right">
-						<p:commandLink title="#{msg['body.worklist.navigation.up']}"
+						<p:commandLink title="#{msg['body.worklist.navigation.button.up']}"
 							actionListener="#{worklistHandlerAction.selectPreviouseTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-up"></i>
 						</p:commandLink>
-						<p:commandLink title="#{msg['body.worklist.navigation.down']}"
+						<p:commandLink title="#{msg['body.worklist.navigation.button.down']}"
 							actionListener="#{worklistHandlerAction.selectNextTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-down"></i>
 						</p:commandLink>
 
-						<p:commandLink title="#{msg['body.worklist.navigation.sort']}"
-							id="listOrder"
-							actionListener="#{worklistHandlerAction.prepareWorklistOptions()}">
+						<p:commandLink title="#{msg['body.worklist.navigation.button.sort']}"
+							actionListener="#{worklistHandlerAction.prepareSortWorklistDialog()}">
 							<i class="fa fa-th-list"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 
 						<p:commandLink
-							title="#{msg['body.worklist.navigation.changlist']}"
+							title="#{msg['body.worklist.navigation.button.changelist']}"
 							actionListener="#{worklistHandlerAction.prepareWorklistOptions()}">
 							<i class="fa fa-cog"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -98,7 +98,7 @@
 						<p:repeat var="task" value="#{patient.activTasks}">
 							<p:commandLink
 								actionListener="#{worklistHandlerAction.selectTaskOfPatient(task)}"
-								update="navigationForm contentForm"
+								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 								<h:outputLabel value="#{task.taskID}" />
 
@@ -137,32 +137,5 @@
 			actionListener="#{worklistHandlerAction.removeFromWorklist(worklistHandlerAction.selectedPatient)}"
 			update="navigationForm contentForm" />
 	</p:contextMenu>
-
-	<p:overlayPanel for="navigationForm:patientList:listOrder"
-		dynamic="true" style="width:600px">
-
-		<p:selectOneRadio id="customRadio" value="#{radioView.color}"
-			layout="custom">
-			<f:selectItem itemLabel="Red" itemValue="Red" />
-			<f:selectItem itemLabel="Green" itemValue="Green" />
-			<f:selectItem itemLabel="Blue" itemValue="Blue" />
-		</p:selectOneRadio>
-
-		<h:panelGrid columns="3" cellpadding="5">
-			<p:radioButton id="opt1" for="customRadio" itemIndex="0" />
-			<h:outputLabel for="opt1" value="Red" />
-			<p:spinner />
-
-			<p:radioButton id="opt2" for="customRadio" itemIndex="1" />
-			<h:outputLabel for="opt2" value="Green" />
-			<p:inputText />
-
-			<p:radioButton id="opt3" for="customRadio" itemIndex="2" />
-			<h:outputLabel for="opt3" value="Blue" />
-			<p:calendar />
-		</h:panelGrid>
-
-	</p:overlayPanel>
-
-
 </ui:composition>
+

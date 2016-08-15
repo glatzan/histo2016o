@@ -365,7 +365,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 			if(task.isArchived())
 				continue;
 			
-			if(task.isDiagnosisNeeded() || task.isReDiagnosisNeeded() || task.isStainingNeeded() || isReStainingNeeded())
+			if(task.isCurrentlyActive() || task.isDiagnosisNeeded() || task.isReDiagnosisNeeded() || task.isStainingNeeded() || task.isReStainingNeeded())
 				result.add(task);
 		}
 		

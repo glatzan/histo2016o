@@ -417,7 +417,7 @@ body {
 
 /* Layout in the tabview center tab*/
 .settingsDialogLayout .settingsPannel .settingsTabView .tabLayout {
-	height: 490px;
+	height: 590px;
 	width: 100%
 }
 
@@ -432,14 +432,14 @@ body {
 /* Settings tab view hight + width*/
 .settingsDialogLayout .settingsPannel .settingsTabView {
 	width: 100%;
-	height: 500px;
+	height: 600px;
 }
 
 /* Layout in the tabview center tab, center column of layout*/
 .settingsDialogLayout .settingsPannel .settingsTabView .tabLayout .center
 	{
 	padding: 1px !important;
-	height: 400px;
+	height: 500px;
 }
 
 /* Layout in the tabview center tab, south column of layout*/

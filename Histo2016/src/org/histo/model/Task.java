@@ -144,11 +144,6 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	private Date diagnosisCompletionDate;
 	/******************************************************** Transient ********************************************************/
 	/**
-	 * Wenn der Task initialisiert wurde ist initialized true
-	 */
-	private boolean initialized;
-
-	/**
 	 * Die Ausgewählte Probe
 	 */
 	private Sample selectedSample;
@@ -162,6 +157,12 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	 * Currently selected task in table form, transient, used for gui
 	 */
 	private ArrayList<StainingTableChooser> stainingTableChoosers;
+
+	/**
+	 * If set to true, this task is shown in the navigation column on the left
+	 * hand side, however there are actions to perform or not.
+	 */
+	private boolean currentlyActive;
 
 	/******************************************************** Transient ********************************************************/
 	public Task() {
@@ -439,15 +440,6 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	}
 
 	@Transient
-	public boolean isInitialized() {
-		return initialized;
-	}
-
-	public void setInitialized(boolean initialized) {
-		this.initialized = initialized;
-	}
-
-	@Transient
 	public ArrayList<StainingTableChooser> getStainingTableRows() {
 		return stainingTableChoosers;
 	}
@@ -465,6 +457,14 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.tabIndex = tabIndex;
 	}
 
+	@Transient
+	public boolean isCurrentlyActive() {
+		return currentlyActive;
+	}
+
+	public void setCurrentlyActive(boolean currentlyActive) {
+		this.currentlyActive = currentlyActive;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

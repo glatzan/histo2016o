@@ -2,12 +2,21 @@ package org.histo.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.InitialDirContext;
+import javax.naming.directory.SearchControls;
+import javax.naming.directory.SearchResult;
 
+import org.histo.config.HistoSettings;
 import org.histo.model.Physician;
 import org.histo.model.UserAcc;
 import org.histo.model.UserRole;
@@ -85,54 +94,98 @@ public class UserUtil {
 	 * @return
 	 * @throws NamingException
 	 */
-	public static final UserAcc updateUserData(UserAcc acc, Attributes attrs) throws NamingException {
+	public static final Physician updateUserData(Physician physician, Attributes attrs) throws NamingException {
 
 		// name surname title
 		Attribute attr = attrs.get("cn");
 
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setFullName(attr.get().toString());
+			physician.setFullName(attr.get().toString());
 		}
 
 		// name
 		attr = attrs.get("sn");
 
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setName(attr.get().toString());
+			physician.setName(attr.get().toString());
 		}
 
+		attr = attrs.get("employeeNumber");
+		if (attr != null && attr.size() == 1) {
+			physician.setEmployeeNumber(attr.get().toString());
+		}
 		attr = attrs.get("givenName");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setSurname(attr.get().toString());
+			physician.setSurname(attr.get().toString());
 		}
 
 		attr = attrs.get("mail");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setEmail(attr.get().toString());
+			physician.setEmail(attr.get().toString());
 		}
 
 		attr = attrs.get("telephonenumber");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setPhoneNumber(attr.get().toString());
+			physician.setPhoneNumber(attr.get().toString());
 		}
 
 		attr = attrs.get("pager");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setPager(attr.get().toString());
+			physician.setPager(attr.get().toString());
 		}
 
 		// role in clinic
 		attr = attrs.get("title");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setClinicTitle(attr.get().toString());
+			physician.setClinicTitle(attr.get().toString());
 		}
 
 		// department
 		attr = attrs.get("ou");
 		if (attr != null && attr.size() == 1) {
-			acc.getPhysician().setDepartment(attr.get().toString());
+			physician.setDepartment(attr.get().toString());
 		}
-		return acc;
+
+		return physician;
+	}
+
+	public static final List<Physician> getPhysiciansFromLDAP(String filter) {
+		ArrayList<Physician> physicians = new ArrayList<>();
+		
+		try {
+			System.out.println();
+			System.out.println("*** Search ***");
+			System.out.println();
+			Hashtable env = new Hashtable(5, 0.75f);
+			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+			env.put(Context.PROVIDER_URL, "ldap://" + HistoSettings.LDAP_HOST + ":" + HistoSettings.LDAP_PORT + "/"
+					+ HistoSettings.LDAP_SUFFIX);
+
+			SearchControls constraints = new SearchControls();
+			constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+			DirContext ctx = new InitialDirContext(env);
+
+			// String filter = "(&(cn=*Glatz*)(cn=*Andreas*))";
+
+			NamingEnumeration results = ctx.search(HistoSettings.LDAP_BASE, filter, constraints);
+
+			System.out.println(filter);
+			while (results != null && results.hasMore()) {
+				SearchResult result = (SearchResult) results.next();
+				Attributes attrs = result.getAttributes();
+				if(attrs != null){
+					Physician newPhysician = new Physician();
+					physicians.add(newPhysician);
+					updateUserData(newPhysician, attrs);
+				}
+			}
+		} catch (NamingException e) {
+			System.err.println("NamingException: " + e.getMessage());
+			e.printStackTrace();
+		}
+
+		return physicians;
 	}
 
 }

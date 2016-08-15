@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
@@ -36,6 +37,7 @@ import org.histo.util.PersonAdministration;
 import org.histo.util.SearchOptions;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
+import org.histo.util.WorklistUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -64,7 +66,8 @@ public class WorklistHandlerAction implements Serializable {
 	public final static int TIME_FAVOURITE = 6;
 
 	public final static int SORT_ORDER_TASK_ID = 0;
-	public final static int SORT_ORDER_NAME = 1;
+	public final static int SORT_ORDER_PIZ = 1;
+	public final static int SORT_ORDER_NAME = 2;
 
 	public final static int DISPLAY_PATIENT = 0;
 	public final static int DISPLAY_RECEIPTLOG = 1;
@@ -218,6 +221,11 @@ public class WorklistHandlerAction implements Serializable {
 	private int worklistSortOrder = SORT_ORDER_TASK_ID;
 
 	/**
+	 * Order of the Worlist, either if true ascending, or if false descending
+	 */
+	private boolean worklistSortOrderAcs = true;
+
+	/**
 	 *  
 	 */
 	private int worklistDisplay = DISPLAY_PATIENT;
@@ -348,15 +356,32 @@ public class WorklistHandlerAction implements Serializable {
 
 	/**
 	 * Sorts a list with patiens either by task id or name of the patient
+	 * 
 	 * @param patiens
 	 * @param order
 	 */
-	public void sortWordklist(List<Patient> patiens, int order) {
-		if(order == SORT_ORDER_TASK_ID){
-			
-		}else if(order == SORT_ORDER_NAME){
-			
+	public void sortWordklist(List<Patient> patiens, int order, boolean asc) {
+		switch (order) {
+		case SORT_ORDER_TASK_ID:
+			setRestrictedWorkList((new WorklistUtil()).orderListByTaskID(patiens, asc));
+			break;
+		case SORT_ORDER_PIZ:
+			setRestrictedWorkList((new WorklistUtil()).orderListByPIZ(patiens, asc));
+			break;
+		case SORT_ORDER_NAME:
+			setRestrictedWorkList((new WorklistUtil()).orderListByName(patiens, asc));
+			break;
 		}
+
+		hideSortWorklistDialog();
+	}
+	
+	public void prepareSortWorklistDialog(){
+		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_ORDER),300, 220,false,false,true);
+	}
+	
+	public void hideSortWorklistDialog(){
+		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_ORDER));
 	}
 
 	/******************************************************** General ********************************************************/
@@ -563,7 +588,9 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	public void selectTask(Task task) {
 		// set patient.selectedTask is performed by the gui
-		task.setInitialized(true);
+		// sets this task as active, so it will be show in the navigation column
+		// whether there is an action to perform or not
+		task.setCurrentlyActive(true);
 
 		log.info("Select and init sample");
 
@@ -1012,10 +1039,6 @@ public class WorklistHandlerAction implements Serializable {
 		setSelectedPatient(null);
 	}
 
-	public void sortWorklist(List<Patient> worklist, int mode) {
-
-	}
-
 	public void selectNextTask() {
 		if (getRestrictedWorkList() != null) {
 			if (getSelectedPatient() != null) {
@@ -1380,6 +1403,14 @@ public class WorklistHandlerAction implements Serializable {
 
 	public void setSelectedPatientFromSearchList(PatientList selectedPatientFromSearchList) {
 		this.selectedPatientFromSearchList = selectedPatientFromSearchList;
+	}
+
+	public boolean isWorklistSortOrderAcs() {
+		return worklistSortOrderAcs;
+	}
+
+	public void setWorklistSortOrderAcs(boolean worklistSortOrderAcs) {
+		this.worklistSortOrderAcs = worklistSortOrderAcs;
 	}
 
 	/********************************************************

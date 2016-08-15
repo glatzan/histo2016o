@@ -86,7 +86,7 @@ public class PersonAdministration {
 			// add request header
 			con.setRequestProperty("User-Agent", USER_AGENT);
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) {
 				response.append(inputLine);
@@ -167,6 +167,9 @@ public class PersonAdministration {
 		// Person data
 		person.setTitle(obj.optString("titel"));
 		person.setName(obj.optString("name"));
+		
+		System.out.println(obj.optString("name"));
+		
 		person.setSurname(obj.optString("vorname"));
 		// parsing date
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
