@@ -22,9 +22,9 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	private static final long serialVersionUID = 7297474866699408016L;
 
 	@SuppressWarnings("unchecked")
-    public List<Physician> getPhysicians(boolean surgeon, boolean extern, boolean other) {
-	
-	if(!surgeon && !extern && !other)
+	public List<Physician> getPhysicians(boolean surgeon, boolean extern, boolean other) {
+
+		if (!surgeon && !extern && !other)
 			return new ArrayList<>();
 
 		Criteria c = getSession().createCriteria(Physician.class, "physician");
@@ -44,6 +44,26 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 
 		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return (List<Physician>) c.list();
+	}
+
+	/**
+	 * Load a physician with the given uid. Is used if a physician was added as
+	 * a surgeon and no login was performed. Is located in UserDao because of
+	 * the scope.
+	 * 
+	 * @param uid
+	 * @return
+	 */
+	public Physician loadPhysicianByUID(String uid) {
+		Criteria c = getSession().createCriteria(Physician.class);
+		c.add(Restrictions.eq("uid", uid)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		List<Physician> res = c.list();
+
+		if (res.size() != 1) {
+			return null;
+		}
+
+		return res.get(0);
 	}
 
 }

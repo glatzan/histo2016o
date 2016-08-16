@@ -4,15 +4,16 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 
 	<!--  <ui:param name="person" value="#{bean.foo}" /> -->
+	<!--  <ui:param name="pannelID" value="#{bean.foo}" /> -->
 
 	<p:panelGrid styleClass="patientSearchTable" columns="2"
-		columnClasses="categoryColum,">
+		columnClasses="categoryColum," id="#{pannelID}">
 		<h:outputLabel value="#{msg['dialog.person.person']}" />
 		<!-- title -->
 		<h:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
-				<p:selectOneMenu style="width:100px" id="title" editable="true"
+				<p:selectOneMenu style="width:100px" id="#{pannelID}_title" editable="true"
 					value="#{person.title}">
 					<f:selectItem itemLabel="" itemValue="" />
 					<f:selectItem itemLabel="#{msg['dialog.person.title.dr']}"
@@ -29,11 +30,11 @@
 		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
-				<p:inputText id="name" value="#{person.name}" />
+				<p:inputText id="#{pannelID}_name" value="#{person.name}" />
 				<p:outputLabel value="#{msg['dialog.person.name']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
-				<p:inputText id="firstName" value="#{person.surname}" />
+				<p:inputText id="#{pannelID}_surname" value="#{person.surname}" />
 				<p:outputLabel value="#{msg['dialog.person.surname']}" />
 			</p:panelGrid>
 		</h:panelGrid>
@@ -43,7 +44,7 @@
 		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
-				<p:selectOneMenu id="gender" style="width:100px"
+				<p:selectOneMenu id="#{pannelID}_gender" style="width:100px"
 					value="#{person.gender}">
 					<f:selectItem itemLabel="#{msg['dialog.person.gender.select']}"
 						itemValue=" " />
@@ -55,7 +56,7 @@
 				<p:outputLabel value="#{msg['dialog.person.gender']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
-				<p:calendar id="birthday" value="#{person.birthday}" locale="de"
+				<p:calendar id="#{pannelID}_birthday" value="#{person.birthday}" locale="de"
 					navigator="true" pattern="dd.MM.yyyy" mask="true" />
 				<p:outputLabel value="#{msg['dialog.person.birthday']}" />
 			</p:panelGrid>
@@ -66,7 +67,7 @@
 		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
-				<p:inputText id="street" value="#{person.street}" />
+				<p:inputText id="#{pannelID}_street" value="#{person.street}" />
 				<p:outputLabel value="#{msg['dialog.person.adress.street']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
@@ -83,7 +84,7 @@
 				<p:outputLabel value="#{msg['dialog.person.adress.plz']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
-				<p:inputText id="town" value="#{person.town}" />
+				<p:inputText id="#{pannelID}_town" value="#{person.town}" />
 				<p:outputLabel value="#{msg['dialog.person.adress.town']}" />
 			</p:panelGrid>
 		</h:panelGrid>
@@ -97,7 +98,7 @@
 					value="#{msg['dialog.person.miscellaneous.phonenumber']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
-				<p:inputText id="email" value="#{person.email}" />
+				<p:inputText id="#{pannelID}_email" value="#{person.email}" />
 				<p:outputLabel value="#{msg['dialog.person.miscellaneous.mail']}" />
 			</p:panelGrid>
 		</h:panelGrid>

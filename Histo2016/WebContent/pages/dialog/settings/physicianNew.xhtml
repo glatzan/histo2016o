@@ -23,21 +23,34 @@
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
 						<p:selectOneButton value="#{settingsHandlerAction.physicianIndex}">
-							<f:selectItem itemLabel="Externer Einsender" itemValue="1" />
-							<f:selectItem itemLabel="Mitarbeiter" itemValue="2" />
-							<p:ajax update="@form"
-								listener="#{settingsHandlerAction.prepareNewPhysician()}"></p:ajax>
+							<f:selectItem itemLabel="Externer Einsender" itemValue="2" />
+							<f:selectItem itemLabel="Mitarbeiter" itemValue="3" />
+							<p:ajax update="@form"></p:ajax>
 						</p:selectOneButton>
 					</p:panelGrid>
 				</h:panelGrid>
 			</p:panelGrid>
 
+			<!-- Internal Physician (Employee, get data from LDAP)-->
+			<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 3}">
+				<ui:include src="../../template/ldapPhysician.xhtml">
+					<ui:param name="physicianList"
+						value="#{settingsHandlerAction.ldapPhysicians}" />
+					<ui:param name="searchString"
+						value="#{settingsHandlerAction.ldapPhysicianSearchString}" />
+					<ui:param name="performAction" value="searchForPhysician" />
+					<ui:param name="performObject" value="#{settingsHandlerAction}" />
+					<ui:param name="selection"
+						value="#{settingsHandlerAction.selectedLdapPhysician}" />
+				</ui:include>
+			</ui:fragment>
+
 			<!-- External Physician -->
-			<ui:fragment rendered="#{!settingsHandlerAction.internalPhysician}">
+			<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 2}">
 				<ui:include src="../../template/person.xhtml">
 					<ui:param name="person"
 						value="#{settingsHandlerAction.editPhysician}" />
-					<ui:param name="pannelID" value="editPhysician" />
+					<ui:param name="pannelID" value="newPhysician" />
 				</ui:include>
 			</ui:fragment>
 
@@ -72,10 +85,18 @@
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
+			<!-- Button for creating a new external physician -->
 			<p:commandButton value="Speichern" icon="fa fa-fw fa-floppy-o"
+				rendered="#{settingsHandlerAction.physicianIndex eq 2}"
 				actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.editPhysician)}"
 				update="@form"></p:commandButton>
-
+				
+			<!-- Button for adding a physician from ldap -->
+			<p:commandButton value="Speichern" icon="fa fa-fw fa-floppy-o"
+				rendered="#{settingsHandlerAction.physicianIndex eq 3}"
+				actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.selectedLdapPhysician, settingsHandlerAction.editPhysician)}"
+				update="@form"></p:commandButton>
+				
 			<p:commandButton value="Abbrechen" icon="fa fa-fw fa-times-circle"
 				actionListener="#{settingsHandlerAction.discardEditPhysician()}"
 				update="@form"></p:commandButton>

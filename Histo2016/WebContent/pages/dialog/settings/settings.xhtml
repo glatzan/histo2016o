@@ -94,14 +94,18 @@
 
 				<!-- ************************************************************** Persons ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.persons']}">
-				<h:panelGroup
+					<ui:fragment
 						rendered="#{settingsHandlerAction.physicianIndex eq 0}">
 						<ui:include src="physicianList.xhtml" />
-					</h:panelGroup>
-						<h:panelGroup
+					</ui:fragment>
+					<ui:fragment
 						rendered="#{settingsHandlerAction.physicianIndex eq 1}">
 						<ui:include src="physicianEdit.xhtml" />
-					</h:panelGroup>
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsHandlerAction.physicianIndex eq 2 or settingsHandlerAction.physicianIndex eq 3}">
+						<ui:include src="physicianNew.xhtml" />
+					</ui:fragment>					
 				</p:tab>
 				<!-- ************************************************************** Persons ************************************************************** -->
 

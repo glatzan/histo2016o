@@ -34,6 +34,12 @@ public class Physician extends Person {
 	private String employeeNumber;
 	
 	/**
+	 * Loginname of the physician
+	 */
+	@Expose
+	private String uid;
+	
+	/**
 	 * clinic internal department
 	 */
 	@Expose
@@ -63,6 +69,19 @@ public class Physician extends Person {
 	@Expose
 	private boolean roleMiscellaneous;
 	
+	/**
+	 * Standard constructor for hibernate
+	 */
+	public Physician(){
+	}
+	
+	/**
+	 * Constructor with id
+	 * @param id
+	 */
+	public Physician(long id){
+		this.id = id;
+	}
 	
 	public boolean isRoleSurgeon() {
 		return roleSurgeon;
@@ -136,4 +155,13 @@ public class Physician extends Person {
 	public void setEmployeeNumber(String employeeNumber) {
 		this.employeeNumber = employeeNumber;
 	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+	
 }

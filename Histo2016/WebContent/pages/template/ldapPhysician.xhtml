@@ -7,7 +7,7 @@
 	<!--  <ui:param name="searchString" value="" /> -->
 	<!--  <ui:param name="performAction" value="searchForPhysician"/>-->
 	<!--  <ui:param name="performObject" value="#{listTemplates.selectedTemplate}"/>-->
-
+	<!--  <ui:param name="selection" value=""/>-->
 
 	<p:panelGrid styleClass="patientSearchTable" columns="2"
 		columnClasses="categoryColum,">
@@ -16,12 +16,16 @@
 
 		<p:inputText value="#{searchString}" id="searchStringInput"
 			widgetVar="searchStringInput">
-			<p:ajax event="keyup" delay="500" listener="#{performObject[performAction](searchString)}"
+			<p:ajax event="keyup" delay="500"
+				listener="#{performObject[performAction](searchString)}"
 				update="ldapPhysicianList" process="@this" />
 		</p:inputText>
 
 		<h:outputLabel value="" />
-		<p:dataTable var="physician" value="#{physicianList}" id="ldapPhysicianList"
+		<p:dataTable var="physician" value="#{physicianList}"
+			id="ldapPhysicianList" selectionMode="single"
+			rowKey="#{physician.id}"
+			selection="#{selection}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 			<!-- title -->
@@ -29,6 +33,11 @@
 				headerText="#{msg['dialog.settings.person.title']}"
 				style="width:20%">
 				<h:outputText value="#{physician.fullName}" />
+			</p:column>
+			<p:column sortBy="#{physician.title}"
+				headerText="#{msg['dialog.settings.person.title']}"
+				style="width:20%">
+				<h:outputText value="#{physician.clinicTitle}" />
 			</p:column>
 		</p:dataTable>
 

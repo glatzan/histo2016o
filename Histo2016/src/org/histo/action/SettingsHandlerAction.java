@@ -55,6 +55,8 @@ public class SettingsHandlerAction {
 
 	public static final int PHYSICIAN_LIST = 0;
 	public static final int PHYSICIAN_EDIT = 1;
+	public static final int PHYSICIAN_ADD_EXTER = 2;
+	public static final int PHYSICIAN_ADD_LDPA = 3;
 
 	@Autowired
 	private HelperHandlerAction helper;
@@ -173,10 +175,21 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * Physician
 	 ********************************************************/
+
+	/**
+	 * Determines the input gui which is shown
+	 */
+	private int physicianIndex = 0;
+
 	/**
 	 * List containing all physicians known in the histo database
 	 */
 	private List<Physician> physicians;
+
+	/**
+	 * Used for creating new or for editing existing physicians
+	 */
+	private Physician editPhysician;
 
 	/**
 	 * List containing all physicians available from ldap
@@ -184,20 +197,14 @@ public class SettingsHandlerAction {
 	private List<Physician> ldapPhysicians;
 
 	/**
-	 * If true a ldap list will be shown to select the physicain from. If false
-	 * a inputmask is to add an external physician.
+	 * String is used for searching for internal physicians
 	 */
-	private boolean internalPhysician = true;
+	private String ldapPhysicianSearchString;
 
 	/**
-	 * String is used for searching for internal physicians 
+	 * Used for selecting a physician from the ldap list
 	 */
-	private String internalPhysicianSearchString;
-	
-	
-	private Physician editPhysician;
-
-	private int physicianIndex = 0;
+	private Physician selectedLdapPhysician;
 
 	private boolean personSurgeon = true;
 
@@ -501,54 +508,97 @@ public class SettingsHandlerAction {
 	 ********************************************************/
 
 	/******************************************************** Physician ********************************************************/
+	/**
+	 * Shows all added Physicians (ROLE: Surgeon, Extern, Other)
+	 */
 	public void preparePhysicianList() {
 		setPhysicians(physicianDAO.getPhysicians(isPersonSurgeon(), isPersonExtern(), isPersonOther()));
-
 	}
 
+	/**
+	 * Shows the add external or ldap screen per default the ldap select screnn
+	 * is used.
+	 */
 	public void prepareNewPhysician() {
 		setEditPhysician(new Physician());
-		setPhysicianIndex(PHYSICIAN_EDIT);
+		setPhysicianIndex(PHYSICIAN_ADD_LDPA);
 	}
 
-	public void searchForPhysician(String name) {
-		System.out.println("searching for name " + name);
-		// removing multiple spaces an commas and replacing them with one space, splitting the whole thing into an array
-		String[] arr = name.replaceAll("[ ,]+", " ").split(" ");
-		StringBuffer request = new StringBuffer("(&");
-		for (int i = 0; i < arr.length; i++) {
-			request.append("(cn=*"+arr[i]+"*)");
-		}
-		request.append(")");
-		System.out.println(request);
-		
-		List<Physician> listP = UserUtil.getPhysiciansFromLDAP(request.toString());
-		
-		for (Physician physician : listP) {
-			System.out.println(physician.getFullName());
-			
-		}
-		
-		setLdapPhysicians(listP);
-	}
-
+	/**
+	 * Shows the gui for editing an existing physician
+	 * 
+	 * @param physician
+	 */
 	public void prepareEditPhysician(Physician physician) {
 		setEditPhysician(physician);
 		setPhysicianIndex(PHYSICIAN_EDIT);
 	}
 
+	/**
+	 * Generates an ldap search filter (?(xxx)....) and offers the result list
+	 * 
+	 * @param name
+	 */
+	public void searchForPhysician(String name) {
+		// removing multiple spaces an commas and replacing them with one space,
+		// splitting the whole thing into an array
+		String[] arr = name.replaceAll("[ ,]+", " ").split(" ");
+		StringBuffer request = new StringBuffer("(&");
+		for (int i = 0; i < arr.length; i++) {
+			request.append("(cn=*" + arr[i] + "*)");
+		}
+		request.append(")");
+
+		List<Physician> listP = UserUtil.getPhysiciansFromLDAP(request.toString());
+
+		setLdapPhysicians(listP);
+	}
+
 	public void savePhysician(Physician physician) {
-		if (!physician.isRoleSurgeon() && !physician.isRoleClinicDoctor() && !physician.isRoleResidentDoctor())
+		// always set role to miscellaneous if no other role was selected
+		if (!physician.isRoleSurgeon() && !physician.isRoleResidentDoctor())
 			physician.setRoleMiscellaneous(true);
 
 		genericDAO.save(physician);
 		discardEditPhysician();
 	}
 
+	public void savePhysician(Physician ldapPhysician, Physician editPhysician) {
+		// removing id from the list
+		ldapPhysician.setId(0);
+		
+		// if internal physician from ldap it might have been added before,
+		// search fur unique uid
+		Physician physicianFromDatabase = physicianDAO.loadPhysicianByUID(ldapPhysician.getUid());
+		if (physicianFromDatabase != null){
+			UserUtil.updatePhysicianData(physicianFromDatabase, ldapPhysician);
+			ldapPhysician = physicianFromDatabase;
+			System.out.println("internal found updatin!");
+		}
+		
+
+		ldapPhysician.setRoleMiscellaneous(editPhysician.isRoleMiscellaneous());
+		ldapPhysician.setRoleResidentDoctor(editPhysician.isRoleResidentDoctor());
+		ldapPhysician.setRoleSurgeon(editPhysician.isRoleSurgeon());
+		
+		savePhysician(ldapPhysician);
+	}
+
+	public void removePhysician(Physician physician) {
+		physician.setRoleMiscellaneous(false);
+		physician.setRoleResidentDoctor(false);
+		physician.setRoleSurgeon(false);
+	}
+
 	public void discardEditPhysician() {
-		if (getEditPhysician().getId() != 0)
+		// if a physician was edited remove all chagnes
+		if (getPhysicianIndex() == PHYSICIAN_EDIT && getEditPhysician().getId() != 0)
 			genericDAO.refresh(getEditPhysician());
+
 		setEditPhysician(null);
+		setSelectedLdapPhysician(null);
+		
+		// update physician list
 		preparePhysicianList();
 		setPhysicianIndex(PHYSICIAN_LIST);
 	}
@@ -779,14 +829,6 @@ public class SettingsHandlerAction {
 		this.editPhysician = editPhysician;
 	}
 
-	public boolean isInternalPhysician() {
-		return internalPhysician;
-	}
-
-	public void setInternalPhysician(boolean internalPhysician) {
-		this.internalPhysician = internalPhysician;
-	}
-
 	public List<Physician> getLdapPhysicians() {
 		return ldapPhysicians;
 	}
@@ -795,12 +837,20 @@ public class SettingsHandlerAction {
 		this.ldapPhysicians = ldapPhysicians;
 	}
 
-	public String getInternalPhysicianSearchString() {
-		return internalPhysicianSearchString;
+	public String getLdapPhysicianSearchString() {
+		return ldapPhysicianSearchString;
 	}
 
-	public void setInternalPhysicianSearchString(String internalPhysicianSearchString) {
-		this.internalPhysicianSearchString = internalPhysicianSearchString;
+	public void setLdapPhysicianSearchString(String ldapPhysicianSearchString) {
+		this.ldapPhysicianSearchString = ldapPhysicianSearchString;
+	}
+
+	public Physician getSelectedLdapPhysician() {
+		return selectedLdapPhysician;
+	}
+
+	public void setSelectedLdapPhysician(Physician selectedLdapPhysician) {
+		this.selectedLdapPhysician = selectedLdapPhysician;
 	}
 
 	/********************************************************

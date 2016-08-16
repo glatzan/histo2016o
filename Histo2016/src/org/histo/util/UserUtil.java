@@ -16,6 +16,7 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.commons.lang3.StringUtils;
 import org.histo.config.HistoSettings;
 import org.histo.model.Physician;
 import org.histo.model.UserAcc;
@@ -85,6 +86,27 @@ public class UserUtil {
 	}
 
 	/**
+	 * Copies the new ldap data form update Physician to the original Physician
+	 * 
+	 * @param original
+	 * @param update
+	 * @return
+	 */
+	public static final Physician updatePhysicianData(Physician original, Physician update) {
+		original.setFullName(update.getFullName());
+		original.setUid(update.getUid());
+		original.setName(update.getName());
+		original.setEmployeeNumber(update.getEmployeeNumber());
+		original.setSurname(update.getSurname());
+		original.setEmail(update.getEmail());
+		original.setPhoneNumber(update.getPhoneNumber());
+		original.setPager(update.getPager());
+		original.setDepartment(update.getDepartment());
+		original.setClinicTitle(update.getTitle());
+		return original;
+	}
+
+	/**
 	 * cn: Dr. Michael Reich ou: Klinik für Augenheilkunde givenName: Andreas
 	 * mail: andreas.glatz@uniklinik-freiburg.de sn: Glatz title: Arzt
 	 * telephonenumber: +49 761 270 40010 pager: 12-4027
@@ -94,7 +116,7 @@ public class UserUtil {
 	 * @return
 	 * @throws NamingException
 	 */
-	public static final Physician updateUserData(Physician physician, Attributes attrs) throws NamingException {
+	public static final Physician updatePhysicianData(Physician physician, Attributes attrs) throws NamingException {
 
 		// name surname title
 		Attribute attr = attrs.get("cn");
@@ -103,15 +125,21 @@ public class UserUtil {
 			physician.setFullName(attr.get().toString());
 		}
 
+		// uid
+		attr = attrs.get("uid");
+		if (attr != null && attr.size() == 1) {
+			physician.setUid(attr.get().toString());
+		}
+
 		// name
 		attr = attrs.get("sn");
-
 		if (attr != null && attr.size() == 1) {
 			physician.setName(attr.get().toString());
 		}
 
 		attr = attrs.get("employeeNumber");
 		if (attr != null && attr.size() == 1) {
+			System.out.println(attr.get().toString());
 			physician.setEmployeeNumber(attr.get().toString());
 		}
 		attr = attrs.get("givenName");
@@ -151,11 +179,8 @@ public class UserUtil {
 
 	public static final List<Physician> getPhysiciansFromLDAP(String filter) {
 		ArrayList<Physician> physicians = new ArrayList<>();
-		
+
 		try {
-			System.out.println();
-			System.out.println("*** Search ***");
-			System.out.println();
 			Hashtable env = new Hashtable(5, 0.75f);
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			env.put(Context.PROVIDER_URL, "ldap://" + HistoSettings.LDAP_HOST + ":" + HistoSettings.LDAP_PORT + "/"
@@ -166,18 +191,23 @@ public class UserUtil {
 
 			DirContext ctx = new InitialDirContext(env);
 
-			// String filter = "(&(cn=*Glatz*)(cn=*Andreas*))";
-
 			NamingEnumeration results = ctx.search(HistoSettings.LDAP_BASE, filter, constraints);
 
-			System.out.println(filter);
+			// temp id
+			int i = 0;
 			while (results != null && results.hasMore()) {
 				SearchResult result = (SearchResult) results.next();
 				Attributes attrs = result.getAttributes();
-				if(attrs != null){
-					Physician newPhysician = new Physician();
-					physicians.add(newPhysician);
-					updateUserData(newPhysician, attrs);
+				if (attrs != null) {
+					// check if uid is not a number, only people with a name as
+					// uid are active
+					Attribute attr = attrs.get("uid");
+					if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
+						Physician newPhysician = new Physician(i++);
+						newPhysician.setRoleClinicDoctor(true);
+						physicians.add(newPhysician);
+						updatePhysicianData(newPhysician, attrs);
+					}
 				}
 			}
 		} catch (NamingException e) {

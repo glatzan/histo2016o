@@ -15,7 +15,9 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
+import org.apache.commons.lang3.StringUtils;
 import org.histo.dao.UserDAO;
+import org.histo.model.Physician;
 import org.histo.model.UserAcc;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private UserDAO userDAO;
-	
+
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String userName = authentication.getName().trim();
 		String password = authentication.getCredentials().toString().trim();
@@ -60,11 +62,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			Attributes attrs = null;
 			while (results != null && results.hasMore()) {
 				SearchResult result = (SearchResult) results.next();
-				dn = result.getName() + "," + base + "," + suffix;
-				result.getAttributes();
-				System.out.println("dn: " + dn);
-				count++;
-				attrs = result.getAttributes();
+
+				Attributes attrsTmp = result.getAttributes();
+
+				if (attrsTmp != null) {
+					Attribute attr = attrsTmp.get("uid");
+					if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
+						count++;
+						dn = result.getName() + "," + base + "," + suffix;
+						attrs = attrsTmp;
+					} else {
+						System.out.println("Not activ account: " + attr.get().toString());
+					}
+
+				}
 			}
 
 			if ((dn == null) || (count != 1)) {
@@ -79,30 +90,31 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			// if now error is thrown the auth attend was successful
 			ctx = new InitialDirContext(env);
 
-			
 			System.out.println("*** Bind erfolgreich ***");
 			UserAcc userAcc = userDAO.loadUserByName(userName);
-			
+
 			if (userAcc == null) {
 				userAcc = UserUtil.createNewUser(userName);
+
+				// if the physician was added as surgeon the useracc an the
+				// physician will be merged
+				Physician tmp = userDAO.loadPhysicianByUID(userName);
+				if (tmp != null)
+					userAcc.setPhysician(tmp);
 			}
 			
-			if (attrs != null) {
-				UserUtil.updateUserData(userAcc.getPhysician(), attrs);
-			} 
-			
+			// updating the physician attributes 
+			UserUtil.updatePhysicianData(userAcc.getPhysician(), attrs);
+
 			ctx.close();
-			
+
 			userAcc.setLastLogin(new Date(System.currentTimeMillis()));
-			
+
 			userDAO.saveUser(userAcc);
-			
-			System.out.println("User loaded " + userAcc);
+
 
 			Collection<? extends GrantedAuthority> authorities = userAcc.getAuthorities();
 
-			System.out.println(userAcc + " " + password + " " + authorities);
-			
 			return new UsernamePasswordAuthenticationToken(userAcc, password, authorities);
 
 		} catch (NamingException e) {
