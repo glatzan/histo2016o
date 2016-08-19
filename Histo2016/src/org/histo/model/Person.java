@@ -56,7 +56,10 @@ public class Person implements Serializable {
 	protected String email = "";
 	@Expose
 	protected String land= "";
-
+	@Expose
+	protected String department;
+	
+	
 	public Person() {
 	}
 
@@ -193,6 +196,14 @@ public class Person implements Serializable {
 		this.land = land;
 	}
 
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	
 	@Transient
 	public String patienDataAsGson() {
 		final GsonBuilder builder = new GsonBuilder();

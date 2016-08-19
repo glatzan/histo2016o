@@ -16,13 +16,14 @@
 			<ui:include src="../../template/person.xhtml">
 				<ui:param name="person"
 					value="#{worklistHandlerAction.tmpPatient.person}" />
+				<ui:param name="pannelID" value="createPatient" />
+				<ui:param name="disabled" value="false" />
 			</ui:include>
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
 			<p:commandButton value="#{msg['dialog.addPatient.add']}"
-				process="@form"
-				icon="fa fa-fw fa-user-plus"
+				process="@form" icon="fa fa-fw fa-user-plus"
 				actionListener="#{worklistHandlerAction.createNewPatient(worklistHandlerAction.tmpPatient)}">
 			</p:commandButton>
 		</p:layoutUnit>

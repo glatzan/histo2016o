@@ -253,6 +253,8 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	@Override
 	@Transient
 	public boolean isStainingPerformed() {
+
+		boolean found = false;
 		for (Block block : getBlocks()) {
 
 			if (block.isArchived())
@@ -260,8 +262,11 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 
 			if (!block.isStainingPerformed())
 				return false;
+			else
+				found = true;
 		}
-		return true;
+
+		return found;
 	}
 
 	/**

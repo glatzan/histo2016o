@@ -11,7 +11,7 @@
 		<p:layoutUnit styleClass="center" position="center">
 
 			<p:panel style="width:100%;"
-				header="#{msg['dialog.settings.person']}" styleClass="contentPannel" />
+				header="#{msg['dialog.settings.person.headline']}" styleClass="contentPannel" />
 
 			<p:dataTable var="physician" id="physician"
 				value="#{settingsHandlerAction.physicians}"
@@ -52,7 +52,7 @@
 						<i class="fa fa-fw fa-check-circle icon-green" />
 					</h:panelGroup>
 				</p:column>
-				
+
 				<!-- Andere -->
 				<p:column headerText="#{msg['dialog.settings.person.other']}"
 					style="text-align:center;">
@@ -80,7 +80,7 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2">
 					<p:commandButton value="#{msg['dialog.settings.person.new']}"
-						 icon="fa fa-fw fa-plus-circle"
+						icon="fa fa-fw fa-plus-circle"
 						actionListener="#{settingsHandlerAction.prepareNewPhysician()}"
 						update="@form"></p:commandButton>
 

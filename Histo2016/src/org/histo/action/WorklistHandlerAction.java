@@ -71,11 +71,11 @@ public class WorklistHandlerAction implements Serializable {
 
 	public final static int DISPLAY_PATIENT = 0;
 	public final static int DISPLAY_RECEIPTLOG = 1;
-	public final static int DISPLAY_DIAGNOSIS_INTERN = 10;
-	public final static int DISPLAY_EXTERNAL_RESULT_SHORT = 2;
-	public final static int DISPLAY_EXTERNAL_RESULT_EXTENDED = 3;
-	public final static int DISPLAY_INTERNAL_RESULT_SHORT = 4;
-	public final static int DISPLAY_INTERNAL_RESULT_EXTENDED = 5;
+	public final static int DISPLAY_DIAGNOSIS_INTERN = 2;
+	public final static int DISPLAY_DIAGNOSIS_INTERN_EXTENDED = 3;
+	public final static int DISPLAY_DIAGNOSIS_EXTERNAL = 4;
+	public final static int DISPLAY_DIAGNOSIS_EXTERNAL_EXTENDED = 5;
+	
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -341,7 +341,7 @@ public class WorklistHandlerAction implements Serializable {
 			else
 				return HistoSettings.CENTER_INCLUDE_BLANK;
 
-		case DISPLAY_EXTERNAL_RESULT_EXTENDED:
+		case DISPLAY_DIAGNOSIS_INTERN_EXTENDED:
 			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
 				return HistoSettings.CENTER_INCLUDE_EXTERN_EXTENDED;
 			else if (getSelectedPatient() != null)

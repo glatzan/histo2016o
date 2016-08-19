@@ -12,7 +12,7 @@
 	<p:panelGrid styleClass="patientSearchTable" columns="2"
 		columnClasses="categoryColum,">
 
-		<h:outputLabel value="Suche" />
+		<h:outputLabel value="#{msg['include.ladpPhysician.search']}" />
 
 		<p:inputText value="#{searchString}" id="searchStringInput"
 			widgetVar="searchStringInput">
@@ -24,8 +24,7 @@
 		<h:outputLabel value="" />
 		<p:dataTable var="physician" value="#{physicianList}"
 			id="ldapPhysicianList" selectionMode="single"
-			rowKey="#{physician.id}"
-			selection="#{selection}"
+			rowKey="#{physician.id}" selection="#{selection}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 			<!-- title -->
@@ -37,7 +36,7 @@
 			<p:column sortBy="#{physician.title}"
 				headerText="#{msg['dialog.settings.person.title']}"
 				style="width:20%">
-				<h:outputText value="#{physician.clinicTitle}" />
+				<h:outputText value="#{physician.clinicRole}" />
 			</p:column>
 		</p:dataTable>
 

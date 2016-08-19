@@ -229,6 +229,9 @@ public class SettingsHandlerAction {
 
 		// init statings
 		setShowStainingEdit(false);
+		
+		
+		preparePhysicianList();
 	}
 
 	/**
@@ -564,6 +567,9 @@ public class SettingsHandlerAction {
 	}
 
 	public void savePhysician(Physician ldapPhysician, Physician editPhysician) {
+		if(ldapPhysician == null)
+			return;
+		
 		// removing id from the list
 		ldapPhysician.setId(0);
 		

@@ -11,35 +11,16 @@
 		<p:layoutUnit styleClass="center" position="center">
 
 			<p:panel style="width:100%;"
-				header="#{msg['dialog.settings.person']} / Erstellen TODO"
+				header="#{msg['dialog.settings.person.edit.headline']}"
 				styleClass="contentPannel" />
 
-			<!-- Employee  -->
-			<p:panelGrid styleClass="patientSearchTable" columns="2"
-				columnClasses="categoryColum,">
-				<h:outputLabel value="Mitarbeiter" />
-				<!-- title -->
-				<h:panelGrid>
-					<p:panelGrid columns="1" styleClass="inputTable"
-						style="float:left;margin-right:20px;">
-						<p:selectOneButton value="#{settingsHandlerAction.physicianIndex}">
-							<f:selectItem itemLabel="Externer Einsender" itemValue="1" />
-							<f:selectItem itemLabel="Mitarbeiter" itemValue="2" />
-							<p:ajax update="@form"
-								listener="#{settingsHandlerAction.prepareNewPhysician()}"></p:ajax>
-						</p:selectOneButton>
-					</p:panelGrid>
-				</h:panelGrid>
-			</p:panelGrid>
-
-			<!-- External Physician -->
-			<ui:fragment rendered="#{!settingsHandlerAction.internalPhysician}">
-				<ui:include src="../../template/person.xhtml">
-					<ui:param name="person"
-						value="#{settingsHandlerAction.editPhysician}" />
-					<ui:param name="pannelID" value="editPhysician" />
-				</ui:include>
-			</ui:fragment>
+			<ui:include src="../../template/person.xhtml">
+				<ui:param name="person"
+					value="#{settingsHandlerAction.editPhysician}" />
+				<ui:param name="pannelID" value="editPhysician" />
+				<ui:param name="disabled"
+					value="#{settingsHandlerAction.editPhysician.roleClinicDoctor}" />
+			</ui:include>
 
 			<!-- Role -->
 			<p:panelGrid styleClass="patientSearchTable" columns="2"
@@ -72,11 +53,13 @@
 		</p:layoutUnit>
 
 		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="Speichern" icon="fa fa-fw fa-floppy-o"
+			<p:commandButton value="#{msg['general.save']}"
+				icon="fa fa-fw fa-floppy-o"
 				actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.editPhysician)}"
 				update="@form"></p:commandButton>
 
-			<p:commandButton value="Abbrechen" icon="fa fa-fw fa-times-circle"
+			<p:commandButton value="#{msg['general.abort']}"
+				icon="fa fa-fw fa-times-circle"
 				actionListener="#{settingsHandlerAction.discardEditPhysician()}"
 				update="@form"></p:commandButton>
 		</p:layoutUnit>

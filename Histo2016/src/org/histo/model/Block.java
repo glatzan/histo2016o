@@ -154,6 +154,8 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus {
 	@Override
 	@Transient
 	public boolean isStainingPerformed() {
+		
+		boolean found = false;
 		for (Staining staining : stainings) {
 
 			if (staining.isArchived())
@@ -161,8 +163,11 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus {
 
 			if (!staining.isStainingPerformed())
 				return false;
+			else
+				found = true;
 		}
-		return true;
+		
+		return found;
 	}
 
 	/**

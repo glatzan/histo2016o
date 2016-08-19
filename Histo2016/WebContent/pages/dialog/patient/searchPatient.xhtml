@@ -22,7 +22,7 @@
 						style="float:left;margin-right:20px;">
 						<p:inputMask value="#{worklistHandlerAction.searchForPatientPiz}"
 							mask="99999999">
-							<p:ajax event="keyup" process="submitGroup" update="patientList"  delay="1000"
+							<p:ajax process="submitGroup" update="patientList" delay="500"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
 						</p:inputMask>
 						<p:outputLabel value="#{msg['dialog.addPatient.search.piz']}" />
@@ -32,7 +32,7 @@
 						<p:calendar
 							value="#{worklistHandlerAction.searchForPatientBirthday}"
 							locale="de" pattern="dd.MM.yyyy" mask="true">
-							<p:ajax event="keyup" process="submitGroup" update="patientList"  delay="1000"
+							<p:ajax process="submitGroup" update="patientList" delay="500"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
 						</p:calendar>
 						<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
@@ -43,7 +43,7 @@
 					<p:panelGrid columns="1" styleClass="inputTable"
 						style="float:left;margin-right:20px;">
 						<p:inputText value="#{worklistHandlerAction.searchForPatientName}">
-							<p:ajax event="keyup" process="submitGroup" update="patientList"  delay="1000"
+							<p:ajax process="submitGroup" update="patientList" delay="500"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
 						</p:inputText>
 						<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
@@ -52,7 +52,7 @@
 					<p:panelGrid columns="1" styleClass="inputTable">
 						<p:inputText
 							value="#{worklistHandlerAction.searchForPatientSurname}">
-							<p:ajax event="keyup" process="submitGroup" update="patientList"  delay="1000"
+							<p:ajax process="submitGroup" update="patientList" delay="500"
 								listener="#{worklistHandlerAction.searchPatient(worklistHandlerAction.searchForPatientPiz,worklistHandlerAction.searchForPatientName,worklistHandlerAction.searchForPatientSurname, worklistHandlerAction.searchForPatientBirthday)}" />
 						</p:inputText>
 						<p:outputLabel value="#{msg['dialog.addPatient.search.surname']}" />

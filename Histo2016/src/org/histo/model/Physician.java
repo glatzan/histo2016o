@@ -25,7 +25,7 @@ public class Physician extends Person {
 	 * clinic internal title
 	 */
 	@Expose
-	private String clinicTitle;
+	private String clinicRole;
 	
 	/**
 	 * Number of the employee
@@ -39,12 +39,6 @@ public class Physician extends Person {
 	@Expose
 	private String uid;
 	
-	/**
-	 * clinic internal department
-	 */
-	@Expose
-	private String department;
-
 	/**
 	 * Is surgeon
 	 */
@@ -124,20 +118,12 @@ public class Physician extends Person {
 	}
 
 
-	public String getClinicTitle() {
-	    return clinicTitle;
+	public String getClinicRole() {
+	    return clinicRole;
 	}
 
-	public void setClinicTitle(String clinicTitle) {
-	    this.clinicTitle = clinicTitle;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
+	public void setClinicRole(String clinicRole) {
+	    this.clinicRole = clinicRole;
 	}
 
 	public String getFullName() {

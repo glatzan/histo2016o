@@ -102,7 +102,7 @@ public class UserUtil {
 		original.setPhoneNumber(update.getPhoneNumber());
 		original.setPager(update.getPager());
 		original.setDepartment(update.getDepartment());
-		original.setClinicTitle(update.getTitle());
+		original.setClinicRole(update.getTitle());
 		return original;
 	}
 
@@ -129,6 +129,12 @@ public class UserUtil {
 		attr = attrs.get("uid");
 		if (attr != null && attr.size() == 1) {
 			physician.setUid(attr.get().toString());
+		}
+
+		// dr titel
+		attr = attrs.get("personalTitle");
+		if (attr != null && attr.size() == 1) {
+			physician.setTitle(attr.get().toString());
 		}
 
 		// name
@@ -165,7 +171,7 @@ public class UserUtil {
 		// role in clinic
 		attr = attrs.get("title");
 		if (attr != null && attr.size() == 1) {
-			physician.setClinicTitle(attr.get().toString());
+			physician.setClinicRole(attr.get().toString());
 		}
 
 		// department

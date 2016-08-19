@@ -20,22 +20,23 @@
 
 				<p:selectOneMenu style="margin-top:1px;"
 					value="#{worklistHandlerAction.worklistDisplay}">
-					
+
 					<p:ajax update="contentForm" process="@this"></p:ajax>
-					
+
 					<f:selectItem itemLabel="Patient" itemValue="0" />
 					<f:selectItem itemLabel="Eingangsbuch" itemValue="1" />
-					<f:selectItem itemLabel="Diagnose intern" itemValue="10" />
-					<f:selectItem itemLabel="Interner Befund" itemValue="2" />
+					<f:selectItem itemLabel="Diagnose intern" itemValue="2" />
 					<f:selectItem itemLabel="Interner Befund ausführlich" itemValue="3" />
 					<f:selectItem itemLabel="Externer Befund" itemValue="4" />
 					<f:selectItem itemLabel="Externer Befund ausführlich" itemValue="5" />
 				</p:selectOneMenu>
-    
-    			<p:commandButton value="test" actionListener="#{settingsHandlerAction.searchPhysician()}"></p:commandButton>
 			</h:panelGrid>
 
 			<h:panelGroup styleClass="headerRight" layout="block">
+				<p:commandButton value="Test" styleClass="buttonMarginLeft"
+					actionListener="#{printHandlerAction.print()}">
+				</p:commandButton>
+
 				<p:commandButton value="Verwalten" styleClass="buttonMarginLeft"
 					actionListener="#{settingsHandlerAction.prepareSettingsDialog()}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
