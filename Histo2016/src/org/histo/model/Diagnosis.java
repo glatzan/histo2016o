@@ -12,6 +12,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.histo.config.HistoSettings;
@@ -28,6 +30,7 @@ import com.google.gson.annotations.Expose;
  */
 @Entity
 @Audited
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
 public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
 

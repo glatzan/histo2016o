@@ -40,17 +40,10 @@
 				<prop key="hibernate.connection.characterEncoding">utf8</prop>
 				<prop key="hibernate.connection.CharSet">utf8</prop>
 				<prop key="hibernate.connection.useUnicode">true</prop>
-				<prop key="org.hibernate.envers.revision_field_name">
-					rev
-				</prop>
-				<prop key="org.hibernate.envers.revision_type_field_name">
-					revision_type
-				</prop>
-				<prop key="org.hibernate.envers.revision_on_collection_change">
-					false
-				</prop>
-				<prop key="org.hibernate.envers.store_data_at_delete">
-					true
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="net.sf.ehcache.configurationResourceName">myehcache.xml</prop>
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
 				</prop>
 			</props>
 		</property>

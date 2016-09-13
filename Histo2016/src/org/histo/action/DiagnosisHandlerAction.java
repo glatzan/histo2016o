@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.stat.Statistics;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
@@ -90,7 +91,8 @@ public class DiagnosisHandlerAction implements Serializable {
 		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
 		genericDAO.save(newDiagnosis, resourceBundle.get("log.diagnosis.new"));
 		genericDAO.merge(sample);
-
+		genericDAO.refresh(sample);
+		
 		log.info(Log.LOG_DIAGNOSIS_NEW, sample.getPatient(), newDiagnosis.getId(), newDiagnosis.getName(),
 				sample.getSampleID(), sample.getParent().getTaskID());
 	}
@@ -156,8 +158,9 @@ public class DiagnosisHandlerAction implements Serializable {
 					sample.getSampleID(), sample.getParent().getTaskID(), diagnosis.asGson());
 		}
 
-		genericDAO.merge(diagnosis.getParent(), resourceBundle.get("log.diagnosis.finaziled"));
-
+		genericDAO.merge(diagnosis, resourceBundle.get("log.diagnosis.finaziled"));
+		genericDAO.refresh(diagnosis);
+		
 		hideFinalizeDiangosisDialog();
 	}
 
@@ -169,8 +172,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void saveDiagnosis(Diagnosis diagnosis) {
 		taskDAO.getDiagnosisRevisions(diagnosis);
-		
-		genericDAO.merge(diagnosis.getParent(), resourceBundle.get("log.diagnosis.changed"));
+		genericDAO.merge(diagnosis, resourceBundle.get("log.diagnosis.changed"));
+		genericDAO.refresh(diagnosis);
 	}
 	
 
@@ -189,4 +192,6 @@ public class DiagnosisHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+	
+	
 }
