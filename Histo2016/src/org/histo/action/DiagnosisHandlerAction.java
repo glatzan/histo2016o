@@ -91,7 +91,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
 		genericDAO.save(newDiagnosis, resourceBundle.get("log.diagnosis.new"));
 		genericDAO.merge(sample);
-		genericDAO.refresh(sample);
+		genericDAO.refresh(sample.getPatient());
 		
 		log.info(Log.LOG_DIAGNOSIS_NEW, sample.getPatient(), newDiagnosis.getId(), newDiagnosis.getName(),
 				sample.getSampleID(), sample.getParent().getTaskID());
@@ -159,7 +159,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		}
 
 		genericDAO.merge(diagnosis, resourceBundle.get("log.diagnosis.finaziled"));
-		genericDAO.refresh(diagnosis);
+		genericDAO.refresh(diagnosis.getPatient());
 		
 		hideFinalizeDiangosisDialog();
 	}
@@ -172,8 +172,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void saveDiagnosis(Diagnosis diagnosis) {
 		taskDAO.getDiagnosisRevisions(diagnosis);
-		genericDAO.merge(diagnosis, resourceBundle.get("log.diagnosis.changed"));
-		genericDAO.refresh(diagnosis);
+		System.out.println(diagnosis.getVersion());
+		System.out.println("- " +genericDAO.merge(diagnosis.getPatient(), resourceBundle.get("log.diagnosis.changed")));
+		System.out.println(diagnosis.getVersion());
 	}
 	
 

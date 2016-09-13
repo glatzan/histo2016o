@@ -127,9 +127,9 @@ public class GenericDAO extends AbstractDAO {
 	Statistics stats = sessionFactory.getStatistics();
 	System.out.println("Stats enabled="+stats.isStatisticsEnabled());
 	stats.setStatisticsEnabled(true);
-	
 	try {
-	    session.merge(object);
+	    session.saveOrUpdate(object);
+	    System.out.println("saving");
 	} catch (HibernateException hibernateException) {
 	    object = (C) session.merge(object);
 	    hibernateException.printStackTrace();

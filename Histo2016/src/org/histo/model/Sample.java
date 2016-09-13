@@ -17,8 +17,15 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.histo.config.HistoSettings;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.StainingStatus;
@@ -26,6 +33,10 @@ import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
 
 @Entity
+@Audited
+@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
 public class Sample implements StainingTreeParent<Task>, StainingStatus, DiagnosisStatus {
 
@@ -113,6 +124,7 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("blockID ASC")
+	@NotAudited
 	public List<Block> getBlocks() {
 		if (blocks == null)
 			blocks = new ArrayList<Block>();
@@ -123,7 +135,7 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 		this.blocks = blocks;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(cascade = {CascadeType.REFRESH, CascadeType.ALL}, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	public List<Diagnosis> getDiagnoses() {
 		if (diagnoses == null)
@@ -302,6 +314,7 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	 * Interface StainingTreeParent
 	 ********************************************************/
 	@ManyToOne(targetEntity = Task.class)
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	public Task getParent() {
 		return parent;
 	}

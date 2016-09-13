@@ -344,7 +344,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.creationDate = creationDate;
 	}
 
-	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, targetEntity = Sample.class, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parent", cascade = {CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	public List<Sample> getSamples() {

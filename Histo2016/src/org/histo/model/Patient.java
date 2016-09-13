@@ -111,7 +111,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 		this.piz = piz;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(cascade = {CascadeType.REFRESH, CascadeType.ALL}, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id DESC")
 	public List<Task> getTasks() {
