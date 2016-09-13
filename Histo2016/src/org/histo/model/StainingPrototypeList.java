@@ -14,12 +14,11 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.histo.model.util.EditAbleEntity;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
-
-import histo.model.util.EditAbleEntity;
 
 @Entity
 @SequenceGenerator(name = "stainingPrototypeList_sequencegenerator", sequenceName = "stainingPrototypeList_sequence")

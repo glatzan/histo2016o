@@ -179,6 +179,13 @@ public class UserUtil {
 		if (attr != null && attr.size() == 1) {
 			physician.setDepartment(attr.get().toString());
 		}
+//		for (NamingEnumeration ae = attrs.getAll(); ae.hasMoreElements();) {
+//			attr = (Attribute) ae.next();
+//			String attrId = attr.getID();
+//			for (Enumeration vals = attr.getAll(); vals.hasMoreElements(); System.out
+//					.println(attrId + ": " + vals.nextElement()))
+//				;
+//		}
 
 		return physician;
 	}

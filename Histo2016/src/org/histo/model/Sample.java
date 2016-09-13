@@ -20,11 +20,10 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.config.HistoSettings;
+import org.histo.model.util.DiagnosisStatus;
+import org.histo.model.util.StainingStatus;
+import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
-
-import histo.model.util.DiagnosisStatus;
-import histo.model.util.StainingStatus;
-import histo.model.util.StainingTreeParent;
 
 @Entity
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
@@ -124,7 +123,7 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 		this.blocks = blocks;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	public List<Diagnosis> getDiagnoses() {
 		if (diagnoses == null)

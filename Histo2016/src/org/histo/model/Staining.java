@@ -14,8 +14,7 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.histo.config.HistoSettings;
-
-import histo.model.util.StainingTreeParent;
+import org.histo.model.util.StainingTreeParent;
 
 @Entity
 @SequenceGenerator(name = "staining_sequencegenerator", sequenceName = "staining_sequence")

@@ -95,30 +95,33 @@
 							<h:outputText
 								value="#{contact.physician.person.title} #{contact.physician.person.name}" />
 						</p:column>
-						
+
 						<p:column headerText="Rolle">
 							<h:outputText value="Operteur" rendered="#{contact.role eq 1}" />
 							<h:outputText value="Einsender" rendered="#{contact.role eq 2}" />
 							<h:outputText value="Andere" rendered="#{contact.role eq 3}" />
 						</p:column>
-						
+
 						<p:column>
 							<f:facet name="header">
 								<i class="fa fa-envelope-o" />
 							</f:facet>
-							<p:selectBooleanCheckbox value="#{contact.useEmail}" disabled="true"/>
+							<p:selectBooleanCheckbox value="#{contact.useEmail}"
+								disabled="true" />
 						</p:column>
 						<p:column>
 							<f:facet name="header">
 								<i class="fa fa-phone" />
 							</f:facet>
-							<p:selectBooleanCheckbox value="#{contact.usePhone}" disabled="true"/>
+							<p:selectBooleanCheckbox value="#{contact.usePhone}"
+								disabled="true" />
 						</p:column>
 						<p:column>
 							<f:facet name="header">
 								<i class="fa fa-fax" />
 							</f:facet>
-							<p:selectBooleanCheckbox value="#{contact.useFax}" disabled="true" />
+							<p:selectBooleanCheckbox value="#{contact.useFax}"
+								disabled="true" />
 						</p:column>
 					</p:dataTable>
 				</p:column>
@@ -160,11 +163,14 @@
 					<p:tabView styleClass="tabView">
 
 
+						<!-- ******************************** Diagnosis ******************************** -->
 						<p:tab title="Diagnose">
+
 							<!-- Diagnosis -->
 							<f:facet name="title">
-								<!-- *********** Staining *********** -->
-								<h:outputLabel value="#{msg['body.statiningView.tab.name']}" />
+
+								<h:outputLabel value="#{msg['body.diagnosisView.tab.name']}" />
+
 								<!-- staining completed -->
 								<h:panelGroup
 									rendered="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}">
@@ -190,19 +196,38 @@
 											style="vertical-align:top;">
 											<p:panelGrid columns="1">
 												<h:outputLabel value="Probe #{sample.sampleID}" />
+												<p:commandLink
+													rendered="#{diagnosisHandlerAction.isDiagonsisFollowUPCreationPossible(sample)}"
+													title="Nachbefundung erstellen"
+													actionListener="#{diagnosisHandlerAction.createNewDiagnosis(sample,1)}"
+													update="contentForm">
+													<h:outputLabel value="(Nachbefundung)"
+														style="font-size:10px; margin-left: 10px;" />
+												</p:commandLink>
+												<p:commandLink
+													rendered="#{diagnosisHandlerAction.isDiagonsisRevisionCreationPossible(sample)}"
+													title="Diagnoserevision erstellen"
+													actionListener="#{diagnosisHandlerAction.createNewDiagnosis(sample,2)}"
+													update="contentForm">
+													<h:outputLabel value="(Diagnoserevision)"
+														style="font-size:10px; margin-left: 10px;" />
+												</p:commandLink>
 											</p:panelGrid>
 										</p:column>
 
 										<p:column>
 
 											<p:accordionPanel value="#{sample.diagnoses}" var="diagnosis"
-												styleClass="diagnosesAccordion">
+												multiple="true" styleClass="diagnosesAccordion">
 												<p:tab>
 													<f:facet name="title">
-														<p:inplace styleClass="inplaceInput">
+														<p:inplace styleClass="inplaceInput"
+															disabled="#{diagnosis.finalized}">
 															<p:inputText value="#{diagnosis.name}"
 																styleClass="inplaceInput" />
 														</p:inplace>
+														<h:outputLabel value="#{diagnosis.diagnosis}"
+															rendered="#{diagnosis.diagnosis ne null}" />
 													</f:facet>
 
 													<h:panelGrid columns="1" style="width:100%;">
@@ -248,12 +273,16 @@
 																rendered="#{!diagnosis.finalized}"
 																process="navigationForm contentForm"
 																update="navigationForm contentForm"
-																actionListener="#{worklistHandlerAction.saveObject(diagnosis)}"></p:commandButton>
+																actionListener="#{diagnosisHandlerAction.saveDiagnosis(diagnosis)}"></p:commandButton>
 															<p:commandButton value="Finalisieren"
-																rendered="#{!diagnosis.finalized}"
-																process="navigationForm contentForm"
-																update="navigationForm contentForm"
-																actionListener="#{worklistHandlerAction.prepareFinalizeDiagnosis(diagnosis)}">
+																rendered="#{!diagnosis.finalized}" process="contentForm"
+																actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
+																<p:ajax event="dialogReturn"
+																	update="navigationForm contentForm" />
+															</p:commandButton>
+															<p:commandButton value="Editieren"
+																rendered="#{diagnosis.finalized}" process="contentForm"
+																actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
 																<p:ajax event="dialogReturn"
 																	update="navigationForm contentForm" />
 															</p:commandButton>
@@ -269,7 +298,7 @@
 								</c:forEach>
 							</p:panelGrid>
 						</p:tab>
-
+						<!-- ******************************** Diagnosis ******************************** -->
 
 
 

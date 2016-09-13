@@ -6,25 +6,34 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>Diagnose finalisieren</title>
+	<title><h:outputFormat
+			value="#{msg['dialog.diagnosis.finalize.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
-<h:body>
+<h:body styleClass="dialogLayout">
 	<h:form>
-		<h:panelGrid columns="1">
-			<h:outputLabel
-				value="Soll diese Diagnose finalisiert werden? Nach diesem Schritt sind keine Änderungen mehr möglich!"
-				styleClass="boldTitle" />
-			<h:panelGrid columns="2">
-				<p:commandButton value="Finalisieren"
-					actionListener="#{worklistHandlerAction.finalizeDiagnosis( worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.tmpDiagnosis,true)}"></p:commandButton>
-				<p:commandButton value="Abbrechen"
-					actionListener="#{worklistHandlerAction.finalizeDiagnosis(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.tmpDiagnosis,false)}"></p:commandButton>
-			</h:panelGrid>
-		</h:panelGrid>
+		<p:layout fullPage="true">
+			<p:layoutUnit position="center" styleClass="center">
+				<h:outputFormat
+					value="#{msg['dialog.diagnosis.finalize.diagnosis.text']}"
+					escape="false"
+					rendered="#{diagnosisHandlerAction.isDiangosisToFinalizeDiagnosisOrFollowUP(diagnosisHandlerAction.tmpDiagnosis)}" />
+				<h:outputFormat
+					value="#{msg['dialog.diagnosis.finalize.revision.text']}"
+					escape="false"
+					rendered="#{!diagnosisHandlerAction.isDiangosisToFinalizeDiagnosisOrFollowUP(diagnosisHandlerAction.tmpDiagnosis)}" />
+			</p:layoutUnit>
+
+			<p:layoutUnit position="south" styleClass="botton" resizable="false">
+				<p:commandButton
+					value="#{msg['dialog.diagnosis.finalize.button.ok']}"
+					actionListener="#{diagnosisHandlerAction.finalizeDiagnosis(diagnosisHandlerAction.tmpDiagnosis)}"></p:commandButton>
+				<p:commandButton value="#{msg['general.abort']}" style="margin-left:10px;"
+					actionListener="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></p:commandButton>
+			</p:layoutUnit>
+		</p:layout>
 	</h:form>
 </h:body>
 </html>
-
 

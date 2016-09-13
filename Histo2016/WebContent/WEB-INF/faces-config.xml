@@ -15,10 +15,6 @@
 			<default-locale>de</default-locale>
 		</locale-config>
 		
-		<resource-bundle>
-			<base-name>org.histo.localization.messages</base-name>
-			<var>msg</var>
-		</resource-bundle>
 	</application>
 
 </faces-config>

@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(value="session")
 public abstract class AbstractDAO implements Serializable{
 
-    @Autowired 
+	private static final long serialVersionUID = 8566919900494360311L;
+
+	@Autowired 
     private SessionFactory sessionFactory;
 
     private Session session;
@@ -27,7 +29,6 @@ public abstract class AbstractDAO implements Serializable{
             return sessionFactory.getCurrentSession();
         } catch (HibernateException hibernateException) {
             hibernateException.printStackTrace();
-            System.out.println("Creation new session!!!!!!!!!!!!!!!" );
             if (session == null || !session.isOpen()) {
                 session = sessionFactory.openSession();
             }

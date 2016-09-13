@@ -66,7 +66,8 @@ public class TaskUtil {
 		diagnosis.setType(type);
 		diagnosis.setDiagnosisOrder(sample.getDiagnosisNumber());
 		diagnosis.setName(getDiagnosisName(sample, diagnosis));
-
+		diagnosis.setParent(sample);
+		
 		sample.incrementDiagnosisNumber();
 		sample.getDiagnoses().add(diagnosis);
 

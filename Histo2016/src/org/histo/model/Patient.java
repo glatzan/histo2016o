@@ -19,15 +19,14 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.histo.model.util.DiagnosisStatus;
+import org.histo.model.util.StainingStatus;
+import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
-
-import histo.model.util.DiagnosisStatus;
-import histo.model.util.StainingStatus;
-import histo.model.util.StainingTreeParent;
 
 @Entity
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")

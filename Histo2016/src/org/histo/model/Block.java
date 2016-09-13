@@ -20,10 +20,9 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.config.HistoSettings;
+import org.histo.model.util.StainingStatus;
+import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
-
-import histo.model.util.StainingStatus;
-import histo.model.util.StainingTreeParent;
 
 @Entity
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")

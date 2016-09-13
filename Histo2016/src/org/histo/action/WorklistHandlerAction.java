@@ -1,12 +1,19 @@
 package org.histo.action;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import javax.annotation.PostConstruct;
 
@@ -30,6 +37,8 @@ import org.histo.model.StainingPrototype;
 import org.histo.model.StainingPrototypeList;
 import org.histo.model.Task;
 import org.histo.model.UserRole;
+import org.histo.model.util.ArchiveAble;
+import org.histo.model.util.StainingTreeParent;
 import org.histo.ui.PatientList;
 import org.histo.ui.StainingListTransformer;
 import org.histo.util.Log;
@@ -41,10 +50,12 @@ import org.histo.util.WorklistUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
-
-import histo.model.util.ArchiveAble;
-import histo.model.util.StainingTreeParent;
 
 @Component
 @Scope(value = "session")
@@ -75,7 +86,6 @@ public class WorklistHandlerAction implements Serializable {
 	public final static int DISPLAY_DIAGNOSIS_INTERN_EXTENDED = 3;
 	public final static int DISPLAY_DIAGNOSIS_EXTERNAL = 4;
 	public final static int DISPLAY_DIAGNOSIS_EXTERNAL_EXTENDED = 5;
-	
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -101,6 +111,9 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	private Log log;
+	
+	@Autowired
+	private org.histo.util.ResourceBundle resourceBundle;
 
 	/******************************************************** Patient ********************************************************/
 	/**
@@ -375,12 +388,12 @@ public class WorklistHandlerAction implements Serializable {
 
 		hideSortWorklistDialog();
 	}
-	
-	public void prepareSortWorklistDialog(){
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_ORDER),300, 220,false,false,true);
+
+	public void prepareSortWorklistDialog() {
+		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_ORDER), 300, 220, false, false, true);
 	}
-	
-	public void hideSortWorklistDialog(){
+
+	public void hideSortWorklistDialog() {
 		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_ORDER));
 	}
 
@@ -665,6 +678,8 @@ public class WorklistHandlerAction implements Serializable {
 			createNewSample(task, stainingPrototypeList);
 		}
 
+		genericDAO.save(patient);
+		
 		hideNewTaskDialog();
 	}
 
@@ -688,15 +703,14 @@ public class WorklistHandlerAction implements Serializable {
 		log.info("Neue Probe erstellt: TaskID: " + task.getTaskID() + ", SampleID: " + newSample.getSampleID(),
 				getSelectedPatient());
 
+		
+		genericDAO.save(newSample);
+		
 		// creating first default diagnosis
 		createNewDiagnosis(newSample, Diagnosis.TYPE_DIAGNOSIS);
-
-		genericDAO.save(newSample);
-
+			
+		// creating needed blocks
 		createNewBlock(newSample, stainingPrototypeList);
-
-		// updating Gui
-		task.generateStainingGuiList();
 
 	}
 
@@ -773,6 +787,26 @@ public class WorklistHandlerAction implements Serializable {
 		if (diagnosisPrototype != null) {
 			diagnosis.setDiagnosis(diagnosisPrototype.getName());
 		}
+	}
+
+	public void createNewDiagnosisTypSelectAuto(Sample sample) {
+		List<Diagnosis> diagnoses = sample.getDiagnoses();
+		
+		// create new diagnosis
+		if (diagnoses.isEmpty()) {
+			createNewDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS);
+		// create revision 
+		} else if (diagnoses.size() == 1) {
+			createNewDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS_REVISION);
+		// if diagnosis and revision 
+		}else{
+			
+			for (Diagnosis diagnosis : diagnoses) {
+				if(!diagnosis.isFinalized())
+					return;
+			}
+		}
+
 	}
 
 	/**
@@ -1084,29 +1118,6 @@ public class WorklistHandlerAction implements Serializable {
 	 * Task Dialogs
 	 ********************************************************/
 
-	public void prepareFinalizeDiagnosis(Diagnosis diagnosis) {
-		setTmpDiagnosis(diagnosis);
-
-		helper.showDialog("/pages/dialog/task/finalizeConfirm", true, false, true);
-		log.info("Shown finalizes diagnosis warning");
-	}
-
-	public void finalizeDiagnosis(Task task, Diagnosis diagnosis, boolean finalize) {
-
-		if (finalize) {
-			diagnosis.setFinalized(true);
-			genericDAO.save(diagnosis);
-		}
-
-		for (Sample sample : task.getSamples()) {
-			// updateSample(sample);
-		}
-
-		genericDAO.save(task);
-
-		log.info("Shown finalizes diagnosis warning");
-		helper.hideDialog("/pages/dialog/task/finalizeConfirm");
-	}
 
 	// public void updateSample(Sample sample) {
 	// boolean completed = true;

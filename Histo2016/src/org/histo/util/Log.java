@@ -12,6 +12,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.sun.javafx.binding.StringFormatter;
+
+import javafx.beans.binding.StringExpression;
+
 /**
  * Login Class for storing log-data
  * 
@@ -20,6 +24,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Log {
+
+	public static final String LOG_DIAGNOSIS_NEW = "Neue Diagnose erstellt (ID %s, Name %s) (Probe %s, Auftrag %s)";
+	public static final String LOG_DIAGNOSIS_FINALIZED = "Diangose finalisiert (ID %s, Name %s) (Probe %s, Auftrag %s) (Inhalt: %s)";
 
 	private Logger logger;
 
@@ -30,7 +37,7 @@ public class Log {
 	public Log() {
 		logger = Logger.getLogger(Log.class.getName());
 	}
-	
+
 	public Log(Class<?> classToLog) {
 		logger = Logger.getLogger(classToLog.getName());
 	}
@@ -45,6 +52,11 @@ public class Log {
 
 	public void info(String message, Patient patient) {
 		log(message, patient, History.LEVEL_INFO);
+	}
+
+	public void info(String message, Patient patient, Object... args) {
+		String log = String.format(message, args);
+		log(log, patient, History.LEVEL_INFO);
 	}
 
 	public void log(String message, Patient patient, int level) {

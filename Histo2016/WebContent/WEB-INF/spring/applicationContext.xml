@@ -40,6 +40,18 @@
 				<prop key="hibernate.connection.characterEncoding">utf8</prop>
 				<prop key="hibernate.connection.CharSet">utf8</prop>
 				<prop key="hibernate.connection.useUnicode">true</prop>
+				<prop key="org.hibernate.envers.revision_field_name">
+					rev
+				</prop>
+				<prop key="org.hibernate.envers.revision_type_field_name">
+					revision_type
+				</prop>
+				<prop key="org.hibernate.envers.revision_on_collection_change">
+					false
+				</prop>
+				<prop key="org.hibernate.envers.store_data_at_delete">
+					true
+				</prop>
 			</props>
 		</property>
 	</bean>
@@ -56,5 +68,11 @@
 	<bean id="persistenceExceptionTranslationPostProcessor"
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames" value="messages\messages">
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
 
 </beans>
