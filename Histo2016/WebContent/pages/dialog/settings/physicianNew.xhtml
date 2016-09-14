@@ -7,105 +7,109 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:layout styleClass="tabLayout">
-		<p:layoutUnit styleClass="center" position="center">
+	<div class="contentDiv">
 
-			<p:panel style="width:100%;"
-				header="#{msg['dialog.settings.person.new.headline']}"
-				styleClass="contentPannel" />
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.settings.person.new.headline']}"
+			styleClass="contentPannel" />
 
-			<!-- Employee  -->
-			<p:panelGrid styleClass="patientSearchTable" columns="2"
-				columnClasses="categoryColum,">
-				<h:outputLabel value="Mitarbeiter" />
-				<!-- title -->
-				<h:panelGrid>
-					<p:panelGrid columns="1" styleClass="inputTable"
-						style="float:left;margin-right:20px;">
-						<p:selectOneButton value="#{settingsHandlerAction.physicianIndex}">
-							<f:selectItem
-								itemLabel="#{msg['dialog.settings.person.new.external']}"
-								itemValue="2" />
-							<f:selectItem
-								itemLabel="#{msg['dialog.settings.person.new.employee']}"
-								itemValue="3" />
-							<p:ajax update="@form"></p:ajax>
-						</p:selectOneButton>
-					</p:panelGrid>
-				</h:panelGrid>
-			</p:panelGrid>
+		<!-- Employee  -->
+		<p:panelGrid styleClass="patientSearchTable" columns="2"
+			columnClasses="categoryColum,">
+			<h:outputLabel value="Mitarbeiter" />
+			<!-- title -->
+			<h:panelGrid>
+				<p:panelGrid columns="1" styleClass="inputTable"
+					style="float:left;margin-right:20px;">
+					<p:selectOneButton value="#{settingsHandlerAction.physicianIndex}">
+						<f:selectItem
+							itemLabel="#{msg['dialog.settings.person.new.external']}"
+							itemValue="2" />
+						<f:selectItem
+							itemLabel="#{msg['dialog.settings.person.new.employee']}"
+							itemValue="3" />
+						<p:ajax update="@form"></p:ajax>
+					</p:selectOneButton>
+				</p:panelGrid>
+			</h:panelGrid>
+		</p:panelGrid>
 
-			<!-- Internal Physician (Employee, get data from LDAP)-->
-			<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 3}">
-				<ui:include src="../../template/ldapPhysician.xhtml">
-					<ui:param name="physicianList"
-						value="#{settingsHandlerAction.ldapPhysicians}" />
-					<ui:param name="searchString"
-						value="#{settingsHandlerAction.ldapPhysicianSearchString}" />
-					<ui:param name="performAction" value="searchForPhysician" />
-					<ui:param name="performObject" value="#{settingsHandlerAction}" />
-					<ui:param name="selection"
-						value="#{settingsHandlerAction.selectedLdapPhysician}" />
-				</ui:include>
-			</ui:fragment>
+		<!-- Internal Physician (Employee, get data from LDAP)-->
+		<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 3}">
+			<ui:include src="../../template/ldapPhysician.xhtml">
+				<ui:param name="physicianList"
+					value="#{settingsHandlerAction.ldapPhysicians}" />
+				<ui:param name="searchString"
+					value="#{settingsHandlerAction.ldapPhysicianSearchString}" />
+				<ui:param name="performAction" value="searchForPhysician" />
+				<ui:param name="performObject" value="#{settingsHandlerAction}" />
+				<ui:param name="selection"
+					value="#{settingsHandlerAction.selectedLdapPhysician}" />
+			</ui:include>
+		</ui:fragment>
 
-			<!-- External Physician -->
-			<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 2}">
-				<ui:include src="../../template/person.xhtml">
-					<ui:param name="person"
-						value="#{settingsHandlerAction.editPhysician}" />
-					<ui:param name="pannelID" value="newPhysician" />
-					<ui:param name="disabled" value="false" />
-				</ui:include>
-			</ui:fragment>
+		<!-- External Physician -->
+		<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 2}">
+			<ui:include src="../../template/person.xhtml">
+				<ui:param name="person"
+					value="#{settingsHandlerAction.editPhysician}" />
+				<ui:param name="pannelID" value="newPhysician" />
+				<ui:param name="disabled" value="false" />
+			</ui:include>
+		</ui:fragment>
 
-			<!-- Role -->
-			<p:panelGrid styleClass="patientSearchTable" columns="2"
-				columnClasses="categoryColum,">
-				<h:outputLabel value="Rolle" />
-				<!-- title -->
-				<h:panelGrid columns="3">
-					<p:panelGrid columns="2" styleClass="inputTable">
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							value="#{settingsHandlerAction.editPhysician.roleSurgeon}" />
-						<p:outputLabel style="margin-left:5px;"
-							value="#{msg['dialog.settings.person.role.surgeon']}" />
-					</p:panelGrid>
-					<p:panelGrid columns="2" styleClass="inputTable">
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							style="margin-left:15px;"
-							value="#{settingsHandlerAction.editPhysician.roleResidentDoctor}" />
-						<p:outputLabel style="margin-left:5px;"
-							value="#{msg['dialog.settings.person.role.extern']}" />
-					</p:panelGrid>
-					<p:panelGrid columns="2" styleClass="inputTable">
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							value="#{settingsHandlerAction.editPhysician.roleMiscellaneous}"
-							style="margin-left:15px;" />
-						<p:outputLabel style="margin-left:5px;"
-							value="#{msg['dialog.settings.person.role.other']}" />
-					</p:panelGrid>
-				</h:panelGrid>
-			</p:panelGrid>
-		</p:layoutUnit>
+		<!-- Role -->
+		<p:panelGrid styleClass="patientSearchTable" columns="2"
+			columnClasses="categoryColum,">
+			<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
+			<!-- title -->
+			<h:panelGrid columns="3">
+				<p:panelGrid columns="2" styleClass="inputTable">
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						value="#{settingsHandlerAction.editPhysician.roleSurgeon}" />
+					<p:outputLabel style="margin-left:5px;"
+						value="#{msg['dialog.settings.person.role.surgeon']}" />
+				</p:panelGrid>
+				<p:panelGrid columns="2" styleClass="inputTable">
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:15px;"
+						value="#{settingsHandlerAction.editPhysician.roleResidentDoctor}" />
+					<p:outputLabel style="margin-left:5px;"
+						value="#{msg['dialog.settings.person.role.extern']}" />
+				</p:panelGrid>
+				<p:panelGrid columns="2" styleClass="inputTable">
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						value="#{settingsHandlerAction.editPhysician.roleMiscellaneous}"
+						style="margin-left:15px;" />
+					<p:outputLabel style="margin-left:5px;"
+						value="#{msg['dialog.settings.person.role.other']}" />
+				</p:panelGrid>
+			</h:panelGrid>
+		</p:panelGrid>
+	</div>
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2">
+				<!-- Button for creating a new external physician -->
+				<p:commandButton value="#{msg['general.save']}"
+					icon="fa fa-fw fa-floppy-o"
+					rendered="#{settingsHandlerAction.physicianIndex eq 2}"
+					actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.editPhysician)}"
+					update="@form" />
 
-		<p:layoutUnit position="south" styleClass="south">
-			<!-- Button for creating a new external physician -->
-			<p:commandButton value="#{msg['general.save']}" icon="fa fa-fw fa-floppy-o"
-				rendered="#{settingsHandlerAction.physicianIndex eq 2}"
-				actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.editPhysician)}"
-				update="@form"></p:commandButton>
+				<!-- Button for adding a physician from ldap -->
+				<p:commandButton value="#{msg['general.save']}"
+					icon="fa fa-fw fa-floppy-o"
+					rendered="#{settingsHandlerAction.physicianIndex eq 3}"
+					actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.selectedLdapPhysician, settingsHandlerAction.editPhysician)}"
+					update="@form" />
 
-			<!-- Button for adding a physician from ldap -->
-			<p:commandButton value="#{msg['general.save']}" icon="fa fa-fw fa-floppy-o"
-				rendered="#{settingsHandlerAction.physicianIndex eq 3}"
-				actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.selectedLdapPhysician, settingsHandlerAction.editPhysician)}"
-				update="@form"></p:commandButton>
-
-			<p:commandButton value="#{msg['general.abort']}" icon="fa fa-fw fa-times-circle"
-				actionListener="#{settingsHandlerAction.discardEditPhysician()}"
-				update="@form"></p:commandButton>
-		</p:layoutUnit>
-	</p:layout>
-
+				<p:commandButton value="#{msg['general.abort']}"
+					icon="fa fa-fw fa-times-circle"
+					actionListener="#{settingsHandlerAction.discardEditPhysician()}"
+					update="@form" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
 </ui:composition>

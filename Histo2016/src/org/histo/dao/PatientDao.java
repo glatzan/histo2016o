@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
@@ -69,6 +72,12 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 
+	public List<Patient> searchForPatientPizes(List<String> piz) {
+		Criteria c = getSession().createCriteria(Patient.class);
+		c.add(Restrictions.in("piz", piz));
+		return c.list();
+	}
+
 	public List<Patient> getPatientWithoutTasks(Date fromDate, Date toDate) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.add(Restrictions.ge("patient.addDate", fromDate)).add(Restrictions.le("patient.addDate", toDate));
@@ -129,7 +138,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		}
 	}
 
-	public List<Patient> getPatientsByParameter(String name, String surname, Date date) {
+	public List<Patient> getPatientsByNameSurnameDateExcludePiz(String name, String surname, Date date,
+			List<String> pizesToExclude) {
 
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.createAlias("patient.person", "_person");
@@ -140,6 +150,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			c.add(Restrictions.ilike("_person.surname", surname, MatchMode.ANYWHERE));
 		if (date != null)
 			c.add(Restrictions.eq("_person.birthday", date));
+		if (pizesToExclude != null && !pizesToExclude.isEmpty())
+			c.add(Restrictions.not(Restrictions.in("piz", pizesToExclude.toArray())));
 
 		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 

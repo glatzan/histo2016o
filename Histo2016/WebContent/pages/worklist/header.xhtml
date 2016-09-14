@@ -12,23 +12,24 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 			style="width:100%">
 			<h:panelGrid columns="2">
-				<p:commandButton value="Patient hinzufügen"
+				<p:commandButton value="#{msg['body.worklist.header.button.addPatient']}"
 					styleClass="buttonMarginLeft"
-					actionListener="#{worklistHandlerAction.prepareAddPatient()}">
+					actionListener="#{patientHandlerAction.prepareAddPatient()}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 				</p:commandButton>
 
 				<p:selectOneMenu style="margin-top:1px;"
+					title="#{msg['body.worklist.header.view']}"
 					value="#{worklistHandlerAction.worklistDisplay}">
 
 					<p:ajax update="contentForm" process="@this"></p:ajax>
 
-					<f:selectItem itemLabel="Patient" itemValue="0" />
-					<f:selectItem itemLabel="Eingangsbuch" itemValue="1" />
-					<f:selectItem itemLabel="Diagnose intern" itemValue="2" />
-					<f:selectItem itemLabel="Interner Befund ausführlich" itemValue="3" />
-					<f:selectItem itemLabel="Externer Befund" itemValue="4" />
-					<f:selectItem itemLabel="Externer Befund ausführlich" itemValue="5" />
+					<f:selectItem itemLabel="#{msg['body.worklist.header.view.patient']}" itemValue="0" />
+					<f:selectItem itemLabel="#{msg['body.worklist.header.view.receiptlog']}" itemValue="1" />
+					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}" itemValue="2" />
+					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}" itemValue="3" />
+					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}" itemValue="4" />
+					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}" itemValue="5" />
 				</p:selectOneMenu>
 			</h:panelGrid>
 
@@ -37,11 +38,11 @@
 					actionListener="#{printHandlerAction.print()}">
 				</p:commandButton>
 
-				<p:commandButton value="Verwalten" styleClass="buttonMarginLeft"
+				<p:commandButton value="#{msg['body.worklist.header.button.settings']}" styleClass="buttonMarginLeft"
 					actionListener="#{settingsHandlerAction.prepareSettingsDialog()}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 				</p:commandButton>
-				<p:button href="/spring_logout" value="Logout"></p:button>
+				<p:button href="/spring_logout" value="#{msg['body.worklist.header.button.logout']}"></p:button>
 			</h:panelGroup>
 		</h:panelGrid>
 	</ui:composition>

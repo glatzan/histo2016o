@@ -111,56 +111,15 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	private Log log;
-	
+
 	@Autowired
 	private org.histo.util.ResourceBundle resourceBundle;
 
 	/******************************************************** Patient ********************************************************/
 	/**
-	 * Tabindex of the addPatient dialog
-	 */
-	private int activePatientDialogIndex = 0;
-
-	/**
 	 * Currently selected patient
 	 */
 	private Patient selectedPatient;
-
-	/**
-	 * Patientdummy for creating a new patient
-	 */
-	private Patient tmpPatient;
-
-	/**
-	 * List of all found Patients of the patientSearchRequest, PatientList is
-	 * used instead of Patient because primefaces needs a unique row collum.
-	 */
-	private List<PatientList> searchForPatientList;
-
-	/**
-	 * Selected Patient, is used to add a patient to the worklist
-	 */
-	private PatientList selectedPatientFromSearchList;
-
-	/**
-	 * Patient to search for, piz
-	 */
-	private String searchForPatientPiz;
-
-	/**
-	 * Patient to search for, name
-	 */
-	private String searchForPatientName;
-
-	/**
-	 * Patient to search for, surname
-	 */
-	private String searchForPatientSurname;
-
-	/**
-	 * Patient to search for, birthday
-	 */
-	private Date searchForPatientBirthday;
 	/******************************************************** Patient ********************************************************/
 
 	/******************************************************** Task ********************************************************/
@@ -197,13 +156,6 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	private boolean archived;
 	/******************************************************** Archivieren ********************************************************/
-
-	/******************************************************** Diagnosis ********************************************************/
-	/**
-	 * Used for selecting a new diagnosis
-	 */
-	private DiagnosisPrototype tmpDiagnosisPrototype;
-	/******************************************************** Diagnosis ********************************************************/
 
 	/******************************************************** Contact ********************************************************/
 	private List<Contact> allAvailableContact;
@@ -255,11 +207,6 @@ public class WorklistHandlerAction implements Serializable {
 	private SearchOptions searchOptions;
 
 	/**
-	 * Diagnosis for manipulating
-	 */
-	private Diagnosis tmpDiagnosis;
-
-	/**
 	 * Paiten search results form external Database
 	 */
 	private ArrayList<Person> searchResults;
@@ -308,15 +255,26 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	/**
-	 * TODO
+	 * Adds a patient to the worklist. If already added it is check if the
+	 * patient should be selected. If so the patient will be selected. The
+	 * patient isn't added twice.
+	 * 
+	 * @param patient
+	 * @param asSelectedPatient
 	 */
-	public void addToWorkList() {
-		setTmpPatient(new Patient());
-		getTmpPatient().setPerson(new Person());
-		setSearchResults(new ArrayList<>());
+	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
+		// checks if patient is already in database
+		for (Patient patientInWorklis : getWorkList()) {
+			if (patientInWorklis.getId() == patient.getId()) {
+				if (asSelectedPatient)
+					setSelectedPatient(patientInWorklis);
+				return;
+			}
+		}
 
-		helper.showDialog("/pages/dialog/addToWorkList", true, false, true);
-		System.out.println("addToWorkListDialog");
+		getWorkList().add(patient);
+		if (asSelectedPatient)
+			setSelectedPatient(patient);
 	}
 
 	public void removeFromWorklist(Patient patient) {
@@ -398,191 +356,6 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	/******************************************************** General ********************************************************/
-
-	/******************************************************** Patient ********************************************************/
-
-	/**
-	 * Shows the "/pages/dialog/patient/addPatient" dialog and creates an new
-	 * empty patient.
-	 */
-	public void prepareAddPatient() {
-		setTmpPatient(new Patient());
-		getTmpPatient().setPerson(new Person());
-
-		// updating search list
-		if (getSearchForPatientPiz() != null || getSearchForPatientName() != null
-				|| getSearchForPatientSurname() != null || getSearchForPatientBirthday() != null)
-			searchPatient(getSearchForPatientPiz(), getSearchForPatientName(), getSearchForPatientSurname(),
-					getSearchForPatientBirthday());
-
-		setSelectedPatientFromSearchList(null);
-
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_PATIENT_ADD), 1024, 500, true, false, false);
-	}
-
-	/**
-	 * Adds an external Patient to the database and worklist
-	 * 
-	 * @param patient
-	 *            Patient to save in the database and add to worklist
-	 */
-	public void createNewPatient(Patient patient) {
-		// maks the patient as externally
-		patient.setExternalPatient(true);
-		patient.setAddDate(new Date(System.currentTimeMillis()));
-
-		genericDAO.save(patient);
-		getWorkList().add(patient);
-		setSelectedPatient(patient);
-
-		log.info("Neuer externer Patient erstellt, " + patient.asGson(), patient);
-
-		hidePatientDialog();
-	}
-
-	/**
-	 * Adds an Patient found in the clinic-backend or in the histo-backend to
-	 * the worklist.
-	 */
-	// TODO not add the same patient twice
-	public void addNewPatient(Patient patient) {
-		if (patient != null) {
-
-			PersonAdministration admim = new PersonAdministration();
-
-			// if patient is new and was not added to the histo database before
-			if (patient.getAddDate() == null)
-				patient.setAddDate(new Date(System.currentTimeMillis()));
-
-			// add patient from the clinic-backend, get all data of this patient
-			if (!patient.getPiz().isEmpty()) {
-				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + patient.getPiz());
-				admim.updatePatientFromClinicJson(patient, userResult);
-			}
-
-			genericDAO.save(patient);
-
-			// add patient to worklist
-			getWorkList().add(patient);
-
-			hidePatientDialog();
-		}
-	}
-
-	/**
-	 * Hides the "/pages/dialog/patient/addPatient" dialog
-	 */
-	public void hidePatientDialog() {
-		setTmpPatient(null);
-		helper.hideDialog("/pages/dialog/patient/addPatient");
-	}
-
-	/**
-	 * Searches for a patient with the given paramenters in the clinic and in
-	 * the histo backend.
-	 * http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
-	 * 
-	 * @param piz
-	 */
-	public void searchPatient(String piz, String name, String surname, Date birthday) {
-
-		PersonAdministration admim = new PersonAdministration();
-
-		// id for patientList, used by primefaces to get the selected row
-		int id = 0;
-
-		// if piz is given ignore other parameters
-		if (piz != null && piz.matches("^[0-9]{6,8}$")) {
-			ArrayList<PatientList> result = new ArrayList<PatientList>();
-			List<Patient> patients = patientDao.searchForPatientsPiz(piz);
-
-			// updates all patients from the local database with data from the
-			// clinic backend
-			for (Patient patient : patients) {
-				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + patient.getPiz());
-				admim.updatePatientFromClinicJson(patient, userResult);
-				result.add(new PatientList(id++, patient));
-			}
-
-			// saves the results
-			genericDAO.save(patients);
-
-			// only get patient from clinic backend if piz is completely
-			// provided and was not added to the local database before
-			if (piz.matches("^[0-9]{8}$") && patients.isEmpty()) {
-				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + piz);
-				result.add(new PatientList(id++, admim.getPatientFromClinicJson(userResult)));
-			}
-
-			setSearchForPatientList(result);
-		} else if ((name != null && !name.isEmpty()) || (surname != null && !surname.isEmpty()) || birthday != null) {
-			List<PatientList> result = new ArrayList<>();
-
-			// getting all patients with given parameters from the clinic
-			// backend
-			String requestURl = HistoSettings.PATIENT_GET_URL + "?name=" + name + "&vorname=" + surname
-					+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : "");
-
-			String userResult = admim.getRequest(requestURl);
-			List<Patient> clinicPatients = admim.getPatientsFromClinicJson(userResult);
-
-			List<Patient> histoPatients = patientDao.getPatientsByParameter(name, surname, birthday);
-
-			for (Patient cPatient : clinicPatients) {
-				PatientList patientList = null;
-
-				boolean found = false;
-
-				for (Patient hPatient : histoPatients) {
-					if (cPatient.getPiz().equals(hPatient.getPatient().getPiz())) {
-						patientList = new PatientList(id++, hPatient);
-						// removing histo patient from list
-						histoPatients.remove(hPatient);
-						// TODO update the patient in histo database
-						found = true;
-						break;
-					}
-				}
-
-				if (!found) {
-					// checking explicitly for the piz
-					Patient histoDatabase = patientDao.searchForPatientPiz(cPatient.getPiz());
-
-					if (histoDatabase != null) {
-						patientList = new PatientList(id++, histoDatabase);
-					} else {
-						patientList = new PatientList(id++, cPatient);
-						patientList.setNotHistoDatabase(true);
-					}
-
-				}
-				// checking if a patient
-
-				result.add(patientList);
-			}
-
-			// adding external patient to the list, these patients are not in
-			// the clinic backend
-			for (Patient hPatient : histoPatients) {
-				result.add(new PatientList(id++, hPatient));
-			}
-
-			setSearchForPatientList(result);
-		}
-	}
-
-	/**
-	 * Shows a dialog for editing patients which are only stored in the histo
-	 * database (external patients)
-	 * 
-	 * @param patient
-	 */
-	public void editExternalPatient(Patient patient) {
-		setTmpPatient(patient);
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_PATIENT_EDIT), 1024, 500, true, false, false);
-	}
-
-	/******************************************************** Patient ********************************************************/
 
 	/******************************************************** Task ********************************************************/
 	/**
@@ -679,7 +452,7 @@ public class WorklistHandlerAction implements Serializable {
 		}
 
 		genericDAO.save(patient);
-		
+
 		hideNewTaskDialog();
 	}
 
@@ -703,12 +476,11 @@ public class WorklistHandlerAction implements Serializable {
 		log.info("Neue Probe erstellt: TaskID: " + task.getTaskID() + ", SampleID: " + newSample.getSampleID(),
 				getSelectedPatient());
 
-		
 		genericDAO.save(newSample);
-		
+
 		// creating first default diagnosis
 		createNewDiagnosis(newSample, Diagnosis.TYPE_DIAGNOSIS);
-			
+
 		// creating needed blocks
 		createNewBlock(newSample, stainingPrototypeList);
 
@@ -783,26 +555,20 @@ public class WorklistHandlerAction implements Serializable {
 	/******************************************************** Archivieren ********************************************************/
 
 	/******************************************************** Diagnosis ********************************************************/
-	public void updateDiagnosisPrototype(Diagnosis diagnosis, DiagnosisPrototype diagnosisPrototype) {
-		if (diagnosisPrototype != null) {
-			diagnosis.setDiagnosis(diagnosisPrototype.getName());
-		}
-	}
-
 	public void createNewDiagnosisTypSelectAuto(Sample sample) {
 		List<Diagnosis> diagnoses = sample.getDiagnoses();
-		
+
 		// create new diagnosis
 		if (diagnoses.isEmpty()) {
 			createNewDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS);
-		// create revision 
+			// create revision
 		} else if (diagnoses.size() == 1) {
 			createNewDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS_REVISION);
-		// if diagnosis and revision 
-		}else{
-			
+			// if diagnosis and revision
+		} else {
+
 			for (Diagnosis diagnosis : diagnoses) {
-				if(!diagnosis.isFinalized())
+				if (!diagnosis.isFinalized())
 					return;
 			}
 		}
@@ -1118,7 +884,6 @@ public class WorklistHandlerAction implements Serializable {
 	 * Task Dialogs
 	 ********************************************************/
 
-
 	// public void updateSample(Sample sample) {
 	// boolean completed = true;
 	//
@@ -1168,10 +933,6 @@ public class WorklistHandlerAction implements Serializable {
 		helper.showDialog("/pages/dialog/staining", true, false, true);
 	}
 
-	public void saveCurrentPatient() {
-		genericDAO.save(getSelectedPatient());
-	}
-
 	public String getSearchType() {
 		return searchType;
 	}
@@ -1196,22 +957,6 @@ public class WorklistHandlerAction implements Serializable {
 		this.workList = workList;
 	}
 
-	public Patient getSelectedPatient() {
-		return selectedPatient;
-	}
-
-	public void setSelectedPatient(Patient selectedPatient) {
-		this.selectedPatient = selectedPatient;
-	}
-
-	public Patient getTmpPatient() {
-		return tmpPatient;
-	}
-
-	public void setTmpPatient(Patient tmpPatient) {
-		this.tmpPatient = tmpPatient;
-	}
-
 	public List<Person> getSearchResults() {
 		return searchResults;
 	}
@@ -1228,14 +973,6 @@ public class WorklistHandlerAction implements Serializable {
 		this.restrictedWorkList = restrictedWorkList;
 	}
 
-	public Diagnosis getTmpDiagnosis() {
-		return tmpDiagnosis;
-	}
-
-	public void setTmpDiagnosis(Diagnosis tmpDiagnosis) {
-		this.tmpDiagnosis = tmpDiagnosis;
-	}
-
 	public SearchOptions getSearchOptions() {
 		return searchOptions;
 	}
@@ -1247,14 +984,6 @@ public class WorklistHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	public int getActivePatientDialogIndex() {
-		return activePatientDialogIndex;
-	}
-
-	public void setActivePatientDialogIndex(int activePatientDialogIndex) {
-		this.activePatientDialogIndex = activePatientDialogIndex;
-	}
-
 	public List<StainingPrototypeList> getAllAvailableStainingLists() {
 		return allAvailableStainingLists;
 	}
@@ -1286,14 +1015,6 @@ public class WorklistHandlerAction implements Serializable {
 
 	public void setStainingListTransformer(StainingListTransformer stainingListTransformer) {
 		this.stainingListTransformer = stainingListTransformer;
-	}
-
-	public DiagnosisPrototype getTmpDiagnosisPrototype() {
-		return tmpDiagnosisPrototype;
-	}
-
-	public void setTmpDiagnosisPrototype(DiagnosisPrototype tmpDiagnosisPrototype) {
-		this.tmpDiagnosisPrototype = tmpDiagnosisPrototype;
 	}
 
 	public ArchiveAble getToArchive() {
@@ -1368,60 +1089,20 @@ public class WorklistHandlerAction implements Serializable {
 		this.worklistDisplay = worklistDisplay;
 	}
 
-	public String getSearchForPatientPiz() {
-		return searchForPatientPiz;
-	}
-
-	public void setSearchForPatientPiz(String searchForPatientPiz) {
-		this.searchForPatientPiz = searchForPatientPiz;
-	}
-
-	public String getSearchForPatientName() {
-		return searchForPatientName;
-	}
-
-	public void setSearchForPatientName(String searchForPatientName) {
-		this.searchForPatientName = searchForPatientName;
-	}
-
-	public String getSearchForPatientSurname() {
-		return searchForPatientSurname;
-	}
-
-	public void setSearchForPatientSurname(String searchForPatientSurname) {
-		this.searchForPatientSurname = searchForPatientSurname;
-	}
-
-	public Date getSearchForPatientBirthday() {
-		return searchForPatientBirthday;
-	}
-
-	public void setSearchForPatientBirthday(Date searchForPatientBirthday) {
-		this.searchForPatientBirthday = searchForPatientBirthday;
-	}
-
-	public List<PatientList> getSearchForPatientList() {
-		return searchForPatientList;
-	}
-
-	public void setSearchForPatientList(List<PatientList> searchForPatientList) {
-		this.searchForPatientList = searchForPatientList;
-	}
-
-	public PatientList getSelectedPatientFromSearchList() {
-		return selectedPatientFromSearchList;
-	}
-
-	public void setSelectedPatientFromSearchList(PatientList selectedPatientFromSearchList) {
-		this.selectedPatientFromSearchList = selectedPatientFromSearchList;
-	}
-
 	public boolean isWorklistSortOrderAcs() {
 		return worklistSortOrderAcs;
 	}
 
 	public void setWorklistSortOrderAcs(boolean worklistSortOrderAcs) {
 		this.worklistSortOrderAcs = worklistSortOrderAcs;
+	}
+
+	public Patient getSelectedPatient() {
+		return selectedPatient;
+	}
+
+	public void setSelectedPatient(Patient selectedPatient) {
+		this.selectedPatient = selectedPatient;
 	}
 
 	/********************************************************

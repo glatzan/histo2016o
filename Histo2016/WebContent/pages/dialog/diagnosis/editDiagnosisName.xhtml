@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.diagnosis.edit.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="defaultDialogLayout">
+	<h:form>
+
+		<div class="dialogContent">
+			<h:outputLabel value="#{msg['dialog.diagnosis.edit.name']}" />
+			<p:inputText value="#{diagnosisHandlerAction.tmpDiagnosis.name}"></p:inputText>
+
+		</div>
+		<div class="buttonContainer">
+			<p:commandButton value="#{msg['general.save']}">
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.saveDiagnosis(diagnosisHandlerAction.tmpDiagnosis)}"></f:actionListener>
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.hideEditDiagnosisNameDialog()}"></f:actionListener>
+			</p:commandButton>
+
+			<p:commandButton value="#{msg['general.delete']}"
+				style="margin-left:10px;"
+				rendered="#{diagnosisHandleraction.isDiangosisDiagnosisOrFollowUP(diagnosisHandlerAction.tmpDiagnosis)}">
+				<f:actionListener
+					binding="#{helpHandlerAction.archiveObject(diagnosisHandlerAction.tmpDiagnosis)}"></f:actionListener>
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.hideEditDiagnosisNameDialog()}"></f:actionListener>
+			</p:commandButton>
+
+			<p:commandButton value="#{msg['general.abort']}"
+				style="margin-left:10px;"
+				actionListener="#{diagnosisHandlerAction.hideEditDiagnosisNameDialog()}"></p:commandButton>
+		</div>
+
+	</h:form>
+</h:body>
+
+
+
+</html>
+

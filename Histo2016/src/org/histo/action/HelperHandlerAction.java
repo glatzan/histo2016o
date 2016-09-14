@@ -14,6 +14,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.model.History;
 import org.histo.model.Patient;
 import org.histo.model.UserAcc;
+import org.histo.model.util.ArchiveAble;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,17 @@ import org.springframework.stereotype.Controller;
 public class HelperHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -4083599293687828502L;
-	
+
+	/**
+	 * Objects implementing archiveAble can be manipulated with this method.
+	 * 
+	 * @param archiveAble
+	 * @param archived
+	 */
+	public void archiveObject(ArchiveAble archiveAble, boolean archived) {
+		archiveAble.setArchived(archived);
+	}
+
 	/**
 	 * Shows a Dialog using no options
 	 * 
@@ -130,7 +141,8 @@ public class HelperHandlerAction implements Serializable {
 	public void timeout() throws IOException {
 		showDialog(HistoSettings.dialog(HistoSettings.DIALOG_LOGOUT));
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-		FacesContext.getCurrentInstance().getExternalContext().redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);
+		FacesContext.getCurrentInstance().getExternalContext()
+				.redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);
 	}
 
 }

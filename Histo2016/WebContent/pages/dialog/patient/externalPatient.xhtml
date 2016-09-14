@@ -7,26 +7,35 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:layout styleClass="tabLayout">
-		<p:layoutUnit styleClass="center" position="center">
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.addPatient.add.headline']}"
+			styleClass="contentPannel" />
 
-			<p:panel style="width:100%;" header="#{msg['dialog.addPatient.add']}"
-				styleClass="contentPannel" />
+		<ui:include src="../../template/person.xhtml">
+			<ui:param name="person"
+				value="#{patientHandlerAction.tmpPatient.person}" />
+			<ui:param name="pannelID" value="newPatient" />
+			<ui:param name="disabled" value="false" />
+		</ui:include>
+	</div>
 
-			<ui:include src="../../template/person.xhtml">
-				<ui:param name="person"
-					value="#{worklistHandlerAction.tmpPatient.person}" />
-				<ui:param name="pannelID" value="createPatient" />
-				<ui:param name="disabled" value="false" />
-			</ui:include>
-		</p:layoutUnit>
-
-		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="#{msg['dialog.addPatient.add']}"
-				process="@form" icon="fa fa-fw fa-user-plus"
-				actionListener="#{worklistHandlerAction.createNewPatient(worklistHandlerAction.tmpPatient)}">
-			</p:commandButton>
-		</p:layoutUnit>
-	</p:layout>
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="1">
+				<!-- 1. adds external patient to database 2. adds to worklist 3. clears patientHandlerAction -->
+				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
+					process="@form" icon="fa fa-fw fa-user-plus">
+					<f:actionListener
+						binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
+					<f:actionListener
+						binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
+					<f:actionListener
+						binding="#{patientHandlerAction.clearTmpPatient()}" />
+				</p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
 
 </ui:composition>

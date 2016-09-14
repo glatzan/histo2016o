@@ -9,7 +9,7 @@
 
 	<p:panelGrid styleClass="patientSearchTable" columns="2"
 		columnClasses="categoryColum," id="#{pannelID}">
-		<h:outputLabel value="#{msg['dialog.person.person']}" />
+		<h:outputLabel value="#{msg['include.person.person']}" />
 		<!-- title -->
 		<h:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable"
@@ -17,12 +17,12 @@
 				<p:selectOneMenu style="width:100px" id="#{pannelID}_title"
 					editable="true" disabled="#{disabled}" value="#{person.title}">
 					<f:selectItem itemLabel="" itemValue="" />
-					<f:selectItem itemLabel="#{msg['dialog.person.title.dr']}"
+					<f:selectItem itemLabel="#{msg['include.person.title.dr']}"
 						itemValue="Dr." />
-					<f:selectItem itemLabel="#{msg['dialog.person.title.prof']}"
+					<f:selectItem itemLabel="#{msg['include.person.title.prof']}"
 						itemValue="Prof." />
 				</p:selectOneMenu>
-				<p:outputLabel value="#{msg['dialog.person.title']}" />
+				<p:outputLabel value="#{msg['include.person.title']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
@@ -33,12 +33,12 @@
 				style="float:left;margin-right:20px;">
 				<p:inputText id="#{pannelID}_name" value="#{person.name}"
 					disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.name']}" />
+				<p:outputLabel value="#{msg['include.person.name']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText id="#{pannelID}_surname" value="#{person.surname}"
 					disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.surname']}" />
+				<p:outputLabel value="#{msg['include.person.surname']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
@@ -49,36 +49,36 @@
 				style="float:left;margin-right:20px;">
 				<p:selectOneMenu id="#{pannelID}_gender" style="width:100px"
 					disabled="#{disabled}" value="#{person.gender}">
-					<f:selectItem itemLabel="#{msg['dialog.person.gender.select']}"
-						itemValue=" " />
-					<f:selectItem itemLabel="#{msg['dialog.person.gender.male']}"
+					<f:selectItem itemLabel="#{msg['include.person.gender.select']}"
+						itemValue="-" />
+					<f:selectItem itemLabel="#{msg['include.person.gender.male']}"
 						itemValue="m" />
-					<f:selectItem itemLabel="#{msg['dialog.person.gender.female']}"
+					<f:selectItem itemLabel="#{msg['include.person.gender.female']}"
 						itemValue="f" />
 				</p:selectOneMenu>
-				<p:outputLabel value="#{msg['dialog.person.gender']}" />
+				<p:outputLabel value="#{msg['include.person.gender']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:calendar id="#{pannelID}_birthday" value="#{person.birthday}"
 					locale="de" disabled="#{disabled}" navigator="true"
 					pattern="dd.MM.yyyy" mask="true" />
-				<p:outputLabel value="#{msg['dialog.person.birthday']}" />
+				<p:outputLabel value="#{msg['include.person.birthday']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
 		<!-- Adress -->
-		<h:outputLabel value="#{msg['dialog.person.adress']}" />
+		<h:outputLabel value="#{msg['include.person.adress']}" />
 		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText id="#{pannelID}_street" value="#{person.street}"
 					disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.adress.street']}" />
+				<p:outputLabel value="#{msg['include.person.adress.street']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText style="width:75px;" value="#{person.houseNumber}"
 					disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.adress.housenumber']}" />
+				<p:outputLabel value="#{msg['include.person.adress.housenumber']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
@@ -88,12 +88,12 @@
 				style="float:left;margin-right:20px;">
 				<p:inputText style="width:75px;" value="#{person.postcode}"
 					disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.adress.plz']}" />
+				<p:outputLabel value="#{msg['include.person.adress.plz']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText id="#{pannelID}_town" value="#{person.town}"
 					disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.adress.town']}" />
+				<p:outputLabel value="#{msg['include.person.adress.town']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
@@ -103,12 +103,12 @@
 				style="float:left;margin-right:20px;">
 				<p:inputText value="#{person.phoneNumber}" disabled="#{disabled}" />
 				<p:outputLabel
-					value="#{msg['dialog.person.miscellaneous.phonenumber']}" />
+					value="#{msg['include.person.miscellaneous.phonenumber']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText id="#{pannelID}_email" value="#{person.email}"
 					disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.miscellaneous.mail']}" />
+				<p:outputLabel value="#{msg['include.person.miscellaneous.mail']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
@@ -117,7 +117,7 @@
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText value="#{person.fax}" disabled="#{disabled}" />
-				<p:outputLabel value="#{msg['dialog.person.miscellaneous.fax']}" />
+				<p:outputLabel value="#{msg['include.person.miscellaneous.fax']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 	</p:panelGrid>

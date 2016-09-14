@@ -67,7 +67,7 @@
 			<p:outputLabel
 				value="#{worklistHandlerAction.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
 			<p:commandLink rendered="#{worklistHandlerAction.selectedPatient.externalPatient}"
-				actionListener="#{worklistHandlerAction.editExternalPatient(worklistHandlerAction.selectedPatient)}">
+				actionListener="#{patientHandlerAction.editExternalPatient(worklistHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 				<i class="fa fa-wrench"></i>
 			</p:commandLink>

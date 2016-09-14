@@ -14,37 +14,37 @@
 
 		<h:outputLabel value="#{msg['include.ladpPhysician.search']}" />
 
-		<p:inputText value="#{searchString}" id="searchStringInput"
-			widgetVar="searchStringInput">
-			<p:ajax event="keyup" delay="500"
-				listener="#{performObject[performAction](searchString)}"
-				update="ldapPhysicianList" process="@this" />
-		</p:inputText>
+		<h:panelGroup>
+			<p:inputText value="#{searchString}" id="searchStringInput"
+				widgetVar="searchStringInput" style="width: 98%">
+				<p:ajax event="keyup" delay="500"
+					listener="#{performObject[performAction](searchString)}"
+					update="ldapPhysicianList" process="@this" />
+			</p:inputText>
+			<p:watermark for="searchStringInput"
+				value="#{msg['include.ladpPhysician.search.watermark']}" />
+		</h:panelGroup>
 
 		<h:outputLabel value="" />
 		<p:dataTable var="physician" value="#{physicianList}"
-			id="ldapPhysicianList" selectionMode="single"
-			rowKey="#{physician.id}" selection="#{selection}"
+			id="ldapPhysicianList" selectionMode="single" scrollable="true"
+			scrollHeight="300" rowKey="#{physician.id}" selection="#{selection}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 			<!-- title -->
-			<p:column sortBy="#{physician.title}"
-				headerText="#{msg['dialog.settings.person.title']}"
+			<p:column sortBy="#{physician.name}"
+				headerText="#{msg['include.ladpPhysician.search.name']}"
 				style="width:20%">
 				<h:outputText value="#{physician.fullName}" />
 			</p:column>
-			<p:column sortBy="#{physician.title}"
-				headerText="#{msg['dialog.settings.person.title']}"
+
+			<p:column sortBy="#{physician.clinicRole}"
+				headerText="#{msg['include.ladpPhysician.search.role']}"
 				style="width:20%">
 				<h:outputText value="#{physician.clinicRole}" />
 			</p:column>
 		</p:dataTable>
 
 	</p:panelGrid>
-
-	<p:remoteCommand name="sendAjaxical" update="@form"
-		oncomplete="alert('asd');"
-		action="#{performObject['performAction'](searchString)}" />
-
 
 </ui:composition>

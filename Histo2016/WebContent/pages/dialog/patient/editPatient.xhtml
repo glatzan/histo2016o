@@ -24,14 +24,14 @@
 
 					<ui:include src="../../template/person.xhtml">
 						<ui:param name="person"
-							value="#{worklistHandlerAction.tmpPatient.person}" />
+							value="#{patientHandlerAction.tmpPatient.person}" />
 					</ui:include>
 				</p:layoutUnit>
 
 				<p:layoutUnit position="south" styleClass="south">
 					<p:commandButton value="#{msg['dialog.addPatient.add']}"
 						process="@form" icon="fa fa-fw fa-user-plus"
-						actionListener="#{worklistHandlerAction.createNewPatient(worklistHandlerAction.tmpPatient)}">
+						actionListener="#{patientHandlerAction.createNewPatient(patientHandlerAction.tmpPatient)}">
 					</p:commandButton>
 				</p:layoutUnit>
 			</p:layout>

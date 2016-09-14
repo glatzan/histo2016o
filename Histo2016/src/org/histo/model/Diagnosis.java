@@ -3,11 +3,13 @@ package org.histo.model;
 import java.util.Date;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -17,6 +19,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.histo.config.HistoSettings;
 import org.histo.model.util.GsonAble;
@@ -32,7 +35,7 @@ import com.google.gson.annotations.Expose;
  */
 @Entity
 @Audited
-@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
@@ -45,7 +48,7 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
 	private long id;
 
 	private int version;
-	
+
 	/**
 	 * Parent of the diagnosis, sample objekt
 	 */
@@ -94,6 +97,12 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
 	private boolean malign;
 
 	/**
+	 * ICD10 Number of this diagnosis
+	 */
+	@Expose
+	private String icd10;
+	
+	/**
 	 * Commentary for internal purpose.
 	 */
 	@Expose
@@ -106,11 +115,16 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
 	private int type;
 
 	/**
-	 * Order in diagnosis arry
+	 * Order in diagnosis array
 	 */
 	@Expose
 	private int diagnosisOrder;
 
+	/**
+	 * Protoype used for this diagnosis.
+	 */
+	private DiagnosisPrototype diagnosisPrototype;
+	
 	// TODO is used?
 	private String extendedDiagnosisText;
 
@@ -136,7 +150,7 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
 	public void setVersion(int version) {
 		this.version = version;
 	}
-	
+
 	@Column(columnDefinition = "text")
 	public String getDiagnosis() {
 		return diagnosis;
@@ -227,21 +241,27 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
 		this.extendedDiagnosisText = extendedDiagnosisText;
 	}
 
+	public String getIcd10() {
+		return icd10;
+	}
+
+	public void setIcd10(String icd10) {
+		this.icd10 = icd10;
+	}
+
+	@OneToOne
+	@NotAudited
+	public DiagnosisPrototype getDiagnosisPrototype() {
+		return diagnosisPrototype;
+	}
+
+	public void setDiagnosisPrototype(DiagnosisPrototype diagnosisPrototype) {
+		this.diagnosisPrototype = diagnosisPrototype;
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-
-	@Transient
-	public String getDiagnosisTypAsName() {
-		switch (getType()) {
-		case TYPE_DIAGNOSIS:
-			return "Diagnose";
-		case TYPE_FOLLOW_UP_DIAGNOSIS:
-			return "Nachbefundung";
-		default:
-			return "Revision";
-		}
-	}
 
 	/********************************************************
 	 * Interface StainingTreeParent
@@ -300,9 +320,36 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
 	@Transient
 	@Override
 	public String getArchiveDialog() {
-		return HistoSettings.dialog(HistoSettings.DIALOG_ARCHIV_STAINING);
+		return null;
 	}
 	/********************************************************
 	 * Interface StainingTreeParent
+	 ********************************************************/
+	
+	/********************************************************
+	 * Transient
+	 ********************************************************/
+	@Transient
+	public String getDiagnosisTypAsName() {
+		switch (getType()) {
+		case TYPE_DIAGNOSIS:
+			return "Diagnose";
+		case TYPE_FOLLOW_UP_DIAGNOSIS:
+			return "Nachbefundung";
+		default:
+			return "Revision";
+		}
+	}
+	
+	@Transient
+	public void updateDiagnosisWithPrototype(DiagnosisPrototype diagnosisPrototype) {
+		setDiagnosis(diagnosisPrototype.getDiagnosisText());
+		setExtendedDiagnosisText(diagnosisPrototype.getExtendedDiagnosisText());
+		setMalign(diagnosisPrototype.isMalign());
+		setIcd10(diagnosisPrototype.getIcd10());
+	}
+		
+	/********************************************************
+	 * Transient
 	 ********************************************************/
 }

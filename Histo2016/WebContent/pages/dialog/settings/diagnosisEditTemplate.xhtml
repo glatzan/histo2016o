@@ -7,24 +7,28 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:layout styleClass="tabLayout">
-		<p:layoutUnit styleClass="center" position="center">
-			<p:panel style="width:100%;"
-				header="Textvorlage für den Brief editieren"
-				styleClass="contentPannel" />
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.settings.diagnosis.editTemplate.headline']}"
+			styleClass="contentPannel" />
 
-			<p:panelGrid columns="1" styleClass="noBorders" style="width:100%">
-				<p:editor
-					value="#{settingsHandlerAction.editDiagnosisPrototype.extendedDiagnosisText}">
-				</p:editor>
-			</p:panelGrid>
-		</p:layoutUnit>
+		<p:panelGrid columns="1" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+			<p:editor
+				value="#{settingsHandlerAction.editDiagnosisPrototype.extendedDiagnosisText}">
+			</p:editor>
+		</p:panelGrid>
+	</div>
 
-		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="OK" 
-				icon="fa fa-fw fa-floppy-o" update="@form"
-				actionListener="#{settingsHandlerAction.discardEditDiagnosisPrototypeTemplate()}"></p:commandButton>
-		</p:layoutUnit>
-	</p:layout>
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="1">
+				<p:commandButton value="#{msg['general.ok']}"
+					icon="fa fa-fw fa-floppy-o" update="@form"
+					actionListener="#{settingsHandlerAction.discardEditDiagnosisPrototypeTemplate()}"></p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
 
 </ui:composition>

@@ -7,59 +7,63 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:layout styleClass="tabLayout">
-		<p:layoutUnit styleClass="center" position="center">
-			<p:panel style="width:100%;" header="Standard Diagnosen"
-				styleClass="contentPannel" />
-			<p:dataTable var="diagnosisPrototype"
-				value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
-				styleClass="defaultDataTable">
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.settings.diagnosis.list.headline']}"
+			styleClass="contentPannel" />
 
-				<p:column sortBy="#{diagnosisPrototype.name}" headerText="Diagnose"
-					style="width:20%">
-					<h:outputText value="#{diagnosisPrototype.name}" />
-				</p:column>
+		<p:dataTable var="diagnosisPrototype" style="width:100%;"
+			scrollable="true" scrollHeight="490"
+			value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
+			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
-				<p:column headerText="Kommentar" style="width:53%">
-					<h:outputLabel value="#{diagnosisPrototype.commentary}">
-						<f:converter converterId="org.histo.ui.TruncateConverter"
-							truncateAt="40" />
-						<f:attribute name="truncateAt" value="40" />
-						<f:attribute name="continuationMark" value="..." />
-					</h:outputLabel>
-				</p:column>
+			<p:column sortBy="#{diagnosisPrototype.name}"
+				headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
+				style="width:20%">
+				<h:outputText value="#{diagnosisPrototype.name}" />
+			</p:column>
 
-				<p:column style="width:7%; text-align:center;">
-					<f:facet name="header">
-						<i class="fa fa-cog" />
-					</f:facet>
-					<p:commandLink title="Editieren"
-						actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototype(diagnosisPrototype)}"
-						update="@form">
-						<i class="fa fa-fw fa-cog" />
-					</p:commandLink>
-				</p:column>
-			</p:dataTable>
-		</p:layoutUnit>
+			<p:column
+				headerText="#{msg['dialog.settings.diagnosis.list.commentary']}"
+				style="width:53%">
+				<h:outputLabel value="#{diagnosisPrototype.commentary}">
+					<f:converter converterId="org.histo.ui.TruncateConverter"
+						truncateAt="40" />
+					<f:attribute name="truncateAt" value="40" />
+					<f:attribute name="continuationMark" value="..." />
+				</h:outputLabel>
+			</p:column>
 
-		<p:layoutUnit position="south" styleClass="south">
+			<p:column style="width:7%; text-align:center;">
+				<f:facet name="header">
+					<i class="fa fa-cog"
+						title="#{msg['dialog.settings.diagnosis.list.options']}" />
+				</f:facet>
+				<p:commandLink
+					title="#{msg[dialog.settings.diagnosis.list.options.edit]}"
+					actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototype(diagnosisPrototype)}"
+					update="@form">
+					<i class="fa fa-fw fa-cog" />
+				</p:commandLink>
+			</p:column>
+		</p:dataTable>
+	</div>
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2">
+				<p:commandButton
+					value="#{msg['dialog.settings.diagnosis.list.button.new']}"
+					icon="fa fa-fw fa-plus-circle"
+					actionListener="#{settingsHandlerAction.prepareNewDiagnosisPrototype()}"
+					update="@form"></p:commandButton>
 
-			<h:panelGrid columns="2" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="2">
-					<p:commandButton value="Neue Diagnose" 
-						icon="fa fa-fw fa-plus-circle"
-						actionListener="#{settingsHandlerAction.prepareNewDiagnosisPrototype()}"
-						update="@form"></p:commandButton>
-
-					<h:panelGrid columns="2" style="margin-left: 20px;">
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
-						<h:outputLabel value="#{msg['dialog.settings.person.archived']}"
-							style="margin-left:5px;"></h:outputLabel>
-					</h:panelGrid>
+				<h:panelGrid columns="2" style="margin-left: 20px;">
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
+					<h:outputLabel
+						value="#{msg['dialog.settings.diagnosis.list.checkbox.archived']}"></h:outputLabel>
 				</h:panelGrid>
 			</h:panelGrid>
-
-		</p:layoutUnit>
-	</p:layout>
+		</h:panelGrid>
+	</div>
 </ui:composition>

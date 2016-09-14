@@ -17,111 +17,115 @@ import com.google.gson.annotations.Expose;
 @SequenceGenerator(name = "standardDiagnosis_sequencegenerator", sequenceName = "standardDiagnosis_sequence")
 public class DiagnosisPrototype implements EditAbleEntity<DiagnosisPrototype> {
 
-    @Expose
-    private long id;
-    @Expose
-    private String name;
-    @Expose
-    private String icd10;
-    @Expose
-    private boolean malign;
-    @Expose
-    private String diagnosisText;
-    @Expose
-    private String extendedDiagnosisText;
-    @Expose
-    private String commentary;
+	@Expose
+	private long id;
+	@Expose
+	private String name;
+	@Expose
+	private String icd10;
+	@Expose
+	private boolean malign;
+	@Expose
+	private String diagnosisText;
+	@Expose
+	private String extendedDiagnosisText;
+	@Expose
+	private String commentary;
 
-    public DiagnosisPrototype() {
-    }
+	public DiagnosisPrototype() {
+	}
 
-    public DiagnosisPrototype(DiagnosisPrototype diagnosisPrototype) {
-	this.id = diagnosisPrototype.getId();
-	update(diagnosisPrototype);
-    }
-    
-    /******************************************************** Getter/Setter ********************************************************/
-    @Id
-    @GeneratedValue(generator = "standardDiagnosis_sequencegenerator")
-    @Column(unique = true, nullable = false)
-    public long getId() {
-	return id;
-    }
+	public DiagnosisPrototype(DiagnosisPrototype diagnosisPrototype) {
+		this.id = diagnosisPrototype.getId();
+		update(diagnosisPrototype);
+	}
 
-    public void setId(long id) {
-	this.id = id;
-    }
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+	@Id
+	@GeneratedValue(generator = "standardDiagnosis_sequencegenerator")
+	@Column(unique = true, nullable = false)
+	public long getId() {
+		return id;
+	}
 
-    public String getName() {
-	return name;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public void setName(String name) {
-	this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getIcd10() {
-	return icd10;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setIcd10(String icd10) {
-	this.icd10 = icd10;
-    }
+	public String getIcd10() {
+		return icd10;
+	}
 
-    public boolean isMalign() {
-	return malign;
-    }
+	public void setIcd10(String icd10) {
+		this.icd10 = icd10;
+	}
 
-    public void setMalign(boolean malign) {
-	this.malign = malign;
-    }
+	public boolean isMalign() {
+		return malign;
+	}
 
-    @Column(columnDefinition = "text")
-    public String getDiagnosisText() {
-	return diagnosisText;
-    }
+	public void setMalign(boolean malign) {
+		this.malign = malign;
+	}
 
-    public void setDiagnosisText(String diagnosisText) {
-	this.diagnosisText = diagnosisText;
-    }
+	@Column(columnDefinition = "text")
+	public String getDiagnosisText() {
+		return diagnosisText;
+	}
 
-    @Column(columnDefinition = "text")
-    public String getExtendedDiagnosisText() {
-	return extendedDiagnosisText;
-    }
+	public void setDiagnosisText(String diagnosisText) {
+		this.diagnosisText = diagnosisText;
+	}
 
-    public void setExtendedDiagnosisText(String extendedDiagnosisText) {
-	this.extendedDiagnosisText = extendedDiagnosisText;
-    }
+	@Column(columnDefinition = "text")
+	public String getExtendedDiagnosisText() {
+		return extendedDiagnosisText;
+	}
 
-    @Column(columnDefinition = "text")
-    public String getCommentary() {
-	return commentary;
-    }
+	public void setExtendedDiagnosisText(String extendedDiagnosisText) {
+		this.extendedDiagnosisText = extendedDiagnosisText;
+	}
 
-    public void setCommentary(String commentary) {
-	this.commentary = commentary;
-    }
+	@Column(columnDefinition = "text")
+	public String getCommentary() {
+		return commentary;
+	}
 
-    /******************************************************** Getter/Setter ********************************************************/
+	public void setCommentary(String commentary) {
+		this.commentary = commentary;
+	}
 
-    @Transient
-    @Override
-    public String asGson() {
-	final GsonBuilder builder = new GsonBuilder();
-	builder.excludeFieldsWithoutExposeAnnotation();
-	final Gson gson = builder.create();
-	return gson.toJson(this);
-    }
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
-    @Transient
-    @Override
-    public void update(DiagnosisPrototype diagnosisPrototype) {
-	this.name = diagnosisPrototype.getName();
-	this.icd10 = diagnosisPrototype.getIcd10();
-	this.malign = diagnosisPrototype.isMalign();
-	this.diagnosisText = diagnosisPrototype.getDiagnosisText();
-	this.extendedDiagnosisText = diagnosisPrototype.getExtendedDiagnosisText();
-	this.commentary = diagnosisPrototype.getCommentary();
-    }
+	@Transient
+	@Override
+	public String asGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		final Gson gson = builder.create();
+		return gson.toJson(this);
+	}
+
+	@Transient
+	@Override
+	public void update(DiagnosisPrototype diagnosisPrototype) {
+		this.name = diagnosisPrototype.getName();
+		this.icd10 = diagnosisPrototype.getIcd10();
+		this.malign = diagnosisPrototype.isMalign();
+		this.diagnosisText = diagnosisPrototype.getDiagnosisText();
+		this.extendedDiagnosisText = diagnosisPrototype.getExtendedDiagnosisText();
+		this.commentary = diagnosisPrototype.getCommentary();
+	}
 }

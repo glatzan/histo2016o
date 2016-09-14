@@ -4,15 +4,11 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.stat.Statistics;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Diagnosis;
-import org.histo.model.History;
 import org.histo.model.Sample;
-import org.histo.model.Task;
-import org.histo.util.Log;
 import org.histo.util.ResourceBundle;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +24,13 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	@Autowired
 	private TaskDAO taskDAO;
-	
-	@Autowired
-	private Log log;
 
 	@Autowired
 	private HelperHandlerAction helper;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
-	
+
 	private static final long serialVersionUID = -1214161114824263589L;
 
 	private Diagnosis tmpDiagnosis;
@@ -89,12 +82,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void createNewDiagnosis(Sample sample, int type) {
 		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
-		genericDAO.save(newDiagnosis, resourceBundle.get("log.diagnosis.new"));
-		genericDAO.merge(sample);
+		genericDAO.save(newDiagnosis, resourceBundle.get("log.diagnosis.new"), newDiagnosis.getPatient());
+		genericDAO.save(sample);
 		genericDAO.refresh(sample.getPatient());
-		
-		log.info(Log.LOG_DIAGNOSIS_NEW, sample.getPatient(), newDiagnosis.getId(), newDiagnosis.getName(),
-				sample.getSampleID(), sample.getParent().getTaskID());
 	}
 
 	/**
@@ -104,7 +94,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param diagnosis
 	 * @return
 	 */
-	public boolean isDiangosisToFinalizeDiagnosisOrFollowUP(Diagnosis diagnosis) {
+	public boolean isDiangosisDiagnosisOrFollowUP(Diagnosis diagnosis) {
 		if (diagnosis.getType() == Diagnosis.TYPE_DIAGNOSIS
 				|| diagnosis.getType() == Diagnosis.TYPE_FOLLOW_UP_DIAGNOSIS) {
 			return true;
@@ -117,8 +107,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void prepareFinalizeDiagnosisDialog(Diagnosis diagnosis) {
 		setTmpDiagnosis(diagnosis);
-		System.out.println(HistoSettings.dialog(HistoSettings.DIALOG_DIAGNOSIS_FINALIZE));
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_DIAGNOSIS_FINALIZE));
+		helper.showDialog(HistoSettings.DIALOG_DIAGNOSIS_FINALIZE, false, false, true);
 	}
 
 	/**
@@ -126,7 +115,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void hideFinalizeDiangosisDialog() {
 		setTmpDiagnosis(null);
-		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_DIAGNOSIS_FINALIZE));
+		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_FINALIZE);
 	}
 
 	/**
@@ -140,28 +129,33 @@ public class DiagnosisHandlerAction implements Serializable {
 	public void finalizeDiagnosis(Diagnosis diagnosis) {
 
 		Sample sample = diagnosis.getParent();
-		if (isDiangosisToFinalizeDiagnosisOrFollowUP(diagnosis)) {
+		if (isDiangosisDiagnosisOrFollowUP(diagnosis)) {
 
 			for (Diagnosis diagnosisIter : sample.getDiagnoses()) {
 				diagnosisIter.setFinalized(true);
 				diagnosisIter.setFinalizedDate(new Date(System.currentTimeMillis()));
-
-				log.info(Log.LOG_DIAGNOSIS_NEW, sample.getPatient(), diagnosisIter.getId(), diagnosisIter.getName(),
-						sample.getSampleID(), sample.getParent().getTaskID(), diagnosisIter.asGson());
 			}
 
 		} else {
 			diagnosis.setFinalized(true);
 			diagnosis.setFinalizedDate(new Date(System.currentTimeMillis()));
-
-			log.info(Log.LOG_DIAGNOSIS_NEW, sample.getPatient(), diagnosis.getId(), diagnosis.getName(),
-					sample.getSampleID(), sample.getParent().getTaskID(), diagnosis.asGson());
 		}
 
-		genericDAO.merge(diagnosis, resourceBundle.get("log.diagnosis.finaziled"));
+		genericDAO.save(diagnosis, resourceBundle.get("log.diagnosis.finaziled"), diagnosis.getPatient());
 		genericDAO.refresh(diagnosis.getPatient());
-		
+
 		hideFinalizeDiangosisDialog();
+	}
+
+	/**
+	 * Makes a diagnosis editable again.
+	 * 
+	 * @param diagnosis
+	 */
+	public void unfinalizeDiagnosis(Diagnosis diagnosis) {
+		diagnosis.setFinalized(false);
+		diagnosis.setFinalizedDate(null);
+		genericDAO.save(diagnosis, resourceBundle.get("log.diagnosis.unfinalize"), diagnosis.getPatient());
 	}
 
 	/**
@@ -172,11 +166,24 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void saveDiagnosis(Diagnosis diagnosis) {
 		taskDAO.getDiagnosisRevisions(diagnosis);
-		System.out.println(diagnosis.getVersion());
-		System.out.println("- " +genericDAO.merge(diagnosis.getPatient(), resourceBundle.get("log.diagnosis.changed")));
-		System.out.println(diagnosis.getVersion());
+		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.diagnosis.changed"), diagnosis.getPatient());
 	}
-	
+
+	/**
+	 * Shows a dialog for editing the name of the passed diagnosis
+	 */
+	public void prepareEditDiagnosisNameDialog(Diagnosis diagnosis) {
+		setTmpDiagnosis(diagnosis);
+		helper.showDialog(HistoSettings.DIALOG_DIAGNOSIS_EDIT_NAME, false, false, true);
+	}
+
+	/**
+	 * Hides the edit name dialog for the diagnosis
+	 */
+	public void hideEditDiagnosisNameDialog() {
+		setTmpDiagnosis(null);
+		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_EDIT_NAME);
+	}
 
 	/********************************************************
 	 * Getter/Setter
@@ -193,6 +200,5 @@ public class DiagnosisHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	
-	
+
 }

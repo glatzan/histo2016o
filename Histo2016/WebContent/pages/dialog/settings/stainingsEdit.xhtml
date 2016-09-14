@@ -7,48 +7,48 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:layout styleClass="tabLayout">
-		<p:layoutUnit styleClass="center" position="center">
-			<p:panel style="width:100%;"
-				header="#{msg['dialog.settings.stainings']} / #{settingsHandlerAction.originalStaining eq null ? msg['dialog.settings.stainings.new.new'] : msg['dialog.settings.stainings.new.edit']}"
-				styleClass="contentPannel" />
-			<p:panelGrid columns="2"
-				styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.settings.stainings']} / #{settingsHandlerAction.originalStaining eq null ? msg['dialog.settings.stainings.new.new'] : msg['dialog.settings.stainings.new.edit']}"
+			styleClass="contentPannel" />
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
 
-				<h:outputLabel value="#{msg['dialog.settings.stainings.new.name']}"></h:outputLabel>
-				<p:inputText value="#{settingsHandlerAction.editStaining.name}"></p:inputText>
+			<h:outputLabel value="#{msg['dialog.settings.stainings.new.name']}"></h:outputLabel>
+			<p:inputText value="#{settingsHandlerAction.editStaining.name}"></p:inputText>
 
-				<h:outputLabel
-					value="#{msg['dialog.settings.stainings.new.commentary']}"></h:outputLabel>
-				<p:inputTextarea rows="3" style="width:390px"
-					value="#{settingsHandlerAction.editStaining.commentary}" />
+			<h:outputLabel
+				value="#{msg['dialog.settings.stainings.new.commentary']}"></h:outputLabel>
+			<p:inputTextarea rows="3" style="width:390px"
+				value="#{settingsHandlerAction.editStaining.commentary}" />
 
-				<h:outputLabel value="#{msg['dialog.settings.stainings.new.type']}"></h:outputLabel>
-				<p:selectOneMenu style="width:125px"
-					value="#{settingsHandlerAction.editStaining.type}">
-					<f:selectItem
-						itemLabel="#{msg['dialog.settings.stainings.new.type.standard']}"
-						itemValue="0" />
-					<f:selectItem
-						itemLabel="#{msg['dialog.settings.stainings.new.type.immun']}"
-						itemValue="1" />
-				</p:selectOneMenu>
-			</p:panelGrid>
+			<h:outputLabel value="#{msg['dialog.settings.stainings.new.type']}"></h:outputLabel>
+			<p:selectOneMenu style="width:125px"
+				value="#{settingsHandlerAction.editStaining.type}">
+				<f:selectItem
+					itemLabel="#{msg['dialog.settings.stainings.new.type.standard']}"
+					itemValue="0" />
+				<f:selectItem
+					itemLabel="#{msg['dialog.settings.stainings.new.type.immun']}"
+					itemValue="1" />
+			</p:selectOneMenu>
+		</p:panelGrid>
+	</div>
+	<div class="bottomDiv">
+		<h:panelGrid
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2">
+				<p:commandButton value="#{msg['general.save']}"
+					icon="fa fa-fw fa-floppy-o"
+					actionListener="#{settingsHandlerAction.saveStainig(settingsHandlerAction.editStaining, settingsHandlerAction.originalStaining)}"
+					update="@form"></p:commandButton>
 
-		</p:layoutUnit>
-
-		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="#{msg['general.save']}"
-				 icon="fa fa-fw fa-floppy-o"
-				actionListener="#{settingsHandlerAction.saveStainig(settingsHandlerAction.editStaining, settingsHandlerAction.originalStaining)}"
-				update="@form"></p:commandButton>
-
-			<p:commandButton value="#{msg['general.abort']}"
-				 style="margin-left:10px;"
-				icon="fa fa-fw fa-times-circle"
-				actionListener="#{settingsHandlerAction.discardChangesOfStainig()}"
-				update="@form"></p:commandButton>
-		</p:layoutUnit>
-	</p:layout>
+				<p:commandButton value="#{msg['general.abort']}"
+					icon="fa fa-fw fa-times-circle"
+					actionListener="#{settingsHandlerAction.discardChangesOfStainig()}"
+					update="@form"></p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
 
 </ui:composition>

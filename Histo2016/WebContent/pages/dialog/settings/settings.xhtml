@@ -36,15 +36,15 @@
 				<!-- ************************************************************** Stainings ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.stainings']}">
 					<!-- Staining List -->
-					<h:panelGroup rendered="#{!settingsHandlerAction.showStainingEdit}">
+					<ui:fragment rendered="#{!settingsHandlerAction.showStainingEdit}">
 						<ui:include src="stainingsList.xhtml" />
-					</h:panelGroup>
+					</ui:fragment>
 					<!-- Staining List -->
 
 					<!-- Edit Staining -->
-					<h:panelGroup rendered="#{settingsHandlerAction.showStainingEdit}">
+					<ui:fragment rendered="#{settingsHandlerAction.showStainingEdit}">
 						<ui:include src="stainingsEdit.xhtml" />
-					</h:panelGroup>
+					</ui:fragment>
 					<!-- Edit Staining -->
 				</p:tab>
 				<!-- ************************************************************** Stainings ************************************************************** -->
@@ -53,42 +53,42 @@
 				<p:tab title="#{msg['dialog.settings.stainingLists']}">
 
 					<!-- ******************* StainingsList List ******************* -->
-					<h:panelGroup
+					<ui:fragment
 						rendered="#{settingsHandlerAction.stainingListIndex eq 0}">
 						<ui:include src="stainingListList.xhtml" />
-					</h:panelGroup>
+					</ui:fragment>
 					<!-- ******************* StainingsList List ******************* -->
 
 					<!-- ******************* StainingsList Edit/New ******************* -->
-					<h:panelGroup
+					<ui:fragment
 						rendered="#{settingsHandlerAction.stainingListIndex eq 1}">
 						<ui:include src="stainingListEdit.xhtml" />
-					</h:panelGroup>
+					</ui:fragment>
 					<!-- ******************* StainingsList Edit/New ******************* -->
 
 					<!-- ******************* StainingsList Add Staining ******************* -->
-					<h:panelGroup
+					<ui:fragment
 						rendered="#{settingsHandlerAction.stainingListIndex eq 2}">
 						<ui:include src="stainingListAddStaining.xhtml" />
-					</h:panelGroup>
+					</ui:fragment>
 					<!-- ******************* StainingsList Add Staining ******************* -->
 				</p:tab>
 				<!-- ************************************************************** StainingList ************************************************************** -->
 
 				<!-- ************************************************************** Diagnoses ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.diagnosis']}">
-					<h:panelGroup
+					<ui:fragment
 						rendered="#{settingsHandlerAction.diagnosisIndex eq 0}">
 						<ui:include src="diagnosisList.xhtml" />
-					</h:panelGroup>
-					<h:panelGroup
+					</ui:fragment>
+					<ui:fragment
 						rendered="#{settingsHandlerAction.diagnosisIndex eq 1}">
 						<ui:include src="diagnosisEdit.xhtml" />
-					</h:panelGroup>
-					<h:panelGroup
+					</ui:fragment>
+					<ui:fragment
 						rendered="#{settingsHandlerAction.diagnosisIndex eq 2}">
 						<ui:include src="diagnosisEditTemplate.xhtml" />
-					</h:panelGroup>
+					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Diagnoses ************************************************************** -->
 

@@ -7,56 +7,68 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:layout styleClass="tabLayout">
-		<p:layoutUnit styleClass="center" position="center">
-			<p:panel style="width:100%;"
-				header="#{settingsHandlerAction.originalDiagnosisPrototype eq null ? 'Neue Diagnose erstellen' : 'Diagnose editieren'}"
-				styleClass="contentPannel" />
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{settingsHandlerAction.originalDiagnosisPrototype eq null ? msg['dialog.settings.diagnosis.edit.headline.new'] : msg['dialog.settings.diagnosis.edit.headline.edit']}"
+			styleClass="contentPannel" />
 
-			<p:panelGrid columns="2" styleClass="noBorders" style="width:100%">
-				<h:outputLabel value="Diagnose" />
-				<p:inputText
-					value="#{settingsHandlerAction.editDiagnosisPrototype.name}"
-					id="diagnosisName">
-					<p:watermark for="diagnosisName" value="Name der Diagnose" />
-				</p:inputText>
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.diagnosis']}" />
+			<p:inputText
+				value="#{settingsHandlerAction.editDiagnosisPrototype.name}"
+				id="diagnosisName">
+				<p:watermark for="diagnosisName"
+					value="#{msg['dialog.settings.diagnosis.edit.diagnosis.watermark']}" />
+			</p:inputText>
 
-				<h:outputLabel value="ICD 10 Nummer" />
-				<p:inputText
-					value="#{settingsHandlerAction.editDiagnosisPrototype.icd10}"
-					id="diagnosisICD">
-					<p:watermark for="diagnosisICD" value="ICD 10 Nummer" />
-				</p:inputText>
+			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.icd10']}" />
+			<p:inputText
+				value="#{settingsHandlerAction.editDiagnosisPrototype.icd10}"
+				id="diagnosisICD">
+				<p:watermark for="diagnosisICD"
+					value="#{msg['dialog.settings.diagnosis.edit.icd10.watermark']}" />
+			</p:inputText>
 
-				<h:outputLabel value="Malignität" />
-				<p:selectBooleanCheckbox
-					value="#{settingsHandlerAction.editDiagnosisPrototype.malign}" />
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.malign']}" />
+			<p:selectBooleanCheckbox
+				value="#{settingsHandlerAction.editDiagnosisPrototype.malign}" />
 
-				<h:outputLabel value="Diagnose Text" />
-				<p:inputTextarea id="diagnosisText"
-					value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosisText}">
-					<p:watermark for="diagnosisText" value="Text für die Befundung" />
-				</p:inputTextarea>
+			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
+			<p:inputTextarea id="diagnosisText"
+				value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosisText}">
+				<p:watermark for="diagnosisText"
+					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
+			</p:inputTextarea>
 
-				<h:outputLabel value="Kommentar" />
-				<p:inputTextarea id="diagnosisCommentary"
-					value="#{settingsHandlerAction.editDiagnosisPrototype.commentary}">
-					<p:watermark for="diagnosisCommentary" value="Kommentar/Anmerkung" />
-				</p:inputTextarea>
-			</p:panelGrid>
-		</p:layoutUnit>
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.commentary']}" />
+			<p:inputTextarea id="diagnosisCommentary"
+				value="#{settingsHandlerAction.editDiagnosisPrototype.commentary}">
+				<p:watermark for="diagnosisCommentary"
+					value="#{msg['dialog.settings.diagnosis.edit.commentary.watermark']}" />
+			</p:inputTextarea>
+		</p:panelGrid>
+	</div>
 
-		<p:layoutUnit position="south" styleClass="south">
-			<p:commandButton value="Speichern" 
-				icon="fa fa-fw fa-floppy-o" update="@form"
-				actionListener="#{settingsHandlerAction.saveDiagnosisPrototype(settingsHandlerAction.editDiagnosisPrototype,settingsHandlerAction.originalDiagnosisPrototype)}"></p:commandButton>
-			<p:commandButton value="Textvorlage editieren"
-				 icon="fa fa-fw fa-pencil-square-o"
-				update="@form" actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototypeTemplate()}"></p:commandButton>
-			<p:commandButton value="Abbrechen" 
-				icon="fa fa-fw fa-times-circle" update="@form"
-				actionListener="#{settingsHandlerAction.discardDiagnosisPrototype()}"></p:commandButton>
-		</p:layoutUnit>
-	</p:layout>
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="3">
+				<p:commandButton value="#{msg['general.save']}"
+					icon="fa fa-fw fa-floppy-o" update="@form"
+					actionListener="#{settingsHandlerAction.saveDiagnosisPrototype(settingsHandlerAction.editDiagnosisPrototype,settingsHandlerAction.originalDiagnosisPrototype)}" />
+				<p:commandButton
+					value="#{msg['dialog.settings.diagnosis.edit.button.textPreset']}"
+					icon="fa fa-fw fa-pencil-square-o" update="@form"
+					actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototypeTemplate()}" />
+				<p:commandButton value="#{msg['general.abort']}"
+					icon="fa fa-fw fa-times-circle" update="@form"
+					actionListener="#{settingsHandlerAction.discardDiagnosisPrototype()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
 
 </ui:composition>

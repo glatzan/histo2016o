@@ -78,11 +78,11 @@ body {
 	font-weight: bold;
 }
 
-.noUnderlineAtLink{
+.noUnderlineAtLink {
 	text-decoration: none !important;
 }
 
-.noUnderlineAtLink:hover{
+.noUnderlineAtLink:hover {
 	font-weight: bold;
 }
 
@@ -376,6 +376,25 @@ body {
 	width: 100%;
 }
 
+/*	################# Notification Dialog ################# */
+/* newest Dialog */
+.defaultDialogLayout {
+	padding: 1em 1em 1em 1em !important;
+}
+
+.defaultDialogLayout .dialogContent {
+	font-size: 1.3em !important;
+	padding-bottom: 0.5em;
+}
+
+.defaultDialogLayout .buttonContainer {
+	position: absolute !important;
+	bottom: 0.5em !important;
+	vertical-align: bottom !important;
+}
+
+/*	################# Notification Dialog ################# */
+
 /*	################# BigDialog ################# */
 /* Layout for big dialogs*/
 .bigDialog, .bigDialog .dialogPannel {
@@ -435,19 +454,22 @@ body {
 	height: 600px;
 }
 
-/* Layout in the tabview center tab, center column of layout*/
-.settingsDialogLayout .settingsPannel .settingsTabView .tabLayout .center
-	{
-	padding: 1px !important;
-	height: 500px;
+/* Layout in the tabview center tab, center div*/
+.settingsDialogLayout .settingsPannel .settingsTabView .contentDiv {
+	padding: 1px 1px 1px 0px !important;
+	height: 550px;
+	overflow-x: hidden;
+	overflow-y: auto; 
 }
 
-/* Layout in the tabview center tab, south column of layout*/
-.settingsDialogLayout .settingsPannel .settingsTabView .tabLayout .south
-	{
-	padding: 1px !important;
-	height: 50px;
-	background-color: black;
+/* Layout in the tabview center tab, bottom div*/
+.settingsDialogLayout .settingsPannel .settingsTabView .bottomDiv {
+	padding: 1px 1px 1px 0px !important;
+	height: 35px;
+	position: absolute !important; 
+	bottom: 1px !important; 
+	vertical-align: bottom !important;
+	width: 100%;
 }
 
 /* Background Color tab view on the left sinde */

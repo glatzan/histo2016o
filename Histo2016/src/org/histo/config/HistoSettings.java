@@ -36,10 +36,12 @@ public class HistoSettings {
 	public static final int DIALOG_LOGOUT = 9;
 	public static final int DIALOG_WORKLIST_OPTIONS = 10;
 	public static final int DIALOG_PATIENT_EDIT = 11;
-	public static final int DIALOG_PATIENT_ADD = 12;
 	public static final int DIALOG_WORKLIST_ORDER = 13;
-	public static final int DIALOG_DIAGNOSIS_FINALIZE = 14;
 
+	public static final String DIALOG_DIAGNOSIS_FINALIZE = "/pages/dialog/diagnosis/finalizeDiagnosis";
+	public static final String DIALOG_DIAGNOSIS_EDIT_NAME = "/pages/dialog/diagnosis/editDiagnosisName";
+	public static final String DIALOG_PATIENT_ADD = "/pages/dialog/patient/addPatient";
+	
 	// noch nicht drinnen
 	public static final int DIALOG_TEST = 255;
 	public static final int DIALOG_ARCHIV_TASK = 2;
@@ -60,9 +62,7 @@ public class HistoSettings {
 		tmpMap.put(DIALOG_LOGOUT, "/pages/dialog/logout");
 		tmpMap.put(DIALOG_WORKLIST_OPTIONS, "/pages/dialog/worklist/worklistOptions");
 		tmpMap.put(DIALOG_PATIENT_EDIT, "/pages/dialog/patient/editPatient");
-		tmpMap.put(DIALOG_PATIENT_ADD, "/pages/dialog/patient/addPatient");
 		tmpMap.put(DIALOG_WORKLIST_ORDER, "/pages/dialog/worklist/worklistOrder");
-		tmpMap.put(DIALOG_DIAGNOSIS_FINALIZE, "/pages/dialog/task/finalizeDiagnosis");
 
 		tmpMap.put(DIALOG_TEST, "/pages/dialog/task/notification");
 

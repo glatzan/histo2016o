@@ -171,31 +171,34 @@
 
 								<h:outputLabel value="#{msg['body.diagnosisView.tab.name']}" />
 
-								<!-- staining completed -->
+								<!-- diagnosis completed -->
 								<h:panelGroup
 									rendered="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}">
-									<div class="fa fa-check-circle icon-green" />
+									<div class="fa fa-check-circle icon-green"
+										title="#{msg['body.diagnosisView.tab.completed']}" />
 								</h:panelGroup>
+
+								<!-- diagnosis not completed -->
 								<h:panelGroup
 									rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted and worklistHandlerAction.selectedPatient.selectedTask.stainingCompleted}">
 									<div class="fa fa-exclamation-circle icon-orange"
-										title="Diagnose ausstehend" />
+										title="#{msg['body.diagnosisView.tab.diagnosis']}" />
 								</h:panelGroup>
 							</f:facet>
-
-
 
 
 							<p:panelGrid styleClass="stainingTable">
 								<c:forEach
 									items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
 									var="sample">
+									<!-- Diangosis -->
 									<p:row>
-										<!-- Sample -->
 										<p:column styleClass="columnSample"
 											style="vertical-align:top;">
 											<p:panelGrid columns="1">
-												<h:outputLabel value="Probe #{sample.sampleID}" />
+												<h:outputLabel
+													value="#{msg['body.diagnosisView.tab.sample']} #{sample.sampleID}" />
+												<!-- Add diagnosis review -->
 												<p:commandLink
 													rendered="#{diagnosisHandlerAction.isDiagonsisFollowUPCreationPossible(sample)}"
 													title="Nachbefundung erstellen"
@@ -204,6 +207,8 @@
 													<h:outputLabel value="(Nachbefundung)"
 														style="font-size:10px; margin-left: 10px;" />
 												</p:commandLink>
+
+												<!-- add diagnosis revision -->
 												<p:commandLink
 													rendered="#{diagnosisHandlerAction.isDiagonsisRevisionCreationPossible(sample)}"
 													title="Diagnoserevision erstellen"
@@ -216,30 +221,43 @@
 										</p:column>
 
 										<p:column>
-
+											<!-- Diangosis data -->
 											<p:accordionPanel value="#{sample.diagnoses}" var="diagnosis"
-												multiple="true" styleClass="diagnosesAccordion">
+												id="diagnosisAccordion" multiple="true"
+												styleClass="diagnosesAccordion">
 												<p:tab>
+													<!-- Headline for diagnosis -->
 													<f:facet name="title">
-														<p:inplace styleClass="inplaceInput"
-															disabled="#{diagnosis.finalized}">
-															<p:inputText value="#{diagnosis.name}"
-																styleClass="inplaceInput" />
-														</p:inplace>
-														<h:outputLabel value="#{diagnosis.diagnosis}"
+														<h:outputLabel value="#{diagnosis.name}" />
+
+														<h:outputLabel value=" #{diagnosis.diagnosis}"
 															rendered="#{diagnosis.diagnosis ne null}" />
+
+														<h:outputLabel
+															value="#{msg['body.diagnosisView.tab.finalized']}"
+															rendered="#{diagnosis.finalized}" />
+
+														<p:commandLink
+															title="#{msg['body.diagnosisView.tab.editName']}"
+															style="float: right"
+															actionListener="#{diagnosisHandlerAction.prepareEditDiagnosisNameDialog(diagnosis)}">
+															<i class="fa fa-fw fa-cog" />
+															<p:ajax event="dialogReturn" update="diagnosisAccordion" />
+														</p:commandLink>
 													</f:facet>
-
+													<!-- Headline for diagnosis -->
+													<!-- Body for diagnosis -->
 													<h:panelGrid columns="1" style="width:100%;">
-
+														<!-- choose diagnosis -->
 														<h:panelGrid columns="4" style="width:100%;">
-															<h:outputLabel value="Diagnose" />
-
+															<h:outputLabel
+																value="#{msg['body.diagnosisView.tab.diagnosis']}" />
 															<p:selectOneMenu
-																value="#{worklistHandlerAction.tmpDiagnosisPrototype}"
+																value="#{diagnosis.diagnosisPrototype}"
 																disabled="#{diagnosis.finalized}"
 																converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}">
-																<f:selectItem itemLabel="Diagnose auswählen"
+																<f:selectItem
+																	itemLabel="#{msg['body.diagnosisView.tab.diagnosis.choose']}"
 																	itemValue="#{null}" />
 																<f:selectItems
 																	value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
@@ -288,13 +306,13 @@
 															</p:commandButton>
 														</h:panelGrid>
 													</h:panelGrid>
-
-
+													<!-- Body for diagnosis -->
 												</p:tab>
 											</p:accordionPanel>
-
+											<!-- Diangosis data -->
 										</p:column>
 									</p:row>
+									<!-- Diangosis -->
 								</c:forEach>
 							</p:panelGrid>
 						</p:tab>

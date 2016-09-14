@@ -26,6 +26,8 @@ public class Log {
     
     private UserAcc userAcc;
     
+    private Patient patient;
+    
 	@Id
 	@GeneratedValue(generator = "log_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -63,6 +65,17 @@ public class Log {
 	public void setUserAcc(UserAcc userAcc) {
 		this.userAcc = userAcc;
 	}
+
+	@OneToOne
+	public Patient getPatient() {
+		return patient;
+	}
+
+	public void setPatient(Patient patient) {
+		this.patient = patient;
+	}
+	
+	
     
 }
 
