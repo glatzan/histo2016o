@@ -96,9 +96,6 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	private HelperDAO helperDAO;
 	@Autowired
-	private PhysicianDAO physicianDAO;
-
-	@Autowired
 	private HelperHandlerAction helper;
 	@Autowired
 	@Lazy
@@ -108,12 +105,9 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	@Lazy
 	private SettingsHandlerAction settingsHandlerAction;
-
 	@Autowired
 	private Log log;
 
-	@Autowired
-	private org.histo.util.ResourceBundle resourceBundle;
 
 	/******************************************************** Patient ********************************************************/
 	/**
@@ -156,18 +150,6 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	private boolean archived;
 	/******************************************************** Archivieren ********************************************************/
-
-	/******************************************************** Contact ********************************************************/
-	private List<Contact> allAvailableContact;
-
-	private boolean personSurgeon = true;
-
-	private boolean personExtern = true;
-
-	private boolean personOther = true;
-
-	private boolean addedContacts = false;
-	/******************************************************** Contact ********************************************************/
 
 	/******************************************************** Worklist ********************************************************/
 	/**
@@ -597,114 +579,6 @@ public class WorklistHandlerAction implements Serializable {
 
 	/******************************************************** Diagnosis ********************************************************/
 
-	/******************************************************** Contact ********************************************************/
-	/**
-	 * Zeigt einen Dialog zum verwalten der Benachrichtigugen/Kontakte für eine
-	 * Aufgabe.
-	 * 
-	 * @param task
-	 * @param surgeon
-	 * @param extern
-	 * @param other
-	 * @param addedContact
-	 */
-	public void prepareContacts(Task task, boolean surgeon, boolean extern, boolean other, boolean addedContact) {
-
-		genericDAO.refresh(task);
-
-		setAllAvailableContact(new ArrayList<Contact>());
-
-		List<Contact> contacts = task.getContacts();
-
-		List<Physician> databaseContacts = physicianDAO.getPhysicians(surgeon, extern, other);
-
-		if (!addedContact) {
-			loop: for (Physician physician : databaseContacts) {
-				for (Contact contact : contacts) {
-					if (contact.getPhysician().getId() == physician.getId()) {
-						contact.setSelected(true);
-						getAllAvailableContact().add(contact);
-						System.out.println("found continue");
-						continue loop;
-					}
-				}
-
-				getAllAvailableContact().add(new Contact(physician));
-
-			}
-			// Nur bereits verwendete Kontakte anzeigen
-		} else {
-			getAllAvailableContact().addAll(contacts);
-		}
-
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_CONTACTS), 1024, 500, false, false, true);
-	}
-
-	/**
-	 * Aktualisiert die Liste der vorhanden Kontakte.
-	 * 
-	 * @param contacts
-	 * @param task
-	 */
-	public void updateContactList(List<Contact> contacts, Task task) {
-		for (Contact contact : contacts) {
-			if (contact.isSelected()) {
-				if (contact.getRole() == 0) {
-					task.getContacts().remove(contact);
-				}
-				continue;
-			} else if (contact.getRole() != 0)
-				task.getContacts().add(contact);
-		}
-
-		genericDAO.save(task);
-		hideContactsDialog();
-	}
-
-	/**
-	 * Sobald im Kontaktdialog ein neuer Kontakt ausgewählt wird, wird je nach
-	 * Art eine Benachrichtigung vorausgewählt.
-	 * 
-	 * @param contact
-	 */
-	public void onContactChangeRole(Contact contact) {
-		// contact wurde deselektiert alles auf nicht benutzt setzten
-		if (contact.getRole() == Contact.ROLE_NONE) {
-			contact.setUseEmail(false);
-			contact.setUseFax(false);
-			contact.setUsePhone(false);
-		} else {
-			// es wurde schon etwas ausgewählt, alles so belassen wie es war
-			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax())
-				return;
-
-			// bei internen operateuren mail bevorzugen
-			if (contact.getRole() == Contact.ROLE_SURGEON) {
-				contact.setUseEmail(true);
-				return;
-			}
-
-			// bei externen die eine Faxnummer haben fax bevorzugen
-			if (contact.getRole() == Contact.ROLE_EXTERN && contact.getPhysician().getFax() != null
-					&& !contact.getPhysician().getFax().isEmpty()) {
-				contact.setUseFax(true);
-				return;
-			}
-			// in allen anderen fällen email setzten
-			if (contact.getPhysician().getEmail() != null && !contact.getPhysician().getEmail().isEmpty())
-				contact.setUseEmail(true);
-		}
-	}
-
-	/**
-	 * Schließt den Kontakt Dialog
-	 */
-	public void hideContactsDialog() {
-		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_CONTACTS));
-	}
-
-	/******************************************************** Contact ********************************************************/
-
 	/******************************************************** Worklistoptions ********************************************************/
 	public void prepareWorklistOptions() {
 		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_OPTIONS), 650, 470, true, false, false);
@@ -1031,46 +905,6 @@ public class WorklistHandlerAction implements Serializable {
 
 	public void setArchived(boolean archived) {
 		this.archived = archived;
-	}
-
-	public List<Contact> getAllAvailableContact() {
-		return allAvailableContact;
-	}
-
-	public void setAllAvailableContact(List<Contact> allAvailableContact) {
-		this.allAvailableContact = allAvailableContact;
-	}
-
-	public boolean isPersonSurgeon() {
-		return personSurgeon;
-	}
-
-	public void setPersonSurgeon(boolean personSurgeon) {
-		this.personSurgeon = personSurgeon;
-	}
-
-	public boolean isPersonExtern() {
-		return personExtern;
-	}
-
-	public void setPersonExtern(boolean personExtern) {
-		this.personExtern = personExtern;
-	}
-
-	public boolean isPersonOther() {
-		return personOther;
-	}
-
-	public void setPersonOther(boolean personOther) {
-		this.personOther = personOther;
-	}
-
-	public boolean isAddedContacts() {
-		return addedContacts;
-	}
-
-	public void setAddedContacts(boolean addedContacts) {
-		this.addedContacts = addedContacts;
 	}
 
 	public int getWorklistSortOrder() {

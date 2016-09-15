@@ -32,7 +32,6 @@ public class HistoSettings {
 	public static final int DIALOG_STAINING_PERFORMED = 5;
 	public static final int DIALOG_ADD_SLIDE_RESTAINING = 6;
 	public static final int DIALOG_SETTINGS = 7;
-	public static final int DIALOG_WORKLIST_CONTACTS = 8;
 	public static final int DIALOG_LOGOUT = 9;
 	public static final int DIALOG_WORKLIST_OPTIONS = 10;
 	public static final int DIALOG_PATIENT_EDIT = 11;
@@ -41,6 +40,8 @@ public class HistoSettings {
 	public static final String DIALOG_DIAGNOSIS_FINALIZE = "/pages/dialog/diagnosis/finalizeDiagnosis";
 	public static final String DIALOG_DIAGNOSIS_EDIT_NAME = "/pages/dialog/diagnosis/editDiagnosisName";
 	public static final String DIALOG_PATIENT_ADD = "/pages/dialog/patient/addPatient";
+	public static final String DIALOG_WORKLIST_CONTACTS = "/pages/dialog/contact/addContact";
+	
 	
 	// noch nicht drinnen
 	public static final int DIALOG_TEST = 255;
@@ -58,7 +59,6 @@ public class HistoSettings {
 		tmpMap.put(DIALOG_STAINING_PERFORMED, "/pages/dialog/task/staingingPerformed");
 		tmpMap.put(DIALOG_ADD_SLIDE_RESTAINING, "/pages/dialog/task/addSlideRestaining");
 		tmpMap.put(DIALOG_SETTINGS, "/pages/dialog/settings/settings");
-		tmpMap.put(DIALOG_WORKLIST_CONTACTS, "/pages/dialog/task/addContact");
 		tmpMap.put(DIALOG_LOGOUT, "/pages/dialog/logout");
 		tmpMap.put(DIALOG_WORKLIST_OPTIONS, "/pages/dialog/worklist/worklistOptions");
 		tmpMap.put(DIALOG_PATIENT_EDIT, "/pages/dialog/patient/editPatient");

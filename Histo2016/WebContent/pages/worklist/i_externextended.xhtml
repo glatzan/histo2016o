@@ -46,7 +46,7 @@
 					<h:outputLabel value="Benachrichtigungen"></h:outputLabel>
 					<p:commandLink title="#{msg['body.statiningView.archiveStaining']}"
 						style="float: right"
-						actionListener="#{worklistHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.personSurgeon,worklistHandlerAction.personExtern,worklistHandlerAction.personOther,worklistHandlerAction.addedContacts)}">
+						actionListener="#{worklistHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.personSurgeon,contactHandlerAction.personExtern,worklistHandlerAction.personOther,worklistHandlerAction.addedContacts)}">
 						<i class="fa fa-fw fa-cog" />
 						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					</p:commandLink>

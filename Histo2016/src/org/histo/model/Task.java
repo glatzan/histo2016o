@@ -92,6 +92,11 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	private String caseHistory;
 
 	/**
+	 * Ward of the patient
+	 */
+	private String ward;
+	
+	/**
 	 * Ey of the samples right/left/both
 	 */
 	private byte eye;
@@ -429,6 +434,14 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.diagnosisCompletionDate = diagnosisCompletionDate;
 	}
 
+	public String getWard() {
+		return ward;
+	}
+
+	public void setWard(String ward) {
+		this.ward = ward;
+	}
+	
 	@Transient
 	public Sample getSelectedSample() {
 		return selectedSample;

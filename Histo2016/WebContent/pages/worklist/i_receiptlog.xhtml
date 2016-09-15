@@ -9,14 +9,14 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 
-	<!-- Auftrag -->
+	<!-- Task -->
 	<h:panelGroup styleClass="contentHolder" layout="block"
 		style="padding:5px; width:auto">
 		<p:panelGrid styleClass="noBorders" style="border: 1px solid black;">
 			<p:row styleClass="noBorders">
-				<!-- Eingagnsdatum -->
+				<!-- Receipt Date -->
 				<p:column>
-					<h:outputLabel value="#{msg.bodyTaskEDate}" />
+					<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
 				</p:column>
 				<p:column>
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
@@ -26,12 +26,12 @@
 
 				<!-- Termin Datum -->
 				<p:column>
-					<h:outputLabel value="#{msg.bodyTaskDueDate}" />
+					<h:outputLabel value="#{msg['body.receiptlog.taskDueDate']}" />
 				</p:column>
 				<p:column>
 					<h:panelGrid columns="2" styleClass="collapsedBorders noPadding">
 						<p:selectBooleanCheckbox style="padding-right:5px;"
-							title="#{msg.bodyTaskDueDateText}"
+							title="#{msg['body.receiptlog.taskDueDate.hint']}"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
 							<p:ajax update="navigationForm contentForm"></p:ajax>
 						</p:selectBooleanCheckbox>
@@ -41,84 +41,118 @@
 							disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}" />
 					</h:panelGrid>
 				</p:column>
-
+				
+				<!-- contact -->
 				<p:column>
-					<h:outputLabel value="Benachrichtigungen"></h:outputLabel>
-					<p:commandLink title="#{msg['body.statiningView.archiveStaining']}"
+					<h:outputLabel value="#{msg['body.receiptlog.notification']}"></h:outputLabel>
+					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right"
-						actionListener="#{worklistHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.personSurgeon,worklistHandlerAction.personExtern,worklistHandlerAction.personOther,worklistHandlerAction.addedContacts)}">
+						actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
 						<i class="fa fa-fw fa-cog" />
 						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					</p:commandLink>
 				</p:column>
 			</p:row>
-			<p:row styleClass="noBorders">
-				<!-- Station -->
-				<p:column>
-					<p:outputLabel value="#{msg.bodyTaskStation}" />
-				</p:column>
 
+			<p:row styleClass="noBorders">
+				<!-- ward -->
 				<p:column>
-					<p:selectOneMenu styleClass="taskSelectOnMenu">
-						<f:selectItem itemLabel="#{msg.bodyTaskStationSelect}"
-							itemValue="" />
-						<f:selectItem itemLabel="#{msg.bodyTaskStationAmbulant}"
-							itemValue="0" />
-						<f:selectItem itemLabel="#{msg.bodyTaskStationStationary}"
-							itemValue="1" />
-						<f:selectItem itemLabel="#{msg.bodyTaskStationExternal}"
-							itemValue="2" />
+					<p:outputLabel value="#{msg['body.receiptlog.ward']}" />
+				</p:column>
+				<p:column>
+					<p:selectOneMenu styleClass="taskSelectOnMenu" editable="true"
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.ward}">
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.select']}"
+							itemValue="none" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.ambulant']}"
+							itemValue="ambulant" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.inpatient']}"
+							itemValue="impatient" />
+						<f:selectItem
+							itemLabel="#{msg['body.receiptlog.ward.ambulant.private']}"
+							itemValue="private" />
+						<f:selectItem
+							itemLabel="#{msg['body.receiptlog.ward.inpatient.private']}"
+							itemValue="impatient-private" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.ims']}"
+							itemValue="ims" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.extern']}"
+							itemValue="extern" />
+						<f:selectItem
+							itemLabel="#{msg['body.receiptlog.ward.exern.private']}"
+							itemValue="extern-private" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.fda']}"
+							itemValue="fda" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.manz']}"
+							itemValue="manz" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.beck']}"
+							itemValue="beck" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.axenfeld']}"
+							itemValue="axenfeld" />
 					</p:selectOneMenu>
 				</p:column>
 
-				<!-- Material -->
+				<!-- material -->
 				<p:column>
-					<p:outputLabel value="#{msg.bodyTaskMaterial}" />
+					<p:outputLabel value="#{msg['body.receiptlog.material']}" />
 				</p:column>
 				<!--TODO: CSS taskSelectOnMenu -->
+				<!--TODO: call ajax to change the material -->
 				<p:column>
 					<p:selectOneMenu
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.materialName}"
 						styleClass="taskSelectOnMenu" editable="true">
-						<f:selectItem itemLabel=" " itemValue="" />
+						<f:selectItem
+							itemLabel="#{msg['body.receiptlog.material.select']} TODO change"
+							itemValue="none" />
 						<f:selectItems
 							value="#{worklistHandlerAction.allAvailableStainingLists}"
 							var="list" itemLabel="#{list.name}" itemValue="#{list.name}" />
 					</p:selectOneMenu>
 				</p:column>
+
+				<!-- contact -->
 				<p:column rowspan="3" style="padding-top:0px;">
 					<p:dataTable var="contact" scrollable="true" scrollHeight="90"
 						styleClass="noBordersAll collapsedBordersAll addedContactDataTable"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.contacts}">
 
-						<p:column headerText="Name">
-							<h:outputText
-								value="#{contact.physician.person.title} #{contact.physician.person.name}" />
+						<p:column headerText="#{msg['body.receiptlog.contact.name']}">
+							<h:outputText value="#{contact.physician.fullName}" />
 						</p:column>
 
-						<p:column headerText="Rolle">
-							<h:outputText value="Operteur" rendered="#{contact.role eq 1}" />
-							<h:outputText value="Einsender" rendered="#{contact.role eq 2}" />
-							<h:outputText value="Andere" rendered="#{contact.role eq 3}" />
+						<p:column headerText="#{msg['body.receiptlog.contact.role']}">
+							<h:outputText
+								value="#{msg['body.receiptlog.contact.role.surgeon']}"
+								rendered="#{contact.role eq 1}" />
+							<h:outputText
+								value="#{msg['body.receiptlog.contact.role.extern']}"
+								rendered="#{contact.role eq 2}" />
+							<h:outputText
+								value="#{msg['body.receiptlog.contact.role.other']}"
+								rendered="#{contact.role eq 3}" />
 						</p:column>
 
 						<p:column>
 							<f:facet name="header">
-								<i class="fa fa-envelope-o" />
+								<i class="fa fa-envelope-o"
+									title="#{msg['body.receiptlog.contact.type.email']}" />
 							</f:facet>
 							<p:selectBooleanCheckbox value="#{contact.useEmail}"
 								disabled="true" />
 						</p:column>
 						<p:column>
 							<f:facet name="header">
-								<i class="fa fa-phone" />
+								<i class="fa fa-phone"
+									title="#{msg['body.receiptlog.contact.type.phone']}" />
 							</f:facet>
 							<p:selectBooleanCheckbox value="#{contact.usePhone}"
 								disabled="true" />
 						</p:column>
 						<p:column>
 							<f:facet name="header">
-								<i class="fa fa-fax" />
+								<i class="fa fa-fax"
+									title="#{msg['body.receiptlog.contact.type.fax']}" />
 							</f:facet>
 							<p:selectBooleanCheckbox value="#{contact.useFax}"
 								disabled="true" />
@@ -126,43 +160,53 @@
 					</p:dataTable>
 				</p:column>
 			</p:row>
+
+			<!-- story -->
 			<p:row styleClass="noBorders">
 				<p:column>
-					<h:outputLabel value="#{msg.bodyTaskStory}" />
+					<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				</p:column>
 				<p:column colspan="3">
-					<p:inputTextarea rows="2" cols="22"
+					<p:inputTextarea rows="2" cols="22" id="stroyField"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}" />
+					<p:watermark value="#{msg['body.receiptlog.story.watermark']}"
+						for="stroyField" />
 				</p:column>
 			</p:row>
+
 			<p:row styleClass="noBorders">
+				<!-- eye -->
 				<p:column>
-					<h:outputLabel value="#{msg.bodyTaskEye}" />
+					<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
 				</p:column>
 				<p:column>
-					<p:selectOneButton styleClass="taskSelectOneButton">
-						<f:selectItem itemLabel="#{msg.bodyTaskBA}" itemValue="0" />
-						<f:selectItem itemLabel="#{msg.bodyTaskRA}" itemValue="1" />
-						<f:selectItem itemLabel="#{msg.bodyTaskLA}" itemValue="2" />
+					<p:selectOneButton styleClass="taskSelectOneButton"
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}">
+						<f:selectItem itemLabel="#{msg['body.receiptlog.eye.both']}"
+							itemValue="0" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.eye.right']}"
+							itemValue="1" />
+						<f:selectItem itemLabel="#{msg['body.receiptlog.eye.left']}"
+							itemValue="2" />
 					</p:selectOneButton>
 				</p:column>
+
+				<!-- other -->
 				<p:column>
-					<h:outputLabel value="#{msg.bodyTaskMore}" />
+					<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />
 				</p:column>
 				<p:column>
 					<p:commandButton icon="fa fa-fw fa-taxi"
-						title="#{msg.bodyTaskMoreExtern}" />
+						title="#{msg['body.receiptlog.miscellaneous.borrow']}" />
 					<p:commandButton icon="fa fa-fw fa-dollar"
 						actionListener="#{worklistHandlerAction.prepareAccountingDialog()}"
-						title="#{msg.bodyTaskMoreMoney}" />
+						title="#{msg['body.receiptlog.miscellaneous.accounting']}" />
 				</p:column>
 			</p:row>
+
 			<p:row styleClass="noBorders">
 				<p:column colspan="6">
-
 					<p:tabView styleClass="tabView">
-
-
 						<!-- ******************************** Diagnosis ******************************** -->
 						<p:tab title="Diagnose">
 
@@ -252,8 +296,7 @@
 														<h:panelGrid columns="4" style="width:100%;">
 															<h:outputLabel
 																value="#{msg['body.diagnosisView.tab.diagnosis']}" />
-															<p:selectOneMenu
-																value="#{diagnosis.diagnosisPrototype}"
+															<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
 																disabled="#{diagnosis.finalized}"
 																converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}">
 																<f:selectItem

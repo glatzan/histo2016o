@@ -23,7 +23,7 @@
 					<p:dataTable var="contact"
 						styleClass="contactDataTable noBordersAll collapsedBordersAll"
 						scrollable="true" scrollHeight="390"
-						value="#{worklistHandlerAction.allAvailableContact}">
+						value="#{contactHandlerAction.allAvailableContact}">
 
 						<p:column headerText="#{msg['dialog.contact.table.name']}"
 							filterBy="#{contact.physician.person.name}"
@@ -37,10 +37,10 @@
 								<ui:fragment rendered="#{contact.physician.roleSurgeon}">
 									<li>#{msg['dialog.contact.table.role.surgeon']}</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{contact.physician.extern}">
+								<ui:fragment rendered="#{contact.physician.roleResidentDoctor}">
 									<li>#{msg['dialog.contact.table.role.roleResidentDoctor']}</li>
 								</ui:fragment>
-								<ui:fragment rendered="#{contact.physician.other}">
+								<ui:fragment rendered="#{contact.physician.roleMiscellaneous}">
 									<li>#{msg['dialog.contact.table.role.roleMiscellaneous']}</li>
 								</ui:fragment>
 							</ul>
@@ -62,7 +62,7 @@
 									itemLabel="#{msg['dialog.contact.table.function.other']}"
 									itemValue="3" />
 								<p:ajax update="@form"
-									listener="#{worklistHandlerAction.onContactChangeRole(contact)}"></p:ajax>
+									listener="#{contactHandlerAction.onContactChangeRole(contact)}"></p:ajax>
 							</p:selectOneMenu>
 						</p:column>
 
@@ -103,20 +103,20 @@
 						<h:panelGrid columns="3">
 							<p:commandButton value="#{msg['general.save']}"
 								 icon="fa fa-fw fa-floppy-o"
-								actionListener="#{worklistHandlerAction.updateContactList(worklistHandlerAction.allAvailableContact,worklistHandlerAction.selectedPatient.selectedTask)}"
+								actionListener="#{contactHandlerAction.updateContactList(contactHandlerAction.allAvailableContact,worklistHandlerAction.selectedPatient.selectedTask)}"
 								update="@form"></p:commandButton>
 
 							<p:commandButton value="#{msg['general.abort']}"
 								 icon="fa fa-fw fa-times-circle"
-								actionListener="#{worklistHandlerAction.hideContactsDialog()}"
+								actionListener="#{contactHandlerAction.hideContactsDialog()}"
 								update="@form"></p:commandButton>
 
 							<h:panelGrid columns="2">
 								<p:selectBooleanCheckbox styleClass="smallCheckbox"
-									value="#{worklistHandlerAction.addedContacts}"
+									value="#{contactHandlerAction.addedContacts}"
 									style="margin-left:10px;">
 									<p:ajax
-										listener="#{worklistHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.personSurgeon,worklistHandlerAction.personExtern,worklistHandlerAction.personOther,worklistHandlerAction.addedContacts)}"
+										listener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}"
 										update="@form"></p:ajax>
 								</p:selectBooleanCheckbox>
 
@@ -128,10 +128,10 @@
 
 						<h:panelGrid columns="6" style="float:right; margin-right:10px;">
 							<p:selectBooleanCheckbox styleClass="smallCheckbox"
-								disabled="#{worklistHandlerAction.addedContacts}"
-								value="#{worklistHandlerAction.personSurgeon}">
+								disabled="#{contactHandlerAction.addedContacts}"
+								value="#{contactHandlerAction.personSurgeon}">
 								<p:ajax
-									listener="#{worklistHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.personSurgeon,worklistHandlerAction.personExtern,worklistHandlerAction.personOther,worklistHandlerAction.addedContacts)}"
+									listener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}"
 									update="@form"></p:ajax>
 							</p:selectBooleanCheckbox>
 
@@ -140,10 +140,10 @@
 
 							<p:selectBooleanCheckbox styleClass="smallCheckbox"
 								style="margin-left:10px;"
-								disabled="#{worklistHandlerAction.addedContacts}"
-								value="#{worklistHandlerAction.personExtern}">
+								disabled="#{contactHandlerAction.addedContacts}"
+								value="#{contactHandlerAction.personExtern}">
 								<p:ajax
-									listener="#{worklistHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.personSurgeon,worklistHandlerAction.personExtern,worklistHandlerAction.personOther,worklistHandlerAction.addedContacts)}"
+									listener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}"
 									update="@form"></p:ajax>
 							</p:selectBooleanCheckbox>
 
@@ -152,10 +152,10 @@
 
 							<p:selectBooleanCheckbox styleClass="smallCheckbox"
 								style="margin-left:10px;"
-								disabled="#{worklistHandlerAction.addedContacts}"
-								value="#{worklistHandlerAction.personOther}">
+								disabled="#{contactHandlerAction.addedContacts}"
+								value="#{contactHandlerAction.personOther}">
 								<p:ajax
-									listener="#{worklistHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,worklistHandlerAction.personSurgeon,worklistHandlerAction.personExtern,worklistHandlerAction.personOther,worklistHandlerAction.addedContacts)}"
+									listener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}"
 									update="@form"></p:ajax>
 							</p:selectBooleanCheckbox>
 							<h:outputLabel value="#{msg['dialog.contact.options.other']}"
