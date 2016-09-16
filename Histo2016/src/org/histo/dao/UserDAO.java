@@ -7,6 +7,10 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
+import org.histo.model.Diagnosis;
 import org.histo.model.Physician;
 import org.histo.model.UserAcc;
 import org.springframework.stereotype.Component;
@@ -61,4 +65,5 @@ public class UserDAO extends AbstractDAO implements Serializable {
 		}
 		return userAcc;
 	}
+	
 }

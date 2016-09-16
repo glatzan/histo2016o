@@ -48,4 +48,13 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 			System.out.println(((Log) data[1]).getLogString());
 		}
 	}
+
+	public List<Object[]> getDiangosisRevisions(Diagnosis diagnosis) {
+		System.out.println(diagnosis);
+		AuditQuery auditQuery = AuditReaderFactory.get(getSession()).createQuery()
+				.forRevisionsOfEntity(Diagnosis.class, false, false).add(AuditEntity.id().eq(diagnosis.getId()));
+
+		List<Object[]> l = auditQuery.getResultList();
+		return l;
+	}
 }

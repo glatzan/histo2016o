@@ -34,10 +34,6 @@
 			</h:panelGrid>
 
 			<h:panelGroup styleClass="headerRight" layout="block">
-				<p:commandButton value="Test" styleClass="buttonMarginLeft"
-					actionListener="#{printHandlerAction.print()}">
-				</p:commandButton>
-
 				<p:commandButton value="#{msg['body.worklist.header.button.settings']}" styleClass="buttonMarginLeft"
 					actionListener="#{settingsHandlerAction.prepareSettingsDialog()}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />

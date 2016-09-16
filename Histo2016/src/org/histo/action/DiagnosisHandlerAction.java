@@ -11,6 +11,7 @@ import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Diagnosis;
+import org.histo.model.DiagnosisPrototype;
 import org.histo.model.Sample;
 import org.histo.util.ResourceBundle;
 import org.histo.util.TaskUtil;
@@ -155,6 +156,22 @@ public class DiagnosisHandlerAction implements Serializable {
 	}
 
 	/**
+	 * Shows a waring dialog before unfinalizing a diagnosis.
+	 */
+	public void prepareUnfinalizeDiagnosisDialog(Diagnosis diagnosis) {
+		setTmpDiagnosis(diagnosis);
+		helper.showDialog(HistoSettings.DIALOG_DIAGNOSIS_UNFINALIZE, false, false, true);
+	}
+
+	/**
+	 * Hides the waring dialog for unfinalizing diagnoses
+	 */
+	public void hideUnfinalizeDiangosisDialog() {
+		setTmpDiagnosis(null);
+		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_UNFINALIZE);
+	}
+	
+	/**
 	 * Makes a diagnosis editable again.
 	 * 
 	 * @param diagnosis
@@ -163,6 +180,8 @@ public class DiagnosisHandlerAction implements Serializable {
 		diagnosis.setFinalized(false);
 		diagnosis.setFinalizedDate(null);
 		genericDAO.save(diagnosis, resourceBundle.get("log.diagnosis.unfinalize"), diagnosis.getPatient());
+		
+		hideUnfinalizeDiangosisDialog();
 	}
 
 	/**
@@ -191,7 +210,20 @@ public class DiagnosisHandlerAction implements Serializable {
 		setTmpDiagnosis(null);
 		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_EDIT_NAME);
 	}
+	
+	/**
+	 * 
+	 * @param diagnosis
+	 * @param diagnosisPrototype
+	 */
+	public void updateDiagnosisWithDiangosisPrototype(Diagnosis diagnosis, DiagnosisPrototype diagnosisPrototype){
+		
+	}
 
+	public void getDiagnosisRevisionList(Diagnosis diagnosis){
+		taskDAO.getDiangosisRevisions(diagnosis);
+	}
+	
 	public void print() {
 //		PdfReader pdfTemplate;
 //		try {

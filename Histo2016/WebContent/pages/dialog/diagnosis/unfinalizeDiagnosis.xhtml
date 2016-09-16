@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.diagnosis.unfinalize.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="defaultDialogLayout">
+	<h:form>
+
+		<div class="dialogContent">
+			<h:outputLabel
+				value="#{msg['dialog.diagnosis.unfinalize.diagnosis.text']}"
+				escape="false" />
+		</div>
+		<div class="buttonContainer">
+			<p:commandButton
+				value="#{msg['dialog.diagnosis.unfinalize.button.ok']}"
+				actionListener="#{diagnosisHandlerAction.unfinalizeDiagnosis(diagnosisHandlerAction.tmpDiagnosis)}" />
+			<p:commandButton value="#{msg['general.abort']}"
+				style="margin-left:10px;"
+				actionListener="#{diagnosisHandlerAction.hideUnfinalizeDiangosisDialog()}" />
+		</div>
+
+	</h:form>
+</h:body>
+
+
+
+</html>
+

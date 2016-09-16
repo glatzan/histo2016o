@@ -41,7 +41,7 @@
 							disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}" />
 					</h:panelGrid>
 				</p:column>
-				
+
 				<!-- contact -->
 				<p:column>
 					<h:outputLabel value="#{msg['body.receiptlog.notification']}"></h:outputLabel>
@@ -213,20 +213,21 @@
 							<!-- Diagnosis -->
 							<f:facet name="title">
 
-								<h:outputLabel value="#{msg['body.diagnosisView.tab.name']}" />
+								<h:outputLabel
+									value="#{msg['body.receiptlog.tab.diangonsis.title']}" />
 
 								<!-- diagnosis completed -->
 								<h:panelGroup
 									rendered="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}">
 									<div class="fa fa-check-circle icon-green"
-										title="#{msg['body.diagnosisView.tab.completed']}" />
+										title="#{msg['body.receiptlog.tab.diangonsis.status.completed.hint']}" />
 								</h:panelGroup>
 
 								<!-- diagnosis not completed -->
 								<h:panelGroup
 									rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted and worklistHandlerAction.selectedPatient.selectedTask.stainingCompleted}">
 									<div class="fa fa-exclamation-circle icon-orange"
-										title="#{msg['body.diagnosisView.tab.diagnosis']}" />
+										title="#{msg['body.receiptlog.tab.diangonsis.status.notcompleted.hint']}" />
 								</h:panelGroup>
 							</f:facet>
 
@@ -241,14 +242,16 @@
 											style="vertical-align:top;">
 											<p:panelGrid columns="1">
 												<h:outputLabel
-													value="#{msg['body.diagnosisView.tab.sample']} #{sample.sampleID}" />
+													value="#{msg['body.receiptlog.tab.diangonsis.sample']} #{sample.sampleID}" />
+
 												<!-- Add diagnosis review -->
 												<p:commandLink
-													rendered="#{diagnosisHandlerAction.isDiagonsisFollowUPCreationPossible(sample)}"
+													rendered="#{diagnosisHandlerAction.isDiagonsisFollowUPCreationPossible(sample) and !diagnosisHandlerAction.isDiagonsisRevisionCreationPossible(sample)}"
 													title="Nachbefundung erstellen"
 													actionListener="#{diagnosisHandlerAction.createNewDiagnosis(sample,1)}"
 													update="contentForm">
-													<h:outputLabel value="(Nachbefundung)"
+													<h:outputLabel
+														value="(#{msg['body.receiptlog.tab.diangonsis.link.rediagnosis']})"
 														style="font-size:10px; margin-left: 10px;" />
 												</p:commandLink>
 
@@ -258,7 +261,8 @@
 													title="Diagnoserevision erstellen"
 													actionListener="#{diagnosisHandlerAction.createNewDiagnosis(sample,2)}"
 													update="contentForm">
-													<h:outputLabel value="(Diagnoserevision)"
+													<h:outputLabel
+														value="(#{msg['body.receiptlog.tab.diangonsis.link.revision']})"
 														style="font-size:10px; margin-left: 10px;" />
 												</p:commandLink>
 											</p:panelGrid>
@@ -272,17 +276,19 @@
 												<p:tab>
 													<!-- Headline for diagnosis -->
 													<f:facet name="title">
-														<h:outputLabel value="#{diagnosis.name}" />
+														<h:outputLabel value="#{diagnosis.name} " />
 
-														<h:outputLabel value=" #{diagnosis.diagnosis}"
-															rendered="#{diagnosis.diagnosis ne null}" />
+														<!-- diangosis in headline -->
+														<h:outputLabel value="(#{diagnosis.diagnosis})"
+															rendered="#{diagnosis.diagnosis ne null and diagnosis.diagnosis.length() gt 0}" />
 
+														<!-- finalized -->
 														<h:outputLabel
-															value="#{msg['body.diagnosisView.tab.finalized']}"
+															value="(#{msg['body.receiptlog.tab.diangonsis.data.headline.finalized']})"
 															rendered="#{diagnosis.finalized}" />
 
 														<p:commandLink
-															title="#{msg['body.diagnosisView.tab.editName']}"
+															title="#{msg['body.receiptlog.tab.diangonsis.data.headline.edit']}"
 															style="float: right"
 															actionListener="#{diagnosisHandlerAction.prepareEditDiagnosisNameDialog(diagnosis)}">
 															<i class="fa fa-fw fa-cog" />
@@ -290,65 +296,101 @@
 														</p:commandLink>
 													</f:facet>
 													<!-- Headline for diagnosis -->
+
 													<!-- Body for diagnosis -->
 													<h:panelGrid columns="1" style="width:100%;">
 														<!-- choose diagnosis -->
-														<h:panelGrid columns="4" style="width:100%;">
-															<h:outputLabel
-																value="#{msg['body.diagnosisView.tab.diagnosis']}" />
-															<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-																disabled="#{diagnosis.finalized}"
-																converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}">
-																<f:selectItem
-																	itemLabel="#{msg['body.diagnosisView.tab.diagnosis.choose']}"
-																	itemValue="#{null}" />
-																<f:selectItems
-																	value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
-																	var="diagnosisPrototype"
-																	itemLabel="#{diagnosisPrototype.name}"
-																	itemValue="#{diagnosisPrototype}" />
-																<p:ajax
-																	listener="#{worklistHandlerAction.updateDiagnosisPrototype(sampleTabviewContainer.diagnosis,worklistHandlerAction.tmpDiagnosisPrototype)}" />
-															</p:selectOneMenu>
-
-															<h:outputLabel value="Maligne" />
-															<p:selectBooleanCheckbox value="#{diagnosis.malign}"
-																disabled="#{diagnosis.finalized}" />
+														<h:panelGrid columns="2" style="width:90%;">
+															<h:panelGrid columns="2">
+																<h:outputLabel
+																	value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis']}" />
+																<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
+																	disabled="#{diagnosis.finalized}"
+																	converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}">
+																	<f:selectItem
+																		itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
+																		itemValue="#{null}" />
+																	<f:selectItems
+																		value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
+																		var="diagnosisPrototype"
+																		itemLabel="#{diagnosisPrototype.name}"
+																		itemValue="#{diagnosisPrototype}" />
+																	<p:ajax
+																		listener="#{diagnosisHandlerAction.updateDiagnosisWithDiangosisPrototype(sampleTabviewContainer.diagnosis,diagnosis.diagnosisPrototype)}" />
+																</p:selectOneMenu>
+															</h:panelGrid>
+															<h:panelGrid columns="2" style="float:right;">
+																<h:outputLabel
+																	value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
+																<p:selectBooleanCheckbox value="#{diagnosis.malign}"
+																	disabled="#{diagnosis.finalized}" />
+															</h:panelGrid>
 														</h:panelGrid>
 
+														<!-- diangosis text -->
 														<p:inputTextarea value="#{diagnosis.diagnosis}" rows="5"
 															style="width:90%" id="diagnosis"
 															readonly="#{diagnosis.finalized}">
-															<p:watermark for="diagnosis" value="Diagnose" />
+															<p:watermark for="diagnosis"
+																value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
 														</p:inputTextarea>
 
+														<!-- commentary -->
 														<p:inputTextarea value="#{diagnosis.commentary}" rows="2"
 															style="width:90%" id="diagnosisCommentary"
 															readonly="#{diagnosis.finalized}">
-															<p:watermark for="diagnosisCommentary" value="Kommentar" />
+															<p:watermark for="diagnosisCommentary"
+																value="#{msg['body.receiptlog.tab.diangonsis.data.commentary.watermark']}" />
 														</p:inputTextarea>
 
-
+														<!-- Buttons -->
 														<h:panelGrid columns="2">
-															<p:commandButton value="Speichern"
-																rendered="#{!diagnosis.finalized}"
-																process="navigationForm contentForm"
-																update="navigationForm contentForm"
-																actionListener="#{diagnosisHandlerAction.saveDiagnosis(diagnosis)}"></p:commandButton>
-															<p:commandButton value="Finalisieren"
-																rendered="#{!diagnosis.finalized}" process="contentForm"
-																actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
-																<p:ajax event="dialogReturn"
-																	update="navigationForm contentForm" />
-															</p:commandButton>
-															<p:commandButton value="Editieren"
+															<!-- Save and finalize buttons -->
+
+															<h:panelGrid styleClass="collapsedBorders" columns="2">
+																<p:commandButton value="#{msg['general.save']}"
+																	rendered="#{!diagnosis.finalized}"
+																	actionListener="#{diagnosisHandlerAction.saveDiagnosis(diagnosis)}"
+																	process="navigationForm contentForm"
+																	update="navigationForm contentForm"
+																	icon="fa fa-fw fa-save">
+																</p:commandButton>
+
+																<p:commandButton process="contentForm"
+																	value="#{msg['body.receiptlog.tab.diangonsis.data.finalize']}"
+																	rendered="#{!diagnosis.finalized}"
+																	icon="fa fa-fw fa-ban"
+																	actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
+																	<p:ajax event="dialogReturn"
+																		update="navigationForm contentForm" />
+																</p:commandButton>
+															</h:panelGrid>
+
+															<p:commandButton
+																value="#{msg['body.receiptlog.tab.diangonsis.data.unfinalize']}"
 																rendered="#{diagnosis.finalized}" process="contentForm"
-																actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
+																actionListener="#{diagnosisHandlerAction.prepareUnfinalizeDiagnosisDialog(diagnosis)}">
 																<p:ajax event="dialogReturn"
 																	update="navigationForm contentForm" />
 															</p:commandButton>
+															<h:panelGroup>
+																<p:commandLink id="diangosisLogInfo">
+																	<i class="fa fa-fw fa-info-circle" />
+																</p:commandLink>
+															</h:panelGroup>
 														</h:panelGrid>
+														<p:commandButton value="Test"
+															actionListener="#{diagnosisHandlerAction.getDiagnosisRevisionList(diagnosis)}">
+														</p:commandButton>
+
 													</h:panelGrid>
+													<div style="left: 0; position: fixed; top: 0;">
+														<p:overlayPanel for="diangosisLogInfo" dynamic="true"
+															showEvent="mouseover" hideEvent="mouseout"
+															style="width:600px">
+															<h:outputLabel value="test"></h:outputLabel>
+														</p:overlayPanel>
+													</div>
 													<!-- Body for diagnosis -->
 												</p:tab>
 											</p:accordionPanel>
