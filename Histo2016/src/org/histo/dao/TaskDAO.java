@@ -14,6 +14,7 @@ import org.hibernate.envers.query.AuditQuery;
 import org.histo.model.Diagnosis;
 import org.histo.model.Log;
 import org.histo.model.Task;
+import org.histo.model.util.LogAble;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -56,5 +57,26 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 		List<Object[]> l = auditQuery.getResultList();
 		return l;
+	}
+
+	public List<Object[]> getRevisionsAndObjects(LogAble object) {
+		System.out.println(object.getClass());
+		AuditQuery auditQuery = AuditReaderFactory.get(getSession()).createQuery()
+				.forRevisionsOfEntity(object.getClass(), false, false).add(AuditEntity.id().eq(object.getId()));
+
+		List<Object[]> l = auditQuery.getResultList();
+		return l;
+	}
+
+	public List<Log> getRevisions(LogAble object) {
+		List<Object[]> objects = getRevisionsAndObjects(object);
+
+		ArrayList<Log> logs = new ArrayList<>(objects.size());
+		
+		for (Object[] tmp : objects) {
+			logs.add((Log)tmp[1]);
+		}
+		
+		return logs;
 	}
 }

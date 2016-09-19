@@ -9,6 +9,10 @@ public class HistoSettings {
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
 
+	public static final String STANDARD_DATEFORMAT_DAY_ONLY = "dd MMM yyyy";
+	public static final String STANDARD_DATEFORMAT = "hh:mm:ss dd.MM.yyyy";
+	
+	
 	// http://auginfo/piz?piz=xx
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 	public static final String PATIENT_GET_URL = "http://auginfo/piz";

@@ -1,6 +1,7 @@
 package org.histo.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -20,10 +21,11 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.histo.config.HistoSettings;
+import org.histo.dao.TaskDAO;
 import org.histo.model.util.GsonAble;
+import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingTreeParent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.annotations.Expose;
 
@@ -39,7 +41,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements StainingTreeParent<Sample>, GsonAble {
+public class Diagnosis implements StainingTreeParent<Sample>, GsonAble, LogAble {
 
 	public static final int TYPE_DIAGNOSIS = 0;
 	public static final int TYPE_FOLLOW_UP_DIAGNOSIS = 1;

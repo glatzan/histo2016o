@@ -4,13 +4,16 @@ import org.histo.model.Patient;
 
 /**
  * Object containing additional data for login. A string which describes the
- * action and optional a patient for whom the action was performed.
+ * action and optional a patient for whom the action was performed. Workaround
+ * for adding more data to the LogListener
  * 
  * @author glatza
  *
  */
 public class LogInfo {
+	
 	private Patient patient;
+	
 	private String info;
 
 	public LogInfo() {
@@ -21,6 +24,7 @@ public class LogInfo {
 	}
 
 	public LogInfo(String info, Patient patient) {
+		this.info = info;
 		this.patient = patient;
 	}
 

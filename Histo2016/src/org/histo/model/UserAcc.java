@@ -15,11 +15,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.histo.model.util.LogAble;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @SequenceGenerator(name = "user_sequencegenerator", sequenceName = "user_sequence")
-public class UserAcc implements UserDetails, Serializable {
+public class UserAcc implements UserDetails, Serializable, LogAble {
 
 	private static final long serialVersionUID = 8292898827966568346L;
 

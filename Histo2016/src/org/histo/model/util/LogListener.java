@@ -8,6 +8,13 @@ import org.histo.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+/**
+ * Listener is called every Time an object is saved to database. Creates a log
+ * entry.
+ * 
+ * @author glatza
+ *
+ */
 @Configurable
 public class LogListener implements RevisionListener {
 
@@ -23,7 +30,6 @@ public class LogListener implements RevisionListener {
 	@Override
 	public void newRevision(Object revisionEntity) {
 		Log revEntity = (Log) revisionEntity;
-
 		// setting user who has changed the object
 		UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		revEntity.setUserAcc(user);
@@ -33,7 +39,6 @@ public class LogListener implements RevisionListener {
 		Object logInfo = SecurityContextHolderUtil.getObjectFromSecurityContext(LOG_KEY_INFO);
 		if (logInfo != null && logInfo instanceof LogInfo) {
 			LogInfo info = (LogInfo) logInfo;
-
 			revEntity.setLogString(info.getInfo());
 			revEntity.setPatient(info.getPatient());
 			SecurityContextHolderUtil.setObjectToSecurityContext(LOG_KEY_INFO, null);

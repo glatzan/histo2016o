@@ -22,6 +22,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.config.HistoSettings;
 import org.histo.model.util.DiagnosisStatus;
+import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
 import org.histo.model.util.StainingTreeParent;
 import org.histo.ui.StainingTableChooser;
@@ -31,7 +32,7 @@ import org.primefaces.event.TabChangeEvent;
 
 @Entity
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Task implements StainingTreeParent<Patient>, StainingStatus, DiagnosisStatus {
+public class Task implements StainingTreeParent<Patient>, StainingStatus, DiagnosisStatus, LogAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;

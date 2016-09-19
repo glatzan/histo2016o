@@ -9,7 +9,7 @@ import javax.faces.context.FacesContext;
 import java.util.HashMap;
 
 @Component(value = "msg")
-public class ResourceBundle extends HashMap {
+public class ResourceBundle extends HashMap<Object, Object> {
 
 	private static final long serialVersionUID = 1668009329184453712L;
 	

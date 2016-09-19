@@ -13,6 +13,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
+import org.histo.model.util.LogAble;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,7 +22,7 @@ import com.google.gson.annotations.Expose;
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @SequenceGenerator(name = "person_sequencegenerator", sequenceName = "person_sequence")
-public class Person implements Serializable {
+public class Person implements Serializable, LogAble {
 
 	private static final long serialVersionUID = 2533238775751991883L;
 	

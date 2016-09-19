@@ -269,8 +269,9 @@
 										</p:column>
 
 										<p:column>
+										
 											<!-- Diangosis data -->
-											<p:accordionPanel value="#{sample.diagnoses}" var="diagnosis"
+											<p:accordionPanel value="#{sample.diagnoses}" var="diagnosis" activeIndex="#{sample.diagnosisAccordionTabStatus}"
 												id="diagnosisAccordion" multiple="true"
 												styleClass="diagnosesAccordion">
 												<p:tab>
@@ -347,9 +348,9 @@
 														<h:panelGrid columns="2">
 															<!-- Save and finalize buttons -->
 
-															<h:panelGrid styleClass="collapsedBorders" columns="2">
+															<h:panelGrid styleClass="collapsedBorders" columns="2"
+																rendered="#{!diagnosis.finalized}">
 																<p:commandButton value="#{msg['general.save']}"
-																	rendered="#{!diagnosis.finalized}"
 																	actionListener="#{diagnosisHandlerAction.saveDiagnosis(diagnosis)}"
 																	process="navigationForm contentForm"
 																	update="navigationForm contentForm"
@@ -358,7 +359,6 @@
 
 																<p:commandButton process="contentForm"
 																	value="#{msg['body.receiptlog.tab.diangonsis.data.finalize']}"
-																	rendered="#{!diagnosis.finalized}"
 																	icon="fa fa-fw fa-ban"
 																	actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
 																	<p:ajax event="dialogReturn"
@@ -379,16 +379,25 @@
 																</p:commandLink>
 															</h:panelGroup>
 														</h:panelGrid>
-														<p:commandButton value="Test"
-															actionListener="#{diagnosisHandlerAction.getDiagnosisRevisionList(diagnosis)}">
-														</p:commandButton>
-
 													</h:panelGrid>
+
 													<div style="left: 0; position: fixed; top: 0;">
-														<p:overlayPanel for="diangosisLogInfo" dynamic="true"
+														<p:overlayPanel for="diangosisLogInfo"
 															showEvent="mouseover" hideEvent="mouseout"
-															style="width:600px">
-															<h:outputLabel value="test"></h:outputLabel>
+															styleClass="logOverlay">
+															<p:dataTable var="log" styleClass="logDatapannel"
+																value="#{helperHandlerAction.getRevisionList(diagnosis)}"
+																resizableColumns="false">
+																<p:column headerText="Datum" style="width:155px;">
+																	<h:outputLabel value="#{log.timestampAsDate}"></h:outputLabel>
+																</p:column>
+																<p:column headerText="Benutzer" style="width:100px;">
+																	<h:outputLabel value="#{log.userAcc.username}"></h:outputLabel>
+																</p:column>
+																<p:column headerText="Aktion">
+																	<h:outputLabel value="#{log.logString}"></h:outputLabel>
+																</p:column>
+															</p:dataTable>
 														</p:overlayPanel>
 													</div>
 													<!-- Body for diagnosis -->

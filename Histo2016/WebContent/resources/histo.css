@@ -86,6 +86,11 @@ body {
 	font-weight: bold;
 }
 
+/* hides the header of a p:datatable */
+.hide-column-names table thead tr {
+    display: none;
+}
+
 /*
 	######################################## Navigatoin ########################################
 */
@@ -598,3 +603,18 @@ body {
 
 /*	################# addPatient dialog ################# */
 /*	######################################## Dialog ######################################## */
+
+/*	######################################## OverlayPannel ######################################## */
+.logOverlay {
+	width: 600px;
+	z-index: 5000;
+}
+
+.logOverlay .ui-overlaypanel-content{
+	padding: 0px !important;	
+}
+
+.logOverlay .logDatapannel tr:nth-child(even) td {
+	background-color: #f9f9f9;
+}
+/*	######################################## OverlayPannel ######################################## */

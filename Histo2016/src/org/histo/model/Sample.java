@@ -28,17 +28,18 @@ import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.histo.config.HistoSettings;
 import org.histo.model.util.DiagnosisStatus;
+import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
 import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
 
 @Entity
 @Audited
-@Cache(usage=CacheConcurrencyStrategy.TRANSACTIONAL)
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements StainingTreeParent<Task>, StainingStatus, DiagnosisStatus {
+public class Sample implements StainingTreeParent<Task>, StainingStatus, DiagnosisStatus, LogAble {
 
 	private long id;
 
@@ -86,6 +87,11 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	 * Wenn archived true ist, wird dieser sample nicht mehr angezeigt
 	 */
 	private boolean archived;
+
+	/******************************************************** Transient ********************************************************/
+	private String diagnosisAccordionTabStatus;
+
+	/******************************************************** Transient ********************************************************/
 
 	public void incrementBlockNumber() {
 		this.blockNumber++;
@@ -135,8 +141,9 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 		this.blocks = blocks;
 	}
 
-	@OneToMany(cascade = {CascadeType.REFRESH, CascadeType.ALL}, mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(cascade = { CascadeType.REFRESH, CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("diagnosisOrder ASC")
 	public List<Diagnosis> getDiagnoses() {
 		if (diagnoses == null)
 			diagnoses = new ArrayList<>();
@@ -195,6 +202,47 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+
+	/******************************************************** Transient ********************************************************/
+
+	/**
+	 * Generates a string for the open/closed status of the accordion tabs
+	 * 
+	 * @return
+	 */
+	public String getDiagnosisAccordionTabStatus() {
+		if (diagnosisAccordionTabStatus == null) {
+			boolean allFinlized = true;
+
+			StringBuilder out = new StringBuilder();
+
+			int tab = 0;
+
+			for (Diagnosis diagnosis : getDiagnoses()) {
+				if (!diagnosis.isFinalized()) {
+					out.append(tab + ",");
+					allFinlized = false;
+				}
+
+				tab++;
+			}
+
+			if (allFinlized) {
+				List<Diagnosis> dia = getDiagnoses();
+				out.append(dia.size() - 1);
+			} else
+				out.deleteCharAt(out.length() - 1);
+
+			diagnosisAccordionTabStatus = out.toString();
+		}
+		return diagnosisAccordionTabStatus;
+	}
+
+	public void setDiagnosisAccordionTabStatus(String diagnosisAccordionTabStatus) {
+		this.diagnosisAccordionTabStatus = diagnosisAccordionTabStatus;
+	}
+
+	/******************************************************** Transient ********************************************************/
 
 	/********************************************************
 	 * Interface DiagnosisStatus

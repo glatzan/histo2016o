@@ -20,6 +20,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.model.util.DiagnosisStatus;
+import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
 import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
@@ -30,7 +31,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, StainingStatus {
+public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, StainingStatus, LogAble {
 
 	@Expose
 	private long id;

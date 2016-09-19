@@ -14,11 +14,12 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.histo.config.HistoSettings;
+import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingTreeParent;
 
 @Entity
 @SequenceGenerator(name = "staining_sequencegenerator", sequenceName = "staining_sequence")
-public class Staining implements StainingTreeParent<Block> {
+public class Staining implements StainingTreeParent<Block>, LogAble {
 
 	private long id;
 

@@ -15,7 +15,6 @@ import org.histo.model.StainingPrototype;
 import org.histo.model.Task;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
-import org.histo.util.Log;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +41,6 @@ public class SlideHandlerAction implements Serializable {
     @Autowired
     private HelperHandlerAction helper;
 
-    @Autowired
-	private Log log;
-	
     /**
      * Temporäres Blockobjekt, wird verwendet um neue Objektträger zu erstellen.
      */
@@ -96,7 +92,7 @@ public class SlideHandlerAction implements Serializable {
 	    getStainingListChooser().add(new StainingListChooser(staining));
 	}
 
-	log.info("Opening select staining dialog");
+//	log.info("Opening select staining dialog");
 	helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_ADD_SLIDE), false, false, true);
     }
 
@@ -253,7 +249,7 @@ public class SlideHandlerAction implements Serializable {
 		allPerformed = false;
 	    }
 
-	    log.info("Updating stainings, set stainingCompleted to " + task.isStainingCompleted());
+//	    log.info("Updating stainings, set stainingCompleted to " + task.isStainingCompleted());
 	}
 
 	genericDAO.save(task);
@@ -301,7 +297,7 @@ public class SlideHandlerAction implements Serializable {
 
 	genericDAO.save(block.getParent().getParent());
 
-	log.info("Neue Färbung erstellt, ID:" + staining.getStainingID() + " - " + staining.getStainingType().getName(), block.getPatient());
+//	log.info("Neue Färbung erstellt, ID:" + staining.getStainingID() + " - " + staining.getStainingType().getName(), block.getPatient());
 
 	// Updating Gui
 	block.getParent().getParent().setStainingCompleted(false);

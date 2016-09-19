@@ -93,6 +93,9 @@ public class DiagnosisHandlerAction implements Serializable {
 		genericDAO.save(newDiagnosis, resourceBundle.get("log.diagnosis.new"), newDiagnosis.getPatient());
 		genericDAO.save(sample);
 		genericDAO.refresh(sample.getPatient());
+
+		// TODO change to sample
+		helper.updateRevision(newDiagnosis);
 	}
 
 	/**
@@ -152,6 +155,8 @@ public class DiagnosisHandlerAction implements Serializable {
 		genericDAO.save(diagnosis, resourceBundle.get("log.diagnosis.finaziled"), diagnosis.getPatient());
 		genericDAO.refresh(diagnosis.getPatient());
 
+		helper.updateRevision(diagnosis);
+
 		hideFinalizeDiangosisDialog();
 	}
 
@@ -170,7 +175,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		setTmpDiagnosis(null);
 		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_UNFINALIZE);
 	}
-	
+
 	/**
 	 * Makes a diagnosis editable again.
 	 * 
@@ -180,7 +185,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		diagnosis.setFinalized(false);
 		diagnosis.setFinalizedDate(null);
 		genericDAO.save(diagnosis, resourceBundle.get("log.diagnosis.unfinalize"), diagnosis.getPatient());
-		
+
 		hideUnfinalizeDiangosisDialog();
 	}
 
@@ -193,6 +198,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	public void saveDiagnosis(Diagnosis diagnosis) {
 		taskDAO.getDiagnosisRevisions(diagnosis);
 		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.diagnosis.changed"), diagnosis.getPatient());
+		helper.updateRevision(diagnosis);
 	}
 
 	/**
@@ -210,70 +216,67 @@ public class DiagnosisHandlerAction implements Serializable {
 		setTmpDiagnosis(null);
 		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_EDIT_NAME);
 	}
-	
+
 	/**
 	 * 
 	 * @param diagnosis
 	 * @param diagnosisPrototype
 	 */
-	public void updateDiagnosisWithDiangosisPrototype(Diagnosis diagnosis, DiagnosisPrototype diagnosisPrototype){
-		
+	public void updateDiagnosisWithDiangosisPrototype(Diagnosis diagnosis, DiagnosisPrototype diagnosisPrototype) {
+
 	}
 
-	public void getDiagnosisRevisionList(Diagnosis diagnosis){
-		taskDAO.getDiangosisRevisions(diagnosis);
-	}
-	
 	public void print() {
-//		PdfReader pdfTemplate;
-//		try {
-//			pdfTemplate = new PdfReader("Q:\\AUG-T-HISTO\\Formulare\\ergebniss20.pdf");
-//
-//			ByteArrayOutputStream out = new ByteArrayOutputStream();
-//			PdfStamper stamper = new PdfStamper(pdfTemplate, out);
-//
-//			stamper.setFormFlattening(true);
-//
-//			stamper.getAcroFields().setField("date", "Daniel Reuter");
-//			stamper.close();
-//			pdfTemplate.close();
-//
-//			FileOutputStream fos = new FileOutputStream("Q:\\AUG-T-HISTO\\Formulare\\ergebnis-test.pdf");
-//
-//			fos.write(out.toByteArray());
-//
-//			fos.close();
-//
-//		} catch (IOException | DocumentException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+		// PdfReader pdfTemplate;
+		// try {
+		// pdfTemplate = new
+		// PdfReader("Q:\\AUG-T-HISTO\\Formulare\\ergebniss20.pdf");
+		//
+		// ByteArrayOutputStream out = new ByteArrayOutputStream();
+		// PdfStamper stamper = new PdfStamper(pdfTemplate, out);
+		//
+		// stamper.setFormFlattening(true);
+		//
+		// stamper.getAcroFields().setField("date", "Daniel Reuter");
+		// stamper.close();
+		// pdfTemplate.close();
+		//
+		// FileOutputStream fos = new
+		// FileOutputStream("Q:\\AUG-T-HISTO\\Formulare\\ergebnis-test.pdf");
+		//
+		// fos.write(out.toByteArray());
+		//
+		// fos.close();
+		//
+		// } catch (IOException | DocumentException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+
 		System.out.println(resourceBundle.get("log.diagnosis.changed"));
-		
+
 		ClassLoader cl = ClassLoader.getSystemClassLoader();
 
-        URL[] urls = ((URLClassLoader)cl).getURLs();
+		URL[] urls = ((URLClassLoader) cl).getURLs();
 
-        for(URL url: urls){
-        	System.out.println(url.getFile());
-        }
+		for (URL url : urls) {
+			System.out.println(url.getFile());
+		}
 
-        
 		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver(new DefaultResourceLoader());
 		Resource[] resources;
 		try {
 			resources = patternResolver.getResources("classpath*:messages/messages*");
-			for(Resource resource : resources) {
-				   System.out.println(resource.getDescription());
-				}
+			for (Resource resource : resources) {
+				System.out.println(resource.getDescription());
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

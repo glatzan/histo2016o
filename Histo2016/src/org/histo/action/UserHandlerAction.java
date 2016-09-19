@@ -8,7 +8,6 @@ import org.histo.dao.HelperDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.UserAcc;
 import org.histo.model.UserRole;
-import org.histo.util.Log;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -28,8 +27,6 @@ public class UserHandlerAction implements Serializable {
     private GenericDAO genericDAO;
 
 
-    @Autowired
-	private Log log;
     
     public boolean isUserAvailable(){
 	if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserAcc)
@@ -79,7 +76,7 @@ public class UserHandlerAction implements Serializable {
 	genericDAO.save(role);
 	genericDAO.save(user);
 	genericDAO.delete(oldRole);
-	log.info("Setting new role to " + role.getName());
+//	log.info("Setting new role to " + role.getName());
     }
 
 

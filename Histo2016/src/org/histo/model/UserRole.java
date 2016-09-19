@@ -8,11 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.histo.model.util.LogAble;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @SequenceGenerator(name = "role_sequencegenerator", sequenceName = "role_sequence")
-public class UserRole implements Serializable, Cloneable, GrantedAuthority {
+public class UserRole implements Serializable, Cloneable, GrantedAuthority, LogAble {
 	/**
 	 * gast user mta befunder admin god
 	 */

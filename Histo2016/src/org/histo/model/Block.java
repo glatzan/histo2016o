@@ -20,13 +20,14 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.config.HistoSettings;
+import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
 import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
 
 @Entity
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements StainingTreeParent<Sample>, StainingStatus {
+public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAble {
 
 	private long id;
 

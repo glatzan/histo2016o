@@ -2,10 +2,12 @@ package org.histo.model;
 
 import javax.persistence.Entity;
 
+import org.histo.model.util.LogAble;
+
 import com.google.gson.annotations.Expose;
 
 @Entity
-public class Physician extends Person {
+public class Physician extends Person{
 
 	private static final long serialVersionUID = 7358147861813210904L;
 

@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.model.util.EditAbleEntity;
+import org.histo.model.util.LogAble;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,7 +23,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "stainingPrototypeList_sequencegenerator", sequenceName = "stainingPrototypeList_sequence")
-public class StainingPrototypeList implements EditAbleEntity<StainingPrototypeList> {
+public class StainingPrototypeList implements EditAbleEntity<StainingPrototypeList>, LogAble {
 
 	@Expose
 	private long id;

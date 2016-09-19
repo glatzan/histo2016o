@@ -89,15 +89,16 @@ public class GenericDAO extends AbstractDAO {
 
 		// sets a logMessage to the securityContext, this is a workaround for
 		// passing variables to the revisionListener
-		if (logInfo != null)
+		if (logInfo != null){
 			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
-
+		}
+			
 		Session session = getSession();
 
-		Statistics stats = sessionFactory.getStatistics();
-		System.out.println("Stats enabled=" + stats.isStatisticsEnabled());
-		stats.setStatisticsEnabled(true);
-
+//		Statistics stats = sessionFactory.getStatistics();
+//		stats.setStatisticsEnabled(true);
+//		printStats(stats);
+		
 		try {
 			session.saveOrUpdate(object);
 		} catch (HibernateException hibernateException) {
@@ -105,7 +106,7 @@ public class GenericDAO extends AbstractDAO {
 			hibernateException.printStackTrace();
 		}
 
-		printStats(stats);
+		
 		return object;
 	}
 

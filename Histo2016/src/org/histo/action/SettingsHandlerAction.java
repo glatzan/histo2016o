@@ -20,7 +20,6 @@ import org.histo.model.UserAcc;
 import org.histo.model.UserRole;
 import org.histo.ui.DiagnosisPrototypeListTransformer;
 import org.histo.ui.StainingListChooser;
-import org.histo.util.Log;
 import org.histo.util.SlideUtil;
 import org.histo.util.UserAccRoleHolder;
 import org.histo.util.UserUtil;
@@ -73,8 +72,6 @@ public class SettingsHandlerAction {
 	@Autowired
 	private PhysicianDAO physicianDAO;
 
-	@Autowired
-	private Log log;
 
 	/**
 	 * List with all users of the program
@@ -294,8 +291,8 @@ public class SettingsHandlerAction {
 		genericDAO.save(role);
 		genericDAO.save(user);
 		genericDAO.delete(oldRole);
-		log.info("Benutzer Rechte geändert. Benutzer: " + user.getUsername() + ", alte Rolle: " + oldRole.getName()
-				+ ", neue Rolle: " + role.getName());
+//		log.info("Benutzer Rechte geändert. Benutzer: " + user.getUsername() + ", alte Rolle: " + oldRole.getName()
+//				+ ", neue Rolle: " + role.getName());
 	}
 
 	/******************************************************** User ********************************************************/
@@ -332,11 +329,11 @@ public class SettingsHandlerAction {
 			// case new, save
 			getAllAvailableStainings().add(newStainingPrototype);
 			genericDAO.save(getAllAvailableStainings());
-			log.info("Neue Färbung erstellt: " + newStainingPrototype.asGson());
+//			log.info("Neue Färbung erstellt: " + newStainingPrototype.asGson());
 		} else {
 			// case edit: update an save
-			log.info("Färbung veränder, Original: " + origStainingPrototype.asGson() + " Neu:"
-					+ newStainingPrototype.asGson());
+//			log.info("Färbung veränder, Original: " + origStainingPrototype.asGson() + " Neu:"
+//					+ newStainingPrototype.asGson());
 			origStainingPrototype.update(newStainingPrototype);
 			genericDAO.save(origStainingPrototype);
 		}
@@ -389,11 +386,11 @@ public class SettingsHandlerAction {
 			getAllAvailableStainingLists().add(newStainingPrototypeList);
 			genericDAO.save(newStainingPrototypeList);
 			genericDAO.save(getAllAvailableStainingLists());
-			log.info("Neue Färbeliste erstellt: " + newStainingPrototypeList.asGson());
+//			log.info("Neue Färbeliste erstellt: " + newStainingPrototypeList.asGson());
 		} else {
 			// case edit: update an save
-			log.info("Färbungsliste veränder, Original: " + origStainingPrototypeList.asGson() + " Neu:"
-					+ newStainingPrototypeList.asGson());
+//			log.info("Färbungsliste veränder, Original: " + origStainingPrototypeList.asGson() + " Neu:"
+//					+ newStainingPrototypeList.asGson());
 			origStainingPrototypeList.update(newStainingPrototypeList);
 			genericDAO.save(origStainingPrototypeList);
 		}
@@ -478,11 +475,11 @@ public class SettingsHandlerAction {
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
 			genericDAO.save(newDiagnosisPrototype);
 			genericDAO.save(getAllAvailableDiagnosisPrototypes());
-			log.info("Neue Diagnose erstellt: " + newDiagnosisPrototype.asGson());
+//			log.info("Neue Diagnose erstellt: " + newDiagnosisPrototype.asGson());
 		} else {
 			// case edit: update an save
-			log.info("Diagnose veränder, Original: " + origDiagnosisPrototype.asGson() + " Neu:"
-					+ newDiagnosisPrototype.asGson());
+//			log.info("Diagnose veränder, Original: " + origDiagnosisPrototype.asGson() + " Neu:"
+//					+ newDiagnosisPrototype.asGson());
 			origDiagnosisPrototype.update(newDiagnosisPrototype);
 			genericDAO.save(origDiagnosisPrototype);
 		}

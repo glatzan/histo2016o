@@ -8,9 +8,11 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.histo.model.util.LogAble;
+
 @Entity
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
-public class Contact {
+public class Contact implements LogAble {
 
     public static final int ROLE_NONE = 0;
     public static final int ROLE_SURGEON = 1;
