@@ -12,7 +12,8 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 			style="width:100%">
 			<h:panelGrid columns="2">
-				<p:commandButton value="#{msg['body.worklist.header.button.addPatient']}"
+				<p:commandButton
+					value="#{msg['body.worklist.header.button.addPatient']}"
 					styleClass="buttonMarginLeft"
 					actionListener="#{patientHandlerAction.prepareAddPatient()}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -24,21 +25,73 @@
 
 					<p:ajax update="contentForm" process="@this"></p:ajax>
 
-					<f:selectItem itemLabel="#{msg['body.worklist.header.view.patient']}" itemValue="0" />
-					<f:selectItem itemLabel="#{msg['body.worklist.header.view.receiptlog']}" itemValue="1" />
-					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}" itemValue="2" />
-					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}" itemValue="3" />
-					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}" itemValue="4" />
-					<f:selectItem itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}" itemValue="5" />
+					<f:selectItem
+						itemLabel="#{msg['body.worklist.header.view.patient']}"
+						itemValue="0" />
+					<f:selectItem
+						itemLabel="#{msg['body.worklist.header.view.receiptlog']}"
+						itemValue="1" />
+					<f:selectItem
+						itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}"
+						itemValue="2" />
+					<f:selectItem
+						itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}"
+						itemValue="3" />
+					<f:selectItem
+						itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}"
+						itemValue="4" />
+					<f:selectItem
+						itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}"
+						itemValue="5" />
 				</p:selectOneMenu>
 			</h:panelGrid>
 
 			<h:panelGroup styleClass="headerRight" layout="block">
-				<p:commandButton value="#{msg['body.worklist.header.button.settings']}" styleClass="buttonMarginLeft"
+
+				<p:commandButton id="dynaButton" value="Bearbeiten" type="button"
+					icon="ui-icon-triangle-1-s" />
+
+				<p:tieredMenu overlay="true" trigger="dynaButton" my="left top"
+					at="left bottom">
+					<p:menuitem value="Speichern" />
+					<p:separator />
+					<p:submenu label="Neu">
+						<p:menuitem value="Neuer Auftrag"
+							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+						<p:menuitem value="Neue Probe" />
+					</p:submenu>
+
+					<p:submenu label="Benachrichtigun">
+						<p:menuitem value="Hinzufügen"
+							rendered="#{worklistHandlerAction.selectedPatient.selectedTask ne null}"
+							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}" />
+						<p:menuitem value="Ausführen" ajax="false" icon="ui-icon-close" />
+					</p:submenu>
+
+					<p:menuitem value="Drucken" ajax="false" icon="ui-icon-close" />
+
+
+
+					<p:menuitem value="Patienten Log" ajax="false" icon="ui-icon-close" />
+				</p:tieredMenu>
+
+				<p:commandButton id="menuBtn" value="Menu" type="button"
+					icon="ui-icon-triangle-1-s" />
+
+				<p:tieredMenu overlay="true" trigger="menuBtn" my="left top"
+					id="tiredMenu" at="left bottom" style="width:200px">
+					<p:menuitem value="#{msg['body.worklist.header.button.settings']}"
+						onclick="$('#headerForm\\:settingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
+					<p:menuitem value="#{msg['body.worklist.header.button.logout']}"
+						url="/spring_logout" />
+				</p:tieredMenu>
+
+				<p:commandButton id="settingsDialogBtn" style="display:none"
+					value="#{msg['body.worklist.header.button.settings']}"
 					actionListener="#{settingsHandlerAction.prepareSettingsDialog()}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 				</p:commandButton>
-				<p:button href="/spring_logout" value="#{msg['body.worklist.header.button.logout']}"></p:button>
+
 			</h:panelGroup>
 		</h:panelGrid>
 	</ui:composition>

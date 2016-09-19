@@ -343,12 +343,17 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble, LogAble 
 		}
 	}
 	
+	/**
+	 * Copies the parameters of a diagnosisPrototype to this entity.
+	 * @param diagnosisPrototype
+	 */
 	@Transient
 	public void updateDiagnosisWithPrototype(DiagnosisPrototype diagnosisPrototype) {
 		setDiagnosis(diagnosisPrototype.getDiagnosisText());
 		setExtendedDiagnosisText(diagnosisPrototype.getExtendedDiagnosisText());
 		setMalign(diagnosisPrototype.isMalign());
 		setIcd10(diagnosisPrototype.getIcd10());
+		setCommentary(diagnosisPrototype.getCommentary());
 	}
 		
 	/********************************************************

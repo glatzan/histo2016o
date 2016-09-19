@@ -36,6 +36,9 @@ public class HelperHandlerAction implements Serializable {
 
 	@Autowired
 	private TaskDAO taskDAO;
+	
+	@Autowired
+	private GenericDAO genericDAO;
 
 	/**
 	 * Log Overlaypanel calls the getRevsionList method several times. This is a
@@ -54,6 +57,15 @@ public class HelperHandlerAction implements Serializable {
 	 */
 	public List<Log> getRevisionList(LogAble logAble) {
 		return getRevisionList(logAble, false);
+	}
+	
+	/**
+	 * Saves the given Object to the database
+	 * 
+	 * @param object
+	 */
+	public void saveObject(Object object) {
+		genericDAO.save(object);
 	}
 	
 	/**

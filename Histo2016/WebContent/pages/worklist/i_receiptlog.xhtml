@@ -45,10 +45,20 @@
 				<!-- contact -->
 				<p:column>
 					<h:outputLabel value="#{msg['body.receiptlog.notification']}"></h:outputLabel>
+
+
+
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right"
 						actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
 						<i class="fa fa-fw fa-cog" />
+						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+					</p:commandLink>
+					
+					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+						style="float: right"
+						actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
+						<i class="fa fa-fw fa-check-square-o" />
 						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					</p:commandLink>
 				</p:column>
@@ -156,6 +166,15 @@
 							</f:facet>
 							<p:selectBooleanCheckbox value="#{contact.useFax}"
 								disabled="true" />
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<i class="fa fa-check-square-o"
+									title="#{msg['body.receiptlog.contact.type.performed']}" />
+							</f:facet>
+							<ui:fragment rendered="#{contact.performed}">
+								<i class="fa fa-check icon-green" />
+							</ui:fragment>
 						</p:column>
 					</p:dataTable>
 				</p:column>
@@ -269,9 +288,10 @@
 										</p:column>
 
 										<p:column>
-										
+
 											<!-- Diangosis data -->
-											<p:accordionPanel value="#{sample.diagnoses}" var="diagnosis" activeIndex="#{sample.diagnosisAccordionTabStatus}"
+											<p:accordionPanel value="#{sample.diagnoses}" var="diagnosis"
+												activeIndex="#{sample.diagnosisAccordionTabStatus}"
 												id="diagnosisAccordion" multiple="true"
 												styleClass="diagnosesAccordion">
 												<p:tab>
@@ -299,7 +319,8 @@
 													<!-- Headline for diagnosis -->
 
 													<!-- Body for diagnosis -->
-													<h:panelGrid columns="1" style="width:100%;">
+													<h:panelGrid columns="1" style="width:100%;"
+														id="diagnosisTable">
 														<!-- choose diagnosis -->
 														<h:panelGrid columns="2" style="width:90%;">
 															<h:panelGrid columns="2">
@@ -316,8 +337,8 @@
 																		var="diagnosisPrototype"
 																		itemLabel="#{diagnosisPrototype.name}"
 																		itemValue="#{diagnosisPrototype}" />
-																	<p:ajax
-																		listener="#{diagnosisHandlerAction.updateDiagnosisWithDiangosisPrototype(sampleTabviewContainer.diagnosis,diagnosis.diagnosisPrototype)}" />
+																	<p:ajax update="diagnosisTable"
+																		listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
 																</p:selectOneMenu>
 															</h:panelGrid>
 															<h:panelGrid columns="2" style="float:right;">

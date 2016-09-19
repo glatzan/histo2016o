@@ -230,9 +230,11 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 			if (allFinlized) {
 				List<Diagnosis> dia = getDiagnoses();
 				out.append(dia.size() - 1);
-			} else
+			} else{
 				out.deleteCharAt(out.length() - 1);
-
+			}
+				
+			System.out.println(out.toString());
 			diagnosisAccordionTabStatus = out.toString();
 		}
 		return diagnosisAccordionTabStatus;

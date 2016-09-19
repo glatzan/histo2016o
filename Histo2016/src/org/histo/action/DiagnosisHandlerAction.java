@@ -223,7 +223,10 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param diagnosisPrototype
 	 */
 	public void updateDiagnosisWithDiangosisPrototype(Diagnosis diagnosis, DiagnosisPrototype diagnosisPrototype) {
-
+		diagnosis.setDiagnosisPrototype(diagnosisPrototype);
+		diagnosis.setDiagnosis(diagnosisPrototype.getDiagnosisText());
+		diagnosis.setMalign(diagnosisPrototype.isMalign());
+		diagnosis.setCommentary(diagnosisPrototype.getCommentary());
 	}
 
 	public void print() {

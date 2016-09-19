@@ -45,8 +45,8 @@ public class HistoSettings {
 	public static final String DIALOG_DIAGNOSIS_UNFINALIZE = "/pages/dialog/diagnosis/unfinalizeDiagnosis";
 	public static final String DIALOG_DIAGNOSIS_EDIT_NAME = "/pages/dialog/diagnosis/editDiagnosisName";
 	public static final String DIALOG_PATIENT_ADD = "/pages/dialog/patient/addPatient";
-	public static final String DIALOG_WORKLIST_CONTACTS = "/pages/dialog/contact/addContact";
-	
+	public static final String DIALOG_WORKLIST_CONTACTS_ADD = "/pages/dialog/contact/addContact";
+	public static final String DIALOG_WORKLIST_CONTACTS_PERFORM = "/pages/dialog/contact/performContact";
 	
 	// noch nicht drinnen
 	public static final int DIALOG_TEST = 255;

@@ -359,11 +359,15 @@ public class WorklistHandlerAction implements Serializable {
 	 * Task - Select and init
 	 */
 	public void selectTask(Task task) {
+		System.out.println(task.getTaskID());
 		// set patient.selectedTask is performed by the gui
 		// sets this task as active, so it will be show in the navigation column
 		// whether there is an action to perform or not
 		task.setCurrentlyActive(true);
 
+		if(task.getPatient().getSelectedTask() != task)
+			task.getPatient().setSelectedTask(task);
+		
 //		log.info("Select and init sample");
 
 		int userLevel = userHandlerAction.getCurrentUser().getRole().getLevel();
@@ -735,15 +739,6 @@ public class WorklistHandlerAction implements Serializable {
 	// sample.setDiagnosisCompletionDate(System.currentTimeMillis());
 	// }
 	// }
-
-	/**
-	 * Saves the given Object to the database
-	 * 
-	 * @param object
-	 */
-	public void saveObject(Object object) {
-		genericDAO.save(object);
-	}
 
 	public void searchForExistingPatients() {
 		if (getSearchString().matches("[0-9]{6,8}")) {

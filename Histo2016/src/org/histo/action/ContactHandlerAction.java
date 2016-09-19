@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.mail.SimpleEmail;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
@@ -25,7 +26,7 @@ public class ContactHandlerAction implements Serializable {
 
 	@Autowired
 	private HelperHandlerAction helper;
-	
+
 	@Autowired
 	private PhysicianDAO physicianDAO;
 
@@ -43,7 +44,8 @@ public class ContactHandlerAction implements Serializable {
 	private boolean addedContacts = false;
 
 	/**
-	 * Gets a list with all available contact for a specific task. Filters all duplicated entries. 
+	 * Gets a list with all available contact for a specific task. Filters all
+	 * duplicated entries.
 	 * 
 	 * @param task
 	 * @param surgeon
@@ -80,7 +82,7 @@ public class ContactHandlerAction implements Serializable {
 			getAllAvailableContact().addAll(contacts);
 		}
 
-		helper.showDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS, 1024, 600, false, false, true);
+		helper.showDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_ADD, 1024, 600, false, false, true);
 	}
 
 	/**
@@ -139,17 +141,38 @@ public class ContactHandlerAction implements Serializable {
 		}
 	}
 
+	public void sendTest(){
+	    SimpleEmail email = new SimpleEmail();
+	    email.setHostName(SMTP_HOST);
+	    email.setAuthentication(USERNAME, PASSWORD);
+	    email.setDebug(true);
+	    email.setSmtpPort(SMTP_PORT);
+	    email.setSSLOnConnect(true);
+	    email.addTo("empfaenger@domain.de");
+	    email.setFrom(USERNAME, "Name des Senders");
+	    email.setSubject("Testnachricht");
+	    email.setMsg("Hallo, das ist nur ein simpler Test");
+	    email.send();
+	}
 	/**
 	 * Schlieﬂt den Kontakt Dialog
 	 */
 	public void hideContactsDialog() {
-		helper.hideDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS);
+		helper.hideDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_ADD);
+	}
+	
+	public void preparePerformContactsDialog(){
+		helper.showDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_PERFORM, 1024, 600, false, false, true);
+	}
+	
+	public void hidePerformContactsDialog(){
+		helper.hideDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_PERFORM);
 	}
 
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	
+
 	public List<Contact> getAllAvailableContact() {
 		return allAvailableContact;
 	}

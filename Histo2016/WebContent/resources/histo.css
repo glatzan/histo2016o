@@ -264,6 +264,13 @@ body {
 	padding-left: 4px;
 	padding-right: 4px;
 }
+
+.content .body .addedContactDataTable td:nth-child(6), .content .body .addedContactDataTable th:nth-child(6)
+	{
+	width: 15px !important;
+	padding-left: 4px;
+	padding-right: 4px;
+}
 /* 	################# AddContectTable ################# */
 
 /* 	################# Body ################# */
