@@ -7,6 +7,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 <body>
+
+
 	<ui:composition>
 		<h:panelGrid columns="2"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll"
@@ -25,56 +27,61 @@
 
 					<p:ajax update="contentForm" process="@this"></p:ajax>
 
-					<f:selectItem
-						itemLabel="#{msg['body.worklist.header.view.patient']}"
-						itemValue="0" />
-					<f:selectItem
-						itemLabel="#{msg['body.worklist.header.view.receiptlog']}"
-						itemValue="1" />
-					<f:selectItem
-						itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}"
-						itemValue="2" />
-					<f:selectItem
-						itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}"
-						itemValue="3" />
-					<f:selectItem
-						itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}"
-						itemValue="4" />
-					<f:selectItem
-						itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}"
-						itemValue="5" />
+					<f:selectItems value="#{emumProvider.displays}" var="current"
+						itemValue="#{current}" itemLabel="#{msg['enum.display.'.concat(current)]}" />
 				</p:selectOneMenu>
 			</h:panelGrid>
 
 			<h:panelGroup styleClass="headerRight" layout="block">
 
+				<p:commandButton value="Test"
+					actionListener="#{contactHandlerAction.sendTest()}" />
+
 				<p:commandButton id="dynaButton" value="Bearbeiten" type="button"
 					icon="ui-icon-triangle-1-s" />
 
+				<!-- Options menu -->
 				<p:tieredMenu overlay="true" trigger="dynaButton" my="left top"
-					at="left bottom">
+					at="left bottom" id="tieredOptions">
 					<p:menuitem value="Speichern" />
 					<p:separator />
+					<!-- New -->
 					<p:submenu label="Neu">
 						<p:menuitem value="Neuer Auftrag"
 							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
 						<p:menuitem value="Neue Probe" />
 					</p:submenu>
 
+					<!-- Contacts -->
 					<p:submenu label="Benachrichtigun">
 						<p:menuitem value="Hinzufügen"
 							rendered="#{worklistHandlerAction.selectedPatient.selectedTask ne null}"
-							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}" />
+							onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 						<p:menuitem value="Ausführen" ajax="false" icon="ui-icon-close" />
 					</p:submenu>
 
-					<p:menuitem value="Drucken" ajax="false" icon="ui-icon-close" />
-
-
+					<!-- Print -->
+					<p:menuitem value="Drucken"
+						rendered="#{worklistHandlerAction.selectedPatient.selectedTask ne null}"
+						onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 					<p:menuitem value="Patienten Log" ajax="false" icon="ui-icon-close" />
 				</p:tieredMenu>
 
+				<!-- Edit Contacts button -->
+				<p:commandButton id="editContactBtn" style="display:none"
+					actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
+					<p:ajax event="dialogReturn" update="contentForm" />
+				</p:commandButton>
+
+				<!-- Print button -->
+				<p:commandButton id="printBtn" style="display:none"
+					actionListener="#{taskHandlerAction.preparePrintDialog()}">
+					<p:ajax event="dialogReturn" update="contentForm" />
+				</p:commandButton>
+
+
+				<!-- Menu Button -->
 				<p:commandButton id="menuBtn" value="Menu" type="button"
 					icon="ui-icon-triangle-1-s" />
 

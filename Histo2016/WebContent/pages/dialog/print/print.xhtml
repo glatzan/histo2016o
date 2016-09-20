@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>#{msg['dialog.addPatient.headline']}</title>
+	<h:outputStylesheet name="dialogStandard.css"
+		value="dialogStandard.css" />
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="printDialog">
+	<h:form>
+		<div class="bodyDiv">
+			<div class="contentDiv">
+				<h:panelGrid columns="2">
+					<h:panelGrid columns="2">
+						<h:outputLabel value="Dokument" />
+						<p:selectOneMenu style="margin-top:1px;"
+							title="#{msg['body.worklist.header.view']}"
+							value="#{worklistHandlerAction.worklistDisplay}">
+
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.patient']}"
+								itemValue="0" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.receiptlog']}"
+								itemValue="1" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}"
+								itemValue="2" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}"
+								itemValue="3" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}"
+								itemValue="4" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}"
+								itemValue="5" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Drucker" />
+
+						<p:selectOneMenu style="margin-top:1px;">
+
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.patient']}"
+								itemValue="0" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.receiptlog']}"
+								itemValue="1" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}"
+								itemValue="2" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}"
+								itemValue="3" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}"
+								itemValue="4" />
+							<f:selectItem
+								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}"
+								itemValue="5" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Anzahl" />
+						<p:spinner min="1" size="13" />
+
+					</h:panelGrid>
+					
+					<p:media></p:media>
+				</h:panelGrid>
+			</div>
+
+			<div class="bottomDiv">
+				<h:panelGrid columns="2" style="width:100%"
+					styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+					<h:panelGrid columns="1">
+						<p:commandButton
+							value="#{msg['dialog.addPatient.add.button.add']}"
+							process="@form" icon="fa fa-fw fa-user-plus">
+							<f:actionListener
+								binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
+							<f:actionListener
+								binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
+							<f:actionListener
+								binding="#{patientHandlerAction.clearTmpPatient()}" />
+						</p:commandButton>
+					</h:panelGrid>
+				</h:panelGrid>
+			</div>
+		</div>
+	</h:form>
+</h:body>
+</html>

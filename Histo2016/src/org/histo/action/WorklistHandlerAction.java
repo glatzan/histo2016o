@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Display;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PatientDao;
@@ -78,13 +79,6 @@ public class WorklistHandlerAction implements Serializable {
 	public final static int SORT_ORDER_TASK_ID = 0;
 	public final static int SORT_ORDER_PIZ = 1;
 	public final static int SORT_ORDER_NAME = 2;
-
-	public final static int DISPLAY_PATIENT = 0;
-	public final static int DISPLAY_RECEIPTLOG = 1;
-	public final static int DISPLAY_DIAGNOSIS_INTERN = 2;
-	public final static int DISPLAY_DIAGNOSIS_INTERN_EXTENDED = 3;
-	public final static int DISPLAY_DIAGNOSIS_EXTERNAL = 4;
-	public final static int DISPLAY_DIAGNOSIS_EXTERNAL_EXTENDED = 5;
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -179,7 +173,7 @@ public class WorklistHandlerAction implements Serializable {
 	/**
 	 *  
 	 */
-	private int worklistDisplay = DISPLAY_PATIENT;
+	private Display worklistDisplay = Display.PATIENT;
 
 	/******************************************************** Worklist ********************************************************/
 
@@ -272,14 +266,14 @@ public class WorklistHandlerAction implements Serializable {
 //		log.info("Entferne Patient aus der Arbeitsliste");
 	}
 
-	public String getCenterView(int view) {
-		switch (view) {
-		case DISPLAY_PATIENT:
+	public String getCenterView(Display display) {
+		switch (display) {
+		case PATIENT:
 			if (getSelectedPatient() == null)
 				return HistoSettings.CENTER_INCLUDE_BLANK;
 			else
 				return HistoSettings.CENTER_INCLUDE_PATIENT;
-		case DISPLAY_RECEIPTLOG:
+		case RECEIPTLOG:
 			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
 				return HistoSettings.CENTER_INCLUDE_RECEIPTLOG;
 			else if (getSelectedPatient() != null) {
@@ -290,7 +284,7 @@ public class WorklistHandlerAction implements Serializable {
 					return HistoSettings.CENTER_INCLUDE_PATIENT;
 			} else
 				return HistoSettings.CENTER_INCLUDE_BLANK;
-		case DISPLAY_DIAGNOSIS_INTERN:
+		case DIAGNOSIS_INTERN:
 			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
 				return HistoSettings.CENTER_INCLUDE_DIAGNOSIS_INTERN;
 			else if (getSelectedPatient() != null)
@@ -298,7 +292,7 @@ public class WorklistHandlerAction implements Serializable {
 			else
 				return HistoSettings.CENTER_INCLUDE_BLANK;
 
-		case DISPLAY_DIAGNOSIS_INTERN_EXTENDED:
+		case DIAGNOSIS_INTERN_EXTENDED:
 			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
 				return HistoSettings.CENTER_INCLUDE_EXTERN_EXTENDED;
 			else if (getSelectedPatient() != null)
@@ -388,12 +382,12 @@ public class WorklistHandlerAction implements Serializable {
 
 		// setzte das diasplay auf das eingangsbuch wenn der patient angezeigt
 		// wird
-		if (getWorklistDisplay() == DISPLAY_PATIENT)
-			setWorklistDisplay(DISPLAY_RECEIPTLOG);
+		if (getWorklistDisplay() == Display.PATIENT)
+			setWorklistDisplay(Display.RECEIPTLOG);
 	}
 
 	public void deselectTask(Patient patient) {
-		setWorklistDisplay(DISPLAY_PATIENT);
+		setWorklistDisplay(Display.PATIENT);
 		patient.setSelectedTask(null);
 	}
 
@@ -871,11 +865,12 @@ public class WorklistHandlerAction implements Serializable {
 		this.worklistSortOrder = worklistSortOrder;
 	}
 
-	public int getWorklistDisplay() {
+	public Display getWorklistDisplay() {
 		return worklistDisplay;
 	}
 
-	public void setWorklistDisplay(int worklistDisplay) {
+	public void setWorklistDisplay(Display worklistDisplay) {
+		System.out.println(worklistDisplay + "-----------");
 		this.worklistDisplay = worklistDisplay;
 	}
 

@@ -3,7 +3,6 @@ package org.histo.config;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 public class HistoSettings {
 
 	public static final String HISTO_BASE_URL = "/Histo2016";
@@ -11,8 +10,10 @@ public class HistoSettings {
 
 	public static final String STANDARD_DATEFORMAT_DAY_ONLY = "dd MMM yyyy";
 	public static final String STANDARD_DATEFORMAT = "hh:mm:ss dd.MM.yyyy";
-	
-	
+
+	public static final String EMAIL_SERVER = "smtp.ukl.uni-freiburg.de";
+	public static final String EMAIL_PORT = "smtp.ukl.uni-freiburg.de";
+
 	// http://auginfo/piz?piz=xx
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 	public static final String PATIENT_GET_URL = "http://auginfo/piz";
@@ -47,7 +48,8 @@ public class HistoSettings {
 	public static final String DIALOG_PATIENT_ADD = "/pages/dialog/patient/addPatient";
 	public static final String DIALOG_WORKLIST_CONTACTS_ADD = "/pages/dialog/contact/addContact";
 	public static final String DIALOG_WORKLIST_CONTACTS_PERFORM = "/pages/dialog/contact/performContact";
-	
+	public static final String DIALOG_PRINT = "/pages/dialog/print/print";
+
 	// noch nicht drinnen
 	public static final int DIALOG_TEST = 255;
 	public static final int DIALOG_ARCHIV_TASK = 2;

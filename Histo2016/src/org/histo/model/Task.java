@@ -21,6 +21,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.config.HistoSettings;
+import org.histo.dao.TaskDAO;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -29,6 +30,8 @@ import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 @Entity
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
@@ -37,6 +40,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
 
+	
 	public static final byte EYE_RIGHT = 0;
 	public static final byte EYE_LEFT = 1;
 
@@ -96,7 +100,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	 * Ward of the patient
 	 */
 	private String ward;
-	
+
 	/**
 	 * Ey of the samples right/left/both
 	 */
@@ -147,6 +151,12 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	 * Date of diagnosis finalization
 	 */
 	private Date diagnosisCompletionDate;
+
+	/**
+	 * Generated PDFs of this task
+	 */
+	private List<PDFs> pdfs;
+
 	/******************************************************** Transient ********************************************************/
 	/**
 	 * Die Ausgewählte Probe
@@ -169,6 +179,11 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	 */
 	private boolean currentlyActive;
 
+	/**
+	 * True if lazy initialision was successful.
+	 */
+	private boolean lazyInitialized;
+	
 	/******************************************************** Transient ********************************************************/
 	public Task() {
 	}
@@ -350,7 +365,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.creationDate = creationDate;
 	}
 
-	@OneToMany(mappedBy = "parent", cascade = {CascadeType.REFRESH, CascadeType.ALL}, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parent", cascade = { CascadeType.REFRESH, CascadeType.ALL }, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	public List<Sample> getSamples() {
@@ -442,7 +457,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	public void setWard(String ward) {
 		this.ward = ward;
 	}
-	
+
 	@Transient
 	public Sample getSelectedSample() {
 		return selectedSample;
@@ -478,6 +493,16 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	public void setCurrentlyActive(boolean currentlyActive) {
 		this.currentlyActive = currentlyActive;
 	}
+
+	@OneToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+	public List<PDFs> getPdfs() {
+		return pdfs;
+	}
+
+	public void setPdfs(List<PDFs> pdfs) {
+		this.pdfs = pdfs;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

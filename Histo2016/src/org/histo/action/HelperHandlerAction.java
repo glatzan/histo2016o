@@ -161,13 +161,14 @@ public class HelperHandlerAction implements Serializable {
 			Map<String, Object> options) {
 		if (width != -1) {
 			options.put("width", width);
-			options.put("contentWidth", "100%");
+			options.put("contentWidth", width);
 		} else
 			options.put("width", "auto");
 
-		if (height != -1)
+		if (height != -1){
+			options.put("contentHeight", height);
 			options.put("height", height);
-		else
+		}else
 			options.put("height", "auto");
 
 		options.put("resizable", resizeable);

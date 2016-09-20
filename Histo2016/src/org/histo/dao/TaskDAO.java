@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.envers.AuditReader;
@@ -78,5 +79,9 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		}
 		
 		return logs;
+	}
+	
+	public void initializeTask(Task task){
+		Hibernate.initialize(task.getPdfs());
 	}
 }

@@ -467,7 +467,7 @@ body {
 }
 
 /* Layout in the tabview center tab, center div*/
-.settingsDialogLayout .settingsPannel .settingsTabView .contentDiv {
+.settingsDialogLayout .settingsPannel .contentDiv {
 	padding: 1px 1px 1px 0px !important;
 	height: 550px;
 	overflow-x: hidden;
@@ -475,7 +475,7 @@ body {
 }
 
 /* Layout in the tabview center tab, bottom div*/
-.settingsDialogLayout .settingsPannel .settingsTabView .bottomDiv {
+.settingsDialogLayout .settingsPannel .bottomDiv {
 	padding: 1px 1px 1px 0px !important;
 	height: 35px;
 	position: absolute !important; 
@@ -521,6 +521,37 @@ body {
 	font-size: 0.8em !important;
 }
 /*	################# Settings ################# */
+
+
+
+/*	################# print ################# */
+/* print Dialog*/
+.printDialog {
+	padding: 0px !important;
+	margin: 0px !important;
+}
+
+/* content div */
+.printDialog .bodyDiv {
+	height: 600px;
+	width: 100%;
+}
+
+.printDialog .bodyDiv .contentDiv{
+	height: 550px;
+}
+
+.printDialog .bodyDiv .bottomDiv{
+	height: 35px;
+	position: absolute !important; 
+	bottom: 0px !important; 
+	vertical-align: bottom !important;
+	width: 100%;
+}
+
+/*	################# print ################# */
+
+
 
 /*	################# Contact ################# */
 /* Layout für den ContactSelect Datatable */

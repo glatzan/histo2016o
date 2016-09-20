@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
@@ -141,31 +142,38 @@ public class ContactHandlerAction implements Serializable {
 		}
 	}
 
-	public void sendTest(){
-	    SimpleEmail email = new SimpleEmail();
-	    email.setHostName(SMTP_HOST);
-	    email.setAuthentication(USERNAME, PASSWORD);
-	    email.setDebug(true);
-	    email.setSmtpPort(SMTP_PORT);
-	    email.setSSLOnConnect(true);
-	    email.addTo("empfaenger@domain.de");
-	    email.setFrom(USERNAME, "Name des Senders");
-	    email.setSubject("Testnachricht");
-	    email.setMsg("Hallo, das ist nur ein simpler Test");
-	    email.send();
+	public void sendTest() {
+		System.out.println("ok");
+		SimpleEmail email = new SimpleEmail();
+		email.setHostName("smtp.ukl.uni-freiburg.de");
+		email.setDebug(true);
+		email.setSmtpPort(465);
+		email.setSSLOnConnect(true);
+		try {
+			email.addTo("andreas.glatz@uniklinik-freiburg.de");
+			email.setFrom("augenklinik.histologie@uniklinik-freiburg.de", "Name des Senders");
+			email.setSubject("Testnachricht");
+			email.setMsg("Hallo, das ist nur ein simpler Test");
+			email.send();
+		} catch (EmailException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
+
 	/**
 	 * Schlieﬂt den Kontakt Dialog
 	 */
 	public void hideContactsDialog() {
 		helper.hideDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_ADD);
 	}
-	
-	public void preparePerformContactsDialog(){
+
+	public void preparePerformContactsDialog() {
 		helper.showDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_PERFORM, 1024, 600, false, false, true);
 	}
-	
-	public void hidePerformContactsDialog(){
+
+	public void hidePerformContactsDialog() {
 		helper.hideDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_PERFORM);
 	}
 
