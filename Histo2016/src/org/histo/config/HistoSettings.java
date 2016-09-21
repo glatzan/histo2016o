@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 public class HistoSettings {
 
+	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
+	
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
 

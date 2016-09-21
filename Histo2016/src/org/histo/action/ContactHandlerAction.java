@@ -12,6 +12,7 @@ import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
 import org.histo.model.Physician;
 import org.histo.model.Task;
+import org.histo.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -143,22 +144,27 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	public void sendTest() {
-		System.out.println("ok");
-		SimpleEmail email = new SimpleEmail();
-		email.setHostName("smtp.ukl.uni-freiburg.de");
-		email.setDebug(true);
-		email.setSmtpPort(465);
-		email.setSSLOnConnect(true);
-		try {
-			email.addTo("andreas.glatz@uniklinik-freiburg.de");
-			email.setFrom("augenklinik.histologie@uniklinik-freiburg.de", "Name des Senders");
-			email.setSubject("Testnachricht");
-			email.setMsg("Hallo, das ist nur ein simpler Test");
-			email.send();
-		} catch (EmailException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		FileUtil.loadTextFile(null);
+		
+		
+		
+//		System.out.println("ok");
+//		SimpleEmail email = new SimpleEmail();
+//		email.setHostName("smtp.ukl.uni-freiburg.de");
+//		email.setDebug(true);
+//		email.setSmtpPort(465);
+//		email.setSSLOnConnect(true);
+//		try {
+//			email.addTo("andreas.glatz@uniklinik-freiburg.de");
+//			email.setFrom("augenklinik.histologie@uniklinik-freiburg.de", "Name des Senders");
+//			email.setSubject("Testnachricht");
+//			email.setMsg("Hallo, das ist nur ein simpler Test");
+//			email.send();
+//		} catch (EmailException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 

@@ -14,7 +14,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
-import org.histo.config.enums.PDFTemplate;
+import org.histo.config.enums.PDFTemplateEnum;
 
 @Entity
 @Audited
@@ -30,7 +30,7 @@ public class PDFs {
 	
 	private boolean finalDocument;
 	
-	private PDFTemplate template;
+	private PDFTemplateEnum template;
 
 	@Id
 	@GeneratedValue(generator = "pdfs_sequencegenerator")
@@ -61,11 +61,11 @@ public class PDFs {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public PDFTemplate getTemplate() {
+	public PDFTemplateEnum getTemplate() {
 		return template;
 	}
 
-	public void setTemplate(PDFTemplate template) {
+	public void setTemplate(PDFTemplateEnum template) {
 		this.template = template;
 	}
 }

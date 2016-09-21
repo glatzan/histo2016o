@@ -1,4 +1,4 @@
-package org.histo.util;
+package org.histo.ui;
 
 import org.histo.model.UserAcc;
 

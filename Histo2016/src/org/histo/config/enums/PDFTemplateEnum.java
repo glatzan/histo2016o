@@ -1,5 +1,5 @@
 package org.histo.config.enums;
 
-public enum PDFTemplate {
+public enum PDFTemplateEnum {
 	DIAGNOSIS_INTERN, DIAGNOSIS_INTERN_EXTENDED, DIAGNOSIS_EXTERNAL, DIAGNOSIS_EXTERNAL_EXTENDED;
 }

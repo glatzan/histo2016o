@@ -21,6 +21,7 @@ import org.histo.config.HistoSettings;
 import org.histo.model.Physician;
 import org.histo.model.UserAcc;
 import org.histo.model.UserRole;
+import org.histo.ui.UserAccRoleHolder;
 
 public class UserUtil {
 
