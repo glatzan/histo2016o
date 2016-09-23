@@ -19,60 +19,31 @@
 				<h:panelGrid columns="2">
 					<h:panelGrid columns="2">
 						<h:outputLabel value="Dokument" />
-						<p:selectOneMenu style="margin-top:1px;"
-							title="#{msg['body.worklist.header.view']}"
-							value="#{worklistHandlerAction.worklistDisplay}">
 
+						<p:selectOneMenu value="#{taskHandlerAction.selectedTemplate}"
+							converter="#{taskHandlerAction.templateTransformer}">
 							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.patient']}"
-								itemValue="0" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.receiptlog']}"
-								itemValue="1" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}"
-								itemValue="2" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}"
-								itemValue="3" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}"
-								itemValue="4" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}"
-								itemValue="5" />
+								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
+								itemValue="#{null}" />
+							<f:selectItems value="#{taskHandlerAction.templates}"
+								var="template" itemLabel="#{template.name}" itemValue="template" />
+
+							<p:ajax
+								listener="#{taskHandlerAction.changeTemplate(taskHandlerAction.taskToPrint, taskHandlerAction.selectedTemplate)}"></p:ajax>
 						</p:selectOneMenu>
 
 						<h:outputLabel value="Drucker" />
 
 						<p:selectOneMenu style="margin-top:1px;">
-
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.patient']}"
-								itemValue="0" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.receiptlog']}"
-								itemValue="1" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter']}"
-								itemValue="2" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.inter.extended']}"
-								itemValue="3" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern']}"
-								itemValue="4" />
-							<f:selectItem
-								itemLabel="#{msg['body.worklist.header.view.diagnosis.extern.extended']}"
-								itemValue="5" />
+							<f:selectItem itemLabel="TODO" itemValue="0" />
 						</p:selectOneMenu>
 
 						<h:outputLabel value="Anzahl" />
 						<p:spinner min="1" size="13" />
 
 					</h:panelGrid>
-					
-					<p:media></p:media>
+
+					<p:media player="pdf" value="#{taskHandlerAction.pdfContent}"></p:media>
 				</h:panelGrid>
 			</div>
 

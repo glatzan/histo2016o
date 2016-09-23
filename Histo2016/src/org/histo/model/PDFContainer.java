@@ -14,7 +14,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
-import org.histo.config.enums.PDFTemplateEnum;
 
 @Entity
 @Audited
@@ -22,15 +21,15 @@ import org.histo.config.enums.PDFTemplateEnum;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "pdfs_sequencegenerator", sequenceName = "pdfs_sequence")
-public class PDFs {
+public class PDFContainer {
 
 	private long id;
 
 	private byte data[];
-	
+
 	private boolean finalDocument;
-	
-	private PDFTemplateEnum template;
+
+	private String type;
 
 	@Id
 	@GeneratedValue(generator = "pdfs_sequencegenerator")
@@ -60,12 +59,11 @@ public class PDFs {
 		this.finalDocument = finalDocument;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public PDFTemplateEnum getTemplate() {
-		return template;
+	public String getType() {
+		return type;
 	}
 
-	public void setTemplate(PDFTemplateEnum template) {
-		this.template = template;
+	public void setType(String type) {
+		this.type = type;
 	}
 }

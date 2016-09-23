@@ -1,6 +1,5 @@
 package org.histo.model.util.transientObjects;
 
-import org.histo.config.enums.PDFTemplateEnum;
 import org.histo.model.util.GsonAble;
 
 import com.google.gson.Gson;
@@ -17,7 +16,9 @@ public class PDFTemplate implements GsonAble {
 	@Expose
 	private String fileWithOutLogo;
 	@Expose
-	private PDFTemplateEnum type;
+	private String type;
+	@Expose
+	private boolean defaultTemplate;
 
 	public String getName() {
 		return name;
@@ -43,12 +44,20 @@ public class PDFTemplate implements GsonAble {
 		this.fileWithOutLogo = fileWithOutLogo;
 	}
 
-	public PDFTemplateEnum getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(PDFTemplateEnum type) {
+	public void setType(String type) {
 		this.type = type;
+	}
+
+	public boolean isDefaultTemplate() {
+		return defaultTemplate;
+	}
+
+	public void setDefaultTemplate(boolean defaultTemplate) {
+		this.defaultTemplate = defaultTemplate;
 	}
 
 	public static final PDFTemplate[] factroy(String json) {

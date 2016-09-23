@@ -76,7 +76,7 @@
 
 				<!-- Print button -->
 				<p:commandButton id="printBtn" style="display:none"
-					actionListener="#{taskHandlerAction.preparePrintDialog()}">
+					actionListener="#{taskHandlerAction.preparePrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 					<p:ajax event="dialogReturn" update="contentForm" />
 				</p:commandButton>
 

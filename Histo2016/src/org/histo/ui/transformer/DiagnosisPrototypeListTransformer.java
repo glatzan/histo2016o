@@ -1,4 +1,4 @@
-package org.histo.ui;
+package org.histo.ui.transformer;
 
 import java.util.List;
 

@@ -21,7 +21,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.config.HistoSettings;
-import org.histo.dao.TaskDAO;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -30,8 +29,6 @@ import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 
 @Entity
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
@@ -155,7 +152,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	/**
 	 * Generated PDFs of this task
 	 */
-	private List<PDFs> pdfs;
+	private List<PDFContainer> pdfs;
 
 	/******************************************************** Transient ********************************************************/
 	/**
@@ -495,11 +492,14 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	}
 
 	@OneToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
-	public List<PDFs> getPdfs() {
+	public List<PDFContainer> getPdfs() {
+		if(pdfs == null)
+			pdfs = new ArrayList<PDFContainer>();
+		
 		return pdfs;
 	}
 
-	public void setPdfs(List<PDFs> pdfs) {
+	public void setPdfs(List<PDFContainer> pdfs) {
 		this.pdfs = pdfs;
 	}
 

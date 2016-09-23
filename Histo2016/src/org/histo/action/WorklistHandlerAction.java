@@ -21,7 +21,6 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.Display;
-import org.histo.config.enums.PDFTemplateEnum;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PatientDao;
@@ -43,7 +42,7 @@ import org.histo.model.util.ArchiveAble;
 import org.histo.model.util.StainingTreeParent;
 import org.histo.model.util.transientObjects.PDFTemplate;
 import org.histo.ui.PatientList;
-import org.histo.ui.StainingListTransformer;
+import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.PersonAdministration;
 import org.histo.util.SearchOptions;
 import org.histo.util.TaskUtil;
@@ -200,11 +199,6 @@ public class WorklistHandlerAction implements Serializable {
 
 	@PostConstruct
 	public void goToLogin() {
-		//log.debug("Login erfolgreich");
-		PDFTemplate test = new PDFTemplate();
-		test.setType(PDFTemplateEnum.DIAGNOSIS_EXTERNAL);
-		System.out.println(test.asGson());
-		
 		goToWorkList();
 	}
 

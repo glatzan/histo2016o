@@ -3,6 +3,7 @@
       "name":"template.diagnosis.internal.extended",
       "fileWithLogo":"templates/Final5-Logo.pdf",
       "fileWithOutLogo":"templates/Final5-noLogo.pdf",
-      "type": "DIAGNOSIS_INTERN_EXTENDED"
+      "type": "DIAGNOSIS_INTERN_EXTENDED",
+      "defaultTemplate": true
    }
 ]
