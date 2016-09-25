@@ -40,10 +40,7 @@ import org.histo.model.Task;
 import org.histo.model.UserRole;
 import org.histo.model.util.ArchiveAble;
 import org.histo.model.util.StainingTreeParent;
-import org.histo.model.util.transientObjects.PDFTemplate;
-import org.histo.ui.PatientList;
 import org.histo.ui.transformer.StainingListTransformer;
-import org.histo.util.PersonAdministration;
 import org.histo.util.SearchOptions;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
@@ -51,11 +48,6 @@ import org.histo.util.WorklistUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -292,13 +284,13 @@ public class WorklistHandlerAction implements Serializable {
 			else
 				return HistoSettings.CENTER_INCLUDE_BLANK;
 
-		case DIAGNOSIS_INTERN_EXTENDED:
-			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
-				return HistoSettings.CENTER_INCLUDE_EXTERN_EXTENDED;
-			else if (getSelectedPatient() != null)
-				return HistoSettings.CENTER_INCLUDE_PATIENT;
-			else
-				return HistoSettings.CENTER_INCLUDE_BLANK;
+//		case DIAGNOSIS_INTERN_EXTENDED:
+//			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
+//				return HistoSettings.CENTER_INCLUDE_EXTERN_EXTENDED;
+//			else if (getSelectedPatient() != null)
+//				return HistoSettings.CENTER_INCLUDE_PATIENT;
+//			else
+//				return HistoSettings.CENTER_INCLUDE_BLANK;
 		default:
 			break;
 		}
@@ -375,7 +367,7 @@ public class WorklistHandlerAction implements Serializable {
 		}
 
 		// Setzte action to none
-		slideHandlerAction.setActionOnMany(SlideHandlerAction.STAININGLIST_ACTION_PERFORMED);
+		slideHandlerAction.setActionOnMany(SlideHandlerAction.STAININGLIST_ACTION_NONE);
 
 		// init all available diagnoses
 		settingsHandlerAction.updateAllDiagnosisPrototypes();

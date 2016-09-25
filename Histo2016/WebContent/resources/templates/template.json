@@ -5,5 +5,12 @@
       "fileWithOutLogo":"templates/Final5-noLogo.pdf",
       "type": "DIAGNOSIS_INTERN_EXTENDED",
       "defaultTemplate": true
+   },
+   {
+      "name":"template.diagnosis.internal",
+      "fileWithLogo":"templates/Final5-Logo.pdf",
+      "fileWithOutLogo":"templates/Final5-noLogo.pdf",
+      "type": "DIAGNOSIS_INTERN_EXTENDED",
+      "defaultTemplate": false
    }
 ]

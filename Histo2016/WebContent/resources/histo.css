@@ -549,6 +549,25 @@ body {
 	width: 100%;
 }
 
+.printDialog .contentTable{
+	width: 100%;
+}
+
+.printDialog .contentTable .settingsColumn{
+	vertical-align: top;
+	width: 200px;
+	height: 550px;
+}
+
+.printDialog .contentTable .pdfColumn{
+	vertical-align: top;
+	width: *;
+	height: 550px;
+	text-align: right;
+}
+
+
+
 /*	################# print ################# */
 
 

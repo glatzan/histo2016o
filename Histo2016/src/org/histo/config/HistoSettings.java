@@ -27,9 +27,8 @@ public class HistoSettings {
 
 	public static final String CENTER_INCLUDE_BLANK = "i_blank.xhtml";
 	public static final String CENTER_INCLUDE_PATIENT = "i_patient.xhtml";
-	public static final String CENTER_INCLUDE_DIAGNOSIS_INTERN = "i_diagnosisIntern.xhtml";
+	public static final String CENTER_INCLUDE_DIAGNOSIS_INTERN = "i_diagnosis.xhtml";
 	public static final String CENTER_INCLUDE_RECEIPTLOG = "i_receiptlog.xhtml";
-	public static final String CENTER_INCLUDE_EXTERN_EXTENDED = "i_externextended.xhtml";
 
 	public static final int DIALOG_ARCHIV_STAINING = 0;
 	public static final int DIALOG_ARCHIV_SAMPLE = 1;

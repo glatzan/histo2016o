@@ -16,44 +16,76 @@
 	<h:form>
 		<div class="bodyDiv">
 			<div class="contentDiv">
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2" columnClasses="settingsColumn,pdfColumn"
+					styleClass="contentTable">
 					<h:panelGrid columns="2">
-						<h:outputLabel value="Dokument" />
 
+						<h:outputLabel value="Dokument" />
 						<p:selectOneMenu value="#{taskHandlerAction.selectedTemplate}"
+							style="width:150px;"
 							converter="#{taskHandlerAction.templateTransformer}">
-							<f:selectItem
-								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-								itemValue="#{null}" />
 							<f:selectItems value="#{taskHandlerAction.templates}"
-								var="template" itemLabel="#{template.name}" itemValue="template" />
+								var="template" itemLabel="#{msg[template.name]}"
+								itemValue="template" />
 
 							<p:ajax
 								listener="#{taskHandlerAction.changeTemplate(taskHandlerAction.taskToPrint, taskHandlerAction.selectedTemplate)}"></p:ajax>
 						</p:selectOneMenu>
 
-						<h:outputLabel value="Drucker" />
+						<h:panelGroup style="height:15px;" layout="block" />
+						<h:panelGroup style="height:15px;" layout="block" />
 
-						<p:selectOneMenu style="margin-top:1px;">
+						<h:outputLabel value="Drucker" />
+						<p:selectOneMenu style="width:150px;">
 							<f:selectItem itemLabel="TODO" itemValue="0" />
 						</p:selectOneMenu>
 
 						<h:outputLabel value="Anzahl" />
 						<p:spinner min="1" size="13" />
 
-					</h:panelGrid>
+						<h:panelGroup style="height:15px;" layout="block" />
+						<h:panelGroup style="height:15px;" layout="block" />
 
-					<p:media player="pdf" value="#{taskHandlerAction.pdfContent}"></p:media>
+						<h:outputLabel value="Befunder" />
+						<p:selectOneMenu style="width:150px;">
+							<f:selectItem itemLabel="TODO" itemValue="0" />
+						</p:selectOneMenu>
+
+						<h:panelGroup></h:panelGroup>
+						<p:selectOneMenu style="width:150px;">
+							<f:selectItem itemLabel="TODO" itemValue="0" />
+						</p:selectOneMenu>
+
+						<h:outputLabel value="Oberarzt" />
+						<p:selectOneMenu style="width:150px;">
+							<f:selectItem itemLabel="TODO" itemValue="0" />
+						</p:selectOneMenu>
+
+						<h:panelGroup></h:panelGroup>
+						<p:selectOneMenu style="width:150px;">
+							<f:selectItem itemLabel="TODO" itemValue="0" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+					<p:media player="pdf" value="#{taskHandlerAction.pdfContent}"
+						width="100%" height="550px"></p:media>
 				</h:panelGrid>
 			</div>
 
 			<div class="bottomDiv">
 				<h:panelGrid columns="2" style="width:100%"
 					styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-					<h:panelGrid columns="1">
-						<p:commandButton
-							value="#{msg['dialog.addPatient.add.button.add']}"
-							process="@form" icon="fa fa-fw fa-user-plus">
+					<h:panelGrid columns="2">
+						<p:commandButton value="Öffnen" process="@form"
+							icon="fa fa-fw fa-user-plus">
+							<f:actionListener
+								binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
+							<f:actionListener
+								binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
+							<f:actionListener
+								binding="#{patientHandlerAction.clearTmpPatient()}" />
+						</p:commandButton>
+						<p:commandButton value="Drucken" process="@form"
+							icon="fa fa-fw fa-user-plus">
 							<f:actionListener
 								binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
 							<f:actionListener
