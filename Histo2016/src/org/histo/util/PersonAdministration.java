@@ -12,8 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.histo.model.Patient;
 import org.histo.model.Person;
+import org.histo.model.patient.Patient;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONObject;
 

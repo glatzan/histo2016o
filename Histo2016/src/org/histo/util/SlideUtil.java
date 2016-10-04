@@ -3,11 +3,11 @@ package org.histo.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.model.Block;
-import org.histo.model.Sample;
-import org.histo.model.Staining;
 import org.histo.model.StainingPrototype;
-import org.histo.model.Task;
+import org.histo.model.patient.Block;
+import org.histo.model.patient.Sample;
+import org.histo.model.patient.Slide;
+import org.histo.model.patient.Task;
 import org.histo.ui.StainingListChooser;
 
 public class SlideUtil {
@@ -54,7 +54,7 @@ public class SlideUtil {
 	    if (block.isArchived())
 		continue;
 
-	    lone: for (Staining slide : block.getStainings()) {
+	    lone: for (Slide slide : block.getSlides()) {
 		
 		// weiter, wenn slide archiviert wurde
 		if (slide.isArchived())

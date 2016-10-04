@@ -26,18 +26,18 @@ import org.histo.dao.HelperDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.model.Block;
 import org.histo.model.Contact;
-import org.histo.model.Diagnosis;
 import org.histo.model.DiagnosisPrototype;
-import org.histo.model.Patient;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.Sample;
 import org.histo.model.StainingPrototype;
-import org.histo.model.StainingPrototypeList;
-import org.histo.model.Task;
+import org.histo.model.MaterialPreset;
 import org.histo.model.UserRole;
+import org.histo.model.patient.Block;
+import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.Patient;
+import org.histo.model.patient.Sample;
+import org.histo.model.patient.Task;
 import org.histo.model.util.ArchiveAble;
 import org.histo.model.util.StainingTreeParent;
 import org.histo.ui.transformer.StainingListTransformer;
@@ -78,10 +78,6 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	private PatientDao patientDao;
 	@Autowired
-	private TaskDAO taskDAO;
-	@Autowired
-	private HelperDAO helperDAO;
-	@Autowired
 	private HelperHandlerAction helper;
 	
 	@Autowired
@@ -91,13 +87,18 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	@Lazy
 	private SettingsHandlerAction settingsHandlerAction;
+	
 	@Autowired
 	@Lazy
 	private SlideHandlerAction slideHandlerAction;
+	
 	@Autowired
 	@Lazy
 	private DiagnosisHandlerAction diagnosisHandlerAction;
 	
+	@Autowired
+	@Lazy
+	private TaskHandlerAction taskHandlerAction;
 	
 
 	/******************************************************** Patient ********************************************************/
@@ -107,27 +108,6 @@ public class WorklistHandlerAction implements Serializable {
 	private Patient selectedPatient;
 	/******************************************************** Patient ********************************************************/
 
-	/******************************************************** Task ********************************************************/
-	/**
-	 * all staininglists, default not initialized
-	 */
-	private List<StainingPrototypeList> allAvailableStainingLists;
-
-	/**
-	 * selected stainingList for task
-	 */
-	private StainingPrototypeList selectedStainingList;
-
-	/**
-	 * amount of samples for the new tasks
-	 */
-	private int sampleCount;
-
-	/**
-	 * Transformer for selecting staininglist
-	 */
-	private StainingListTransformer stainingListTransformer;
-	/******************************************************** Task ********************************************************/
 
 	/******************************************************** Archivieren ********************************************************/
 
@@ -372,6 +352,10 @@ public class WorklistHandlerAction implements Serializable {
 		// init all available diagnoses
 		settingsHandlerAction.updateAllDiagnosisPrototypes();
 
+		// init all available materials
+		taskHandlerAction.prepareForTask();
+		
+		
 		// setzte das diasplay auf das eingangsbuch wenn der patient angezeigt
 		// wird
 		if (getWorklistDisplay() == Display.PATIENT)
@@ -383,104 +367,15 @@ public class WorklistHandlerAction implements Serializable {
 		patient.setSelectedTask(null);
 	}
 
-	/**
-	 * Displays a dialog for creating a new task
-	 */
-	public void prepareNewTaskDialog() {
-		setAllAvailableStainingLists(helperDAO.getAllStainingLists());
-		// checks if default statingsList is empty
-		if (!getAllAvailableStainingLists().isEmpty()) {
-			setSelectedStainingList(getAllAvailableStainingLists().get(0));
-			setStainingListTransformer(new StainingListTransformer(getAllAvailableStainingLists()));
-		}
-
-		setSampleCount(1);
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_CREATE_TASK));
-	}
-
-	/**
-	 * Creates a new Task for the given Patient
-	 * 
-	 * @param patient
-	 */
-	public void createNewTask(Patient patient, StainingPrototypeList stainingPrototypeList, int sampleCount) {
-		if (patient.getTasks() == null) {
-			patient.setTasks(new ArrayList<>());
-		}
-
-		Task task = TaskUtil.createNewTask(patient, taskDAO.countSamplesOfCurrentYear());
-
-		task.setTypeOfMaterial(stainingPrototypeList);
-		task.setMaterialName(stainingPrototypeList.getName());
-
-		// TODO material -> in gui
-		patient.getTasks().add(0, task);
-		// sets the new task as the selected task
-		patient.setSelectedTask(task);
-
-		genericDAO.save(patient);
-
-//		log.info("Neuer Auftrag erstell: TaskID:" + task.getTaskID(), patient);
-
-		for (int i = 0; i < sampleCount; i++) {
-			// autogenerating first sample
-			createNewSample(task, stainingPrototypeList);
-		}
-
-		genericDAO.save(patient);
-
-		hideNewTaskDialog();
-	}
-
-	public void hideNewTaskDialog() {
-		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_CREATE_TASK));
-	}
-
 	/******************************************************** Task ********************************************************/
 
 	/******************************************************** Sample ********************************************************/
-	/**
-	 * Adds a new Sample with one diagnosis an the standard stainings.
-	 * 
-	 * @param task
-	 */
-	public void createNewSample(Task task, StainingPrototypeList stainingPrototypeList) {
-		// TODO remove task and statningP list an use it from
-		// patient.selectedTask....
-		Sample newSample = TaskUtil.createNewSample(task);
 
-//		log.info("Neue Probe erstellt: TaskID: " + task.getTaskID() + ", SampleID: " + newSample.getSampleID(),
-//				getSelectedPatient());
-
-		genericDAO.save(newSample);
-
-		// creating first default diagnosis
-		diagnosisHandlerAction.createNewDiagnosis(newSample, Diagnosis.TYPE_DIAGNOSIS);
-
-		// creating needed blocks
-		createNewBlock(newSample, stainingPrototypeList);
-
-	}
 
 	/******************************************************** Sample ********************************************************/
 
 	/******************************************************** Block ********************************************************/
-	public void createNewBlock(Sample sample, StainingPrototypeList stainingPrototypeList) {
-		Block block = TaskUtil.createNewBlock(sample);
 
-//		log.info("Neuen Block erstellt: SampleID: " + sample.getSampleID() + ", BlockID: " + block.getBlockID(),
-//				getSelectedPatient());
-
-		genericDAO.save(block);
-
-		// adding standard staining
-		for (StainingPrototype proto : stainingPrototypeList.getStainingPrototypes()) {
-			slideHandlerAction.addStaining(proto, block);
-		}
-
-		// updating Gui
-		sample.getParent().generateStainingGuiList();
-	}
 
 	/******************************************************** Block ********************************************************/
 
@@ -800,38 +695,6 @@ public class WorklistHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	public List<StainingPrototypeList> getAllAvailableStainingLists() {
-		return allAvailableStainingLists;
-	}
-
-	public void setAllAvailableStainingLists(List<StainingPrototypeList> allAvailableStainingLists) {
-		this.allAvailableStainingLists = allAvailableStainingLists;
-	}
-
-	public StainingPrototypeList getSelectedStainingList() {
-		return selectedStainingList;
-	}
-
-	public void setSelectedStainingList(StainingPrototypeList selectedStainingList) {
-		System.out.println("setting statingn lsit" + selectedStainingList);
-		this.selectedStainingList = selectedStainingList;
-	}
-
-	public int getSampleCount() {
-		return sampleCount;
-	}
-
-	public void setSampleCount(int sampleCount) {
-		this.sampleCount = sampleCount;
-	}
-
-	public StainingListTransformer getStainingListTransformer() {
-		return stainingListTransformer;
-	}
-
-	public void setStainingListTransformer(StainingListTransformer stainingListTransformer) {
-		this.stainingListTransformer = stainingListTransformer;
-	}
 
 	public ArchiveAble getToArchive() {
 		return toArchive;

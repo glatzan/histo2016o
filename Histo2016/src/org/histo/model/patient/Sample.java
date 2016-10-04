@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.patient;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,9 +13,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -27,6 +29,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.histo.config.HistoSettings;
+import org.histo.model.MaterialPreset;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -43,6 +46,8 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 
 	private long id;
 
+	private long version;
+	
 	/**
 	 * Parent of this sample.
 	 */
@@ -88,6 +93,17 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	 */
 	private boolean archived;
 
+	/**
+	 * Material name is first initialized with the name of the typeOfMaterial.
+	 * Can be later changed.
+	 */
+	private String material;
+	
+	/**
+	 * Material object, containing preset for staining
+	 */
+	private MaterialPreset materilaPreset;
+	
 	/******************************************************** Transient ********************************************************/
 	private String diagnosisAccordionTabStatus;
 
@@ -127,10 +143,18 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 		this.id = id;
 	}
 
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
+	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("blockID ASC")
-	@NotAudited
 	public List<Block> getBlocks() {
 		if (blocks == null)
 			blocks = new ArrayList<Block>();
@@ -199,6 +223,25 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 		this.blockNumber = blockNumber;
 	}
 
+	@Basic
+	public String getMaterial() {
+		return material;
+	}
+
+	public void setMaterial(String material) {
+		this.material = material;
+	}
+	
+	@OneToOne
+	@NotAudited
+	public MaterialPreset getMaterilaPreset() {
+		return materilaPreset;
+	}
+
+	public void setMaterilaPreset(MaterialPreset materilaPreset) {
+		this.materilaPreset = materilaPreset;
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -364,7 +407,6 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	 * Interface StainingTreeParent
 	 ********************************************************/
 	@ManyToOne(targetEntity = Task.class)
-	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	public Task getParent() {
 		return parent;
 	}

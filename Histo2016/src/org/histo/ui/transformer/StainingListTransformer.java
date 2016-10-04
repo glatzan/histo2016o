@@ -6,22 +6,21 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.StainingPrototypeList;
+import org.histo.model.MaterialPreset;
 
 public class StainingListTransformer implements Converter {
 
-	private List<StainingPrototypeList> allAvailableStainingLists;
+	private List<MaterialPreset> allAvailableStainingLists;
 
-	public StainingListTransformer(List<StainingPrototypeList> allAvailableStainingLists) {
+	public StainingListTransformer(List<MaterialPreset> allAvailableStainingLists) {
 		this.allAvailableStainingLists = allAvailableStainingLists;
 	}
 
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
 		if (value != null && value.trim().length() > 0) {
 			try {
-				System.out.println(value);
 				long id = Long.valueOf(value);
-				for (StainingPrototypeList stainingPrototypeList : allAvailableStainingLists) {
+				for (MaterialPreset stainingPrototypeList : allAvailableStainingLists) {
 					if (stainingPrototypeList.getId() == id)
 						return stainingPrototypeList;
 				}
@@ -35,8 +34,8 @@ public class StainingListTransformer implements Converter {
 	}
 
 	public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-		if (object != null && object instanceof StainingPrototypeList) {
-			return String.valueOf(((StainingPrototypeList) object).getId());
+		if (object != null && object instanceof MaterialPreset) {
+			return String.valueOf(((MaterialPreset) object).getId());
 		} else {
 			return "";
 		}

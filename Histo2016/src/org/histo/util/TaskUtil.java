@@ -6,13 +6,13 @@ import java.util.List;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
-import org.histo.model.Block;
-import org.histo.model.Diagnosis;
-import org.histo.model.Patient;
-import org.histo.model.Sample;
-import org.histo.model.Staining;
 import org.histo.model.StainingPrototype;
-import org.histo.model.Task;
+import org.histo.model.patient.Block;
+import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.Patient;
+import org.histo.model.patient.Sample;
+import org.histo.model.patient.Slide;
+import org.histo.model.patient.Task;
 
 public class TaskUtil {
 
@@ -96,11 +96,11 @@ public class TaskUtil {
 	 * @param prototype
 	 * @return
 	 */
-	public final static Staining createNewStaining(Block block, StainingPrototype prototype) {
-		Staining staining = new Staining();
+	public final static Slide createNewStaining(Block block, StainingPrototype prototype) {
+		Slide staining = new Slide();
 		staining.setReStaining(block.getParent().isReStainingPhase());
 		staining.setGenerationDate(new Date(System.currentTimeMillis()));
-		staining.setStainingType(prototype);
+		staining.setSlidePrototype(prototype);
 		staining.setParent(block);
 
 		// generating block id
@@ -108,11 +108,11 @@ public class TaskUtil {
 		int stainingsInBlock = getNumerOfSameStainings(block, prototype);
 		if (stainingsInBlock > 1)
 			number = " " + String.valueOf(stainingsInBlock);
-		staining.setStainingID(
+		staining.setSlideID(
 				block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
 
-		block.getStainings().add(staining);
-		block.incrementStainingNumber();
+		block.getSlides().add(staining);
+		block.incrementSlideNumber();
 
 		return staining;
 	}
@@ -126,8 +126,8 @@ public class TaskUtil {
 	 */
 	private final static int getNumerOfSameStainings(Block block, StainingPrototype prototype) {
 		int count = 1;
-		for (Staining staining : block.getStainings()) {
-			if (staining.getStainingType().getId() == prototype.getId())
+		for (Slide staining : block.getSlides()) {
+			if (staining.getSlidePrototype().getId() == prototype.getId())
 				count++;
 		}
 		return count;

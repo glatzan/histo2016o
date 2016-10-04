@@ -3,6 +3,7 @@ package org.histo.model;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 import org.histo.config.HistoSettings;
+import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.histo.util.TimeUtil;
 import org.hibernate.envers.RevisionEntity;

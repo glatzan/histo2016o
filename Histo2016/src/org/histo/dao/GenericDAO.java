@@ -12,7 +12,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.stat.Statistics;
-import org.histo.model.Patient;
+import org.histo.model.patient.Patient;
 import org.histo.model.util.LogInfo;
 import org.histo.model.util.LogListener;
 import org.histo.util.SecurityContextHolderUtil;

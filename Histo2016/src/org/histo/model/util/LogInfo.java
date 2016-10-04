@@ -1,6 +1,6 @@
 package org.histo.model.util;
 
-import org.histo.model.Patient;
+import org.histo.model.patient.Patient;
 
 /**
  * Object containing additional data for login. A string which describes the

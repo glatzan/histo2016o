@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.patient;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +22,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.dao.TaskDAO;
+import org.histo.model.DiagnosisPrototype;
 import org.histo.model.util.GsonAble;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingTreeParent;
@@ -49,7 +50,7 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble, LogAble 
 
 	private long id;
 
-	private int version;
+	private long version;
 
 	/**
 	 * Parent of the diagnosis, sample objekt
@@ -145,11 +146,11 @@ public class Diagnosis implements StainingTreeParent<Sample>, GsonAble, LogAble 
 	}
 
 	@Version
-	public int getVersion() {
+	public long getVersion() {
 		return version;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(long version) {
 		this.version = version;
 	}
 

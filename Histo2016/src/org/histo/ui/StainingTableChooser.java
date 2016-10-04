@@ -3,9 +3,9 @@ package org.histo.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.model.Block;
-import org.histo.model.Sample;
-import org.histo.model.Staining;
+import org.histo.model.patient.Block;
+import org.histo.model.patient.Sample;
+import org.histo.model.patient.Slide;
 
 public class StainingTableChooser {
 
@@ -14,7 +14,7 @@ public class StainingTableChooser {
 
     private Sample sample;
     private Block block;
-    private Staining staining;
+    private Slide staining;
 
     private List<StainingTableChooser> children;
 
@@ -30,7 +30,7 @@ public class StainingTableChooser {
 	children = new ArrayList<StainingTableChooser>();
     }
 
-    public StainingTableChooser(Staining staining, boolean even) {
+    public StainingTableChooser(Slide staining, boolean even) {
 	this.staining = staining;
 	this.even = even;
     }
@@ -51,11 +51,11 @@ public class StainingTableChooser {
 	this.block = block;
     }
 
-    public Staining getStaining() {
+    public Slide getStaining() {
 	return staining;
     }
 
-    public void setStaining(Staining staining) {
+    public void setStaining(Slide staining) {
 	this.staining = staining;
     }
 

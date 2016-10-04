@@ -23,77 +23,73 @@ public class UserHandlerAction implements Serializable {
 	@Autowired
 	private HelperHandlerAction helperHandlerAction;
 
-    @Autowired
-    private GenericDAO genericDAO;
+	@Autowired
+	private GenericDAO genericDAO;
 
-
-    
-    public boolean isUserAvailable(){
-	if(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserAcc)
-	    return true;
-	return false;
-    }
-    
-    /**
-     * Returns the current user.
-     * @return
-     */
-    public UserAcc getCurrentUser() {
-	UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	return user;
-    }
-
-    public boolean hasRole(String role) {
-	// sonderfall wenn nicht eingeloggt
-	if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String)
-	    return false;
-	else {
-	    UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	    return hasRole(user, role);
+	public boolean isUserAvailable() {
+		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserAcc)
+			return true;
+		return false;
 	}
-    }
 
-    public boolean hasRole(UserAcc userAcc, String role) {
-	if (userAcc.getRole().equals(role))
-	    return true;
-	return false;
-    }
+	/**
+	 * Returns the current user.
+	 * 
+	 * @return
+	 */
+	public UserAcc getCurrentUser() {
+		UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return user;
+	}
 
-    public void setRoleForUser(String role) {
-	setRoleForUser(getCurrentUser(), UserUtil.createRole(role));
-    }
-    
-    // TODO delete
-    public void setRoleForUser(UserAcc user, String role) {
-	setRoleForUser(user, UserUtil.createRole(role));
-    }
+	public boolean hasRole(String role) {
+		// sonderfall wenn nicht eingeloggt
+		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String)
+			return false;
+		else {
+			UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return hasRole(user, role);
+		}
+	}
 
-    // TODO delete
-    public void setRoleForUser(UserAcc user, UserRole role) {
-	UserRole oldRole = user.getRole();
-	user.setRole(role);
-	user.getAuthorities().add(role);
-	genericDAO.save(role);
-	genericDAO.save(user);
-	genericDAO.delete(oldRole);
-//	log.info("Setting new role to " + role.getName());
-    }
+	public boolean hasRole(UserAcc userAcc, String role) {
+		if (userAcc.getRole().equals(role))
+			return true;
+		return false;
+	}
 
+	public void setRoleForUser(String role) {
+		setRoleForUser(getCurrentUser(), UserUtil.createRole(role));
+	}
 
-    public void prepareManageUser() {
-    }
+	// TODO delete
+	public void setRoleForUser(UserAcc user, String role) {
+		setRoleForUser(user, UserUtil.createRole(role));
+	}
 
-    public void onCloseHandler() {
-    }
+	// TODO delete
+	public void setRoleForUser(UserAcc user, UserRole role) {
+		UserRole oldRole = user.getRole();
+		user.setRole(role);
+		user.getAuthorities().add(role);
+		genericDAO.save(role);
+		genericDAO.save(user);
+		genericDAO.delete(oldRole);
+		// log.info("Setting new role to " + role.getName());
+	}
 
-    public HelperHandlerAction getHelperHandlerAction() {
-	return helperHandlerAction;
-    }
+	public void prepareManageUser() {
+	}
 
-    public void setHelperHandlerAction(HelperHandlerAction helperHandlerAction) {
-	this.helperHandlerAction = helperHandlerAction;
-    }
+	public void onCloseHandler() {
+	}
 
+	public HelperHandlerAction getHelperHandlerAction() {
+		return helperHandlerAction;
+	}
 
+	public void setHelperHandlerAction(HelperHandlerAction helperHandlerAction) {
+		this.helperHandlerAction = helperHandlerAction;
+	}
 
 }

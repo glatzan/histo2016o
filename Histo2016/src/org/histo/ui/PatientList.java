@@ -1,6 +1,6 @@
 package org.histo.ui;
 
-import org.histo.model.Patient;
+import org.histo.model.patient.Patient;
 
 /**
  * Class with temporary id for selecting patients from the clinic backend and

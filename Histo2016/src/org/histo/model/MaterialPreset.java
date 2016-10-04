@@ -23,7 +23,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "stainingPrototypeList_sequencegenerator", sequenceName = "stainingPrototypeList_sequence")
-public class StainingPrototypeList implements EditAbleEntity<StainingPrototypeList>, LogAble {
+public class MaterialPreset implements EditAbleEntity<MaterialPreset>, LogAble {
 
 	@Expose
 	private long id;
@@ -37,10 +37,10 @@ public class StainingPrototypeList implements EditAbleEntity<StainingPrototypeLi
 	@Expose
 	private List<StainingPrototype> stainingPrototypes;
 
-	public StainingPrototypeList() {
+	public MaterialPreset() {
 	}
 
-	public StainingPrototypeList(StainingPrototypeList stainingPrototypeList) {
+	public MaterialPreset(MaterialPreset stainingPrototypeList) {
 		this.id = stainingPrototypeList.getId();
 		update(stainingPrototypeList);
 	}
@@ -95,7 +95,7 @@ public class StainingPrototypeList implements EditAbleEntity<StainingPrototypeLi
 	 ********************************************************/
 
 	@Transient
-	public void update(StainingPrototypeList stainingPrototypeList) {
+	public void update(MaterialPreset stainingPrototypeList) {
 		this.name = stainingPrototypeList.getName();
 		this.commentary = stainingPrototypeList.getCommentary();
 		this.stainingPrototypes = new ArrayList<StainingPrototype>(stainingPrototypeList.getStainingPrototypes());

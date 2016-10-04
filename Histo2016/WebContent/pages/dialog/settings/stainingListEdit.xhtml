@@ -9,36 +9,36 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.stainingList']} / #{settingsHandlerAction.originalStainingList eq null ? msg['dialog.settings.stainingList.new.new'] : msg['dialog.settings.stainingList.new.edit']}"
+			header="#{msg['dialog.settings.material']} / #{settingsHandlerAction.originalStainingList eq null ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']}"
 			styleClass="contentPannel" />
 
 		<p:panelGrid columns="2"
 			styleClass="noBordersAll collapsedBordersAll " style="width:100%">
 			<h:outputLabel
-				value="#{msg['dialog.settings.stainingList.new.name']}"></h:outputLabel>
+				value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
 			<p:inputText style="width:390px"
 				value="#{settingsHandlerAction.editStainingList.name}" />
 
 			<h:outputLabel
-				value="#{msg['dialog.settings.stainingList.new.commentary']}"></h:outputLabel>
+				value="#{msg['dialog.settings.material.new.commentary']}"></h:outputLabel>
 			<p:inputTextarea rows="3" style="width:390px"
 				value="#{settingsHandlerAction.editStainingList.commentary}" />
 
 			<h:outputLabel
-				value="#{msg['dialog.settings.stainingList.new.stainings']}"></h:outputLabel>
+				value="#{msg['dialog.settings.material.new.stainings']}"></h:outputLabel>
 
 			<p:dataTable var="staining" style="width:400px" scrollable="true"
 				scrollHeight="150" styleClass="defaultDataTable"
 				value="#{settingsHandlerAction.editStainingList.stainingPrototypes}">
 
 				<p:column
-					headerText="#{msg['dialog.settings.stainingList.new.stainings.name']}"
+					headerText="#{msg['dialog.settings.material.new.stainings.name']}"
 					sortBy="#{staining.name}" style="width:30%">
 					<h:outputText value="#{staining.name}" />
 				</p:column>
 
 				<p:column
-					headerText="#{msg['dialog.settings.stainingList.new.stainings.type']}"
+					headerText="#{msg['dialog.settings.material.new.stainings.type']}"
 					sortBy="#{staining.type}">
 					<h:outputText value="#{staining.getTypeAsString()}" />
 				</p:column>
@@ -64,7 +64,7 @@
 					actionListener="#{settingsHandlerAction.saveStainigList(settingsHandlerAction.editStainingList, settingsHandlerAction.originalStainingList)}"
 					update="@form"></p:commandButton>
 				<p:commandButton
-					value="#{msg['dialog.settings.stainingList.new.stainings.add']}"
+					value="#{msg['dialog.settings.material.new.stainings.add']}"
 					 icon="fa fa-fw fa-plus-circle"
 					actionListener="#{settingsHandlerAction.prepareAddStainingToStainingList()}"
 					update="@form"></p:commandButton>

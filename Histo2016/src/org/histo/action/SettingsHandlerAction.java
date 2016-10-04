@@ -12,12 +12,12 @@ import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.History;
-import org.histo.model.Patient;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
-import org.histo.model.StainingPrototypeList;
+import org.histo.model.MaterialPreset;
 import org.histo.model.UserAcc;
 import org.histo.model.UserRole;
+import org.histo.model.patient.Patient;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.UserAccRoleHolder;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
@@ -114,7 +114,7 @@ public class SettingsHandlerAction {
 	/**
 	 * all staininglists
 	 */
-	private List<StainingPrototypeList> allAvailableStainingLists;
+	private List<MaterialPreset> allAvailableMaterials;
 
 	/**
 	 * used in manageStaingsList dialog to show overview or single stainingList
@@ -124,12 +124,12 @@ public class SettingsHandlerAction {
 	/**
 	 * StainingPrototype for creating and editing
 	 */
-	private StainingPrototypeList editStainingList;
+	private MaterialPreset editStainingList;
 
 	/**
 	 * original StainingPrototypeList for editing
 	 */
-	private StainingPrototypeList originalStainingList;
+	private MaterialPreset originalStainingList;
 
 	/**
 	 * List for selecting staining, this list contains all stainings. They can
@@ -250,8 +250,8 @@ public class SettingsHandlerAction {
 			setAllAvailableStainings(helperDAO.getAllStainings());
 			break;
 		case TAB_STAINING_LIST:
-			setAllAvailableStainingLists(helperDAO.getAllStainingLists());
-			helperDAO.initStainingPrototypeList(getAllAvailableStainingLists());
+			setAllAvailableMaterials(helperDAO.getAllStainingLists());
+			helperDAO.initStainingPrototypeList(getAllAvailableMaterials());
 			// update statinglist if selected
 			if (getStainingListIndex() == STAINING_LIST_EDIT)
 				setStainingListChooserForStainingList(SlideUtil.getStainingListChooser(helperDAO.getAllStainings()));
@@ -357,7 +357,7 @@ public class SettingsHandlerAction {
 	 */
 	public void prepareNewStainingList() {
 		setStainingListIndex(STAINING_LIST_EDIT);
-		setEditStainingList(new StainingPrototypeList());
+		setEditStainingList(new MaterialPreset());
 		setOriginalStainingList(null);
 	}
 
@@ -366,9 +366,9 @@ public class SettingsHandlerAction {
 	 * 
 	 * @param stainingPrototype
 	 */
-	public void prepareEditStainingList(StainingPrototypeList stainingPrototypeList) {
+	public void prepareEditStainingList(MaterialPreset stainingPrototypeList) {
 		setStainingListIndex(STAINING_LIST_EDIT);
-		setEditStainingList(new StainingPrototypeList(stainingPrototypeList));
+		setEditStainingList(new MaterialPreset(stainingPrototypeList));
 		setOriginalStainingList(stainingPrototypeList);
 		setStainingListChooserForStainingList(SlideUtil.getStainingListChooser(helperDAO.getAllStainings()));
 	}
@@ -379,13 +379,13 @@ public class SettingsHandlerAction {
 	 * @param newStainingPrototypeList
 	 * @param origStainingPrototypeList
 	 */
-	public void saveStainigList(StainingPrototypeList newStainingPrototypeList,
-			StainingPrototypeList origStainingPrototypeList) {
+	public void saveStainigList(MaterialPreset newStainingPrototypeList,
+			MaterialPreset origStainingPrototypeList) {
 		if (origStainingPrototypeList == null) {
 			// case new, save
-			getAllAvailableStainingLists().add(newStainingPrototypeList);
+			getAllAvailableMaterials().add(newStainingPrototypeList);
 			genericDAO.save(newStainingPrototypeList);
-			genericDAO.save(getAllAvailableStainingLists());
+			genericDAO.save(getAllAvailableMaterials());
 //			log.info("Neue Färbeliste erstellt: " + newStainingPrototypeList.asGson());
 		} else {
 			// case edit: update an save
@@ -397,7 +397,7 @@ public class SettingsHandlerAction {
 		discardChangesOfStainigList();
 	}
 
-	public void prepareDeleteStainingList(StainingPrototypeList stainingPrototypeList) {
+	public void prepareDeleteStainingList(MaterialPreset stainingPrototypeList) {
 		setEditStainingList(stainingPrototypeList);
 		setOriginalStainingList(null);
 	}
@@ -426,7 +426,7 @@ public class SettingsHandlerAction {
 	 * @param stainingPrototypeList
 	 */
 	public void addStainingToStainingList(List<StainingListChooser> stainingListChoosers,
-			StainingPrototypeList stainingPrototypeList) {
+			MaterialPreset stainingPrototypeList) {
 		for (StainingListChooser staining : stainingListChoosers) {
 			if (staining.isChoosen()) {
 				stainingPrototypeList.getStainingPrototypes().add(staining.getStainingPrototype());
@@ -443,7 +443,7 @@ public class SettingsHandlerAction {
 	 * @param stainingPrototypeList
 	 */
 	public void removeStainingFromStainingList(StainingPrototype toRemove,
-			StainingPrototypeList stainingPrototypeList) {
+			MaterialPreset stainingPrototypeList) {
 		stainingPrototypeList.getStainingPrototypes().remove(toRemove);
 	}
 
@@ -703,12 +703,12 @@ public class SettingsHandlerAction {
 		this.originalStaining = originalStaining;
 	}
 
-	public List<StainingPrototypeList> getAllAvailableStainingLists() {
-		return allAvailableStainingLists;
+	public List<MaterialPreset> getAllAvailableMaterials() {
+		return allAvailableMaterials;
 	}
 
-	public void setAllAvailableStainingLists(List<StainingPrototypeList> allAvailableStainingLists) {
-		this.allAvailableStainingLists = allAvailableStainingLists;
+	public void setAllAvailableMaterials(List<MaterialPreset> allAvailableMaterials) {
+		this.allAvailableMaterials = allAvailableMaterials;
 	}
 
 	public int getStainingListIndex() {
@@ -719,19 +719,19 @@ public class SettingsHandlerAction {
 		this.stainingListIndex = stainingListIndex;
 	}
 
-	public StainingPrototypeList getEditStainingList() {
+	public MaterialPreset getEditStainingList() {
 		return editStainingList;
 	}
 
-	public void setEditStainingList(StainingPrototypeList editStainingList) {
+	public void setEditStainingList(MaterialPreset editStainingList) {
 		this.editStainingList = editStainingList;
 	}
 
-	public StainingPrototypeList getOriginalStainingList() {
+	public MaterialPreset getOriginalStainingList() {
 		return originalStainingList;
 	}
 
-	public void setOriginalStainingList(StainingPrototypeList originalStainingList) {
+	public void setOriginalStainingList(MaterialPreset originalStainingList) {
 		this.originalStainingList = originalStainingList;
 	}
 

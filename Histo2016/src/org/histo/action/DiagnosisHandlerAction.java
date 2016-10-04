@@ -10,9 +10,9 @@ import java.util.List;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.model.Diagnosis;
 import org.histo.model.DiagnosisPrototype;
-import org.histo.model.Sample;
+import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.Sample;
 import org.histo.util.ResourceBundle;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,12 +88,19 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param sample
 	 * @param type
 	 */
-	public void createNewDiagnosis(Sample sample, int type) {
+	public void createDiagnosisFromGui(Sample sample, int type) {
 		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
-		genericDAO.save(newDiagnosis, resourceBundle.get("log.diagnosis.new"), newDiagnosis.getPatient());
+
+		createDiagnosis(sample,type);
+		
 		genericDAO.save(sample);
 		genericDAO.refresh(sample.getPatient());
 
+	}
+
+	public void createDiagnosis(Sample sample, int type) {
+		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
+		genericDAO.save(newDiagnosis, resourceBundle.get("log.patient.diagnosis.new"), newDiagnosis.getPatient());
 		// TODO change to sample
 		helper.updateRevision(newDiagnosis);
 	}
@@ -152,7 +159,7 @@ public class DiagnosisHandlerAction implements Serializable {
 			diagnosis.setFinalizedDate(new Date(System.currentTimeMillis()));
 		}
 
-		genericDAO.save(diagnosis, resourceBundle.get("log.diagnosis.finaziled"), diagnosis.getPatient());
+		genericDAO.save(diagnosis, resourceBundle.get("log.patient.diagnosis.finaziled"), diagnosis.getPatient());
 		genericDAO.refresh(diagnosis.getPatient());
 
 		helper.updateRevision(diagnosis);
@@ -184,7 +191,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	public void unfinalizeDiagnosis(Diagnosis diagnosis) {
 		diagnosis.setFinalized(false);
 		diagnosis.setFinalizedDate(null);
-		genericDAO.save(diagnosis, resourceBundle.get("log.diagnosis.unfinalize"), diagnosis.getPatient());
+		genericDAO.save(diagnosis, resourceBundle.get("log.patient.diagnosis.unfinalize"), diagnosis.getPatient());
 
 		hideUnfinalizeDiangosisDialog();
 	}
@@ -197,7 +204,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void saveDiagnosis(Diagnosis diagnosis) {
 		taskDAO.getDiagnosisRevisions(diagnosis);
-		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.diagnosis.changed"), diagnosis.getPatient());
+		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.patient.diagnosis.changed"), diagnosis.getPatient());
 		helper.updateRevision(diagnosis);
 	}
 
@@ -256,7 +263,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		// e.printStackTrace();
 		// }
 
-		System.out.println(resourceBundle.get("log.diagnosis.changed"));
+		System.out.println(resourceBundle.get("log.patient.diagnosis.changed"));
 
 		ClassLoader cl = ClassLoader.getSystemClassLoader();
 

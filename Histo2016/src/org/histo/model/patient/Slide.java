@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.patient;
 
 import java.util.Date;
 
@@ -11,21 +11,35 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.histo.config.HistoSettings;
+import org.histo.model.StainingPrototype;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingTreeParent;
 
 @Entity
-@SequenceGenerator(name = "staining_sequencegenerator", sequenceName = "staining_sequence")
-public class Staining implements StainingTreeParent<Block>, LogAble {
+@Audited
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
+@SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
+public class Slide implements StainingTreeParent<Block>, LogAble {
 
 	private long id;
+	
+	private long version;
 
 	private Date generationDate;
 
-	private String stainingID;
+	private String slideID;
 
 	private boolean stainingPerformed;
 
@@ -33,7 +47,7 @@ public class Staining implements StainingTreeParent<Block>, LogAble {
 
 	private String commentary;
 
-	private StainingPrototype stainingType;
+	private StainingPrototype slidePrototype;
 
 	/**
 	 * Eltern Block des Stainings
@@ -46,7 +60,7 @@ public class Staining implements StainingTreeParent<Block>, LogAble {
 	private boolean archived;
 
 	@Id
-	@GeneratedValue(generator = "staining_sequencegenerator")
+	@GeneratedValue(generator = "slide_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	public long getId() {
 		return id;
@@ -56,7 +70,17 @@ public class Staining implements StainingTreeParent<Block>, LogAble {
 		this.id = id;
 	}
 
-	@Column
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
+
+	
+	@Basic
 	public boolean isStainingPerformed() {
 		return stainingPerformed;
 	}
@@ -66,14 +90,15 @@ public class Staining implements StainingTreeParent<Block>, LogAble {
 	}
 
 	@OneToOne
-	public StainingPrototype getStainingType() {
-		return stainingType;
+	@NotAudited
+	public StainingPrototype getSlidePrototype() {
+		return slidePrototype;
 	}
 
-	public void setStainingType(StainingPrototype stainingType) {
-		this.stainingType = stainingType;
+	public void setSlidePrototype(StainingPrototype slidePrototype) {
+		this.slidePrototype = slidePrototype;
 	}
-
+	
 	@Basic
 	public Date getGenerationDate() {
 		return generationDate;
@@ -84,12 +109,12 @@ public class Staining implements StainingTreeParent<Block>, LogAble {
 	}
 
 	@Basic
-	public String getStainingID() {
-		return stainingID;
+	public String getSlideID() {
+		return slideID;
 	}
 
-	public void setStainingID(String stainingID) {
-		this.stainingID = stainingID;
+	public void setSlideID(String slideID) {
+		this.slideID = slideID;
 	}
 
 	@Basic
@@ -154,7 +179,7 @@ public class Staining implements StainingTreeParent<Block>, LogAble {
 	@Transient
 	@Override
 	public String getTextIdentifier() {
-		return getStainingID();
+		return getSlideID();
 	}
 
 	/**

@@ -1,6 +1,6 @@
 package org.histo.model.util;
 
-import org.histo.model.Patient;
+import org.histo.model.patient.Patient;
 
 /**
  * Interfaces welches vom StainingTree (Task->Sample->Block->Staining) implementiert wird.

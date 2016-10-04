@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.histo.model.Patient;
-import org.histo.model.Task;
+import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 
 public class WorklistUtil {
 

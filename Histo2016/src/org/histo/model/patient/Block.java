@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.patient;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,9 +16,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
 import org.histo.config.HistoSettings;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -26,10 +32,16 @@ import org.histo.model.util.StainingTreeParent;
 import org.histo.util.TimeUtil;
 
 @Entity
+@Audited
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
 public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAble {
 
 	private long id;
+
+	private long version;
 
 	/**
 	 * Parent of this block
@@ -44,12 +56,12 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAbl
 	/**
 	 * Number increases with every staining
 	 */
-	private int stainingNumber = 1;
+	private int slideNumber = 1;
 
 	/**
 	 * staining array
 	 */
-	private List<Staining> stainings;
+	private List<Slide> slides;
 
 	/**
 	 * Date of sample creation
@@ -61,16 +73,16 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAbl
 	 */
 	private boolean archived;
 
-	public void removeStaining(Staining staining) {
-		getStainings().remove(staining);
+	public void removeStaining(Slide staining) {
+		getSlides().remove(staining);
 	}
 
-	public void incrementStainingNumber() {
-		this.stainingNumber++;
+	public void incrementSlideNumber() {
+		this.slideNumber++;
 	}
 
-	public void decrementStainingNumber() {
-		this.stainingNumber--;
+	public void decrementSlideNumber() {
+		this.slideNumber--;
 	}
 
 	/********************************************************
@@ -87,26 +99,35 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAbl
 		this.id = id;
 	}
 
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("generationDate ASC, id ASC")
-	public List<Staining> getStainings() {
-		if (stainings == null)
-			stainings = new ArrayList<>();
-		return stainings;
+	public List<Slide> getSlides() {
+		if (slides == null)
+			slides = new ArrayList<>();
+		return slides;
 	}
 
-	public void setStainings(List<Staining> stainings) {
-		this.stainings = stainings;
+	public void setSlides(List<Slide> slides) {
+		this.slides = slides;
 	}
 
 	@Basic
 	public int getStainingNumber() {
-		return stainingNumber;
+		return slideNumber;
 	}
 
 	public void setStainingNumber(int stainingNumber) {
-		this.stainingNumber = stainingNumber;
+		this.slideNumber = stainingNumber;
 	}
 
 	@Basic
@@ -154,9 +175,9 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAbl
 	@Override
 	@Transient
 	public boolean isStainingPerformed() {
-		
+
 		boolean found = false;
-		for (Staining staining : stainings) {
+		for (Slide staining : slides) {
 
 			if (staining.isArchived())
 				continue;
@@ -166,7 +187,7 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAbl
 			else
 				found = true;
 		}
-		
+
 		return found;
 	}
 
@@ -236,7 +257,7 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAbl
 		this.archived = archived;
 
 		// setzt alle Kinder
-		for (Staining staining : getStainings()) {
+		for (Slide staining : getSlides()) {
 			staining.setArchived(archived);
 		}
 	}

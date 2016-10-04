@@ -46,15 +46,13 @@
 				<p:column>
 					<h:outputLabel value="#{msg['body.receiptlog.notification']}"></h:outputLabel>
 
-
-
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right"
 						actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
 						<i class="fa fa-fw fa-cog" />
 						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					</p:commandLink>
-					
+
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right"
 						actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
@@ -106,19 +104,24 @@
 				<p:column>
 					<p:outputLabel value="#{msg['body.receiptlog.material']}" />
 				</p:column>
-				<!--TODO: CSS taskSelectOnMenu -->
-				<!--TODO: call ajax to change the material -->
-				<p:column>
-					<p:selectOneMenu
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.materialName}"
-						styleClass="taskSelectOnMenu" editable="true">
-						<f:selectItem
-							itemLabel="#{msg['body.receiptlog.material.select']} TODO change"
-							itemValue="none" />
-						<f:selectItems
-							value="#{worklistHandlerAction.allAvailableStainingLists}"
-							var="list" itemLabel="#{list.name}" itemValue="#{list.name}" />
-					</p:selectOneMenu>
+				<p:column rowspan="2">
+					<h:panelGrid columns="2">
+						<!-- TODO Update background object, e.g. .blure() (inputtext) -->
+						<c:forEach
+							items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
+							var="sample">
+							<h:outputLabel value="#{sample.sampleID}" />
+							<p:selectOneMenu value="#{sample.material}"
+								styleClass="smallInput" editable="true" style="width:100px;">
+								<f:selectItem
+									itemLabel="#{msg['body.receiptlog.material.select']}"
+									itemValue="none" />
+								<f:selectItems
+									value="#{taskHandlerAction.allAvailableMaterials}" var="list"
+									itemLabel="#{list.name}" itemValue="#{list.name}" />
+							</p:selectOneMenu>
+						</c:forEach>
+					</h:panelGrid>
 				</p:column>
 
 				<!-- contact -->
@@ -185,7 +188,7 @@
 				<p:column>
 					<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				</p:column>
-				<p:column colspan="3">
+				<p:column>
 					<p:inputTextarea rows="2" cols="22" id="stroyField"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}" />
 					<p:watermark value="#{msg['body.receiptlog.story.watermark']}"
@@ -313,7 +316,7 @@
 															style="float: right"
 															actionListener="#{diagnosisHandlerAction.prepareEditDiagnosisNameDialog(diagnosis)}">
 															<i class="fa fa-fw fa-cog" />
-															<p:ajax event="dialogReturn" update="diagnosisAccordion" />
+															<p:ajax event="dialogReturn" update="contentForm" />
 														</p:commandLink>
 													</f:facet>
 													<!-- Headline for diagnosis -->
@@ -544,7 +547,7 @@
 											styleClass="columnStainingID #{stainingRow.even ? 'darkBackround' : ''}">
 											<h:panelGroup rendered="#{stainingRow.stainingType}">
 												<p:inplace styleClass="inplaceInput">
-													<p:inputText value="#{stainingRow.staining.stainingID}"
+													<p:inputText value="#{stainingRow.staining.slideID}"
 														style="width:100% !important;" />
 												</p:inplace>
 											</h:panelGroup>
@@ -613,7 +616,7 @@
 												<!-- ********** New Block Button ********** -->
 												<p:commandLink title="#{msg['body.statiningView.newBlock']}"
 													update="navigationForm contentForm"
-													actionListener="#{worklistHandlerAction.createNewBlock(stainingRow.sample, worklistHandlerAction.selectedPatient.selectedTask.typeOfMaterial)}">
+													actionListener="#{worklistHandlerAction.createNewBlock(stainingRow.sample)}">
 													<i class="fa fa-fw fa-th-large"></i>
 												</p:commandLink>
 												<!-- ********** Delete Button ********** -->
@@ -686,12 +689,14 @@
 									process="navigationForm contentForm"
 									actionListener="#{slideHandlerAction.saveStainings(worklistHandlerAction.selectedPatient.selectedTask)}" />
 
+								<!-- New sample -->
 								<p:commandButton icon="fa fa-fw fa-plus-circle"
 									styleClass="taskButton"
 									value="#{msg['body.statiningView.newSample']}"
-									update="navigationForm contentForm"
-									process="navigationForm contentForm"
-									actionListener="#{worklistHandlerAction.createNewSample(worklistHandlerAction.selectedPatient.selectedTask, worklistHandlerAction.selectedPatient.selectedTask.typeOfMaterial)}" />
+									actionListener="#{taskHandlerAction.prepareNewSampleDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandButton>
 
 								<p:commandButton icon="fa fa-fw fa-check-circle"
 									update="contentForm"

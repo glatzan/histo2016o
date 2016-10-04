@@ -10,9 +10,9 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
-import org.histo.model.Diagnosis;
 import org.histo.model.Physician;
 import org.histo.model.UserAcc;
+import org.histo.model.patient.Diagnosis;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

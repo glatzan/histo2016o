@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.patient;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,9 +16,17 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.histo.model.Person;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -30,12 +38,18 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 @Entity
+@Audited
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, StainingStatus, LogAble {
 
 	@Expose
 	private long id;
 
+	private long version;
+	
 	/**
 	 * PIZ
 	 */
@@ -48,6 +62,11 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	@Expose
 	private String insurance = "";
 
+	/**
+	 * True if insurance is private
+	 */
+	private boolean privateInsurance;
+	
 	/**
 	 * True if patient was added as an external patient.
 	 */
@@ -103,6 +122,15 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 		this.id = id;
 	}
 
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
+	
 	@Column
 	public String getPiz() {
 		return piz;
@@ -126,6 +154,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	}
 
 	@OneToOne(cascade = CascadeType.ALL)
+	@NotAudited
 	public Person getPerson() {
 		return person;
 	}
@@ -168,6 +197,15 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 
 	public void setSelectedTask(Task selectedTask) {
 		this.selectedTask = selectedTask;
+	}
+	
+
+	public boolean isPrivateInsurance() {
+		return privateInsurance;
+	}
+
+	public void setPrivateInsurance(boolean privateInsurance) {
+		this.privateInsurance = privateInsurance;
 	}
 	/********************************************************
 	 * Getter/Setter
@@ -371,4 +409,5 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 		
 		return result;
 	}
+
 }

@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.histo.model.patient.Patient;
+
 @Entity
 @SequenceGenerator(name = "history_sequencegenerator", sequenceName = "history_sequence")
 public class History {

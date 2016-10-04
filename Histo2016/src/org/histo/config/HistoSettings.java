@@ -33,7 +33,6 @@ public class HistoSettings {
 	public static final int DIALOG_ARCHIV_STAINING = 0;
 	public static final int DIALOG_ARCHIV_SAMPLE = 1;
 	public static final int DIALOG_ARCHIV_BLOCK = 2;
-	public static final int DIALOG_CREATE_TASK = 3;
 	public static final int DIALOG_ADD_SLIDE = 4;
 	public static final int DIALOG_STAINING_PERFORMED = 5;
 	public static final int DIALOG_ADD_SLIDE_RESTAINING = 6;
@@ -50,7 +49,10 @@ public class HistoSettings {
 	public static final String DIALOG_WORKLIST_CONTACTS_ADD = "/pages/dialog/contact/addContact";
 	public static final String DIALOG_WORKLIST_CONTACTS_PERFORM = "/pages/dialog/contact/performContact";
 	public static final String DIALOG_PRINT = "/pages/dialog/print/print";
-
+	public static final String DIALOG_CREATE_TASK = "/pages/dialog/task/createTask";
+	public static final String DIALOG_CREATE_SAMPLE = "/pages/dialog/task/createSample";
+	
+	
 	// noch nicht drinnen
 	public static final int DIALOG_TEST = 255;
 	public static final int DIALOG_ARCHIV_TASK = 2;
@@ -62,7 +64,6 @@ public class HistoSettings {
 		tmpMap.put(DIALOG_ARCHIV_SAMPLE, "/pages/dialog/task/archiveSample");
 		tmpMap.put(DIALOG_ARCHIV_STAINING, "/pages/dialog/task/archiveStaining");
 		tmpMap.put(DIALOG_ARCHIV_BLOCK, "/pages/dialog/task/archiveBlock");
-		tmpMap.put(DIALOG_CREATE_TASK, "/pages/dialog/task/createTask");
 		tmpMap.put(DIALOG_ADD_SLIDE, "/pages/dialog/task/addSlide");
 		tmpMap.put(DIALOG_STAINING_PERFORMED, "/pages/dialog/task/staingingPerformed");
 		tmpMap.put(DIALOG_ADD_SLIDE_RESTAINING, "/pages/dialog/task/addSlideRestaining");

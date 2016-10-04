@@ -32,6 +32,11 @@ body {
 	vertical-align: middle !important;
 }
 
+.verticalAlignTopAll tr, .verticalAlignTopAll td,
+	.verticalAlignTopAll {
+	vertical-align: top !important;
+}
+
 /* Kleiner Knopf */
 .smallButton .ui-button-text {
 	padding-top: 0.2em !important;
@@ -444,6 +449,7 @@ body {
 .settingsDialogLayout {
 	padding: 0px !important;
 	margin: 0px !important;
+	overflow-x: hidden;
 }
 
 /* Layout in the tabview center tab*/
@@ -487,6 +493,7 @@ body {
 /* Background Color tab view on the left sinde */
 .settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-nav {
 	background: none;
+	width: 22% !important;
 }
 
 /* Tabs on the left side style */
@@ -494,13 +501,13 @@ body {
 	border: 1px solid #a8a8a8;
 	border-radius: 3px;
 	float: left;
-	width: 99%;
+	width: 100%;
 	margin-left: 1px !important;
 }
 
 /* withd of the tab content on the right*/
 .settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-panels {
-	width: 76% !important;
+	width: 77% !important;
 	min-width: 780px;
 }
 

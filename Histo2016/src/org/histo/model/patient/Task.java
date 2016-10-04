@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.patient;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,10 +17,19 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.histo.config.HistoSettings;
+import org.histo.model.Contact;
+import org.histo.model.PDFContainer;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -31,17 +40,22 @@ import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
 @Entity
+@Audited
+@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
 public class Task implements StainingTreeParent<Patient>, StainingStatus, DiagnosisStatus, LogAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
 
-	
 	public static final byte EYE_RIGHT = 0;
 	public static final byte EYE_LEFT = 1;
 
 	private long id;
+
+	private long version;
 
 	/**
 	 * Generated Task ID as String
@@ -58,6 +72,11 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	 */
 	private Date creationDate;
 
+	/**
+	 * The date of the sugery
+	 */
+	private Date dateOfSugery;
+	
 	/**
 	 * Date of reception of the first material
 	 */
@@ -112,17 +131,6 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	 * List with all samples
 	 */
 	private List<Sample> samples;
-
-	/**
-	 * Material Type of sample, is used for default stainings within new blocks
-	 */
-	private StainingPrototypeList typeOfMaterial;
-
-	/**
-	 * Material name is first initialized with the name of the typeOfMaterial.
-	 * Can be later changed.
-	 */
-	private String materialName;
 
 	/**
 	 * Der Task ist archiviert und wird nicht mehr angezeigt wenn true
@@ -180,7 +188,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	 * True if lazy initialision was successful.
 	 */
 	private boolean lazyInitialized;
-	
+
 	/******************************************************** Transient ********************************************************/
 	public Task() {
 	}
@@ -230,7 +238,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 				getStainingTableRows().add(blockChooser);
 				sampleChooser.addChild(blockChooser);
 
-				for (Staining staining : block.getStainings()) {
+				for (Slide staining : block.getSlides()) {
 					// überspringt archivierte Objektträger
 					if (staining.isArchived() && !showArchived)
 						continue;
@@ -277,6 +285,15 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.id = id;
 	}
 
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
+
 	@Column
 	public String getTaskID() {
 		return taskID;
@@ -307,6 +324,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
+	@NotAudited
 	public List<Contact> getContacts() {
 		if (contacts == null)
 			contacts = new ArrayList<Contact>();
@@ -375,15 +393,6 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.samples = samples;
 	}
 
-	@OneToOne
-	public StainingPrototypeList getTypeOfMaterial() {
-		return typeOfMaterial;
-	}
-
-	public void setTypeOfMaterial(StainingPrototypeList typeOfMaterial) {
-		this.typeOfMaterial = typeOfMaterial;
-	}
-
 	@Basic
 	public int getSampleNumer() {
 		return sampleNumer;
@@ -391,15 +400,6 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 
 	public void setSampleNumer(int sampleNumer) {
 		this.sampleNumer = sampleNumer;
-	}
-
-	@Basic
-	public String getMaterialName() {
-		return materialName;
-	}
-
-	public void setMaterialName(String materialName) {
-		this.materialName = materialName;
 	}
 
 	@Basic
@@ -491,11 +491,11 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.currentlyActive = currentlyActive;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	public List<PDFContainer> getPdfs() {
-		if(pdfs == null)
+		if (pdfs == null)
 			pdfs = new ArrayList<PDFContainer>();
-		
+
 		return pdfs;
 	}
 
@@ -503,6 +503,13 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.pdfs = pdfs;
 	}
 
+	public Date getDateOfSugery() {
+		return dateOfSugery;
+	}
+
+	public void setDateOfSugery(Date dateOfSugery) {
+		this.dateOfSugery = dateOfSugery;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -705,4 +712,5 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
+
 }

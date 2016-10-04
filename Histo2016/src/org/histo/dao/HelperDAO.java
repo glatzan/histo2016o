@@ -10,9 +10,9 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.History;
-import org.histo.model.Patient;
 import org.histo.model.StainingPrototype;
-import org.histo.model.StainingPrototypeList;
+import org.histo.model.patient.Patient;
+import org.histo.model.MaterialPreset;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +26,8 @@ public class HelperDAO extends AbstractDAO implements Serializable {
 		return (List<StainingPrototype>) getSession().createCriteria(StainingPrototype.class).list();
 	}
 
-	public List<StainingPrototypeList> getAllStainingLists() {
-		return (List<StainingPrototypeList>) getSession().createCriteria(StainingPrototypeList.class)
+	public List<MaterialPreset> getAllStainingLists() {
+		return (List<MaterialPreset>) getSession().createCriteria(MaterialPreset.class)
 				.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
 	}
 
@@ -36,13 +36,13 @@ public class HelperDAO extends AbstractDAO implements Serializable {
 	 * 
 	 * @param stainingPrototypeLists
 	 */
-	public void initStainingPrototypeList(List<StainingPrototypeList> stainingPrototypeLists) {
-		for (StainingPrototypeList stainingPrototypeList : stainingPrototypeLists) {
+	public void initStainingPrototypeList(List<MaterialPreset> stainingPrototypeLists) {
+		for (MaterialPreset stainingPrototypeList : stainingPrototypeLists) {
 			initStainingPrototypeList(stainingPrototypeList);
 		}
 	}
 
-	public void initStainingPrototypeList(StainingPrototypeList stainingPrototypeLists) {
+	public void initStainingPrototypeList(MaterialPreset stainingPrototypeLists) {
 		Hibernate.initialize(stainingPrototypeLists.getStainingPrototypes());
 	}
 

@@ -11,7 +11,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
 import org.histo.model.Physician;
-import org.histo.model.Task;
+import org.histo.model.patient.Task;
 import org.histo.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

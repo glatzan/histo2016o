@@ -66,7 +66,8 @@
 		<h:panelGroup>
 			<p:outputLabel
 				value="#{worklistHandlerAction.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
-			<p:commandLink rendered="#{worklistHandlerAction.selectedPatient.externalPatient}"
+			<p:commandLink
+				rendered="#{worklistHandlerAction.selectedPatient.externalPatient}"
 				actionListener="#{patientHandlerAction.editExternalPatient(worklistHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 				<i class="fa fa-wrench"></i>
@@ -90,7 +91,7 @@
 				<h:panelGrid columns="2" styleClass="collapsedBorders noPadding">
 					<h:outputLabel value="Aufträge" style="float:left;"></h:outputLabel>
 					<p:commandLink id="taskList"
-						actionListener="#{worklistHandlerAction.prepareNewTaskDialog()}">
+						actionListener="#{taskHandlerAction.prepareNewTaskDialog()}">
 						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						<i class="fa fa-plus" style="float: right"></i>
 
