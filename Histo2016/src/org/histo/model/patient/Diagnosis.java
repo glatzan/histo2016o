@@ -25,7 +25,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.util.GsonAble;
 import org.histo.model.util.LogAble;
-import org.histo.model.util.StainingTreeParent;
+import org.histo.model.util.TaskTree;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.annotations.Expose;
@@ -42,7 +42,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements StainingTreeParent<Sample>, GsonAble, LogAble {
+public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 
 	public static final int TYPE_DIAGNOSIS = 0;
 	public static final int TYPE_FOLLOW_UP_DIAGNOSIS = 1;

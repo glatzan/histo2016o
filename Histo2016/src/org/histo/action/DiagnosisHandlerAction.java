@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.LogDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.patient.Diagnosis;
@@ -39,6 +40,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	@Autowired
+	private LogDAO logDAO;
+	
 	private static final long serialVersionUID = -1214161114824263589L;
 
 	private Diagnosis tmpDiagnosis;
@@ -99,10 +103,10 @@ public class DiagnosisHandlerAction implements Serializable {
 	}
 
 	public void createDiagnosis(Sample sample, int type) {
-		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
-		genericDAO.save(newDiagnosis, resourceBundle.get("log.patient.diagnosis.new"), newDiagnosis.getPatient());
+		Diagnosis diagnosis = TaskUtil.createNewDiagnosis(sample, type);
+		genericDAO.save(diagnosis, resourceBundle.get("log.patient.task.sample.diagnosis.new",sample.getSampleID(), diagnosis.getName()), diagnosis.getPatient());
 		// TODO change to sample
-		helper.updateRevision(newDiagnosis);
+		helper.updateRevision(diagnosis);
 	}
 
 	/**
@@ -203,7 +207,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param diagnosis
 	 */
 	public void saveDiagnosis(Diagnosis diagnosis) {
-		taskDAO.getDiagnosisRevisions(diagnosis);
+		logDAO.getDiagnosisRevisions(diagnosis);
 		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.patient.diagnosis.changed"), diagnosis.getPatient());
 		helper.updateRevision(diagnosis);
 	}

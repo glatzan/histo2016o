@@ -8,7 +8,7 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-
+	
 	<!-- Übersicht -->
 	<p:panelGrid columns="4" styleClass="noBordersAll"
 		style="min-width:700px"
@@ -100,7 +100,7 @@
 			</f:facet>
 
 			<h:outputText
-				value="#{tasks.taskID} - #{helperHandlerAction.simpleDateFormatter(tasks.dateOfReceipt)}" />
+				value="#{tasks.taskID} - #{helperHandlerAction.simpleDateFormatter(tasks.dateOfReceiptAsDate)}" />
 
 			<h:panelGroup rendered="#{tasks.isNew()}">
 				<h:outputText value=" ("></h:outputText>

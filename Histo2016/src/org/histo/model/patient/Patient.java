@@ -30,7 +30,7 @@ import org.histo.model.Person;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
-import org.histo.model.util.StainingTreeParent;
+import org.histo.model.util.TaskTree;
 import org.histo.util.TimeUtil;
 
 import com.google.gson.Gson;
@@ -43,7 +43,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, StainingStatus, LogAble {
+public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStatus, LogAble {
 
 	@Expose
 	private long id;
@@ -77,7 +77,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	 * Date of adding to the database
 	 */
 	@Expose
-	private Date addDate = null;
+	private long addDate = 0;
 
 	/**
 	 * Person data
@@ -173,11 +173,11 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	}
 
 	@Column
-	public Date getAddDate() {
+	public long getAddDate() {
 		return addDate;
 	}
 
-	public void setAddDate(Date addDate) {
+	public void setAddDate(long addDate) {
 		this.addDate = addDate;
 	}
 
@@ -283,7 +283,7 @@ public class Patient implements StainingTreeParent<Patient>, DiagnosisStatus, St
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(getAddDate(), new Date(System.currentTimeMillis())))
+		if (TimeUtil.isDateOnSameDay(getAddDate(), System.currentTimeMillis()))
 			return true;
 
 		for (Task task : getTasks()) {

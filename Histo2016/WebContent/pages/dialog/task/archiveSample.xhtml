@@ -5,32 +5,35 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
+
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.archiveSample.Headline']}">
-			<f:param value="#{worklistHandlerAction.toArchive.textIdentifier}" />
+			<f:param value="#{taskHandlerAction.toArchive.textIdentifier}" />
 		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
-<h:body styleClass="dialogLayout">
-	<h:form>
-		<p:layout fullPage="true">
-			<p:layoutUnit position="center" styleClass="center">
-				<h:outputFormat value="#{msg['dialog.archiveSample.Text']}" escape="false">
-					<f:param value="#{worklistHandlerAction.toArchive.textIdentifier}" />
-				</h:outputFormat>
-			</p:layoutUnit>
 
-			<p:layoutUnit position="south" styleClass="botton"
-				resizable="false">
-				<p:commandButton value="#{msg['general.archive']}" actionListener="#{worklistHandlerAction.archiveObjectForStainingList(worklistHandlerAction.toArchive, true)}"></p:commandButton>
-				<p:commandButton value="#{msg['general.abort']}" actionListener="#{worklistHandlerAction.hideObjectForStainingListDialog()}"></p:commandButton>
-			</p:layoutUnit>
-		</p:layout>
+<h:body styleClass="defaultDialogLayout">
+	<h:form>
+		<div class="dialogContent">
+			<h:outputFormat value="#{msg['dialog.archiveSample.Text']}"
+				escape="false">
+				<f:param value="#{taskHandlerAction.toArchive.textIdentifier}" />
+			</h:outputFormat>
+		</div>
+		<div class="buttonContainer">
+			<p:commandButton value="#{msg['general.archive']}"
+				actionListener="#{taskHandlerAction.archiveObject(taskHandlerAction.toArchive, true)}"></p:commandButton>
+			<p:commandButton value="#{msg['general.abort']}"
+				actionListener="#{taskHandlerAction.hideArchiveObjectDialog()}"
+				style="margin-left:20px;"></p:commandButton>
+		</div>
 	</h:form>
 </h:body>
 </html>
+
 
 
 

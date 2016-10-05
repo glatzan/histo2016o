@@ -21,7 +21,7 @@
 				<p:column>
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
 						styleClass="taskCalendar"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceipt}" />
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}" />
 				</p:column>
 
 				<!-- Termin Datum -->
@@ -37,7 +37,7 @@
 						</p:selectBooleanCheckbox>
 						<p:calendar pattern="dd.MM.yyyy" mask="true"
 							styleClass="taskCalendar"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDate}"
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
 							disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}" />
 					</h:panelGrid>
 				</p:column>
@@ -558,7 +558,7 @@
 											styleClass="columnStaining #{stainingRow.even ? 'darkBackround' : ''}">
 											<h:panelGroup rendered="#{stainingRow.stainingType}">
 												<h:outputText
-													value="#{stainingRow.staining.stainingType.name}" />
+													value="#{stainingRow.staining.slidePrototype.name}" />
 											</h:panelGroup>
 										</p:column>
 
@@ -599,7 +599,7 @@
 												</h:panelGroup>
 
 												<!-- ********** Info Button ********** -->
-												<p:commandLink id="info" type="button"
+												<p:commandLink id="info" type="button" styleClass="noUnderlineAtLink"
 													title="#{stainingRow.staining.commentary}"
 													rendered="#{stainingRow.staining.commentary ne null}">
 													<i class="fa fa-fw fa-info-circle" />
@@ -614,15 +614,15 @@
 											<h:panelGroup rendered="#{stainingRow.sampleType}"
 												style="float: right">
 												<!-- ********** New Block Button ********** -->
-												<p:commandLink title="#{msg['body.statiningView.newBlock']}"
+												<p:commandLink title="#{msg['body.statiningView.newBlock']}" styleClass="noUnderlineAtLink"
 													update="navigationForm contentForm"
-													actionListener="#{worklistHandlerAction.createNewBlock(stainingRow.sample)}">
+													actionListener="#{taskHandlerAction.createNewBlockFromGui(stainingRow.sample)}">
 													<i class="fa fa-fw fa-th-large"></i>
 												</p:commandLink>
 												<!-- ********** Delete Button ********** -->
-												<p:commandLink
+												<p:commandLink styleClass="noUnderlineAtLink"
 													title="#{msg['body.statiningView.archiveSample']}"
-													actionListener="#{worklistHandlerAction.prepareArchiveObjectForStainingList(stainingRow.sample, true)}">
+													actionListener="#{taskHandlerAction.prepareArchiveObject(stainingRow.sample, true)}">
 													<i class="fa fa-fw fa-times-circle"></i>
 													<p:ajax event="dialogReturn"
 														update="navigationForm contentForm" />
@@ -634,16 +634,16 @@
 												style="float: right">
 												<!-- ********** New Staining Button ********** -->
 												<p:commandLink
-													title="#{msg['body.statiningView.newStaining']}"
+													title="#{msg['body.statiningView.newStaining']}" styleClass="noUnderlineAtLink"
 													actionListener="#{slideHandlerAction.prepareAddSlideDialog(stainingRow.block)}">
 													<i class="fa fa-fw fa-paint-brush"></i>
 													<p:ajax event="dialogReturn"
 														update="navigationForm contentForm" />
 												</p:commandLink>
 												<!-- ********** Delete Button ********** -->
-												<p:commandLink
+												<p:commandLink styleClass="noUnderlineAtLink"
 													title="#{msg['body.statiningView.archiveBlock']}"
-													actionListener="#{worklistHandlerAction.prepareArchiveObjectForStainingList(stainingRow.block, true)}">
+													actionListener="#{taskHandlerAction.prepareArchiveObject(stainingRow.block, true)}">
 													<i class="fa fa-fw fa-times-circle"></i>
 													<p:ajax event="dialogReturn"
 														update="navigationForm contentForm" />
@@ -654,23 +654,23 @@
 											<h:panelGroup rendered="#{stainingRow.stainingType}"
 												style="float: right">
 												<!-- ********** Print Button ********** -->
-												<p:commandLink
+												<p:commandLink styleClass="noUnderlineAtLink"
 													title="#{msg['body.statiningView.printStaining']}">
 													<i class="fa fa-fw fa-print" />
 													<p:ajax event="dialogReturn"
 														update="navigationForm contentForm" />
 												</p:commandLink>
 												<!-- ********** Cloud Button ********** -->
-												<p:commandLink
+												<p:commandLink styleClass="noUnderlineAtLink"
 													title="#{msg['body.statiningView.showStaining']}">
 													<i class="fa fa-fw fa-file-photo-o" />
 													<p:ajax event="dialogReturn"
 														update="navigationForm contentForm" />
 												</p:commandLink>
 												<!-- ********** Delete Button ********** -->
-												<p:commandLink
+												<p:commandLink styleClass="noUnderlineAtLink"
 													title="#{msg['body.statiningView.archiveStaining']}"
-													actionListener="#{worklistHandlerAction.prepareArchiveObjectForStainingList(stainingRow.staining, true)}">
+													actionListener="#{taskHandlerAction.prepareArchiveObject(stainingRow.staining, true)}">
 													<i class="fa fa-fw fa-times-circle" />
 													<p:ajax event="dialogReturn"
 														update="navigationForm contentForm" />

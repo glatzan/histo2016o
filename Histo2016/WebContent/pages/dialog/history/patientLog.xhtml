@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.addSlide.Headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="defaultDialogLayout" >
+	<h:form>
+		<div class="dialogContent" >
+			<p:dataTable var="log" styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll smallFont" scrollable="true"
+				scrollHeight="410" value="#{logHandlerAction.patientLog}"
+				resizableColumns="false">
+				<p:column headerText="ID" style="width:50px;text-align:center" >
+					<h:outputLabel value="#{log.id}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="Datum" style="width:100px;text-align:center">
+					<h:outputLabel value="#{log.timestampAsDate}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="Benutzer" style="width:100px;">
+					<h:outputLabel value="#{log.userAcc.username}"></h:outputLabel>
+				</p:column>
+				<p:column headerText="Aktion">
+					<h:outputLabel value="#{log.logString}"></h:outputLabel>
+				</p:column>
+			</p:dataTable>
+		</div>
+		<div class="buttonContainer">
+			<p:commandButton value="#{msg['general.create']}"
+				actionListener="#{slideHandlerAction.addSelectedSlides(slideHandlerAction.stainingListChooser, slideHandlerAction.tmpBlock, slideHandlerAction.tmpCommentary, slideHandlerAction.tmpRestaining)}"></p:commandButton>
+			<p:commandButton value="#{msg['general.abort']}"
+				actionListener="#{slideHandlerAction.hideAddSlideDialog()}"
+				style="margin-left:20px;"></p:commandButton>
+		</div>
+	</h:form>
+</h:body>
+</html>

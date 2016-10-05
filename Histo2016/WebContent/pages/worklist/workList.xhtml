@@ -47,7 +47,7 @@
 						<h:outputFormat value="#{msg['bodyNavigationTask']}"
 							styleClass="navigationText">
 							<f:param
-								value="#{helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceipt)}" />
+								value="#{helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate)}" />
 							<f:param
 								value="#{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
 						</h:outputFormat>

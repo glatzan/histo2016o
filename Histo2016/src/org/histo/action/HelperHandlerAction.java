@@ -13,12 +13,13 @@ import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.LogDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.History;
 import org.histo.model.Log;
 import org.histo.model.UserAcc;
 import org.histo.model.patient.Patient;
-import org.histo.model.util.ArchiveAble;
+import org.histo.model.util.ArchivAble;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.LogListContainer;
 import org.histo.util.TimeUtil;
@@ -40,6 +41,9 @@ public class HelperHandlerAction implements Serializable {
 	@Autowired
 	private GenericDAO genericDAO;
 
+	@Autowired
+	private LogDAO logDAO;
+	
 	/**
 	 * Log Overlaypanel calls the getRevsionList method several times. This is a
 	 * Buffer to increase performance. It contains LogListcontainers with a
@@ -82,13 +86,13 @@ public class HelperHandlerAction implements Serializable {
 		if (index != -1) {
 			LogListContainer logListContainer = logTmpMempory.get(index);
 			if (igonreTimestamp || System.currentTimeMillis() - 60000 > logListContainer.getTimestampOfUpdate()) {
-				logListContainer.setLogs((taskDAO.getRevisions(logAble)));
+				logListContainer.setLogs((logDAO.getRevisions(logAble)));
 				logListContainer.setTimestampOfUpdate(System.currentTimeMillis());
 			}
 			return logListContainer.getLogs();
 		} else {
 			LogListContainer newContainer = new LogListContainer(logAble);
-			newContainer.setLogs((taskDAO.getRevisions(logAble)));
+			newContainer.setLogs((logDAO.getRevisions(logAble)));
 			newContainer.setTimestampOfUpdate(System.currentTimeMillis());
 			logTmpMempory.add(newContainer);
 			return newContainer.getLogs();
@@ -110,7 +114,7 @@ public class HelperHandlerAction implements Serializable {
 	 * @param archiveAble
 	 * @param archived
 	 */
-	public void archiveObject(ArchiveAble archiveAble, boolean archived) {
+	public void archiveObject(ArchivAble archiveAble, boolean archived) {
 		archiveAble.setArchived(archived);
 	}
 

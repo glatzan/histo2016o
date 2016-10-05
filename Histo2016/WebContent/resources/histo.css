@@ -27,6 +27,10 @@ body {
 	padding: 0px !important;
 }
 
+.smallPaddingAll tr, .smallPaddingAll td, .smallPaddingAll {
+	padding: 3px !important;
+}
+
 .verticalAlignMiddleAll tr, .verticalAlignMiddleAll td,
 	.verticalAlignMiddleAll {
 	vertical-align: middle !important;
@@ -94,6 +98,10 @@ body {
 /* hides the header of a p:datatable */
 .hide-column-names table thead tr {
     display: none;
+}
+
+.smallFont{
+	font-size: 0.8em !important;	
 }
 
 /*

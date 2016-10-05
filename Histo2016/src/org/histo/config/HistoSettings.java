@@ -3,15 +3,16 @@ package org.histo.config;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 public class HistoSettings {
 
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
-	
+
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
 
 	public static final String STANDARD_DATEFORMAT_DAY_ONLY = "dd MMM yyyy";
-	public static final String STANDARD_DATEFORMAT = "hh:mm:ss dd.MM.yyyy";
+	public static final String STANDARD_DATEFORMAT = "HH:mm:ss dd.MM.yyyy";
 
 	public static final String EMAIL_SERVER = "smtp.ukl.uni-freiburg.de";
 	public static final String EMAIL_PORT = "smtp.ukl.uni-freiburg.de";
@@ -30,18 +31,6 @@ public class HistoSettings {
 	public static final String CENTER_INCLUDE_DIAGNOSIS_INTERN = "i_diagnosis.xhtml";
 	public static final String CENTER_INCLUDE_RECEIPTLOG = "i_receiptlog.xhtml";
 
-	public static final int DIALOG_ARCHIV_STAINING = 0;
-	public static final int DIALOG_ARCHIV_SAMPLE = 1;
-	public static final int DIALOG_ARCHIV_BLOCK = 2;
-	public static final int DIALOG_ADD_SLIDE = 4;
-	public static final int DIALOG_STAINING_PERFORMED = 5;
-	public static final int DIALOG_ADD_SLIDE_RESTAINING = 6;
-	public static final int DIALOG_SETTINGS = 7;
-	public static final int DIALOG_LOGOUT = 9;
-	public static final int DIALOG_WORKLIST_OPTIONS = 10;
-	public static final int DIALOG_PATIENT_EDIT = 11;
-	public static final int DIALOG_WORKLIST_ORDER = 13;
-
 	public static final String DIALOG_DIAGNOSIS_FINALIZE = "/pages/dialog/diagnosis/finalizeDiagnosis";
 	public static final String DIALOG_DIAGNOSIS_UNFINALIZE = "/pages/dialog/diagnosis/unfinalizeDiagnosis";
 	public static final String DIALOG_DIAGNOSIS_EDIT_NAME = "/pages/dialog/diagnosis/editDiagnosisName";
@@ -51,20 +40,25 @@ public class HistoSettings {
 	public static final String DIALOG_PRINT = "/pages/dialog/print/print";
 	public static final String DIALOG_CREATE_TASK = "/pages/dialog/task/createTask";
 	public static final String DIALOG_CREATE_SAMPLE = "/pages/dialog/task/createSample";
-	
-	
-	// noch nicht drinnen
-	public static final int DIALOG_TEST = 255;
-	public static final int DIALOG_ARCHIV_TASK = 2;
+	public static final String DIALOG_ADD_SLIDE_TO_BLOCK = "/pages/dialog/task/addSlide";
+	public static final String DIALOG_ARCHIV_STAINING = "/pages/dialog/task/archiveStaining";
+	public static final String DIALOG_ARCHIV_SAMPLE = "/pages/dialog/task/archiveSample";
+	public static final String DIALOG_ARCHIV_BLOCK = "/pages/dialog/task/archiveBlock";
+	public static final String DIALOG_ARCHIV_TASK = "/pages/dialog/task/archiveTask";
+	public static final String DIALOG_PATIENT_LOG = "/pages/dialog/history/patientLog";
 
+	public static final int DIALOG_STAINING_PERFORMED = 5;
+	public static final int DIALOG_ADD_SLIDE_RESTAINING = 6;
+	public static final int DIALOG_SETTINGS = 7;
+	public static final int DIALOG_LOGOUT = 9;
+	public static final int DIALOG_WORKLIST_OPTIONS = 10;
+	public static final int DIALOG_PATIENT_EDIT = 11;
+	public static final int DIALOG_WORKLIST_ORDER = 13;
+	
 	public static final Map<Integer, String> dialogMap;
 
 	static {
 		Map<Integer, String> tmpMap = new HashMap<>();
-		tmpMap.put(DIALOG_ARCHIV_SAMPLE, "/pages/dialog/task/archiveSample");
-		tmpMap.put(DIALOG_ARCHIV_STAINING, "/pages/dialog/task/archiveStaining");
-		tmpMap.put(DIALOG_ARCHIV_BLOCK, "/pages/dialog/task/archiveBlock");
-		tmpMap.put(DIALOG_ADD_SLIDE, "/pages/dialog/task/addSlide");
 		tmpMap.put(DIALOG_STAINING_PERFORMED, "/pages/dialog/task/staingingPerformed");
 		tmpMap.put(DIALOG_ADD_SLIDE_RESTAINING, "/pages/dialog/task/addSlideRestaining");
 		tmpMap.put(DIALOG_SETTINGS, "/pages/dialog/settings/settings");
@@ -72,8 +66,6 @@ public class HistoSettings {
 		tmpMap.put(DIALOG_WORKLIST_OPTIONS, "/pages/dialog/worklist/worklistOptions");
 		tmpMap.put(DIALOG_PATIENT_EDIT, "/pages/dialog/patient/editPatient");
 		tmpMap.put(DIALOG_WORKLIST_ORDER, "/pages/dialog/worklist/worklistOrder");
-
-		tmpMap.put(DIALOG_TEST, "/pages/dialog/task/notification");
 
 		dialogMap = Collections.unmodifiableMap(tmpMap);
 	}

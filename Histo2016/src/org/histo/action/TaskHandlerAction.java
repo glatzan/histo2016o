@@ -23,7 +23,10 @@ import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
+import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.util.ArchivAble;
+import org.histo.model.util.TaskTree;
 import org.histo.model.util.transientObjects.PDFTemplate;
 import org.histo.ui.transformer.PdfTemplateTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
@@ -41,31 +44,30 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session")
 public class TaskHandlerAction implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1460063099758733063L;
 
 	@Autowired
-	HelperHandlerAction helper;
+	private HelperHandlerAction helper;
 
 	@Autowired
-	HelperDAO helperDAO;
+	private HelperDAO helperDAO;
 
 	@Autowired
-	TaskDAO taskDAO;
+	private TaskDAO taskDAO;
 
 	@Autowired
-	GenericDAO genericDAO;
+	private GenericDAO genericDAO;
 
 	@Autowired
-	DiagnosisHandlerAction diagnosisHandlerAction;
+	private DiagnosisHandlerAction diagnosisHandlerAction;
 
 	@Autowired
-	SlideHandlerAction slideHandlerAction;
+	private SlideHandlerAction slideHandlerAction;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
+
+	private HashMap<String, String> selectableWards;
 
 	private Task taskToPrint;
 
@@ -108,12 +110,32 @@ public class TaskHandlerAction implements Serializable {
 	 * Task creation
 	 ********************************************************/
 
-	private HashMap<String, String> selectableWards;
+	/********************************************************
+	 * Archive able
+	 ********************************************************/
 
+	/**
+	 * Object to archive
+	 */
+	private ArchivAble toArchive;
+
+	/**
+	 * the toArchive object will be archived if true
+	 */
+	private boolean archived;
+
+	/********************************************************
+	 * Archive able
+	 ********************************************************/
+
+	/********************************************************
+	 * Task
+	 ********************************************************/
 	public void prepareForTask() {
 		setAllAvailableMaterials(helperDAO.getAllStainingLists());
 		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
 
+		// initis all wards
 		if (selectableWards == null) {
 			selectableWards = new HashMap<String, String>();
 			selectableWards.put("none", resourceBundle.get("#{msg['body.receiptlog.ward.select']}"));
@@ -169,14 +191,25 @@ public class TaskHandlerAction implements Serializable {
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		genericDAO.save(task, resourceBundle.get("log.patient.task.new"), patient);
+		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID(), material.getName()),
+				patient);
 
 		createNewSample(task, material);
+
+		// generating gui list
+		task.generateStainingGuiList();
 
 		genericDAO.save(patient, resourceBundle.get("log.patient.save"), patient);
 
 		hideNewTaskDialog();
 	}
+
+	/********************************************************
+	 * Task
+	 ********************************************************/
+	/********************************************************
+	 * Sample
+	 ********************************************************/
 
 	/**
 	 * Displays a dialog for creating a new sample
@@ -210,6 +243,7 @@ public class TaskHandlerAction implements Serializable {
 	 */
 	public void createNewSampleForGui(Task task, MaterialPreset material) {
 		createNewSample(task, material);
+		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 		hideNewSampleDialog();
 	}
 
@@ -225,17 +259,35 @@ public class TaskHandlerAction implements Serializable {
 		sample.setMaterilaPreset(material);
 		sample.setMaterial(material.getName());
 
-		genericDAO.save(sample, resourceBundle.get("log.patient.sample.new"), task.getPatient());
+		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", sample.getSampleID()),
+				task.getPatient());
 
 		// creating first default diagnosis
 		diagnosisHandlerAction.createDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS);
 
 		// creating needed blocks
 		createNewBlock(sample);
-
-		genericDAO.save(sample);
 	}
 
+	/********************************************************
+	 * Sample
+	 ********************************************************/
+
+	/********************************************************
+	 * Block
+	 ********************************************************/
+
+	/**
+	 * Method used by the gui for creating a new sample
+	 * 
+	 * @param task
+	 * @param material
+	 */
+	public void createNewBlockFromGui(Sample sample) {
+		createNewBlock(sample);
+		genericDAO.save(sample.getPatient(), resourceBundle.get("log.patient.save"), sample.getPatient());
+	}
+	
 	/**
 	 * Creates a new block for the given sample. Adds all slides from the
 	 * material preset to the block.
@@ -246,17 +298,88 @@ public class TaskHandlerAction implements Serializable {
 	public void createNewBlock(Sample sample) {
 		Block block = TaskUtil.createNewBlock(sample);
 
-		genericDAO.save(block, resourceBundle.get("log.patient.block.new"), sample.getPatient());
+		genericDAO.save(block, resourceBundle.get("log.patient.task.sample.blok.new", block.getParent().getSampleID(),
+				block.getBlockID()), sample.getPatient());
 
 		for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
 			slideHandlerAction.addStaining(proto, block);
 		}
-
-		genericDAO.save(block);
-
+		
 		sample.getParent().generateStainingGuiList();
 	}
 
+	/********************************************************
+	 * Block
+	 ********************************************************/
+
+	/********************************************************
+	 * Archive
+	 ********************************************************/
+
+	/**
+	 * Shows a Dialog for deleting (archiving) the sample/task/bock/image
+	 * 
+	 * @param sample
+	 * @param archived
+	 */
+	public void prepareArchiveObject(TaskTree<?> archive, boolean archived) {
+		setArchived(archived);
+		setToArchive(archive);
+		// if no dialog is provieded the object will be archived immediately
+		if (archive.getArchiveDialog() == null)
+			archiveObject(archive, archived);
+		else
+			helper.showDialog(archive.getArchiveDialog(), false, false, true);
+	}
+
+	/**
+	 * Archives a Object implementing TaskTree.
+	 * 
+	 * @param task
+	 * @param archiveAble
+	 * @param archived
+	 */
+	public void archiveObject(TaskTree<?> archive, boolean archived) {
+
+		archive.setArchived(archived);
+
+		String logString = "log.error";
+
+		if (archive instanceof Slide)
+			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived");
+		else if (archive instanceof Diagnosis)
+			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
+					((Diagnosis) archive).getParent().getSampleID(), ((Diagnosis) archive).getName());
+		else if (archive instanceof Block)
+			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
+					((Block) archive).getParent().getSampleID(), ((Block) archive).getBlockID());
+		else if (archive instanceof Sample)
+			logString = resourceBundle.get("log.patient.task.sample.archived", ((Sample) archive).getSampleID());
+		else if (archive instanceof Task)
+			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
+
+		genericDAO.save(archive, logString, archive.getPatient());
+
+		// update the gui list for displaying in the receiptlog
+		archive.getPatient().getSelectedTask().generateStainingGuiList();
+
+		hideArchiveObjectDialog();
+	}
+
+	/**
+	 * Hides the Dialog for achieving an object
+	 */
+	public void hideArchiveObjectDialog() {
+		helper.hideDialog(getToArchive().getArchiveDialog());
+	}
+
+	/********************************************************
+	 * Archive
+	 ********************************************************/
+
+	/********************************************************
+	 * Print
+	 ********************************************************/
 	public void preparePrintDialog(Task task) {
 		setTaskToPrint(task);
 		helper.showDialog(HistoSettings.DIALOG_PRINT, 1024, 600, false, false, true);
@@ -303,6 +426,10 @@ public class TaskHandlerAction implements Serializable {
 
 		}
 	}
+
+	/********************************************************
+	 * Print
+	 ********************************************************/
 
 	/********************************************************
 	 * Getter/Setter
@@ -403,6 +530,21 @@ public class TaskHandlerAction implements Serializable {
 		this.selectableWards = selectableWards;
 	}
 
+	public ArchivAble getToArchive() {
+		return toArchive;
+	}
+
+	public void setToArchive(ArchivAble toArchive) {
+		this.toArchive = toArchive;
+	}
+
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

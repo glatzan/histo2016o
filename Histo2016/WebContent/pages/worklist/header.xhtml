@@ -28,7 +28,8 @@
 					<p:ajax update="contentForm" process="@this"></p:ajax>
 
 					<f:selectItems value="#{emumProvider.displays}" var="current"
-						itemValue="#{current}" itemLabel="#{msg['enum.display.'.concat(current)]}" />
+						itemValue="#{current}"
+						itemLabel="#{msg['enum.display.'.concat(current)]}" />
 				</p:selectOneMenu>
 			</h:panelGrid>
 
@@ -65,7 +66,10 @@
 						rendered="#{worklistHandlerAction.selectedPatient.selectedTask ne null}"
 						onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
-					<p:menuitem value="Patienten Log" ajax="false" icon="ui-icon-close" />
+					<!-- Log -->
+					<p:menuitem value="Historie"
+						rendered="#{worklistHandlerAction.selectedPatient ne null}"
+						actionListener="#{logHandlerAction.preparePatientLogDialog(worklistHandlerAction.selectedPatient)}" />
 				</p:tieredMenu>
 
 				<!-- Edit Contacts button -->

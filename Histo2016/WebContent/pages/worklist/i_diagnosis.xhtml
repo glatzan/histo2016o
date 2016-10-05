@@ -52,13 +52,13 @@
 				<h:outputLabel value="Entnahmedatum"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
 					styleClass="taskCalendar"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugery}" />
+					value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}" />
 
 				<!-- date of receipt -->
 				<h:outputLabel value="Eingangsdatum"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
 					styleClass="taskCalendar"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceipt}" />
+					value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}" />
 
 				<!-- Task Number -->
 				<h:outputLabel value="Eingangsnummer"></h:outputLabel>

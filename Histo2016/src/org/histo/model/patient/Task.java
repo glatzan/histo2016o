@@ -33,7 +33,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
-import org.histo.model.util.StainingTreeParent;
+import org.histo.model.util.TaskTree;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 import org.primefaces.component.tabview.TabView;
@@ -45,7 +45,7 @@ import org.primefaces.event.TabChangeEvent;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Task implements StainingTreeParent<Patient>, StainingStatus, DiagnosisStatus, LogAble {
+public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus, LogAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -70,27 +70,27 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	/**
 	 * Date of creation
 	 */
-	private Date creationDate;
+	private long creationDate;
 
 	/**
 	 * The date of the sugery
 	 */
-	private Date dateOfSugery;
+	private long dateOfSugery;
 	
 	/**
 	 * Date of reception of the first material
 	 */
-	private Date dateOfReceipt;
-
-	/**
-	 * If a dueDate is given
-	 */
-	private boolean dueDateSelected;
+	private long dateOfReceipt;
 
 	/**
 	 * The dueDate
 	 */
-	private Date dueDate;
+	private long dueDate;
+	
+	/**
+	 * If a dueDate is given
+	 */
+	private boolean dueDateSelected;
 
 	/**
 	 * Liste aller Personen die über die Diangose informiert werden sollen.
@@ -145,7 +145,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	/**
 	 * date of staining completion
 	 */
-	private Date stainingCompletionDate;
+	private long stainingCompletionDate;
 
 	/**
 	 * True if every diagnosis is finalized
@@ -155,7 +155,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	/**
 	 * Date of diagnosis finalization
 	 */
-	private Date diagnosisCompletionDate;
+	private long diagnosisCompletionDate;
 
 	/**
 	 * Generated PDFs of this task
@@ -294,7 +294,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.version = version;
 	}
 
-	@Column
+	@Basic
 	public String getTaskID() {
 		return taskID;
 	}
@@ -303,24 +303,78 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.taskID = taskID;
 	}
 
-	@Column
-	public Date getDateOfReceipt() {
+	@Basic
+	public long getDateOfReceipt() {
 		return dateOfReceipt;
 	}
 
-	public void setDateOfReceipt(Date dateOfReceipt) {
+	public void setDateOfReceipt(long dateOfReceipt) {
 		this.dateOfReceipt = dateOfReceipt;
 	}
 
-	@Column
-	public Date getDueDate() {
+	@Transient     
+	public Date getDateOfReceiptAsDate(){
+		return new Date(getDateOfReceipt());
+	}
+	
+	public void setDateOfReceiptAsDate(Date date){
+		setDateOfReceipt(TimeUtil.setDayBeginning(date).getTime());
+	}
+	
+	@Basic
+	public long getDueDate() {
 		return dueDate;
 	}
 
-	public void setDueDate(Date dueDate) {
+	public void setDueDate(long dueDate) {
 		this.dueDate = dueDate;
 	}
+	
+	@Transient
+	public Date getDueDateAsDate(){
+		return new Date(getDueDate());
+	}
+	
+	public void setDueDateAsDate(Date date){
+		setDueDate(TimeUtil.setDayBeginning(date).getTime());
+	}
+	
+	@Basic
+	public long getCreationDate() {
+		return creationDate;
+	}
 
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
+	}
+	
+	@Transient
+	public Date getCreationDateAsDate(){
+		return new Date(getCreationDate());
+	}
+	
+	public void setCreationDateAsDate(Date date){
+		setCreationDate(TimeUtil.setDayBeginning(date).getTime());
+	}
+
+	@Basic
+	public long getDateOfSugery() {
+		return dateOfSugery;
+	}
+
+	public void setDateOfSugery(long dateOfSugery) {
+		this.dateOfSugery = dateOfSugery;
+	}
+	
+	@Transient
+	public Date getDateOfSugeryAsDate(){
+		return new Date(getDateOfSugery());
+	}
+	
+	public void setDateOfSugeryAsDate(Date date){
+		setDateOfSugery(TimeUtil.setDayBeginning(date).getTime());
+	}
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
@@ -362,22 +416,13 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 		this.caseHistory = caseHistory;
 	}
 
-	@Column
+	@Basic
 	public byte getEye() {
 		return eye;
 	}
 
 	public void setEye(byte eye) {
 		this.eye = eye;
-	}
-
-	@Basic
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
 	}
 
 	@OneToMany(mappedBy = "parent", cascade = { CascadeType.REFRESH, CascadeType.ALL }, fetch = FetchType.EAGER)
@@ -421,11 +466,11 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	}
 
 	@Basic
-	public Date getStainingCompletionDate() {
+	public long getStainingCompletionDate() {
 		return stainingCompletionDate;
 	}
 
-	public void setStainingCompletionDate(Date stainingCompletionDate) {
+	public void setStainingCompletionDate(long stainingCompletionDate) {
 		this.stainingCompletionDate = stainingCompletionDate;
 	}
 
@@ -439,11 +484,11 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	}
 
 	@Basic
-	public Date getDiagnosisCompletionDate() {
+	public long getDiagnosisCompletionDate() {
 		return diagnosisCompletionDate;
 	}
 
-	public void setDiagnosisCompletionDate(Date diagnosisCompletionDate) {
+	public void setDiagnosisCompletionDate(long diagnosisCompletionDate) {
 		this.diagnosisCompletionDate = diagnosisCompletionDate;
 	}
 
@@ -502,14 +547,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	public void setPdfs(List<PDFContainer> pdfs) {
 		this.pdfs = pdfs;
 	}
-
-	public Date getDateOfSugery() {
-		return dateOfSugery;
-	}
-
-	public void setDateOfSugery(Date dateOfSugery) {
-		this.dateOfSugery = dateOfSugery;
-	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -585,7 +623,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(creationDate, new Date(System.currentTimeMillis())))
+		if (TimeUtil.isDateOnSameDay(creationDate, System.currentTimeMillis()))
 			return true;
 		return false;
 	}
@@ -707,7 +745,7 @@ public class Task implements StainingTreeParent<Patient>, StainingStatus, Diagno
 	@Transient
 	@Override
 	public String getArchiveDialog() {
-		return HistoSettings.dialog(HistoSettings.DIALOG_ARCHIV_TASK);
+		return HistoSettings.DIALOG_ARCHIV_TASK;
 	}
 	/********************************************************
 	 * Interface StainingTreeParent

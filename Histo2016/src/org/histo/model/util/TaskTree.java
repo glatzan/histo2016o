@@ -3,13 +3,14 @@ package org.histo.model.util;
 import org.histo.model.patient.Patient;
 
 /**
- * Interfaces welches vom StainingTree (Task->Sample->Block->Staining) implementiert wird.
+ * Interface for every object of the task tree (Task->Sample->Block->Staining).
+ * Enables the returning of the parent and implements the archivable interface.
  * 
  * @author andi
  *
  * @param <T>
  */
-public interface StainingTreeParent<T> extends ArchiveAble {
+public interface TaskTree<T> extends ArchivAble {
     public Patient getPatient();
 
     public T getParent();

@@ -5,7 +5,7 @@ package org.histo.model.util;
  * @author andi
  *
  */
-public interface ArchiveAble {
+public interface ArchivAble {
   
     public boolean isArchived();
     

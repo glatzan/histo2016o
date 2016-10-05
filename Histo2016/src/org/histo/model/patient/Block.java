@@ -28,7 +28,7 @@ import org.hibernate.envers.Audited;
 import org.histo.config.HistoSettings;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
-import org.histo.model.util.StainingTreeParent;
+import org.histo.model.util.TaskTree;
 import org.histo.util.TimeUtil;
 
 @Entity
@@ -37,7 +37,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAble {
+public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 
 	private long id;
 
@@ -279,7 +279,7 @@ public class Block implements StainingTreeParent<Sample>, StainingStatus, LogAbl
 	@Transient
 	@Override
 	public String getArchiveDialog() {
-		return HistoSettings.dialog(HistoSettings.DIALOG_ARCHIV_BLOCK);
+		return HistoSettings.DIALOG_ARCHIV_BLOCK;
 	}
 	/******************************************************** ArchiveAble ********************************************************/
 }

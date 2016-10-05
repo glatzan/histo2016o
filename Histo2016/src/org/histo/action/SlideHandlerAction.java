@@ -15,6 +15,7 @@ import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
+import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,15 @@ public class SlideHandlerAction implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
-	
+
 	@Autowired
 	private HelperDAO helperDAO;
-	
+
 	@Autowired
 	private HelperHandlerAction helper;
+
+	@Autowired
+	private ResourceBundle resourceBundle;
 
 	/**
 	 * Temporäres Blockobjekt, wird verwendet um neue Objektträger zu erstellen.
@@ -74,12 +78,8 @@ public class SlideHandlerAction implements Serializable {
 	 */
 	private byte actionOnMany;
 
-	/********************************************************
-	 * Add Slide to Block
-	 ********************************************************/
 	/**
-	 * Zeigt einen Dialog um einen neunen Objektträger für eine Block zu
-	 * erstellen
+	 * Show a dialog for adding new slides to a block
 	 * 
 	 * @param sample
 	 */
@@ -98,8 +98,14 @@ public class SlideHandlerAction implements Serializable {
 			getStainingListChooser().add(new StainingListChooser(staining));
 		}
 
-		// log.info("Opening select staining dialog");
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_ADD_SLIDE), false, false, true);
+		helper.showDialog(HistoSettings.DIALOG_ADD_SLIDE_TO_BLOCK, false, false, true);
+	}
+
+	/**
+	 * Hides the dialog for adding new slides
+	 */
+	public void hideAddSlideDialog() {
+		helper.hideDialog(HistoSettings.DIALOG_ADD_SLIDE_TO_BLOCK);
 	}
 
 	public void addSelectedSlides(List<StainingListChooser> slideList, Block block, String commentary,
@@ -127,20 +133,14 @@ public class SlideHandlerAction implements Serializable {
 			}
 		}
 
+		// updating statining list
+		block.getParent().getParent().generateStainingGuiList();
+		
+		genericDAO.save(block.getPatient(), resourceBundle.get("log.patient.save"), block.getPatient());
+		
 		hideAddSlideDialog();
 
 	}
-
-	/**
-	 * Schließt den addSlide Dialog
-	 */
-	public void hideAddSlideDialog() {
-		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_ADD_SLIDE));
-	}
-
-	/********************************************************
-	 * Add Staining to Block
-	 ********************************************************/
 
 	/********************************************************
 	 * Many Staining Manipulation
@@ -267,9 +267,10 @@ public class SlideHandlerAction implements Serializable {
 		}
 
 		genericDAO.save(task);
-		if (allPerformed)
+		if (allPerformed){
 			task.setStainingCompleted(true);
-		else
+			task.setStainingCompletionDate(System.currentTimeMillis());
+		}else
 			task.setStainingCompleted(false);
 		return allPerformed;
 	}
@@ -309,22 +310,22 @@ public class SlideHandlerAction implements Serializable {
 	 * @param patientOfSample
 	 */
 	public void addStaining(StainingPrototype prototype, Block block, String commentary, boolean reStaining) {
-		Slide staining = TaskUtil.createNewStaining(block, prototype);
+		Slide slide = TaskUtil.createNewStaining(block, prototype);
 		if (commentary != null && !commentary.isEmpty())
-			staining.setCommentary(commentary);
+			slide.setCommentary(commentary);
 
-		staining.setReStaining(reStaining);
+		slide.setReStaining(reStaining);
 
-		genericDAO.save(block.getParent().getParent());
+		genericDAO.save(slide,
+				resourceBundle.get("log.patient.task.sample.blok.slide.new",
+						slide.getParent().getParent().getSampleID(), slide.getParent().getBlockID(),
+						slide.getSlideID()),
+				slide.getPatient());
 
-		// log.info("Neue Färbung erstellt, ID:" + staining.getStainingID() + "
-		// - " + staining.getStainingType().getName(), block.getPatient());
-
-		// Updating Gui
-		block.getParent().getParent().setStainingCompleted(false);
-		block.getParent().getParent().generateStainingGuiList();
+		// updating the staining is needed flag of the task object
+		updateSlideTree(block.getParent().getParent());
+		
 	}
-
 	/********************************************************
 	 * Staining Manipulation
 	 ********************************************************/

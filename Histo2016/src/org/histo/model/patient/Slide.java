@@ -23,7 +23,7 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.HistoSettings;
 import org.histo.model.StainingPrototype;
 import org.histo.model.util.LogAble;
-import org.histo.model.util.StainingTreeParent;
+import org.histo.model.util.TaskTree;
 
 @Entity
 @Audited
@@ -31,7 +31,7 @@ import org.histo.model.util.StainingTreeParent;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements StainingTreeParent<Block>, LogAble {
+public class Slide implements TaskTree<Block>, LogAble {
 
 	private long id;
 	
@@ -189,7 +189,7 @@ public class Slide implements StainingTreeParent<Block>, LogAble {
 	@Transient
 	@Override
 	public String getArchiveDialog() {
-		return HistoSettings.dialog(HistoSettings.DIALOG_ARCHIV_STAINING);
+		return HistoSettings.DIALOG_ARCHIV_STAINING;
 	}
 	/********************************************************
 	 * Interface StainingTreeParent

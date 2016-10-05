@@ -104,9 +104,10 @@ public class PatientHandlerAction implements Serializable {
 	public void addNewExternalPatient(Patient patient) {
 		// marks the patient as externally
 		patient.setExternalPatient(true);
-		patient.setAddDate(new Date(System.currentTimeMillis()));
+		patient.setAddDate(System.currentTimeMillis());
 
-		genericDAO.save(patient, resourceBundle.get("log.patient.extern.new"), patient);
+		genericDAO.save(patient, resourceBundle.get("log.patient.extern.new", patient.getPerson().getName(),
+				patient.getPerson().getSurname()), patient);
 
 		hidePatientDialog();
 	}
@@ -128,8 +129,9 @@ public class PatientHandlerAction implements Serializable {
 			// patient not in database, is new patient from database
 			if (patient.getId() == 0) {
 				// set add date
-				patient.setAddDate(new Date(System.currentTimeMillis()));
-				genericDAO.save(patient, resourceBundle.get("log.patient.search.new"), patient);
+				patient.setAddDate(System.currentTimeMillis());
+				genericDAO.save(patient, resourceBundle.get("log.patient.search.new", patient.getPerson().getName(),
+						patient.getPerson().getSurname(), patient.getPiz()), patient);
 			} else
 				genericDAO.save(patient, resourceBundle.get("log.patient.search.update"), patient);
 
@@ -211,7 +213,8 @@ public class PatientHandlerAction implements Serializable {
 
 				List<Patient> histoMatchList = new ArrayList<Patient>(0);
 
-				// creating a list of patient from the histo backend pizes wich where obtaind from the clinic backend
+				// creating a list of patient from the histo backend pizes wich
+				// where obtaind from the clinic backend
 				histoMatchList = patientDao.searchForPatientPizes(notFoundPiz);
 
 				for (Patient cPatient : clinicPatients) {
@@ -239,7 +242,8 @@ public class PatientHandlerAction implements Serializable {
 				}
 			}
 
-			// search for external patient in histo database, excluding the already found patients via piz
+			// search for external patient in histo database, excluding the
+			// already found patients via piz
 			List<Patient> histoPatients = patientDao.getPatientsByNameSurnameDateExcludePiz(name, surname, birthday,
 					foundPiz);
 

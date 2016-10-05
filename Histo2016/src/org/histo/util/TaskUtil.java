@@ -26,11 +26,13 @@ public class TaskUtil {
 	 */
 	public final static Task createNewTask(Patient patient, int taskNumer) {
 		Task result = new Task();
-		result.setCreationDate(new Date(System.currentTimeMillis()));
-		result.setDateOfReceipt(new Date(System.currentTimeMillis()));
-		result.setDueDate(new Date(System.currentTimeMillis()));
+		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
+		result.setCreationDate(currentDay);
+		result.setDateOfReceipt(currentDay);
+		result.setDueDate(currentDay);
+		result.setDateOfSugery(currentDay);
 		// 20xx -2000 = tasknumber
-		result.setTaskID(Integer.toString(TimeUtil.getCurrentYear()-2000) + fitString(taskNumer, 4));
+		result.setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000) + fitString(taskNumer, 4));
 		result.setParent(patient);
 
 		return result;
@@ -67,7 +69,7 @@ public class TaskUtil {
 		diagnosis.setDiagnosisOrder(sample.getDiagnosisNumber());
 		diagnosis.setName(getDiagnosisName(sample, diagnosis));
 		diagnosis.setParent(sample);
-		
+
 		sample.incrementDiagnosisNumber();
 		sample.getDiagnoses().add(diagnosis);
 
@@ -108,8 +110,7 @@ public class TaskUtil {
 		int stainingsInBlock = getNumerOfSameStainings(block, prototype);
 		if (stainingsInBlock > 1)
 			number = " " + String.valueOf(stainingsInBlock);
-		staining.setSlideID(
-				block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
+		staining.setSlideID(block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
 
 		block.getSlides().add(staining);
 		block.incrementSlideNumber();
@@ -222,18 +223,12 @@ public class TaskUtil {
 	}
 
 	public final static Task getLastTask(List<Task> tasks) {
-		Task result = null;
-		if (tasks != null && tasks.size() > 0) {
-
-			for (Task task : tasks) {
-				if (result == null) {
-					result = task;
-				} else if (result.getDateOfReceipt().before(task.getDateOfReceipt())) {
-					result = task;
-				}
-			}
-		}
-		return result;
+		// List is ordere desc by taskID per default so return first (and
+		// latest) task in List
+		if (tasks != null && !tasks.isEmpty())
+			return tasks.get(0);
+		else
+			return null;
 	}
 
 	public final static String fitString(int value, int len) {

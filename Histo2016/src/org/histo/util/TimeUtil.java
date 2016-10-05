@@ -15,14 +15,17 @@ public class TimeUtil {
 		return year;
 	}
 
-	public static final Date getDateInUnixTimestamp(int year, int month, int day, int hour, int minute, int second) {
+	public static final long getDateInUnixTimestamp(int year, int month, int day, int hour, int minute, int second) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTimeInMillis(0);
 		cal.set(year, month, day, hour, minute, second);
-		System.out.println(cal);
-		return cal.getTime();
+		return cal.getTimeInMillis();
 	}
 
+	public static final boolean isDateOnSameDay(long date, long timeOfDay) {
+		return isDateOnSameDay(new Date(date), new Date(timeOfDay));
+	}
+	
 	public static final boolean isDateOnSameDay(Date date, Date timeOfDay) {
 		Calendar dateC = Calendar.getInstance();
 		dateC.setTime(date);
@@ -63,6 +66,16 @@ public class TimeUtil {
 		cal.set(Calendar.SECOND, 59);
 		cal.set(Calendar.MILLISECOND, 999);
 		return cal;
+	}
+
+	public static final long setDayBeginning(long date){
+		return setDayBeginning(new Date(date)).getTime();
+	}
+	
+	public static final Date setDayBeginning(Date date){
+		Calendar dateC = Calendar.getInstance();
+		dateC.setTime(date);
+		return setDayBeginning(dateC).getTime();
 	}
 
 	public static final Calendar setDayBeginning(Calendar cal) {

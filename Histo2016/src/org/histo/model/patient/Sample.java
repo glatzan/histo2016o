@@ -33,7 +33,7 @@ import org.histo.model.MaterialPreset;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
-import org.histo.model.util.StainingTreeParent;
+import org.histo.model.util.TaskTree;
 import org.histo.util.TimeUtil;
 
 @Entity
@@ -42,7 +42,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements StainingTreeParent<Task>, StainingStatus, DiagnosisStatus, LogAble {
+public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, LogAble {
 
 	private long id;
 
@@ -462,7 +462,7 @@ public class Sample implements StainingTreeParent<Task>, StainingStatus, Diagnos
 	@Transient
 	@Override
 	public String getArchiveDialog() {
-		return HistoSettings.dialog(HistoSettings.DIALOG_ARCHIV_SAMPLE);
+		return HistoSettings.DIALOG_ARCHIV_SAMPLE;
 	}
 	/******************************************************** ArchiveAble ********************************************************/
 }
