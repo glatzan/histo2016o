@@ -8,46 +8,24 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.histo.config.enums.Role;
 import org.histo.model.util.LogAble;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @SequenceGenerator(name = "role_sequencegenerator", sequenceName = "role_sequence")
 public class UserRole implements Serializable, Cloneable, GrantedAuthority, LogAble {
-	/**
-	 * gast user mta befunder admin god
-	 */
 
-	public static final String ROLE_GUEST_NAME = "guest";
-	public static final int ROLE_LEVEL_GUEST = 1;
-
-	public static final String ROLE_USER_NAME = "user";
-	public static final int ROLE_LEVEL_USER = 2;
-
-	public static final String ROLE_MTA_NAME = "mta";
-	public static final int ROLE_LEVEL_MTA = 3;
-
-	public static final String ROLE_HISTO_NAME = "researcher";
-	public static final int ROLE_LEVEL_HISTO = 4;
-
-	public static final String ROLE_MODERATOR_NAME = "moderator";
-	public static final int ROLE_LEVEL_MODERATOR = 5;
-
-	public static final String ROLE_SUPERADMIN_NAME = "admin";
-	public static final int ROLE_SUPERADMIN_GOD = 6;
-
+    
 	private long id;
 
-	private String name;
-
-	private int level;
+	private Role role;
 
 	public UserRole() {
 	}
 
-	public UserRole(String roleName, int level) {
-		this.name = roleName;
-		this.level = level;
+	public UserRole(Role role) {
+		this.role = role;
 	}
 
 	@Id
@@ -61,32 +39,22 @@ public class UserRole implements Serializable, Cloneable, GrantedAuthority, LogA
 		this.id = id;
 	}
 
-	@Column
-	public String getName() {
-		return name;
+	public Role getRole() {
+	    return role;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Column
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
+	public void setRole(Role role) {
+	    this.role = role;
 	}
 
 	@Override
 	public UserRole clone() {
-		return new UserRole(getName(), getLevel());
+		return new UserRole(getRole());
 	}
 
 	@Override
 	public String getAuthority() {
-		if (getLevel() < ROLE_LEVEL_USER) {
+		if (getRole().getRoleValue() < Role.GUEST.getRoleValue()) {
 			return "ROLE_GUEST";
 		}
 		return "ROLE_USER";

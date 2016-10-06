@@ -23,5 +23,8 @@ public class EmumProvider {
 		return Display.values();
 	}
 	
+	public Role[] getRoles(){
+	    return Role.values();
+	}
 	
 }
