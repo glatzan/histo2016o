@@ -11,7 +11,7 @@
 
 	<http auto-config='true'>
 		<intercept-url pattern="/login*"
-			access="hasAnyRole('ROLE_GUEST','ROLE_USER','ROLE_UNAUTH')" />
+			access="hasAnyRole('ROLE_GUEST','ROLE_USER','ROLE_NONEAUTH')" />
 		<intercept-url pattern="/*"
 			access="hasAnyRole('ROLE_GUEST','ROLE_USER')" />
 		<intercept-url pattern="/pages/index.xhtml"
@@ -29,7 +29,7 @@
 
 		<logout logout-url="/spring_logout" logout-success-url="/login.xhtml" />
 
-		<anonymous username="guest" granted-authority="ROLE_UNAUTH" />
+		<anonymous username="guest" granted-authority="ROLE_NONEAUTH" />
 
 	</http>
 

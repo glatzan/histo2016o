@@ -27,7 +27,7 @@ public class History {
 
 	private Patient patient;
 
-	private UserAcc userAcc;
+	private HistoUser histoUser;
 
 	private String messages;
 
@@ -54,12 +54,12 @@ public class History {
 	}
 
 	@OneToOne
-	public UserAcc getUserAcc() {
-		return userAcc;
+	public HistoUser getUserAcc() {
+		return histoUser;
 	}
 
-	public void setUserAcc(UserAcc userAcc) {
-		this.userAcc = userAcc;
+	public void setUserAcc(HistoUser histoUser) {
+		this.histoUser = histoUser;
 	}
 
 	@Column(columnDefinition = "text")

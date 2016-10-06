@@ -15,7 +15,7 @@ import org.histo.model.History;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.MaterialPreset;
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 import org.histo.model.UserRole;
 import org.histo.model.patient.Patient;
 import org.histo.ui.StainingListChooser;
@@ -274,7 +274,7 @@ public class SettingsHandlerAction {
 	 * @param user
 	 * @param role
 	 */
-	public void setRoleForUser(UserAcc user, String role) {
+	public void setRoleForUser(HistoUser user, String role) {
 		setRoleForUser(user, UserUtil.createRole(role));
 	}
 
@@ -284,7 +284,7 @@ public class SettingsHandlerAction {
 	 * @param user
 	 * @param role
 	 */
-	public void setRoleForUser(UserAcc user, UserRole role) {
+	public void setRoleForUser(HistoUser user, UserRole role) {
 		UserRole oldRole = user.getRole();
 		user.setRole(role);
 		user.getAuthorities().add(role);

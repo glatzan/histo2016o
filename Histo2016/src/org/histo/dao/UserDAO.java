@@ -11,7 +11,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.envers.query.AuditQuery;
 import org.histo.model.Physician;
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 import org.histo.model.patient.Diagnosis;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,15 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserDAO extends AbstractDAO implements Serializable {
 
-	public List<UserAcc> loadAllUsers() {
-		Criteria c = getSession().createCriteria(UserAcc.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+	public List<HistoUser> loadAllUsers() {
+		Criteria c = getSession().createCriteria(HistoUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		return c.list();
 	}
 
-	public UserAcc loadUserByName(String name) {
-		Criteria c = getSession().createCriteria(UserAcc.class);
+	public HistoUser loadUserByName(String name) {
+		Criteria c = getSession().createCriteria(HistoUser.class);
 		c.add(Restrictions.eq("username", name)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		List<UserAcc> res = c.list();
+		List<HistoUser> res = c.list();
 
 		if (res.size() != 1) {
 			return null;
@@ -55,15 +55,15 @@ public class UserDAO extends AbstractDAO implements Serializable {
 		return res.get(0);
 	}
 
-	public UserAcc saveUser(UserAcc userAcc) {
+	public HistoUser saveUser(HistoUser histoUser) {
 		Session session = getSession();
 		try {
-			session.saveOrUpdate(userAcc);
+			session.saveOrUpdate(histoUser);
 		} catch (HibernateException hibernateException) {
-			userAcc = (UserAcc) session.merge(userAcc);
+			histoUser = (HistoUser) session.merge(histoUser);
 			hibernateException.printStackTrace();
 		}
-		return userAcc;
+		return histoUser;
 	}
 	
 }

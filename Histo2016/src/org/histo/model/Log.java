@@ -31,7 +31,7 @@ public class Log {
     
     private String logString;
     
-    private UserAcc userAcc;
+    private HistoUser histoUser;
     
     private Patient patient;
     
@@ -65,12 +65,12 @@ public class Log {
 	}
 
 	@OneToOne
-	public UserAcc getUserAcc() {
-		return userAcc;
+	public HistoUser getUserAcc() {
+		return histoUser;
 	}
 
-	public void setUserAcc(UserAcc userAcc) {
-		this.userAcc = userAcc;
+	public void setUserAcc(HistoUser histoUser) {
+		this.histoUser = histoUser;
 	}
 
 	@OneToOne

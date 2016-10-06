@@ -19,16 +19,16 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.histo.config.HistoSettings;
 import org.histo.model.Physician;
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 import org.histo.model.UserRole;
 import org.histo.ui.UserAccRoleHolder;
 
 public class UserUtil {
 
-	public static final ArrayList<UserAccRoleHolder> getUserAndRoles(List<UserAcc> userAccs) {
+	public static final ArrayList<UserAccRoleHolder> getUserAndRoles(List<HistoUser> histoUsers) {
 		ArrayList<UserAccRoleHolder> userAccRoleHolders = new ArrayList<UserAccRoleHolder>();
-		for (UserAcc userAcc : userAccs) {
-			userAccRoleHolders.add(new UserAccRoleHolder(userAcc));
+		for (HistoUser histoUser : histoUsers) {
+			userAccRoleHolders.add(new UserAccRoleHolder(histoUser));
 		}
 		return userAccRoleHolders;
 	}
@@ -75,9 +75,9 @@ public class UserUtil {
 		return false;
 	}
 
-	public static final UserAcc createNewUser(String name) {
+	public static final HistoUser createNewUser(String name) {
 		UserRole guestRole = UserUtil.createRole(UserRole.ROLE_LEVEL_GUEST);
-		UserAcc newUser = new UserAcc();
+		HistoUser newUser = new HistoUser();
 		newUser.setUsername(name);
 		newUser.setRole(guestRole);
 		newUser.setPhysician(new Physician());

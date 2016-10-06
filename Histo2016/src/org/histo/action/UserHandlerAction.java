@@ -7,7 +7,7 @@ import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.UserDAO;
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 import org.histo.model.UserRole;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class UserHandlerAction implements Serializable {
     private GenericDAO genericDAO;
 
     public boolean isUserAvailable() {
-	if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof UserAcc)
+	if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof HistoUser)
 	    return true;
 	return false;
     }
@@ -38,8 +38,8 @@ public class UserHandlerAction implements Serializable {
      * 
      * @return
      */
-    public UserAcc getCurrentUser() {
-	UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public HistoUser getCurrentUser() {
+	HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	return user;
     }
 
@@ -65,13 +65,13 @@ public class UserHandlerAction implements Serializable {
 	if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String)
 	    return false;
 	else {
-	    UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	    HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	    return hasRole(user, role);
 	}
     }
 
-    public boolean hasRole(UserAcc userAcc, String role) {
-	if (userAcc.getRole().equals(role))
+    public boolean hasRole(HistoUser histoUser, String role) {
+	if (histoUser.getRole().equals(role))
 	    return true;
 	return false;
     }
@@ -81,12 +81,12 @@ public class UserHandlerAction implements Serializable {
     }
 
     // TODO delete
-    public void setRoleForUser(UserAcc user, String role) {
+    public void setRoleForUser(HistoUser user, String role) {
 	setRoleForUser(user, UserUtil.createRole(role));
     }
 
     // TODO delete
-    public void setRoleForUser(UserAcc user, UserRole role) {
+    public void setRoleForUser(HistoUser user, UserRole role) {
 	UserRole oldRole = user.getRole();
 	user.setRole(role);
 	user.getAuthorities().add(role);

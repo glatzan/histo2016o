@@ -1,24 +1,24 @@
 package org.histo.ui;
 
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 
 public class UserAccRoleHolder {
 
-    private UserAcc userAcc;
+    private HistoUser histoUser;
     
     private String roleName;
 
-    public UserAccRoleHolder(UserAcc userAcc){
-	setUserAcc(userAcc);
-	setRoleName(userAcc.getRole().getName());
+    public UserAccRoleHolder(HistoUser histoUser){
+	setUserAcc(histoUser);
+	setRoleName(histoUser.getRole().getName());
     }
     
-    public UserAcc getUserAcc() {
-        return userAcc;
+    public HistoUser getUserAcc() {
+        return histoUser;
     }
 
-    public void setUserAcc(UserAcc userAcc) {
-        this.userAcc = userAcc;
+    public void setUserAcc(HistoUser histoUser) {
+        this.histoUser = histoUser;
     }
 
     public String getRoleName() {

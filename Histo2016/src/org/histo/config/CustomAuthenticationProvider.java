@@ -18,7 +18,7 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.histo.dao.UserDAO;
 import org.histo.model.Physician;
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -91,16 +91,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			ctx = new InitialDirContext(env);
 
 			System.out.println("*** Bind erfolgreich ***");*/
-			UserAcc userAcc = userDAO.loadUserByName(userName);
+			HistoUser histoUser = userDAO.loadUserByName(userName);
 
-			if (userAcc == null) {
-				userAcc = UserUtil.createNewUser(userName);
+			if (histoUser == null) {
+				histoUser = UserUtil.createNewUser(userName);
 
 				// if the physician was added as surgeon the useracc an the
 				// physician will be merged
 				Physician tmp = userDAO.loadPhysicianByUID(userName);
 				if (tmp != null)
-					userAcc.setPhysician(tmp);
+					histoUser.setPhysician(tmp);
 			}
 			
 			// updating the physician attributes 
@@ -108,14 +108,14 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 		//	ctx.close();
 
-			userAcc.setLastLogin(new Date(System.currentTimeMillis()));
+			histoUser.setLastLogin(new Date(System.currentTimeMillis()));
 
-			userDAO.saveUser(userAcc);
+			userDAO.saveUser(histoUser);
 
 
-			Collection<? extends GrantedAuthority> authorities = userAcc.getAuthorities();
+			Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
 
-			return new UsernamePasswordAuthenticationToken(userAcc, password, authorities);
+			return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
 
 //		} catch (NamingException e) {
 //			System.err.println("NamingException: " + e.getMessage());

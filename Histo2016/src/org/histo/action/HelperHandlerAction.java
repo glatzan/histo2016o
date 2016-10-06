@@ -17,7 +17,7 @@ import org.histo.dao.LogDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.History;
 import org.histo.model.Log;
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.LogAble;

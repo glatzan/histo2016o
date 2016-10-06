@@ -2,7 +2,7 @@ package org.histo.model.util;
 
 import org.hibernate.envers.RevisionListener;
 import org.histo.model.Log;
-import org.histo.model.UserAcc;
+import org.histo.model.HistoUser;
 import org.histo.model.patient.Patient;
 import org.histo.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -31,7 +31,7 @@ public class LogListener implements RevisionListener {
 	public void newRevision(Object revisionEntity) {
 		Log revEntity = (Log) revisionEntity;
 		// setting user who has changed the object
-		UserAcc user = (UserAcc) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		revEntity.setUserAcc(user);
 
 		// sets the log info if present, gets the info from the
