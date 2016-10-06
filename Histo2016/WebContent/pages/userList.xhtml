@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:body>
+
+	<ui:composition template="../template/layout.xhtml">
+
+		<!-- Header -->
+		<ui:define name="header">
+			<ui:include src="header.xhtml" />
+		</ui:define>
+
+		<!-- Navigation -->
+		<ui:define name="navigation">
+			<ui:include src="navigation.xhtml"></ui:include>
+		</ui:define>
+
+		<ui:define name="content">
+			<!-- Navigation Bar -->
+			<h:panelGrid columns="2" styleClass="navigation">
+				<h:panelGroup
+					rendered="#{worklistHandlerAction.selectedPatient ne null}">
+
+					<!-- Name -->
+					<h:commandLink update="navigationForm contentForm"
+						actionListener="#{worklistHandlerAction.deselectTask(worklistHandlerAction.selectedPatient)}">
+						<h:outputFormat value="#{msg['bodyNavigationOverview']}"
+							styleClass="navigationText">
+							<f:param
+								value="#{worklistHandlerAction.selectedPatient.person.name}" />
+							<f:param
+								value="#{worklistHandlerAction.selectedPatient.person.surname}" />
+							<f:param value="#{worklistHandlerAction.selectedPatient.piz}" />
+						</h:outputFormat>
+					</h:commandLink>
+
+					<!-- Auftrag -->
+					<h:commandLink
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
+						actionListener="#{worklistHandlerAction.deselectTask(worklistHandlerAction.selectedPatient)}">
+						<h:outputFormat value="#{msg['bodyNavigationTask']}"
+							styleClass="navigationText">
+							<f:param
+								value="#{helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate)}" />
+							<f:param
+								value="#{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
+						</h:outputFormat>
+					</h:commandLink>
+
+				</h:panelGroup>
+			</h:panelGrid>
+			<!-- Navigation Bar -->
+
+			<p:panel style="width:100%;"
+				styleClass=" collapsedBorders noPadding noBorders">
+				<ui:include
+					src="#{worklistHandlerAction.getCenterView(worklistHandlerAction.worklistDisplay)}"></ui:include>
+			</p:panel>
+
+		</ui:define>
+	</ui:composition>
+
+
+
+</h:body>
+</html>
