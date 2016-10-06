@@ -46,8 +46,9 @@ public class HistoSettings {
 	public static final String DIALOG_ARCHIV_BLOCK = "/pages/dialog/task/archiveBlock";
 	public static final String DIALOG_ARCHIV_TASK = "/pages/dialog/task/archiveTask";
 	public static final String DIALOG_PATIENT_LOG = "/pages/dialog/history/patientLog";
+	public static final String DIALOG_ALL_STAINING_PERFORMED = "/pages/dialog/task/staingingPerformed";
+	
 
-	public static final int DIALOG_STAINING_PERFORMED = 5;
 	public static final int DIALOG_ADD_SLIDE_RESTAINING = 6;
 	public static final int DIALOG_SETTINGS = 7;
 	public static final int DIALOG_LOGOUT = 9;
@@ -59,7 +60,6 @@ public class HistoSettings {
 
 	static {
 		Map<Integer, String> tmpMap = new HashMap<>();
-		tmpMap.put(DIALOG_STAINING_PERFORMED, "/pages/dialog/task/staingingPerformed");
 		tmpMap.put(DIALOG_ADD_SLIDE_RESTAINING, "/pages/dialog/task/addSlideRestaining");
 		tmpMap.put(DIALOG_SETTINGS, "/pages/dialog/settings/settings");
 		tmpMap.put(DIALOG_LOGOUT, "/pages/dialog/logout");

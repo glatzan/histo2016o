@@ -51,7 +51,7 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	/**
 	 * ID in block
 	 */
-	private String blockID;
+	private String blockID = "";
 
 	/**
 	 * Number increases with every staining
@@ -66,7 +66,7 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	/**
 	 * Date of sample creation
 	 */
-	private Date generationDate;
+	private long generationDate;
 
 	/**
 	 * Wenn true wird dieser block nicht mehr angezeigt.
@@ -140,11 +140,11 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	}
 
 	@Basic
-	public Date getGenerationDate() {
+	public long getGenerationDate() {
 		return generationDate;
 	}
 
-	public void setGenerationDate(Date generationDate) {
+	public void setGenerationDate(long generationDate) {
 		this.generationDate = generationDate;
 	}
 
@@ -162,7 +162,7 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(generationDate, new Date(System.currentTimeMillis())))
+		if (TimeUtil.isDateOnSameDay(generationDate, System.currentTimeMillis()))
 			return true;
 		return false;
 	}

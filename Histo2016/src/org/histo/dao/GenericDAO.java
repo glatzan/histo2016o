@@ -91,7 +91,8 @@ public class GenericDAO extends AbstractDAO {
 		// passing variables to the revisionListener
 		if (logInfo != null){
 			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
-		}
+		}else
+			System.out.println("LOGINFO = NULL: " + object.getClass());
 			
 		Session session = getSession();
 

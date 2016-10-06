@@ -12,59 +12,94 @@ import org.histo.ui.StainingListChooser;
 
 public class SlideUtil {
 
-    /**
-     * Erstellt einen Liste mit Färbungen, die ausgewählt werden können um sie einem Block hinzuzufügen
-     * 
-     * @param stainingPrototypes
-     * @return
-     */
-    public final static ArrayList<StainingListChooser> getStainingListChooser(List<StainingPrototype> stainingPrototypes) {
-	ArrayList<StainingListChooser> res = new ArrayList<StainingListChooser>();
-	for (StainingPrototype staining : stainingPrototypes) {
-	    res.add(new StainingListChooser(staining));
+	/**
+	 * Erstellt einen Liste mit Färbungen, die ausgewählt werden können um sie
+	 * einem Block hinzuzufügen
+	 * 
+	 * @param stainingPrototypes
+	 * @return
+	 */
+	public final static ArrayList<StainingListChooser> getStainingListChooser(
+			List<StainingPrototype> stainingPrototypes) {
+		ArrayList<StainingListChooser> res = new ArrayList<StainingListChooser>();
+		for (StainingPrototype staining : stainingPrototypes) {
+			res.add(new StainingListChooser(staining));
+		}
+		return res;
 	}
-	return res;
-    }
 
-    /**
-     * Überprüft einen Task ob alle Objektträger gefärbt wurden
-     * 
-     * @param task
-     * @return
-     */
-    public final static boolean checkIfAtLeastOnSlide(Task task) {
-	for (Sample sample : task.getSamples()) {
-	    if (!checkIfAtLeastOnSlide(sample))
-		return false;
+	/**
+	 * Überprüft einen Task ob alle Objektträger gefärbt wurden
+	 * 
+	 * @param task
+	 * @return
+	 */
+	public final static boolean checkIfAtLeastOnSlide(Task task) {
+		for (Sample sample : task.getSamples()) {
+			if (!checkIfAtLeastOnSlide(sample))
+				return false;
+		}
+		return true;
 	}
-	return true;
-    }
 
-    /**
-     * Überprüft eine Probe ob alle Objektträger gefärbt wurden
-     * 
-     * @param sample
-     * @return
-     */
-    public final static boolean checkIfAtLeastOnSlide(Sample sample) {
-	boolean atLeastOneSlide = false;
+	/**
+	 * Überprüft eine Probe ob alle Objektträger gefärbt wurden
+	 * 
+	 * @param sample
+	 * @return
+	 */
+	public final static boolean checkIfAtLeastOnSlide(Sample sample) {
+		boolean atLeastOneSlide = false;
+
+		for (Block block : sample.getBlocks()) {
+			// weiter, wenn block archiviert wurde
+			if (block.isArchived())
+				continue;
+
+			lone: for (Slide slide : block.getSlides()) {
+
+				// weiter, wenn slide archiviert wurde
+				if (slide.isArchived())
+					continue;
+
+				atLeastOneSlide = true;
+				break lone;
+			}
+		}
+
+		return atLeastOneSlide;
+	}
 	
-	for (Block block : sample.getBlocks()) {
-	    // weiter, wenn block archiviert wurde
-	    if (block.isArchived())
-		continue;
+	/**
+	 * Checks if all slides are staind and stets the allStainingsPerformed flag
+	 * in the task object to true.
+	 * 
+	 * @param sample
+	 */
+	public static final boolean checkIfAllSlidesAreStained(Task task) {
+		boolean allPerformed = true;
+		for (Sample sample : task.getSamples()) {
+			// übersprinen, wenn sample archiviert wurde
+			if (sample.isArchived())
+				continue;
 
-	    lone: for (Slide slide : block.getSlides()) {
-		
-		// weiter, wenn slide archiviert wurde
-		if (slide.isArchived())
-		    continue;
+			// nur als completed markieren wenn mindestens eine Färbung
+			// vorhanden ist
+			if (sample.isStainingPerformed() && SlideUtil.checkIfAtLeastOnSlide(sample))
+				sample.setReStainingPhase(true);
+			else {
+				allPerformed = false;
+			}
 
-		atLeastOneSlide = true;
-		break lone;
-	    }
+		}
+
+		if (allPerformed) {
+			task.setStainingCompleted(true);
+			task.setStainingCompletionDate(System.currentTimeMillis());
+		} else
+			task.setStainingCompleted(false);
+
+		return allPerformed;
 	}
-	
-	return atLeastOneSlide;
-    }
+
 }

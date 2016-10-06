@@ -42,7 +42,7 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	@Autowired
 	private LogDAO logDAO;
-	
+
 	private static final long serialVersionUID = -1214161114824263589L;
 
 	private Diagnosis tmpDiagnosis;
@@ -95,8 +95,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	public void createDiagnosisFromGui(Sample sample, int type) {
 		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
 
-		createDiagnosis(sample,type);
-		
+		createDiagnosis(sample, type);
+
 		genericDAO.save(sample);
 		genericDAO.refresh(sample.getPatient());
 
@@ -104,7 +104,8 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	public void createDiagnosis(Sample sample, int type) {
 		Diagnosis diagnosis = TaskUtil.createNewDiagnosis(sample, type);
-		genericDAO.save(diagnosis, resourceBundle.get("log.patient.task.sample.diagnosis.new",sample.getSampleID(), diagnosis.getName()), diagnosis.getPatient());
+		genericDAO.save(diagnosis, resourceBundle.get("log.patient.task.sample.diagnosis.new",
+				sample.getParent().getTaskID(), sample.getSampleID(), diagnosis.getName()), diagnosis.getPatient());
 		// TODO change to sample
 		helper.updateRevision(diagnosis);
 	}
@@ -155,12 +156,12 @@ public class DiagnosisHandlerAction implements Serializable {
 
 			for (Diagnosis diagnosisIter : sample.getDiagnoses()) {
 				diagnosisIter.setFinalized(true);
-				diagnosisIter.setFinalizedDate(new Date(System.currentTimeMillis()));
+				diagnosisIter.setFinalizedDate(System.currentTimeMillis());
 			}
 
 		} else {
 			diagnosis.setFinalized(true);
-			diagnosis.setFinalizedDate(new Date(System.currentTimeMillis()));
+			diagnosis.setFinalizedDate(System.currentTimeMillis());
 		}
 
 		genericDAO.save(diagnosis, resourceBundle.get("log.patient.diagnosis.finaziled"), diagnosis.getPatient());
@@ -194,7 +195,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void unfinalizeDiagnosis(Diagnosis diagnosis) {
 		diagnosis.setFinalized(false);
-		diagnosis.setFinalizedDate(null);
+		diagnosis.setFinalizedDate(0);
 		genericDAO.save(diagnosis, resourceBundle.get("log.patient.diagnosis.unfinalize"), diagnosis.getPatient());
 
 		hideUnfinalizeDiangosisDialog();
@@ -208,7 +209,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void saveDiagnosis(Diagnosis diagnosis) {
 		logDAO.getDiagnosisRevisions(diagnosis);
-		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.patient.diagnosis.changed"), diagnosis.getPatient());
+		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.patient.diagnosis.changed"),
+				diagnosis.getPatient());
 		helper.updateRevision(diagnosis);
 	}
 

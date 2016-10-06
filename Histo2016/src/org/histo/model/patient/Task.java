@@ -60,7 +60,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * Generated Task ID as String
 	 */
-	private String taskID;
+	private String taskID = "";
 
 	/**
 	 * The Patient of the task;
@@ -70,27 +70,27 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * Date of creation
 	 */
-	private long creationDate;
+	private long creationDate = 0;
 
 	/**
 	 * The date of the sugery
 	 */
-	private long dateOfSugery;
+	private long dateOfSugery = 0 ;
 	
 	/**
 	 * Date of reception of the first material
 	 */
-	private long dateOfReceipt;
+	private long dateOfReceipt = 0;
 
 	/**
 	 * The dueDate
 	 */
-	private long dueDate;
+	private long dueDate = 0;
 	
 	/**
 	 * If a dueDate is given
 	 */
-	private boolean dueDateSelected;
+	private boolean dueDateSelected = false;
 
 	/**
 	 * Liste aller Personen die über die Diangose informiert werden sollen.
@@ -105,22 +105,22 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * Commentary TODO: is used=
 	 */
-	private String commentray;
+	private String commentray  = "";
 
 	/**
 	 * Details of the case
 	 */
-	private String caseHistory;
+	private String caseHistory  = "";
 
 	/**
 	 * Ward of the patient
 	 */
-	private String ward;
+	private String ward  = "";
 
 	/**
 	 * Ey of the samples right/left/both
 	 */
-	private byte eye;
+	private byte eye = EYE_RIGHT;
 
 	/**
 	 * Sample count, is incemented with every new sample
@@ -135,27 +135,27 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * Der Task ist archiviert und wird nicht mehr angezeigt wenn true
 	 */
-	private boolean archived;
+	private boolean archived = false;
 
 	/**
 	 * all stainings completed
 	 */
-	private boolean stainingCompleted;
+	private boolean stainingCompleted = false;
 
 	/**
 	 * date of staining completion
 	 */
-	private long stainingCompletionDate;
+	private long stainingCompletionDate = 0;
 
 	/**
 	 * True if every diagnosis is finalized
 	 */
-	private boolean diagnosisCompleted;
+	private boolean diagnosisCompleted = false;
 
 	/**
 	 * Date of diagnosis finalization
 	 */
-	private long diagnosisCompletionDate;
+	private long diagnosisCompletionDate = 0;
 
 	/**
 	 * Generated PDFs of this task
@@ -425,7 +425,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.eye = eye;
 	}
 
-	@OneToMany(mappedBy = "parent", cascade = { CascadeType.REFRESH, CascadeType.ALL }, fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL , fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	public List<Sample> getSamples() {
@@ -691,7 +691,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
-	@ManyToOne
+	@ManyToOne(targetEntity = Patient.class)
 	public Patient getParent() {
 		return parent;
 	}

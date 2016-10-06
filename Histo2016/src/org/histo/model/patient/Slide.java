@@ -37,15 +37,15 @@ public class Slide implements TaskTree<Block>, LogAble {
 	
 	private long version;
 
-	private Date generationDate;
+	private long generationDate;
 
-	private String slideID;
+	private String slideID = "";
 
 	private boolean stainingPerformed;
 
 	private boolean reStaining;
 
-	private String commentary;
+	private String commentary = "";
 
 	private StainingPrototype slidePrototype;
 
@@ -100,11 +100,11 @@ public class Slide implements TaskTree<Block>, LogAble {
 	}
 	
 	@Basic
-	public Date getGenerationDate() {
+	public long getGenerationDate() {
 		return generationDate;
 	}
 
-	public void setGenerationDate(Date generationDate) {
+	public void setGenerationDate(long generationDate) {
 		this.generationDate = generationDate;
 	}
 

@@ -48,7 +48,7 @@ public class TaskUtil {
 	 */
 	public final static Sample createNewSample(Task task) {
 		Sample sample = new Sample();
-		sample.setGenerationDate(new Date(System.currentTimeMillis()));
+		sample.setGenerationDate(System.currentTimeMillis());
 		sample.setSampleID(getRomanNumber(task.getSampleNumer()));
 		sample.setParent(task);
 		task.getSamples().add(sample);
@@ -64,7 +64,7 @@ public class TaskUtil {
 	 */
 	public final static Diagnosis createNewDiagnosis(Sample sample, int type) {
 		Diagnosis diagnosis = new Diagnosis();
-		diagnosis.setGenerationDate(new Date(System.currentTimeMillis()));
+		diagnosis.setGenerationDate(System.currentTimeMillis());
 		diagnosis.setType(type);
 		diagnosis.setDiagnosisOrder(sample.getDiagnosisNumber());
 		diagnosis.setName(getDiagnosisName(sample, diagnosis));
@@ -101,7 +101,7 @@ public class TaskUtil {
 	public final static Slide createNewStaining(Block block, StainingPrototype prototype) {
 		Slide staining = new Slide();
 		staining.setReStaining(block.getParent().isReStainingPhase());
-		staining.setGenerationDate(new Date(System.currentTimeMillis()));
+		staining.setGenerationDate(System.currentTimeMillis());
 		staining.setSlidePrototype(prototype);
 		staining.setParent(block);
 

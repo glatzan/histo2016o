@@ -48,8 +48,9 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	@Expose
 	private long id;
 
+	@Expose
 	private long version;
-	
+
 	/**
 	 * PIZ
 	 */
@@ -65,8 +66,8 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	/**
 	 * True if insurance is private
 	 */
-	private boolean privateInsurance;
-	
+	private boolean privateInsurance = false;
+
 	/**
 	 * True if patient was added as an external patient.
 	 */
@@ -96,9 +97,9 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	private Task selectedTask;
 
 	/**
-	 * Wenn archived true ist, wird dieser patient nicht mehr angezeigt
+	 * If true the patient is archived. Thus he won't be displayed.
 	 */
-	private boolean archived;
+	private boolean archived = false;
 
 	@Transient
 	public String asGson() {
@@ -130,7 +131,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	public void setVersion(long version) {
 		this.version = version;
 	}
-	
+
 	@Column
 	public String getPiz() {
 		return piz;
@@ -140,7 +141,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 		this.piz = piz;
 	}
 
-	@OneToMany(cascade = {CascadeType.REFRESH, CascadeType.ALL}, mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL , mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id DESC")
 	public List<Task> getTasks() {
@@ -198,7 +199,6 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	public void setSelectedTask(Task selectedTask) {
 		this.selectedTask = selectedTask;
 	}
-	
 
 	public boolean isPrivateInsurance() {
 		return privateInsurance;
@@ -207,10 +207,10 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	public void setPrivateInsurance(boolean privateInsurance) {
 		this.privateInsurance = privateInsurance;
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-
 
 	/********************************************************
 	 * Interface DiagnosisStatus
@@ -223,7 +223,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	@Transient
 	public boolean isDiagnosisPerformed() {
 		for (Task task : tasks) {
-			
+
 			if (task.isArchived())
 				continue;
 
@@ -241,7 +241,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	@Transient
 	public boolean isDiagnosisNeeded() {
 		for (Task task : tasks) {
-			
+
 			if (task.isArchived())
 				continue;
 
@@ -259,7 +259,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	@Transient
 	public boolean isReDiagnosisNeeded() {
 		for (Task task : tasks) {
-			
+
 			if (task.isArchived())
 				continue;
 
@@ -393,20 +393,22 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	@Override
 	public void setParent(Patient parent) {
 	}
+
 	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
 	@Transient
-	public ArrayList<Task> getActivTasks(){
+	public ArrayList<Task> getActivTasks() {
 		ArrayList<Task> result = new ArrayList<>();
 		for (Task task : tasks) {
-			if(task.isArchived())
+			if (task.isArchived())
 				continue;
-			
-			if(task.isCurrentlyActive() || task.isDiagnosisNeeded() || task.isReDiagnosisNeeded() || task.isStainingNeeded() || task.isReStainingNeeded())
+
+			if (task.isCurrentlyActive() || task.isDiagnosisNeeded() || task.isReDiagnosisNeeded()
+					|| task.isStainingNeeded() || task.isReStainingNeeded())
 				result.add(task);
 		}
-		
+
 		return result;
 	}
 

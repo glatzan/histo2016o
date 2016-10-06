@@ -20,11 +20,17 @@
 				</p:column>
 				<p:column>
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						styleClass="taskCalendar"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}" />
+						styleClass="taskCalendar" id="receiptDate"
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
+						<p:ajax event="dateSelect"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}"
+							update="receiptDate" />
+						<f:ajax event="change" execute="@this" render="receiptDate"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+					</p:calendar>
 				</p:column>
 
-				<!-- Termin Datum -->
+				<!-- Termin Date -->
 				<p:column>
 					<h:outputLabel value="#{msg['body.receiptlog.taskDueDate']}" />
 				</p:column>
@@ -33,12 +39,21 @@
 						<p:selectBooleanCheckbox style="padding-right:5px;"
 							title="#{msg['body.receiptlog.taskDueDate.hint']}"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
-							<p:ajax update="navigationForm contentForm"></p:ajax>
+							<p:ajax event="change" execute="@this"
+								update="navigationForm contentForm"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate',worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected)}">
+							</p:ajax>
 						</p:selectBooleanCheckbox>
 						<p:calendar pattern="dd.MM.yyyy" mask="true"
-							styleClass="taskCalendar"
+							styleClass="taskCalendar" id="dueDate"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
-							disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}" />
+							disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
+							<p:ajax event="dateSelect"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate.date',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}"
+								update="dueDate" />
+							<f:ajax event="change" execute="@this" render="dueDate"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate.date',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}" />
+						</p:calendar>
 					</h:panelGrid>
 				</p:column>
 
@@ -97,6 +112,10 @@
 							itemValue="beck" />
 						<f:selectItem itemLabel="#{msg['body.receiptlog.ward.axenfeld']}"
 							itemValue="axenfeld" />
+
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.ward',worklistHandlerAction.selectedPatient.selectedTask.ward)}" />
+
 					</p:selectOneMenu>
 				</p:column>
 
@@ -104,8 +123,9 @@
 				<p:column>
 					<p:outputLabel value="#{msg['body.receiptlog.material']}" />
 				</p:column>
-				<p:column rowspan="2">
-					<h:panelGrid columns="2">
+				<p:column rowspan="2" styleClass="verticalAlignTopAll">
+					<p:panelGrid columns="2"
+						styleClass="noBordersAll collapsedBordersAll verticalAlignMiddleAll smallPaddingAll">
 						<!-- TODO Update background object, e.g. .blure() (inputtext) -->
 						<c:forEach
 							items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
@@ -119,9 +139,12 @@
 								<f:selectItems
 									value="#{taskHandlerAction.allAvailableMaterials}" var="list"
 									itemLabel="#{list.name}" itemValue="#{list.name}" />
+
+								<p:ajax event="change" execute="@this"
+									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.sample.material',worklistHandlerAction.selectedPatient.selectedTask.taskID,sample.material.name)}" />
 							</p:selectOneMenu>
 						</c:forEach>
-					</h:panelGrid>
+					</p:panelGrid>
 				</p:column>
 
 				<!-- contact -->
@@ -190,7 +213,10 @@
 				</p:column>
 				<p:column>
 					<p:inputTextarea rows="2" cols="22" id="stroyField"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}" />
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}">
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.caseHistory',worklistHandlerAction.selectedPatient.selectedTask.caseHistory)}" />
+					</p:inputTextarea>
 					<p:watermark value="#{msg['body.receiptlog.story.watermark']}"
 						for="stroyField" />
 				</p:column>
@@ -210,6 +236,9 @@
 							itemValue="1" />
 						<f:selectItem itemLabel="#{msg['body.receiptlog.eye.left']}"
 							itemValue="2" />
+
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.eye',worklistHandlerAction.selectedPatient.selectedTask.eye)}" />
 					</p:selectOneButton>
 				</p:column>
 
@@ -599,9 +628,10 @@
 												</h:panelGroup>
 
 												<!-- ********** Info Button ********** -->
-												<p:commandLink id="info" type="button" styleClass="noUnderlineAtLink"
+												<p:commandLink id="info" type="button"
+													styleClass="noUnderlineAtLink"
 													title="#{stainingRow.staining.commentary}"
-													rendered="#{stainingRow.staining.commentary ne null}">
+													rendered="#{stainingRow.staining.commentary ne ''}">
 													<i class="fa fa-fw fa-info-circle" />
 												</p:commandLink>
 											</h:panelGroup>
@@ -614,7 +644,8 @@
 											<h:panelGroup rendered="#{stainingRow.sampleType}"
 												style="float: right">
 												<!-- ********** New Block Button ********** -->
-												<p:commandLink title="#{msg['body.statiningView.newBlock']}" styleClass="noUnderlineAtLink"
+												<p:commandLink title="#{msg['body.statiningView.newBlock']}"
+													styleClass="noUnderlineAtLink"
 													update="navigationForm contentForm"
 													actionListener="#{taskHandlerAction.createNewBlockFromGui(stainingRow.sample)}">
 													<i class="fa fa-fw fa-th-large"></i>
@@ -634,7 +665,8 @@
 												style="float: right">
 												<!-- ********** New Staining Button ********** -->
 												<p:commandLink
-													title="#{msg['body.statiningView.newStaining']}" styleClass="noUnderlineAtLink"
+													title="#{msg['body.statiningView.newStaining']}"
+													styleClass="noUnderlineAtLink"
 													actionListener="#{slideHandlerAction.prepareAddSlideDialog(stainingRow.block)}">
 													<i class="fa fa-fw fa-paint-brush"></i>
 													<p:ajax event="dialogReturn"
@@ -682,12 +714,6 @@
 							</p:panelGrid>
 
 							<h:panelGrid columns="5" style="margin-top:10px;">
-
-								<p:commandButton icon="fa fa-fw fa-save"
-									update="navigationForm contentForm"
-									value="#{msg['general.save']}"
-									process="navigationForm contentForm"
-									actionListener="#{slideHandlerAction.saveStainings(worklistHandlerAction.selectedPatient.selectedTask)}" />
 
 								<!-- New sample -->
 								<p:commandButton icon="fa fa-fw fa-plus-circle"

@@ -56,17 +56,17 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	/**
 	 * Sample ID as string
 	 */
-	private String sampleID;
+	private String sampleID = "";
 
 	/**
 	 * Date of sample creation
 	 */
-	private Date generationDate;
+	private long generationDate = 0;
 
 	/**
-	 * Number of the staining batch,
+	 * If true the not completed stainings are restainings.
 	 */
-	private boolean reStainingPhase;
+	private boolean reStainingPhase = false;
 
 	/**
 	 * block number
@@ -97,8 +97,8 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	 * Material name is first initialized with the name of the typeOfMaterial.
 	 * Can be later changed.
 	 */
-	private String material;
-	
+	private String material = "";
+	 
 	/**
 	 * Material object, containing preset for staining
 	 */
@@ -188,11 +188,11 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	}
 
 	@Basic
-	public Date getGenerationDate() {
+	public long getGenerationDate() {
 		return generationDate;
 	}
 
-	public void setGenerationDate(Date generationDate) {
+	public void setGenerationDate(long generationDate) {
 		this.generationDate = generationDate;
 	}
 
@@ -345,7 +345,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(generationDate, new Date(System.currentTimeMillis())))
+		if (TimeUtil.isDateOnSameDay(generationDate, System.currentTimeMillis()))
 			return true;
 		return false;
 	}

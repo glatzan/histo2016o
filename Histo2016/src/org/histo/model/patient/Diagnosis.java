@@ -67,13 +67,13 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * Date of diagnosis creation.
 	 */
 	@Expose
-	private Date generationDate;
+	private long generationDate;
 
 	/**
 	 * Date of diagnosis finalization.
 	 */
 	@Expose
-	private Date finalizedDate;
+	private long finalizedDate;
 
 	/**
 	 * True if finalized.
@@ -85,13 +85,13 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * Name of the diagnosis.
 	 */
 	@Expose
-	private String name;
+	private String name = "";
 
 	/**
 	 * Diagnosis as short string.
 	 */
 	@Expose
-	private String diagnosis;
+	private String diagnosis = "";
 
 	/**
 	 * True if finding is malign.
@@ -103,13 +103,13 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * ICD10 Number of this diagnosis
 	 */
 	@Expose
-	private String icd10;
+	private String icd10 = "";
 	
 	/**
 	 * Commentary for internal purpose.
 	 */
 	@Expose
-	private String commentary;
+	private String commentary = "";
 
 	/**
 	 * Diagnosis type, normal = 0, follow up = 1 , revision = 2.
@@ -129,7 +129,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	private DiagnosisPrototype diagnosisPrototype;
 	
 	// TODO is used?
-	private String extendedDiagnosisText;
+	private String extendedDiagnosisText = "";
 
 	/********************************************************
 	 * Getter/Setter
@@ -164,11 +164,11 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	}
 
 	@Basic
-	public Date getGenerationDate() {
+	public long getGenerationDate() {
 		return generationDate;
 	}
 
-	public void setGenerationDate(Date generationDate) {
+	public void setGenerationDate(long generationDate) {
 		this.generationDate = generationDate;
 	}
 
@@ -191,11 +191,11 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	}
 
 	@Basic
-	public Date getFinalizedDate() {
+	public long getFinalizedDate() {
 		return finalizedDate;
 	}
 
-	public void setFinalizedDate(Date finalizedDate) {
+	public void setFinalizedDate(long finalizedDate) {
 		this.finalizedDate = finalizedDate;
 	}
 

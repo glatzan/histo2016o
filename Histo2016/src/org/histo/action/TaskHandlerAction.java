@@ -33,6 +33,7 @@ import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.FileUtil;
 import org.histo.util.PdfUtil;
 import org.histo.util.ResourceBundle;
+import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -66,6 +67,9 @@ public class TaskHandlerAction implements Serializable {
 
 	@Autowired
 	private ResourceBundle resourceBundle;
+
+	@Autowired
+	private WorklistHandlerAction worklistHandlerAction;
 
 	private HashMap<String, String> selectableWards;
 
@@ -196,10 +200,12 @@ public class TaskHandlerAction implements Serializable {
 
 		createNewSample(task, material);
 
+		// checking if staining flag of the task object has to be false
+		SlideUtil.checkIfAllSlidesAreStained(task);
 		// generating gui list
 		task.generateStainingGuiList();
-
-		genericDAO.save(patient, resourceBundle.get("log.patient.save"), patient);
+		// saving patient
+		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
 		hideNewTaskDialog();
 	}
@@ -241,9 +247,16 @@ public class TaskHandlerAction implements Serializable {
 	 * @param task
 	 * @param material
 	 */
-	public void createNewSampleForGui(Task task, MaterialPreset material) {
+	public void createNewSampleFromGui(Task task, MaterialPreset material) {
 		createNewSample(task, material);
+
+		// checking if staining flag of the task object has to be false
+		SlideUtil.checkIfAllSlidesAreStained(task);
+		// generating gui list
+		task.generateStainingGuiList();
+		// saving patient
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
+
 		hideNewSampleDialog();
 	}
 
@@ -259,12 +272,12 @@ public class TaskHandlerAction implements Serializable {
 		sample.setMaterilaPreset(material);
 		sample.setMaterial(material.getName());
 
-		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", sample.getSampleID()),
+		genericDAO.save(sample,
+				resourceBundle.get("log.patient.task.sample.new", task.getTaskID(), sample.getSampleID()),
 				task.getPatient());
 
 		// creating first default diagnosis
 		diagnosisHandlerAction.createDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS);
-
 		// creating needed blocks
 		createNewBlock(sample);
 	}
@@ -285,9 +298,15 @@ public class TaskHandlerAction implements Serializable {
 	 */
 	public void createNewBlockFromGui(Sample sample) {
 		createNewBlock(sample);
+
+		// checking if staining flag of the task object has to be false
+		SlideUtil.checkIfAllSlidesAreStained(sample.getParent());
+		// generating gui list
+		sample.getParent().generateStainingGuiList();
+		// saving patient
 		genericDAO.save(sample.getPatient(), resourceBundle.get("log.patient.save"), sample.getPatient());
 	}
-	
+
 	/**
 	 * Creates a new block for the given sample. Adds all slides from the
 	 * material preset to the block.
@@ -298,14 +317,14 @@ public class TaskHandlerAction implements Serializable {
 	public void createNewBlock(Sample sample) {
 		Block block = TaskUtil.createNewBlock(sample);
 
-		genericDAO.save(block, resourceBundle.get("log.patient.task.sample.blok.new", block.getParent().getSampleID(),
-				block.getBlockID()), sample.getPatient());
+		genericDAO.save(block, resourceBundle.get("log.patient.task.sample.blok.new",
+				block.getParent().getParent().getTaskID(), block.getParent().getSampleID(), block.getBlockID()),
+				sample.getPatient());
 
 		for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
 			slideHandlerAction.addStaining(proto, block);
 		}
-		
-		sample.getParent().generateStainingGuiList();
+
 	}
 
 	/********************************************************
@@ -346,15 +365,21 @@ public class TaskHandlerAction implements Serializable {
 		String logString = "log.error";
 
 		if (archive instanceof Slide)
-			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived");
+			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived",
+					((Slide) archive).getParent().getParent().getParent().getTaskID(),
+					((Slide) archive).getParent().getParent().getSampleID(), ((Slide) archive).getParent().getBlockID(),
+					((Slide) archive).getSlideID());
 		else if (archive instanceof Diagnosis)
 			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
+					((Diagnosis) archive).getParent().getParent().getTaskID(),
 					((Diagnosis) archive).getParent().getSampleID(), ((Diagnosis) archive).getName());
 		else if (archive instanceof Block)
 			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
-					((Block) archive).getParent().getSampleID(), ((Block) archive).getBlockID());
+					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),
+					((Block) archive).getBlockID());
 		else if (archive instanceof Sample)
-			logString = resourceBundle.get("log.patient.task.sample.archived", ((Sample) archive).getSampleID());
+			logString = resourceBundle.get("log.patient.task.sample.archived",
+					((Sample) archive).getParent().getTaskID(), ((Sample) archive).getSampleID());
 		else if (archive instanceof Task)
 			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
 
@@ -375,6 +400,28 @@ public class TaskHandlerAction implements Serializable {
 
 	/********************************************************
 	 * Archive
+	 ********************************************************/
+
+	/********************************************************
+	 * Task Data
+	 ********************************************************/
+
+	public void taskDataChanged(Task task){
+		taskDataChanged(task, null);
+	}
+	
+	public void taskDataChanged(Task task, String detailedInfoResourcesKey, Object... detailedInfoParams) {
+		String detailedInfoString = "";
+		
+		if(detailedInfoResourcesKey != null)
+			detailedInfoString = resourceBundle.get(detailedInfoResourcesKey, detailedInfoParams);
+		
+		genericDAO.save(task, resourceBundle.get("log.patient.task.dataChange", task.getTaskID(), detailedInfoString), task.getParent());
+		System.out.println("saving data");
+	}
+
+	/********************************************************
+	 * Task Data
 	 ********************************************************/
 
 	/********************************************************

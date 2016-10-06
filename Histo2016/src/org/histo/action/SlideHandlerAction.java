@@ -135,9 +135,13 @@ public class SlideHandlerAction implements Serializable {
 
 		// updating statining list
 		block.getParent().getParent().generateStainingGuiList();
-		
+
+		// if staining is needed set the staining flag of the task object to
+		// true
+		SlideUtil.checkIfAllSlidesAreStained(block.getParent().getParent());
+
 		genericDAO.save(block.getPatient(), resourceBundle.get("log.patient.save"), block.getPatient());
-		
+
 		hideAddSlideDialog();
 
 	}
@@ -215,20 +219,40 @@ public class SlideHandlerAction implements Serializable {
 		switch (getActionOnMany()) {
 		case STAININGLIST_ACTION_PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
-				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
-					stainingTableChooser.getStaining().setStainingPerformed(true);
+				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType() && !stainingTableChooser.getStaining().isStainingPerformed()) {
+					Slide slide = stainingTableChooser.getStaining();
+					slide.setStainingPerformed(true);
+
+					genericDAO.save(slide,
+							resourceBundle.get("log.patient.task.sample.blok.slide.stainingPerformed",
+									slide.getParent().getParent().getParent().getTaskID(),
+									slide.getParent().getParent().getSampleID(), slide.getParent().getBlockID(),
+									slide.getSlideID()),
+							task.getPatient());
+
 				}
 			}
-			// zeige Dialog das Alle Färbungen erledigt wurden.
-			if (updateSlideTree(task)) {
-				helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_STAINING_PERFORMED));
+			// shows dialog for informing the user that all stainings are
+			// performed
+			if (SlideUtil.checkIfAllSlidesAreStained(task)) {
+				helper.showDialog(HistoSettings.DIALOG_ALL_STAINING_PERFORMED);
 			}
 
 			break;
 		case STAININGLIST_ACTION_NOT_PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
-				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
+				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType() && stainingTableChooser.getStaining().isStainingPerformed()) {
 					stainingTableChooser.getStaining().setStainingPerformed(false);
+
+					Slide slide = stainingTableChooser.getStaining();
+					slide.setStainingPerformed(false);
+
+					genericDAO.save(slide,
+							resourceBundle.get("log.patient.task.sample.blok.slide.stainingNotPerformed",
+									slide.getParent().getParent().getParent().getTaskID(),
+									slide.getParent().getParent().getSampleID(), slide.getParent().getBlockID(),
+									slide.getSlideID()),
+							task.getPatient());
 				}
 			}
 			break;
@@ -239,44 +263,13 @@ public class SlideHandlerAction implements Serializable {
 		default:
 			break;
 		}
+		
+		setActionOnMany(STAININGLIST_ACTION_NONE);
 
-	}
-
-	/**
-	 * Geht eine Task durch und schaut ob alle färbungen vollstädnig sind
-	 * 
-	 * @param sample
-	 */
-	public boolean updateSlideTree(Task task) {
-		boolean allPerformed = true;
-		for (Sample sample : task.getSamples()) {
-			// übersprinen, wenn sample archiviert wurde
-			if (sample.isArchived())
-				continue;
-
-			// nur als completed markieren wenn mindestens eine Färbung
-			// vorhanden ist
-			if (sample.isStainingPerformed() && SlideUtil.checkIfAtLeastOnSlide(sample))
-				sample.setReStainingPhase(true);
-			else {
-				allPerformed = false;
-			}
-
-			// log.info("Updating stainings, set stainingCompleted to " +
-			// task.isStainingCompleted());
-		}
-
-		genericDAO.save(task);
-		if (allPerformed){
-			task.setStainingCompleted(true);
-			task.setStainingCompletionDate(System.currentTimeMillis());
-		}else
-			task.setStainingCompleted(false);
-		return allPerformed;
 	}
 
 	public void hideStainingsPerformedDialog() {
-		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_STAINING_PERFORMED));
+		helper.hideDialog(HistoSettings.DIALOG_ALL_STAINING_PERFORMED);
 	}
 
 	/********************************************************
@@ -316,49 +309,15 @@ public class SlideHandlerAction implements Serializable {
 
 		slide.setReStaining(reStaining);
 
-		genericDAO.save(slide,
-				resourceBundle.get("log.patient.task.sample.blok.slide.new",
-						slide.getParent().getParent().getSampleID(), slide.getParent().getBlockID(),
-						slide.getSlideID()),
-				slide.getPatient());
+		genericDAO.save(slide, resourceBundle.get("log.patient.task.sample.blok.slide.new",
+				slide.getParent().getParent().getParent().getTaskID(), slide.getParent().getParent().getSampleID(),
+				slide.getParent().getBlockID(), slide.getSlideID()), slide.getPatient());
 
-		// updating the staining is needed flag of the task object
-		updateSlideTree(block.getParent().getParent());
-		
 	}
+
 	/********************************************************
 	 * Staining Manipulation
 	 ********************************************************/
-
-	/**
-	 * Saves all stainigs, if all stainigs are marked as performed
-	 * prepareStainingsPerformed method is called
-	 * 
-	 * @param sample
-	 */
-	public void saveStainings(Task task) {
-		updateSlideTree(task);
-		genericDAO.save(task);
-	}
-
-	/******************************************************** Diagnosis ********************************************************/
-
-	// public void updateSample(Sample sample) {
-	// boolean completed = true;
-	//
-	// for (Diagnosis diagnosis2 : sample.getDiagnoses()) {
-	// if (!diagnosis2.isFinalized())
-	// completed = false;
-	// }
-	//
-	// if (completed) {
-	// sample.setDiagnosisCompletionDate(System.currentTimeMillis());
-	// sample.setDiagnosisCompleted(true);
-	// } else {
-	// sample.setDiagnosisCompleted(false);
-	// sample.setDiagnosisCompletionDate(System.currentTimeMillis());
-	// }
-	// }
 
 	/********************************************************
 	 * Getter/Setter

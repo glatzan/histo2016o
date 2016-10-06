@@ -35,17 +35,12 @@
 
 			<h:panelGroup styleClass="headerRight" layout="block">
 
-				<p:commandButton value="Test"
-					actionListener="#{contactHandlerAction.sendTest()}" />
-
 				<p:commandButton id="dynaButton" value="Bearbeiten" type="button"
 					icon="ui-icon-triangle-1-s" />
 
 				<!-- Options menu -->
 				<p:tieredMenu overlay="true" trigger="dynaButton" my="left top"
 					at="left bottom" id="tieredOptions">
-					<p:menuitem value="Speichern" />
-					<p:separator />
 					<!-- New -->
 					<p:submenu label="Neu">
 						<p:menuitem value="Neuer Auftrag"
