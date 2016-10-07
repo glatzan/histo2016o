@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.histo.config.enums.Pages;
 import org.histo.config.enums.Role;
 import org.histo.model.util.LogAble;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,9 +33,11 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	private String username;
 
-	private Date lastLogin;
+	private long lastLogin;
 
 	private Role role;
+	
+	private Pages defaultView;
 
 	private Physician physician;
 
@@ -82,11 +85,11 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	}
 
 	@Basic
-	public Date getLastLogin() {
+	public long getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(long lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
@@ -97,6 +100,15 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public Pages getDefaultView() {
+		return defaultView;
+	}
+
+	public void setDefaultView(Pages defaultView) {
+		this.defaultView = defaultView;
 	}
 
 	@Transient

@@ -10,13 +10,18 @@
 	</authentication-manager>
 
 	<http auto-config='true'>
-		<intercept-url pattern="/login*"
-			access="hasAnyRole('ROLE_GUEST','ROLE_USER','ROLE_NONEAUTH')" />
+		
+		<intercept-url pattern="/login*" access="hasRole('ROLE_NONEAUTH')" />
+		<intercept-url pattern="/pages/guest.xhtml" access="hasRole('ROLE_GUEST')" />
+		<intercept-url pattern="/index.xhtml" access="hasRole('ROLE_GUEST')" />
+			
 		<intercept-url pattern="/*"
-			access="hasAnyRole('ROLE_GUEST','ROLE_USER')" />
-		<intercept-url pattern="/pages/index.xhtml"
-			access="hasAnyRole('ROLE_GUEST','ROLE_USER')" />
-		<intercept-url pattern="/pages/**" access="hasRole('ROLE_USER')" />
+			access="hasAnyRole('ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
+		<intercept-url pattern="/pages/**"
+			access="hasAnyRole('ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
+
+	
+
 
 		<csrf disabled="true" />
 

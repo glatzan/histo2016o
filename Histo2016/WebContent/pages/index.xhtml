@@ -18,22 +18,7 @@
 
 	<div class="container">
 		<h:form>
-			<p:panel rendered="#{userHandlerAction.isUserAvailable() and !userHandlerAction.hasRole('user')}">
-				<p:panelGrid columns="2" columnClasses=",headlineRightColumn"
-					style="width:100%" styleClass="noBorders">
-					<h:outputLabel value="Bitte erst freischalten lassen!"></h:outputLabel>
-					<h:panelGroup>
-
-						<p:commandButton 
-							actionListener="#{userHandlerAction.changeRoleForCurrentUser('ROLE_MODERATOR')}"
-							action="#{worklistHandlerAction.goToWorkList()}"
-							value="Freischalten"></p:commandButton>
-						<p:button href="/spring_logout" value="Logout"></p:button>
-					</h:panelGroup>
-				</p:panelGrid>
-			</p:panel>
-
-			
+			<h:outputLabel value="index"></h:outputLabel>
 		</h:form>
 	</div>
 </h:body>

@@ -7,10 +7,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.histo.model.UserRole;
+import org.histo.config.enums.Pages;
+import org.histo.config.enums.Role;
+import org.histo.model.HistoUser;
 import org.histo.util.UserUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
@@ -20,50 +23,82 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-	handle(request, response, authentication);
-	clearAuthenticationAttributes(request);
-    }
-
-    protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-	String targetUrl = determineTargetUrl(authentication);
-
-	if (response.isCommitted()) {
-	    System.out.println("Response has already been committed. Unable to redirect to " + targetUrl);
-	    return;
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException {
+		handle(request, response, authentication);
+		clearAuthenticationAttributes(request);
 	}
 
-	redirectStrategy.sendRedirect(request, response, targetUrl);
-    }
+	protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+			throws IOException {
+		String targetUrl = determineTargetUrl(authentication);
 
-    /** Builds the target URL according to the logic defined in the main class Javadoc. */
-    protected String determineTargetUrl(Authentication authentication) {
-        System.out.println("working");
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+		if (response.isCommitted()) {
+			System.out.println("Response has already been committed. Unable to redirect to " + targetUrl);
+			return;
+		}
 
-        if(UserUtil.accessByUserLevel((Collection<UserRole>) authorities,UserRole.ROLE_LEVEL_USER))
-            return "/pages/worklist/workList.xhtml";
-        else
-            return "/pages/index.xhtml";
-        
-    }
-
-    protected void clearAuthenticationAttributes(HttpServletRequest request) {
-	HttpSession session = request.getSession(false);
-	if (session == null) {
-	    return;
+		redirectStrategy.sendRedirect(request, response, targetUrl);
 	}
-	session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-    }
 
-    public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
-	this.redirectStrategy = redirectStrategy;
-    }
+	/**
+	 * Returns the base URL according to the users role
+	 */
+	protected String determineTargetUrl(Authentication authentication) {
+		if ((authentication.getPrincipal() instanceof HistoUser)) {
 
-    protected RedirectStrategy getRedirectStrategy() {
-	return redirectStrategy;
-    }
+			HistoUser user = (HistoUser) authentication.getPrincipal();
+
+			Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+
+			Collection<Role> roles = (Collection<Role>) authorities;
+
+			Role userRole = null;
+			if (!roles.isEmpty()) {
+				userRole = roles.iterator().next();
+			} else {
+				return Pages.LOGIN.getPath();
+			}
+
+			if (userRole == Role.NONE_AUTH)
+				// no role, should never happen
+				return Pages.LOGIN.getPath();
+			else if (userRole == Role.GUEST)
+				// guest need to be unlocked first
+				return Pages.GUEST.getPath();
+			else if (userRole == Role.SCIENTIST)
+				// no names are displayed
+				return Pages.SCIENTIST.getPath();
+			else if (userRole.getRoleValue() >= Role.USER.getRoleValue()) {
+				// if a default view is selected for the user
+				if (user.getDefaultView() != null)
+					return user.getDefaultView().getPath();
+
+				// normal work environment
+				return Pages.WORKLIST_PATIENT.getPath();
+			} else
+				return Pages.LOGIN.getPath();
+		}
+
+		return Pages.LOGIN.getPath();
+	}
+
+	protected void clearAuthenticationAttributes(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			return;
+		}
+		session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+	}
+
+	public void setRedirectStrategy(RedirectStrategy redirectStrategy) {
+		this.redirectStrategy = redirectStrategy;
+	}
+
+	protected RedirectStrategy getRedirectStrategy() {
+		return redirectStrategy;
+	}
 }

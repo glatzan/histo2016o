@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.Person;
@@ -34,8 +35,11 @@ public class PatientHandlerAction implements Serializable {
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	PatientDao patientDao;
-
+	private PatientDao patientDao;
+	
+	@Autowired
+	private MainHandlerAction mainHandlerAction;
+	
 	/**
 	 * Tabindex of the addPatient dialog
 	 */
@@ -92,7 +96,7 @@ public class PatientHandlerAction implements Serializable {
 
 		setSelectedPatientFromSearchList(null);
 
-		helper.showDialog(HistoSettings.DIALOG_PATIENT_ADD, 1024, 600, false, false, true);
+		mainHandlerAction.showDialog(Dialog.WORKLIST_ADD_PATIENT);
 	}
 
 	/**
@@ -109,7 +113,7 @@ public class PatientHandlerAction implements Serializable {
 		genericDAO.save(patient, resourceBundle.get("log.patient.extern.new", patient.getPerson().getName(),
 				patient.getPerson().getSurname()), patient);
 
-		hidePatientDialog();
+		mainHandlerAction.hideDialog(Dialog.WORKLIST_ADD_PATIENT);
 	}
 
 	/**
@@ -135,15 +139,8 @@ public class PatientHandlerAction implements Serializable {
 			} else
 				genericDAO.save(patient, resourceBundle.get("log.patient.search.update"), patient);
 
-			hidePatientDialog();
+			mainHandlerAction.hideDialog(Dialog.WORKLIST_ADD_PATIENT);
 		}
-	}
-
-	/**
-	 * Hides the "/pages/dialog/patient/addPatient" dialog
-	 */
-	public void hidePatientDialog() {
-		helper.hideDialog(HistoSettings.DIALOG_PATIENT_ADD);
 	}
 
 	/**

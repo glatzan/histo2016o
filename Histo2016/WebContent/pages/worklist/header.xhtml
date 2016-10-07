@@ -23,14 +23,18 @@
 
 				<p:selectOneMenu style="margin-top:1px;"
 					title="#{msg['body.worklist.header.view']}"
-					value="#{worklistHandlerAction.worklistDisplay}">
+					value="#{mainHandlerAction.currentView}">
 
-					<p:ajax update="contentForm" process="@this"></p:ajax>
+					<f:selectItems value="#{mainHandlerAction.navigationPages}"
+						var="page" itemLabel="#{msg['enum.display.pages.'.concat(page)]}" />
 
-					<f:selectItems value="#{emumProvider.displays}" var="current"
-						itemValue="#{current}"
-						itemLabel="#{msg['enum.display.'.concat(current)]}" />
+					<p:ajax event="change" oncomplete="$('#headerForm\\:testwas').click();"></p:ajax>
+					
 				</p:selectOneMenu>
+
+				<h:commandButton value="submit" id="testwas"
+					action="#{mainHandlerAction.goToNavigation(mainHandlerAction.currentView)}"
+					style="display:none" />
 			</h:panelGrid>
 
 			<h:panelGroup styleClass="headerRight" layout="block">

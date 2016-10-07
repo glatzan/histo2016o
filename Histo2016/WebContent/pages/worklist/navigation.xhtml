@@ -33,26 +33,29 @@
 					<h:outputLabel value="#{msg['body.worklist.navigation.headline']}"
 						style="float:left;"></h:outputLabel>
 					<h:panelGroup style="float: right">
-						<p:commandLink title="#{msg['body.worklist.navigation.button.up']}"
+						<p:commandLink
+							title="#{msg['body.worklist.navigation.button.up']}"
 							actionListener="#{worklistHandlerAction.selectPreviouseTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-up"></i>
 						</p:commandLink>
-						<p:commandLink title="#{msg['body.worklist.navigation.button.down']}"
+						<p:commandLink
+							title="#{msg['body.worklist.navigation.button.down']}"
 							actionListener="#{worklistHandlerAction.selectNextTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-down"></i>
 						</p:commandLink>
 
-						<p:commandLink title="#{msg['body.worklist.navigation.button.sort']}"
-							actionListener="#{worklistHandlerAction.prepareSortWorklistDialog()}">
+						<p:commandLink
+							title="#{msg['body.worklist.navigation.button.sort']}"
+							actionListener="#{mainHandlerAction.showDialog(enumProvider.dialog('WORKLIST_SEARCH'))}">
 							<i class="fa fa-th-list"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.changelist']}"
-							actionListener="#{worklistHandlerAction.prepareWorklistOptions()}">
+							actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}">
 							<i class="fa fa-cog"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>

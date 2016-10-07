@@ -2,15 +2,21 @@ package org.histo.action;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.histo.model.UserRole;
+import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Display;
+import org.histo.config.enums.Pages;
+import org.histo.config.enums.Role;
+import org.histo.config.enums.Worklist;
 import org.histo.model.patient.Patient;
-import org.histo.ui.Page;
 import org.histo.util.ResourceBundle;
 import org.histo.util.SearchOptions;
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -19,55 +25,145 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session")
 public class MainHandlerAction {
 
-    @Autowired
-    private ResourceBundle resourceBundle;
+	@Autowired
+	private ResourceBundle resourceBundle;
 
-    @Autowired
-    private UserHandlerAction userHandlerAction;
-    
-    private List<Page> navigationPages;
+	@Autowired
+	private UserHandlerAction userHandlerAction;
 
+	/**
+	 * View options, dynamically generated depending on the users role
+	 */
+	private List<Pages> navigationPages;
 
-    @PostConstruct
-    public void init() {
-	navigationPages = new ArrayList<Page>();
-	navigationPages.add(new Page("page.list", "/page1.xhtml"));
+	/**
+	 * The current view of the user
+	 */
+	private Pages currentView;
 	
-	if(userHandlerAction.u)
-	
-	navigationPages.add(new Page("Page 2", "/page2.xhtml"));
-	navigationPages.add(new Page("Page 3", "/page3.xhtml"));
-    }
-    page.list=Liste
-	    page.patient=Patient
-	    page.receiptLog=Eingangsbuch
-	    page.diagnosis=Diagnose
-    public String goToHisto16() {
-	if (getWorkList() == null) {
-	    // log.debug("Standard Arbeitsliste geladen");
-	    Date currentDate = new Date(System.currentTimeMillis());
-	    // standard settings patients for today
-	    setWorkList(new ArrayList<Patient>());
+	/**
+	 * Method called on postconstruct. Initializes all important variables.
+	 */
+	@PostConstruct
+	public void init() {
+		navigationPages = new ArrayList<Pages>();
+		navigationPages.add(Pages.USERLIST);
 
-	    setSearchOptions(new SearchOptions());
+		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
+			navigationPages.add(Pages.WORKLIST_PATIENT);
+			navigationPages.add(Pages.WORKLIST_RECEITLOG);
+			navigationPages.add(Pages.WORKLIST_DIAGNOSIS);
+		}
+		
+		// setting the current view depending on the users role
+		if (userHandlerAction.currentUserHasRole(Role.GUEST))
+			// guest need to be unlocked first
+			setCurrentView(Pages.GUEST);
+		else if (userHandlerAction.currentUserHasRole(Role.SCIENTIST))
+			// no names are displayed
+			setCurrentView(Pages.SCIENTIST);
+		else if (userHandlerAction.currentUserHasRoleOrHigher(Role.USER)) {
+			// if a default view is selected for the user
+			if (userHandlerAction.getCurrentUser().getDefaultView() != null)
+				setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
 
-	    // getting default worklist depending on role
-	    int userLevel = userHandlerAction.getCurrentUser().getRole().getLevel();
-
-	    if (userLevel == UserRole.ROLE_LEVEL_MTA) {
-		getSearchOptions().setSearchIndex(SearchOptions.SEARCH_INDEX_STAINING);
-		updateWorklistOptions(getSearchOptions());
-	    } else if (userLevel == UserRole.ROLE_LEVEL_HISTO || userLevel == UserRole.ROLE_LEVEL_MODERATOR) {
-		getSearchOptions().setSearchIndex(SearchOptions.SEARCH_INDEX_DIAGNOSIS);
-		updateWorklistOptions(getSearchOptions());
-	    } else {
-		// not adding anything to workilist -> superadmin or user
-	    }
-
-	    setRestrictedWorkList(getWorkList());
+			// normal work environment
+			setCurrentView(Pages.WORKLIST_PATIENT);
+		} else
+			setCurrentView(Pages.GUEST);
 	}
 
-	return "/pages/worklist/workList";
-    }
+	/*
+	 * ************************** Navigation ****************************
+	 */
+	
+	/**
+	 * Method is called for chaning the current view with an p:selectOneMenu (e.g. worklist/header.xthml)
+	 * @param pages
+	 * @return
+	 */
+	public String goToNavigation(Pages pages){
+		setCurrentView(pages);
+		return pages.getPath();
+	}
+	/*
+	 * ************************** Navigation ****************************
+	 */
+	
+	/*
+	 * ************************** Dialog ****************************
+	 */
+	
+	/**
+	 * Shows a dialog using the primefaces dialog framework
+	 * @param dilalog
+	 */
+	public void showDialog(Dialog dilalog) {
+		HashMap<String, Object> options = new HashMap<String, Object>();
 
+		if (dilalog.getWidth() != 0) {
+			options.put("width", dilalog.getWidth());
+			options.put("contentWidth", dilalog.getWidth());
+		} else
+			options.put("width", "auto");
+
+		if (dilalog.getHeight() != 0) {
+			options.put("contentHeight", dilalog.getHeight());
+			options.put("height", dilalog.getHeight());
+		} else
+			options.put("height", "auto");
+
+		if (dilalog.isUseOptions()) {
+			options.put("resizable", dilalog.isResizeable());
+			options.put("draggable", dilalog.isDraggable());
+			options.put("modal", dilalog.isModal());
+		}
+		
+		RequestContext.getCurrentInstance().openDialog(dilalog.getPath(), options, null);
+	}
+
+	/**
+	 * Closes a dialog using primefaces dialog framework
+	 * 
+	 * @param dialog
+	 */
+	public void hideDialog(Dialog dialog) {
+		RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
+	}
+	
+	/*
+	 * ************************** Dialog ****************************
+	 */
+	
+	/*
+	 * ************************** Getters/Setters ****************************
+	 */
+
+	/**
+	 * Returns the current active worklist.
+	 * 
+	 * @return
+	 */
+	public List<Pages> getNavigationPages() {
+		return navigationPages;
+	}
+
+	public void setNavigationPages(List<Pages> navigationPages) {
+		this.navigationPages = navigationPages;
+	}
+
+	/**
+	 * The current view
+	 * @return
+	 */
+	public Pages getCurrentView() {
+		return currentView;
+	}
+
+	public void setCurrentView(Pages currentView) {
+		this.currentView = currentView;
+	}
+	/*
+	 * ************************** Getters/Setters ****************************
+	 */
 }

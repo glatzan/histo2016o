@@ -30,17 +30,6 @@
 
 			<p:column headerText="#{msg['dialog.settings.user.role']}">
 
-				<p:selectOneMenu style="margin-top:1px;"
-					title="#{msg['body.worklist.header.view']}"
-					value="#{worklistHandlerAction.worklistDisplay}">
-
-					<p:ajax update="contentForm" process="@this"></p:ajax>
-
-					<f:selectItems value="#{emumProvider.displays}" var="current"
-						itemValue="#{current}"
-						itemLabel="#{msg['enum.display.'.concat(current)]}" />
-				</p:selectOneMenu>
-
 				<p:selectOneMenu styleClass="smallerInput" value="#{user.role}">
 
 					<p:selectOneMenu style="margin-top:1px;"
@@ -50,7 +39,7 @@
 						<p:ajax event="change" execute="@this"
 							listener="#{userHandlerAction.roleOfuserHasChanged(user)}"></p:ajax>
 
-						<f:selectItems value="#{emumProvider.roles}" var="roles"
+						<f:selectItems value="#{enumProvider.roles}" var="roles"
 							itemValue="#{roles}"
 							itemLabel="#{msg['enum.display.role.'.concat(roles)]}" />
 					</p:selectOneMenu>

@@ -1,36 +1,27 @@
 package org.histo.action;
 
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPrototype;
+import org.histo.model.HistoUser;
 import org.histo.model.History;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.MaterialPreset;
-import org.histo.model.HistoUser;
-import org.histo.model.UserRole;
 import org.histo.model.patient.Patient;
 import org.histo.ui.StainingListChooser;
-import org.histo.ui.UserAccRoleHolder;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
 import org.histo.util.SlideUtil;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import java.util.*;
-import java.io.*;
-
-import javax.naming.*;
-import javax.naming.directory.*;
 
 @Component
 @Scope(value = "session")
@@ -76,7 +67,7 @@ public class SettingsHandlerAction {
 	/**
 	 * List with all users of the program
 	 */
-	private List<UserAccRoleHolder> users;
+	private List<HistoUser> users;
 
 	/**
 	 * Current History
@@ -222,7 +213,7 @@ public class SettingsHandlerAction {
 		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_SETTINGS), 1024, 600, false, false, true, options);
 
 		// init users
-		setUsers(UserUtil.getUserAndRoles(userDAO.loadAllUsers()));
+		setUsers(userDAO.loadAllUsers());
 
 		// init statings
 		setShowStainingEdit(false);
@@ -266,36 +257,6 @@ public class SettingsHandlerAction {
 			break;
 		}
 	}
-
-	/******************************************************** User ********************************************************/
-	/**
-	 * Changes user role to new Role
-	 * 
-	 * @param user
-	 * @param role
-	 */
-	public void setRoleForUser(HistoUser user, String role) {
-		setRoleForUser(user, UserUtil.createRole(role));
-	}
-
-	/**
-	 * Changes user role to new Role
-	 * 
-	 * @param user
-	 * @param role
-	 */
-	public void setRoleForUser(HistoUser user, UserRole role) {
-		UserRole oldRole = user.getRole();
-		user.setRole(role);
-		user.getAuthorities().add(role);
-		genericDAO.save(role);
-		genericDAO.save(user);
-		genericDAO.delete(oldRole);
-//		log.info("Benutzer Rechte geändert. Benutzer: " + user.getUsername() + ", alte Rolle: " + oldRole.getName()
-//				+ ", neue Rolle: " + role.getName());
-	}
-
-	/******************************************************** User ********************************************************/
 
 	/******************************************************** Staining ********************************************************/
 	/**
@@ -647,11 +608,11 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	public List<UserAccRoleHolder> getUsers() {
+	public List<HistoUser> getUsers() {
 		return users;
 	}
 
-	public void setUsers(List<UserAccRoleHolder> users) {
+	public void setUsers(List<HistoUser> users) {
 		this.users = users;
 	}
 

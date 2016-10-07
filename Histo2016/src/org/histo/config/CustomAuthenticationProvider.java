@@ -108,7 +108,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 		//	ctx.close();
 
-			histoUser.setLastLogin(new Date(System.currentTimeMillis()));
+			histoUser.setLastLogin(System.currentTimeMillis());
 
 			userDAO.saveUser(histoUser);
 
