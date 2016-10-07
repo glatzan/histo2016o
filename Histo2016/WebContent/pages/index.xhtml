@@ -25,7 +25,7 @@
 					<h:panelGroup>
 
 						<p:commandButton 
-							actionListener="#{userHandlerAction.setRoleForUser('moderator')}"
+							actionListener="#{userHandlerAction.changeRoleForCurrentUser('ROLE_MODERATOR')}"
 							action="#{worklistHandlerAction.goToWorkList()}"
 							value="Freischalten"></p:commandButton>
 						<p:button href="/spring_logout" value="Logout"></p:button>

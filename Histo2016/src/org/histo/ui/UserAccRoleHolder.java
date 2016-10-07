@@ -4,30 +4,29 @@ import org.histo.model.HistoUser;
 
 public class UserAccRoleHolder {
 
-    private HistoUser histoUser;
-    
-    private String roleName;
+	private HistoUser histoUser;
 
-    public UserAccRoleHolder(HistoUser histoUser){
-	setUserAcc(histoUser);
-	setRoleName(histoUser.getRole().getName());
-    }
-    
-    public HistoUser getUserAcc() {
-        return histoUser;
-    }
+	private String roleName;
 
-    public void setUserAcc(HistoUser histoUser) {
-        this.histoUser = histoUser;
-    }
+	public UserAccRoleHolder(HistoUser histoUser) {
+		setUserAcc(histoUser);
+		setRoleName(histoUser.getRole().getName());
+	}
 
-    public String getRoleName() {
-        return roleName;
-    }
+	public HistoUser getUserAcc() {
+		return histoUser;
+	}
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-    
-    
+	public void setUserAcc(HistoUser histoUser) {
+		this.histoUser = histoUser;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
 }

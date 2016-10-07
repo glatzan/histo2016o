@@ -9,6 +9,7 @@ import org.histo.dao.HelperDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.UserRole;
+import org.histo.util.ResourceBundle;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -19,80 +20,78 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session")
 public class UserHandlerAction implements Serializable {
 
-    private static final long serialVersionUID = -8314968695816748306L;
+	private static final long serialVersionUID = -8314968695816748306L;
 
-    @Autowired
-    private HelperHandlerAction helperHandlerAction;
+	@Autowired
+	private HelperHandlerAction helperHandlerAction;
 
-    @Autowired
-    private GenericDAO genericDAO;
+	@Autowired
+	private GenericDAO genericDAO;
 
-    public boolean isUserAvailable() {
-	if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof HistoUser)
-	    return true;
-	return false;
-    }
-
-    /**
-     * Returns the current user.
-     * 
-     * @return
-     */
-    public HistoUser getCurrentUser() {
-	HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	return user;
-    }
-
-    public boolean currentUserHasRole(Role role) {
-	return getCurrentUser().getRole().equals(role);
-    }
-
-    public boolean currentUserHasRoleOrHigher(Role role) {
-	return getCurrentUser().getRole().getRole().getRoleValue() >= role.getRoleValue();
-    }
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public boolean hasRole(String role) {
-	// sonderfall wenn nicht eingeloggt
-	if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String)
-	    return false;
-	else {
-	    HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	    return hasRole(user, role);
+	@Autowired
+	private ResourceBundle resourceBundle;
+	
+	public boolean isUserAvailable() {
+		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof HistoUser)
+			return true;
+		return false;
 	}
-    }
 
-    public boolean hasRole(HistoUser histoUser, String role) {
-	if (histoUser.getRole().equals(role))
-	    return true;
-	return false;
-    }
+	/**
+	 * Returns the current user.
+	 * 
+	 * @return
+	 */
+	public HistoUser getCurrentUser() {
+		HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return user;
+	}
 
-    public void setRoleForUser(String role) {
-	setRoleForUser(getCurrentUser(), UserUtil.createRole(role));
-    }
+	public boolean currentUserHasRole(Role role) {
+		return getCurrentUser().getRole().equals(role);
+	}
 
-    // TODO delete
-    public void setRoleForUser(HistoUser user, String role) {
-	setRoleForUser(user, UserUtil.createRole(role));
-    }
+	public boolean currentUserHasRoleOrHigher(Role role) {
+		return getCurrentUser().getRole().getRoleValue() >= role.getRoleValue();
+	}
+	
+	public boolean userHasRole(HistoUser user){
+		
+	}
+	
+	public void changeRoleForCurrentUser(String role) {
+		changeRoleForUser(getCurrentUser(),Role.getRoleByToken(role));
+	}
 
-    // TODO delete
-    public void setRoleForUser(HistoUser user, UserRole role) {
-	UserRole oldRole = user.getRole();
-	user.setRole(role);
-	user.getAuthorities().add(role);
-	genericDAO.save(role);
-	genericDAO.save(user);
-	genericDAO.delete(oldRole);
-	// log.info("Setting new role to " + role.getName());
-    }
+	public void changeRoleForCurrentUser(Role role) {
+		changeRoleForUser(getCurrentUser(),role);
+	}
+	
+	public void changeRoleForUser(HistoUser user, Role role){
+		user.setRole(role);
+		roleOfuserHasChanged(user);
+	}
+	
+	public void roleOfuserHasChanged(HistoUser histoUser){
+		genericDAO.save(histoUser, resourceBundle.get("log.user.role.changed",histoUser.getRole()));
+	}
+	
+
+	
+	public boolean hasRole(String role) {
+		// sonderfall wenn nicht eingeloggt
+		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof String)
+			return false;
+		else {
+			HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			return hasRole(user, role);
+		}
+	}
+
+	public boolean hasRole(HistoUser histoUser, String role) {
+		if (histoUser.getRole().equals(role))
+			return true;
+		return false;
+	}
+
 }
