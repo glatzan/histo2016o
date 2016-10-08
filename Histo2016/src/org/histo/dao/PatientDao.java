@@ -12,6 +12,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.util.SearchOptions;
@@ -123,15 +124,15 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return c.list();
 	}
 
-	public List<Patient> getWorklistDynamicallyByType(long fromDate, long toDate, int searchType) {
-		switch (searchType) {
-		case SearchOptions.SEARCH_FILTER_ADDTOWORKLIST:
+	public List<Patient> getWorklistDynamicallyByType(long fromDate, long toDate, WorklistSearchFilter filter) {
+		switch (filter) {
+		case ADDED_TO_WORKLIST:
 			return getPatientByAddDateToWorklist(fromDate, toDate);
-		case SearchOptions.SEARCH_FILTER_TASKCREATION:
+		case TASK_CREATION:
 			return getPatientBySampleCreationDateBetweenDates(fromDate, toDate);
-		case SearchOptions.SEARCH_FILTER_STAINING:
+		case STAINING_COMPLETED:
 			return getPatientByStainingsBetweenDates(fromDate, toDate, true);
-		case SearchOptions.SEARCH_FILTER_DIAGNOSIS:
+		case DIAGNOSIS_COMPLETED:
 			return getPatientByDiagnosBetweenDates(fromDate, toDate, true);
 		default:
 			return null;

@@ -26,13 +26,13 @@
 					value="#{mainHandlerAction.currentView}">
 
 					<f:selectItems value="#{mainHandlerAction.navigationPages}"
-						var="page" itemLabel="#{msg['enum.display.pages.'.concat(page)]}" />
+						var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 
-					<p:ajax event="change" oncomplete="$('#headerForm\\:testwas').click();"></p:ajax>
+					<p:ajax event="change" oncomplete="$('#headerForm\\:changeView').click();"></p:ajax>
 					
 				</p:selectOneMenu>
 
-				<h:commandButton value="submit" id="testwas"
+				<h:commandButton value="submit" id="changeView"
 					action="#{mainHandlerAction.goToNavigation(mainHandlerAction.currentView)}"
 					style="display:none" />
 			</h:panelGrid>

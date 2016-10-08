@@ -8,8 +8,6 @@
 <h:head>
 	<title>Abrechnung</title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
-	<h:outputStylesheet name="dialogStandard.css"
-		value="dialogStandard.css" />
 </h:head>
 
 <h:body styleClass="dialogLayout">
@@ -54,10 +52,10 @@
 		<h:panelGrid columns="1" styleClass="noBorders">
 			<p:panelGrid columns="2" styleClass="noBorders">
 				<p:commandButton value="Speichern"
-					actionListener="#{worklistHandlerAction.hideAccountingDialog()}"></p:commandButton>
+					actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_ACCOUNTING'))}"></p:commandButton>
 
 				<p:commandButton value="Abbrechen"
-					actionListener="#{worklistHandlerAction.hideAccountingDialog()}"></p:commandButton>
+					actionListener="#{wmainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_ACCOUNTING'))}"></p:commandButton>
 
 			</p:panelGrid>
 		</h:panelGrid>

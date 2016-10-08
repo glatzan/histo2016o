@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.LogDAO;
 import org.histo.model.Log;
 import org.histo.model.patient.Patient;
@@ -23,15 +24,14 @@ public class LogHandlerAction implements Serializable {
 	@Autowired
 	HelperHandlerAction helper;
 	
+	@Autowired
+	MainHandlerAction mainHandlerAction;
+	
 	private List<Log> patientLog;
 
 	public void preparePatientLogDialog(Patient patient){
 		setPatientLog(logDAO.getPatientLog(patient));
-		helper.showDialog(HistoSettings.DIALOG_PATIENT_LOG, 600, 500, false, false, true);
-	}
-	
-	public void hidePatientLogDialog(){
-		helper.hideDialog(HistoSettings.DIALOG_PATIENT_LOG);
+		mainHandlerAction.showDialog(Dialog.PATIENT_LOG);
 	}
 	
 	public List<Log> getPatientLog() {

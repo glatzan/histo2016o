@@ -118,78 +118,6 @@ public class HelperHandlerAction implements Serializable {
 		archiveAble.setArchived(archived);
 	}
 
-	/**
-	 * Shows a Dialog using no options
-	 * 
-	 * @param dilalog
-	 */
-	public void showDialog(String dilalog) {
-		RequestContext.getCurrentInstance().openDialog(dilalog);
-	}
-
-	/**
-	 * Displays a dilaog using the primefaces dialog engine.
-	 */
-	public void showDialog(String dilalog, boolean resizeable, boolean draggable, boolean modal) {
-		showDialog(dilalog, -1, -1, resizeable, draggable, modal);
-	}
-
-	/**
-	 * Displays a dilaog using the primefaces dialog engine.
-	 * 
-	 * @param dilalog
-	 * @param width
-	 * @param height
-	 * @param resizeable
-	 * @param draggable
-	 * @param modal
-	 */
-	public void showDialog(String dilalog, int width, int height, boolean resizeable, boolean draggable,
-			boolean modal) {
-		showDialog(dilalog, width, height, resizeable, draggable, modal, new HashMap<String, Object>());
-	}
-
-	/**
-	 * Opens a dialog. In contrast to the other showDialog methods it is
-	 * possible to pass custom settings using the options parameter.
-	 * 
-	 * @param dilalog
-	 * @param width
-	 * @param height
-	 * @param resizeable
-	 * @param draggable
-	 * @param modal
-	 * @param options
-	 */
-	public void showDialog(String dilalog, int width, int height, boolean resizeable, boolean draggable, boolean modal,
-			Map<String, Object> options) {
-		if (width != -1) {
-			options.put("width", width);
-			options.put("contentWidth", width);
-		} else
-			options.put("width", "auto");
-
-		if (height != -1){
-			options.put("contentHeight", height);
-			options.put("height", height);
-		}else
-			options.put("height", "auto");
-
-		options.put("resizable", resizeable);
-		options.put("draggable", draggable);
-		options.put("modal", modal);
-		RequestContext.getCurrentInstance().openDialog(dilalog, options, null);
-	}
-
-	/**
-	 * Closes a dialog using primefaces dilaog engine
-	 * 
-	 * @param dialog
-	 */
-	public void hideDialog(String dialog) {
-		RequestContext.getCurrentInstance().closeDialog(dialog);
-	}
-
 	public String simpleDateFormatterUnix(long date) {
 		return simpleDateFormatter(new Date(date));
 	}
@@ -220,7 +148,7 @@ public class HelperHandlerAction implements Serializable {
 	}
 
 	public void timeout() throws IOException {
-		showDialog(HistoSettings.dialog(HistoSettings.DIALOG_LOGOUT));
+		//showDialog(HistoSettings.dialog(HistoSettings.DIALOG_LOGOUT));
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 		FacesContext.getCurrentInstance().getExternalContext()
 				.redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);

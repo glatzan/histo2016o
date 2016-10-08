@@ -2,11 +2,17 @@ package org.histo.model;
 
 import javax.persistence.Entity;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
 import org.histo.model.util.LogAble;
 
 import com.google.gson.annotations.Expose;
 
 @Entity
+@Audited
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 public class Physician extends Person{
 
 	private static final long serialVersionUID = 7358147861813210904L;

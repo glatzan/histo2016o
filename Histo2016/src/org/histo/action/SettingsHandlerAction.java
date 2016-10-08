@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
@@ -63,6 +64,8 @@ public class SettingsHandlerAction {
 	@Autowired
 	private PhysicianDAO physicianDAO;
 
+	@Autowired
+	MainHandlerAction mainHandlerAction;
 
 	/**
 	 * List with all users of the program
@@ -208,25 +211,22 @@ public class SettingsHandlerAction {
 	 * Show the adminSettigns Dialog and inits the used values
 	 */
 	public void prepareSettingsDialog() {
-		// custom header Element
-		HashMap<String, Object> options = new HashMap<String, Object>();
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_SETTINGS), 1024, 600, false, false, true, options);
-
 		// init users
 		setUsers(userDAO.loadAllUsers());
 
 		// init statings
 		setShowStainingEdit(false);
 		
-		
 		preparePhysicianList();
+
+		mainHandlerAction.showDialog(Dialog.SETTINGS);
 	}
 
 	/**
 	 * Hides the adminSettings Dialog
 	 */
 	public void hideSettingsDialog() {
-		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_SETTINGS));
+		mainHandlerAction.hideDialog(Dialog.SETTINGS);
 	}
 
 	/**

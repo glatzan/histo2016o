@@ -13,35 +13,41 @@
 </h:head>
 
 
-<h:body styleClass="dialogLayout">
+<h:body styleClass="defaultDialogLayout">
 	<h:form>
-		<p:panel styleClass="noBorders">
-			<p:layout style="height: 190px;">
-				<p:layoutUnit position="center" styleClass="center">
-					<h:panelGrid columns="1" styleClass="dialogTable">
-						<p:selectOneRadio
-							value="#{worklistHandlerAction.worklistSortOrder}" layout="grid"
-							columns="1">
-							<f:selectItem itemLabel="#{msg['dialog.worklistorder.tasknumber']}" itemValue="0" />
-							<f:selectItem itemLabel="#{msg['dialog.worklistorder.piz']}" itemValue="1" />
-							<f:selectItem itemLabel="#{msg['dialog.worklistorder.name']}" itemValue="2" />
-						</p:selectOneRadio>
-						<h:panelGrid columns="2">
-							<h:outputLabel value="#{msg['dialog.worklistorder.order']}"></h:outputLabel>
-							<p:selectBooleanButton
-								value="#{worklistHandlerAction.worklistSortOrderAcs}"
-								style="margin-left:15px;" onLabel="#{msg['dialog.worklistorder.order.asc']}"
-								offLabel="#{msg['dialog.worklistorder.order.dec']}" />
-						</h:panelGrid>
-					</h:panelGrid>
-				</p:layoutUnit>
-
-				<p:layoutUnit position="south" styleClass="botton" resizable="false">
-					<p:commandButton value="#{msg['dialog.worklistorder.button.sort']}"
-						actionListener="#{worklistHandlerAction.sortWordklist(worklistHandlerAction.restrictedWorkList, worklistHandlerAction.worklistSortOrder,worklistHandlerAction.worklistSortOrderAcs)}"></p:commandButton>
-				</p:layoutUnit>
-			</p:layout>
-		</p:panel>
+		<div class="dialogContent">
+			<h:panelGrid columns="1" styleClass="dialogTable ">
+				<p:selectOneRadio value="#{worklistHandlerAction.worklistSortOrder}"
+					layout="grid" columns="1" styleClass="smallFont smallPaddingAll">
+					<f:selectItem itemLabel="#{msg['dialog.worklistorder.tasknumber']}"
+						itemValue="0"/>
+					<f:selectItem itemLabel="#{msg['dialog.worklistorder.piz']}"
+						itemValue="1" />
+					<f:selectItem itemLabel="#{msg['dialog.worklistorder.name']}"
+						itemValue="2" />
+				</p:selectOneRadio>
+				<h:panelGrid columns="2" style="margin-top:10px;margin-bottom:10px;">
+					<h:outputLabel value="#{msg['dialog.worklistorder.order']}"></h:outputLabel>
+					<p:selectBooleanButton styleClass="smallInput smallFont"
+						value="#{worklistHandlerAction.worklistSortOrderAcs}"
+						style="margin-left:15px;"
+						onLabel="#{msg['dialog.worklistorder.order.asc']}"
+						offLabel="#{msg['dialog.worklistorder.order.dec']}" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+		<div class="buttonContainer">
+			<p:commandButton value="#{msg['dialog.worklistorder.button.sort']}" icon="fa fa-align-left">
+				<f:actionListener
+					binding="#{worklistHandlerAction.sortWordklist(worklistHandlerAction.worklist, worklistHandlerAction.worklistSortOrder,worklistHandlerAction.worklistSortOrderAcs)}" />
+				<f:actionListener
+					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_ORDER'))}" />
+			</p:commandButton>
+			<p:commandButton value="#{msg['general.abort']}"
+				styleClass="smallButton" style="margin-left:1em;"
+				icon="fa fa-times-circle"
+				actionListener="#{taskHandlerAction.hideNewSampleDialog()}"></p:commandButton>
+		</div>
 	</h:form>
 </h:body>
 </html>

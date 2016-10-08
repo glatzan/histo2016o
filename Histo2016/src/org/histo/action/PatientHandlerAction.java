@@ -260,7 +260,7 @@ public class PatientHandlerAction implements Serializable {
 	 */
 	public void editExternalPatient(Patient patient) {
 		setTmpPatient(patient);
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_PATIENT_EDIT), 1024, 500, true, false, false);
+		mainHandlerAction.showDialog(Dialog.PATIENT_EDIT);
 	}
 
 	/********************************************************

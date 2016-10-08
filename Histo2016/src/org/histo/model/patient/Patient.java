@@ -26,6 +26,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.config.enums.Dialog;
 import org.histo.model.Person;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
@@ -380,7 +381,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 
 	@Transient
 	@Override
-	public String getArchiveDialog() {
+	public Dialog getArchiveDialog() {
 		return null;
 	}
 

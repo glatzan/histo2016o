@@ -21,6 +21,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.TaskDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.util.GsonAble;
@@ -322,7 +323,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 */
 	@Transient
 	@Override
-	public String getArchiveDialog() {
+	public Dialog getArchiveDialog() {
 		return null;
 	}
 	/********************************************************

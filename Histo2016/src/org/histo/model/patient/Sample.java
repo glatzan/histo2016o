@@ -29,6 +29,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.model.MaterialPreset;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
@@ -461,8 +462,8 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	 */
 	@Transient
 	@Override
-	public String getArchiveDialog() {
-		return HistoSettings.DIALOG_ARCHIV_SAMPLE;
+	public Dialog getArchiveDialog() {
+		return Dialog.SAMPLE_ARCHIV;
 	}
 	/******************************************************** ArchiveAble ********************************************************/
 }

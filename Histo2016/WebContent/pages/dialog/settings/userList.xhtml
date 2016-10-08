@@ -14,39 +14,35 @@
 		<p:dataTable var="user" value="#{settingsHandlerAction.users}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 			style="width:100%;" scrollable="true" scrollHeight="450">
-			<p:column filterBy="#{user.userAcc.username}"
+			<p:column filterBy="#{user.username}"
 				headerText="#{msg['dialog.settings.user.username']}"
 				filterMatchMode="contains">
-				<h:outputText value="#{user.userAcc.username}" />
+				<h:outputText value="#{user.username}" />
 			</p:column>
 
 			<p:column headerText="#{msg['dialog.settings.user.name']}">
-				<h:outputLabel value="#{user.userAcc.physician.fullName}" />
+				<h:outputLabel value="#{user.physician.fullName}" />
 			</p:column>
 
 			<p:column headerText="#{msg['dialog.settings.user.function']}">
-				<h:outputLabel value="#{user.userAcc.physician.clinicRole}" />
+				<h:outputLabel value="#{user.physician.clinicRole}" />
 			</p:column>
 
 			<p:column headerText="#{msg['dialog.settings.user.role']}">
 
-				<p:selectOneMenu styleClass="smallerInput" value="#{user.role}">
+				<p:selectOneMenu style="margin-top:1px;"
+					title="#{msg['body.worklist.header.view']}" value="#{user.role}"
+					styleClass="smallerInput">
 
-					<p:selectOneMenu style="margin-top:1px;"
-						title="#{msg['body.worklist.header.view']}"
-						value="#{worklistHandlerAction.worklistDisplay}">
+					<p:ajax event="change" execute="@this"
+						listener="#{userHandlerAction.roleOfuserHasChanged(user)}"></p:ajax>
 
-						<p:ajax event="change" execute="@this"
-							listener="#{userHandlerAction.roleOfuserHasChanged(user)}"></p:ajax>
-
-						<f:selectItems value="#{enumProvider.roles}" var="roles"
-							itemValue="#{roles}"
-							itemLabel="#{msg['enum.display.role.'.concat(roles)]}" />
-					</p:selectOneMenu>
-
-
+					<f:selectItems value="#{enumProvider.roles}" var="role"
+						itemValue="#{role}"
+						itemLabel="#{msg['enum.role.'.concat(role)]}" />
 
 				</p:selectOneMenu>
+
 			</p:column>
 
 		</p:dataTable>

@@ -41,6 +41,11 @@ body {
 	vertical-align: top !important;
 }
 
+.horizontalAlignCenterAll tr, .horizontalAlignCenterAll td,
+	.horizontalAlignCenterAll {
+	text-align:center;
+}
+
 /* Kleiner Knopf */
 .smallButton .ui-button-text {
 	padding-top: 0.2em !important;
@@ -104,6 +109,9 @@ body {
 	font-size: 0.8em !important;	
 }
 
+.smallCalendarInput input {
+	width:150px !important;
+}
 /*
 	######################################## Navigatoin ########################################
 */

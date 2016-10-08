@@ -17,13 +17,22 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
 import org.histo.config.enums.Pages;
 import org.histo.config.enums.Role;
 import org.histo.model.util.LogAble;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
+@Audited
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 @SequenceGenerator(name = "user_sequencegenerator", sequenceName = "user_sequence")
 public class HistoUser implements UserDetails, Serializable, LogAble {
 
@@ -31,6 +40,8 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	private long id;
 
+	private long version;
+	
 	private String username;
 
 	private long lastLogin;
@@ -66,6 +77,15 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 		this.username = username;
 	}
 
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
+	
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Physician getPhysician() {
 		return physician;

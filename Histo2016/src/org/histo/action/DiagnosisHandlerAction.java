@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.LogDAO;
 import org.histo.dao.TaskDAO;
@@ -43,6 +44,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	@Autowired
 	private LogDAO logDAO;
 
+	@Autowired
+	private MainHandlerAction mainHandlerAction;
+	
 	private static final long serialVersionUID = -1214161114824263589L;
 
 	private Diagnosis tmpDiagnosis;
@@ -130,7 +134,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void prepareFinalizeDiagnosisDialog(Diagnosis diagnosis) {
 		setTmpDiagnosis(diagnosis);
-		helper.showDialog(HistoSettings.DIALOG_DIAGNOSIS_FINALIZE, false, false, true);
+		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_FINALIZE);
 	}
 
 	/**
@@ -138,7 +142,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void hideFinalizeDiangosisDialog() {
 		setTmpDiagnosis(null);
-		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_FINALIZE);
+		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_FINALIZE);
 	}
 
 	/**
@@ -177,7 +181,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void prepareUnfinalizeDiagnosisDialog(Diagnosis diagnosis) {
 		setTmpDiagnosis(diagnosis);
-		helper.showDialog(HistoSettings.DIALOG_DIAGNOSIS_UNFINALIZE, false, false, true);
+		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_UNFINALIZE);
 	}
 
 	/**
@@ -185,7 +189,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void hideUnfinalizeDiangosisDialog() {
 		setTmpDiagnosis(null);
-		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_UNFINALIZE);
+		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_UNFINALIZE);
 	}
 
 	/**
@@ -219,7 +223,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void prepareEditDiagnosisNameDialog(Diagnosis diagnosis) {
 		setTmpDiagnosis(diagnosis);
-		helper.showDialog(HistoSettings.DIALOG_DIAGNOSIS_EDIT_NAME, false, false, true);
+		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_NAME);
 	}
 
 	/**
@@ -227,7 +231,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	public void hideEditDiagnosisNameDialog() {
 		setTmpDiagnosis(null);
-		helper.hideDialog(HistoSettings.DIALOG_DIAGNOSIS_EDIT_NAME);
+		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_NAME);
 	}
 
 	/**

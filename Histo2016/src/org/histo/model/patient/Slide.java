@@ -21,6 +21,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.model.StainingPrototype;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.TaskTree;
@@ -188,8 +189,8 @@ public class Slide implements TaskTree<Block>, LogAble {
 	 */
 	@Transient
 	@Override
-	public String getArchiveDialog() {
-		return HistoSettings.DIALOG_ARCHIV_STAINING;
+	public Dialog getArchiveDialog() {
+		return Dialog.SLIDE_ARCHIV;
 	}
 	/********************************************************
 	 * Interface StainingTreeParent

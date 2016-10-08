@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
@@ -31,7 +32,10 @@ public class ContactHandlerAction implements Serializable {
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
-
+	
+	@Autowired
+	private MainHandlerAction mainHandlerAction;
+	
 	/**
 	 * List with all available contacts
 	 */
@@ -84,7 +88,7 @@ public class ContactHandlerAction implements Serializable {
 			getAllAvailableContact().addAll(contacts);
 		}
 
-		helper.showDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_ADD, 1024, 600, false, false, true);
+		mainHandlerAction.showDialog(Dialog.CONTACTS_ADD);
 	}
 
 	/**
@@ -172,15 +176,15 @@ public class ContactHandlerAction implements Serializable {
 	 * Schlieﬂt den Kontakt Dialog
 	 */
 	public void hideContactsDialog() {
-		helper.hideDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_ADD);
+		mainHandlerAction.hideDialog(Dialog.CONTACTS_ADD);
 	}
 
 	public void preparePerformContactsDialog() {
-		helper.showDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_PERFORM, 1024, 600, false, false, true);
+		mainHandlerAction.showDialog(Dialog.CONTACTS_PERFORMED);
 	}
 
 	public void hidePerformContactsDialog() {
-		helper.hideDialog(HistoSettings.DIALOG_WORKLIST_CONTACTS_PERFORM);
+		mainHandlerAction.hideDialog(Dialog.CONTACTS_PERFORMED);
 	}
 
 	/********************************************************

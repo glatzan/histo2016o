@@ -11,8 +11,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
 import org.histo.model.util.LogAble;
 
 import com.google.gson.Gson;
@@ -21,13 +25,18 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Audited
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 @SequenceGenerator(name = "person_sequencegenerator", sequenceName = "person_sequence")
 public class Person implements Serializable, LogAble {
 
 	private static final long serialVersionUID = 2533238775751991883L;
-	
+
 	public static final char GENDER_MALE = 'M';
 	public static final char GENDER_FEMALE = 'W';
+
+	private long version;
 
 	@Expose
 	protected long id;
@@ -52,15 +61,14 @@ public class Person implements Serializable, LogAble {
 	@Expose
 	protected String phoneNumber = "";
 	@Expose
-	protected String fax= "";
+	protected String fax = "";
 	@Expose
 	protected String email = "";
 	@Expose
-	protected String land= "";
+	protected String land = "";
 	@Expose
 	protected String department;
-	
-	
+
 	public Person() {
 	}
 
@@ -77,6 +85,15 @@ public class Person implements Serializable, LogAble {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
 	}
 
 	@Column(length = 255)
@@ -204,7 +221,7 @@ public class Person implements Serializable, LogAble {
 	public void setDepartment(String department) {
 		this.department = department;
 	}
-	
+
 	@Transient
 	public String patienDataAsGson() {
 		final GsonBuilder builder = new GsonBuilder();

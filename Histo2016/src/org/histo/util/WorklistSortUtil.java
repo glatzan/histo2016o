@@ -7,7 +7,7 @@ import java.util.List;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 
-public class WorklistUtil {
+public class WorklistSortUtil {
 
 	/**
 	 * Sorts a List of patients by the task id. The tasknumber will be ascending
@@ -16,7 +16,7 @@ public class WorklistUtil {
 	 * @param patiens
 	 * @return
 	 */
-	public List<Patient> orderListByTaskID(List<Patient> patiens, boolean asc) {
+	public static final List<Patient> orderListByTaskID(List<Patient> patiens, boolean asc) {
 
 		// Sorting
 		Collections.sort(patiens, new Comparator<Patient>() {
@@ -33,7 +33,7 @@ public class WorklistUtil {
 					return asc ? 1 : -1;
 				else {
 					int res = lastTaskOne.getTaskID().compareTo(lastTaskTwo.getTaskID());
-					return asc ? res : res*-1;
+					return asc ? res : res * -1;
 				}
 			}
 		});
@@ -41,7 +41,13 @@ public class WorklistUtil {
 		return patiens;
 	}
 
-	public List<Patient> orderListByPIZ(List<Patient> patiens, boolean asc) {
+	/**
+	 * Sorts an array list of patients by the piz.
+	 * @param patiens
+	 * @param asc
+	 * @return
+	 */
+	public static final List<Patient> orderListByPIZ(List<Patient> patiens, boolean asc) {
 
 		// Sorting
 		Collections.sort(patiens, new Comparator<Patient>() {
@@ -55,7 +61,7 @@ public class WorklistUtil {
 					return asc ? 1 : -1;
 				else {
 					int res = patientOne.getPiz().compareTo(patientTwo.getPiz());
-					return asc ? res : res*-1;
+					return asc ? res : res * -1;
 				}
 			}
 		});
@@ -63,7 +69,13 @@ public class WorklistUtil {
 		return patiens;
 	}
 
-	public List<Patient> orderListByName(List<Patient> patiens, boolean asc) {
+	/**
+	 * sorts an array list of patients ascending or descending by name.
+	 * @param patiens
+	 * @param asc
+	 * @return
+	 */
+	public static final List<Patient> orderListByName(List<Patient> patiens, boolean asc) {
 
 		// Sorting
 		Collections.sort(patiens, new Comparator<Patient>() {
@@ -77,7 +89,7 @@ public class WorklistUtil {
 					return asc ? 1 : -1;
 				else {
 					int res = patientOne.getPerson().getName().compareTo(patientTwo.getPerson().getName());
-					return asc ? res : res*-1;
+					return asc ? res : res * -1;
 				}
 			}
 		});

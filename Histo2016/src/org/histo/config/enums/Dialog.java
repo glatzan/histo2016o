@@ -1,10 +1,38 @@
 package org.histo.config.enums;
 
+import org.histo.config.HistoSettings;
+
+/**
+ * mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ORDER'))
+ * @author andi
+ *
+ */
 public enum Dialog {
 	
-	WORKLIST_SEARCH("/pages/dialog/worklist/worklistOptions", 650, 470, false, false, true),
-	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", 1024, 600, false, false, true);
-
+	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", 650, 470, false, false, true),
+	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", 1024, 600, false, false, true), //
+	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", 430, 270, false, false, true), //
+	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", 300, 200, false, false, true), //
+	PATIENT_EDIT("/pages/dialog/patient/editPatient", 600, 500, false, false, true),
+	PATIENT_LOG("/pages/dialog/history/patientLog", 620, 500, false, false, true),
+	TASK_CREATE("/pages/dialog/task/createTask", 0, 0, false, false, true),
+	TASK_ARCHIV("/pages/dialog/task/archivTask", 0, 0, false, false, true), // <<
+	SAMPLE_CREATE("/pages/dialog/task/createTask", 0, 0, false, false, true),
+	SAMPLE_ARCHIV("/pages/dialog/task/archivSample", 0, 0, false, false, true), // <<
+	BLOCK_ARCHIV("/pages/dialog/task/archivBlock", 0, 0, false, false, true), // <<
+	SLIDE_CREATE("/pages/dialog/task/addSlide", 0, 0, false, false, true),
+	SLIDE_ARCHIV("/pages/dialog/task/archivSlide", 0, 0, false, false, true),
+	DIAGNOSIS_FINALIZE("/pages/dialog/diagnosis/finalizeDiagnosis", 0, 0, false, false, true),
+	DIAGNOSIS_UNFINALIZE("/pages/dialog/diagnosis/unfinalizeDiagnosis", 0, 0, false, false, true),
+	DIAGNOSIS_NAME("/pages/dialog/diagnosis/editDiagnosisName", 0, 0, false, false, true),
+	CONTACTS_ADD("/pages/dialog/contact/addContact", 1024, 600, false, false, true),// <<
+	CONTACTS_PERFORMED("/pages/dialog/contact/performContact", 1024, 600, false, false, true),// <<
+	STAINING_PERFORMED("/pages/dialog/task/staingingPerformed", 1024, 600, false, false, true),
+	SETTINGS("/pages/dialog/settings/settings", 1024, 600, false, false, true),
+	PRINT("/pages/dialog/print/print", 1024, 600, false, false, true), // <<
+	; 
+	
+	
 	private final String path;
 	private final boolean useOptions;
 	

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.model.StainingPrototype;
@@ -46,6 +47,9 @@ public class SlideHandlerAction implements Serializable {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	@Autowired
+	MainHandlerAction mainHandlerAction;
+	
 	/**
 	 * Temporäres Blockobjekt, wird verwendet um neue Objektträger zu erstellen.
 	 */
@@ -98,14 +102,14 @@ public class SlideHandlerAction implements Serializable {
 			getStainingListChooser().add(new StainingListChooser(staining));
 		}
 
-		helper.showDialog(HistoSettings.DIALOG_ADD_SLIDE_TO_BLOCK, false, false, true);
+		mainHandlerAction.showDialog(Dialog.SLIDE_CREATE);
 	}
 
 	/**
 	 * Hides the dialog for adding new slides
 	 */
 	public void hideAddSlideDialog() {
-		helper.hideDialog(HistoSettings.DIALOG_ADD_SLIDE_TO_BLOCK);
+		mainHandlerAction.hideDialog(Dialog.SLIDE_CREATE);
 	}
 
 	public void addSelectedSlides(List<StainingListChooser> slideList, Block block, String commentary,
@@ -235,7 +239,7 @@ public class SlideHandlerAction implements Serializable {
 			// shows dialog for informing the user that all stainings are
 			// performed
 			if (SlideUtil.checkIfAllSlidesAreStained(task)) {
-				helper.showDialog(HistoSettings.DIALOG_ALL_STAINING_PERFORMED);
+				mainHandlerAction.showDialog(Dialog.STAINING_PERFORMED);
 			}
 
 			break;
@@ -269,7 +273,7 @@ public class SlideHandlerAction implements Serializable {
 	}
 
 	public void hideStainingsPerformedDialog() {
-		helper.hideDialog(HistoSettings.DIALOG_ALL_STAINING_PERFORMED);
+		mainHandlerAction.hideDialog(Dialog.STAINING_PERFORMED);
 	}
 
 	/********************************************************

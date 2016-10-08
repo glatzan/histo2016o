@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Display;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -71,6 +72,9 @@ public class TaskHandlerAction implements Serializable {
 	@Autowired
 	private WorklistHandlerAction worklistHandlerAction;
 
+	@Autowired
+	MainHandlerAction mainHandlerAction;
+	
 	private HashMap<String, String> selectableWards;
 
 	private Task taskToPrint;
@@ -169,14 +173,7 @@ public class TaskHandlerAction implements Serializable {
 			setSelectedMaterial(getAllAvailableMaterials().get(0));
 		}
 
-		helper.showDialog(HistoSettings.DIALOG_CREATE_TASK, false, false, true);
-	}
-
-	/**
-	 * Hides the dialog for creating new tasks
-	 */
-	public void hideNewTaskDialog() {
-		helper.hideDialog(HistoSettings.DIALOG_CREATE_TASK);
+		mainHandlerAction.showDialog(Dialog.TASK_CREATE);
 	}
 
 	/**
@@ -207,7 +204,7 @@ public class TaskHandlerAction implements Serializable {
 		// saving patient
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
-		hideNewTaskDialog();
+		mainHandlerAction.hideDialog(Dialog.TASK_CREATE);
 	}
 
 	/********************************************************
@@ -230,7 +227,7 @@ public class TaskHandlerAction implements Serializable {
 
 		setTemporaryTask(task);
 
-		helper.showDialog(HistoSettings.DIALOG_CREATE_SAMPLE, false, false, true);
+		mainHandlerAction.showDialog(Dialog.SAMPLE_CREATE);
 	}
 
 	/**
@@ -238,7 +235,7 @@ public class TaskHandlerAction implements Serializable {
 	 */
 	public void hideNewSampleDialog() {
 		setTemporaryTask(null);
-		helper.hideDialog(HistoSettings.DIALOG_CREATE_SAMPLE);
+		mainHandlerAction.hideDialog(Dialog.SAMPLE_CREATE);
 	}
 
 	/**
@@ -348,7 +345,7 @@ public class TaskHandlerAction implements Serializable {
 		if (archive.getArchiveDialog() == null)
 			archiveObject(archive, archived);
 		else
-			helper.showDialog(archive.getArchiveDialog(), false, false, true);
+			mainHandlerAction.showDialog(archive.getArchiveDialog());
 	}
 
 	/**
@@ -395,7 +392,7 @@ public class TaskHandlerAction implements Serializable {
 	 * Hides the Dialog for achieving an object
 	 */
 	public void hideArchiveObjectDialog() {
-		helper.hideDialog(getToArchive().getArchiveDialog());
+		mainHandlerAction.showDialog(getToArchive().getArchiveDialog());
 	}
 
 	/********************************************************
@@ -429,17 +426,17 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 	public void preparePrintDialog(Task task) {
 		setTaskToPrint(task);
-		helper.showDialog(HistoSettings.DIALOG_PRINT, 1024, 600, false, false, true);
 		String templateFile = FileUtil.loadTextFile(HistoSettings.PDF_TEMPLATE_JSON);
 		setTemplates(Arrays.asList(PDFTemplate.factroy(templateFile)));
 		setSelectedTemplate(PdfUtil.getDefaultTemplate(getTemplates()));
 		setPdfContent(generatePDF(task, getSelectedTemplate()));
 		setTemplateTransformer(new PdfTemplateTransformer(getTemplates()));
+		mainHandlerAction.showDialog(Dialog.PRINT);
 	}
 
 	public void hidePrintDialog() {
 		setTaskToPrint(null);
-		helper.hideDialog(HistoSettings.DIALOG_PRINT);
+		mainHandlerAction.hideDialog(Dialog.PRINT);
 	}
 
 	public void changeTemplate(Task task, PDFTemplate template) {

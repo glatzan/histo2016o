@@ -122,6 +122,7 @@ public class UserHandlerAction implements Serializable {
 	 * @param histoUser
 	 */
 	public void roleOfuserHasChanged(HistoUser histoUser) {
+		System.out.println("role changes");
 		genericDAO.save(histoUser, resourceBundle.get("log.user.role.changed", histoUser.getRole()));
 	}
 }

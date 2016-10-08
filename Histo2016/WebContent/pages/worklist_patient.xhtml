@@ -18,7 +18,7 @@
 
 		<!-- Navigation -->
 		<ui:define name="navigation">
-			<ui:include src="worklist/navigation.xhtml"></ui:include>
+			<ui:include src="worklist/patientList.xhtml"></ui:include>
 		</ui:define>
 
 		<ui:define name="content">
@@ -28,7 +28,7 @@
 			<p:panel style="width:100%;"
 				rendered="#{worklistHandlerAction.selectedPatient ne null}"
 				styleClass=" collapsedBorders noPadding noBorders">
-				
+
 				<p:panelGrid columns="4" styleClass="noBordersAll"
 					style="min-width:700px"
 					columnClasses="patientTableTagRow,patientTableContentRow,patientTableTagRow,patientTableContentRow">
@@ -102,8 +102,9 @@
 					rendered="#{worklistHandlerAction.selectedPatient != null}"
 					selection="#{worklistHandlerAction.selectedPatient.selectedTask}"
 					rowKey="#{tasks.id}">
-					<p:ajax event="rowSelect" update=":contentForm, :headerForm"
-						listener="#{worklistHandlerAction.selectTask(worklistHandlerAction.selectedPatient.selectedTask)}" />
+
+					<p:ajax event="rowSelect"
+						oncomplete="$('#contentForm\\:selectTaskBtn').click();" />
 
 					<p:column>
 						<f:facet name="header">
@@ -154,6 +155,13 @@
 					</p:column>
 
 				</p:dataTable>
+
+
+				<p:commandButton id="selectTaskBtn" ajax="none"
+					action="#{worklistHandlerAction.selectTask(worklistHandlerAction.selectedPatient.selectedTask)}"
+					style="display:none" />
+				<!-- Auftrag -->
+
 			</p:panel>
 
 		</ui:define>

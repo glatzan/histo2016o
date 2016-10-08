@@ -12,7 +12,7 @@
 	<h:panelGroup styleClass="searchContainer" layout="block">
 		<p:focus context="form" for="searchField" />
 		<p:inputText placeholder="#{msg.headSearch}" id="searchField"
-			styleClass="seachFiled" value="#{worklistHandlerAction.searchString}">
+			styleClass="seachFiled" value="#{worklistHandlerAction.worklistFilter}">
 			<p:ajax event="keyup"
 				listener="#{worklistHandlerAction.searchForExistingPatients()}" />
 		</p:inputText>
@@ -20,7 +20,7 @@
 
 	<!-- Nav Table -->
 	<p:dataTable var="patient" id="patientList"
-		value="#{worklistHandlerAction.restrictedWorkList}"
+		value="#{worklistHandlerAction.workList}"
 		selectionMode="single"
 		selection="#{worklistHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
@@ -48,7 +48,7 @@
 
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.sort']}"
-							actionListener="#{mainHandlerAction.showDialog(enumProvider.dialog('WORKLIST_SEARCH'))}">
+							actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ORDER'))}">
 							<i class="fa fa-th-list"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>

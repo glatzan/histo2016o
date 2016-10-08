@@ -250,7 +250,7 @@
 					<p:commandButton icon="fa fa-fw fa-taxi"
 						title="#{msg['body.receiptlog.miscellaneous.borrow']}" />
 					<p:commandButton icon="fa fa-fw fa-dollar"
-						actionListener="#{worklistHandlerAction.prepareAccountingDialog()}"
+						actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ACCOUNTING'))}"
 						title="#{msg['body.receiptlog.miscellaneous.accounting']}" />
 				</p:column>
 			</p:row>

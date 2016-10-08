@@ -1,54 +1,27 @@
 package org.histo.action;
 
-import java.awt.Dialog;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.CacheStoreMode;
 
-import org.apache.commons.lang3.text.WordUtils;
-import org.apache.log4j.Logger;
-import org.histo.config.HistoSettings;
-import org.histo.config.enums.Display;
+import org.histo.config.enums.Pages;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.Worklist;
-import org.histo.dao.GenericDAO;
-import org.histo.dao.HelperDAO;
+import org.histo.config.enums.WorklistSearchOption;
+import org.histo.config.enums.WorklistSortOrder;
 import org.histo.dao.PatientDao;
-import org.histo.dao.PhysicianDAO;
-import org.histo.dao.TaskDAO;
-import org.histo.model.Contact;
-import org.histo.model.DiagnosisPrototype;
-import org.histo.model.Person;
-import org.histo.model.Physician;
-import org.histo.model.StainingPrototype;
-import org.histo.model.MaterialPreset;
-import org.histo.model.patient.Block;
-import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
-import org.histo.model.util.ArchivAble;
-import org.histo.model.util.TaskTree;
-import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.SearchOptions;
-import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
-import org.histo.util.WorklistUtil;
+import org.histo.util.WorklistSortUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -73,15 +46,8 @@ public class WorklistHandlerAction implements Serializable {
 	public final static int TIME_CUSTOM = 5;
 	public final static int TIME_FAVOURITE = 6;
 
-	public final static int SORT_ORDER_TASK_ID = 0;
-	public final static int SORT_ORDER_PIZ = 1;
-	public final static int SORT_ORDER_NAME = 2;
-
 	@Autowired
 	private PatientDao patientDao;
-
-	@Autowired
-	private HelperHandlerAction helper;
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
@@ -102,34 +68,21 @@ public class WorklistHandlerAction implements Serializable {
 	@Lazy
 	private TaskHandlerAction taskHandlerAction;
 
-	/******************************************************** Patient ********************************************************/
+	@Autowired
+	MainHandlerAction mainHandlerAction;
+
+	/*
+	 * ************************** Patient ****************************
+	 */
+
 	/**
 	 * Currently selected patient
 	 */
 	private Patient selectedPatient;
 
-	/******************************************************** Patient ********************************************************/
-
-	/******************************************************** Worklist ********************************************************/
-	/**
-	 * Ungefilterte Worklist
+	/*
+	 * ************************** Patient ****************************
 	 */
-	private List<Patient> workList;
-
-	/**
-	 * Worklist, gefiltert und sortiert
-	 */
-	private List<Patient> restrictedWorkList;
-
-	/**
-	 * Order of the Worklist, either by id or by patient name
-	 */
-	private int worklistSortOrder = SORT_ORDER_TASK_ID;
-
-	/**
-	 * Order of the Worlist, either if true ascending, or if false descending
-	 */
-	private boolean worklistSortOrderAcs = true;
 
 	/*
 	 * ************************** Worklist ****************************
@@ -150,19 +103,23 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	private SearchOptions searchOptions;
 
-	/******************************************************** General ********************************************************/
-
-	private String searchType;
-
-	private String searchString;
+	/**
+	 * Order of the Worklist, either by id or by patient name
+	 */
+	private WorklistSortOrder worklistSortOrder = WorklistSortOrder.TASK_ID;
 
 	/**
-	 * Paiten search results form external Database
+	 * Order of the Worlist, either if true ascending, or if false descending
 	 */
-	private ArrayList<Person> searchResults;
+	private boolean worklistSortOrderAcs = true;
 
-	public WorklistHandlerAction() {
-	}
+	/**
+	 * A Filter which searches for a given pattern in the current worklist (
+	 */
+	private String worklistFilter;
+	/*
+	 * ************************** Worklist ****************************
+	 */
 
 	@PostConstruct
 	public void init() {
@@ -180,16 +137,16 @@ public class WorklistHandlerAction implements Serializable {
 
 		switch (userRole) {
 		case MTA:
-			getSearchOptions().setSearchIndex(SearchOptions.SEARCH_INDEX_STAINING);
-			searCurrentWorklist();
+			getSearchOptions().setSearchIndex(WorklistSearchOption.STAINING_LIST);
+			searhCurrentWorklist();
 			break;
 		case USER:
 			break;
 		case PHYSICIAN:
 		case MODERATOR:
 		case ADMIN:
-			getSearchOptions().setSearchIndex(SearchOptions.SEARCH_INDEX_DIAGNOSIS);
-			searCurrentWorklist();
+			getSearchOptions().setSearchIndex(WorklistSearchOption.DIAGNOSIS_LIST);
+			searhCurrentWorklist();
 		default:
 			break;
 		}
@@ -230,74 +187,24 @@ public class WorklistHandlerAction implements Serializable {
 
 	}
 
-	public String getCenterView(Display display) {
-		switch (display) {
-		case PATIENT:
-			if (getSelectedPatient() == null)
-				return HistoSettings.CENTER_INCLUDE_BLANK;
-			else
-				return HistoSettings.CENTER_INCLUDE_PATIENT;
-		case RECEIPTLOG:
-			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
-				return HistoSettings.CENTER_INCLUDE_RECEIPTLOG;
-			else if (getSelectedPatient() != null) {
-				if (getSelectedPatient().getTasks() != null && getSelectedPatient().getTasks().size() > 0) {
-					getSelectedPatient().setSelectedTask(TaskUtil.getLastTask(getSelectedPatient().getTasks()));
-					return HistoSettings.CENTER_INCLUDE_RECEIPTLOG;
-				} else
-					return HistoSettings.CENTER_INCLUDE_PATIENT;
-			} else
-				return HistoSettings.CENTER_INCLUDE_BLANK;
-		case DIAGNOSIS_INTERN:
-			if (getSelectedPatient() != null && getSelectedPatient().getSelectedTask() != null)
-				return HistoSettings.CENTER_INCLUDE_DIAGNOSIS_INTERN;
-			else if (getSelectedPatient() != null)
-				return HistoSettings.CENTER_INCLUDE_PATIENT;
-			else
-				return HistoSettings.CENTER_INCLUDE_BLANK;
-
-			// case DIAGNOSIS_INTERN_EXTENDED:
-			// if (getSelectedPatient() != null &&
-			// getSelectedPatient().getSelectedTask() != null)
-			// return HistoSettings.CENTER_INCLUDE_EXTERN_EXTENDED;
-			// else if (getSelectedPatient() != null)
-			// return HistoSettings.CENTER_INCLUDE_PATIENT;
-			// else
-			// return HistoSettings.CENTER_INCLUDE_BLANK;
-		default:
-			break;
-		}
-		return "";
-	}
-
 	/**
 	 * Sorts a list with patiens either by task id or name of the patient
 	 * 
 	 * @param patiens
 	 * @param order
 	 */
-	public void sortWordklist(List<Patient> patiens, int order, boolean asc) {
+	public void sortWordklist(List<Patient> patiens, WorklistSortOrder order, boolean asc) {
 		switch (order) {
-		case SORT_ORDER_TASK_ID:
-			setRestrictedWorkList((new WorklistUtil()).orderListByTaskID(patiens, asc));
+		case TASK_ID:
+			WorklistSortUtil.orderListByTaskID(patiens, asc);
 			break;
-		case SORT_ORDER_PIZ:
-			setRestrictedWorkList((new WorklistUtil()).orderListByPIZ(patiens, asc));
+		case PIZ:
+			WorklistSortUtil.orderListByPIZ(patiens, asc);
 			break;
-		case SORT_ORDER_NAME:
-			setRestrictedWorkList((new WorklistUtil()).orderListByName(patiens, asc));
+		case NAME:
+			WorklistSortUtil.orderListByName(patiens, asc);
 			break;
 		}
-
-		hideSortWorklistDialog();
-	}
-
-	public void prepareSortWorklistDialog() {
-		helper.showDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_ORDER), 300, 220, false, false, true);
-	}
-
-	public void hideSortWorklistDialog() {
-		helper.hideDialog(HistoSettings.dialog(HistoSettings.DIALOG_WORKLIST_ORDER));
 	}
 
 	/******************************************************** General ********************************************************/
@@ -317,7 +224,7 @@ public class WorklistHandlerAction implements Serializable {
 	/**
 	 * Task - Select and init
 	 */
-	public void selectTask(Task task) {
+	public String selectTask(Task task) {
 		System.out.println(task.getTaskID());
 		// set patient.selectedTask is performed by the gui
 		// sets this task as active, so it will be show in the navigation column
@@ -329,16 +236,15 @@ public class WorklistHandlerAction implements Serializable {
 
 		// log.info("Select and init sample");
 
-		// int userLevel =
-		// userHandlerAction.getCurrentUser().getRole().getLevel();
-		//
-		// task.generateStainingGuiList();
-		//
-		// if (userLevel == UserRole.ROLE_LEVEL_MTA) {
-		// task.setTabIndex(Task.TAB_STAINIG);
-		// } else {
-		// task.setTabIndex(Task.TAB_DIAGNOSIS);
-		// }
+		Role userRole = userHandlerAction.getCurrentUser().getRole();
+
+		task.generateStainingGuiList();
+
+		if (userRole == Role.MTA) {
+			task.setTabIndex(Task.TAB_STAINIG);
+		} else {
+			task.setTabIndex(Task.TAB_DIAGNOSIS);
+		}
 
 		// Setzte action to none
 		slideHandlerAction.setActionOnMany(SlideHandlerAction.STAININGLIST_ACTION_NONE);
@@ -351,13 +257,15 @@ public class WorklistHandlerAction implements Serializable {
 
 		// setzte das diasplay auf das eingangsbuch wenn der patient angezeigt
 		// wird
-//		if (getWorklistDisplay() == Display.PATIENT)
-//			setWorklistDisplay(Display.RECEIPTLOG);
+		// if (getWorklistDisplay() == Display.PATIENT)
+		// setWorklistDisplay(Display.RECEIPTLOG);
+		
+		return mainHandlerAction.goToNavigation(Pages.WORKLIST_RECEITLOG);
 	}
 
 	public void deselectTask(Patient patient) {
-//		setWorklistDisplay(Display.PATIENT);
-//		patient.setSelectedTask(null);
+		// setWorklistDisplay(Display.PATIENT);
+		// patient.setSelectedTask(null);
 	}
 
 	/******************************************************** Task ********************************************************/
@@ -370,15 +278,15 @@ public class WorklistHandlerAction implements Serializable {
 	 * Searches the database for the given searchOptions and overwrites the
 	 * content of the current worklist with the found content.
 	 */
-	public void searCurrentWorklist() {
-		searCurrentWorklist(getSearchOptions());
+	public void searhCurrentWorklist() {
+		searhCurrentWorklist(getSearchOptions());
 	}
 
 	/**
 	 * Searches the database for the given searchOptions and overwrites the
 	 * content of the current worklist with the found content.
 	 */
-	public void searCurrentWorklist(SearchOptions searchOptions) {
+	public void searhCurrentWorklist(SearchOptions searchOptions) {
 
 		ArrayList<Patient> result = new ArrayList<Patient>();
 
@@ -387,7 +295,7 @@ public class WorklistHandlerAction implements Serializable {
 		cal.setTime(currentDate);
 
 		switch (searchOptions.getSearchIndex()) {
-		case SearchOptions.SEARCH_INDEX_STAINING:
+		case STAINING_LIST:
 
 			if (searchOptions.isStaining_new()) {
 				result.addAll(patientDao.getPatientWithoutTasks(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
@@ -409,7 +317,7 @@ public class WorklistHandlerAction implements Serializable {
 			}
 
 			break;
-		case SearchOptions.SEARCH_INDEX_DIAGNOSIS:
+		case DIAGNOSIS_LIST:
 			if (searchOptions.isStaining_diagnosis() && searchOptions.isStaining_rediagnosis()) {
 				result.addAll(patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false));
 			} else {
@@ -423,41 +331,41 @@ public class WorklistHandlerAction implements Serializable {
 				}
 			}
 			break;
-		case SearchOptions.SEARCH_INDEX_TODAY:
+		case TODAY:
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 					TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
-		case SearchOptions.SEARCH_INDEX_YESTERDAY:
+		case YESTERDAY:
 			cal.add(Calendar.DAY_OF_MONTH, -1);
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 					TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
-		case SearchOptions.SEARCH_INDEX_CURRENTWEEK:
+		case CURRENTWEEK:
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
 					TimeUtil.setWeekEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
-		case SearchOptions.SEARCH_INDEX_LASTWEEK:
+		case LASTWEEK:
 			cal.add(Calendar.WEEK_OF_YEAR, -1);
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
 					TimeUtil.setWeekEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
-		case SearchOptions.SEARCH_INDEX_LASTMONTH:
+		case LASTMONTH:
 			cal.add(Calendar.MONDAY, -1);
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
 					TimeUtil.setMonthEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
-		case SearchOptions.SEARCH_INDEX_DAY:
+		case DAY:
 			cal.setTime(searchOptions.getDay());
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 					TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
-		case SearchOptions.SEARCH_INDEX_MONTH:
-			cal.set(Calendar.MONTH, searchOptions.getSearchMonth());
+		case MONTH:
+			cal.set(Calendar.MONTH, searchOptions.getSearchMonth().getNumber());
 			cal.set(Calendar.YEAR, searchOptions.getYear());
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
 					TimeUtil.setMonthEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
-		case SearchOptions.SEARCH_INDEX_TIME:
+		case TIME:
 			cal.setTime(searchOptions.getSearchFrom());
 			long fromTime = TimeUtil.setDayBeginning(cal).getTimeInMillis();
 			cal.setTime(searchOptions.getSearchTo());
@@ -474,25 +382,25 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	public void selectNextTask() {
-		if (getRestrictedWorkList() != null) {
+		if (getWorkList() != null) {
 			if (getSelectedPatient() != null) {
-				int indexOfPatient = getRestrictedWorkList().indexOf(getSelectedPatient());
-				if (getRestrictedWorkList().size() - 1 > indexOfPatient)
-					setSelectedPatient(getRestrictedWorkList().get(indexOfPatient + 1));
+				int indexOfPatient = getWorkList().indexOf(getSelectedPatient());
+				if (getWorkList().size() - 1 > indexOfPatient)
+					setSelectedPatient(getWorkList().get(indexOfPatient + 1));
 			} else {
-				setSelectedPatient(getRestrictedWorkList().get(0));
+				setSelectedPatient(getWorkList().get(0));
 			}
 		}
 	}
 
 	public void selectPreviouseTask() {
-		if (getRestrictedWorkList() != null) {
+		if (getWorkList() != null) {
 			if (getSelectedPatient() != null) {
-				int indexOfPatient = getRestrictedWorkList().indexOf(getSelectedPatient());
+				int indexOfPatient = getWorkList().indexOf(getSelectedPatient());
 				if (indexOfPatient > 0)
-					setSelectedPatient(getRestrictedWorkList().get(indexOfPatient - 1));
+					setSelectedPatient(getWorkList().get(indexOfPatient - 1));
 			} else {
-				setSelectedPatient(getRestrictedWorkList().get(getRestrictedWorkList().size() - 1));
+				setSelectedPatient(getWorkList().get(getWorkList().size() - 1));
 			}
 		}
 	}
@@ -500,25 +408,6 @@ public class WorklistHandlerAction implements Serializable {
 	/*
 	 * ************************** Worklist ****************************
 	 */
-
-	/********************************************************
-	 * Task Dialogs
-	 ********************************************************/
-	public void prepareAccountingDialog() {
-		helper.showDialog("/pages/dialog/task/accounting", 430, 270, true, false, true);
-	}
-
-	public void hideAccountingDialog() {
-		helper.hideDialog("/pages/dialog/task/accounting");
-	}
-
-	public void prepareNotificationDialog() {
-		helper.showDialog("/pages/dialog/task/notification");
-	}
-
-	/********************************************************
-	 * Task Dialogs
-	 ********************************************************/
 
 	// public void updateSample(Sample sample) {
 	// boolean completed = true;
@@ -538,12 +427,12 @@ public class WorklistHandlerAction implements Serializable {
 	// }
 
 	public void searchForExistingPatients() {
-		if (getSearchString().matches("[0-9]{6,8}")) {
+		if (getWorklistFilter().matches("[0-9]{6,8}")) {
 			System.out.println("piz");
-			System.out.println(patientDao.searchForPatientsPiz(getSearchString()));
-		} else if (getSearchString().matches("[a-zA-Z ,]*")) {
+			System.out.println(patientDao.searchForPatientsPiz(getWorklistFilter()));
+		} else if (getWorklistFilter().matches("[a-zA-Z ,]*")) {
 			Pattern p = Pattern.compile("[a-zA-Z-]*?[ ,]*?[a-zA-Z-]*?");
-			Matcher m = p.matcher(getSearchString()); // get a matcher object
+			Matcher m = p.matcher(getWorklistFilter()); // get a matcher object
 			int count = 0;
 
 			while (m.find()) {
@@ -554,10 +443,6 @@ public class WorklistHandlerAction implements Serializable {
 				System.out.println(m.group());
 			}
 		}
-	}
-
-	public void prepareAddStaning() {
-		helper.showDialog("/pages/dialog/staining", true, false, true);
 	}
 
 	/*
@@ -584,55 +469,19 @@ public class WorklistHandlerAction implements Serializable {
 		return worklists.get(getActiveWorklistKey());
 	}
 
-	/*
-	 * ************************** Getters/Setters ****************************
-	 */
-
-	public String getSearchType() {
-		return searchType;
+	public Patient getSelectedPatient() {
+		return selectedPatient;
 	}
 
-	public void setSearchType(String searchType) {
-		this.searchType = searchType;
+	public void setSelectedPatient(Patient selectedPatient) {
+		this.selectedPatient = selectedPatient;
 	}
 
-	public String getSearchString() {
-		return searchString;
-	}
-
-	public void setSearchString(String searchString) {
-		this.searchString = searchString;
-	}
-
-	public List<Person> getSearchResults() {
-		return searchResults;
-	}
-
-	public void setSearchResults(ArrayList<Person> searchResults) {
-		this.searchResults = searchResults;
-	}
-
-	public List<Patient> getRestrictedWorkList() {
-		return restrictedWorkList;
-	}
-
-	public void setRestrictedWorkList(List<Patient> restrictedWorkList) {
-		this.restrictedWorkList = restrictedWorkList;
-	}
-
-	public SearchOptions getSearchOptions() {
-		return searchOptions;
-	}
-
-	public void setSearchOptions(SearchOptions searchOptions) {
-		this.searchOptions = searchOptions;
-	}
-
-	public int getWorklistSortOrder() {
+	public WorklistSortOrder getWorklistSortOrder() {
 		return worklistSortOrder;
 	}
 
-	public void setWorklistSortOrder(int worklistSortOrder) {
+	public void setWorklistSortOrder(WorklistSortOrder worklistSortOrder) {
 		this.worklistSortOrder = worklistSortOrder;
 	}
 
@@ -644,12 +493,24 @@ public class WorklistHandlerAction implements Serializable {
 		this.worklistSortOrderAcs = worklistSortOrderAcs;
 	}
 
-	public Patient getSelectedPatient() {
-		return selectedPatient;
+	public SearchOptions getSearchOptions() {
+		return searchOptions;
 	}
 
-	public void setSelectedPatient(Patient selectedPatient) {
-		this.selectedPatient = selectedPatient;
+	public void setSearchOptions(SearchOptions searchOptions) {
+		this.searchOptions = searchOptions;
 	}
+
+	public String getWorklistFilter() {
+		return worklistFilter;
+	}
+
+	public void setWorklistFilter(String worklistFilter) {
+		this.worklistFilter = worklistFilter;
+	}
+
+	/*
+	 * ************************** Getters/Setters ****************************
+	 */
 
 }

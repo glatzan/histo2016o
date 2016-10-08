@@ -6,36 +6,31 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>#{msg['dialog.addPatient.headline']}</title>
-	<h:outputStylesheet name="dialogStandard.css"
-		value="dialogStandard.css" />
+	<title>#{msg['dialog.editPatient.headline']}</title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
-<h:body styleClass="settingsDialogLayout">
+
+
+<h:body styleClass="defaultDialogLayout">
 	<h:form>
-		<p:panel styleClass="collapsedBorders noBorders settingsPannel">
-			<p:layout styleClass="tabLayout">
-				<p:layoutUnit styleClass="center" position="center">
-
-					<p:panel style="width:100%;"
-						header="#{msg['dialog.addPatient.add']}"
-						styleClass="contentPannel" />
-
-					<ui:include src="../../template/person.xhtml">
-						<ui:param name="person"
-							value="#{patientHandlerAction.tmpPatient.person}" />
-					</ui:include>
-				</p:layoutUnit>
-
-				<p:layoutUnit position="south" styleClass="south">
-					<p:commandButton value="#{msg['dialog.addPatient.add']}"
-						process="@form" icon="fa fa-fw fa-user-plus"
-						actionListener="#{patientHandlerAction.createNewPatient(patientHandlerAction.tmpPatient)}">
-					</p:commandButton>
-				</p:layoutUnit>
-			</p:layout>
-		</p:panel>
+		<div class="dialogContent">
+			<ui:include src="../../template/person.xhtml">
+				<ui:param name="person"
+					value="#{patientHandlerAction.tmpPatient.person}" />
+				<ui:param name="pannelID" value="editPatient" />
+				<ui:param name="disabled" value="false" />
+			</ui:include>
+		</div>
+		<div class="buttonContainer">
+			<p:commandButton value="#{msg['dialog.editPatient.edit']}"
+				process="@form" icon="fa fa-fw fa-user-plus"
+				actionListener="#{patientHandlerAction.createNewPatient(patientHandlerAction.tmpPatient)}">
+			</p:commandButton>
+		</div>
 	</h:form>
 </h:body>
 </html>
+
+
+

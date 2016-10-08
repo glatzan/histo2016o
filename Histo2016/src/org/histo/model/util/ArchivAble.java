@@ -1,5 +1,7 @@
 package org.histo.model.util;
 
+import org.histo.config.enums.Dialog;
+
 /**
  * Alle Objekte werden nicht gelöscht, sondern nurch archiviert.
  * @author andi
@@ -25,5 +27,5 @@ public interface ArchivAble {
      * Gibt den Dilaog zum Archivieren zurück
      * @return
      */
-    public String getArchiveDialog();
+    public Dialog getArchiveDialog();
 }

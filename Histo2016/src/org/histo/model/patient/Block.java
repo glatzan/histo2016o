@@ -26,6 +26,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.Dialog;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
 import org.histo.model.util.TaskTree;
@@ -278,8 +279,8 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	 */
 	@Transient
 	@Override
-	public String getArchiveDialog() {
-		return HistoSettings.DIALOG_ARCHIV_BLOCK;
+	public Dialog getArchiveDialog() {
+		return Dialog.BLOCK_ARCHIV;
 	}
 	/******************************************************** ArchiveAble ********************************************************/
 }
