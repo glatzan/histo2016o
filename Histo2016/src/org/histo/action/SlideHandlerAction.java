@@ -138,7 +138,7 @@ public class SlideHandlerAction implements Serializable {
 		}
 
 		// updating statining list
-		block.getParent().getParent().generateStainingGuiList();
+		TaskUtil.generateSlideGuiList(block.getParent().getParent());
 
 		// if staining is needed set the staining flag of the task object to
 		// true

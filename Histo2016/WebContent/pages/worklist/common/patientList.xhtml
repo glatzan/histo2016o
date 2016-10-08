@@ -12,7 +12,8 @@
 	<h:panelGroup styleClass="searchContainer" layout="block">
 		<p:focus context="form" for="searchField" />
 		<p:inputText placeholder="#{msg.headSearch}" id="searchField"
-			styleClass="seachFiled" value="#{worklistHandlerAction.worklistFilter}">
+			styleClass="seachFiled"
+			value="#{worklistHandlerAction.worklistFilter}">
 			<p:ajax event="keyup"
 				listener="#{worklistHandlerAction.searchForExistingPatients()}" />
 		</p:inputText>
@@ -20,12 +21,13 @@
 
 	<!-- Nav Table -->
 	<p:dataTable var="patient" id="patientList"
-		value="#{worklistHandlerAction.workList}"
-		selectionMode="single"
+		value="#{worklistHandlerAction.workList}" selectionMode="single"
 		selection="#{worklistHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
+
 		<p:ajax event="rowSelect" update=":contentForm, :headerForm"
-			listener="#{worklistHandlerAction.selectPatient(worklistHandlerAction.selectedPatient)}" />
+			listener="#{worklistHandlerAction.onSelectPatient(worklistHandlerAction.selectedPatient)}" />
+
 		<p:column>
 			<!-- Header -->
 			<f:facet name="header">
@@ -70,7 +72,6 @@
 					<p:column>
 						<h:outputText
 							value="#{patient.person.name}, #{patient.person.surname}" />
-
 					</p:column>
 					<p:column>
 						<h:outputText
@@ -100,9 +101,10 @@
 						<!-- task list -->
 						<p:repeat var="task" value="#{patient.activTasks}">
 							<p:commandLink
-								actionListener="#{worklistHandlerAction.selectTaskOfPatient(task)}"
+								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
+
 								<h:outputLabel value="#{task.taskID}" />
 
 								<!-- new task -->

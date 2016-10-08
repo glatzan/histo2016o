@@ -9,7 +9,7 @@ import org.histo.config.HistoSettings;
  */
 public enum Dialog {
 	
-	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", 650, 470, false, false, true),
+	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", 620, 440, false, false, true),
 	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", 1024, 600, false, false, true), //
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", 430, 270, false, false, true), //
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", 300, 200, false, false, true), //

@@ -76,8 +76,8 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * The date of the sugery
 	 */
-	private long dateOfSugery = 0 ;
-	
+	private long dateOfSugery = 0;
+
 	/**
 	 * Date of reception of the first material
 	 */
@@ -87,7 +87,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * The dueDate
 	 */
 	private long dueDate = 0;
-	
+
 	/**
 	 * If a dueDate is given
 	 */
@@ -106,17 +106,17 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * Commentary TODO: is used=
 	 */
-	private String commentray  = "";
+	private String commentray = "";
 
 	/**
 	 * Details of the case
 	 */
-	private String caseHistory  = "";
+	private String caseHistory = "";
 
 	/**
 	 * Ward of the patient
 	 */
-	private String ward  = "";
+	private String ward = "";
 
 	/**
 	 * Ey of the samples right/left/both
@@ -183,7 +183,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * If set to true, this task is shown in the navigation column on the left
 	 * hand side, however there are actions to perform or not.
 	 */
-	private boolean currentlyActive;
+	private boolean active;
 
 	/**
 	 * True if lazy initialision was successful.
@@ -198,70 +198,29 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.parent = parent;
 	}
 
-	/**
-	 * Erstellt eine Liste aller in diesem Task enthaltenen
-	 * Proben/Blöcke/Färbungen. Standardmäßig werden archivierte Elemente nicht
-	 * angezegit.
+	/*
+	 * ************************** Transient ****************************
 	 */
-	public void generateStainingGuiList() {
-		generateStainingGuiList(false);
-	}
-
-	/**
-	 * Erstellt eine Liste aller in diesem Task enthaltenen
-	 * Proben/Blöcke/Färbungen. Es kann ausgewählt werden, ob archivierte
-	 * Element angezeigt werden oder nicht.
-	 * 
-	 * @param showArchived
-	 */
-	public void generateStainingGuiList(boolean showArchived) {
-		if (getStainingTableRows() == null)
-			setStainingTableRows(new ArrayList<>());
-		else
-			getStainingTableRows().clear();
-
-		boolean even = false;
-
-		for (Sample sample : samples) {
-			// überspringt archivierte Proben
-			if (sample.isArchived() && !showArchived)
-				continue;
-
-			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
-			getStainingTableRows().add(sampleChooser);
-
-			for (Block block : sample.getBlocks()) {
-				// überspringt archivierte Blöcke
-				if (block.isArchived() && !showArchived)
-					continue;
-
-				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
-				getStainingTableRows().add(blockChooser);
-				sampleChooser.addChild(blockChooser);
-
-				for (Slide staining : block.getSlides()) {
-					// überspringt archivierte Objektträger
-					if (staining.isArchived() && !showArchived)
-						continue;
-
-					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
-					getStainingTableRows().add(stainingChooser);
-					blockChooser.addChild(stainingChooser);
-				}
-			}
-			even = !even;
-		}
-	}
-
 	/**
 	 * Updated den Tabindex wenn ein andere Tab (Diagnose oder Färbung) in der
-	 * Gui ausgewählt wurde
+	 * Gui ausgewählt wurde TODO: Remove or use
 	 * 
 	 * @param event
 	 */
-	@Transient
-	public void tabIndexListener(TabChangeEvent event) {
+	public void onTabChange(TabChangeEvent event) {
 		setTabIndex(((TabView) event.getSource()).getIndex());
+	}
+
+	/**
+	 * Returns true if either the task is active or a diagnosis or a staining is
+	 * needed.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean isActiveOrActionToPerform() {
+		return isActive() || isDiagnosisNeeded() || isReDiagnosisNeeded() || isStainingNeeded()
+				|| isReDiagnosisNeeded();
 	}
 
 	public void incrementSampleNumber() {
@@ -271,10 +230,13 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void decrementSmapleNumber() {
 		this.sampleNumer--;
 	}
+	/*
+	 * ************************** Transient ****************************
+	 */
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
+	/*
+	 * ************************** Getter/Setter ****************************
+	 */
 	@Id
 	@GeneratedValue(generator = "sample_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -286,96 +248,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.id = id;
 	}
 
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@Basic
-	public String getTaskID() {
-		return taskID;
-	}
-
-	public void setTaskID(String taskID) {
-		this.taskID = taskID;
-	}
-
-	@Basic
-	public long getDateOfReceipt() {
-		return dateOfReceipt;
-	}
-
-	public void setDateOfReceipt(long dateOfReceipt) {
-		this.dateOfReceipt = dateOfReceipt;
-	}
-
-	@Transient     
-	public Date getDateOfReceiptAsDate(){
-		return new Date(getDateOfReceipt());
-	}
-	
-	public void setDateOfReceiptAsDate(Date date){
-		setDateOfReceipt(TimeUtil.setDayBeginning(date).getTime());
-	}
-	
-	@Basic
-	public long getDueDate() {
-		return dueDate;
-	}
-
-	public void setDueDate(long dueDate) {
-		this.dueDate = dueDate;
-	}
-	
-	@Transient
-	public Date getDueDateAsDate(){
-		return new Date(getDueDate());
-	}
-	
-	public void setDueDateAsDate(Date date){
-		setDueDate(TimeUtil.setDayBeginning(date).getTime());
-	}
-	
-	@Basic
-	public long getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
-	}
-	
-	@Transient
-	public Date getCreationDateAsDate(){
-		return new Date(getCreationDate());
-	}
-	
-	public void setCreationDateAsDate(Date date){
-		setCreationDate(TimeUtil.setDayBeginning(date).getTime());
-	}
-
-	@Basic
-	public long getDateOfSugery() {
-		return dateOfSugery;
-	}
-
-	public void setDateOfSugery(long dateOfSugery) {
-		this.dateOfSugery = dateOfSugery;
-	}
-	
-	@Transient
-	public Date getDateOfSugeryAsDate(){
-		return new Date(getDateOfSugery());
-	}
-	
-	public void setDateOfSugeryAsDate(Date date){
-		setDateOfSugery(TimeUtil.setDayBeginning(date).getTime());
-	}
-	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
@@ -390,43 +262,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.contacts = contacts;
 	}
 
-	@Column
-	public byte getTypeOfOperation() {
-		return typeOfOperation;
-	}
-
-	public void setTypeOfOperation(byte typeOfOperation) {
-		this.typeOfOperation = typeOfOperation;
-	}
-
-	@Column
-	public String getCommentray() {
-		return commentray;
-	}
-
-	public void setCommentray(String commentray) {
-		this.commentray = commentray;
-	}
-
-	@Column
-	public String getCaseHistory() {
-		return caseHistory;
-	}
-
-	public void setCaseHistory(String caseHistory) {
-		this.caseHistory = caseHistory;
-	}
-
-	@Basic
-	public byte getEye() {
-		return eye;
-	}
-
-	public void setEye(byte eye) {
-		this.eye = eye;
-	}
-
-	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL , fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	public List<Sample> getSamples() {
@@ -439,7 +275,99 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.samples = samples;
 	}
 
-	@Basic
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public List<PDFContainer> getPdfs() {
+		if (pdfs == null)
+			pdfs = new ArrayList<PDFContainer>();
+
+		return pdfs;
+	}
+
+	public void setPdfs(List<PDFContainer> pdfs) {
+		this.pdfs = pdfs;
+	}
+
+	@Version
+	public long getVersion() {
+		return version;
+	}
+
+	public void setVersion(long version) {
+		this.version = version;
+	}
+
+	public String getTaskID() {
+		return taskID;
+	}
+
+	public void setTaskID(String taskID) {
+		this.taskID = taskID;
+	}
+
+	public long getDateOfReceipt() {
+		return dateOfReceipt;
+	}
+
+	public void setDateOfReceipt(long dateOfReceipt) {
+		this.dateOfReceipt = dateOfReceipt;
+	}
+
+	public long getDueDate() {
+		return dueDate;
+	}
+
+	public void setDueDate(long dueDate) {
+		this.dueDate = dueDate;
+	}
+
+	public long getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public long getDateOfSugery() {
+		return dateOfSugery;
+	}
+
+	public void setDateOfSugery(long dateOfSugery) {
+		this.dateOfSugery = dateOfSugery;
+	}
+
+	public byte getTypeOfOperation() {
+		return typeOfOperation;
+	}
+
+	public void setTypeOfOperation(byte typeOfOperation) {
+		this.typeOfOperation = typeOfOperation;
+	}
+
+	public String getCommentray() {
+		return commentray;
+	}
+
+	public void setCommentray(String commentray) {
+		this.commentray = commentray;
+	}
+
+	public String getCaseHistory() {
+		return caseHistory;
+	}
+
+	public void setCaseHistory(String caseHistory) {
+		this.caseHistory = caseHistory;
+	}
+
+	public byte getEye() {
+		return eye;
+	}
+
+	public void setEye(byte eye) {
+		this.eye = eye;
+	}
+
 	public int getSampleNumer() {
 		return sampleNumer;
 	}
@@ -448,7 +376,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.sampleNumer = sampleNumer;
 	}
 
-	@Basic
 	public boolean isDueDateSelected() {
 		return dueDateSelected;
 	}
@@ -457,7 +384,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.dueDateSelected = dueDateSelected;
 	}
 
-	@Basic
 	public boolean isStainingCompleted() {
 		return stainingCompleted;
 	}
@@ -466,7 +392,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.stainingCompleted = stainingCompleted;
 	}
 
-	@Basic
 	public long getStainingCompletionDate() {
 		return stainingCompletionDate;
 	}
@@ -475,7 +400,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.stainingCompletionDate = stainingCompletionDate;
 	}
 
-	@Basic
 	public boolean isDiagnosisCompleted() {
 		return diagnosisCompleted;
 	}
@@ -484,7 +408,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.diagnosisCompleted = diagnosisCompleted;
 	}
 
-	@Basic
 	public long getDiagnosisCompletionDate() {
 		return diagnosisCompletionDate;
 	}
@@ -499,6 +422,40 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 
 	public void setWard(String ward) {
 		this.ward = ward;
+	}
+	/*
+	 * ************************** Getter/Setter ****************************
+	 */
+
+	/*
+	 * ************************** Transient Getter/Setter
+	 * ****************************
+	 */
+	@Transient
+	public Date getCreationDateAsDate() {
+		return new Date(getCreationDate());
+	}
+
+	public void setCreationDateAsDate(Date date) {
+		setCreationDate(TimeUtil.setDayBeginning(date).getTime());
+	}
+
+	@Transient
+	public Date getDateOfSugeryAsDate() {
+		return new Date(getDateOfSugery());
+	}
+
+	public void setDateOfSugeryAsDate(Date date) {
+		setDateOfSugery(TimeUtil.setDayBeginning(date).getTime());
+	}
+
+	@Transient
+	public Date getDateOfReceiptAsDate() {
+		return new Date(getDateOfReceipt());
+	}
+
+	public void setDateOfReceiptAsDate(Date date) {
+		setDateOfReceipt(TimeUtil.setDayBeginning(date).getTime());
 	}
 
 	@Transient
@@ -529,33 +486,31 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	}
 
 	@Transient
-	public boolean isCurrentlyActive() {
-		return currentlyActive;
+	public Date getDueDateAsDate() {
+		return new Date(getDueDate());
 	}
 
-	public void setCurrentlyActive(boolean currentlyActive) {
-		this.currentlyActive = currentlyActive;
+	public void setDueDateAsDate(Date date) {
+		setDueDate(TimeUtil.setDayBeginning(date).getTime());
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public List<PDFContainer> getPdfs() {
-		if (pdfs == null)
-			pdfs = new ArrayList<PDFContainer>();
-
-		return pdfs;
+	@Transient
+	public boolean isActive() {
+		return active;
 	}
 
-	public void setPdfs(List<PDFContainer> pdfs) {
-		this.pdfs = pdfs;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
-	
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
+	/*
+	 * ************************** Transient Getter/Setter
+	 * ****************************
+	 */
 
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
+	/*
+	 * ************************** Interface DiagnosisStatus
+	 * ****************************
+	 */
 	/**
 	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
 	 * Gibt true zurück wenn alle Diagnosen finalisiert wurden.
@@ -610,13 +565,15 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		return false;
 	}
 
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
+	/*
+	 * ************************** Interface DiagnosisStatus
+	 * ****************************
+	 */
 
-	/********************************************************
-	 * Interface StainingStauts
-	 ********************************************************/
+	/*
+	 * ************************** Interface StainingStauts
+	 * ****************************
+	 */
 	/**
 	 * Überschreibt Methode aus dem Interface StainingStauts <br>
 	 * Gibt true zurück, wenn die Aufgabe am heutigen Tag erstellt wurde
@@ -684,14 +641,15 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		}
 		return false;
 	}
+	/*
+	 * ************************** Interface StainingStauts
+	 * ****************************
+	 */
 
-	/********************************************************
-	 * Interface StainingStauts
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface StainingTreeParent
-	 ********************************************************/
+	/*
+	 * ************************** Interface StainingTreeParent
+	 * ****************************
+	 */
 	@ManyToOne(targetEntity = Patient.class)
 	public Patient getParent() {
 		return parent;
@@ -748,8 +706,9 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public Dialog getArchiveDialog() {
 		return Dialog.TASK_ARCHIV;
 	}
-	/********************************************************
-	 * Interface StainingTreeParent
-	 ********************************************************/
+	/*
+	 * ************************** Interface StainingTreeParent
+	 * ****************************
+	 */
 
 }

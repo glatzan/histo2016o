@@ -200,7 +200,7 @@ public class TaskHandlerAction implements Serializable {
 		// checking if staining flag of the task object has to be false
 		SlideUtil.checkIfAllSlidesAreStained(task);
 		// generating gui list
-		task.generateStainingGuiList();
+		TaskUtil.generateSlideGuiList(task);
 		// saving patient
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
@@ -250,7 +250,7 @@ public class TaskHandlerAction implements Serializable {
 		// checking if staining flag of the task object has to be false
 		SlideUtil.checkIfAllSlidesAreStained(task);
 		// generating gui list
-		task.generateStainingGuiList();
+		TaskUtil.generateSlideGuiList(task);
 		// saving patient
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
@@ -299,7 +299,7 @@ public class TaskHandlerAction implements Serializable {
 		// checking if staining flag of the task object has to be false
 		SlideUtil.checkIfAllSlidesAreStained(sample.getParent());
 		// generating gui list
-		sample.getParent().generateStainingGuiList();
+		TaskUtil.generateSlideGuiList(sample.getParent());
 		// saving patient
 		genericDAO.save(sample.getPatient(), resourceBundle.get("log.patient.save"), sample.getPatient());
 	}
@@ -383,7 +383,7 @@ public class TaskHandlerAction implements Serializable {
 		genericDAO.save(archive, logString, archive.getPatient());
 
 		// update the gui list for displaying in the receiptlog
-		archive.getPatient().getSelectedTask().generateStainingGuiList();
+		TaskUtil.generateSlideGuiList(archive.getPatient().getSelectedTask());
 
 		hideArchiveObjectDialog();
 	}

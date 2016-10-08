@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
-import org.histo.config.enums.Pages;
+import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
@@ -20,6 +20,7 @@ import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.SearchOptions;
+import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.WorklistSortUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ public class WorklistHandlerAction implements Serializable {
 	private TaskHandlerAction taskHandlerAction;
 
 	@Autowired
-	MainHandlerAction mainHandlerAction;
+	private MainHandlerAction mainHandlerAction;
 
 	/*
 	 * ************************** Patient ****************************
@@ -117,6 +118,12 @@ public class WorklistHandlerAction implements Serializable {
 	 * A Filter which searches for a given pattern in the current worklist (
 	 */
 	private String worklistFilter;
+
+	/**
+	 * If true all not active task are skipped while the user useses the up and
+	 * down arrows to navigate
+	 */
+	private boolean skipNotActiveTasks = true;
 	/*
 	 * ************************** Worklist ****************************
 	 */
@@ -152,8 +159,106 @@ public class WorklistHandlerAction implements Serializable {
 		}
 	}
 
-	public void selectPatient(Patient patient) {
-		// TODO
+	/**
+	 * Action is performed on selecting a patient in the patient list on the
+	 * left hand side. If the receiptlog or the diagnosis view should be used it
+	 * is checked if a task is selected. If not the program will select the
+	 * first (active oder not depending on skipNotActiveTasks) task.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("incomplete-switch")
+	public String onSelectPatient(Patient patient) {
+		setSelectedPatient(patient);
+
+		if (patient == null)
+			return View.WORKLIST.getPath();
+
+		switch (mainHandlerAction.getCurrentView()) {
+		case WORKLIST_PATIENT:
+		case WORKLIST_RECEIPTLOG:
+		case WORKLIST_DIAGNOSIS:
+			System.out.println("task");
+			Task task = patient.getSelectedTask();
+			if (task == null && !patient.getTasks().isEmpty()) {
+				if (skipNotActiveTasks)
+					task = TaskUtil.getLastActiveTask(patient.getTasks());
+				else
+					task = TaskUtil.getLastTask(patient.getTasks());
+			}
+
+			if (task != null)
+				return onSelectTask(task);
+
+		}
+
+		return View.WORKLIST.getPath();
+	}
+
+	/**
+	 * Selects a task and sets the patient of this task as selectedPatient
+	 * 
+	 * @param task
+	 */
+	public void onSelectTaskAndPatient(Task task) {
+
+		if (mainHandlerAction.getCurrentView() != View.WORKLIST_RECEIPTLOG
+				|| mainHandlerAction.getCurrentView() != View.WORKLIST_DIAGNOSIS) {
+			// TODO set favorite view depending on user
+			mainHandlerAction.setCurrentView(View.WORKLIST_RECEIPTLOG);
+		}
+
+		onSelectPatient(task.getPatient());
+	}
+
+	/**
+	 * Task - Select and init
+	 */
+	public String onSelectTask(Task task) {
+		System.out.println(task.getTaskID());
+		// set patient.selectedTask is performed by the gui
+		// sets this task as active, so it will be show in the navigation column
+		// whether there is an action to perform or not
+		task.setActive(true);
+
+		task.getPatient().setSelectedTask(task);
+
+		Role userRole = userHandlerAction.getCurrentUser().getRole();
+
+		TaskUtil.generateSlideGuiList(task);
+
+		// Setzte action to none
+		slideHandlerAction.setActionOnMany(SlideHandlerAction.STAININGLIST_ACTION_NONE);
+
+		// init all available diagnoses
+		settingsHandlerAction.updateAllDiagnosisPrototypes();
+
+		// init all available materials
+		taskHandlerAction.prepareForTask();
+
+		if (mainHandlerAction.getCurrentView() == View.WORKLIST_RECEIPTLOG) {
+			if (userRole == Role.MTA) {
+				task.setTabIndex(Task.TAB_STAINIG);
+			} else {
+				task.setTabIndex(Task.TAB_DIAGNOSIS);
+			}
+		}
+
+		return View.WORKLIST.getPath();
+	}
+
+	public String onDeselectTask(Patient patient) {
+		patient.setSelectedTask(null);
+		mainHandlerAction.setCurrentView(View.WORKLIST_PATIENT);
+		return View.WORKLIST.getPath();
+	}
+
+	public String getCenterView() {
+		View currentView = mainHandlerAction.getCurrentView();
+		if (currentView == View.WORKLIST_BLANK || currentView == View.WORKLIST_DIAGNOSIS
+				|| currentView == View.WORKLIST_PATIENT || currentView == View.WORKLIST_RECEIPTLOG)
+			return mainHandlerAction.getCurrentView().getPath();
+		return View.WORKLIST_BLANK.getPath();
 	}
 
 	/**
@@ -210,63 +315,6 @@ public class WorklistHandlerAction implements Serializable {
 	/******************************************************** General ********************************************************/
 
 	/******************************************************** Task ********************************************************/
-	/**
-	 * Selects a task and sets the patient of this task as selectedPatient
-	 * 
-	 * @param task
-	 */
-	public void selectTaskOfPatient(Task task) {
-		setSelectedPatient(task.getParent());
-		selectPatient(getSelectedPatient());
-		selectTask(task);
-	}
-
-	/**
-	 * Task - Select and init
-	 */
-	public String selectTask(Task task) {
-		System.out.println(task.getTaskID());
-		// set patient.selectedTask is performed by the gui
-		// sets this task as active, so it will be show in the navigation column
-		// whether there is an action to perform or not
-		task.setCurrentlyActive(true);
-
-		if (task.getPatient().getSelectedTask() != task)
-			task.getPatient().setSelectedTask(task);
-
-		// log.info("Select and init sample");
-
-		Role userRole = userHandlerAction.getCurrentUser().getRole();
-
-		task.generateStainingGuiList();
-
-		if (userRole == Role.MTA) {
-			task.setTabIndex(Task.TAB_STAINIG);
-		} else {
-			task.setTabIndex(Task.TAB_DIAGNOSIS);
-		}
-
-		// Setzte action to none
-		slideHandlerAction.setActionOnMany(SlideHandlerAction.STAININGLIST_ACTION_NONE);
-
-		// init all available diagnoses
-		settingsHandlerAction.updateAllDiagnosisPrototypes();
-
-		// init all available materials
-		taskHandlerAction.prepareForTask();
-
-		// setzte das diasplay auf das eingangsbuch wenn der patient angezeigt
-		// wird
-		// if (getWorklistDisplay() == Display.PATIENT)
-		// setWorklistDisplay(Display.RECEIPTLOG);
-		
-		return mainHandlerAction.goToNavigation(Pages.WORKLIST_RECEITLOG);
-	}
-
-	public void deselectTask(Patient patient) {
-		// setWorklistDisplay(Display.PATIENT);
-		// patient.setSelectedTask(null);
-	}
 
 	/******************************************************** Task ********************************************************/
 
@@ -426,6 +474,13 @@ public class WorklistHandlerAction implements Serializable {
 	// }
 	// }
 
+	//name (in current worklist)
+	//name, surname (in current worklist)
+	//piz (current, extern)
+	//auftrag a (current, extern)
+	//bloc b (current extern)
+	//slide s (current extern)
+	
 	public void searchForExistingPatients() {
 		if (getWorklistFilter().matches("[0-9]{6,8}")) {
 			System.out.println("piz");
@@ -509,6 +564,13 @@ public class WorklistHandlerAction implements Serializable {
 		this.worklistFilter = worklistFilter;
 	}
 
+	public boolean isSkipNotActiveTasks() {
+		return skipNotActiveTasks;
+	}
+
+	public void setSkipNotActiveTasks(boolean skipNotActiveTasks) {
+		this.skipNotActiveTasks = skipNotActiveTasks;
+	}
 	/*
 	 * ************************** Getters/Setters ****************************
 	 */

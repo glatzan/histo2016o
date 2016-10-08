@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.histo.config.enums.Pages;
+import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
 import org.histo.model.HistoUser;
 import org.histo.util.UserUtil;
@@ -60,30 +60,30 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 			if (!roles.isEmpty()) {
 				userRole = roles.iterator().next();
 			} else {
-				return Pages.LOGIN.getPath();
+				return View.LOGIN.getPath();
 			}
 
 			if (userRole == Role.NONE_AUTH)
 				// no role, should never happen
-				return Pages.LOGIN.getPath();
+				return View.LOGIN.getPath();
 			else if (userRole == Role.GUEST)
 				// guest need to be unlocked first
-				return Pages.GUEST.getPath();
+				return View.GUEST.getPath();
 			else if (userRole == Role.SCIENTIST)
 				// no names are displayed
-				return Pages.SCIENTIST.getPath();
+				return View.SCIENTIST.getPath();
 			else if (userRole.getRoleValue() >= Role.USER.getRoleValue()) {
 				// if a default view is selected for the user
 				if (user.getDefaultView() != null)
 					return user.getDefaultView().getPath();
 
 				// normal work environment
-				return Pages.WORKLIST_PATIENT.getPath();
+				return View.WORKLIST.getPath();
 			} else
-				return Pages.LOGIN.getPath();
+				return View.LOGIN.getPath();
 		}
 
-		return Pages.LOGIN.getPath();
+		return View.LOGIN.getPath();
 	}
 
 	protected void clearAuthenticationAttributes(HttpServletRequest request) {

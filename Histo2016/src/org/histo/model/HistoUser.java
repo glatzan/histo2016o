@@ -24,7 +24,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
-import org.histo.config.enums.Pages;
+import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
 import org.histo.model.util.LogAble;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,7 +48,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	private Role role;
 	
-	private Pages defaultView;
+	private View defaultView;
 
 	private Physician physician;
 
@@ -123,11 +123,11 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public Pages getDefaultView() {
+	public View getDefaultView() {
 		return defaultView;
 	}
 
-	public void setDefaultView(Pages defaultView) {
+	public void setDefaultView(View defaultView) {
 		this.defaultView = defaultView;
 	}
 

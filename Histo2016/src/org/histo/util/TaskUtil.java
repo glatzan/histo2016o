@@ -1,5 +1,6 @@
 package org.histo.util;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.ui.StainingTableChooser;
 
 public class TaskUtil {
 
@@ -125,7 +127,7 @@ public class TaskUtil {
 	 * @param prototype
 	 * @return
 	 */
-	private final static int getNumerOfSameStainings(Block block, StainingPrototype prototype) {
+	public final static int getNumerOfSameStainings(Block block, StainingPrototype prototype) {
 		int count = 1;
 		for (Slide staining : block.getSlides()) {
 			if (staining.getSlidePrototype().getId() == prototype.getId())
@@ -222,13 +224,101 @@ public class TaskUtil {
 		return String.valueOf(Character.toChars(((int) 'a') + number));
 	}
 
+	/**
+	 * Creates linear list of all slides of the given task. The
+	 * StainingTableChosser is used as holder class in order to offer an option
+	 * to select the slides by clicking on a checkbox. Archived elements will
+	 * not be shown if showArchived is false.
+	 */
+	public static final void generateSlideGuiList(Task task) {
+		generateSlideGuiList(task, false);
+	}
+
+	/**
+	 * Creates linear list of all slides of the given task. The
+	 * StainingTableChosser is used as holder class in order to offer an option
+	 * to select the slides by clicking on a checkbox. Archived elements will
+	 * not be shown if showArchived is false.
+	 * 
+	 * @param showArchived
+	 */
+	public static final void generateSlideGuiList(Task task, boolean showArchived) {
+		if (task.getStainingTableRows() == null)
+			task.setStainingTableRows(new ArrayList<>());
+		else
+			task.getStainingTableRows().clear();
+
+		boolean even = false;
+
+		for (Sample sample : task.getSamples()) {
+			// skips archived tasks
+			if (sample.isArchived() && !showArchived)
+				continue;
+
+			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
+			task.getStainingTableRows().add(sampleChooser);
+
+			for (Block block : sample.getBlocks()) {
+				// skips archived blocks
+				if (block.isArchived() && !showArchived)
+					continue;
+
+				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
+				task.getStainingTableRows().add(blockChooser);
+				sampleChooser.addChild(blockChooser);
+
+				for (Slide staining : block.getSlides()) {
+					// skips archived sliedes
+					if (staining.isArchived() && !showArchived)
+						continue;
+
+					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
+					task.getStainingTableRows().add(stainingChooser);
+					blockChooser.addChild(stainingChooser);
+				}
+			}
+			even = !even;
+		}
+	}
+
+	/**
+	 * Returns the task with the highest taskID. (Is always the first task
+	 * because of the descending order)
+	 * 
+	 * @param tasks
+	 * @return
+	 */
 	public final static Task getLastTask(List<Task> tasks) {
+		if (tasks == null || tasks.isEmpty())
+			return null;
+
 		// List is ordere desc by taskID per default so return first (and
 		// latest) task in List
 		if (tasks != null && !tasks.isEmpty())
 			return tasks.get(0);
 		else
 			return null;
+	}
+
+	/**
+	 * Returns the task with the highest taskID which is also active or the
+	 * stating/diagnosis process wasn't completed.
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+	public final static Task getLastActiveTask(List<Task> tasks) {
+		if (tasks == null || tasks.isEmpty())
+			return null;
+
+		// List is ordere desc by taskID per default, iterate tasks to find the
+		// first active task (in most case the first one)
+
+		for (Task task : tasks) {
+			if (task.isActiveOrActionToPerform())
+				return task;
+		}
+		return null;
 	}
 
 	public final static String fitString(int value, int len) {

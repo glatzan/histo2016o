@@ -1,7 +1,6 @@
 package org.histo.model.patient;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -34,10 +33,6 @@ import org.histo.model.util.StainingStatus;
 import org.histo.model.util.TaskTree;
 import org.histo.util.TimeUtil;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
-
 @Entity
 @Audited
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
@@ -46,45 +41,28 @@ import com.google.gson.annotations.Expose;
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStatus, LogAble {
 
-	@Expose
 	private long id;
 
-	@Expose
 	private long version;
 
 	/**
 	 * PIZ
 	 */
-	@Expose
 	private String piz = "";
 
 	/**
 	 * Insurance of the patient
 	 */
-	@Expose
 	private String insurance = "";
-
-	/**
-	 * True if insurance is private
-	 */
-	private boolean privateInsurance = false;
-
-	/**
-	 * True if patient was added as an external patient.
-	 */
-	@Expose
-	private boolean externalPatient = false;
 
 	/**
 	 * Date of adding to the database
 	 */
-	@Expose
 	private long addDate = 0;
 
 	/**
 	 * Person data
 	 */
-	@Expose
 	private Person person;
 
 	/**
@@ -98,21 +76,61 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	private Task selectedTask;
 
 	/**
+	 * True if insurance is private
+	 */
+	private boolean privateInsurance = false;
+
+	/**
+	 * True if patient was added as an external patient.
+	 */
+	private boolean externalPatient = false;
+
+	/**
 	 * If true the patient is archived. Thus he won't be displayed.
 	 */
 	private boolean archived = false;
 
+	/*
+	 * ************************** Transient ****************************
+	 */
+	
+	/**
+	 * Returns a list with all currently active tasks
+	 * @return
+	 */
 	@Transient
-	public String asGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		builder.excludeFieldsWithoutExposeAnnotation();
-		final Gson gson = builder.create();
-		return gson.toJson(this);
-	}
+	public ArrayList<Task> getActivTasks() {
+		ArrayList<Task> result = new ArrayList<Task>();
+		for (Task task : tasks) {
+			if (task.isArchived())
+				continue;
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
+			if (task.isActiveOrActionToPerform())
+				result.add(task);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Returns a list with tasks which are not active
+	 * @return
+	 */
+	@Transient
+	public ArrayList<Task> getNoneActivTasks() {
+		ArrayList<Task> result = new ArrayList<Task>(getTasks());
+		result.removeAll(getActivTasks());
+		return result;
+	}
+	
+	/*
+	 * ************************** Transient ****************************
+	 */
+	
+	/*
+	 * ************************** Getter/Setter ****************************
+	 */
+	@Override
 	@Id
 	@GeneratedValue(generator = "patient_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -209,13 +227,13 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 		this.privateInsurance = privateInsurance;
 	}
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
+	/*
+	 * ************************** Getter/Setter ****************************
+	 */
 
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
+	/*
+	 * ************************** Interface DiagnosisStatus ****************************
+	 */
 	/**
 	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
 	 * Gibt true zurück wenn alle Diagnosen finalisiert wurden.
@@ -270,13 +288,13 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 		return false;
 	}
 
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
+	/*
+	 * ************************** Interface DiagnosisStatus ****************************
+	 */
 
-	/********************************************************
-	 * Interface StainingStauts
-	 ********************************************************/
+	/*
+	 * ************************** Interface StainingStauts ****************************
+	 */
 	/**
 	 * Überschreibt Methode aus dem Interface StainingStauts <br>
 	 * Gibt true zurück, wenn der Patient oder der Auftrag heute erstellt wurde.
@@ -350,13 +368,13 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 		return false;
 	}
 
-	/********************************************************
-	 * Interface StainingStauts
-	 ********************************************************/
+	/*
+	 * ************************** Interface StainingStauts ****************************
+	 */
 
-	/********************************************************
-	 * Interface StainingTreeParent
-	 ********************************************************/
+	/*
+	 * ************************** Interface StainingTreeParent ****************************
+	 */
 	@Transient
 	@Override
 	public Patient getPatient() {
@@ -394,23 +412,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	@Override
 	public void setParent(Patient parent) {
 	}
-
-	/********************************************************
-	 * Interface StainingTreeParent
-	 ********************************************************/
-	@Transient
-	public ArrayList<Task> getActivTasks() {
-		ArrayList<Task> result = new ArrayList<>();
-		for (Task task : tasks) {
-			if (task.isArchived())
-				continue;
-
-			if (task.isCurrentlyActive() || task.isDiagnosisNeeded() || task.isReDiagnosisNeeded()
-					|| task.isStainingNeeded() || task.isReStainingNeeded())
-				result.add(task);
-		}
-
-		return result;
-	}
-
+	/*
+	 * ************************** Interface StainingTreeParent ****************************
+	 */
 }

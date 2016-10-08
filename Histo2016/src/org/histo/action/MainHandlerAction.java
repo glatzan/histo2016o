@@ -10,7 +10,7 @@ import javax.annotation.PostConstruct;
 
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Display;
-import org.histo.config.enums.Pages;
+import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.Worklist;
 import org.histo.model.patient.Patient;
@@ -34,68 +34,72 @@ public class MainHandlerAction {
 	/**
 	 * View options, dynamically generated depending on the users role
 	 */
-	private List<Pages> navigationPages;
+	private List<View> navigationPages;
 
 	/**
 	 * The current view of the user
 	 */
-	private Pages currentView;
-	
+	private View currentView;
+
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
 	@PostConstruct
 	public void init() {
-		navigationPages = new ArrayList<Pages>();
-		navigationPages.add(Pages.USERLIST);
+		navigationPages = new ArrayList<View>();
+		navigationPages.add(View.USERLIST);
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
-			navigationPages.add(Pages.WORKLIST_PATIENT);
-			navigationPages.add(Pages.WORKLIST_RECEITLOG);
-			navigationPages.add(Pages.WORKLIST_DIAGNOSIS);
+			navigationPages.add(View.WORKLIST_PATIENT);
+			navigationPages.add(View.WORKLIST_RECEIPTLOG);
+			navigationPages.add(View.WORKLIST_DIAGNOSIS);
 		}
-		
+
 		// setting the current view depending on the users role
 		if (userHandlerAction.currentUserHasRole(Role.GUEST))
 			// guest need to be unlocked first
-			setCurrentView(Pages.GUEST);
+			setCurrentView(View.GUEST);
 		else if (userHandlerAction.currentUserHasRole(Role.SCIENTIST))
 			// no names are displayed
-			setCurrentView(Pages.SCIENTIST);
+			setCurrentView(View.SCIENTIST);
 		else if (userHandlerAction.currentUserHasRoleOrHigher(Role.USER)) {
 			// if a default view is selected for the user
 			if (userHandlerAction.getCurrentUser().getDefaultView() != null)
 				setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
 
 			// normal work environment
-			setCurrentView(Pages.WORKLIST_PATIENT);
+			setCurrentView(View.WORKLIST_PATIENT);
 		} else
-			setCurrentView(Pages.GUEST);
+			setCurrentView(View.GUEST);
 	}
 
 	/*
 	 * ************************** Navigation ****************************
 	 */
-	
+
 	/**
-	 * Method is called for chaning the current view with an p:selectOneMenu (e.g. worklist/header.xthml)
-	 * @param pages
+	 * Method is called for chaning the current view with an p:selectOneMenu
+	 * (e.g. worklist/header.xthml). If the view is a subview of a parent,
+	 * return the parent url.
+	 * 
+	 * @param view
 	 * @return
 	 */
-	public String goToNavigation(Pages pages){
-		setCurrentView(pages);
-		return pages.getPath();
+	public String goToNavigation(View view) {
+		setCurrentView(view);
+		return view.getParentView() == null ? view.getPath() : view.getParentView().getPath();
 	}
 	/*
 	 * ************************** Navigation ****************************
 	 */
-	
+
 	/*
 	 * ************************** Dialog ****************************
 	 */
-	
+
 	/**
 	 * Shows a dialog using the primefaces dialog framework
+	 * 
 	 * @param dilalog
 	 */
 	public void showDialog(Dialog dilalog) {
@@ -118,7 +122,7 @@ public class MainHandlerAction {
 			options.put("draggable", dilalog.isDraggable());
 			options.put("modal", dilalog.isModal());
 		}
-		
+
 		RequestContext.getCurrentInstance().openDialog(dilalog.getPath(), options, null);
 	}
 
@@ -130,11 +134,11 @@ public class MainHandlerAction {
 	public void hideDialog(Dialog dialog) {
 		RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
 	}
-	
+
 	/*
 	 * ************************** Dialog ****************************
 	 */
-	
+
 	/*
 	 * ************************** Getters/Setters ****************************
 	 */
@@ -144,23 +148,24 @@ public class MainHandlerAction {
 	 * 
 	 * @return
 	 */
-	public List<Pages> getNavigationPages() {
+	public List<View> getNavigationPages() {
 		return navigationPages;
 	}
 
-	public void setNavigationPages(List<Pages> navigationPages) {
+	public void setNavigationPages(List<View> navigationPages) {
 		this.navigationPages = navigationPages;
 	}
 
 	/**
 	 * The current view
+	 * 
 	 * @return
 	 */
-	public Pages getCurrentView() {
+	public View getCurrentView() {
 		return currentView;
 	}
 
-	public void setCurrentView(Pages currentView) {
+	public void setCurrentView(View currentView) {
 		this.currentView = currentView;
 	}
 	/*
