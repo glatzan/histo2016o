@@ -258,9 +258,18 @@ public class PatientHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void editExternalPatient(Patient patient) {
+	public void prepareEditExternalPatientDialog(Patient patient) {
 		setTmpPatient(patient);
 		mainHandlerAction.showDialog(Dialog.PATIENT_EDIT);
+	}
+	
+	/**
+	 * Saves the edited patient data and closes the dialog
+	 * @param patient
+	 */
+	public void saveEditedExternalPatient(Patient patient){
+		genericDAO.save(patient, resourceBundle.get("log.patient.extern.edit"), patient);
+		mainHandlerAction.hideDialog(Dialog.PATIENT_EDIT);
 	}
 
 	/********************************************************

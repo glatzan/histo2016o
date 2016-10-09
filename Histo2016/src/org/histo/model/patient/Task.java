@@ -159,6 +159,11 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	private long diagnosisCompletionDate = 0;
 
 	/**
+	 * Uploaded order letter 
+	 */
+	private PDFContainer orderLetter;
+	
+	/**
 	 * Generated PDFs of this task
 	 */
 	private List<PDFContainer> pdfs;
@@ -223,6 +228,13 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 				|| isReDiagnosisNeeded();
 	}
 
+	@Transient
+	public boolean isNewAndActionsPending() {
+		if(isNew() && (!isStainingCompleted() || !isDiagnosisCompleted()))
+			return true;
+		return false;
+	}
+	
 	public void incrementSampleNumber() {
 		this.sampleNumer++;
 	}
@@ -423,9 +435,20 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setWard(String ward) {
 		this.ward = ward;
 	}
+
+	@OneToOne
+	public PDFContainer getOrderLetter() {
+		return orderLetter;
+	}
+
+	public void setOrderLetter(PDFContainer orderLetter) {
+		this.orderLetter = orderLetter;
+	}
+	
 	/*
 	 * ************************** Getter/Setter ****************************
 	 */
+
 
 	/*
 	 * ************************** Transient Getter/Setter

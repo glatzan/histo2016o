@@ -3,8 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
-
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <h:head>
 	<title><h:outputFormat
@@ -14,28 +14,72 @@
 
 
 <h:body styleClass="defaultDialogLayout">
-	<h:form>
+	<h:form enctype="multipart/form-data">
 		<div class="dialogContent">
-			<h:panelGrid columns="2" styleClass="dialogTable">
-				<h:outputLabel value="#{msg['dialog.createTask.material']}"></h:outputLabel>
-				<p:selectOneMenu id="selectStainingList" styleClass="smallInput" style="margin-left:30px;"
-					converter="#{taskHandlerAction.materialListTransformer}"
-					value="#{taskHandlerAction.selectedMaterial}">
-					<f:selectItems value="#{taskHandlerAction.allAvailableMaterials}"
-						var="material" itemLabel="#{material.name}"
-						itemValue="#{material}">
-					</f:selectItems>
-				</p:selectOneMenu>
+			<h:panelGrid columns="2" styleClass="dialogTable" style="width:100%"
+				columnClasses="taskTextColunm,">
+
+				<h:outputLabel value="#{msg['dialog.createTask.orderLetter']}"></h:outputLabel>
+
+				<h:panelGroup id="uploadHolder">
+					<p:fileUpload style="width:100%" styleClass="taskUpload"
+						rendered="#{taskHandlerAction.orderLetter eq null}"
+						fileUploadListener="#{taskHandlerAction.handleOrderLetterUpload}"
+						auto="true" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
+						update="uploadHolder" />
+
+					<h:panelGrid columns="2"
+						rendered="#{taskHandlerAction.orderLetter ne null}">
+						<h:outputLabel value="#{taskHandlerAction.orderLetter.name}"></h:outputLabel>
+						<p:commandLink style="margin-left:10px;"
+							title="#{msg['dialog.createTask.orderLetter.remove']}"
+							actionListener="#{taskHandlerAction.setOrderLetter(nul)}"
+							update="uploadHolder">
+							<i class="fa fa-times-circle" style="color: black"></i>
+						</p:commandLink>
+					</h:panelGrid>
+				</h:panelGroup>
+
+
+				<h:outputLabel value="#{msg['dialog.createTask.taskCount']}"></h:outputLabel>
+				<p:spinner id="basic" value="#{taskHandlerAction.sampleCount}"
+					styleClass="taskSpinner" min="1" max="5">
+					<p:ajax update="sampleMaterial" process="@this"
+						listener="#{taskHandlerAction.updateNewTaskDilaog()}"></p:ajax>
+				</p:spinner>
+
 			</h:panelGrid>
+			<h:panelGrid columns="1" styleClass="dialogTable">
+				<p:dataTable var="material" id="sampleMaterial"
+					styleClass="smallPaddingAll noBordersAll hide-column-names "
+					value="${taskHandlerAction.selectedMaterialList}">
+					<p:column style="width: 150px;">
+						<h:outputLabel
+							value="#{msg['dialog.createTask.task']} #{taskHandlerAction.getSampleNumberForTaskCreation(material)}"></h:outputLabel>
+					</p:column>
+					<p:column>
+						<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
+							style="margin-left:30px;"
+							converter="#{taskHandlerAction.materialListTransformer}"
+							value="#{material}">
+							<f:selectItems value="#{taskHandlerAction.allAvailableMaterials}"
+								var="material" itemLabel="#{material.name}"
+								itemValue="#{material}">
+							</f:selectItems>
+						</p:selectOneMenu>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+
 		</div>
 		<div class="buttonContainer">
 			<p:commandButton value="#{msg['general.create']}"
 				icon="fa fa-check-circle-o" styleClass="smallButton"
-				actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.selectedMaterial)}"></p:commandButton>
+				actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.selectedMaterialList,taskHandlerAction.orderLetter)}"></p:commandButton>
 			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="smallButton" style="margin-left:1em;"
+				styleClass="smallButton buttonLeftMarginInList"
 				icon="fa fa-times-circle"
-				actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('TASK_CREATE'))}"></p:commandButton>
+				actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('TASK_CREATE'))}"></p:commandButton>
 		</div>
 	</h:form>
 </h:body>

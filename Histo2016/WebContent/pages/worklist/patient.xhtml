@@ -43,7 +43,7 @@
 			<p:outputLabel value="#{msg['body.worklist.patient.birthday']}"
 				styleClass="bold-text" />
 			<p:outputLabel
-				value="#{worklistHandlerAction.selectedPatient.person.birthday}" />
+				value="#{mainHandlerAction.date(worklistHandlerAction.selectedPatient.person.birthday)}" />
 
 			<p:outputLabel value="#{msg['body.worklist.patient.postcode']}"
 				styleClass="bold-text" />
@@ -67,19 +67,20 @@
 
 			<p:outputLabel value="#{msg['body.worklist.patient.extern']}"
 				styleClass="bold-text" />
+			
 			<h:panelGroup>
 				<p:outputLabel
 					value="#{worklistHandlerAction.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
 				<p:commandLink
 					rendered="#{worklistHandlerAction.selectedPatient.externalPatient}"
-					actionListener="#{patientHandlerAction.editExternalPatient(worklistHandlerAction.selectedPatient)}">
+					actionListener="#{patientHandlerAction.prepareEditExternalPatientDialog(worklistHandlerAction.selectedPatient)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					<i class="fa fa-wrench"></i>
 				</p:commandLink>
 			</h:panelGroup>
 		</p:panelGrid>
 
-		<p:dataTable var="tasks" scrollable="true" scrollHeight="100"
+		<p:dataTable var="tasks" 
 			style="margin-top:20px;" id="taskList"
 			value="#{worklistHandlerAction.selectedPatient.tasks}"
 			selectionMode="single"
@@ -107,7 +108,7 @@
 				</f:facet>
 
 				<h:outputText
-					value="#{tasks.taskID} - #{helperHandlerAction.simpleDateFormatter(tasks.dateOfReceiptAsDate)}" />
+					value="#{tasks.taskID} - #{mainHandlerAction.date(tasks.dateOfReceiptAsDate)}" />
 
 				<h:panelGroup rendered="#{tasks.isNew()}">
 					<h:outputText value=" ("></h:outputText>

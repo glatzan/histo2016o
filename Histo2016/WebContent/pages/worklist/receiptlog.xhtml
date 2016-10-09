@@ -27,10 +27,10 @@
 							styleClass="taskCalendar" id="receiptDate"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
 							<p:ajax event="dateSelect"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}"
 								update="receiptDate" />
 							<f:ajax event="change" execute="@this" render="receiptDate"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
 						</p:calendar>
 					</p:column>
 
@@ -53,10 +53,10 @@
 								value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
 								disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
 								<p:ajax event="dateSelect"
-									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate.date',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}"
+									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}"
 									update="dueDate" />
 								<f:ajax event="change" execute="@this" render="dueDate"
-									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate.date',helperHandlerAction.simpleDateFormatter(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}" />
+									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}" />
 							</p:calendar>
 						</h:panelGrid>
 					</p:column>
@@ -289,7 +289,7 @@
 
 
 								<p:panelGrid styleClass="stainingTable">
-									<c:forEach
+									<c:forEach varStatus="outerLoop"
 										items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
 										var="sample">
 										<!-- Diangosis -->
@@ -326,15 +326,12 @@
 
 											<p:column>
 
-												<!-- Diangosis data -->
-												<p:accordionPanel value="#{sample.diagnoses}"
-													var="diagnosis"
-													activeIndex="#{sample.diagnosisAccordionTabStatus}"
-													id="diagnosisAccordion" multiple="true"
-													styleClass="diagnosesAccordion">
-													<p:tab>
-														<!-- Headline for diagnosis -->
-														<f:facet name="title">
+												<c:forEach items="#{sample.diagnoses}" var="diagnosis"
+													varStatus="loop">
+													<p:panel id="toggleable" toggleable="true" collapsed="#{diagnosis.finalized}"
+														toggleSpeed="500" style="margin-bottom:10px">
+
+														<f:facet name="header">
 															<h:outputLabel value="#{diagnosis.name} " />
 
 															<!-- diangosis in headline -->
@@ -345,16 +342,22 @@
 															<h:outputLabel
 																value="(#{msg['body.receiptlog.tab.diangonsis.data.headline.finalized']})"
 																rendered="#{diagnosis.finalized}" />
-
-															<p:commandLink
-																title="#{msg['body.receiptlog.tab.diangonsis.data.headline.edit']}"
-																style="float: right"
-																actionListener="#{diagnosisHandlerAction.prepareEditDiagnosisNameDialog(diagnosis)}">
-																<i class="fa fa-fw fa-cog" />
-																<p:ajax event="dialogReturn" update="contentForm" />
-															</p:commandLink>
 														</f:facet>
-														<!-- Headline for diagnosis -->
+
+														<f:facet name="options">
+															<p:menu>
+																<p:menuitem
+																	value="#{msg['body.receiptlog.tab.diangonsis.data.headline.edit']}"
+																	icon="fa fa-fw fa-cog"
+																	onclick="$('#contentForm\\:editDiagnosisNameBtn-#{outerLoop.index}-#{loop.index}').click(); alert();" />
+															</p:menu>
+														</f:facet>
+
+														<p:commandButton
+															id="editDiagnosisNameBtn-#{outerLoop.index}-#{loop.index}"
+															actionListener="#{diagnosisHandlerAction.prepareEditDiagnosisNameDialog(diagnosis)}">
+															<p:ajax event="dialogReturn" update="contentForm" />
+														</p:commandButton>
 
 														<!-- Body for diagnosis -->
 														<h:panelGrid columns="1" style="width:100%;"
@@ -376,8 +379,12 @@
 																			var="diagnosisPrototype"
 																			itemLabel="#{diagnosisPrototype.name}"
 																			itemValue="#{diagnosisPrototype}" />
+
 																		<p:ajax update="diagnosisTable"
 																			listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
+																		<f:ajax event="change" execute="@this"
+																			listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis',diagnosis.diagnosisPrototype.name)}" />
+
 																	</p:selectOneMenu>
 																</h:panelGrid>
 																<h:panelGrid columns="2" style="float:right;">
@@ -394,6 +401,10 @@
 																readonly="#{diagnosis.finalized}">
 																<p:watermark for="diagnosis"
 																	value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
+
+																<f:ajax event="change" execute="@this"
+																	listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
+
 															</p:inputTextarea>
 
 															<!-- commentary -->
@@ -402,21 +413,16 @@
 																readonly="#{diagnosis.finalized}">
 																<p:watermark for="diagnosisCommentary"
 																	value="#{msg['body.receiptlog.tab.diangonsis.data.commentary.watermark']}" />
+																<f:ajax event="change" execute="@this"
+																	listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.commentary',diagnosis.commentary)}" />
 															</p:inputTextarea>
 
 															<!-- Buttons -->
 															<h:panelGrid columns="2">
 																<!-- Save and finalize buttons -->
 
-																<h:panelGrid styleClass="collapsedBorders" columns="2"
+																<h:panelGrid styleClass="collapsedBorders" columns="1"
 																	rendered="#{!diagnosis.finalized}">
-																	<p:commandButton value="#{msg['general.save']}"
-																		actionListener="#{diagnosisHandlerAction.saveDiagnosis(diagnosis)}"
-																		process="navigationForm contentForm"
-																		update="navigationForm contentForm"
-																		icon="fa fa-fw fa-save">
-																	</p:commandButton>
-
 																	<p:commandButton process="contentForm"
 																		value="#{msg['body.receiptlog.tab.diangonsis.data.finalize']}"
 																		icon="fa fa-fw fa-ban"
@@ -461,9 +467,8 @@
 															</p:overlayPanel>
 														</div>
 														<!-- Body for diagnosis -->
-													</p:tab>
-												</p:accordionPanel>
-												<!-- Diangosis data -->
+													</p:panel>
+												</c:forEach>
 											</p:column>
 										</p:row>
 										<!-- Diangosis -->

@@ -13,8 +13,8 @@
 
 
 <h:body styleClass="defaultDialogLayout">
-	<h:form>
-		<div class="dialogContent">
+	<h:form id="dialogForm">
+		<div class="dialogContent" id="dialogContent">
 			<ui:include src="../../template/person.xhtml">
 				<ui:param name="person"
 					value="#{patientHandlerAction.tmpPatient.person}" />
@@ -23,9 +23,20 @@
 			</ui:include>
 		</div>
 		<div class="buttonContainer">
+			
 			<p:commandButton value="#{msg['dialog.editPatient.edit']}"
 				process="@form" icon="fa fa-fw fa-user-plus"
-				actionListener="#{patientHandlerAction.createNewPatient(patientHandlerAction.tmpPatient)}">
+				styleClass="smallButton"
+				actionListener="#{patientHandlerAction.saveEditedExternalPatient(patientHandlerAction.tmpPatient)}">
+			</p:commandButton>
+			
+			<p:commandButton value="#{msg['general.abort']}"
+				styleClass="smallButton buttonLeftMarginInList"
+				icon="fa fa-times-circle">
+				<p:ajax update="@form" resetValues="true"
+					icon="fa fa-fw fa-user-plus" />
+				<f:actionListener
+					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('PATIENT_EDIT'))}" />
 			</p:commandButton>
 		</div>
 	</h:form>

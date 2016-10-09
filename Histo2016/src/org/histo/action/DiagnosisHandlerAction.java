@@ -15,6 +15,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
+import org.histo.model.patient.Task;
 import org.histo.util.ResourceBundle;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +34,14 @@ public class DiagnosisHandlerAction implements Serializable {
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private TaskDAO taskDAO;
-
-	@Autowired
 	private HelperHandlerAction helper;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	private LogDAO logDAO;
-
-	@Autowired
 	private MainHandlerAction mainHandlerAction;
-	
+
 	private static final long serialVersionUID = -1214161114824263589L;
 
 	private Diagnosis tmpDiagnosis;
@@ -205,18 +200,33 @@ public class DiagnosisHandlerAction implements Serializable {
 		hideUnfinalizeDiangosisDialog();
 	}
 
-	/**
-	 * Saves the parent sample of the passed diagnosis, thus saving the
-	 * diagnosis as well.
-	 * 
-	 * @param diagnosis
-	 */
-	public void saveDiagnosis(Diagnosis diagnosis) {
-		logDAO.getDiagnosisRevisions(diagnosis);
-		genericDAO.save(diagnosis.getPatient(), resourceBundle.get("log.patient.diagnosis.changed"),
-				diagnosis.getPatient());
-		helper.updateRevision(diagnosis);
+	public void diagnosisDataChanged(Diagnosis diagnosis) {
+		diagnosisDataChanged(diagnosis, null);
 	}
+
+	public void diagnosisDataChanged(Diagnosis diagnosis, String detailedInfoResourcesKey,
+			Object... detailedInfoParams) {
+		String detailedInfoString = "";
+
+		if (detailedInfoResourcesKey != null)
+			detailedInfoString = resourceBundle.get(detailedInfoResourcesKey, detailedInfoParams);
+
+		genericDAO.save(diagnosis,
+				resourceBundle.get("log.patient.task.sample.diagnosis.changed",
+						diagnosis.getParent().getParent().getTaskID(), diagnosis.getParent().getSampleID(),
+						detailedInfoString),
+				diagnosis.getPatient());
+	}
+
+	/*
+	 * log.patient.task.sample.diagnosis.finalized=Diangose finalisiert.
+	 * (Auftrag: {0}, Probe: {1}, Diangose: {2})
+	 * log.patient.task.sample.diagnosis.changed.diagnosis=Diagnose {0}
+	 * log.patient.task.sample.diagnosis.changed.diagnosis.text=Diangose Text
+	 * {0} log.patient.task.sample.diagnosis.changed.commentary=Kommentar{0}
+	 * log.patient.task.sample.diagnosis.unfinalize=Diagnose wieder freigegeben.
+	 * (Auftrag: {0}, Probe: {1}, Diangose: {2})
+	 */
 
 	/**
 	 * Shows a dialog for editing the name of the passed diagnosis

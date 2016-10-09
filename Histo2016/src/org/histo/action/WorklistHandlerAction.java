@@ -19,7 +19,8 @@ import org.histo.config.enums.WorklistSortOrder;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.util.SearchOptions;
+import org.histo.model.transitory.SearchOptions;
+import org.histo.model.transitory.SortOptions;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.WorklistSortUtil;
@@ -105,25 +106,14 @@ public class WorklistHandlerAction implements Serializable {
 	private SearchOptions searchOptions;
 
 	/**
-	 * Order of the Worklist, either by id or by patient name
+	 * Options for sorting the worklist
 	 */
-	private WorklistSortOrder worklistSortOrder = WorklistSortOrder.TASK_ID;
-
-	/**
-	 * Order of the Worlist, either if true ascending, or if false descending
-	 */
-	private boolean worklistSortOrderAcs = true;
+	private SortOptions sortOptions;
 
 	/**
 	 * A Filter which searches for a given pattern in the current worklist (
 	 */
 	private String worklistFilter;
-
-	/**
-	 * If true all not active task are skipped while the user useses the up and
-	 * down arrows to navigate
-	 */
-	private boolean skipNotActiveTasks = true;
 	/*
 	 * ************************** Worklist ****************************
 	 */
@@ -138,6 +128,8 @@ public class WorklistHandlerAction implements Serializable {
 		setActiveWorklistKey(Worklist.DEFAULT.getName());
 
 		setSearchOptions(new SearchOptions());
+
+		setSortOptions(new SortOptions());
 
 		// getting default worklist depending on role
 		Role userRole = userHandlerAction.getCurrentUser().getRole();
@@ -178,17 +170,16 @@ public class WorklistHandlerAction implements Serializable {
 		case WORKLIST_PATIENT:
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
-			System.out.println("task");
 			Task task = patient.getSelectedTask();
 			if (task == null && !patient.getTasks().isEmpty()) {
-				if (skipNotActiveTasks)
-					task = TaskUtil.getLastActiveTask(patient.getTasks());
-				else
-					task = TaskUtil.getLastTask(patient.getTasks());
+				task = TaskUtil.getLastTask(patient.getTasks(),
+						!getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks());
 			}
 
 			if (task != null)
 				return onSelectTask(task);
+			else
+				return View.WORKLIST_PATIENT.getPath();
 
 		}
 
@@ -208,6 +199,8 @@ public class WorklistHandlerAction implements Serializable {
 			mainHandlerAction.setCurrentView(View.WORKLIST_RECEIPTLOG);
 		}
 
+		task.getPatient().setSelectedTask(task);
+
 		onSelectPatient(task.getPatient());
 	}
 
@@ -215,11 +208,10 @@ public class WorklistHandlerAction implements Serializable {
 	 * Task - Select and init
 	 */
 	public String onSelectTask(Task task) {
-		System.out.println(task.getTaskID());
 		// set patient.selectedTask is performed by the gui
 		// sets this task as active, so it will be show in the navigation column
 		// whether there is an action to perform or not
-		task.setActive(true);
+		// task.setActive(true);
 
 		task.getPatient().setSelectedTask(task);
 
@@ -247,18 +239,34 @@ public class WorklistHandlerAction implements Serializable {
 		return View.WORKLIST.getPath();
 	}
 
+	/**
+	 * Deselects a task an show the worklist patient view.
+	 * 
+	 * @param patient
+	 * @return
+	 */
 	public String onDeselectTask(Patient patient) {
 		patient.setSelectedTask(null);
 		mainHandlerAction.setCurrentView(View.WORKLIST_PATIENT);
 		return View.WORKLIST.getPath();
 	}
 
+	/**
+	 * If the view Worklist is displayed this method will return the subviews.
+	 * 
+	 * @return
+	 */
 	public String getCenterView() {
 		View currentView = mainHandlerAction.getCurrentView();
-		if (currentView == View.WORKLIST_BLANK || currentView == View.WORKLIST_DIAGNOSIS
-				|| currentView == View.WORKLIST_PATIENT || currentView == View.WORKLIST_RECEIPTLOG)
+
+		if (getSelectedPatient() == null || currentView == View.WORKLIST_BLANK)
+			return View.WORKLIST_BLANK.getPath();
+		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT)
+			return View.WORKLIST_PATIENT.getPath();
+		else if (currentView == View.WORKLIST_DIAGNOSIS || currentView == View.WORKLIST_RECEIPTLOG) {
 			return mainHandlerAction.getCurrentView().getPath();
-		return View.WORKLIST_BLANK.getPath();
+		} else
+			return View.WORKLIST_BLANK.getPath();
 	}
 
 	/**
@@ -284,16 +292,19 @@ public class WorklistHandlerAction implements Serializable {
 			setSelectedPatient(patient);
 	}
 
+	/**
+	 * Removes a patient from the worklist.
+	 * 
+	 * @param patient
+	 */
 	public void removeFromWorklist(Patient patient) {
-		System.out.println(patient + " " + patient.getPerson().getName());
 		getWorkList().remove(patient);
 		if (getSelectedPatient() == patient)
 			setSelectedPatient(null);
-
 	}
 
 	/**
-	 * Sorts a list with patiens either by task id or name of the patient
+	 * Sorts a list with patients either by task id or name of the patient
 	 * 
 	 * @param patiens
 	 * @param order
@@ -311,16 +322,6 @@ public class WorklistHandlerAction implements Serializable {
 			break;
 		}
 	}
-
-	/******************************************************** General ********************************************************/
-
-	/******************************************************** Task ********************************************************/
-
-	/******************************************************** Task ********************************************************/
-
-	/*
-	 * ************************** Worklist ****************************
-	 */
 
 	/**
 	 * Searches the database for the given searchOptions and overwrites the
@@ -429,26 +430,61 @@ public class WorklistHandlerAction implements Serializable {
 		setSelectedPatient(null);
 	}
 
+	/**
+	 * Selects the next task in List
+	 */
 	public void selectNextTask() {
 		if (getWorkList() != null) {
 			if (getSelectedPatient() != null) {
+
+				boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
+
+				Task nextTask = TaskUtil.getNextTask(getSelectedPatient().getTasks(),
+						getSelectedPatient().getSelectedTask(), activeOnly);
+				if (nextTask != null) {
+					onSelectTask(nextTask);
+					return;
+				}
+
 				int indexOfPatient = getWorkList().indexOf(getSelectedPatient());
-				if (getWorkList().size() - 1 > indexOfPatient)
-					setSelectedPatient(getWorkList().get(indexOfPatient + 1));
+				if (getWorkList().size() - 1 > indexOfPatient) {
+					getSelectedPatient().setSelectedTask(null);
+					onSelectPatient(getWorkList().get(indexOfPatient + 1));
+				}
 			} else {
-				setSelectedPatient(getWorkList().get(0));
+				onSelectPatient(getWorkList().get(0));
 			}
 		}
 	}
 
 	public void selectPreviouseTask() {
 		if (getWorkList() != null) {
+
+			boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
+
+			Task nextTask = TaskUtil.getPrevTask(getSelectedPatient().getTasks(),
+					getSelectedPatient().getSelectedTask(), activeOnly);
+
+			if (nextTask != null) {
+				onSelectTask(nextTask);
+				return;
+			}
+
 			if (getSelectedPatient() != null) {
 				int indexOfPatient = getWorkList().indexOf(getSelectedPatient());
-				if (indexOfPatient > 0)
-					setSelectedPatient(getWorkList().get(indexOfPatient - 1));
+				if (indexOfPatient > 0) {
+					getSelectedPatient().setSelectedTask(null);
+
+					Patient prevPatient = getWorkList().get(indexOfPatient - 1);
+
+					Task preFirstTask = TaskUtil.getFirstTask(prevPatient.getTasks(), activeOnly);
+					if (preFirstTask != null)
+						prevPatient.setSelectedTask(preFirstTask);
+
+					onSelectPatient(getWorkList().get(indexOfPatient - 1));
+				}
 			} else {
-				setSelectedPatient(getWorkList().get(getWorkList().size() - 1));
+				onSelectPatient(getWorkList().get(getWorkList().size() - 1));
 			}
 		}
 	}
@@ -474,13 +510,13 @@ public class WorklistHandlerAction implements Serializable {
 	// }
 	// }
 
-	//name (in current worklist)
-	//name, surname (in current worklist)
-	//piz (current, extern)
-	//auftrag a (current, extern)
-	//bloc b (current extern)
-	//slide s (current extern)
-	
+	// name (in current worklist)
+	// name, surname (in current worklist)
+	// piz (current, extern)
+	// auftrag a (current, extern)
+	// bloc b (current extern)
+	// slide s (current extern)
+
 	public void searchForExistingPatients() {
 		if (getWorklistFilter().matches("[0-9]{6,8}")) {
 			System.out.println("piz");
@@ -532,28 +568,20 @@ public class WorklistHandlerAction implements Serializable {
 		this.selectedPatient = selectedPatient;
 	}
 
-	public WorklistSortOrder getWorklistSortOrder() {
-		return worklistSortOrder;
-	}
-
-	public void setWorklistSortOrder(WorklistSortOrder worklistSortOrder) {
-		this.worklistSortOrder = worklistSortOrder;
-	}
-
-	public boolean isWorklistSortOrderAcs() {
-		return worklistSortOrderAcs;
-	}
-
-	public void setWorklistSortOrderAcs(boolean worklistSortOrderAcs) {
-		this.worklistSortOrderAcs = worklistSortOrderAcs;
-	}
-
 	public SearchOptions getSearchOptions() {
 		return searchOptions;
 	}
 
 	public void setSearchOptions(SearchOptions searchOptions) {
 		this.searchOptions = searchOptions;
+	}
+
+	public SortOptions getSortOptions() {
+		return sortOptions;
+	}
+
+	public void setSortOptions(SortOptions sortOptions) {
+		this.sortOptions = sortOptions;
 	}
 
 	public String getWorklistFilter() {
@@ -564,13 +592,6 @@ public class WorklistHandlerAction implements Serializable {
 		this.worklistFilter = worklistFilter;
 	}
 
-	public boolean isSkipNotActiveTasks() {
-		return skipNotActiveTasks;
-	}
-
-	public void setSkipNotActiveTasks(boolean skipNotActiveTasks) {
-		this.skipNotActiveTasks = skipNotActiveTasks;
-	}
 	/*
 	 * ************************** Getters/Setters ****************************
 	 */

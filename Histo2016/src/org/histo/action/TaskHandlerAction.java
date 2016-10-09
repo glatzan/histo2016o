@@ -26,9 +26,9 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.PDFTemplate;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.TaskTree;
-import org.histo.model.util.transientObjects.PDFTemplate;
 import org.histo.ui.transformer.PdfTemplateTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.FileUtil;
@@ -36,8 +36,11 @@ import org.histo.util.PdfUtil;
 import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DefaultUploadedFile;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -47,9 +50,6 @@ import org.springframework.stereotype.Component;
 public class TaskHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -1460063099758733063L;
-
-	@Autowired
-	private HelperHandlerAction helper;
 
 	@Autowired
 	private HelperDAO helperDAO;
@@ -70,11 +70,8 @@ public class TaskHandlerAction implements Serializable {
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private MainHandlerAction mainHandlerAction;
 
-	@Autowired
-	MainHandlerAction mainHandlerAction;
-	
 	private HashMap<String, String> selectableWards;
 
 	private Task taskToPrint;
@@ -100,9 +97,19 @@ public class TaskHandlerAction implements Serializable {
 	private List<MaterialPreset> allAvailableMaterials;
 
 	/**
-	 * selected stainingList for task
+	 * selected stainingLists for task creation
+	 */
+	private ArrayList<MaterialPreset> selectedMaterialList;
+
+	/**
+	 * selected stainingList for sample
 	 */
 	private MaterialPreset selectedMaterial;
+
+	/**
+	 * The count of samples for a new task
+	 */
+	private int sampleCount = 1;
 
 	/**
 	 * Transformer for selecting staininglist
@@ -113,6 +120,11 @@ public class TaskHandlerAction implements Serializable {
 	 * Temporary task for creating samples
 	 */
 	private Task temporaryTask;
+
+	/**
+	 * The order letter of the new task
+	 */
+	private PDFContainer orderLetter;
 
 	/********************************************************
 	 * Task creation
@@ -168,12 +180,61 @@ public class TaskHandlerAction implements Serializable {
 	public void prepareNewTaskDialog() {
 		prepareForTask();
 
+		setSelectedMaterialList(new ArrayList<MaterialPreset>());
+		setSampleCount(1);
+		setOrderLetter(null);
+
 		// checks if default statingsList is empty
 		if (!getAllAvailableMaterials().isEmpty()) {
-			setSelectedMaterial(getAllAvailableMaterials().get(0));
+			getSelectedMaterialList().add(getAllAvailableMaterials().get(0));
 		}
 
 		mainHandlerAction.showDialog(Dialog.TASK_CREATE);
+	}
+
+	/**
+	 * Method is called if user adds or removes a sample within the task
+	 * creation process. Adds or removes a new Material for the new Sample.
+	 */
+	public void updateNewTaskDilaog() {
+		if (getSampleCount() >= 1) {
+			if (getSampleCount() > getSelectedMaterialList().size())
+				while (getSampleCount() > getSelectedMaterialList().size()) {
+					getSelectedMaterialList().add(getAllAvailableMaterials().get(0));
+				}
+			else if (getSampleCount() < getSelectedMaterialList().size())
+				while (getSampleCount() < getSelectedMaterialList().size()) {
+					getSelectedMaterialList().remove(getSelectedMaterialList().size() - 1);
+				}
+		}
+	}
+
+	/**
+	 * Returns a Romen number, depending on the index of the material preset
+	 * within the array.
+	 * 
+	 * @param materialPreset
+	 * @return
+	 */
+	public String getSampleNumberForTaskCreation(MaterialPreset materialPreset) {
+		int index = getSelectedMaterialList().indexOf(materialPreset);
+		if (index == -1)
+			return "";
+		index += 1;
+		return TaskUtil.getRomanNumber(index);
+	}
+
+	/**
+	 * Handles the uploaded pdf orderLetter.
+	 * 
+	 * @param event
+	 */
+	public void handleOrderLetterUpload(FileUploadEvent event) {
+		PDFContainer orderLetterPdf = new PDFContainer();
+		orderLetterPdf.setType("application/pdf");
+		orderLetterPdf.setData(event.getFile().getContents());
+		orderLetterPdf.setName(event.getFile().getFileName());
+		setOrderLetter(orderLetterPdf);
 	}
 
 	/**
@@ -181,7 +242,7 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void createNewTask(Patient patient, MaterialPreset material) {
+	public void createNewTask(Patient patient, List<MaterialPreset> material, PDFContainer uploadedFile) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
@@ -192,10 +253,17 @@ public class TaskHandlerAction implements Serializable {
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID(), material.getName()),
-				patient);
+		if (uploadedFile != null) {
+			genericDAO.save(uploadedFile,
+					resourceBundle.get("log.patient.task.upload.orderList", task.getTaskID(), uploadedFile.getName()),
+					patient);
+		}
 
-		createNewSample(task, material);
+		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
+
+		for (MaterialPreset materialPreset : material) {
+			createNewSample(task, materialPreset);
+		}
 
 		// checking if staining flag of the task object has to be false
 		SlideUtil.checkIfAllSlidesAreStained(task);
@@ -269,9 +337,8 @@ public class TaskHandlerAction implements Serializable {
 		sample.setMaterilaPreset(material);
 		sample.setMaterial(material.getName());
 
-		genericDAO.save(sample,
-				resourceBundle.get("log.patient.task.sample.new", task.getTaskID(), sample.getSampleID()),
-				task.getPatient());
+		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
+				sample.getSampleID(), material.getName()), task.getPatient());
 
 		// creating first default diagnosis
 		diagnosisHandlerAction.createDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS);
@@ -402,18 +469,32 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task Data
 	 ********************************************************/
-
-	public void taskDataChanged(Task task){
+	/**
+	 * Method is called if the user changes task data.
+	 * 
+	 * @param task
+	 */
+	public void taskDataChanged(Task task) {
 		taskDataChanged(task, null);
 	}
-	
+
+	/**
+	 * Method is called if the user changes task data. A detail resources
+	 * string can be passed. This string can contain placeholder which will be
+	 * replaced by the additional parameters.
+	 * 
+	 * @param task
+	 * @param detailedInfoResourcesKey
+	 * @param detailedInfoParams
+	 */
 	public void taskDataChanged(Task task, String detailedInfoResourcesKey, Object... detailedInfoParams) {
 		String detailedInfoString = "";
-		
-		if(detailedInfoResourcesKey != null)
+
+		if (detailedInfoResourcesKey != null)
 			detailedInfoString = resourceBundle.get(detailedInfoResourcesKey, detailedInfoParams);
-		
-		genericDAO.save(task, resourceBundle.get("log.patient.task.dataChange", task.getTaskID(), detailedInfoString), task.getParent());
+
+		genericDAO.save(task, resourceBundle.get("log.patient.task.dataChange", task.getTaskID(), detailedInfoString),
+				task.getParent());
 		System.out.println("saving data");
 	}
 
@@ -550,6 +631,22 @@ public class TaskHandlerAction implements Serializable {
 		this.selectedMaterial = selectedMaterial;
 	}
 
+	public ArrayList<MaterialPreset> getSelectedMaterialList() {
+		return selectedMaterialList;
+	}
+
+	public void setSelectedMaterialList(ArrayList<MaterialPreset> selectedMaterialList) {
+		this.selectedMaterialList = selectedMaterialList;
+	}
+
+	public int getSampleCount() {
+		return sampleCount;
+	}
+
+	public void setSampleCount(int sampleCount) {
+		this.sampleCount = sampleCount;
+	}
+
 	public StainingListTransformer getMaterialListTransformer() {
 		return materialListTransformer;
 	}
@@ -589,6 +686,15 @@ public class TaskHandlerAction implements Serializable {
 	public void setArchived(boolean archived) {
 		this.archived = archived;
 	}
+
+	public PDFContainer getOrderLetter() {
+		return orderLetter;
+	}
+
+	public void setOrderLetter(PDFContainer orderLetter) {
+		this.orderLetter = orderLetter;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

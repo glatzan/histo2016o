@@ -23,7 +23,7 @@
 		<div class="buttonContainer">
 			<p:commandButton value="#{msg['general.save']}">
 				<f:actionListener
-					binding="#{diagnosisHandlerAction.saveDiagnosis(diagnosisHandlerAction.tmpDiagnosis)}"></f:actionListener>
+					binding="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosisHandlerAction.tmpDiagnosis, 'log.patient.task.sample.diagnosis.changed.name', diagnosisHandlerAction.tmpDiagnosis.name)}"></f:actionListener>
 				<f:actionListener
 					binding="#{diagnosisHandlerAction.hideEditDiagnosisNameDialog()}"></f:actionListener>
 			</p:commandButton>

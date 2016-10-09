@@ -93,9 +93,10 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	/*
 	 * ************************** Transient ****************************
 	 */
-	
+
 	/**
 	 * Returns a list with all currently active tasks
+	 * 
 	 * @return
 	 */
 	@Transient
@@ -111,22 +112,23 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 
 		return result;
 	}
-	
+
 	/**
 	 * Returns a list with tasks which are not active
+	 * 
 	 * @return
 	 */
 	@Transient
 	public ArrayList<Task> getNoneActivTasks() {
 		ArrayList<Task> result = new ArrayList<Task>(getTasks());
 		result.removeAll(getActivTasks());
-		return result;
+		return result.isEmpty() ? null : result;
 	}
-	
+
 	/*
 	 * ************************** Transient ****************************
 	 */
-	
+
 	/*
 	 * ************************** Getter/Setter ****************************
 	 */
@@ -160,7 +162,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 		this.piz = piz;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL , mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id DESC")
 	public List<Task> getTasks() {
@@ -232,7 +234,8 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	 */
 
 	/*
-	 * ************************** Interface DiagnosisStatus ****************************
+	 * ************************** Interface DiagnosisStatus
+	 * ****************************
 	 */
 	/**
 	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
@@ -289,11 +292,13 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	}
 
 	/*
-	 * ************************** Interface DiagnosisStatus ****************************
+	 * ************************** Interface DiagnosisStatus
+	 * ****************************
 	 */
 
 	/*
-	 * ************************** Interface StainingStauts ****************************
+	 * ************************** Interface StainingStauts
+	 * ****************************
 	 */
 	/**
 	 * Überschreibt Methode aus dem Interface StainingStauts <br>
@@ -369,11 +374,13 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	}
 
 	/*
-	 * ************************** Interface StainingStauts ****************************
+	 * ************************** Interface StainingStauts
+	 * ****************************
 	 */
 
 	/*
-	 * ************************** Interface StainingTreeParent ****************************
+	 * ************************** Interface StainingTreeParent
+	 * ****************************
 	 */
 	@Transient
 	@Override
@@ -413,6 +420,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	public void setParent(Patient parent) {
 	}
 	/*
-	 * ************************** Interface StainingTreeParent ****************************
+	 * ************************** Interface StainingTreeParent
+	 * ****************************
 	 */
 }

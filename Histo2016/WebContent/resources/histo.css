@@ -36,14 +36,13 @@ body {
 	vertical-align: middle !important;
 }
 
-.verticalAlignTopAll tr, .verticalAlignTopAll td,
-	.verticalAlignTopAll {
+.verticalAlignTopAll tr, .verticalAlignTopAll td, .verticalAlignTopAll {
 	vertical-align: top !important;
 }
 
 .horizontalAlignCenterAll tr, .horizontalAlignCenterAll td,
 	.horizontalAlignCenterAll {
-	text-align:center;
+	text-align: center;
 }
 
 /* Kleiner Knopf */
@@ -102,15 +101,23 @@ body {
 
 /* hides the header of a p:datatable */
 .hide-column-names table thead tr {
-    display: none;
+	display: none;
+}
+/* hides the tbody border of a p:datatable */
+.hide-tbody-borer tbody{
+	border: none !important;
 }
 
-.smallFont{
-	font-size: 0.8em !important;	
+.smallFont {
+	font-size: 0.8em !important;
 }
 
 .smallCalendarInput input {
-	width:150px !important;
+	width: 150px !important;
+}
+
+.buttonLeftMarginInList {
+	margin-left: 0.5em;
 }
 /*
 	######################################## Navigatoin ########################################
@@ -493,15 +500,15 @@ body {
 	padding: 1px 1px 1px 0px !important;
 	height: 550px;
 	overflow-x: hidden;
-	overflow-y: auto; 
+	overflow-y: auto;
 }
 
 /* Layout in the tabview center tab, bottom div*/
 .settingsDialogLayout .settingsPannel .bottomDiv {
 	padding: 1px 1px 1px 0px !important;
 	height: 35px;
-	position: absolute !important; 
-	bottom: 1px !important; 
+	position: absolute !important;
+	bottom: 1px !important;
 	vertical-align: bottom !important;
 	width: 100%;
 }
@@ -545,8 +552,6 @@ body {
 }
 /*	################# Settings ################# */
 
-
-
 /*	################# print ################# */
 /* print Dialog*/
 .printDialog {
@@ -560,40 +565,36 @@ body {
 	width: 100%;
 }
 
-.printDialog .bodyDiv .contentDiv{
+.printDialog .bodyDiv .contentDiv {
 	height: 550px;
 }
 
-.printDialog .bodyDiv .bottomDiv{
+.printDialog .bodyDiv .bottomDiv {
 	height: 35px;
-	position: absolute !important; 
-	bottom: 0px !important; 
+	position: absolute !important;
+	bottom: 0px !important;
 	vertical-align: bottom !important;
 	width: 100%;
 }
 
-.printDialog .contentTable{
+.printDialog .contentTable {
 	width: 100%;
 }
 
-.printDialog .contentTable .settingsColumn{
+.printDialog .contentTable .settingsColumn {
 	vertical-align: top;
 	width: 200px;
 	height: 550px;
 }
 
-.printDialog .contentTable .pdfColumn{
+.printDialog .contentTable .pdfColumn {
 	vertical-align: top;
 	width: *;
 	height: 550px;
 	text-align: right;
 }
 
-
-
 /*	################# print ################# */
-
-
 
 /*	################# Contact ################# */
 /* Layout für den ContactSelect Datatable */
@@ -682,6 +683,47 @@ body {
 }
 
 /*	################# addPatient dialog ################# */
+
+/*	################# create Task dialog ################# */
+
+.taskUpload{
+	font-size: 0.8em !important;
+}
+
+.taskUpload .ui-fileupload-buttonbar{
+	padding: 0px !important;
+	background: none !important;	
+	border: none!important;
+}
+
+.taskUpload .ui-fileupload-content{
+	border-top: 1px solid rgb(170, 170, 170);
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+
+}
+
+
+.taskUpload .ui-button-text {
+	font-size: 0.8em !important;
+	padding: 0px 10px 0px  30px !important;
+	font-size: 1em !important;
+}
+
+.taskUpload .ui-fileupload-filename {
+	padding: 0px 10px 0px  0px !important;
+}
+
+.taskSpinner .ui-spinner-input {
+	padding: 2px 20px 2px 7px !important;
+	width: 60px;
+}
+.taskTextColunm {
+	width: 150px;
+}
+/*	################# create Task dialog ################# */
+
+
 /*	######################################## Dialog ######################################## */
 
 /*	######################################## OverlayPannel ######################################## */
@@ -690,8 +732,8 @@ body {
 	z-index: 5000;
 }
 
-.logOverlay .ui-overlaypanel-content{
-	padding: 0px !important;	
+.logOverlay .ui-overlaypanel-content {
+	padding: 0px !important;
 }
 
 .logOverlay .logDatapannel tr:nth-child(even) td {

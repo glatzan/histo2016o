@@ -9,7 +9,7 @@ import java.util.List;
 import org.histo.config.HistoSettings;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.util.transientObjects.PDFTemplate;
+import org.histo.model.transitory.PDFTemplate;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;

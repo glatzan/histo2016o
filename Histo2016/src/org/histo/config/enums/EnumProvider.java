@@ -66,22 +66,21 @@ public class EnumProvider {
 	 * Takes a string (from primefeaces) or a WorklistSearchFilter and returns a
 	 * WorklistSearchFilter. Workaround for primefaces.
 	 * 
-	 * @param worklistSearchFilter
-	 * @return
-	 */
-	public WorklistSearchFilter getSearchFilter(WorklistSearchFilter worklistSearchFilter) {
-		return worklistSearchFilter;
-	}
-
-	/**
-	 * Takes a string (from primefeaces) or a WorklistSearchFilter and returns a
-	 * WorklistSearchFilter. Workaround for primefaces.
-	 * 
 	 * @param WorklistSearchFilter
 	 * @return
 	 */
 	public WorklistSearchFilter getWorklistSearchFilter(WorklistSearchFilter worklistSearchFilter) {
 		return worklistSearchFilter;
 	}
-	
+
+	/**
+	 * Takes a string (from primefeaces) or a WorklistSortOrder and returns a
+	 * WorklistSortOrder. Workaround for primefaces.
+	 * 
+	 * @param worklistSearchFilter
+	 * @return
+	 */
+	public WorklistSortOrder getWorklistSortOrder(WorklistSortOrder worklistSearchFilter) {
+		return worklistSearchFilter;
+	}
 }

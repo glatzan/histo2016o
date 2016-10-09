@@ -1,4 +1,4 @@
-package org.histo.model.util.transientObjects;
+package org.histo.model.transitory;
 
 import org.histo.model.util.GsonAble;
 

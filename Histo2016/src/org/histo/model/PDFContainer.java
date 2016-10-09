@@ -31,6 +31,8 @@ public class PDFContainer {
 
 	private String type;
 
+	private String name; 
+	
 	@Id
 	@GeneratedValue(generator = "pdfs_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -65,5 +67,14 @@ public class PDFContainer {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

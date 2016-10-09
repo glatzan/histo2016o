@@ -118,35 +118,6 @@ public class HelperHandlerAction implements Serializable {
 		archiveAble.setArchived(archived);
 	}
 
-	public String simpleDateFormatterUnix(long date) {
-		return simpleDateFormatter(new Date(date));
-	}
-
-	/**
-	 * Shows a simple date
-	 * 
-	 * @param date
-	 * @return
-	 */
-	public String simpleDateFormatter(Date date) {
-		return dateFormatter(date, "dd MMM yyyy");
-	}
-
-	public String dateFormatterUnix(long date, String formatString) {
-		return dateFormatter(new Date(date), formatString);
-	}
-
-	/**
-	 * Returns a date formatted with the given string
-	 * 
-	 * @param date
-	 * @param formatString
-	 * @return
-	 */
-	public String dateFormatter(Date date, String formatString) {
-		return TimeUtil.formatDate(date, formatString);
-	}
-
 	public void timeout() throws IOException {
 		//showDialog(HistoSettings.dialog(HistoSettings.DIALOG_LOGOUT));
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();

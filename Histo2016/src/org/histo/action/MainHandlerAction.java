@@ -8,18 +8,30 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Display;
 import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.Worklist;
+import org.histo.model.HistoUser;
 import org.histo.model.patient.Patient;
+import org.histo.model.transitory.SearchOptions;
 import org.histo.util.ResourceBundle;
-import org.histo.util.SearchOptions;
+import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+// TODO: Diagnose page
+// TODO Biobank
+// TODO: favouriten
+// TODO edit page patient external
+// TODO: Logout warn
+// TODO: status display
+// TODO log in settings rework
+// TODO: Edit external patient from menu bar
 
 @Component
 @Scope(value = "session")
@@ -139,6 +151,51 @@ public class MainHandlerAction {
 	 * ************************** Dialog ****************************
 	 */
 
+	/*
+	 * ************************** Time ****************************
+	 */
+
+	/**
+	 * Takes a long timestamp and returns a formatted date in standard format.
+	 * @param date
+	 * @return
+	 */
+	public String date(long date){
+		return date(new Date(date), HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY);
+	}
+	
+	/**
+	 * Takes a date and returns a formatted date in standard format.
+	 * @param date
+	 * @return
+	 */
+	public String date(Date date){
+		return date(date, HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY);
+	}
+	
+	/**
+	 * Takes a long timestamp and a format string and returns a formatted date.
+	 * @param date
+	 * @return
+	 */
+	public String date(long date, String format){
+		return date(new Date(date),format);
+	}
+	
+	/**
+	 * Takes a date and a format string and returns a formatted date.
+	 * @param date
+	 * @return
+	 */
+	public String date(Date date, String format){
+		return TimeUtil.formatDate(date, format);
+	}
+	
+	/*
+	 * ************************** Time ****************************
+	 */
+	
+	
 	/*
 	 * ************************** Getters/Setters ****************************
 	 */

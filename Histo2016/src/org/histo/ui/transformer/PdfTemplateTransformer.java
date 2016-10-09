@@ -6,7 +6,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.util.transientObjects.PDFTemplate;
+import org.histo.model.transitory.PDFTemplate;
 
 public class PdfTemplateTransformer implements Converter {
 

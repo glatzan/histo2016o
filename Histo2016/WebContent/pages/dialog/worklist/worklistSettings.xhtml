@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.worklistsettings.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout">
+	<h:form>
+		<div class="dialogContent">
+			<h:panelGrid columns="2" style="margin-left:5px;"
+				tyleClass="dialogTable ">
+				<h:outputLabel value="#{msg['dialog.worklistsettings.showAllTasks']}"></h:outputLabel>
+				<p:selectBooleanCheckbox style="margin-left:10px;" 
+					value="#{worklistHandlerAction.sortOptions.showAllTasks}"
+					title="#{msg['dialog.worklistsettings.showAllTasks.text']}" >
+					<p:ajax update="@form"></p:ajax>
+					</p:selectBooleanCheckbox>
+				<h:outputLabel value="#{msg['dialog.worklistsettings.skipNonActive']}"></h:outputLabel>
+				<p:selectBooleanCheckbox style="margin-left:10px;" disabled="#{!worklistHandlerAction.sortOptions.showAllTasks}"
+					value="#{worklistHandlerAction.sortOptions.skipNotActiveTasks}"
+					title="#{msg['dialog.worklistsettings.skipNonActive.text']}" />
+			</h:panelGrid>
+		</div>
+		<div class="buttonContainer">
+			<p:commandButton value="#{msg['general.ok']}"
+				icon="fa fa-check-circle-o" styleClass="smallButton" process="@form">
+				<f:actionListener
+					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SETTINGS'))}" />
+			</p:commandButton>
+		</div>
+	</h:form>
+</h:body>
+</html>
+
+

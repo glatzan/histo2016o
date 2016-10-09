@@ -2,6 +2,7 @@ package org.histo.util;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.Transient;
@@ -288,35 +289,73 @@ public class TaskUtil {
 	 * @param tasks
 	 * @return
 	 */
-	public final static Task getLastTask(List<Task> tasks) {
+	public final static Task getLastTask(List<Task> tasks, boolean active) {
 		if (tasks == null || tasks.isEmpty())
 			return null;
 
 		// List is ordere desc by taskID per default so return first (and
 		// latest) task in List
-		if (tasks != null && !tasks.isEmpty())
-			return tasks.get(0);
-		else
+		if (tasks != null && !tasks.isEmpty()){
+			if(active == false)
+				return tasks.get(0);
+			
+			for (Task task : tasks) {
+				if (task.isActiveOrActionToPerform())
+					return task;
+			}
+		}
 			return null;
 	}
 
-	/**
-	 * Returns the task with the highest taskID which is also active or the
-	 * stating/diagnosis process wasn't completed.
-	 * 
-	 * @param tasks
-	 * @return
-	 */
-	public final static Task getLastActiveTask(List<Task> tasks) {
+	public final static Task getFirstTask(List<Task> tasks, boolean active) {
 		if (tasks == null || tasks.isEmpty())
 			return null;
 
-		// List is ordere desc by taskID per default, iterate tasks to find the
-		// first active task (in most case the first one)
+		// List is ordere desc by taskID per default so return first (and
+		// latest) task in List
+		if (tasks != null && !tasks.isEmpty()) {
 
-		for (Task task : tasks) {
-			if (task.isActiveOrActionToPerform())
-				return task;
+			if (active == false)
+				return tasks.get(tasks.size() - 1);
+
+			for (int i = tasks.size() - 1; i >= 0; i--) {
+				if (tasks.get(i).isActiveOrActionToPerform())
+					return tasks.get(i);
+				else
+					continue;
+			}
+		}
+		return null;
+	}
+
+	public final static Task getPrevTask(List<Task> tasks, Task currentTask, boolean activeOnle) {
+
+		int index = tasks.indexOf(currentTask);
+		if (index == -1 || index == 0)
+			return null;
+
+		for (int i = index - 1; i >= 0; i--) {
+			if (activeOnle) {
+				if (tasks.get(i).isActiveOrActionToPerform())
+					return tasks.get(i);
+			} else
+				return tasks.get(i);
+		}
+		return null;
+	}
+
+	public final static Task getNextTask(List<Task> tasks, Task currentTask, boolean activeOnle) {
+
+		int index = tasks.indexOf(currentTask);
+		if (index == -1 || index == tasks.size() - 1)
+			return null;
+
+		for (int i = index + 1; i < tasks.size(); i++) {
+			if (activeOnle) {
+				if (tasks.get(i).isActiveOrActionToPerform())
+					return tasks.get(i);
+			} else
+				return tasks.get(i);
 		}
 		return null;
 	}

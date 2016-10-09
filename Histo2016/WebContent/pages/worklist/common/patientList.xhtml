@@ -25,7 +25,7 @@
 		selection="#{worklistHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
 
-		<p:ajax event="rowSelect" update=":contentForm, :headerForm"
+		<p:ajax event="rowSelect" update=":contentForm :headerForm :navigationForm"
 			listener="#{worklistHandlerAction.onSelectPatient(worklistHandlerAction.selectedPatient)}" />
 
 		<p:column>
@@ -35,12 +35,15 @@
 					<h:outputLabel value="#{msg['body.worklist.navigation.headline']}"
 						style="float:left;"></h:outputLabel>
 					<h:panelGroup style="float: right">
+						<!-- Button UP -->
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.up']}"
 							actionListener="#{worklistHandlerAction.selectPreviouseTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-up"></i>
 						</p:commandLink>
+
+						<!-- Button Down -->
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.down']}"
 							actionListener="#{worklistHandlerAction.selectNextTask()}"
@@ -48,6 +51,7 @@
 							<i class="fa fa-arrow-circle-down"></i>
 						</p:commandLink>
 
+						<!-- Button Sort -->
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.sort']}"
 							actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ORDER'))}">
@@ -55,10 +59,19 @@
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 
+						<!-- Worklist settings -->
+						<p:commandLink
+							title="#{msg['body.worklist.navigation.button.sort']}"
+							actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_SETTINGS'))}">
+							<i class="fa fa-wrench"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+
+						<!-- Worklist change -->
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.changelist']}"
 							actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}">
-							<i class="fa fa-cog"></i>
+							<i class="fa fa-search"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 					</h:panelGroup>
@@ -81,13 +94,14 @@
 				<p:row>
 					<p:column>
 						<h:outputLabel
-							value="#{helperHandlerAction.simpleDateFormatter(patient.person.birthday)}"
+							value="#{mainHandlerAction.date(patient.person.birthday)}"
 							rendered="#{patient.person.birthday ne null}" />
 					</p:column>
 					<p:column>
 					</p:column>
 				</p:row>
-				<!-- Tasks -->
+
+				<!-- Active Tasks -->
 				<p:row>
 					<p:column style="vertical-align: top !important;">
 						<h:outputLabel
@@ -105,13 +119,16 @@
 								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 
-								<h:outputLabel value="#{task.taskID}" />
+								<h:outputLabel value="#{task.taskID}"
+									style="#{worklistHandlerAction.selectedPatient.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 
 								<!-- new task -->
-								<h:panelGroup rendered="#{task.isNew()}">
+								<h:panelGroup
+									rendered="#{task.isNew() and (task.isDiagnosisNeeded() or task.isReDiagnosisNeeded())}">
 									<i style="margin-left: 5px;" class="fa fa-child icon-green"
 										title="#{msg['body.worklist.navigation.activtasks.new']}" />
 								</h:panelGroup>
+
 								<!-- staining needed -->
 								<h:panelGroup
 									rendered="#{task.isStainingNeeded() or task.isReStainingNeeded()}">
@@ -119,6 +136,7 @@
 										class="fa fa-image #{task.isStainingNeeded() ? 'icon-green' : 'icon-orange'}"
 										title="#{task.isStainingNeeded() eq true ? msg['body.worklist.navigation.activtasks.staining'] : msg['body.worklist.navigation.activtasks.restaining']}" />
 								</h:panelGroup>
+
 								<!-- diagnosis needed -->
 								<h:panelGroup
 									rendered="#{task.isStainingPerformed() and (task.isDiagnosisNeeded() or task.isReDiagnosisNeeded())}">
@@ -126,6 +144,37 @@
 										class="fa fa-eye #{task.isDiagnosisNeeded() ? 'icon-green' : 'icon-orange'}"
 										title="#{task.isDiagnosisNeeded() ? msg['body.worklist.navigation.activtasks.diagnosis'] : msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 								</h:panelGroup>
+
+								<!-- Pendings completed -->
+								<h:panelGroup
+									rendered="#{not (task.isDiagnosisNeeded() or task.isReDiagnosisNeeded())}">
+									<i style="margin-left: 5px;"
+										class="fa fa-check-circle icon-green"
+										title="#{msg['body.worklist.navigation.activtasks.pendencies']}" />
+								</h:panelGroup>
+
+							</p:commandLink>
+							<br />
+						</p:repeat>
+
+					</p:column>
+				</p:row>
+
+				<!-- Non active Tasks -->
+				<p:row
+					rendered="#{patient.noneActivTasks ne null and worklistHandlerAction.sortOptions.showAllTasks}">
+					<p:column style="vertical-align: top !important;">
+						<h:outputLabel value="#{msg['body.worklist.navigation.tasks']}" />
+					</p:column>
+					<p:column>
+						<!-- task list -->
+						<p:repeat var="task" value="#{patient.noneActivTasks}">
+							<p:commandLink
+								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
+								update="navigationForm contentForm headerForm"
+								styleClass="noUnderlineAtLink">
+								<h:outputLabel value="#{task.taskID}"
+									style="#{worklistHandlerAction.selectedPatient.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 							</p:commandLink>
 							<br />
 						</p:repeat>

@@ -13,6 +13,8 @@
 
 <h:body styleClass="defaultDialogLayout">
 	<h:form>
+
+		<p:importEnum type="org.histo.config.enums.WorklistSearchOption" />
 		<div class="dialogContent">
 
 			<!-- Select -->
@@ -180,7 +182,7 @@
 								value="#{msg['dialog.worklistsearch.date.day']}" />
 							<p:calendar value="#{worklistHandlerAction.searchOptions.day}"
 								styleClass="smallFont smallInput" locale="de" navigator="true"
-								pattern="dd MMMM yyyy"
+								pattern="dd.MM.yyyy" mask="true"
 								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'DAY'}" />
 						</h:panelGrid>
 
@@ -219,14 +221,14 @@
 							<p:calendar styleClass="smallFont smallInput smallCalendarInput"
 								value="#{worklistHandlerAction.searchOptions.searchFrom}"
 								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'TIME'}"
-								locale="de" navigator="true" pattern="dd MMMM yyyy" />
+								locale="de" navigator="true" pattern="dd.MM.yyyy" mask="true" />
 							<h:outputLabel styleClass="smallFont"
 								value="#{msg['dialog.worklistsearch.date.timespan.to']}" />
 							<p:calendar
 								value="#{worklistHandlerAction.searchOptions.searchTo}"
 								locale="de" styleClass="smallFont smallInput smallCalendarInput"
 								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'TIME'}"
-								navigator="true" pattern="dd MMMM yyyy" />
+								navigator="true" pattern="dd.MM.yyyy" mask="true" />
 						</h:panelGrid>
 					</h:panelGrid>
 
@@ -247,7 +249,6 @@
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.diagnosis']}"
 							itemValue="#{enumProvider.getWorklistSearchFilter('DIAGNOSIS_COMPLETED')}" />
-						<p:ajax update="@form"></p:ajax>
 					</p:selectOneRadio>
 
 					<h:panelGrid columns="1">
@@ -257,25 +258,25 @@
 						<h:panelGrid columns="10" cellpadding="5">
 							<!-- Patient added -->
 							<p:radioButton id="filter0" for="filterIndexRadio" itemIndex="0"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex != 'DIAGNOSIS_LIST'}" />
+								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
 							<h:outputLabel for="filter0" styleClass="smallFont"
 								value="#{msg['dialog.worklistsearch.filter.patient']}" />
 
 							<!-- Task created -->
 							<p:radioButton id="filter1" for="filterIndexRadio" itemIndex="1"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex != 'DIAGNOSIS_LIST'}" />
+								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
 							<h:outputLabel for="filter1" styleClass="smallFont"
 								value="#{msg['dialog.worklistsearch.filter.task']}" />
 
 							<!-- Staining -->
 							<p:radioButton id="filter2" for="filterIndexRadio" itemIndex="2"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex != 'DIAGNOSIS_LIST'}" />
+								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
 							<h:outputLabel for="filter2" styleClass="smallFont"
 								value="#{msg['dialog.worklistsearch.filter.staining']}" />
 
 							<!-- Diagnosis -->
 							<p:radioButton id="filter3" for="filterIndexRadio" itemIndex="3"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex != 'DIAGNOSIS_LIST'}" />
+								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
 							<h:outputLabel for="filter3" styleClass="smallFont"
 								value="#{msg['dialog.worklistsearch.filter.diagnosis']}" />
 						</h:panelGrid>

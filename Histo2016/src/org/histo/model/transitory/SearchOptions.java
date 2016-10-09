@@ -1,4 +1,4 @@
-package org.histo.util;
+package org.histo.model.transitory;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -167,7 +167,9 @@ public class SearchOptions {
 	}
 
 	public void setFilterIndex(WorklistSearchFilter filterIndex) {
-		this.filterIndex = filterIndex;
+		// workaround because gui submits null value if radiobuttun is disabled
+		if (filterIndex != null)
+			this.filterIndex = filterIndex;
 	}
 
 	public Date getDay() {
