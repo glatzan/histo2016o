@@ -20,6 +20,7 @@ import org.histo.model.patient.Task;
 import org.histo.util.ResourceBundle;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -42,6 +43,10 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
+
+	@Autowired
+	@Lazy
+	private TaskHandlerAction taskHandlerAction;
 
 	private static final long serialVersionUID = -1214161114824263589L;
 
@@ -216,13 +221,39 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	public void onDiagnosisPrototypeChanged(Diagnosis diagnosis) {
 		Task task = diagnosis.getParent().getParent();
-		
-		// only setting diagnosis text if one sample and no text has been added jet 
-		if(task.getSamples().size() == 1 && task.getHistologicalRecord().isEmpty())
+
+		// only setting diagnosis text if one sample and no text has been added
+		// jet
+		if (task.getSamples().size() == 1 && task.getHistologicalRecord().isEmpty())
 			task.setHistologicalRecord(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 
 		genericDAO.save(diagnosis, "hallo", diagnosis.getPatient());
 		System.out.println("changed");
+	}
+
+	public void prepareCopyHistologicalRecord(Diagnosis tmpDiagnosis) {
+		setTmpDiagnosis(tmpDiagnosis);
+
+		// setting diagnosistext if no text is set
+		if (tmpDiagnosis.getParent().getParent().getHistologicalRecord().isEmpty()
+				&& tmpDiagnosis.getDiagnosisPrototype() != null) {
+			copyHistologicalRecord(tmpDiagnosis);
+			return;
+		}
+
+		if (tmpDiagnosis.getDiagnosisPrototype() != null)
+			mainHandlerAction.showDialog(Dialog.DIAGNOSIS_RECORD_OVERWRITE);
+
+	}
+
+	public void copyHistologicalRecord(Diagnosis tmpDiagnosis) {
+		tmpDiagnosis.getParent().getParent()
+				.setHistologicalRecord(tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+		setTmpDiagnosis(null);
+
+		taskHandlerAction.taskDataChanged(tmpDiagnosis.getParent().getParent(),
+				"log.patient.task.dataChange.histologicalRecord",
+				tmpDiagnosis.getParent().getParent().getHistologicalRecord());
 	}
 	/*
 	 * log.patient.task.sample.diagnosis.finalized=Diangose finalisiert.

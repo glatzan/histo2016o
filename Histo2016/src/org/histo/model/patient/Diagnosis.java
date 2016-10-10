@@ -123,9 +123,6 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 */
 	private DiagnosisPrototype diagnosisPrototype;
 
-	// TODO is used?
-	private String extendedDiagnosisText = "";
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -230,15 +227,6 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 		this.malign = malign;
 	}
 
-	@Column(columnDefinition = "text")
-	public String getExtendedDiagnosisText() {
-		return extendedDiagnosisText;
-	}
-
-	public void setExtendedDiagnosisText(String extendedDiagnosisText) {
-		this.extendedDiagnosisText = extendedDiagnosisText;
-	}
-
 	public String getIcd10() {
 		return icd10;
 	}
@@ -337,7 +325,6 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	public void updateDiagnosisWithPrototype(DiagnosisPrototype diagnosisPrototype) {
 		System.out.println("updateing");
 		setDiagnosis(diagnosisPrototype.getDiagnosisText());
-		setExtendedDiagnosisText(diagnosisPrototype.getExtendedDiagnosisText());
 		setMalign(diagnosisPrototype.isMalign());
 		setIcd10(diagnosisPrototype.getIcd10());
 		setCommentary(diagnosisPrototype.getCommentary());

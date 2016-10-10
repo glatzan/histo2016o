@@ -7,32 +7,31 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.patient.task.sample.diagnosis.unfinalize.headline']}" /></title>
+			value="#{msg['dialog.histologicalRecordOverwrite.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
 
 <h:body styleClass="defaultDialogLayout">
 	<h:form>
-
 		<div class="dialogContent">
 			<h:outputLabel
-				value="#{msg['dialog.patient.task.sample.diagnosis.unfinalize.diagnosis.text']}"
+				value="#{msg['dialog.histologicalRecordOverwrite.text']}"
 				escape="false" />
 		</div>
 		<div class="buttonContainer">
 			<p:commandButton
-				value="#{msg['dialog.patient.task.sample.diagnosis.unfinalize.button.ok']}"
-				actionListener="#{diagnosisHandlerAction.unfinalizeDiagnosis(diagnosisHandlerAction.tmpDiagnosis)}" />
+				value="#{msg['dialog.histologicalRecordOverwrite.button.overwrite']}">
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.copyHistologicalRecord(diagnosisHandlerAction.tmpDiagnosis)}"></f:actionListener>
+				<f:actionListener
+					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('DIAGNOSIS_RECORD_OVERWRITE'))}"></f:actionListener>
+			</p:commandButton>
+
 			<p:commandButton value="#{msg['general.abort']}"
 				styleClass="buttonLeftMarginInList"
-				actionListener="#{diagnosisHandlerAction.hideUnfinalizeDiangosisDialog()}" />
+				actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('DIAGNOSIS_RECORD_OVERWRITE'))}" />
 		</div>
-
 	</h:form>
 </h:body>
-
-
-
 </html>
-

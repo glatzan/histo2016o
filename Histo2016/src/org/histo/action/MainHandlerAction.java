@@ -25,12 +25,12 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 // TODO: Diagnose page
-// TODO Biobank
+// TODO: Biobank
 // TODO: favouriten
-// TODO edit page patient external
+// ++++ edit page patient external
 // TODO: Logout warn
-// TODO: status display
-// TODO log in settings rework
+// TODO: status display (in navigation)
+// TODO: log in settings rework
 // TODO: Edit external patient from menu bar
 
 @Component

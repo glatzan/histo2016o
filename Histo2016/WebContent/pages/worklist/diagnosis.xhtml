@@ -10,47 +10,62 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<p:panel style="width:100%;"
+	<p:panel style="width:100%;" id="diagnosisView"
 		styleClass=" collapsedBorders noPadding noBorders">
-		<h:panelGrid columns="1">
+		<h:panelGrid columns="1" styleClass="noPadding">
 			<h:outputLabel value="Histologisches Gutachten"
-				style="font-size:20px;"></h:outputLabel>
-			<h:panelGrid columns="2">
-				<h:panelGrid columns="1">
-					<h:panelGrid columns="2" columnClasses="verticalAlignTopAll,"
-						style="width:100%;">
-						<h:outputLabel value="Präparat"></h:outputLabel>
-						<h:panelGrid columns="2" style="margin-left:10px; float:right;"
-							styleClass="verticalAlignMiddleAll">
-							<!-- TODO Update background object, e.g. .blure() (inputtext) -->
-							<c:forEach
-								items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
-								var="sample">
-								<h:outputLabel value="#{sample.sampleID}" />
-								<p:selectOneMenu value="#{sample.material}"
-									styleClass="smallInput" editable="true" style="width:250px;">
-									<f:selectItem
-										itemLabel="#{msg['body.receiptlog.material.select']}"
-										itemValue="none" />
-									<f:selectItems
-										value="#{taskHandlerAction.allAvailableMaterials}" var="list"
-										itemLabel="#{list.name}" itemValue="#{list.name}" />
-								</p:selectOneMenu>
-							</c:forEach>
-						</h:panelGrid>
-					</h:panelGrid>
+				style="font-size:1.5em;"></h:outputLabel>
 
-					<h:outputLabel value="Vorgeschichte"></h:outputLabel>
-					<h:panelGroup>
+			<h:panelGrid columns="2" style="margin-top:20px"
+				styleClass="noPaddingAll noBordersAll collapsedBordersAll"
+				columnClasses="verticalAlignTop,verticalAlignTop">
+
+				<h:panelGrid columns="1" style="width:410px"
+					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
+					<!-- TODO Update background object, e.g. .blure() (inputtext) -->
+					<c:forEach
+						items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
+						var="sample" varStatus="loopCount">
+						<h:panelGrid columns="3" id="materialTable"
+							columnClasses="firstColumn, secondColumn, thirdColumn"
+							styleClass="materialTable noPaddingAll noBordersAll collapsedBordersAll">
+
+							<h:panelGroup>
+								<h:outputLabel value="Präparat" style="font-size:1.2em"
+									rendered="#{loopCount.index eq 0}"></h:outputLabel>
+							</h:panelGroup>
+
+							<h:outputLabel value="#{sample.sampleID}" />
+
+							<p:selectOneMenu value="#{sample.material}"
+								styleClass="smallInput" editable="true" style="width:200px;">
+								<f:selectItem
+									itemLabel="#{msg['body.receiptlog.material.select']}"
+									itemValue="none" />
+								<f:selectItems
+									value="#{taskHandlerAction.allAvailableMaterials}" var="list"
+									itemLabel="#{list.name}" itemValue="#{list.name}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</c:forEach>
+
+					<h:panelGroup layout="block"
+						style="font-size:1.2em;margin-top:10px;">
+						<h:outputLabel value="Vorgeschichte"></h:outputLabel>
+					</h:panelGroup>
+
+					<h:panelGrid columns="2"
+						styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 						<p:inputTextarea
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}" />
 						<h:graphicImage value="/resources/gfx/augen.png"
 							style="width: 200px;" />
-					</h:panelGroup>
+					</h:panelGrid>
 				</h:panelGrid>
 
 
-				<h:panelGrid columns="2">
+				<h:panelGrid columns="2"
+					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 					<!-- date of surgery -->
 					<h:outputLabel value="Entnahmedatum"></h:outputLabel>
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
@@ -65,7 +80,7 @@
 
 					<!-- Task Number -->
 					<h:outputLabel value="Eingangsnummer"></h:outputLabel>
-					<h:inputText
+					<p:inputText disabled="true"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
 
 					<!-- insurance -->
@@ -100,7 +115,9 @@
 			</h:panelGrid>
 			<p:separator />
 			<h:outputLabel value="Histlogischer Befund"></h:outputLabel>
-			<p:editor id="extendedText" value="#{worklistHandlerAction.selectedPatient.selectedTask.histologicalRecord}" style="width:100%" >
+			<p:editor id="extendedText"
+				value="#{worklistHandlerAction.selectedPatient.selectedTask.histologicalRecord}"
+				style="width:100%">
 			</p:editor>
 
 			<h:outputLabel value="Diagnose"></h:outputLabel>
@@ -109,10 +126,17 @@
 
 				<c:set var="diagnosis" value="#{sampel.getLastRelevantDiagnosis()}" />
 
-				<h:panelGrid columns="3" id="diagnosisTable">
+				<h:panelGrid columns="4" id="diagnosisTable"
+					styleClass="diagnosisTable noPaddingAll noBordersAll collapsedBordersAll"
+					columnClasses="firstColumn,secondColumn,thirdColumn,fourthColumn">
+
+					<h:outputLabel value="Probe #{sampel.sampleID}"></h:outputLabel>
+
 					<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-						disabled="#{diagnosis.finalized}"
-						converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}">
+						disabled="#{diagnosis.finalized}" styleClass="diagnosisSelectMenu"
+						panelStyleClass="diagnosisSelectMenuPanel"
+						converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
+						filter="true" filterMatchMode="startsWith">
 						<f:selectItem
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
 							itemValue="#{null}" />
@@ -129,10 +153,14 @@
 							listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
 					</p:selectOneMenu>
 
-					<h:inputText value="#{diagnosis.diagnosis}" style="width: 400px"></h:inputText>
+					<h:inputText value="#{diagnosis.diagnosis}"
+						styleClass="diagnosisText"></h:inputText>
+
 					<h:panelGroup>
 						<p:commandLink title=""
-							actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ORDER'))}">
+							rendered="#{diagnosis.diagnosisPrototype ne null}"
+							actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
+							update=":contentForm:extendedText">
 							<i class="fa fa-hand-o-up"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -144,6 +172,4 @@
 		</h:panelGrid>
 	</p:panel>
 </ui:composition>
-
-
 

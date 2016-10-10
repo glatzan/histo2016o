@@ -24,6 +24,8 @@ public class Contact implements LogAble {
     private Physician physician;
 
     private int role;
+    
+    private boolean primaryContact;
 
     private boolean usePhone;
     private boolean useFax;
@@ -112,4 +114,14 @@ public class Contact implements LogAble {
 	this.selected = selected;
     }
 
+	
+    public boolean isPrimaryContact() {
+		return primaryContact;
+	}
+
+	public void setPrimaryContact(boolean primaryContact) {
+		this.primaryContact = primaryContact;
+	}
+
+    
 }

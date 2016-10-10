@@ -221,6 +221,11 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		setTabIndex(((TabView) event.getSource()).getIndex());
 	}
 
+	public Contact getPrimaryContact(){
+		
+		return null;
+	}
+	
 	/**
 	 * Returns true if either the task is active or a diagnosis or a staining is
 	 * needed.
