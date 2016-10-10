@@ -129,4 +129,24 @@ public class DiagnosisPrototype implements EditAbleEntity<DiagnosisPrototype>, L
 		this.extendedDiagnosisText = diagnosisPrototype.getExtendedDiagnosisText();
 		this.commentary = diagnosisPrototype.getCommentary();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof DiagnosisPrototype){
+			if(getId() == ((DiagnosisPrototype)obj).getId()){
+				return true;
+			}
+		}
+		
+		return super.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return (int)getId();
+	}
+	
+	
 }
+
+

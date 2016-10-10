@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.histo.config.enums.DiagnosisType;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -65,12 +66,12 @@ public class TaskUtil {
 	 * @param sample
 	 * @return
 	 */
-	public final static Diagnosis createNewDiagnosis(Sample sample, int type) {
+	public final static Diagnosis createNewDiagnosis(Sample sample, DiagnosisType type, ResourceBundle resourceBundle) {
 		Diagnosis diagnosis = new Diagnosis();
 		diagnosis.setGenerationDate(System.currentTimeMillis());
 		diagnosis.setType(type);
 		diagnosis.setDiagnosisOrder(sample.getDiagnosisNumber());
-		diagnosis.setName(getDiagnosisName(sample, diagnosis));
+		diagnosis.setName(getDiagnosisName(sample, diagnosis, resourceBundle));
 		diagnosis.setParent(sample);
 
 		sample.incrementDiagnosisNumber();
@@ -295,16 +296,16 @@ public class TaskUtil {
 
 		// List is ordere desc by taskID per default so return first (and
 		// latest) task in List
-		if (tasks != null && !tasks.isEmpty()){
-			if(active == false)
+		if (tasks != null && !tasks.isEmpty()) {
+			if (active == false)
 				return tasks.get(0);
-			
+
 			for (Task task : tasks) {
 				if (task.isActiveOrActionToPerform())
 					return task;
 			}
 		}
-			return null;
+		return null;
 	}
 
 	public final static Task getFirstTask(List<Task> tasks, boolean active) {
@@ -369,7 +370,7 @@ public class TaskUtil {
 	}
 
 	@Transient
-	public static final String getDiagnosisName(Sample sample, Diagnosis diagnosis) {
+	public static final String getDiagnosisName(Sample sample, Diagnosis diagnosis, ResourceBundle resourceBundle) {
 		int number = 1;
 
 		for (Diagnosis diagnosisOfSample : sample.getDiagnoses()) {
@@ -378,6 +379,6 @@ public class TaskUtil {
 			}
 		}
 
-		return diagnosis.getDiagnosisTypAsName() + (number == 1 ? "" : " " + number);
+		return resourceBundle.get("enum.diagnosisType." + diagnosis.getType()) + (number == 1 ? "" : " " + number);
 	}
 }

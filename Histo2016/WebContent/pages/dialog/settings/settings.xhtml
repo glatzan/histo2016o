@@ -118,7 +118,7 @@
 
 						<p:column headerText="Datum" style="width:12%">
 							<h:outputText
-								value="#{helperHandlerAction.dateFormatterUnix(history.date, 'hh:mm:ss dd/MM/yyyy ')}" />
+								value="#{mainHandlerAction.date(history.date, 'hh:mm:ss dd/MM/yyyy ')}" />
 						</p:column>
 						<p:column headerText="Benutzer" style="width:12%">
 							<h:outputText value="#{history.userAcc.username}" />

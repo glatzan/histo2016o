@@ -29,6 +29,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.model.MaterialPreset;
 import org.histo.model.util.DiagnosisStatus;
@@ -106,10 +107,18 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	private MaterialPreset materilaPreset;
 	
 	/******************************************************** Transient ********************************************************/
-	private String diagnosisAccordionTabStatus;
 
 	/******************************************************** Transient ********************************************************/
 
+	@Transient
+	public Diagnosis getLastRelevantDiagnosis(){
+		for(int i = getDiagnoses().size()-1; i >= 0; i--){
+			if(getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS_REVISION || getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS)
+				return getDiagnoses().get(i);
+		}
+		return null;
+	}
+	
 	public void incrementBlockNumber() {
 		this.blockNumber++;
 	}
@@ -249,44 +258,6 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 
 	/******************************************************** Transient ********************************************************/
 
-	/**
-	 * Generates a string for the open/closed status of the accordion tabs
-	 * 
-	 * @return
-	 */
-	public String getDiagnosisAccordionTabStatus() {
-		if (diagnosisAccordionTabStatus == null) {
-			boolean allFinlized = true;
-
-			StringBuilder out = new StringBuilder();
-
-			int tab = 0;
-
-			for (Diagnosis diagnosis : getDiagnoses()) {
-				if (!diagnosis.isFinalized()) {
-					out.append(tab + ",");
-					allFinlized = false;
-				}
-
-				tab++;
-			}
-
-			if (allFinlized) {
-				List<Diagnosis> dia = getDiagnoses();
-				out.append(dia.size() - 1);
-			} else{
-				out.deleteCharAt(out.length() - 1);
-			}
-				
-			System.out.println(out.toString());
-			diagnosisAccordionTabStatus = out.toString();
-		}
-		return diagnosisAccordionTabStatus;
-	}
-
-	public void setDiagnosisAccordionTabStatus(String diagnosisAccordionTabStatus) {
-		this.diagnosisAccordionTabStatus = diagnosisAccordionTabStatus;
-	}
 
 	/******************************************************** Transient ********************************************************/
 

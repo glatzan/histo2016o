@@ -1,12 +1,10 @@
 package org.histo.model.patient;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -21,13 +19,12 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
-import org.histo.dao.TaskDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.util.GsonAble;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.TaskTree;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.annotations.Expose;
 
@@ -44,10 +41,6 @@ import com.google.gson.annotations.Expose;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
 public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
-
-	public static final int TYPE_DIAGNOSIS = 0;
-	public static final int TYPE_FOLLOW_UP_DIAGNOSIS = 1;
-	public static final int TYPE_DIAGNOSIS_REVISION = 2;
 
 	private long id;
 
@@ -105,7 +98,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 */
 	@Expose
 	private String icd10 = "";
-	
+
 	/**
 	 * Commentary for internal purpose.
 	 */
@@ -116,7 +109,8 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * Diagnosis type, normal = 0, follow up = 1 , revision = 2.
 	 */
 	@Expose
-	private int type;
+	@Enumerated(EnumType.STRING)
+	private DiagnosisType type;
 
 	/**
 	 * Order in diagnosis array
@@ -128,7 +122,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * Protoype used for this diagnosis.
 	 */
 	private DiagnosisPrototype diagnosisPrototype;
-	
+
 	// TODO is used?
 	private String extendedDiagnosisText = "";
 
@@ -174,11 +168,11 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	}
 
 	@Basic
-	public int getType() {
+	public DiagnosisType getType() {
 		return type;
 	}
 
-	public void setType(int type) {
+	public void setType(DiagnosisType type) {
 		this.type = type;
 	}
 
@@ -262,7 +256,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	public void setDiagnosisPrototype(DiagnosisPrototype diagnosisPrototype) {
 		this.diagnosisPrototype = diagnosisPrototype;
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -326,38 +320,29 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	public Dialog getArchiveDialog() {
 		return null;
 	}
+
 	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Transient
 	 ********************************************************/
-	@Transient
-	public String getDiagnosisTypAsName() {
-		switch (getType()) {
-		case TYPE_DIAGNOSIS:
-			return "Diagnose";
-		case TYPE_FOLLOW_UP_DIAGNOSIS:
-			return "Nachbefundung";
-		default:
-			return "Revision";
-		}
-	}
-	
 	/**
 	 * Copies the parameters of a diagnosisPrototype to this entity.
+	 * 
 	 * @param diagnosisPrototype
 	 */
 	@Transient
 	public void updateDiagnosisWithPrototype(DiagnosisPrototype diagnosisPrototype) {
+		System.out.println("updateing");
 		setDiagnosis(diagnosisPrototype.getDiagnosisText());
 		setExtendedDiagnosisText(diagnosisPrototype.getExtendedDiagnosisText());
 		setMalign(diagnosisPrototype.isMalign());
 		setIcd10(diagnosisPrototype.getIcd10());
 		setCommentary(diagnosisPrototype.getCommentary());
 	}
-		
+
 	/********************************************************
 	 * Transient
 	 ********************************************************/

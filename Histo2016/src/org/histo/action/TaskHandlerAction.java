@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Display;
 import org.histo.dao.GenericDAO;
@@ -341,7 +342,7 @@ public class TaskHandlerAction implements Serializable {
 				sample.getSampleID(), material.getName()), task.getPatient());
 
 		// creating first default diagnosis
-		diagnosisHandlerAction.createDiagnosis(sample, Diagnosis.TYPE_DIAGNOSIS);
+		diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
 		// creating needed blocks
 		createNewBlock(sample);
 	}

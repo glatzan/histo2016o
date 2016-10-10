@@ -86,7 +86,7 @@
 				headerText="#{msg['dialog.addPatient.search.birthday.short']}"
 				sortBy="#{patientList.patient.person.birthday}">
 				<h:outputText
-					value="#{helperHandlerAction.dateFormatter(patientList.patient.person.birthday,'dd.MM.yyyy')}" />
+					value="#{mainHandlerAction.date(patientList.patient.person.birthday,'dd.MM.yyyy')}" />
 			</p:column>
 			<!-- gender -->
 			<p:column sortBy="#{patientList.patient.person.gender}">

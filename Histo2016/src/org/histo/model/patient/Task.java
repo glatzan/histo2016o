@@ -168,6 +168,11 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 */
 	private List<PDFContainer> pdfs;
 
+	/**
+	 * Text containing the histological record for all samples.
+	 */
+	private String histologicalRecord = "";
+	
 	/******************************************************** Transient ********************************************************/
 	/**
 	 * Die Ausgewählte Probe
@@ -445,10 +450,19 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.orderLetter = orderLetter;
 	}
 	
+	@Column(columnDefinition = "text")
+	public String getHistologicalRecord() {
+		return histologicalRecord;
+	}
+
+	public void setHistologicalRecord(String histologicalRecord) {
+		this.histologicalRecord = histologicalRecord;
+	}
+
+	
 	/*
 	 * ************************** Getter/Setter ****************************
 	 */
-
 
 	/*
 	 * ************************** Transient Getter/Setter

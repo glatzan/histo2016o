@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.LogDAO;
@@ -91,18 +92,13 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param sample
 	 * @param type
 	 */
-	public void createDiagnosisFromGui(Sample sample, int type) {
-		Diagnosis newDiagnosis = TaskUtil.createNewDiagnosis(sample, type);
-
+	public void createDiagnosisFromGui(Sample sample, DiagnosisType type) {
 		createDiagnosis(sample, type);
-
-		genericDAO.save(sample);
-		genericDAO.refresh(sample.getPatient());
-
+		genericDAO.save(sample.getPatient(), resourceBundle.get("log.patient.save"), sample.getPatient());
 	}
 
-	public void createDiagnosis(Sample sample, int type) {
-		Diagnosis diagnosis = TaskUtil.createNewDiagnosis(sample, type);
+	public void createDiagnosis(Sample sample, DiagnosisType type) {
+		Diagnosis diagnosis = TaskUtil.createNewDiagnosis(sample, type, resourceBundle);
 		genericDAO.save(diagnosis, resourceBundle.get("log.patient.task.sample.diagnosis.new",
 				sample.getParent().getTaskID(), sample.getSampleID(), diagnosis.getName()), diagnosis.getPatient());
 		// TODO change to sample
@@ -117,8 +113,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @return
 	 */
 	public boolean isDiangosisDiagnosisOrFollowUP(Diagnosis diagnosis) {
-		if (diagnosis.getType() == Diagnosis.TYPE_DIAGNOSIS
-				|| diagnosis.getType() == Diagnosis.TYPE_FOLLOW_UP_DIAGNOSIS) {
+		if (diagnosis.getType() == DiagnosisType.DIAGNOSIS
+				|| diagnosis.getType() == DiagnosisType.FOLLOW_UP_DIAGNOSIS) {
 			return true;
 		}
 		return false;
@@ -218,6 +214,16 @@ public class DiagnosisHandlerAction implements Serializable {
 				diagnosis.getPatient());
 	}
 
+	public void onDiagnosisPrototypeChanged(Diagnosis diagnosis) {
+		Task task = diagnosis.getParent().getParent();
+		
+		// only setting diagnosis text if one sample and no text has been added jet 
+		if(task.getSamples().size() == 1 && task.getHistologicalRecord().isEmpty())
+			task.setHistologicalRecord(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+
+		genericDAO.save(diagnosis, "hallo", diagnosis.getPatient());
+		System.out.println("changed");
+	}
 	/*
 	 * log.patient.task.sample.diagnosis.finalized=Diangose finalisiert.
 	 * (Auftrag: {0}, Probe: {1}, Diangose: {2})
@@ -227,22 +233,6 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * log.patient.task.sample.diagnosis.unfinalize=Diagnose wieder freigegeben.
 	 * (Auftrag: {0}, Probe: {1}, Diangose: {2})
 	 */
-
-	/**
-	 * Shows a dialog for editing the name of the passed diagnosis
-	 */
-	public void prepareEditDiagnosisNameDialog(Diagnosis diagnosis) {
-		setTmpDiagnosis(diagnosis);
-		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_NAME);
-	}
-
-	/**
-	 * Hides the edit name dialog for the diagnosis
-	 */
-	public void hideEditDiagnosisNameDialog() {
-		setTmpDiagnosis(null);
-		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_NAME);
-	}
 
 	/**
 	 * 

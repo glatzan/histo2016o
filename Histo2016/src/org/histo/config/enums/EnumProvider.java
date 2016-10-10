@@ -83,4 +83,15 @@ public class EnumProvider {
 	public WorklistSortOrder getWorklistSortOrder(WorklistSortOrder worklistSearchFilter) {
 		return worklistSearchFilter;
 	}
+	
+	/**
+	 * Takes a string (from primefeaces) or a DiagnosisType and returns a
+	 * DiagnosisType. Workaround for primefaces.
+	 * 
+	 * @param diagnosisType
+	 * @return
+	 */
+	public DiagnosisType getDiagnosisType(DiagnosisType diagnosisType){
+		return diagnosisType;
+	}
 }

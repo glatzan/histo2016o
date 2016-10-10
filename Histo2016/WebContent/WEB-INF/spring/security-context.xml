@@ -10,17 +10,18 @@
 	</authentication-manager>
 
 	<http auto-config='true'>
-		
-		<intercept-url pattern="/login*" access="hasRole('ROLE_NONEAUTH')" />
+
+		<intercept-url pattern="/login*"
+			access="hasAnyRole('ROLE_NONEAUTH', 'ROLE_GUEST', 'ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
 		<intercept-url pattern="/pages/guest.xhtml" access="hasRole('ROLE_GUEST')" />
 		<intercept-url pattern="/index.xhtml" access="hasRole('ROLE_GUEST')" />
-			
+
 		<intercept-url pattern="/*"
 			access="hasAnyRole('ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
 		<intercept-url pattern="/pages/**"
 			access="hasAnyRole('ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
 
-	
+
 
 
 		<csrf disabled="true" />
@@ -35,6 +36,8 @@
 		<logout logout-url="/spring_logout" logout-success-url="/login.xhtml" />
 
 		<anonymous username="guest" granted-authority="ROLE_NONEAUTH" />
+
+		<access-denied-handler error-page="/login.xhtml" />
 
 	</http>
 

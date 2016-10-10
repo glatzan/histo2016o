@@ -264,7 +264,7 @@
 					<p:column colspan="6">
 						<p:tabView styleClass="tabView">
 							<!-- ******************************** Diagnosis ******************************** -->
-							<p:tab title="Diagnose">
+							<p:tab title="Diagnose" id="diagnosisTab">
 
 								<!-- Diagnosis -->
 								<f:facet name="title">
@@ -304,7 +304,7 @@
 													<p:commandLink
 														rendered="#{diagnosisHandlerAction.isDiagonsisFollowUPCreationPossible(sample) and !diagnosisHandlerAction.isDiagonsisRevisionCreationPossible(sample)}"
 														title="Nachbefundung erstellen"
-														actionListener="#{diagnosisHandlerAction.createNewDiagnosis(sample,1)}"
+														actionListener="#{diagnosisHandlerAction.createDiagnosisFromGui(sample,enumProvider.getDiagnosisType('FOLLOW_UP_DIAGNOSIS'))}"
 														update="contentForm">
 														<h:outputLabel
 															value="(#{msg['body.receiptlog.tab.diangonsis.link.rediagnosis']})"
@@ -315,7 +315,7 @@
 													<p:commandLink
 														rendered="#{diagnosisHandlerAction.isDiagonsisRevisionCreationPossible(sample)}"
 														title="Diagnoserevision erstellen"
-														actionListener="#{diagnosisHandlerAction.createNewDiagnosis(sample,2)}"
+														actionListener="#{diagnosisHandlerAction.createDiagnosisFromGui(sample,enumProvider.getDiagnosisType('DIAGNOSIS_REVISION'))}"
 														update="contentForm">
 														<h:outputLabel
 															value="(#{msg['body.receiptlog.tab.diangonsis.link.revision']})"
@@ -323,16 +323,23 @@
 													</p:commandLink>
 												</p:panelGrid>
 											</p:column>
-
 											<p:column>
 
 												<c:forEach items="#{sample.diagnoses}" var="diagnosis"
 													varStatus="loop">
-													<p:panel id="toggleable" toggleable="true" collapsed="#{diagnosis.finalized}"
-														toggleSpeed="500" style="margin-bottom:10px">
+													<p:panel id="toggleable" toggleable="true"
+														collapsed="#{diagnosis.finalized}" toggleSpeed="500"
+														style="margin-bottom:10px">
 
 														<f:facet name="header">
-															<h:outputLabel value="#{diagnosis.name} " />
+															<p:inplace id="ajax" editor="true"
+																styleClass="smallInput">
+																<p:inputText value="#{diagnosis.name}" required="true"
+																	label="text">
+																	<f:ajax event="change" execute="@this"
+																		listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.name',diagnosis.name)}" />
+																</p:inputText>
+															</p:inplace>
 
 															<!-- diangosis in headline -->
 															<h:outputLabel value="(#{diagnosis.diagnosis})"
@@ -343,21 +350,6 @@
 																value="(#{msg['body.receiptlog.tab.diangonsis.data.headline.finalized']})"
 																rendered="#{diagnosis.finalized}" />
 														</f:facet>
-
-														<f:facet name="options">
-															<p:menu>
-																<p:menuitem
-																	value="#{msg['body.receiptlog.tab.diangonsis.data.headline.edit']}"
-																	icon="fa fa-fw fa-cog"
-																	onclick="$('#contentForm\\:editDiagnosisNameBtn-#{outerLoop.index}-#{loop.index}').click(); alert();" />
-															</p:menu>
-														</f:facet>
-
-														<p:commandButton
-															id="editDiagnosisNameBtn-#{outerLoop.index}-#{loop.index}"
-															actionListener="#{diagnosisHandlerAction.prepareEditDiagnosisNameDialog(diagnosis)}">
-															<p:ajax event="dialogReturn" update="contentForm" />
-														</p:commandButton>
 
 														<!-- Body for diagnosis -->
 														<h:panelGrid columns="1" style="width:100%;"
@@ -380,9 +372,9 @@
 																			itemLabel="#{diagnosisPrototype.name}"
 																			itemValue="#{diagnosisPrototype}" />
 
-																		<p:ajax update="diagnosisTable"
+																		<p:ajax event="change"
 																			listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
-																		<f:ajax event="change" execute="@this"
+																		<p:ajax event="change" update="diagnosisTable"
 																			listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis',diagnosis.diagnosisPrototype.name)}" />
 
 																	</p:selectOneMenu>
@@ -396,7 +388,7 @@
 															</h:panelGrid>
 
 															<!-- diangosis text -->
-															<p:inputTextarea value="#{diagnosis.diagnosis}" rows="5"
+															<p:inputTextarea value="#{diagnosis.diagnosis}" rows="2"
 																style="width:90%" id="diagnosis"
 																readonly="#{diagnosis.finalized}">
 																<p:watermark for="diagnosis"
