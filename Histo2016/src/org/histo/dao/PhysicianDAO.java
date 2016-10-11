@@ -22,22 +22,44 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = 7297474866699408016L;
 
+	/**
+	 * Gets a list of physicians which are associated with one role in the
+	 * Contactrole Array. If archived is true, even archived physicians will be
+	 * Returned.
+	 * 
+	 * @param roles
+	 * @param archived
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	public List<Physician> getPhysicians(List<ContactRole> roles) {
+	public List<Physician> getPhysicians(List<ContactRole> roles, boolean archived) {
 		ContactRole[] contactRoles = new ContactRole[roles.size()];
 		roles.toArray(contactRoles);
-		return getPhysicians(contactRoles);
+		return getPhysicians(contactRoles, archived);
 	}
-	
-	@SuppressWarnings("unchecked")
-	public List<Physician> getPhysicians(ContactRole[] roles) {
 
-		if (roles == null)
+	/**
+	 * Gets a list of physicians which are associated with one role in the
+	 * Contactrole Array. If archived is true, even archived physicians will be
+	 * Returned.
+	 * 
+	 * @param roles
+	 * @param archived
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Physician> getPhysicians(ContactRole[] roles, boolean archived) {
+
+		if (roles == null || roles.length == 0)
 			return new ArrayList<>();
 
-		Criteria c = getSession().createCriteria(Physician.class, "physician");
-		c.addOrder(Order.asc("defaultcontactrole;"));
-		c.addOrder(Order.asc("clinicemployee;"));
+		Criteria c = getSession().createCriteria(Physician.class);
+		c.addOrder(Order.asc("defaultContactRole"));
+		c.addOrder(Order.asc("clinicEmployee"));
+
+		// don't select archived physicians
+		if (!archived)
+			c.add(Restrictions.eq("archived", false));
 
 		Disjunction objDisjunction = Restrictions.disjunction();
 

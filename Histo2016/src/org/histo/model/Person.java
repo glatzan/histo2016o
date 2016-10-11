@@ -17,6 +17,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
+import org.histo.config.enums.Dialog;
+import org.histo.model.util.ArchivAble;
 import org.histo.model.util.LogAble;
 import org.histo.util.TimeUtil;
 
@@ -30,7 +32,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "person_sequencegenerator", sequenceName = "person_sequence")
-public class Person implements Serializable, LogAble {
+public class Person implements Serializable, LogAble, ArchivAble {
 
 	private static final long serialVersionUID = 2533238775751991883L;
 
@@ -68,8 +70,10 @@ public class Person implements Serializable, LogAble {
 	@Expose
 	protected String land = "";
 	@Expose
-	protected String department;
+	protected String department = "";
 
+	protected boolean archived;
+	
 	public Person() {
 	}
 
@@ -230,4 +234,35 @@ public class Person implements Serializable, LogAble {
 		final Gson gson = builder.create();
 		return gson.toJson(this);
 	}
+
+	/********************************************************
+	 * Interace archive able
+	 ********************************************************/
+	@Override
+	public boolean isArchived() {
+		return archived;
+	}
+
+	@Override
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
+
+	@Override
+	@Transient
+	public String getTextIdentifier() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	@Transient
+	public Dialog getArchiveDialog() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/********************************************************
+	 * Interace archive able
+	 ********************************************************/
 }

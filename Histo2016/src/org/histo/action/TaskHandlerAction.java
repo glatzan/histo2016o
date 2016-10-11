@@ -1,7 +1,6 @@
 package org.histo.action;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +13,6 @@ import javax.faces.event.PhaseId;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.Display;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.TaskDAO;
@@ -39,9 +37,7 @@ import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.DefaultUploadedFile;
 import org.primefaces.model.StreamedContent;
-import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

@@ -69,7 +69,7 @@ public class ContactHandlerAction implements Serializable {
 		List<Contact> contacts = task.getContacts();
 
 		List<Physician> databaseContacts = physicianDAO.getPhysicians(
-				new ContactRole[] { ContactRole.SURGEON, ContactRole.PRIVATE_PHYSICIAN, ContactRole.OTHER });
+				new ContactRole[] { ContactRole.SURGEON, ContactRole.PRIVATE_PHYSICIAN, ContactRole.OTHER }, false);
 
 		if (!addedContact) {
 			loop: for (Physician physician : databaseContacts) {

@@ -7,6 +7,7 @@ import java.util.List;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.SettingsTab;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
@@ -18,8 +19,10 @@ import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.MaterialPreset;
 import org.histo.model.patient.Patient;
+import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
+import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +55,6 @@ public class SettingsHandlerAction {
 	public static final int PHYSICIAN_ADD_LDPA = 3;
 
 	@Autowired
-	private HelperHandlerAction helper;
-
-	@Autowired
 	private UserDAO userDAO;
 
 	@Autowired
@@ -67,7 +67,10 @@ public class SettingsHandlerAction {
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
-	MainHandlerAction mainHandlerAction;
+	private MainHandlerAction mainHandlerAction;
+
+	@Autowired
+	private ResourceBundle resourceBundle;
 
 	/**
 	 * List with all users of the program
@@ -83,6 +86,11 @@ public class SettingsHandlerAction {
 	 * Tabindex of settings dialog
 	 */
 	private int activeSettingsIndex = 0;
+
+	/**
+	 * Tabindex of the settings tab
+	 */
+	private SettingsTab physicianTabIndex = SettingsTab.PHYSICIAN_LIST;
 
 	/******************************************************** Staining ********************************************************/
 	/**
@@ -170,48 +178,47 @@ public class SettingsHandlerAction {
 	 ********************************************************/
 
 	/**
-	 * Determines the input gui which is shown
+	 * containing options for the physician list
 	 */
-	private int physicianIndex = 0;
+	private PhysicianRoleOptions physicianRoleOptions;
 
 	/**
 	 * List containing all physicians known in the histo database
 	 */
-	private List<Physician> physicians;
+	private List<Physician> physicianList;
 
 	/**
 	 * Used for creating new or for editing existing physicians
 	 */
-	private Physician editPhysician;
+	private Physician tmpPhysician;
 
 	/**
 	 * List containing all physicians available from ldap
 	 */
-	private List<Physician> ldapPhysicians;
+	private List<Physician> ldapPhysicianList;
+
+	/**
+	 * Used for selecting a physician from the ldap list
+	 */
+	private Physician tmpLdapPhysician;
 
 	/**
 	 * String is used for searching for internal physicians
 	 */
 	private String ldapPhysicianSearchString;
 
-	/**
-	 * Used for selecting a physician from the ldap list
-	 */
-	private Physician selectedLdapPhysician;
-
-	private boolean personSurgeon = true;
-
-	private boolean personExtern = true;
-
-	private boolean personOther = true;
-
 	/********************************************************
 	 * Physician
+	 ********************************************************/
+
+	/********************************************************
+	 * General
 	 ********************************************************/
 
 	/**
 	 * Show the adminSettigns Dialog and inits the used values
 	 */
+
 	public void prepareSettingsDialog() {
 		// init users
 		setUsers(userDAO.loadAllUsers());
@@ -259,6 +266,10 @@ public class SettingsHandlerAction {
 			break;
 		}
 	}
+
+	/********************************************************
+	 * General
+	 ********************************************************/
 
 	/******************************************************** Staining ********************************************************/
 	/**
@@ -474,21 +485,26 @@ public class SettingsHandlerAction {
 	 * Standard Diagnosis
 	 ********************************************************/
 
-	/******************************************************** Physician ********************************************************/
+	/********************************************************
+	 * Physician
+	 ********************************************************/
 	/**
-	 * Shows all added Physicians (ROLE: Surgeon, Extern, Other)
+	 * Shows all added Physicians (ROLE: Surgeon, PrivatePhysician, Other)
 	 */
 	public void preparePhysicianList() {
+		if (getPhysicianRoleOptions() == null)
+			setPhysicianRoleOptions(new PhysicianRoleOptions());
+
 		List<ContactRole> contactRoles = new ArrayList<ContactRole>();
-		
-		if(isPersonSurgeon())
+
+		if (getPhysicianRoleOptions().isSurgeon())
 			contactRoles.add(ContactRole.SURGEON);
-		if(isPersonExtern())
+		if (getPhysicianRoleOptions().isPrivatePhysician())
 			contactRoles.add(ContactRole.PRIVATE_PHYSICIAN);
-		if(isPersonOther())
+		if (getPhysicianRoleOptions().isOther())
 			contactRoles.add(ContactRole.OTHER);
-		
-		setPhysicians(physicianDAO.getPhysicians(contactRoles));
+
+		setPhysicianList(physicianDAO.getPhysicians(contactRoles, getPhysicianRoleOptions().isArchived()));
 	}
 
 	/**
@@ -496,8 +512,8 @@ public class SettingsHandlerAction {
 	 * is used.
 	 */
 	public void prepareNewPhysician() {
-		setEditPhysician(new Physician());
-		setPhysicianIndex(PHYSICIAN_ADD_LDPA);
+		setTmpPhysician(new Physician());
+		setPhysicianTabIndex(SettingsTab.PHYSICIAN_ADD_LDPA);
 	}
 
 	/**
@@ -506,12 +522,14 @@ public class SettingsHandlerAction {
 	 * @param physician
 	 */
 	public void prepareEditPhysician(Physician physician) {
-		setEditPhysician(physician);
-		setPhysicianIndex(PHYSICIAN_EDIT);
+		setTmpPhysician(physician);
+		setPhysicianTabIndex(SettingsTab.PHYSICIAN_EDIT);
 	}
 
 	/**
-	 * Generates an ldap search filter (?(xxx)....) and offers the result list
+	 * Generates an ldap search filter (?(xxx)....) and offers the result list.
+	 * The result list is a physician list with minimal details. Before adding
+	 * an clinic physician a ldap fetch for more details has to be done
 	 * 
 	 * @param name
 	 */
@@ -527,53 +545,105 @@ public class SettingsHandlerAction {
 
 		List<Physician> listP = UserUtil.getPhysiciansFromLDAP(request.toString());
 
-		setLdapPhysicians(listP);
+		setLdapPhysicianList(listP);
 	}
 
-	public void savePhysician(Physician physician) {
-		// always set role to miscellaneous if no other role was selected
-		if (physician.getDefaultContactRole() == null)
+	/**
+	 * Saves an edited physician to the database
+	 * 
+	 * @param physician
+	 */
+	public void saveEditPhysician(Physician physician) {
+		if (physician.getDefaultContactRole() == ContactRole.NONE)
 			physician.setDefaultContactRole(ContactRole.OTHER);
 
-		genericDAO.save(physician);
-		discardEditPhysician();
+		genericDAO.save(physician,
+				resourceBundle.get("log.settings.physician.physician.edit", physician.getFullName()));
+		discardTmpPhysician();
 	}
 
-	public void savePhysician(Physician ldapPhysician, Physician editPhysician) {
+	/**
+	 * Saves a physician to the database, if no role was selected
+	 * ContactRole.Other will be set per default.
+	 * 
+	 * @param physician
+	 */
+	public void saveNewPrivatePhysician(Physician physician) {
+		// always set role to miscellaneous if no other role was selected
+		if (physician.getDefaultContactRole() == ContactRole.NONE)
+			physician.setDefaultContactRole(ContactRole.OTHER);
+
+		genericDAO.save(physician,
+				resourceBundle.get("log.settings.physician.privatePhysician.save", physician.getFullName()));
+		discardTmpPhysician();
+	}
+
+	/**
+	 * 
+	 * @param ldapPhysician
+	 * @param editPhysician
+	 */
+	public void savePhysicianFromLdap(Physician ldapPhysician, ContactRole role) {
 		if (ldapPhysician == null)
 			return;
 
 		// removing id from the list
 		ldapPhysician.setId(0);
 
-		// if internal physician from ldap it might have been added before,
+		if (role == ContactRole.NONE)
+			ldapPhysician.setDefaultContactRole(ContactRole.OTHER);
+		else
+			ldapPhysician.setDefaultContactRole(role);
+
+		// tje internal physician from ldap it might have been added before (if
+		// the the physician is a user of this programm),
 		// search fur unique uid
 		Physician physicianFromDatabase = physicianDAO.loadPhysicianByUID(ldapPhysician.getUid());
+
+		// undating the foud physician
 		if (physicianFromDatabase != null) {
 			UserUtil.updatePhysicianData(physicianFromDatabase, ldapPhysician);
 			ldapPhysician = physicianFromDatabase;
-			System.out.println("internal found updatin!");
+
+			genericDAO.save(ldapPhysician,
+					resourceBundle.get("log.settings.physician.ldap.update", ldapPhysician.getFullName()));
+			return;
 		}
-		ldapPhysician.setDefaultContactRole(editPhysician.getDefaultContactRole());
 
-		savePhysician(ldapPhysician);
+		genericDAO.save(ldapPhysician,
+				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getFullName()));
+
+		discardTmpPhysician();
 	}
 
-	public void removePhysician(Physician physician) {
-		physician.setDefaultContactRole(ContactRole.NONE);
+	/**
+	 * Archvies or dearchvies physicians depending on the given parameters.
+	 * 
+	 * @param physician
+	 * @param archive
+	 */
+	public void archivePhysician(Physician physician, boolean archive) {
+		physician.setArchived(archive);
+		genericDAO.save(physician,
+				resourceBundle.get(archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
+						physician.getFullName()));
+		preparePhysicianList();
 	}
 
-	public void discardEditPhysician() {
+	/**
+	 * Clears the temporary variables and the the physician list to display
+	 */
+	public void discardTmpPhysician() {
 		// if a physician was edited remove all chagnes
-		if (getPhysicianIndex() == PHYSICIAN_EDIT && getEditPhysician().getId() != 0)
-			genericDAO.refresh(getEditPhysician());
+		if (getPhysicianTabIndex() == SettingsTab.PHYSICIAN_EDIT && getTmpPhysician().getId() != 0)
+			genericDAO.refresh(getTmpPhysician());
 
-		setEditPhysician(null);
-		setSelectedLdapPhysician(null);
+		setTmpPhysician(null);
+		setTmpLdapPhysician(null);
 
 		// update physician list
 		preparePhysicianList();
-		setPhysicianIndex(PHYSICIAN_LIST);
+		setPhysicianTabIndex(SettingsTab.PHYSICIAN_LIST);
 	}
 
 	/******************************************************** Physician ********************************************************/
@@ -754,60 +824,28 @@ public class SettingsHandlerAction {
 		this.diagnosisPrototypeListTransformer = diagnosisPrototypeListTransformer;
 	}
 
-	public List<Physician> getPhysicians() {
-		return physicians;
+	public List<Physician> getPhysicianList() {
+		return physicianList;
 	}
 
-	public void setPhysicians(List<Physician> physicians) {
-		this.physicians = physicians;
+	public void setPhysicianList(List<Physician> physicianList) {
+		this.physicianList = physicianList;
 	}
 
-	public int getPhysicianIndex() {
-		return physicianIndex;
+	public Physician getTmpPhysician() {
+		return tmpPhysician;
 	}
 
-	public void setPhysicianIndex(int physicianIndex) {
-		this.physicianIndex = physicianIndex;
+	public void setTmpPhysician(Physician tmpPhysician) {
+		this.tmpPhysician = tmpPhysician;
 	}
 
-	public boolean isPersonSurgeon() {
-		return personSurgeon;
+	public List<Physician> getLdapPhysicianList() {
+		return ldapPhysicianList;
 	}
 
-	public void setPersonSurgeon(boolean personSurgeon) {
-		this.personSurgeon = personSurgeon;
-	}
-
-	public boolean isPersonExtern() {
-		return personExtern;
-	}
-
-	public void setPersonExtern(boolean personExtern) {
-		this.personExtern = personExtern;
-	}
-
-	public boolean isPersonOther() {
-		return personOther;
-	}
-
-	public void setPersonOther(boolean personOther) {
-		this.personOther = personOther;
-	}
-
-	public Physician getEditPhysician() {
-		return editPhysician;
-	}
-
-	public void setEditPhysician(Physician editPhysician) {
-		this.editPhysician = editPhysician;
-	}
-
-	public List<Physician> getLdapPhysicians() {
-		return ldapPhysicians;
-	}
-
-	public void setLdapPhysicians(List<Physician> ldapPhysicians) {
-		this.ldapPhysicians = ldapPhysicians;
+	public void setLdapPhysicianList(List<Physician> ldapPhysicianList) {
+		this.ldapPhysicianList = ldapPhysicianList;
 	}
 
 	public String getLdapPhysicianSearchString() {
@@ -818,12 +856,28 @@ public class SettingsHandlerAction {
 		this.ldapPhysicianSearchString = ldapPhysicianSearchString;
 	}
 
-	public Physician getSelectedLdapPhysician() {
-		return selectedLdapPhysician;
+	public Physician getTmpLdapPhysician() {
+		return tmpLdapPhysician;
 	}
 
-	public void setSelectedLdapPhysician(Physician selectedLdapPhysician) {
-		this.selectedLdapPhysician = selectedLdapPhysician;
+	public void setTmpLdapPhysician(Physician tmpLdapPhysician) {
+		this.tmpLdapPhysician = tmpLdapPhysician;
+	}
+
+	public PhysicianRoleOptions getPhysicianRoleOptions() {
+		return physicianRoleOptions;
+	}
+
+	public void setPhysicianRoleOptions(PhysicianRoleOptions physicianRoleOptions) {
+		this.physicianRoleOptions = physicianRoleOptions;
+	}
+
+	public SettingsTab getPhysicianTabIndex() {
+		return physicianTabIndex;
+	}
+
+	public void setPhysicianTabIndex(SettingsTab physicianTabIndex) {
+		this.physicianTabIndex = physicianTabIndex;
 	}
 
 	/********************************************************

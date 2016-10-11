@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 // TODO: status display (in navigation)
 // TODO: log in settings rework
 // TODO: Edit external patient from menu bar
+// TODO: Priorisierung
 
 @Component
 @Scope(value = "session")

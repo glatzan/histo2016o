@@ -43,20 +43,22 @@ public class EnumProvider {
 
 	/**
 	 * Returns an array containing all values of the eye enumeration
+	 * 
 	 * @return
 	 */
-	public Eye[] getEyes(){
+	public Eye[] getEyes() {
 		return Eye.values();
 	}
-	
+
 	/**
 	 * Retuerns an array containin all values of the contactRole enummeration.
+	 * 
 	 * @return
 	 */
-	public ContactRole[] getContactRoles(){
+	public ContactRole[] getContactRoles() {
 		return ContactRole.values();
 	}
-	
+
 	/**
 	 * Returns the path an an dialog
 	 * 
@@ -99,7 +101,7 @@ public class EnumProvider {
 	public WorklistSortOrder getWorklistSortOrder(WorklistSortOrder worklistSearchFilter) {
 		return worklistSearchFilter;
 	}
-	
+
 	/**
 	 * Takes a string (from primefeaces) or a DiagnosisType and returns a
 	 * DiagnosisType. Workaround for primefaces.
@@ -107,10 +109,10 @@ public class EnumProvider {
 	 * @param diagnosisType
 	 * @return
 	 */
-	public DiagnosisType getDiagnosisType(DiagnosisType diagnosisType){
+	public DiagnosisType getDiagnosisType(DiagnosisType diagnosisType) {
 		return diagnosisType;
 	}
-	
+
 	/**
 	 * Takes a string (from primefeaces) or a ContactRole and returns a
 	 * ContactRole. Workaround for primefaces.
@@ -118,8 +120,18 @@ public class EnumProvider {
 	 * @param contactRole
 	 * @return
 	 */
-	public ContactRole getContactRole(ContactRole contactRole){
+	public ContactRole getContactRole(ContactRole contactRole) {
 		return contactRole;
 	}
-	
+
+	/**
+	 * Takes a string (from primefeaces) or a SettingsTab and returns a
+	 * SettingsTab. Workaround for primefaces.
+	 * 
+	 * @param settingsTab
+	 * @return
+	 */
+	public SettingsTab getSettingsTab(SettingsTab settingsTab) {
+		return settingsTab;
+	}
 }

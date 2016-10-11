@@ -21,13 +21,13 @@
 			<h:panelGrid>
 				<p:panelGrid columns="1" styleClass="inputTable"
 					style="float:left;margin-right:20px;">
-					<p:selectOneButton value="#{settingsHandlerAction.physicianIndex}">
+					<p:selectOneButton value="#{settingsHandlerAction.physicianTabIndex}">
 						<f:selectItem
 							itemLabel="#{msg['dialog.settings.person.new.external']}"
-							itemValue="2" />
+							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_EXTER')}" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.settings.person.new.employee']}"
-							itemValue="3" />
+							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_LDPA')}" />
 						<p:ajax update="@form"></p:ajax>
 					</p:selectOneButton>
 				</p:panelGrid>
@@ -35,24 +35,24 @@
 		</p:panelGrid>
 
 		<!-- Internal Physician (Employee, get data from LDAP)-->
-		<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 3}">
+		<ui:fragment rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_LDPA'}">
 			<ui:include src="../../template/ldapPhysician.xhtml">
 				<ui:param name="physicianList"
-					value="#{settingsHandlerAction.ldapPhysicians}" />
+					value="#{settingsHandlerAction.ldapPhysicianList}" />
 				<ui:param name="searchString"
 					value="#{settingsHandlerAction.ldapPhysicianSearchString}" />
 				<ui:param name="performAction" value="searchForPhysician" />
 				<ui:param name="performObject" value="#{settingsHandlerAction}" />
 				<ui:param name="selection"
-					value="#{settingsHandlerAction.selectedLdapPhysician}" />
+					value="#{settingsHandlerAction.tmpLdapPhysician}" />
 			</ui:include>
 		</ui:fragment>
 
 		<!-- External Physician -->
-		<ui:fragment rendered="#{settingsHandlerAction.physicianIndex eq 2}">
+		<ui:fragment rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_EXTER'}">
 			<ui:include src="../../template/person.xhtml">
 				<ui:param name="person"
-					value="#{settingsHandlerAction.editPhysician}" />
+					value="#{settingsHandlerAction.tmpPhysician}" />
 				<ui:param name="pannelID" value="newPhysician" />
 				<ui:param name="disabled" value="false" />
 			</ui:include>
@@ -65,10 +65,10 @@
 			<!-- title -->
 			<h:panelGrid columns="3">
 				<p:selectOneMenu
-					value="#{settingsHandlerAction.editPhysician.defaultContactRole}">
+					value="#{settingsHandlerAction.tmpPhysician.defaultContactRole}">
 
 					<f:selectItems value="#{enumProvider.contactRoles}" var="role"
-						itemLabel="#{msg['enum.contactRoles.'.concat(role)]}"
+						itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
 						itemValue="#{role}" />
 
 				</p:selectOneMenu>
@@ -82,20 +82,20 @@
 				<!-- Button for creating a new external physician -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
-					rendered="#{settingsHandlerAction.physicianIndex eq 2}"
-					actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.editPhysician)}"
+					rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_EXTER'}"
+					actionListener="#{settingsHandlerAction.saveNewPrivatePhysician(settingsHandlerAction.tmpPhysician)}"
 					update="@form" />
 
 				<!-- Button for adding a physician from ldap -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
-					rendered="#{settingsHandlerAction.physicianIndex eq 3}"
-					actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.selectedLdapPhysician, settingsHandlerAction.editPhysician)}"
+					rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_LDPA'}"
+					actionListener="#{settingsHandlerAction.savePhysicianFromLdap(settingsHandlerAction.tmpLdapPhysician, settingsHandlerAction.tmpPhysician.defaultContactRole)}"
 					update="@form" />
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
-					actionListener="#{settingsHandlerAction.discardEditPhysician()}"
+					actionListener="#{settingsHandlerAction.discardTmpPhysician()}"
 					update="@form" />
 			</h:panelGrid>
 		</h:panelGrid>

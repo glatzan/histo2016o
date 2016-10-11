@@ -50,6 +50,7 @@ public class UserUtil {
 		original.setPager(update.getPager());
 		original.setDepartment(update.getDepartment());
 		original.setClinicRole(update.getTitle());
+		original.setDefaultContactRole(update.getDefaultContactRole());
 		return original;
 	}
 

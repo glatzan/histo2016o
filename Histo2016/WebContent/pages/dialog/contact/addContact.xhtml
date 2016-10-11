@@ -34,14 +34,14 @@
 
 						<p:column headerText="#{msg['dialog.contact.table.role']}">
 							<h:outputLabel
-								value="#{msg['enum.contactRoles.'.concat(contact.physician.defaultContactRole)]}" />
+								value="#{msg['enum.contactRole.'.concat(contact.physician.defaultContactRole)]}" />
 						</p:column>
 
 						<p:column headerText="#{msg['dialog.contact.table.function']}">
 							<p:selectOneMenu value="#{contact.role}">
 
 								<f:selectItems value="#{enumProvider.contactRoles}" var="role"
-									itemLabel="#{msg['enum.contactRoles.'.concat(role)]}"
+									itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
 									itemValue="#{role}" />
 
 								<p:ajax update="@form"

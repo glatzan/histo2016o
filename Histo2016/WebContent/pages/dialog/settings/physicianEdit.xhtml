@@ -14,10 +14,10 @@
 
 		<ui:include src="../../template/person.xhtml">
 			<ui:param name="person"
-				value="#{settingsHandlerAction.editPhysician}" />
-			<ui:param name="pannelID" value="editPhysician" />
+				value="#{settingsHandlerAction.tmpPhysician}" />
+			<ui:param name="pannelID" value="tmpPhysician" />
 			<ui:param name="disabled"
-				value="#{settingsHandlerAction.editPhysician.roleClinicDoctor}" />
+				value="#{settingsHandlerAction.tmpPhysician.clinicEmployee}" />
 		</ui:include>
 
 		<!-- Role -->
@@ -27,10 +27,10 @@
 			<!-- title -->
 			<h:panelGrid columns="3">
 				<p:selectOneMenu
-					value="#{settingsHandlerAction.editPhysician.defaultContactRole}">
+					value="#{settingsHandlerAction.tmpPhysician.defaultContactRole}">
 
 					<f:selectItems value="#{enumProvider.contactRoles}" var="role"
-						itemLabel="#{msg['enum.contactRoles.'.concat(role)]}"
+						itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
 						itemValue="#{role}" />
 
 				</p:selectOneMenu>
@@ -43,12 +43,12 @@
 			<h:panelGrid columns="2">
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
-					actionListener="#{settingsHandlerAction.savePhysician(settingsHandlerAction.editPhysician)}"
+					actionListener="#{settingsHandlerAction.saveEditPhysician(settingsHandlerAction.tmpPhysician)}"
 					update="@form" />
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
-					actionListener="#{settingsHandlerAction.discardEditPhysician()}"
+					actionListener="#{settingsHandlerAction.discardTmpPhysician()}"
 					update="@form" />
 			</h:panelGrid>
 		</h:panelGrid>

@@ -53,7 +53,7 @@ public class Physician extends Person{
 	/**
 	 * Default role of this physician
 	 */
-	private ContactRole defaultContactRole = ContactRole.NONE;
+	private ContactRole defaultContactRole = ContactRole.OTHER;
 	
 	/**
 	 * True if clinic employee
