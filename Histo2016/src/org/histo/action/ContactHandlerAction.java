@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
@@ -32,10 +33,10 @@ public class ContactHandlerAction implements Serializable {
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
-	
+
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
-	
+
 	/**
 	 * List with all available contacts
 	 */
@@ -67,7 +68,8 @@ public class ContactHandlerAction implements Serializable {
 
 		List<Contact> contacts = task.getContacts();
 
-		List<Physician> databaseContacts = physicianDAO.getPhysicians(surgeon, extern, other);
+		List<Physician> databaseContacts = physicianDAO.getPhysicians(
+				new ContactRole[] { ContactRole.SURGEON, ContactRole.PRIVATE_PHYSICIAN, ContactRole.OTHER });
 
 		if (!addedContact) {
 			loop: for (Physician physician : databaseContacts) {
@@ -100,11 +102,11 @@ public class ContactHandlerAction implements Serializable {
 	public void updateContactList(List<Contact> contacts, Task task) {
 		for (Contact contact : contacts) {
 			if (contact.isSelected()) {
-				if (contact.getRole() == 0) {
+				if (contact.getRole() == ContactRole.NONE) {
 					task.getContacts().remove(contact);
 				}
 				continue;
-			} else if (contact.getRole() != 0)
+			} else if (contact.getRole() != ContactRole.NONE)
 				task.getContacts().add(contact);
 		}
 
@@ -120,7 +122,7 @@ public class ContactHandlerAction implements Serializable {
 	 */
 	public void onContactChangeRole(Contact contact) {
 		// contact wurde deselektiert alles auf nicht benutzt setzten
-		if (contact.getRole() == Contact.ROLE_NONE) {
+		if (contact.getRole() == ContactRole.NONE) {
 			contact.setUseEmail(false);
 			contact.setUseFax(false);
 			contact.setUsePhone(false);
@@ -130,13 +132,13 @@ public class ContactHandlerAction implements Serializable {
 				return;
 
 			// bei internen operateuren mail bevorzugen
-			if (contact.getRole() == Contact.ROLE_SURGEON) {
+			if (contact.getRole() == ContactRole.SURGEON) {
 				contact.setUseEmail(true);
 				return;
 			}
 
 			// bei externen die eine Faxnummer haben fax bevorzugen
-			if (contact.getRole() == Contact.ROLE_EXTERN && contact.getPhysician().getFax() != null
+			if (contact.getRole() == ContactRole.PRIVATE_PHYSICIAN && contact.getPhysician().getFax() != null
 					&& !contact.getPhysician().getFax().isEmpty()) {
 				contact.setUseFax(true);
 				return;
@@ -148,27 +150,26 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	public void sendTest() {
-		
+
 		FileUtil.loadTextFile(null);
-		
-		
-		
-//		System.out.println("ok");
-//		SimpleEmail email = new SimpleEmail();
-//		email.setHostName("smtp.ukl.uni-freiburg.de");
-//		email.setDebug(true);
-//		email.setSmtpPort(465);
-//		email.setSSLOnConnect(true);
-//		try {
-//			email.addTo("andreas.glatz@uniklinik-freiburg.de");
-//			email.setFrom("augenklinik.histologie@uniklinik-freiburg.de", "Name des Senders");
-//			email.setSubject("Testnachricht");
-//			email.setMsg("Hallo, das ist nur ein simpler Test");
-//			email.send();
-//		} catch (EmailException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
+		// System.out.println("ok");
+		// SimpleEmail email = new SimpleEmail();
+		// email.setHostName("smtp.ukl.uni-freiburg.de");
+		// email.setDebug(true);
+		// email.setSmtpPort(465);
+		// email.setSSLOnConnect(true);
+		// try {
+		// email.addTo("andreas.glatz@uniklinik-freiburg.de");
+		// email.setFrom("augenklinik.histologie@uniklinik-freiburg.de", "Name
+		// des Senders");
+		// email.setSubject("Testnachricht");
+		// email.setMsg("Hallo, das ist nur ein simpler Test");
+		// email.send();
+		// } catch (EmailException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 

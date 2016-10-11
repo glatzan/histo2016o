@@ -42,6 +42,22 @@ public class EnumProvider {
 	}
 
 	/**
+	 * Returns an array containing all values of the eye enumeration
+	 * @return
+	 */
+	public Eye[] getEyes(){
+		return Eye.values();
+	}
+	
+	/**
+	 * Retuerns an array containin all values of the contactRole enummeration.
+	 * @return
+	 */
+	public ContactRole[] getContactRoles(){
+		return ContactRole.values();
+	}
+	
+	/**
 	 * Returns the path an an dialog
 	 * 
 	 * @param dialog
@@ -94,4 +110,16 @@ public class EnumProvider {
 	public DiagnosisType getDiagnosisType(DiagnosisType diagnosisType){
 		return diagnosisType;
 	}
+	
+	/**
+	 * Takes a string (from primefeaces) or a ContactRole and returns a
+	 * ContactRole. Workaround for primefaces.
+	 * 
+	 * @param contactRole
+	 * @return
+	 */
+	public ContactRole getContactRole(ContactRole contactRole){
+		return contactRole;
+	}
+	
 }

@@ -9,6 +9,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.histo.config.enums.ContactRole;
 import org.histo.model.Physician;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,23 +23,27 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	private static final long serialVersionUID = 7297474866699408016L;
 
 	@SuppressWarnings("unchecked")
-	public List<Physician> getPhysicians(boolean surgeon, boolean extern, boolean other) {
+	public List<Physician> getPhysicians(List<ContactRole> roles) {
+		ContactRole[] contactRoles = new ContactRole[roles.size()];
+		roles.toArray(contactRoles);
+		return getPhysicians(contactRoles);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Physician> getPhysicians(ContactRole[] roles) {
 
-		if (!surgeon && !extern && !other)
+		if (roles == null)
 			return new ArrayList<>();
 
 		Criteria c = getSession().createCriteria(Physician.class, "physician");
-		c.addOrder(Order.asc("roleSurgeon"));
-		c.addOrder(Order.asc("roleResidentDoctor"));
+		c.addOrder(Order.asc("defaultcontactrole;"));
+		c.addOrder(Order.asc("clinicemployee;"));
 
 		Disjunction objDisjunction = Restrictions.disjunction();
 
-		if (surgeon)
-			objDisjunction.add(Restrictions.eq("roleSurgeon", true));
-		if (extern)
-			objDisjunction.add(Restrictions.eq("roleResidentDoctor", true));
-		if (other)
-			objDisjunction.add(Restrictions.eq("roleMiscellaneous", true));
+		for (ContactRole contactRole : roles) {
+			objDisjunction.add(Restrictions.eq("defaultContactRole", contactRole));
+		}
 
 		c.add(objDisjunction);
 

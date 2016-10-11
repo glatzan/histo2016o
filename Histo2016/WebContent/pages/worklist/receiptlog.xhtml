@@ -233,18 +233,15 @@
 						<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
 					</p:column>
 					<p:column>
-						<p:selectOneButton styleClass="taskSelectOneButton"
+						<p:selectOneMenu styleClass="smallInput"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}">
-							<f:selectItem itemLabel="#{msg['body.receiptlog.eye.both']}"
-								itemValue="0" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.eye.right']}"
-								itemValue="1" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.eye.left']}"
-								itemValue="2" />
+
+							<f:selectItems value="#{enumProvider.eyes}" var="eye"
+								itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.eye',worklistHandlerAction.selectedPatient.selectedTask.eye)}" />
-						</p:selectOneButton>
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.eye',msg['enum.eye.'.concat(worklistHandlerAction.selectedPatient.selectedTask.eye)])}" />
+						</p:selectOneMenu>
 					</p:column>
 
 					<!-- other -->

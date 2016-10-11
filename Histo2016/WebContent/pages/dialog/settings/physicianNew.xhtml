@@ -64,26 +64,14 @@
 			<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
 			<!-- title -->
 			<h:panelGrid columns="3">
-				<p:panelGrid columns="2" styleClass="inputTable">
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						value="#{settingsHandlerAction.editPhysician.roleSurgeon}" />
-					<p:outputLabel style="margin-left:5px;"
-						value="#{msg['dialog.settings.person.role.surgeon']}" />
-				</p:panelGrid>
-				<p:panelGrid columns="2" styleClass="inputTable">
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						style="margin-left:15px;"
-						value="#{settingsHandlerAction.editPhysician.roleResidentDoctor}" />
-					<p:outputLabel style="margin-left:5px;"
-						value="#{msg['dialog.settings.person.role.extern']}" />
-				</p:panelGrid>
-				<p:panelGrid columns="2" styleClass="inputTable">
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						value="#{settingsHandlerAction.editPhysician.roleMiscellaneous}"
-						style="margin-left:15px;" />
-					<p:outputLabel style="margin-left:5px;"
-						value="#{msg['dialog.settings.person.role.other']}" />
-				</p:panelGrid>
+				<p:selectOneMenu
+					value="#{settingsHandlerAction.editPhysician.defaultContactRole}">
+
+					<f:selectItems value="#{enumProvider.contactRoles}" var="role"
+						itemLabel="#{msg['enum.contactRoles.'.concat(role)]}"
+						itemValue="#{role}" />
+
+				</p:selectOneMenu>
 			</h:panelGrid>
 		</p:panelGrid>
 	</div>

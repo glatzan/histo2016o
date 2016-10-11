@@ -37,26 +37,16 @@
 				<h:outputText value="#{physician.surname}" />
 			</p:column>
 
-			<!-- Operateur -->
-			<p:column headerText="#{msg['dialog.settings.person.list.surgeon']}"
+			<!-- Role -->
+			<p:column headerText="#{msg['dialog.settings.person.list.role']}"
 				style="text-align:center;">
-				<h:panelGroup rendered="#{physician.roleSurgeon}">
-					<i class="fa fa-fw fa-check-circle icon-green" />
-				</h:panelGroup>
+				<h:outputLabel value="#{msg['enum.contactRoles.'.concat(physician.defaultContactRole)]}"></h:outputLabel>
 			</p:column>
 
 			<!-- Einsender -->
-			<p:column headerText="#{msg['dialog.settings.person.list.extern']}"
+			<p:column headerText="#{msg['dialog.settings.person.list.employee']}"
 				style="text-align:center;">
-				<h:panelGroup rendered="#{physician.roleResidentDoctor}">
-					<i class="fa fa-fw fa-check-circle icon-green" />
-				</h:panelGroup>
-			</p:column>
-
-			<!-- Andere -->
-			<p:column headerText="#{msg['dialog.settings.person.list.other']}"
-				style="text-align:center;">
-				<h:panelGroup rendered="#{physician.roleMiscellaneous}">
+				<h:panelGroup rendered="#{physician.clinicEmployee}">
 					<i class="fa fa-fw fa-check-circle icon-green" />
 				</h:panelGroup>
 			</p:column>

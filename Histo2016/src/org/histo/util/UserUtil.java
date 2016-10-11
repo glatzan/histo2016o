@@ -28,7 +28,7 @@ public class UserUtil {
 		newUser.setRole(Role.GUEST);
 		newUser.setPhysician(new Physician());
 		// set role clinicalDoctor or clical personnel
-		newUser.getPhysician().setRoleClinicDoctor(true);
+		newUser.getPhysician().setClinicEmployee(true);
 		return newUser;
 	}
 
@@ -164,7 +164,7 @@ public class UserUtil {
 					Attribute attr = attrs.get("uid");
 					if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
 						Physician newPhysician = new Physician(i++);
-						newPhysician.setRoleClinicDoctor(true);
+						newPhysician.setClinicEmployee(true);
 						physicians.add(newPhysician);
 						updatePhysicianData(newPhysician, attrs);
 					}

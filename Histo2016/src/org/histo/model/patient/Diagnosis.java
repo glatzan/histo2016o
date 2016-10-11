@@ -109,7 +109,6 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * Diagnosis type, normal = 0, follow up = 1 , revision = 2.
 	 */
 	@Expose
-	@Enumerated(EnumType.STRING)
 	private DiagnosisType type;
 
 	/**
@@ -164,7 +163,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 		this.generationDate = generationDate;
 	}
 
-	@Basic
+	@Enumerated(EnumType.STRING)
 	public DiagnosisType getType() {
 		return type;
 	}

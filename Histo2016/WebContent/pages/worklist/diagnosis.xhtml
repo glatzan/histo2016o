@@ -38,7 +38,8 @@
 							<h:outputLabel value="#{sample.sampleID}" />
 
 							<p:selectOneMenu value="#{sample.material}"
-								styleClass="smallInput" editable="true" style="width:200px;">
+								styleClass="smallInput" editable="true"
+								style="width:200px;float:right;margin-right:30px;">
 								<f:selectItem
 									itemLabel="#{msg['body.receiptlog.material.select']}"
 									itemValue="none" />
@@ -50,16 +51,31 @@
 					</c:forEach>
 
 					<h:panelGroup layout="block"
-						style="font-size:1.2em;margin-top:10px;">
-						<h:outputLabel value="Vorgeschichte"></h:outputLabel>
+						style="font-size:1.0em;margin-top:10px;">
+						<h:outputLabel
+							value="Vorgeschichte, klinischer Befund, Fragestellung"></h:outputLabel>
 					</h:panelGroup>
 
-					<h:panelGrid columns="2"
+					<h:graphicImage value="/resources/gfx/augen.png"
+						style="width: 280px;float:right;margin-right:30px;" />
+
+					<h:panelGrid columns="2" columnClasses="verticalAlignTop,"
+						style="width:100%"
 						styleClass="noPaddingAll noBordersAll collapsedBordersAll">
-						<p:inputTextarea
+						<p:selectOneMenu styleClass="smallInput"
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}">
+
+							<f:selectItems value="#{enumProvider.eyes}" var="eye"
+								itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
+
+							<p:ajax event="change" execute="@this"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.eye',msg['enum.eye.'.concat(worklistHandlerAction.selectedPatient.selectedTask.eye)])}" />
+						</p:selectOneMenu>
+
+						<p:inputTextarea rows="2"
+							style="width: 270px;float:right;margin-right:30px;"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}" />
-						<h:graphicImage value="/resources/gfx/augen.png"
-							style="width: 200px;" />
+
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -101,16 +117,38 @@
 						<f:selectItems value="#{taskHandlerAction.selectableWards}" />
 					</p:selectOneMenu>
 
+					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
+						<h:outputLabel value="Operateur/Einsender" />
+					</h:panelGroup>
+					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
+						<h:outputLabel
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.getPrimaryContact(enumProvider.getContactRole('SURGEON'))}"></h:outputLabel>
 
-					<h:outputLabel value="Fax an Augenarzt"></h:outputLabel>
-					<h:panelGroup></h:panelGroup>
-					<h:inputText></h:inputText>
-					<h:panelGroup></h:panelGroup>
+						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+							style="float: right; margin-right:5px;"
+							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
+							<i class="fa fa-fw fa-cog" />
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</h:panelGroup>
 
-					<h:outputLabel value="Operateur/Einsender"></h:outputLabel>
-					<h:panelGroup></h:panelGroup>
-					<h:inputText></h:inputText>
-					<h:panelGroup></h:panelGroup>
+
+
+					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
+						<h:outputLabel value="Augenarzt"></h:outputLabel>
+					</h:panelGroup>
+
+					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
+						<h:outputLabel
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.getPrimaryContact(enumProvider.getContactRole('PRIVATE_PHYSICIAN'))}"></h:outputLabel>
+
+						<p:commandLink title="" style="float:right; margin-right:10px;"
+							actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
+							update=":contentForm:extendedText">
+							<i class="fa fa-hand-o-up"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</h:panelGroup>
 				</h:panelGrid>
 			</h:panelGrid>
 			<p:separator />

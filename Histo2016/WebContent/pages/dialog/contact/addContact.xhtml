@@ -33,34 +33,17 @@
 						</p:column>
 
 						<p:column headerText="#{msg['dialog.contact.table.role']}">
-							<ul class="roleList">
-								<ui:fragment rendered="#{contact.physician.roleSurgeon}">
-									<li>#{msg['dialog.contact.table.role.surgeon']}</li>
-								</ui:fragment>
-								<ui:fragment rendered="#{contact.physician.roleResidentDoctor}">
-									<li>#{msg['dialog.contact.table.role.roleResidentDoctor']}</li>
-								</ui:fragment>
-								<ui:fragment rendered="#{contact.physician.roleMiscellaneous}">
-									<li>#{msg['dialog.contact.table.role.roleMiscellaneous']}</li>
-								</ui:fragment>
-							</ul>
+							<h:outputLabel
+								value="#{msg['enum.contactRoles.'.concat(contact.physician.defaultContactRole)]}" />
 						</p:column>
 
 						<p:column headerText="#{msg['dialog.contact.table.function']}">
-							<p:selectOneMenu styleClass="taskSelectOnMenu"
-								value="#{contact.role}">
-								<f:selectItem
-									itemLabel="#{msg['dialog.contact.table.function.none']}"
-									itemValue="0" />
-								<f:selectItem
-									itemLabel="#{msg['dialog.contact.table.function.surgeon']}"
-									itemValue="1" />
-								<f:selectItem
-									itemLabel="#{msg['dialog.contact.table.function.extern']}"
-									itemValue="2" />
-								<f:selectItem
-									itemLabel="#{msg['dialog.contact.table.function.other']}"
-									itemValue="3" />
+							<p:selectOneMenu value="#{contact.role}">
+
+								<f:selectItems value="#{enumProvider.contactRoles}" var="role"
+									itemLabel="#{msg['enum.contactRoles.'.concat(role)]}"
+									itemValue="#{role}" />
+
 								<p:ajax update="@form"
 									listener="#{contactHandlerAction.onContactChangeRole(contact)}"></p:ajax>
 							</p:selectOneMenu>
@@ -102,12 +85,12 @@
 
 						<h:panelGrid columns="3">
 							<p:commandButton value="#{msg['general.save']}"
-								 icon="fa fa-fw fa-floppy-o"
+								icon="fa fa-fw fa-floppy-o"
 								actionListener="#{contactHandlerAction.updateContactList(contactHandlerAction.allAvailableContact,worklistHandlerAction.selectedPatient.selectedTask)}"
 								update="@form"></p:commandButton>
 
 							<p:commandButton value="#{msg['general.abort']}"
-								 icon="fa fa-fw fa-times-circle"
+								icon="fa fa-fw fa-times-circle"
 								actionListener="#{contactHandlerAction.hideContactsDialog()}"
 								update="@form"></p:commandButton>
 

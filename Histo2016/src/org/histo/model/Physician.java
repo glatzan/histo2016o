@@ -1,10 +1,13 @@
 package org.histo.model;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
+import org.histo.config.enums.ContactRole;
 import org.histo.model.util.LogAble;
 
 import com.google.gson.annotations.Expose;
@@ -48,29 +51,15 @@ public class Physician extends Person{
 	private String uid;
 	
 	/**
-	 * Is surgeon
+	 * Default role of this physician
 	 */
-	@Expose
-	private boolean roleSurgeon;
-
-	/**
-	 * Is external doctor
-	 */
-	@Expose
-	private boolean roleResidentDoctor;
-
-	/**
-	 * Is internal doctor or clinical personnel
-	 */
-	@Expose
-	private boolean roleClinicDoctor;
+	private ContactRole defaultContactRole = ContactRole.NONE;
 	
 	/**
-	 * Other
+	 * True if clinic employee
 	 */
-	@Expose
-	private boolean roleMiscellaneous;
-	
+	private boolean clinicEmployee;
+
 	/**
 	 * Standard constructor for hibernate
 	 */
@@ -85,38 +74,6 @@ public class Physician extends Person{
 		this.id = id;
 	}
 	
-	public boolean isRoleSurgeon() {
-		return roleSurgeon;
-	}
-
-	public void setRoleSurgeon(boolean roleSurgeon) {
-		this.roleSurgeon = roleSurgeon;
-	}
-
-	public boolean isRoleResidentDoctor() {
-		return roleResidentDoctor;
-	}
-
-	public void setRoleResidentDoctor(boolean roleResidentDoctor) {
-		this.roleResidentDoctor = roleResidentDoctor;
-	}
-
-	public boolean isRoleClinicDoctor() {
-		return roleClinicDoctor;
-	}
-
-	public void setRoleClinicDoctor(boolean roleClinicDoctor) {
-		this.roleClinicDoctor = roleClinicDoctor;
-	}
-
-	public boolean isRoleMiscellaneous() {
-		return roleMiscellaneous;
-	}
-
-	public void setRoleMiscellaneous(boolean roleMiscellaneous) {
-		this.roleMiscellaneous = roleMiscellaneous;
-	}
-
 	public String getPager() {
 		return pager;
 	}
@@ -157,5 +114,21 @@ public class Physician extends Person{
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
-	
+
+	@Enumerated(EnumType.STRING)
+	public ContactRole getDefaultContactRole() {
+		return defaultContactRole;
+	}
+
+	public void setDefaultContactRole(ContactRole defaultContactRole) {
+		this.defaultContactRole = defaultContactRole;
+	}
+
+	public boolean isClinicEmployee() {
+		return clinicEmployee;
+	}
+
+	public void setClinicEmployee(boolean clinicEmployee) {
+		this.clinicEmployee = clinicEmployee;
+	}
 }

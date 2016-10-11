@@ -1,9 +1,11 @@
 package org.histo.action;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -216,7 +218,7 @@ public class SettingsHandlerAction {
 
 		// init statings
 		setShowStainingEdit(false);
-		
+
 		preparePhysicianList();
 
 		mainHandlerAction.showDialog(Dialog.SETTINGS);
@@ -290,11 +292,13 @@ public class SettingsHandlerAction {
 			// case new, save
 			getAllAvailableStainings().add(newStainingPrototype);
 			genericDAO.save(getAllAvailableStainings());
-//			log.info("Neue Färbung erstellt: " + newStainingPrototype.asGson());
+			// log.info("Neue Färbung erstellt: " +
+			// newStainingPrototype.asGson());
 		} else {
 			// case edit: update an save
-//			log.info("Färbung veränder, Original: " + origStainingPrototype.asGson() + " Neu:"
-//					+ newStainingPrototype.asGson());
+			// log.info("Färbung veränder, Original: " +
+			// origStainingPrototype.asGson() + " Neu:"
+			// + newStainingPrototype.asGson());
 			origStainingPrototype.update(newStainingPrototype);
 			genericDAO.save(origStainingPrototype);
 		}
@@ -340,18 +344,19 @@ public class SettingsHandlerAction {
 	 * @param newStainingPrototypeList
 	 * @param origStainingPrototypeList
 	 */
-	public void saveStainigList(MaterialPreset newStainingPrototypeList,
-			MaterialPreset origStainingPrototypeList) {
+	public void saveStainigList(MaterialPreset newStainingPrototypeList, MaterialPreset origStainingPrototypeList) {
 		if (origStainingPrototypeList == null) {
 			// case new, save
 			getAllAvailableMaterials().add(newStainingPrototypeList);
 			genericDAO.save(newStainingPrototypeList);
 			genericDAO.save(getAllAvailableMaterials());
-//			log.info("Neue Färbeliste erstellt: " + newStainingPrototypeList.asGson());
+			// log.info("Neue Färbeliste erstellt: " +
+			// newStainingPrototypeList.asGson());
 		} else {
 			// case edit: update an save
-//			log.info("Färbungsliste veränder, Original: " + origStainingPrototypeList.asGson() + " Neu:"
-//					+ newStainingPrototypeList.asGson());
+			// log.info("Färbungsliste veränder, Original: " +
+			// origStainingPrototypeList.asGson() + " Neu:"
+			// + newStainingPrototypeList.asGson());
 			origStainingPrototypeList.update(newStainingPrototypeList);
 			genericDAO.save(origStainingPrototypeList);
 		}
@@ -403,8 +408,7 @@ public class SettingsHandlerAction {
 	 * @param toRemove
 	 * @param stainingPrototypeList
 	 */
-	public void removeStainingFromStainingList(StainingPrototype toRemove,
-			MaterialPreset stainingPrototypeList) {
+	public void removeStainingFromStainingList(StainingPrototype toRemove, MaterialPreset stainingPrototypeList) {
 		stainingPrototypeList.getStainingPrototypes().remove(toRemove);
 	}
 
@@ -436,11 +440,13 @@ public class SettingsHandlerAction {
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
 			genericDAO.save(newDiagnosisPrototype);
 			genericDAO.save(getAllAvailableDiagnosisPrototypes());
-//			log.info("Neue Diagnose erstellt: " + newDiagnosisPrototype.asGson());
+			// log.info("Neue Diagnose erstellt: " +
+			// newDiagnosisPrototype.asGson());
 		} else {
 			// case edit: update an save
-//			log.info("Diagnose veränder, Original: " + origDiagnosisPrototype.asGson() + " Neu:"
-//					+ newDiagnosisPrototype.asGson());
+			// log.info("Diagnose veränder, Original: " +
+			// origDiagnosisPrototype.asGson() + " Neu:"
+			// + newDiagnosisPrototype.asGson());
 			origDiagnosisPrototype.update(newDiagnosisPrototype);
 			genericDAO.save(origDiagnosisPrototype);
 		}
@@ -473,7 +479,16 @@ public class SettingsHandlerAction {
 	 * Shows all added Physicians (ROLE: Surgeon, Extern, Other)
 	 */
 	public void preparePhysicianList() {
-		setPhysicians(physicianDAO.getPhysicians(isPersonSurgeon(), isPersonExtern(), isPersonOther()));
+		List<ContactRole> contactRoles = new ArrayList<ContactRole>();
+		
+		if(isPersonSurgeon())
+			contactRoles.add(ContactRole.SURGEON);
+		if(isPersonExtern())
+			contactRoles.add(ContactRole.PRIVATE_PHYSICIAN);
+		if(isPersonOther())
+			contactRoles.add(ContactRole.OTHER);
+		
+		setPhysicians(physicianDAO.getPhysicians(contactRoles));
 	}
 
 	/**
@@ -517,41 +532,35 @@ public class SettingsHandlerAction {
 
 	public void savePhysician(Physician physician) {
 		// always set role to miscellaneous if no other role was selected
-		if (!physician.isRoleSurgeon() && !physician.isRoleResidentDoctor())
-			physician.setRoleMiscellaneous(true);
+		if (physician.getDefaultContactRole() == null)
+			physician.setDefaultContactRole(ContactRole.OTHER);
 
 		genericDAO.save(physician);
 		discardEditPhysician();
 	}
 
 	public void savePhysician(Physician ldapPhysician, Physician editPhysician) {
-		if(ldapPhysician == null)
+		if (ldapPhysician == null)
 			return;
-		
+
 		// removing id from the list
 		ldapPhysician.setId(0);
-		
+
 		// if internal physician from ldap it might have been added before,
 		// search fur unique uid
 		Physician physicianFromDatabase = physicianDAO.loadPhysicianByUID(ldapPhysician.getUid());
-		if (physicianFromDatabase != null){
+		if (physicianFromDatabase != null) {
 			UserUtil.updatePhysicianData(physicianFromDatabase, ldapPhysician);
 			ldapPhysician = physicianFromDatabase;
 			System.out.println("internal found updatin!");
 		}
-		
+		ldapPhysician.setDefaultContactRole(editPhysician.getDefaultContactRole());
 
-		ldapPhysician.setRoleMiscellaneous(editPhysician.isRoleMiscellaneous());
-		ldapPhysician.setRoleResidentDoctor(editPhysician.isRoleResidentDoctor());
-		ldapPhysician.setRoleSurgeon(editPhysician.isRoleSurgeon());
-		
 		savePhysician(ldapPhysician);
 	}
 
 	public void removePhysician(Physician physician) {
-		physician.setRoleMiscellaneous(false);
-		physician.setRoleResidentDoctor(false);
-		physician.setRoleSurgeon(false);
+		physician.setDefaultContactRole(ContactRole.NONE);
 	}
 
 	public void discardEditPhysician() {
@@ -561,7 +570,7 @@ public class SettingsHandlerAction {
 
 		setEditPhysician(null);
 		setSelectedLdapPhysician(null);
-		
+
 		// update physician list
 		preparePhysicianList();
 		setPhysicianIndex(PHYSICIAN_LIST);

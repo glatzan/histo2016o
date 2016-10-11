@@ -8,6 +8,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.histo.config.enums.ContactRole;
 import org.histo.model.util.LogAble;
 
 @Entity
@@ -23,7 +24,7 @@ public class Contact implements LogAble {
 
     private Physician physician;
 
-    private int role;
+    private ContactRole role;
     
     private boolean primaryContact;
 
@@ -65,11 +66,11 @@ public class Contact implements LogAble {
 	this.physician = physician;
     }
 
-    public int getRole() {
+    public ContactRole getRole() {
         return role;
     }
 
-    public void setRole(int role) {
+    public void setRole(ContactRole role) {
         this.role = role;
     }
 

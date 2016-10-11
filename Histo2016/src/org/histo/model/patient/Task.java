@@ -8,6 +8,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -28,7 +30,9 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Eye;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
 import org.histo.model.util.DiagnosisStatus;
@@ -121,7 +125,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * Ey of the samples right/left/both
 	 */
-	private byte eye = EYE_RIGHT;
+	private Eye eye = Eye.RIGHT;
 
 	/**
 	 * Sample count, is incemented with every new sample
@@ -221,7 +225,11 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		setTabIndex(((TabView) event.getSource()).getIndex());
 	}
 
-	public Contact getPrimaryContact(){
+	public Contact getPrimaryContact(ContactRole contactRole){
+		for (Contact contact : contacts) {
+			if(contact.getRole() == contactRole && contact.isPrimaryContact())
+				return contact;
+		}
 		
 		return null;
 	}
@@ -382,11 +390,12 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.caseHistory = caseHistory;
 	}
 
-	public byte getEye() {
+	@Enumerated(EnumType.STRING)
+	public Eye getEye() {
 		return eye;
 	}
 
-	public void setEye(byte eye) {
+	public void setEye(Eye eye) {
 		this.eye = eye;
 	}
 
