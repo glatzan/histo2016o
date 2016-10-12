@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.event.ValueChangeListener;
 
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
@@ -125,4 +127,18 @@ public class HelperHandlerAction implements Serializable {
 				.redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);
 	}
 
+	  public void valueChanged() {
+	      System.out.println("called: valueChanged()");
+	   }
+	   
+	   public void valueChanged(ValueChangeEvent event) {
+		   System.out.println(event.getOldValue());
+		   System.out.println(event.getNewValue());
+		   
+	      System.out.println("called: valueChanged(ValueChangeEvent event)");
+	   }
+	   
+	   public void valueChanged(ValueChangeListener listener) {
+	      System.out.println("called: valueChanged(ValueChangeListener listener)");
+	   }
 }

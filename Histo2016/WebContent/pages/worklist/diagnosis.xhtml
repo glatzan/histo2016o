@@ -23,6 +23,7 @@
 				<h:panelGrid columns="1" style="width:410px"
 					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 					<!-- TODO Update background object, e.g. .blure() (inputtext) -->
+					<!-- material -->
 					<c:forEach
 						items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
 						var="sample" varStatus="loopCount">
@@ -46,6 +47,9 @@
 								<f:selectItems
 									value="#{taskHandlerAction.allAvailableMaterials}" var="list"
 									itemLabel="#{list.name}" itemValue="#{list.name}" />
+
+								<p:ajax event="change" execute="@this"
+									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.sample.material',worklistHandlerAction.selectedPatient.selectedTask.taskID,sample.material.name)}" />
 							</p:selectOneMenu>
 						</h:panelGrid>
 					</c:forEach>
@@ -58,7 +62,7 @@
 
 					<h:graphicImage value="/resources/gfx/augen.png"
 						style="width: 280px;float:right;margin-right:30px;" />
-
+					<!-- eye -->
 					<h:panelGrid columns="2" columnClasses="verticalAlignTop,"
 						style="width:100%"
 						styleClass="noPaddingAll noBordersAll collapsedBordersAll">
@@ -72,10 +76,14 @@
 								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.eye',msg['enum.eye.'.concat(worklistHandlerAction.selectedPatient.selectedTask.eye)])}" />
 						</p:selectOneMenu>
 
-						<p:inputTextarea rows="2"
+						<p:inputTextarea rows="2" id="stroyField"
 							style="width: 270px;float:right;margin-right:30px;"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}" />
-
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}">
+							<p:ajax event="change" execute="@this"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.caseHistory',worklistHandlerAction.selectedPatient.selectedTask.caseHistory)}" />
+							<p:watermark value="#{msg['body.receiptlog.story.watermark']}"
+								for="stroyField" />
+						</p:inputTextarea>
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -83,24 +91,34 @@
 				<h:panelGrid columns="2"
 					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 					<!-- date of surgery -->
-					<h:outputLabel value="Entnahmedatum"></h:outputLabel>
+					<h:outputLabel value="Entnahmedatum" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
 						styleClass="taskCalendar"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}" />
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}">
+						<p:ajax event="dateSelect"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+						<f:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+					</p:calendar>
 
 					<!-- date of receipt -->
-					<h:outputLabel value="Eingangsdatum"></h:outputLabel>
+					<h:outputLabel value="Eingangsdatum" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
 						styleClass="taskCalendar"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}" />
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
+						<p:ajax event="dateSelect"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+						<f:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+					</p:calendar>
 
 					<!-- Task Number -->
-					<h:outputLabel value="Eingangsnummer"></h:outputLabel>
+					<h:outputLabel value="Eingangsnummer" />
 					<p:inputText disabled="true"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
 
 					<!-- insurance -->
-					<h:outputLabel value="Versicherung"></h:outputLabel>
+					<h:outputLabel value="Versicherung" />
 
 					<p:selectOneButton
 						value="#{worklistHandlerAction.selectedPatient.privateInsurance}">
@@ -110,13 +128,16 @@
 
 
 					<!-- ward -->
-					<h:outputLabel value="Station"></h:outputLabel>
+					<h:outputLabel value="Station" />
 					<p:selectOneMenu id="wards"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.ward}"
 						effect="fold" editable="true">
 						<f:selectItems value="#{taskHandlerAction.selectableWards}" />
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.ward',worklistHandlerAction.selectedPatient.selectedTask.ward)}" />
 					</p:selectOneMenu>
 
+					<!-- surgeon -->
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
 						<h:outputLabel value="Operateur/Einsender" />
 					</h:panelGroup>
@@ -132,8 +153,6 @@
 						</p:commandLink>
 					</h:panelGroup>
 
-
-
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
 						<h:outputLabel value="Augenarzt"></h:outputLabel>
 					</h:panelGroup>
@@ -142,10 +161,10 @@
 						<h:outputLabel
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.getPrimaryContact(enumProvider.getContactRole('PRIVATE_PHYSICIAN'))}"></h:outputLabel>
 
-						<p:commandLink title="" style="float:right; margin-right:10px;"
-							actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
-							update=":contentForm:extendedText">
-							<i class="fa fa-hand-o-up"></i>
+						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+							style="float: right; margin-right:5px;"
+							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
+							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 					</h:panelGroup>
@@ -153,10 +172,40 @@
 			</h:panelGrid>
 			<p:separator />
 			<h:outputLabel value="Histlogischer Befund"></h:outputLabel>
-			<p:editor id="extendedText"
-				value="#{worklistHandlerAction.selectedPatient.selectedTask.histologicalRecord}"
-				style="width:100%">
-			</p:editor>
+			<h:panelGroup id="extendedTextParent">
+				<p:editor id="extendedText" widgetVar="extendedText"
+					value="#{worklistHandlerAction.selectedPatient.selectedTask.histologicalRecord}"
+					style="width:100%"
+					valueChangeListener="#{helperHandlerAction.valueChanged}">
+				</p:editor>
+				<p:commandButton style="display:none" id="submitDiagnosisChange"
+					name="submitDiagnosisChange" process="extendedTextParent"></p:commandButton>
+
+				<f:verbatim>
+					<script type="text/javascript">
+						$(document)
+								.ready(
+										function() {
+											var first = true;
+											//documentation is the editor widgetVar
+											PF('extendedText').jq
+													.find("iframe")
+													.contents()
+													.find('body')
+													.blur(
+															function() {
+																if (first) {
+																	first = false;
+																	return;
+																}
+																$(
+																		'#contentForm\\:submitDiagnosisChange')
+																		.click();
+															});
+										});
+					</script>
+				</f:verbatim>
+			</h:panelGroup>
 
 			<h:outputLabel value="Diagnose"></h:outputLabel>
 			<ui:repeat var="sampel"

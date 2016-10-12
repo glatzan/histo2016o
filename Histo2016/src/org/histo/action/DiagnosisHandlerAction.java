@@ -254,6 +254,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		taskHandlerAction.taskDataChanged(tmpDiagnosis.getParent().getParent(),
 				"log.patient.task.dataChange.histologicalRecord",
 				tmpDiagnosis.getParent().getParent().getHistologicalRecord());
+		System.out.println("---------!!!!!!!!!");
 	}
 	/*
 	 * log.patient.task.sample.diagnosis.finalized=Diangose finalisiert.
