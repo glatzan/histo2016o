@@ -13,6 +13,7 @@ import javax.faces.event.PhaseId;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.TaskDAO;
@@ -94,9 +95,9 @@ public class TaskHandlerAction implements Serializable {
 	private List<MaterialPreset> allAvailableMaterials;
 
 	/**
-	 * selected stainingLists for task creation
+	 * Transformer for selecting staininglist
 	 */
-	private ArrayList<MaterialPreset> selectedMaterialList;
+	private StainingListTransformer materialListTransformer;
 
 	/**
 	 * selected stainingList for sample
@@ -104,24 +105,15 @@ public class TaskHandlerAction implements Serializable {
 	private MaterialPreset selectedMaterial;
 
 	/**
-	 * The count of samples for a new task
-	 */
-	private int sampleCount = 1;
-
-	/**
-	 * Transformer for selecting staininglist
-	 */
-	private StainingListTransformer materialListTransformer;
-
-	/**
 	 * Temporary task for creating samples
 	 */
 	private Task temporaryTask;
 
 	/**
-	 * The order letter of the new task
+	 * sample count for temporary task, used by p:spinner in the createTask
+	 * dialog
 	 */
-	private PDFContainer orderLetter;
+	private int temporaryTaskSampleCount;
 
 	/********************************************************
 	 * Task creation
@@ -177,13 +169,14 @@ public class TaskHandlerAction implements Serializable {
 	public void prepareNewTaskDialog() {
 		prepareForTask();
 
-		setSelectedMaterialList(new ArrayList<MaterialPreset>());
-		setSampleCount(1);
-		setOrderLetter(null);
+		setTemporaryTask(new Task());
+		getTemporaryTask().setTaskPriority(TaskPriority.LOW);
+		setTemporaryTaskSampleCount(1);
+		TaskUtil.createNewSample(getTemporaryTask());
 
 		// checks if default statingsList is empty
 		if (!getAllAvailableMaterials().isEmpty()) {
-			getSelectedMaterialList().add(getAllAvailableMaterials().get(0));
+			getTemporaryTask().getSamples().get(0).setMaterilaPreset(getAllAvailableMaterials().get(0));
 		}
 
 		mainHandlerAction.showDialog(Dialog.TASK_CREATE);
@@ -193,32 +186,19 @@ public class TaskHandlerAction implements Serializable {
 	 * Method is called if user adds or removes a sample within the task
 	 * creation process. Adds or removes a new Material for the new Sample.
 	 */
-	public void updateNewTaskDilaog() {
-		if (getSampleCount() >= 1) {
-			if (getSampleCount() > getSelectedMaterialList().size())
-				while (getSampleCount() > getSelectedMaterialList().size()) {
-					getSelectedMaterialList().add(getAllAvailableMaterials().get(0));
+	public void updateNewTaskDilaog(Task task) {
+		if (temporaryTaskSampleCount >= 1) {
+			if (temporaryTaskSampleCount > task.getSamples().size())
+				while (temporaryTaskSampleCount > task.getSamples().size()) {
+					Sample tmp = TaskUtil.createNewSample(task);
+					tmp.setMaterilaPreset(getAllAvailableMaterials().get(0));
 				}
-			else if (getSampleCount() < getSelectedMaterialList().size())
-				while (getSampleCount() < getSelectedMaterialList().size()) {
-					getSelectedMaterialList().remove(getSelectedMaterialList().size() - 1);
+			else if (temporaryTaskSampleCount < task.getSamples().size())
+				while (temporaryTaskSampleCount < task.getSamples().size()) {
+					getTemporaryTask().setSampleNumer(getTemporaryTask().getSampleNumer() - 1);
+					task.getSamples().remove(task.getSamples().size() - 1);
 				}
 		}
-	}
-
-	/**
-	 * Returns a Romen number, depending on the index of the material preset
-	 * within the array.
-	 * 
-	 * @param materialPreset
-	 * @return
-	 */
-	public String getSampleNumberForTaskCreation(MaterialPreset materialPreset) {
-		int index = getSelectedMaterialList().indexOf(materialPreset);
-		if (index == -1)
-			return "";
-		index += 1;
-		return TaskUtil.getRomanNumber(index);
 	}
 
 	/**
@@ -231,7 +211,8 @@ public class TaskHandlerAction implements Serializable {
 		orderLetterPdf.setType("application/pdf");
 		orderLetterPdf.setData(event.getFile().getContents());
 		orderLetterPdf.setName(event.getFile().getFileName());
-		setOrderLetter(orderLetterPdf);
+		if (getTemporaryTask() != null)
+			getTemporaryTask().setOrderLetter(orderLetterPdf);
 	}
 
 	/**
@@ -239,27 +220,34 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void createNewTask(Patient patient, List<MaterialPreset> material, PDFContainer uploadedFile) {
+	public void createNewTask(Patient patient, Task phantomTask) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
 
-		Task task = TaskUtil.createNewTask(patient, taskDAO.countSamplesOfCurrentYear());
+		Task task = TaskUtil.createNewTask(phantomTask, patient, taskDAO.countSamplesOfCurrentYear());
 
 		patient.getTasks().add(0, task);
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		if (uploadedFile != null) {
-			genericDAO.save(uploadedFile,
-					resourceBundle.get("log.patient.task.upload.orderList", task.getTaskID(), uploadedFile.getName()),
-					patient);
+		if (task.getOrderLetter() != null) {
+			genericDAO.save(task.getOrderLetter(), resourceBundle.get("log.patient.task.upload.orderList",
+					task.getTaskID(), task.getOrderLetter().getName()), patient);
 		}
 
 		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
 
-		for (MaterialPreset materialPreset : material) {
-			createNewSample(task, materialPreset);
+		for (Sample sample : task.getSamples()) {
+			sample.setMaterial(sample.getMaterilaPreset().getName());
+
+			genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
+					sample.getSampleID(), sample.getMaterial()), task.getPatient());
+
+			// creating first default diagnosis
+			diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
+			// creating needed blocks
+			createNewBlock(sample);
 		}
 
 		// checking if staining flag of the task object has to be false
@@ -476,9 +464,9 @@ public class TaskHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Method is called if the user changes task data. A detail resources
-	 * string can be passed. This string can contain placeholder which will be
-	 * replaced by the additional parameters.
+	 * Method is called if the user changes task data. A detail resources string
+	 * can be passed. This string can contain placeholder which will be replaced
+	 * by the additional parameters.
 	 * 
 	 * @param task
 	 * @param detailedInfoResourcesKey
@@ -628,22 +616,6 @@ public class TaskHandlerAction implements Serializable {
 		this.selectedMaterial = selectedMaterial;
 	}
 
-	public ArrayList<MaterialPreset> getSelectedMaterialList() {
-		return selectedMaterialList;
-	}
-
-	public void setSelectedMaterialList(ArrayList<MaterialPreset> selectedMaterialList) {
-		this.selectedMaterialList = selectedMaterialList;
-	}
-
-	public int getSampleCount() {
-		return sampleCount;
-	}
-
-	public void setSampleCount(int sampleCount) {
-		this.sampleCount = sampleCount;
-	}
-
 	public StainingListTransformer getMaterialListTransformer() {
 		return materialListTransformer;
 	}
@@ -684,14 +656,14 @@ public class TaskHandlerAction implements Serializable {
 		this.archived = archived;
 	}
 
-	public PDFContainer getOrderLetter() {
-		return orderLetter;
+	public int getTemporaryTaskSampleCount() {
+		return temporaryTaskSampleCount;
 	}
 
-	public void setOrderLetter(PDFContainer orderLetter) {
-		this.orderLetter = orderLetter;
+	public void setTemporaryTaskSampleCount(int temporaryTaskSampleCount) {
+		this.temporaryTaskSampleCount = temporaryTaskSampleCount;
 	}
-
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

@@ -96,4 +96,29 @@ public class WorklistSortUtil {
 
 		return patiens;
 	}
+	
+	public static final List<Patient> orderListByPriority(List<Patient> patiens, boolean asc) {
+
+		// Sorting
+		Collections.sort(patiens, new Comparator<Patient>() {
+			@Override
+			public int compare(Patient patientOne, Patient patientTwo) {
+				Task highestPriorityOne = patientOne.getActivTasks().size() > 0 ? TaskUtil.getTaskByHighestPriority(patientOne.getActivTasks()) : null;
+				Task highestPriorityTwo = patientTwo.getActivTasks().size() > 0 ? TaskUtil.getTaskByHighestPriority(patientTwo.getActivTasks()) : null;
+
+				if (highestPriorityOne == null && highestPriorityTwo == null)
+					return 0;
+				else if (highestPriorityOne == null)
+					return asc ? -1 : 1;
+				else if (highestPriorityTwo == null)
+					return asc ? 1 : -1;
+				else {
+					int res = highestPriorityOne.getTaskPriority().compareTo(highestPriorityTwo.getTaskPriority());
+					return asc ? res : res * -1;
+				}
+			}
+		});
+
+		return patiens;
+	}
 }

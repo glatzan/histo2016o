@@ -33,6 +33,7 @@ import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
+import org.histo.config.enums.TaskPriority;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
 import org.histo.model.util.DiagnosisStatus;
@@ -62,6 +63,11 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 
 	private long version;
 
+	/**
+	 * Priority of the task
+	 */
+	private TaskPriority taskPriority;
+	
 	/**
 	 * Generated Task ID as String
 	 */
@@ -212,9 +218,9 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.parent = parent;
 	}
 
-	/*
-	 * ************************** Transient ****************************
-	 */
+	/********************************************************
+	 * Transient
+	 ********************************************************/
 	/**
 	 * Updated den Tabindex wenn ein andere Tab (Diagnose oder Färbung) in der
 	 * Gui ausgewählt wurde TODO: Remove or use
@@ -260,13 +266,13 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void decrementSmapleNumber() {
 		this.sampleNumer--;
 	}
-	/*
-	 * ************************** Transient ****************************
-	 */
+	/********************************************************
+	 * Transient
+	 ********************************************************/
 
-	/*
-	 * ************************** Getter/Setter ****************************
-	 */
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 	@Id
 	@GeneratedValue(generator = "sample_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -472,16 +478,23 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setHistologicalRecord(String histologicalRecord) {
 		this.histologicalRecord = histologicalRecord;
 	}
-
 	
-	/*
-	 * ************************** Getter/Setter ****************************
-	 */
+	@Enumerated(EnumType.ORDINAL)
+	public TaskPriority getTaskPriority() {
+		return taskPriority;
+	}
 
-	/*
-	 * ************************** Transient Getter/Setter
-	 * ****************************
-	 */
+	public void setTaskPriority(TaskPriority taskPriority) {
+		this.taskPriority = taskPriority;
+	}
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+
+
+	/********************************************************
+	 * Transient Getter/Setter
+	 ********************************************************/
 	@Transient
 	public Date getCreationDateAsDate() {
 		return new Date(getCreationDate());
@@ -553,15 +566,13 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	/*
-	 * ************************** Transient Getter/Setter
-	 * ****************************
-	 */
+	/********************************************************
+	 * Transient Getter/Setter
+	 ********************************************************/
 
-	/*
-	 * ************************** Interface DiagnosisStatus
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface DiagnosisStatus
+	 ********************************************************/
 	/**
 	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
 	 * Gibt true zurück wenn alle Diagnosen finalisiert wurden.
@@ -616,15 +627,13 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		return false;
 	}
 
-	/*
-	 * ************************** Interface DiagnosisStatus
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface DiagnosisStatus
+	 ********************************************************/
 
-	/*
-	 * ************************** Interface StainingStauts
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface StainingStauts
+	 ********************************************************/
 	/**
 	 * Überschreibt Methode aus dem Interface StainingStauts <br>
 	 * Gibt true zurück, wenn die Aufgabe am heutigen Tag erstellt wurde
@@ -692,15 +701,13 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		}
 		return false;
 	}
-	/*
-	 * ************************** Interface StainingStauts
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface StainingStauts
+	 ********************************************************/
 
-	/*
-	 * ************************** Interface StainingTreeParent
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
 	@ManyToOne(targetEntity = Patient.class)
 	public Patient getParent() {
 		return parent;
@@ -757,9 +764,8 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public Dialog getArchiveDialog() {
 		return Dialog.TASK_ARCHIV;
 	}
-	/*
-	 * ************************** Interface StainingTreeParent
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
 
 }

@@ -51,7 +51,7 @@ public class EnumProvider {
 	}
 
 	/**
-	 * Retuerns an array containin all values of the contactRole enummeration.
+	 * Returns an array containing all values of the contactRole enumeration.
 	 * 
 	 * @return
 	 */
@@ -59,6 +59,14 @@ public class EnumProvider {
 		return ContactRole.values();
 	}
 
+	/**
+	 * Returns an array containing all values of the TaskPriority enumeration
+	 * @return
+	 */
+	public TaskPriority[] getTaskPriority() {
+		return TaskPriority.values();
+	}
+	
 	/**
 	 * Returns the path an an dialog
 	 * 

@@ -1,13 +1,8 @@
 package org.histo.util;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.persistence.Transient;
-
-import org.apache.log4j.Logger;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
@@ -20,16 +15,24 @@ import org.histo.ui.StainingTableChooser;
 
 public class TaskUtil {
 
-	private static Logger log = Logger.getLogger(TaskUtil.class.getName());
-
 	/**
-	 * Creats an empty task
+	 * Creates a new Task for a patient.
 	 * 
+	 * @param patient
 	 * @param taskNumer
 	 * @return
 	 */
 	public final static Task createNewTask(Patient patient, int taskNumer) {
-		Task result = new Task();
+		return createNewTask(new Task(), patient, taskNumer);
+	}
+
+	/**
+	 * Initializes a task with important values.
+	 * 
+	 * @param taskNumer
+	 * @return
+	 */
+	public final static Task createNewTask(Task result, Patient patient, int taskNumer) {
 		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
 		result.setCreationDate(currentDay);
 		result.setDateOfReceipt(currentDay);
@@ -43,15 +46,23 @@ public class TaskUtil {
 	}
 
 	/**
+	 * Creates a new Sample and adds it to the samplelist of the given task
+	 * @param task
+	 * @return
+	 */
+	public final static Sample createNewSample(Task task) {
+		return createNewSample(new Sample(),task);
+	}
+	
+	/**
 	 * Creates a new sample with one diagnosis an standard staingings. Adds the
-	 * sample to the given tasks and returns it-
+	 * sample to the given tasks and returns it.
 	 * 
 	 * @param task
 	 * @param standardStainings
 	 * @return
 	 */
-	public final static Sample createNewSample(Task task) {
-		Sample sample = new Sample();
+	public final static Sample createNewSample(Sample sample, Task task) {
 		sample.setGenerationDate(System.currentTimeMillis());
 		sample.setSampleID(getRomanNumber(task.getSampleNumer()));
 		sample.setParent(task);
@@ -369,7 +380,6 @@ public class TaskUtil {
 		return result;
 	}
 
-	@Transient
 	public static final String getDiagnosisName(Sample sample, Diagnosis diagnosis, ResourceBundle resourceBundle) {
 		int number = 1;
 
@@ -380,5 +390,26 @@ public class TaskUtil {
 		}
 
 		return resourceBundle.get("enum.diagnosisType." + diagnosis.getType()) + (number == 1 ? "" : " " + number);
+	}
+
+	/**
+	 * Returns the task with the highest priority. If several tasks share the
+	 * same priority the first one is returned.
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+	public static final Task getTaskByHighestPriority(List<Task> tasks) {
+		if (tasks == null || tasks.size() == 0)
+			return null;
+
+		Task highest = tasks.get(0);
+
+		for (int i = 1; i < tasks.size(); i++) {
+			if (highest.getTaskPriority().getPriority() < tasks.get(i).getTaskPriority().getPriority())
+				highest = tasks.get(i);
+		}
+
+		return highest;
 	}
 }

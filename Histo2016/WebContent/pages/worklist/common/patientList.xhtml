@@ -25,7 +25,8 @@
 		selection="#{worklistHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
 
-		<p:ajax event="rowSelect" update=":contentForm :headerForm :navigationForm"
+		<p:ajax event="rowSelect"
+			update=":contentForm :headerForm :navigationForm"
 			listener="#{worklistHandlerAction.onSelectPatient(worklistHandlerAction.selectedPatient)}" />
 
 		<p:column>
@@ -121,6 +122,13 @@
 
 								<h:outputLabel value="#{task.taskID}"
 									style="#{worklistHandlerAction.selectedPatient.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
+
+								<!-- priority -->
+								<h:panelGroup
+									rendered="#{task.taskPriority ne 'LOW'}">
+									<i style="margin-left: 5px;" class="fa fa-exclamation #{task.taskPriority eq 'MEDIUM' ? 'icon-orange' : 'icon-red'}"
+										title="#{msg['body.worklist.navigation.activtasks.new']}" />
+								</h:panelGroup>
 
 								<!-- new task -->
 								<h:panelGroup

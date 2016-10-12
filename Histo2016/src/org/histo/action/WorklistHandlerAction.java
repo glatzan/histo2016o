@@ -320,6 +320,9 @@ public class WorklistHandlerAction implements Serializable {
 		case NAME:
 			WorklistSortUtil.orderListByName(patiens, asc);
 			break;
+		case PRIORITY:
+			WorklistSortUtil.orderListByPriority(patiens, asc);
+			break;
 		}
 	}
 

@@ -16,66 +16,86 @@
 <h:body styleClass="defaultDialogLayout">
 	<h:form enctype="multipart/form-data">
 		<div class="dialogContent">
-			<h:panelGrid columns="2" styleClass="dialogTable" style="width:100%"
-				columnClasses="taskTextColunm,">
+			<h:panelGrid columns="2"
+				styleClass="dialogTable smallPaddingVerticalAll standardFont"
+				style="width:100%" columnClasses="taskTextColunm,">
 
 				<h:outputLabel value="#{msg['dialog.createTask.orderLetter']}"></h:outputLabel>
 
+				<!-- order letter -->
 				<h:panelGroup id="uploadHolder">
 					<p:fileUpload style="width:100%" styleClass="taskUpload"
-						rendered="#{taskHandlerAction.orderLetter eq null}"
-						fileUploadListener="#{taskHandlerAction.handleOrderLetterUpload}"
+						rendered="#{taskHandlerAction.temporaryTask.orderLetter eq null}"
+						fileUploadListener="#{taskHandlerAction.temporaryTask.handleOrderLetterUpload}"
 						auto="true" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
 						update="uploadHolder" />
 
 					<h:panelGrid columns="2"
-						rendered="#{taskHandlerAction.orderLetter ne null}">
-						<h:outputLabel value="#{taskHandlerAction.orderLetter.name}"></h:outputLabel>
+						rendered="#{taskHandlerAction.temporaryTask.orderLetter ne null}">
+						<h:outputLabel
+							value="#{taskHandlerAction.temporaryTask.orderLetter.name}"></h:outputLabel>
 						<p:commandLink style="margin-left:10px;"
 							title="#{msg['dialog.createTask.orderLetter.remove']}"
-							actionListener="#{taskHandlerAction.setOrderLetter(nul)}"
+							actionListener="#{taskHandlerAction.temporaryTask.setOrderLetter(nul)}"
 							update="uploadHolder">
 							<i class="fa fa-times-circle" style="color: black"></i>
 						</p:commandLink>
 					</h:panelGrid>
 				</h:panelGroup>
 
+				<!-- priority -->
+				<h:outputLabel value="#{msg['dialog.createTask.priority']}"></h:outputLabel>
+				<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
+					value="#{taskHandlerAction.temporaryTask.taskPriority}">
+					<f:selectItems value="#{enumProvider.taskPriority}"
+						var="taskPriority"
+						itemLabel="#{msg['enum.taskPriority.'.concat(taskPriority)]}"
+						itemValue="#{taskPriority}">
+					</f:selectItems>
+				</p:selectOneMenu>
 
-				<h:outputLabel value="#{msg['dialog.createTask.taskCount']}"></h:outputLabel>
-				<p:spinner id="basic" value="#{taskHandlerAction.sampleCount}"
+				<!-- samplecount -->
+				<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
+				<p:spinner id="basic"
+					value="#{taskHandlerAction.temporaryTaskSampleCount}"
 					styleClass="taskSpinner" min="1" max="5">
-					<p:ajax update="sampleMaterial" process="@this"
-						listener="#{taskHandlerAction.updateNewTaskDilaog()}"></p:ajax>
+					<p:ajax update="sampleMaterial" process="@this" event="change"
+						listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask)}"></p:ajax>
 				</p:spinner>
 
 			</h:panelGrid>
-			<h:panelGrid columns="1" styleClass="dialogTable">
-				<p:dataTable var="material" id="sampleMaterial"
-					styleClass="smallPaddingAll noBordersAll hide-column-names "
-					value="${taskHandlerAction.selectedMaterialList}">
-					<p:column style="width: 150px;">
-						<h:outputLabel
-							value="#{msg['dialog.createTask.task']} #{taskHandlerAction.getSampleNumberForTaskCreation(material)}"></h:outputLabel>
-					</p:column>
-					<p:column>
-						<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-							style="margin-left:30px;"
-							converter="#{taskHandlerAction.materialListTransformer}"
-							value="#{material}">
-							<f:selectItems value="#{taskHandlerAction.allAvailableMaterials}"
-								var="material" itemLabel="#{material.name}"
-								itemValue="#{material}">
-							</f:selectItems>
-						</p:selectOneMenu>
-					</p:column>
-				</p:dataTable>
-			</h:panelGrid>
+			
+			<p:dataTable var="sample" id="sampleMaterial"
+				styleClass="smallPaddingAll noBordersAll hide-column-names standardFont"
+				value="#{taskHandlerAction.temporaryTask.samples}">
+				<p:column style="width: 40px;">
+					<ul style="margin: 0px;">
+						<LI style="margin: 0px;" />
+					</ul>
+				</p:column>
+
+				<p:column style="width: 62px;">
+					<h:outputLabel
+						value="#{msg['dialog.createTask.task']} #{sample.sampleID}"></h:outputLabel>
+				</p:column>
+				<p:column>
+					<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
+						style="margin-left:30px;"
+						converter="#{taskHandlerAction.materialListTransformer}"
+						value="#{sample.materilaPreset}">
+						<f:selectItems value="#{taskHandlerAction.allAvailableMaterials}"
+							var="materialSelect" itemLabel="#{materialSelect.name}"
+							itemValue="#{materialSelect}">
+						</f:selectItems>
+					</p:selectOneMenu>
+				</p:column>
+			</p:dataTable>
 
 		</div>
 		<div class="buttonContainer">
 			<p:commandButton value="#{msg['general.create']}"
 				icon="fa fa-check-circle-o" styleClass="smallButton"
-				actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.selectedMaterialList,taskHandlerAction.orderLetter)}"></p:commandButton>
+				actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 			<p:commandButton value="#{msg['general.abort']}"
 				styleClass="smallButton buttonLeftMarginInList"
 				icon="fa fa-times-circle"

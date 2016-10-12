@@ -7,7 +7,7 @@ body {
 	border: none !important;
 }
 
-.noBordersAll tr, .noBordersAll td, .noBordersAll {
+.noBordersAll tr, .noBordersAll td, .noBordersAll tbody, .noBordersAll {
 	border: none !important;
 }
 
@@ -29,6 +29,11 @@ body {
 
 .smallPaddingAll tr, .smallPaddingAll td, .smallPaddingAll {
 	padding: 3px !important;
+}
+
+.smallPaddingVerticalAll tr, .smallPaddingVerticalAll td,
+	.smallPaddingVerticalAll {
+	padding: 3px 0px !important;
 }
 
 .verticalAlignMiddleAll tr, .verticalAlignMiddleAll td,
@@ -95,6 +100,14 @@ body {
 	font-weight: bold;
 }
 
+.standardFont label, .standardFont input{
+	font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+	font-size: 15px !important;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 22px;
+}
 .noUnderlineAtLink {
 	text-decoration: none !important;
 }
@@ -491,7 +504,7 @@ body {
 }
 
 .defaultDialogLayout .dialogContent {
-	font-size: 1.3em !important;
+	font-size: 15px !important;
 	padding-bottom: 0.5em;
 }
 
