@@ -15,6 +15,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
 import org.histo.model.Physician;
+import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.util.FileUtil;
@@ -23,6 +24,7 @@ import org.histo.util.ResourceBundle;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
@@ -228,6 +230,21 @@ public class ContactHandlerAction implements Serializable {
 
 	}
 
+	@Async("taskExecutor")
+	public void test1(){
+		while(true){
+			test++;
+			System.out.println("test" +test);
+			genericDAO.save(new Slide());
+			
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

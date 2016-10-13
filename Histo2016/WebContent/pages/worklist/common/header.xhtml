@@ -101,7 +101,7 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
-			<p:commandButton value="test" actionListener="#{contactHandlerAction.sendTest()}"></p:commandButton>
+			<p:commandButton value="test" actionListener="#{contactHandlerAction.test1()}" async="true"></p:commandButton>
 			#{contactHandlerAction.test}
 			
 			<p:poll interval="3" update="@form" />
