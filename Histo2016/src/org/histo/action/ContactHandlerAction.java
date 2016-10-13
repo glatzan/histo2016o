@@ -18,9 +18,12 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.util.FileUtil;
+import org.histo.util.NotificationHandler;
 import org.histo.util.ResourceBundle;
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -29,6 +32,9 @@ public class ContactHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -3672859612072175725L;
 
+	@Autowired
+	private ThreadPoolTaskExecutor taskExecutor;
+	
 	@Autowired
 	private GenericDAO genericDAO;
 
@@ -188,9 +194,19 @@ public class ContactHandlerAction implements Serializable {
 		genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 	}
 
+	private int test = 1;
+	
+	public void updateTest(){
+	}
+	
 	public void sendTest() {
 
-		FileUtil.loadTextFile(null);
+		System.out.println(taskExecutor);
+		NotificationHandler test = new NotificationHandler(this,genericDAO);
+		test.setName("was geht");
+		
+		taskExecutor.execute(test);
+		//FileUtil.loadTextFile(null);
 
 		// System.out.println("ok");
 		// SimpleEmail email = new SimpleEmail();
@@ -242,4 +258,12 @@ public class ContactHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+
+	public int getTest() {
+		return test;
+	}
+
+	public void setTest(int test) {
+		this.test = test;
+	}
 }

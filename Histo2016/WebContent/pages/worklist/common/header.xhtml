@@ -101,6 +101,10 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
+			<p:commandButton value="test" actionListener="#{contactHandlerAction.sendTest()}"></p:commandButton>
+			#{contactHandlerAction.test}
+			
+			<p:poll interval="3" update="@form" />
 		</h:panelGroup>
 	</h:panelGrid>
 </ui:composition>
