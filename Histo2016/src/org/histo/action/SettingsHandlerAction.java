@@ -37,7 +37,7 @@ public class SettingsHandlerAction {
 	public static final int TAB_STAINING = 1;
 	public static final int TAB_STAINING_LIST = 2;
 	public static final int TAB_DIAGNOSIS = 3;
-	public static final int TAB_PERSON = 5;
+	public static final int TAB_PERSON = 4;
 	public static final int TAB_MISELLANEOUS = 5;
 	public static final int TAB_LOG = 6;
 

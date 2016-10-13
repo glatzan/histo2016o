@@ -72,7 +72,7 @@
 
 			<!-- Edit Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
-				actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
+				actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 

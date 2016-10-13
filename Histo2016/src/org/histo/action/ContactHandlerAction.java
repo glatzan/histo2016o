@@ -8,13 +8,17 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.ContactTab;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.SettingsTab;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.util.FileUtil;
+import org.histo.util.ResourceBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -29,26 +33,31 @@ public class ContactHandlerAction implements Serializable {
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private HelperHandlerAction helper;
-
-	@Autowired
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
+
+	@Autowired
+	private ResourceBundle resourceBundle;
+
+	@Autowired
+	private SettingsHandlerAction settingsHandlerAction;
 
 	/**
 	 * List with all available contacts
 	 */
 	private List<Contact> allAvailableContact;
 
-	private boolean personSurgeon = true;
+	/**
+	 * containing options for the physician list
+	 */
+	private PhysicianRoleOptions physicianRoleOptions;
 
-	private boolean personExtern = true;
-
-	private boolean personOther = true;
-
-	private boolean addedContacts = false;
+	/**
+	 * Determines which tab is displayed.
+	 */
+	private ContactTab contactTab;
 
 	/**
 	 * Gets a list with all available contact for a specific task. Filters all
@@ -60,24 +69,49 @@ public class ContactHandlerAction implements Serializable {
 	 * @param other
 	 * @param addedContact
 	 */
-	public void prepareContacts(Task task, boolean surgeon, boolean extern, boolean other, boolean addedContact) {
+	public void prepareContacts(Task task, boolean surgeon, boolean extern, boolean other,
+			boolean showAddedContactsOnly) {
 
+		if (getPhysicianRoleOptions() == null)
+			setPhysicianRoleOptions(new PhysicianRoleOptions());
+
+		setContactTab(ContactTab.LIST);
+
+		updateContactList(task, surgeon, extern, other, showAddedContactsOnly);
+
+		mainHandlerAction.showDialog(Dialog.CONTACTS);
+	}
+
+	/**
+	 * Refreshes the contact list.
+	 * 
+	 * @param task
+	 * @param surgeon
+	 * @param extern
+	 * @param other
+	 * @param showAddedContactsOnly
+	 */
+	public void updateContactList(Task task, boolean surgeon, boolean extern, boolean other,
+			boolean showAddedContactsOnly) {
+		// refreshing the selected task
 		genericDAO.refresh(task);
 
 		setAllAvailableContact(new ArrayList<Contact>());
 
 		List<Contact> contacts = task.getContacts();
 
+		// getting all contact options
 		List<Physician> databaseContacts = physicianDAO.getPhysicians(
 				new ContactRole[] { ContactRole.SURGEON, ContactRole.PRIVATE_PHYSICIAN, ContactRole.OTHER }, false);
 
-		if (!addedContact) {
+		if (!showAddedContactsOnly) {
+			// shows all contacts but marks the already selected contacts with
+			// the selected flag.
 			loop: for (Physician physician : databaseContacts) {
 				for (Contact contact : contacts) {
 					if (contact.getPhysician().getId() == physician.getId()) {
 						contact.setSelected(true);
 						getAllAvailableContact().add(contact);
-						System.out.println("found continue");
 						continue loop;
 					}
 				}
@@ -85,33 +119,27 @@ public class ContactHandlerAction implements Serializable {
 				getAllAvailableContact().add(new Contact(physician));
 
 			}
-			// Nur bereits verwendete Kontakte anzeigen
 		} else {
+			// show only selected contacts, mark them as selected
+			for (Contact contact : contacts) {
+				contact.setSelected(true);
+			}
 			getAllAvailableContact().addAll(contacts);
 		}
 
-		mainHandlerAction.showDialog(Dialog.CONTACTS_ADD);
 	}
 
 	/**
-	 * Aktualisiert die Liste der vorhanden Kontakte.
+	 * Opens the passed physician in the settingsDialog in order to edit the
+	 * phone number, email or faxnumber.
 	 * 
-	 * @param contacts
-	 * @param task
+	 * @param contact
 	 */
-	public void updateContactList(List<Contact> contacts, Task task) {
-		for (Contact contact : contacts) {
-			if (contact.isSelected()) {
-				if (contact.getRole() == ContactRole.NONE) {
-					task.getContacts().remove(contact);
-				}
-				continue;
-			} else if (contact.getRole() != ContactRole.NONE)
-				task.getContacts().add(contact);
-		}
-
-		genericDAO.save(task);
-		hideContactsDialog();
+	public void editContactData(Contact contact) {
+		settingsHandlerAction.prepareSettingsDialog();
+		settingsHandlerAction.setTmpPhysician(contact.getPhysician());
+		settingsHandlerAction.setPhysicianTabIndex(SettingsTab.PHYSICIAN_EDIT);
+		settingsHandlerAction.setActiveSettingsIndex(SettingsHandlerAction.TAB_PERSON);
 	}
 
 	/**
@@ -120,33 +148,44 @@ public class ContactHandlerAction implements Serializable {
 	 * 
 	 * @param contact
 	 */
-	public void onContactChangeRole(Contact contact) {
-		// contact wurde deselektiert alles auf nicht benutzt setzten
+	public void onContactChangeRole(Contact contact, Task task) {
+		// role was set to none so deselect every marker
 		if (contact.getRole() == ContactRole.NONE) {
+			task.getContacts().remove(contact);
 			contact.setUseEmail(false);
 			contact.setUseFax(false);
 			contact.setUsePhone(false);
+			genericDAO.delete(contact, resourceBundle.get("log.patient.task.contact.remove", task.getTaskID(),
+					contact.getPhysician().getName()), task.getPatient());
 		} else {
-			// es wurde schon etwas ausgew‰hlt, alles so belassen wie es war
-			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax())
-				return;
 
-			// bei internen operateuren mail bevorzugen
-			if (contact.getRole() == ContactRole.SURGEON) {
+			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax()){
+				// something was already select, do nothing				
+			}else if (contact.getRole() == ContactRole.SURGEON) {
+				// surgeon use email per default
 				contact.setUseEmail(true);
-				return;
-			}
-
-			// bei externen die eine Faxnummer haben fax bevorzugen
-			if (contact.getRole() == ContactRole.PRIVATE_PHYSICIAN && contact.getPhysician().getFax() != null
+			}else if (contact.getRole() == ContactRole.PRIVATE_PHYSICIAN && contact.getPhysician().getFax() != null
 					&& !contact.getPhysician().getFax().isEmpty()) {
+				// private physician use fax per default
 				contact.setUseFax(true);
-				return;
-			}
-			// in allen anderen f‰llen email setzten
-			if (contact.getPhysician().getEmail() != null && !contact.getPhysician().getEmail().isEmpty())
+			}else if(contact.getPhysician().getEmail() != null && !contact.getPhysician().getEmail().isEmpty()){
+				// other contacts use email per default
 				contact.setUseEmail(true);
+			}
+
+			// adds contact if not added jet
+			if(!task.getContacts().contains(contact)){
+				task.getContacts().add(contact);
+			}
+
+			genericDAO.save(contact, resourceBundle.get("log.patient.task.contact.add", task.getTaskID(),
+					contact.getPhysician().getName()), task.getPatient());
+			
+			System.out.println("saving");
+			
 		}
+
+		genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 	}
 
 	public void sendTest() {
@@ -173,21 +212,6 @@ public class ContactHandlerAction implements Serializable {
 
 	}
 
-	/**
-	 * Schlieﬂt den Kontakt Dialog
-	 */
-	public void hideContactsDialog() {
-		mainHandlerAction.hideDialog(Dialog.CONTACTS_ADD);
-	}
-
-	public void preparePerformContactsDialog() {
-		mainHandlerAction.showDialog(Dialog.CONTACTS_PERFORMED);
-	}
-
-	public void hidePerformContactsDialog() {
-		mainHandlerAction.hideDialog(Dialog.CONTACTS_PERFORMED);
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -200,36 +224,20 @@ public class ContactHandlerAction implements Serializable {
 		this.allAvailableContact = allAvailableContact;
 	}
 
-	public boolean isPersonSurgeon() {
-		return personSurgeon;
+	public PhysicianRoleOptions getPhysicianRoleOptions() {
+		return physicianRoleOptions;
 	}
 
-	public void setPersonSurgeon(boolean personSurgeon) {
-		this.personSurgeon = personSurgeon;
+	public void setPhysicianRoleOptions(PhysicianRoleOptions physicianRoleOptions) {
+		this.physicianRoleOptions = physicianRoleOptions;
 	}
 
-	public boolean isPersonExtern() {
-		return personExtern;
+	public ContactTab getContactTab() {
+		return contactTab;
 	}
 
-	public void setPersonExtern(boolean personExtern) {
-		this.personExtern = personExtern;
-	}
-
-	public boolean isPersonOther() {
-		return personOther;
-	}
-
-	public void setPersonOther(boolean personOther) {
-		this.personOther = personOther;
-	}
-
-	public boolean isAddedContacts() {
-		return addedContacts;
-	}
-
-	public void setAddedContacts(boolean addedContacts) {
-		this.addedContacts = addedContacts;
+	public void setContactTab(ContactTab contactTab) {
+		this.contactTab = contactTab;
 	}
 	/********************************************************
 	 * Getter/Setter

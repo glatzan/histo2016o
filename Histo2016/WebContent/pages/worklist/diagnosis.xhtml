@@ -147,7 +147,7 @@
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 							style="float: right; margin-right:5px;"
-							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
+							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -163,7 +163,7 @@
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 							style="float: right; margin-right:5px;"
-							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.personSurgeon,contactHandlerAction.personExtern,contactHandlerAction.personOther,contactHandlerAction.addedContacts)}">
+							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>

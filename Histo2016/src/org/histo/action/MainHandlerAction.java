@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+//http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
 // TODO: Diagnose page
 // TODO: Biobank
 // TODO: favouriten
@@ -32,7 +33,8 @@ import org.springframework.stereotype.Component;
 // TODO: status display (in navigation)
 // TODO: log in settings rework
 // TODO: Edit external patient from menu bar
-// TODO: Priorisierung
+// ++++: Priorisierung
+// prevent overwriting of data from clinic physicians if changed
 
 @Component
 @Scope(value = "session")

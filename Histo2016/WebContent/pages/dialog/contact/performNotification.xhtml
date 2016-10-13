@@ -38,7 +38,7 @@
 						itemValue="#{role}" />
 
 					<p:ajax update="@form"
-						listener="#{contactHandlerAction.onContactChangeRole(contact,worklistHandlerAction.selectedPatient.selectedTask)}"></p:ajax>
+						listener="#{contactHandlerAction.onContactChangeRole(contact)}"></p:ajax>
 				</p:selectOneMenu>
 			</p:column>
 
@@ -110,12 +110,18 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 			<h:panelGrid columns="4">
-				<p:commandButton value="#{msg['general.close']}"
+				<p:commandButton value="#{msg['general.save']}"
 					style="margin-left:6px" icon="fa fa-fw fa-floppy-o"
-					actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('CONTACTS'))}"></p:commandButton>
+					actionListener="#{contactHandlerAction.updateContactListOfTask(contactHandlerAction.allAvailableContact,worklistHandlerAction.selectedPatient.selectedTask)}"
+					update="@form"></p:commandButton>
 
 				<p:commandButton value="Benachrichtigen"
 					icon="fa fa-fw fa-volume-up" styleClass="buttonLeftMarginInList"
+					actionListener="#{contactHandlerAction.hideContactsDialog()}"
+					update="@form" />
+
+				<p:commandButton value="#{msg['general.abort']}"
+					icon="fa fa-fw fa-times-circle" styleClass="buttonLeftMarginInList"
 					actionListener="#{contactHandlerAction.hideContactsDialog()}"
 					update="@form" />
 

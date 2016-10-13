@@ -183,7 +183,9 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 */
 	private String histologicalRecord = "";
 	
-	/******************************************************** Transient ********************************************************/
+	/********************************************************
+	 * Transient Variables
+	 ********************************************************/
 	/**
 	 * Die Ausgewählte Probe
 	 */
@@ -209,8 +211,11 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * True if lazy initialision was successful.
 	 */
 	private boolean lazyInitialized;
-
-	/******************************************************** Transient ********************************************************/
+	
+	/********************************************************
+	 * Transient Variables
+	 ********************************************************/
+	
 	public Task() {
 	}
 

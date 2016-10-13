@@ -1,5 +1,6 @@
 package org.histo.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,108 +16,102 @@ import org.histo.model.util.LogAble;
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
 public class Contact implements LogAble {
 
-    public static final int ROLE_NONE = 0;
-    public static final int ROLE_SURGEON = 1;
-    public static final int ROLE_EXTERN = 2;
-    public static final int ROLE_OTHER = 3;
-    
-    private long id;
+	public static final int ROLE_NONE = 0;
+	public static final int ROLE_SURGEON = 1;
+	public static final int ROLE_EXTERN = 2;
+	public static final int ROLE_OTHER = 3;
 
-    private Physician physician;
+	private long id;
 
-    private ContactRole role;
-    
-    private boolean primaryContact;
+	private Physician physician;
 
-    private boolean usePhone;
-    private boolean useFax;
-    private boolean useEmail;
+	private ContactRole role = ContactRole.NONE;
 
-    private boolean performed;
+	private boolean primaryContact;
 
-    /**
-     * Transient, wird für das Auswählen neuer Kontakte und das abwählen alter benötigt
-     */
-    private boolean selected;
+	private boolean usePhone;
+	private boolean useFax;
+	private boolean useEmail;
 
-    public Contact() {
-    }
+	private boolean notificationPerformed;
 
-    public Contact(Physician physician) {
-	this.physician = physician;
-    }
+	/**
+	 * Transient, wird für das Auswählen neuer Kontakte und das abwählen alter
+	 * benötigt
+	 */
+	private boolean selected;
 
-    @Id
-    @GeneratedValue(generator = "contact_sequencegenerator")
-    @Column(unique = true, nullable = false)
-    public long getId() {
-	return id;
-    }
+	public Contact() {
+	}
 
-    public void setId(long id) {
-	this.id = id;
-    }
+	public Contact(Physician physician) {
+		this.physician = physician;
+	}
 
-    @OneToOne
-    public Physician getPhysician() {
-	return physician;
-    }
+	/********************************************************
+	 * Getters/Setters
+	 ********************************************************/
+	@Id
+	@GeneratedValue(generator = "contact_sequencegenerator")
+	@Column(unique = true, nullable = false)
+	public long getId() {
+		return id;
+	}
 
-    public void setPhysician(Physician physician) {
-	this.physician = physician;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public ContactRole getRole() {
-        return role;
-    }
+	@OneToOne()
+	public Physician getPhysician() {
+		return physician;
+	}
 
-    public void setRole(ContactRole role) {
-        this.role = role;
-    }
+	public void setPhysician(Physician physician) {
+		this.physician = physician;
+	}
 
-    public boolean isUsePhone() {
-	return usePhone;
-    }
+	public ContactRole getRole() {
+		return role;
+	}
 
-    public void setUsePhone(boolean usePhone) {
-	this.usePhone = usePhone;
-    }
+	public void setRole(ContactRole role) {
+		this.role = role;
+	}
 
-    public boolean isUseFax() {
-	return useFax;
-    }
+	public boolean isUsePhone() {
+		return usePhone;
+	}
 
-    public void setUseFax(boolean useFax) {
-	this.useFax = useFax;
-    }
+	public void setUsePhone(boolean usePhone) {
+		this.usePhone = usePhone;
+	}
 
-    public boolean isUseEmail() {
-	return useEmail;
-    }
+	public boolean isUseFax() {
+		return useFax;
+	}
 
-    public void setUseEmail(boolean useEmail) {
-	this.useEmail = useEmail;
-    }
+	public void setUseFax(boolean useFax) {
+		this.useFax = useFax;
+	}
 
-    public boolean isPerformed() {
-	return performed;
-    }
+	public boolean isUseEmail() {
+		return useEmail;
+	}
 
-    public void setPerformed(boolean performed) {
-	this.performed = performed;
-    }
+	public void setUseEmail(boolean useEmail) {
+		this.useEmail = useEmail;
+	}
 
-    @Transient
-    public boolean isSelected() {
-	return selected;
-    }
+	public boolean isNotificationPerformed() {
+		return notificationPerformed;
+	}
 
-    public void setSelected(boolean selected) {
-	this.selected = selected;
-    }
+	public void setNotificationPerformed(boolean notificationPerformed) {
+		this.notificationPerformed = notificationPerformed;
+	}
 
-	
-    public boolean isPrimaryContact() {
+	public boolean isPrimaryContact() {
 		return primaryContact;
 	}
 
@@ -124,5 +119,23 @@ public class Contact implements LogAble {
 		this.primaryContact = primaryContact;
 	}
 
-    
+	/********************************************************
+	 * Getters/Setters
+	 ********************************************************/
+	
+	/********************************************************
+	 * Transient Getter/Setter
+	 ********************************************************/
+	@Transient
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+	/********************************************************
+	 * Transient Getter/Setter
+	 ********************************************************/
+
 }

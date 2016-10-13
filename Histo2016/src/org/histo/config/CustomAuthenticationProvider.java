@@ -44,8 +44,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String userName = authentication.getName().trim();
 		String password = authentication.getCredentials().toString().trim();
 
-//		try {
-			/*Hashtable<String, String> env = new Hashtable<String, String>();
+		try {
+			Hashtable<String, String> env = new Hashtable<String, String>();
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port + "/" + suffix);
 
@@ -90,7 +90,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			// if now error is thrown the auth attend was successful
 			ctx = new InitialDirContext(env);
 
-			System.out.println("*** Bind erfolgreich ***");*/
+			System.out.println("*** Bind erfolgreich ***");
 			HistoUser histoUser = userDAO.loadUserByName(userName);
 
 			if (histoUser == null) {
@@ -104,9 +104,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			}
 			
 			// updating the physician attributes 
-		//	UserUtil.updatePhysicianData(userAcc.getPhysician(), attrs);
+			UserUtil.updatePhysicianData(histoUser.getPhysician(), attrs);
 
-		//	ctx.close();
+			ctx.close();
 
 			histoUser.setLastLogin(System.currentTimeMillis());
 
@@ -117,10 +117,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 			return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
 
-//		} catch (NamingException e) {
-//			System.err.println("NamingException: " + e.getMessage());
-//			throw new BadCredentialsException("Username not found.");
-//		}
+		} catch (NamingException e) {
+			System.err.println("NamingException: " + e.getMessage());
+			throw new BadCredentialsException("Username not found.");
+		}
 
 	}
 

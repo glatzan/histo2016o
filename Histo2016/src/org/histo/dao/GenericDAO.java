@@ -73,33 +73,32 @@ public class GenericDAO extends AbstractDAO {
 	}
 
 	public <C> C save(C object) {
-		return save(object, (LogInfo)null);
+		return save(object, (LogInfo) null);
 	}
 
 	public <C> C save(C object, String logMessage) {
 		return save(object, new LogInfo(logMessage));
 	}
-	
+
 	public <C> C save(C object, String logMessage, Patient patient) {
-		return save(object, new LogInfo(logMessage,patient));
+		return save(object, new LogInfo(logMessage, patient));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <C> C save(C object, LogInfo logInfo) {
 
 		// sets a logMessage to the securityContext, this is a workaround for
 		// passing variables to the revisionListener
-		if (logInfo != null){
+		if (logInfo != null) {
 			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
-		}else
-			System.out.println("LOGINFO = NULL: " + object.getClass());
-			
+		}
+
 		Session session = getSession();
 
-//		Statistics stats = sessionFactory.getStatistics();
-//		stats.setStatisticsEnabled(true);
-//		printStats(stats);
-		
+		// Statistics stats = sessionFactory.getStatistics();
+		// stats.setStatisticsEnabled(true);
+		// printStats(stats);
+
 		try {
 			session.saveOrUpdate(object);
 		} catch (HibernateException hibernateException) {
@@ -107,7 +106,6 @@ public class GenericDAO extends AbstractDAO {
 			hibernateException.printStackTrace();
 		}
 
-		
 		return object;
 	}
 
@@ -123,7 +121,22 @@ public class GenericDAO extends AbstractDAO {
 		}
 	}
 
-	public void delete(Object object) {
+	public <C> C delete(C object) {
+		return save(object, (LogInfo) null);
+	}
+	
+	public <C> C delete(C object, String logMessage, Patient patient) {
+		return save(object, new LogInfo(logMessage, patient));
+	}
+
+	public void delete(Object object, LogInfo logInfo) {
+
+		// sets a logMessage to the securityContext, this is a workaround for
+		// passing variables to the revisionListener
+		if (logInfo != null) {
+			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
+		}
+
 		Session session = getSession();
 		try {
 			session.delete(object);

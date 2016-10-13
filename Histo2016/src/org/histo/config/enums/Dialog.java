@@ -26,8 +26,7 @@ public enum Dialog {
 	DIAGNOSIS_FINALIZE("/pages/dialog/diagnosis/finalizeDiagnosis", 0, 0, false, false, true),
 	DIAGNOSIS_UNFINALIZE("/pages/dialog/diagnosis/unfinalizeDiagnosis", 0, 0, false, false, true),
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/diagnosis/histologicalRecordOverwrite", 0, 0, false, false, true),
-	CONTACTS_ADD("/pages/dialog/contact/addContact", 1024, 600, false, false, true),// <<
-	CONTACTS_PERFORMED("/pages/dialog/contact/performContact", 1024, 600, false, false, true),// <<
+	CONTACTS("/pages/dialog/contact/contact", 1024, 600, false, false, true),// <<
 	STAINING_PERFORMED("/pages/dialog/task/staingingPerformed", 0, 0, false, false, true),
 	SETTINGS("/pages/dialog/settings/settings", 1024, 600, false, false, true),
 	PRINT("/pages/dialog/print/print", 1024, 600, false, false, true), // <<

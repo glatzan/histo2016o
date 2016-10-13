@@ -289,28 +289,7 @@ body {
 	width: auto !important;
 }
 
-.content .body .addedContactDataTable td:nth-child(3), .content .body .addedContactDataTable th:nth-child(3)
-	{
-	width: 15px !important;
-	padding-left: 4px;
-	padding-right: 4px;
-}
-
-.content .body .addedContactDataTable td:nth-child(4), .content .body .addedContactDataTable th:nth-child(4)
-	{
-	width: 15px !important;
-	padding-left: 4px;
-	padding-right: 4px;
-}
-
-.content .body .addedContactDataTable td:nth-child(5), .content .body .addedContactDataTable th:nth-child(5)
-	{
-	width: 15px !important;
-	padding-left: 4px;
-	padding-right: 4px;
-}
-
-.content .body .addedContactDataTable td:nth-child(6), .content .body .addedContactDataTable th:nth-child(6)
+.content .body .addedContactDataTable td:nth-child(6), .content .body .addedContactDataTable th:nth-child(3)
 	{
 	width: 15px !important;
 	padding-left: 4px;
@@ -518,34 +497,16 @@ body {
 
 /*	################# BigDialog ################# */
 /* Layout for big dialogs*/
-.bigDialog, .bigDialog .dialogPannel {
+.bigDialog{
 	padding: 0px !important;
 	border: 0px !important;
-	border-collapse: collapse;
 }
 
-.bigDialog .dialogPannel .ui-widget-content {
-	padding: 1px !important;
-	border: 0px !important;
-	border-collapse: collapse;
+.bigDialog .buttonContainer{
+	width: 1023px !important;
 }
 
-.bigDialog .dialogPannel .dialogLayout {
-	height: 500px;
-	width: 100%;
-	padding: 0px !important;
-}
 
-/* Layout in the tabview center tab, center column of layout*/
-.bigDialog .dialogPannel .dialogLayout .center, .bigDialog .dialogPannel .dialogLayout .center .ui-widget-content
-	{
-	padding: 0px !important;
-}
-
-/* Layout in the tabview center tab, south column of layout*/
-.bigDialog .dialogPannel .dialogLayout .south {
-	padding: 4px !important;
-}
 /*	################# BigDialog ################# */
 
 /*	################# Settings ################# */

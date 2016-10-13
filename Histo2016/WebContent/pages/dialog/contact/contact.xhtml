@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.contact.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout bigDialog">
+	<h:form>
+
+		<ui:fragment rendered="#{contactHandlerAction.contactTab eq 'LIST'}">
+			<ui:include src="addContact.xhtml" />
+		</ui:fragment>
+
+		<ui:fragment
+			rendered="#{contactHandlerAction.contactTab eq 'NOTIFICATION'}">
+			<ui:include src="performNotification.xhtml" /> 
+		</ui:fragment> 
+
+	</h:form>
+</h:body>
+</html>
