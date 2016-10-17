@@ -32,6 +32,7 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
+import org.histo.config.enums.PdfTemplate;
 import org.histo.config.enums.TaskPriority;
 import org.histo.model.Accounting;
 import org.histo.model.Contact;
@@ -181,18 +182,18 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * Text containing the histological record for all samples.
 	 */
 	private String histologicalRecord = "";
-	
+
 	/**
 	 * Generated PDFs of this task
 	 */
 	private List<PDFContainer> attachedPdfs;
-	
+
 	private Council council;
 
 	private Accounting accounting;
-	
+
 	private Siganture signatureLeft;
-	
+
 	private Siganture sigantureRight;
 	/********************************************************
 	 * Transient Variables
@@ -511,7 +512,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setCouncil(Council council) {
 		this.council = council;
 	}
-	
+
 	@OneToOne(fetch = FetchType.LAZY)
 	public Accounting getAccounting() {
 		return accounting;
@@ -538,11 +539,10 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setSigantureRight(Siganture sigantureRight) {
 		this.sigantureRight = sigantureRight;
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-
 
 	/********************************************************
 	 * Transient Getter/Setter
@@ -628,15 +628,33 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.initialized = initialized;
 	}
 
-	public PDFContainer getReport(String type){
-		
+	/**
+	 * Returns a report with the given type. If no matching repord was found
+	 * null will be returned.
+	 * 
+	 * @param type
+	 * @return
+	 */
+	@Transient
+	public PDFContainer getReport(PdfTemplate type) {
+		for (PDFContainer pdfContainer : attachedPdfs) {
+			if (pdfContainer.getType() == type)
+				return pdfContainer;
+		}
+		return null;
 	}
-	
-	public boolean setReport()
+
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean setReport(PdfTemplate pdfTemplate) {
+
+	}
+
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
-
 
 	/********************************************************
 	 * Interface DiagnosisStatus
