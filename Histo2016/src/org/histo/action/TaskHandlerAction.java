@@ -1,24 +1,18 @@
 package org.histo.action;
 
-import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
-
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.PdfTemplate;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.MaterialPreset;
-import org.histo.model.PDFContainer;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -26,19 +20,12 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.PdfTemplate;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.TaskTree;
-import org.histo.ui.transformer.PdfTemplateTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
-import org.histo.util.FileUtil;
-import org.histo.util.PdfUtil;
 import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
-import org.primefaces.event.FileUploadEvent;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -188,20 +175,6 @@ public class TaskHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Handles the uploaded pdf orderLetter.
-	 * 
-	 * @param event
-	 */
-	public void handleOrderLetterUpload(FileUploadEvent event) {
-		PDFContainer orderLetterPdf = new PDFContainer();
-		orderLetterPdf.setType("application/pdf");
-		orderLetterPdf.setData(event.getFile().getContents());
-		orderLetterPdf.setName(event.getFile().getFileName());
-		if (getTemporaryTask() != null)
-			getTemporaryTask().setOrderLetter(orderLetterPdf);
-	}
-
-	/**
 	 * Creates a new task for the given Patient
 	 * 
 	 * @param patient
@@ -217,9 +190,9 @@ public class TaskHandlerAction implements Serializable {
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		if (task.getOrderLetter() != null) {
-			genericDAO.save(task.getOrderLetter(), resourceBundle.get("log.patient.task.upload.orderList",
-					task.getTaskID(), task.getOrderLetter().getName()), patient);
+		if (task.getReport(PdfTemplate.UREPROT) != null) {
+			genericDAO.save(task.getReport(PdfTemplate.UREPROT), resourceBundle.get("log.patient.task.upload.orderList",
+					task.getTaskID(), task.getReport(PdfTemplate.UREPROT).getName()), patient);
 		}
 
 		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);

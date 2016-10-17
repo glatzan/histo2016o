@@ -12,7 +12,6 @@ import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.HistoUser;
-import org.histo.model.History;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
@@ -74,11 +73,6 @@ public class SettingsHandlerAction {
 	 * List with all users of the program
 	 */
 	private List<HistoUser> users;
-
-	/**
-	 * Current History
-	 */
-	private List<History> currentHistory;
 
 	/**
 	 * Tabindex of settings dialog
@@ -652,7 +646,7 @@ public class SettingsHandlerAction {
 	 * history dialog.
 	 */
 	public void loadGeneralHistory() {
-		setCurrentHistory(helperDAO.getCurrentHistory(100));
+		//setCurrentHistory(helperDAO.getCurrentHistory(100));
 	}
 
 	/**
@@ -662,7 +656,7 @@ public class SettingsHandlerAction {
 	 * @param patient
 	 */
 	public void loadPatientHistory(Patient patient) {
-		setCurrentHistory(helperDAO.getCurrentHistoryForPatient(100, patient));
+		//setCurrentHistory(helperDAO.getCurrentHistoryForPatient(100, patient));
 	}
 
 	/******************************************************** History ********************************************************/
@@ -699,14 +693,6 @@ public class SettingsHandlerAction {
 
 	public void setActiveSettingsIndex(int activeSettingsIndex) {
 		this.activeSettingsIndex = activeSettingsIndex;
-	}
-
-	public List<History> getCurrentHistory() {
-		return currentHistory;
-	}
-
-	public void setCurrentHistory(List<History> currentHistory) {
-		this.currentHistory = currentHistory;
 	}
 
 	public List<StainingPrototype> getAllAvailableStainings() {

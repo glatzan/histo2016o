@@ -46,7 +46,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	private long id;
 
 	private long version;
-	
+
 	/**
 	 * Parent of this sample.
 	 */
@@ -97,25 +97,40 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	 * Can be later changed.
 	 */
 	private String material = "";
-	 
+
 	/**
 	 * Material object, containing preset for staining
 	 */
 	private MaterialPreset materilaPreset;
-	
+
 	/******************************************************** Transient ********************************************************/
 
 	/******************************************************** Transient ********************************************************/
 
 	@Transient
-	public Diagnosis getLastRelevantDiagnosis(){
-		for(int i = getDiagnoses().size()-1; i >= 0; i--){
-			if(getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS_REVISION || getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS)
+	public Diagnosis getLastRelevantDiagnosis() {
+		for (int i = getDiagnoses().size() - 1; i >= 0; i--) {
+			if (getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS_REVISION
+					|| getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS)
 				return getDiagnoses().get(i);
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Returns true if a diagnosis is marked as malign.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean isMalign() {
+		for (Diagnosis diagnosis : getDiagnoses()) {
+			if (diagnosis.isMalign())
+				return true;
+		}
+		return false;
+	}
+
 	public void incrementBlockNumber() {
 		this.blockNumber++;
 	}
@@ -158,7 +173,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	public void setVersion(long version) {
 		this.version = version;
 	}
-	
+
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("blockID ASC")
@@ -238,7 +253,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	public void setMaterial(String material) {
 		this.material = material;
 	}
-	
+
 	@OneToOne
 	@NotAudited
 	public MaterialPreset getMaterilaPreset() {
@@ -248,13 +263,12 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	public void setMaterilaPreset(MaterialPreset materilaPreset) {
 		this.materilaPreset = materilaPreset;
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
 
 	/******************************************************** Transient ********************************************************/
-
 
 	/******************************************************** Transient ********************************************************/
 

@@ -40,6 +40,7 @@ import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.Siganture;
+import org.histo.model.SignatureContainer;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -192,9 +193,8 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 
 	private Accounting accounting;
 
-	private Siganture signatureLeft;
-
-	private Siganture sigantureRight;
+	private SignatureContainer signatures;
+	
 	/********************************************************
 	 * Transient Variables
 	 ********************************************************/
@@ -248,6 +248,13 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		setTabIndex(((TabView) event.getSource()).getIndex());
 	}
 
+	/**
+	 * Returns a contact marked als primary with the given role.
+	 * 
+	 * @param contactRole
+	 * @return
+	 */
+	@Transient
 	public Contact getPrimaryContact(ContactRole contactRole) {
 		for (Contact contact : contacts) {
 			if (contact.getRole() == contactRole && contact.isPrimaryContact())
@@ -523,26 +530,17 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	}
 
 	@OneToOne(fetch = FetchType.LAZY)
-	public Siganture getSignatureLeft() {
-		return signatureLeft;
+	public SignatureContainer getSignatures() {
+		return signatures;
 	}
 
-	public void setSignatureLeft(Siganture signatureLeft) {
-		this.signatureLeft = signatureLeft;
+	public void setSignatures(SignatureContainer signatures) {
+		this.signatures = signatures;
 	}
-
-	@OneToOne(fetch = FetchType.LAZY)
-	public Siganture getSigantureRight() {
-		return sigantureRight;
-	}
-
-	public void setSigantureRight(Siganture sigantureRight) {
-		this.sigantureRight = sigantureRight;
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+
 
 	/********************************************************
 	 * Transient Getter/Setter
@@ -629,7 +627,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	}
 
 	/**
-	 * Returns a report with the given type. If no matching repord was found
+	 * Returns a report with the given type. If no matching record was found
 	 * null will be returned.
 	 * 
 	 * @param type
@@ -637,7 +635,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 */
 	@Transient
 	public PDFContainer getReport(PdfTemplate type) {
-		for (PDFContainer pdfContainer : attachedPdfs) {
+		for (PDFContainer pdfContainer : getAttachedPdfs()) {
 			if (pdfContainer.getType() == type)
 				return pdfContainer;
 		}
@@ -645,11 +643,44 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	}
 
 	/**
+	 * Adds a report to the report list
 	 * 
 	 * @return
 	 */
-	public boolean setReport(PdfTemplate pdfTemplate) {
+	@Transient
+	public void addReport(PDFContainer pdfTemplate) {
+		getAttachedPdfs().add(pdfTemplate);
+	}
 
+	/**
+	 * Removes a report with a specific type from the database
+	 * 
+	 * @param type
+	 * @return
+	 */
+	@Transient
+	public PDFContainer removeReport(PdfTemplate type) {
+		for (PDFContainer pdfContainer : getAttachedPdfs()) {
+			if (pdfContainer.getType() == type) {
+				getAttachedPdfs().remove(pdfContainer);
+				return pdfContainer;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Returns true if a diagnosis is marked as malign.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean isMalign() {
+		for (Sample sample : getSamples()) {
+			if (sample.isMalign())
+				return true;
+		}
+		return false;
 	}
 
 	/********************************************************

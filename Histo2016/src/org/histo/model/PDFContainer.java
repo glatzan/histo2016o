@@ -32,6 +32,19 @@ public class PDFContainer {
 
 	private String name;
 
+	public PDFContainer() {
+	}
+
+	public PDFContainer(PdfTemplate pdfTemplate){
+		this(pdfTemplate,null);
+	}
+	
+	public PDFContainer(PdfTemplate pdfTemplate, byte[] data){
+		this.type = pdfTemplate;
+		this.data = data;
+	}
+	
+	
 	@Id
 	@GeneratedValue(generator = "pdfs_sequencegenerator")
 	@Column(unique = true, nullable = false)

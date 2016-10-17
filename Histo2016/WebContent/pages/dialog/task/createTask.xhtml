@@ -25,18 +25,18 @@
 				<!-- order letter -->
 				<h:panelGroup id="uploadHolder">
 					<p:fileUpload style="width:100%" styleClass="taskUpload"
-						rendered="#{taskHandlerAction.temporaryTask.orderLetter eq null}"
+						rendered="#{taskHandlerAction.temporaryTask.getReport('UREPROT') eq null}"
 						fileUploadListener="#{pdfHandlerAction.handleTaskRequestReport}"
 						auto="true" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
 						update="uploadHolder" />
 
 					<h:panelGrid columns="2"
-						rendered="#{taskHandlerAction.temporaryTask.orderLetter ne null}">
+						rendered="#{taskHandlerAction.temporaryTask.getReport('UREPROT') ne null}">
 						<h:outputLabel
-							value="#{taskHandlerAction.temporaryTask.orderLetter.name}"></h:outputLabel>
+							value="#{taskHandlerAction.temporaryTask.getReport('UREPROT').name}"></h:outputLabel>
 						<p:commandLink style="margin-left:10px;"
 							title="#{msg['dialog.createTask.orderLetter.remove']}"
-							actionListener="#{taskHandlerAction.temporaryTask.setOrderLetter(nul)}"
+							actionListener="#{taskHandlerAction.temporaryTask.removeReport('UREPROT')}"
 							update="uploadHolder">
 							<i class="fa fa-times-circle" style="color: black"></i>
 						</p:commandLink>

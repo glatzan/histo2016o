@@ -9,7 +9,6 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.DiagnosisPrototype;
-import org.histo.model.History;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
@@ -56,23 +55,23 @@ public class HelperDAO extends AbstractDAO implements Serializable {
 		return getSession().createCriteria(DiagnosisPrototype.class).list();
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<History> getCurrentHistory(int entryCount) {
-		Criteria c = getSession().createCriteria(History.class, "history");
-		c.addOrder(Order.desc("date"));
-		c.setMaxResults(entryCount);
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return (List<History>) c.list();
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<History> getCurrentHistoryForPatient(int entryCount, Patient patient) {
-		Criteria c = getSession().createCriteria(History.class, "history");
-		c.add(Restrictions.eq("patient.id", patient.getId()));
-		c.addOrder(Order.desc("date"));
-		c.setMaxResults(entryCount);
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return (List<History>) c.list();
-	}
+//	@SuppressWarnings("unchecked")
+//	public List<History> getCurrentHistory(int entryCount) {
+//		Criteria c = getSession().createCriteria(History.class, "history");
+//		c.addOrder(Order.desc("date"));
+//		c.setMaxResults(entryCount);
+//		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+//		return (List<History>) c.list();
+//	}
+//
+//	@SuppressWarnings("unchecked")
+//	public List<History> getCurrentHistoryForPatient(int entryCount, Patient patient) {
+//		Criteria c = getSession().createCriteria(History.class, "history");
+//		c.add(Restrictions.eq("patient.id", patient.getId()));
+//		c.addOrder(Order.desc("date"));
+//		c.setMaxResults(entryCount);
+//		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+//		return (List<History>) c.list();
+//	}
 
 }

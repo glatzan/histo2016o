@@ -1,18 +1,17 @@
 package org.histo.ui.transformer;
 
-import java.util.List;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.transitory.PdfTemplate;
+import org.histo.config.enums.PdfTemplate;
+
 
 public class PdfTemplateTransformer implements Converter {
 
-	private List<PdfTemplate> templates;
+	private PdfTemplate[] templates;
 
-	public PdfTemplateTransformer(List<PdfTemplate> templates) {
+	public PdfTemplateTransformer(PdfTemplate[] templates) {
 		this.templates = templates;
 	}
 
