@@ -1,23 +1,22 @@
 package org.histo.model;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
+
+import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 import org.histo.config.HistoSettings;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.histo.util.TimeUtil;
-import org.hibernate.envers.RevisionEntity;
-
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
-import javax.persistence.GeneratedValue;
-
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
 
 
 @Entity

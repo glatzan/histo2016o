@@ -23,8 +23,7 @@
 						<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
 					</p:column>
 					<p:column>
-						<p:calendar pattern="dd.MM.yyyy" mask="true"
-							styleClass="taskCalendar" id="receiptDate"
+						<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
 							<p:ajax event="dateSelect"
 								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}"
@@ -48,8 +47,7 @@
 									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dueDate',worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected)}">
 								</p:ajax>
 							</p:selectBooleanCheckbox>
-							<p:calendar pattern="dd.MM.yyyy" mask="true"
-								styleClass="taskCalendar" id="dueDate"
+							<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
 								value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
 								disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
 								<p:ajax event="dateSelect"

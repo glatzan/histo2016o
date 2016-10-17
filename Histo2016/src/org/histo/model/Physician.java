@@ -8,7 +8,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.ContactRole;
-import org.histo.model.util.LogAble;
 
 import com.google.gson.annotations.Expose;
 
@@ -16,7 +15,7 @@ import com.google.gson.annotations.Expose;
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
-public class Physician extends Person{
+public class Physician extends Person {
 
 	private static final long serialVersionUID = 7358147861813210904L;
 
@@ -25,36 +24,36 @@ public class Physician extends Person{
 	 */
 	@Expose
 	private String fullName;
-	
+
 	/**
 	 * Pager Number
 	 */
 	@Expose
 	private String pager;
-	
+
 	/**
 	 * clinic internal title
 	 */
 	@Expose
 	private String clinicRole;
-	
+
 	/**
 	 * Number of the employee
 	 */
 	@Expose
 	private String employeeNumber;
-	
+
 	/**
 	 * Loginname of the physician
 	 */
 	@Expose
 	private String uid;
-	
+
 	/**
 	 * Default role of this physician
 	 */
 	private ContactRole defaultContactRole = ContactRole.OTHER;
-	
+
 	/**
 	 * True if clinic employee
 	 */
@@ -63,17 +62,18 @@ public class Physician extends Person{
 	/**
 	 * Standard constructor for hibernate
 	 */
-	public Physician(){
+	public Physician() {
 	}
-	
+
 	/**
 	 * Constructor with id
+	 * 
 	 * @param id
 	 */
-	public Physician(long id){
+	public Physician(long id) {
 		this.id = id;
 	}
-	
+
 	public String getPager() {
 		return pager;
 	}
@@ -82,16 +82,17 @@ public class Physician extends Person{
 		this.pager = pager;
 	}
 
-
 	public String getClinicRole() {
-	    return clinicRole;
+		return clinicRole;
 	}
 
 	public void setClinicRole(String clinicRole) {
-	    this.clinicRole = clinicRole;
+		this.clinicRole = clinicRole;
 	}
 
 	public String getFullName() {
+		if (fullName == null)
+			return getTitle() + " " + getName() + " " + getSurname();
 		return fullName;
 	}
 

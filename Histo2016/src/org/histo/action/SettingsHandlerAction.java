@@ -1,10 +1,8 @@
 package org.histo.action;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.SettingsTab;
@@ -15,9 +13,9 @@ import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.HistoUser;
 import org.histo.model.History;
+import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
-import org.histo.model.MaterialPreset;
 import org.histo.model.patient.Patient;
 import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.ui.StainingListChooser;

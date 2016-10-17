@@ -42,6 +42,23 @@
 				</p:selectOneMenu>
 			</p:column>
 
+
+			<!-- primary contact only for surgeons and private physicians-->
+			<p:column>
+				<f:facet name="header">
+					<i class="fa fa-diamond"
+						title="#{msg['dialog.contact.table.primaryContact']}" />
+				</f:facet>
+				<p:selectBooleanCheckbox
+					rendered="#{contact.role ne 'NONE' and contact.role ne 'OTHER'}"
+					value="#{contact.primaryContact}"
+					title="#{contact.role eq 'SURGEON' ? msg['dialog.contact.table.primaryContact.surgeon.selected'] :  msg['dialog.contact.table.primaryContact.privatePhysician.selected'] }">
+					<p:ajax event="change"
+						listener="#{contactHandlerAction.onContactChangePrimary(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+						update="@form"></p:ajax>
+				</p:selectBooleanCheckbox>
+			</p:column>
+
 			<!-- mail -->
 			<p:column>
 				<f:facet name="header">

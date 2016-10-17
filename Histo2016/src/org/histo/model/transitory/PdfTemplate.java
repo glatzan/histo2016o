@@ -1,13 +1,14 @@
 package org.histo.model.transitory;
 
+import java.lang.reflect.Type;
+
 import org.histo.model.util.GsonAble;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
 
-public class PDFTemplate implements GsonAble {
+public class PdfTemplate implements GsonAble {
 
 	@Expose
 	private String name;
@@ -60,12 +61,12 @@ public class PDFTemplate implements GsonAble {
 		this.defaultTemplate = defaultTemplate;
 	}
 
-	public static final PDFTemplate[] factroy(String json) {
-		Type type = new TypeToken<PDFTemplate[]>() {
+	public static final PdfTemplate[] factroy(String json) {
+		Type type = new TypeToken<PdfTemplate[]>() {
 		}.getType();
 
 		Gson gson = new Gson();
-		PDFTemplate[] result = gson.fromJson(json, type);
+		PdfTemplate[] result = gson.fromJson(json, type);
 		return result;
 	}
 }

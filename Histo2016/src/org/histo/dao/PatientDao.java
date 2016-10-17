@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
@@ -15,7 +12,6 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
-import org.histo.model.transitory.SearchOptions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

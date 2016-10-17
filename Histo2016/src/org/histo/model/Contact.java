@@ -1,6 +1,5 @@
 package org.histo.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,11 +15,6 @@ import org.histo.model.util.LogAble;
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
 public class Contact implements LogAble {
 
-	public static final int ROLE_NONE = 0;
-	public static final int ROLE_SURGEON = 1;
-	public static final int ROLE_EXTERN = 2;
-	public static final int ROLE_OTHER = 3;
-
 	private long id;
 
 	private Physician physician;
@@ -30,7 +24,9 @@ public class Contact implements LogAble {
 	private boolean primaryContact;
 
 	private boolean usePhone;
+	
 	private boolean useFax;
+
 	private boolean useEmail;
 
 	private boolean notificationPerformed;
@@ -138,4 +134,13 @@ public class Contact implements LogAble {
 	 * Transient Getter/Setter
 	 ********************************************************/
 
+	@Override
+	public String toString() {
+		if(getPhysician().getFullName() != null && !getPhysician().getFullName().isEmpty())
+			return getPhysician().getFullName();
+		else
+			return getPhysician().getTitle() + " " + getPhysician().getSurname() + " " + getPhysician().getName();
+	}
+
+	
 }

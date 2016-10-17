@@ -26,7 +26,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.PDFTemplate;
+import org.histo.model.transitory.PdfTemplate;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.TaskTree;
 import org.histo.ui.transformer.PdfTemplateTransformer;
@@ -71,21 +71,7 @@ public class TaskHandlerAction implements Serializable {
 	private MainHandlerAction mainHandlerAction;
 
 	private HashMap<String, String> selectableWards;
-
-	private Task taskToPrint;
-
-	private List<PDFTemplate> templates;
-
-	private PDFTemplate selectedTemplate;
-
-	private PdfTemplateTransformer templateTransformer;
-
-	private StreamedContent pdfContent;
-
-	private String printer;
-
-	private int copies;
-
+	
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -488,118 +474,8 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Print
-	 ********************************************************/
-	public void preparePrintDialog(Task task) {
-		setTaskToPrint(task);
-		String templateFile = FileUtil.loadTextFile(HistoSettings.PDF_TEMPLATE_JSON);
-		setTemplates(Arrays.asList(PDFTemplate.factroy(templateFile)));
-		setSelectedTemplate(PdfUtil.getDefaultTemplate(getTemplates()));
-		setPdfContent(generatePDF(task, getSelectedTemplate()));
-		setTemplateTransformer(new PdfTemplateTransformer(getTemplates()));
-		mainHandlerAction.showDialog(Dialog.PRINT);
-	}
-
-	public void hidePrintDialog() {
-		setTaskToPrint(null);
-		mainHandlerAction.hideDialog(Dialog.PRINT);
-	}
-
-	public void changeTemplate(Task task, PDFTemplate template) {
-		setPdfContent(generatePDF(task, template));
-		System.out.println("chagne task");
-	}
-
-	public StreamedContent generatePDF(Task task, PDFTemplate template) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-			// So, we're rendering the HTML. Return a stub StreamedContent so
-			// that it will generate right URL.
-			return new DefaultStreamedContent();
-		} else {
-			taskDAO.initializeTask(task);
-
-			if (task.getPdfs() != null && !task.getPdfs().isEmpty()) {
-				for (PDFContainer pdf : task.getPdfs()) {
-					if (pdf.getType().equals(template.getType()))
-						return new DefaultStreamedContent(new ByteArrayInputStream(pdf.getData()), "application/pdf");
-				}
-			}
-
-			PDFContainer container = PdfUtil.createPDFContainer(template,
-					PdfUtil.populatePdf(FileUtil.loadPDFFile(template.getFileWithLogo()), task));
-
-			task.getPdfs().add(container);
-			genericDAO.save(task);
-
-			return new DefaultStreamedContent(new ByteArrayInputStream(container.getData()), "application/pdf");
-
-		}
-	}
-
-	/********************************************************
-	 * Print
-	 ********************************************************/
-
-	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	public Task getTaskToPrint() {
-		return taskToPrint;
-	}
-
-	public void setTaskToPrint(Task taskToPrint) {
-		this.taskToPrint = taskToPrint;
-	}
-
-	public List<PDFTemplate> getTemplates() {
-		return templates;
-	}
-
-	public void setTemplates(List<PDFTemplate> templates) {
-		this.templates = templates;
-	}
-
-	public PDFTemplate getSelectedTemplate() {
-		return selectedTemplate;
-	}
-
-	public void setSelectedTemplate(PDFTemplate selectedTemplate) {
-		this.selectedTemplate = selectedTemplate;
-	}
-
-	public StreamedContent getPdfContent() {
-		return pdfContent;
-	}
-
-	public void setPdfContent(StreamedContent pdfContent) {
-		this.pdfContent = pdfContent;
-	}
-
-	public PdfTemplateTransformer getTemplateTransformer() {
-		return templateTransformer;
-	}
-
-	public void setTemplateTransformer(PdfTemplateTransformer templateTransformer) {
-		this.templateTransformer = templateTransformer;
-	}
-
-	public String getPrinter() {
-		return printer;
-	}
-
-	public void setPrinter(String printer) {
-		this.printer = printer;
-	}
-
-	public int getCopies() {
-		return copies;
-	}
-
-	public void setCopies(int copies) {
-		this.copies = copies;
-	}
-
 	public List<MaterialPreset> getAllAvailableMaterials() {
 		return allAvailableMaterials;
 	}

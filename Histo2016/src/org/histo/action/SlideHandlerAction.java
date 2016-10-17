@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -40,9 +38,6 @@ public class SlideHandlerAction implements Serializable {
 
 	@Autowired
 	private HelperDAO helperDAO;
-
-	@Autowired
-	private HelperHandlerAction helper;
 
 	@Autowired
 	private ResourceBundle resourceBundle;

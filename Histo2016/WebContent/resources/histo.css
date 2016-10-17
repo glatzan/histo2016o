@@ -100,14 +100,15 @@ body {
 	font-weight: bold;
 }
 
-.standardFont label, .standardFont input{
-	font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+.standardFont label, .standardFont input {
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-size: 15px !important;
 	font-style: normal;
 	font-variant: normal;
 	font-weight: 500;
 	line-height: 22px;
 }
+
 .noUnderlineAtLink {
 	text-decoration: none !important;
 }
@@ -497,15 +498,14 @@ body {
 
 /*	################# BigDialog ################# */
 /* Layout for big dialogs*/
-.bigDialog{
+.bigDialog {
 	padding: 0px !important;
 	border: 0px !important;
 }
 
-.bigDialog .buttonContainer{
+.bigDialog .buttonContainer {
 	width: 1023px !important;
 }
-
 
 /*	################# BigDialog ################# */
 

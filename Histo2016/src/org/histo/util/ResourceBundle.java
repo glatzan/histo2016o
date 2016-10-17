@@ -1,15 +1,15 @@
 package org.histo.util;
 
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.MissingResourceException;
+
+import javax.faces.context.FacesContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.stereotype.Component;
-
-import javax.faces.context.FacesContext;
-
-import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.MissingResourceException;
 
 @Component(value = "msg")
 public class ResourceBundle extends HashMap<Object, Object> {

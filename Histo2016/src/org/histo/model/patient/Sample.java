@@ -1,7 +1,6 @@
 package org.histo.model.patient;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -27,8 +26,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.hibernate.envers.RelationTargetAuditMode;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.model.MaterialPreset;

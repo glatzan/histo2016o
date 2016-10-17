@@ -3,32 +3,22 @@ package org.histo.action;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.event.ValueChangeListener;
 
-import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.LogDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.model.History;
 import org.histo.model.Log;
-import org.histo.model.HistoUser;
-import org.histo.model.patient.Patient;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.LogListContainer;
-import org.histo.util.TimeUtil;
-import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -37,9 +27,6 @@ public class HelperHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -4083599293687828502L;
 
-	@Autowired
-	private TaskDAO taskDAO;
-	
 	@Autowired
 	private GenericDAO genericDAO;
 

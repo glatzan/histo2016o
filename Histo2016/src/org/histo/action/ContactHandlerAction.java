@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.SimpleEmail;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.ContactTab;
 import org.histo.config.enums.Dialog;
@@ -18,10 +15,8 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PhysicianRoleOptions;
-import org.histo.util.FileUtil;
 import org.histo.util.NotificationHandler;
 import org.histo.util.ResourceBundle;
-import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -36,7 +31,7 @@ public class ContactHandlerAction implements Serializable {
 
 	@Autowired
 	private ThreadPoolTaskExecutor taskExecutor;
-	
+
 	@Autowired
 	private GenericDAO genericDAO;
 
@@ -167,48 +162,132 @@ public class ContactHandlerAction implements Serializable {
 					contact.getPhysician().getName()), task.getPatient());
 		} else {
 
-			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax()){
-				// something was already select, do nothing				
-			}else if (contact.getRole() == ContactRole.SURGEON) {
+			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax()) {
+				// something was already select, do nothing
+			} else if (contact.getRole() == ContactRole.SURGEON) {
 				// surgeon use email per default
 				contact.setUseEmail(true);
-			}else if (contact.getRole() == ContactRole.PRIVATE_PHYSICIAN && contact.getPhysician().getFax() != null
+			} else if (contact.getRole() == ContactRole.PRIVATE_PHYSICIAN && contact.getPhysician().getFax() != null
 					&& !contact.getPhysician().getFax().isEmpty()) {
 				// private physician use fax per default
 				contact.setUseFax(true);
-			}else if(contact.getPhysician().getEmail() != null && !contact.getPhysician().getEmail().isEmpty()){
+			} else if (contact.getPhysician().getEmail() != null && !contact.getPhysician().getEmail().isEmpty()) {
 				// other contacts use email per default
 				contact.setUseEmail(true);
 			}
 
 			// adds contact if not added jet
-			if(!task.getContacts().contains(contact)){
+			if (!task.getContacts().contains(contact)) {
 				task.getContacts().add(contact);
 			}
 
 			genericDAO.save(contact, resourceBundle.get("log.patient.task.contact.add", task.getTaskID(),
 					contact.getPhysician().getName()), task.getPatient());
-			
+
 			System.out.println("saving");
-			
+
 		}
+
+		updateContactRolePrimary(task);
 
 		genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 	}
 
-	private int test = 1;
-	
-	public void updateTest(){
+	/**
+	 * Updates the contact list an checks if there are primary contacts for the
+	 * surgeon role and the private physician role. If no primary contact is
+	 * found the first contact possessing this role will be selected.
+	 * 
+	 * @param task
+	 */
+	public void updateContactRolePrimary(Task task) {
+		updateContactRolePrimary(task, ContactRole.PRIVATE_PHYSICIAN);
+		updateContactRolePrimary(task, ContactRole.SURGEON);
 	}
-	
+
+	/**
+	 * Checks if the contact list contains a primary contact for the given role.
+	 * If there are multiple contact marked as primary the only the first one
+	 * will remain the primary one. If on contact is marked, the first contact
+	 * possessing this role will be selected.
+	 * 
+	 * @param task
+	 * @param role
+	 */
+	public void updateContactRolePrimary(Task task, ContactRole role) {
+		Contact first = null;
+		boolean primary = false;
+
+		for (Contact contactListItem : task.getContacts()) {
+			if (contactListItem.getRole() == role) {
+				if (first == null)
+					first = contactListItem;
+
+				if (contactListItem.isPrimaryContact()) {
+					if (primary) {
+						contactListItem.setPrimaryContact(false);
+						genericDAO
+								.save(contactListItem,
+										resourceBundle.get("log.patient.task.contact.primaryRole.removed",
+												task.getTaskID(), contactListItem.getPhysician().getName()),
+										task.getPatient());
+
+					} else
+						primary = true;
+				}
+			}
+		}
+
+		if (!primary && first != null) {
+			first.setPrimaryContact(true);
+			genericDAO.save(first, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
+					first.getPhysician().getName()), task.getPatient());
+		}
+	}
+
+	/**
+	 * Is fired on primaryContact change an checks if any other contact is the
+	 * primary contact. If so the status of the other contact will be set to
+	 * false.
+	 * 
+	 * @param task
+	 * @param contact
+	 */
+	public void onContactChangePrimary(Task task, Contact contact) {
+		for (Contact contactListItem : task.getContacts()) {
+			if (contactListItem.getRole() == contact.getRole() && contactListItem.isPrimaryContact()) {
+				// is the same contact return
+				if (contactListItem.getId() == contact.getId())
+					continue;
+				else {
+					// otherwise set to false
+					contactListItem.setPrimaryContact(false);
+					genericDAO.save(contactListItem, resourceBundle.get("log.patient.task.contact.primaryRole.removed",
+							task.getTaskID(), contactListItem.getPhysician().getName()), task.getPatient());
+				}
+			}
+		}
+
+		if (!contact.isPrimaryContact()) {
+			contact.setPrimaryContact(true);
+			genericDAO.save(contact, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
+					contact.getPhysician().getName()), task.getPatient());
+		}
+	}
+
+	private int test = 1;
+
+	public void updateTest() {
+	}
+
 	public void sendTest() {
 
 		System.out.println(taskExecutor);
-		NotificationHandler test = new NotificationHandler(this,genericDAO);
+		NotificationHandler test = new NotificationHandler(this, genericDAO);
 		test.setName("was geht");
-		
+
 		taskExecutor.execute(test);
-		//FileUtil.loadTextFile(null);
+		// FileUtil.loadTextFile(null);
 
 		// System.out.println("ok");
 		// SimpleEmail email = new SimpleEmail();
@@ -231,12 +310,11 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	@Async("taskExecutor")
-	public void test1(){
-		while(true){
+	public void test1() {
+		while (true) {
 			test++;
-			System.out.println("test" +test);
+			System.out.println("test" + test);
 			genericDAO.save(new Slide());
-			
 
 			try {
 				Thread.sleep(1000);
@@ -245,6 +323,7 @@ public class ContactHandlerAction implements Serializable {
 			}
 		}
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -272,6 +351,7 @@ public class ContactHandlerAction implements Serializable {
 	public void setContactTab(ContactTab contactTab) {
 		this.contactTab = contactTab;
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

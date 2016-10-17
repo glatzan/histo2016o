@@ -29,13 +29,16 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.TaskPriority;
+import org.histo.model.Accounting;
 import org.histo.model.Contact;
+import org.histo.model.Council;
 import org.histo.model.PDFContainer;
+import org.histo.model.Physician;
+import org.histo.model.Siganture;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -50,7 +53,7 @@ import org.primefaces.event.TabChangeEvent;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
-@SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
+@SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus, LogAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
@@ -64,14 +67,14 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	private long version;
 
 	/**
-	 * Priority of the task
-	 */
-	private TaskPriority taskPriority;
-	
-	/**
 	 * Generated Task ID as String
 	 */
 	private String taskID = "";
+
+	/**
+	 * Priority of the task
+	 */
+	private TaskPriority taskPriority;
 
 	/**
 	 * The Patient of the task;
@@ -112,11 +115,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * Stationär/ambulant/Extern
 	 */
 	private byte typeOfOperation;
-
-	/**
-	 * Commentary TODO: is used=
-	 */
-	private String commentray = "";
 
 	/**
 	 * Details of the case
@@ -169,20 +167,33 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	private long diagnosisCompletionDate = 0;
 
 	/**
-	 * Uploaded order letter 
+	 * True if all persons within the contact list have been notified about the
+	 * result.
 	 */
-	private PDFContainer orderLetter;
-	
+	private boolean notificationCompleted = false;
+
 	/**
-	 * Generated PDFs of this task
+	 * The date of the completion of the notificaiton.
 	 */
-	private List<PDFContainer> pdfs;
+	private long notificationCompletionDate = 0;
 
 	/**
 	 * Text containing the histological record for all samples.
 	 */
 	private String histologicalRecord = "";
 	
+	/**
+	 * Generated PDFs of this task
+	 */
+	private List<PDFContainer> attachedPdfs;
+	
+	private Council council;
+
+	private Accounting accounting;
+	
+	private Siganture signatureLeft;
+	
+	private Siganture sigantureRight;
 	/********************************************************
 	 * Transient Variables
 	 ********************************************************/
@@ -210,12 +221,12 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	/**
 	 * True if lazy initialision was successful.
 	 */
-	private boolean lazyInitialized;
-	
+	private boolean initialized;
+
 	/********************************************************
 	 * Transient Variables
 	 ********************************************************/
-	
+
 	public Task() {
 	}
 
@@ -236,15 +247,15 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		setTabIndex(((TabView) event.getSource()).getIndex());
 	}
 
-	public Contact getPrimaryContact(ContactRole contactRole){
+	public Contact getPrimaryContact(ContactRole contactRole) {
 		for (Contact contact : contacts) {
-			if(contact.getRole() == contactRole && contact.isPrimaryContact())
+			if (contact.getRole() == contactRole && contact.isPrimaryContact())
 				return contact;
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Returns true if either the task is active or a diagnosis or a staining is
 	 * needed.
@@ -259,11 +270,11 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 
 	@Transient
 	public boolean isNewAndActionsPending() {
-		if(isNew() && (!isStainingCompleted() || !isDiagnosisCompleted()))
+		if (isNew() && (!isStainingCompleted() || !isDiagnosisCompleted()))
 			return true;
 		return false;
 	}
-	
+
 	public void incrementSampleNumber() {
 		this.sampleNumer++;
 	}
@@ -271,6 +282,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void decrementSmapleNumber() {
 		this.sampleNumer--;
 	}
+
 	/********************************************************
 	 * Transient
 	 ********************************************************/
@@ -279,7 +291,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * Getter/Setter
 	 ********************************************************/
 	@Id
-	@GeneratedValue(generator = "sample_sequencegenerator")
+	@GeneratedValue(generator = "task_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	public long getId() {
 		return id;
@@ -317,15 +329,14 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public List<PDFContainer> getPdfs() {
-		if (pdfs == null)
-			pdfs = new ArrayList<PDFContainer>();
-
-		return pdfs;
+	public List<PDFContainer> getAttachedPdfs() {
+		if (attachedPdfs == null)
+			attachedPdfs = new ArrayList<PDFContainer>();
+		return attachedPdfs;
 	}
 
-	public void setPdfs(List<PDFContainer> pdfs) {
-		this.pdfs = pdfs;
+	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
+		this.attachedPdfs = attachedPdfs;
 	}
 
 	@Version
@@ -383,14 +394,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 
 	public void setTypeOfOperation(byte typeOfOperation) {
 		this.typeOfOperation = typeOfOperation;
-	}
-
-	public String getCommentray() {
-		return commentray;
-	}
-
-	public void setCommentray(String commentray) {
-		this.commentray = commentray;
 	}
 
 	public String getCaseHistory() {
@@ -466,15 +469,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.ward = ward;
 	}
 
-	@OneToOne
-	public PDFContainer getOrderLetter() {
-		return orderLetter;
-	}
-
-	public void setOrderLetter(PDFContainer orderLetter) {
-		this.orderLetter = orderLetter;
-	}
-	
 	@Column(columnDefinition = "text")
 	public String getHistologicalRecord() {
 		return histologicalRecord;
@@ -483,7 +477,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setHistologicalRecord(String histologicalRecord) {
 		this.histologicalRecord = histologicalRecord;
 	}
-	
+
 	@Enumerated(EnumType.ORDINAL)
 	public TaskPriority getTaskPriority() {
 		return taskPriority;
@@ -492,6 +486,59 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setTaskPriority(TaskPriority taskPriority) {
 		this.taskPriority = taskPriority;
 	}
+
+	public boolean isNotificationCompleted() {
+		return notificationCompleted;
+	}
+
+	public void setNotificationCompleted(boolean notificationCompleted) {
+		this.notificationCompleted = notificationCompleted;
+	}
+
+	public long getNotificationCompletionDate() {
+		return notificationCompletionDate;
+	}
+
+	public void setNotificationCompletionDate(long notificationCompletionDate) {
+		this.notificationCompletionDate = notificationCompletionDate;
+	}
+
+	@OneToOne(fetch = FetchType.LAZY)
+	public Council getCouncil() {
+		return council;
+	}
+
+	public void setCouncil(Council council) {
+		this.council = council;
+	}
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	public Accounting getAccounting() {
+		return accounting;
+	}
+
+	public void setAccounting(Accounting accounting) {
+		this.accounting = accounting;
+	}
+
+	@OneToOne(fetch = FetchType.LAZY)
+	public Siganture getSignatureLeft() {
+		return signatureLeft;
+	}
+
+	public void setSignatureLeft(Siganture signatureLeft) {
+		this.signatureLeft = signatureLeft;
+	}
+
+	@OneToOne(fetch = FetchType.LAZY)
+	public Siganture getSigantureRight() {
+		return sigantureRight;
+	}
+
+	public void setSigantureRight(Siganture sigantureRight) {
+		this.sigantureRight = sigantureRight;
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -571,9 +618,25 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
+	@Transient
+	public boolean isInitialized() {
+		return initialized;
+	}
+
+	public void setInitialized(boolean initialized) {
+		this.initialized = initialized;
+	}
+
+	public PDFContainer getReport(String type){
+		
+	}
+	
+	public boolean setReport()
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
+
 
 	/********************************************************
 	 * Interface DiagnosisStatus
@@ -706,6 +769,7 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		}
 		return false;
 	}
+
 	/********************************************************
 	 * Interface StainingStauts
 	 ********************************************************/

@@ -67,7 +67,7 @@
 
 			<p:outputLabel value="#{msg['body.worklist.patient.extern']}"
 				styleClass="bold-text" />
-			
+
 			<h:panelGroup>
 				<p:outputLabel
 					value="#{worklistHandlerAction.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
@@ -80,8 +80,7 @@
 			</h:panelGroup>
 		</p:panelGrid>
 
-		<p:dataTable var="tasks" 
-			style="margin-top:20px;" id="taskList"
+		<p:dataTable var="tasks" style="margin-top:20px;" id="taskList"
 			value="#{worklistHandlerAction.selectedPatient.tasks}"
 			selectionMode="single"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"

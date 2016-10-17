@@ -14,7 +14,7 @@
 		<locale-config>
 			<default-locale>de</default-locale>
 		</locale-config>
-		
+
 	</application>
 
 </faces-config>

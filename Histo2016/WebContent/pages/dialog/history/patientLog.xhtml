@@ -12,13 +12,14 @@
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout" >
+<h:body styleClass="defaultDialogLayout">
 	<h:form>
-		<div class="dialogContent" >
-			<p:dataTable var="log" styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll smallFont" scrollable="true"
-				scrollHeight="410" value="#{logHandlerAction.patientLog}"
-				resizableColumns="false">
-				<p:column headerText="ID" style="width:50px;text-align:center" >
+		<div class="dialogContent">
+			<p:dataTable var="log"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll smallFont"
+				scrollable="true" scrollHeight="410"
+				value="#{logHandlerAction.patientLog}" resizableColumns="false">
+				<p:column headerText="ID" style="width:50px;text-align:center">
 					<h:outputLabel value="#{log.id}"></h:outputLabel>
 				</p:column>
 				<p:column headerText="Datum" style="width:100px;text-align:center">

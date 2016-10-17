@@ -1,9 +1,8 @@
 package org.histo.model.util;
 
 import org.hibernate.envers.RevisionListener;
-import org.histo.model.Log;
 import org.histo.model.HistoUser;
-import org.histo.model.patient.Patient;
+import org.histo.model.Log;
 import org.histo.util.SecurityContextHolderUtil;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -16,14 +16,17 @@
 		<div class="dialogContent">
 			<h:panelGrid columns="2" style="margin-left:5px;"
 				tyleClass="dialogTable ">
-				<h:outputLabel value="#{msg['dialog.worklistsettings.showAllTasks']}"></h:outputLabel>
-				<p:selectBooleanCheckbox style="margin-left:10px;" 
+				<h:outputLabel
+					value="#{msg['dialog.worklistsettings.showAllTasks']}"></h:outputLabel>
+				<p:selectBooleanCheckbox style="margin-left:10px;"
 					value="#{worklistHandlerAction.sortOptions.showAllTasks}"
-					title="#{msg['dialog.worklistsettings.showAllTasks.text']}" >
+					title="#{msg['dialog.worklistsettings.showAllTasks.text']}">
 					<p:ajax update="@form"></p:ajax>
-					</p:selectBooleanCheckbox>
-				<h:outputLabel value="#{msg['dialog.worklistsettings.skipNonActive']}"></h:outputLabel>
-				<p:selectBooleanCheckbox style="margin-left:10px;" disabled="#{!worklistHandlerAction.sortOptions.showAllTasks}"
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value="#{msg['dialog.worklistsettings.skipNonActive']}"></h:outputLabel>
+				<p:selectBooleanCheckbox style="margin-left:10px;"
+					disabled="#{!worklistHandlerAction.sortOptions.showAllTasks}"
 					value="#{worklistHandlerAction.sortOptions.skipNotActiveTasks}"
 					title="#{msg['dialog.worklistsettings.skipNonActive.text']}" />
 			</h:panelGrid>

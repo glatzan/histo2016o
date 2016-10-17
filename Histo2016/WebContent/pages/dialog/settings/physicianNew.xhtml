@@ -21,7 +21,8 @@
 			<h:panelGrid>
 				<p:panelGrid columns="1" styleClass="inputTable"
 					style="float:left;margin-right:20px;">
-					<p:selectOneButton value="#{settingsHandlerAction.physicianTabIndex}">
+					<p:selectOneButton
+						value="#{settingsHandlerAction.physicianTabIndex}">
 						<f:selectItem
 							itemLabel="#{msg['dialog.settings.person.new.external']}"
 							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_EXTER')}" />
@@ -35,7 +36,8 @@
 		</p:panelGrid>
 
 		<!-- Internal Physician (Employee, get data from LDAP)-->
-		<ui:fragment rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_LDPA'}">
+		<ui:fragment
+			rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_LDPA'}">
 			<ui:include src="../../template/ldapPhysician.xhtml">
 				<ui:param name="physicianList"
 					value="#{settingsHandlerAction.ldapPhysicianList}" />
@@ -49,7 +51,8 @@
 		</ui:fragment>
 
 		<!-- External Physician -->
-		<ui:fragment rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_EXTER'}">
+		<ui:fragment
+			rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_EXTER'}">
 			<ui:include src="../../template/person.xhtml">
 				<ui:param name="person"
 					value="#{settingsHandlerAction.tmpPhysician}" />

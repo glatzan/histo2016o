@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
-import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
+import org.histo.config.enums.View;
 import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;

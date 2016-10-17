@@ -23,13 +23,13 @@
 			</ui:include>
 		</div>
 		<div class="buttonContainer">
-			
+
 			<p:commandButton value="#{msg['dialog.editPatient.edit']}"
 				process="@form" icon="fa fa-fw fa-user-plus"
 				styleClass="smallButton"
 				actionListener="#{patientHandlerAction.saveEditedExternalPatient(patientHandlerAction.tmpPatient)}">
 			</p:commandButton>
-			
+
 			<p:commandButton value="#{msg['general.abort']}"
 				styleClass="smallButton buttonLeftMarginInList"
 				icon="fa fa-times-circle">

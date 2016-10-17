@@ -17,8 +17,8 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.Role;
-import org.histo.model.Physician;
 import org.histo.model.HistoUser;
+import org.histo.model.Physician;
 
 public class UserUtil {
 

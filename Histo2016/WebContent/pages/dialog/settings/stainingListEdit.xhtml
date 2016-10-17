@@ -14,8 +14,7 @@
 
 		<p:panelGrid columns="2"
 			styleClass="noBordersAll collapsedBordersAll " style="width:100%">
-			<h:outputLabel
-				value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
+			<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
 			<p:inputText style="width:390px"
 				value="#{settingsHandlerAction.editStainingList.name}" />
 
@@ -65,11 +64,11 @@
 					update="@form"></p:commandButton>
 				<p:commandButton
 					value="#{msg['dialog.settings.material.new.stainings.add']}"
-					 icon="fa fa-fw fa-plus-circle"
+					icon="fa fa-fw fa-plus-circle"
 					actionListener="#{settingsHandlerAction.prepareAddStainingToStainingList()}"
 					update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.abort']}"
-					 icon="fa fa-fw fa-times-circle"
+					icon="fa fa-fw fa-times-circle"
 					actionListener="#{settingsHandlerAction.discardChangesOfStainigList()}"
 					update="@form"></p:commandButton>
 			</h:panelGrid>

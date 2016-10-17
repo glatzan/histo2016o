@@ -6,20 +6,20 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.transitory.PDFTemplate;
+import org.histo.model.transitory.PdfTemplate;
 
 public class PdfTemplateTransformer implements Converter {
 
-	private List<PDFTemplate> templates;
+	private List<PdfTemplate> templates;
 
-	public PdfTemplateTransformer(List<PDFTemplate> templates) {
+	public PdfTemplateTransformer(List<PdfTemplate> templates) {
 		this.templates = templates;
 	}
 
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
 		if (value != null && value.trim().length() > 0) {
 			try {
-				for (PDFTemplate pdfTemplate : templates) {
+				for (PdfTemplate pdfTemplate : templates) {
 					if (pdfTemplate.getName().equals(value))
 						return pdfTemplate;
 				}
@@ -33,8 +33,8 @@ public class PdfTemplateTransformer implements Converter {
 	}
 
 	public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-		if (object != null && object instanceof PDFTemplate) {
-			return ((PDFTemplate)object).getName();
+		if (object != null && object instanceof PdfTemplate) {
+			return ((PdfTemplate)object).getName();
 		} else {
 			return "";
 		}

@@ -2,8 +2,6 @@ package org.histo.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
@@ -14,6 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
+import org.histo.config.enums.PdfTemplate;
 
 @Entity
 @Audited
@@ -29,10 +28,10 @@ public class PDFContainer {
 
 	private boolean finalDocument;
 
-	private String type;
+	private PdfTemplate type;
 
-	private String name; 
-	
+	private String name;
+
 	@Id
 	@GeneratedValue(generator = "pdfs_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -61,14 +60,13 @@ public class PDFContainer {
 		this.finalDocument = finalDocument;
 	}
 
-	public String getType() {
+	public PdfTemplate getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(PdfTemplate type) {
 		this.type = type;
 	}
-
 
 	public String getName() {
 		return name;

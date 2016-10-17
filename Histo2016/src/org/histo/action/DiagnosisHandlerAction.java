@@ -4,15 +4,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Date;
 import java.util.List;
 
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.LogDAO;
-import org.histo.dao.TaskDAO;
 import org.histo.model.DiagnosisPrototype;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;

@@ -4,19 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.Display;
-import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
-import org.histo.config.enums.Worklist;
-import org.histo.model.HistoUser;
-import org.histo.model.patient.Patient;
-import org.histo.model.transitory.SearchOptions;
+import org.histo.config.enums.View;
 import org.histo.util.ResourceBundle;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -34,14 +28,13 @@ import org.springframework.stereotype.Component;
 // TODO: log in settings rework
 // TODO: Edit external patient from menu bar
 // ++++: Priorisierung
-// prevent overwriting of data from clinic physicians if changed
+// TODO: prevent overwriting of data from clinic physicians if changed
+// TODO: change event of histological record in diagnosis page, located in helphandler action
+// TODO: Re-Diagnosis reduce options 
 
 @Component
 @Scope(value = "session")
 public class MainHandlerAction {
-
-	@Autowired
-	private ResourceBundle resourceBundle;
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
@@ -160,45 +153,48 @@ public class MainHandlerAction {
 
 	/**
 	 * Takes a long timestamp and returns a formatted date in standard format.
+	 * 
 	 * @param date
 	 * @return
 	 */
-	public String date(long date){
+	public String date(long date) {
 		return date(new Date(date), HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY);
 	}
-	
+
 	/**
 	 * Takes a date and returns a formatted date in standard format.
+	 * 
 	 * @param date
 	 * @return
 	 */
-	public String date(Date date){
+	public String date(Date date) {
 		return date(date, HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY);
 	}
-	
+
 	/**
 	 * Takes a long timestamp and a format string and returns a formatted date.
+	 * 
 	 * @param date
 	 * @return
 	 */
-	public String date(long date, String format){
-		return date(new Date(date),format);
+	public String date(long date, String format) {
+		return date(new Date(date), format);
 	}
-	
+
 	/**
 	 * Takes a date and a format string and returns a formatted date.
+	 * 
 	 * @param date
 	 * @return
 	 */
-	public String date(Date date, String format){
+	public String date(Date date, String format) {
 		return TimeUtil.formatDate(date, format);
 	}
-	
+
 	/*
 	 * ************************** Time ****************************
 	 */
-	
-	
+
 	/*
 	 * ************************** Getters/Setters ****************************
 	 */

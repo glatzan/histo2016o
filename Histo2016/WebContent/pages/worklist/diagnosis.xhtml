@@ -12,8 +12,9 @@
 
 	<p:panel style="width:100%;" id="diagnosisView"
 		styleClass=" collapsedBorders noPadding noBorders">
+
 		<h:panelGrid columns="1" styleClass="noPadding">
-			<h:outputLabel value="Histologisches Gutachten"
+			<h:outputLabel value="#{msg['body.diagnosis.headline']}"
 				style="font-size:1.5em;"></h:outputLabel>
 
 			<h:panelGrid columns="2" style="margin-top:20px"
@@ -32,13 +33,14 @@
 							styleClass="materialTable noPaddingAll noBordersAll collapsedBordersAll">
 
 							<h:panelGroup>
-								<h:outputLabel value="Präparat" style="font-size:1.2em"
-									rendered="#{loopCount.index eq 0}"></h:outputLabel>
+								<h:outputLabel value="#{msg['body.diagnosis.material']}"
+									style="font-size:1.2em" rendered="#{loopCount.index eq 0}"></h:outputLabel>
 							</h:panelGroup>
 
 							<h:outputLabel value="#{sample.sampleID}" />
 
 							<p:selectOneMenu value="#{sample.material}"
+								disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 								styleClass="smallInput" editable="true"
 								style="width:200px;float:right;margin-right:30px;">
 								<f:selectItem
@@ -56,17 +58,18 @@
 
 					<h:panelGroup layout="block"
 						style="font-size:1.0em;margin-top:10px;">
-						<h:outputLabel
-							value="Vorgeschichte, klinischer Befund, Fragestellung"></h:outputLabel>
+						<h:outputLabel value="#{msg['body.diagnosis.story']}"></h:outputLabel>
 					</h:panelGroup>
 
 					<h:graphicImage value="/resources/gfx/augen.png"
 						style="width: 280px;float:right;margin-right:30px;" />
+
 					<!-- eye -->
 					<h:panelGrid columns="2" columnClasses="verticalAlignTop,"
 						style="width:100%"
 						styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 						<p:selectOneMenu styleClass="smallInput"
+							disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}">
 
 							<f:selectItems value="#{enumProvider.eyes}" var="eye"
@@ -77,11 +80,12 @@
 						</p:selectOneMenu>
 
 						<p:inputTextarea rows="2" id="stroyField"
+							disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 							style="width: 270px;float:right;margin-right:30px;"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}">
 							<p:ajax event="change" execute="@this"
 								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.caseHistory',worklistHandlerAction.selectedPatient.selectedTask.caseHistory)}" />
-							<p:watermark value="#{msg['body.receiptlog.story.watermark']}"
+							<p:watermark value="#{msg['body.diagnosis.story.watermark']}"
 								for="stroyField" />
 						</p:inputTextarea>
 					</h:panelGrid>
@@ -91,9 +95,9 @@
 				<h:panelGrid columns="2"
 					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 					<!-- date of surgery -->
-					<h:outputLabel value="Entnahmedatum" />
+					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						styleClass="taskCalendar"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
@@ -102,9 +106,9 @@
 					</p:calendar>
 
 					<!-- date of receipt -->
-					<h:outputLabel value="Eingangsdatum" />
+					<h:outputLabel value="#{msg['body.diagnosis.taskEDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						styleClass="taskCalendar"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
@@ -113,25 +117,27 @@
 					</p:calendar>
 
 					<!-- Task Number -->
-					<h:outputLabel value="Eingangsnummer" />
+					<h:outputLabel value="#{msg['body.diagnosis.taskNumber']}" />
 					<p:inputText disabled="true"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
 
 					<!-- insurance -->
-					<h:outputLabel value="Versicherung" />
+					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
 
 					<p:selectOneButton
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 						value="#{worklistHandlerAction.selectedPatient.privateInsurance}">
 						<f:selectItem itemLabel="regulär" itemValue="#{false}]" />
 						<f:selectItem itemLabel="privat" itemValue="#{true}" />
 					</p:selectOneButton>
 
-
 					<!-- ward -->
-					<h:outputLabel value="Station" />
+					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
+
 					<p:selectOneMenu id="wards"
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.ward}"
-						effect="fold" editable="true">
+						effect="fold" editable="true"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}">
 						<f:selectItems value="#{taskHandlerAction.selectableWards}" />
 						<p:ajax event="change" execute="@this"
 							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.ward',worklistHandlerAction.selectedPatient.selectedTask.ward)}" />
@@ -139,13 +145,15 @@
 
 					<!-- surgeon -->
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
-						<h:outputLabel value="Operateur/Einsender" />
+						<h:outputLabel value="#{msg['body.diagnosis.surgeon']}" />
 					</h:panelGroup>
+
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
-						<h:outputLabel
+						<h:outputLabel style="margin-left:10px;"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.getPrimaryContact(enumProvider.getContactRole('SURGEON'))}"></h:outputLabel>
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+							rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 							style="float: right; margin-right:5px;"
 							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
 							<i class="fa fa-fw fa-cog" />
@@ -154,15 +162,16 @@
 					</h:panelGroup>
 
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
-						<h:outputLabel value="Augenarzt"></h:outputLabel>
+						<h:outputLabel value="#{msg['body.diagnosis.privatePhysician']}"></h:outputLabel>
 					</h:panelGroup>
 
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
-						<h:outputLabel
+						<h:outputLabel style="margin-left:10px;"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.getPrimaryContact(enumProvider.getContactRole('PRIVATE_PHYSICIAN'))}"></h:outputLabel>
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 							style="float: right; margin-right:5px;"
+							rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -170,10 +179,13 @@
 					</h:panelGroup>
 				</h:panelGrid>
 			</h:panelGrid>
+
 			<p:separator />
-			<h:outputLabel value="Histlogischer Befund"></h:outputLabel>
+
+			<h:outputLabel value="#{msg['body.diagnosis.histologicalRecord']}"></h:outputLabel>
 			<h:panelGroup id="extendedTextParent">
 				<p:editor id="extendedText" widgetVar="extendedText"
+					disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
 					value="#{worklistHandlerAction.selectedPatient.selectedTask.histologicalRecord}"
 					style="width:100%"
 					valueChangeListener="#{helperHandlerAction.valueChanged}">
@@ -207,7 +219,7 @@
 				</f:verbatim>
 			</h:panelGroup>
 
-			<h:outputLabel value="Diagnose"></h:outputLabel>
+			<h:outputLabel value="#{msg['body.diagnosis.diagnosis']}"></h:outputLabel>
 			<ui:repeat var="sampel"
 				value="#{worklistHandlerAction.selectedPatient.selectedTask.samples}">
 
@@ -217,7 +229,8 @@
 					styleClass="diagnosisTable noPaddingAll noBordersAll collapsedBordersAll"
 					columnClasses="firstColumn,secondColumn,thirdColumn,fourthColumn">
 
-					<h:outputLabel value="Probe #{sampel.sampleID}"></h:outputLabel>
+					<h:outputLabel
+						value="#{msg['body.diagnosis.diagnosis.sample']} #{sampel.sampleID}"></h:outputLabel>
 
 					<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
 						disabled="#{diagnosis.finalized}" styleClass="diagnosisSelectMenu"
@@ -241,10 +254,11 @@
 					</p:selectOneMenu>
 
 					<h:inputText value="#{diagnosis.diagnosis}"
-						styleClass="diagnosisText"></h:inputText>
+						disabled="#{diagnosis.finalized}" styleClass="diagnosisText"></h:inputText>
 
 					<h:panelGroup>
-						<p:commandLink title=""
+						<p:commandLink
+							title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
 							rendered="#{diagnosis.diagnosisPrototype ne null}"
 							actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
 							update=":contentForm:extendedText">

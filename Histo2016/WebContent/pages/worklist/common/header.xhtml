@@ -78,7 +78,7 @@
 
 			<!-- Print button -->
 			<p:commandButton id="printBtn" style="display:none"
-				actionListener="#{taskHandlerAction.preparePrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				actionListener="#{pdfHandlerAction.preparePrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 
@@ -101,7 +101,8 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
-			<p:commandButton value="test" actionListener="#{contactHandlerAction.test1()}" async="true"></p:commandButton>
+			<p:commandButton value="test"
+				actionListener="#{contactHandlerAction.test1()}" async="true"></p:commandButton>
 			#{contactHandlerAction.test}
 			
 			<p:poll interval="3" update="@form" />

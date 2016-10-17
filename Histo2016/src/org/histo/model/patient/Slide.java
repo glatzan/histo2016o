@@ -1,7 +1,5 @@
 package org.histo.model.patient;
 
-import java.util.Date;
-
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +18,6 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.model.StainingPrototype;
 import org.histo.model.util.LogAble;

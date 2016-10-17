@@ -9,7 +9,7 @@ import java.util.List;
 import org.histo.config.HistoSettings;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.PDFTemplate;
+import org.histo.model.transitory.PdfTemplate;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -98,15 +98,15 @@ public class PdfUtil {
 		return out.toByteArray();
 	}
 
-	public static final PDFTemplate getDefaultTemplate(List<PDFTemplate> templates) {
-		for (PDFTemplate pdfTemplate : templates) {
+	public static final PdfTemplate getDefaultTemplate(List<PdfTemplate> templates) {
+		for (PdfTemplate pdfTemplate : templates) {
 			if (pdfTemplate.isDefaultTemplate())
 				return pdfTemplate;
 		}
 		return templates.get(0);
 	}
-	
-	public static final PDFContainer createPDFContainer(PDFTemplate template, byte[] content){
+
+	public static final PDFContainer createPDFContainer(PdfTemplate template, byte[] content) {
 		PDFContainer container = new PDFContainer();
 		container.setData(content);
 		container.setType(template.getType());

@@ -26,9 +26,6 @@ public class PatientHandlerAction implements Serializable {
 	private static final long serialVersionUID = -7781752890620696154L;
 
 	@Autowired
-	private HelperHandlerAction helper;
-
-	@Autowired
 	private GenericDAO genericDAO;
 
 	@Autowired

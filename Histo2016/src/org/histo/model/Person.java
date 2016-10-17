@@ -20,7 +20,6 @@ import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.LogAble;
-import org.histo.util.TimeUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

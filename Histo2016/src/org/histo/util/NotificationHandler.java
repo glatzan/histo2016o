@@ -1,7 +1,6 @@
 package org.histo.util;
 
 import org.histo.action.ContactHandlerAction;
-import org.histo.action.MainHandlerAction;
 import org.histo.dao.GenericDAO;
 import org.histo.model.patient.Slide;
 

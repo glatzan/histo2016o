@@ -3,7 +3,6 @@ package org.histo.action;
 import java.io.Serializable;
 import java.util.List;
 
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.LogDAO;
 import org.histo.model.Log;

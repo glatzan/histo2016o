@@ -2,7 +2,6 @@ package org.histo.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -19,13 +18,11 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
-import org.histo.config.enums.View;
 import org.histo.config.enums.Role;
+import org.histo.config.enums.View;
 import org.histo.model.util.LogAble;
 import org.springframework.security.core.userdetails.UserDetails;
 

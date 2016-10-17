@@ -1,7 +1,5 @@
 package org.histo.config.enums;
 
-import org.histo.config.HistoSettings;
-
 /**
  * mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ORDER'))
  * @author andi

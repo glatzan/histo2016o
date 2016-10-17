@@ -1,5 +1,5 @@
 package org.histo.config.enums;
 
 public enum ContactRole {
-	NONE, SURGEON, PRIVATE_PHYSICIAN, OTHER;
+	NONE, SURGEON, PRIVATE_PHYSICIAN, OTHER, FAMILY_PHYSICIAN;
 }
