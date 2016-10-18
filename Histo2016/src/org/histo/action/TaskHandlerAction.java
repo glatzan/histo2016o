@@ -5,14 +5,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PdfTemplate;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
+import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.MaterialPreset;
+import org.histo.model.Physician;
+import org.histo.model.Siganture;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -22,6 +26,7 @@ import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.TaskTree;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
@@ -57,8 +62,11 @@ public class TaskHandlerAction implements Serializable {
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
 
+	@Autowired
+	private PhysicianDAO physicianDAO;
+
 	private HashMap<String, String> selectableWards;
-	
+
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -88,6 +96,15 @@ public class TaskHandlerAction implements Serializable {
 	 */
 	private int temporaryTaskSampleCount;
 
+	/**
+	 * List of all physicians
+	 */
+	private List<Physician> physiciansToSignReport;
+
+	/**
+	 * Transformer for selecting a physician for sigin the report
+	 */
+	private DefaultTransformer<Physician> physiciansToSignReportTransformer;
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -117,6 +134,9 @@ public class TaskHandlerAction implements Serializable {
 		setAllAvailableMaterials(helperDAO.getAllStainingLists());
 		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
 
+		setPhysiciansToSignReport(physicianDAO.getPhysicians(ContactRole.values(), false));
+		setPhysiciansToSignReportTransformer(new DefaultTransformer<>(getPhysiciansToSignReport()));
+
 		// initis all wards
 		if (selectableWards == null) {
 			selectableWards = new HashMap<String, String>();
@@ -145,11 +165,11 @@ public class TaskHandlerAction implements Serializable {
 		setTemporaryTask(new Task());
 		getTemporaryTask().setTaskPriority(TaskPriority.LOW);
 		setTemporaryTaskSampleCount(1);
-		TaskUtil.createNewSample(getTemporaryTask());
+		Sample tmp = new Sample(getTemporaryTask());
 
 		// checks if default statingsList is empty
 		if (!getAllAvailableMaterials().isEmpty()) {
-			getTemporaryTask().getSamples().get(0).setMaterilaPreset(getAllAvailableMaterials().get(0));
+			tmp.setMaterilaPreset(getAllAvailableMaterials().get(0));
 		}
 
 		mainHandlerAction.showDialog(Dialog.TASK_CREATE);
@@ -163,12 +183,11 @@ public class TaskHandlerAction implements Serializable {
 		if (temporaryTaskSampleCount >= 1) {
 			if (temporaryTaskSampleCount > task.getSamples().size())
 				while (temporaryTaskSampleCount > task.getSamples().size()) {
-					Sample tmp = TaskUtil.createNewSample(task);
+					Sample tmp = new Sample(task);
 					tmp.setMaterilaPreset(getAllAvailableMaterials().get(0));
 				}
 			else if (temporaryTaskSampleCount < task.getSamples().size())
 				while (temporaryTaskSampleCount < task.getSamples().size()) {
-					getTemporaryTask().setSampleNumer(getTemporaryTask().getSampleNumer() - 1);
 					task.getSamples().remove(task.getSamples().size() - 1);
 				}
 		}
@@ -194,6 +213,10 @@ public class TaskHandlerAction implements Serializable {
 			genericDAO.save(task.getReport(PdfTemplate.UREPROT), resourceBundle.get("log.patient.task.upload.orderList",
 					task.getTaskID(), task.getReport(PdfTemplate.UREPROT).getName()), patient);
 		}
+
+		// saving report to datanase
+		genericDAO.save(task.getReport(), resourceBundle.get("log.patient.task.report.new", task.getTaskID()),
+				task.getPatient());
 
 		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
 
@@ -276,10 +299,7 @@ public class TaskHandlerAction implements Serializable {
 	 * @param task
 	 */
 	public void createNewSample(Task task, MaterialPreset material) {
-		Sample sample = TaskUtil.createNewSample(task);
-
-		sample.setMaterilaPreset(material);
-		sample.setMaterial(material.getName());
+		Sample sample = new Sample(task, material);
 
 		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
 				sample.getSampleID(), material.getName()), task.getPatient());
@@ -512,10 +532,23 @@ public class TaskHandlerAction implements Serializable {
 	public void setTemporaryTaskSampleCount(int temporaryTaskSampleCount) {
 		this.temporaryTaskSampleCount = temporaryTaskSampleCount;
 	}
-	
+
+	public List<Physician> getPhysiciansToSignReport() {
+		return physiciansToSignReport;
+	}
+
+	public void setPhysiciansToSignReport(List<Physician> physiciansToSignReport) {
+		this.physiciansToSignReport = physiciansToSignReport;
+	}
+
+	public DefaultTransformer<Physician> getPhysiciansToSignReportTransformer() {
+		return physiciansToSignReportTransformer;
+	}
+
+	public void setPhysiciansToSignReportTransformer(DefaultTransformer<Physician> physiciansToSignReportTransformer) {
+		this.physiciansToSignReportTransformer = physiciansToSignReportTransformer;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
 }
-// p:importEnum type="javax.faces.application.ProjectStage"
-// var="JsfProjectStages" allSuffix="ALL_ENUM_VALUES" />

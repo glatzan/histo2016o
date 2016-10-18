@@ -186,7 +186,7 @@
 			<h:panelGroup id="extendedTextParent">
 				<p:editor id="extendedText" widgetVar="extendedText"
 					disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.histologicalRecord}"
+					value="#{worklistHandlerAction.selectedPatient.selectedTask.report.histologicalRecord}"
 					style="width:100%"
 					valueChangeListener="#{helperHandlerAction.valueChanged}">
 				</p:editor>
@@ -225,50 +225,95 @@
 
 				<c:set var="diagnosis" value="#{sampel.getLastRelevantDiagnosis()}" />
 
-				<h:panelGrid columns="4" id="diagnosisTable"
+				<p:panelGrid id="diagnosisTable"
 					styleClass="diagnosisTable noPaddingAll noBordersAll collapsedBordersAll"
 					columnClasses="firstColumn,secondColumn,thirdColumn,fourthColumn">
 
-					<h:outputLabel
-						value="#{msg['body.diagnosis.diagnosis.sample']} #{sampel.sampleID}"></h:outputLabel>
+					<p:row>
+						<p:column style=" width:100px;">
+							<h:outputLabel
+								value="#{msg['body.diagnosis.diagnosis.sample']} #{sampel.sampleID}"></h:outputLabel>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
+								disabled="#{diagnosis.finalized}"
+								styleClass="diagnosisSelectMenu"
+								panelStyleClass="diagnosisSelectMenuPanel"
+								converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
+								filter="true" filterMatchMode="startsWith">
+								<f:selectItem
+									itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
+									itemValue="#{null}" />
 
-					<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-						disabled="#{diagnosis.finalized}" styleClass="diagnosisSelectMenu"
+								<f:selectItems
+									value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
+									var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.name}"
+									itemValue="#{diagnosisPrototype}" />
+
+								<p:ajax event="change"
+									listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
+								<p:ajax event="change"
+									update="diagnosisTable :contentForm:extendedText"
+									listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
+							</p:selectOneMenu>
+						</p:column>
+						<p:column>
+							<p:commandLink
+								title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
+								rendered="#{diagnosis.diagnosisPrototype ne null}"
+								actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
+								update=":contentForm:extendedText">
+								<i class="fa fa-hand-o-up"></i>
+								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							</p:commandLink>
+						</p:column>
+						<p:column>
+							<h:panelGrid columns="2" style="float:right;margin-right:20px;">
+								<h:outputLabel
+									value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
+								<p:selectBooleanCheckbox value="#{diagnosis.malign}"
+									disabled="#{diagnosis.finalized}" />
+							</h:panelGrid>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column></p:column>
+						<p:column colspan="3">
+							<h:inputText value="#{diagnosis.diagnosis}"
+								disabled="#{diagnosis.finalized}" styleClass="diagnosisText"></h:inputText>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+			</ui:repeat>
+
+			<h:panelGrid columns="4">
+				<h:outputLabel value="Unterschriftsdatum"></h:outputLabel>
+				<p:calendar></p:calendar>
+
+				<h:panelGrid columns="1">
+					<p:selectOneMenu disabled="#{diagnosis.finalized}"
+						styleClass="diagnosisSelectMenu"
 						panelStyleClass="diagnosisSelectMenuPanel"
-						converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
-						filter="true" filterMatchMode="startsWith">
+						converter="#{taskHandlerAction.physiciansToSignReportTransformer}"
+						filter="true" filterMatchMode="contains">
 						<f:selectItem
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
 							itemValue="#{null}" />
 
 						<f:selectItems
-							value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
-							var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.name}"
-							itemValue="#{diagnosisPrototype}" />
+							value="#{taskHandlerAction.physiciansToSignReport}"
+							var="physiciansToSignReport" itemLabel="#{physiciansToSignReport.fullName}"
+							itemValue="#{physiciansToSignReport}" />
 
-						<p:ajax event="change"
-							listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
-						<p:ajax event="change"
-							update="diagnosisTable :contentForm:extendedText"
-							listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
 					</p:selectOneMenu>
-
-					<h:inputText value="#{diagnosis.diagnosis}"
-						disabled="#{diagnosis.finalized}" styleClass="diagnosisText"></h:inputText>
-
-					<h:panelGroup>
-						<p:commandLink
-							title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
-							rendered="#{diagnosis.diagnosisPrototype ne null}"
-							actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
-							update=":contentForm:extendedText">
-							<i class="fa fa-hand-o-up"></i>
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
-						</p:commandLink>
-					</h:panelGroup>
+					<p:selectOneMenu></p:selectOneMenu>
 				</h:panelGrid>
-			</ui:repeat>
-
+				<h:panelGrid columns="1">
+					<p:selectOneMenu></p:selectOneMenu>
+					<p:selectOneMenu></p:selectOneMenu>
+				</h:panelGrid>
+			</h:panelGrid>
 
 		</h:panelGrid>
 	</p:panel>

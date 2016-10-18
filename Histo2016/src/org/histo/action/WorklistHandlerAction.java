@@ -17,6 +17,7 @@ import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.dao.PatientDao;
+import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.SearchOptions;
@@ -73,6 +74,9 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
 
+	@Autowired
+	private TaskDAO taskDAO;
+	
 	/*
 	 * ************************** Patient ****************************
 	 */
@@ -236,6 +240,8 @@ public class WorklistHandlerAction implements Serializable {
 			}
 		}
 
+		taskDAO.initializeReportData(task);
+			
 		return View.WORKLIST.getPath();
 	}
 
@@ -263,8 +269,12 @@ public class WorklistHandlerAction implements Serializable {
 			return View.WORKLIST_BLANK.getPath();
 		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT)
 			return View.WORKLIST_PATIENT.getPath();
-		else if (currentView == View.WORKLIST_DIAGNOSIS || currentView == View.WORKLIST_RECEIPTLOG) {
-			return mainHandlerAction.getCurrentView().getPath();
+		else if (currentView == View.WORKLIST_DIAGNOSIS){
+			
+			
+			return View.WORKLIST_DIAGNOSIS.getPath();
+		}else if (currentView == View.WORKLIST_RECEIPTLOG) {
+			return View.WORKLIST_RECEIPTLOG.getPath();
 		} else
 			return View.WORKLIST_BLANK.getPath();
 	}

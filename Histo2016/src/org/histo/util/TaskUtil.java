@@ -45,31 +45,6 @@ public class TaskUtil {
 		return result;
 	}
 
-	/**
-	 * Creates a new Sample and adds it to the samplelist of the given task
-	 * @param task
-	 * @return
-	 */
-	public final static Sample createNewSample(Task task) {
-		return createNewSample(new Sample(),task);
-	}
-	
-	/**
-	 * Creates a new sample with one diagnosis an standard staingings. Adds the
-	 * sample to the given tasks and returns it.
-	 * 
-	 * @param task
-	 * @param standardStainings
-	 * @return
-	 */
-	public final static Sample createNewSample(Sample sample, Task task) {
-		sample.setGenerationDate(System.currentTimeMillis());
-		sample.setSampleID(getRomanNumber(task.getSampleNumer()));
-		sample.setParent(task);
-		task.getSamples().add(sample);
-		task.incrementSampleNumber();
-		return sample;
-	}
 
 	/**
 	 * Creates a diagnosis an adds it to the given sample

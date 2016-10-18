@@ -220,8 +220,8 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		// only setting diagnosis text if one sample and no text has been added
 		// jet
-		if (task.getSamples().size() == 1 && task.getHistologicalRecord().isEmpty())
-			task.setHistologicalRecord(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+		if (task.getSamples().size() == 1 && (task.getReport().getHistologicalRecord() != null || task.getReport().getHistologicalRecord().isEmpty()))
+			task.getReport().setHistologicalRecord(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 
 		genericDAO.save(diagnosis, "hallo", diagnosis.getPatient());
 		System.out.println("changed");
@@ -231,7 +231,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		setTmpDiagnosis(tmpDiagnosis);
 
 		// setting diagnosistext if no text is set
-		if (tmpDiagnosis.getParent().getParent().getHistologicalRecord().isEmpty()
+		if (tmpDiagnosis.getParent().getParent().getReport().getHistologicalRecord().isEmpty()
 				&& tmpDiagnosis.getDiagnosisPrototype() != null) {
 			copyHistologicalRecord(tmpDiagnosis);
 			return;
@@ -244,12 +244,12 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	public void copyHistologicalRecord(Diagnosis tmpDiagnosis) {
 		tmpDiagnosis.getParent().getParent()
-				.setHistologicalRecord(tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+				.getReport().setHistologicalRecord(tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 		setTmpDiagnosis(null);
 
 		taskHandlerAction.taskDataChanged(tmpDiagnosis.getParent().getParent(),
 				"log.patient.task.dataChange.histologicalRecord",
-				tmpDiagnosis.getParent().getParent().getHistologicalRecord());
+				tmpDiagnosis.getParent().getParent().getReport().getHistologicalRecord());
 		System.out.println("---------!!!!!!!!!");
 	}
 	/*

@@ -20,7 +20,7 @@ import org.hibernate.envers.Audited;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "signatureContainer_sequencegenerator", sequenceName = "signatureContainer_sequence")
-public class SignatureContainer {
+public class Report {
 
 	private long id;
 
@@ -31,6 +31,11 @@ public class SignatureContainer {
 	private Siganture signatureLeft;
 
 	private Siganture sigantureRight;
+
+	/**
+	 * Text containing the histological record for all samples.
+	 */
+	private String histologicalRecord = "";
 
 	@Id
 	@GeneratedValue(generator = "signatureContainer_sequencegenerator")
@@ -76,6 +81,15 @@ public class SignatureContainer {
 
 	public void setSignatureDate(long signatureDate) {
 		this.signatureDate = signatureDate;
+	}
+
+	@Column(columnDefinition = "text")
+	public String getHistologicalRecord() {
+		return histologicalRecord;
+	}
+
+	public void setHistologicalRecord(String histologicalRecord) {
+		this.histologicalRecord = histologicalRecord;
 	}
 
 }

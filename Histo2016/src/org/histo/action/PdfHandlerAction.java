@@ -217,21 +217,21 @@ public class PdfHandlerAction {
 					privatePhysician == null ? "" : privatePhysician.getPhysician().getFullName());
 			stamper.getAcroFields().setField("I_SURGEON", surgeon == null ? "" : surgeon.getPhysician().getFullName());
 
-			stamper.getAcroFields().setField("I_DIAGNOSIS_EXTENDED", task.getHistologicalRecord());
+			stamper.getAcroFields().setField("I_DIAGNOSIS_EXTENDED", task.getReport().getHistologicalRecord());
 			stamper.getAcroFields().setField("I_DIAGNOSIS", diagonsisList.toString());
 
-			if (task.getSignatures() != null) {
-				if (task.getSignatures().getSignatureLeft() != null) {
+			if (task.getReport() != null) {
+				if (task.getReport().getSignatureLeft() != null) {
 					stamper.getAcroFields().setField("I_PHYSICIAN",
-							task.getSignatures().getSignatureLeft().getPhysician().getFullName());
-					stamper.getAcroFields().setField("I_PHYSICIAN", task.getSignatures().getSignatureLeft().getRole());
+							task.getReport().getSignatureLeft().getPhysician().getFullName());
+					stamper.getAcroFields().setField("I_PHYSICIAN", task.getReport().getSignatureLeft().getRole());
 				}
 
-				if (task.getSignatures().getSigantureRight() != null) {
+				if (task.getReport().getSigantureRight() != null) {
 					stamper.getAcroFields().setField("I_CONSULTANT",
-							task.getSignatures().getSigantureRight().getPhysician().getFullName());
+							task.getReport().getSigantureRight().getPhysician().getFullName());
 					stamper.getAcroFields().setField("I_CONSULTANT_ROLE",
-							task.getSignatures().getSigantureRight().getRole());
+							task.getReport().getSigantureRight().getRole());
 				}
 			}
 

@@ -31,6 +31,10 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	public void initializePdfData(Task task) {
 		getSession().update(task);
 		Hibernate.initialize(task.getAttachedPdfs());
-		Hibernate.initialize(task.getSignatures());
+	}
+	
+	public void initializeReportData(Task task) {
+		getSession().update(task);
+		Hibernate.initialize(task.getReport());
 	}
 }

@@ -40,7 +40,7 @@ import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.Siganture;
-import org.histo.model.SignatureContainer;
+import org.histo.model.Report;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
@@ -134,11 +134,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	private Eye eye = Eye.RIGHT;
 
 	/**
-	 * Sample count, is incemented with every new sample
-	 */
-	private int sampleNumer = 1;
-
-	/**
 	 * List with all samples
 	 */
 	private List<Sample> samples;
@@ -180,20 +175,15 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	private long notificationCompletionDate = 0;
 
 	/**
-	 * Text containing the histological record for all samples.
-	 */
-	private String histologicalRecord = "";
-
-	/**
 	 * Generated PDFs of this task
 	 */
 	private List<PDFContainer> attachedPdfs;
 
-	private Council council;
-
 	private Accounting accounting;
 
-	private SignatureContainer signatures;
+	private Council council;
+
+	private Report report;
 	
 	/********************************************************
 	 * Transient Variables
@@ -281,14 +271,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		if (isNew() && (!isStainingCompleted() || !isDiagnosisCompleted()))
 			return true;
 		return false;
-	}
-
-	public void incrementSampleNumber() {
-		this.sampleNumer++;
-	}
-
-	public void decrementSmapleNumber() {
-		this.sampleNumer--;
 	}
 
 	/********************************************************
@@ -421,14 +403,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.eye = eye;
 	}
 
-	public int getSampleNumer() {
-		return sampleNumer;
-	}
-
-	public void setSampleNumer(int sampleNumer) {
-		this.sampleNumer = sampleNumer;
-	}
-
 	public boolean isDueDateSelected() {
 		return dueDateSelected;
 	}
@@ -477,15 +451,6 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 		this.ward = ward;
 	}
 
-	@Column(columnDefinition = "text")
-	public String getHistologicalRecord() {
-		return histologicalRecord;
-	}
-
-	public void setHistologicalRecord(String histologicalRecord) {
-		this.histologicalRecord = histologicalRecord;
-	}
-
 	@Enumerated(EnumType.ORDINAL)
 	public TaskPriority getTaskPriority() {
 		return taskPriority;
@@ -530,12 +495,14 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	}
 
 	@OneToOne(fetch = FetchType.LAZY)
-	public SignatureContainer getSignatures() {
-		return signatures;
+	public Report getReport() {
+		if(report == null)
+			report = new Report();
+		return report;
 	}
 
-	public void setSignatures(SignatureContainer signatures) {
-		this.signatures = signatures;
+	public void setReport(Report report) {
+		this.report = report;
 	}
 	/********************************************************
 	 * Getter/Setter

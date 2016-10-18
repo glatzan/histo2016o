@@ -33,6 +33,7 @@ import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.StainingStatus;
 import org.histo.model.util.TaskTree;
+import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 
 @Entity
@@ -103,7 +104,33 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	 */
 	private MaterialPreset materilaPreset;
 
-	/******************************************************** Transient ********************************************************/
+	public Sample() {
+	}
+
+	/**
+	 * Constructor for adding this sample to a task.
+	 * 
+	 * @param task
+	 */
+	public Sample(Task task) {
+		this(task, null);
+	}
+
+	/**
+	 * Constructor for adding this sample to a task and set the material as
+	 * well.
+	 * 
+	 * @param task
+	 */
+	public Sample(Task task, MaterialPreset material) {
+		setGenerationDate(System.currentTimeMillis());
+		setSampleID(TaskUtil.getRomanNumber(task.getSamples().size() + 1));
+		setParent(task);
+		setMaterilaPreset(material);
+		setMaterial(material == null ? "" : material.getName());
+		task.getSamples().add(this);
+
+	}
 
 	/******************************************************** Transient ********************************************************/
 
@@ -130,6 +157,8 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 		}
 		return false;
 	}
+
+	/******************************************************** Transient ********************************************************/
 
 	public void incrementBlockNumber() {
 		this.blockNumber++;
