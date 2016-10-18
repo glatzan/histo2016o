@@ -220,11 +220,13 @@
 			</h:panelGroup>
 
 			<h:outputLabel value="#{msg['body.diagnosis.diagnosis']}"></h:outputLabel>
+
 			<ui:repeat var="sampel"
 				value="#{worklistHandlerAction.selectedPatient.selectedTask.samples}">
 
 				<c:set var="diagnosis" value="#{sampel.getLastRelevantDiagnosis()}" />
 
+				<!-- Diagnosis -->
 				<p:panelGrid id="diagnosisTable"
 					styleClass="diagnosisTable noPaddingAll noBordersAll collapsedBordersAll"
 					columnClasses="firstColumn,secondColumn,thirdColumn,fourthColumn">
@@ -235,86 +237,178 @@
 								value="#{msg['body.diagnosis.diagnosis.sample']} #{sampel.sampleID}"></h:outputLabel>
 						</p:column>
 						<p:column>
-							<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-								disabled="#{diagnosis.finalized}"
-								styleClass="diagnosisSelectMenu"
-								panelStyleClass="diagnosisSelectMenuPanel"
-								converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
-								filter="true" filterMatchMode="startsWith">
-								<f:selectItem
-									itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-									itemValue="#{null}" />
+							<h:panelGrid columns="2"
+								styleClass="noPaddingAll noBordersAll collapsedBordersAll">
+								<!-- Diagnosis select -->
+								<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
+									disabled="#{diagnosis.finalized}"
+									styleClass="diagnosisSelectMenu"
+									panelStyleClass="diagnosisSelectMenuPanel"
+									converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
+									filter="true" filterMatchMode="startsWith">
+									<f:selectItem
+										itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
+										itemValue="#{null}" />
 
-								<f:selectItems
-									value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
-									var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.name}"
-									itemValue="#{diagnosisPrototype}" />
+									<f:selectItems
+										value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
+										var="diagnosisPrototype"
+										itemLabel="#{diagnosisPrototype.name}"
+										itemValue="#{diagnosisPrototype}" />
 
-								<p:ajax event="change"
-									listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
-								<p:ajax event="change"
-									update="diagnosisTable :contentForm:extendedText"
-									listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
-							</p:selectOneMenu>
+									<p:ajax event="change"
+										listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
+									<p:ajax event="change"
+										update="diagnosisTable :contentForm:extendedText"
+										listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
+								</p:selectOneMenu>
+								<!-- copy diagnosis text -->
+								<p:commandLink styleClass="noUnderlineAtLink"
+									style="margin-left:20px;"
+									title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
+									rendered="#{diagnosis.diagnosisPrototype ne null}"
+									actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
+									update=":contentForm:extendedText">
+									<i class="fa fa-hand-o-up"></i>
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+							</h:panelGrid>
 						</p:column>
 						<p:column>
-							<p:commandLink
-								title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
-								rendered="#{diagnosis.diagnosisPrototype ne null}"
-								actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
-								update=":contentForm:extendedText">
-								<i class="fa fa-hand-o-up"></i>
-								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
-							</p:commandLink>
-						</p:column>
-						<p:column>
-							<h:panelGrid columns="2" style="float:right;margin-right:20px;">
+							<!-- malign -->
+							<h:panelGrid columns="2" style="float:right;margin-right:20px;"
+								styleClass="verticalAlignMiddleAll">
 								<h:outputLabel
 									value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
 								<p:selectBooleanCheckbox value="#{diagnosis.malign}"
-									disabled="#{diagnosis.finalized}" />
+									style="margin:3px 0px 0px 3px;"
+									disabled="#{diagnosis.finalized}">
+
+									<f:ajax event="change" execute="@this"
+										listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
+								</p:selectBooleanCheckbox>
 							</h:panelGrid>
 						</p:column>
 					</p:row>
 					<p:row>
 						<p:column></p:column>
-						<p:column colspan="3">
-							<h:inputText value="#{diagnosis.diagnosis}"
-								disabled="#{diagnosis.finalized}" styleClass="diagnosisText"></h:inputText>
+						<p:column colspan="2">
+							<!-- diagnosis text -->
+							<p:inputTextarea value="#{diagnosis.diagnosis}"
+								id="diagnosisText" style="margin-top:5px;"
+								disabled="#{diagnosis.finalized}" styleClass="diagnosisText"
+								rows="1">
+								<p:watermark for="diagnosisText"
+									value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
+								<f:ajax event="change" execute="@this"
+									listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
+							</p:inputTextarea>
+
 						</p:column>
 					</p:row>
 				</p:panelGrid>
-
+				<!-- Diagnosis -->
 			</ui:repeat>
 
-			<h:panelGrid columns="4">
-				<h:outputLabel value="Unterschriftsdatum"></h:outputLabel>
-				<p:calendar></p:calendar>
+			<p:panelGrid style="width:100%;margin-top:30px;"
+				styleClass="noPaddingAll noBordersAll collapsedBordersAll">
+				<p:row>
+					<p:column style="width:30%">
+						<h:outputLabel value="Datum Unterschrift"></h:outputLabel>
+					</p:column>
+					<p:column style="width:30%">
+						<p:selectOneMenu disabled="#{diagnosis.finalized}"
+							styleClass="diagnosisSelectMenu" style="float:right; width:80%"
+							panelStyleClass="diagnosisSelectMenuPanel"
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft}"
+							converter="#{taskHandlerAction.physiciansToSignReportTransformer}"
+							filter="true" filterMatchMode="contains">
+							<f:selectItem
+								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
+								itemValue="#{null}" />
 
-				<h:panelGrid columns="1">
-					<p:selectOneMenu disabled="#{diagnosis.finalized}"
-						styleClass="diagnosisSelectMenu"
-						panelStyleClass="diagnosisSelectMenuPanel"
-						converter="#{taskHandlerAction.physiciansToSignReportTransformer}"
-						filter="true" filterMatchMode="contains">
-						<f:selectItem
-							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-							itemValue="#{null}" />
+							<f:selectItems
+								value="#{taskHandlerAction.physiciansToSignReport}"
+								var="physiciansToSignReport"
+								itemLabel="#{physiciansToSignReport.physician.fullName}"
+								itemValue="#{physiciansToSignReport}" />
 
-						<f:selectItems
-							value="#{taskHandlerAction.physiciansToSignReport}"
-							var="physiciansToSignReport" itemLabel="#{physiciansToSignReport.fullName}"
-							itemValue="#{physiciansToSignReport}" />
+							<p:ajax update="sigantureLeftRole" process="@this" event="change">
+							</p:ajax>
+						</p:selectOneMenu>
+					</p:column>
+					<p:column style="width:30%">
+						<p:selectOneMenu disabled="#{diagnosis.finalized}"
+							style="float:right;width:80%" styleClass="diagnosisSelectMenu"
+							panelStyleClass="diagnosisSelectMenuPanel"
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight}"
+							converter="#{taskHandlerAction.physiciansToSignReportTransformer}"
+							filter="true" filterMatchMode="contains">
+							<f:selectItem
+								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
+								itemValue="#{null}" />
 
-					</p:selectOneMenu>
-					<p:selectOneMenu></p:selectOneMenu>
-				</h:panelGrid>
-				<h:panelGrid columns="1">
-					<p:selectOneMenu></p:selectOneMenu>
-					<p:selectOneMenu></p:selectOneMenu>
-				</h:panelGrid>
-			</h:panelGrid>
+							<f:selectItems
+								value="#{taskHandlerAction.physiciansToSignReport}"
+								var="physiciansToSignReport"
+								itemLabel="#{physiciansToSignReport.physician.fullName}"
+								itemValue="#{physiciansToSignReport}" />
 
+							<p:ajax update="sigantureRightRole" process="@this"
+								event="change">
+							</p:ajax>
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:separator style="float:left;width:75%" />
+					</p:column>
+					<p:column>
+						<p:separator style="float:right; width:90%" />
+					</p:column>
+					<p:column>
+						<p:separator style="float:right; width:90%" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<p:calendar pattern="dd.MM.yyyy" mask="true"
+							disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
+							value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}">
+							<p:ajax event="dateSelect"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+							<f:ajax event="change" execute="@this"
+								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+						</p:calendar>
+					</p:column>
+					<p:column>
+						<h:panelGroup id="sigantureLeftRole">
+							<p:selectOneMenu editable="true" style="float:right; width:80%"
+								value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft.role}"
+								rendered="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft ne null}">
+								<f:selectItems value="#{enumProvider.signatureRoles}"
+									var="signatureRole"
+									itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
+									itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+					</p:column>
+					<p:column>
+						<h:panelGroup id="sigantureRightRole">
+							<p:selectOneMenu editable="true" style="float:right; width:80%"
+								value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight.role}"
+								rendered="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight ne null}">
+								<f:selectItems value="#{enumProvider.signatureRoles}"
+									var="signatureRole"
+									itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
+									itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
 		</h:panelGrid>
 	</p:panel>
 </ui:composition>

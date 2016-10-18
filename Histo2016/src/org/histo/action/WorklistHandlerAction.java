@@ -506,30 +506,6 @@ public class WorklistHandlerAction implements Serializable {
 	 * ************************** Worklist ****************************
 	 */
 
-	// public void updateSample(Sample sample) {
-	// boolean completed = true;
-	//
-	// for (Diagnosis diagnosis2 : sample.getDiagnoses()) {
-	// if (!diagnosis2.isFinalized())
-	// completed = false;
-	// }
-	//
-	// if (completed) {
-	// sample.setDiagnosisCompletionDate(System.currentTimeMillis());
-	// sample.setDiagnosisCompleted(true);
-	// } else {
-	// sample.setDiagnosisCompleted(false);
-	// sample.setDiagnosisCompletionDate(System.currentTimeMillis());
-	// }
-	// }
-
-	// name (in current worklist)
-	// name, surname (in current worklist)
-	// piz (current, extern)
-	// auftrag a (current, extern)
-	// bloc b (current extern)
-	// slide s (current extern)
-
 	public void searchForExistingPatients() {
 		if (getWorklistFilter().matches("[0-9]{6,8}")) {
 			System.out.println("piz");

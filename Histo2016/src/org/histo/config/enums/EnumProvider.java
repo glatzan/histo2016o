@@ -68,6 +68,14 @@ public class EnumProvider {
 	}
 	
 	/**
+	 * Returns an array containing all values of the SigantureRole enumeration.
+	 * @return
+	 */
+	public SignatureRole[] getSignatureRoles(){
+		return SignatureRole.values();
+	}
+	
+	/**
 	 * Returns the path an an dialog
 	 * 
 	 * @param dialog

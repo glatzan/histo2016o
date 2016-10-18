@@ -16,14 +16,8 @@
 	<h:form>
 
 		<div class="dialogContent">
-			<h:outputLabel
-				value="#{msg['dialog.diagnosis.finalize.diagnosis.text']}"
-				escape="false"
-				rendered="#{diagnosisHandlerAction.isDiangosisDiagnosisOrFollowUP(diagnosisHandlerAction.tmpDiagnosis)}" />
-			<h:outputLabel
-				value="#{msg['dialog.diagnosis.finalize.revision.text']}"
-				escape="false"
-				rendered="#{!diagnosisHandlerAction.isDiangosisDiagnosisOrFollowUP(diagnosisHandlerAction.tmpDiagnosis)}" />
+			<h:outputLabel value="#{msg['dialog.diagnosis.finalize.text']}"
+				escape="false" />
 
 		</div>
 		<div class="buttonContainer">
@@ -37,8 +31,5 @@
 
 	</h:form>
 </h:body>
-
-
-
 </html>
 

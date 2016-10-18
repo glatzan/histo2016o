@@ -8,7 +8,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.histo.model.DiagnosisPrototype;
+import org.histo.model.DiagnosisPreset;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
@@ -51,8 +51,8 @@ public class HelperDAO extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<DiagnosisPrototype> getAllDiagnosisPrototypes() {
-		return getSession().createCriteria(DiagnosisPrototype.class).list();
+	public List<DiagnosisPreset> getAllDiagnosisPrototypes() {
+		return getSession().createCriteria(DiagnosisPreset.class).list();
 	}
 
 //	@SuppressWarnings("unchecked")

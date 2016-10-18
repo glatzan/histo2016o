@@ -227,11 +227,11 @@ public class PdfHandlerAction {
 					stamper.getAcroFields().setField("I_PHYSICIAN", task.getReport().getSignatureLeft().getRole());
 				}
 
-				if (task.getReport().getSigantureRight() != null) {
+				if (task.getReport().getSignatureRight() != null) {
 					stamper.getAcroFields().setField("I_CONSULTANT",
-							task.getReport().getSigantureRight().getPhysician().getFullName());
+							task.getReport().getSignatureRight().getPhysician().getFullName());
 					stamper.getAcroFields().setField("I_CONSULTANT_ROLE",
-							task.getReport().getSigantureRight().getRole());
+							task.getReport().getSignatureRight().getRole());
 				}
 			}
 

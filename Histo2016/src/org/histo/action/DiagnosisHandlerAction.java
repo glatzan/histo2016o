@@ -9,7 +9,7 @@ import java.util.List;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
-import org.histo.model.DiagnosisPrototype;
+import org.histo.model.DiagnosisPreset;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
@@ -47,22 +47,6 @@ public class DiagnosisHandlerAction implements Serializable {
 	private static final long serialVersionUID = -1214161114824263589L;
 
 	private Diagnosis tmpDiagnosis;
-
-	/**
-	 * Checks if a follow up diagnosis (Nachbefundung) can be created. This is
-	 * only possible if one normal diagnosis is present.
-	 * 
-	 * @param sample
-	 * @return
-	 */
-	public boolean isDiagonsisFollowUPCreationPossible(Sample sample) {
-		List<Diagnosis> diagnoses = sample.getDiagnoses();
-
-		if (diagnoses.size() == 1)
-			return true;
-		else
-			return false;
-	}
 
 	/**
 	 * Checks if a diagnosis revision can be created. This in only possible if
@@ -107,21 +91,6 @@ public class DiagnosisHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Checks if the given diagnosis is a normal diagnosis or a followup
-	 * diagnosis.
-	 * 
-	 * @param diagnosis
-	 * @return
-	 */
-	public boolean isDiangosisDiagnosisOrFollowUP(Diagnosis diagnosis) {
-		if (diagnosis.getType() == DiagnosisType.DIAGNOSIS
-				|| diagnosis.getType() == DiagnosisType.FOLLOW_UP_DIAGNOSIS) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Shows a waring dialog before finalizing a diagnosis.
 	 */
 	public void prepareFinalizeDiagnosisDialog(Diagnosis diagnosis) {
@@ -138,34 +107,29 @@ public class DiagnosisHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Finalizes the passed diagnosis. If the diagnosis is a normal diagnosis or
-	 * an follow up diagnosis, all other normal or follow up (there can only be
-	 * one other) will be finalized as well. If the diagnosis is a revision
-	 * diagnosis, only the revision diagnosis will be finalized.
+	 * Finalizes all diagnoses of the task.
+	 */
+	public void finalizeDiagnoses(Task task) {
+		for (Sample sample : task.getSamples()) {
+			for (Diagnosis diagnosis : sample.getDiagnoses()) {
+				finalizeDiagnosis(diagnosis);
+			}
+		}
+		task.setDiagnosisCompleted(true);
+		task.setDiagnosisCompletionDate(System.currentTimeMillis());
+	}
+
+	/**
+	 * Finalizes the passed diagnosis.
 	 * 
 	 * @param diagnosis
 	 */
 	public void finalizeDiagnosis(Diagnosis diagnosis) {
-
-		Sample sample = diagnosis.getParent();
-		if (isDiangosisDiagnosisOrFollowUP(diagnosis)) {
-
-			for (Diagnosis diagnosisIter : sample.getDiagnoses()) {
-				diagnosisIter.setFinalized(true);
-				diagnosisIter.setFinalizedDate(System.currentTimeMillis());
-			}
-
-		} else {
-			diagnosis.setFinalized(true);
-			diagnosis.setFinalizedDate(System.currentTimeMillis());
-		}
+		diagnosis.setFinalized(true);
+		diagnosis.setFinalizedDate(System.currentTimeMillis());
 
 		genericDAO.save(diagnosis, resourceBundle.get("log.patient.diagnosis.finaziled"), diagnosis.getPatient());
 		genericDAO.refresh(diagnosis.getPatient());
-
-		helper.updateRevision(diagnosis);
-
-		hideFinalizeDiangosisDialog();
 	}
 
 	/**
@@ -220,7 +184,8 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		// only setting diagnosis text if one sample and no text has been added
 		// jet
-		if (task.getSamples().size() == 1 && (task.getReport().getHistologicalRecord() != null || task.getReport().getHistologicalRecord().isEmpty()))
+		if (task.getSamples().size() == 1 && (task.getReport().getHistologicalRecord() != null
+				|| task.getReport().getHistologicalRecord().isEmpty()))
 			task.getReport().setHistologicalRecord(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 
 		genericDAO.save(diagnosis, "hallo", diagnosis.getPatient());
@@ -243,8 +208,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	}
 
 	public void copyHistologicalRecord(Diagnosis tmpDiagnosis) {
-		tmpDiagnosis.getParent().getParent()
-				.getReport().setHistologicalRecord(tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+		tmpDiagnosis.getParent().getParent().getReport()
+				.setHistologicalRecord(tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 		setTmpDiagnosis(null);
 
 		taskHandlerAction.taskDataChanged(tmpDiagnosis.getParent().getParent(),
@@ -261,18 +226,6 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * log.patient.task.sample.diagnosis.unfinalize=Diagnose wieder freigegeben.
 	 * (Auftrag: {0}, Probe: {1}, Diangose: {2})
 	 */
-
-	/**
-	 * 
-	 * @param diagnosis
-	 * @param diagnosisPrototype
-	 */
-	public void updateDiagnosisWithDiangosisPrototype(Diagnosis diagnosis, DiagnosisPrototype diagnosisPrototype) {
-		diagnosis.setDiagnosisPrototype(diagnosisPrototype);
-		diagnosis.setDiagnosis(diagnosisPrototype.getDiagnosisText());
-		diagnosis.setMalign(diagnosisPrototype.isMalign());
-		diagnosis.setCommentary(diagnosisPrototype.getCommentary());
-	}
 
 	public void print() {
 		// PdfReader pdfTemplate;

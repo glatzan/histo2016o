@@ -16,7 +16,7 @@ import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
-import org.histo.model.Siganture;
+import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -99,12 +99,12 @@ public class TaskHandlerAction implements Serializable {
 	/**
 	 * List of all physicians
 	 */
-	private List<Physician> physiciansToSignReport;
+	private List<Signature> physiciansToSignReport;
 
 	/**
 	 * Transformer for selecting a physician for sigin the report
 	 */
-	private DefaultTransformer<Physician> physiciansToSignReportTransformer;
+	private DefaultTransformer<Signature> physiciansToSignReportTransformer;
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -134,7 +134,7 @@ public class TaskHandlerAction implements Serializable {
 		setAllAvailableMaterials(helperDAO.getAllStainingLists());
 		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
 
-		setPhysiciansToSignReport(physicianDAO.getPhysicians(ContactRole.values(), false));
+		setPhysiciansToSignReport(Signature.getSignatureList(physicianDAO.getPhysicians(ContactRole.values(), false)));
 		setPhysiciansToSignReportTransformer(new DefaultTransformer<>(getPhysiciansToSignReport()));
 
 		// initis all wards
@@ -533,19 +533,19 @@ public class TaskHandlerAction implements Serializable {
 		this.temporaryTaskSampleCount = temporaryTaskSampleCount;
 	}
 
-	public List<Physician> getPhysiciansToSignReport() {
+	public List<Signature> getPhysiciansToSignReport() {
 		return physiciansToSignReport;
 	}
 
-	public void setPhysiciansToSignReport(List<Physician> physiciansToSignReport) {
+	public void setPhysiciansToSignReport(List<Signature> physiciansToSignReport) {
 		this.physiciansToSignReport = physiciansToSignReport;
 	}
 
-	public DefaultTransformer<Physician> getPhysiciansToSignReportTransformer() {
+	public DefaultTransformer<Signature> getPhysiciansToSignReportTransformer() {
 		return physiciansToSignReportTransformer;
 	}
 
-	public void setPhysiciansToSignReportTransformer(DefaultTransformer<Physician> physiciansToSignReportTransformer) {
+	public void setPhysiciansToSignReportTransformer(DefaultTransformer<Signature> physiciansToSignReportTransformer) {
 		this.physiciansToSignReportTransformer = physiciansToSignReportTransformer;
 	}
 	/********************************************************

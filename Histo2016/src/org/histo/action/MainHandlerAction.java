@@ -31,7 +31,53 @@ import org.springframework.stereotype.Component;
 // TODO: prevent overwriting of data from clinic physicians if changed
 // TODO: change event of histological record in diagnosis page, located in helphandler action
 // TODO: Re-Diagnosis reduce options 
-
+//<!-- Buttons -->
+//<h:panelGrid columns="2">
+//	<!-- Save and finalize buttons -->
+//
+//	<h:panelGrid styleClass="collapsedBorders" columns="1"
+//		rendered="#{!diagnosis.finalized}">
+//		<p:commandButton process="contentForm"
+//			value="#{msg['body.receiptlog.tab.diangonsis.data.finalize']}"
+//			icon="fa fa-fw fa-ban"
+//			actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
+//			<p:ajax event="dialogReturn"
+//				update="navigationForm contentForm" />
+//		</p:commandButton>
+//	</h:panelGrid>
+//
+//	<p:commandButton
+//		value="#{msg['body.receiptlog.tab.diangonsis.data.unfinalize']}"
+//		rendered="#{diagnosis.finalized}" process="contentForm"
+//		actionListener="#{diagnosisHandlerAction.prepareUnfinalizeDiagnosisDialog(diagnosis)}">
+//		<p:ajax event="dialogReturn"
+//			update="navigationForm contentForm" />
+//	</p:commandButton>
+//	<h:panelGroup>
+//		<p:commandLink id="diangosisLogInfo">
+//			<i class="fa fa-fw fa-info-circle" />
+//		</p:commandLink>
+//	</h:panelGroup>
+//</h:panelGrid>
+//<div style="left: 0; position: fixed; top: 0;">
+//<p:overlayPanel for="diangosisLogInfo"
+//	showEvent="mouseover" hideEvent="mouseout"
+//	styleClass="logOverlay">
+//	<p:dataTable var="log" styleClass="logDatapannel"
+//		value="#{helperHandlerAction.getRevisionList(diagnosis)}"
+//		resizableColumns="false">
+//		<p:column headerText="Datum" style="width:155px;">
+//			<h:outputLabel value="#{log.timestampAsDate}"></h:outputLabel>
+//		</p:column>
+//		<p:column headerText="Benutzer" style="width:100px;">
+//			<h:outputLabel value="#{log.userAcc.username}"></h:outputLabel>
+//		</p:column>
+//		<p:column headerText="Aktion">
+//			<h:outputLabel value="#{log.logString}"></h:outputLabel>
+//		</p:column>
+//	</p:dataTable>
+//</p:overlayPanel>
+//</div>
 @Component
 @Scope(value = "session")
 public class MainHandlerAction {

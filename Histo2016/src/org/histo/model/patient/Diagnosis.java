@@ -21,7 +21,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
-import org.histo.model.DiagnosisPrototype;
+import org.histo.model.DiagnosisPreset;
 import org.histo.model.util.GsonAble;
 import org.histo.model.util.LogAble;
 import org.histo.model.util.TaskTree;
@@ -100,10 +100,16 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	private String icd10 = "";
 
 	/**
-	 * Commentary for internal purpose.
+	 * If true the followUp field will be used.
 	 */
 	@Expose
-	private String commentary = "";
+	private boolean useFollowUp;
+
+	/**
+	 * Followup field for adding follow up comments.
+	 */
+	@Expose
+	private String followUp = "";
 
 	/**
 	 * Diagnosis type, normal = 0, follow up = 1 , revision = 2.
@@ -120,7 +126,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	/**
 	 * Protoype used for this diagnosis.
 	 */
-	private DiagnosisPrototype diagnosisPrototype;
+	private DiagnosisPreset diagnosisPreset;
 
 	/********************************************************
 	 * Getter/Setter
@@ -209,12 +215,22 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	}
 
 	@Column(columnDefinition = "text")
-	public String getCommentary() {
-		return commentary;
+
+
+	public String getFollowUp() {
+		return followUp;
 	}
 
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
+	public void setFollowUp(String followUp) {
+		this.followUp = followUp;
+	}
+	
+	public boolean isUseFollowUp() {
+		return useFollowUp;
+	}
+	
+	public void setUseFollowUp(boolean useFollowUp) {
+		this.useFollowUp = useFollowUp;
 	}
 
 	@Basic
@@ -236,12 +252,12 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 
 	@OneToOne
 	@NotAudited
-	public DiagnosisPrototype getDiagnosisPrototype() {
-		return diagnosisPrototype;
+	public DiagnosisPreset getDiagnosisPrototype() {
+		return diagnosisPreset;
 	}
 
-	public void setDiagnosisPrototype(DiagnosisPrototype diagnosisPrototype) {
-		this.diagnosisPrototype = diagnosisPrototype;
+	public void setDiagnosisPrototype(DiagnosisPreset diagnosisPreset) {
+		this.diagnosisPreset = diagnosisPreset;
 	}
 
 	/********************************************************
@@ -316,17 +332,16 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * Transient
 	 ********************************************************/
 	/**
-	 * Copies the parameters of a diagnosisPrototype to this entity.
+	 * Copies the parameters of a diagnosisPreset to this entity.
 	 * 
-	 * @param diagnosisPrototype
+	 * @param diagnosisPreset
 	 */
 	@Transient
-	public void updateDiagnosisWithPrototype(DiagnosisPrototype diagnosisPrototype) {
+	public void updateDiagnosisWithPrest(DiagnosisPreset diagnosisPreset) {
 		System.out.println("updateing");
-		setDiagnosis(diagnosisPrototype.getDiagnosisText());
-		setMalign(diagnosisPrototype.isMalign());
-		setIcd10(diagnosisPrototype.getIcd10());
-		setCommentary(diagnosisPrototype.getCommentary());
+		setDiagnosis(diagnosisPreset.getDiagnosisText());
+		setMalign(diagnosisPreset.isMalign());
+		setIcd10(diagnosisPreset.getIcd10());
 	}
 
 	/********************************************************

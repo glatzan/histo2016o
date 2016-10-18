@@ -6,7 +6,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.DiagnosisPrototype;
+import org.histo.model.DiagnosisPreset;
 import org.histo.model.util.LogAble;
 
 public class DefaultTransformer<T extends LogAble> implements Converter {

@@ -39,7 +39,7 @@ import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
-import org.histo.model.Siganture;
+import org.histo.model.Signature;
 import org.histo.model.Report;
 import org.histo.model.util.DiagnosisStatus;
 import org.histo.model.util.LogAble;

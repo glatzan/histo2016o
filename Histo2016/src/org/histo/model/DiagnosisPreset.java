@@ -16,7 +16,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "standardDiagnosis_sequencegenerator", sequenceName = "standardDiagnosis_sequence")
-public class DiagnosisPrototype implements EditAbleEntity<DiagnosisPrototype>, LogAble {
+public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble {
 
 	@Expose
 	private long id;
@@ -30,15 +30,13 @@ public class DiagnosisPrototype implements EditAbleEntity<DiagnosisPrototype>, L
 	private String diagnosisText;
 	@Expose
 	private String extendedDiagnosisText;
-	@Expose
-	private String commentary;
 
-	public DiagnosisPrototype() {
+	public DiagnosisPreset() {
 	}
 
-	public DiagnosisPrototype(DiagnosisPrototype diagnosisPrototype) {
-		this.id = diagnosisPrototype.getId();
-		update(diagnosisPrototype);
+	public DiagnosisPreset(DiagnosisPreset diagnosisPreset) {
+		this.id = diagnosisPreset.getId();
+		update(diagnosisPreset);
 	}
 
 	/********************************************************
@@ -97,15 +95,6 @@ public class DiagnosisPrototype implements EditAbleEntity<DiagnosisPrototype>, L
 		this.extendedDiagnosisText = extendedDiagnosisText;
 	}
 
-	@Column(columnDefinition = "text")
-	public String getCommentary() {
-		return commentary;
-	}
-
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -121,19 +110,18 @@ public class DiagnosisPrototype implements EditAbleEntity<DiagnosisPrototype>, L
 
 	@Transient
 	@Override
-	public void update(DiagnosisPrototype diagnosisPrototype) {
-		this.name = diagnosisPrototype.getName();
-		this.icd10 = diagnosisPrototype.getIcd10();
-		this.malign = diagnosisPrototype.isMalign();
-		this.diagnosisText = diagnosisPrototype.getDiagnosisText();
-		this.extendedDiagnosisText = diagnosisPrototype.getExtendedDiagnosisText();
-		this.commentary = diagnosisPrototype.getCommentary();
+	public void update(DiagnosisPreset diagnosisPreset) {
+		this.name = diagnosisPreset.getName();
+		this.icd10 = diagnosisPreset.getIcd10();
+		this.malign = diagnosisPreset.isMalign();
+		this.diagnosisText = diagnosisPreset.getDiagnosisText();
+		this.extendedDiagnosisText = diagnosisPreset.getExtendedDiagnosisText();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof DiagnosisPrototype){
-			if(getId() == ((DiagnosisPrototype)obj).getId()){
+		if(obj instanceof DiagnosisPreset){
+			if(getId() == ((DiagnosisPreset)obj).getId()){
 				return true;
 			}
 		}

@@ -45,30 +45,53 @@
 			<p:tieredMenu overlay="true" trigger="dynaButton" my="left top"
 				at="left bottom" id="tieredOptions">
 				<!-- New -->
-				<p:submenu label="Neu">
-					<p:menuitem value="Neuer Auftrag"
+				<p:submenu label="Patient">
+					<p:menuitem value="Patient bearbeiten"></p:menuitem>
+					<p:menuitem value="Neuen Auftrag erstellen"
+						onclick="$('#headerForm\\:newTaskBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
-					<p:menuitem value="Neue Probe" />
 				</p:submenu>
 
 				<!-- Contacts -->
-				<p:submenu label="Benachrichtigun">
-					<p:menuitem value="Hinzufügen"
-						rendered="#{worklistHandlerAction.selectedPatient.selectedTask ne null}"
+				<p:submenu label="Auftrag">
+					<p:menuitem value="Neue Probe"
+						onclick="$('#headerForm\\:newSampleBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
+					<!-- Contacts -->
+					<p:menuitem value="Benachrichtigungen Verwalten"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
 						onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-					<p:menuitem value="Ausführen" ajax="false" icon="ui-icon-close" />
+					<p:menuitem value="Abrechnung"></p:menuitem>
+
 				</p:submenu>
 
-				<!-- Print -->
-				<p:menuitem value="Drucken"
-					rendered="#{worklistHandlerAction.selectedPatient.selectedTask ne null}"
-					onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+				<!-- Contacts -->
+				<p:submenu label="Diagnose">
+					<!-- Contacts -->
+					<p:menuitem value="Befundung beenden"></p:menuitem>
+					<!-- Print -->
+					<p:menuitem value="Drucken"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
+						onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+				</p:submenu>
 
 				<!-- Log -->
 				<p:menuitem value="Historie"
 					rendered="#{worklistHandlerAction.selectedPatient ne null}"
 					actionListener="#{logHandlerAction.preparePatientLogDialog(worklistHandlerAction.selectedPatient)}" />
 			</p:tieredMenu>
+
+			<!-- New Task Button -->
+			<p:commandButton id="newTaskBtn" style="display:none"
+				actionListener="#{taskHandlerAction.prepareNewTaskDialog()}">
+				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+			</p:commandButton>
+
+			<!-- New Sample -->
+			<p:commandButton id="newSampleBtn" style="display:none"
+				actionListener="#{taskHandlerAction.prepareNewSampleDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+			</p:commandButton>
 
 			<!-- Edit Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
@@ -101,11 +124,6 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
-			<p:commandButton value="test"
-				actionListener="#{contactHandlerAction.test1()}" async="true"></p:commandButton>
-			#{contactHandlerAction.test}
-			
-			<p:poll interval="3" update="@form" />
 		</h:panelGroup>
 	</h:panelGrid>
 </ui:composition>

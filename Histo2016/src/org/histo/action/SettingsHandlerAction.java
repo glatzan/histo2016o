@@ -10,7 +10,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UserDAO;
-import org.histo.model.DiagnosisPrototype;
+import org.histo.model.DiagnosisPreset;
 import org.histo.model.HistoUser;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
@@ -140,17 +140,17 @@ public class SettingsHandlerAction {
 	/**
 	 * List with all standard diagnoses
 	 */
-	private List<DiagnosisPrototype> allAvailableDiagnosisPrototypes;
+	private List<DiagnosisPreset> allAvailableDiagnosisPrototypes;
 
 	/**
 	 * Temp variable for creating and editing standardDiagnoses objects
 	 */
-	private DiagnosisPrototype editDiagnosisPrototype;
+	private DiagnosisPreset editDiagnosisPrototype;
 
 	/**
-	 * Original DiagnosisPrototype for editing.
+	 * Original DiagnosisPreset for editing.
 	 */
-	private DiagnosisPrototype originalDiagnosisPrototype;
+	private DiagnosisPreset originalDiagnosisPrototype;
 
 	/**
 	 * index which diagnosis inputmask should be rendered.
@@ -425,19 +425,19 @@ public class SettingsHandlerAction {
 	 * Standard Diagnosis
 	 ********************************************************/
 	public void prepareNewDiagnosisPrototype() {
-		setEditDiagnosisPrototype(new DiagnosisPrototype());
+		setEditDiagnosisPrototype(new DiagnosisPreset());
 		setOriginalDiagnosisPrototype(null);
 		setDiagnosisIndex(DIAGNOSIS_EDIT);
 	}
 
-	public void prepareEditDiagnosisPrototype(DiagnosisPrototype diagnosisPrototype) {
-		setEditDiagnosisPrototype(new DiagnosisPrototype(diagnosisPrototype));
-		setOriginalDiagnosisPrototype(diagnosisPrototype);
+	public void prepareEditDiagnosisPrototype(DiagnosisPreset diagnosisPreset) {
+		setEditDiagnosisPrototype(new DiagnosisPreset(diagnosisPreset));
+		setOriginalDiagnosisPrototype(diagnosisPreset);
 		setDiagnosisIndex(DIAGNOSIS_EDIT);
 	}
 
-	public void saveDiagnosisPrototype(DiagnosisPrototype newDiagnosisPrototype,
-			DiagnosisPrototype origDiagnosisPrototype) {
+	public void saveDiagnosisPrototype(DiagnosisPreset newDiagnosisPrototype,
+			DiagnosisPreset origDiagnosisPrototype) {
 		if (origDiagnosisPrototype == null) {
 			// case new, save
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
@@ -767,19 +767,19 @@ public class SettingsHandlerAction {
 		this.stainingListChooserForStainingList = stainingListChooserForStainingList;
 	}
 
-	public List<DiagnosisPrototype> getAllAvailableDiagnosisPrototypes() {
+	public List<DiagnosisPreset> getAllAvailableDiagnosisPrototypes() {
 		return allAvailableDiagnosisPrototypes;
 	}
 
-	public void setAllAvailableDiagnosisPrototypes(List<DiagnosisPrototype> allAvailableDiagnosisPrototypes) {
+	public void setAllAvailableDiagnosisPrototypes(List<DiagnosisPreset> allAvailableDiagnosisPrototypes) {
 		this.allAvailableDiagnosisPrototypes = allAvailableDiagnosisPrototypes;
 	}
 
-	public DiagnosisPrototype getEditDiagnosisPrototype() {
+	public DiagnosisPreset getEditDiagnosisPrototype() {
 		return editDiagnosisPrototype;
 	}
 
-	public void setEditDiagnosisPrototype(DiagnosisPrototype editDiagnosisPrototype) {
+	public void setEditDiagnosisPrototype(DiagnosisPreset editDiagnosisPrototype) {
 		this.editDiagnosisPrototype = editDiagnosisPrototype;
 	}
 
@@ -791,11 +791,11 @@ public class SettingsHandlerAction {
 		this.diagnosisIndex = diagnosisIndex;
 	}
 
-	public DiagnosisPrototype getOriginalDiagnosisPrototype() {
+	public DiagnosisPreset getOriginalDiagnosisPrototype() {
 		return originalDiagnosisPrototype;
 	}
 
-	public void setOriginalDiagnosisPrototype(DiagnosisPrototype originalDiagnosisPrototype) {
+	public void setOriginalDiagnosisPrototype(DiagnosisPreset originalDiagnosisPrototype) {
 		this.originalDiagnosisPrototype = originalDiagnosisPrototype;
 	}
 

@@ -6,13 +6,13 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.DiagnosisPrototype;
+import org.histo.model.DiagnosisPreset;
 
 public class DiagnosisPrototypeListTransformer implements Converter {
 
-	private List<DiagnosisPrototype> allAvailableDiagnosisPrototypes;
+	private List<DiagnosisPreset> allAvailableDiagnosisPrototypes;
 
-	public DiagnosisPrototypeListTransformer(List<DiagnosisPrototype> allAvailableDiagnosisPrototypes) {
+	public DiagnosisPrototypeListTransformer(List<DiagnosisPreset> allAvailableDiagnosisPrototypes) {
 		this.allAvailableDiagnosisPrototypes = allAvailableDiagnosisPrototypes;
 	}
 
@@ -20,9 +20,9 @@ public class DiagnosisPrototypeListTransformer implements Converter {
 		if (value != null && value.trim().length() > 0) {
 			try {
 				long id = Long.valueOf(value);
-				for (DiagnosisPrototype diagnosisPrototype : allAvailableDiagnosisPrototypes) {
-					if (diagnosisPrototype.getId() == id)
-						return diagnosisPrototype;
+				for (DiagnosisPreset diagnosisPreset : allAvailableDiagnosisPrototypes) {
+					if (diagnosisPreset.getId() == id)
+						return diagnosisPreset;
 				}
 				return null;
 			} catch (NumberFormatException e) {
@@ -34,8 +34,8 @@ public class DiagnosisPrototypeListTransformer implements Converter {
 	}
 
 	public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-		if (object != null && object instanceof DiagnosisPrototype) {
-			return String.valueOf(((DiagnosisPrototype) object).getId());
+		if (object != null && object instanceof DiagnosisPreset) {
+			return String.valueOf(((DiagnosisPreset) object).getId());
 		} else {
 			return "";
 		}

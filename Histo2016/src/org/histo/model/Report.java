@@ -28,9 +28,9 @@ public class Report {
 
 	private long signatureDate;
 
-	private Siganture signatureLeft;
+	private Signature signatureLeft;
 
-	private Siganture sigantureRight;
+	private Signature signatureRight;
 
 	/**
 	 * Text containing the histological record for all samples.
@@ -58,21 +58,21 @@ public class Report {
 	}
 
 	@OneToOne
-	public Siganture getSignatureLeft() {
+	public Signature getSignatureLeft() {
 		return signatureLeft;
 	}
 
-	public void setSignatureLeft(Siganture signatureLeft) {
+	public void setSignatureLeft(Signature signatureLeft) {
 		this.signatureLeft = signatureLeft;
 	}
 
 	@OneToOne
-	public Siganture getSigantureRight() {
-		return sigantureRight;
+	public Signature getSignatureRight() {
+		return signatureRight;
 	}
 
-	public void setSigantureRight(Siganture sigantureRight) {
-		this.sigantureRight = sigantureRight;
+	public void setSignatureRight(Signature signatureRight) {
+		this.signatureRight = signatureRight;
 	}
 
 	public long getSignatureDate() {
