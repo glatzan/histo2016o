@@ -46,8 +46,10 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -1214161114824263589L;
 
-	private Diagnosis tmpDiagnosis;
+	private Task tmpTask;
 
+	private Diagnosis tmpDiagnosis;
+	
 	/**
 	 * Checks if a diagnosis revision can be created. This in only possible if
 	 * all other diagnoses are finalized.
@@ -93,8 +95,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	/**
 	 * Shows a waring dialog before finalizing a diagnosis.
 	 */
-	public void prepareFinalizeDiagnosisDialog(Diagnosis diagnosis) {
-		setTmpDiagnosis(diagnosis);
+	public void prepareFinalizeDiagnosisDialog(Task task) {
+		setTmpTask(task);
 		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_FINALIZE);
 	}
 
@@ -102,10 +104,10 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Hides the waring dialog for finalizing diagnoses
 	 */
 	public void hideFinalizeDiangosisDialog() {
-		setTmpDiagnosis(null);
+		setTmpTask(null);
 		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_FINALIZE);
 	}
-
+	
 	/**
 	 * Finalizes all diagnoses of the task.
 	 */
@@ -136,7 +138,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Shows a waring dialog before unfinalizing a diagnosis.
 	 */
 	public void prepareUnfinalizeDiagnosisDialog(Diagnosis diagnosis) {
-		setTmpDiagnosis(diagnosis);
+	//	setTmpDiagnosis(diagnosis);
 		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_UNFINALIZE);
 	}
 
@@ -144,7 +146,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Hides the waring dialog for unfinalizing diagnoses
 	 */
 	public void hideUnfinalizeDiangosisDialog() {
-		setTmpDiagnosis(null);
+		//setTmpDiagnosis(null);
 		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_UNFINALIZE);
 	}
 
@@ -281,6 +283,13 @@ public class DiagnosisHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+	public Task getTmpTask() {
+		return tmpTask;
+	}
+
+	public void setTmpTask(Task tmpTask) {
+		this.tmpTask = tmpTask;
+	}
 
 	public Diagnosis getTmpDiagnosis() {
 		return tmpDiagnosis;
@@ -289,7 +298,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	public void setTmpDiagnosis(Diagnosis tmpDiagnosis) {
 		this.tmpDiagnosis = tmpDiagnosis;
 	}
-
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

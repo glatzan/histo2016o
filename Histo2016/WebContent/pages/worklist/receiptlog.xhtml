@@ -253,8 +253,8 @@
 
 
 								<p:panelGrid styleClass="stainingTable">
-									<c:forEach varStatus="outerLoop"
-										items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
+									<ui:repeat
+										value="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
 										var="sample">
 										<!-- Diangosis -->
 										<p:row>
@@ -278,7 +278,7 @@
 											</p:column>
 											<p:column>
 
-												<c:forEach items="#{sample.diagnoses}" var="diagnosis"
+												<ui:repeat value="#{sample.diagnoses}" var="diagnosis"
 													varStatus="loop">
 													<p:panel id="toggleable" toggleable="true"
 														collapsed="#{diagnosis.finalized}" toggleSpeed="500"
@@ -308,7 +308,8 @@
 														<h:panelGrid columns="1" style="width:100%;"
 															id="diagnosisTable">
 															<!-- choose diagnosis -->
-															<h:panelGrid columns="2" style="width:90%;">
+															<h:panelGrid columns="3" style="width:90%;">
+																<!-- choose diagnosis -->
 																<h:panelGrid columns="2">
 																	<h:outputLabel
 																		value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis']}" />
@@ -326,12 +327,27 @@
 																			itemValue="#{diagnosisPrototype}" />
 
 																		<p:ajax event="change"
-																			listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
+																			listener="#{diagnosis.updateDiagnosisWithPrest(diagnosis.diagnosisPrototype)}" />
 																		<p:ajax event="change" update="diagnosisTable"
 																			listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis',diagnosis.diagnosisPrototype.name)}" />
 
 																	</p:selectOneMenu>
 																</h:panelGrid>
+
+																<h:panelGrid columns="2" style="float:right;">
+																	<h:outputLabel
+																		value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.reDiagnosis']}" />
+																	<p:selectBooleanCheckbox
+																		value="#{diagnosis.useFollowUp}"
+																		style="margin:3px 0px 0px 3px;"
+																		disabled="#{diagnosis.finalized}">
+
+																		<p:ajax event="change" execute="@this"
+																			update="diagnosisTable"
+																			listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.followUP',diagnosis.useFollowUp)}" />
+																	</p:selectBooleanCheckbox>
+																</h:panelGrid>
+																<!-- malign -->
 																<h:panelGrid columns="2" style="float:right;">
 																	<h:outputLabel
 																		value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
@@ -357,25 +373,27 @@
 
 															</p:inputTextarea>
 
-															<!-- commentary -->
-															<p:inputTextarea value="#{diagnosis.commentary}" rows="2"
-																style="width:90%" id="diagnosisCommentary"
-																readonly="#{diagnosis.finalized}">
-																<p:watermark for="diagnosisCommentary"
-																	value="#{msg['body.receiptlog.tab.diangonsis.data.commentary.watermark']}" />
-																<f:ajax event="change" execute="@this"
-																	listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.commentary',diagnosis.commentary)}" />
-															</p:inputTextarea>
 
+															<h:panelGroup rendered="#{diagnosis.useFollowUp}">
+																<!-- followup -->
+																<p:inputTextarea value="#{diagnosis.followUp}" rows="2"
+																	id="diagnosisFollowUp" style="width:90%"
+																	readonly="#{diagnosis.finalized}">
+																	<p:watermark for="diagnosisFollowUp"
+																		value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.reDiagnosis.watermark']}" />
+																	<f:ajax event="change" execute="@this"
+																		listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.followUp',diagnosis.followUp)}" />
+																</p:inputTextarea>
+															</h:panelGroup>
 														</h:panelGrid>
 
 														<!-- Body for diagnosis -->
 													</p:panel>
-												</c:forEach>
+												</ui:repeat>
 											</p:column>
 										</p:row>
 										<!-- Diangosis -->
-									</c:forEach>
+									</ui:repeat>
 								</p:panelGrid>
 							</p:tab>
 							<!-- ******************************** Diagnosis ******************************** -->

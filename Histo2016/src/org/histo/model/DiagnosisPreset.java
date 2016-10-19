@@ -30,7 +30,9 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	private String diagnosisText;
 	@Expose
 	private String extendedDiagnosisText;
-
+	@Expose
+	private String commentary;
+	
 	public DiagnosisPreset() {
 	}
 
@@ -93,6 +95,15 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 
 	public void setExtendedDiagnosisText(String extendedDiagnosisText) {
 		this.extendedDiagnosisText = extendedDiagnosisText;
+	}
+
+	@Column(columnDefinition = "text")
+	public String getCommentary() {
+		return commentary;
+	}
+
+	public void setCommentary(String commentary) {
+		this.commentary = commentary;
 	}
 
 	/********************************************************

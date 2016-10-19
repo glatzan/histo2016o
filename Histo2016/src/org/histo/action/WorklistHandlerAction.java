@@ -203,6 +203,7 @@ public class WorklistHandlerAction implements Serializable {
 			mainHandlerAction.setCurrentView(View.WORKLIST_RECEIPTLOG);
 		}
 
+		System.out.println(task.getPatient());
 		task.getPatient().setSelectedTask(task);
 
 		onSelectPatient(task.getPatient());

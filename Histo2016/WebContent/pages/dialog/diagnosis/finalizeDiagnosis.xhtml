@@ -22,7 +22,17 @@
 		</div>
 		<div class="buttonContainer">
 			<p:commandButton
+				value="#{msg['dialog.diagnosis.finalize.button.print']}">
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.finalizeDiagnoses(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></f:actionListener>
+				<f:actionListener
+					binding="#{pdfHandlerAction.preparePrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
+			</p:commandButton>
+			<p:commandButton
 				value="#{msg['dialog.diagnosis.finalize.button.ok']}"
+				styleClass="buttonLeftMarginInList"
 				actionListener="#{diagnosisHandlerAction.finalizeDiagnosis(diagnosisHandlerAction.tmpDiagnosis)}" />
 			<p:commandButton value="#{msg['general.abort']}"
 				styleClass="buttonLeftMarginInList"

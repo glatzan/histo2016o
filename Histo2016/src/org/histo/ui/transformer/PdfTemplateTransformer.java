@@ -6,7 +6,6 @@ import javax.faces.convert.Converter;
 
 import org.histo.config.enums.PdfTemplate;
 
-
 public class PdfTemplateTransformer implements Converter {
 
 	private PdfTemplate[] templates;
@@ -19,7 +18,7 @@ public class PdfTemplateTransformer implements Converter {
 		if (value != null && value.trim().length() > 0) {
 			try {
 				for (PdfTemplate pdfTemplate : templates) {
-					if (pdfTemplate.getName().equals(value))
+					if (pdfTemplate.getType().equals(value))
 						return pdfTemplate;
 				}
 				return null;
@@ -33,7 +32,7 @@ public class PdfTemplateTransformer implements Converter {
 
 	public String getAsString(FacesContext fc, UIComponent uic, Object object) {
 		if (object != null && object instanceof PdfTemplate) {
-			return ((PdfTemplate)object).getName();
+			return ((PdfTemplate) object).getType();
 		} else {
 			return "";
 		}

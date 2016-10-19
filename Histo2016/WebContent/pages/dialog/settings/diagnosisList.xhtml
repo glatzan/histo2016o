@@ -12,21 +12,21 @@
 			header="#{msg['dialog.settings.diagnosis.list.headline']}"
 			styleClass="contentPannel" />
 
-		<p:dataTable var="diagnosisPrototype" style="width:100%;"
+		<p:dataTable var="diagnosisPreset" style="width:100%;"
 			scrollable="true" scrollHeight="490"
 			value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
-			<p:column sortBy="#{diagnosisPrototype.name}"
+			<p:column sortBy="#{diagnosisPreset.name}"
 				headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
 				style="width:20%">
-				<h:outputText value="#{diagnosisPrototype.name}" />
+				<h:outputText value="#{diagnosisPreset.name}" />
 			</p:column>
 
 			<p:column
 				headerText="#{msg['dialog.settings.diagnosis.list.commentary']}"
 				style="width:53%">
-				<h:outputLabel value="#{diagnosisPrototype.commentary}">
+				<h:outputLabel value="#{diagnosisPreset.commentary}">
 					<f:converter converterId="org.histo.ui.TruncateConverter"
 						truncateAt="40" />
 					<f:attribute name="truncateAt" value="40" />

@@ -9,6 +9,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
+import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
@@ -44,7 +45,10 @@ public class SlideHandlerAction implements Serializable {
 
 	@Autowired
 	MainHandlerAction mainHandlerAction;
-	
+
+	@Autowired
+	DiagnosisHandlerAction diagnosisHandlerAction;
+
 	/**
 	 * Temporäres Blockobjekt, wird verwendet um neue Objektträger zu erstellen.
 	 */
@@ -218,7 +222,8 @@ public class SlideHandlerAction implements Serializable {
 		switch (getActionOnMany()) {
 		case STAININGLIST_ACTION_PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
-				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType() && !stainingTableChooser.getStaining().isStainingPerformed()) {
+				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()
+						&& !stainingTableChooser.getStaining().isStainingPerformed()) {
 					Slide slide = stainingTableChooser.getStaining();
 					slide.setStainingPerformed(true);
 
@@ -240,7 +245,8 @@ public class SlideHandlerAction implements Serializable {
 			break;
 		case STAININGLIST_ACTION_NOT_PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
-				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType() && stainingTableChooser.getStaining().isStainingPerformed()) {
+				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()
+						&& stainingTableChooser.getStaining().isStainingPerformed()) {
 					stainingTableChooser.getStaining().setStainingPerformed(false);
 
 					Slide slide = stainingTableChooser.getStaining();
@@ -262,7 +268,7 @@ public class SlideHandlerAction implements Serializable {
 		default:
 			break;
 		}
-		
+
 		setActionOnMany(STAININGLIST_ACTION_NONE);
 
 	}
@@ -312,6 +318,18 @@ public class SlideHandlerAction implements Serializable {
 				slide.getParent().getParent().getParent().getTaskID(), slide.getParent().getParent().getSampleID(),
 				slide.getParent().getBlockID(), slide.getSlideID()), slide.getPatient());
 
+		// setting restaining flag of the diagnosis
+		if (reStaining) {
+			List<Diagnosis> diagnoses = slide.getParent().getParent().getDiagnoses();
+			if (diagnoses.size() > 0) {
+				Diagnosis diagnosis = diagnoses.get(diagnoses.size() - 1);
+				if (!diagnosis.isUseFollowUp()) {
+					diagnosis.setUseFollowUp(true);
+					diagnosisHandlerAction.diagnosisDataChanged(diagnosis,
+							"log.patient.task.sample.diagnosis.changed.followUP", diagnosis.isUseFollowUp());
+				}
+			}
+		}
 	}
 
 	/********************************************************

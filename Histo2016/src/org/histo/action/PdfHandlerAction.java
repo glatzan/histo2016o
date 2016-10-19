@@ -146,7 +146,7 @@ public class PdfHandlerAction {
 
 	private PDFContainer generatePdfForTemplate(Task task, PdfTemplate template) {
 		if (task.isDiagnosisCompleted()) {
-			return null;
+			return new PDFContainer(template, generatePlaceholderPdf("Todo"));
 		} else {
 			if (!template.isStaticDocument()) {
 				PdfReader balnkPdf = FileUtil.loadPDFFile(template.getFileWithLogo());

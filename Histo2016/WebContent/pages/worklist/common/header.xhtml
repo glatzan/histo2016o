@@ -62,13 +62,14 @@
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
 						onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 					<p:menuitem value="Abrechnung"></p:menuitem>
-
 				</p:submenu>
 
 				<!-- Contacts -->
 				<p:submenu label="Diagnose">
 					<!-- Contacts -->
-					<p:menuitem value="Befundung beenden"></p:menuitem>
+					<p:menuitem value="Befundung beenden"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
+						onclick="$('#headerForm\\:finalizeBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 					<!-- Print -->
 					<p:menuitem value="Drucken"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
@@ -96,6 +97,12 @@
 			<!-- Edit Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
 				actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
+				<p:ajax event="dialogReturn" update="contentForm" />
+			</p:commandButton>
+
+			<!-- Finalize button -->
+			<p:commandButton id="finalizeBtn" style="display:none"
+				actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 

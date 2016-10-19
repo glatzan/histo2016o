@@ -257,7 +257,7 @@
 										itemValue="#{diagnosisPrototype}" />
 
 									<p:ajax event="change"
-										listener="#{diagnosis.updateDiagnosisWithPrototype(diagnosis.diagnosisPrototype)}" />
+										listener="#{diagnosis.updateDiagnosisWithPrest(diagnosis.diagnosisPrototype)}" />
 									<p:ajax event="change"
 										update="diagnosisTable :contentForm:extendedText"
 										listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />

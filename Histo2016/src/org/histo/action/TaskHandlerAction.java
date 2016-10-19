@@ -15,7 +15,6 @@ import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.MaterialPreset;
-import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
