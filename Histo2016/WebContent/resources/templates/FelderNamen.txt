@@ -5,6 +5,7 @@ H_Insurance
 H_PIZ
 H_Date
 H_PIZ_CODE
+H_PIZ
 H_ADDRESS
 
 B_SAMPLES

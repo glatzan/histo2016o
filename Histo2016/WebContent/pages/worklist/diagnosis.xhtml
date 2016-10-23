@@ -322,17 +322,17 @@
 							styleClass="diagnosisSelectMenu" style="float:right; width:80%"
 							panelStyleClass="diagnosisSelectMenuPanel"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft}"
-							converter="#{taskHandlerAction.physiciansToSignReportTransformer}"
+							converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
 							filter="true" filterMatchMode="contains">
 							<f:selectItem
 								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
 								itemValue="#{null}" />
 
 							<f:selectItems
-								value="#{taskHandlerAction.physiciansToSignReport}"
-								var="physiciansToSignReport"
-								itemLabel="#{physiciansToSignReport.physician.fullName}"
-								itemValue="#{physiciansToSignReport}" />
+								value="#{taskHandlerAction.allAvailablePhysicians}"
+								var="allAvailablePhysicians"
+								itemLabel="#{allAvailablePhysicians.physician.fullName}"
+								itemValue="#{allAvailablePhysicians}" />
 
 							<p:ajax update="sigantureLeftRole" process="@this" event="change">
 							</p:ajax>
@@ -343,17 +343,17 @@
 							style="float:right;width:80%" styleClass="diagnosisSelectMenu"
 							panelStyleClass="diagnosisSelectMenuPanel"
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight}"
-							converter="#{taskHandlerAction.physiciansToSignReportTransformer}"
+							converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
 							filter="true" filterMatchMode="contains">
 							<f:selectItem
 								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
 								itemValue="#{null}" />
 
 							<f:selectItems
-								value="#{taskHandlerAction.physiciansToSignReport}"
-								var="physiciansToSignReport"
-								itemLabel="#{physiciansToSignReport.physician.fullName}"
-								itemValue="#{physiciansToSignReport}" />
+								value="#{taskHandlerAction.allAvailablePhysicians}"
+								var="allAvailablePhysicians"
+								itemLabel="#{allAvailablePhysicians.physician.fullName}"
+								itemValue="#{allAvailablePhysicians}" />
 
 							<p:ajax update="sigantureRightRole" process="@this"
 								event="change">

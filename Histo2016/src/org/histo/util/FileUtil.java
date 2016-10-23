@@ -44,27 +44,4 @@ public class FileUtil {
 		return result.toString();
 	}
 
-	/**
-	 * Loads a PdfReader from a file
-	 * @param path
-	 * @return
-	 */
-	public static final PdfReader loadPDFFile(String path) {
-		PdfReader pdfTemplate = null;
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
-
-		Resource resource = appContext.getResource(path);
-
-		try {
-			pdfTemplate = new PdfReader(resource.getInputStream());
-
-			appContext.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-			appContext.close();
-			return null;
-		}
-
-		return pdfTemplate;
-	}
 }

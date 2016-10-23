@@ -14,6 +14,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
+import org.histo.model.Council;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
@@ -31,6 +32,7 @@ import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -63,6 +65,13 @@ public class TaskHandlerAction implements Serializable {
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
+
+	@Autowired
+	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	@Lazy
+	private PdfHandlerAction pdfHandlerAction;
 
 	private HashMap<String, String> selectableWards;
 
@@ -98,12 +107,12 @@ public class TaskHandlerAction implements Serializable {
 	/**
 	 * List of all physicians
 	 */
-	private List<Signature> physiciansToSignReport;
+	private List<Signature> allAvailablePhysicians;
 
 	/**
 	 * Transformer for selecting a physician for sigin the report
 	 */
-	private DefaultTransformer<Signature> physiciansToSignReportTransformer;
+	private DefaultTransformer<Signature> allAvailablePhysiciansTransformer;
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -133,8 +142,8 @@ public class TaskHandlerAction implements Serializable {
 		setAllAvailableMaterials(helperDAO.getAllStainingLists());
 		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
 
-		setPhysiciansToSignReport(Signature.getSignatureList(physicianDAO.getPhysicians(ContactRole.values(), false)));
-		setPhysiciansToSignReportTransformer(new DefaultTransformer<>(getPhysiciansToSignReport()));
+		setAllAvailablePhysicians(Signature.getSignatureList(physicianDAO.getPhysicians(ContactRole.values(), false)));
+		setAllAvailablePhysiciansTransformer(new DefaultTransformer<>(getAllAvailablePhysicians()));
 
 		// initis all wards
 		if (selectableWards == null) {
@@ -466,6 +475,37 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
+	 * Council
+	 ********************************************************/
+	public void prepareCouncilDialog(Task task) {
+		taskDAO.initializeCouncilData(task);
+		if (task.getCouncil() == null) {
+			task.setCouncil(new Council());
+			// setting current user als requesting physician
+			task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
+			genericDAO.save(task.getCouncil(), resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
+					task.getPatient());
+		}
+
+		setAllAvailablePhysicians(Signature.getSignatureList(physicianDAO.getPhysicians(ContactRole.values(), false)));
+		setAllAvailablePhysiciansTransformer(new DefaultTransformer<>(getAllAvailablePhysicians()));
+
+		setTemporaryTask(task);
+		
+		mainHandlerAction.showDialog(Dialog.COUNCIL);
+	}
+
+	public void printCouncilReport(Task task) {
+		mainHandlerAction.hideDialog(Dialog.COUNCIL);
+		pdfHandlerAction.setTaskToPrint(task);
+		pdfHandlerAction.preparePrintDialog(task, new PdfTemplate[] { PdfTemplate.COUNCIL }, PdfTemplate.COUNCIL);
+	}
+
+	/********************************************************
+	 * Council
+	 ********************************************************/
+
+	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
 	public List<MaterialPreset> getAllAvailableMaterials() {
@@ -532,21 +572,22 @@ public class TaskHandlerAction implements Serializable {
 		this.temporaryTaskSampleCount = temporaryTaskSampleCount;
 	}
 
-	public List<Signature> getPhysiciansToSignReport() {
-		return physiciansToSignReport;
+	public List<Signature> getAllAvailablePhysicians() {
+		return allAvailablePhysicians;
 	}
 
-	public void setPhysiciansToSignReport(List<Signature> physiciansToSignReport) {
-		this.physiciansToSignReport = physiciansToSignReport;
+	public DefaultTransformer<Signature> getAllAvailablePhysiciansTransformer() {
+		return allAvailablePhysiciansTransformer;
 	}
 
-	public DefaultTransformer<Signature> getPhysiciansToSignReportTransformer() {
-		return physiciansToSignReportTransformer;
+	public void setAllAvailablePhysicians(List<Signature> allAvailablePhysicians) {
+		this.allAvailablePhysicians = allAvailablePhysicians;
 	}
 
-	public void setPhysiciansToSignReportTransformer(DefaultTransformer<Signature> physiciansToSignReportTransformer) {
-		this.physiciansToSignReportTransformer = physiciansToSignReportTransformer;
+	public void setAllAvailablePhysiciansTransformer(DefaultTransformer<Signature> allAvailablePhysiciansTransformer) {
+		this.allAvailablePhysiciansTransformer = allAvailablePhysiciansTransformer;
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

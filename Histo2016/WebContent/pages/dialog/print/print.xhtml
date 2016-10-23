@@ -24,10 +24,10 @@
 							converter="#{pdfHandlerAction.templateTransformer}">
 							<f:selectItems value="#{pdfHandlerAction.templates}"
 								var="template" itemLabel="#{msg[template.name]}"
-								itemValue="template" />
+								itemValue="#{template}" />
 
-							<p:ajax
-								listener="#{pdfHandlerAction.changeTemplate(pdfHandlerAction.taskToPrint, pdfHandlerAction.selectedTemplate)}"></p:ajax>
+							<p:ajax update="@form"
+								listener="#{pdfHandlerAction.onChangeTemplate()}"></p:ajax>
 						</p:selectOneMenu>
 
 						<h:panelGroup style="height:15px;" layout="block" />

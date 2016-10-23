@@ -13,6 +13,8 @@ public class HistoSettings {
 
 	public static final String STANDARD_DATEFORMAT_DAY_ONLY = "dd MMM yyyy";
 	public static final String STANDARD_DATEFORMAT = "HH:mm:ss dd.MM.yyyy";
+	public static final String STANDARD_DATEFORMAT_GERMAN = "dd.MM.yyyy";
+	
 
 	public static final String EMAIL_SERVER = "smtp.ukl.uni-freiburg.de";
 	public static final String EMAIL_PORT = "smtp.ukl.uni-freiburg.de";

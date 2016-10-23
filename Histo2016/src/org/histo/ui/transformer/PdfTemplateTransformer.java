@@ -18,8 +18,10 @@ public class PdfTemplateTransformer implements Converter {
 		if (value != null && value.trim().length() > 0) {
 			try {
 				for (PdfTemplate pdfTemplate : templates) {
-					if (pdfTemplate.getType().equals(value))
+					if (pdfTemplate.getType().equals(value)){
+						System.out.println("found");
 						return pdfTemplate;
+					}
 				}
 				return null;
 			} catch (NumberFormatException e) {
@@ -34,6 +36,7 @@ public class PdfTemplateTransformer implements Converter {
 		if (object != null && object instanceof PdfTemplate) {
 			return ((PdfTemplate) object).getType();
 		} else {
+			System.out.println("nop ");
 			return "";
 		}
 	}

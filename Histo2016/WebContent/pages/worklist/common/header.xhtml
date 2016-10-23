@@ -46,34 +46,38 @@
 				at="left bottom" id="tieredOptions">
 				<!-- New -->
 				<p:submenu label="Patient">
-					<p:menuitem value="Patient bearbeiten"></p:menuitem>
-					<p:menuitem value="Neuen Auftrag erstellen"
-						onclick="$('#headerForm\\:newTaskBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+					<p:menuitem value="Übersicht"></p:menuitem>
+					<p:menuitem value="Bearbeiten"></p:menuitem>
 				</p:submenu>
 
 				<!-- Contacts -->
 				<p:submenu label="Auftrag">
+					<p:menuitem value="Neuer Auftrag"
+						onclick="$('#headerForm\\:newTaskBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
 					<p:menuitem value="Neue Probe"
 						onclick="$('#headerForm\\:newSampleBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
-					<!-- Contacts -->
-					<p:menuitem value="Benachrichtigungen Verwalten"
-						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
-						onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-					<p:menuitem value="Abrechnung"></p:menuitem>
-				</p:submenu>
-
-				<!-- Contacts -->
-				<p:submenu label="Diagnose">
+					<p:menuitem value="Konsil"
+						onclick="$('#headerForm\\:councilBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
 					<!-- Contacts -->
 					<p:menuitem value="Befundung beenden"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
 						onclick="$('#headerForm\\:finalizeBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+
+				</p:submenu>
+
+				<p:submenu label="Sonstiges">
+					<!-- Contacts -->
+					<p:menuitem value="Benachrichtigungen"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
+						onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 					<!-- Print -->
 					<p:menuitem value="Drucken"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
 						onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+					<p:menuitem value="Abrechnung"></p:menuitem>
 				</p:submenu>
 
 				<!-- Log -->
@@ -112,7 +116,12 @@
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 
-
+			<!-- Council button -->
+			<p:commandButton id="councilBtn" style="display:none"
+				actionListener="#{taskHandlerAction.prepareCouncilDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn" update="contentForm" />
+			</p:commandButton>
+			
 			<!-- Menu Button -->
 			<p:commandButton id="menuBtn" value="Menu" type="button"
 				icon="ui-icon-triangle-1-s" />

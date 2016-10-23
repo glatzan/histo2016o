@@ -3,12 +3,12 @@ package org.histo.config.enums;
 public enum PdfTemplate {
 
 	UREPROT("uReport", "json.pdfTemplate.ureport"), 
-	COUNCIL("concil", "json.pdfTemplate.council", "templates/Final5-Logo.pdf", "templates/Final5-noLogo.pdf", false),
-	SHORTREPORT("shortReport", "json.pdfTemplate.shortReport", "templates/Final5-Logo.pdf", "templates/Final5-noLogo.pdf", false),
-	INTERNAL("internal", "json.pdfTemplate.diagnosis.internal", "templates/Final5-Logo.pdf", "templates/Final5-noLogo.pdf", false),
-	INTERNAL_EXTENDED("internalExtended", "json.pdfTemplate.diagnosis.internal.extended", "templates/Final5-Logo.pdf", "templates/Final5-noLogo.pdf", true),
-	FAMILY_PHYSICIAN("familyPhysician", "json.pdfTemplate.shortReport", "templates/Final5-Logo.pdf", "templates/Final5-noLogo.pdf", false),
-	PRIVATE_PHYSICIAN("privatePhysician", "json.pdfTemplate.shortReport", "templates/Final5-Logo.pdf", "templates/Final5-noLogo.pdf", false);
+	COUNCIL("concil", "json.pdfTemplate.council", "templates/council.pdf", "templates/council.pdf", false),
+	SHORTREPORT("shortReport", "json.pdfTemplate.shortReport", "templates/diagnosisShort.pdf", "templates/diagnosisShort.pdf", false),
+	INTERNAL("internal", "json.pdfTemplate.diagnosis.internal", "templates/Final5-Logo.pdf", "templates/Final5-Logo.pdf", false),
+	INTERNAL_EXTENDED("internalExtended", "json.pdfTemplate.diagnosis.internal.extended", "templates/DiagnosisExtended9_nf.pdf", "templates/DiagnosisExtended9_nf.pdf", true),
+	FAMILY_PHYSICIAN("familyPhysician", "json.pdfTemplate.shortReport", "templates/diagnosisExtern.pdf", "templates/diagnosisExtern.pdf", false),
+	PRIVATE_PHYSICIAN("privatePhysician", "json.pdfTemplate.shortReport", "templates/diagnosisExtern.pdf", "templates/diagnosisExtern.pdf", false);
 
 	private final String type;
 
