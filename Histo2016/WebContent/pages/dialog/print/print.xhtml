@@ -14,10 +14,26 @@
 	<h:form>
 		<div class="bodyDiv">
 			<div class="contentDiv">
+
+				<h:panelGrid>
+					<p:selectOneButton
+						value="#{settingsHandlerAction.physicianTabIndex}">
+						<f:selectItem
+							itemLabel="Gespeichert (3)"
+							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_EXTER')}" />
+						<f:selectItem
+							itemLabel="Neu"
+							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_LDPA')}" />
+						<p:ajax update="@form"></p:ajax>
+					</p:selectOneButton>
+				</h:panelGrid>
+				
+				
+				
+				
 				<h:panelGrid columns="2" columnClasses="settingsColumn,pdfColumn"
 					styleClass="contentTable">
 					<h:panelGrid columns="2">
-
 						<h:outputLabel value="Dokument" />
 						<p:selectOneMenu value="#{pdfHandlerAction.selectedTemplate}"
 							style="width:150px;"

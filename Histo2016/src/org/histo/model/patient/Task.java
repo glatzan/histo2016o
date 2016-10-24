@@ -33,7 +33,6 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
-import org.histo.config.enums.PdfTemplate;
 import org.histo.config.enums.TaskPriority;
 import org.histo.model.Accounting;
 import org.histo.model.Contact;
@@ -602,9 +601,9 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * @return
 	 */
 	@Transient
-	public PDFContainer getReport(PdfTemplate type) {
+	public PDFContainer getReport(String type) {
 		for (PDFContainer pdfContainer : getAttachedPdfs()) {
-			if (pdfContainer.getType() == type)
+			if (pdfContainer.getType().equals(type))
 				return pdfContainer;
 		}
 		return null;
@@ -627,9 +626,9 @@ public class Task implements TaskTree<Patient>, StainingStatus, DiagnosisStatus,
 	 * @return
 	 */
 	@Transient
-	public PDFContainer removeReport(PdfTemplate type) {
+	public PDFContainer removeReport(String type) {
 		for (PDFContainer pdfContainer : getAttachedPdfs()) {
-			if (pdfContainer.getType() == type) {
+			if (pdfContainer.getType().equals(type)) {
 				getAttachedPdfs().remove(pdfContainer);
 				return pdfContainer;
 			}

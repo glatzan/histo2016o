@@ -12,7 +12,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
-import org.histo.config.enums.PdfTemplate;
 
 @Entity
 @Audited
@@ -28,18 +27,18 @@ public class PDFContainer {
 
 	private boolean finalDocument;
 
-	private PdfTemplate type;
+	private String type;
 
 	private String name;
 
 	public PDFContainer() {
 	}
 
-	public PDFContainer(PdfTemplate pdfTemplate){
+	public PDFContainer(String pdfTemplate){
 		this(pdfTemplate,null);
 	}
 	
-	public PDFContainer(PdfTemplate pdfTemplate, byte[] data){
+	public PDFContainer(String pdfTemplate, byte[] data){
 		this.type = pdfTemplate;
 		this.data = data;
 	}
@@ -73,11 +72,11 @@ public class PDFContainer {
 		this.finalDocument = finalDocument;
 	}
 
-	public PdfTemplate getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(PdfTemplate type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

@@ -1,51 +1,71 @@
 [
+    {
+      "name":"json.pdfTemplate.uReport",
+      "nameAsResources" : true,
+      "type": "UREPORT",
+      "externalDocument" : true
+   },
    {
-   	  "id": 0,
+      "name":"json.pdfTemplate.bioBankConsent",
+      "nameAsResources" : true,
+      "type": "biobankConsent",
+      "externalDocument" : true
+   }, 
+   {
       "name":"json.pdfTemplate.council",
+      "nameAsResources" : true,
       "fileWithLogo":"templates/Final5-Logo.pdf",
       "fileWithOutLogo":"templates/Final5-noLogo.pdf",
-      "type": "concil",
-      "defaultTemplate": true
+      "type": "COUNCIL",
+      "defaultTemplate": true,
+      "externalDocument" : false
    },
    {
-   	  "id": 1,	
+ 
       "name":"json.pdfTemplate.shortReport",
-      "fileWithLogo":"templates/Final5-Logo.pdf",
-      "fileWithOutLogo":"templates/Final5-noLogo.pdf",
+      "nameAsResources" : true,
+      "fileWithLogo":"templates/diagnosisShort.pdf",
+      "fileWithOutLogo":"templates/diagnosisShort.pdf",
       "type": "shortReport",
-      "defaultTemplate": false
+      "defaultTemplate": false,
+      "externalDocument" : false
    },
    {
-   	  "id": 2,	
       "name":"json.pdfTemplate.diagnosis.internal",
+      "nameAsResources" : true,
       "fileWithLogo":"templates/Final5-Logo.pdf",
-      "fileWithOutLogo":"templates/Final5-noLogo.pdf",
+      "fileWithOutLogo":"templates/Final5-Logo.pdf",
       "type": "internal",
-      "defaultTemplate": false
+      "defaultTemplate": false,
+      "externalDocument" : false
    },
    {
-   	  "id": 3,	
       "name":"json.pdfTemplate.diagnosis.internal.extended",
-      "fileWithLogo":"templates/Final5-Logo.pdf",
-      "fileWithOutLogo":"templates/Final5-noLogo.pdf",
-      "type": "internalExtended",
-      "defaultTemplate": true
+      "nameAsResources" : true,
+      "fileWithLogo":"templates/DiagnosisExtended9_nf.pdf",
+      "fileWithOutLogo":"templates/DiagnosisExtended9_nf.pdf",
+      "type": "INTERNAL_EXTENDED",
+      "defaultTemplate": true,
+      "externalDocument" : false
    },
    {
-   	  "id": 4,	
       "name":"json.pdfTemplate.diagnosis.familyPhysician",
-      "fileWithLogo":"templates/Final5-Logo.pdf",
-      "fileWithOutLogo":"templates/Final5-noLogo.pdf",
+      "nameAsResources" : true,
       "type": "familyPhysician",
-      "defaultTemplate": true
+      "fileWithLogo":"templates/diagnosisExtern.pdf",
+      "fileWithOutLogo":"templates/diagnosisExtern.pdf",
+      "defaultTemplate": false,
+      "externalDocument" : false
    },
    {
-   	  "id": 5,	
-      "name":"json.pdfTemplate.diagnosis.privatePhysician",
-      "fileWithLogo":"templates/Final5-Logo.pdf",
-      "fileWithOutLogo":"templates/Final5-noLogo.pdf",
+   	  "name":"json.pdfTemplate.diagnosis.privatePhysician",
+      "nameAsResources" : true,
       "type": "privatePhysician",
-      "defaultTemplate": true
+      "fileWithLogo":"templates/diagnosisExtern.pdf",
+      "fileWithOutLogo":"templates/diagnosisExtern.pdf",
+      "defaultTemplate": false,
+      "externalDocument" : false
    },
       
 ]
+

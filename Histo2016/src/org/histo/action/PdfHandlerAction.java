@@ -13,15 +13,16 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.BuildInTemplates;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.PdfTemplate;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.PdfTemplate;
 import org.histo.ui.transformer.PdfTemplateTransformer;
 import org.histo.util.FileUtil;
 import org.histo.util.PdfUtil;
@@ -48,6 +49,7 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
+import com.sun.javafx.scene.traversal.Hueristic2D;
 
 /**
  * @formatter:off I_Name I_Birthday I_Insurance I_PIZ_CODE I_PIZ I_Date
@@ -107,7 +109,7 @@ public class PdfHandlerAction {
 	 * @param event
 	 */
 	public void handleTaskRequestReport(FileUploadEvent event) {
-		PDFContainer requestReport = new PDFContainer(PdfTemplate.UREPROT);
+		PDFContainer requestReport = new PDFContainer(PdfTemplate.BUILD_IN_UREPORT);
 		// requestReport.setType("application/pdf");
 		requestReport.setData(event.getFile().getContents());
 		requestReport.setName(event.getFile().getFileName());
@@ -116,7 +118,8 @@ public class PdfHandlerAction {
 	}
 
 	public void preparePrintDialog(Task task) {
-		preparePrintDialog(task, PdfTemplate.values(), PdfTemplate.getDefaultTemplate());
+		PdfTemplate[] templates = PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON);
+		preparePrintDialog(task, templates, PdfTemplate.getDefaultTemplate(templates));
 	}
 
 	public void preparePrintDialog(Task task, PdfTemplate[] templates, PdfTemplate selectedTemplate) {
@@ -145,9 +148,9 @@ public class PdfHandlerAction {
 		PdfReader pdfReader;
 		PdfStamper pdf;
 
-		switch (getSelectedTemplate()) {
-		case UREPROT:
-			PDFContainer container = getTaskToPrint().getReport(PdfTemplate.UREPROT);
+		switch (getSelectedTemplate().getType()) {
+		case "UREPORT":
+			PDFContainer container = getTaskToPrint().getReport(BuildInTemplates.UREPORT.toString());
 			if (container != null)
 				setPdfContent(
 						new DefaultStreamedContent(new ByteArrayInputStream(container.getData()), "application/pdf"));
@@ -155,7 +158,7 @@ public class PdfHandlerAction {
 				setPdfContent(new DefaultStreamedContent(
 						new ByteArrayInputStream(generatePlaceholderPdf("Bitte Hochladen")), "application/pdf"));
 			return;
-		case INTERNAL_EXTENDED:
+		case "INTERNAL_EXTENDED":
 			out = new ByteArrayOutputStream();
 			pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
 			pdf = PdfUtil.getPdfStamper(pdfReader, out);
@@ -167,7 +170,7 @@ public class PdfHandlerAction {
 			setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
 			System.out.println("council");
 			return;
-		case COUNCIL:
+		case"COUNCIL":
 			taskDAO.initializeCouncilData(getTaskToPrint());
 			out = new ByteArrayOutputStream();
 			pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
@@ -226,7 +229,8 @@ public class PdfHandlerAction {
 
 		for (Sample sample : samples) {
 			material.append(sample.getSampleID() + " " + sample.getMaterial() + "\r\n");
-			diagonsisList.append(sample.getSampleID() + " " + sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
+			diagonsisList
+					.append(sample.getSampleID() + " " + sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
 		}
 
 		try {

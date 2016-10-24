@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.histo.config.HistoSettings;
+import org.histo.config.enums.BuildInTemplates;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.PdfTemplate;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -24,6 +25,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.PdfTemplate;
 import org.histo.model.util.ArchivAble;
 import org.histo.model.util.TaskTree;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -217,9 +219,11 @@ public class TaskHandlerAction implements Serializable {
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		if (task.getReport(PdfTemplate.UREPROT) != null) {
-			genericDAO.save(task.getReport(PdfTemplate.UREPROT), resourceBundle.get("log.patient.task.upload.orderList",
-					task.getTaskID(), task.getReport(PdfTemplate.UREPROT).getName()), patient);
+		if (task.getReport(BuildInTemplates.UREPORT.toString()) != null) {
+			genericDAO.save(task.getReport(BuildInTemplates.UREPORT.toString()),
+					resourceBundle.get("log.patient.task.upload.orderList", task.getTaskID(),
+							task.getReport(BuildInTemplates.UREPORT.toString()).getName()),
+					patient);
 		}
 
 		// saving report to datanase
@@ -491,14 +495,16 @@ public class TaskHandlerAction implements Serializable {
 		setAllAvailablePhysiciansTransformer(new DefaultTransformer<>(getAllAvailablePhysicians()));
 
 		setTemporaryTask(task);
-		
+
 		mainHandlerAction.showDialog(Dialog.COUNCIL);
 	}
 
 	public void printCouncilReport(Task task) {
 		mainHandlerAction.hideDialog(Dialog.COUNCIL);
 		pdfHandlerAction.setTaskToPrint(task);
-		pdfHandlerAction.preparePrintDialog(task, new PdfTemplate[] { PdfTemplate.COUNCIL }, PdfTemplate.COUNCIL);
+		PdfTemplate council = PdfTemplate.getTemplateByType(PdfTemplate.factroy(HistoSettings.PDF_TEMPLATE_JSON),
+				BuildInTemplates.COUNCIL.toString());
+		pdfHandlerAction.preparePrintDialog(task, new PdfTemplate[] { council }, council);
 	}
 
 	/********************************************************
