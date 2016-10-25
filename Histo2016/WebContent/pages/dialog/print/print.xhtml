@@ -16,22 +16,31 @@
 			<div class="contentDiv">
 
 				<h:panelGrid>
-					<p:selectOneButton
-						value="#{pdfHandlerAction.printTab}">
-						<f:selectItem
-							itemLabel="Gespeichert (3)"
-							itemValue="PDF_VIEW" />
-						<f:selectItem
-							itemLabel="Neu"
-							itemValue="PRINT_VIEW" />
-						<p:ajax update="@form"></p:ajax>
+					<p:selectOneButton value="#{pdfHandlerAction.printTab}">
+						<f:selectItem itemLabel="Gespeichert (3)" itemValue="PDF_VIEW" />
+						<f:selectItem itemLabel="Neu" itemValue="PRINT_VIEW" />
+						<p:ajax update="contentDiv"
+							listener="#{pdfHandlerAction.onChangePrintTab}"></p:ajax>
 					</p:selectOneButton>
 				</h:panelGrid>
-				
-				
+
+
+
+
 				<h:panelGrid columns="2" columnClasses="settingsColumn,pdfColumn"
-					styleClass="contentTable" rendered="#{pdfHandlerAction.printTab eq 'PRINT_VIEW'}">
-					<h:panelGrid columns="2">
+					styleClass="contentTable" id="contentDiv">
+
+					<h:panelGrid rendered="#{pdfHandlerAction.printTab eq 'PDF_VIEW'}">
+						<p:dataTable value="#{pdfHandlerAction.taskToPrint.attachedPdfs}"
+							var="pdfs">
+							<p:column headerText="Id">
+								<h:outputText value="#{pdfs.id}" />
+							</p:column>
+						</p:dataTable>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2"
+						rendered="#{pdfHandlerAction.printTab eq 'PRINT_VIEW'}">
 						<h:outputLabel value="Dokument" />
 						<p:selectOneMenu value="#{pdfHandlerAction.selectedTemplate}"
 							style="width:150px;"
@@ -78,8 +87,9 @@
 							<f:selectItem itemLabel="TODO" itemValue="0" />
 						</p:selectOneMenu>
 					</h:panelGrid>
-					<p:media player="pdf" value="#{pdfHandlerAction.pdfContent}"
-						width="100%" height="550px"></p:media>
+
+					<p:media player="pdf" id="testtest"
+						value="#{pdfHandlerAction.pdfContent}" width="100%" height="550px"></p:media>
 				</h:panelGrid>
 			</div>
 

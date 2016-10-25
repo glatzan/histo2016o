@@ -119,8 +119,7 @@ public class PdfHandlerAction {
 	 * The printtab to diasplay (Print view or pdf view)
 	 */
 	private PrintTab printTab;
-	
-	
+
 	private String printer;
 
 	private int copies;
@@ -142,7 +141,7 @@ public class PdfHandlerAction {
 	public void preparePrintDialog(Task task) {
 		PdfTemplate[] templates = PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON);
 		preparePrintDialog(task, templates, PdfTemplate.getDefaultTemplate(templates));
-		
+
 	}
 
 	public void preparePrintDialog(Task task, PdfTemplate[] templates, PdfTemplate selectedTemplate) {
@@ -156,11 +155,11 @@ public class PdfHandlerAction {
 
 		taskDAO.initializePdfData(task);
 
-		onChangeTemplate();
-		
-		if(printTab == null)
+		onChangePrintTab();
+
+		if (printTab == null)
 			printTab = PrintTab.PRINT_VIEW;
-		
+
 		mainHandlerAction.showDialog(Dialog.PRINT);
 	}
 
@@ -221,6 +220,21 @@ public class PdfHandlerAction {
 			setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
 			System.out.println("council");
 			return;
+		}
+	}
+
+	public void onChangePrintTab() {
+		if (getPrintTab() == PrintTab.PDF_VIEW) {
+			List<PDFContainer> container = getTaskToPrint().getAttachedPdfs();
+			if (container != null && container.size() != 0) {
+				setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(container.get(0).getData()),
+						"application/pdf"));
+			} else {
+				setPdfContent(new DefaultStreamedContent(
+						new ByteArrayInputStream(generatePlaceholderPdf("Keine Files")), "application/pdf"));
+			}
+		} else {
+			onChangeTemplate();
 		}
 	}
 
@@ -422,6 +436,7 @@ public class PdfHandlerAction {
 	}
 
 	public void setPdfContent(StreamedContent pdfContent) {
+		System.out.println("setting " + pdfContent);
 		this.pdfContent = pdfContent;
 	}
 
