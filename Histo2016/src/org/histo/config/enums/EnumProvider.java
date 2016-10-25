@@ -150,4 +150,5 @@ public class EnumProvider {
 	public SettingsTab getSettingsTab(SettingsTab settingsTab) {
 		return settingsTab;
 	}
+	
 }

@@ -65,7 +65,6 @@
       "fileWithOutLogo":"templates/diagnosisExtern.pdf",
       "defaultTemplate": false,
       "externalDocument" : false
-   },
-      
+   }  
 ]
 

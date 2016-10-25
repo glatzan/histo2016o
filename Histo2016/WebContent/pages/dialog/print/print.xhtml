@@ -17,22 +17,20 @@
 
 				<h:panelGrid>
 					<p:selectOneButton
-						value="#{settingsHandlerAction.physicianTabIndex}">
+						value="#{pdfHandlerAction.printTab}">
 						<f:selectItem
 							itemLabel="Gespeichert (3)"
-							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_EXTER')}" />
+							itemValue="PDF_VIEW" />
 						<f:selectItem
 							itemLabel="Neu"
-							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_LDPA')}" />
+							itemValue="PRINT_VIEW" />
 						<p:ajax update="@form"></p:ajax>
 					</p:selectOneButton>
 				</h:panelGrid>
 				
 				
-				
-				
 				<h:panelGrid columns="2" columnClasses="settingsColumn,pdfColumn"
-					styleClass="contentTable">
+					styleClass="contentTable" rendered="#{pdfHandlerAction.printTab eq 'PRINT_VIEW'}">
 					<h:panelGrid columns="2">
 						<h:outputLabel value="Dokument" />
 						<p:selectOneMenu value="#{pdfHandlerAction.selectedTemplate}"

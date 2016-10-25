@@ -16,6 +16,7 @@ import org.histo.config.HistoSettings;
 import org.histo.config.enums.BuildInTemplates;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.PrintTab;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Contact;
@@ -89,16 +90,37 @@ public class PdfHandlerAction {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	/**
+	 * List with all templates available for printing.
+	 */
 	private PdfTemplate[] templates;
 
+	/**
+	 * Selected template for printing
+	 */
 	private PdfTemplate selectedTemplate;
 
+	/**
+	 * The TemplateListtransformer for selecting a template
+	 */
 	private PdfTemplateTransformer templateTransformer;
 
+	/**
+	 * The selected task for that a report should be generated
+	 */
 	private Task taskToPrint;
 
+	/**
+	 * Content of the generated pdf
+	 */
 	private StreamedContent pdfContent;
 
+	/**
+	 * The printtab to diasplay (Print view or pdf view)
+	 */
+	private PrintTab printTab;
+	
+	
 	private String printer;
 
 	private int copies;
@@ -120,6 +142,7 @@ public class PdfHandlerAction {
 	public void preparePrintDialog(Task task) {
 		PdfTemplate[] templates = PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON);
 		preparePrintDialog(task, templates, PdfTemplate.getDefaultTemplate(templates));
+		
 	}
 
 	public void preparePrintDialog(Task task, PdfTemplate[] templates, PdfTemplate selectedTemplate) {
@@ -134,7 +157,10 @@ public class PdfHandlerAction {
 		taskDAO.initializePdfData(task);
 
 		onChangeTemplate();
-
+		
+		if(printTab == null)
+			printTab = PrintTab.PRINT_VIEW;
+		
 		mainHandlerAction.showDialog(Dialog.PRINT);
 	}
 
@@ -170,7 +196,7 @@ public class PdfHandlerAction {
 			setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
 			System.out.println("council");
 			return;
-		case"COUNCIL":
+		case "COUNCIL":
 			taskDAO.initializeCouncilData(getTaskToPrint());
 			out = new ByteArrayOutputStream();
 			pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
@@ -308,7 +334,8 @@ public class PdfHandlerAction {
 					task.getParent().getPerson().getBirthday(), HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY));
 			stamper.getAcroFields().setField("B_PIZ", task.getParent().getPiz());
 
-			stamper.getAcroFields().setField("B_TEXT", task.getCouncil().getCouncilText());
+			if (task.getCouncil() != null)
+				stamper.getAcroFields().setField("B_TEXT", task.getCouncil().getCouncilText());
 			// stamper.getAcroFields().setField("B_SIGANTURE",
 			// task.getCouncil().getCouncilPhysician().getFullName());
 			// stamper.getAcroFields().setField("B_APPENDIX",
@@ -412,6 +439,14 @@ public class PdfHandlerAction {
 
 	public void setCopies(int copies) {
 		this.copies = copies;
+	}
+
+	public PrintTab getPrintTab() {
+		return printTab;
+	}
+
+	public void setPrintTab(PrintTab printTab) {
+		this.printTab = printTab;
 	}
 
 	/********************************************************
