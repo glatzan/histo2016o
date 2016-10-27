@@ -14,8 +14,8 @@
    {
       "name":"json.pdfTemplate.council",
       "nameAsResources" : true,
-      "fileWithLogo":"templates/Final5-Logo.pdf",
-      "fileWithOutLogo":"templates/Final5-noLogo.pdf",
+      "fileWithLogo":"templates/council.pdf",
+      "fileWithOutLogo":"templates/council.pdf",
       "type": "COUNCIL",
       "defaultTemplate": true,
       "externalDocument" : false

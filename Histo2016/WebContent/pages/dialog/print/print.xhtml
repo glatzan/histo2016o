@@ -39,58 +39,95 @@
 						</p:dataTable>
 					</h:panelGrid>
 
-					<h:panelGrid columns="2"
+					<h:panelGroup
 						rendered="#{pdfHandlerAction.printTab eq 'PRINT_VIEW'}">
-						<h:outputLabel value="Dokument" />
-						<p:selectOneMenu value="#{pdfHandlerAction.selectedTemplate}"
-							style="width:150px;"
-							converter="#{pdfHandlerAction.templateTransformer}">
-							<f:selectItems value="#{pdfHandlerAction.templates}"
-								var="template" itemLabel="#{msg[template.name]}"
-								itemValue="#{template}" />
+						<h:panelGrid columns="2">
+							<h:outputLabel value="Dokument" />
+							<p:selectOneMenu value="#{pdfHandlerAction.selectedTemplate}"
+								style="width:150px;"
+								converter="#{pdfHandlerAction.templateTransformer}">
+								<f:selectItems value="#{pdfHandlerAction.templates}"
+									var="template" itemLabel="#{msg[template.name]}"
+									itemValue="#{template}" />
 
-							<p:ajax update="@form"
-								listener="#{pdfHandlerAction.onChangeTemplate()}"></p:ajax>
-						</p:selectOneMenu>
+								<p:ajax update="@form"
+									listener="#{pdfHandlerAction.onChangeTemplate()}"></p:ajax>
+							</p:selectOneMenu>
 
-						<h:panelGroup style="height:15px;" layout="block" />
-						<h:panelGroup style="height:15px;" layout="block" />
+							<h:panelGroup style="height:15px;" layout="block" />
+							<h:panelGroup style="height:15px;" layout="block" />
 
-						<h:outputLabel value="Drucker" />
-						<p:selectOneMenu style="width:150px;">
-							<f:selectItem itemLabel="TODO" itemValue="0" />
-						</p:selectOneMenu>
+							<h:outputLabel value="Drucker" />
+							<p:selectOneMenu style="width:150px;">
+								<f:selectItem itemLabel="TODO" itemValue="0" />
+							</p:selectOneMenu>
 
-						<h:outputLabel value="Anzahl" />
-						<p:spinner min="1" size="13" />
+							<h:outputLabel value="Anzahl" />
+							<p:spinner min="1" size="13" />
 
-						<h:panelGroup style="height:15px;" layout="block" />
-						<h:panelGroup style="height:15px;" layout="block" />
+							<h:panelGroup style="height:15px;" layout="block" />
+							<h:panelGroup style="height:15px;" layout="block" />
 
-						<h:outputLabel value="Befunder" />
-						<p:selectOneMenu style="width:150px;">
-							<f:selectItem itemLabel="TODO" itemValue="0" />
-						</p:selectOneMenu>
+						</h:panelGrid>
 
-						<h:panelGroup></h:panelGroup>
-						<p:selectOneMenu style="width:150px;">
-							<f:selectItem itemLabel="TODO" itemValue="0" />
-						</p:selectOneMenu>
+						<h:panelGrid
+							rendered="#{pdfHandlerAction.selectedTemplate.type eq 'COUNCIL'}">
 
-						<h:outputLabel value="Oberarzt" />
-						<p:selectOneMenu style="width:150px;">
-							<f:selectItem itemLabel="TODO" itemValue="0" />
-						</p:selectOneMenu>
+							<p:commandButton value="Konsil bearbeiten" process="@form"
+								icon="fa fa-fw fa-user-plus">
+								<f:actionListener
+									binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
+								<f:actionListener
+									binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
+								<f:actionListener
+									binding="#{patientHandlerAction.clearTmpPatient()}" />
+							</p:commandButton>
 
-						<h:panelGroup></h:panelGroup>
-						<p:selectOneMenu style="width:150px;">
-							<f:selectItem itemLabel="TODO" itemValue="0" />
-						</p:selectOneMenu>
-					</h:panelGrid>
+						</h:panelGrid>
 
+						<h:panelGrid columns="2"
+							rendered="#{pdfHandlerAction.selectedTemplate.type eq 'INTERNAL_EXTENDED'}">
+
+							<h:outputLabel value="Datum" />
+							<p:calendar pattern="dd.MM.yyyy" mask="true"
+								disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
+								value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}">
+								<p:ajax event="dateSelect"
+									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+								<f:ajax event="change" execute="@this"
+									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+							</p:calendar>
+
+
+
+							<h:outputLabel value="Assistent" />
+							<p:selectOneMenu editable="true" style="float:right; width:80%"
+								value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft.role}"
+								rendered="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft ne null}">
+								<f:selectItems value="#{enumProvider.signatureRoles}"
+									var="signatureRole"
+									itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
+									itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
+							</p:selectOneMenu>
+
+							<h:outputLabel value="Oberarzt" />
+							<h:panelGroup id="sigantureRightRole">
+								<p:selectOneMenu editable="true" style="float:right; width:80%"
+									value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight.role}"
+									rendered="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight ne null}">
+									<f:selectItems value="#{enumProvider.signatureRoles}"
+										var="signatureRole"
+										itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
+										itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+						</h:panelGrid>
+					</h:panelGroup>
 					<p:media player="pdf" id="testtest"
 						value="#{pdfHandlerAction.pdfContent}" width="100%" height="550px"></p:media>
 				</h:panelGrid>
+
 			</div>
 
 			<div class="bottomDiv">
