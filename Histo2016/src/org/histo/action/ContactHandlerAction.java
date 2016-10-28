@@ -72,7 +72,7 @@ public class ContactHandlerAction implements Serializable {
 	 * @param other
 	 * @param addedContact
 	 */
-	public void prepareContacts(Task task, boolean surgeon, boolean extern, boolean other,
+	public void prepareContacts(Task task, boolean surgeon, boolean extern, boolean other, boolean familyPhsysician,
 			boolean showAddedContactsOnly) {
 
 		if (getPhysicianRoleOptions() == null)
@@ -80,7 +80,7 @@ public class ContactHandlerAction implements Serializable {
 
 		setContactTab(ContactTab.LIST);
 
-		updateContactList(task, surgeon, extern, other, showAddedContactsOnly);
+		updateContactList(task, surgeon, extern, other, familyPhsysician, showAddedContactsOnly);
 
 		mainHandlerAction.showDialog(Dialog.CONTACTS);
 	}
@@ -94,7 +94,7 @@ public class ContactHandlerAction implements Serializable {
 	 * @param other
 	 * @param showAddedContactsOnly
 	 */
-	public void updateContactList(Task task, boolean surgeon, boolean extern, boolean other,
+	public void updateContactList(Task task, boolean surgeon, boolean extern, boolean other, boolean familyPhsysician,
 			boolean showAddedContactsOnly) {
 		// refreshing the selected task
 		genericDAO.refresh(task);
@@ -104,8 +104,8 @@ public class ContactHandlerAction implements Serializable {
 		List<Contact> contacts = task.getContacts();
 
 		// getting all contact options
-		List<Physician> databaseContacts = physicianDAO.getPhysicians(
-				new ContactRole[] { ContactRole.SURGEON, ContactRole.PRIVATE_PHYSICIAN, ContactRole.OTHER }, false);
+		List<Physician> databaseContacts = physicianDAO
+				.getPhysicians(ContactRole.getRoles(surgeon, extern, other, familyPhsysician), false);
 
 		if (!showAddedContactsOnly) {
 			// shows all contacts but marks the already selected contacts with
@@ -167,7 +167,8 @@ public class ContactHandlerAction implements Serializable {
 			} else if (contact.getRole() == ContactRole.SURGEON) {
 				// surgeon use email per default
 				contact.setUseEmail(true);
-			} else if (contact.getRole() == ContactRole.PRIVATE_PHYSICIAN && contact.getPhysician().getFax() != null
+			} else if ((contact.getRole() == ContactRole.PRIVATE_PHYSICIAN
+					|| contact.getRole() == ContactRole.FAMILY_PHYSICIAN) && contact.getPhysician().getFax() != null
 					&& !contact.getPhysician().getFax().isEmpty()) {
 				// private physician use fax per default
 				contact.setUseFax(true);
@@ -202,6 +203,7 @@ public class ContactHandlerAction implements Serializable {
 	 */
 	public void updateContactRolePrimary(Task task) {
 		updateContactRolePrimary(task, ContactRole.PRIVATE_PHYSICIAN);
+		updateContactRolePrimary(task, ContactRole.FAMILY_PHYSICIAN);
 		updateContactRolePrimary(task, ContactRole.SURGEON);
 	}
 

@@ -51,7 +51,7 @@
    {
       "name":"json.pdfTemplate.diagnosis.familyPhysician",
       "nameAsResources" : true,
-      "type": "familyPhysician",
+      "type": "FAMILY_PHYSICIAN",
       "fileWithLogo":"templates/diagnosisExtern.pdf",
       "fileWithOutLogo":"templates/diagnosisExtern.pdf",
       "defaultTemplate": false,
@@ -60,7 +60,7 @@
    {
    	  "name":"json.pdfTemplate.diagnosis.privatePhysician",
       "nameAsResources" : true,
-      "type": "privatePhysician",
+      "type": "PRIVATE_PHYSICIAN",
       "fileWithLogo":"templates/diagnosisExtern.pdf",
       "fileWithOutLogo":"templates/diagnosisExtern.pdf",
       "defaultTemplate": false,

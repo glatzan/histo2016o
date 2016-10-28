@@ -11,6 +11,7 @@ public class PhysicianRoleOptions {
 
 	private boolean surgeon = true;
 	private boolean privatePhysician = true;
+	private boolean familyPhysician = true;
 	private boolean other = true;
 	private boolean archived = false;
 
@@ -54,6 +55,14 @@ public class PhysicianRoleOptions {
 
 	public void setShowAddedContactsOnly(boolean showAddedContactsOnly) {
 		this.showAddedContactsOnly = showAddedContactsOnly;
+	}
+
+	public boolean isFamilyPhysician() {
+		return familyPhysician;
+	}
+
+	public void setFamilyPhysician(boolean familyPhysician) {
+		this.familyPhysician = familyPhysician;
 	}
 
 }

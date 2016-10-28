@@ -30,6 +30,7 @@
 				<h:panelGrid columns="2" columnClasses="settingsColumn,pdfColumn"
 					styleClass="contentTable" id="contentDiv">
 
+					<!-- PDF view -->
 					<h:panelGrid rendered="#{pdfHandlerAction.printTab eq 'PDF_VIEW'}">
 						<p:dataTable value="#{pdfHandlerAction.taskToPrint.attachedPdfs}"
 							var="pdfs">
@@ -38,10 +39,15 @@
 							</p:column>
 						</p:dataTable>
 					</h:panelGrid>
+					<!-- PDF view -->
 
+					<!-- PDF Print view -->
 					<h:panelGroup
 						rendered="#{pdfHandlerAction.printTab eq 'PRINT_VIEW'}">
+						<!-- template and printer select -->
 						<h:panelGrid columns="2">
+
+							<!-- Template select -->
 							<h:outputLabel value="Dokument" />
 							<p:selectOneMenu value="#{pdfHandlerAction.selectedTemplate}"
 								style="width:150px;"
@@ -67,23 +73,18 @@
 
 							<h:panelGroup style="height:15px;" layout="block" />
 							<h:panelGroup style="height:15px;" layout="block" />
-
 						</h:panelGrid>
+						<!-- template and printer select -->
 
+						<!-- Council  -->
 						<h:panelGrid
 							rendered="#{pdfHandlerAction.selectedTemplate.type eq 'COUNCIL'}">
-
 							<p:commandButton value="Konsil bearbeiten" process="@form"
+								rendered="#{pdfHandlerAction.renderPDF}"
 								icon="fa fa-fw fa-user-plus">
-								<f:actionListener
-									binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
-								<f:actionListener
-									binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
-								<f:actionListener
-									binding="#{patientHandlerAction.clearTmpPatient()}" />
 							</p:commandButton>
-
 						</h:panelGrid>
+						<!-- Council  -->
 
 						<h:panelGrid columns="2"
 							rendered="#{pdfHandlerAction.selectedTemplate.type eq 'INTERNAL_EXTENDED'}">
@@ -124,8 +125,36 @@
 
 						</h:panelGrid>
 					</h:panelGroup>
-					<p:media player="pdf" id="testtest"
-						value="#{pdfHandlerAction.pdfContent}" width="100%" height="550px"></p:media>
+					<!-- PDF Print view -->
+
+					<!-- PDF Render -->
+					<h:panelGroup>
+						<p:media player="pdf" id="testtest"
+							value="#{pdfHandlerAction.pdfContent}" width="100%"
+							rendered="#{pdfHandlerAction.renderPDF}" height="550px"></p:media>
+						<!-- Council create  -->
+						<h:panelGrid
+							rendered="#{pdfHandlerAction.selectedTemplate.type eq 'COUNCIL' and !pdfHandlerAction.renderPDF}">
+							<h:outputLabel value="Kein Konsil vorhanden, Konsil erstellen?" />
+							<p:commandButton value="Konsil bearbeiten" process="@form"
+								icon="fa fa-fw fa-user-plus">
+							</p:commandButton>
+						</h:panelGrid>
+						<!-- Council create  -->
+
+						<!-- external -->
+						<h:panelGrid
+							rendered="#{(pdfHandlerAction.selectedTemplate.type eq 'FAMILY_PHYSICIAN' or pdfHandlerAction.selectedTemplate.type eq 'PRIVATE_PHYSICIAN' ) and !pdfHandlerAction.renderPDF}">
+							<h:outputLabel value="Kein Hausarzt ausgewähl!" rendered="#{pdfHandlerAction.selectedTemplate.type eq 'FAMILY_PHYSICIAN'}"/>
+							<h:outputLabel value="Kein Facharzt ausgewähl!" rendered="#{pdfHandlerAction.selectedTemplate.type eq 'PRIVATE_PHYSICIAN'}"/>
+							<p:commandButton value="Konsil bearbeiten" process="@form"
+								icon="fa fa-fw fa-user-plus">
+							</p:commandButton>
+						</h:panelGrid>
+						<!-- external -->
+
+					</h:panelGroup>
+					<!-- PDF Render -->
 				</h:panelGrid>
 
 			</div>

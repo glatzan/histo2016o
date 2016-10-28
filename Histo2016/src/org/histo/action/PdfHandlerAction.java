@@ -21,6 +21,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
+import org.histo.model.Physician;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PdfTemplate;
@@ -120,6 +121,11 @@ public class PdfHandlerAction {
 	 */
 	private PrintTab printTab;
 
+	/**
+	 * True if pdf should be rendere in the gui
+	 */
+	private boolean renderPDF = false;
+
 	private String printer;
 
 	private int copies;
@@ -174,15 +180,6 @@ public class PdfHandlerAction {
 		PdfStamper pdf;
 
 		switch (getSelectedTemplate().getType()) {
-		case "UREPORT":
-			PDFContainer container = getTaskToPrint().getReport(BuildInTemplates.UREPORT.toString());
-			if (container != null)
-				setPdfContent(
-						new DefaultStreamedContent(new ByteArrayInputStream(container.getData()), "application/pdf"));
-			else
-				setPdfContent(new DefaultStreamedContent(
-						new ByteArrayInputStream(generatePlaceholderPdf("Bitte Hochladen")), "application/pdf"));
-			return;
 		case "INTERNAL_EXTENDED":
 			out = new ByteArrayOutputStream();
 			pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
@@ -193,20 +190,47 @@ public class PdfHandlerAction {
 			PdfUtil.closePdf(pdfReader, pdf);
 
 			setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
-			System.out.println("council");
+			setRenderPDF(true);
 			return;
 		case "COUNCIL":
 			taskDAO.initializeCouncilData(getTaskToPrint());
-			out = new ByteArrayOutputStream();
-			pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
-			pdf = PdfUtil.getPdfStamper(pdfReader, out);
-			populateReportHead(pdfReader, pdf, getTaskToPrint());
-			populateReportCouncil(pdf, getTaskToPrint());
-			pdf.setFormFlattening(true);
-			PdfUtil.closePdf(pdfReader, pdf);
-
-			setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
-			System.out.println("council");
+			if (getTaskToPrint().getCouncil() != null) {
+				out = new ByteArrayOutputStream();
+				pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
+				pdf = PdfUtil.getPdfStamper(pdfReader, out);
+				populateReportHead(pdfReader, pdf, getTaskToPrint());
+				populateReportCouncil(pdf, getTaskToPrint());
+				pdf.setFormFlattening(true);
+				PdfUtil.closePdf(pdfReader, pdf);
+				setPdfContent(
+						new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
+				setRenderPDF(true);
+			} else {
+				setRenderPDF(false);
+				setPdfContent(null);
+			}
+			return;
+		case "FAMILY_PHYSICIAN":
+		case "PRIVATE_PHYSICIAN":
+			Contact physician = getTaskToPrint()
+					.getPrimaryContact(getSelectedTemplate().getType().equals("FAMILY_PHYSICIAN")
+							? ContactRole.FAMILY_PHYSICIAN : ContactRole.PRIVATE_PHYSICIAN);
+			if (physician == null) {
+				setRenderPDF(false);
+				setPdfContent(null);
+			} else {
+				out = new ByteArrayOutputStream();
+				pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
+				pdf = PdfUtil.getPdfStamper(pdfReader, out);
+				populateReportHead(pdfReader, pdf, getTaskToPrint());
+				populateReportAddress(pdf, physician);
+				populateReportCouncil(pdf, getTaskToPrint());
+				pdf.setFormFlattening(true);
+				PdfUtil.closePdf(pdfReader, pdf);
+				setPdfContent(
+						new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
+				setRenderPDF(true);
+			}
 			return;
 		default:
 			out = new ByteArrayOutputStream();
@@ -245,7 +269,7 @@ public class PdfHandlerAction {
 					task.getParent().getPerson().getName() + ", " + task.getParent().getPerson().getSurname());
 			stamper.getAcroFields().setField("H_Birthday", resourceBundle.get("pdf.birthday") + " " + TimeUtil
 					.formatDate(task.getParent().getPerson().getBirthday(), HistoSettings.STANDARD_DATEFORMAT_GERMAN));
-			stamper.getAcroFields().setField("H_ADDRESS", task.getParent().getInsurance());
+			stamper.getAcroFields().setField("H_Insurance", task.getParent().getInsurance());
 
 			if (!task.getParent().getPiz().isEmpty())
 				PdfUtil.generateCode128Field(reader, stamper, String.valueOf(task.getParent().getPiz()), 40f, 0.95f, 70,
@@ -256,6 +280,21 @@ public class PdfHandlerAction {
 			stamper.getAcroFields().setField("H_Date", TimeUtil.formatDate(new Date(System.currentTimeMillis()),
 					HistoSettings.STANDARD_DATEFORMAT_GERMAN));
 		} catch (IOException | DocumentException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public final void populateReportAddress(PdfStamper stamper, Contact contact) {
+		StringBuffer contAdr = new StringBuffer();
+		contAdr.append(contact.getPhysician().getGender() == 'w' ? "Todo Frau" : "Todo Hermm");
+		contAdr.append(contact.getPhysician().getFullName());
+		contAdr.append(contact.getPhysician().getStreet() + " " + contact.getPhysician().getHouseNumber());
+		contAdr.append(contact.getPhysician().getPostcode() + " " + contact.getPhysician().getTown());
+
+		try {
+			stamper.getAcroFields().setField("H_ADDRESS", contAdr.toString());
+		} catch (IOException | DocumentException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -462,6 +501,14 @@ public class PdfHandlerAction {
 
 	public void setPrintTab(PrintTab printTab) {
 		this.printTab = printTab;
+	}
+
+	public boolean isRenderPDF() {
+		return renderPDF;
+	}
+
+	public void setRenderPDF(boolean renderPDF) {
+		this.renderPDF = renderPDF;
 	}
 
 	/********************************************************
