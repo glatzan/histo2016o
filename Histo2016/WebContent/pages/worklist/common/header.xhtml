@@ -65,10 +65,6 @@
 					<p:menuitem value="Befundung beenden"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
 						onclick="$('#headerForm\\:finalizeBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-
-				</p:submenu>
-
-				<p:submenu label="Sonstiges">
 					<!-- Contacts -->
 					<p:menuitem value="Benachrichtigungen"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
@@ -78,6 +74,10 @@
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
 						onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 					<p:menuitem value="Abrechnung"></p:menuitem>
+				</p:submenu>
+
+				<p:submenu label="Sonstiges">
+
 				</p:submenu>
 
 				<!-- Log -->
@@ -121,7 +121,7 @@
 				actionListener="#{taskHandlerAction.prepareCouncilDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
-			
+
 			<!-- Menu Button -->
 			<p:commandButton id="menuBtn" value="Menu" type="button"
 				icon="ui-icon-triangle-1-s" />

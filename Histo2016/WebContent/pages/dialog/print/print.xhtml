@@ -145,8 +145,10 @@
 						<!-- external -->
 						<h:panelGrid
 							rendered="#{(pdfHandlerAction.selectedTemplate.type eq 'FAMILY_PHYSICIAN' or pdfHandlerAction.selectedTemplate.type eq 'PRIVATE_PHYSICIAN' ) and !pdfHandlerAction.renderPDF}">
-							<h:outputLabel value="Kein Hausarzt ausgewähl!" rendered="#{pdfHandlerAction.selectedTemplate.type eq 'FAMILY_PHYSICIAN'}"/>
-							<h:outputLabel value="Kein Facharzt ausgewähl!" rendered="#{pdfHandlerAction.selectedTemplate.type eq 'PRIVATE_PHYSICIAN'}"/>
+							<h:outputLabel value="Kein Hausarzt ausgewähl!"
+								rendered="#{pdfHandlerAction.selectedTemplate.type eq 'FAMILY_PHYSICIAN'}" />
+							<h:outputLabel value="Kein Facharzt ausgewähl!"
+								rendered="#{pdfHandlerAction.selectedTemplate.type eq 'PRIVATE_PHYSICIAN'}" />
 							<p:commandButton value="Konsil bearbeiten" process="@form"
 								icon="fa fa-fw fa-user-plus">
 							</p:commandButton>
@@ -162,24 +164,9 @@
 			<div class="bottomDiv">
 				<h:panelGrid columns="2" style="width:100%"
 					styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-					<h:panelGrid columns="2">
-						<p:commandButton value="Öffnen" process="@form"
-							icon="fa fa-fw fa-user-plus">
-							<f:actionListener
-								binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
-							<f:actionListener
-								binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
-							<f:actionListener
-								binding="#{patientHandlerAction.clearTmpPatient()}" />
-						</p:commandButton>
-						<p:commandButton value="Drucken" process="@form"
-							icon="fa fa-fw fa-user-plus">
-							<f:actionListener
-								binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
-							<f:actionListener
-								binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
-							<f:actionListener
-								binding="#{patientHandlerAction.clearTmpPatient()}" />
+					<h:panelGrid columns="1">
+						<p:commandButton value="Drucken" icon="fa fa-fw fa-user-plus"
+							oncomplete="window.open('pdfWindows.xhtml', '_blank')">
 						</p:commandButton>
 					</h:panelGrid>
 				</h:panelGrid>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<ui:param name="root" value="#{request.contextPath}/" />
+	<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
+	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="grid/grid.css" library="primefaces" />
+</h:head>
+
+<h:body>
+	<div>
+	#{pdfHandlerAction.renderPDF}
+		<p:media player="pdf" value="#{pdfHandlerAction.pdfContent}"
+			rendered="#{pdfHandlerAction.renderPDF}" width="700px" height="100px"></p:media>
+	</div>
+</h:body>
+</html>

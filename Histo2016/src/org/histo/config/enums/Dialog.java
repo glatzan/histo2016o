@@ -28,7 +28,7 @@ public enum Dialog {
 	STAINING_PERFORMED("/pages/dialog/task/staingingPerformed", 0, 0, false, false, true),
 	SETTINGS("/pages/dialog/settings/settings", 1024, 600, false, false, true),
 	PRINT("/pages/dialog/print/print", 1024, 600, false, false, true), // <<
-	COUNCIL("/pages/dialog/task/council", 1024, 600, false, false, true),
+	COUNCIL("/pages/dialog/task/council", 640, 360, false, false, true),
 	; 
 	
 	

@@ -6,54 +6,78 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+<c:set var="selectedTask"
+	value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
+
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.createTask.Headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
-
 <h:body styleClass="defaultDialogLayout">
 	<h:form enctype="multipart/form-data">
 		<div class="dialogContent">
+
 			<h:panelGrid columns="2"
 				styleClass="dialogTable smallPaddingVerticalAll standardFont"
-				style="width:100%" columnClasses="taskTextColunm,">
+				style="width:100%"
+				columnClasses="councilTableTextColumn,councilTableInputColumn">
 
 				<h:outputLabel value="Konsil an:"></h:outputLabel>
 
-				<p:selectOneMenu disabled="#{diagnosis.finalized}"
-					styleClass="diagnosisSelectMenu"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.council.councilPhysician}"
-					panelStyleClass="diagnosisSelectMenuPanel"
-					converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
-					filter="true" filterMatchMode="contains">
-					<f:selectItem
-						itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-						itemValue="#{null}" />
+				<h:panelGrid columns="2"
+					styleClass="noBordersAll, collapsedBordersAll, noPaddingAll">
+					<p:selectOneMenu disabled="#{diagnosis.finalized}"
+						styleClass="diagnosisSelectMenu, smallInput"
+						value="#{selectedTask.council.councilPhysician}"
+						panelStyleClass="diagnosisSelectMenuPanel"
+						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Konsilar auswählen" itemValue="#{null}" />
 
-					<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
-						var="allAvailablePhysicians"
-						itemLabel="#{allAvailablePhysicians.physician.fullName}"
-						itemValue="#{allAvailablePhysicians}" />
+						<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
+							var="allAvailablePhysicians"
+							itemLabel="#{allAvailablePhysicians.fullName}"
+							itemValue="#{allAvailablePhysicians}" />
 
-					<p:ajax process="@this" event="change">
-					</p:ajax>
-				</p:selectOneMenu>
+						<p:ajax process="@this" event="change"
+							listener="#{mainHandlerAction.saveChangedData(selectedTask.council,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.change',selectedTask.taskID,mainHandlerAction.replaceWildcard('log.patient.task.council.counselor.change',selectedTask.council.councilPhysician.fullName)))}">
+						</p:ajax>
+					</p:selectOneMenu>
+					<p:commandLink title="Bearbeiten/Hinzufügen"
+						rendered="#{!selectedTask.diagnosisCompleted}"
+						style=" margin-left:10px;" styleClass="noUnderlineAtLink"
+						actionListener="#{contactHandlerAction.prepareContacts(selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
+						<i class="fa fa-fw fa-cog" />
+						<p:ajax event="dialogReturn" update="" />
+					</p:commandLink>
+				</h:panelGrid>
 
 				<h:outputLabel value="Anforderung"></h:outputLabel>
-				<h:inputText value="#{worklistHandlerAction.selectedPatient.selectedTask.council.councilText}"></h:inputText>
+				<h:inputTextarea style="width: 500px;" rows="5"
+					value="#{selectedTask.council.councilText}">
+					<p:ajax process="@this" event="change"
+						listener="#{mainHandlerAction.saveChangedData(selectedTask.council,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.change',selectedTask.taskID,mainHandlerAction.replaceWildcard('log.patient.task.council.text.change',selectedTask.council.councilText)))}">
+						</p:ajax>
+				</h:inputTextarea>
 
 				<h:outputLabel value="Anlage"></h:outputLabel>
-				<h:inputText value="#{worklistHandlerAction.selectedPatient.selectedTask.council.attachment}"></h:inputText>
+				<h:inputTextarea style="width: 500px;" rows="2"
+					value="#{selectedTask.council.attachment}">
+					<p:ajax process="@this" event="change"
+						listener="#{mainHandlerAction.saveChangedData(selectedTask.council,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.change',selectedTask.taskID,mainHandlerAction.replaceWildcard('log.patient.task.council.attachment.change',selectedTask.council.attachment)))}">
+						</p:ajax>
+				</h:inputTextarea>
 
 				<h:outputLabel value="Gezeichnet:"></h:outputLabel>
 
-				<h:panelGroup>
+				<h:panelGrid columns="2"
+					styleClass="noBordersAll, collapsedBordersAll, noPaddingAll">
 					<p:selectOneMenu disabled="#{diagnosis.finalized}"
-						styleClass="diagnosisSelectMenu"
+						styleClass="diagnosisSelectMenu, smallInput"
 						panelStyleClass="diagnosisSelectMenuPanel"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.council.physicianRequestingCouncil}"
+						value="#{selectedTask.council.physicianRequestingCouncil}"
 						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
 						filter="true" filterMatchMode="contains">
 						<f:selectItem
@@ -62,27 +86,29 @@
 
 						<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
 							var="allAvailablePhysicians"
-							itemLabel="#{allAvailablePhysicians.physician.fullName}"
+							itemLabel="#{allAvailablePhysicians.fullName}"
 							itemValue="#{allAvailablePhysicians}" />
 
-						<p:ajax process="@this" event="change">
+						<p:ajax process="@this" event="change"
+							listener="#{mainHandlerAction.saveChangedData(selectedTask.council,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.change',selectedTask.taskID,mainHandlerAction.replaceWildcard('log.patient.task.council.physician.change',selectedTask.council.physicianRequestingCouncil.fullName)))}">
+
 						</p:ajax>
 					</p:selectOneMenu>
-					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-						rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-						style="float: right; margin-right:5px;"
-						actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
+					<p:commandLink title="Bearbeiten/Hinzufügen"
+						rendered="#{!selectedTask.diagnosisCompleted}"
+						style=" margin-left:10px;" styleClass="noUnderlineAtLink"
+						actionListener="#{contactHandlerAction.prepareContacts(selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
 						<i class="fa fa-fw fa-cog" />
 						<p:ajax event="dialogReturn" update="" />
 					</p:commandLink>
-				</h:panelGroup>
+				</h:panelGrid>
 
 			</h:panelGrid>
 
 
 		</div>
 		<div class="buttonContainer">
-			<p:commandButton value="Anforderung drucken"
+			<p:commandButton value="Anforderung drucken/versenden"
 				icon="fa fa-check-circle-o" styleClass="smallButton"
 				actionListener="#{taskHandlerAction.printCouncilReport(taskHandlerAction.temporaryTask)}"></p:commandButton>
 			<p:commandButton value="#{msg['general.abort']}"

@@ -1,6 +1,7 @@
 package org.histo.action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +12,10 @@ import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
+import org.histo.dao.GenericDAO;
+import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
+import org.histo.model.util.TaskTree;
 import org.histo.util.ResourceBundle;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -85,6 +90,12 @@ public class MainHandlerAction {
 	@Autowired
 	private UserHandlerAction userHandlerAction;
 
+	@Autowired
+	private GenericDAO genericDAO;
+
+	@Autowired
+	private ResourceBundle resourceBundle;
+
 	/**
 	 * View options, dynamically generated depending on the users role
 	 */
@@ -96,12 +107,20 @@ public class MainHandlerAction {
 	private View currentView;
 
 	/**
+	 * List of currently opened dialogs
+	 */
+	private ArrayList<Dialog> currentDialogs;
+
+	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
 	@PostConstruct
 	public void init() {
+
 		navigationPages = new ArrayList<View>();
 		navigationPages.add(View.USERLIST);
+		
+		setCurrentDialogs(new ArrayList<Dialog>());
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);
@@ -154,30 +173,30 @@ public class MainHandlerAction {
 	/**
 	 * Shows a dialog using the primefaces dialog framework
 	 * 
-	 * @param dilalog
+	 * @param dialog
 	 */
-	public void showDialog(Dialog dilalog) {
+	public void showDialog(Dialog dialog) {
 		HashMap<String, Object> options = new HashMap<String, Object>();
 
-		if (dilalog.getWidth() != 0) {
-			options.put("width", dilalog.getWidth());
-			options.put("contentWidth", dilalog.getWidth());
+		if (dialog.getWidth() != 0) {
+			options.put("width", dialog.getWidth());
+			options.put("contentWidth", dialog.getWidth());
 		} else
 			options.put("width", "auto");
 
-		if (dilalog.getHeight() != 0) {
-			options.put("contentHeight", dilalog.getHeight());
-			options.put("height", dilalog.getHeight());
+		if (dialog.getHeight() != 0) {
+			options.put("contentHeight", dialog.getHeight());
+			options.put("height", dialog.getHeight());
 		} else
 			options.put("height", "auto");
 
-		if (dilalog.isUseOptions()) {
-			options.put("resizable", dilalog.isResizeable());
-			options.put("draggable", dilalog.isDraggable());
-			options.put("modal", dilalog.isModal());
+		if (dialog.isUseOptions()) {
+			options.put("resizable", dialog.isResizeable());
+			options.put("draggable", dialog.isDraggable());
+			options.put("modal", dialog.isModal());
 		}
-
-		RequestContext.getCurrentInstance().openDialog(dilalog.getPath(), options, null);
+		getCurrentDialogs().add(dialog);
+		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
 	}
 
 	/**
@@ -186,7 +205,19 @@ public class MainHandlerAction {
 	 * @param dialog
 	 */
 	public void hideDialog(Dialog dialog) {
+		getCurrentDialogs().remove(dialog);
 		RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
+	}
+
+	/**
+	 * Closes all opened dialogs
+	 */
+	public void hideAllDialogs() {
+		for (Dialog dialog : getCurrentDialogs()) {
+			RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
+		}
+
+		getCurrentDialogs().clear();
 	}
 
 	/*
@@ -241,6 +272,55 @@ public class MainHandlerAction {
 	 * ************************** Time ****************************
 	 */
 
+	/**
+	 * Takes a object to save and an resourcesString with optional wildcards.
+	 * This method will replace wildcard recursively ("log.test",
+	 * "{'log.hallo', 'wuuu'}", "replace other"). If an object is associated
+	 * with a patient but does not implement TaskTree the patient object can be
+	 * passed separately.
+	 * 
+	 * @param toSave
+	 * @param resourcesKey
+	 * @param detailedInfoParams
+	 */
+	public void saveChangedData(Object toSave, Patient patient, String logInfo) {
+
+		if (patient != null) {
+			genericDAO.save(toSave, logInfo, patient);
+		} else
+			genericDAO.save(toSave, logInfo);
+
+		System.out.println("saving data " + logInfo);
+	}
+
+	/**
+	 * Takes a object to save and an resourcesString with optional wildcards.
+	 * This method will replace wildcard recursively ("log.test",
+	 * "{'log.hallo', 'wuuu'}", "replace other")
+	 * 
+	 * @param toSave
+	 * @param resourcesKey
+	 * @param detailedInfoParams
+	 */
+	public void saveChangedData(Object toSave, String resourcesKey) {
+
+		if (toSave instanceof TaskTree) {
+			saveChangedData(toSave, ((TaskTree<?>) toSave).getPatient(), resourcesKey);
+		} else
+			saveChangedData(toSave, null, resourcesKey);
+	}
+
+	/**
+	 * Replaces wildcards in resoucesString.
+	 * 
+	 * @param baseStr
+	 * @param arr
+	 * @return
+	 */
+	public String replaceWildcard(String baseStr, Object... arr) {
+		return resourceBundle.get(baseStr, arr);
+	}
+
 	/*
 	 * ************************** Getters/Setters ****************************
 	 */
@@ -270,6 +350,15 @@ public class MainHandlerAction {
 	public void setCurrentView(View currentView) {
 		this.currentView = currentView;
 	}
+
+	public ArrayList<Dialog> getCurrentDialogs() {
+		return currentDialogs;
+	}
+
+	public void setCurrentDialogs(ArrayList<Dialog> currentDialogs) {
+		this.currentDialogs = currentDialogs;
+	}
+
 	/*
 	 * ************************** Getters/Setters ****************************
 	 */
