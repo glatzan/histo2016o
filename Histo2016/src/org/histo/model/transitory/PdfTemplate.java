@@ -1,7 +1,6 @@
 package org.histo.model.transitory;
 
-import org.histo.config.enums.BuildInTemplates;
-import org.histo.model.util.GsonAble;
+import org.histo.model.interfaces.GsonAble;
 import org.histo.util.FileUtil;
 
 import com.google.gson.Gson;
@@ -11,11 +10,17 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class PdfTemplate implements GsonAble {
+	
+	public static final String UREPORT = "UREPORT";
+	public static final String COUNCIL = "COUNCIL";
+	public static final String INTERNAL_SHORT = "INTERNAL_SHORT";
+	public static final String INTERNAL = "INTERNAL";
+	public static final String SHORT = "SHORT";
+	public static final String EXTERN = "EXTERN";
 
-	public static final String BUILD_IN_UREPORT = "uReport";
-	public static final String BUILD_IN_INTERNAl_EXTENDED = "internalExtended";
-	public static final String BUILD_IN_COUNCIL = "uReport";
-
+	/**
+	 * Name of the pdf file
+	 */
 	@Expose
 	private String name;
 	/**
@@ -23,12 +28,21 @@ public class PdfTemplate implements GsonAble {
 	 */
 	@Expose
 	private boolean nameAsResources;
+
 	@Expose
 	private String fileWithLogo;
 	@Expose
 	private String fileWithOutLogo;
+
+	/**
+	 * Type as String
+	 */
 	@Expose
 	private String type;
+
+	/**
+	 * True if default template
+	 */
 	@Expose
 	private boolean defaultTemplate;
 
@@ -38,6 +52,12 @@ public class PdfTemplate implements GsonAble {
 	 */
 	@Expose
 	private boolean externalDocument;
+
+	@Expose
+	private CodeRectangle[] pizCode;
+
+	@Expose
+	private CodeRectangle[] taskCode;
 
 	public String getName() {
 		return name;
@@ -93,6 +113,63 @@ public class PdfTemplate implements GsonAble {
 
 	public void setExternalDocument(boolean externalDocument) {
 		this.externalDocument = externalDocument;
+	}
+
+	public CodeRectangle[] getPizCode() {
+		return pizCode;
+	}
+
+	public CodeRectangle[] getTaskCode() {
+		return taskCode;
+	}
+
+	public void setPizCode(CodeRectangle[] pizCode) {
+		this.pizCode = pizCode;
+	}
+
+	public void setTaskCode(CodeRectangle[] taskCode) {
+		this.taskCode = taskCode;
+	}
+
+	public class CodeRectangle {
+		int x;
+		int y;
+
+		float width;
+		float height;
+
+		public int getX() {
+			return x;
+		}
+
+		public int getY() {
+			return y;
+		}
+
+		public float getWidth() {
+			return width;
+		}
+
+		public float getHeight() {
+			return height;
+		}
+
+		public void setX(int x) {
+			this.x = x;
+		}
+
+		public void setY(int y) {
+			this.y = y;
+		}
+
+		public void setWidth(float width) {
+			this.width = width;
+		}
+
+		public void setHeight(float height) {
+			this.height = height;
+		}
+
 	}
 
 	public static final PdfTemplate[] factroy(String jsonFile) {

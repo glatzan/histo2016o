@@ -4,19 +4,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.histo.config.ResourceBundle;
+import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.ContactTab;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.SettingsTab;
+import org.histo.config.enums.Notification;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
+import org.histo.dao.TaskDAO;
+import org.histo.experimental.NotificationHandler;
 import org.histo.model.Contact;
+import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.PdfTemplate;
 import org.histo.model.transitory.PhysicianRoleOptions;
-import org.histo.util.NotificationHandler;
-import org.histo.util.ResourceBundle;
+import org.histo.ui.NotificationChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -30,9 +36,6 @@ public class ContactHandlerAction implements Serializable {
 	private static final long serialVersionUID = -3672859612072175725L;
 
 	@Autowired
-	private ThreadPoolTaskExecutor taskExecutor;
-
-	@Autowired
 	private GenericDAO genericDAO;
 
 	@Autowired
@@ -44,9 +47,6 @@ public class ContactHandlerAction implements Serializable {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
-	@Autowired
-	private SettingsHandlerAction settingsHandlerAction;
-
 	/**
 	 * List with all available contacts
 	 */
@@ -57,10 +57,21 @@ public class ContactHandlerAction implements Serializable {
 	 */
 	private PhysicianRoleOptions physicianRoleOptions;
 
+	@PostConstruct
+	public void prepareBean() {
+		setPhysicianRoleOptions(new PhysicianRoleOptions());
+	}
+
 	/**
-	 * Determines which tab is displayed.
+	 * Show the contact dialog using the display settings from the
+	 * {@link PhysicianRoleOptions} object
+	 * 
+	 * @param task
 	 */
-	private ContactTab contactTab;
+	public void showContacts(Task task) {
+		updateContactList(task);
+		mainHandlerAction.showDialog(Dialog.CONTACTS);
+	}
 
 	/**
 	 * Gets a list with all available contact for a specific task. Filters all
@@ -72,17 +83,27 @@ public class ContactHandlerAction implements Serializable {
 	 * @param other
 	 * @param addedContact
 	 */
-	public void prepareContacts(Task task, boolean surgeon, boolean extern, boolean other, boolean familyPhsysician,
-			boolean showAddedContactsOnly) {
+	public void showContacts(Task task, boolean surgeon, boolean privatePhysician, boolean other,
+			boolean familyPhysician, boolean showAddedContactsOnly) {
 
-		if (getPhysicianRoleOptions() == null)
-			setPhysicianRoleOptions(new PhysicianRoleOptions());
+		getPhysicianRoleOptions().setSurgeon(surgeon);
+		getPhysicianRoleOptions().setPrivatePhysician(privatePhysician);
+		getPhysicianRoleOptions().setOther(other);
+		getPhysicianRoleOptions().setFamilyPhysician(familyPhysician);
+		getPhysicianRoleOptions().setShowAddedContactsOnly(showAddedContactsOnly);
 
-		setContactTab(ContactTab.LIST);
+		showContacts(task);
+	}
 
-		updateContactList(task, surgeon, extern, other, familyPhsysician, showAddedContactsOnly);
-
-		mainHandlerAction.showDialog(Dialog.CONTACTS);
+	/**
+	 * Updates the contact list using bean values.
+	 * 
+	 * @param task
+	 */
+	public void updateContactList(Task task) {
+		updateContactList(task, getPhysicianRoleOptions().isSurgeon(), getPhysicianRoleOptions().isPrivatePhysician(),
+				getPhysicianRoleOptions().isOther(), getPhysicianRoleOptions().isFamilyPhysician(),
+				getPhysicianRoleOptions().isShowAddedContactsOnly());
 	}
 
 	/**
@@ -130,19 +151,6 @@ public class ContactHandlerAction implements Serializable {
 			getAllAvailableContact().addAll(contacts);
 		}
 
-	}
-
-	/**
-	 * Opens the passed physician in the settingsDialog in order to edit the
-	 * phone number, email or faxnumber.
-	 * 
-	 * @param contact
-	 */
-	public void editContactData(Contact contact) {
-		settingsHandlerAction.prepareSettingsDialog();
-		settingsHandlerAction.setTmpPhysician(contact.getPhysician());
-		settingsHandlerAction.setPhysicianTabIndex(SettingsTab.PHYSICIAN_EDIT);
-		settingsHandlerAction.setActiveSettingsIndex(SettingsHandlerAction.TAB_PERSON);
 	}
 
 	/**
@@ -277,55 +285,6 @@ public class ContactHandlerAction implements Serializable {
 		}
 	}
 
-	private int test = 1;
-
-	public void updateTest() {
-	}
-
-	public void sendTest() {
-
-		System.out.println(taskExecutor);
-		NotificationHandler test = new NotificationHandler(this, genericDAO);
-		test.setName("was geht");
-
-		taskExecutor.execute(test);
-		// FileUtil.loadTextFile(null);
-
-		// System.out.println("ok");
-		// SimpleEmail email = new SimpleEmail();
-		// email.setHostName("smtp.ukl.uni-freiburg.de");
-		// email.setDebug(true);
-		// email.setSmtpPort(465);
-		// email.setSSLOnConnect(true);
-		// try {
-		// email.addTo("andreas.glatz@uniklinik-freiburg.de");
-		// email.setFrom("augenklinik.histologie@uniklinik-freiburg.de", "Name
-		// des Senders");
-		// email.setSubject("Testnachricht");
-		// email.setMsg("Hallo, das ist nur ein simpler Test");
-		// email.send();
-		// } catch (EmailException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
-	}
-
-	@Async("taskExecutor")
-	public void test1() {
-		while (true) {
-			test++;
-			System.out.println("test" + test);
-			genericDAO.save(new Slide());
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -346,23 +305,8 @@ public class ContactHandlerAction implements Serializable {
 		this.physicianRoleOptions = physicianRoleOptions;
 	}
 
-	public ContactTab getContactTab() {
-		return contactTab;
-	}
-
-	public void setContactTab(ContactTab contactTab) {
-		this.contactTab = contactTab;
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
 
-	public int getTest() {
-		return test;
-	}
-
-	public void setTest(int test) {
-		this.test = test;
-	}
 }

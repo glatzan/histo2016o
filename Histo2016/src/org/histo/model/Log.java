@@ -14,6 +14,7 @@ import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.DateFormat;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.histo.util.TimeUtil;
@@ -87,7 +88,7 @@ public class Log {
 	 */
 	@Transient
 	public String getTimestampAsDate(){
-		return TimeUtil.formatDate(new Date(getTimestamp()), HistoSettings.STANDARD_DATEFORMAT);
+		return TimeUtil.formatDate(new Date(getTimestamp()), DateFormat.GERMAN_DATE_TIME.getDateFormat());
 	}
     
 }

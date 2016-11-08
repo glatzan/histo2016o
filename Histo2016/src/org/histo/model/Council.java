@@ -1,11 +1,14 @@
 package org.histo.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -32,6 +35,12 @@ public class Council {
 	private String councilText;
 	
 	private String attachment;
+	
+	private long dateOfRequest;
+	
+	public Council() {
+		dateOfRequest = 0;
+	}
 	
 	@Id
 	@GeneratedValue(generator = "council_sequencegenerator")
@@ -87,6 +96,23 @@ public class Council {
 
 	public void setAttachment(String attachment) {
 		this.attachment = attachment;
+	}
+
+	public long getDateOfRequest() {
+		return dateOfRequest;
+	}
+
+	public void setDateOfRequest(long dateOfRequest) {
+		this.dateOfRequest = dateOfRequest;
+	}
+
+	@Transient
+	public Date getDateOfRequestAsDate() {
+		return new Date(dateOfRequest);
+	}
+
+	public void setDateOfRequestAsDate(Date dateOfRequestAsDate) {
+		this.dateOfRequest = dateOfRequestAsDate.getTime();
 	}
 
 	

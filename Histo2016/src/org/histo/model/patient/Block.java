@@ -25,10 +25,12 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
-import org.histo.model.util.LogAble;
-import org.histo.model.util.StainingStatus;
-import org.histo.model.util.TaskTree;
-import org.histo.util.TimeUtil;
+import org.histo.config.enums.StainingStatus;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.CreationDate;
+import org.histo.model.interfaces.LogAble;
+import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.StainingInfo;
 
 @Entity
 @Audited
@@ -36,7 +38,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
+public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAble, ArchivAble {
 
 	private long id;
 
@@ -53,11 +55,6 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	private String blockID = "";
 
 	/**
-	 * Number increases with every staining
-	 */
-	private int slideNumber = 1;
-
-	/**
 	 * staining array
 	 */
 	private List<Slide> slides;
@@ -65,7 +62,7 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	/**
 	 * Date of sample creation
 	 */
-	private long generationDate;
+	private long creationDate;
 
 	/**
 	 * Wenn true wird dieser block nicht mehr angezeigt.
@@ -74,14 +71,6 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 
 	public void removeStaining(Slide staining) {
 		getSlides().remove(staining);
-	}
-
-	public void incrementSlideNumber() {
-		this.slideNumber++;
-	}
-
-	public void decrementSlideNumber() {
-		this.slideNumber--;
 	}
 
 	/********************************************************
@@ -109,7 +98,7 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("generationDate ASC, id ASC")
+	@OrderBy("creationDate ASC, id ASC")
 	public List<Slide> getSlides() {
 		if (slides == null)
 			slides = new ArrayList<>();
@@ -121,15 +110,6 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	}
 
 	@Basic
-	public int getStainingNumber() {
-		return slideNumber;
-	}
-
-	public void setStainingNumber(int stainingNumber) {
-		this.slideNumber = stainingNumber;
-	}
-
-	@Basic
 	public String getBlockID() {
 		return blockID;
 	}
@@ -138,13 +118,12 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 		this.blockID = blockID;
 	}
 
-	@Basic
-	public long getGenerationDate() {
-		return generationDate;
+	public long getCreationDate() {
+		return creationDate;
 	}
 
-	public void setGenerationDate(long generationDate) {
-		this.generationDate = generationDate;
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	/********************************************************
@@ -153,66 +132,49 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	/********************************************************
 	 * Interface StainingStauts
 	 ********************************************************/
-
 	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zurück, wenn die Probe am heutigen Tag erstellt wrude
+	 * Overwrites the {@link StainingInfo} interfaces new method. Returns true
+	 * if the creation date was on the same as the current day.
 	 */
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(generationDate, System.currentTimeMillis()))
-			return true;
-		return false;
+		return isNew(getCreationDate());
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zurück wenn alle Färbungen gemacht wurden, gibt fals zurück
-	 * wenn mindestens eine Färbung aussteht.
+	 * Returns the status of the staining process. Either it can return staining
+	 * performed, staining needed, restaining needed (restaining is returned if
+	 * at least one staining is marked as restaining).
 	 */
 	@Override
 	@Transient
-	public boolean isStainingPerformed() {
+	public StainingStatus getStainingStatus() {
+		// if empty return staining needed
+		if (slides.isEmpty())
+			return StainingStatus.STAINING_NEEDED;
 
-		boolean found = false;
+		boolean stainingNeeded = false;
+
 		for (Slide staining : slides) {
 
+			// contiune if archived
 			if (staining.isArchived())
 				continue;
 
-			if (!staining.isStainingPerformed())
-				return false;
-			else
-				found = true;
+			// continue if no staining is needed
+			if (staining.isStainingPerformed())
+				continue;
+			else {
+				// check if restaining is needed (restaining > staining) so
+				// return that it is needed
+				if (staining.isReStaining())
+					return StainingStatus.RE_STAINING_NEEDED;
+				else
+					stainingNeeded = true;
+			}
 		}
-
-		return found;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zrück wenn mindestens eine Färbung aussteht.
-	 */
-	@Override
-	@Transient
-	public boolean isStainingNeeded() {
-		if (!isStainingPerformed())
-			return true;
-		return false;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zrück wenn mindestens eine Färbung aussteht. Unterscheidet
-	 * nicht zwischen Nachfärbung und Färbung. Dies geht erst auf Sample level.
-	 */
-	@Override
-	@Transient
-	public boolean isReStainingNeeded() {
-		if (!isStainingPerformed())
-			return true;
-		return false;
+		return stainingNeeded ? StainingStatus.STAINING_NEEDED : StainingStatus.PERFORMED;
 	}
 
 	/********************************************************
@@ -220,7 +182,7 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface StainingTreeParent
+	 * Interface Parent
 	 ********************************************************/
 	@ManyToOne
 	public Sample getParent() {
@@ -240,6 +202,13 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 		return getParent().getPatient();
 	}
 
+	/********************************************************
+	 * Interface Parent
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble
 	 */
@@ -280,5 +249,7 @@ public class Block implements TaskTree<Sample>, StainingStatus, LogAble {
 	public Dialog getArchiveDialog() {
 		return Dialog.BLOCK_ARCHIV;
 	}
-	/******************************************************** ArchiveAble ********************************************************/
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
 }

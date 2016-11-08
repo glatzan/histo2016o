@@ -1,35 +1,24 @@
 package org.histo.action;
 
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.histo.config.HistoSettings;
-import org.histo.config.enums.BuildInTemplates;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PrintTab;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.model.Contact;
+import org.histo.interfaces.DynamicHandler;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PdfTemplate;
 import org.histo.ui.transformer.PdfTemplateTransformer;
-import org.histo.util.FileUtil;
-import org.histo.util.PdfUtil;
-import org.histo.util.ResourceBundle;
-import org.histo.util.TimeUtil;
+import org.histo.util.PdfGenerator;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -37,21 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.AcroFields;
-import com.lowagie.text.pdf.Barcode;
-import com.lowagie.text.pdf.Barcode128;
-import com.lowagie.text.pdf.BarcodeEAN;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.PdfWriter;
-import com.sun.javafx.scene.traversal.Hueristic2D;
 
 /**
  * @formatter:off I_Name I_Birthday I_Insurance I_PIZ_CODE I_PIZ I_Date
@@ -92,6 +66,11 @@ public class PdfHandlerAction {
 	private ResourceBundle resourceBundle;
 
 	/**
+	 * The selected task for that a report should be generated
+	 */
+	private Task taskToPrint;
+
+	/**
 	 * List with all templates available for printing.
 	 */
 	private PdfTemplate[] templates;
@@ -107,14 +86,9 @@ public class PdfHandlerAction {
 	private PdfTemplateTransformer templateTransformer;
 
 	/**
-	 * The selected task for that a report should be generated
+	 * Generated or loaded PDf
 	 */
-	private Task taskToPrint;
-
-	/**
-	 * Content of the generated pdf
-	 */
-	private StreamedContent pdfContent;
+	private PDFContainer tmpPdfContainer;
 
 	/**
 	 * The printtab to diasplay (Print view or pdf view)
@@ -126,9 +100,129 @@ public class PdfHandlerAction {
 	 */
 	private boolean renderPDF = false;
 
+	/**
+	 * If an external report should be printed the adress of the receiver is
+	 * determined using this variable. It can be {@link ContactRole},
+	 * FAMILY_PHYSICIAN, PRIVATE_PHYSICIAN, and OTHER for a list to choose from.
+	 */
+	private ContactRole externalReportPhysicianType;
+
+	/**
+	 * If externalReportPhysicianType is set to OTHER the selected physician is
+	 * stored in this variable.
+	 */
+	private Physician externalPhysician;
+
+	/**
+	 * Physician to sign the internal_short, external and external short report.
+	 */
+	private Physician signatureTmpPhysician;
+
+	/**
+	 * The date of the signature and the report
+	 */
+	private long dateOfReport;
+
+	// TODO implement
 	private String printer;
 
+	// TODO implement
 	private int copies;
+
+	/**
+	 * Shows the print dialog. Does not initializes the bean!
+	 */
+	public void showPrintDialog() {
+		onChangeTemplate();
+		mainHandlerAction.showDialog(Dialog.PRINT);
+	}
+
+	/**
+	 * Shows the print dialog an initializes all default values.
+	 * 
+	 * @param task
+	 */
+	public void showPrintDialog(Task task) {
+		prepareForPdf(task);
+		mainHandlerAction.showDialog(Dialog.PRINT);
+	}
+
+	/**
+	 * Hides the print dialog and clears the print data.
+	 */
+	public void hidePrintDialog() {
+		mainHandlerAction.hideDialog(Dialog.PRINT);
+		clearData();
+	}
+
+	public void prepareForPdf(Task task) {
+		prepareForPdf(task, null);
+	}
+
+	public void prepareForPdf(Task task, String selectedTemplateName) {
+		prepareForPdf(task, null, selectedTemplateName);
+	}
+
+	public void prepareForPdf(Task task, PdfTemplate[] templates, String selectedTemplateName) {
+		prepareBean(task, templates, selectedTemplateName);
+
+		setPrintTab(PrintTab.PRINT_PDFs);
+
+		onChangeTemplate();
+	}
+
+	public void prepareForAttachedPdf(Task task, PDFContainer selectedPdfContainer) {
+		prepareBean(task, null, null);
+
+		setTmpPdfContainer(selectedPdfContainer);
+
+		if (selectedPdfContainer != null) {
+			setSelectedTemplate(PdfTemplate.getTemplateByType(getTemplates(), selectedPdfContainer.getType()));
+		} else
+			setSelectedTemplate(PdfTemplate.getDefaultTemplate(getTemplates()));
+
+		setPrintTab(PrintTab.ATTACHED_PDFs);
+
+		onChangeTemplate();
+	}
+
+	public void onChangeTemplate() {
+		if (getPrintTab() == PrintTab.PRINT_PDFs) {
+			System.out.println(getTaskToPrint() + " -- ");
+			setTmpPdfContainer((new PdfGenerator(mainHandlerAction, resourceBundle)).generatePdfForTemplate(
+					getTaskToPrint(), getSelectedTemplate(), getDateOfReport(), getExternalReportPhysicianType(),
+					getExternalPhysician(), getSignatureTmpPhysician()));
+
+			if (getTmpPdfContainer() == null) {
+				setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
+				setRenderPDF(true);
+			} else
+				setRenderPDF(true);
+
+		} else {
+			if (getTmpPdfContainer() == null || getTmpPdfContainer().getId() == 0) {
+				if (!getTaskToPrint().getAttachedPdfs().isEmpty()) {
+					setTmpPdfContainer(getTaskToPrint().getAttachedPdfs().get(0));
+					setRenderPDF(true);
+				} else {
+					setRenderPDF(false);
+					setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
+				}
+			} else
+				setRenderPDF(true);
+		}
+
+	}
+
+	/**
+	 * Hides the print Dialog an switches to the Council Dialog. Workaround
+	 * because direct hiding and then showing an other dialog not working.
+	 */
+	public void switchToCouncilDialog() {
+		taskHandlerAction.prepareCouncilDialog(getTaskToPrint(), false);
+		hidePrintDialog();
+		mainHandlerAction.setQueueDialog("#headerForm\\\\:councilBtnShowOnly");
+	}
 
 	/**
 	 * Handles the uploaded pdf orderLetter.
@@ -136,7 +230,7 @@ public class PdfHandlerAction {
 	 * @param event
 	 */
 	public void handleTaskRequestReport(FileUploadEvent event) {
-		PDFContainer requestReport = new PDFContainer(PdfTemplate.BUILD_IN_UREPORT);
+		PDFContainer requestReport = new PDFContainer(PdfTemplate.UREPORT);
 		// requestReport.setType("application/pdf");
 		requestReport.setData(event.getFile().getContents());
 		requestReport.setName(event.getFile().getFileName());
@@ -144,286 +238,77 @@ public class PdfHandlerAction {
 			taskHandlerAction.getTemporaryTask().addReport(requestReport);
 	}
 
-	public void preparePrintDialog(Task task) {
-		PdfTemplate[] templates = PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON);
-		preparePrintDialog(task, templates, PdfTemplate.getDefaultTemplate(templates));
-
+	public void onPrintPDF() {
+		if (getTmpPdfContainer().getId() == 0) {
+			genericDAO.save(getTmpPdfContainer(),
+					resourceBundle.get("log.patient.task.pdf.created", getTmpPdfContainer().getName()),
+					getTaskToPrint().getPatient());
+			getTaskToPrint().getAttachedPdfs().add(getTmpPdfContainer());
+			genericDAO.save(getTaskToPrint(), resourceBundle.get("log.patient.task.pdf.attached",
+					getTaskToPrint().getTaskID(), getTmpPdfContainer().getName()), getTaskToPrint().getPatient());
+		} else
+			System.out.println("downloading only");
 	}
 
-	public void preparePrintDialog(Task task, PdfTemplate[] templates, PdfTemplate selectedTemplate) {
-		setTaskToPrint(task);
+	/**
+	 * Prepares the bean for printing and generating pdfs.
+	 * 
+	 * @param task
+	 * @param templates
+	 * @param selectedTemplateType
+	 */
+	public void prepareBean(Task task, PdfTemplate[] templates, String selectedTemplateType) {
 
-		setTemplates(templates);
-		// setting the listtransformer
+		// loading templates if no are passed
+		if (templates != null)
+			setTemplates(templates);
+		else
+			setTemplates(PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON));
+
 		setTemplateTransformer(new PdfTemplateTransformer(getTemplates()));
 
-		setSelectedTemplate(selectedTemplate);
+		setTaskToPrint(task);
+
+		// loads the default template if no type is passed
+		if (selectedTemplateType != null) {
+			setSelectedTemplate(PdfTemplate.getTemplateByType(getTemplates(), selectedTemplateType));
+		} else {
+			setSelectedTemplate(PdfTemplate.getDefaultTemplate(getTemplates()));
+		}
+
+		// setting default external receiver to family physician
+		if (getExternalReportPhysicianType() == null)
+			setExternalReportPhysicianType(ContactRole.FAMILY_PHYSICIAN);
+
+		// changing the time of signature if 0
+		if (getDateOfReport() == 0)
+			setDateOfReport(System.currentTimeMillis());
+
+		// initializes teh task
+		taskDAO.initializeCouncilData(task);
+		taskDAO.initializeReportData(task);
 
 		taskDAO.initializePdfData(task);
 
-		onChangePrintTab();
-
-		if (printTab == null)
-			printTab = PrintTab.PRINT_VIEW;
-
-		mainHandlerAction.showDialog(Dialog.PRINT);
+		// also initializing taskHandlerAction, generating lists to choos
+		// physicians from
+		taskHandlerAction.prepareBean();
 	}
 
-	public void hidePrintDialog() {
+	/**
+	 * Clears all values of the bean.
+	 */
+	public void clearData() {
 		setTaskToPrint(null);
-		mainHandlerAction.hideDialog(Dialog.PRINT);
+		setTemplates(null);
+		setSelectedTemplate(null);
+		setTemplateTransformer(null);
+		setTmpPdfContainer(null);
 	}
 
-	public void onChangeTemplate() {
-		ByteArrayOutputStream out;
-		PdfReader pdfReader;
-		PdfStamper pdf;
-
-		switch (getSelectedTemplate().getType()) {
-		case "INTERNAL_EXTENDED":
-			out = new ByteArrayOutputStream();
-			pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
-			pdf = PdfUtil.getPdfStamper(pdfReader, out);
-			populateReportHead(pdfReader, pdf, getTaskToPrint());
-			populateExtendedDiagnosis(pdfReader, pdf, getTaskToPrint());
-			pdf.setFormFlattening(true);
-			PdfUtil.closePdf(pdfReader, pdf);
-
-			setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
-			setRenderPDF(true);
-			return;
-		case "COUNCIL":
-			taskDAO.initializeCouncilData(getTaskToPrint());
-			if (getTaskToPrint().getCouncil() != null) {
-				out = new ByteArrayOutputStream();
-				pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
-				pdf = PdfUtil.getPdfStamper(pdfReader, out);
-				populateReportHead(pdfReader, pdf, getTaskToPrint());
-				populateReportCouncil(pdf, getTaskToPrint());
-				pdf.setFormFlattening(true);
-				PdfUtil.closePdf(pdfReader, pdf);
-				setPdfContent(
-						new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
-				setRenderPDF(true);
-			} else {
-				setRenderPDF(false);
-				setPdfContent(null);
-			}
-			return;
-		case "FAMILY_PHYSICIAN":
-		case "PRIVATE_PHYSICIAN":
-			Contact physician = getTaskToPrint()
-					.getPrimaryContact(getSelectedTemplate().getType().equals("FAMILY_PHYSICIAN")
-							? ContactRole.FAMILY_PHYSICIAN : ContactRole.PRIVATE_PHYSICIAN);
-			if (physician == null) {
-				setRenderPDF(false);
-				setPdfContent(null);
-			} else {
-				out = new ByteArrayOutputStream();
-				pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
-				pdf = PdfUtil.getPdfStamper(pdfReader, out);
-				populateReportHead(pdfReader, pdf, getTaskToPrint());
-				populateReportAddress(pdf, physician);
-				populateReportCouncil(pdf, getTaskToPrint());
-				pdf.setFormFlattening(true);
-				PdfUtil.closePdf(pdfReader, pdf);
-				setPdfContent(
-						new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
-				setRenderPDF(true);
-			}
-			return;
-		default:
-			out = new ByteArrayOutputStream();
-			pdfReader = PdfUtil.getPdfFile(getSelectedTemplate().getFileWithLogo());
-			pdf = PdfUtil.getPdfStamper(pdfReader, out);
-			populateReportHead(pdfReader, pdf, getTaskToPrint());
-			populateReportCouncil(pdf, getTaskToPrint());
-			pdf.setFormFlattening(true);
-			PdfUtil.closePdf(pdfReader, pdf);
-
-			setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf"));
-			System.out.println("council");
-			return;
-		}
-	}
-
-	public void onChangePrintTab() {
-		if (getPrintTab() == PrintTab.PDF_VIEW) {
-			List<PDFContainer> container = getTaskToPrint().getAttachedPdfs();
-			if (container != null && container.size() != 0) {
-				setPdfContent(new DefaultStreamedContent(new ByteArrayInputStream(container.get(0).getData()),
-						"application/pdf"));
-			} else {
-				setPdfContent(new DefaultStreamedContent(
-						new ByteArrayInputStream(generatePlaceholderPdf("Keine Files")), "application/pdf"));
-			}
-		} else {
-			onChangeTemplate();
-		}
-	}
-
-	public final void populateReportHead(PdfReader reader, PdfStamper stamper, Task task) {
-
-		try {
-			stamper.getAcroFields().setField("H_Name",
-					task.getParent().getPerson().getName() + ", " + task.getParent().getPerson().getSurname());
-			stamper.getAcroFields().setField("H_Birthday", resourceBundle.get("pdf.birthday") + " " + TimeUtil
-					.formatDate(task.getParent().getPerson().getBirthday(), HistoSettings.STANDARD_DATEFORMAT_GERMAN));
-			stamper.getAcroFields().setField("H_Insurance", task.getParent().getInsurance());
-
-			if (!task.getParent().getPiz().isEmpty())
-				PdfUtil.generateCode128Field(reader, stamper, String.valueOf(task.getParent().getPiz()), 40f, 0.95f, 70,
-						105);
-
-			stamper.getAcroFields().setField("H_PIZ",
-					task.getParent().getPiz().isEmpty() ? resourceBundle.get("pdf.noPIZ") : task.getParent().getPiz());
-			stamper.getAcroFields().setField("H_Date", TimeUtil.formatDate(new Date(System.currentTimeMillis()),
-					HistoSettings.STANDARD_DATEFORMAT_GERMAN));
-		} catch (IOException | DocumentException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public final void populateReportAddress(PdfStamper stamper, Contact contact) {
-		StringBuffer contAdr = new StringBuffer();
-		contAdr.append(contact.getPhysician().getGender() == 'w' ? "Todo Frau" : "Todo Hermm");
-		contAdr.append(contact.getPhysician().getFullName());
-		contAdr.append(contact.getPhysician().getStreet() + " " + contact.getPhysician().getHouseNumber());
-		contAdr.append(contact.getPhysician().getPostcode() + " " + contact.getPhysician().getTown());
-
-		try {
-			stamper.getAcroFields().setField("H_ADDRESS", contAdr.toString());
-		} catch (IOException | DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public final void populateExtendedDiagnosis(PdfReader reader, PdfStamper stamper, Task task) {
-
-		List<Sample> samples = task.getSamples();
-
-		StringBuffer material = new StringBuffer();
-		StringBuffer diagonsisList = new StringBuffer();
-
-		for (Sample sample : samples) {
-			material.append(sample.getSampleID() + " " + sample.getMaterial() + "\r\n");
-			diagonsisList
-					.append(sample.getSampleID() + " " + sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
-		}
-
-		try {
-			stamper.getAcroFields().setField("B_SAMPLES", material.toString());
-
-			stamper.getAcroFields().setField("B_EDATE",
-					TimeUtil.formatDate(task.getDateOfSugeryAsDate(), HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY));
-
-			PdfUtil.generateCode128Field(reader, stamper, String.valueOf(task.getTaskID()), 25f, 1.3f, 453, 345);
-			stamper.getAcroFields().setField("B_TASK_NUMBER", task.getTaskID());
-
-			stamper.getAcroFields().setField("B_EYE", resourceBundle.get("enum.eye." + task.getEye().toString()));
-
-			stamper.getAcroFields().setField("B_HISTORY", task.getCaseHistory());
-			stamper.getAcroFields().setField("B_INSURANCE_NORMAL", task.getPatient().isPrivateInsurance() ? "0" : "1");
-			stamper.getAcroFields().setField("B_INSURANCE_PRIVATE", task.getPatient().isPrivateInsurance() ? "1" : "0");
-			stamper.getAcroFields().setField("B_WARD", task.getWard());
-
-			stamper.getAcroFields().setField("B_MALIGN", task.isMalign() ? "1" : "0");
-
-			Contact privatePhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
-			Contact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
-
-			stamper.getAcroFields().setField("B_PRIVATE_PHYSICIAN",
-					privatePhysician == null ? "" : privatePhysician.getPhysician().getFullName());
-			stamper.getAcroFields().setField("B_SURGEON", surgeon == null ? "" : surgeon.getPhysician().getFullName());
-
-			stamper.getAcroFields().setField("B_HISTOLOGICAL_RECORD", task.getReport().getHistologicalRecord());
-			stamper.getAcroFields().setField("B_DIAGNOSIS", diagonsisList.toString());
-
-			stamper.getAcroFields().setField("B_DATE", TimeUtil.formatDate(new Date(System.currentTimeMillis()),
-					HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY));
-
-			if (task.getReport() != null) {
-				if (task.getReport().getSignatureLeft() != null) {
-					stamper.getAcroFields().setField("S_PHYSICIAN",
-							task.getReport().getSignatureLeft().getPhysician().getFullName());
-					stamper.getAcroFields().setField("S_PHYSICIAN_ROLE", task.getReport().getSignatureLeft().getRole());
-				}
-
-				if (task.getReport().getSignatureRight() != null) {
-					stamper.getAcroFields().setField("S_CONSULTANT",
-							task.getReport().getSignatureRight().getPhysician().getFullName());
-					stamper.getAcroFields().setField("S_CONSULTANT_ROLE",
-							task.getReport().getSignatureRight().getRole());
-				}
-			}
-		} catch (IOException | DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-
-	// // HashMap<?, ?> test = stamper.getAcroFields().getFields();
-	// // for(HashMap<?, ?> fields : test){
-	// //
-	// // }
-	// AcroFields fields = stamper.getAcroFields();
-	//
-	// Set<String> fldNames = fields.getFields().keySet();
-	//
-	// for (String fldName : fldNames) {
-	// System.out.println(fldName + ": " + fields.getField(fldName));
-	// }
-
-	public final void populateReportCouncil(PdfStamper stamper, Task task) {
-		// TODO B_DATE
-		try {
-			stamper.getAcroFields().setField("B_TASK_NUMBER_CODE", task.getTaskID());
-
-			stamper.getAcroFields().setField("B_NAME",
-					task.getParent().getPerson().getName() + ", " + task.getParent().getPerson().getSurname());
-			stamper.getAcroFields().setField("B_BIRTHDAY", TimeUtil.formatDate(
-					task.getParent().getPerson().getBirthday(), HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY));
-			stamper.getAcroFields().setField("B_PIZ", task.getParent().getPiz());
-
-			if (task.getCouncil() != null)
-				stamper.getAcroFields().setField("B_TEXT", task.getCouncil().getCouncilText());
-			// stamper.getAcroFields().setField("B_SIGANTURE",
-			// task.getCouncil().getCouncilPhysician().getFullName());
-			// stamper.getAcroFields().setField("B_APPENDIX",
-			// task.getCouncil().getAttachment());
-		} catch (IOException | DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	// B_TASK_NUMBER_CODE
-	// B_PIZ
-	// B_NAME
-	// B_BIRTHDAY
-	// B_DATE
-	// B_TEXT
-	// B_SIGANTURE
-	// B_APPENDIX
-
-	public final byte[] generatePlaceholderPdf(String text) {
-		Document document = new Document();
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-		try {
-			PdfWriter.getInstance(document, outputStream);
-			document.open();
-			document.add(new Paragraph(text));
-			document.close();
-		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return outputStream.toByteArray();
-	}
+	/********************************************************
+	 * DynamicHandler Interface
+	 ********************************************************/
 
 	/********************************************************
 	 * Getter/Setter
@@ -466,17 +351,11 @@ public class PdfHandlerAction {
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
 			// So, we're rendering the HTML. Return a stub StreamedContent so
 			// that it will generate right URL.
-			System.out.println("reder repsonse");
 			return new DefaultStreamedContent();
 		} else {
-			System.out.println("PDf " + pdfContent);
-			return pdfContent;
+			return new DefaultStreamedContent(new ByteArrayInputStream(getTmpPdfContainer().getData()),
+					"application/pdf", getTmpPdfContainer().getName());
 		}
-	}
-
-	public void setPdfContent(StreamedContent pdfContent) {
-		System.out.println("setting " + pdfContent);
-		this.pdfContent = pdfContent;
 	}
 
 	public String getPrinter() {
@@ -509,6 +388,54 @@ public class PdfHandlerAction {
 
 	public void setRenderPDF(boolean renderPDF) {
 		this.renderPDF = renderPDF;
+	}
+
+	public ContactRole getExternalReportPhysicianType() {
+		return externalReportPhysicianType;
+	}
+
+	public Physician getExternalPhysician() {
+		return externalPhysician;
+	}
+
+	public void setExternalReportPhysicianType(ContactRole externalReportPhysicianType) {
+		this.externalReportPhysicianType = externalReportPhysicianType;
+	}
+
+	public void setExternalPhysician(Physician externalPhysician) {
+		this.externalPhysician = externalPhysician;
+	}
+
+	public PDFContainer getTmpPdfContainer() {
+		return tmpPdfContainer;
+	}
+
+	public void setTmpPdfContainer(PDFContainer tmpPdfContainer) {
+		this.tmpPdfContainer = tmpPdfContainer;
+	}
+
+	public Physician getSignatureTmpPhysician() {
+		return signatureTmpPhysician;
+	}
+
+	public void setSignatureTmpPhysician(Physician signatureTmpPhysician) {
+		this.signatureTmpPhysician = signatureTmpPhysician;
+	}
+
+	public long getDateOfReport() {
+		return dateOfReport;
+	}
+
+	public void setDateOfReport(long dateOfReport) {
+		this.dateOfReport = dateOfReport;
+	}
+
+	public Date getDateOfReportAsDate() {
+		return new Date(dateOfReport);
+	}
+
+	public void setDateOfReportAsDate(Date dateOfReportAsDate) {
+		this.dateOfReport = dateOfReportAsDate.getTime();
 	}
 
 	/********************************************************

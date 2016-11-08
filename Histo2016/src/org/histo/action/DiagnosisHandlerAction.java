@@ -6,6 +6,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
@@ -13,7 +14,6 @@ import org.histo.model.DiagnosisPreset;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
-import org.histo.util.ResourceBundle;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

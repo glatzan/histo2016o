@@ -25,25 +25,33 @@ public class PDFContainer {
 
 	private byte data[];
 
-	private boolean finalDocument;
-
 	private String type;
 
 	private String name;
 
+	private long creationDate;
+
+	private boolean finalDocument;
+
 	public PDFContainer() {
+		this.creationDate = System.currentTimeMillis();
 	}
 
-	public PDFContainer(String pdfTemplate){
-		this(pdfTemplate,null);
+	public PDFContainer(String pdfTemplate) {
+		this(pdfTemplate, null);
 	}
-	
-	public PDFContainer(String pdfTemplate, byte[] data){
+
+	public PDFContainer(String pdfTemplate, byte[] data) {
+		this(pdfTemplate, null, data);
+	}
+
+	public PDFContainer(String pdfTemplate, String name, byte[] data) {
 		this.type = pdfTemplate;
 		this.data = data;
+		this.name = name;
+		this.creationDate = System.currentTimeMillis();
 	}
-	
-	
+
 	@Id
 	@GeneratedValue(generator = "pdfs_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -86,5 +94,13 @@ public class PDFContainer {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public long getCreationDate() {
+		return creationDate;
+	}
+
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
 	}
 }

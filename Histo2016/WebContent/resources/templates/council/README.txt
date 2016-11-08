@@ -1,0 +1,21 @@
+// council v15/ v19
+H_Name
+H_Birthday
+H_Insurance
+H_PIZ
+H_PIZ_CODE
+H_Date
+
+H_ADDRESS
+
+B_DATE
+B_NAME
+B_BIRTHDAY
+B_PIZ
+
+B_TASK_NUMBER
+B_TASK_NUMBER_CODE
+
+B_TEXT
+B_SIGANTURE
+B_APPENDIX

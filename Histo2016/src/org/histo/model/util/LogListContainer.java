@@ -3,6 +3,7 @@ package org.histo.model.util;
 import java.util.List;
 
 import org.histo.model.Log;
+import org.histo.model.interfaces.LogAble;
 
 /**
  * Class for caching logs. Logs retrieval is very time consuming. This class can

@@ -19,13 +19,13 @@
 					value="#{worklistHandlerAction.sortOptions.worklistSortOrder}"
 					layout="grid" columns="1" styleClass="smallFont smallPaddingAll">
 					<f:selectItem itemLabel="#{msg['dialog.worklistorder.tasknumber']}"
-						itemValue="#{enumProvider.getWorklistSortOrder('TASK_ID')}" />
+						itemValue="TASK_ID" />
 					<f:selectItem itemLabel="#{msg['dialog.worklistorder.piz']}"
-						itemValue="#{enumProvider.getWorklistSortOrder('PIZ')}" />
+						itemValue="PIZ" />
 					<f:selectItem itemLabel="#{msg['dialog.worklistorder.name']}"
-						itemValue="#{enumProvider.getWorklistSortOrder('NAME')}" />
+						itemValue="NAME" />
 					<f:selectItem itemLabel="#{msg['dialog.worklistorder.priority']}"
-						itemValue="#{enumProvider.getWorklistSortOrder('PRIORITY')}" />
+						itemValue="PRIORITY" />
 				</p:selectOneRadio>
 				<h:panelGrid columns="2" style="margin-left:5px;">
 					<h:outputLabel value="#{msg['dialog.worklistorder.order']}"></h:outputLabel>

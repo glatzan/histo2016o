@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -15,7 +16,6 @@ import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
-import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -323,10 +323,10 @@ public class SlideHandlerAction implements Serializable {
 			List<Diagnosis> diagnoses = slide.getParent().getParent().getDiagnoses();
 			if (diagnoses.size() > 0) {
 				Diagnosis diagnosis = diagnoses.get(diagnoses.size() - 1);
-				if (!diagnosis.isUseFollowUp()) {
-					diagnosis.setUseFollowUp(true);
+				if (!diagnosis.isDiagnosisRevision()) {
+					diagnosis.setDiagnosisRevision(true);
 					diagnosisHandlerAction.diagnosisDataChanged(diagnosis,
-							"log.patient.task.sample.diagnosis.changed.followUP", diagnosis.isUseFollowUp());
+							"log.patient.task.sample.diagnosis.changed.followUP", diagnosis.isDiagnosisRevision());
 				}
 			}
 		}

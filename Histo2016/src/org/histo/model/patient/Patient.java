@@ -25,12 +25,16 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.StainingStatus;
 import org.histo.model.Person;
-import org.histo.model.util.DiagnosisStatus;
-import org.histo.model.util.LogAble;
-import org.histo.model.util.StainingStatus;
-import org.histo.model.util.TaskTree;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.CreationDate;
+import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.LogAble;
+import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TimeUtil;
 
 @Entity
@@ -39,7 +43,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStatus, LogAble {
+public class Patient implements Parent<Patient>, DiagnosisInfo<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble {
 
 	private long id;
 
@@ -58,7 +62,7 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	/**
 	 * Date of adding to the database
 	 */
-	private long addDate = 0;
+	private long creationDate = 0;
 
 	/**
 	 * Person data
@@ -90,6 +94,9 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	 */
 	private boolean archived = false;
 
+	public Patient() {
+		setCreationDate(0);
+	}
 	/*
 	 * ************************** Transient ****************************
 	 */
@@ -195,12 +202,14 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	}
 
 	@Column
-	public long getAddDate() {
-		return addDate;
+	@Override
+	public long getCreationDate() {
+		return creationDate;
 	}
 
-	public void setAddDate(long addDate) {
-		this.addDate = addDate;
+	@Override
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	@Column
@@ -233,81 +242,34 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	 * ************************** Getter/Setter ****************************
 	 */
 
-	/*
-	 * ************************** Interface DiagnosisStatus
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface DiagnosisInfo
+	 ********************************************************/
 	/**
-	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-	 * Gibt true zurück wenn alle Diagnosen finalisiert wurden.
+	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
+	 * of the diagnoses.
 	 */
 	@Override
 	@Transient
-	public boolean isDiagnosisPerformed() {
-		for (Task task : tasks) {
-
-			if (task.isArchived())
-				continue;
-
-			if (!task.isDiagnosisPerformed())
-				return false;
-		}
-		return true;
+	public DiagnosisStatus getDiagnosisStatus() {
+		return getDiagnosisStatus(getTasks());
 	}
 
+	/********************************************************
+	 * Interface DiagnosisInfo
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface StainingInfo
+	 ********************************************************/
 	/**
-	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-	 * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
-	 */
-	@Override
-	@Transient
-	public boolean isDiagnosisNeeded() {
-		for (Task task : tasks) {
-
-			if (task.isArchived())
-				continue;
-
-			if (task.isDiagnosisNeeded())
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-	 * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
-	 */
-	@Override
-	@Transient
-	public boolean isReDiagnosisNeeded() {
-		for (Task task : tasks) {
-
-			if (task.isArchived())
-				continue;
-
-			if (task.isReDiagnosisNeeded())
-				return true;
-		}
-		return false;
-	}
-
-	/*
-	 * ************************** Interface DiagnosisStatus
-	 * ****************************
-	 */
-
-	/*
-	 * ************************** Interface StainingStauts
-	 * ****************************
-	 */
-	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zurück, wenn der Patient oder der Auftrag heute erstellt wurde.
+	 * Overwrites the {@link StainingInfo} interfaces new method. Returns true
+	 * if the creation date was on the same as the current day.
 	 */
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(getAddDate(), System.currentTimeMillis()))
+		if (isNew(getCreationDate()))
 			return true;
 
 		for (Task task : getTasks()) {
@@ -318,65 +280,19 @@ public class Patient implements TaskTree<Patient>, DiagnosisStatus, StainingStat
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zurück, wenn die Probe am heutigen Tag erstellt wrude
-	 */
-	@Transient
-	@Override
-	public boolean isStainingPerformed() {
-		for (Task task : getTasks()) {
-
-			if (task.isArchived())
-				continue;
-
-			if (!task.isStainingPerformed())
-				return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber
-	 * == 0 ist.
+	 * Returns the status of the staining process. Either it can return staining
+	 * performed, staining needed, restaining needed (restaining is returned if
+	 * at least one staining is marked as restaining).
 	 */
 	@Override
 	@Transient
-	public boolean isStainingNeeded() {
-		for (Task task : getTasks()) {
-
-			if (task.isArchived())
-				continue;
-
-			if (task.isStainingNeeded())
-				return true;
-		}
-		return false;
+	public StainingStatus getStainingStatus() {
+		return getStainingStatus(getTasks());
 	}
 
-	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber
-	 * > 0 ist.
-	 */
-	@Override
-	@Transient
-	public boolean isReStainingNeeded() {
-		for (Task task : getTasks()) {
-
-			if (task.isArchived())
-				continue;
-
-			if (task.isReStainingNeeded())
-				return true;
-		}
-		return false;
-	}
-
-	/*
-	 * ************************** Interface StainingStauts
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface StainingInfo
+	 ********************************************************/
 
 	/*
 	 * ************************** Interface StainingTreeParent

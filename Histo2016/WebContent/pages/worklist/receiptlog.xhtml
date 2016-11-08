@@ -65,7 +65,7 @@
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 							style="float: right"
-							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.familyPhysician,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
+							actionListener="#{contactHandlerAction.showContacts(worklistHandlerAction.selectedPatient.selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -268,7 +268,7 @@
 													<p:commandLink
 														rendered="#{diagnosisHandlerAction.isDiagonsisRevisionCreationPossible(sample)}"
 														title="Diagnoserevision erstellen"
-														actionListener="#{diagnosisHandlerAction.createDiagnosisFromGui(sample,enumProvider.getDiagnosisType('DIAGNOSIS_REVISION'))}"
+														actionListener="#{diagnosisHandlerAction.createDiagnosisFromGui(sample,'DIAGNOSIS_REVISION')}"
 														update="contentForm">
 														<h:outputLabel
 															value="(#{msg['body.receiptlog.tab.diangonsis.link.revision']})"
@@ -338,13 +338,13 @@
 																	<h:outputLabel
 																		value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.reDiagnosis']}" />
 																	<p:selectBooleanCheckbox
-																		value="#{diagnosis.useFollowUp}"
+																		value="#{diagnosis.diagnosisRevision}"
 																		style="margin:3px 0px 0px 3px;"
 																		disabled="#{diagnosis.finalized}">
 
 																		<p:ajax event="change" execute="@this"
 																			update="diagnosisTable"
-																			listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.followUP',diagnosis.useFollowUp)}" />
+																			listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.followUP',diagnosis.diagnosisRevision)}" />
 																	</p:selectBooleanCheckbox>
 																</h:panelGrid>
 																<!-- malign -->
@@ -374,15 +374,15 @@
 															</p:inputTextarea>
 
 
-															<h:panelGroup rendered="#{diagnosis.useFollowUp}">
+															<h:panelGroup rendered="#{diagnosis.diagnosisRevision}">
 																<!-- followup -->
-																<p:inputTextarea value="#{diagnosis.followUp}" rows="2"
+																<p:inputTextarea value="#{diagnosis.diagnosisRevisionText}" rows="2"
 																	id="diagnosisFollowUp" style="width:90%"
 																	readonly="#{diagnosis.finalized}">
 																	<p:watermark for="diagnosisFollowUp"
 																		value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.reDiagnosis.watermark']}" />
 																	<f:ajax event="change" execute="@this"
-																		listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.followUp',diagnosis.followUp)}" />
+																		listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.followUp',diagnosis.diagnosisRevisionText)}" />
 																</p:inputTextarea>
 															</h:panelGroup>
 														</h:panelGrid>
@@ -408,19 +408,19 @@
 									<h:outputLabel value="#{msg['body.statiningView.tab.name']}" />
 									<!-- staining completed -->
 									<h:panelGroup
-										rendered="#{worklistHandlerAction.selectedPatient.selectedTask.stainingPerformed}">
+										rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'PERFORMED'}">
 										<div class="fa fa-check-circle icon-green"
 											title="#{msg['body.statiningView.tab.completed']}" />
 									</h:panelGroup>
 									<!-- staining to perform -->
 									<h:panelGroup
-										rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.stainingPerformed and !worklistHandlerAction.selectedPatient.selectedTask.reStainingNeeded}">
+										rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'STAINING_NEEDED'}">
 										<div class="fa fa-exclamation-circle icon-orange"
 											title="#{msg['body.statiningView.tab.staining']}" />
 									</h:panelGroup>
 									<!-- restaining to perform -->
 									<h:panelGroup
-										rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.stainingPerformed and worklistHandlerAction.selectedPatient.selectedTask.reStainingNeeded}">
+										rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
 										<div class="fa fa-exclamation-circle ic-custom icon-orange"
 											title="#{msg['body.statiningView.tab.restaining']}" />
 									</h:panelGroup>
@@ -531,7 +531,7 @@
 												<h:panelGroup rendered="#{stainingRow.sampleType}">
 													<!-- ********** Staining performed ********** -->
 													<h:panelGroup
-														rendered="#{stainingRow.sample.stainingPerformed}">
+														rendered="#{stainingRow.sample.getStainingStatus() eq 'PERFORMED'}">
 														<i class="fa fa-fw fa-check-circle icon-green"
 															title="#{msg['body.statiningView.status.performed']}" />
 													</h:panelGroup>
@@ -540,7 +540,7 @@
 												<h:panelGroup rendered="#{stainingRow.blockType}">
 													<!-- ********** Staining performed ********** -->
 													<h:panelGroup
-														rendered="#{stainingRow.block.stainingPerformed}">
+														rendered="#{stainingRow.block.getStainingStatus() eq 'PERFORMED'}">
 														<i class="fa fa-fw fa-check-circle icon-green"
 															title="#{msg['body.statiningView.status.performed']}" />
 													</h:panelGroup>
@@ -587,7 +587,7 @@
 													<!-- ********** Delete Button ********** -->
 													<p:commandLink styleClass="noUnderlineAtLink"
 														title="#{msg['body.statiningView.archiveSample']}"
-														actionListener="#{taskHandlerAction.prepareArchiveObject(stainingRow.sample, true)}">
+														actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.sample, true)}">
 														<i class="fa fa-fw fa-times-circle"></i>
 														<p:ajax event="dialogReturn"
 															update="navigationForm contentForm" />
@@ -609,7 +609,7 @@
 													<!-- ********** Delete Button ********** -->
 													<p:commandLink styleClass="noUnderlineAtLink"
 														title="#{msg['body.statiningView.archiveBlock']}"
-														actionListener="#{taskHandlerAction.prepareArchiveObject(stainingRow.block, true)}">
+														actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.block, true)}">
 														<i class="fa fa-fw fa-times-circle"></i>
 														<p:ajax event="dialogReturn"
 															update="navigationForm contentForm" />
@@ -636,7 +636,7 @@
 													<!-- ********** Delete Button ********** -->
 													<p:commandLink styleClass="noUnderlineAtLink"
 														title="#{msg['body.statiningView.archiveStaining']}"
-														actionListener="#{taskHandlerAction.prepareArchiveObject(stainingRow.staining, true)}">
+														actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.staining, true)}">
 														<i class="fa fa-fw fa-times-circle" />
 														<p:ajax event="dialogReturn"
 															update="navigationForm contentForm" />

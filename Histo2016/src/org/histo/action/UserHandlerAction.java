@@ -2,10 +2,10 @@ package org.histo.action;
 
 import java.io.Serializable;
 
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
-import org.histo.util.ResourceBundle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;

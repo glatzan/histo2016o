@@ -7,8 +7,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
-import org.histo.model.util.EditAbleEntity;
-import org.histo.model.util.LogAble;
+import org.histo.model.interfaces.EditAbleEntity;
+import org.histo.model.interfaces.LogAble;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -90,20 +90,20 @@ public class StainingPrototype implements EditAbleEntity<StainingPrototype>, Log
     }
     /******************************************************** Getter/Setter ********************************************************/
     
-    @Transient
-    public void update(StainingPrototype stainingPrototype){
-	this.name = stainingPrototype.getName();
-	this.commentary = stainingPrototype.getCommentary();
-	this.type = stainingPrototype.getType();
-    }
-    
-    @Transient
-    public String asGson() {
-	final GsonBuilder builder = new GsonBuilder();
-	builder.excludeFieldsWithoutExposeAnnotation();
-	final Gson gson = builder.create();
-	return gson.toJson(this);
-    }
+	@Transient
+	public void update(StainingPrototype stainingPrototype) {
+		this.name = stainingPrototype.getName();
+		this.commentary = stainingPrototype.getCommentary();
+		this.type = stainingPrototype.getType();
+	}
+
+	@Transient
+	public String asGson() {
+		final GsonBuilder builder = new GsonBuilder();
+		builder.excludeFieldsWithoutExposeAnnotation();
+		final Gson gson = builder.create();
+		return gson.toJson(this);
+	}
     
     @Transient
     public String getTypeAsString(){

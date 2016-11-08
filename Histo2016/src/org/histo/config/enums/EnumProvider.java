@@ -61,20 +61,52 @@ public class EnumProvider {
 
 	/**
 	 * Returns an array containing all values of the TaskPriority enumeration
+	 * 
 	 * @return
 	 */
 	public TaskPriority[] getTaskPriority() {
 		return TaskPriority.values();
 	}
-	
+
 	/**
 	 * Returns an array containing all values of the SigantureRole enumeration.
+	 * 
 	 * @return
 	 */
-	public SignatureRole[] getSignatureRoles(){
+	public SignatureRole[] getSignatureRoles() {
 		return SignatureRole.values();
 	}
-	
+
+	/**
+	 * Returns an array containing all values of the {@link NotificationOption}
+	 * enumeration.
+	 * 
+	 * @return
+	 */
+	public NotificationOption[] getNotificationEmailOptions() {
+		return new NotificationOption[] { NotificationOption.NONE, NotificationOption.TEXT, NotificationOption.PDF };
+	}
+
+	/**
+	 * Returns an array containing all values of the {@link NotificationOption}
+	 * enumeration.
+	 * 
+	 * @return
+	 */
+	public NotificationOption[] getNotificationFaxOptions() {
+		return new NotificationOption[] { NotificationOption.NONE, NotificationOption.FAX };
+	}
+
+	/**
+	 * Returns an array containing all values of the {@link NotificationOption}
+	 * enumeration.
+	 * 
+	 * @return
+	 */
+	public NotificationOption[] getNotificationPhoneOptions() {
+		return new NotificationOption[] { NotificationOption.NONE, NotificationOption.PHONE };
+	}
+
 	/**
 	 * Returns the path an an dialog
 	 * 
@@ -85,70 +117,4 @@ public class EnumProvider {
 		return dialog;
 	}
 
-	/**
-	 * Takes a string (from primefeaces) or a WorklistSearchOption and returns a
-	 * WorklistSearchOption. Workaround for primefaces.
-	 * 
-	 * @param worklistSearchOption
-	 * @return
-	 */
-	public WorklistSearchOption getSearchOption(WorklistSearchOption worklistSearchOption) {
-		return worklistSearchOption;
-	}
-
-	/**
-	 * Takes a string (from primefeaces) or a WorklistSearchFilter and returns a
-	 * WorklistSearchFilter. Workaround for primefaces.
-	 * 
-	 * @param WorklistSearchFilter
-	 * @return
-	 */
-	public WorklistSearchFilter getWorklistSearchFilter(WorklistSearchFilter worklistSearchFilter) {
-		return worklistSearchFilter;
-	}
-
-	/**
-	 * Takes a string (from primefeaces) or a WorklistSortOrder and returns a
-	 * WorklistSortOrder. Workaround for primefaces.
-	 * 
-	 * @param worklistSearchFilter
-	 * @return
-	 */
-	public WorklistSortOrder getWorklistSortOrder(WorklistSortOrder worklistSearchFilter) {
-		return worklistSearchFilter;
-	}
-
-	/**
-	 * Takes a string (from primefeaces) or a DiagnosisType and returns a
-	 * DiagnosisType. Workaround for primefaces.
-	 * 
-	 * @param diagnosisType
-	 * @return
-	 */
-	public DiagnosisType getDiagnosisType(DiagnosisType diagnosisType) {
-		return diagnosisType;
-	}
-
-	/**
-	 * Takes a string (from primefeaces) or a ContactRole and returns a
-	 * ContactRole. Workaround for primefaces.
-	 * 
-	 * @param contactRole
-	 * @return
-	 */
-	public ContactRole getContactRole(ContactRole contactRole) {
-		return contactRole;
-	}
-
-	/**
-	 * Takes a string (from primefeaces) or a SettingsTab and returns a
-	 * SettingsTab. Workaround for primefaces.
-	 * 
-	 * @param settingsTab
-	 * @return
-	 */
-	public SettingsTab getSettingsTab(SettingsTab settingsTab) {
-		return settingsTab;
-	}
-	
 }

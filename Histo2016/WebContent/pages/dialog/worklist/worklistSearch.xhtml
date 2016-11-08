@@ -24,46 +24,46 @@
 				<!-- 0 -->
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.staininglist']}"
-					itemValue="#{enumProvider.getSearchOption('STAINING_LIST')}" />
+					itemValue="STAINING_LIST" />
 				<!-- 1 -->
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.diagnosislist']}"
-					itemValue="#{enumProvider.getSearchOption('DIAGNOSIS_LIST')}" />
+					itemValue="DIAGNOSIS_LIST" />
 				<!-- 2 -->
 				<f:selectItem itemLabel="#{msg['dialog.worklistsearch.date.today']}"
-					itemValue="#{enumProvider.getSearchOption('TODAY')}" />
+					itemValue="TODAY" />
 
 				<!-- 3 -->
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.date.yesterday']}"
-					itemValue="#{enumProvider.getSearchOption('YESTERDAY')}" />
+					itemValue="YESTERDAY" />
 
 				<!-- 4 -->
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.date.thisweek']}"
-					itemValue="#{enumProvider.getSearchOption('CURRENTWEEK')}" />
+					itemValue="CURRENTWEEK" />
 
 				<!-- 5 -->
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.date.lastweek']}"
-					itemValue="#{enumProvider.getSearchOption('LASTWEEK')}" />
+					itemValue="LASTWEEK" />
 
 				<!-- 6 -->
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.date.lastmonth']}"
-					itemValue="#{enumProvider.getSearchOption('LASTMONTH')}" />
+					itemValue="LASTMONTH" />
 
 				<!-- 7 -->
 				<f:selectItem itemLabel="#{msg['dialog.worklistsearch.date.day']}"
-					itemValue="#{enumProvider.getSearchOption('DAY')}" />
+					itemValue="DAY" />
 
 				<!-- 8 -->
 				<f:selectItem itemLabel="#{msg['dialog.worklistsearch.date.month']}"
-					itemValue="#{enumProvider.getSearchOption('MONTH')}" />
+					itemValue="MONTH" />
 
 				<!-- 9 -->
 				<f:selectItem itemLabel="Zeitraum"
-					itemValue="#{enumProvider.getSearchOption('TIME')}" />
+					itemValue="TIME" />
 
 				<p:ajax update="@form"></p:ajax>
 			</p:selectOneRadio>
@@ -239,16 +239,16 @@
 						layout="custom">
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.patient']}"
-							itemValue="#{enumProvider.getWorklistSearchFilter('ADDED_TO_WORKLIST')}" />
+							itemValue="ADDED_TO_WORKLIST}" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.task']}"
-							itemValue="#{enumProvider.getWorklistSearchFilter('TASK_CREATION')}" />
+							itemValue="TASK_CREATION}" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.staining']}"
-							itemValue="#{enumProvider.getWorklistSearchFilter('STAINING_COMPLETED')}" />
+							itemValue="STAINING_COMPLETED}" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.diagnosis']}"
-							itemValue="#{enumProvider.getWorklistSearchFilter('DIAGNOSIS_COMPLETED')}" />
+							itemValue="DIAGNOSIS_COMPLETED}" />
 					</p:selectOneRadio>
 
 					<h:panelGrid columns="1">

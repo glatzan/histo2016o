@@ -9,14 +9,21 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.ResourceBundle;
+import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.Parent;
+import org.histo.model.patient.Block;
+import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Sample;
+import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.util.TaskTree;
-import org.histo.util.ResourceBundle;
+import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,53 +43,8 @@ import org.springframework.stereotype.Component;
 // TODO: prevent overwriting of data from clinic physicians if changed
 // TODO: change event of histological record in diagnosis page, located in helphandler action
 // TODO: Re-Diagnosis reduce options 
-//<!-- Buttons -->
-//<h:panelGrid columns="2">
-//	<!-- Save and finalize buttons -->
-//
-//	<h:panelGrid styleClass="collapsedBorders" columns="1"
-//		rendered="#{!diagnosis.finalized}">
-//		<p:commandButton process="contentForm"
-//			value="#{msg['body.receiptlog.tab.diangonsis.data.finalize']}"
-//			icon="fa fa-fw fa-ban"
-//			actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(diagnosis)}">
-//			<p:ajax event="dialogReturn"
-//				update="navigationForm contentForm" />
-//		</p:commandButton>
-//	</h:panelGrid>
-//
-//	<p:commandButton
-//		value="#{msg['body.receiptlog.tab.diangonsis.data.unfinalize']}"
-//		rendered="#{diagnosis.finalized}" process="contentForm"
-//		actionListener="#{diagnosisHandlerAction.prepareUnfinalizeDiagnosisDialog(diagnosis)}">
-//		<p:ajax event="dialogReturn"
-//			update="navigationForm contentForm" />
-//	</p:commandButton>
-//	<h:panelGroup>
-//		<p:commandLink id="diangosisLogInfo">
-//			<i class="fa fa-fw fa-info-circle" />
-//		</p:commandLink>
-//	</h:panelGroup>
-//</h:panelGrid>
-//<div style="left: 0; position: fixed; top: 0;">
-//<p:overlayPanel for="diangosisLogInfo"
-//	showEvent="mouseover" hideEvent="mouseout"
-//	styleClass="logOverlay">
-//	<p:dataTable var="log" styleClass="logDatapannel"
-//		value="#{helperHandlerAction.getRevisionList(diagnosis)}"
-//		resizableColumns="false">
-//		<p:column headerText="Datum" style="width:155px;">
-//			<h:outputLabel value="#{log.timestampAsDate}"></h:outputLabel>
-//		</p:column>
-//		<p:column headerText="Benutzer" style="width:100px;">
-//			<h:outputLabel value="#{log.userAcc.username}"></h:outputLabel>
-//		</p:column>
-//		<p:column headerText="Aktion">
-//			<h:outputLabel value="#{log.logString}"></h:outputLabel>
-//		</p:column>
-//	</p:dataTable>
-//</p:overlayPanel>
-//</div>
+// TODO: fullName propertie of physician move to person
+
 @Component
 @Scope(value = "session")
 public class MainHandlerAction {
@@ -107,10 +69,28 @@ public class MainHandlerAction {
 	private View currentView;
 
 	/**
-	 * List of currently opened dialogs
+	 * 
 	 */
-	private ArrayList<Dialog> currentDialogs;
+	private String queueDialog;
 
+	/********************************************************
+	 * Archive able
+	 ********************************************************/
+
+	/**
+	 * Object to archive
+	 */
+	private ArchivAble toArchive;
+
+	/**
+	 * the toArchive object will be archived if true
+	 */
+	private boolean archived;
+
+	/********************************************************
+	 * Archive able
+	 ********************************************************/
+	
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
@@ -119,8 +99,6 @@ public class MainHandlerAction {
 
 		navigationPages = new ArrayList<View>();
 		navigationPages.add(View.USERLIST);
-		
-		setCurrentDialogs(new ArrayList<Dialog>());
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);
@@ -170,6 +148,14 @@ public class MainHandlerAction {
 	 * ************************** Dialog ****************************
 	 */
 
+	public void showQueueDialog() {
+		System.out.println("----> Shwing Quwuw " + getQueueDialog());
+		if (getQueueDialog() != null) {
+			RequestContext.getCurrentInstance().execute("showDialogFromFrontendByBean('" + getQueueDialog() + "')");
+			setQueueDialog(null);
+		}
+	}
+
 	/**
 	 * Shows a dialog using the primefaces dialog framework
 	 * 
@@ -195,7 +181,13 @@ public class MainHandlerAction {
 			options.put("draggable", dialog.isDraggable());
 			options.put("modal", dialog.isModal());
 		}
-		getCurrentDialogs().add(dialog);
+
+		options.put("closable", false);
+
+		if (dialog.getHeader() != null)
+			options.put("headerElement", "dialogForm:header");
+
+		System.out.println("----> Showing " + dialog);
 		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
 	}
 
@@ -205,19 +197,8 @@ public class MainHandlerAction {
 	 * @param dialog
 	 */
 	public void hideDialog(Dialog dialog) {
-		getCurrentDialogs().remove(dialog);
-		RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
-	}
-
-	/**
-	 * Closes all opened dialogs
-	 */
-	public void hideAllDialogs() {
-		for (Dialog dialog : getCurrentDialogs()) {
-			RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
-		}
-
-		getCurrentDialogs().clear();
+		RequestContext.getCurrentInstance().closeDialog(dialog);
+		System.out.println("----> Hiding " + dialog);
 	}
 
 	/*
@@ -235,7 +216,7 @@ public class MainHandlerAction {
 	 * @return
 	 */
 	public String date(long date) {
-		return date(new Date(date), HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY);
+		return date(new Date(date), DateFormat.GERMAN_DATE);
 	}
 
 	/**
@@ -245,7 +226,7 @@ public class MainHandlerAction {
 	 * @return
 	 */
 	public String date(Date date) {
-		return date(date, HistoSettings.STANDARD_DATEFORMAT_DAY_ONLY);
+		return date(date, DateFormat.GERMAN_DATE);
 	}
 
 	/**
@@ -256,6 +237,28 @@ public class MainHandlerAction {
 	 */
 	public String date(long date, String format) {
 		return date(new Date(date), format);
+	}
+
+	/**
+	 * Takes a dateFormat an returns a formated string.
+	 * 
+	 * @param date
+	 * @param format
+	 * @return
+	 */
+	public String date(long date, DateFormat format) {
+		return date(new Date(date), format.getDateFormat());
+	}
+
+	/**
+	 * Takes a dateFormat an returns a formated string.
+	 * 
+	 * @param date
+	 * @param format
+	 * @return
+	 */
+	public String date(Date date, DateFormat format) {
+		return date(date, format.getDateFormat());
 	}
 
 	/**
@@ -271,12 +274,87 @@ public class MainHandlerAction {
 	/*
 	 * ************************** Time ****************************
 	 */
+	/********************************************************
+	 * Archive
+	 ********************************************************/
+
+	/**
+	 * Shows a Dialog for deleting (archiving) the sample/task/bock/image
+	 * 
+	 * @param sample
+	 * @param archived
+	 */
+	public void prepareArchiveObject(ArchivAble archive, boolean archived) {
+		setArchived(archived);
+		setToArchive(archive);
+		// if no dialog is provieded the object will be archived immediately
+		if (archive.getArchiveDialog() == null)
+			archiveObject(archive, archived);
+		else
+			showDialog(archive.getArchiveDialog());
+	}
+
+	/**
+	 * Archives a Object implementing Parent.
+	 * 
+	 * @param task
+	 * @param archiveAble
+	 * @param archived
+	 */
+	public void archiveObject(ArchivAble archive, boolean archived) {
+
+		archive.setArchived(archived);
+
+		String logString = "log.error";
+
+		if (archive instanceof Slide)
+			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived",
+					((Slide) archive).getParent().getParent().getParent().getTaskID(),
+					((Slide) archive).getParent().getParent().getSampleID(), ((Slide) archive).getParent().getBlockID(),
+					((Slide) archive).getSlideID());
+		else if (archive instanceof Diagnosis)
+			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
+					((Diagnosis) archive).getParent().getParent().getTaskID(),
+					((Diagnosis) archive).getParent().getSampleID(), ((Diagnosis) archive).getName());
+		else if (archive instanceof Block)
+			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
+					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),
+					((Block) archive).getBlockID());
+		else if (archive instanceof Sample)
+			logString = resourceBundle.get("log.patient.task.sample.archived",
+					((Sample) archive).getParent().getTaskID(), ((Sample) archive).getSampleID());
+		else if (archive instanceof Task)
+			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
+
+		Patient patient = null;
+
+		if (archive instanceof Parent<?>) {
+			patient = ((Parent<?>) archive).getPatient();
+			// update the gui list for displaying in the receiptlog
+			TaskUtil.generateSlideGuiList(patient.getSelectedTask());
+		}
+
+		genericDAO.save(archive, logString, patient);
+
+		hideArchiveObjectDialog();
+	}
+
+	/**
+	 * Hides the Dialog for achieving an object
+	 */
+	public void hideArchiveObjectDialog() {
+		hideDialog(getToArchive().getArchiveDialog());
+	}
+
+	/********************************************************
+	 * Archive
+	 ********************************************************/
 
 	/**
 	 * Takes a object to save and an resourcesString with optional wildcards.
 	 * This method will replace wildcard recursively ("log.test",
 	 * "{'log.hallo', 'wuuu'}", "replace other"). If an object is associated
-	 * with a patient but does not implement TaskTree the patient object can be
+	 * with a patient but does not implement Parent the patient object can be
 	 * passed separately.
 	 * 
 	 * @param toSave
@@ -304,8 +382,8 @@ public class MainHandlerAction {
 	 */
 	public void saveChangedData(Object toSave, String resourcesKey) {
 
-		if (toSave instanceof TaskTree) {
-			saveChangedData(toSave, ((TaskTree<?>) toSave).getPatient(), resourcesKey);
+		if (toSave instanceof Parent) {
+			saveChangedData(toSave, ((Parent<?>) toSave).getPatient(), resourcesKey);
 		} else
 			saveChangedData(toSave, null, resourcesKey);
 	}
@@ -321,9 +399,9 @@ public class MainHandlerAction {
 		return resourceBundle.get(baseStr, arr);
 	}
 
-	/*
-	 * ************************** Getters/Setters ****************************
-	 */
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
 	/**
 	 * Returns the current active worklist.
@@ -351,15 +429,33 @@ public class MainHandlerAction {
 		this.currentView = currentView;
 	}
 
-	public ArrayList<Dialog> getCurrentDialogs() {
-		return currentDialogs;
+	public String getQueueDialog() {
+		return queueDialog;
 	}
 
-	public void setCurrentDialogs(ArrayList<Dialog> currentDialogs) {
-		this.currentDialogs = currentDialogs;
+	public void setQueueDialog(String queueDialog) {
+		System.out.println("----> Setting Quwuw " + queueDialog);
+		this.queueDialog = queueDialog;
 	}
 
-	/*
-	 * ************************** Getters/Setters ****************************
-	 */
+	public ArchivAble getToArchive() {
+		return toArchive;
+	}
+
+	public void setToArchive(ArchivAble toArchive) {
+		this.toArchive = toArchive;
+	}
+
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
+	
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+
 }

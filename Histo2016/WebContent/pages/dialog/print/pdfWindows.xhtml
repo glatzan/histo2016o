@@ -15,10 +15,17 @@
 </h:head>
 
 <h:body>
+
+	<p:commandButton value="Drucken" icon="fa fa-fw fa-user-plus"
+		oncomplete="window.open('pdfWindows.xhtml', '_blank')">
+	</p:commandButton>
+
 	<div>
-	#{pdfHandlerAction.renderPDF}
+		#{pdfHandlerAction.renderPDF}
 		<p:media player="pdf" value="#{pdfHandlerAction.pdfContent}"
 			rendered="#{pdfHandlerAction.renderPDF}" width="700px" height="100px"></p:media>
 	</div>
 </h:body>
 </html>
+
+

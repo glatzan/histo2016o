@@ -3,6 +3,7 @@ package org.histo.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.config.enums.StainingStatus;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
@@ -77,29 +78,13 @@ public class SlideUtil {
 	 * @param sample
 	 */
 	public static final boolean checkIfAllSlidesAreStained(Task task) {
-		boolean allPerformed = true;
-		for (Sample sample : task.getSamples()) {
-			// übersprinen, wenn sample archiviert wurde
-			if (sample.isArchived())
-				continue;
-
-			// nur als completed markieren wenn mindestens eine Färbung
-			// vorhanden ist
-			if (sample.isStainingPerformed() && SlideUtil.checkIfAtLeastOnSlide(sample))
-				sample.setReStainingPhase(true);
-			else {
-				allPerformed = false;
-			}
-
-		}
-
-		if (allPerformed) {
+		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
 			task.setStainingCompleted(true);
 			task.setStainingCompletionDate(System.currentTimeMillis());
 		} else
 			task.setStainingCompleted(false);
 
-		return allPerformed;
+		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
 	}
 
 }

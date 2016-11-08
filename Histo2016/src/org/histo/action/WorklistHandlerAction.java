@@ -11,7 +11,9 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Role;
+import org.histo.config.enums.StainingStatus;
 import org.histo.config.enums.View;
 import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
@@ -76,7 +78,7 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	private TaskDAO taskDAO;
-	
+
 	/*
 	 * ************************** Patient ****************************
 	 */
@@ -231,7 +233,7 @@ public class WorklistHandlerAction implements Serializable {
 		settingsHandlerAction.updateAllDiagnosisPrototypes();
 
 		// init all available materials
-		taskHandlerAction.prepareForTask();
+		taskHandlerAction.prepareTask(task);
 
 		if (mainHandlerAction.getCurrentView() == View.WORKLIST_RECEIPTLOG) {
 			if (userRole == Role.MTA) {
@@ -241,8 +243,6 @@ public class WorklistHandlerAction implements Serializable {
 			}
 		}
 
-		taskDAO.initializeReportData(task);
-			
 		return View.WORKLIST.getPath();
 	}
 
@@ -270,11 +270,10 @@ public class WorklistHandlerAction implements Serializable {
 			return View.WORKLIST_BLANK.getPath();
 		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT)
 			return View.WORKLIST_PATIENT.getPath();
-		else if (currentView == View.WORKLIST_DIAGNOSIS){
-			
-			
+		else if (currentView == View.WORKLIST_DIAGNOSIS) {
+
 			return View.WORKLIST_DIAGNOSIS.getPath();
-		}else if (currentView == View.WORKLIST_RECEIPTLOG) {
+		} else if (currentView == View.WORKLIST_RECEIPTLOG) {
 			return View.WORKLIST_RECEIPTLOG.getPath();
 		} else
 			return View.WORKLIST_BLANK.getPath();
@@ -371,9 +370,9 @@ public class WorklistHandlerAction implements Serializable {
 				List<Patient> paints = patientDao.getPatientByStainingsBetweenDates(0, System.currentTimeMillis(),
 						false);
 				for (Patient patient : paints) {
-					if (searchOptions.isStaining_staining() && patient.isStainingNeeded()) {
+					if (searchOptions.isStaining_staining() && patient.getStainingStatus() == StainingStatus.STAINING_NEEDED) {
 						result.add(patient);
-					} else if (searchOptions.isStaining_restaining() && patient.isReStainingNeeded()) {
+					} else if (searchOptions.isStaining_restaining() && patient.getStainingStatus() == StainingStatus.RE_STAINING_NEEDED) {
 						result.add(patient);
 					}
 				}
@@ -386,9 +385,9 @@ public class WorklistHandlerAction implements Serializable {
 			} else {
 				List<Patient> paints = patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false);
 				for (Patient patient : paints) {
-					if (searchOptions.isStaining_diagnosis() && patient.isDiagnosisNeeded()) {
+					if (searchOptions.isStaining_diagnosis() && patient.getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED ) {
 						result.add(patient);
-					} else if (searchOptions.isStaining_rediagnosis() && patient.isReDiagnosisNeeded()) {
+					} else if (searchOptions.isStaining_rediagnosis() && patient.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					}
 				}

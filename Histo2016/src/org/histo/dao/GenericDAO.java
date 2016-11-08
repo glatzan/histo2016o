@@ -10,10 +10,10 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.histo.config.SecurityContextHolderUtil;
+import org.histo.model.interfaces.LogInfo;
 import org.histo.model.patient.Patient;
-import org.histo.model.util.LogInfo;
 import org.histo.model.util.LogListener;
-import org.histo.util.SecurityContextHolderUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,7 +100,9 @@ public class GenericDAO extends AbstractDAO {
 			object = (C) session.merge(object);
 			hibernateException.printStackTrace();
 		}
-
+		
+		System.out.println("Saving");
+		
 		return object;
 	}
 

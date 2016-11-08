@@ -20,8 +20,10 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.StainingPrototype;
-import org.histo.model.util.LogAble;
-import org.histo.model.util.TaskTree;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.CreationDate;
+import org.histo.model.interfaces.LogAble;
+import org.histo.model.interfaces.Parent;
 
 @Entity
 @Audited
@@ -29,13 +31,13 @@ import org.histo.model.util.TaskTree;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements TaskTree<Block>, LogAble {
+public class Slide implements Parent<Block>, LogAble, CreationDate, ArchivAble {
 
 	private long id;
 	
 	private long version;
 
-	private long generationDate;
+	private long creationDate;
 
 	private String slideID = "";
 
@@ -96,14 +98,13 @@ public class Slide implements TaskTree<Block>, LogAble {
 	public void setSlidePrototype(StainingPrototype slidePrototype) {
 		this.slidePrototype = slidePrototype;
 	}
-	
-	@Basic
-	public long getGenerationDate() {
-		return generationDate;
+
+	public long getCreationDate() {
+		return creationDate;
 	}
 
-	public void setGenerationDate(long generationDate) {
-		this.generationDate = generationDate;
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	@Basic
@@ -135,7 +136,7 @@ public class Slide implements TaskTree<Block>, LogAble {
 	}
 
 	/********************************************************
-	 * Interface StainingTreeParent
+	 * Interface Parent
 	 ********************************************************/
 	@ManyToOne
 	public Block getParent() {
@@ -154,7 +155,13 @@ public class Slide implements TaskTree<Block>, LogAble {
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
+	/********************************************************
+	 * Interface Parent
+	 ********************************************************/
 
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble
 	 */
@@ -190,6 +197,6 @@ public class Slide implements TaskTree<Block>, LogAble {
 		return Dialog.SLIDE_ARCHIV;
 	}
 	/********************************************************
-	 * Interface StainingTreeParent
+	 * Interface ArchiveAble
 	 ********************************************************/
 }

@@ -14,8 +14,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.histo.model.util.EditAbleEntity;
-import org.histo.model.util.LogAble;
+import org.histo.model.interfaces.EditAbleEntity;
+import org.histo.model.interfaces.LogAble;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

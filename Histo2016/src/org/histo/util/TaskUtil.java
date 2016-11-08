@@ -3,6 +3,7 @@ package org.histo.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
@@ -56,11 +57,10 @@ public class TaskUtil {
 		Diagnosis diagnosis = new Diagnosis();
 		diagnosis.setGenerationDate(System.currentTimeMillis());
 		diagnosis.setType(type);
-		diagnosis.setDiagnosisOrder(sample.getDiagnosisNumber());
+		diagnosis.setDiagnosisOrder(sample.getDiagnoses().size());
 		diagnosis.setName(getDiagnosisName(sample, diagnosis, resourceBundle));
 		diagnosis.setParent(sample);
 
-		sample.incrementDiagnosisNumber();
 		sample.getDiagnoses().add(diagnosis);
 
 		return diagnosis;
@@ -74,10 +74,9 @@ public class TaskUtil {
 	 */
 	public final static Block createNewBlock(Sample sample) {
 		Block block = new Block();
-		block.setBlockID(getCharNumber(sample.getBlockNumber()));
+		block.setBlockID(getCharNumber(sample.getBlocks().size()));
 		block.setParent(sample);
 		sample.getBlocks().add(block);
-		sample.incrementBlockNumber();
 		return block;
 	}
 
@@ -91,7 +90,7 @@ public class TaskUtil {
 	public final static Slide createNewStaining(Block block, StainingPrototype prototype) {
 		Slide staining = new Slide();
 		staining.setReStaining(block.getParent().isReStainingPhase());
-		staining.setGenerationDate(System.currentTimeMillis());
+		staining.setCreationDate(System.currentTimeMillis());
 		staining.setSlidePrototype(prototype);
 		staining.setParent(block);
 
@@ -103,7 +102,6 @@ public class TaskUtil {
 		staining.setSlideID(block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
 
 		block.getSlides().add(staining);
-		block.incrementSlideNumber();
 
 		return staining;
 	}

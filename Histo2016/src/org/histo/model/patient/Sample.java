@@ -26,13 +26,17 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.StainingStatus;
 import org.histo.model.MaterialPreset;
-import org.histo.model.util.DiagnosisStatus;
-import org.histo.model.util.LogAble;
-import org.histo.model.util.StainingStatus;
-import org.histo.model.util.TaskTree;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.CreationDate;
+import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.LogAble;
+import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 
@@ -42,7 +46,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, LogAble {
+public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo, CreationDate, LogAble, ArchivAble {
 
 	private long id;
 
@@ -61,7 +65,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	/**
 	 * Date of sample creation
 	 */
-	private long generationDate = 0;
+	private long creationDate = 0;
 
 	/**
 	 * If true the not completed stainings are restainings.
@@ -69,19 +73,9 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	private boolean reStainingPhase = false;
 
 	/**
-	 * block number
-	 */
-	private int blockNumber = 0;
-
-	/**
 	 * blocks array
 	 */
 	private List<Block> blocks;
-
-	/**
-	 * Number increases with every new diagnosis
-	 */
-	private int diagnosisNumber;
 
 	/**
 	 * All diagnoses of this sample
@@ -123,7 +117,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	 * @param task
 	 */
 	public Sample(Task task, MaterialPreset material) {
-		setGenerationDate(System.currentTimeMillis());
+		setCreationDate(System.currentTimeMillis());
 		setSampleID(TaskUtil.getRomanNumber(task.getSamples().size() + 1));
 		setParent(task);
 		setMaterilaPreset(material);
@@ -136,12 +130,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 
 	@Transient
 	public Diagnosis getLastRelevantDiagnosis() {
-		for (int i = getDiagnoses().size() - 1; i >= 0; i--) {
-			if (getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS_REVISION
-					|| getDiagnoses().get(i).getType() == DiagnosisType.DIAGNOSIS)
-				return getDiagnoses().get(i);
-		}
-		return null;
+		return getDiagnoses().get(getDiagnoses().size()-1);
 	}
 
 	/**
@@ -159,26 +148,6 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	}
 
 	/******************************************************** Transient ********************************************************/
-
-	public void incrementBlockNumber() {
-		this.blockNumber++;
-	}
-
-	public void decrementBlockNumber() {
-		this.blockNumber--;
-	}
-
-	public void addDiagnosis(Diagnosis diagnosis) {
-		getDiagnoses().add(diagnosis);
-	}
-
-	public void incrementDiagnosisNumber() {
-		this.diagnosisNumber++;
-	}
-
-	public void decrementDiagnosisNumber() {
-		this.diagnosisNumber--;
-	}
 
 	/********************************************************
 	 * Getter/Setter
@@ -238,22 +207,12 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 		this.sampleID = sampleID;
 	}
 
-	@Basic
-	public long getGenerationDate() {
-		return generationDate;
+	public long getCreationDate() {
+		return creationDate;
 	}
 
-	public void setGenerationDate(long generationDate) {
-		this.generationDate = generationDate;
-	}
-
-	@Basic
-	public int getDiagnosisNumber() {
-		return diagnosisNumber;
-	}
-
-	public void setDiagnosisNumber(int diagnosisNumber) {
-		this.diagnosisNumber = diagnosisNumber;
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
 	}
 
 	@Basic
@@ -263,15 +222,6 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 
 	public void setReStainingPhase(boolean reStainingPhase) {
 		this.reStainingPhase = reStainingPhase;
-	}
-
-	@Basic
-	public int getBlockNumber() {
-		return blockNumber;
-	}
-
-	public void setBlockNumber(int blockNumber) {
-		this.blockNumber = blockNumber;
 	}
 
 	@Basic
@@ -302,121 +252,84 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	/******************************************************** Transient ********************************************************/
 
 	/********************************************************
-	 * Interface DiagnosisStatus
+	 * Interface DiagnosisInfo
 	 ********************************************************/
 	/**
-	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-	 * Gibt true zurück wenn alle Diagnosen finalisiert wurden.
+	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
+	 * of the diagnoses.
 	 */
 	@Override
 	@Transient
-	public boolean isDiagnosisPerformed() {
+	public DiagnosisStatus getDiagnosisStatus() {
+		if (getDiagnoses().isEmpty())
+			return DiagnosisStatus.DIAGNOSIS_NEEDED;
+
+		boolean diagnosisNeeded = false;
+
 		for (Diagnosis diagnosis : getDiagnoses()) {
-			if (!diagnosis.isFinalized())
-				return false;
+
+			if (diagnosis.isArchived())
+				continue;
+
+			// continue if no diangosis is needed
+			if (diagnosis.isFinalized())
+				continue;
+			else {
+				// check if restaining is needed (restaining > staining) so
+				// return that it is needed
+				if (diagnosis.isDiagnosisRevision())
+					return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
+				else
+					diagnosisNeeded = true;
+			}
+
 		}
-		return true;
-	}
 
-	/**
-	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-	 * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
-	 */
-	@Override
-	@Transient
-	public boolean isDiagnosisNeeded() {
-		if (!isDiagnosisPerformed() && getDiagnosisNumber() == 1)
-			return true;
-		return false;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface DiagnosisStatus <br>
-	 * Gibt true zurück wenn mindestens eine Dinagnose nicht finalisiert wurde.
-	 */
-	@Override
-	@Transient
-	public boolean isReDiagnosisNeeded() {
-		if (!isDiagnosisPerformed() && getDiagnosisNumber() > 1)
-			return true;
-		return false;
+		
+		
+		// if there is more then one diagnosis a revision was created
+		if (getDiagnoses().size() > 1 && diagnosisNeeded) {
+			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
+		} else {
+			return diagnosisNeeded ? DiagnosisStatus.DIAGNOSIS_NEEDED : DiagnosisStatus.PERFORMED;
+		}
 	}
 
 	/********************************************************
-	 * Interface DiagnosisStatus
+	 * Interface DiagnosisInfo
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface StainingStauts
+	 * Interface StainingInfo
 	 ********************************************************/
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zurück, wenn die Probe am heutigen Tag erstellt wurde
+	 * Overwrites the {@link StainingInfo} interfaces new method. Returns true
+	 * if the creation date was on the same as the current day.
 	 */
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (TimeUtil.isDateOnSameDay(generationDate, System.currentTimeMillis()))
-			return true;
-		return false;
+		return isNew(getCreationDate());
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zurück, wenn die Probe am heutigen Tag erstellt wrude
+	 * Returns the status of the staining process. Either it can return staining
+	 * performed, staining needed, restaining needed (restaining is returned if
+	 * at least one staining is marked as restaining).
 	 */
 	@Override
 	@Transient
-	public boolean isStainingPerformed() {
-
-		boolean found = false;
-		for (Block block : getBlocks()) {
-
-			if (block.isArchived())
-				continue;
-
-			if (!block.isStainingPerformed())
-				return false;
-			else
-				found = true;
-		}
-
-		return found;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber
-	 * == 0 ist.
-	 */
-	@Override
-	@Transient
-	public boolean isStainingNeeded() {
-		if (!isStainingPerformed() && !isReStainingPhase())
-			return true;
-		return false;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface StainingStauts <br>
-	 * Gibt true zrück wenn mindestens eine Färbung aussteht und die Batchnumber
-	 * > 0 ist.
-	 */
-	@Override
-	@Transient
-	public boolean isReStainingNeeded() {
-		if (!isStainingPerformed() && isReStainingPhase())
-			return true;
-		return false;
+	public StainingStatus getStainingStatus() {
+		return getStainingStatus(getBlocks());
 	}
 
 	/********************************************************
-	 * Interface StainingStauts
+	 * Interface StainingInfo
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface StainingTreeParent
+	 * Interface Parent
 	 ********************************************************/
 	@ManyToOne(targetEntity = Task.class)
 	public Task getParent() {
@@ -435,6 +348,14 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
+
+	/********************************************************
+	 * Interface Parent
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
 
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
@@ -476,5 +397,7 @@ public class Sample implements TaskTree<Task>, StainingStatus, DiagnosisStatus, 
 	public Dialog getArchiveDialog() {
 		return Dialog.SAMPLE_ARCHIV;
 	}
-	/******************************************************** ArchiveAble ********************************************************/
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
 }

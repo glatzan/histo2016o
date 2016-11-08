@@ -68,7 +68,7 @@
 					<!-- Contacts -->
 					<p:menuitem value="Benachrichtigungen"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
-						onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+						onclick="$('#headerForm\\:notificationContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 					<!-- Print -->
 					<p:menuitem value="Drucken"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
@@ -100,7 +100,13 @@
 
 			<!-- Edit Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
-				actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
+				actionListener="#{contactHandlerAction.showContacts(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn" update="contentForm" />
+			</p:commandButton>
+
+			<!-- Notification button -->
+			<p:commandButton id="notificationContactBtn" style="display:none"
+				actionListener="#{notificationHandlerAction.showNotificationDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 
@@ -112,14 +118,17 @@
 
 			<!-- Print button -->
 			<p:commandButton id="printBtn" style="display:none"
-				actionListener="#{pdfHandlerAction.preparePrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm" />
+				widgetVar="printBtnVar"
+				actionListener="#{pdfHandlerAction.showPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn" update="contentForm"
+					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
 			<!-- Council button -->
 			<p:commandButton id="councilBtn" style="display:none"
 				actionListener="#{taskHandlerAction.prepareCouncilDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm" />
+				<p:ajax event="dialogReturn" update="contentForm"
+					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
 			<!-- Menu Button -->
@@ -135,11 +144,30 @@
 			</p:tieredMenu>
 
 			<p:commandButton id="settingsDialogBtn" style="display:none"
-				value="#{msg['body.worklist.header.button.settings']}"
 				actionListener="#{settingsHandlerAction.prepareSettingsDialog()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
+
+
+			<p:commandButton id="printBtnShowOnly" style="display:none"
+				actionListener="#{pdfHandlerAction.showPrintDialog()}">
+				<p:ajax event="dialogReturn" update="contentForm"
+					listener="#{mainHandlerAction.showQueueDialog()}" />
+			</p:commandButton>
+
+			<p:commandButton id="councilBtnShowOnly" style="display:none"
+				actionListener="#{mainHandlerAction.showDialog('COUNCIL')}">
+				<p:ajax event="dialogReturn" update="contentForm"
+					listener="#{mainHandlerAction.showQueueDialog()}" />
+			</p:commandButton>
+
+			<script type="text/javascript">
+				// funktion is triggert by the backend to show a dialog, workaround
+				function showDialogFromFrontendByBean(btn) {
+					$(btn).click();
+				}
+			</script>
 		</h:panelGroup>
 	</h:panelGrid>
 </ui:composition>

@@ -12,16 +12,222 @@
 </h:head>
 
 <h:body styleClass="defaultDialogLayout bigDialog">
-	<h:form>
+	<h:form id="dialogContent">
+	
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.contact.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+		
+		<div class="dialogContent">
+			<!-- Contact Datatable -->
+			<p:dataTable var="contact"
+				styleClass="contactDataTable noBordersAll collapsedBordersAll"
+				scrollable="true" scrollHeight="390"
+				value="#{contactHandlerAction.allAvailableContact}">
 
-		<ui:fragment rendered="#{contactHandlerAction.contactTab eq 'LIST'}">
-			<ui:include src="addContact.xhtml" />
-		</ui:fragment>
+				<!-- Name -->
+				<p:column headerText="#{msg['dialog.contact.table.name']}"
+					filterBy="#{contact.physician.person.name}"
+					filterMatchMode="contains">
+					<h:outputLabel
+						value="#{contact.physician.title} #{contact.physician.name}, #{contact.physician.surname}" />
+				</p:column>
 
-		<ui:fragment
-			rendered="#{contactHandlerAction.contactTab eq 'NOTIFICATION'}">
-			<ui:include src="performNotification.xhtml" />
-		</ui:fragment>
+				<!-- default function-->
+				<p:column
+					headerText="#{msg['dialog.contact.table.defaultFunction']}">
+					<h:outputLabel
+						value="#{msg['enum.contactRole.'.concat(contact.physician.defaultContactRole)]}" />
+				</p:column>
+
+				<!-- function -->
+				<p:column headerText="#{msg['dialog.contact.table.function']}"
+					styleClass="smallInput">
+					<p:selectOneMenu value="#{contact.role}">
+
+						<f:selectItems value="#{enumProvider.contactRoles}" var="role"
+							itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
+							itemValue="#{role}" />
+
+						<p:ajax update="@form"
+							listener="#{contactHandlerAction.onContactChangeRole(contact,worklistHandlerAction.selectedPatient.selectedTask)}"></p:ajax>
+					</p:selectOneMenu>
+				</p:column>
+
+
+				<!-- primary contact only for surgeons and private physicians-->
+				<p:column>
+					<f:facet name="header">
+						<i class="fa fa-diamond"
+							title="#{msg['dialog.contact.table.primaryContact']}" />
+					</f:facet>
+					<p:selectBooleanCheckbox
+						rendered="#{contact.role ne 'NONE' and contact.role ne 'OTHER'}"
+						value="#{contact.primaryContact}"
+						title="#{contact.role eq 'SURGEON' ? msg['dialog.contact.table.primaryContact.surgeon.selected'] :  msg['dialog.contact.table.primaryContact.privatePhysician.selected'] }">
+						<p:ajax event="change"
+							listener="#{contactHandlerAction.onContactChangePrimary(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+							update="@form"></p:ajax>
+					</p:selectBooleanCheckbox>
+				</p:column>
+
+				<!-- mail -->
+				<p:column>
+					<f:facet name="header">
+						<i class="fa fa-envelope-o"
+							title="#{msg['dialog.contact.table.mail']}" />
+					</f:facet>
+					<p:selectBooleanCheckbox
+						disabled="#{contact.role eq 'NONE' or contact.physician.email eq '' or contact.role eq 'NONE' }"
+						value="#{contact.useEmail}"
+						title="#{contact.physician.email eq '' ?  msg['dialog.contact.table.mail.none'] : msg['dialog.contact.table.mail']}" />
+				</p:column>
+
+				<!-- Phone -->
+				<p:column>
+					<f:facet name="header">
+						<i class="fa fa-phone"
+							title="#{msg['dialog.contact.table.phone']}" />
+					</f:facet>
+					<p:selectBooleanCheckbox
+						disabled="#{contact.role eq 'NONE' or contact.physician.phoneNumber eq '' or contact.role eq 'NONE'  }"
+						value="#{contact.usePhone}"
+						title="#{contact.physician.phoneNumber eq '' ? msg['dialog.contact.table.phone.none'] : msg['dialog.contact.table.phone']}" />
+				</p:column>
+
+				<!-- Fax -->
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-fax" title="#{msg['dialog.contact.table.fax']}" />
+					</f:facet>
+					<p:selectBooleanCheckbox
+						disabled="#{contact.role eq 'NONE' or contact.physician.fax eq '' or contact.role eq 'NONE' }"
+						value="#{contact.useFax}"
+						title="#{ contact.physician.fax eq '' ? msg['dialog.contact.table.fax.none'] : msg['dialog.contact.table.fax']}" />
+				</p:column>
+
+				<!-- notification performed -->
+				<p:column style="width:15px">
+					<f:facet name="header">
+						<i class="fa fa-volume-up"
+							title="#{msg['dialog.contact.table.notificationDone']}" />
+					</f:facet>
+					<h:panelGroup rendered="#{contact.notificationPerformed}">
+						<i class="fa fa-fw fa-check-circle icon-green"
+							title="#{msg['dialog.contact.table.notificationDone']}" />
+					</h:panelGroup>
+				</p:column>
+
+				<!-- edit person -->
+				<p:column style="width:15px">
+					<f:facet name="header">
+						<i class="fa fa-cog" title="#{msg['dialog.contact.table.mail']}" />
+					</f:facet>
+					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+						style="float: right"
+						actionListener="#{settingsHandlerAction.prepareEditPhysicianFromExtern(contact.physician)}">
+						<i class="fa fa-fw fa-cog" />
+						<p:ajax event="dialogReturn" update="@form"
+							listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}" />
+					</p:commandLink>
+
+				</p:column>
+
+			</p:dataTable>
+			<!-- Contact Datatable -->
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%;"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="4">
+					<p:commandButton value="#{msg['general.close']}"
+						style="margin-left:6px" icon="fa fa-fw fa-floppy-o" id="closeBtn"
+						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('CONTACTS'))}"></p:commandButton>
+
+					<p:commandButton value="Benachrichtigen"
+						icon="fa fa-fw fa-volume-up" styleClass="buttonLeftMarginInList"
+						actionListener="#{contactHandlerAction.hideContactsDialog()}"
+						update="@form" />
+
+					<h:panelGrid columns="2">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{contactHandlerAction.physicianRoleOptions.showAddedContactsOnly}"
+							style="margin-left:10px;">
+							<p:ajax
+								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
+
+						<h:outputLabel
+							value="#{msg['dialog.contact.options.addedContacts']}"
+							style="margin-left:5px;"></h:outputLabel>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="8" style="float:right; margin-right:10px;">
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						title="#{msg['dialog.contact.options.surgeon.show']}"
+						disabled="#{contactHandlerAction.physicianRoleOptions.showAddedContactsOnly}"
+						value="#{contactHandlerAction.physicianRoleOptions.surgeon}">
+						<p:ajax
+							listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+							update="@form"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value="#{msg['dialog.contact.options.surgeon']}"
+						style="margin-left:5px;"></h:outputLabel>
+
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:10px;"
+						title="#{msg['body.receiptlog.contact.role.privatePhysician.show']}"
+						disabled="#{contactHandlerAction.physicianRoleOptions.showAddedContactsOnly}"
+						value="#{contactHandlerAction.physicianRoleOptions.privatePhysician}">
+						<p:ajax
+							listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+							update="@form"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel
+						value="#{msg['body.receiptlog.contact.role.privatePhysician']}"
+						style="margin-left:5px;"></h:outputLabel>
+
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:10px;"
+						title="#{msg['body.receiptlog.contact.role.familyPhysician.show']}"
+						disabled="#{contactHandlerAction.physicianRoleOptions.showAddedContactsOnly}"
+						value="#{contactHandlerAction.physicianRoleOptions.familyPhysician}">
+						<p:ajax
+							listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+							update="@form"></p:ajax>
+					</p:selectBooleanCheckbox>
+
+					<h:outputLabel
+						value="#{msg['body.receiptlog.contact.role.familyPhysician']}"
+						style="margin-left:5px;"></h:outputLabel>
+
+
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:10px;"
+						title="#{msg['dialog.contact.options.other.show']}"
+						disabled="#{contactHandlerAction.physicianRoleOptions.showAddedContactsOnly}"
+						value="#{contactHandlerAction.physicianRoleOptions.other}">
+						<p:ajax
+							listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+							update="@form"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value="#{msg['dialog.contact.options.other']}"
+						style="margin-left:5px;"></h:outputLabel>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
 
 	</h:form>
 </h:body>

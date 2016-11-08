@@ -25,10 +25,10 @@
 						value="#{settingsHandlerAction.physicianTabIndex}">
 						<f:selectItem
 							itemLabel="#{msg['dialog.settings.person.new.external']}"
-							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_EXTER')}" />
+							itemValue="P_ADD_EXTER" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.settings.person.new.employee']}"
-							itemValue="#{enumProvider.getSettingsTab('PHYSICIAN_ADD_LDPA')}" />
+							itemValue="P_ADD_LDPA" />
 						<p:ajax update="@form"></p:ajax>
 					</p:selectOneButton>
 				</p:panelGrid>
@@ -37,7 +37,7 @@
 
 		<!-- Internal Physician (Employee, get data from LDAP)-->
 		<ui:fragment
-			rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_LDPA'}">
+			rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}">
 			<ui:include src="../../template/ldapPhysician.xhtml">
 				<ui:param name="physicianList"
 					value="#{settingsHandlerAction.ldapPhysicianList}" />
@@ -52,7 +52,7 @@
 
 		<!-- External Physician -->
 		<ui:fragment
-			rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_EXTER'}">
+			rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER'}">
 			<ui:include src="../../template/person.xhtml">
 				<ui:param name="person"
 					value="#{settingsHandlerAction.tmpPhysician}" />
@@ -85,14 +85,14 @@
 				<!-- Button for creating a new external physician -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
-					rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_EXTER'}"
+					rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER'}"
 					actionListener="#{settingsHandlerAction.saveNewPrivatePhysician(settingsHandlerAction.tmpPhysician)}"
 					update="@form" />
 
 				<!-- Button for adding a physician from ldap -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
-					rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_LDPA'}"
+					rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}"
 					actionListener="#{settingsHandlerAction.savePhysicianFromLdap(settingsHandlerAction.tmpLdapPhysician, settingsHandlerAction.tmpPhysician.defaultContactRole)}"
 					update="@form" />
 

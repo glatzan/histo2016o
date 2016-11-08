@@ -28,12 +28,16 @@
 				<f:actionListener
 					binding="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></f:actionListener>
 				<f:actionListener
-					binding="#{pdfHandlerAction.preparePrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
+					binding="#{pdfHandlerAction.showPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
 			</p:commandButton>
 			<p:commandButton
 				value="#{msg['dialog.diagnosis.finalize.button.ok']}"
-				styleClass="buttonLeftMarginInList"
-				actionListener="#{diagnosisHandlerAction.finalizeDiagnosis(diagnosisHandlerAction.tmpDiagnosis)}" />
+				styleClass="buttonLeftMarginInList">
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.finalizeDiagnoses(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
+				<f:actionListener
+					binding="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></f:actionListener>
+			</p:commandButton>
 			<p:commandButton value="#{msg['general.abort']}"
 				styleClass="buttonLeftMarginInList"
 				actionListener="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}" />

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
@@ -13,7 +14,6 @@ import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.ui.PatientList;
 import org.histo.util.PersonAdministration;
-import org.histo.util.ResourceBundle;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -105,7 +105,7 @@ public class PatientHandlerAction implements Serializable {
 	public void addNewExternalPatient(Patient patient) {
 		// marks the patient as externally
 		patient.setExternalPatient(true);
-		patient.setAddDate(System.currentTimeMillis());
+		patient.setCreationDate(System.currentTimeMillis());
 
 		genericDAO.save(patient, resourceBundle.get("log.patient.extern.new", patient.getPerson().getName(),
 				patient.getPerson().getSurname()), patient);
@@ -130,7 +130,7 @@ public class PatientHandlerAction implements Serializable {
 			// patient not in database, is new patient from database
 			if (patient.getId() == 0) {
 				// set add date
-				patient.setAddDate(System.currentTimeMillis());
+				patient.setCreationDate(System.currentTimeMillis());
 				genericDAO.save(patient, resourceBundle.get("log.patient.search.new", patient.getPerson().getName(),
 						patient.getPerson().getSurname(), patient.getPiz()), patient);
 			} else

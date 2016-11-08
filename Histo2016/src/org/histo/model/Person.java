@@ -18,8 +18,8 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
-import org.histo.model.util.ArchivAble;
-import org.histo.model.util.LogAble;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.LogAble;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -260,8 +260,11 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	/********************************************************
 	 * Interace archive able
 	 ********************************************************/
+
+	
 }
+
+

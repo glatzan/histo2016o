@@ -74,8 +74,16 @@ body {
 	color: green;
 }
 
+.icon-green {
+	color: green;
+}
+
 .icon-orange {
 	color: orange;
+}
+
+.icon-grey {
+	color: #555555;
 }
 
 .icon-red {
@@ -136,6 +144,23 @@ body {
 
 .buttonLeftMarginInList {
 	margin-left: 0.5em;
+}
+
+}
+/* style of the input field of an onSelect primefaces element */
+.customSerachSelectMenu .ui-inputfield {
+	padding: 2px 7px;
+}
+
+/* style of the popup menu*/
+.customSerachSelectMenuPanel {
+	padding: 0px;
+}
+
+/* style of the popup menu*/
+.customSerachSelectMenuPanel .ui-selectonemenu-filter {
+	width: 77% !important;
+	padding: 3px 7px;
 }
 /*
 	######################################## Navigatoin ########################################
@@ -346,21 +371,6 @@ body {
 	width: auto;
 }
 
-/* style of the imput field */
-.diagnosisTable .diagnosisSelectMenu .ui-inputfield {
-	padding: 2px 7px;
-}
-
-/* style of the popup menu*/
-.diagnosisSelectMenuPanel {
-	padding: 0px;
-}
-
-/* style of the popup menu*/
-.diagnosisSelectMenuPanel .ui-selectonemenu-filter {
-	width: 77% !important;
-	padding: 3px 7px;
-}
 
 /* ################# Diagnosis View ################# */
 
@@ -457,30 +467,33 @@ body {
 /* ######################################## Content ######################################## */
 
 /*	######################################## Dialog ######################################## */
-.dialogLayout {
-	padding: 0.4em 0.4em 0.4em 0.4em !important;
+/* Title bar for dialogues */
+.ui-dialog-titlebar {
+	display: none !important;
 }
 
-/* Wenn kein layout verwendet wird sondern ein pannel, padding und rand entfernen*/
-.dialogLayout .pannelLayout, .dialogLayout .pannelLayout .ui-panel-content
-	{
+/* Title bar for dialogues */
+.ui-dialog-titlebar .ui-dialog-title {
+	display: block !important;
+	width: 100% !important;
 	padding: 0px !important;
-	border: none;
+	margin: 0px !important;
 }
 
-.dialogLayout .center, .dialogLayout .botton {
-	border: none;
-}
-
-.dialogLayout .dialogTable {
-	border: none;
-	width: 100%;
-}
-
-/*	################# Notification Dialog ################# */
+/*	################# Default Dialog ################# */
 /* newest Dialog */
 .defaultDialogLayout {
 	padding: 1em 1em 1em 1em !important;
+}
+
+.defaultDialogLayout .dialogHeader {
+	font-size: 20px;
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+}
+
+.defaultDialogLayout .dialogHeader a:-webkit-any-link {
+	color: #555555;
+	font-size: 15px;
 }
 
 .defaultDialogLayout .dialogContent {
@@ -494,9 +507,28 @@ body {
 	vertical-align: bottom !important;
 }
 
-/*	################# Notification Dialog ################# */
+/* Dialog header */
+.defaulDilaogHeaderDivWithBackground {
+	padding: 3px 10px;
+	color: black;
+	font-weight: bold;
+	font-family: Verdana, Arial, sans-serif;
+	font-size: 1.1em;
+	background: #cccccc
+		url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)
+		50% 50% repeat-x;
+}
+
+.defaulDilaogHeaderDivWithBackground,
+	.defaulDilaogHeaderDivWithBackground a:-webkit-any-link {
+	color: #555555;
+	font-size: 15px;
+}
+
+/*	################# Default Dialog ################# */
 
 /*	################# BigDialog ################# */
+/* contacts.xhtml */
 /* Layout for big dialogs*/
 .bigDialog {
 	padding: 0px !important;
@@ -505,6 +537,10 @@ body {
 
 .bigDialog .buttonContainer {
 	width: 1023px !important;
+}
+
+.bigDialog  .contentDiv {
+	height: 540px;
 }
 
 /*	################# BigDialog ################# */
@@ -519,7 +555,7 @@ body {
 
 /* Layout in the tabview center tab*/
 .settingsDialogLayout .settingsPannel .settingsTabView .tabLayout {
-	height: 590px;
+	height: 560px;
 	width: 100%
 }
 
@@ -534,7 +570,7 @@ body {
 /* Settings tab view hight + width*/
 .settingsDialogLayout .settingsPannel .settingsTabView {
 	width: 100%;
-	height: 600px;
+	height: 570px;
 }
 
 /* Layout in the tabview center tab, center div*/
@@ -594,49 +630,38 @@ body {
 }
 /*	################# Settings ################# */
 
-/*	################# print ################# */
-/* print Dialog*/
-.printDialog {
-	padding: 0px !important;
-	margin: 0px !important;
-}
+/*	################# print dialog ################# */
 
-/* content div */
-.printDialog .bodyDiv {
-	height: 600px;
+.printTable{
 	width: 100%;
 }
 
-.printDialog .bodyDiv .contentDiv {
-	height: 550px;
-}
-
-.printDialog .bodyDiv .bottomDiv {
-	height: 35px;
-	position: absolute !important;
-	bottom: 0px !important;
-	vertical-align: bottom !important;
-	width: 100%;
-}
-
-.printDialog .contentTable {
-	width: 100%;
-}
-
-.printDialog .contentTable .settingsColumn {
+.printTable .menuColumn{
 	vertical-align: top;
-	width: 300px;
-	height: 550px;
+	width: 320px;
+	height: 500px;
 }
-
-.printDialog .contentTable .pdfColumn {
+.printTable .pdfColumn {
 	vertical-align: top;
 	width: *;
-	height: 550px;
+	height: 500px;
 	text-align: right;
 }
 
-/*	################# print ################# */
+.attachedPDFTable table{
+	width:100%;
+}
+
+.attachedPDFTable a:hover{
+	text-decoration: none !important;
+}
+
+.attachedPDFTable .ui-datagrid-content div:nth-child(even) td{
+	background: #f9f9f9;
+}
+
+/*	################# print dialog ################# */
+
 
 /*	################# Contact ################# */
 /* Layout für den ContactSelect Datatable */
@@ -764,14 +789,30 @@ body {
 /*	################# create Task dialog ################# */
 
 /*	################# council dialog ################# */
-.councilTableTextColumn{
+.councilTableTextColumn {
 	width: 150px;
 }
-.councilTableInputColumn{
+
+.councilTableInputColumn {
 	valign: middle;
 }
 /*	################# council dialog ################# */
 
+/*	################# notification dialog ################# */
+.notificationTable{
+	width: 100%;
+	margin-top: 5px;
+}
+
+.notificationTable .textColumn{
+	width: 200px;
+}
+
+.notificationTable .physicianList tr:nth-child(even) td {
+	background-color: #f9f9f9;
+}
+
+/*	################# notification dialog ################# */
 
 /*	######################################## Dialog ######################################## */
 

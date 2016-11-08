@@ -132,32 +132,32 @@
 
 								<!-- new task -->
 								<h:panelGroup
-									rendered="#{task.isNew() and (task.isDiagnosisNeeded() or task.isReDiagnosisNeeded())}">
+									rendered="#{task.isNew()}">
 									<i style="margin-left: 5px;" class="fa fa-child icon-green"
 										title="#{msg['body.worklist.navigation.activtasks.new']}" />
 								</h:panelGroup>
 
 								<!-- staining needed -->
 								<h:panelGroup
-									rendered="#{task.isStainingNeeded() or task.isReStainingNeeded()}">
+									rendered="#{task.getStainingStatus() eq 'STAINING_NEEDED'  or task.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
 									<i style="margin-left: 5px;"
-										class="fa fa-image #{task.isStainingNeeded() ? 'icon-green' : 'icon-orange'}"
-										title="#{task.isStainingNeeded() eq true ? msg['body.worklist.navigation.activtasks.staining'] : msg['body.worklist.navigation.activtasks.restaining']}" />
+										class="fa fa-image #{task.getStainingStatus() eq 'STAINING_NEEDED'  ? 'icon-green' : 'icon-orange'}"
+										title="#{task.getStainingStatus() eq 'STAINING_NEEDED' ? msg['body.worklist.navigation.activtasks.staining'] : msg['body.worklist.navigation.activtasks.restaining']}" />
 								</h:panelGroup>
 
 								<!-- diagnosis needed -->
 								<h:panelGroup
-									rendered="#{task.isStainingPerformed() and (task.isDiagnosisNeeded() or task.isReDiagnosisNeeded())}">
+									rendered="#{task.getStainingStatus() eq 'PERFORMED' and (task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' or task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED')}">
 									<i style="margin-left: 5px;"
-										class="fa fa-eye #{task.isDiagnosisNeeded() ? 'icon-green' : 'icon-orange'}"
-										title="#{task.isDiagnosisNeeded() ? msg['body.worklist.navigation.activtasks.diagnosis'] : msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+										class="fa fa-eye #{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' ? 'icon-green' : 'icon-orange'}"
+										title="#{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' ? msg['body.worklist.navigation.activtasks.diagnosis'] : msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 								</h:panelGroup>
 
 								<!-- Pendings completed -->
 								<h:panelGroup
-									rendered="#{not (task.isDiagnosisNeeded() or task.isReDiagnosisNeeded())}">
+									rendered="#{(task.getDiagnosisStatus() eq 'PERFORMED')}">
 									<i style="margin-left: 5px;"
-										class="fa fa-check-circle icon-green"
+										class="fa fa-check-circle "
 										title="#{msg['body.worklist.navigation.activtasks.pendencies']}" />
 								</h:panelGroup>
 
@@ -166,7 +166,7 @@
 						</p:repeat>
 
 					</p:column>
-				</p:row>
+				</p:row>	
 
 				<!-- Non active Tasks -->
 				<p:row

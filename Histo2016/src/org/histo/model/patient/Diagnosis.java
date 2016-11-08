@@ -22,9 +22,10 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.model.DiagnosisPreset;
-import org.histo.model.util.GsonAble;
-import org.histo.model.util.LogAble;
-import org.histo.model.util.TaskTree;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.GsonAble;
+import org.histo.model.interfaces.LogAble;
+import org.histo.model.interfaces.Parent;
 
 import com.google.gson.annotations.Expose;
 
@@ -40,7 +41,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
+public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble {
 
 	private long id;
 
@@ -103,13 +104,13 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 * If true the followUp field will be used.
 	 */
 	@Expose
-	private boolean useFollowUp;
+	private boolean diagnosisRevision;
 
 	/**
 	 * Followup field for adding follow up comments.
 	 */
 	@Expose
-	private String followUp = "";
+	private String diagnosisRevisionText = "";
 
 	/**
 	 * Diagnosis type, normal = 0, follow up = 1 , revision = 2.
@@ -214,23 +215,21 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 		this.name = name;
 	}
 
+	public boolean isDiagnosisRevision() {
+		return diagnosisRevision;
+	}
+
+	public String getDiagnosisRevisionText() {
+		return diagnosisRevisionText;
+	}
+
 	@Column(columnDefinition = "text")
-
-
-	public String getFollowUp() {
-		return followUp;
+	public void setDiagnosisRevision(boolean diagnosisRevision) {
+		this.diagnosisRevision = diagnosisRevision;
 	}
 
-	public void setFollowUp(String followUp) {
-		this.followUp = followUp;
-	}
-	
-	public boolean isUseFollowUp() {
-		return useFollowUp;
-	}
-	
-	public void setUseFollowUp(boolean useFollowUp) {
-		this.useFollowUp = useFollowUp;
+	public void setDiagnosisRevisionText(String diagnosisRevisionText) {
+		this.diagnosisRevisionText = diagnosisRevisionText;
 	}
 
 	@Basic
@@ -265,7 +264,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface StainingTreeParent
+	 * Interface Parent
 	 ********************************************************/
 	/**
 	 * Returns the parent of this diagnosis. Overwrites method from
@@ -289,7 +288,13 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
+	/********************************************************
+	 * Interface Parent
+	 ********************************************************/
 
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
 	/**
 	 * True if deleted. Overwrites method from StainingTreeParent.
 	 */
@@ -325,7 +330,7 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	}
 
 	/********************************************************
-	 * Interface StainingTreeParent
+	 * Interface ArchiveAble
 	 ********************************************************/
 
 	/********************************************************
@@ -338,7 +343,6 @@ public class Diagnosis implements TaskTree<Sample>, GsonAble, LogAble {
 	 */
 	@Transient
 	public void updateDiagnosisWithPrest(DiagnosisPreset diagnosisPreset) {
-		System.out.println("updateing");
 		setDiagnosis(diagnosisPreset.getDiagnosisText());
 		setMalign(diagnosisPreset.isMalign());
 		setIcd10(diagnosisPreset.getIcd10());

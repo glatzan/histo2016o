@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -16,7 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
-import org.histo.model.util.LogAble;
+import org.histo.model.interfaces.LogAble;
 
 @Entity
 @Audited
@@ -79,18 +80,33 @@ public class Signature implements LogAble {
 		this.role = role;
 	}
 
-	/**
-	 * Generates a list of signatures.
-	 * 
-	 * @param physicians
-	 * @return
-	 */
-	public static final ArrayList<Signature> getSignatureList(List<Physician> physicians) {
-		ArrayList<Signature> signatures = new ArrayList<Signature>(physicians.size());
-		for (Physician physician : physicians) {
-			Signature signature = new Signature(physician);
-			signatures.add(signature);
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Signature && ((Signature) obj).getPhysician() != null && getPhysician() != null) {
+			if (((Signature) obj).getPhysician().getId() == getPhysician().getId())
+				return true;
 		}
-		return signatures;
+
+		return super.equals(obj);
 	}
+
+	/**
+	 * Updates the signature with a new physician, if the same physician nothing
+	 * will be done.
+	 * 
+	 * @param physician
+	 */
+	public void updateSignature(Physician physician) {
+		if (physician == null) {
+			setPhysician(null);
+			setRole("");
+			return;
+		}
+
+		if (getPhysician() == null || getPhysician().getId() != physician.getId()) {
+			setPhysician(physician);
+			setRole(physician.getClinicRole());
+		}
+	}
+
 }

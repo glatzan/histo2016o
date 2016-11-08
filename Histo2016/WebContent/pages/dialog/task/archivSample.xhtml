@@ -25,9 +25,9 @@
 		</div>
 		<div class="buttonContainer">
 			<p:commandButton value="#{msg['general.archive']}"
-				actionListener="#{taskHandlerAction.archiveObject(taskHandlerAction.toArchive, true)}"></p:commandButton>
+				actionListener="#{mainHandlerAction.archiveObject(taskHandlerAction.toArchive, true)}"></p:commandButton>
 			<p:commandButton value="#{msg['general.abort']}"
-				actionListener="#{taskHandlerAction.hideArchiveObjectDialog()}"
+				actionListener="#{mainHandlerAction.hideArchiveObjectDialog()}"
 				style="margin-left:20px;"></p:commandButton>
 		</div>
 	</h:form>

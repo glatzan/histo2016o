@@ -1,11 +1,16 @@
 package org.histo.model;
 
+import java.util.Date;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -28,14 +33,25 @@ public class Report {
 
 	private long signatureDate;
 
-	private Signature signatureLeft;
-
-	private Signature signatureRight;
-
+	/**
+	 * Selected physician to sign the report
+	 */
+	private Signature physicianToSign;
+	
+	/**
+	 * Selected consultant to sign the report
+	 */
+	private Signature consultantToSign;
+	
 	/**
 	 * Text containing the histological record for all samples.
 	 */
 	private String histologicalRecord = "";
+
+	public Report() {
+		physicianToSign = new Signature();
+		consultantToSign = new Signature();
+	}
 
 	@Id
 	@GeneratedValue(generator = "signatureContainer_sequencegenerator")
@@ -56,23 +72,23 @@ public class Report {
 	public void setVersion(long version) {
 		this.version = version;
 	}
-
-	@OneToOne
-	public Signature getSignatureLeft() {
-		return signatureLeft;
+	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	public Signature getPhysicianToSign() {
+		return physicianToSign;
 	}
 
-	public void setSignatureLeft(Signature signatureLeft) {
-		this.signatureLeft = signatureLeft;
+	public void setPhysicianToSign(Signature physicianToSign) {
+		this.physicianToSign = physicianToSign;
 	}
-
-	@OneToOne
-	public Signature getSignatureRight() {
-		return signatureRight;
+	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	public Signature getConsultantToSign() {
+		return consultantToSign;
 	}
-
-	public void setSignatureRight(Signature signatureRight) {
-		this.signatureRight = signatureRight;
+	
+	public void setConsultantToSign(Signature consultantToSign) {
+		this.consultantToSign = consultantToSign;
 	}
 
 	public long getSignatureDate() {
@@ -81,6 +97,15 @@ public class Report {
 
 	public void setSignatureDate(long signatureDate) {
 		this.signatureDate = signatureDate;
+	}
+
+	@Transient
+	public Date getSignatureDateAsDate() {
+		return new Date(signatureDate);
+	}
+
+	public void setSignatureDateAsDate(Date signatureDateAsDate) {
+		this.signatureDate = signatureDateAsDate.getTime();
 	}
 
 	@Column(columnDefinition = "text")
@@ -92,4 +117,13 @@ public class Report {
 		this.histologicalRecord = histologicalRecord;
 	}
 
+	/**
+	 * Updates the physician and the consultant of the report
+	 * @param physician
+	 * @param consultant
+	 */
+	public void updatePhysiciansToSign(Physician physician, Physician consultant){
+		getPhysicianToSign().updateSignature(physician);
+		getConsultantToSign().updateSignature(consultant);
+	}
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.histo.config.HistoSettings;
-import org.histo.config.enums.BuildInTemplates;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
@@ -18,8 +18,11 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.Council;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
+import org.histo.model.Report;
 import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
+import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
@@ -27,13 +30,11 @@ import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PdfTemplate;
-import org.histo.model.util.ArchivAble;
-import org.histo.model.util.TaskTree;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
-import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
+import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -108,16 +109,6 @@ public class TaskHandlerAction implements Serializable {
 	private int temporaryTaskSampleCount;
 
 	/**
-	 * List of all signatures of all physicians, needed for printing
-	 */
-	private List<Signature> allAvailableSignatures;
-
-	/**
-	 * Transformer for selecting a physician for sigin the report
-	 */
-	private DefaultTransformer<Signature> allAvailableSignaturesTransformer;
-	
-	/**
 	 * List of all physicians known in the database
 	 */
 	private List<Physician> allAvailablePhysicians;
@@ -131,32 +122,45 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Archive able
+	 * Council
 	 ********************************************************/
 
 	/**
-	 * Object to archive
+	 * Temporary object for council dialog
 	 */
-	private ArchivAble toArchive;
-
-	/**
-	 * the toArchive object will be archived if true
-	 */
-	private boolean archived;
+	private Council tmpCouncil;
 
 	/********************************************************
-	 * Archive able
+	 * Council
+	 ********************************************************/
+
+	/********************************************************
+	 * Report
+	 ********************************************************/
+	/**
+	 * Selected physician to sign the report
+	 */
+	private Physician physicianToSign;
+
+	/**
+	 * Selected consultant to sign the report
+	 */
+	private Physician consultantToSign;
+
+	/********************************************************
+	 * Report
 	 ********************************************************/
 
 	/********************************************************
 	 * Task
 	 ********************************************************/
-	public void prepareForTask() {
+	
+	public void prepareBean() {
 		setAllAvailableMaterials(helperDAO.getAllStainingLists());
 		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
 
-		setAllAvailableSignatures(Signature.getSignatureList(physicianDAO.getPhysicians(ContactRole.values(), false)));
-		setAllAvailableSignaturesTransformer(new DefaultTransformer<Signature>(getAllAvailableSignatures()));
+		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
+		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
 
 		// initis all wards
 		if (selectableWards == null) {
@@ -177,13 +181,28 @@ public class TaskHandlerAction implements Serializable {
 		}
 	}
 
+	public void prepareTask(Task task) {
+		prepareBean();
+
+		taskDAO.initializeReportData(task);
+
+		// setting the report time to the current date
+		if (!task.isDiagnosisCompleted()) {
+			task.getReport().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
+		}
+
+		setPhysicianToSign(task.getReport().getPhysicianToSign().getPhysician());
+		setConsultantToSign(task.getReport().getConsultantToSign().getPhysician());
+	}
+
 	/**
 	 * Displays a dialog for creating a new task
 	 */
 	public void prepareNewTaskDialog() {
-		prepareForTask();
+		prepareBean();
 
 		setTemporaryTask(new Task());
+		getTemporaryTask().setReport(new Report());
 		getTemporaryTask().setTaskPriority(TaskPriority.LOW);
 		setTemporaryTaskSampleCount(1);
 		Sample tmp = new Sample(getTemporaryTask());
@@ -230,10 +249,10 @@ public class TaskHandlerAction implements Serializable {
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		if (task.getReport(BuildInTemplates.UREPORT.toString()) != null) {
-			genericDAO.save(task.getReport(BuildInTemplates.UREPORT.toString()),
+		if (task.getReport(PdfTemplate.UREPORT) != null) {
+			genericDAO.save(task.getReport(PdfTemplate.UREPORT),
 					resourceBundle.get("log.patient.task.upload.orderList", task.getTaskID(),
-							task.getReport(BuildInTemplates.UREPORT.toString()).getName()),
+							task.getReport(PdfTemplate.UREPORT).getName()),
 					patient);
 		}
 
@@ -382,76 +401,7 @@ public class TaskHandlerAction implements Serializable {
 	 * Block
 	 ********************************************************/
 
-	/********************************************************
-	 * Archive
-	 ********************************************************/
-
-	/**
-	 * Shows a Dialog for deleting (archiving) the sample/task/bock/image
-	 * 
-	 * @param sample
-	 * @param archived
-	 */
-	public void prepareArchiveObject(TaskTree<?> archive, boolean archived) {
-		setArchived(archived);
-		setToArchive(archive);
-		// if no dialog is provieded the object will be archived immediately
-		if (archive.getArchiveDialog() == null)
-			archiveObject(archive, archived);
-		else
-			mainHandlerAction.showDialog(archive.getArchiveDialog());
-	}
-
-	/**
-	 * Archives a Object implementing TaskTree.
-	 * 
-	 * @param task
-	 * @param archiveAble
-	 * @param archived
-	 */
-	public void archiveObject(TaskTree<?> archive, boolean archived) {
-
-		archive.setArchived(archived);
-
-		String logString = "log.error";
-
-		if (archive instanceof Slide)
-			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived",
-					((Slide) archive).getParent().getParent().getParent().getTaskID(),
-					((Slide) archive).getParent().getParent().getSampleID(), ((Slide) archive).getParent().getBlockID(),
-					((Slide) archive).getSlideID());
-		else if (archive instanceof Diagnosis)
-			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
-					((Diagnosis) archive).getParent().getParent().getTaskID(),
-					((Diagnosis) archive).getParent().getSampleID(), ((Diagnosis) archive).getName());
-		else if (archive instanceof Block)
-			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
-					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),
-					((Block) archive).getBlockID());
-		else if (archive instanceof Sample)
-			logString = resourceBundle.get("log.patient.task.sample.archived",
-					((Sample) archive).getParent().getTaskID(), ((Sample) archive).getSampleID());
-		else if (archive instanceof Task)
-			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
-
-		genericDAO.save(archive, logString, archive.getPatient());
-
-		// update the gui list for displaying in the receiptlog
-		TaskUtil.generateSlideGuiList(archive.getPatient().getSelectedTask());
-
-		hideArchiveObjectDialog();
-	}
-
-	/**
-	 * Hides the Dialog for achieving an object
-	 */
-	public void hideArchiveObjectDialog() {
-		mainHandlerAction.showDialog(getToArchive().getArchiveDialog());
-	}
-
-	/********************************************************
-	 * Archive
-	 ********************************************************/
+	
 
 	/********************************************************
 	 * Task Data
@@ -493,29 +443,55 @@ public class TaskHandlerAction implements Serializable {
 	 * Council
 	 ********************************************************/
 	public void prepareCouncilDialog(Task task) {
-		taskDAO.initializeCouncilData(task);
-		if (task.getCouncil() == null) {
-			task.setCouncil(new Council());
-			// setting current user als requesting physician
-			task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
-			genericDAO.save(task.getCouncil(), resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
-					task.getPatient());
-		}
-
-		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
-		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
-
-		setTemporaryTask(task);
-
-		mainHandlerAction.showDialog(Dialog.COUNCIL);
+		prepareCouncilDialog(task, true);
 	}
 
-	public void printCouncilReport(Task task) {
-		pdfHandlerAction.setTaskToPrint(task);
-		PdfTemplate council = PdfTemplate.getTemplateByType(PdfTemplate.factroy(HistoSettings.PDF_TEMPLATE_JSON),
-				BuildInTemplates.COUNCIL.toString());
-		pdfHandlerAction.preparePrintDialog(task, new PdfTemplate[] { council }, council);
-		//mainHandlerAction.hideDialog(Dialog.COUNCIL);
+	public void prepareCouncilDialog(Task task, boolean show) {
+		setTemporaryTask(task);
+
+		taskDAO.initializeCouncilData(task);
+
+		if (task.getCouncil() == null) {
+			// only saving if the diagnosis process has not been finished jet
+			if (task.isDiagnosisCompleted()) {
+				setTmpCouncil(new Council());
+			} else {
+				setTmpCouncil(new Council());
+				task.setCouncil(getTmpCouncil());
+				// setting current user als requesting physician
+				task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
+
+				genericDAO.save(task.getCouncil(), resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
+						task.getPatient());
+			}
+		} else
+			setTmpCouncil(task.getCouncil());
+
+		updateCouncilDialog();
+
+		if (show)
+			mainHandlerAction.showDialog(Dialog.COUNCIL);
+	}
+
+	public void updateCouncilDialog() {
+		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
+		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
+	}
+
+	public void hideCouncilDialog() {
+		hideCouncilDialogAndPrintReport(false);
+	}
+
+	public void hideCouncilDialogAndPrintReport(boolean print) {
+		if (print) {
+			pdfHandlerAction.prepareForPdf(getTemporaryTask(), PdfTemplate.COUNCIL);
+			// workaround for showing and hiding two dialogues
+			mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
+		}
+
+		setTmpCouncil(null);
+		setTemporaryTask(null);
+		mainHandlerAction.hideDialog(Dialog.COUNCIL);
 	}
 
 	/********************************************************
@@ -565,44 +541,12 @@ public class TaskHandlerAction implements Serializable {
 		this.selectableWards = selectableWards;
 	}
 
-	public ArchivAble getToArchive() {
-		return toArchive;
-	}
-
-	public void setToArchive(ArchivAble toArchive) {
-		this.toArchive = toArchive;
-	}
-
-	public boolean isArchived() {
-		return archived;
-	}
-
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-	}
-
 	public int getTemporaryTaskSampleCount() {
 		return temporaryTaskSampleCount;
 	}
 
 	public void setTemporaryTaskSampleCount(int temporaryTaskSampleCount) {
 		this.temporaryTaskSampleCount = temporaryTaskSampleCount;
-	}
-
-	public List<Signature> getAllAvailableSignatures() {
-		return allAvailableSignatures;
-	}
-
-	public DefaultTransformer<Signature> getAllAvailableSignaturesTransformer() {
-		return allAvailableSignaturesTransformer;
-	}
-
-	public void setAllAvailableSignatures(List<Signature> allAvailableSignatures) {
-		this.allAvailableSignatures = allAvailableSignatures;
-	}
-
-	public void setAllAvailableSignaturesTransformer(DefaultTransformer<Signature> allAvailableSignaturesTransformer) {
-		this.allAvailableSignaturesTransformer = allAvailableSignaturesTransformer;
 	}
 
 	public List<Physician> getAllAvailablePhysicians() {
@@ -619,6 +563,30 @@ public class TaskHandlerAction implements Serializable {
 
 	public void setAllAvailablePhysiciansTransformer(DefaultTransformer<Physician> allAvailablePhysiciansTransformer) {
 		this.allAvailablePhysiciansTransformer = allAvailablePhysiciansTransformer;
+	}
+
+	public Council getTmpCouncil() {
+		return tmpCouncil;
+	}
+
+	public void setTmpCouncil(Council tmpCouncil) {
+		this.tmpCouncil = tmpCouncil;
+	}
+
+	public Physician getPhysicianToSign() {
+		return physicianToSign;
+	}
+
+	public Physician getConsultantToSign() {
+		return consultantToSign;
+	}
+
+	public void setPhysicianToSign(Physician physicianToSign) {
+		this.physicianToSign = physicianToSign;
+	}
+
+	public void setConsultantToSign(Physician consultantToSign) {
+		this.consultantToSign = consultantToSign;
 	}
 
 	/********************************************************

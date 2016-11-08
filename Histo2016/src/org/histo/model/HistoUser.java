@@ -23,7 +23,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
-import org.histo.model.util.LogAble;
+import org.histo.model.interfaces.LogAble;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity

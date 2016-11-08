@@ -16,6 +16,19 @@
 
 <h:body styleClass="settingsDialogLayout">
 	<h:form id="adminForm">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.settings.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
 		<p:panel styleClass="settingsPannel">
 			<p:tabView orientation="left"
 				activeIndex="#{settingsHandlerAction.activeSettingsIndex}"
@@ -93,15 +106,15 @@
 				<!-- ************************************************************** Persons ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.persons']}">
 					<ui:fragment
-						rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_LIST'}">
+						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_LIST'}">
 						<ui:include src="physicianList.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_EDIT'}">
+						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_EDIT'}">
 						<ui:include src="physicianEdit.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_EXTER' or settingsHandlerAction.physicianTabIndex eq 'PHYSICIAN_ADD_LDPA'}">
+						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER' or settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}">
 						<ui:include src="physicianNew.xhtml" />
 					</ui:fragment>
 				</p:tab>

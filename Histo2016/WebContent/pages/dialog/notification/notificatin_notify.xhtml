@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv" id="contentDiv">
+
+		<p:panelGrid id="emailGrid"
+			styleClass="noBordersAll collapsedBordersAll notificationTable"
+			style="width:100%">
+
+			<p:row>
+				<p:column styleClass="textColumn">
+					<h:outputText value="Email Benachrichtigung:" />
+					<h:outputText
+						value="#{notificationHandlerAction.useEmail ? 'Eroflgt' : 'Ausgeschaltet'}" />
+				</p:column>
+			</p:row>
+
+			<p:row rendered="#{notificationHandlerAction.useEmail}">
+				<p:column styleClass="textColumn">
+					<p:dataTable var="emailNotification" styleClass="physicianList"
+						value="#{notificationHandlerAction.notificationEmailList}">
+						<p:column headerText="Name" style="width:25%">
+							<h:outputText
+								value="#{emailNotification.contact.physician.fullName}" />
+						</p:column>
+						<p:column headerText="Benachrichtigung" style="width:25%">
+						</p:column>
+					</p:dataTable>
+				</p:column>
+			</p:row>
+		</p:panelGrid>
+
+
+		<p:panelGrid
+			styleClass="noBordersAll collapsedBordersAll notificationTable"
+			style="width:100%">
+
+			<p:row>
+				<p:column styleClass="textColumn">
+					<h:outputText value="Fax Benachrichtigung:" />
+					<h:outputText
+						value="#{notificationHandlerAction.useFax ? 'Eroflgt' : 'Ausgeschaltet'}" />
+				</p:column>
+			</p:row>
+
+			<p:row rendered="#{notificationHandlerAction.useFax}">
+				<p:column styleClass="textColumn">
+					<p:dataTable var="faxNotification" styleClass="physicianList"
+						value="#{notificationHandlerAction.notificationFaxList}">
+						<p:column headerText="Name" style="width:25%">
+							<h:outputText
+								value="#{faxNotification.contact.physician.fullName}" />
+						</p:column>
+						<p:column headerText="Benachrichtigung" style="width:25%">
+						</p:column>
+					</p:dataTable>
+				</p:column>
+			</p:row>
+		</p:panelGrid>
+
+		<p:panelGrid
+			styleClass="noBordersAll collapsedBordersAll notificationTable"
+			style="width:100%">
+
+			<p:row>
+				<p:column styleClass="textColumn">
+					<h:outputText value="Telefon Benachrichtigung:" />
+					<h:outputText
+						value="#{notificationHandlerAction.usePhone ? 'Eroflgt' : 'Ausgeschaltet'}" />
+				</p:column>
+			</p:row>
+
+			<p:row rendered="#{notificationHandlerAction.usePhone}">
+				<p:column styleClass="textColumn">
+					<p:dataTable var="phoneNotification" styleClass="physicianList"
+						value="#{notificationHandlerAction.notificationPhoneList}">
+						<p:column headerText="Name" style="width:25%">
+							<h:outputText
+								value="#{phoneNotification.contact.physician.fullName}" />
+						</p:column>
+						<p:column headerText="Benachrichtigung" style="width:25%">
+						</p:column>
+					</p:dataTable>
+				</p:column>
+			</p:row>
+		</p:panelGrid>
+
+		<p:poll interval="1" update="emailGrid test"
+			widgetVar="currentTimePoller"
+			autoStart="#{notificationHandlerAction.notificationRunning ? true: false}" />
+
+		<h:outputLabel value="#{notificationHandlerAction.test}" id="test"></h:outputLabel>
+	</div>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="1">
+				<p:commandButton value="#{msg['general.abort']}" id="abortBtn"
+					styleClass="smallButton buttonLeftMarginInList"
+					icon="fa fa-times-circle"
+					disabled="#{notificationHandlerAction.notificationRunning}"
+					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}"></p:commandButton>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" style="float:right; margin-right: 10px;">
+				<p:commandButton value="Zurück" update="@form" id="backBtn"
+					styleClass="smallButton "
+					disabled="#{notificationHandlerAction.notificationRunning}"
+					actionListener="#{notificationHandlerAction.setNotificationTab('PHONE')}">
+				</p:commandButton>
+				<p:commandButton value="Benachrichtigung ausführen" update="@form"
+					disabled="#{notificationHandlerAction.notificationRunning}"
+					styleClass="smallButton buttonLeftMarginInList" async="true"
+					partialSubmit="true" onclick="performNotificationBtn();">
+				</p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+		<p:remoteCommand name="performNotificationBtn"
+			actionListener="#{notificationHandlerAction.performeNotification()}"
+			async="true"></p:remoteCommand>
+	</div>
+
+</ui:composition>

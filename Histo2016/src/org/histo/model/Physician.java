@@ -132,4 +132,12 @@ public class Physician extends Person {
 	public void setClinicEmployee(boolean clinicEmployee) {
 		this.clinicEmployee = clinicEmployee;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Physician && ((Physician) obj).getId() == getId())
+			return true;
+		return super.equals(obj);
+	}
+
 }

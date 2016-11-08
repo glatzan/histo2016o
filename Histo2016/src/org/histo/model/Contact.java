@@ -9,7 +9,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.histo.config.enums.ContactRole;
-import org.histo.model.util.LogAble;
+import org.histo.model.interfaces.LogAble;
 
 @Entity
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")

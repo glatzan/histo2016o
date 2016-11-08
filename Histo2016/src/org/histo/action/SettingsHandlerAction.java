@@ -1,8 +1,10 @@
 package org.histo.action;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.SettingsTab;
@@ -19,7 +21,6 @@ import org.histo.model.patient.Patient;
 import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
-import org.histo.util.ResourceBundle;
 import org.histo.util.SlideUtil;
 import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +46,6 @@ public class SettingsHandlerAction {
 	public static final int DIAGNOSIS_LIST = 0;
 	public static final int DIAGNOSIS_EDIT = 1;
 	public static final int DIAGNOSIS_TEXT_TEMPLATE = 2;
-
-	public static final int PHYSICIAN_LIST = 0;
-	public static final int PHYSICIAN_EDIT = 1;
-	public static final int PHYSICIAN_ADD_EXTER = 2;
-	public static final int PHYSICIAN_ADD_LDPA = 3;
 
 	@Autowired
 	private UserDAO userDAO;
@@ -82,7 +78,7 @@ public class SettingsHandlerAction {
 	/**
 	 * Tabindex of the settings tab
 	 */
-	private SettingsTab physicianTabIndex = SettingsTab.PHYSICIAN_LIST;
+	private SettingsTab physicianTabIndex = SettingsTab.P_LIST;
 
 	/******************************************************** Staining ********************************************************/
 	/**
@@ -212,15 +208,34 @@ public class SettingsHandlerAction {
 	 */
 
 	public void prepareSettingsDialog() {
-		// init users
-		setUsers(userDAO.loadAllUsers());
+		prepareSettingsDialog(getActiveSettingsIndex());
+	}
+
+	public void prepareSettingsDialog(int activeTab) {
+		setActiveSettingsIndex(activeTab);
 
 		// init statings
 		setShowStainingEdit(false);
+		
+		setPhysicianRoleOptions(new PhysicianRoleOptions());
 
-		preparePhysicianList();
+		onSettingsTabChange();
 
 		mainHandlerAction.showDialog(Dialog.SETTINGS);
+	}
+
+	public void prepareSettingsDialog(SettingsTab settingsTab) {
+		SettingsTab parentTab = settingsTab.getParent() != null ? settingsTab.getParent() : settingsTab;
+
+		switch (parentTab) {
+		case PHYSICIAN:
+			setPhysicianTabIndex(settingsTab);
+			break;
+		default:
+			break;
+		}
+
+		prepareSettingsDialog(settingsTab.getTabNumber());
 	}
 
 	/**
@@ -235,6 +250,9 @@ public class SettingsHandlerAction {
 	 */
 	public void onSettingsTabChange() {
 		switch (getActiveSettingsIndex()) {
+		case TAB_USER:
+			setUsers(userDAO.loadAllUsers());
+			break;
 		case TAB_LOG:
 			loadGeneralHistory();
 			break;
@@ -436,8 +454,7 @@ public class SettingsHandlerAction {
 		setDiagnosisIndex(DIAGNOSIS_EDIT);
 	}
 
-	public void saveDiagnosisPrototype(DiagnosisPreset newDiagnosisPrototype,
-			DiagnosisPreset origDiagnosisPrototype) {
+	public void saveDiagnosisPrototype(DiagnosisPreset newDiagnosisPrototype, DiagnosisPreset origDiagnosisPrototype) {
 		if (origDiagnosisPrototype == null) {
 			// case new, save
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
@@ -505,7 +522,7 @@ public class SettingsHandlerAction {
 	 */
 	public void prepareNewPhysician() {
 		setTmpPhysician(new Physician());
-		setPhysicianTabIndex(SettingsTab.PHYSICIAN_ADD_LDPA);
+		setPhysicianTabIndex(SettingsTab.P_ADD_LDPA);
 	}
 
 	/**
@@ -515,7 +532,19 @@ public class SettingsHandlerAction {
 	 */
 	public void prepareEditPhysician(Physician physician) {
 		setTmpPhysician(physician);
-		setPhysicianTabIndex(SettingsTab.PHYSICIAN_EDIT);
+		setPhysicianTabIndex(SettingsTab.P_EDIT);
+	}
+
+	/**
+	 * Opens the passed physician in the settingsDialog in order to edit the
+	 * phone number, email or faxnumber.
+	 * 
+	 * @param contact
+	 */
+	public void prepareEditPhysicianFromExtern(Physician physician) {
+		prepareEditPhysician(physician);
+		setActiveSettingsIndex(SettingsHandlerAction.TAB_PERSON);
+		prepareSettingsDialog();
 	}
 
 	/**
@@ -627,7 +656,7 @@ public class SettingsHandlerAction {
 	 */
 	public void discardTmpPhysician() {
 		// if a physician was edited remove all chagnes
-		if (getPhysicianTabIndex() == SettingsTab.PHYSICIAN_EDIT && getTmpPhysician().getId() != 0)
+		if (getPhysicianTabIndex() == SettingsTab.P_EDIT && getTmpPhysician().getId() != 0)
 			genericDAO.refresh(getTmpPhysician());
 
 		setTmpPhysician(null);
@@ -635,7 +664,7 @@ public class SettingsHandlerAction {
 
 		// update physician list
 		preparePhysicianList();
-		setPhysicianTabIndex(SettingsTab.PHYSICIAN_LIST);
+		setPhysicianTabIndex(SettingsTab.P_LIST);
 	}
 
 	/******************************************************** Physician ********************************************************/
@@ -646,7 +675,7 @@ public class SettingsHandlerAction {
 	 * history dialog.
 	 */
 	public void loadGeneralHistory() {
-		//setCurrentHistory(helperDAO.getCurrentHistory(100));
+		// setCurrentHistory(helperDAO.getCurrentHistory(100));
 	}
 
 	/**
@@ -656,7 +685,8 @@ public class SettingsHandlerAction {
 	 * @param patient
 	 */
 	public void loadPatientHistory(Patient patient) {
-		//setCurrentHistory(helperDAO.getCurrentHistoryForPatient(100, patient));
+		// setCurrentHistory(helperDAO.getCurrentHistoryForPatient(100,
+		// patient));
 	}
 
 	/******************************************************** History ********************************************************/

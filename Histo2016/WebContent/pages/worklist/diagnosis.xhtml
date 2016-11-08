@@ -10,6 +10,9 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
+	<c:set var="selectedTask"
+		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
+
 	<p:panel style="width:100%;" id="diagnosisView"
 		styleClass=" collapsedBorders noPadding noBorders">
 
@@ -25,9 +28,8 @@
 					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 					<!-- TODO Update background object, e.g. .blure() (inputtext) -->
 					<!-- material -->
-					<c:forEach
-						items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
-						var="sample" varStatus="loopCount">
+					<c:forEach items="#{selectedTask.samples}" var="sample"
+						varStatus="loopCount">
 						<h:panelGrid columns="3" id="materialTable"
 							columnClasses="firstColumn, secondColumn, thirdColumn"
 							styleClass="materialTable noPaddingAll noBordersAll collapsedBordersAll">
@@ -40,7 +42,7 @@
 							<h:outputLabel value="#{sample.sampleID}" />
 
 							<p:selectOneMenu value="#{sample.material}"
-								disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
+								disabled="#{selectedTask.diagnosisCompleted}"
 								styleClass="smallInput" editable="true"
 								style="width:200px;float:right;margin-right:30px;">
 								<f:selectItem
@@ -51,7 +53,7 @@
 									itemLabel="#{list.name}" itemValue="#{list.name}" />
 
 								<p:ajax event="change" execute="@this"
-									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.sample.material',worklistHandlerAction.selectedPatient.selectedTask.taskID,sample.material.name)}" />
+									listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.sample.material',selectedTask.taskID,sample.material.name)}" />
 							</p:selectOneMenu>
 						</h:panelGrid>
 					</c:forEach>
@@ -69,22 +71,22 @@
 						style="width:100%"
 						styleClass="noPaddingAll noBordersAll collapsedBordersAll">
 						<p:selectOneMenu styleClass="smallInput"
-							disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}">
+							disabled="#{selectedTask.diagnosisCompleted}"
+							value="#{selectedTask.eye}">
 
 							<f:selectItems value="#{enumProvider.eyes}" var="eye"
 								itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.eye',msg['enum.eye.'.concat(worklistHandlerAction.selectedPatient.selectedTask.eye)])}" />
+								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.eye',msg['enum.eye.'.concat(selectedTask.eye)])}" />
 						</p:selectOneMenu>
 
 						<p:inputTextarea rows="2" id="stroyField"
-							disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
+							disabled="#{selectedTask.diagnosisCompleted}"
 							style="width: 270px;float:right;margin-right:30px;"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}">
+							value="#{selectedTask.caseHistory}">
 							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.caseHistory',worklistHandlerAction.selectedPatient.selectedTask.caseHistory)}" />
+								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.caseHistory',selectedTask.caseHistory)}" />
 							<p:watermark value="#{msg['body.diagnosis.story.watermark']}"
 								for="stroyField" />
 						</p:inputTextarea>
@@ -97,35 +99,33 @@
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}">
+						disabled="#{selectedTask.diagnosisCompleted}"
+						value="#{selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 					</p:calendar>
 
 					<!-- date of receipt -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskEDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
+						disabled="#{selectedTask.diagnosisCompleted}"
+						value="#{selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 					</p:calendar>
 
 					<!-- Task Number -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskNumber']}" />
-					<p:inputText disabled="true"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
+					<p:inputText disabled="true" value="#{selectedTask.taskID}" />
 
 					<!-- insurance -->
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
 
-					<p:selectOneButton
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
+					<p:selectOneButton disabled="#{selectedTask.diagnosisCompleted}"
 						value="#{worklistHandlerAction.selectedPatient.privateInsurance}">
 						<f:selectItem itemLabel="regulär" itemValue="#{false}]" />
 						<f:selectItem itemLabel="privat" itemValue="#{true}" />
@@ -134,13 +134,12 @@
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 
-					<p:selectOneMenu id="wards"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.ward}"
+					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
 						effect="fold" editable="true"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}">
+						disabled="#{selectedTask.diagnosisCompleted}">
 						<f:selectItems value="#{taskHandlerAction.selectableWards}" />
 						<p:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.ward',worklistHandlerAction.selectedPatient.selectedTask.ward)}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.ward',selectedTask.ward)}" />
 					</p:selectOneMenu>
 
 					<!-- surgeon -->
@@ -150,12 +149,12 @@
 
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
 						<h:outputLabel style="margin-left:10px;"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.getPrimaryContact(enumProvider.getContactRole('SURGEON'))}"></h:outputLabel>
+							value="#{selectedTask.getPrimaryContact('SURGEON')}"></h:outputLabel>
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
+							rendered="#{!selectedTask.diagnosisCompleted}"
 							style="float: right; margin-right:5px;"
-							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
+							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -167,12 +166,12 @@
 
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
 						<h:outputLabel style="margin-left:10px;"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.getPrimaryContact(enumProvider.getContactRole('PRIVATE_PHYSICIAN'))}"></h:outputLabel>
+							value="#{selectedTask.getPrimaryContact('PRIVATE_PHYSICIAN')}"></h:outputLabel>
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 							style="float: right; margin-right:5px;"
-							rendered="#{!worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-							actionListener="#{contactHandlerAction.prepareContacts(worklistHandlerAction.selectedPatient.selectedTask,contactHandlerAction.physicianRoleOptions.surgeon,contactHandlerAction.physicianRoleOptions.privatePhysician,contactHandlerAction.physicianRoleOptions.other,contactHandlerAction.physicianRoleOptions.showAddedContactsOnly)}">
+							rendered="#{!selectedTask.diagnosisCompleted}"
+							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -185,8 +184,8 @@
 			<h:outputLabel value="#{msg['body.diagnosis.histologicalRecord']}"></h:outputLabel>
 			<h:panelGroup id="extendedTextParent">
 				<p:editor id="extendedText" widgetVar="extendedText"
-					disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.report.histologicalRecord}"
+					disabled="#{selectedTask.diagnosisCompleted}"
+					value="#{selectedTask.report.histologicalRecord}"
 					style="width:100%"
 					valueChangeListener="#{helperHandlerAction.valueChanged}">
 				</p:editor>
@@ -221,8 +220,7 @@
 
 			<h:outputLabel value="#{msg['body.diagnosis.diagnosis']}"></h:outputLabel>
 
-			<ui:repeat var="sampel"
-				value="#{worklistHandlerAction.selectedPatient.selectedTask.samples}">
+			<ui:repeat var="sampel" value="#{selectedTask.samples}">
 
 				<c:set var="diagnosis" value="#{sampel.getLastRelevantDiagnosis()}" />
 
@@ -242,8 +240,8 @@
 								<!-- Diagnosis select -->
 								<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
 									disabled="#{diagnosis.finalized}"
-									styleClass="diagnosisSelectMenu"
-									panelStyleClass="diagnosisSelectMenuPanel"
+									styleClass="customSerachSelectMenu"
+									panelStyleClass="customSerachSelectMenuPanel"
 									converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
 									filter="true" filterMatchMode="startsWith">
 									<f:selectItem
@@ -318,94 +316,54 @@
 						<h:outputLabel value="Datum Unterschrift"></h:outputLabel>
 					</p:column>
 					<p:column style="width:30%">
-						<p:selectOneMenu disabled="#{diagnosis.finalized}"
-							styleClass="diagnosisSelectMenu" style="float:right; width:80%"
-							panelStyleClass="diagnosisSelectMenuPanel"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft}"
-							converter="#{taskHandlerAction.allAvailableSignaturesTransformer}"
-							filter="true" filterMatchMode="contains">
-							<f:selectItem
-								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-								itemValue="#{null}" />
 
-							<f:selectItems
-								value="#{taskHandlerAction.allAvailableSignatures}"
-								var="allAvailableSignatures"
-								itemLabel="#{allAvailableSignatures.physician.fullName}"
-								itemValue="#{allAvailableSignatures}" />
-
-							<p:ajax update="sigantureLeftRole" process="@this" event="change">
-							</p:ajax>
-						</p:selectOneMenu>
 					</p:column>
 					<p:column style="width:30%">
-						<p:selectOneMenu disabled="#{diagnosis.finalized}"
-							style="float:right;width:80%" styleClass="diagnosisSelectMenu"
-							panelStyleClass="diagnosisSelectMenuPanel"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight}"
-							converter="#{taskHandlerAction.allAvailableSignaturesTransformer}"
+						<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
+							styleClass="customSerachSelectMenu" style="width:80% !important"
+							panelStyleClass="customSerachSelectMenuPanel"
+							value="#{taskHandlerAction.consultantToSign}"
+							converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
 							filter="true" filterMatchMode="contains">
-							<f:selectItem
-								itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-								itemValue="#{null}" />
+							<f:selectItem itemLabel="Oberarzt auswählen" itemValue="#{null}" />
 
 							<f:selectItems
-								value="#{taskHandlerAction.allAvailableSignatures}"
-								var="allAvailableSignatures"
-								itemLabel="#{allAvailableSignatures.physician.fullName}"
-								itemValue="#{allAvailableSignatures}" />
+								value="#{taskHandlerAction.allAvailablePhysicians}"
+								var="physician" itemLabel="#{physician.fullName}"
+								itemValue="#{physician}" />
 
-							<p:ajax update="sigantureRightRole" process="@this"
-								event="change">
-							</p:ajax>
+							<p:ajax event="change"
+								oncomplete="$('#dialogContent\\:submitConsultantChange').click();" />
+
 						</p:selectOneMenu>
-					</p:column>
-				</p:row>
-				<p:row>
-					<p:column>
-						<p:separator style="float:left;width:75%" />
-					</p:column>
-					<p:column>
-						<p:separator style="float:right; width:90%" />
-					</p:column>
-					<p:column>
-						<p:separator style="float:right; width:90%" />
 					</p:column>
 				</p:row>
 				<p:row>
 					<p:column>
 						<p:calendar pattern="dd.MM.yyyy" mask="true"
-							disabled="#{worklistHandlerAction.selectedPatient.selectedTask.diagnosisCompleted}"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate}">
+							disabled="#{selectedTask.diagnosisCompleted}"
+							value="#{selectedTask.dateOfSugeryAsDate}">
 							<p:ajax event="dateSelect"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 							<f:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfSugeryAsDate))}" />
+								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 						</p:calendar>
 					</p:column>
 					<p:column>
-						<h:panelGroup id="sigantureLeftRole">
-							<p:selectOneMenu editable="true" style="float:right; width:80%"
-								value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft.role}"
-								rendered="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureLeft ne null}">
-								<f:selectItems value="#{enumProvider.signatureRoles}"
-									var="signatureRole"
-									itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
-									itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
-							</p:selectOneMenu>
-						</h:panelGroup>
 					</p:column>
 					<p:column>
-						<h:panelGroup id="sigantureRightRole">
-							<p:selectOneMenu editable="true" style="float:right; width:80%"
-								value="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight.role}"
-								rendered="#{worklistHandlerAction.selectedPatient.selectedTask.report.signatureRight ne null}">
-								<f:selectItems value="#{enumProvider.signatureRoles}"
-									var="signatureRole"
-									itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
-									itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
-							</p:selectOneMenu>
-						</h:panelGroup>
+						<p:selectOneMenu styleClass="customSerachSelectMenu"
+							id="consultantToSignRole" editable="true"
+							style="width:80% !important"
+							disabled="#{selectedTask.report.consultantToSign.physician eq null or diagnosis.finalized}"
+							value="#{selectedTask.report.consultantToSign.role}">
+							<f:selectItems value="#{enumProvider.signatureRoles}"
+								var="signatureRole"
+								itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
+								itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
+							<p:ajax event="change"
+								oncomplete="$('#dialogContent\\:submitConsultantRoleChange').click();" />
+						</p:selectOneMenu>
 					</p:column>
 				</p:row>
 			</p:panelGrid>

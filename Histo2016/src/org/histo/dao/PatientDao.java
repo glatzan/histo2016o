@@ -77,7 +77,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 	public List<Patient> getPatientWithoutTasks(long fromDate, long toDate) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.add(Restrictions.ge("patient.addDate", fromDate)).add(Restrictions.le("patient.addDate", toDate));
+		c.add(Restrictions.ge("patient.creationDate", fromDate)).add(Restrictions.le("patient.creationDate", toDate));
 		c.add(Restrictions.isEmpty("patient.tasks"));
 		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return c.list();
@@ -85,7 +85,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 	public List<Patient> getPatientByAddDateToWorklist(long fromDate, long toDate) {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.add(Restrictions.ge("patient.addDate", fromDate)).add(Restrictions.le("patient.addDate", toDate));
+		c.add(Restrictions.ge("patient.creationDate", fromDate)).add(Restrictions.le("patient.creationDate", toDate));
 		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return c.list();
 	}
@@ -94,8 +94,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.createAlias("patient.tasks", "_tasks");
 		c.createAlias("_tasks.samples", "_samples");
-		c.add(Restrictions.ge("_samples.generationDate", fromDate))
-				.add(Restrictions.le("_samples.generationDate", toDate));
+		c.add(Restrictions.ge("_samples.creationDate", fromDate))
+				.add(Restrictions.le("_samples.creationDate", toDate));
 		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return c.list();
 	}

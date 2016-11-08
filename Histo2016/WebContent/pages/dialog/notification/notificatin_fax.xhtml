@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panelGrid
+			styleClass="noBordersAll collapsedBordersAll notificationTable"
+			style="width:100%">
+
+			<p:row>
+				<p:column styleClass="textColumn">
+					<h:outputText value="Fax versenden" />
+				</p:column>
+				<p:column>
+					<p:selectBooleanCheckbox
+						value="#{notificationHandlerAction.useFax}">
+						<p:ajax event="change" update="@form" />
+					</p:selectBooleanCheckbox>
+				</p:column>
+			</p:row>
+			<p:column colspan="2">
+
+				<p:dataTable var="faxNotification" styleClass="physicianList"
+					value="#{notificationHandlerAction.notificationFaxList}">
+					<p:column headerText="Name" style="width:25%">
+						<h:outputText
+							value="#{faxNotification.contact.physician.fullName}" />
+					</p:column>
+
+					<p:column headerText="Benachrichtigung" style="width:25%">
+						<p:selectOneMenu title=""
+							disabled="#{!notificationHandlerAction.useFax}"
+							value="#{faxNotification.notificationAttachment}">
+
+							<f:selectItems
+								value="#{enumProvider.getNotificationFaxOptions()}" var="option"
+								itemLabel="#{msg['enum.notification.'.concat(option)]}" />
+
+							<p:ajax event="change" update="@form" />
+						</p:selectOneMenu>
+					</p:column>
+
+					<p:column style="width:auto">
+						<h:outputLabel rendered="#{faxNotification.pdf != null}"
+							value="#{faxNotification.pdf.name}" />
+					</p:column>
+
+					<p:column style="width:4%">
+						<p:commandLink
+							rendered="#{faxNotification.notificationAttachment eq 'PDF'}"
+							disabled="#{!notificationHandlerAction.useFax}"
+							title="#{msg['body.receiptlog.notification.hint']}"
+							style="float: right"
+							actionListener="#{notificationHandlerAction.showPreviewDialog(faxNotification)}">
+							<i class="fa fa-fw fa-cog" />
+							<p:ajax event="dialogReturn" update="@form" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+
+			</p:column>
+		</p:panelGrid>
+	</div>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="1">
+				<p:commandButton value="#{msg['general.abort']}"
+					styleClass="smallButton buttonLeftMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}"></p:commandButton>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" style="float:right; margin-right: 10px;">
+				<p:commandButton value="Zurück" update="@form"
+					styleClass="smallButton "
+					actionListener="#{notificationHandlerAction.setNotificationTab('EMAIL')}">
+				</p:commandButton>
+				<p:commandButton value="Weiter" update="@form"
+					styleClass="smallButton buttonLeftMarginInList"
+					actionListener="#{notificationHandlerAction.setNotificationTab('PHONE')}">
+				</p:commandButton>
+			</h:panelGrid>
+
+
+		</h:panelGrid>
+	</div>
+
+</ui:composition>
