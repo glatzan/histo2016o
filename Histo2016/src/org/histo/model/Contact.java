@@ -24,12 +24,14 @@ public class Contact implements LogAble {
 	private boolean primaryContact;
 
 	private boolean usePhone;
-	
+
 	private boolean useFax;
 
 	private boolean useEmail;
 
 	private boolean notificationPerformed;
+
+	private long notificationDate;
 
 	/**
 	 * Transient, wird für das Auswählen neuer Kontakte und das abwählen alter
@@ -105,6 +107,9 @@ public class Contact implements LogAble {
 
 	public void setNotificationPerformed(boolean notificationPerformed) {
 		this.notificationPerformed = notificationPerformed;
+
+		if (notificationPerformed)
+			setNotificationDate(System.currentTimeMillis());
 	}
 
 	public boolean isPrimaryContact() {
@@ -115,10 +120,18 @@ public class Contact implements LogAble {
 		this.primaryContact = primaryContact;
 	}
 
+	public long getNotificationDate() {
+		return notificationDate;
+	}
+
+	public void setNotificationDate(long notificationDate) {
+		this.notificationDate = notificationDate;
+	}
+
 	/********************************************************
 	 * Getters/Setters
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
@@ -130,17 +143,17 @@ public class Contact implements LogAble {
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
+
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
 
 	@Override
 	public String toString() {
-		if(getPhysician().getFullName() != null && !getPhysician().getFullName().isEmpty())
+		if (getPhysician().getFullName() != null && !getPhysician().getFullName().isEmpty())
 			return getPhysician().getFullName();
 		else
 			return getPhysician().getTitle() + " " + getPhysician().getSurname() + " " + getPhysician().getName();
 	}
 
-	
 }

@@ -78,18 +78,18 @@
 							<h:panelGrid
 								rendered="#{pdfHandlerAction.printTab eq 'ATTACHED_PDFs'}">
 
-
 								<p:dataGrid var="pdf" style="width:100%"
 									styleClass="attachedPDFTable"
-									value="#{cc.attrs.taskToPrint.attachedPdfs}" columns="1"
-									layout="grid" rows="7" paginator="true" id="cars"
+									value="#{pdfHandlerAction.taskToPrint.attachedPdfs}"
+									columns="1" layout="grid" rows="6" paginator="true"
 									paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
-									<p:commandLink styleClass="noUnderlineAtLink"
+									<p:commandLink
+										styleClass="noUnderlineAtLink attachedPDFTableLink"
 										actionListener="#{pdfHandlerAction.setTmpPdfContainer(pdf)}"
 										update="@form">
-										<p:panelGrid>
+										<p:panelGrid styleClass="smallPaddingAll smallFont">
 											<p:row>
-												<p:column>
+												<p:column style="width:60px;">
 													<h:outputLabel value="Name" />
 												</p:column>
 												<p:column>
@@ -102,7 +102,7 @@
 												</p:column>
 												<p:column>
 													<h:outputLabel
-														value="#{mainHandlerAction.date(pdf.creationDate,'GERMAN_DATE_TIME')}" />
+														value="#{mainHandlerAction.date(pdf.creationDate,enumProvider.getDateFormat('GERMAN_DATE_TIME'))}" />
 												</p:column>
 											</p:row>
 											<p:row>

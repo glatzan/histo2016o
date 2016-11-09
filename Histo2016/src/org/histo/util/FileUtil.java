@@ -28,7 +28,7 @@ public class FileUtil {
 
 		try {
 			InputStream is = resource.getInputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
 
 			String line;
 			while ((line = br.readLine()) != null) {

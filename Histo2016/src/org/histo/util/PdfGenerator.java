@@ -3,7 +3,9 @@ package org.histo.util;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.histo.action.MainHandlerAction;
@@ -80,6 +82,11 @@ public class PdfGenerator {
 
 	public PDFContainer generatePdf(Task task, PdfTemplate template, long dateOfReport, Physician addressPhysician,
 			Physician signingPhysician) {
+		return generatePdf(task, template, dateOfReport, addressPhysician, signingPhysician, null);
+	}
+
+	public PDFContainer generatePdf(Task task, PdfTemplate template, long dateOfReport, Physician addressPhysician,
+			Physician signingPhysician, HashMap<String, String> additionalFields) {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		PdfReader pdfReader = getPdfFile(template.getFileWithLogo());
@@ -101,6 +108,15 @@ public class PdfGenerator {
 		// barcodes
 		drawBarCodes(task, template, pdfReader, pdf);
 
+		// additional fields for special pdfs
+		if (additionalFields != null) {
+			for (Map.Entry<String, String> entry : additionalFields.entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				setStamperField(pdf, key, value);
+			}
+		}
+		
 		pdf.setFormFlattening(true);
 
 		closePdf(pdfReader, pdf);

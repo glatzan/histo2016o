@@ -92,6 +92,11 @@ public class MainHandlerAction {
 	 ********************************************************/
 	
 	/**
+	 * Dynamic Texts which are used rarely are stroed here.
+	 */
+	private HistoSettings settings;
+	
+	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
 	@PostConstruct
@@ -100,6 +105,8 @@ public class MainHandlerAction {
 		navigationPages = new ArrayList<View>();
 		navigationPages.add(View.USERLIST);
 
+		setSettings(HistoSettings.factory());
+		
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);
 			navigationPages.add(View.WORKLIST_RECEIPTLOG);
@@ -452,6 +459,14 @@ public class MainHandlerAction {
 
 	public void setArchived(boolean archived) {
 		this.archived = archived;
+	}
+
+	public HistoSettings getSettings() {
+		return settings;
+	}
+
+	public void setSettings(HistoSettings settings) {
+		this.settings = settings;
 	}
 	
 	/********************************************************

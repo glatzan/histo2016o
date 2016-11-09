@@ -1,0 +1,4 @@
+{
+	"emailDefaultSubjectReportFinished" : "Histologiebefung für %name%, geb. %birthday%, PIZ: %piz% abeschlossen.",
+	"emailDefualtTextReportFinished" : "Hier steht ein Text"
+}

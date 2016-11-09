@@ -3,6 +3,8 @@ package org.histo.util;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
@@ -12,6 +14,7 @@ import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.histo.config.HistoSettings;
 import org.histo.model.PDFContainer;
+import org.histo.ui.NotificationChooser;
 
 public class MailUtil {
 
@@ -66,5 +69,14 @@ public class MailUtil {
 		}
 
 		return true;
+	}
+
+	public static final String replaceWildcardsInString(String text, HashMap<String, String> replace) {
+		for (Map.Entry<String, String> entry : replace.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			text = text.replace(key, value);
+		}
+		return text;
 	}
 }

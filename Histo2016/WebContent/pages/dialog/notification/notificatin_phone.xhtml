@@ -27,12 +27,12 @@
 
 				<p:dataTable var="phoneNotification" styleClass="physicianList"
 					value="#{notificationHandlerAction.notificationPhoneList}">
-					<p:column headerText="Name" style="width:25%">
+					<p:column headerText="Name" style="width:auto">
 						<h:outputText
 							value="#{phoneNotification.contact.physician.fullName}" />
 					</p:column>
 
-					<p:column headerText="Benachrichtigung" style="width:25%">
+					<p:column headerText="Benachrichtigung" style="width:auto">
 						<p:selectOneMenu title=""
 							disabled="#{!notificationHandlerAction.usePhone}"
 							value="#{phoneNotification.notificationAttachment}">
@@ -44,25 +44,7 @@
 							<p:ajax event="change" update="@form" />
 						</p:selectOneMenu>
 					</p:column>
-
-					<p:column style="width:auto">
-						<h:outputLabel rendered="#{phoneNotification.pdf != null}"
-							value="#{phoneNotification.pdf.name}" />
-					</p:column>
-
-					<p:column style="width:4%">
-						<p:commandLink
-							rendered="#{phoneNotification.notificationAttachment eq 'PDF'}"
-							disabled="#{!notificationHandlerAction.usePhone}"
-							title="#{msg['body.receiptlog.notification.hint']}"
-							style="float: right"
-							actionListener="#{notificationHandlerAction.showPreviewDialog(phoneNotification)}">
-							<i class="fa fa-fw fa-cog" />
-							<p:ajax event="dialogReturn" update="@form" />
-						</p:commandLink>
-					</p:column>
 				</p:dataTable>
-
 			</p:column>
 		</p:panelGrid>
 	</div>

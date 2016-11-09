@@ -116,5 +116,15 @@ public class EnumProvider {
 	public Dialog getDialog(Dialog dialog) {
 		return dialog;
 	}
+	
+	/**
+	 * Returns a dateFormat
+	 * 
+	 * @param dialog
+	 * @return
+	 */
+	public DateFormat getDateFormat(DateFormat dateFormat) {
+		return dateFormat;
+	}
 
 }

@@ -3,6 +3,13 @@
 	"nameAsResources": true,
 	"type": "UREPORT",
 	"externalDocument": true
+},{
+	"name": "json.pdfTemplate.report.manual",
+	"nameAsResources": true,
+	"type": "MANUAL_REPOT",
+	"fileWithLogo": "templates/miscellaneous/notify4.pdf",
+	"fileWithOutLogo": "templates/miscellaneous/notify4.pdf",
+	"externalDocument": true
 }, {
 	"name": "json.pdfTemplate.bioBankConsent",
 	"nameAsResources": true,

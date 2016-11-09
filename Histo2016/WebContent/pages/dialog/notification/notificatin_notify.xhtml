@@ -25,11 +25,17 @@
 				<p:column styleClass="textColumn">
 					<p:dataTable var="emailNotification" styleClass="physicianList"
 						value="#{notificationHandlerAction.notificationEmailList}">
-						<p:column headerText="Name" style="width:25%">
+						<p:column headerText="Name">
 							<h:outputText
 								value="#{emailNotification.contact.physician.fullName}" />
 						</p:column>
-						<p:column headerText="Benachrichtigung" style="width:25%">
+						<p:column headerText="Benachrichtigung">
+							<h:outputLabel
+								rendered="#{emailNotification.notificationAttachment eq 'NONE'}"
+								value="Es wird keine Benachrichtigung erfolgen" />
+							<ui:fragment rendered="#{emailNotification.performed}">
+								<i class="fa fa-check icon-green" />
+							</ui:fragment>
 						</p:column>
 					</p:dataTable>
 				</p:column>
@@ -53,11 +59,14 @@
 				<p:column styleClass="textColumn">
 					<p:dataTable var="faxNotification" styleClass="physicianList"
 						value="#{notificationHandlerAction.notificationFaxList}">
-						<p:column headerText="Name" style="width:25%">
+						<p:column headerText="Name">
 							<h:outputText
 								value="#{faxNotification.contact.physician.fullName}" />
 						</p:column>
-						<p:column headerText="Benachrichtigung" style="width:25%">
+						<p:column headerText="Benachrichtigung">
+							<h:outputLabel
+								rendered="#{faxNotification.notificationAttachment eq 'NONE'}"
+								value="Es wird keine Benachrichtigung erfolgen" />
 						</p:column>
 					</p:dataTable>
 				</p:column>
@@ -80,22 +89,23 @@
 				<p:column styleClass="textColumn">
 					<p:dataTable var="phoneNotification" styleClass="physicianList"
 						value="#{notificationHandlerAction.notificationPhoneList}">
-						<p:column headerText="Name" style="width:25%">
+						<p:column headerText="Name">
 							<h:outputText
 								value="#{phoneNotification.contact.physician.fullName}" />
 						</p:column>
-						<p:column headerText="Benachrichtigung" style="width:25%">
+						<p:column headerText="Benachrichtigung">
+							<h:outputLabel
+								rendered="#{phoneNotification.notificationAttachment eq 'NONE'}"
+								value="Es wird keine Benachrichtigung erfolgen" />
 						</p:column>
 					</p:dataTable>
 				</p:column>
 			</p:row>
 		</p:panelGrid>
 
-		<p:poll interval="1" update="emailGrid test"
-			widgetVar="currentTimePoller"
+		<p:poll interval="1" update="@form" widgetVar="currentTimePoller"
 			autoStart="#{notificationHandlerAction.notificationRunning ? true: false}" />
 
-		<h:outputLabel value="#{notificationHandlerAction.test}" id="test"></h:outputLabel>
 	</div>
 
 	<div class="buttonContainer">
@@ -106,20 +116,34 @@
 					styleClass="smallButton buttonLeftMarginInList"
 					icon="fa fa-times-circle"
 					disabled="#{notificationHandlerAction.notificationRunning}"
+					rendered="#{!notificationHandlerAction.notificationPerformed}"
 					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}"></p:commandButton>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" style="float:right; margin-right: 10px;">
 				<p:commandButton value="Zurück" update="@form" id="backBtn"
 					styleClass="smallButton "
+					rendered="#{!notificationHandlerAction.notificationPerformed}"
 					disabled="#{notificationHandlerAction.notificationRunning}"
 					actionListener="#{notificationHandlerAction.setNotificationTab('PHONE')}">
 				</p:commandButton>
+				<h:panelGroup
+					rendered="#{notificationHandlerAction.notificationPerformed}"></h:panelGroup>
+
 				<p:commandButton value="Benachrichtigung ausführen" update="@form"
 					disabled="#{notificationHandlerAction.notificationRunning}"
+					rendered="#{!notificationHandlerAction.notificationPerformed}"
 					styleClass="smallButton buttonLeftMarginInList" async="true"
 					partialSubmit="true" onclick="performNotificationBtn();">
 				</p:commandButton>
+
+				<p:commandButton value="Liste Drucken" ajax="false" update="@form"
+					styleClass="smallButton buttonLeftMarginInList"
+					icon="ui-icon-arrowthick-1-s" rendered="#{notificationHandlerAction.notificationPerformed}"
+					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}">
+					<p:fileDownload value="#{pdfHandlerAction.pdfContent}" />
+				</p:commandButton>
+				
 			</h:panelGrid>
 		</h:panelGrid>
 		<p:remoteCommand name="performNotificationBtn"

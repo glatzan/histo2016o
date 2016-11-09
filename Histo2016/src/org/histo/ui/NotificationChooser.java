@@ -2,6 +2,7 @@ package org.histo.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
@@ -18,8 +19,11 @@ public class NotificationChooser {
 
 	private PDFContainer pdf;
 
+	private AtomicBoolean performed;
+
 	public NotificationChooser(Contact contact) {
 		this.contact = contact;
+		this.performed = new AtomicBoolean(false);
 	}
 
 	public static final List<NotificationChooser> getSublist(List<Contact> contacts, ContactMethod contactMethod) {
@@ -68,4 +72,11 @@ public class NotificationChooser {
 		this.notificationAttachment = notificationAttachment;
 	}
 
+	public boolean isPerformed() {
+		return performed.get();
+	}
+
+	public void setPerformed(boolean performed) {
+		this.performed.set(performed);
+	}
 }

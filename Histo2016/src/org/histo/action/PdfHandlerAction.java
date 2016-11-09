@@ -195,7 +195,7 @@ public class PdfHandlerAction {
 
 			if (getTmpPdfContainer() == null) {
 				setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
-				setRenderPDF(true);
+				setRenderPDF(false);
 			} else
 				setRenderPDF(true);
 

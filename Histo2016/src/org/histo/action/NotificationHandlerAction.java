@@ -1,6 +1,8 @@
 package org.histo.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -8,19 +10,18 @@ import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Notification;
 import org.histo.config.enums.NotificationOption;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.experimental.NotificationHandler;
 import org.histo.model.PDFContainer;
-import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PdfTemplate;
 import org.histo.ui.NotificationChooser;
 import org.histo.util.MailUtil;
+import org.histo.util.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -32,6 +33,12 @@ import org.springframework.stereotype.Component;
 public class NotificationHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -3672859612072175725L;
+
+	@Autowired
+	private GenericDAO genericDAO;
+
+	@Autowired
+	private TaskDAO taskDAO;
 
 	@Autowired
 	private ThreadPoolTaskExecutor taskExecutor;
@@ -46,7 +53,7 @@ public class NotificationHandlerAction implements Serializable {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private TaskDAO taskDAO;
+	private ResourceBundle resourceBundle;
 
 	/**
 	 * Task to perfome notification
@@ -82,10 +89,19 @@ public class NotificationHandlerAction implements Serializable {
 	 */
 	private PDFContainer defaultEmailPdf;
 
+	/**
+	 * The subject of the email to send
+	 */
 	private String emailSubject;
 
+	/**
+	 * The text of the email to send
+	 */
 	private String emailText;
 
+	/**
+	 * True if the report should be send as well
+	 */
 	private boolean attachPdfToEmail;
 
 	/********************************************************
@@ -133,7 +149,10 @@ public class NotificationHandlerAction implements Serializable {
 	 */
 	private AtomicBoolean notificationRunning = new AtomicBoolean(false);
 
-	private PDFContainer manualNotifyList;
+	/**
+	 * True if the notification is perfomed.
+	 */
+	private AtomicBoolean notificationPerformed = new AtomicBoolean(false);
 
 	/********************************************************
 	 * Notification
@@ -145,11 +164,22 @@ public class NotificationHandlerAction implements Serializable {
 
 		setNotificationEmailList(NotificationChooser.getSublist(task.getContacts(), ContactMethod.EMAIL));
 		setNotificationFaxList(NotificationChooser.getSublist(task.getContacts(), ContactMethod.FAX));
-		setNotificationFaxList(NotificationChooser.getSublist(task.getContacts(), ContactMethod.PHONE));
+		setNotificationPhoneList(NotificationChooser.getSublist(task.getContacts(), ContactMethod.PHONE));
 
 		setNotificationTab(Notification.EMAIL);
 
-		onAttachPdfToEmailChange();
+		HashMap<String, String> toReplace = new HashMap<String, String>();
+		toReplace.put("%name%",
+				task.getPatient().getPerson().getName() + ", " + task.getPatient().getPerson().getSurname());
+		toReplace.put("%birthday%",
+				mainHandlerAction.date(task.getPatient().getPerson().getBirthday(), DateFormat.GERMAN_DATE));
+		toReplace.put("%piz%", task.getPatient() == null ? "Keine Piz" : task.getPatient().getPiz());
+
+		String emailSubject = MailUtil.replaceWildcardsInString(
+				mainHandlerAction.getSettings().getEmailDefaultSubjectReportFinished(), toReplace);
+		setEmailSubject(emailSubject);
+
+		setEmailText(mainHandlerAction.getSettings().getEmailDefualtTextReportFinished());
 
 		mainHandlerAction.showDialog(Dialog.NOTIFICATION);
 	}
@@ -233,7 +263,7 @@ public class NotificationHandlerAction implements Serializable {
 						getCustomPdfToPhysician().setPdf(pdfHandlerAction.getTmpPdfContainer());
 				}
 			} else if (getNotificationTab() == Notification.FAX) {
-				if (getCustomPdfToPhysician().getNotificationAttachment() == NotificationOption.PDF)
+				if (getCustomPdfToPhysician().getNotificationAttachment() == NotificationOption.FAX)
 					getCustomPdfToPhysician().setPdf(pdfHandlerAction.getTmpPdfContainer());
 			}
 		}
@@ -241,92 +271,256 @@ public class NotificationHandlerAction implements Serializable {
 		// pdfHandlerAction.clearData();
 	}
 
-	private int test = 1;
-
-	public void updateTest() {
-	}
-
-	public void sendTest() {
-
-		// System.out.println(taskExecutor);
-		// NotificationHandler test = new NotificationHandler(this, genericDAO);
-		// test.setName("was geht");
-		//
-		// taskExecutor.execute(test);
-		// // FileUtil.loadTextFile(null);
-
-		// System.out.println("ok");
-		// SimpleEmail email = new SimpleEmail();
-		// email.setHostName("smtp.ukl.uni-freiburg.de");
-		// email.setDebug(true);
-		// email.setSmtpPort(465);
-		// email.setSSLOnConnect(true);
-		// try {
-		// email.addTo("andreas.glatz@uniklinik-freiburg.de");
-		// email.setFrom("augenklinik.histologie@uniklinik-freiburg.de", "Name
-		// des Senders");
-		// email.setSubject("Testnachricht");
-		// email.setMsg("Hallo, das ist nur ein simpler Test");
-		// email.send();
-		// } catch (EmailException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
-	}
-
 	@Async("taskExecutor")
 	public void performeNotification() {
+
 		if (notificationRunning.get())
 			return;
+
 		notificationRunning.set(true);
+
+		taskDAO.initializeCouncilData(getTmpTask());
+		taskDAO.initializeReportData(getTmpTask());
+		taskDAO.initializePdfData(getTmpTask());
 
 		if (isUseFax() || isUsePhone() || isUseEmail()) {
 
+			ArrayList<PDFContainer> resultPdfs = new ArrayList<PDFContainer>();
+			ArrayList<PDFContainer> resultPdfsToDownload = new ArrayList<PDFContainer>();
+
+			StringBuilder result = new StringBuilder();
+
+			// using email notification
 			if (isUseEmail()) {
+
+				// email
+				result.append(resourceBundle.get("pdf.notification.email.text") + "\r\n");
+
 				for (NotificationChooser notificationChooser : notificationEmailList) {
-					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE)
+
+					boolean emailSuccessful = false;
+
+					// name and mail
+					result.append(notificationChooser.getContact().getPhysician().getFullName() + "\t ");
+					result.append(resourceBundle.get("pdf.notification.email")
+							+ notificationChooser.getContact().getPhysician().getEmail() + "\t");
+
+					// no notification
+					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
+						result.append(resourceBundle.get("pdf.notification.none") + "\r\n");
 						continue;
-					else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
+					} else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
 							&& notificationChooser.getPdf() != null) {
-						MailUtil.sendMail(notificationChooser.getContact().getPhysician().getEmail(),
-								HistoSettings.EMAIL_FROM, HistoSettings.EMAIL_FROM_NAME, getEmailSubject(),
-								getEmailText(), notificationChooser.getPdf());
+						// attach pdf to mail
+
+						// check if pdf was selected
+						if (notificationChooser.getPdf() != null) {
+
+							// MailUtil.sendMail(notificationChooser.getContact().getPhysician().getEmail(),
+							// HistoSettings.EMAIL_FROM,
+							// HistoSettings.EMAIL_FROM_NAME, getEmailSubject(),
+							// getEmailText(), notificationChooser.getPdf());
+							emailSuccessful = true;
+
+							// adding mail to the result array
+							resultPdfs.add(notificationChooser.getPdf());
+							// adding the name of the pdf file to the report
+							// list pdf
+							result.append(notificationChooser.getPdf().getName() + "\t");
+
+							// if a new pdf was created save this to database
+							if (notificationChooser.getPdf().getId() == 0) {
+								genericDAO
+										.save(notificationChooser.getPdf(),
+												resourceBundle.get("log.patient.task.pdf.created",
+														notificationChooser.getPdf().getName()),
+												getTmpTask().getPatient());
+
+								getTmpTask().addReport(notificationChooser.getPdf());
+
+								genericDAO.save(
+										getTmpTask(), resourceBundle.get("log.patient.task.pdf.attached",
+												getTmpTask().getTaskID(), notificationChooser.getPdf().getName()),
+										getTmpTask().getPatient());
+							}
+
+						} else {
+							// user has forgotten to add pdf, so send plain mail
+
+							// MailUtil.sendMail(notificationChooser.getContact().getPhysician().getEmail(),
+							// HistoSettings.EMAIL_FROM,
+							// HistoSettings.EMAIL_FROM_NAME, getEmailSubject(),
+							// getEmailText());
+
+							result.append(resourceBundle.get("pdf.notification.email.text") + "\t");
+						}
+
 					} else {
-						MailUtil.sendMail(notificationChooser.getContact().getPhysician().getEmail(),
-								HistoSettings.EMAIL_FROM, HistoSettings.EMAIL_FROM_NAME, getEmailSubject(),
-								getEmailText());
+						// only plain mail should be send
+
+						// MailUtil.sendMail(notificationChooser.getContact().getPhysician().getEmail(),
+						// HistoSettings.EMAIL_FROM,
+						// HistoSettings.EMAIL_FROM_NAME, getEmailSubject(),
+						// getEmailText());
+						emailSuccessful = true;
+
+						result.append(resourceBundle.get("pdf.notification.email.text") + "\t");
+
+					}
+
+					// check if mail was send
+					if (emailSuccessful) {
+
+						// setting the contact to perfomed
+						notificationChooser.getContact().setNotificationPerformed(true);
+						genericDAO.save(notificationChooser.getContact(),
+								resourceBundle.get("log.patient.task.contact.notification.performed",
+										getTmpTask().getTaskID(),
+										notificationChooser.getContact().getPhysician().getFullName()),
+								getTmpTask().getPatient());
+
+						notificationChooser.setPerformed(true);
+						result.append(resourceBundle.get("pdf.notification.email.performed") + "r\n");
+					} else
+						result.append(resourceBundle.get("pdf.notification.email.failed") + "\r\n");
+
+				}
+
+				result.append("\r\n");
+			}
+
+			// if use fax
+			if (isUseFax()) {
+
+				result.append(resourceBundle.get("pdf.notification.fax.text") + "\r\n");
+
+				for (NotificationChooser notificationChooser : notificationFaxList) {
+
+					result.append(notificationChooser.getContact().getPhysician().getFullName() + "\t");
+					result.append(resourceBundle.get("pdf.notification.fax.number") + " "
+							+ notificationChooser.getContact().getPhysician().getFax() + "\t");
+
+					// no notification
+					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
+						result.append(resourceBundle.get("pdf.notification.none") + "\r\n");
+						continue;
+					} else {
+
+						if (notificationChooser.getPdf() != null) {
+
+							resultPdfs.add(notificationChooser.getPdf());
+							resultPdfsToDownload.add(notificationChooser.getPdf());
+
+							result.append(notificationChooser.getPdf().getName() + "\t");
+
+							// saving because new pdf
+							if (notificationChooser.getPdf().getId() == 0) {
+								genericDAO
+										.save(notificationChooser.getPdf(),
+												resourceBundle.get("log.patient.task.pdf.created",
+														notificationChooser.getPdf().getName()),
+												getTmpTask().getPatient());
+
+								getTmpTask().addReport(notificationChooser.getPdf());
+
+								genericDAO.save(
+										getTmpTask(), resourceBundle.get("log.patient.task.pdf.attached",
+												getTmpTask().getTaskID(), notificationChooser.getPdf().getName()),
+										getTmpTask().getPatient());
+							}
+
+						} else
+							result.append(resourceBundle.get("pdf.notification.fax.noPdf") + "\r\n");
+
+						notificationChooser.getContact().setNotificationPerformed(true);
+
+						genericDAO.save(notificationChooser.getContact(),
+								resourceBundle.get("log.patient.task.contact.notification.fax.performed",
+										getTmpTask().getTaskID(),
+										notificationChooser.getContact().getPhysician().getFullName()),
+								getTmpTask().getPatient());
 					}
 				}
-				// TODO 
+
+				result.append("\r\n");
 			}
-			
-			if(isUseFax()){
-				for (NotificationChooser notificationChooser : notificationEmailList) {
-//					mergePdfs
+
+			// if use phone
+			if (isUsePhone()) {
+
+				result.append(resourceBundle.get("pdf.notification.phone.text"));
+
+				for (NotificationChooser notificationChooser : notificationPhoneList) {
+
+					result.append(notificationChooser.getContact().getPhysician() + "\t");
+					result.append(resourceBundle.get("pdf.notification.phone.number") + " "
+							+ notificationChooser.getContact().getPhysician().getPhoneNumber() + "\t");
+
+					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
+						result.append(resourceBundle.get("pdf.notification.none") + "\r\n");
+						continue;
+					} else {
+						notificationChooser.getContact().setNotificationPerformed(true);
+						genericDAO.save(getTmpTask(),
+								resourceBundle.get("log.patient.task.contact.notification.telefon.performed",
+										getTmpTask().getTaskID(),
+										notificationChooser.getContact().getPhysician().getFullName()),
+								getTmpTask().getPatient());
+					}
+
 				}
+
+				result.append("\r\n");
 			}
-			
-			while (true) {
-				test++;
-				System.out.println("updating");
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
+
+			// getting the template for the report
+			PdfTemplate manuelReport = PdfTemplate.getTemplateByType(HistoSettings.PDF_TEMPLATE_JSON,
+					PdfTemplate.MANUAL_REPOT);
+
+			// addition field
+			HashMap<String, String> addtionalFields = new HashMap<String, String>();
+			addtionalFields.put("B_NOTIFY", result.toString());
+
+			// generating report
+			PDFContainer manelReportPdf = (new PdfGenerator(mainHandlerAction, resourceBundle))
+					.generatePdf(getTmpTask(), manuelReport, System.currentTimeMillis(), null, null, addtionalFields);
+
+			// adding as first page to the printout
+			resultPdfs.add(0, manelReportPdf);
+			resultPdfsToDownload.add(0, manelReportPdf);
+
+			// generating full report to save in database
+			String pdfName = (manuelReport.isNameAsResources() ? resourceBundle.get(manuelReport.getName())
+					: manuelReport.getName());
+
+			PDFContainer resultPdf = PdfGenerator.mergePdfs(resultPdfs,
+					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
+					"MANUAL_REPOT");
+			getTmpTask().addReport(resultPdf);
+			getTmpTask().setNotificationCompleted(true);
+			getTmpTask().setNotificationCompletionDate(System.currentTimeMillis());
+
+			// savin complete report
+			genericDAO.save(resultPdf, resourceBundle.get("log.patient.task.pdf.created", resultPdf.getName()),
+					getTmpTask().getPatient());
+
+			// saving task
+			genericDAO.save(getTmpTask(),
+					resourceBundle.get("log.patient.task.pdf.attached", getTmpTask().getTaskID(), resultPdf.getName()),
+					getTmpTask().getPatient());
+
+			// generated report without email pdfs is returned to download
+			PDFContainer resultPdfToDownload = PdfGenerator.mergePdfs(resultPdfs,
+					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
+					"MANUAL_REPOT");
+
+			pdfHandlerAction.setTmpPdfContainer(resultPdfToDownload);
+
+			setNotificationPerformed(true);
+
 		}
 
 		notificationRunning.set(false);
-	}
-
-	public int getTest() {
-		return test;
-	}
-
-	public void setTest(int test) {
-		this.test = test;
 	}
 
 	/********************************************************
@@ -443,6 +637,14 @@ public class NotificationHandlerAction implements Serializable {
 
 	public void setNotificationRunning(boolean notificationRunning) {
 		this.notificationRunning.set(notificationRunning);
+	}
+
+	public boolean getNotificationPerformed() {
+		return notificationPerformed.get();
+	}
+
+	public void setNotificationPerformed(boolean notificationPerformed) {
+		this.notificationPerformed.set(notificationPerformed);
 	}
 
 	/********************************************************

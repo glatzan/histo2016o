@@ -652,9 +652,12 @@ body {
 	width:100%;
 }
 
-.attachedPDFTable a:hover{
-	text-decoration: none !important;
+.attachedPDFTable .attachedPDFTableLink:hover {
+	text-decoration: underline !important;
+	font-weight: normal !important;
+	background-color: black !important;
 }
+
 
 .attachedPDFTable .ui-datagrid-content div:nth-child(even) td{
 	background: #f9f9f9;

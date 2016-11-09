@@ -17,7 +17,8 @@ public class PdfTemplate implements GsonAble {
 	public static final String INTERNAL = "INTERNAL";
 	public static final String SHORT = "SHORT";
 	public static final String EXTERN = "EXTERN";
-
+	public static final String MANUAL_REPOT = "MANUAL_REPOT";
+	
 	/**
 	 * Name of the pdf file
 	 */
@@ -195,7 +196,23 @@ public class PdfTemplate implements GsonAble {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Returns a template matching the given type string.
+	 * 
+	 * @param array
+	 * @param type
+	 * @return
+	 */
+	public static final PdfTemplate getTemplateByType(String jsonFile, String type) {
+		PdfTemplate[] array = factroy(jsonFile);
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].getType().equals(type))
+				return array[i];
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns a template matching the given type string.
 	 * 
