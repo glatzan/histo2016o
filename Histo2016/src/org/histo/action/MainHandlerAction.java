@@ -1,5 +1,6 @@
 package org.histo.action;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,6 +30,7 @@ import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import java.net.URLClassLoader;
 
 //http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
 // TODO: Diagnose page
@@ -90,12 +92,12 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Archive able
 	 ********************************************************/
-	
+
 	/**
 	 * Dynamic Texts which are used rarely are stroed here.
 	 */
 	private HistoSettings settings;
-	
+
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
@@ -106,7 +108,7 @@ public class MainHandlerAction {
 		navigationPages.add(View.USERLIST);
 
 		setSettings(HistoSettings.factory());
-		
+
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);
 			navigationPages.add(View.WORKLIST_RECEIPTLOG);
@@ -129,6 +131,18 @@ public class MainHandlerAction {
 			setCurrentView(View.WORKLIST_PATIENT);
 		} else
 			setCurrentView(View.GUEST);
+
+		System.out.println("------------------------------------");
+
+		ClassLoader cl = ClassLoader.getSystemClassLoader();
+
+		URL[] urls = ((URLClassLoader) cl).getURLs();
+
+		for (URL url : urls) {
+			System.out.println(url.getFile());
+		}
+
+		System.out.println("------------------------------------");
 	}
 
 	/*
@@ -468,7 +482,7 @@ public class MainHandlerAction {
 	public void setSettings(HistoSettings settings) {
 		this.settings = settings;
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
