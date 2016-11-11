@@ -34,7 +34,10 @@ import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import java.net.URLClassLoader;
 
 //http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
@@ -153,6 +156,10 @@ public class MainHandlerAction {
 //		System.setOut( new PrintStream( new LoggingOutputStream( Logger.getRootLogger(  ), Level.INFO ), true));
 	}
 
+	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such Keyword")
+	public void test(){
+		throw new NullPointerException();
+	}
 	/*
 	 * ************************** Navigation ****************************
 	 */
