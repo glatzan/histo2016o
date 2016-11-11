@@ -1,5 +1,6 @@
 package org.histo.action;
 
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +10,9 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
@@ -24,6 +28,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.util.LoggingOutputStream;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -142,7 +147,10 @@ public class MainHandlerAction {
 			System.out.println(url.getFile());
 		}
 
-		System.out.println("------------------------------------");
+//		System.out.println("------------------------------------");
+//		System.setErr( new PrintStream( new LoggingOutputStream( Logger.getRootLogger(  ), Level.ERROR ), true));
+//
+//		System.setOut( new PrintStream( new LoggingOutputStream( Logger.getRootLogger(  ), Level.INFO ), true));
 	}
 
 	/*
