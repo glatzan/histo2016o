@@ -11,7 +11,7 @@
 
 <composite:interface>
 	<!-- task to print -->
-	<composite:attribute name="taskToPrint" />
+	<composite:attribute name="taskToPrint" required="true" />
 
 	<!-- Close listener -->
 	<composite:attribute name="closeListener"
@@ -20,6 +20,8 @@
 	<!-- include link for submitting buttons  -->
 	<composite:attribute name="submitButtonIncludeLink" required="true" />
 
+	<!-- Headline -->
+	<composite:attribute name="headline" required="true" />
 </composite:interface>
 
 <composite:implementation>
@@ -34,7 +36,7 @@
 			<div class="defaulDilaogHeaderDivWithBackground">
 				<h:panelGrid style="width:100%;" columns="2"
 					styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-					<h:outputLabel value="#{msg['dialog.council.headline']}" />
+					<h:outputLabel value="#{cc.attrs.headline}" />
 					<p:commandLink title="#{msg['general.close']}" style="float:right;"
 						styleClass="noUnderlineAtLink"
 						actionListener="#{cc.attrs.closeListener}">

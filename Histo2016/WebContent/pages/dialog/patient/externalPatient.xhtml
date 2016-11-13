@@ -26,7 +26,7 @@
 			<h:panelGrid columns="2" style="float:right;">
 				<!-- 1. adds external patient to database 2. adds to worklist 3. clears patientHandlerAction -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
-					process="@form" icon="fa fa-fw fa-user-plus" styleClass="smallButton">
+					process="@form" icon="fa fa-fw fa-user-plus" styleClass="smallButton buttonRighMarginInListExtended">
 					<f:actionListener
 						binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
 					<f:actionListener

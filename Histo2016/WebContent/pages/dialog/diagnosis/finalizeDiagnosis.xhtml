@@ -12,35 +12,60 @@
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout">
-	<h:form>
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
 
-		<div class="dialogContent">
-			<h:outputLabel value="#{msg['dialog.diagnosis.finalize.text']}"
-				escape="false" />
-
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.diagnosis.finalize.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
 		</div>
+
+		<div class="contentDiv">
+			<p:panelGrid columns="1"
+				styleClass="noBordersAll collapsedBordersAll infoTable standardFont"
+				style="width:100%">
+				<h:outputLabel value="#{msg['dialog.diagnosis.finalize.text']}"
+					escape="false" />
+			</p:panelGrid>
+		</div>
+
 		<div class="buttonContainer">
-			<p:commandButton
-				value="#{msg['dialog.diagnosis.finalize.button.print']}">
-				<f:actionListener
-					binding="#{diagnosisHandlerAction.finalizeDiagnoses(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
-				<f:actionListener
-					binding="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></f:actionListener>
-				<f:actionListener
-					binding="#{pdfHandlerAction.showPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
-			</p:commandButton>
-			<p:commandButton
-				value="#{msg['dialog.diagnosis.finalize.button.ok']}"
-				styleClass="buttonLeftMarginInList">
-				<f:actionListener
-					binding="#{diagnosisHandlerAction.finalizeDiagnoses(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
-				<f:actionListener
-					binding="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></f:actionListener>
-			</p:commandButton>
-			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="buttonLeftMarginInList"
-				actionListener="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}" />
+
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="3" style="float:right;">
+					<!-- confirm -->
+					<p:commandButton styleClass="smallButton buttonRighMarginInList"
+						value="#{msg['dialog.diagnosis.finalize.button.print']}">
+						<f:actionListener
+							binding="#{diagnosisHandlerAction.finalizeDiagnoses(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
+						<f:actionListener
+							binding="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></f:actionListener>
+						<f:actionListener
+							binding="#{pdfHandlerAction.showPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
+					</p:commandButton>
+					
+					<p:commandButton
+						value="#{msg['dialog.diagnosis.finalize.button.ok']}"
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{diagnosisHandlerAction.finalizeDiagnoses(worklistHandlerAction.selectedPatient.selectedTask)}"></f:actionListener>
+						<f:actionListener
+							binding="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}"></f:actionListener>
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.abort']}"
+						styleClass="buttonRighMarginInList smallButton"
+						actionListener="#{diagnosisHandlerAction.hideFinalizeDiangosisDialog()}" />
+				</h:panelGrid>
+			</h:panelGrid>
 		</div>
 
 	</h:form>

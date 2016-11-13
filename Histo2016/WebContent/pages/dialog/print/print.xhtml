@@ -10,8 +10,9 @@
 
 <histo:print taskToPrint="#{pdfHandlerAction.taskToPrint}"
 	closeListener="#{pdfHandlerAction.hidePrintDialog()}"
-	submitButtonIncludeLink="/pages/dialog/print/print_submit.xhtml" />
-	
+	submitButtonIncludeLink="/pages/dialog/print/print_submit.xhtml"
+	headline="#{msg['dialog.print.headline']}" />
+
 </html>
 
 

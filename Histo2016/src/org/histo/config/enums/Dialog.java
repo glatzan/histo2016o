@@ -9,19 +9,19 @@ public enum Dialog {
 	
 	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", null, 620, 440, false, false, true),
 	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", null, 1024, 600, false, false, true), // 16:9
-	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,430, 270, false, false, true), //
-	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), //
-	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null, 290, 120, false, false, true), //
+	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,430, 270, false, false, true), 
+	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), 
+	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null, 290, 120, false, false, true), 
 	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_LOG("/pages/dialog/history/patientLog", null, 620, 500, false, false, true),
-	TASK_CREATE("/pages/dialog/task/createTask", null, 0, 380, false, false, true),
-	TASK_ARCHIV("/pages/dialog/task/archivTask", null, 0, 0, false, false, true), // <<
-	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 0, 0, false, false, true),
-	SAMPLE_ARCHIV("/pages/dialog/task/archivSample", null, 0, 0, false, false, true), // <<
-	BLOCK_ARCHIV("/pages/dialog/task/archivBlock", null, 0, 0, false, false, true), // <<
+	TASK_CREATE("/pages/dialog/task/createTask", null, 640, 360, false, false, true), // 16:9
+	TASK_ARCHIV("/pages/dialog/task/archivTask", null, 0, 0, false, false, true), 
+	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9
+	SAMPLE_ARCHIV("/pages/dialog/task/archivSample", null, 0, 0, false, false, true), 
+	BLOCK_ARCHIV("/pages/dialog/task/archivBlock", null, 0, 0, false, false, true), 
 	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 0, 0, false, false, true),
 	SLIDE_ARCHIV("/pages/dialog/task/archivSlide", null, 0, 0, false, false, true),
-	DIAGNOSIS_FINALIZE("/pages/dialog/diagnosis/finalizeDiagnosis", null, 0, 0, false, false, true),
+	DIAGNOSIS_FINALIZE("/pages/dialog/diagnosis/finalizeDiagnosis", null, 480, 272, false, false, true),// 16:9
 	DIAGNOSIS_UNFINALIZE("/pages/dialog/diagnosis/unfinalizeDiagnosis", null, 0, 0, false, false, true),
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/diagnosis/histologicalRecordOverwrite", null, 0, 0, false, false, true),
 	STAINING_PERFORMED("/pages/dialog/task/staingingPerformed", null, 0, 0, false, false, true),
@@ -32,7 +32,7 @@ public enum Dialog {
 	NOTIFICATION_ALREADY_PERFORMED("/pages/dialog/notification/notification_already_performed", null,  480, 272, false, false, true), //  16:9
 	NOTIFICATION("/pages/dialog/notification/notification", null,  1024, 600, false, false, true),  // 16:9
 	NOTIFICATION_PREVIEW("/pages/dialog/notification/notification_preview", null,  1024, 600, false, false, true); //  16:9
-		
+
 	private final String path;
 	private final boolean useOptions;
 	private final String header;

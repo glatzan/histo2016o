@@ -11,7 +11,7 @@
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
-<h:body styleClass="defaultDialogLayout notificationDialog">
+<h:body styleClass="defaultDialogLayout infoDialog">
 	<h:form id="dialogContent">
 
 		<div class="defaulDilaogHeaderDivWithBackground">
@@ -45,18 +45,20 @@
 					<p:commandButton value="#{msg['general.confirm']}"
 						styleClass="smallButton buttonRighMarginInList"
 						actionListener="#{notificationHandlerAction.hideAlreadyPerformedDialogAndShowNotification(true)}" />
-						
-					<!-- download latest list, rendered if list not null -->		
-					<p:commandButton rendered="#{pdfHandlerAction.tmpPdfContainer ne null}"
+
+					<!-- download latest list, rendered if list not null -->
+					<p:commandButton
+						rendered="#{pdfHandlerAction.tmpPdfContainer ne null}"
 						value="#{msg['dialog.notification.alreadyPerformed.print']}"
 						ajax="false" styleClass="smallButton buttonRighMarginInList"
 						icon="ui-icon-arrowthick-1-s">
 						<p:fileDownload value="#{pdfHandlerAction.pdfContent}" />
 					</p:commandButton>
-					
+
 					<!-- placeholder if list is null -->
-					<h:panelGroup rendered="#{pdfHandlerAction.tmpPdfContainer eq null}"></h:panelGroup>
-					
+					<h:panelGroup
+						rendered="#{pdfHandlerAction.tmpPdfContainer eq null}"></h:panelGroup>
+
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}"
 						styleClass="smallButton buttonRighMarginInList"

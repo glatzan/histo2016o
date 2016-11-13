@@ -158,11 +158,11 @@ public class NotificationHandlerAction implements Serializable {
 	 * Notification
 	 ********************************************************/
 
-	public void showNotificationDialog(Task task) {
-		showNotificationDialog(task, false);
+	public void showinfoDialog(Task task) {
+		showinfoDialog(task, false);
 	}
 
-	public void showNotificationDialog(Task task, boolean show) {
+	public void showinfoDialog(Task task, boolean show) {
 		setTmpTask(task);
 		
 		// loading all pfs

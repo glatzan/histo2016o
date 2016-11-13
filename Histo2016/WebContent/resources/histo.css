@@ -552,24 +552,33 @@ body {
 
 /*	################# BigDialog ################# */
 
-/*	################# Notification Dialog ################# */
+/*	################# infoDialog ################# */
 /* notification_already_performed.xhtml
 /* Layout for all info dialogs*/
-.notificationDialog {
+.infoDialog {
 	padding: 0px !important;
 	border: 0px !important;
 }
 
-.notificationDialog .buttonContainer {
+.infoDialog .buttonContainer {
 	width: 100%;
 }
 
-.notificationDialog  .contentDiv {
+.infoDialog  .contentDiv {
 	height: 200px;
 	padding: 5px;
 }
 
-/*	################# Notification Dialog ################# */
+.infoDialog .infoTable{
+	width: 100%;
+}
+
+.infoDialog .infoTable .textColumn {
+	width: 150px;
+	padding-left: 10px !important;
+}
+
+/*	################# infoDialog ################# */
 
 /*	################# Settings ################# */
 /* Settings Dialog*/
@@ -812,9 +821,6 @@ body {
 	width: 60px;
 }
 
-.taskTextColunm {
-	width: 150px;
-}
 /*	################# create Task dialog ################# */
 
 /*	################# council dialog ################# */

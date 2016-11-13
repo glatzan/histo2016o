@@ -13,10 +13,24 @@
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout">
-	<h:form>
-		<div class="dialogContent">
-			<h:panelGrid columns="2" styleClass="dialogTable">
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.createSample.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="2" columnClasses="textColumn,"
+				styleClass="infoTable smallPaddingVerticalAll standardFont">
 				<h:outputLabel value="#{msg['dialog.createSample.material']}"></h:outputLabel>
 				<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
 					style="margin-left:30px;"
@@ -29,15 +43,26 @@
 				</p:selectOneMenu>
 			</h:panelGrid>
 		</div>
+
 		<div class="buttonContainer">
-			<p:commandButton value="#{msg['general.create']}"
-				icon="fa fa-check-circle-o" styleClass="smallButton"
-				actionListener="#{taskHandlerAction.createNewSampleFromGui(taskHandlerAction.temporaryTask,taskHandlerAction.selectedMaterial)}"></p:commandButton>
-			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="smallButton" style="margin-left:1em;"
-				icon="fa fa-times-circle"
-				actionListener="#{taskHandlerAction.hideNewSampleDialog()}"></p:commandButton>
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+					<!-- confirm -->
+					<p:commandButton value="#{msg['general.create']}"
+						icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{taskHandlerAction.createNewSampleFromGui(taskHandlerAction.temporaryTask,taskHandlerAction.selectedMaterial)}"></p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{taskHandlerAction.hideNewSampleDialog()}" />
+				</h:panelGrid>
+			</h:panelGrid>
 		</div>
+
 	</h:form>
 </h:body>
 </html>
