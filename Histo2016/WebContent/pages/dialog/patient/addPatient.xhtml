@@ -6,12 +6,26 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>#{msg['dialog.addPatient.headline']}</title>
+	<title><h:outputLabel
+			value="#{msg['dialog.addPatient.headline']}" /></title>
+
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
 <h:body styleClass="settingsDialogLayout">
 	<h:form>
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.addPatient.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					actionListener="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
 		<p:panel styleClass="settingsPannel">
 			<p:tabView orientation="left"
 				activeIndex="#{patientHandlerAction.activePatientDialogIndex}"

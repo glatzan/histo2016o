@@ -50,6 +50,7 @@ import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
+import org.springframework.core.annotation.Order;
 
 @Entity
 @Audited
@@ -321,6 +322,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("creationDate DESC")
 	public List<PDFContainer> getAttachedPdfs() {
 		if (attachedPdfs == null)
 			attachedPdfs = new ArrayList<PDFContainer>();

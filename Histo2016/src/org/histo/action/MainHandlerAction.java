@@ -39,20 +39,23 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URLClassLoader;
+// TODO urgent: status und info dialog
+// TODO check patient fetch from jason form clinik -> zu viele patienten
+
 
 //http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
-// TODO: Diagnose page
+// ++++: Diagnose page
 // TODO: Biobank
 // TODO: favouriten
 // ++++ edit page patient external
 // TODO: Logout warn
 // TODO: status display (in navigation)
 // TODO: log in settings rework
-// TODO: Edit external patient from menu bar
+// ++++: Edit external patient from menu bar
 // ++++: Priorisierung
 // TODO: prevent overwriting of data from clinic physicians if changed
 // TODO: change event of histological record in diagnosis page, located in helphandler action
-// TODO: Re-Diagnosis reduce options 
+// ++++: Re-Diagnosis reduce options 
 // TODO: fullName propertie of physician move to person
 
 @Component
@@ -150,16 +153,8 @@ public class MainHandlerAction {
 			System.out.println(url.getFile());
 		}
 
-//		System.out.println("------------------------------------");
-//		System.setErr( new PrintStream( new LoggingOutputStream( Logger.getRootLogger(  ), Level.ERROR ), true));
-//
-//		System.setOut( new PrintStream( new LoggingOutputStream( Logger.getRootLogger(  ), Level.INFO ), true));
 	}
 
-	@ResponseStatus(value=HttpStatus.NOT_FOUND, reason="No such Keyword")
-	public void test(){
-		throw new NullPointerException();
-	}
 	/*
 	 * ************************** Navigation ****************************
 	 */

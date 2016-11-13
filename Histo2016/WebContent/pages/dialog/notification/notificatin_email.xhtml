@@ -13,9 +13,10 @@
 			styleClass="noBordersAll collapsedBordersAll notificationTable"
 			style="width:100%">
 
+			<!-- send email -->
 			<p:row>
 				<p:column styleClass="textColumn">
-					<h:outputText value="Email versenden" />
+					<h:outputText value="#{msg['dialog.notification.email.send']}" />
 				</p:column>
 				<p:column>
 					<p:selectBooleanCheckbox
@@ -25,9 +26,10 @@
 				</p:column>
 			</p:row>
 
+			<!-- Subject -->
 			<p:row>
-				<p:column styleClass="textColumn">
-					<h:outputText value="Betref" />
+				<p:column >
+					<h:outputText value="#{msg['dialog.notification.email.subject']}" />
 				</p:column>
 				<p:column>
 					<h:inputText value="#{notificationHandlerAction.emailSubject}"
@@ -36,9 +38,10 @@
 				</p:column>
 			</p:row>
 
+			<!-- Email Text -->
 			<p:row>
 				<p:column styleClass="verticalAlignTopAll">
-					<h:outputLabel value="Text" />
+					<h:outputLabel value="#{msg['dialog.notification.email.text']}" />
 				</p:column>
 				<p:column>
 					<h:inputTextarea value="#{notificationHandlerAction.emailText}"
@@ -47,9 +50,11 @@
 				</p:column>
 			</p:row>
 
+			<!-- Attach pdf -->
 			<p:row>
 				<p:column>
-					<h:outputLabel value="Bericht anhängen" />
+					<h:outputLabel
+						value="#{msg['dialog.notification.email.attachPdf']}" />
 				</p:column>
 				<p:column>
 					<p:selectBooleanCheckbox
@@ -62,14 +67,15 @@
 				</p:column>
 			</p:row>
 
+			<!-- Pdf file for all -->
 			<p:row>
 				<p:column>
-					<h:outputLabel value="Template" />
+					<h:outputLabel
+						value="#{msg['dialog.notification.email.attachPdf.name']}" />
 				</p:column>
 				<p:column>
 					<h:outputLabel
 						value="#{notificationHandlerAction.defaultEmailPdf.name}" />
-
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						styleClass="noUnderlineAtLink" style="margin-left: 5px;"
 						disabled="#{!notificationHandlerAction.useEmail or !notificationHandlerAction.attachPdfToEmail}"
@@ -80,17 +86,24 @@
 				</p:column>
 			</p:row>
 
+			<!-- Email receivers -->
 			<p:row>
 				<p:column colspan="2">
-
 					<p:dataTable var="emailNotification" styleClass="physicianList"
 						value="#{notificationHandlerAction.notificationEmailList}">
-						<p:column headerText="Name" style="width:25%">
+
+						<!-- name of receiver -->
+						<p:column
+							headerText="#{msg['dialog.notification.email.receiver.name']}"
+							style="width:25%">
 							<h:outputText
 								value="#{emailNotification.contact.physician.fullName}" />
 						</p:column>
 
-						<p:column headerText="Benachrichtigung" style="width:25%">
+						<!-- Notification via email, none, text -->
+						<p:column
+							headerText="#{msg['dialog.notification.email.receiver.type']}"
+							style="width:25%">
 							<p:selectOneMenu title=""
 								disabled="#{!notificationHandlerAction.useEmail or !notificationHandlerAction.attachPdfToEmail}"
 								value="#{emailNotification.notificationAttachment}">
@@ -111,7 +124,7 @@
 							<p:commandLink
 								rendered="#{emailNotification.notificationAttachment eq 'PDF'}"
 								disabled="#{!notificationHandlerAction.useEmail}"
-								title="#{msg['body.receiptlog.notification.hint']}"
+								title="#{msg['dialog.notification.email.receiver.pdf.hint']}"
 								style="float: right"
 								actionListener="#{notificationHandlerAction.showPreviewDialog(emailNotification)}">
 								<i class="fa fa-fw fa-cog" />
@@ -128,17 +141,16 @@
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="1">
-				<p:commandButton value="#{msg['general.abort']}"
-					styleClass="smallButton buttonLeftMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}"></p:commandButton>
-			</h:panelGrid>
+			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton value="#{msg['general.next']}" update="@form"
+					styleClass="smallButton buttonRighMarginInListExtended"
+					actionListener="#{notificationHandlerAction.setNotificationTab('FAX')}" />
 
-			<p:commandButton value="Weiter" update="@form"
-				styleClass="smallButton " style="float:right; margin-right: 10px;"
-				actionListener="#{notificationHandlerAction.setNotificationTab('FAX')}">
-			</p:commandButton>
+				<p:commandButton value="#{msg['general.abort']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}" />
+			</h:panelGrid>
 		</h:panelGrid>
 	</div>
 

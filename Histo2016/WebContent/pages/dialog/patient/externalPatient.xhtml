@@ -23,17 +23,25 @@
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="1">
+			<h:panelGrid columns="2" style="float:right;">
 				<!-- 1. adds external patient to database 2. adds to worklist 3. clears patientHandlerAction -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
-					process="@form" icon="fa fa-fw fa-user-plus">
+					process="@form" icon="fa fa-fw fa-user-plus" styleClass="smallButton">
 					<f:actionListener
 						binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
 					<f:actionListener
 						binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
 					<f:actionListener
 						binding="#{patientHandlerAction.clearTmpPatient()}" />
+					<f:actionListener
+						binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
 				</p:commandButton>
+
+				<!-- Close Button -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

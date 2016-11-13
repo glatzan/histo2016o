@@ -12,83 +12,91 @@
 			styleClass="noBordersAll collapsedBordersAll notificationTable"
 			style="width:100%">
 
+			<!-- use Fax -->
 			<p:row>
 				<p:column styleClass="textColumn">
-					<h:outputText value="Fax versenden" />
+					<h:outputText value="#{msg['dialog.notification.fax.send']}" />
 				</p:column>
 				<p:column>
 					<p:selectBooleanCheckbox
 						value="#{notificationHandlerAction.useFax}">
-						<p:ajax event="change" update="@form" />
+						<p:ajax event="change"
+							listener="#{notificationHandlerAction.onUseFaxChanges()}"
+							update="@form" />
 					</p:selectBooleanCheckbox>
 				</p:column>
 			</p:row>
-			<p:column colspan="2">
+			
+			<!-- Fax recipient list -->
+			<p:row>
+				<p:column colspan="2">
+					<p:dataTable var="faxNotification" styleClass="physicianList"
+						value="#{notificationHandlerAction.notificationFaxList}">
+						
+						<!-- name -->
+						<p:column headerText="#{msg['dialog.notification.fax.receiver.name']}" style="width:25%">
+							<h:outputText
+								value="#{faxNotification.contact.physician.fullName}" />
+						</p:column>
 
-				<p:dataTable var="faxNotification" styleClass="physicianList"
-					value="#{notificationHandlerAction.notificationFaxList}">
-					<p:column headerText="Name" style="width:25%">
-						<h:outputText
-							value="#{faxNotification.contact.physician.fullName}" />
-					</p:column>
+						<!-- method -->
+						<p:column headerText="#{msg['dialog.notification.fax.receiver.type']}" style="width:25%">
+							<p:selectOneMenu title=""
+								disabled="#{!notificationHandlerAction.useFax}"
+								value="#{faxNotification.notificationAttachment}">
 
-					<p:column headerText="Benachrichtigung" style="width:25%">
-						<p:selectOneMenu title=""
-							disabled="#{!notificationHandlerAction.useFax}"
-							value="#{faxNotification.notificationAttachment}">
+								<f:selectItems
+									value="#{enumProvider.getNotificationFaxOptions()}"
+									var="option"
+									itemLabel="#{msg['enum.notification.'.concat(option)]}" />
 
-							<f:selectItems
-								value="#{enumProvider.getNotificationFaxOptions()}" var="option"
-								itemLabel="#{msg['enum.notification.'.concat(option)]}" />
+								<p:ajax event="change" update="@form" />
+							</p:selectOneMenu>
+						</p:column>
+	
+						<!-- pdf Name -->
+						<p:column style="width:auto">
+							<h:outputLabel rendered="#{faxNotification.pdf != null}"
+								value="#{faxNotification.pdf.name}" />
+						</p:column>
+						
+						<!-- change pdf for user -->
+						<p:column style="width:4%">
+							<p:commandLink
+								rendered="#{faxNotification.notificationAttachment eq 'FAX'}"
+								disabled="#{!notificationHandlerAction.useFax}"
+								title="#{msg['dialog.notification.fax.receiver.pdf.hint']}"
+								style="float: right"
+								actionListener="#{notificationHandlerAction.showPreviewDialog(faxNotification)}">
+								<i class="fa fa-fw fa-cog" />
+								<p:ajax event="dialogReturn" update="@form" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
 
-							<p:ajax event="change" update="@form" />
-						</p:selectOneMenu>
-					</p:column>
-
-					<p:column style="width:auto">
-						<h:outputLabel rendered="#{faxNotification.pdf != null}"
-							value="#{faxNotification.pdf.name}" />
-					</p:column>
-
-					<p:column style="width:4%">
-						<p:commandLink
-							rendered="#{faxNotification.notificationAttachment eq 'FAX'}"
-							disabled="#{!notificationHandlerAction.useFax}"
-							title="#{msg['body.receiptlog.notification.hint']}"
-							style="float: right"
-							actionListener="#{notificationHandlerAction.showPreviewDialog(faxNotification)}">
-							<i class="fa fa-fw fa-cog" />
-							<p:ajax event="dialogReturn" update="@form" />
-						</p:commandLink>
-					</p:column>
-				</p:dataTable>
-
-			</p:column>
+				</p:column>
+			</p:row>
 		</p:panelGrid>
 	</div>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="1">
-				<p:commandButton value="#{msg['general.abort']}"
-					styleClass="smallButton buttonLeftMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}"></p:commandButton>
-			</h:panelGrid>
-
-			<h:panelGrid columns="2" style="float:right; margin-right: 10px;">
-				<p:commandButton value="Zurück" update="@form"
-					styleClass="smallButton "
+			<h:panelGrid columns="3" style="float:right;">
+				<p:commandButton value="#{msg['general.back']}" update="@form"
+					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{notificationHandlerAction.setNotificationTab('EMAIL')}">
 				</p:commandButton>
-				<p:commandButton value="Weiter" update="@form"
-					styleClass="smallButton buttonLeftMarginInList"
+				<p:commandButton value="#{msg['general.next']}" update="@form"
+					styleClass="smallButton buttonRighMarginInListExtended"
 					actionListener="#{notificationHandlerAction.setNotificationTab('PHONE')}">
 				</p:commandButton>
+
+				<p:commandButton value="#{msg['general.abort']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}" />
 			</h:panelGrid>
-
-
 		</h:panelGrid>
 	</div>
 

@@ -6,14 +6,28 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title>#{msg['dialog.editPatient.headline']}</title>
+	<title><h:outputLabel
+			value="#{msg['dialog.editPatient.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
 
 
-<h:body styleClass="defaultDialogLayout">
+<h:body styleClass="defaultDialogLayout bigDialog">
 	<h:form id="dialogForm">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.editPatient.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					actionListener="#{mainHandlerAction.hideDialog('PATIENT_EDIT')}">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
 		<div class="dialogContent" id="dialogContent">
 			<ui:include src="../../template/person.xhtml">
 				<ui:param name="person"
@@ -22,22 +36,25 @@
 				<ui:param name="disabled" value="false" />
 			</ui:include>
 		</div>
+		
 		<div class="buttonContainer">
-
-			<p:commandButton value="#{msg['dialog.editPatient.edit']}"
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+							<p:commandButton value="#{msg['dialog.editPatient.edit']}"
 				process="@form" icon="fa fa-fw fa-user-plus"
-				styleClass="smallButton"
-				actionListener="#{patientHandlerAction.saveEditedExternalPatient(patientHandlerAction.tmpPatient)}">
-			</p:commandButton>
+				styleClass="smallButton buttonRighMarginInListExtended"
+				actionListener="#{patientHandlerAction.saveEditedExternalPatient(patientHandlerAction.tmpPatient)}" />
 
-			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="smallButton buttonLeftMarginInList"
-				icon="fa fa-times-circle">
-				<p:ajax update="@form" resetValues="true"
-					icon="fa fa-fw fa-user-plus" />
-				<f:actionListener
-					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('PATIENT_EDIT'))}" />
-			</p:commandButton>
+					<p:commandButton value="#{msg['general.abort']}"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{mainHandlerAction.hideDialog('PATIENT_EDIT')}">
+						<p:ajax update="@form" resetValues="true"
+							icon="fa fa-fw fa-user-plus" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
 		</div>
 	</h:form>
 </h:body>

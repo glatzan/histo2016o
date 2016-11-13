@@ -143,10 +143,17 @@ body {
 }
 
 .buttonLeftMarginInList {
-	margin-left: 0.5em;
+	margin-left: 0.5em !important;
 }
 
+.buttonRighMarginInList{
+	margin-right: 0.5em !important;
 }
+
+.buttonRighMarginInListExtended{
+	margin-right: 1em !important;
+}
+
 /* style of the input field of an onSelect primefaces element */
 .customSerachSelectMenu .ui-inputfield {
 	padding: 2px 7px;
@@ -544,6 +551,25 @@ body {
 }
 
 /*	################# BigDialog ################# */
+
+/*	################# Notification Dialog ################# */
+/* notification_already_performed.xhtml
+/* Layout for all info dialogs*/
+.notificationDialog {
+	padding: 0px !important;
+	border: 0px !important;
+}
+
+.notificationDialog .buttonContainer {
+	width: 100%;
+}
+
+.notificationDialog  .contentDiv {
+	height: 200px;
+	padding: 5px;
+}
+
+/*	################# Notification Dialog ################# */
 
 /*	################# Settings ################# */
 /* Settings Dialog*/

@@ -32,12 +32,12 @@
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:inputText id="#{pannelID}_name" value="#{person.name}"
-					disabled="#{disabled}" required="true" />
+					disabled="#{disabled}" />
 				<p:outputLabel value="#{msg['include.person.name']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText id="#{pannelID}_surname" value="#{person.surname}"
-					disabled="#{disabled}" required="true" />
+					disabled="#{disabled}" />
 				<p:outputLabel value="#{msg['include.person.surname']}" />
 			</p:panelGrid>
 		</h:panelGrid>
@@ -48,7 +48,7 @@
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
 				<p:selectOneMenu id="#{pannelID}_gender" style="width:100px"
-					disabled="#{disabled}" value="#{person.gender}" required="true">
+					disabled="#{disabled}" value="#{person.gender}" >
 					<f:selectItem itemLabel="#{msg['include.person.gender.select']}"
 						itemValue="-" />
 					<f:selectItem itemLabel="#{msg['include.person.gender.male']}"
@@ -61,7 +61,7 @@
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:calendar id="#{pannelID}_birthday" value="#{person.birthday}"
 					locale="de" disabled="#{disabled}" navigator="true"
-					pattern="dd.MM.yyyy" mask="true" required="true" />
+					pattern="dd.MM.yyyy" mask="true"  />
 				<p:outputLabel value="#{msg['include.person.birthday']}" />
 			</p:panelGrid>
 		</h:panelGrid>

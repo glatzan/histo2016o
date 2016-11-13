@@ -136,7 +136,6 @@ public class PatientHandlerAction implements Serializable {
 			} else
 				genericDAO.save(patient, resourceBundle.get("log.patient.search.update"), patient);
 
-			mainHandlerAction.hideDialog(Dialog.WORKLIST_ADD_PATIENT);
 		}
 	}
 

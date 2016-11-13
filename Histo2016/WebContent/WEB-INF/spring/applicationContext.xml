@@ -64,7 +64,8 @@
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
-			<property name="basenames" value="classpath*:/messages/messages">
+		<!-- classpath*:/ -->
+		<property name="basenames" value="messages/messages">
 		</property>
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>

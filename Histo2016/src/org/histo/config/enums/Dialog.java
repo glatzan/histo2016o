@@ -8,11 +8,11 @@ package org.histo.config.enums;
 public enum Dialog {
 	
 	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", null, 620, 440, false, false, true),
-	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", null, 1024, 600, false, false, true), //
+	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", null, 1024, 600, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,430, 270, false, false, true), //
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), //
 	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null, 290, 120, false, false, true), //
-	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 600, 500, false, false, true),
+	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_LOG("/pages/dialog/history/patientLog", null, 620, 500, false, false, true),
 	TASK_CREATE("/pages/dialog/task/createTask", null, 0, 380, false, false, true),
 	TASK_ARCHIV("/pages/dialog/task/archivTask", null, 0, 0, false, false, true), // <<
@@ -29,9 +29,10 @@ public enum Dialog {
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
 	PRINT("/pages/dialog/print/print", null, 1024, 600, false, false, true), // 16:9
 	COUNCIL("/pages/dialog/task/council", null,  640, 360, false, false, true), // 16:9
+	NOTIFICATION_ALREADY_PERFORMED("/pages/dialog/notification/notification_already_performed", null,  480, 272, false, false, true), //  16:9
 	NOTIFICATION("/pages/dialog/notification/notification", null,  1024, 600, false, false, true),  // 16:9
 	NOTIFICATION_PREVIEW("/pages/dialog/notification/notification_preview", null,  1024, 600, false, false, true); //  16:9
-	
+		
 	private final String path;
 	private final boolean useOptions;
 	private final String header;

@@ -159,14 +159,37 @@ public class NotificationHandlerAction implements Serializable {
 	 ********************************************************/
 
 	public void showNotificationDialog(Task task) {
+		showNotificationDialog(task, false);
+	}
 
+	public void showNotificationDialog(Task task, boolean show) {
 		setTmpTask(task);
+		
+		// loading all pfs
+		taskDAO.initializePdfData(task);
+
+		if (task.isNotificationCompleted() && !show) {
+			// setting last manual report ready for download
+			PDFContainer maunalReport = task.getReport(PdfTemplate.MANUAL_REPOT);
+			pdfHandlerAction.setTmpPdfContainer(maunalReport);
+			mainHandlerAction.showDialog(Dialog.NOTIFICATION_ALREADY_PERFORMED);
+		} else {
+			prepareForNotification(task);
+			mainHandlerAction.showDialog(Dialog.NOTIFICATION);
+		}
+	}
+
+	public void prepareForNotification(Task task) {
 
 		setNotificationEmailList(NotificationChooser.getSublist(task.getContacts(), ContactMethod.EMAIL));
 		setNotificationFaxList(NotificationChooser.getSublist(task.getContacts(), ContactMethod.FAX));
 		setNotificationPhoneList(NotificationChooser.getSublist(task.getContacts(), ContactMethod.PHONE));
 
 		setNotificationTab(Notification.EMAIL);
+
+		setUseEmail(!getNotificationEmailList().isEmpty() ? true : false);
+		setUseFax(!getNotificationFaxList().isEmpty() ? true : false);
+		setUsePhone(!getNotificationPhoneList().isEmpty() ? true : false);
 
 		HashMap<String, String> toReplace = new HashMap<String, String>();
 		toReplace.put("%name%",
@@ -181,16 +204,30 @@ public class NotificationHandlerAction implements Serializable {
 
 		setEmailText(mainHandlerAction.getSettings().getEmailDefualtTextReportFinished());
 
-		mainHandlerAction.showDialog(Dialog.NOTIFICATION);
+		setNotificationPerformed(false);
+
+		onAttachPdfToEmailChange();
+		onUseFaxChanges();
+		onUsePhoneChanges();
 	}
 
 	public void hideNotificatonDialog() {
+		// TODO CLEAR
 		// setNotifications(null);
 		mainHandlerAction.hideDialog(Dialog.NOTIFICATION);
 	}
 
+	public void hideAlreadyPerformedDialogAndShowNotification(boolean notify) {
+		if (notify) {
+			// TODO CLEAR
+			// workaround for showing and hiding two dialogues
+			mainHandlerAction.setQueueDialog("#headerForm\\\\:notificationBtnShowOnly");
+		}
+		mainHandlerAction.hideDialog(Dialog.NOTIFICATION_ALREADY_PERFORMED);
+	}
+
 	public void onAttachPdfToEmailChange() {
-		for (NotificationChooser notificationChooser : notificationEmailList) {
+		for (NotificationChooser notificationChooser : getNotificationEmailList()) {
 			if (isAttachPdfToEmail()) {
 				if (notificationChooser.getNotificationAttachment() != NotificationOption.NONE) {
 					notificationChooser.setNotificationAttachment(NotificationOption.PDF);
@@ -205,6 +242,26 @@ public class NotificationHandlerAction implements Serializable {
 		}
 	}
 
+	public void onUseFaxChanges() {
+		for (NotificationChooser notificationChooser : getNotificationFaxList()) {
+			if (isUseFax()) {
+				notificationChooser.setNotificationAttachment(NotificationOption.FAX);
+			} else {
+				notificationChooser.setNotificationAttachment(NotificationOption.NONE);
+			}
+		}
+	}
+
+	public void onUsePhoneChanges() {
+		for (NotificationChooser notificationChooser : getNotificationPhoneList()) {
+			if (isUsePhone()) {
+				notificationChooser.setNotificationAttachment(NotificationOption.PHONE);
+			} else {
+				notificationChooser.setNotificationAttachment(NotificationOption.NONE);
+			}
+		}
+	}
+
 	public void showPreviewDialog() {
 		showPreviewDialog(null);
 	}
@@ -212,7 +269,6 @@ public class NotificationHandlerAction implements Serializable {
 	public void showPreviewDialog(NotificationChooser chooser) {
 		setCustomPdfToPhysician(chooser);
 
-		taskDAO.initializePdfData(getTmpTask());
 
 		if (getNotificationTab() == Notification.EMAIL) {
 
@@ -281,7 +337,6 @@ public class NotificationHandlerAction implements Serializable {
 
 		taskDAO.initializeCouncilData(getTmpTask());
 		taskDAO.initializeReportData(getTmpTask());
-		taskDAO.initializePdfData(getTmpTask());
 
 		if (isUseFax() || isUsePhone() || isUseEmail()) {
 
@@ -452,7 +507,7 @@ public class NotificationHandlerAction implements Serializable {
 
 				for (NotificationChooser notificationChooser : notificationPhoneList) {
 
-					result.append(notificationChooser.getContact().getPhysician() + "\t");
+					result.append(notificationChooser.getContact().getPhysician().getFullName() + "\t");
 					result.append(resourceBundle.get("pdf.notification.phone.number") + " "
 							+ notificationChooser.getContact().getPhysician().getPhoneNumber() + "\t");
 

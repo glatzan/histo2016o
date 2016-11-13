@@ -6,7 +6,8 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title><h:outputFormat value="Benachrichtigung" /></title>
+	<title><h:outputFormat
+			value="#{msg['dialog.notification.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -15,9 +16,10 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="Benachrichtigung" />
+				<h:outputLabel value="#{msg['dialog.notification.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
-					styleClass="noUnderlineAtLink" disabled="#{notificationHandlerAction.notificationRunning}"
+					styleClass="noUnderlineAtLink"
+					disabled="#{notificationHandlerAction.notificationRunning}"
 					actionListener="#{notificationHandlerAction.hideNotificatonDialog()}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
@@ -38,7 +40,7 @@
 			rendered="#{notificationHandlerAction.notificationTab eq 'PHONE'}">
 			<ui:include src="notificatin_phone.xhtml" />
 		</ui:fragment>
-		
+
 		<ui:fragment
 			rendered="#{notificationHandlerAction.notificationTab eq 'NOTIFY'}">
 			<ui:include src="notificatin_notify.xhtml" />

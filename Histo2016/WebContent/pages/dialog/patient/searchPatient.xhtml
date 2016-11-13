@@ -96,6 +96,7 @@
 				</f:facet>
 				<h:outputText value="#{patientList.patient.person.gender}" />
 			</p:column>
+
 			<!-- databse -->
 			<p:column sortBy="#{patientList.notHistoDatabase}">
 				<f:facet name="header">
@@ -112,13 +113,14 @@
 					<i class="fa fa-fw fa-times-circle icon-red"
 						title="#{msg['dialog.addPatient.search.database.clinic']}" />
 				</ui:fragment>
-
 			</p:column>
+
 			<!-- piz -->
 			<p:column headerText="#{msg['dialog.addPatient.search.piz']}"
 				sortBy="#{patientList.patient.piz}">
 				<h:outputText value="#{patientList.patient.piz}" />
 			</p:column>
+
 			<p:ajax event="rowDblselect" oncomplete="remoteSumbitDoubleClick()">
 
 			</p:ajax>
@@ -131,19 +133,32 @@
 				binding="#{patientHandlerAction.addNewInterlPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
 			<f:actionListener
 				binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.selectedPatientFromSearchList.patient,true)}" />
+			<f:actionListener
+				binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
 		</p:remoteCommand>
+
 	</div>
+
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="1">
+			<h:panelGrid columns="2" style="float:right;">
+				<!-- Add button -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
-					icon="fa fa-fw fa-user-plus">
+					icon="fa fa-fw fa-user-plus" styleClass="smallButton">
 					<f:actionListener
 						binding="#{patientHandlerAction.addNewInterlPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
 					<f:actionListener
 						binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.selectedPatientFromSearchList.patient,true)}" />
+					<f:actionListener
+						binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
 				</p:commandButton>
+
+				<!-- Close Button -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

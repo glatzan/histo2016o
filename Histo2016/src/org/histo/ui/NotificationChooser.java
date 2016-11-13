@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.naming.directory.AttributeModificationException;
+
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.NotificationOption;
@@ -20,6 +22,8 @@ public class NotificationChooser {
 	private PDFContainer pdf;
 
 	private AtomicBoolean performed;
+	
+	private AtomicBoolean error;
 
 	public NotificationChooser(Contact contact) {
 		this.contact = contact;
@@ -78,5 +82,13 @@ public class NotificationChooser {
 
 	public void setPerformed(boolean performed) {
 		this.performed.set(performed);
+	}
+	
+	public boolean isError() {
+		return error.get();
+	}
+
+	public void setError(boolean error) {
+		this.error.set(error);
 	}
 }
