@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
@@ -28,7 +30,7 @@ public class FileUtil {
 
 		try {
 			InputStream is = resource.getInputStream();
-			BufferedReader br = new BufferedReader(new InputStreamReader(is,"UTF-8"));
+			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 
 			String line;
 			while ((line = br.readLine()) != null) {
@@ -42,6 +44,15 @@ public class FileUtil {
 		}
 
 		return result.toString();
+	}
+
+	public static final String replaceWildcardsInString(String text, HashMap<String, String> replace) {
+		for (Map.Entry<String, String> entry : replace.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			text = text.replace(key, value);
+		}
+		return text;
 	}
 
 }

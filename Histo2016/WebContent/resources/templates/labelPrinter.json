@@ -1,0 +1,11 @@
+[{
+	"name" : "Aug-Histo-Etikettendrucker-1",
+	"location" : "",
+	"commentary" : "",
+	"ip"	: "10.210.98.143",
+	"ftpPort" : 21,
+	"userName" : "admin",
+	"password" : "1234",
+	"fileName" : "print.zpl"
+}]
+

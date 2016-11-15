@@ -32,12 +32,16 @@ import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+<<<<<<< HEAD
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URLClassLoader;
 // TODO urgent: status und info dialog
 // TODO check patient fetch from jason form clinik -> zu viele patienten
 // TODO List für Patienten übersicht
+=======
+
+>>>>>>> branch 'master' of https://github.com/blub4ever/histo2016o
 
 //http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
 // ++++: Diagnose page
@@ -105,6 +109,7 @@ public class MainHandlerAction {
 	 */
 	private HistoSettings settings;
 
+	
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */

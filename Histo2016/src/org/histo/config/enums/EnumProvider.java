@@ -78,6 +78,15 @@ public class EnumProvider {
 	}
 
 	/**
+	 * Retnurns an array containing all values of the StainingListAction enumeration.
+	 * @return
+	 */
+	public StainingListAction[] getStainingListActions() {
+		return StainingListAction.values();
+	}
+	
+	
+	/**
 	 * Returns an array containing all values of the {@link NotificationOption}
 	 * enumeration.
 	 * 

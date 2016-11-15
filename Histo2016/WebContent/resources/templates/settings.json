@@ -1,0 +1,5 @@
+{
+	"defaultReportEmailSubject" : "Histologiebefung für %name%, geb. %birthday%, PIZ: %piz% abeschlossen.",
+	"defaultReportEmailText" : "Hier steht ein Text",
+	"defaultSlideLableLayout" :  "^XA^FO10,00^A0N,16,12^FDAugenklinik Freiburg Histologie^FS^FO07,20^BY2^BCN,40,N,N,N,A^FD%slideNumber%^FS^FO5,75^A0N,60,30^FD%slideName%^FS^XZ"
+}

@@ -2,10 +2,14 @@ package org.histo.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.StainingListAction;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.model.StainingPrototype;
@@ -14,6 +18,7 @@ import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.LabelPrinter;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.SlideUtil;
@@ -28,11 +33,7 @@ public class SlideHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -7212398949353596573L;
 
-	public final static byte STAININGLIST_ACTION_NONE = 0;
-	public final static byte STAININGLIST_ACTION_PERFORMED = 1;
-	public final static byte STAININGLIST_ACTION_NOT_PERFORMED = 2;
-	public final static byte STAININGLIST_ACTION_PRINT = 3;
-	public final static byte STAININGLIST_ACTION_ARCHIVE = 4;
+	private static Logger logger = Logger.getLogger(SlideHandlerAction.class);
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -76,10 +77,11 @@ public class SlideHandlerAction implements Serializable {
 	private boolean tmpRestaining;
 
 	/**
-	 * In dieser Variable wird die Aktion gespeichert, die in der
-	 * Objektträgerliste auf alle ausgewählten elemente ausgeführt werden soll.
+	 * This variable is used to save the selected action, which sho In dieser
+	 * Variable wird die Aktion gespeichert, die in der Objektträgerliste auf
+	 * alle ausgewählten elemente ausgeführt werden soll.
 	 */
-	private byte actionOnMany;
+	private StainingListAction actionOnMany;
 
 	/**
 	 * Show a dialog for adding new slides to a block
@@ -175,8 +177,7 @@ public class SlideHandlerAction implements Serializable {
 			}
 		}
 
-		setActionOnMany(STAININGLIST_ACTION_NONE);
-
+		setActionOnMany(StainingListAction.NONE);
 	}
 
 	/**
@@ -195,7 +196,7 @@ public class SlideHandlerAction implements Serializable {
 
 	public void performActionOnMany(Task task) {
 		performActionOnMany(task, getActionOnMany());
-		setActionOnMany(STAININGLIST_ACTION_NONE);
+		setActionOnMany(StainingListAction.NONE);
 	}
 
 	/**
@@ -204,7 +205,7 @@ public class SlideHandlerAction implements Serializable {
 	 * @param list
 	 * @param action
 	 */
-	public void performActionOnMany(Task task, byte action) {
+	public void performActionOnMany(Task task, StainingListAction action) {
 		List<StainingTableChooser> list = task.getStainingTableRows();
 
 		// mindestens ein Objektträger muss ausgewählt sein
@@ -220,7 +221,7 @@ public class SlideHandlerAction implements Serializable {
 			return;
 
 		switch (getActionOnMany()) {
-		case STAININGLIST_ACTION_PERFORMED:
+		case PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
 				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()
 						&& !stainingTableChooser.getStaining().isStainingPerformed()) {
@@ -243,7 +244,7 @@ public class SlideHandlerAction implements Serializable {
 			}
 
 			break;
-		case STAININGLIST_ACTION_NOT_PERFORMED:
+		case NOT_PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
 				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()
 						&& stainingTableChooser.getStaining().isStainingPerformed()) {
@@ -261,15 +262,32 @@ public class SlideHandlerAction implements Serializable {
 				}
 			}
 			break;
-		case STAININGLIST_ACTION_ARCHIVE:
+		case ARCHIVE:
 			// TODO implement
 			System.out.println("To impliment");
+			break;
+		case PRINT:
+			for (StainingTableChooser stainingTableChooser : list) {
+				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()){
+					
+					LabelPrinter[] test = LabelPrinter.factroy(HistoSettings.LABEL_PRINTER_JSON);
+					
+					HashMap<String, String> args = new HashMap<String,String>();
+					args.put("%slideNumber%", "1600101");
+					
+					Slide slide = stainingTableChooser.getStaining();
+					
+					args.put("%slideName%", slide.getSlideID());
+
+					test[0].printViaFtp(mainHandlerAction.getSettings().getDefaultSlideLableLayout(), args);
+				}
+			}
 			break;
 		default:
 			break;
 		}
 
-		setActionOnMany(STAININGLIST_ACTION_NONE);
+		setActionOnMany(StainingListAction.NONE);
 
 	}
 
@@ -371,11 +389,11 @@ public class SlideHandlerAction implements Serializable {
 		this.tmpSample = tmpSample;
 	}
 
-	public byte getActionOnMany() {
+	public StainingListAction getActionOnMany() {
 		return actionOnMany;
 	}
 
-	public void setActionOnMany(byte actionOnMany) {
+	public void setActionOnMany(StainingListAction actionOnMany) {
 		this.actionOnMany = actionOnMany;
 	}
 
