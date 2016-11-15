@@ -1,18 +1,16 @@
 package org.histo.action;
 
-import java.io.PrintStream;
 import java.net.URL;
+import java.net.URLClassLoader;
+// TODO urgent: status und info dialog
+// TODO check patient fetch from jason form clinik -> zu viele patienten
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
@@ -28,20 +26,18 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.util.LoggingOutputStream;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URLClassLoader;
 // TODO urgent: status und info dialog
 // TODO check patient fetch from jason form clinik -> zu viele patienten
-
+// TODO List für Patienten übersicht
 
 //http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
 // ++++: Diagnose page
