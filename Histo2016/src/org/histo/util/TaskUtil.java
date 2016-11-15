@@ -110,7 +110,7 @@ public class TaskUtil {
 		staining.setUniqueIDinBlock(block.getNextSlideNumber());
 
 		block.getSlides().add(staining);
-		System.out.println("New staining created ");
+
 		logger.info("New staining created " + staining.getSlideID());
 
 		return staining;

@@ -72,7 +72,7 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	/**
 	 * Unique slide counter is increased for every added slide;
 	 */
-	private int uniqueSlideCounter;
+	private int uniqueSlideCounter = 0;
 
 	public void removeStaining(Slide staining) {
 		getSlides().remove(staining);
@@ -80,8 +80,7 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 
 	@Transient
 	public int getNextSlideNumber() {
-		setUniqueSlideCounter(getUniqueSlideCounter() + 1);
-		return getUniqueSlideCounter();
+		return ++uniqueSlideCounter;
 	}
 
 	/********************************************************
