@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Role;
+import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.StainingStatus;
 import org.histo.config.enums.View;
 import org.histo.config.enums.Worklist;
@@ -227,7 +228,7 @@ public class WorklistHandlerAction implements Serializable {
 		TaskUtil.generateSlideGuiList(task);
 
 		// Setzte action to none
-		slideHandlerAction.setActionOnMany(SlideHandlerAction.STAININGLIST_ACTION_NONE);
+		slideHandlerAction.setActionOnMany(StainingListAction.NONE);
 
 		// init all available diagnoses
 		settingsHandlerAction.updateAllDiagnosisPrototypes();

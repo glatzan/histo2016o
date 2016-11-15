@@ -71,12 +71,4 @@ public class MailUtil {
 		return true;
 	}
 
-	public static final String replaceWildcardsInString(String text, HashMap<String, String> replace) {
-		for (Map.Entry<String, String> entry : replace.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-			text = text.replace(key, value);
-		}
-		return text;
-	}
 }

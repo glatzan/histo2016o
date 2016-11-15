@@ -1,15 +1,14 @@
 package org.histo.config;
 
-
 import org.histo.util.FileUtil;
 
 import com.google.gson.Gson;
 
-
 public class HistoSettings {
 
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
-	public static final String TEXT_TEMPLATE_JSON = "classpath:templates/text.json";
+	public static final String DEFAULT_SETTINGS_JSON = "classpath:templates/settings.json";
+	public static final String LABEL_PRINTER_JSON = "classpath:templates/labelPrinter.json";
 
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
@@ -29,30 +28,50 @@ public class HistoSettings {
 	public static final String LDAP_PORT = "389";
 	public static final String LDAP_SUFFIX = "dc=ukl,dc=uni-freiburg,dc=de";
 	public static final String LDAP_BASE = "ou=people";
-	
+
 	public static final HistoSettings factory() {
 		Gson gson = new Gson();
-		HistoSettings result = gson.fromJson(FileUtil.loadTextFile(TEXT_TEMPLATE_JSON), HistoSettings.class);
+		HistoSettings result = gson.fromJson(FileUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
 		return result;
 	}
-	
-	private String emailDefualtTextReportFinished;
-	
-	private String emailDefaultSubjectReportFinished;
 
-	public String getEmailDefualtTextReportFinished() {
-		return emailDefualtTextReportFinished;
+	/**
+	 * Default subject for report emails to physicians
+	 */
+	private String defaultReportEmailSubject;
+
+	/**
+	 * Default text for report emails to physicians
+	 */
+	private String defaultReportEmailText;
+
+	/**
+	 * Default layout of the slides labels, contains %slideNumber% and
+	 * %slideName% as wildcards
+	 */
+	private String defaultSlideLableLayout;
+
+	public String getDefaultReportEmailSubject() {
+		return defaultReportEmailSubject;
 	}
 
-	public String getEmailDefaultSubjectReportFinished() {
-		return emailDefaultSubjectReportFinished;
+	public void setDefaultReportEmailSubject(String defaultReportEmailSubject) {
+		this.defaultReportEmailSubject = defaultReportEmailSubject;
 	}
 
-	public void setEmailDefualtTextReportFinished(String emailDefualtTextReportFinished) {
-		this.emailDefualtTextReportFinished = emailDefualtTextReportFinished;
+	public String getDefaultReportEmailText() {
+		return defaultReportEmailText;
 	}
 
-	public void setEmailDefaultSubjectReportFinished(String emailDefaultSubjectReportFinished) {
-		this.emailDefaultSubjectReportFinished = emailDefaultSubjectReportFinished;
+	public void setDefaultReportEmailText(String defaultReportEmailText) {
+		this.defaultReportEmailText = defaultReportEmailText;
+	}
+
+	public String getDefaultSlideLableLayout() {
+		return defaultSlideLableLayout;
+	}
+
+	public void setDefaultSlideLableLayout(String defaultSlideLableLayout) {
+		this.defaultSlideLableLayout = defaultSlideLableLayout;
 	}
 }

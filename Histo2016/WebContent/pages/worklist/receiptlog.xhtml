@@ -376,7 +376,8 @@
 
 															<h:panelGroup rendered="#{diagnosis.diagnosisRevision}">
 																<!-- followup -->
-																<p:inputTextarea value="#{diagnosis.diagnosisRevisionText}" rows="2"
+																<p:inputTextarea
+																	value="#{diagnosis.diagnosisRevisionText}" rows="2"
 																	id="diagnosisFollowUp" style="width:90%"
 																	readonly="#{diagnosis.finalized}">
 																	<p:watermark for="diagnosisFollowUp"
@@ -669,21 +670,10 @@
 									<h:panelGroup>
 										<p:selectOneMenu value="#{slideHandlerAction.actionOnMany}"
 											onchange="PF('performOnMay').jq.click();">
-											<f:selectItem
-												itemLabel="#{msg['body.statiningView.choosenAction.select']}"
-												itemValue="0" />
-											<f:selectItem
-												itemLabel="#{msg['body.statiningView.choosenAction.performed']}"
-												itemValue="1" />
-											<f:selectItem
-												itemLabel="#{msg['body.statiningView.choosenAction.notPerformed']}"
-												itemValue="2" />
-											<f:selectItem
-												itemLabel="#{msg['body.statiningView.choosenAction.print']}"
-												itemValue="3" />
-											<f:selectItem
-												itemLabel="#{msg['body.statiningView.choosenAction.archive']}"
-												itemValue="4" />
+
+											<f:selectItems value="#{enumProvider.stainingListActions}"
+												var="action"
+												itemLabel="#{msg['enum.pages.'.concat(action)]}" />
 
 											<p:ajax update="navigationForm contentForm" />
 										</p:selectOneMenu>
