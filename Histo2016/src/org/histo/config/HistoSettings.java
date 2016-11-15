@@ -1,6 +1,6 @@
 package org.histo.config;
 
-import org.histo.util.FileUtil;
+import org.histo.util.HistoUtil;
 
 import com.google.gson.Gson;
 
@@ -31,7 +31,7 @@ public class HistoSettings {
 
 	public static final HistoSettings factory() {
 		Gson gson = new Gson();
-		HistoSettings result = gson.fromJson(FileUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
+		HistoSettings result = gson.fromJson(HistoUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
 		return result;
 	}
 
@@ -46,8 +46,8 @@ public class HistoSettings {
 	private String defaultReportEmailText;
 
 	/**
-	 * Default layout of the slides labels, contains %slideNumber% and
-	 * %slideName% as wildcards
+	 * Default layout of the slides labels, contains %slideNumber%, slideText%
+	 * %slideName% and %date% as wildcards
 	 */
 	private String defaultSlideLableLayout;
 

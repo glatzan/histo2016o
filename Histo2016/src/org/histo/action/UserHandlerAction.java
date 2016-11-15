@@ -23,6 +23,10 @@ public class UserHandlerAction implements Serializable {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	public void prepareUserSettingsDialog(){
+		
+	}
+	
 	/**
 	 * Checks if the session is associated with a user.
 	 * 

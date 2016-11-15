@@ -41,6 +41,8 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, ArchivAble {
 
 	private String slideID = "";
 
+	private int uniqueIDinBlock;
+	
 	private boolean stainingPerformed;
 
 	private boolean reStaining;
@@ -78,9 +80,7 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, ArchivAble {
 	public void setVersion(long version) {
 		this.version = version;
 	}
-
 	
-	@Basic
 	public boolean isStainingPerformed() {
 		return stainingPerformed;
 	}
@@ -107,7 +107,6 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, ArchivAble {
 		this.creationDate = creationDate;
 	}
 
-	@Basic
 	public String getSlideID() {
 		return slideID;
 	}
@@ -116,7 +115,6 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, ArchivAble {
 		this.slideID = slideID;
 	}
 
-	@Basic
 	public boolean isReStaining() {
 		return reStaining;
 	}
@@ -125,7 +123,6 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, ArchivAble {
 		this.reStaining = reStaining;
 	}
 
-	@Basic
 	@Type(type = "text")
 	public String getCommentary() {
 		return commentary;
@@ -133,6 +130,14 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, ArchivAble {
 
 	public void setCommentary(String commentary) {
 		this.commentary = commentary;
+	}
+
+	public int getUniqueIDinBlock() {
+		return uniqueIDinBlock;
+	}
+
+	public void setUniqueIDinBlock(int uniqueIDinBlock) {
+		this.uniqueIDinBlock = uniqueIDinBlock;
 	}
 
 	/********************************************************

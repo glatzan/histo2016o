@@ -1,7 +1,7 @@
 package org.histo.model.transitory;
 
 import org.histo.model.interfaces.GsonAble;
-import org.histo.util.FileUtil;
+import org.histo.util.HistoUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -179,7 +179,7 @@ public class PdfTemplate implements GsonAble {
 		}.getType();
 
 		Gson gson = new Gson();
-		PdfTemplate[] result = gson.fromJson(FileUtil.loadTextFile(jsonFile), type);
+		PdfTemplate[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
 		return result;
 	}
 

@@ -1,5 +1,6 @@
 package org.histo.action;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import org.histo.model.patient.Task;
 import org.histo.model.transitory.LabelPrinter;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
+import org.histo.util.HistoUtil;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +35,7 @@ public class SlideHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -7212398949353596573L;
 
-	private static Logger logger = Logger.getLogger(SlideHandlerAction.class);
+	private static Logger logger = Logger.getRootLogger();
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -267,21 +269,37 @@ public class SlideHandlerAction implements Serializable {
 			System.out.println("To impliment");
 			break;
 		case PRINT:
-			for (StainingTableChooser stainingTableChooser : list) {
-				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()){
-					
-					LabelPrinter[] test = LabelPrinter.factroy(HistoSettings.LABEL_PRINTER_JSON);
-					
-					HashMap<String, String> args = new HashMap<String,String>();
-					args.put("%slideNumber%", "1600101");
-					
-					Slide slide = stainingTableChooser.getStaining();
-					
-					args.put("%slideName%", slide.getSlideID());
+			LabelPrinter[] test = LabelPrinter.factroy(HistoSettings.LABEL_PRINTER_JSON);
 
-					test[0].printViaFtp(mainHandlerAction.getSettings().getDefaultSlideLableLayout(), args);
+			for (StainingTableChooser stainingTableChooser : list) {
+				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
+
+					Slide slide = stainingTableChooser.getStaining();
+					String taskID = slide.getParent().getParent().getParent().getTaskID();
+
+					HashMap<String, String> args = new HashMap<String, String>();
+					args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 2, '0'));
+					args.put("%slideName%", taskID + " " + slide.getSlideID());
+					args.put("%slideText%", slide.getCommentary());
+					args.put("%date%", mainHandlerAction.date(System.currentTimeMillis()));
+
+					test[0].addTaskToBuffer(HistoUtil.replaceWildcardsInString(
+							mainHandlerAction.getSettings().getDefaultSlideLableLayout(), args));
 				}
 			}
+
+			if (test[0].isBufferNotEmpty()) {
+				try {
+					test[0].openConnection();
+					test[0].flushBuffer();
+					test[0].closeConnection();
+					System.out.println(test[0].isBufferNotEmpty());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
 			break;
 		default:
 			break;
@@ -327,6 +345,9 @@ public class SlideHandlerAction implements Serializable {
 	 */
 	public void addStaining(StainingPrototype prototype, Block block, String commentary, boolean reStaining) {
 		Slide slide = TaskUtil.createNewStaining(block, prototype);
+
+		logger.debug("New Slide created " + slide.getSlideID());
+
 		if (commentary != null && !commentary.isEmpty())
 			slide.setCommentary(commentary);
 

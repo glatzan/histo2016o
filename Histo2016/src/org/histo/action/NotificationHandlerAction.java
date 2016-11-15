@@ -20,7 +20,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PdfTemplate;
 import org.histo.ui.NotificationChooser;
-import org.histo.util.FileUtil;
+import org.histo.util.HistoUtil;
 import org.histo.util.MailUtil;
 import org.histo.util.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,7 +199,7 @@ public class NotificationHandlerAction implements Serializable {
 				mainHandlerAction.date(task.getPatient().getPerson().getBirthday(), DateFormat.GERMAN_DATE));
 		toReplace.put("%piz%", task.getPatient() == null ? "Keine Piz" : task.getPatient().getPiz());
 
-		String emailSubject = FileUtil.replaceWildcardsInString(
+		String emailSubject = HistoUtil.replaceWildcardsInString(
 				mainHandlerAction.getSettings().getDefaultReportEmailSubject(), toReplace);
 		setEmailSubject(emailSubject);
 

@@ -3,6 +3,8 @@ package org.histo.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.histo.action.SlideHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisType;
 import org.histo.model.StainingPrototype;
@@ -15,6 +17,8 @@ import org.histo.model.patient.Task;
 import org.histo.ui.StainingTableChooser;
 
 public class TaskUtil {
+
+	private static Logger logger = Logger.getRootLogger();
 
 	/**
 	 * Creates a new Task for a patient.
@@ -40,12 +44,11 @@ public class TaskUtil {
 		result.setDueDate(currentDay);
 		result.setDateOfSugery(currentDay);
 		// 20xx -2000 = tasknumber
-		result.setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000) + fitString(taskNumer, 4));
+		result.setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000) + HistoUtil.fitString(taskNumer, 4, '0'));
 		result.setParent(patient);
 
 		return result;
 	}
-
 
 	/**
 	 * Creates a diagnosis an adds it to the given sample
@@ -89,6 +92,7 @@ public class TaskUtil {
 	 */
 	public final static Slide createNewStaining(Block block, StainingPrototype prototype) {
 		Slide staining = new Slide();
+
 		staining.setReStaining(block.getParent().isReStainingPhase());
 		staining.setCreationDate(System.currentTimeMillis());
 		staining.setSlidePrototype(prototype);
@@ -97,11 +101,17 @@ public class TaskUtil {
 		// generating block id
 		String number = "";
 		int stainingsInBlock = getNumerOfSameStainings(block, prototype);
+
 		if (stainingsInBlock > 1)
 			number = " " + String.valueOf(stainingsInBlock);
 		staining.setSlideID(block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
 
+		// setting unique slide number
+		staining.setUniqueIDinBlock(block.getNextSlideNumber());
+
 		block.getSlides().add(staining);
+		System.out.println("New staining created ");
+		logger.info("New staining created " + staining.getSlideID());
 
 		return staining;
 	}
@@ -343,14 +353,6 @@ public class TaskUtil {
 				return tasks.get(i);
 		}
 		return null;
-	}
-
-	public final static String fitString(int value, int len) {
-		String result = String.valueOf(value);
-		while (result.length() < len) {
-			result = "0" + result;
-		}
-		return result;
 	}
 
 	public static final String getDiagnosisName(Sample sample, Diagnosis diagnosis, ResourceBundle resourceBundle) {

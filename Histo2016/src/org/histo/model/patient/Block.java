@@ -69,8 +69,19 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	 */
 	private boolean archived;
 
+	/**
+	 * Unique slide counter is increased for every added slide;
+	 */
+	private int uniqueSlideCounter;
+
 	public void removeStaining(Slide staining) {
 		getSlides().remove(staining);
+	}
+
+	@Transient
+	public int getNextSlideNumber() {
+		setUniqueSlideCounter(getUniqueSlideCounter() + 1);
+		return getUniqueSlideCounter();
 	}
 
 	/********************************************************
@@ -109,7 +120,6 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 		this.slides = slides;
 	}
 
-	@Basic
 	public String getBlockID() {
 		return blockID;
 	}
@@ -124,6 +134,14 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 
 	public void setCreationDate(long creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public int getUniqueSlideCounter() {
+		return uniqueSlideCounter;
+	}
+
+	public void setUniqueSlideCounter(int uniqueSlideCounter) {
+		this.uniqueSlideCounter = uniqueSlideCounter;
 	}
 
 	/********************************************************
@@ -252,4 +270,5 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	/********************************************************
 	 * Interface ArchiveAble
 	 ********************************************************/
+
 }

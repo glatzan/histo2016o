@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -29,6 +30,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.LabelPrinter;
 import org.histo.model.transitory.PdfTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
@@ -45,6 +47,8 @@ import org.springframework.stereotype.Component;
 public class TaskHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -1460063099758733063L;
+
+	private static Logger logger = Logger.getLogger(TaskHandlerAction.class);
 
 	@Autowired
 	private HelperDAO helperDAO;
@@ -154,7 +158,7 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task
 	 ********************************************************/
-	
+
 	public void prepareBean() {
 		setAllAvailableMaterials(helperDAO.getAllStainingLists());
 		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
@@ -244,18 +248,15 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		Task task = TaskUtil.createNewTask(phantomTask, patient, taskDAO.countSamplesOfCurrentYear());
-
 		patient.getTasks().add(0, task);
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
 		if (task.getReport(PdfTemplate.UREPORT) != null) {
-			genericDAO.save(task.getReport(PdfTemplate.UREPORT),
-					resourceBundle.get("log.patient.task.upload.orderList", task.getTaskID(),
-							task.getReport(PdfTemplate.UREPORT).getName()),
-					patient);
+			genericDAO.save(task.getReport(PdfTemplate.UREPORT), resourceBundle.get("log.patient.task.upload.orderList",
+					task.getTaskID(), task.getReport(PdfTemplate.UREPORT).getName()), patient);
 		}
-
+	
 		// saving report to datanase
 		genericDAO.save(task.getReport(), resourceBundle.get("log.patient.task.report.new", task.getTaskID()),
 				task.getPatient());
@@ -387,9 +388,13 @@ public class TaskHandlerAction implements Serializable {
 	public void createNewBlock(Sample sample) {
 		Block block = TaskUtil.createNewBlock(sample);
 
+		logger.debug("Creating new block " + block.getBlockID());
+
 		genericDAO.save(block, resourceBundle.get("log.patient.task.sample.blok.new",
 				block.getParent().getParent().getTaskID(), block.getParent().getSampleID(), block.getBlockID()),
 				sample.getPatient());
+
+		logger.debug("Block saved, adding default slides");
 
 		for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
 			slideHandlerAction.addStaining(proto, block);
@@ -400,8 +405,6 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Block
 	 ********************************************************/
-
-	
 
 	/********************************************************
 	 * Task Data

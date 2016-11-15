@@ -12,7 +12,7 @@ import org.springframework.core.io.Resource;
 
 import com.lowagie.text.pdf.PdfReader;
 
-public class FileUtil {
+public class HistoUtil {
 
 	/**
 	 * Reads a file form the passed path.
@@ -46,6 +46,14 @@ public class FileUtil {
 		return result.toString();
 	}
 
+	/**
+	 * Task a HashMap with key value pairs and replaces all entries within a
+	 * string.
+	 * 
+	 * @param text
+	 * @param replace
+	 * @return
+	 */
 	public static final String replaceWildcardsInString(String text, HashMap<String, String> replace) {
 		for (Map.Entry<String, String> entry : replace.entrySet()) {
 			String key = entry.getKey();
@@ -55,4 +63,31 @@ public class FileUtil {
 		return text;
 	}
 
+	/**
+	 * Adds chars at the beginning of a string.
+	 * 
+	 * @param value
+	 * @param len
+	 * @param fitChar
+	 * @return
+	 */
+	public final static String fitString(int value, int len, char fitChar) {
+		return fitString(String.valueOf(value), len, fitChar);
+	}
+
+	/**
+	 * Adds chars at the beginning of a string.
+	 * 
+	 * @param value
+	 * @param len
+	 * @param fitChar
+	 * @return
+	 */
+	public final static String fitString(String value, int len, char fitChar) {
+		StringBuilder str = new StringBuilder(value);
+		while (str.length() < len) {
+			str.insert(0, fitChar);
+		}
+		return str.toString();
+	}
 }
