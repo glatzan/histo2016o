@@ -676,6 +676,46 @@ public class Task
 	 * Transient Getter/Setter
 	 ********************************************************/
 
+	/**
+	 * Checks if all staings are performed an returns true if the status has
+	 * changed. If no change occurred false will be returned.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean updateStainingStatus() {
+		if (getStainingStatus() == StainingStatus.PERFORMED) {
+			if (!isStainingCompleted()) {
+				setStainingCompleted(true);
+				setStainingCompletionDate(System.currentTimeMillis());
+				return true;
+			}
+		} else {
+			if (isStainingCompleted()) {
+				setStainingCompleted(false);
+				setStainingCompletionDate(0);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if all slides are staind and stets the allStainingsPerformed flag
+	 * in the task object to true.
+	 * 
+	 * @param sample
+	 */
+	public static final boolean checkIfAllSlidesAreStained(Task task) {
+		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
+			task.setStainingCompleted(true);
+			task.setStainingCompletionDate(System.currentTimeMillis());
+		} else
+			task.setStainingCompleted(false);
+
+		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
+	}
+
 	/********************************************************
 	 * Interface DiagnosisInfo
 	 ********************************************************/

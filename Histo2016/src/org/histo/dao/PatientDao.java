@@ -7,9 +7,13 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.WorklistSearchFilter;
+import org.histo.model.Log;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.springframework.context.annotation.Scope;
@@ -94,30 +98,32 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Criteria c = getSession().createCriteria(Patient.class, "patient");
 		c.createAlias("patient.tasks", "_tasks");
 		c.createAlias("_tasks.samples", "_samples");
-		c.add(Restrictions.ge("_samples.creationDate", fromDate))
-				.add(Restrictions.le("_samples.creationDate", toDate));
+		c.add(Restrictions.ge("_samples.creationDate", fromDate)).add(Restrictions.le("_samples.creationDate", toDate));
 		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return c.list();
 	}
 
 	public List<Patient> getPatientByStainingsBetweenDates(long fromDate, long toDate, boolean completed) {
-		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.createAlias("patient.tasks", "_tasks");
-		c.add(Restrictions.ge("_tasks.creationDate", fromDate)).add(Restrictions.le("_tasks.creationDate", toDate));
-		c.add(Restrictions.eq("_tasks.stainingCompleted", completed));
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return c.list();
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
+		query.createAlias("patient.tasks", "_tasks");
+		query.add(Restrictions.ge("_tasks.creationDate", fromDate)).add(Restrictions.le("_tasks.creationDate", toDate));
+		query.add(Restrictions.eq("_tasks.stainingCompleted", completed));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
 	public List<Patient> getPatientByDiagnosBetweenDates(long fromDate, long toDate, boolean completed) {
-		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.createAlias("patient.tasks", "_tasks");
-		c.add(Restrictions.ge("_tasks.stainingCompletionDate", fromDate))
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
+		query.createAlias("patient.tasks", "_tasks");
+		query.add(Restrictions.ge("_tasks.stainingCompletionDate", fromDate))
 				.add(Restrictions.le("_tasks.stainingCompletionDate", toDate));
-		c.add(Restrictions.eq("_tasks.stainingCompleted", true));
-		c.add(Restrictions.eq("_tasks.diagnosisCompleted", completed));
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return c.list();
+		query.add(Restrictions.eq("_tasks.stainingCompleted", true));
+		query.add(Restrictions.eq("_tasks.diagnosisCompleted", completed));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
 	public List<Patient> getWorklistDynamicallyByType(long fromDate, long toDate, WorklistSearchFilter filter) {

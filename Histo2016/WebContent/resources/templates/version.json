@@ -9,7 +9,10 @@
          "<b>Added:</b> Dialog zum Erstellen von neuen Aufgaben: Print-Buttons zum Bedrucken des Eingangsbogen wurden hinzugefügt.",
          "<b>Change:</b> Auftragsnummer wird im Eingangsbuch angezeigt",
          "<b>Change:</b> Es werden keine Proben und Blocknummern mehr automatisch generiert",
-         "<b>Added:</b> Upload Dialog: Es ist möglich belibige Datein einer Aufgabe anzuhängen"
+         "<b>Added:</b> Upload Dialog: Es ist möglich belibige Datein einer Aufgabe anzuhängen",
+         "<b>Fix:</b> Patient wird nach Abschluss der Färbung korrekt in der Befundungsliste gezeigt",
+         "<b>Change:</b> Färbung beendet Dialog: Design angepasst",
+          "<b>Fix:</b> Patient wird nach revidieren des Abschluss der Färbung korrekt in der Färbungsliste gezeigt"
       ]
    }
 ]

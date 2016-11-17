@@ -321,20 +321,21 @@ public class PdfHandlerAction {
 	}
 
 	public void saveUploadedPdfToTask(PDFContainer container, Task task) {
-		container= getUploadedFile();
+		container = getUploadedFile();
 		if (container != null) {
 			System.out.println(container.getId());
 			taskDAO.initializePdfData(task);
-			task.addReport(container);
 
-			genericDAO.save(container,
-					resourceBundle.get("log.patient.task.pdf.uploded", container.getName()),
+			genericDAO.save(container, resourceBundle.get("log.patient.task.pdf.uploded", container.getName()),
 					task.getPatient());
 
-			task.getAttachedPdfs().add(container);
+			task.addReport(container);
 
-			genericDAO.save(task, resourceBundle.get("log.patient.task.pdf.attached",
-					task.getTaskID(), container.getName()), task.getPatient());
+			genericDAO.save(task,
+					resourceBundle.get("log.patient.task.pdf.attached", task.getTaskID(), container.getName()),
+					task.getPatient());
+
+			mainHandlerAction.hideDialog(Dialog.UPLOAD_TASK);
 		}
 	}
 
@@ -376,6 +377,7 @@ public class PdfHandlerAction {
 		setUploadedFile(requestReport);
 
 		onChangeFileType();
+
 	}
 
 	/********************************************************

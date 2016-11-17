@@ -298,7 +298,7 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		// checking if staining flag of the task object has to be false
-		SlideUtil.checkIfAllSlidesAreStained(task);
+		task.updateStainingStatus();
 		// generating gui list
 		TaskUtil.generateSlideGuiList(task);
 		// saving patient
@@ -348,7 +348,7 @@ public class TaskHandlerAction implements Serializable {
 		createNewSample(task, material);
 
 		// checking if staining flag of the task object has to be false
-		SlideUtil.checkIfAllSlidesAreStained(task);
+		task.updateStainingStatus();
 		// generating gui list
 		TaskUtil.generateSlideGuiList(task);
 		// saving patient
@@ -393,7 +393,7 @@ public class TaskHandlerAction implements Serializable {
 		createNewBlock(sample, false);
 
 		// checking if staining flag of the task object has to be false
-		SlideUtil.checkIfAllSlidesAreStained(sample.getParent());
+		sample.getParent().updateStainingStatus();
 		// generating gui list
 		TaskUtil.generateSlideGuiList(sample.getParent());
 		// saving patient
