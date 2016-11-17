@@ -35,10 +35,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URLClassLoader;
-// TODO urgent: status und info dialog
+// ++++ urgent: status und info dialog
 // TODO check patient fetch from jason form clinik -> zu viele patienten
 // TODO List für Patienten übersicht
-
+// TODO UREPORT Printing from create dialog
+// TODO Multible councils
 
 //http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
 // ++++: Diagnose page
@@ -46,7 +47,7 @@ import java.net.URLClassLoader;
 // TODO: favouriten
 // ++++ edit page patient external
 // TODO: Logout warn
-// TODO: status display (in navigation)
+// ++++ status display (in navigation)
 // TODO: log in settings rework
 // ++++: Edit external patient from menu bar
 // ++++: Priorisierung

@@ -10,7 +10,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class PdfTemplate implements GsonAble {
+
 	
+	public static final String OTHER = "OTHER";
+	public static final String BIOBANK = "BIOBANK";
 	public static final String UREPORT = "UREPORT";
 	public static final String COUNCIL = "COUNCIL";
 	public static final String INTERNAL_SHORT = "INTERNAL_SHORT";
@@ -18,7 +21,7 @@ public class PdfTemplate implements GsonAble {
 	public static final String SHORT = "SHORT";
 	public static final String EXTERN = "EXTERN";
 	public static final String MANUAL_REPOT = "MANUAL_REPOT";
-	
+
 	/**
 	 * Name of the pdf file
 	 */
@@ -32,6 +35,7 @@ public class PdfTemplate implements GsonAble {
 
 	@Expose
 	private String fileWithLogo;
+
 	@Expose
 	private String fileWithOutLogo;
 
@@ -132,6 +136,79 @@ public class PdfTemplate implements GsonAble {
 		this.taskCode = taskCode;
 	}
 
+	public static final PdfTemplate[] factroy(String jsonFile) {
+
+		Type type = new TypeToken<PdfTemplate[]>() {
+		}.getType();
+
+		Gson gson = new Gson();
+		PdfTemplate[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
+		return result;
+	}
+
+	/**
+	 * Return the first template of an array which is marked as default.
+	 * 
+	 * @param array
+	 * @return
+	 */
+	public static final PdfTemplate getDefaultTemplate(PdfTemplate[] array) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].isDefaultTemplate())
+				return array[i];
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a template matching the given type string.
+	 * 
+	 * @param array
+	 * @param type
+	 * @return
+	 */
+	public static final PdfTemplate getTemplateByType(String jsonFile, String type) {
+		PdfTemplate[] array = factroy(jsonFile);
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].getType().equals(type))
+				return array[i];
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a template matching the given type string.
+	 * 
+	 * @param array
+	 * @param type
+	 * @return
+	 */
+	public static final PdfTemplate getTemplateByType(PdfTemplate[] array, String type) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].getType().equals(type))
+				return array[i];
+		}
+		return null;
+	}
+
+	/**
+	 * Returns an array with only templates that can be used by the program to
+	 * generate a report
+	 * 
+	 * @param json
+	 * @return
+	 */
+	public static final PdfTemplate[] getInternalReportsOnly(String jsonFile) {
+		PdfTemplate[] tmp = factroy(jsonFile);
+		ArrayList<PdfTemplate> result = new ArrayList<>();
+		for (int i = 0; i < tmp.length; i++) {
+			if (!tmp[i].isExternalDocument())
+				result.add(tmp[i]);
+		}
+		return result.toArray(new PdfTemplate[result.size()]);
+
+	}
+
 	public class CodeRectangle {
 		int x;
 		int y;
@@ -170,79 +247,6 @@ public class PdfTemplate implements GsonAble {
 		public void setHeight(float height) {
 			this.height = height;
 		}
-
-	}
-
-	public static final PdfTemplate[] factroy(String jsonFile) {
-
-		Type type = new TypeToken<PdfTemplate[]>() {
-		}.getType();
-
-		Gson gson = new Gson();
-		PdfTemplate[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
-		return result;
-	}
-
-	/**
-	 * Return the first template of an array which is marked as default.
-	 * 
-	 * @param array
-	 * @return
-	 */
-	public static final PdfTemplate getDefaultTemplate(PdfTemplate[] array) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].isDefaultTemplate())
-				return array[i];
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns a template matching the given type string.
-	 * 
-	 * @param array
-	 * @param type
-	 * @return
-	 */
-	public static final PdfTemplate getTemplateByType(String jsonFile, String type) {
-		PdfTemplate[] array = factroy(jsonFile);
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].getType().equals(type))
-				return array[i];
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns a template matching the given type string.
-	 * 
-	 * @param array
-	 * @param type
-	 * @return
-	 */
-	public static final PdfTemplate getTemplateByType(PdfTemplate[] array, String type) {
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].getType().equals(type))
-				return array[i];
-		}
-		return null;
-	}
-
-	/**
-	 * Returns an array with only templates that can be used by the program to
-	 * generate a report
-	 * 
-	 * @param json
-	 * @return
-	 */
-	public static final PdfTemplate[] getInternalReportsOnly(String jsonFile) {
-		PdfTemplate[] tmp = factroy(jsonFile);
-		ArrayList<PdfTemplate> result = new ArrayList<>();
-		for (int i = 0; i < tmp.length; i++) {
-			if (!tmp[i].isExternalDocument())
-				result.add(tmp[i]);
-		}
-		return result.toArray(new PdfTemplate[result.size()]);
 
 	}
 }

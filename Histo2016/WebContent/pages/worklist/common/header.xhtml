@@ -84,7 +84,7 @@
 					<p:menuitem value="#{msg['header.menu.task.sample.create']}"
 						icon="fa fa-plus"
 						onclick="$('#headerForm\\:newSampleBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null }"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
@@ -92,9 +92,9 @@
 
 					<!-- Finish diagnostics, rendered if selected patient is not null, disabled if no task was selected -->
 					<p:menuitem icon="fa fa-picture-o"
-						value="#{msg['header.menu.task.sample.staining.finish']} + TODO"
+						value="#{msg['header.menu.task.sample.staining.finish']}"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null or true}"
 						onclick="$('#headerForm\\:finalizeStaining').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
@@ -142,30 +142,25 @@
 					<p:separator />
 
 					<!-- council -->
-					<p:menuitem value="Konsil"
+					<p:menuitem value="#{msg['header.menu.task.council']}"
+						icon="fa fa-comment-o"
 						onclick="$('#headerForm\\:councilBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
-				</p:submenu>
 
-
-				<p:submenu label="Sonstiges">
+					<!-- upload -->
+					<p:menuitem value="#{msg['header.menu.task.upload']}"
+						icon="fa fa-cloud-upload"
+						onclick="$('#headerForm\\:uploadBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
 
 				</p:submenu>
 
 				<!-- Log -->
-				<p:menuitem value="Historie"
-					rendered="#{worklistHandlerAction.selectedPatient ne null}"
-					actionListener="#{logHandlerAction.preparePatientLogDialog(worklistHandlerAction.selectedPatient)}" />
-			</p:tieredMenu>
+				<p:menuitem value="#{msg['header.menu.log']}"
+					onclick="$('#headerForm\\:logBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+					rendered="#{worklistHandlerAction.selectedPatient ne null}" />
 
-			<p:tieredMenu overlay="true" trigger="menuBtn" my="left top"
-				id="tiredMenu" at="left bottom" style="width:200px">
-				<p:menuitem value="#{msg['body.worklist.header.button.settings']}"
-					onclick="$('#headerForm\\:settingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
-				<p:menuitem value="Einstellungen"></p:menuitem>
-				<p:menuitem value="Info"></p:menuitem>
-				<p:menuitem value="#{msg['body.worklist.header.button.logout']}"
-					url="/spring_logout" />
+
 			</p:tieredMenu>
 
 			<!-- *************** Patient Menu *************** -->
@@ -227,8 +222,6 @@
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
-
-
 			<!-- Print button -->
 			<p:commandButton id="printBtn" style="display:none"
 				widgetVar="printBtnVar"
@@ -244,17 +237,64 @@
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
+			<!-- upload button -->
+			<p:commandButton id="uploadBtn" style="display:none"
+				actionListener="#{pdfHandlerAction.preparePdfUploadDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn" update="contentForm"
+					listener="#{mainHandlerAction.showQueueDialog()}" />
+			</p:commandButton>
+
+
 			<!-- *************** Task Menu *************** -->
+
+			<!-- *************** Log Menu *************** -->
+			<p:commandButton id="logBtn" style="display:none"
+				actionListener="#{logHandlerAction.preparePatientLogDialog(worklistHandlerAction.selectedPatient)}">
+				<p:ajax event="dialogReturn" update="contentForm" />
+			</p:commandButton>
+			<!-- *************** Log Menu *************** -->
+
 
 			<!-- Menu Button -->
 			<p:commandButton id="menuBtn" value="Menu" type="button"
 				icon="ui-icon-triangle-1-s" />
 
+			<!-- Menu Button over -->
+			<p:tieredMenu overlay="true" trigger="menuBtn" my="left top"
+				id="tiredMenu" at="left bottom" style="width:200px">
 
+				<!-- settings button -->
+				<p:menuitem value="#{msg['body.worklist.header.button.settings']}"
+					onclick="$('#headerForm\\:settingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
+
+				<!-- notification -->
+				<p:menuitem value="Einstellungen"></p:menuitem>
+
+				<!-- info button -->
+				<p:menuitem value="#{msg['body.worklist.header.button.info']}"
+					onclick="$('#headerForm\\:infoDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
+
+				<!-- notification -->
+				<p:menuitem value="#{msg['body.worklist.header.button.logout']}"
+					url="/spring_logout" />
+			</p:tieredMenu>
+
+			<!-- settings button -->
 			<p:commandButton id="settingsDialogBtn" style="display:none"
 				actionListener="#{settingsHandlerAction.prepareSettingsDialog()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
+
+			<!-- Info button -->
+			<p:commandButton id="infoDialogBtn" style="display:none"
+				actionListener="#{maintenanceHandlerAction.prepareInfoDialog()}">
+				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+			</p:commandButton>
+
+
+
+
+
 
 
 			<!-- show only button for print dialog, workaround for closing and showing dialogs -->

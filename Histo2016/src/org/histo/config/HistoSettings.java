@@ -8,6 +8,7 @@ public class HistoSettings {
 
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
 	public static final String DEFAULT_SETTINGS_JSON = "classpath:templates/settings.json";
+	public static final String VERSION_JSON = "classpath:templates/version.json";
 	public static final String LABEL_PRINTER_JSON = "classpath:templates/labelPrinter.json";
 
 	public static final String HISTO_BASE_URL = "/Histo2016";

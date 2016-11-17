@@ -129,6 +129,24 @@ public class PdfHandlerAction {
 	// TODO implement
 	private int copies;
 
+	/********************************************************
+	 * Upload
+	 ********************************************************/
+
+	/**
+	 * Uploaded file from upload dialog
+	 */
+	private PDFContainer uploadedFile;
+
+	/**
+	 * File Type of the uploaded file {@link PdfContainer}
+	 */
+	private String uploadedFileType;
+
+	/********************************************************
+	 * Upload
+	 ********************************************************/
+
 	/**
 	 * Shows the print dialog. Does not initializes the bean!
 	 */
@@ -224,20 +242,6 @@ public class PdfHandlerAction {
 		mainHandlerAction.setQueueDialog("#headerForm\\\\:councilBtnShowOnly");
 	}
 
-	/**
-	 * Handles the uploaded pdf orderLetter.
-	 * 
-	 * @param event
-	 */
-	public void handleTaskRequestReport(FileUploadEvent event) {
-		PDFContainer requestReport = new PDFContainer(PdfTemplate.UREPORT);
-		// requestReport.setType("application/pdf");
-		requestReport.setData(event.getFile().getContents());
-		requestReport.setName(event.getFile().getFileName());
-		if (taskHandlerAction.getTemporaryTask() != null)
-			taskHandlerAction.getTemporaryTask().addReport(requestReport);
-	}
-
 	public void onPrintPDF() {
 		if (getTmpPdfContainer().getId() == 0) {
 			genericDAO.save(getTmpPdfContainer(),
@@ -307,7 +311,75 @@ public class PdfHandlerAction {
 	}
 
 	/********************************************************
-	 * DynamicHandler Interface
+	 * Upload
+	 ********************************************************/
+	public void preparePdfUploadDialog(Task task) {
+		setUploadedFile(null);
+		setTaskToPrint(task);
+		setUploadedFileType(PdfTemplate.OTHER);
+		mainHandlerAction.showDialog(Dialog.UPLOAD_TASK);
+	}
+
+	public void saveUploadedPdfToTask(PDFContainer container, Task task) {
+		container= getUploadedFile();
+		if (container != null) {
+			System.out.println(container.getId());
+			taskDAO.initializePdfData(task);
+			task.addReport(container);
+
+			genericDAO.save(container,
+					resourceBundle.get("log.patient.task.pdf.uploded", container.getName()),
+					task.getPatient());
+
+			task.getAttachedPdfs().add(container);
+
+			genericDAO.save(task, resourceBundle.get("log.patient.task.pdf.attached",
+					task.getTaskID(), container.getName()), task.getPatient());
+		}
+	}
+
+	public void onChangeFileType() {
+		if (getUploadedFile() != null) {
+			getUploadedFile().setType(getUploadedFileType());
+
+			// generating a name
+			if (getUploadedFileType() != null && !getUploadedFileType().equals(PdfTemplate.OTHER)) {
+				String pdfName = "";
+				System.out.println(getUploadedFileType());
+				if (getUploadedFileType().equals(PdfTemplate.BIOBANK)) {
+					pdfName = resourceBundle.get("json.pdfTemplate.biobank") + "_"
+							+ getTaskToPrint().getPatient().getPiz() + ".pdf";
+				} else if (getUploadedFileType().equals(PdfTemplate.UREPORT)) {
+					pdfName = resourceBundle.get("json.pdfTemplate.council") + "_"
+							+ getTaskToPrint().getPatient().getPiz() + ".pdf";
+				}
+				getUploadedFile().setName(pdfName);
+			}
+		}
+	}
+
+	/**
+	 * Handles the uploaded pdf orderLetter.
+	 * 
+	 * @param event
+	 */
+	public void uploadPdfForTask(FileUploadEvent event) {
+		PDFContainer requestReport = new PDFContainer();
+		// requestReport.setType("application/pdf");
+		requestReport.setData(event.getFile().getContents());
+		requestReport.setName(event.getFile().getFileName());
+
+		if (getUploadedFileType() != null || !getUploadedFileType().isEmpty()) {
+			requestReport.setType(getUploadedFileType());
+		}
+
+		setUploadedFile(requestReport);
+
+		onChangeFileType();
+	}
+
+	/********************************************************
+	 * Upload
 	 ********************************************************/
 
 	/********************************************************
@@ -436,6 +508,22 @@ public class PdfHandlerAction {
 
 	public void setDateOfReportAsDate(Date dateOfReportAsDate) {
 		this.dateOfReport = dateOfReportAsDate.getTime();
+	}
+
+	public PDFContainer getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(PDFContainer uploadedFile) {
+		this.uploadedFile = uploadedFile;
+	}
+
+	public String getUploadedFileType() {
+		return uploadedFileType;
+	}
+
+	public void setUploadedFileType(String uploadedFileType) {
+		this.uploadedFileType = uploadedFileType;
 	}
 
 	/********************************************************

@@ -33,10 +33,13 @@ public class PatientHandlerAction implements Serializable {
 
 	@Autowired
 	private PatientDao patientDao;
-	
+
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
-	
+
+	@Autowired
+	private WorklistHandlerAction worklistHandlerAction;
+
 	/**
 	 * Tabindex of the addPatient dialog
 	 */
@@ -85,13 +88,13 @@ public class PatientHandlerAction implements Serializable {
 		setTmpPatient(new Patient());
 		getTmpPatient().setPerson(new Person());
 
-		// updating search list
-		if (getSearchForPatientPiz() != null || getSearchForPatientName() != null
-				|| getSearchForPatientSurname() != null || getSearchForPatientBirthday() != null)
-			searchPatient(getSearchForPatientPiz(), getSearchForPatientName(), getSearchForPatientSurname(),
-					getSearchForPatientBirthday());
+		setSearchForPatientBirthday(null);
+		setSearchForPatientName("");
+		setSearchForPatientSurname("");
+		setSearchForPatientPiz("");
 
 		setSelectedPatientFromSearchList(null);
+		setSearchForPatientList(null);
 
 		mainHandlerAction.showDialog(Dialog.WORKLIST_ADD_PATIENT);
 	}
@@ -109,15 +112,13 @@ public class PatientHandlerAction implements Serializable {
 
 		genericDAO.save(patient, resourceBundle.get("log.patient.extern.new", patient.getPerson().getName(),
 				patient.getPerson().getSurname()), patient);
-
-		mainHandlerAction.hideDialog(Dialog.WORKLIST_ADD_PATIENT);
 	}
 
 	/**
 	 * Saves a patient found in the clinic-backend to the hist-backend or if the
 	 * patient is found in the histo-backend the patient data are updated.
 	 */
-	public void addNewInterlPatient(Patient patient) {
+	public void addNewInternalPatient(Patient patient) {
 		if (patient != null) {
 
 			// add patient from the clinic-backend, get all data of this patient
@@ -138,6 +139,23 @@ public class PatientHandlerAction implements Serializable {
 
 		}
 	}
+
+	public void addNewInternalPatientFromGui(Patient patient) {
+		if (patient != null) {
+			addNewExternalPatient(patient);
+			worklistHandlerAction.addPatientToWorkList(patient, true);
+			mainHandlerAction.hideDialog(Dialog.WORKLIST_ADD_PATIENT);
+		}
+	}
+
+	// <f:actionListener
+	// binding="#{patientHandlerAction.addNewInternalPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}"
+	// />
+	// <f:actionListener
+	// binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.selectedPatientFromSearchList.patient,true)}"
+	// />
+	// <f:actionListener
+	// binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
 
 	/**
 	 * Sets the tmpPatient to bull
@@ -180,8 +198,14 @@ public class PatientHandlerAction implements Serializable {
 			// provided and was not added to the local database before
 			if (piz.matches("^[0-9]{8}$") && patients.isEmpty()) {
 				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + piz);
-				result.add(new PatientList(id++, admim.getPatientFromClinicJson(userResult)));
+				PatientList patient = new PatientList(id++, admim.getPatientFromClinicJson(userResult));
+				result.add(patient);
+
 			}
+
+			if (!result.isEmpty())
+				// only one match is expected, set this as selected patient
+				setSelectedPatientFromSearchList(result.isEmpty() ? null : result.get(0));
 
 			setSearchForPatientList(result);
 		} else if ((name != null && !name.isEmpty()) || (surname != null && !surname.isEmpty()) || birthday != null) {
@@ -258,12 +282,13 @@ public class PatientHandlerAction implements Serializable {
 		setTmpPatient(patient);
 		mainHandlerAction.showDialog(Dialog.PATIENT_EDIT);
 	}
-	
+
 	/**
 	 * Saves the edited patient data and closes the dialog
+	 * 
 	 * @param patient
 	 */
-	public void saveEditedExternalPatient(Patient patient){
+	public void saveEditedExternalPatient(Patient patient) {
 		genericDAO.save(patient, resourceBundle.get("log.patient.extern.edit"), patient);
 		mainHandlerAction.hideDialog(Dialog.PATIENT_EDIT);
 	}

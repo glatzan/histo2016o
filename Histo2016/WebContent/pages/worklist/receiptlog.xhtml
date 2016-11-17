@@ -18,6 +18,12 @@
 			style="padding:5px; width:auto">
 			<p:panelGrid styleClass="noBorders" style="border: 1px solid black;">
 				<p:row styleClass="noBorders">
+					<p:column colspan="4">
+					 <h:outputLabel style="font-size:20px;font-weight: bold;" value="#{msg['body.receiptlog.taskId']} #{worklistHandlerAction.selectedPatient.selectedTask.taskID}"/>
+					</p:column>
+				</p:row>
+
+				<p:row styleClass="noBorders">
 					<!-- Receipt Date -->
 					<p:column>
 						<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />

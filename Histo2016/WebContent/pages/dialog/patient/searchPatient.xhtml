@@ -16,23 +16,27 @@
 		<p:panelGrid styleClass="patientSearchTable" columns="3"
 			id="submitGroup" columnClasses="categoryColum,">
 			<h:outputLabel value="#{msg['dialog.addPatient.search.person']}" />
+
 			<h:panelGroup>
 				<!-- Piz -->
 				<p:panelGrid columns="1" styleClass="inputTable"
 					style="float:left;margin-right:20px;">
-					<p:inputMask value="#{patientHandlerAction.searchForPatientPiz}"
-						mask="99999999">
-						<p:ajax process="submitGroup" update="patientList" delay="200"
-							event="keyup"
-							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
-					</p:inputMask>
+					<h:panelGroup>
+						<p:focus for="pizInput" />
+						<p:inputMask value="#{patientHandlerAction.searchForPatientPiz}"
+							id="pizInput" tabindex="1" mask="99999999">
+							<p:ajax process="submitGroup" update="patientList" delay="200"
+								event="keyup"
+								listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
+						</p:inputMask>
+					</h:panelGroup>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.piz']}" />
 				</p:panelGrid>
 				<!-- Birthday -->
 				<p:panelGrid columns="1" styleClass="inputTable">
 					<p:calendar
 						value="#{patientHandlerAction.searchForPatientBirthday}"
-						locale="de" pattern="dd.MM.yyyy" mask="true">
+						tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
 						<p:ajax process="submitGroup" update="patientList" delay="300"
 							event="keyup"
 							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
@@ -44,7 +48,8 @@
 				<!-- Name -->
 				<p:panelGrid columns="1" styleClass="inputTable"
 					style="float:left;margin-right:20px;">
-					<p:inputText value="#{patientHandlerAction.searchForPatientName}">
+					<p:inputText value="#{patientHandlerAction.searchForPatientName}"
+						tabindex="2">
 						<p:ajax process="submitGroup" update="patientList" delay="300"
 							event="keyup"
 							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
@@ -53,7 +58,7 @@
 				</p:panelGrid>
 				<!-- Surname -->
 				<p:panelGrid columns="1" styleClass="inputTable">
-					<p:inputText
+					<p:inputText tabindex="3"
 						value="#{patientHandlerAction.searchForPatientSurname}">
 						<p:ajax process="submitGroup" update="patientList" delay="300"
 							event="keyup"
@@ -121,37 +126,25 @@
 				<h:outputText value="#{patientList.patient.piz}" />
 			</p:column>
 
-			<p:ajax event="rowDblselect" oncomplete="remoteSumbitDoubleClick()">
+			<p:ajax event="rowDblselect"
+				listener="#{patientHandlerAction.addNewInternalPatientFromGui(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
 
-			</p:ajax>
+
 			<!--   listener="#{patientHandlerAction.addNewInterlPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}" />-->
 		</p:dataTable>
-
-		<p:remoteCommand name="remoteSumbitDoubleClick" partialSubmit="true"
-			process="@this">
-			<f:actionListener
-				binding="#{patientHandlerAction.addNewInterlPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
-			<f:actionListener
-				binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.selectedPatientFromSearchList.patient,true)}" />
-			<f:actionListener
-				binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
-		</p:remoteCommand>
-
 	</div>
 
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="2" style="float:right;">
+
 				<!-- Add button -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
-					icon="fa fa-fw fa-user-plus" styleClass="smallButton buttonRighMarginInListExtended">
+					id="submitAddButton" icon="fa fa-fw fa-user-plus" process="@form"
+					styleClass="smallButton buttonRighMarginInListExtended">
 					<f:actionListener
-						binding="#{patientHandlerAction.addNewInterlPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
-					<f:actionListener
-						binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.selectedPatientFromSearchList.patient,true)}" />
-					<f:actionListener
-						binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
+						binding="#{patientHandlerAction.addNewInternalPatientFromGui(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
 				</p:commandButton>
 
 				<!-- Close Button -->

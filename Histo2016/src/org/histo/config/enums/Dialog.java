@@ -13,8 +13,8 @@ public enum Dialog {
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), 
 	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null, 290, 120, false, false, true), 
 	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 1024, 600, false, false, true), // 16:9
-	PATIENT_LOG("/pages/dialog/history/patientLog", null, 620, 500, false, false, true),
-	TASK_CREATE("/pages/dialog/task/createTask", null, 640, 360, false, false, true), // 16:9
+	PATIENT_LOG("/pages/dialog/history/patientLog", null,  1024, 600, false, false, true),// 16:9
+	TASK_CREATE("/pages/dialog/task/createTask", null, 858, 484, false, false, true), // 16:9
 	TASK_ARCHIV("/pages/dialog/task/archivTask", null, 0, 0, false, false, true), 
 	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9
 	SAMPLE_ARCHIV("/pages/dialog/task/archivSample", null, 0, 0, false, false, true), 
@@ -31,8 +31,10 @@ public enum Dialog {
 	COUNCIL("/pages/dialog/task/council", null,  640, 360, false, false, true), // 16:9
 	NOTIFICATION_ALREADY_PERFORMED("/pages/dialog/notification/notification_already_performed", null,  480, 272, false, false, true), //  16:9
 	NOTIFICATION("/pages/dialog/notification/notification", null,  1024, 600, false, false, true),  // 16:9
-	NOTIFICATION_PREVIEW("/pages/dialog/notification/notification_preview", null,  1024, 600, false, false, true); //  16:9
-
+	NOTIFICATION_PREVIEW("/pages/dialog/notification/notification_preview", null,  1024, 600, false, false, true), //  16:9
+	INFO("/pages/dialog/info/info", null,  640, 360, false, false, true), //  16:9
+	UPLOAD_TASK("/pages/dialog/upload/uploadPdfToTask", null,  640, 360, false, false, true);
+	
 	private final String path;
 	private final boolean useOptions;
 	private final String header;
