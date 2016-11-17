@@ -65,7 +65,7 @@
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<!-- classpath*:/ -->
-		<property name="basenames" value="org/histo/ui/messages">
+		<property name="basenames" value="messages/messages">
 		</property>
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
