@@ -156,7 +156,7 @@
 							value="#{worklistHandlerAction.selectedPatient.selectedTask.contacts}">
 
 							<p:column headerText="#{msg['body.receiptlog.contact.name']}">
-								<h:outputText value="#{contact.physician.fullName}" />
+								<h:outputText value="#{contact.physician.person.fullName}" />
 							</p:column>
 
 							<p:column headerText="#{msg['body.receiptlog.contact.role']}">

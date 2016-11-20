@@ -15,6 +15,7 @@ import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.HistoUser;
 import org.histo.model.MaterialPreset;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
@@ -522,6 +523,7 @@ public class SettingsHandlerAction {
 	 */
 	public void prepareNewPhysician() {
 		setTmpPhysician(new Physician());
+		getTmpPhysician().setPerson(new Person());
 		setPhysicianTabIndex(SettingsTab.P_ADD_LDPA);
 	}
 
@@ -579,7 +581,7 @@ public class SettingsHandlerAction {
 			physician.setDefaultContactRole(ContactRole.OTHER);
 
 		genericDAO.save(physician,
-				resourceBundle.get("log.settings.physician.physician.edit", physician.getFullName()));
+				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
 		discardTmpPhysician();
 	}
 
@@ -595,7 +597,7 @@ public class SettingsHandlerAction {
 			physician.setDefaultContactRole(ContactRole.OTHER);
 
 		genericDAO.save(physician,
-				resourceBundle.get("log.settings.physician.privatePhysician.save", physician.getFullName()));
+				resourceBundle.get("log.settings.physician.privatePhysician.save", physician.getPerson().getFullName()));
 		discardTmpPhysician();
 	}
 
@@ -627,12 +629,12 @@ public class SettingsHandlerAction {
 			ldapPhysician = physicianFromDatabase;
 
 			genericDAO.save(ldapPhysician,
-					resourceBundle.get("log.settings.physician.ldap.update", ldapPhysician.getFullName()));
+					resourceBundle.get("log.settings.physician.ldap.update", ldapPhysician.getPerson().getFullName()));
 			return;
 		}
 
 		genericDAO.save(ldapPhysician,
-				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getFullName()));
+				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getPerson().getFullName()));
 
 		discardTmpPhysician();
 	}
@@ -647,7 +649,7 @@ public class SettingsHandlerAction {
 		physician.setArchived(archive);
 		genericDAO.save(physician,
 				resourceBundle.get(archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
-						physician.getFullName()));
+						physician.getPerson().getFullName()));
 		preparePhysicianList();
 	}
 

@@ -19,7 +19,7 @@ import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.LabelPrinter;
+import org.histo.model.transitory.json.LabelPrinter;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.HistoUtil;

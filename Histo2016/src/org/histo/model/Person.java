@@ -63,6 +63,8 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	@Expose
 	protected String phoneNumber = "";
 	@Expose
+	protected String mobileNumber = "";
+	@Expose
 	protected String fax = "";
 	@Expose
 	protected String email = "";
@@ -72,7 +74,7 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	protected String department = "";
 
 	protected boolean archived;
-	
+
 	public Person() {
 	}
 
@@ -234,6 +236,28 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		return gson.toJson(this);
 	}
 
+	/**
+	 * Returns a full name with title, name and surname.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public String getFullName() {
+		StringBuilder result = new StringBuilder();
+
+		if (getTitle() != null && !getTitle().isEmpty())
+			result.append(getTitle() + " ");
+
+		if (getName() != null && !getName().isEmpty())
+			result.append(getName() + " ");
+
+		if (getSurname() != null && !getSurname().isEmpty())
+			result.append(getSurname() + " ");
+
+		// remove the last space from the string
+		return result.substring(0, result.length() - 2);
+	}
+
 	/********************************************************
 	 * Interace archive able
 	 ********************************************************/
@@ -264,7 +288,4 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	 * Interace archive able
 	 ********************************************************/
 
-	
 }
-
-

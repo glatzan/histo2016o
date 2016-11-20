@@ -229,7 +229,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax update="@form"
@@ -285,7 +285,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax event="change"
@@ -333,7 +333,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax event="change"
@@ -516,7 +516,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax update="@form"
@@ -568,7 +568,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax update="@form"

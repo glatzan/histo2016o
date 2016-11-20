@@ -1,4 +1,4 @@
-package org.histo.model.transitory;
+package org.histo.model.transitory.json;
 
 import org.histo.model.interfaces.GsonAble;
 import org.histo.util.HistoUtil;

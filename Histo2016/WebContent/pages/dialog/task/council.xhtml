@@ -52,7 +52,7 @@
 
 						<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
 							var="allAvailablePhysicians"
-							itemLabel="#{allAvailablePhysicians.fullName}"
+							itemLabel="#{allAvailablePhysicians.person.fullName}"
 							itemValue="#{allAvailablePhysicians}" />
 
 						<p:ajax process="@this" event="change"
@@ -109,7 +109,7 @@
 
 						<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
 							var="allAvailablePhysicians"
-							itemLabel="#{allAvailablePhysicians.fullName}"
+							itemLabel="#{allAvailablePhysicians.person.fullName}"
 							itemValue="#{allAvailablePhysicians}" />
 
 						<p:ajax process="@this" event="change"

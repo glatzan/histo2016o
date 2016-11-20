@@ -2,7 +2,7 @@ package org.histo.action;
 
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
-import org.histo.model.transitory.ProgramVersion;
+import org.histo.model.transitory.json.ProgramVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

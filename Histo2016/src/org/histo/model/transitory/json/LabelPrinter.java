@@ -1,4 +1,4 @@
-package org.histo.model.transitory;
+package org.histo.model.transitory.json;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.naming.NamingEnumeration;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;

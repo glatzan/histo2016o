@@ -16,7 +16,7 @@ import org.histo.interfaces.DynamicHandler;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.PdfTemplate;
+import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.ui.transformer.PdfTemplateTransformer;
 import org.histo.util.PdfGenerator;
 import org.primefaces.event.FileUploadEvent;

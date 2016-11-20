@@ -1,23 +1,13 @@
 package org.histo.config;
 
+import java.io.IOException;
 import java.util.Collection;
-import java.util.Hashtable;
-
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.Physician;
-import org.histo.util.UserUtil;
+import org.histo.model.transitory.json.LdapConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -30,6 +20,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
+	private static Logger logger = Logger.getLogger("histo");
+
 	public static String host = "ldap.ukl.uni-freiburg.de";
 	public static String port = "389";
 	public static String suffix = "dc=ukl,dc=uni-freiburg,dc=de";
@@ -38,90 +30,64 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private UserDAO userDAO;
 
+	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String userName = authentication.getName().trim();
 		String password = authentication.getCredentials().toString().trim();
 
-//		try {
-//			Hashtable<String, String> env = new Hashtable<String, String>();
-//			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-//			env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port + "/" + suffix);
-//
-//			SearchControls constraints = new SearchControls();
-//			constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
-//
-//			// search for user Data
-//			DirContext ctx = new InitialDirContext(env);
-//
-//			NamingEnumeration<?> results = ctx.search(base, "(uid=" + userName + ")", constraints);
-//
-//			int count = 0;
-//			String dn = null;
-//			Attributes attrs = null;
-//			while (results != null && results.hasMore()) {
-//				SearchResult result = (SearchResult) results.next();
-//
-//				Attributes attrsTmp = result.getAttributes();
-//
-//				if (attrsTmp != null) {
-//					Attribute attr = attrsTmp.get("uid");
-//					if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
-//						count++;
-//						dn = result.getName() + "," + base + "," + suffix;
-//						attrs = attrsTmp;
-//					} else {
-//						System.out.println("Not activ account: " + attr.get().toString());
-//					}
-//
-//				}
-//			}
-//
-//			if ((dn == null) || (count != 1)) {
-//				throw new NamingException("Fehler bei der Authentisierung");
-//			}
-//
-//			ctx.close();
-//
-//			env.put(Context.SECURITY_PRINCIPAL, dn);
-//			env.put(Context.SECURITY_CREDENTIALS, password);
-//
-//			// if now error is thrown the auth attend was successful
-//			ctx = new InitialDirContext(env);
+		try {
+			LdapConnection connection = LdapConnection.factroy(HistoSettings.LDAP_JSON);
 
-			System.out.println("*** Bind erfolgreich ***");
-			HistoUser histoUser = userDAO.loadUserByName(userName);
+			connection.openConnection();
 
-			if (histoUser == null) {
-				histoUser = UserUtil.createNewUser(userName);
+			Physician physician = connection.getPhyscican(userName);
 
-				// if the physician was added as surgeon the useracc an the
-				// physician will be merged
-				Physician tmp = userDAO.loadPhysicianByUID(userName);
-				if (tmp != null)
-					histoUser.setPhysician(tmp);
-			}
-			
-////			 updating the physician attributes 
-//			UserUtil.updatePhysicianData(histoUser.getPhysician(), attrs);
-//
-//			ctx.close();
+			if (physician != null) {
+				String dn = physician.getDnObjectName() + "," + base + "," + suffix;
 
-			histoUser.setLastLogin(System.currentTimeMillis());
+				connection.closeConnection();
 
-			userDAO.saveUser(histoUser);
+				logger.info("Physician found " + physician.getPerson().getFullName());
 
+				// if now error was thrown auth was successful
+				connection.checkPassword(dn, password);
 
-			Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
+				logger.info("Login successful " + physician.getPerson().getFullName());
 
-			return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
+				HistoUser histoUser = userDAO.loadUserByName(userName);
 
-//		} catch (NamingException e) {
-//			System.err.println("NamingException: " + e.getMessage());
-//			throw new BadCredentialsException("Username not found.");
-//		}
+				if (histoUser == null) {
+					logger.info("Creating new HistoUser " + physician.getPerson().getFullName());
+					histoUser = new HistoUser(userName);
+
+					// if the physician was added as surgeon the useracc an the
+					// physician will be merged
+					Physician physicianFromDatabase = userDAO.loadPhysicianByUID(userName);
+					if (physicianFromDatabase != null) {
+						histoUser.setPhysician(physicianFromDatabase);
+						logger.info("Physician already in datanse " + physician.getPerson().getFullName());
+					}
+				}
+
+				histoUser.getPhysician().copyIntoObject(physician);
+
+				connection.closeConnection();
+
+				histoUser.setLastLogin(System.currentTimeMillis());
+
+				userDAO.saveUser(histoUser, "Benutzerdaten geupdated");
+
+				Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
+
+				return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
+			} else
+				throw new BadCredentialsException("Username not found.");
+		} catch (NamingException | IOException e) {
+			System.err.println("NamingException: " + e.getMessage());
+			throw new BadCredentialsException("Username not found.");
+		}
 
 	}
-
 
 	@Override
 	public boolean supports(Class<? extends Object> authentication) {

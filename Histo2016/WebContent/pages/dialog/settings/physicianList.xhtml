@@ -16,23 +16,23 @@
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 			<!-- title -->
-			<p:column sortBy="#{physician.title}"
+			<p:column sortBy="#{physician.person.title}"
 				headerText="#{msg['dialog.settings.person.list.title']}"
 				style="width:15%">
-				<h:outputText value="#{physician.title}" />
+				<h:outputText value="#{physician.person.title}" />
 			</p:column>
 
 			<!-- Name -->
-			<p:column sortBy="#{physician.name}"
+			<p:column sortBy="#{physician.person.name}"
 				headerText="#{msg['dialog.settings.person.list.name']}"
 				style="width:20%">
-				<h:outputText value="#{physician.name}" />
+				<h:outputText value="#{physician.person.name}" />
 			</p:column>
 
 			<!-- Vorname -->
 			<p:column headerText="#{msg['dialog.settings.person.list.surname']}"
 				style="width:20%">
-				<h:outputText value="#{physician.surname}" />
+				<h:outputText value="#{physician.person.surname}" />
 			</p:column>
 
 			<!-- Role -->

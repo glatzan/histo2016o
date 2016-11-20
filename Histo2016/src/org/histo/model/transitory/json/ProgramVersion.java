@@ -1,4 +1,4 @@
-package org.histo.model.transitory;
+package org.histo.model.transitory.json;
 
 import java.lang.reflect.Type;
 
