@@ -12,6 +12,7 @@ import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.Gender;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
@@ -159,7 +160,7 @@ public class PdfGenerator {
 		StringBuffer contAdr = new StringBuffer();
 
 		if (physician != null) {
-			contAdr.append(physician.getPerson().getGender() == 'w' ? resourceBundle.get("pdf.address.female")
+			contAdr.append(physician.getPerson().getGender() == Gender.FEMALE ? resourceBundle.get("pdf.address.female")
 					: resourceBundle.get("pdf.address.male") + "\r\n");
 			contAdr.append(physician.getPerson().getFullName() + "\r\n");
 			contAdr.append(physician.getPerson().getStreet() + " " + physician.getPerson().getHouseNumber() + "\r\n");

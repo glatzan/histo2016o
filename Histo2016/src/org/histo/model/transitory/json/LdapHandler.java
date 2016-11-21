@@ -32,7 +32,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
-public class LdapConnection implements GsonAble {
+public class LdapHandler implements GsonAble {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -71,7 +71,7 @@ public class LdapConnection implements GsonAble {
 			SearchResult result = (SearchResult) results.next();
 			Attributes attrs = result.getAttributes();
 
-			if(logger.isTraceEnabled())
+			if (logger.isTraceEnabled())
 				printAllAttributes(attrs);
 
 			if (attrs != null) {
@@ -121,16 +121,10 @@ public class LdapConnection implements GsonAble {
 		connection = null;
 	}
 
-	public static final LdapConnection factroy(String jsonFile) {
-		Gson gson = new Gson();
-		LdapConnection result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), LdapConnection.class);
-
-		logger.debug("Creating Ldap Connection " + result.getHost() + ":" + result.getPort() + " Base: "
-				+ result.getBase() + " Suffix: " + result.getSuffix());
-
-		return result;
-	}
-
+	/********************************************************
+	 * static
+	 ********************************************************/
+	
 	public static final void printAllAttributes(Attributes attrs) {
 		for (NamingEnumeration<?> ae = attrs.getAll(); ae.hasMoreElements();) {
 			Attribute attr;
@@ -146,6 +140,14 @@ public class LdapConnection implements GsonAble {
 
 		}
 	}
+
+	/********************************************************
+	 * static
+	 ********************************************************/
+	
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
 	public String getHost() {
 		return host;
@@ -178,5 +180,9 @@ public class LdapConnection implements GsonAble {
 	public void setBase(String base) {
 		this.base = base;
 	}
+
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
 }

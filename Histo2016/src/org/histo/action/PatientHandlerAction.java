@@ -13,7 +13,6 @@ import org.histo.dao.PatientDao;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.ui.PatientList;
-import org.histo.util.PersonAdministration;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -121,11 +120,10 @@ public class PatientHandlerAction implements Serializable {
 	public void addNewInternalPatient(Patient patient) {
 		if (patient != null) {
 
-			// add patient from the clinic-backend, get all data of this patient
+			// add patient from the clinic-backend, get all data of this patient, piz search is more specific
 			if (!patient.getPiz().isEmpty()) {
-				PersonAdministration admim = new PersonAdministration();
-				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + patient.getPiz());
-				admim.updatePatientFromClinicJson(patient, userResult);
+				Patient clinicPatient = mainHandlerAction.getSettings().getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+				patient.copyIntoObject(clinicPatient);
 			}
 
 			// patient not in database, is new patient from database
@@ -173,8 +171,6 @@ public class PatientHandlerAction implements Serializable {
 	 */
 	public void searchPatient(String piz, String name, String surname, Date birthday) {
 
-		PersonAdministration admim = new PersonAdministration();
-
 		// id for patientList, used by primefaces to get the selected row
 		int id = 0;
 
@@ -186,8 +182,8 @@ public class PatientHandlerAction implements Serializable {
 			// updates all patients from the local database with data from the
 			// clinic backend
 			for (Patient patient : patients) {
-				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + patient.getPiz());
-				admim.updatePatientFromClinicJson(patient, userResult);
+				Patient clinicPatient = mainHandlerAction.getSettings().getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+				patient.copyIntoObject(clinicPatient);
 				result.add(new PatientList(id++, patient));
 			}
 
@@ -197,8 +193,8 @@ public class PatientHandlerAction implements Serializable {
 			// only get patient from clinic backend if piz is completely
 			// provided and was not added to the local database before
 			if (piz.matches("^[0-9]{8}$") && patients.isEmpty()) {
-				String userResult = admim.getRequest(HistoSettings.PATIENT_GET_URL + "/" + piz);
-				PatientList patient = new PatientList(id++, admim.getPatientFromClinicJson(userResult));
+				Patient clinicPatient = mainHandlerAction.getSettings().getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
+				PatientList patient = new PatientList(id++, clinicPatient);
 				result.add(patient);
 
 			}
@@ -213,11 +209,9 @@ public class PatientHandlerAction implements Serializable {
 
 			// getting all patients with given parameters from the clinic
 			// backend
-			String requestURl = HistoSettings.PATIENT_GET_URL + "?name=" + name + "&vorname=" + surname
-					+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : "");
 
-			String userResult = admim.getRequest(requestURl);
-			List<Patient> clinicPatients = admim.getPatientsFromClinicJson(userResult);
+			List<Patient> clinicPatients = mainHandlerAction.getSettings().getClinicJsonHandler().getPatientsFromClinicJson("?name=" + name + "&vorname=" + surname
+						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
 
 			ArrayList<String> notFoundPiz = new ArrayList<String>(clinicPatients.size());
 			ArrayList<String> foundPiz = new ArrayList<String>();

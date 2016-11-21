@@ -89,9 +89,9 @@ public class GenericDAO extends AbstractDAO {
 		// sets a logMessage to the securityContext, this is a workaround for
 		// passing variables to the revisionListener
 		if (logInfo != null) {
-			logger.info("Adding log Info " + logInfo.getInfo());
+			logger.info("Loginfo: " + logInfo.getInfo());
 			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO,
-					logInfo.getInfo() + " for " + logInfo.getPatient().getPerson().getFullName());
+					logInfo.getInfo() + " for " + (logInfo.getPatient() != null ?  logInfo.getPatient().getPerson().getFullName() : "" ));
 		}
 
 		Session session = getSession();

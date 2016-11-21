@@ -21,7 +21,6 @@ import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.ui.NotificationChooser;
 import org.histo.util.HistoUtil;
-import org.histo.util.MailUtil;
 import org.histo.util.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -200,10 +199,10 @@ public class NotificationHandlerAction implements Serializable {
 		toReplace.put("%piz%", task.getPatient() == null ? "Keine Piz" : task.getPatient().getPiz());
 
 		String emailSubject = HistoUtil.replaceWildcardsInString(
-				mainHandlerAction.getSettings().getDefaultReportEmailSubject(), toReplace);
+				mainHandlerAction.getSettings().getMail().getDefaultReportEmailSubject(), toReplace);
 		setEmailSubject(emailSubject);
 
-		setEmailText(mainHandlerAction.getSettings().getDefaultReportEmailText());
+		setEmailText(mainHandlerAction.getSettings().getMail().getDefaultReportEmailText());
 
 		setNotificationPerformed(false);
 

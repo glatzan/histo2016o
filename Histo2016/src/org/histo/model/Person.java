@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -18,6 +20,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Gender;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.LogAble;
 
@@ -35,15 +38,12 @@ public class Person implements Serializable, LogAble, ArchivAble {
 
 	private static final long serialVersionUID = 2533238775751991883L;
 
-	public static final char GENDER_MALE = 'M';
-	public static final char GENDER_FEMALE = 'W';
-
 	private long version;
 
 	@Expose
 	protected long id;
 	@Expose
-	protected char gender = ' ';
+	protected Gender gender = Gender.UNKNOWN;
 	@Expose
 	protected String title = "";
 	@Expose
@@ -69,7 +69,7 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	@Expose
 	protected String email = "";
 	@Expose
-	protected String land = "";
+	protected String country = "";
 	@Expose
 	protected String department = "";
 
@@ -120,7 +120,6 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		this.surname = surname;
 	}
 
-	@Column()
 	@Type(type = "date")
 	public Date getBirthday() {
 		return birthday;
@@ -130,7 +129,6 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		this.birthday = birthday;
 	}
 
-	@Column
 	public String getTitle() {
 		return title;
 	}
@@ -139,12 +137,12 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		this.title = title;
 	}
 
-	@Column
-	public char getGender() {
+	@Enumerated(EnumType.STRING)
+	public Gender getGender() {
 		return gender;
 	}
 
-	public void setGender(char geneder) {
+	public void setGender(Gender geneder) {
 		this.gender = geneder;
 	}
 
@@ -193,7 +191,6 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		this.email = email;
 	}
 
-	@Column
 	public String getHouseNumber() {
 		return houseNumber;
 	}
@@ -202,7 +199,6 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		this.houseNumber = houseNumber;
 	}
 
-	@Column
 	public String getFax() {
 		return fax;
 	}
@@ -211,13 +207,21 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		this.fax = fax;
 	}
 
-	@Column
-	public String getLand() {
-		return land;
+	@Column(length = 255)
+	public String getCountry() {
+		return country;
 	}
 
-	public void setLand(String land) {
-		this.land = land;
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
 
 	public String getDepartment() {

@@ -90,7 +90,7 @@
 			<p:column
 				headerText="#{msg['dialog.addPatient.search.birthday.short']}"
 				sortBy="#{patientList.patient.person.birthday}">
-				<h:outputText
+				<h:outputText rendered="#{patientList.patient.person.birthday ne null}"
 					value="#{mainHandlerAction.date(patientList.patient.person.birthday,'dd.MM.yyyy')}" />
 			</p:column>
 			<!-- gender -->
@@ -99,7 +99,8 @@
 					<h:outputText value="#{msg['dialog.addPatient.search.gender']}"
 						title="#{msg['dialog.addPatient.search.gender.info']}" />
 				</f:facet>
-				<h:outputText value="#{patientList.patient.person.gender}" />
+				<h:outputText
+					value="#{patientList.patient.person.gender eq 'FEMALE' ? msg['dialog.addPatient.search.gender.female'] : msg['dialog.addPatient.search.gender.male']}" />
 			</p:column>
 
 			<!-- databse -->

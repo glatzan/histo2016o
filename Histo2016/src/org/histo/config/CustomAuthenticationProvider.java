@@ -8,7 +8,7 @@ import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.transitory.json.LdapConnection;
+import org.histo.model.transitory.json.LdapHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -37,7 +37,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String password = authentication.getCredentials().toString().trim();
 
 		try {
-			LdapConnection connection = LdapConnection.factroy(HistoSettings.LDAP_JSON);
+			HistoSettings settings = HistoSettings.factory();
+			LdapHandler connection = settings.getLdap();
 
 			connection.openConnection();
 
@@ -73,6 +74,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 						histoUser.getPhysician().setUid(userName);
 						histoUser.getPhysician().setClinicEmployee(true);
 					}
+					
+					// sending mail to inform about unlocking request
+					settings.getMail().sendMail(settings.getAdminMails(), "Freischaltung", userName + " erbittet eine Freischaltung");
 				}
 
 				histoUser.getPhysician().copyIntoObject(physician);

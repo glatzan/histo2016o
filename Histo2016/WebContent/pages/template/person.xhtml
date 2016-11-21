@@ -50,11 +50,11 @@
 				<p:selectOneMenu id="#{pannelID}_gender" style="width:100px"
 					disabled="#{disabled}" value="#{person.gender}" >
 					<f:selectItem itemLabel="#{msg['include.person.gender.select']}"
-						itemValue="-" />
+						itemValue="UNKNOW" />
 					<f:selectItem itemLabel="#{msg['include.person.gender.male']}"
-						itemValue="m" />
+						itemValue="MALE" />
 					<f:selectItem itemLabel="#{msg['include.person.gender.female']}"
-						itemValue="f" />
+						itemValue="FEMALE" />
 				</p:selectOneMenu>
 				<p:outputLabel value="#{msg['include.person.gender']}" />
 			</p:panelGrid>

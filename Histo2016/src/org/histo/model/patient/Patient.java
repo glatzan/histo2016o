@@ -1,7 +1,12 @@
 package org.histo.model.patient;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -27,6 +32,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Gender;
 import org.histo.config.enums.StainingStatus;
 import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
@@ -36,6 +42,7 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TimeUtil;
+import org.primefaces.json.JSONObject;
 
 @Entity
 @Audited
@@ -43,7 +50,8 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient implements Parent<Patient>, DiagnosisInfo<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble {
+public class Patient
+		implements Parent<Patient>, DiagnosisInfo<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble {
 
 	private long id;
 
@@ -94,12 +102,98 @@ public class Patient implements Parent<Patient>, DiagnosisInfo<Task>, StainingIn
 	 */
 	private boolean archived = false;
 
-	public Patient() {
-		setCreationDate(0);
-	}
-	/*
-	 * ************************** Transient ****************************
+	/**
+	 * Standard constructor
 	 */
+	public Patient() {
+	}
+
+	/********************************************************
+	 * Transient Methods
+	 ********************************************************/
+
+	/**
+	 * Updates the patient data with a given patient dummy
+	 * @param patient
+	 */
+	public final void  copyIntoObject(Patient patient) {
+		setPiz(patient.getPiz());
+		setInsurance(getInsurance());
+		getPerson().setTitle(patient.getPerson().getTitle());
+		getPerson().setName(patient.getPerson().getName());
+		getPerson().setSurname(patient.getPerson().getSurname());
+		getPerson().setBirthday(patient.getPerson().getBirthday());
+		getPerson().setTown(patient.getPerson().getTown());
+		getPerson().setCountry(patient.getPerson().getCountry());
+		getPerson().setPostcode(patient.getPerson().getPostcode());
+		getPerson().setStreet(patient.getPerson().getStreet());
+		getPerson().setPhoneNumber(patient.getPerson().getPhoneNumber());
+		getPerson().setGender(patient.getPerson().getGender());
+		getPerson().setEmail(patient.getPerson().getEmail());
+		getPerson().setHouseNumber(patient.getPerson().getHouseNumber());
+	}
+
+	/**
+	 * Updates the patient data with a given json string.
+	 * @param json
+	 */
+	public final void  copyIntoObject(String json) {
+		copyIntoObject(new JSONObject(json));
+	}
+	
+	/**
+	 * Updates the patient object with a given json array from the clinic backend
+	 *
+	 * { "vorname":"Test", "mode":"W", "status":null, "piz":"25201957",
+	 * "sonderinfo":"", "iknr":"00190", "kvnr":null, "titel":"Prof. Dr. med.",
+	 * "versichertenstatus":" ", "tel":"12-4085", "anschrift": "Gillenweg 4",
+	 * "wop":null, "plz":"79110", "name":"Test", "geburtsdatum":"1972-08-22",
+	 * "gueltig_bis":null, "krankenkasse":"Wissenschaftliche Unters.",
+	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg",
+	 * "status2":null }
+	 * 
+	 * @param patient
+	 * @param json
+	 * @return
+	 */
+	public final void copyIntoObject(JSONObject obj) {
+
+		Person person = getPerson();
+
+		// Person data
+		person.setTitle(obj.optString("titel"));
+		person.setName(obj.optString("name"));
+
+		person.setSurname(obj.optString("vorname"));
+
+		// parsing date
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
+		Date date;
+		try {
+			date = format.parse(obj.optString("geburtsdatum"));
+		} catch (ParseException e) {
+			date = new Date();
+		}
+		person.setBirthday(date);
+
+		person.setTown(obj.optString("ort"));
+		person.setCountry(obj.optString("land"));
+		person.setPostcode(obj.optString("plz"));
+		person.setStreet(obj.optString("anschrift"));
+		person.setPhoneNumber(obj.optString("tel"));
+
+		// 1 equals female, empty equals male
+		person.setGender(obj.optString("weiblich").equals("1") ? Gender.FEMALE : Gender.MALE);
+
+		// TODO
+		person.setEmail("");
+		// todo
+		person.setHouseNumber("");
+
+		// patient data
+		setPiz(obj.optString("piz"));
+		setInsurance(obj.optString("krankenkasse"));
+	}
 
 	/**
 	 * Returns a list with all currently active tasks
@@ -132,13 +226,13 @@ public class Patient implements Parent<Patient>, DiagnosisInfo<Task>, StainingIn
 		return result.isEmpty() ? null : result;
 	}
 
-	/*
-	 * ************************** Transient ****************************
-	 */
+	/********************************************************
+	 * Transient Methods
+	 ********************************************************/
 
-	/*
-	 * ************************** Getter/Setter ****************************
-	 */
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 	@Override
 	@Id
 	@GeneratedValue(generator = "patient_sequencegenerator")
@@ -238,9 +332,9 @@ public class Patient implements Parent<Patient>, DiagnosisInfo<Task>, StainingIn
 		this.privateInsurance = privateInsurance;
 	}
 
-	/*
-	 * ************************** Getter/Setter ****************************
-	 */
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
 	/********************************************************
 	 * Interface DiagnosisInfo

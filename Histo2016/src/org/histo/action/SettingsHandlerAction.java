@@ -25,7 +25,7 @@ import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
 import org.histo.model.transitory.PhysicianRoleOptions;
-import org.histo.model.transitory.json.LdapConnection;
+import org.histo.model.transitory.json.LdapHandler;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
 import org.histo.util.SlideUtil;
@@ -576,7 +576,7 @@ public class SettingsHandlerAction {
 		try {
 			logger.debug("Search for " + request.toString());
 
-			LdapConnection connection = LdapConnection.factroy(HistoSettings.LDAP_JSON);
+			LdapHandler connection = mainHandlerAction.getSettings().getLdap();
 			
 			// searching for physicians
 			connection.openConnection();

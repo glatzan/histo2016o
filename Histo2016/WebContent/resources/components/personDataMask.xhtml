@@ -67,11 +67,11 @@
 					style="width:100px" disabled="#{cc.attrs.disabled}"
 					value="#{cc.attrs.person.gender}">
 					<f:selectItem itemLabel="#{msg['component.personDataMask.gender.select']}"
-						itemValue="-" />
+						itemValue="UNKNOWN" />
 					<f:selectItem itemLabel="#{msg['component.personDataMask.gender.male']}"
-						itemValue="m" />
+						itemValue="MALE" />
 					<f:selectItem itemLabel="#{msg['component.personDataMask.gender.female']}"
-						itemValue="f" />
+						itemValue="FEMALE" />
 				</p:selectOneMenu>
 				<p:outputLabel value="#{msg['component.personDataMask.gender']}" />
 			</p:panelGrid>

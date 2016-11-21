@@ -1,68 +1,62 @@
 package org.histo.config;
 
+import org.apache.log4j.Logger;
+import org.histo.model.transitory.json.ClinicJsonHandler;
+import org.histo.model.transitory.json.LdapHandler;
+import org.histo.model.transitory.json.MailHandler;
 import org.histo.util.HistoUtil;
 
 import com.google.gson.Gson;
 
 public class HistoSettings {
 
+	private static Logger logger = Logger.getLogger("org.histo");
+	
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
 	public static final String DEFAULT_SETTINGS_JSON = "classpath:templates/settings.json";
 	public static final String VERSION_JSON = "classpath:templates/version.json";
 	public static final String LABEL_PRINTER_JSON = "classpath:templates/labelPrinter.json";
-	public static final String LDAP_JSON = "classpath:templates/ldap.json";
-	
+
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
 
-	public static final String EMAIL_SERVER = "smtp.ukl.uni-freiburg.de";
-	public static final int EMAIL_PORT = 465;
-	public static final boolean EMAIL_SSL = true;
-	public static final boolean EMAIL_DEBUG = true;
-	public static final String EMAIL_FROM = "augenklinik.histologie@uniklinik-freiburg.de";
-	public static final String EMAIL_FROM_NAME = "Histologisches Labor der Augenklinik Freiburg";
-
 	// http://auginfo/piz?piz=xx
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
-	public static final String PATIENT_GET_URL = "http://auginfo/piz";
 
 	public static final HistoSettings factory() {
 		Gson gson = new Gson();
+		
+		logger.debug("Creating Settings Object ");
+
 		HistoSettings result = gson.fromJson(HistoUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
 		return result;
 	}
 
 	/**
-	 * Default subject for report emails to physicians
+	 * Object for sending mails via clini backend
 	 */
-	private String defaultReportEmailSubject;
+	private MailHandler mail;
 
 	/**
-	 * Default text for report emails to physicians
+	 * Obejct for ldap communication with clinic backend
 	 */
-	private String defaultReportEmailText;
+	private LdapHandler ldap;
 
+	/**
+	 * Object for handeling clinic backend requsts for patient data
+	 */
+	private ClinicJsonHandler clinicJsonHandler;
+	
+	/**
+	 * List of mail to whom unlock requests will be send
+	 */
+	private String[] adminMails;
+	
 	/**
 	 * Default layout of the slides labels, contains %slideNumber%, slideText%
 	 * %slideName% and %date% as wildcards
 	 */
 	private String defaultSlideLableLayout;
-
-	public String getDefaultReportEmailSubject() {
-		return defaultReportEmailSubject;
-	}
-
-	public void setDefaultReportEmailSubject(String defaultReportEmailSubject) {
-		this.defaultReportEmailSubject = defaultReportEmailSubject;
-	}
-
-	public String getDefaultReportEmailText() {
-		return defaultReportEmailText;
-	}
-
-	public void setDefaultReportEmailText(String defaultReportEmailText) {
-		this.defaultReportEmailText = defaultReportEmailText;
-	}
 
 	public String getDefaultSlideLableLayout() {
 		return defaultSlideLableLayout;
@@ -71,4 +65,37 @@ public class HistoSettings {
 	public void setDefaultSlideLableLayout(String defaultSlideLableLayout) {
 		this.defaultSlideLableLayout = defaultSlideLableLayout;
 	}
+
+	public MailHandler getMail() {
+		return mail;
+	}
+
+	public void setMail(MailHandler mail) {
+		this.mail = mail;
+	}
+
+	public LdapHandler getLdap() {
+		return ldap;
+	}
+
+	public void setLdap(LdapHandler ldap) {
+		this.ldap = ldap;
+	}
+
+	public String[] getAdminMails() {
+		return adminMails;
+	}
+
+	public void setAdminMails(String[] adminMails) {
+		this.adminMails = adminMails;
+	}
+
+	public ClinicJsonHandler getClinicJsonHandler() {
+		return clinicJsonHandler;
+	}
+
+	public void setClinicJsonHandler(ClinicJsonHandler clinicJsonHandler) {
+		this.clinicJsonHandler = clinicJsonHandler;
+	}
+
 }

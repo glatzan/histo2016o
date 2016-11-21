@@ -37,7 +37,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URLClassLoader;
 // ++++ urgent: status und info dialog
-// TODO check patient fetch from jason form clinik -> zu viele patienten
+// ++++ check patient fetch from jason form clinik -> zu viele patienten
+
+// TODO Bug from email!
+// TODO wenn kein patient gefunden, darf dieser nicht ausgewählt werden können
+// TODO print dialog auswahl der ärtze geht nicht
+// TODO report in task muss umbeannt werden
 // TODO List für Patienten übersicht
 // TODO UREPORT Printing from create dialog
 // TODO Multible councils
@@ -55,7 +60,7 @@ import java.net.URLClassLoader;
 // TODO: prevent overwriting of data from clinic physicians if changed
 // TODO: change event of histological record in diagnosis page, located in helphandler action
 // ++++: Re-Diagnosis reduce options 
-// TODO: fullName propertie of physician move to person
+// ++++: fullName propertie of physician move to person
 
 @Component
 @Scope(value = "session")
@@ -173,8 +178,9 @@ public class MainHandlerAction {
 	 */
 
 	public void showQueueDialog() {
-		System.out.println("----> Shwing Quwuw " + getQueueDialog());
+		logger.trace("Showing Dialog from queue called");
 		if (getQueueDialog() != null) {
+			logger.debug("Showing Dialog from queue: " + getQueueDialog());
 			RequestContext.getCurrentInstance().execute("showDialogFromFrontendByBean('" + getQueueDialog() + "')");
 			setQueueDialog(null);
 		}
@@ -211,7 +217,8 @@ public class MainHandlerAction {
 		if (dialog.getHeader() != null)
 			options.put("headerElement", "dialogForm:header");
 
-		System.out.println("----> Showing " + dialog);
+		logger.debug("Showing Dialog: " + dialog);
+
 		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
 	}
 
@@ -221,8 +228,8 @@ public class MainHandlerAction {
 	 * @param dialog
 	 */
 	public void hideDialog(Dialog dialog) {
+		logger.debug("Hiding Dialog: " + dialog);
 		RequestContext.getCurrentInstance().closeDialog(dialog);
-		System.out.println("----> Hiding " + dialog);
 	}
 
 	/*
