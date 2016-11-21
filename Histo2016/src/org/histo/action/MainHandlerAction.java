@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
@@ -59,6 +60,8 @@ import java.net.URLClassLoader;
 @Component
 @Scope(value = "session")
 public class MainHandlerAction {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
@@ -383,13 +386,10 @@ public class MainHandlerAction {
 	 * @param detailedInfoParams
 	 */
 	public void saveChangedData(Object toSave, Patient patient, String logInfo) {
-
 		if (patient != null) {
 			genericDAO.save(toSave, logInfo, patient);
 		} else
 			genericDAO.save(toSave, logInfo);
-
-		System.out.println("saving data " + logInfo);
 	}
 
 	/**

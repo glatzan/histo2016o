@@ -5,7 +5,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
 
 	<div class="contentDiv">
 
@@ -51,14 +52,12 @@
 		</ui:fragment>
 
 		<!-- External Physician -->
+
 		<ui:fragment
 			rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER'}">
-			<ui:include src="../../template/person.xhtml">
-				<ui:param name="person"
-					value="#{settingsHandlerAction.tmpPhysician}" />
-				<ui:param name="pannelID" value="newPhysician" />
-				<ui:param name="disabled" value="false" />
-			</ui:include>
+			<histo:personDataMask 
+				person="#{settingsHandlerAction.tmpPhysician.person}"
+				pannelID="newPhysician" disabled="false" />
 		</ui:fragment>
 
 		<!-- Role -->

@@ -6,6 +6,7 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.transitory.json.LdapConnection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
-	private static Logger logger = Logger.getLogger("histo");
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	public static String host = "ldap.ukl.uni-freiburg.de";
 	public static String port = "389";
@@ -31,7 +32,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	private UserDAO userDAO;
 
 	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+	public Authentication authenticate(Authentication authentication) {
 		String userName = authentication.getName().trim();
 		String password = authentication.getCredentials().toString().trim();
 
@@ -66,6 +67,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 					if (physicianFromDatabase != null) {
 						histoUser.setPhysician(physicianFromDatabase);
 						logger.info("Physician already in datanse " + physician.getPerson().getFullName());
+					} else {
+						// creating new physician an person
+						histoUser.setPhysician(new Physician(new Person()));
+						histoUser.getPhysician().setUid(userName);
+						histoUser.getPhysician().setClinicEmployee(true);
 					}
 				}
 
@@ -82,8 +88,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
 			} else
 				throw new BadCredentialsException("Username not found.");
-		} catch (NamingException | IOException e) {
-			System.err.println("NamingException: " + e.getMessage());
+		} catch (NamingException | IOException | AuthenticationException e) {
+			logger.error("NamingException: " + e.getMessage() + " " + userName, e);
 			throw new BadCredentialsException("Username not found.");
 		}
 

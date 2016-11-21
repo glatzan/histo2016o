@@ -26,11 +26,6 @@ public class HistoSettings {
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 	public static final String PATIENT_GET_URL = "http://auginfo/piz";
 
-	public static final String LDAP_HOST = "ldap.ukl.uni-freiburg.de";
-	public static final String LDAP_PORT = "389";
-	public static final String LDAP_SUFFIX = "dc=ukl,dc=uni-freiburg,dc=de";
-	public static final String LDAP_BASE = "ou=people";
-
 	public static final HistoSettings factory() {
 		Gson gson = new Gson();
 		HistoSettings result = gson.fromJson(HistoUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);

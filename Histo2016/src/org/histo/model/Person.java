@@ -255,7 +255,7 @@ public class Person implements Serializable, LogAble, ArchivAble {
 			result.append(getSurname() + " ");
 
 		// remove the last space from the string
-		return result.substring(0, result.length() - 2);
+		return result.substring(0, result.length() - 1);
 	}
 
 	/********************************************************

@@ -12,7 +12,9 @@
          "<b>Added:</b> Upload Dialog: Es ist möglich belibige Datein einer Aufgabe anzuhängen",
          "<b>Fix:</b> Patient wird nach Abschluss der Färbung korrekt in der Befundungsliste gezeigt",
          "<b>Change:</b> Färbung beendet Dialog: Design angepasst",
-         "<b>Fix:</b> Patient wird nach revidieren des Abschluss der Färbung korrekt in der Färbungsliste gezeigt"
+         "<b>Fix:</b> Patient wird nach revidieren des Abschluss der Färbung korrekt in der Färbungsliste gezeigt",
+         "<b>Fix:</b> Eingangsbuch: Fehler sobald der Patient kein Geburtsdatum hat behoben",
+         "<b>Fix:</b> Befundung: Arzt und Oberarzt kann wieder richtig ausgewählt werden"
       ]
    }
 ]

@@ -2,6 +2,7 @@ package org.histo.model;
 
 import java.io.Serializable;
 
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.persistence.CascadeType;
@@ -15,6 +16,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.apache.log4j.Logger;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
@@ -31,6 +33,8 @@ import com.google.gson.annotations.Expose;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "physician_sequencegenerator", sequenceName = "physician_sequence")
 public class Physician implements Serializable, ArchivAble, LogAble {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	private static final long serialVersionUID = 7358147861813210904L;
 
@@ -108,6 +112,15 @@ public class Physician implements Serializable, ArchivAble, LogAble {
 	}
 
 	/**
+	 * Constructor setting person
+	 * 
+	 * @param person
+	 */
+	public Physician(Person person) {
+		this.person = person;
+	}
+
+	/**
 	 * Copies data from an other physician object into this object
 	 * 
 	 * @param dataToUpdate
@@ -129,8 +142,7 @@ public class Physician implements Serializable, ArchivAble, LogAble {
 	}
 
 	/**
-	 * Copies data from ldap into this physician object. 
-	 * cn: Dr. Michael Reich
+	 * Copies data from ldap into this physician object. cn: Dr. Michael Reich
 	 * ou: Klinik für Augenheilkunde givenName: Andreas mail:
 	 * andreas.glatz@uniklinik-freiburg.de sn: Glatz title: Arzt
 	 * telephonenumber: +49 761 270 40010 pager: 12-4027
@@ -138,66 +150,67 @@ public class Physician implements Serializable, ArchivAble, LogAble {
 	 * @param attrs
 	 */
 	public void copyIntoObject(Attributes attrs) {
-		// name surname title
-		Attribute attr = attrs.get("cn");
+		
+		logger.debug("Upadting physician data for " + getUid() + " from ldap");
+		
+		try {
+			// name surname title
+			Attribute attr = attrs.get("personalTitle");
 
-		if (attr != null && attr.size() == 1) {
-			physician.setFullName(attr.get().toString());
-		}
+			if (attr != null && attr.size() == 1) {
+				getPerson().setTitle(attr.get().toString());
+			}
 
-		// uid
-		attr = attrs.get("uid");
-		if (attr != null && attr.size() == 1) {
-			physician.setUid(attr.get().toString());
-		}
+			// uid
+			attr = attrs.get("uid");
+			if (attr != null && attr.size() == 1) {
+				setUid(attr.get().toString());
+			}
 
-		// dr titel
-		attr = attrs.get("personalTitle");
-		if (attr != null && attr.size() == 1) {
-			physician.setTitle(attr.get().toString());
-		}
+			// name
+			attr = attrs.get("sn");
+			if (attr != null && attr.size() == 1) {
+				getPerson().setName(attr.get().toString());
+			}
 
-		// name
-		attr = attrs.get("sn");
-		if (attr != null && attr.size() == 1) {
-			physician.setName(attr.get().toString());
-		}
+			attr = attrs.get("employeeNumber");
+			if (attr != null && attr.size() == 1) {
+				setEmployeeNumber(attr.get().toString());
+			}
 
-		attr = attrs.get("employeeNumber");
-		if (attr != null && attr.size() == 1) {
-			System.out.println(attr.get().toString());
-			physician.setEmployeeNumber(attr.get().toString());
-		}
-		attr = attrs.get("givenName");
-		if (attr != null && attr.size() == 1) {
-			physician.setSurname(attr.get().toString());
-		}
+			attr = attrs.get("givenName");
+			if (attr != null && attr.size() == 1) {
+				getPerson().setSurname(attr.get().toString());
+			}
 
-		attr = attrs.get("mail");
-		if (attr != null && attr.size() == 1) {
-			physician.setEmail(attr.get().toString());
-		}
+			attr = attrs.get("mail");
+			if (attr != null && attr.size() == 1) {
+				getPerson().setEmail(attr.get().toString());
+			}
 
-		attr = attrs.get("telephonenumber");
-		if (attr != null && attr.size() == 1) {
-			physician.setPhoneNumber(attr.get().toString());
-		}
+			attr = attrs.get("telephonenumber");
+			if (attr != null && attr.size() == 1) {
+				getPerson().setPhoneNumber(attr.get().toString());
+			}
 
-		attr = attrs.get("pager");
-		if (attr != null && attr.size() == 1) {
-			physician.setPager(attr.get().toString());
-		}
+			attr = attrs.get("pager");
+			if (attr != null && attr.size() == 1) {
+				setPager(attr.get().toString());
+			}
 
-		// role in clinic
-		attr = attrs.get("title");
-		if (attr != null && attr.size() == 1) {
-			physician.setClinicRole(attr.get().toString());
-		}
+			// role in clinic
+			attr = attrs.get("title");
+			if (attr != null && attr.size() == 1) {
+				setClinicRole(attr.get().toString());
+			}
 
-		// department
-		attr = attrs.get("ou");
-		if (attr != null && attr.size() == 1) {
-			physician.setDepartment(attr.get().toString());
+			// department
+			attr = attrs.get("ou");
+			if (attr != null && attr.size() == 1) {
+				getPerson().setDepartment(attr.get().toString());
+			}
+		} catch (NamingException e) {
+			logger.error("Error while updating physician data for " + getUid() + " from ldap", e);
 		}
 	}
 

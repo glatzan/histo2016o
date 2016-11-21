@@ -21,7 +21,9 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.util.HistoUtil;
@@ -31,6 +33,8 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
 public class LdapConnection implements GsonAble {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Expose
 	private String host;
@@ -57,6 +61,8 @@ public class LdapConnection implements GsonAble {
 		SearchControls constraints = new SearchControls();
 		constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
+		logger.debug("Searching for Filter " + filter);
+
 		NamingEnumeration<?> results = connection.search(base, filter, constraints);
 
 		// temp id
@@ -64,16 +70,20 @@ public class LdapConnection implements GsonAble {
 		while (results != null && results.hasMore()) {
 			SearchResult result = (SearchResult) results.next();
 			Attributes attrs = result.getAttributes();
+
+			if(logger.isTraceEnabled())
+				printAllAttributes(attrs);
+
 			if (attrs != null) {
 				// check if uid is not a number, only people with a name as
 				// uid are active
 				Attribute attr = attrs.get("uid");
 				if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
-					Physician newPhysician = new Physician(i++);
+					Physician newPhysician = new Physician(new Person());
+					newPhysician.setUid(attr.get().toString());
 					newPhysician.setClinicEmployee(true);
 					newPhysician.setDnObjectName(result.getName());
 					newPhysician.copyIntoObject(attrs);
-
 					physicians.add(newPhysician);
 				}
 			}
@@ -100,6 +110,8 @@ public class LdapConnection implements GsonAble {
 			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 			env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port + "/" + suffix);
 
+			logger.debug("Open connection to ldap: " + env.get(Context.PROVIDER_URL));
+
 			connection = new InitialDirContext(env);
 		}
 	}
@@ -113,6 +125,9 @@ public class LdapConnection implements GsonAble {
 		Gson gson = new Gson();
 		LdapConnection result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), LdapConnection.class);
 
+		logger.debug("Creating Ldap Connection " + result.getHost() + ":" + result.getPort() + " Base: "
+				+ result.getBase() + " Suffix: " + result.getSuffix());
+
 		return result;
 	}
 
@@ -122,11 +137,11 @@ public class LdapConnection implements GsonAble {
 			try {
 				attr = (Attribute) ae.next();
 				String attrId = attr.getID();
-				for (Enumeration<?> vals = attr.getAll(); vals.hasMoreElements(); System.out
-						.println(attrId + ": " + vals.nextElement()))
+				for (Enumeration<?> vals = attr.getAll(); vals.hasMoreElements(); logger
+						.info(attrId + ": " + vals.nextElement()))
 					;
 			} catch (NamingException e) {
-				e.printStackTrace();
+				logger.error("Error while listing physician data ", e);
 			}
 
 		}

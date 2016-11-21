@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -28,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Scope("session")
 public class GenericDAO extends AbstractDAO {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@SuppressWarnings("unchecked")
 	public <C> C get(Class<C> clazz, Serializable serializable) {
@@ -82,10 +85,13 @@ public class GenericDAO extends AbstractDAO {
 	@SuppressWarnings("unchecked")
 	public <C> C save(C object, LogInfo logInfo) {
 
+		logger.info("Saving " + object.toString());
 		// sets a logMessage to the securityContext, this is a workaround for
 		// passing variables to the revisionListener
 		if (logInfo != null) {
-			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
+			logger.info("Adding log Info " + logInfo.getInfo());
+			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO,
+					logInfo.getInfo() + " for " + logInfo.getPatient().getPerson().getFullName());
 		}
 
 		Session session = getSession();
@@ -100,9 +106,9 @@ public class GenericDAO extends AbstractDAO {
 			object = (C) session.merge(object);
 			hibernateException.printStackTrace();
 		}
-		
-		System.out.println("Saving");
-		
+
+		logger.info("Saved " + object.toString());
+
 		return object;
 	}
 
@@ -121,7 +127,7 @@ public class GenericDAO extends AbstractDAO {
 	public <C> C delete(C object) {
 		return save(object, (LogInfo) null);
 	}
-	
+
 	public <C> C delete(C object, String logMessage, Patient patient) {
 		return save(object, new LogInfo(logMessage, patient));
 	}
