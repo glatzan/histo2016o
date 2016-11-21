@@ -289,8 +289,10 @@ public class WorklistHandlerAction implements Serializable {
 	 * @param asSelectedPatient
 	 */
 	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
+		
 		// checks if patient is already in database
 		for (Patient patientInWorklis : getWorkList()) {
+			
 			if (patientInWorklis.getId() == patient.getId()) {
 				if (asSelectedPatient)
 					setSelectedPatient(patientInWorklis);

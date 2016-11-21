@@ -58,7 +58,8 @@ import org.springframework.core.annotation.Order;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<Sample>, CreationDate, LogAble, ArchivAble {
+public class Task
+		implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<Sample>, CreationDate, LogAble, ArchivAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -74,11 +75,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 	 * Generated Task ID as String
 	 */
 	private String taskID = "";
-
-	/**
-	 * Priority of the task
-	 */
-	private TaskPriority taskPriority;
 
 	/**
 	 * The Patient of the task;
@@ -101,14 +97,14 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 	private long dateOfReceipt = 0;
 
 	/**
+	 * Priority of the task
+	 */
+	private TaskPriority taskPriority;
+
+	/**
 	 * The dueDate
 	 */
 	private long dueDate = 0;
-
-	/**
-	 * If a dueDate is given
-	 */
-	private boolean dueDateSelected = false;
 
 	/**
 	 * Liste aller Personen die über die Diangose informiert werden sollen.
@@ -407,14 +403,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 		this.eye = eye;
 	}
 
-	public boolean isDueDateSelected() {
-		return dueDateSelected;
-	}
-
-	public void setDueDateSelected(boolean dueDateSelected) {
-		this.dueDateSelected = dueDateSelected;
-	}
-
 	public boolean isStainingCompleted() {
 		return stainingCompleted;
 	}
@@ -596,6 +584,29 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 	}
 
 	/**
+	 * Returns true if priority is set to TaskPriority.Time
+	 */
+	@Transient
+	public boolean isDueDateSelected() {
+		if (getTaskPriority() == TaskPriority.TIME)
+			return true;
+		return false;
+	}
+
+	/**
+	 * Sets if the given parameter is true TaskPriority.Time, if false
+	 * TaskPriority.NONE
+	 * 
+	 * @param dueDate
+	 */
+	public void setDueDateSelected(boolean dueDate) {
+		if (dueDate)
+			setTaskPriority(TaskPriority.TIME);
+		else
+			setTaskPriority(TaskPriority.NONE);
+	}
+
+	/**
 	 * Returns a report with the given type. If no matching record was found
 	 * null will be returned.
 	 * 
@@ -610,7 +621,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 		}
 		return null;
 	}
-	
+
 	@Transient
 	public PDFContainer getReportByName(String name) {
 		for (PDFContainer pdfContainer : getAttachedPdfs()) {
@@ -664,6 +675,46 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
+
+	/**
+	 * Checks if all staings are performed an returns true if the status has
+	 * changed. If no change occurred false will be returned.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean updateStainingStatus() {
+		if (getStainingStatus() == StainingStatus.PERFORMED) {
+			if (!isStainingCompleted()) {
+				setStainingCompleted(true);
+				setStainingCompletionDate(System.currentTimeMillis());
+				return true;
+			}
+		} else {
+			if (isStainingCompleted()) {
+				setStainingCompleted(false);
+				setStainingCompletionDate(0);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if all slides are staind and stets the allStainingsPerformed flag
+	 * in the task object to true.
+	 * 
+	 * @param sample
+	 */
+	public static final boolean checkIfAllSlidesAreStained(Task task) {
+		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
+			task.setStainingCompleted(true);
+			task.setStainingCompletionDate(System.currentTimeMillis());
+		} else
+			task.setStainingCompleted(false);
+
+		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
+	}
 
 	/********************************************************
 	 * Interface DiagnosisInfo
@@ -730,10 +781,11 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInf
 	public Patient getPatient() {
 		return getParent();
 	}
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Interface ArchiveAble
 	 ********************************************************/

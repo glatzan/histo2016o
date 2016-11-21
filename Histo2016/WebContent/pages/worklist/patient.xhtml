@@ -43,7 +43,7 @@
 			<p:outputLabel value="#{msg['body.worklist.patient.birthday']}"
 				styleClass="bold-text" />
 			<p:outputLabel
-				value="#{mainHandlerAction.date(worklistHandlerAction.selectedPatient.person.birthday)}" />
+				value="#{ worklistHandlerAction.selectedPatient.person.birthday ne null ? mainHandlerAction.date(worklistHandlerAction.selectedPatient.person.birthday) : ''}" />
 
 			<p:outputLabel value="#{msg['body.worklist.patient.postcode']}"
 				styleClass="bold-text" />
@@ -115,25 +115,29 @@
 					<h:outputText value=") "></h:outputText>
 				</h:panelGroup>
 
-				<h:panelGroup rendered="#{task.getStainingStatus() eq 'STAINING_NEEDED'}">
+				<h:panelGroup
+					rendered="#{task.getStainingStatus() eq 'STAINING_NEEDED'}">
 					<h:outputText value=" ("></h:outputText>
 					<h:outputText value="Färben" style="color:orange;" />
 					<h:outputText value=") "></h:outputText>
 				</h:panelGroup>
 
-				<h:panelGroup rendered="#{task.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
+				<h:panelGroup
+					rendered="#{task.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
 					<h:outputText value=" ("></h:outputText>
 					<h:outputText value="Nachfärben" style="color:blue;" />
 					<h:outputText value=") "></h:outputText>
 				</h:panelGroup>
 
-				<h:panelGroup rendered="#{task.getStainingStatus() eq 'PERFORMED' and task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED'}">
+				<h:panelGroup
+					rendered="#{task.getStainingStatus() eq 'PERFORMED' and task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED'}">
 					<h:outputText value=" ("></h:outputText>
 					<h:outputText value="Befundung" style="color:purple;" />
 					<h:outputText value=") "></h:outputText>
 				</h:panelGroup>
 
-				<h:panelGroup rendered="#{task.getStainingStatus() eq 'PERFORMED' and task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED'}">
+				<h:panelGroup
+					rendered="#{task.getStainingStatus() eq 'PERFORMED' and task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED'}">
 					<h:outputText value=" ("></h:outputText>
 					<h:outputText value="Nachbefundung" style="color:red;" />
 					<h:outputText value=")"></h:outputText>

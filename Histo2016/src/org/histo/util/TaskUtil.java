@@ -28,7 +28,7 @@ public class TaskUtil {
 	 * @return
 	 */
 	public final static Task createNewTask(Patient patient, int taskNumer) {
-		return createNewTask(new Task(), patient, taskNumer);
+		return createNewTask(new Task(), patient);
 	}
 
 	/**
@@ -37,14 +37,13 @@ public class TaskUtil {
 	 * @param taskNumer
 	 * @return
 	 */
-	public final static Task createNewTask(Task result, Patient patient, int taskNumer) {
+	public final static Task createNewTask(Task result, Patient patient) {
 		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
 		result.setCreationDate(currentDay);
 		result.setDateOfReceipt(currentDay);
 		result.setDueDate(currentDay);
 		result.setDateOfSugery(currentDay);
 		// 20xx -2000 = tasknumber
-		result.setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000) + HistoUtil.fitString(taskNumer, 4, '0'));
 		result.setParent(patient);
 
 		return result;

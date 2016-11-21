@@ -32,10 +32,10 @@
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 			<!-- title -->
-			<p:column sortBy="#{physician.name}"
+			<p:column sortBy="#{physician.person.name}"
 				headerText="#{msg['include.ladpPhysician.search.name']}"
 				style="width:20%">
-				<h:outputText value="#{physician.fullName}" />
+				<h:outputText value="#{physician.person.fullName}" />
 			</p:column>
 
 			<p:column sortBy="#{physician.clinicRole}"

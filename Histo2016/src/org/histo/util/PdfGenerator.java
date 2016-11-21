@@ -17,8 +17,8 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.PdfTemplate;
-import org.histo.model.transitory.PdfTemplate.CodeRectangle;
+import org.histo.model.transitory.json.PdfTemplate;
+import org.histo.model.transitory.json.PdfTemplate.CodeRectangle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -141,7 +141,7 @@ public class PdfGenerator {
 	}
 
 	public final void populateSingleSignature(PdfStamper stamper, Physician physician) {
-		setStamperField(stamper, "B_SIGANTURE", physician.getFullName());
+		setStamperField(stamper, "B_SIGANTURE", physician.getPerson().getFullName());
 	}
 
 	public final void populateReportHead(PdfStamper stamper, Task task, long dateOfReport) {
@@ -159,11 +159,11 @@ public class PdfGenerator {
 		StringBuffer contAdr = new StringBuffer();
 
 		if (physician != null) {
-			contAdr.append(physician.getGender() == 'w' ? resourceBundle.get("pdf.address.female")
+			contAdr.append(physician.getPerson().getGender() == 'w' ? resourceBundle.get("pdf.address.female")
 					: resourceBundle.get("pdf.address.male") + "\r\n");
-			contAdr.append(physician.getFullName() + "\r\n");
-			contAdr.append(physician.getStreet() + " " + physician.getHouseNumber() + "\r\n");
-			contAdr.append(physician.getPostcode() + " " + physician.getTown() + "\r\n");
+			contAdr.append(physician.getPerson().getFullName() + "\r\n");
+			contAdr.append(physician.getPerson().getStreet() + " " + physician.getPerson().getHouseNumber() + "\r\n");
+			contAdr.append(physician.getPerson().getPostcode() + " " + physician.getPerson().getTown() + "\r\n");
 		} else
 			contAdr.append(resourceBundle.get("pdf.address.none"));
 
@@ -210,13 +210,13 @@ public class PdfGenerator {
 		Contact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
 
 		setStamperField(stamper, "B_PRIVATE_PHYSICIAN",
-				privatePhysician == null ? "" : privatePhysician.getPhysician().getFullName());
-		setStamperField(stamper, "B_SURGEON", surgeon == null ? "" : surgeon.getPhysician().getFullName());
+				privatePhysician == null ? "" : privatePhysician.getPhysician().getPerson().getFullName());
+		setStamperField(stamper, "B_SURGEON", surgeon == null ? "" : surgeon.getPhysician().getPerson().getFullName());
 		setStamperField(stamper, "B_DIAGNOSIS", diagonsisList.toString());
 		setStamperField(stamper, "B_DATE", mainHandlerAction.date(dateOfReport));
 
 		if (task.getCouncil() != null && task.getCouncil().getCouncilPhysician() != null) {
-			setStamperField(stamper, "B_COUNCIL", task.getCouncil().getCouncilPhysician().getFullName());
+			setStamperField(stamper, "B_COUNCIL", task.getCouncil().getCouncilPhysician().getPerson().getFullName());
 			setStamperField(stamper, "B_TEXT", task.getCouncil().getCouncilText());
 			setStamperField(stamper, "B_APPENDIX", task.getCouncil().getAttachment());
 		}
@@ -232,13 +232,13 @@ public class PdfGenerator {
 
 			if (task.getReport().getPhysicianToSign().getPhysician() != null) {
 				setStamperField(stamper, "S_PHYSICIAN",
-						task.getReport().getPhysicianToSign().getPhysician().getFullName());
+						task.getReport().getPhysicianToSign().getPhysician().getPerson().getFullName());
 				setStamperField(stamper, "S_PHYSICIAN_ROLE", task.getReport().getPhysicianToSign().getRole());
 			}
 
 			if (task.getReport().getConsultantToSign().getPhysician() != null) {
 				setStamperField(stamper, "S_CONSULTANT",
-						task.getReport().getConsultantToSign().getPhysician().getFullName());
+						task.getReport().getConsultantToSign().getPhysician().getPerson().getFullName());
 				setStamperField(stamper, "S_CONSULTANT_ROLE", task.getReport().getConsultantToSign().getRole());
 			}
 		}

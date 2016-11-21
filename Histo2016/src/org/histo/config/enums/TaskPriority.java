@@ -1,7 +1,7 @@
 package org.histo.config.enums;
 
 public enum TaskPriority {
-	LOW(0), MEDIUM(50), HIGHT(100);
+	NONE(0), HIGH(50), TIME(100);
 
 	private final int priority;
 

@@ -19,7 +19,7 @@ import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.LabelPrinter;
+import org.histo.model.transitory.json.LabelPrinter;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.HistoUtil;
@@ -145,7 +145,8 @@ public class SlideHandlerAction implements Serializable {
 
 		// if staining is needed set the staining flag of the task object to
 		// true
-		SlideUtil.checkIfAllSlidesAreStained(block.getParent().getParent());
+		// TODO save indepenetly from patient
+		block.getParent().getParent().updateStainingStatus();
 
 		genericDAO.save(block.getPatient(), resourceBundle.get("log.patient.save"), block.getPatient());
 
@@ -241,8 +242,9 @@ public class SlideHandlerAction implements Serializable {
 			}
 			// shows dialog for informing the user that all stainings are
 			// performed
-			if (SlideUtil.checkIfAllSlidesAreStained(task)) {
+			if (task.updateStainingStatus()) {
 				mainHandlerAction.showDialog(Dialog.STAINING_PERFORMED);
+				genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 			}
 
 			break;
@@ -263,6 +265,12 @@ public class SlideHandlerAction implements Serializable {
 							task.getPatient());
 				}
 			}
+			
+			if (task.updateStainingStatus()) {
+				mainHandlerAction.showDialog(Dialog.STAINING_PERFORMED);
+				genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
+			}
+			
 			break;
 		case ARCHIVE:
 			// TODO implement

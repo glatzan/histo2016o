@@ -30,10 +30,11 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.LabelPrinter;
-import org.histo.model.transitory.PdfTemplate;
+import org.histo.model.transitory.json.LabelPrinter;
+import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
+import org.histo.util.HistoUtil;
 import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
@@ -113,6 +114,17 @@ public class TaskHandlerAction implements Serializable {
 	private int temporaryTaskSampleCount;
 
 	/**
+	 * If true the program will name all samples, and blocks
+	 */
+	private boolean useAutoNomenclature;
+	/********************************************************
+	 * Task creation
+	 ********************************************************/
+
+	/********************************************************
+	 * Task
+	 ********************************************************/
+	/**
 	 * List of all physicians known in the database
 	 */
 	private List<Physician> allAvailablePhysicians;
@@ -122,7 +134,7 @@ public class TaskHandlerAction implements Serializable {
 	 */
 	private DefaultTransformer<Physician> allAvailablePhysiciansTransformer;
 	/********************************************************
-	 * Task creation
+	 * Task
 	 ********************************************************/
 
 	/********************************************************
@@ -206,8 +218,11 @@ public class TaskHandlerAction implements Serializable {
 		prepareBean();
 
 		setTemporaryTask(new Task());
+		getTemporaryTask().setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000)
+				+ HistoUtil.fitString(taskDAO.countSamplesOfCurrentYear(), 4, '0'));
 		getTemporaryTask().setReport(new Report());
-		getTemporaryTask().setTaskPriority(TaskPriority.LOW);
+		getTemporaryTask().setTaskPriority(TaskPriority.NONE);
+		getTemporaryTask().setDateOfReceipt(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		setTemporaryTaskSampleCount(1);
 		Sample tmp = new Sample(getTemporaryTask());
 
@@ -216,6 +231,7 @@ public class TaskHandlerAction implements Serializable {
 			tmp.setMaterilaPreset(getAllAvailableMaterials().get(0));
 		}
 
+		setUseAutoNomenclature(false);
 		mainHandlerAction.showDialog(Dialog.TASK_CREATE);
 	}
 
@@ -223,17 +239,23 @@ public class TaskHandlerAction implements Serializable {
 	 * Method is called if user adds or removes a sample within the task
 	 * creation process. Adds or removes a new Material for the new Sample.
 	 */
-	public void updateNewTaskDilaog(Task task) {
+	public void updateNewTaskDilaog(Task task, boolean useAutoNomenclature) {
 		if (temporaryTaskSampleCount >= 1) {
 			if (temporaryTaskSampleCount > task.getSamples().size())
 				while (temporaryTaskSampleCount > task.getSamples().size()) {
-					Sample tmp = new Sample(task);
+					Sample tmp = new Sample(task, null, useAutoNomenclature);
 					tmp.setMaterilaPreset(getAllAvailableMaterials().get(0));
 				}
 			else if (temporaryTaskSampleCount < task.getSamples().size())
 				while (temporaryTaskSampleCount < task.getSamples().size()) {
 					task.getSamples().remove(task.getSamples().size() - 1);
 				}
+			if (temporaryTaskSampleCount > 1)
+				// if there are more then one sample use auto nomenclature
+				setUseAutoNomenclature(true);
+			else
+				// if there is only one sample don't use auto nomenclature
+				setUseAutoNomenclature(false);
 		}
 	}
 
@@ -242,12 +264,12 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void createNewTask(Patient patient, Task phantomTask) {
+	public void createNewTask(Patient patient, Task phantomTask, boolean useAutoNomenclature) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
 
-		Task task = TaskUtil.createNewTask(phantomTask, patient, taskDAO.countSamplesOfCurrentYear());
+		Task task = TaskUtil.createNewTask(phantomTask, patient);
 		patient.getTasks().add(0, task);
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
@@ -256,7 +278,7 @@ public class TaskHandlerAction implements Serializable {
 			genericDAO.save(task.getReport(PdfTemplate.UREPORT), resourceBundle.get("log.patient.task.upload.orderList",
 					task.getTaskID(), task.getReport(PdfTemplate.UREPORT).getName()), patient);
 		}
-	
+
 		// saving report to datanase
 		genericDAO.save(task.getReport(), resourceBundle.get("log.patient.task.report.new", task.getTaskID()),
 				task.getPatient());
@@ -272,11 +294,11 @@ public class TaskHandlerAction implements Serializable {
 			// creating first default diagnosis
 			diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
 			// creating needed blocks
-			createNewBlock(sample);
+			createNewBlock(sample, false);
 		}
 
 		// checking if staining flag of the task object has to be false
-		SlideUtil.checkIfAllSlidesAreStained(task);
+		task.updateStainingStatus();
 		// generating gui list
 		TaskUtil.generateSlideGuiList(task);
 		// saving patient
@@ -326,7 +348,7 @@ public class TaskHandlerAction implements Serializable {
 		createNewSample(task, material);
 
 		// checking if staining flag of the task object has to be false
-		SlideUtil.checkIfAllSlidesAreStained(task);
+		task.updateStainingStatus();
 		// generating gui list
 		TaskUtil.generateSlideGuiList(task);
 		// saving patient
@@ -342,7 +364,7 @@ public class TaskHandlerAction implements Serializable {
 	 * @param task
 	 */
 	public void createNewSample(Task task, MaterialPreset material) {
-		Sample sample = new Sample(task, material);
+		Sample sample = new Sample(task, material, false);
 
 		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
 				sample.getSampleID(), material.getName()), task.getPatient());
@@ -350,7 +372,7 @@ public class TaskHandlerAction implements Serializable {
 		// creating first default diagnosis
 		diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
 		// creating needed blocks
-		createNewBlock(sample);
+		createNewBlock(sample, false);
 	}
 
 	/********************************************************
@@ -368,10 +390,10 @@ public class TaskHandlerAction implements Serializable {
 	 * @param material
 	 */
 	public void createNewBlockFromGui(Sample sample) {
-		createNewBlock(sample);
+		createNewBlock(sample, false);
 
 		// checking if staining flag of the task object has to be false
-		SlideUtil.checkIfAllSlidesAreStained(sample.getParent());
+		sample.getParent().updateStainingStatus();
 		// generating gui list
 		TaskUtil.generateSlideGuiList(sample.getParent());
 		// saving patient
@@ -385,7 +407,7 @@ public class TaskHandlerAction implements Serializable {
 	 * @param sample
 	 * @param material
 	 */
-	public void createNewBlock(Sample sample) {
+	public void createNewBlock(Sample sample, boolean useAutoNomenclature) {
 		Block block = TaskUtil.createNewBlock(sample);
 
 		logger.debug("Creating new block " + block.getBlockID());
@@ -592,6 +614,13 @@ public class TaskHandlerAction implements Serializable {
 		this.consultantToSign = consultantToSign;
 	}
 
+	public boolean isUseAutoNomenclature() {
+		return useAutoNomenclature;
+	}
+
+	public void setUseAutoNomenclature(boolean useAutoNomenclature) {
+		this.useAutoNomenclature = useAutoNomenclature;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

@@ -124,9 +124,9 @@
 									style="#{worklistHandlerAction.selectedPatient.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 
 								<!-- priority -->
-								<h:panelGroup rendered="#{task.taskPriority ne 'LOW'}">
+								<h:panelGroup rendered="#{task.taskPriority ne 'NONE'}">
 									<i style="margin-left: 5px;"
-										class="fa fa-exclamation #{task.taskPriority eq 'MEDIUM' ? 'icon-orange' : 'icon-red'}"
+										class="fa fa-exclamation #{task.taskPriority eq 'HIGH' ? 'icon-orange' : 'icon-red'}"
 										title="#{msg['body.worklist.navigation.activtasks.new']}" />
 								</h:panelGroup>
 

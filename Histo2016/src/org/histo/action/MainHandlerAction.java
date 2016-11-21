@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
@@ -35,10 +36,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.net.URLClassLoader;
-// TODO urgent: status und info dialog
+// ++++ urgent: status und info dialog
 // TODO check patient fetch from jason form clinik -> zu viele patienten
 // TODO List für Patienten übersicht
-
+// TODO UREPORT Printing from create dialog
+// TODO Multible councils
 
 //http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
 // ++++: Diagnose page
@@ -46,7 +48,7 @@ import java.net.URLClassLoader;
 // TODO: favouriten
 // ++++ edit page patient external
 // TODO: Logout warn
-// TODO: status display (in navigation)
+// ++++ status display (in navigation)
 // TODO: log in settings rework
 // ++++: Edit external patient from menu bar
 // ++++: Priorisierung
@@ -58,6 +60,8 @@ import java.net.URLClassLoader;
 @Component
 @Scope(value = "session")
 public class MainHandlerAction {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
@@ -141,15 +145,6 @@ public class MainHandlerAction {
 		} else
 			setCurrentView(View.GUEST);
 
-		System.out.println("------------------------------------");
-
-		ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-		URL[] urls = ((URLClassLoader) cl).getURLs();
-
-		for (URL url : urls) {
-			System.out.println(url.getFile());
-		}
 
 	}
 
@@ -391,13 +386,10 @@ public class MainHandlerAction {
 	 * @param detailedInfoParams
 	 */
 	public void saveChangedData(Object toSave, Patient patient, String logInfo) {
-
 		if (patient != null) {
 			genericDAO.save(toSave, logInfo, patient);
 		} else
 			genericDAO.save(toSave, logInfo);
-
-		System.out.println("saving data " + logInfo);
 	}
 
 	/**

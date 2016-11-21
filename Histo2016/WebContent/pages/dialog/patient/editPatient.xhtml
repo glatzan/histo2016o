@@ -3,7 +3,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
 
 <h:head>
 	<title><h:outputLabel
@@ -28,23 +29,22 @@
 			</h:panelGrid>
 		</div>
 
+
 		<div class="dialogContent" id="dialogContent">
-			<ui:include src="../../template/person.xhtml">
-				<ui:param name="person"
-					value="#{patientHandlerAction.tmpPatient.person}" />
-				<ui:param name="pannelID" value="editPatient" />
-				<ui:param name="disabled" value="false" />
-			</ui:include>
+
+			<histo:personDataMask
+				person="#{patientHandlerAction.tmpPatient.person}"
+				pannelID="editPatient" disabled="false" />
 		</div>
-		
+
 		<div class="buttonContainer">
 			<h:panelGrid columns="2" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
-							<p:commandButton value="#{msg['dialog.editPatient.edit']}"
-				process="@form" icon="fa fa-fw fa-user-plus"
-				styleClass="smallButton buttonRighMarginInListExtended"
-				actionListener="#{patientHandlerAction.saveEditedExternalPatient(patientHandlerAction.tmpPatient)}" />
+					<p:commandButton value="#{msg['dialog.editPatient.edit']}"
+						process="@form" icon="fa fa-fw fa-user-plus"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{patientHandlerAction.saveEditedExternalPatient(patientHandlerAction.tmpPatient)}" />
 
 					<p:commandButton value="#{msg['general.abort']}"
 						styleClass="smallButton buttonRighMarginInList"

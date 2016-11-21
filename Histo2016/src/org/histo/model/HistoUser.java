@@ -38,13 +38,13 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	private long id;
 
 	private long version;
-	
+
 	private String username;
 
 	private long lastLogin;
 
 	private Role role;
-	
+
 	private View defaultView;
 
 	private Physician physician;
@@ -53,6 +53,26 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	private boolean accountNonLocked = true;
 	private boolean credentialsNonExpired = true;
 	private boolean enabled = true;
+
+	/**
+	 * Constructor for Hibernate
+	 */
+	public HistoUser() {
+	}
+
+	/**
+	 * Consturctor for creating new Histouser
+	 * @param name
+	 */
+	public HistoUser(String name) {
+		setUsername(name);
+		setRole(Role.GUEST);
+		setPhysician(new Physician());
+		getPhysician().setPerson(new Person());
+		
+		// set role clinicalDoctor or clical personnel
+		getPhysician().setClinicEmployee(true);
+	}
 
 	@Id
 	@GeneratedValue(generator = "user_sequencegenerator")
@@ -82,7 +102,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	public void setVersion(long version) {
 		this.version = version;
 	}
-	
+
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Physician getPhysician() {
 		return physician;

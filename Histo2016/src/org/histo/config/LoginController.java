@@ -24,7 +24,7 @@ import org.springframework.security.web.WebAttributes;
 @RequestScoped
 public class LoginController implements PhaseListener {
 
-     protected final Log logger = LogFactory.getLog(getClass());
+     protected final Log logger = LogFactory.getLog("histo");
     
     /**
      *

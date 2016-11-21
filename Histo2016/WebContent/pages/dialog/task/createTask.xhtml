@@ -28,52 +28,69 @@
 			</h:panelGrid>
 		</div>
 
+
 		<div class="contentDiv">
 			<h:panelGrid columns="2"
 				styleClass="infoTable smallPaddingVerticalAll standardFont"
 				style="width:100%" columnClasses="textColumn,">
 
-				<h:outputLabel value="#{msg['dialog.createTask.orderLetter']}"></h:outputLabel>
+				<!-- Task number -->
+				<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
+				<h:outputLabel value="#{taskHandlerAction.temporaryTask.taskID}"></h:outputLabel>
 
-				<!-- order letter -->
-				<h:panelGroup id="uploadHolder">
-					<p:fileUpload style="width:100%" styleClass="taskUpload"
-						rendered="#{taskHandlerAction.temporaryTask.getReport('UREPROT') eq null}"
-						fileUploadListener="#{pdfHandlerAction.handleTaskRequestReport}"
-						auto="true" mode="advanced" allowTypes="/(\.|\/)(pdf)$/"
-						update="uploadHolder" />
+				<!-- Task Date -->
 
-					<h:panelGrid columns="2"
-						rendered="#{taskHandlerAction.temporaryTask.getReport('UREPROT') ne null}">
-						<h:outputLabel
-							value="#{taskHandlerAction.temporaryTask.getReport('UREPROT').name}"></h:outputLabel>
-						<p:commandLink style="margin-left:10px;"
-							title="#{msg['dialog.createTask.orderLetter.remove']}"
-							actionListener="#{taskHandlerAction.temporaryTask.removeReport('UREPROT')}"
-							update="uploadHolder">
-							<i class="fa fa-times-circle" style="color: black"></i>
-						</p:commandLink>
-					</h:panelGrid>
-				</h:panelGroup>
+				<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
+				<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
+					value="#{taskHandlerAction.temporaryTask.dateOfReceiptAsDate}">
+				</p:calendar>
 
 				<!-- priority -->
 				<h:outputLabel value="#{msg['dialog.createTask.priority']}"></h:outputLabel>
-				<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-					value="#{taskHandlerAction.temporaryTask.taskPriority}">
-					<f:selectItems value="#{enumProvider.taskPriority}"
-						var="taskPriority"
-						itemLabel="#{msg['enum.taskPriority.'.concat(taskPriority)]}"
-						itemValue="#{taskPriority}">
-					</f:selectItems>
-				</p:selectOneMenu>
+				<p:panelGrid columns="1"
+					styleClass="noBordersAll noPaddingAll collapsedBorders">
+					<p:row>
+						<p:column colspan="2">
+							<p:selectOneRadio id="console"
+								value="#{taskHandlerAction.temporaryTask.taskPriority}">
+								<f:selectItem itemLabel="#{msg['enum.taskPriority.LOW']}"
+									itemValue="NONE" />
+								<f:selectItem itemLabel="#{msg['enum.taskPriority.HIGHT']}"
+									itemValue="HIGH" />
+								<f:selectItem itemLabel="#{msg['enum.taskPriority.TIME']}"
+									itemValue="TIME" />
+
+								<p:ajax update="@form"></p:ajax>
+							</p:selectOneRadio>
+						</p:column>
+					</p:row>
+					<p:row>
+						<p:column>
+							<h:outputLabel
+								value="#{msg['dialog.createTask.priority.dueDate']}" />
+						</p:column>
+						<p:column>
+							<p:calendar pattern="dd.MM.yyyy" mask="true"
+								disabled="#{!taskHandlerAction.temporaryTask.dueDateSelected}"
+								value="#{taskHandlerAction.temporaryTask.dueDateAsDate}">
+							</p:calendar>
+						</p:column>
+					</p:row>
+				</p:panelGrid>
+
+				<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}"></h:outputLabel>
+				<p:selectBooleanCheckbox id="autoNomenclature"
+					title="#{msg['dialog.createTask.autoNomenclature.text']}"
+					value="#{taskHandlerAction.useAutoNomenclature}" />
 
 				<!-- samplecount -->
 				<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
 				<p:spinner id="basic"
 					value="#{taskHandlerAction.temporaryTaskSampleCount}"
 					styleClass="taskSpinner" min="1" max="5">
-					<p:ajax update="sampleMaterial" process="@this" event="change"
-						listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask)}"></p:ajax>
+					<p:ajax update="sampleMaterial autoNomenclature" process="@this"
+						event="change"
+						listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask, taskHandlerAction.useAutoNomenclature)}"></p:ajax>
 				</p:spinner>
 
 			</h:panelGrid>
@@ -109,12 +126,24 @@
 		<div class="buttonContainer">
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="2" style="float:right;">
+				<h:panelGrid columns="4" style="float:right;">
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
+
+					<!-- print ureport -->
+					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
+						icon="fa fa-print"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
+
+					<!-- print dummy ureport -->
+					<p:commandButton value="#{msg['dialog.createTask.print.dummyUReport']}"
+						icon="fa fa-print"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"

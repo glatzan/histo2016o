@@ -229,7 +229,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax update="@form"
@@ -258,9 +258,9 @@
 													disabled="#{cc.attrs.taskToPrint.diagnosisCompleted}"
 													value="#{cc.attrs.taskToPrint.report.signatureDateAsDate}">
 													<p:ajax event="dateSelect"
-														listener="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.dateOfSignature',cc.attrs.taskToPrint.taskID,cc.attrs.taskToPrint.mainHandlerAction.date(cc.attrs.taskToPrint.report.signatureDate)))}" />
+														listener="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.dateOfSignature',cc.attrs.taskToPrint.taskID,mainHandlerAction.date(cc.attrs.taskToPrint.report.signatureDate)))}" />
 													<p:ajax event="change" execute="@this"
-														listener="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.dateOfSignature',cc.attrs.taskToPrint.taskID,cc.attrs.taskToPrint.mainHandlerAction.date(cc.attrs.taskToPrint.report.signatureDate)))}" />
+														listener="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.dateOfSignature',cc.attrs.taskToPrint.taskID,mainHandlerAction.date(cc.attrs.taskToPrint.report.signatureDate)))}" />
 												</p:calendar>
 											</p:column>
 										</p:row>
@@ -285,11 +285,11 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax event="change"
-														onstart="$('#dialogContent\\:submitPhysicianChange').click();" />
+														onstart="PF('submitPhysicianChange1').jq.click();alert();" />
 
 												</p:selectOneMenu>
 											</p:column>
@@ -333,7 +333,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax event="change"
@@ -366,11 +366,11 @@
 											<p:column colspan="2">
 												<!-- hidden button for updating on physician change -->
 												<p:commandButton style="display:none" update="@form"
-													id="submitPhysicianChange">
+													id="submitPhysicianChange1" onclick="alert();">
 													<f:actionListener
 														binding="#{cc.attrs.taskToPrint.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
 													<f:actionListener
-														binding="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',cc.attrs.taskToPrint.taskID, (cc.attrs.taskToPrint.report.physicianToSign.physician ne null ?  cc.attrs.taskToPrint.report.physicianToSign.physician.fullName : '') ))}"></f:actionListener>
+														binding="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',cc.attrs.taskToPrint.taskID, (cc.attrs.taskToPrint.report.physicianToSign.physician ne null ?  cc.attrs.taskToPrint.report.physicianToSign.physician.person.fullName : '') ))}"></f:actionListener>
 													<f:actionListener
 														binding="#{pdfHandlerAction.onChangeTemplate()}"></f:actionListener>
 												</p:commandButton>
@@ -386,12 +386,12 @@
 
 
 												<!-- hidden button for updating on consultant change -->
-												<p:commandButton style="display:none" update="@form"
+												<p:commandButton style="display:none" update="@form" onclick="alert();"
 													id="submitConsultantChange">
 													<f:actionListener
 														binding="#{cc.attrs.taskToPrint.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
 													<f:actionListener
-														binding="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.consultant',cc.attrs.taskToPrint.taskID, (cc.attrs.taskToPrint.report.consultantToSign.physician ne null ?  cc.attrs.taskToPrint.report.consultantToSign.physician.fullName : '') ))}"></f:actionListener>
+														binding="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.consultant',cc.attrs.taskToPrint.taskID, (cc.attrs.taskToPrint.report.consultantToSign.physician ne null ?  cc.attrs.taskToPrint.report.consultantToSign.physician.person.fullName : '') ))}"></f:actionListener>
 													<f:actionListener
 														binding="#{pdfHandlerAction.onChangeTemplate()}"></f:actionListener>
 												</p:commandButton>
@@ -516,7 +516,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax update="@form"
@@ -568,7 +568,7 @@
 
 													<f:selectItems
 														value="#{taskHandlerAction.allAvailablePhysicians}"
-														var="physician" itemLabel="#{physician.fullName}"
+														var="physician" itemLabel="#{physician.person.fullName}"
 														itemValue="#{physician}" />
 
 													<p:ajax update="@form"

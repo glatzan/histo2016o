@@ -70,21 +70,6 @@ public class SlideUtil {
 
 		return atLeastOneSlide;
 	}
-	
-	/**
-	 * Checks if all slides are staind and stets the allStainingsPerformed flag
-	 * in the task object to true.
-	 * 
-	 * @param sample
-	 */
-	public static final boolean checkIfAllSlidesAreStained(Task task) {
-		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
-			task.setStainingCompleted(true);
-			task.setStainingCompletionDate(System.currentTimeMillis());
-		} else
-			task.setStainingCompleted(false);
 
-		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
-	}
 
 }

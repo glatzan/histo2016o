@@ -8,8 +8,10 @@ public class HistoSettings {
 
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
 	public static final String DEFAULT_SETTINGS_JSON = "classpath:templates/settings.json";
+	public static final String VERSION_JSON = "classpath:templates/version.json";
 	public static final String LABEL_PRINTER_JSON = "classpath:templates/labelPrinter.json";
-
+	public static final String LDAP_JSON = "classpath:templates/ldap.json";
+	
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
 
@@ -23,11 +25,6 @@ public class HistoSettings {
 	// http://auginfo/piz?piz=xx
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 	public static final String PATIENT_GET_URL = "http://auginfo/piz";
-
-	public static final String LDAP_HOST = "ldap.ukl.uni-freiburg.de";
-	public static final String LDAP_PORT = "389";
-	public static final String LDAP_SUFFIX = "dc=ukl,dc=uni-freiburg,dc=de";
-	public static final String LDAP_BASE = "ou=people";
 
 	public static final HistoSettings factory() {
 		Gson gson = new Gson();

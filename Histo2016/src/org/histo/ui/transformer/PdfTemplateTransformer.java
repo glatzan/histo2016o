@@ -4,7 +4,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.transitory.PdfTemplate;
+import org.histo.model.transitory.json.PdfTemplate;
 
 
 public class PdfTemplateTransformer implements Converter {

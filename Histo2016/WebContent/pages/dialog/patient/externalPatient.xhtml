@@ -5,19 +5,18 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
 			header="#{msg['dialog.addPatient.add.headline']}"
 			styleClass="contentPannel" />
 
-		<ui:include src="../../template/person.xhtml">
-			<ui:param name="person"
-				value="#{patientHandlerAction.tmpPatient.person}" />
-			<ui:param name="pannelID" value="newPatient" />
-			<ui:param name="disabled" value="false" />
-		</ui:include>
+		<histo:personDataMask
+			person="#{patientHandlerAction.tmpPatient.person}"
+			pannelID="newPatient" disabled="false" />
+
 	</div>
 
 	<div class="bottomDiv">
@@ -26,7 +25,8 @@
 			<h:panelGrid columns="2" style="float:right;">
 				<!-- 1. adds external patient to database 2. adds to worklist 3. clears patientHandlerAction -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
-					process="@form" icon="fa fa-fw fa-user-plus" styleClass="smallButton buttonRighMarginInListExtended">
+					process="@form" icon="fa fa-fw fa-user-plus"
+					styleClass="smallButton buttonRighMarginInListExtended">
 					<f:actionListener
 						binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
 					<f:actionListener

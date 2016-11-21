@@ -3,18 +3,26 @@ package org.histo.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.histo.config.CustomAuthenticationProvider;
+import org.histo.config.SecurityContextHolderUtil;
 import org.histo.model.HistoUser;
 import org.histo.model.Physician;
+import org.histo.model.interfaces.LogInfo;
+import org.histo.model.patient.Patient;
+import org.histo.model.util.LogListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
 public class UserDAO extends AbstractDAO implements Serializable {
+
+	private static Logger logger = Logger.getLogger("histo");
 
 	public List<HistoUser> loadAllUsers() {
 		Criteria c = getSession().createCriteria(HistoUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -34,8 +42,10 @@ public class UserDAO extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Load a physician with the given uid. Is used if a physician was added as a surgeon and 
-	 * no login was performed. Is located in UserDao because of the scope.
+	 * Load a physician with the given uid. Is used if a physician was added as
+	 * a surgeon and no login was performed. Is located in UserDao because of
+	 * the scope.
+	 * 
 	 * @param uid
 	 * @return
 	 */
@@ -51,9 +61,19 @@ public class UserDAO extends AbstractDAO implements Serializable {
 		return res.get(0);
 	}
 
-	public HistoUser saveUser(HistoUser histoUser) {
+	/**
+	 * Workaround because there is no session within the
+	 * {@link CustomAuthenticationProvider}
+	 * 
+	 * @param histoUser
+	 * @param logMessage
+	 * @return
+	 */
+	public HistoUser saveUser(HistoUser histoUser, String logMessage) {
 		Session session = getSession();
 		try {
+			// setting log info
+			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, new LogInfo(logMessage));
 			session.saveOrUpdate(histoUser);
 		} catch (HibernateException hibernateException) {
 			histoUser = (HistoUser) session.merge(histoUser);
@@ -61,5 +81,5 @@ public class UserDAO extends AbstractDAO implements Serializable {
 		}
 		return histoUser;
 	}
-	
+
 }

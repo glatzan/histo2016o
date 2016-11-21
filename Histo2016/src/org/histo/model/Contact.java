@@ -150,10 +150,10 @@ public class Contact implements LogAble {
 
 	@Override
 	public String toString() {
-		if (getPhysician().getFullName() != null && !getPhysician().getFullName().isEmpty())
-			return getPhysician().getFullName();
+		if (getPhysician().getPerson().getFullName() != null && !getPhysician().getPerson().getFullName().isEmpty())
+			return getPhysician().getPerson().getFullName();
 		else
-			return getPhysician().getTitle() + " " + getPhysician().getSurname() + " " + getPhysician().getName();
+			return getPhysician().getPerson().getTitle() + " " + getPhysician().getPerson().getSurname() + " " + getPhysician().getPerson().getName();
 	}
 
 }

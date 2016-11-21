@@ -1,9 +1,14 @@
 package org.histo.action;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.naming.NamingException;
+
+import org.apache.log4j.Logger;
+import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -15,14 +20,15 @@ import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.HistoUser;
 import org.histo.model.MaterialPreset;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
 import org.histo.model.transitory.PhysicianRoleOptions;
+import org.histo.model.transitory.json.LdapConnection;
 import org.histo.ui.StainingListChooser;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
 import org.histo.util.SlideUtil;
-import org.histo.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,6 +36,8 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(value = "session")
 public class SettingsHandlerAction {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	public static final int TAB_USER = 0;
 	public static final int TAB_STAINING = 1;
@@ -216,7 +224,7 @@ public class SettingsHandlerAction {
 
 		// init statings
 		setShowStainingEdit(false);
-		
+
 		setPhysicianRoleOptions(new PhysicianRoleOptions());
 
 		onSettingsTabChange();
@@ -522,6 +530,7 @@ public class SettingsHandlerAction {
 	 */
 	public void prepareNewPhysician() {
 		setTmpPhysician(new Physician());
+		getTmpPhysician().setPerson(new Person());
 		setPhysicianTabIndex(SettingsTab.P_ADD_LDPA);
 	}
 
@@ -564,9 +573,26 @@ public class SettingsHandlerAction {
 		}
 		request.append(")");
 
-		List<Physician> listP = UserUtil.getPhysiciansFromLDAP(request.toString());
+		try {
+			logger.debug("Search for " + request.toString());
 
-		setLdapPhysicianList(listP);
+			LdapConnection connection = LdapConnection.factroy(HistoSettings.LDAP_JSON);
+			
+			// searching for physicians
+			connection.openConnection();
+			setLdapPhysicianList(connection.getListOfPhysicians(request.toString()));
+			connection.closeConnection();
+
+			// in order to choose from a list set dummy ids
+			int i = 0;
+			for (Physician physician : getLdapPhysicianList()) {
+				physician.setId(i);
+				i++;
+			}
+		} catch (NamingException | IOException e) {
+			logger.error("NamingException: " + e.getMessage(), e);
+			setLdapPhysicianList(null);
+		}
 	}
 
 	/**
@@ -579,7 +605,7 @@ public class SettingsHandlerAction {
 			physician.setDefaultContactRole(ContactRole.OTHER);
 
 		genericDAO.save(physician,
-				resourceBundle.get("log.settings.physician.physician.edit", physician.getFullName()));
+				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
 		discardTmpPhysician();
 	}
 
@@ -594,8 +620,8 @@ public class SettingsHandlerAction {
 		if (physician.getDefaultContactRole() == ContactRole.NONE)
 			physician.setDefaultContactRole(ContactRole.OTHER);
 
-		genericDAO.save(physician,
-				resourceBundle.get("log.settings.physician.privatePhysician.save", physician.getFullName()));
+		genericDAO.save(physician, resourceBundle.get("log.settings.physician.privatePhysician.save",
+				physician.getPerson().getFullName()));
 		discardTmpPhysician();
 	}
 
@@ -623,16 +649,17 @@ public class SettingsHandlerAction {
 
 		// undating the foud physician
 		if (physicianFromDatabase != null) {
-			UserUtil.updatePhysicianData(physicianFromDatabase, ldapPhysician);
+			physicianFromDatabase.copyIntoObject(ldapPhysician);
+
 			ldapPhysician = physicianFromDatabase;
 
 			genericDAO.save(ldapPhysician,
-					resourceBundle.get("log.settings.physician.ldap.update", ldapPhysician.getFullName()));
+					resourceBundle.get("log.settings.physician.ldap.update", ldapPhysician.getPerson().getFullName()));
 			return;
 		}
 
 		genericDAO.save(ldapPhysician,
-				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getFullName()));
+				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getPerson().getFullName()));
 
 		discardTmpPhysician();
 	}
@@ -647,7 +674,7 @@ public class SettingsHandlerAction {
 		physician.setArchived(archive);
 		genericDAO.save(physician,
 				resourceBundle.get(archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
-						physician.getFullName()));
+						physician.getPerson().getFullName()));
 		preparePhysicianList();
 	}
 

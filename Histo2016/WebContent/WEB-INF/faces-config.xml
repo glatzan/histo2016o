@@ -22,4 +22,4 @@
 				org.histo.config.exception.CustomExceptionHandlerFactory
 			</exception-handler-factory>
 		</factory>
-</faces-config>
+</faces-config> 
