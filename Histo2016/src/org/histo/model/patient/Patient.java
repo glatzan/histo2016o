@@ -107,6 +107,11 @@ public class Patient
 	 */
 	public Patient() {
 	}
+	
+	public Patient(Person person) {
+		this.person = person;
+	}
+
 
 	/********************************************************
 	 * Transient Methods

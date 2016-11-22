@@ -29,4 +29,8 @@ public class MaintenanceHandlerAction {
 		this.versionInfo = versionInfo;
 	}
 
+	
+	public void requestUnlock(){
+		
+	}
 }

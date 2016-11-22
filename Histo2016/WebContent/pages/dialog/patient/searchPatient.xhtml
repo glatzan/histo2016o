@@ -25,7 +25,7 @@
 						<p:focus for="pizInput" />
 						<p:inputMask value="#{patientHandlerAction.searchForPatientPiz}"
 							id="pizInput" tabindex="1" mask="99999999">
-							<p:ajax process="submitGroup" update="patientList" delay="200"
+							<p:ajax process="submitGroup" update="patientList buttonTable" delay="200"
 								event="keyup"
 								listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
 						</p:inputMask>
@@ -37,7 +37,7 @@
 					<p:calendar
 						value="#{patientHandlerAction.searchForPatientBirthday}"
 						tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
-						<p:ajax process="submitGroup" update="patientList" delay="300"
+						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
 							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
 					</p:calendar>
@@ -50,7 +50,7 @@
 					style="float:left;margin-right:20px;">
 					<p:inputText value="#{patientHandlerAction.searchForPatientName}"
 						tabindex="2">
-						<p:ajax process="submitGroup" update="patientList" delay="300"
+						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
 							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
 					</p:inputText>
@@ -60,7 +60,7 @@
 				<p:panelGrid columns="1" styleClass="inputTable">
 					<p:inputText tabindex="3"
 						value="#{patientHandlerAction.searchForPatientSurname}">
-						<p:ajax process="submitGroup" update="patientList" delay="300"
+						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
 							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
 
@@ -90,7 +90,8 @@
 			<p:column
 				headerText="#{msg['dialog.addPatient.search.birthday.short']}"
 				sortBy="#{patientList.patient.person.birthday}">
-				<h:outputText rendered="#{patientList.patient.person.birthday ne null}"
+				<h:outputText
+					rendered="#{patientList.patient.person.birthday ne null}"
 					value="#{mainHandlerAction.date(patientList.patient.person.birthday,'dd.MM.yyyy')}" />
 			</p:column>
 			<!-- gender -->
@@ -136,10 +137,15 @@
 	</div>
 
 	<div class="bottomDiv">
-		<h:panelGrid columns="2" style="width:100%"
+		<h:panelGrid columns="2" style="width:100%" id="buttonTable"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="2" style="float:right;">
 
+			<h:outputLabel
+				value="#{msg['dialog.addPatient.toManyResults']}" id="toManyMatches"
+				style="color:red"
+				rendered="#{patientHandlerAction.toManyMatchesInClinicDatabase}" />
+
+			<h:panelGrid columns="2" style="float:right;">
 				<!-- Add button -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
 					id="submitAddButton" icon="fa fa-fw fa-user-plus" process="@form"

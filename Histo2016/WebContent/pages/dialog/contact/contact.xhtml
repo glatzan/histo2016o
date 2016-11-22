@@ -13,7 +13,7 @@
 
 <h:body styleClass="defaultDialogLayout bigDialog">
 	<h:form id="dialogContent">
-	
+
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
@@ -25,7 +25,7 @@
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
-		
+
 		<div class="dialogContent">
 			<!-- Contact Datatable -->
 			<p:dataTable var="contact"
@@ -154,9 +154,8 @@
 						style="margin-left:6px" icon="fa fa-fw fa-floppy-o" id="closeBtn"
 						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('CONTACTS'))}"></p:commandButton>
 
-					<p:commandButton value="Benachrichtigen"
+					<p:commandButton value="Benachrichtigen" disabled="true"
 						icon="fa fa-fw fa-volume-up" styleClass="buttonLeftMarginInList"
-						actionListener="#{contactHandlerAction.hideContactsDialog()}"
 						update="@form" />
 
 					<h:panelGrid columns="2">

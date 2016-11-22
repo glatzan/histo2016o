@@ -16,7 +16,8 @@
          "<b>Fix:</b> Eingangsbuch: Fehler sobald der Patient kein Geburtsdatum hat behoben",
          "<b>Fix:</b> Befundung: Arzt und Oberarzt kann wieder richtig ausgewählt werden",
          "<b>Added:</b> Emailbenachrichtigung bei Neuanmeldung",
-         "<b>Change:</b> Geschlecht wird intern als Enum abgebildet"
+         "<b>Change:</b> Geschlecht wird intern als Enum abgebildet",
+         "<b>Fix:</b> Patienten hinzufügen, es wird angezeigt, wenn zu viele Datensätze in der Klinik-Datenbank gefunden wurden",
       ]
    }
 ]

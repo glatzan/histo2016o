@@ -206,7 +206,6 @@ public class PdfHandlerAction {
 
 	public void onChangeTemplate() {
 		if (getPrintTab() == PrintTab.PRINT_PDFs) {
-			System.out.println(getTaskToPrint() + " -- ");
 			setTmpPdfContainer((new PdfGenerator(mainHandlerAction, resourceBundle)).generatePdfForTemplate(
 					getTaskToPrint(), getSelectedTemplate(), getDateOfReport(), getExternalReportPhysicianType(),
 					getExternalPhysician(), getSignatureTmpPhysician()));

@@ -289,9 +289,20 @@
 														itemValue="#{physician}" />
 
 													<p:ajax event="change"
-														onstart="PF('submitPhysicianChange1').jq.click();alert();" />
+														oncomplete="$('#dialogContent\\:submitPhysicianChange1').click();" />
 
 												</p:selectOneMenu>
+
+												<!-- hidden button for updating on physician change -->
+												<p:commandButton style="display:none" update="@form"
+													id="submitPhysicianChange1" onclick="alert();">
+													<f:actionListener
+														binding="#{cc.attrs.taskToPrint.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
+													<f:actionListener
+														binding="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',cc.attrs.taskToPrint.taskID, (cc.attrs.taskToPrint.report.physicianToSign.physician ne null ?  cc.attrs.taskToPrint.report.physicianToSign.physician.person.fullName : '') ))}"></f:actionListener>
+													<f:actionListener
+														binding="#{pdfHandlerAction.onChangeTemplate()}"></f:actionListener>
+												</p:commandButton>
 											</p:column>
 										</p:row>
 										<p:row>
@@ -364,16 +375,6 @@
 
 										<p:row>
 											<p:column colspan="2">
-												<!-- hidden button for updating on physician change -->
-												<p:commandButton style="display:none" update="@form"
-													id="submitPhysicianChange1" onclick="alert();">
-													<f:actionListener
-														binding="#{cc.attrs.taskToPrint.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
-													<f:actionListener
-														binding="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',cc.attrs.taskToPrint.taskID, (cc.attrs.taskToPrint.report.physicianToSign.physician ne null ?  cc.attrs.taskToPrint.report.physicianToSign.physician.person.fullName : '') ))}"></f:actionListener>
-													<f:actionListener
-														binding="#{pdfHandlerAction.onChangeTemplate()}"></f:actionListener>
-												</p:commandButton>
 
 												<!-- hidden button for updating on physician role change -->
 												<p:commandButton style="display:none" update="@form"
@@ -386,8 +387,8 @@
 
 
 												<!-- hidden button for updating on consultant change -->
-												<p:commandButton style="display:none" update="@form" onclick="alert();"
-													id="submitConsultantChange">
+												<p:commandButton style="display:none" update="@form"
+													onclick="alert();" id="submitConsultantChange">
 													<f:actionListener
 														binding="#{cc.attrs.taskToPrint.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
 													<f:actionListener

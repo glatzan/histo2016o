@@ -17,11 +17,13 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.apache.log4j.Logger;
+import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.model.patient.Patient;
 import org.primefaces.json.JSONArray;
+import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 
 //{
@@ -84,25 +86,41 @@ public class ClinicJsonHandler implements GsonAble {
 
 	private String userAgent;
 
-	public List<Patient> getPatientsFromClinicJson(String url) {
+	/**
+	 * Creates a list of patients fetched from the clinic backend. If there is
+	 * no data returned due to to many results an error will be thrown.
+	 * 
+	 * @param url
+	 * @return
+	 * @throws CustomExceptionToManyEntries
+	 */
+	public List<Patient> getPatientsFromClinicJson(String url) throws CustomExceptionToManyEntries {
 		String result = requestJsonData(baseUrl + url);
 		return createPatientsFromClinicJson(result);
 	}
 
+	/**
+	 * Creates a patient object from data fechted from the clinic backend.
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public Patient getPatientFromClinicJson(String url) {
 		String result = requestJsonData(baseUrl + url);
 		return createPatientFromClinicJson(result);
 	}
 
 	/**
-	 * Uses a search list from the clinic backend and creates a Patient list
-	 * using these data.
+	 * Phrases a json string an returns a patient list, throws error if due to
+	 * to many results no data was returned.
 	 * 
 	 * @param json
 	 *            [{},{}]
 	 * @return
+	 * @throws CustomExceptionToManyEntries
+	 * @throws JSONException
 	 */
-	public List<Patient> createPatientsFromClinicJson(String json) {
+	public List<Patient> createPatientsFromClinicJson(String json) throws CustomExceptionToManyEntries {
 		JSONArray arr = new JSONArray(json);
 		ArrayList<Patient> patients = new ArrayList<>();
 		for (int i = 0; i < arr.length(); i++) {
@@ -112,36 +130,50 @@ public class ClinicJsonHandler implements GsonAble {
 	}
 
 	/**
-	 * Creates a new patient using data from the clinic backend.
+	 * Creates a new patient using data from the clinic backend. Throws an error
+	 * if no data are given.
 	 * 
 	 * @param json
 	 * @return
+	 * @throws CustomExceptionToManyEntries
+	 * @throws JSONException
 	 */
 	public Patient createPatientFromClinicJson(String json) {
-		return createPatientFromClinicJson(new JSONObject(json));
+		try {
+			return createPatientFromClinicJson(new JSONObject(json));
+		} catch (JSONException | CustomExceptionToManyEntries e) {
+			logger.error("To many search results found", e);
+			return new Patient(new Person());
+		}
 	}
 
 	/**
 	 * Creates a new Patient using a json object contain data from the clinic
-	 * backend
+	 * backend. If the json string contains the error field an error will be
+	 * thrown.
 	 * 
 	 * @param json
 	 * @return
+	 * @throws CustomExceptionToManyEntries
 	 */
-	public Patient createPatientFromClinicJson(JSONObject json) {
+	public Patient createPatientFromClinicJson(JSONObject json) throws CustomExceptionToManyEntries {
 		Patient patient = new Patient();
 		patient.setPerson(new Person());
 
-		if (json.has("error")) {
-			patient.getPerson().setName("Zu viele");
-			return patient;
-		}
+		if (json.has("error"))
+			throw new CustomExceptionToManyEntries();
 
 		patient.copyIntoObject(json);
 
 		return patient;
 	}
 
+	/**
+	 * Returns a json string grabbed from the given url.
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public String requestJsonData(String url) {
 
 		StringBuffer response = new StringBuffer();
