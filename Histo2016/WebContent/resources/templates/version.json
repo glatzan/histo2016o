@@ -18,6 +18,12 @@
          "<b>Added:</b> Emailbenachrichtigung bei Neuanmeldung",
          "<b>Change:</b> Geschlecht wird intern als Enum abgebildet",
          "<b>Fix:</b> Patienten hinzufügen, es wird angezeigt, wenn zu viele Datensätze in der Klinik-Datenbank gefunden wurden",
+         "<b>Fix:</b> Dialog Arbeistliste erstellen, Suche nach Daten funktioniert wieder",
+         "<b>Added:</b> Dialog Arbeistliste erstellen, Suche nach ausstehenden Benachrichtigungen hinzugefügt",
+         "<b>Added:</b> Freischalt Knopf, beim ersten einloggen",
+         "<b>Added:</b> Aktuelle Version wird in der oberen Leiste angezeigt",
+         "<b>Added:</b> Fehlermeldungen können über das Infomenu gesendet werden",
+         "<b>Added:</b> \"Über\" Tab im Info-Dialog"
       ]
    }
 ]

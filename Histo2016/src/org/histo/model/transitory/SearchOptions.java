@@ -72,6 +72,7 @@ public class SearchOptions {
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		setSearchFrom(cal.getTime());
 
+		setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
 	}
 
 	public WorklistSearchOption getSearchIndex() {

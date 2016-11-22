@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.WorklistSearchFilter;
-import org.histo.model.Log;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
+import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Scope(value = "session")
 public class PatientDao extends AbstractDAO implements Serializable {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	public void getAllPaitent() {
 		Person p = new Person();
@@ -73,36 +75,83 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 
+	/**
+	 * Returns a list of patients with matching pizes.
+	 * 
+	 * @param piz
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Patient> searchForPatientPizes(List<String> piz) {
-		Criteria c = getSession().createCriteria(Patient.class);
-		c.add(Restrictions.in("piz", piz));
-		return c.list();
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		query.add(Restrictions.in("piz", piz));
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	/**
+	 * Returns a list without of patients without tasks between the two given
+	 * dates.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Patient> getPatientWithoutTasks(long fromDate, long toDate) {
-		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.add(Restrictions.ge("patient.creationDate", fromDate)).add(Restrictions.le("patient.creationDate", toDate));
-		c.add(Restrictions.isEmpty("patient.tasks"));
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return c.list();
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		query.add(Restrictions.ge("patient.creationDate", fromDate))
+				.add(Restrictions.le("patient.creationDate", toDate));
+		query.add(Restrictions.isEmpty("patient.tasks"));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	/**
+	 * Returns a list of patients added to the worklist between the two given
+	 * dates.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Patient> getPatientByAddDateToWorklist(long fromDate, long toDate) {
-		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.add(Restrictions.ge("patient.creationDate", fromDate)).add(Restrictions.le("patient.creationDate", toDate));
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return c.list();
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		query.add(Restrictions.ge("patient.creationDate", fromDate))
+				.add(Restrictions.le("patient.creationDate", toDate));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	/**
+	 * Returns a list of patients which had a sample created between the two
+	 * given dates
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Patient> getPatientBySampleCreationDateBetweenDates(long fromDate, long toDate) {
-		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.createAlias("patient.tasks", "_tasks");
-		c.createAlias("_tasks.samples", "_samples");
-		c.add(Restrictions.ge("_samples.creationDate", fromDate)).add(Restrictions.le("_samples.creationDate", toDate));
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return c.list();
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		query.createAlias("patient.tasks", "_tasks");
+		query.createAlias("_tasks.samples", "_samples");
+		query.add(Restrictions.ge("_samples.creationDate", fromDate))
+				.add(Restrictions.le("_samples.creationDate", toDate));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	/**
+	 * Returns a list of patients which had the staining procedure completed
+	 * between the two given dates
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @param completed
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Patient> getPatientByStainingsBetweenDates(long fromDate, long toDate, boolean completed) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
@@ -114,6 +163,16 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	/**
+	 * Returns a list of patients which had the diagnosis completed between the
+	 * two given dates.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @param completed
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Patient> getPatientByDiagnosBetweenDates(long fromDate, long toDate, boolean completed) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
@@ -126,15 +185,57 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	/**
+	 * Returns a list of patients which had the diagnosis completed between the
+	 * two given dats.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @param completed
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Patient> getPatientByNotificationBetweenDates(long fromDate, long toDate, boolean completed) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
+		query.createAlias("patient.tasks", "_tasks");
+		query.add(Restrictions.ge("_tasks.notificationCompletionDate", fromDate))
+				.add(Restrictions.le("_tasks.notificationCompletionDate", toDate));
+		query.add(Restrictions.eq("_tasks.diagnosisCompleted", true));
+		query.add(Restrictions.eq("_tasks.notificationCompleted", completed));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
+	}
+
+	/**
+	 * Returns a list of patients depending on the worklistfilter option.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @param filter
+	 * @return
+	 */
 	public List<Patient> getWorklistDynamicallyByType(long fromDate, long toDate, WorklistSearchFilter filter) {
 		switch (filter) {
 		case ADDED_TO_WORKLIST:
+			logger.debug("Searching for add date from "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
 			return getPatientByAddDateToWorklist(fromDate, toDate);
 		case TASK_CREATION:
+			logger.debug("Searching for task creation date from "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
 			return getPatientBySampleCreationDateBetweenDates(fromDate, toDate);
 		case STAINING_COMPLETED:
+			logger.debug("Searching for staining completed "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
 			return getPatientByStainingsBetweenDates(fromDate, toDate, true);
 		case DIAGNOSIS_COMPLETED:
+			logger.debug("Searching for diagnosis completed "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
 			return getPatientByDiagnosBetweenDates(fromDate, toDate, true);
 		default:
 			return null;

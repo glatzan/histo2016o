@@ -7,7 +7,7 @@ package org.histo.config.enums;
  */
 public enum Dialog {
 	
-	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", null, 620, 440, false, false, true),
+	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", null, 858, 484, false, false, true), // 16:9
 	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", null, 1024, 600, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,430, 270, false, false, true), 
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), 
@@ -32,7 +32,7 @@ public enum Dialog {
 	NOTIFICATION_ALREADY_PERFORMED("/pages/dialog/notification/notification_already_performed", null,  480, 272, false, false, true), //  16:9
 	NOTIFICATION("/pages/dialog/notification/notification", null,  1024, 600, false, false, true),  // 16:9
 	NOTIFICATION_PREVIEW("/pages/dialog/notification/notification_preview", null,  1024, 600, false, false, true), //  16:9
-	INFO("/pages/dialog/info/info", null,  640, 360, false, false, true), //  16:9
+	INFO("/pages/dialog/info/info", null,  1024, 600, false, false, true), //  16:9
 	UPLOAD_TASK("/pages/dialog/upload/uploadPdfToTask", null,  640, 360, false, false, true);
 	
 	private final String path;

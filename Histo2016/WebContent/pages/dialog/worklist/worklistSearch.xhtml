@@ -11,10 +11,22 @@
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout">
-	<h:form>
+<h:body styleClass="defaultDialogLayout infoDialog">
 
-		<p:importEnum type="org.histo.config.enums.WorklistSearchOption" />
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.worklistsearch.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
 		<div class="dialogContent">
 
 			<!-- Select -->
@@ -25,10 +37,12 @@
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.staininglist']}"
 					itemValue="STAINING_LIST" />
+
 				<!-- 1 -->
 				<f:selectItem
 					itemLabel="#{msg['dialog.worklistsearch.diagnosislist']}"
 					itemValue="DIAGNOSIS_LIST" />
+
 				<!-- 2 -->
 				<f:selectItem itemLabel="#{msg['dialog.worklistsearch.date.today']}"
 					itemValue="TODAY" />
@@ -62,8 +76,14 @@
 					itemValue="MONTH" />
 
 				<!-- 9 -->
-				<f:selectItem itemLabel="Zeitraum"
+				<f:selectItem
+					itemLabel="#{msg['dialog.worklistsearch.date.timespan']}"
 					itemValue="TIME" />
+
+				<!-- 10 -->
+				<f:selectItem
+					itemLabel="#{msg['dialog.worklistsearch.date.timespan']}"
+					itemValue="NOTIFICATION_LIST" />
 
 				<p:ajax update="@form"></p:ajax>
 			</p:selectOneRadio>
@@ -139,6 +159,15 @@
 								value="#{worklistHandlerAction.searchOptions.deadline_diagnosis}"
 								disabled="true" />
 						</p:panelGrid>
+
+						<!-- Diagnosis List -->
+						<p:radioButton id="opt11" for="searchIndexRadio" itemIndex="10" />
+						<h:outputLabel for="opt11" styleClass="smallFont"
+							value="#{msg['dialog.worklistsearch.notificationlist']}" />
+
+						<p:panelGrid columns="1" styleClass="noBorders">
+						</p:panelGrid>
+						
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -239,16 +268,16 @@
 						layout="custom">
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.patient']}"
-							itemValue="ADDED_TO_WORKLIST}" />
+							itemValue="ADDED_TO_WORKLIST" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.task']}"
-							itemValue="TASK_CREATION}" />
+							itemValue="TASK_CREATION" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.staining']}"
-							itemValue="STAINING_COMPLETED}" />
+							itemValue="STAINING_COMPLETED" />
 						<f:selectItem
 							itemLabel="#{msg['dialog.worklistsearch.filter.diagnosis']}"
-							itemValue="DIAGNOSIS_COMPLETED}" />
+							itemValue="DIAGNOSIS_COMPLETED" />
 					</p:selectOneRadio>
 
 					<h:panelGrid columns="1">
@@ -285,17 +314,23 @@
 			</h:panelGrid>
 		</div>
 
+
 		<div class="buttonContainer">
-			<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
-				process="@form">
-				<f:actionListener
-					binding="#{worklistHandlerAction.searhCurrentWorklist()}" />
-				<f:actionListener
-					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}" />
-			</p:commandButton>
-			<p:commandButton value="#{msg['general.abort']}"
-				actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}"
-				style="margin-left:20px;"></p:commandButton>
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+					<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
+						process="@form">
+						<f:actionListener
+							binding="#{worklistHandlerAction.searhCurrentWorklist()}" />
+						<f:actionListener
+							binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}" />
+					</p:commandButton>
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}"
+						style="margin-left:20px;"></p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
 		</div>
 	</h:form>
 </h:body>

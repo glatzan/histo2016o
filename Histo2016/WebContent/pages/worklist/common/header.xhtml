@@ -39,9 +39,16 @@
 		<!-- Buttons on the right -->
 		<h:panelGroup styleClass="headerRight" layout="block">
 
+			<!-- Current Version -->
+			<p:commandLink
+				value="Version : #{mainHandlerAction.settings.currentVersion}"
+				styleClass="noUnderlineAtLink buttonRighMarginInListExtended icon-grey"
+				actionListener="#{maintenanceHandlerAction.prepareInfoDialog()}"></p:commandLink>
+
 			<!-- button edit -->
 			<p:commandButton id="dynaButton" value="#{msg['header.menu.edit']}"
-				type="button" icon="ui-icon-triangle-1-s" />
+				type="button" icon="ui-icon-triangle-1-s"
+				styleClass="buttonRighMarginInList" />
 
 			<!-- Options menu -->
 			<p:tieredMenu overlay="true" trigger="dynaButton" my="left top"

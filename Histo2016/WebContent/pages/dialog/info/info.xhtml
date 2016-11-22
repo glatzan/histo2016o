@@ -6,12 +6,11 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-	<title><h:outputFormat
-			value="#{msg['dialog.contact.headline']}" /></title>
+	<title><h:outputFormat value="#{msg['dialog.info.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
-<h:body styleClass="defaultDialogLayout infoDialog">
+<h:body styleClass="settingsDialogLayout">
 	<h:form id="dialogContent">
 
 		<div class="defaulDilaogHeaderDivWithBackground">
@@ -20,44 +19,148 @@
 				<h:outputLabel value="#{msg['dialog.info.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('INFO'))}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
 
-		<div class="dialogContent">
-			<p:scrollPanel mode="native"
-				styleClass="infoTable smallPaddingVerticalAll standardFont noBordersAll"
-				style="width:100%;height:280px">
-				<ui:repeat var="info"
-					value="#{maintenanceHandlerAction.versionInfo}">
-					<h:outputLabel style="margin-left:5px;"
-						value="#{msg['dialog.info.version']} #{info.version}" />
-					<ul style="margin: 0px;">
-						<ui:repeat var="text" value="#{info.changes}" varStatus="status">
+		<p:panel styleClass="settingsPannel">
+			<p:tabView orientation="left"
+				activeIndex="#{settingsHandlerAction.activeSettingsIndex}"
+				styleClass="settingsTabView">
 
-							<li><h:outputLabel escape="false"
-									value="#{text}" /></li>
+				<!-- ************************************************************** Version Info ************************************************************** -->
+				<p:tab title="#{msg['dialog.info.version.headline']}">
+					<div class="contentDiv">
+						<p:panel style="width:100%;"
+							header="#{msg['dialog.info.version.headline']}"
+							styleClass="contentPannel" />
+
+						<ui:repeat var="info"
+							value="#{maintenanceHandlerAction.versionInfo}">
+							<h:outputLabel style="margin-left:5px;"
+								value="#{msg['dialog.info.version']} #{info.version}" />
+
+							<ul style="margin: 0px;">
+								<ui:repeat var="text" value="#{info.changes}" varStatus="status">
+									<li><h:outputLabel escape="false" value="#{text}" /></li>
+								</ui:repeat>
+							</ul>
 						</ui:repeat>
-					</ul>
-				</ui:repeat>
-			</p:scrollPanel>
-		</div>
+					</div>
 
-		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="1" style="float:right;">
-					<!-- Abort button -->
-					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-times-circle"
-						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('INFO'))}" />
-				</h:panelGrid>
-			</h:panelGrid>
-		</div>
+					<div class="bottomDiv">
+						<h:panelGrid columns="1" style="width:100%"
+							styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+							<h:panelGrid columns="1" style="float:right;">
+								<!-- Close button -->
+								<p:commandButton value="#{msg['general.close']}"
+									styleClass="smallButton buttonRighMarginInList"
+									icon="fa fa-times-circle"
+									actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</div>
+				</p:tab>
+				<!-- ************************************************************** Version Info ************************************************************** -->
 
+				<!-- ************************************************************** Error send ************************************************************** -->
+				<p:tab title="#{msg['dialog.info.error.headline']}">
+
+					<div class="contentDiv">
+						<p:panel style="width:100%;"
+							header="#{msg['dialog.info.error.headline']}"
+							styleClass="contentPannel" />
+
+						<p:panelGrid columns="2"
+							styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+							<h:outputLabel value="#{msg['dialog.info.error.time']}" />
+							<p:calendar pattern="HH:mm:ss dd.MM.yyyy" mask="true"
+								value="#{maintenanceHandlerAction.errorDate}">
+							</p:calendar>
+							<h:outputLabel value="#{msg['dialog.info.error.text']}" />
+							<h:panelGroup />
+						</p:panelGrid>
+						<p:panelGrid columns="1"
+							styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+							<p:inputTextarea style="width:90%" rows="15"
+								value="#{maintenanceHandlerAction.errorMessage}" />
+						</p:panelGrid>
+
+					</div>
+
+					<div class="bottomDiv">
+						<h:panelGrid columns="1" style="width:100%"
+							styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+							<h:panelGrid columns="2" style="float:right;">
+
+								<!-- Send button -->
+								<p:commandButton value="#{msg['dialog.info.error.button.send']}"
+									styleClass="smallButton buttonRighMarginInListExtended"
+									icon="fa fa-mail-forward"
+									actionListener="#{maintenanceHandlerAction.sendErrorMessage(maintenanceHandlerAction.errorDate, maintenanceHandlerAction.errorMessage)}" />
+
+								<!-- Close button -->
+								<p:commandButton value="#{msg['general.close']}"
+									styleClass="smallButton buttonRighMarginInList"
+									icon="fa fa-times-circle"
+									actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</div>
+				</p:tab>
+				<!-- ************************************************************** Error send ************************************************************** -->
+
+				<!-- ************************************************************** About ************************************************************** -->
+				<p:tab title="#{msg['dialog.info.todo.headline']}">
+					<div class="contentDiv">
+						<p:panel style="width:100%;"
+							header="#{msg['dialog.info.todo.headline']}"
+							styleClass="contentPannel" />
+					</div>
+					<div class="bottomDiv">
+						<h:panelGrid columns="1" style="float:right;">
+							<!-- Close button -->
+							<p:commandButton value="#{msg['general.close']}"
+								styleClass="smallButton buttonRighMarginInList"
+								icon="fa fa-times-circle"
+								actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+						</h:panelGrid>
+					</div>
+				</p:tab>
+
+
+				<!-- ************************************************************** About ************************************************************** -->
+				<p:tab title="#{msg['dialog.info.about.headline']}">
+					<div class="contentDiv">
+						<p:panel style="width:100%;"
+							header="#{msg['dialog.info.about.headline']}"
+							styleClass="contentPannel" />
+
+						<p:panelGrid columns="1"
+							styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+							<h:outputLabel value="#{msg['dialog.info.about.text']}" />
+						</p:panelGrid>
+					</div>
+
+					<div class="bottomDiv">
+						<h:panelGrid columns="1" style="width:100%"
+							styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+							<h:panelGrid columns="1" style="float:right;">
+								<!-- Close button -->
+								<p:commandButton value="#{msg['general.close']}"
+									styleClass="smallButton buttonRighMarginInList"
+									icon="fa fa-times-circle"
+									actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+							</h:panelGrid>
+						</h:panelGrid>
+					</div>
+				</p:tab>
+				<!-- ************************************************************** About ************************************************************** -->
+
+			</p:tabView>
+		</p:panel>
 	</h:form>
 </h:body>
 </html>

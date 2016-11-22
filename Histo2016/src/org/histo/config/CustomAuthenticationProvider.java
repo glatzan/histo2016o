@@ -74,9 +74,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 						histoUser.getPhysician().setUid(userName);
 						histoUser.getPhysician().setClinicEmployee(true);
 					}
-					
-					// sending mail to inform about unlocking request
-					settings.getMail().sendMail(settings.getAdminMails(), "Freischaltung", userName + " erbittet eine Freischaltung");
 				}
 
 				histoUser.getPhysician().copyIntoObject(physician);

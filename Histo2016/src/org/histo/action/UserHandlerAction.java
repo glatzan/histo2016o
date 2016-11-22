@@ -7,6 +7,7 @@ import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -23,10 +24,19 @@ public class UserHandlerAction implements Serializable {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
-	public void prepareUserSettingsDialog(){
-		
+	@Autowired
+	@Lazy
+	private MainHandlerAction mainHandlerAction;
+
+	/**
+	 * True if unlock button was clicked
+	 */
+	private boolean unlockRequestSend;
+
+	public void prepareUserSettingsDialog() {
+
 	}
-	
+
 	/**
 	 * Checks if the session is associated with a user.
 	 * 
@@ -129,4 +139,33 @@ public class UserHandlerAction implements Serializable {
 		System.out.println("role changes");
 		genericDAO.save(histoUser, resourceBundle.get("log.user.role.changed", histoUser.getRole()));
 	}
+
+	/**
+	 * Sends an unlock Request to admins
+	 */
+	public void requestUnlock() {
+		HistoUser currentUser = getCurrentUser();
+		// sending mail to inform about unlocking request
+		mainHandlerAction.getSettings().getMail().sendMail(mainHandlerAction.getSettings().getAdminMails(),
+				"Freischaltung von " + currentUser.getUsername(),
+				currentUser.getUsername() + " erbittet eine Freischaltung\r\n\r\nAutomatische Email");
+		setUnlockRequestSend(true);
+	}
+
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+	
+	public boolean isUnlockRequestSend() {
+		return unlockRequestSend;
+	}
+
+	public void setUnlockRequestSend(boolean unlockRequestSend) {
+		this.unlockRequestSend = unlockRequestSend;
+	}
+	
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+	
 }

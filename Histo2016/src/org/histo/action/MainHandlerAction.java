@@ -31,6 +31,7 @@ import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -69,6 +70,7 @@ public class MainHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
+	@Lazy
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
@@ -149,7 +151,6 @@ public class MainHandlerAction {
 			setCurrentView(View.WORKLIST_PATIENT);
 		} else
 			setCurrentView(View.GUEST);
-
 
 	}
 

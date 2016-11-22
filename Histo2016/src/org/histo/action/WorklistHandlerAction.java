@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.StainingListAction;
@@ -39,18 +40,7 @@ public class WorklistHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = 7122206530891485336L;
 
-	public static String SEARCH_CURRENT = "%current%";
-	public static String SEARCH_YESTERDAY = "%yesterday%";
-	public static String SEARCH_LASTWEEK = "%lastweek%";
-	public static String SEARCH_TIME = "%time%";
-	public static String SEARCH_INDIVIDUAL = "%individual%";
-
-	public final static int TIME_TODAY = 1;
-	public final static int TIME_YESTERDAY = 2;
-	public final static int TIME_LASTWEEK = 3;
-	public final static int TIME_LASTMONTH = 4;
-	public final static int TIME_CUSTOM = 5;
-	public final static int TIME_FAVOURITE = 6;
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
 	private PatientDao patientDao;
@@ -76,9 +66,6 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
-
-	@Autowired
-	private TaskDAO taskDAO;
 
 	/*
 	 * ************************** Patient ****************************
@@ -127,6 +114,8 @@ public class WorklistHandlerAction implements Serializable {
 
 	@PostConstruct
 	public void init() {
+		logger.debug("Init worklist");
+
 		// init worklist
 		worklists = new HashMap<String, ArrayList<Patient>>();
 
@@ -289,10 +278,10 @@ public class WorklistHandlerAction implements Serializable {
 	 * @param asSelectedPatient
 	 */
 	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
-		
+
 		// checks if patient is already in database
 		for (Patient patientInWorklis : getWorkList()) {
-			
+
 			if (patientInWorklis.getId() == patient.getId()) {
 				if (asSelectedPatient)
 					setSelectedPatient(patientInWorklis);
@@ -353,6 +342,8 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	public void searhCurrentWorklist(SearchOptions searchOptions) {
 
+		logger.debug("Searching current worklist");
+		
 		ArrayList<Patient> result = new ArrayList<Patient>();
 
 		Calendar cal = Calendar.getInstance();
@@ -361,7 +352,7 @@ public class WorklistHandlerAction implements Serializable {
 
 		switch (searchOptions.getSearchIndex()) {
 		case STAINING_LIST:
-
+			logger.debug("Staining list selected");
 			if (searchOptions.isStaining_new()) {
 				result.addAll(patientDao.getPatientWithoutTasks(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 						TimeUtil.setDayEnding(cal).getTimeInMillis()));
@@ -373,9 +364,11 @@ public class WorklistHandlerAction implements Serializable {
 				List<Patient> paints = patientDao.getPatientByStainingsBetweenDates(0, System.currentTimeMillis(),
 						false);
 				for (Patient patient : paints) {
-					if (searchOptions.isStaining_staining() && patient.getStainingStatus() == StainingStatus.STAINING_NEEDED) {
+					if (searchOptions.isStaining_staining()
+							&& patient.getStainingStatus() == StainingStatus.STAINING_NEEDED) {
 						result.add(patient);
-					} else if (searchOptions.isStaining_restaining() && patient.getStainingStatus() == StainingStatus.RE_STAINING_NEEDED) {
+					} else if (searchOptions.isStaining_restaining()
+							&& patient.getStainingStatus() == StainingStatus.RE_STAINING_NEEDED) {
 						result.add(patient);
 					}
 				}
@@ -383,54 +376,70 @@ public class WorklistHandlerAction implements Serializable {
 
 			break;
 		case DIAGNOSIS_LIST:
+			logger.debug("Diagnosis list selected");
 			if (searchOptions.isStaining_diagnosis() && searchOptions.isStaining_rediagnosis()) {
 				result.addAll(patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false));
 			} else {
 				List<Patient> paints = patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false);
 				for (Patient patient : paints) {
-					if (searchOptions.isStaining_diagnosis() && patient.getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED ) {
+					if (searchOptions.isStaining_diagnosis()
+							&& patient.getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED) {
 						result.add(patient);
-					} else if (searchOptions.isStaining_rediagnosis() && patient.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
+					} else if (searchOptions.isStaining_rediagnosis()
+							&& patient.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					}
 				}
 			}
 			break;
+		case NOTIFICATION_LIST:
+			logger.debug("Notification list selected");
+			result.addAll(patientDao.getPatientByNotificationBetweenDates(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
+					TimeUtil.setDayEnding(cal).getTimeInMillis(), false));
+			break;
 		case TODAY:
+			logger.debug("Today selected");
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 					TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
 		case YESTERDAY:
+			logger.debug("Yesterdy selected");
 			cal.add(Calendar.DAY_OF_MONTH, -1);
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 					TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
 		case CURRENTWEEK:
+			logger.debug("Current week selected");
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
 					TimeUtil.setWeekEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
 		case LASTWEEK:
+			logger.debug("Last week selected");
 			cal.add(Calendar.WEEK_OF_YEAR, -1);
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
 					TimeUtil.setWeekEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
 		case LASTMONTH:
+			logger.debug("Last month selected");
 			cal.add(Calendar.MONDAY, -1);
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
 					TimeUtil.setMonthEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
 		case DAY:
+			logger.debug("Day selected");
 			cal.setTime(searchOptions.getDay());
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 					TimeUtil.setDayEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
 		case MONTH:
+			logger.debug("Month selected");
 			cal.set(Calendar.MONTH, searchOptions.getSearchMonth().getNumber());
 			cal.set(Calendar.YEAR, searchOptions.getYear());
 			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
 					TimeUtil.setMonthEnding(cal).getTimeInMillis(), searchOptions.getFilterIndex()));
 			break;
 		case TIME:
+			logger.debug("Time selected");
 			cal.setTime(searchOptions.getSearchFrom());
 			long fromTime = TimeUtil.setDayBeginning(cal).getTimeInMillis();
 			cal.setTime(searchOptions.getSearchTo());

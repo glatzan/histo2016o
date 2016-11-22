@@ -25,7 +25,7 @@ public class TimeUtil {
 	public static final boolean isDateOnSameDay(long date, long timeOfDay) {
 		return isDateOnSameDay(new Date(date), new Date(timeOfDay));
 	}
-	
+
 	public static final boolean isDateOnSameDay(Date date, Date timeOfDay) {
 		Calendar dateC = Calendar.getInstance();
 		dateC.setTime(date);
@@ -68,11 +68,11 @@ public class TimeUtil {
 		return cal;
 	}
 
-	public static final long setDayBeginning(long date){
+	public static final long setDayBeginning(long date) {
 		return setDayBeginning(new Date(date)).getTime();
 	}
-	
-	public static final Date setDayBeginning(Date date){
+
+	public static final Date setDayBeginning(Date date) {
 		Calendar dateC = Calendar.getInstance();
 		dateC.setTime(date);
 		return setDayBeginning(dateC).getTime();
@@ -85,14 +85,19 @@ public class TimeUtil {
 		cal.set(Calendar.MILLISECOND, 0);
 		return cal;
 	}
-	
+
+	public static final String formatDate(long date, String formatString){
+		return formatDate(new Date(date),formatString);
+	}
+
 	/**
 	 * Formats a given date using the given formatString. Returns a string.
+	 * 
 	 * @param date
 	 * @param formatString
 	 * @return
 	 */
-	public static final String formatDate(Date date, String formatString){
+	public static final String formatDate(Date date, String formatString) {
 		String dateString = "";
 
 		try {
