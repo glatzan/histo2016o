@@ -108,6 +108,12 @@ public class WorklistHandlerAction implements Serializable {
 	 * A Filter which searches for a given pattern in the current worklist (
 	 */
 	private String worklistFilter;
+
+	/**
+	 * If true and a value is insert into the worklist search field, the
+	 * worklist will be filtered using the value in worklistFilter. Otherwise new data will be loaded.
+	 */
+	private boolean filterWorklist;
 	/*
 	 * ************************** Worklist ****************************
 	 */
@@ -343,7 +349,7 @@ public class WorklistHandlerAction implements Serializable {
 	public void searhCurrentWorklist(SearchOptions searchOptions) {
 
 		logger.debug("Searching current worklist");
-		
+
 		ArrayList<Patient> result = new ArrayList<Patient>();
 
 		Calendar cal = Calendar.getInstance();
@@ -394,8 +400,9 @@ public class WorklistHandlerAction implements Serializable {
 			break;
 		case NOTIFICATION_LIST:
 			logger.debug("Notification list selected");
-			result.addAll(patientDao.getPatientByNotificationBetweenDates(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-					TimeUtil.setDayEnding(cal).getTimeInMillis(), false));
+			result.addAll(
+					patientDao.getPatientByNotificationBetweenDates(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
+							TimeUtil.setDayEnding(cal).getTimeInMillis(), false));
 			break;
 		case TODAY:
 			logger.debug("Today selected");
@@ -591,6 +598,14 @@ public class WorklistHandlerAction implements Serializable {
 
 	public void setWorklistFilter(String worklistFilter) {
 		this.worklistFilter = worklistFilter;
+	}
+
+	public boolean isFilterWorklist() {
+		return filterWorklist;
+	}
+
+	public void setFilterWorklist(boolean filterWorklist) {
+		this.filterWorklist = filterWorklist;
 	}
 
 	/*

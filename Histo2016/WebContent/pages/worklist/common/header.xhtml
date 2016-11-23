@@ -11,8 +11,11 @@
 	<h:panelGrid columns="2"
 		styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 		style="width:100%">
-		<h:panelGrid columns="2">
-			<p:commandButton
+		<h:panelGrid columns="4">
+			<p:selectBooleanCheckbox></p:selectBooleanCheckbox>
+			<h:outputLabel value="Filter" />
+			
+			<p:commandButton 
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
 				actionListener="#{patientHandlerAction.prepareAddPatient()}">
@@ -283,7 +286,7 @@
 
 				<!-- notification -->
 				<p:menuitem value="#{msg['body.worklist.header.button.logout']}"
-					url="/spring_logout" />
+					url="/spring_logout?faces-redirect=true" />
 			</p:tieredMenu>
 
 			<!-- settings button -->

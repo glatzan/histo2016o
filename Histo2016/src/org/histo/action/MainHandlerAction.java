@@ -1,6 +1,7 @@
 package org.histo.action;
 
 import java.net.URL;
+// http://stackoverflow.com/questions/3642919/javax-faces-application-viewexpiredexception-view-could-not-be-restored
 import java.net.URLClassLoader;
 // TODO urgent: status und info dialog
 // TODO check patient fetch from jason form clinik -> zu viele patienten
@@ -34,9 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.net.URLClassLoader;
 // ++++ urgent: status und info dialog
 // ++++ check patient fetch from jason form clinik -> zu viele patienten
 

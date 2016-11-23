@@ -39,6 +39,8 @@
 
 		<access-denied-handler error-page="/login.xhtml" />
 
+	
+
 	</http>
 
 
