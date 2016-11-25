@@ -27,7 +27,7 @@
 							id="pizInput" tabindex="1" mask="99999999">
 							<p:ajax process="submitGroup" update="patientList buttonTable" delay="200"
 								event="keyup"
-								listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
+								listener="#{patientHandlerAction.searchPatients()}" />
 						</p:inputMask>
 					</h:panelGroup>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.piz']}" />
@@ -39,7 +39,7 @@
 						tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
 						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
-							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
+							listener="#{patientHandlerAction.searchPatient()}" />
 					</p:calendar>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
 				</p:panelGrid>
@@ -52,7 +52,7 @@
 						tabindex="2">
 						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
-							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
+							listener="#{patientHandlerAction.searchPatient()}" />
 					</p:inputText>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
 				</p:panelGrid>
@@ -62,7 +62,7 @@
 						value="#{patientHandlerAction.searchForPatientSurname}">
 						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
-							listener="#{patientHandlerAction.searchPatient(patientHandlerAction.searchForPatientPiz,patientHandlerAction.searchForPatientName,patientHandlerAction.searchForPatientSurname, patientHandlerAction.searchForPatientBirthday)}" />
+							listener="#{patientHandlerAction.searchPatient()}" />
 
 					</p:inputText>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.surname']}" />

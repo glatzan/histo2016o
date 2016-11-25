@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.QuickSearchOptions;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.StainingStatus;
@@ -26,6 +27,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.SearchOptions;
 import org.histo.model.transitory.SortOptions;
+import org.histo.ui.PatientList;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.WorklistSortUtil;
@@ -63,6 +65,10 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	@Lazy
 	private TaskHandlerAction taskHandlerAction;
+
+	@Autowired
+	@Lazy
+	private PatientHandlerAction patientHandlerAction;
 
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
@@ -111,7 +117,8 @@ public class WorklistHandlerAction implements Serializable {
 
 	/**
 	 * If true and a value is insert into the worklist search field, the
-	 * worklist will be filtered using the value in worklistFilter. Otherwise new data will be loaded.
+	 * worklist will be filtered using the value in worklistFilter. Otherwise
+	 * new data will be loaded.
 	 */
 	private boolean filterWorklist;
 	/*
@@ -139,7 +146,7 @@ public class WorklistHandlerAction implements Serializable {
 		switch (userRole) {
 		case MTA:
 			getSearchOptions().setSearchIndex(WorklistSearchOption.STAINING_LIST);
-			searhCurrentWorklist();
+			createWorklist();
 			break;
 		case USER:
 			break;
@@ -147,7 +154,7 @@ public class WorklistHandlerAction implements Serializable {
 		case MODERATOR:
 		case ADMIN:
 			getSearchOptions().setSearchIndex(WorklistSearchOption.DIAGNOSIS_LIST);
-			searhCurrentWorklist();
+			createWorklist();
 		default:
 			break;
 		}
@@ -338,15 +345,15 @@ public class WorklistHandlerAction implements Serializable {
 	 * Searches the database for the given searchOptions and overwrites the
 	 * content of the current worklist with the found content.
 	 */
-	public void searhCurrentWorklist() {
-		searhCurrentWorklist(getSearchOptions());
+	public void createWorklist() {
+		createWorklist(getSearchOptions());
 	}
 
 	/**
 	 * Searches the database for the given searchOptions and overwrites the
 	 * content of the current worklist with the found content.
 	 */
-	public void searhCurrentWorklist(SearchOptions searchOptions) {
+	public void createWorklist(SearchOptions searchOptions) {
 
 		logger.debug("Searching current worklist");
 
@@ -525,28 +532,65 @@ public class WorklistHandlerAction implements Serializable {
 	 * ************************** Worklist ****************************
 	 */
 
-	public void searchForExistingPatients() {
-		if (getWorklistFilter().matches("[0-9]{6,8}")) {
-			System.out.println("piz");
-			System.out.println(patientDao.searchForPatientsPiz(getWorklistFilter()));
-		} else if (getWorklistFilter().matches("[a-zA-Z ,]*")) {
-			Pattern p = Pattern.compile("[a-zA-Z-]*?[ ,]*?[a-zA-Z-]*?");
-			Matcher m = p.matcher(getWorklistFilter()); // get a matcher object
-			int count = 0;
+	public void quickSearch() {
+		quickSearch(getWorklistFilter(), false);
+	}
 
-			while (m.find()) {
-				count++;
-				System.out.println("Match number " + count);
-				System.out.println("start(): " + m.start());
-				System.out.println("end(): " + m.end());
-				System.out.println(m.group());
+	public void quickSearch(String searchString, boolean isFilter) {
+		logger.debug("Search for " + searchString);
+
+		String[] resultArr = new String[2];
+		QuickSearchOptions search = QuickSearchOptions.getQuickSearchOption(searchString, resultArr);
+
+		List<PatientList> result = null;
+
+		if (isFilter) {
+
+		} else {
+			logger.debug("Search in database");
+			switch (search) {
+			case NAME:
+				result = patientHandlerAction.searchForPatientList("", resultArr[0], resultArr[1], null);
+
+				if (result.size() == 1) {
+					patientHandlerAction.addNewInternalPatient(result.get(0).getPatient());
+					addPatientToWorkList(result.get(0).getPatient(), true);
+				} else {
+					patientHandlerAction.initAddPatientDialog();
+					patientHandlerAction.setActivePatientDialogIndex(0);
+					patientHandlerAction.setSearchForPatientName(resultArr[0]);
+					patientHandlerAction.setSearchForPatientSurname(resultArr[1]);
+					patientHandlerAction.setSearchForPatientList(result);
+					patientHandlerAction.showAddPatientDialog();
+				}
+				break;
+			case PIZ:
+
+				logger.debug("Search for piz: " + searchString);
+
+				result = patientHandlerAction.searchForPatientList(String.valueOf(resultArr[0]), null, null, null);
+
+				if (result.size() == 1) {
+					patientHandlerAction.addNewInternalPatient(result.get(0).getPatient());
+					addPatientToWorkList(result.get(0).getPatient(), true);
+					logger.debug("Found patient " + result.get(0).getPatient() + " and adding to current worklist");
+				} else
+					logger.debug("Found non patient");
+
+				break;
+			case SLIDE_ID:
+				break;
+			case TASK_ID:
+				break;
+			default:
+				break;
 			}
 		}
 	}
 
-	/*
-	 * ************************** Getters/Setters ****************************
-	 */
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
 	public String getActiveWorklistKey() {
 		return activeWorklistKey;
@@ -608,8 +652,8 @@ public class WorklistHandlerAction implements Serializable {
 		this.filterWorklist = filterWorklist;
 	}
 
-	/*
-	 * ************************** Getters/Setters ****************************
-	 */
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 
 }

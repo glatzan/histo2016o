@@ -90,10 +90,16 @@ public class PatientHandlerAction implements Serializable {
 	 */
 	private boolean toManyMatchesInClinicDatabase;
 
-	/**
-	 * Shows dialog for adding and creating new patients.
-	 */
-	public void prepareAddPatient() {
+	public void showAndInitAddPatientDialog(){
+		initAddPatientDialog();
+		showAddPatientDialog();
+	}
+	
+	public void showAddPatientDialog() {
+		mainHandlerAction.showDialog(Dialog.WORKLIST_ADD_PATIENT);
+	}
+
+	public void initAddPatientDialog(){
 		setTmpPatient(new Patient());
 		getTmpPatient().setPerson(new Person());
 
@@ -104,12 +110,10 @@ public class PatientHandlerAction implements Serializable {
 
 		setSelectedPatientFromSearchList(null);
 		setSearchForPatientList(null);
-		
+
 		setToManyMatchesInClinicDatabase(false);
-
-		mainHandlerAction.showDialog(Dialog.WORKLIST_ADD_PATIENT);
 	}
-
+	
 	/**
 	 * Adds an external Patient to the database.
 	 * 
@@ -176,6 +180,12 @@ public class PatientHandlerAction implements Serializable {
 		setTmpPatient(null);
 	}
 
+	
+	public void searchPatients() {
+		setSearchForPatientList(searchForPatientList(getSearchForPatientPiz(), getSearchForPatientName(),
+				getSearchForPatientSurname(), getSearchForPatientBirthday()));
+	}
+
 	/**
 	 * Searches for a patient with the given paramenters in the clinic and in
 	 * the histo backend.
@@ -183,14 +193,14 @@ public class PatientHandlerAction implements Serializable {
 	 * 
 	 * @param piz
 	 */
-	public void searchPatient(String piz, String name, String surname, Date birthday) {
-
+	public List<PatientList> searchForPatientList(String piz, String name, String surname, Date birthday) {
+		ArrayList<PatientList> result = new ArrayList<>();
+		
 		// id for patientList, used by primefaces to get the selected row
 		int id = 0;
 
 		// if piz is given ignore other parameters
 		if (piz != null && piz.matches("^[0-9]{6,8}$")) {
-			ArrayList<PatientList> result = new ArrayList<PatientList>();
 			List<Patient> patients = patientDao.searchForPatientsPiz(piz);
 
 			// updates all patients from the local database with data from the
@@ -218,15 +228,13 @@ public class PatientHandlerAction implements Serializable {
 				// only one match is expected, set this as selected patient
 				setSelectedPatientFromSearchList(result.isEmpty() ? null : result.get(0));
 
-			setSearchForPatientList(result);
 		} else if ((name != null && !name.isEmpty()) || (surname != null && !surname.isEmpty()) || birthday != null) {
-			List<PatientList> result = new ArrayList<>();
 
 			// getting all patients with given parameters from the clinic
 			// backend
 
 			List<Patient> clinicPatients;
-			
+
 			// list for excluding results for the histo database search
 			ArrayList<String> foundPiz = new ArrayList<String>();
 
@@ -237,11 +245,11 @@ public class PatientHandlerAction implements Serializable {
 
 				// list of pizes to serach in the histo database
 				ArrayList<String> toSearchPizes = new ArrayList<String>(clinicPatients.size());
-				
+
 				if (!clinicPatients.isEmpty()) {
-					
+
 					logger.trace("Patients in clinic backend found");
-					
+
 					// getting all pizes in one Array
 					for (Patient cPatient : clinicPatients) {
 						toSearchPizes.add(cPatient.getPiz());
@@ -277,9 +285,9 @@ public class PatientHandlerAction implements Serializable {
 						result.add(patientList);
 					}
 				}
-				
+
 				setToManyMatchesInClinicDatabase(false);
-				
+
 			} catch (CustomExceptionToManyEntries e) {
 				logger.debug("To many patiens were found in the clinc database");
 				setToManyMatchesInClinicDatabase(true);
@@ -294,8 +302,9 @@ public class PatientHandlerAction implements Serializable {
 				result.add(new PatientList(id++, patient));
 			}
 
-			setSearchForPatientList(result);
 		}
+		
+		return result;
 	}
 
 	/**
@@ -393,7 +402,7 @@ public class PatientHandlerAction implements Serializable {
 	public void setToManyMatchesInClinicDatabase(boolean toManyMatchesInClinicDatabase) {
 		this.toManyMatchesInClinicDatabase = toManyMatchesInClinicDatabase;
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

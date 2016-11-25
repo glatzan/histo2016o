@@ -18,7 +18,7 @@
 			<p:commandButton 
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
-				actionListener="#{patientHandlerAction.prepareAddPatient()}">
+				actionListener="#{patientHandlerAction.showAndInitAddPatientDialog()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
@@ -176,7 +176,7 @@
 			<!-- *************** Patient Menu *************** -->
 			<!-- Show Patient Overview -->
 			<p:commandButton id="addPatient" style="display:none"
-				actionListener="#{patientHandlerAction.prepareAddPatient()}">
+				actionListener="#{patientHandlerAction.showAndInitAddPatientDialog()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 			<!-- Show Overview -->
