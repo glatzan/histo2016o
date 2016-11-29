@@ -28,7 +28,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		Integer totalResult = ((Number) c.setProjection(Projections.rowCount()).uniqueResult()).intValue();
 		return totalResult.intValue();
 	}
-
+	
 	public void initializePdfData(Task task) {
 		getSession().update(task);
 		Hibernate.initialize(task.getAttachedPdfs());

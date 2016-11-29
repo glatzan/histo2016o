@@ -24,8 +24,14 @@ public class NotificationChooser {
 	private AtomicBoolean performed;
 	
 	private AtomicBoolean error;
+	
+	public NotificationChooser(){
+		performed = new AtomicBoolean(false);
+		error = new AtomicBoolean(false);
+	}
 
 	public NotificationChooser(Contact contact) {
+		this();
 		this.contact = contact;
 		this.performed = new AtomicBoolean(false);
 	}

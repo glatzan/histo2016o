@@ -140,6 +140,8 @@ public class WorklistHandlerAction implements Serializable {
 
 		setSortOptions(new SortOptions());
 
+		setFilterWorklist(false);
+
 		// getting default worklist depending on role
 		Role userRole = userHandlerAction.getCurrentUser().getRole();
 
@@ -473,7 +475,7 @@ public class WorklistHandlerAction implements Serializable {
 	 * Selects the next task in List
 	 */
 	public void selectNextTask() {
-		if (getWorkList() != null) {
+		if (getWorkList() != null && !getWorkList().isEmpty()) {
 			if (getSelectedPatient() != null) {
 
 				boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
@@ -497,7 +499,7 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	public void selectPreviouseTask() {
-		if (getWorkList() != null) {
+		if (getWorkList() != null && !getWorkList().isEmpty()) {
 
 			boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
 
@@ -549,20 +551,57 @@ public class WorklistHandlerAction implements Serializable {
 		} else {
 			logger.debug("Search in database");
 			switch (search) {
-			case NAME:
+			case NAME_AND_SURNAME:
+				logger.debug("Searching for name (" + resultArr[0] + ") and suranme (" + resultArr[1] + ")");
+
+				// overwrites the toManyPatiensInClinicDatabse flag, so perform
+				// method before search
+
 				result = patientHandlerAction.searchForPatientList("", resultArr[0], resultArr[1], null);
 
 				if (result.size() == 1) {
 					patientHandlerAction.addNewInternalPatient(result.get(0).getPatient());
 					addPatientToWorkList(result.get(0).getPatient(), true);
+					logger.debug("Found patient " + result.get(0).getPatient() + " and adding to current worklist");
 				} else {
+					logger.debug("To many results found in clinic database, open addPatient dialog (" + resultArr[0]
+							+ "," + resultArr[1] + ")");
+					boolean toMany = false;
+					if(patientHandlerAction.isToManyMatchesInClinicDatabase())
+						toMany= true;
+					
 					patientHandlerAction.initAddPatientDialog();
+					
+					patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
 					patientHandlerAction.setActivePatientDialogIndex(0);
 					patientHandlerAction.setSearchForPatientName(resultArr[0]);
 					patientHandlerAction.setSearchForPatientSurname(resultArr[1]);
+
 					patientHandlerAction.setSearchForPatientList(result);
+
 					patientHandlerAction.showAddPatientDialog();
+
 				}
+				break;
+			case NAME:
+				logger.debug("Searching for name, open addPatient dialog");
+
+				
+
+				result = patientHandlerAction.searchForPatientList("", resultArr[0], null, null);
+
+				boolean toMany = false;
+				if(patientHandlerAction.isToManyMatchesInClinicDatabase())
+					toMany= true;
+				
+				patientHandlerAction.initAddPatientDialog();
+				
+				patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
+				patientHandlerAction.setActivePatientDialogIndex(0);
+				patientHandlerAction.setSearchForPatientName(resultArr[0]);
+				patientHandlerAction.setSearchForPatientList(result);
+				patientHandlerAction.showAddPatientDialog();
+
 				break;
 			case PIZ:
 
@@ -579,8 +618,28 @@ public class WorklistHandlerAction implements Serializable {
 
 				break;
 			case SLIDE_ID:
+				logger.debug("Search for SlideID: " + searchString);
+
+				Patient searchResultSlide = patientDao.getPatientBySlidID(resultArr[0]);
+
+				if (searchResultSlide != null) {
+					logger.debug("Slide found");
+					addPatientToWorkList(searchResultSlide.getPatient(), true);
+				} else
+					logger.debug("No slide with the given id found");
+
 				break;
 			case TASK_ID:
+				logger.debug("Search for TaskID: " + searchString);
+
+				Patient searchResultTask = patientDao.getPatientByTaskID(resultArr[0]);
+
+				if (searchResultTask != null) {
+					logger.debug("Task found");
+					addPatientToWorkList(searchResultTask.getPatient(), true);
+				} else
+					logger.debug("No task with the given id found");
+
 				break;
 			default:
 				break;

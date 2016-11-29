@@ -148,17 +148,16 @@ public class PatientHandlerAction implements Serializable {
 			if (patient.getId() == 0) {
 				// set add date
 				patient.setCreationDate(System.currentTimeMillis());
-				genericDAO.save(patient, resourceBundle.get("log.patient.search.new", patient.getPerson().getName(),
-						patient.getPerson().getSurname(), patient.getPiz()), patient);
+				genericDAO.save(patient, resourceBundle.get("log.patient.search.new", patient.toString()), patient);
 			} else
-				genericDAO.save(patient, resourceBundle.get("log.patient.search.update"), patient);
+				genericDAO.save(patient, resourceBundle.get("log.patient.search.update", patient.toString()), patient);
 
 		}
 	}
 
 	public void addNewInternalPatientFromGui(Patient patient) {
 		if (patient != null) {
-			addNewExternalPatient(patient);
+			addNewInternalPatient(patient);
 			worklistHandlerAction.addPatientToWorkList(patient, true);
 			mainHandlerAction.hideDialog(Dialog.WORKLIST_ADD_PATIENT);
 		}
@@ -224,9 +223,10 @@ public class PatientHandlerAction implements Serializable {
 				result.add(patient);
 			}
 
-			if (!result.isEmpty())
-				// only one match is expected, set this as selected patient
-				setSelectedPatientFromSearchList(result.isEmpty() ? null : result.get(0));
+			// TODO: remove or write to an other method
+//			if (!result.isEmpty())
+//				// only one match is expected, set this as selected patient
+//				setSelectedPatientFromSearchList(result.isEmpty() ? null : result.get(0));
 
 		} else if ((name != null && !name.isEmpty()) || (surname != null && !surname.isEmpty()) || birthday != null) {
 
@@ -240,7 +240,7 @@ public class PatientHandlerAction implements Serializable {
 
 			try {
 				clinicPatients = mainHandlerAction.getSettings().getClinicJsonHandler()
-						.getPatientsFromClinicJson("?name=" + name + "&vorname=" + surname + (birthday != null
+						.getPatientsFromClinicJson("?name=" + name + ( surname != null ? ("&vorname=" + surname) : "") + (birthday != null
 								? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
 
 				// list of pizes to serach in the histo database
@@ -327,6 +327,7 @@ public class PatientHandlerAction implements Serializable {
 		genericDAO.save(patient, resourceBundle.get("log.patient.extern.edit"), patient);
 		mainHandlerAction.hideDialog(Dialog.PATIENT_EDIT);
 	}
+
 
 	/********************************************************
 	 * Getter/Setter

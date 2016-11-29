@@ -43,9 +43,10 @@
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
 			<h:panelGrid columns="2">
 				<p:commandButton value="#{msg['dialog.settings.material.new']}"
-					icon="fa fa-fw fa-plus-circle"
+					icon="fa fa-fw fa-plus-circle" styleClass="smallButton"
 					actionListener="#{settingsHandlerAction.prepareNewStainingList()}"
 					update="@form"></p:commandButton>
 
@@ -54,6 +55,13 @@
 					<h:outputLabel value="#{msg['dialog.settings.material.archived']}"
 						style="margin-left:5px;"></h:outputLabel>
 				</h:panelGrid>
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" style="float:right;">
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

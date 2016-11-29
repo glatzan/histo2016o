@@ -231,6 +231,12 @@ public class Patient
 		return result.isEmpty() ? null : result;
 	}
 
+	@Override
+	@Transient
+	public String toString() {
+		return "ID: " +getId() + ", Name: " + getPerson().getFullName() +", PIZ: " + (getPiz() == null ? "extern" : getPiz());
+	}
+	
 	/********************************************************
 	 * Transient Methods
 	 ********************************************************/

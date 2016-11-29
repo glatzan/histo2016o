@@ -1,5 +1,8 @@
 package org.histo.model.util;
 
+import javax.sound.midi.MidiDevice.Info;
+
+import org.apache.log4j.Logger;
 import org.hibernate.envers.RevisionListener;
 import org.histo.config.SecurityContextHolderUtil;
 import org.histo.model.HistoUser;
@@ -17,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
  */
 @Configurable
 public class LogListener implements RevisionListener {
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	/**
 	 * Key for the securityContext, workaround in order to pass a string to this
@@ -43,12 +48,14 @@ public class LogListener implements RevisionListener {
 			Object logInfo = SecurityContextHolderUtil.getObjectFromSecurityContext(LOG_KEY_INFO);
 			if (logInfo != null && logInfo instanceof LogInfo) {
 				LogInfo info = (LogInfo) logInfo;
+				logger.debug("Loginfo found: " + info.getInfo() + " for patient: "
+						+ (info.getPatient() == null ? "none" : info.getPatient().toString() ));
 				revEntity.setLogString(info.getInfo());
 				revEntity.setPatient(info.getPatient());
 				SecurityContextHolderUtil.setObjectToSecurityContext(LOG_KEY_INFO, null);
 			}
 		} catch (NullPointerException e) {
-			System.out.println(e);
+			logger.error("Nullpointer expection",e);
 		}
 	}
 

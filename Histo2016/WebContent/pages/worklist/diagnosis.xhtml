@@ -183,16 +183,26 @@
 
 			<h:outputLabel value="#{msg['body.diagnosis.histologicalRecord']}"></h:outputLabel>
 			<h:panelGroup id="extendedTextParent">
-				<p:editor id="extendedText" widgetVar="extendedText"
+				<!-- <p:editor id="extendedText" widgetVar="extendedText"
 					disabled="#{selectedTask.diagnosisCompleted}"
 					value="#{selectedTask.report.histologicalRecord}"
 					style="width:100%"
 					valueChangeListener="#{helperHandlerAction.valueChanged}">
-				</p:editor>
+				</p:editor> -->
+
+				<p:inputTextarea style="width:100%" id="extendedText" rows="15"
+					disabled="#{selectedTask.diagnosisCompleted}"
+					value="#{selectedTask.report.histologicalRecord}">
+
+					<p:ajax event="change" execute="@this"
+						listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.histologicalRecord',selectedTask.report.histologicalRecord)}" />
+				</p:inputTextarea>
+
+
 				<p:commandButton style="display:none" id="submitDiagnosisChange"
 					name="submitDiagnosisChange" process="extendedTextParent"></p:commandButton>
 
-				<f:verbatim>
+				<!--  	<f:verbatim>
 					<script type="text/javascript">
 						$(document)
 								.ready(
@@ -215,7 +225,7 @@
 															});
 										});
 					</script>
-				</f:verbatim>
+				</f:verbatim>-->
 			</h:panelGroup>
 
 			<h:outputLabel value="#{msg['body.diagnosis.diagnosis']}"></h:outputLabel>
@@ -350,7 +360,7 @@
 					<!-- consultant -->
 					<p:column style="width:30%">
 						<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
-							styleClass="customSerachSelectMenu" 
+							styleClass="customSerachSelectMenu"
 							panelStyleClass="customSerachSelectMenuPanel"
 							value="#{taskHandlerAction.consultantToSign}"
 							converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
@@ -394,7 +404,7 @@
 					<p:column>
 						<p:selectOneMenu styleClass="customSerachSelectMenu"
 							id="pysicianToSignRole" editable="true"
-							style="width:80% !important;" 
+							style="width:80% !important;"
 							disabled="#{selectedTask.report.physicianToSign.physician eq null or diagnosis.finalized}"
 							value="#{selectedTask.report.physicianToSign.role}">
 							<f:selectItems value="#{enumProvider.signatureRoles}"
@@ -404,7 +414,7 @@
 							<p:ajax event="change"
 								onstart="$('#contentForm\\:submitPhysicianRoleChange').click();" />
 						</p:selectOneMenu>
-						
+
 						<!-- hidden button for updating on physician role change -->
 						<p:commandButton style="display:none" update="@form"
 							id="submitPhysicianRoleChange">

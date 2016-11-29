@@ -13,7 +13,7 @@
 			styleClass="contentPannel" />
 
 		<p:dataTable var="diagnosisPreset" style="width:100%;"
-			scrollable="true" scrollHeight="490"
+			scrollable="true" scrollHeight="460"
 			value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
@@ -49,12 +49,14 @@
 		</p:dataTable>
 	</div>
 	<div class="bottomDiv">
+
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
 			<h:panelGrid columns="2">
 				<p:commandButton
 					value="#{msg['dialog.settings.diagnosis.list.button.new']}"
-					icon="fa fa-fw fa-plus-circle"
+					icon="fa fa-fw fa-plus-circle" styleClass="smallButton"
 					actionListener="#{settingsHandlerAction.prepareNewDiagnosisPrototype()}"
 					update="@form"></p:commandButton>
 
@@ -63,6 +65,13 @@
 					<h:outputLabel
 						value="#{msg['dialog.settings.diagnosis.list.checkbox.archived']}"></h:outputLabel>
 				</h:panelGrid>
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" style="float:right;">
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

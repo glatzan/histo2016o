@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum QuickSearchOptions {
-	NAME, PIZ, TASK_ID, SLIDE_ID, NONE;
+	NAME, NAME_AND_SURNAME, PIZ, TASK_ID, SLIDE_ID, NONE;
 
 	/**
 	 * Checks the string for a name (Name, surname), PIZ (8), Task_ID (6), SLIDE_ID (10) 
@@ -24,9 +24,19 @@ public enum QuickSearchOptions {
 		if (m.find()) {
 			toSearch[0] = m.group(1);
 			toSearch[1] = m.group(2);
-			return NAME;
+			return NAME_AND_SURNAME;
 		}
 
+		pattern = "[\\p{Alpha}\\-]+";
+
+		r = Pattern.compile(pattern);
+		m = r.matcher(search);
+
+		if (m.find()) {
+			toSearch[0] = m.group(0);
+			return NAME;
+		}
+		
 		pattern = "(\\d{8})";
 
 		r = Pattern.compile(pattern);

@@ -39,7 +39,7 @@
 						tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
 						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
-							listener="#{patientHandlerAction.searchPatient()}" />
+							listener="#{patientHandlerAction.searchPatients()}" />
 					</p:calendar>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
 				</p:panelGrid>
@@ -52,7 +52,7 @@
 						tabindex="2">
 						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
-							listener="#{patientHandlerAction.searchPatient()}" />
+							listener="#{patientHandlerAction.searchPatients()}" />
 					</p:inputText>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
 				</p:panelGrid>
@@ -62,7 +62,7 @@
 						value="#{patientHandlerAction.searchForPatientSurname}">
 						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
 							event="keyup"
-							listener="#{patientHandlerAction.searchPatient()}" />
+							listener="#{patientHandlerAction.searchPatients()}" />
 
 					</p:inputText>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.surname']}" />
@@ -70,7 +70,7 @@
 			</h:panelGroup>
 		</p:panelGrid>
 
-		<p:dataTable var="patientList" id="patientList" scrollHeight="380"
+		<p:dataTable var="patientList" id="patientList" scrollHeight="370"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 			scrollable="true" selectionMode="single" rowKey="#{patientList.id}"
 			selection="#{patientHandlerAction.selectedPatientFromSearchList}"

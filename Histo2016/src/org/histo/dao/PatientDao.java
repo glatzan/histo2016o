@@ -245,21 +245,68 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	public List<Patient> getPatientsByNameSurnameDateExcludePiz(String name, String surname, Date date,
 			List<String> pizesToExclude) {
 
-		Criteria c = getSession().createCriteria(Patient.class, "patient");
-		c.createAlias("patient.person", "_person");
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		
+		query.createAlias("patient.person", "_person");
 
 		if (name != null && !name.isEmpty())
-			c.add(Restrictions.ilike("_person.name", name, MatchMode.ANYWHERE));
-		if (surname != null & !surname.isEmpty())
-			c.add(Restrictions.ilike("_person.surname", surname, MatchMode.ANYWHERE));
+			query.add(Restrictions.ilike("_person.name", name, MatchMode.ANYWHERE));
+		if (surname != null && !surname.isEmpty())
+			query.add(Restrictions.ilike("_person.surname", surname, MatchMode.ANYWHERE));
 		if (date != null)
-			c.add(Restrictions.eq("_person.birthday", date));
+			query.add(Restrictions.eq("_person.birthday", date));
 		if (pizesToExclude != null && !pizesToExclude.isEmpty())
-			c.add(Restrictions.not(Restrictions.in("piz", pizesToExclude.toArray())));
+			query.add(Restrictions.not(Restrictions.in("piz", pizesToExclude.toArray())));
 
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-		List<Patient> result = (List<Patient>) c.list();
+		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+		
 		return result != null ? result : new ArrayList<>();
+	}
+	
+	/**
+	 * Searches for an taskID and returns the patient whom the task belongs to
+	 * @param taskID
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Patient getPatientByTaskID(String taskID) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
+		query.createAlias("patient.tasks", "_tasks");
+		query.add(Restrictions.eq("_tasks.taskID", taskID));
+
+		
+		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+
+		if (result.size() == 1)
+			return result.get(0);
+		
+		return null;
+	}
+	
+	/**
+	 * Searches for an slideID and returns the patient whom the slide belongs to
+	 * @param slideID
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Patient getPatientBySlidID(String slideID) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		
+		query.createAlias("patient.tasks", "_tasks");
+		query.createAlias("_tasks.samples", "_samples");
+		query.createAlias("_samples.blocks", "_blocks");
+		query.createAlias("_blocks.slides", "_slides");
+		query.add(Restrictions.eq("_slides.slideID", slideID));
+		
+
+		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+
+		if (result.size() == 1)
+			return result.get(0);
+		
+		return null;
 	}
 }

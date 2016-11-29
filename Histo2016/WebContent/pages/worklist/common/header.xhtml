@@ -12,8 +12,9 @@
 		styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 		style="width:100%">
 		<h:panelGrid columns="4">
-			<p:selectBooleanCheckbox></p:selectBooleanCheckbox>
-			<h:outputLabel value="Filter" />
+			
+			<p:selectBooleanCheckbox value="#{worklistHandlerAction.filterWorklist}" disabled="true" />
+			<h:outputLabel value="#{msg['body.worklist.header.filter']}" />
 			
 			<p:commandButton 
 				value="#{msg['body.worklist.header.button.addPatient']}"

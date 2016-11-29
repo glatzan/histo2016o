@@ -59,6 +59,8 @@ public class MaintenanceHandlerAction {
 							+ TimeUtil.formatDate(dateOfError, DateFormat.GERMAN_DATE_TIME.getDateFormat()),
 					errorMessage);
 		}
+		
+		mainHandlerAction.hideDialog(Dialog.INFO);
 	}
 
 	/********************************************************

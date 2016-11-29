@@ -1,5 +1,15 @@
 [  
    {  
+      "version":"0.95a",
+      "changes":[  
+         "<b>Added:</b> Suche aus der Menuleiste jetzt mölgich",
+         "<b>Added:</b> Umschaltknopf für Menuleiste zum filtern der Arbeitesliste",
+         "<b>Fix:</b> Verschiedene Scrollbalken entfernt",
+         "<b>Fix:</b> Fehler beim der Benachrichtigung von Ärzten behoben",
+         "<b>Change:</b> Nach Absenden einer Fehlermeldung wird der Info-Dialog geschlossen"
+       ]
+   },    
+   {  
       "version":"0.95",
       "changes":[  
          "<b>Added:</b> Info Dilaog",
