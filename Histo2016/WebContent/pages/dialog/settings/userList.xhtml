@@ -34,20 +34,20 @@
 
 				<p:selectOneMenu style="margin-top:1px;"
 					title="#{msg['body.worklist.header.view']}" value="#{user.role}"
-					styleClass="smallerInput" disabled="#{userHandlerAction.currentUserHasRoleOrHigher('MODERATOR')}]">
+					styleClass="smallerInput"
+					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('MODERATOR')}]">
 
 					<p:ajax event="change" execute="@this"
-						listener="#{userHandlerAction.roleOfuserHasChanged(user)}"></p:ajax>
+						listener="#{settingsHandlerAction.onChangeUserRole(user)}"></p:ajax>
 
 					<f:selectItems value="#{enumProvider.roles}" var="role"
 						itemValue="#{role}" itemLabel="#{msg['enum.role.'.concat(role)]}" />
 
 				</p:selectOneMenu>
-
 			</p:column>
-
 		</p:dataTable>
 	</div>
+
 
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"

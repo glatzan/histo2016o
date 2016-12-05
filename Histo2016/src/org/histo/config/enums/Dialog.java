@@ -33,7 +33,9 @@ public enum Dialog {
 	NOTIFICATION("/pages/dialog/notification/notification", null,  1024, 600, false, false, true),  // 16:9
 	NOTIFICATION_PREVIEW("/pages/dialog/notification/notification_preview", null,  1024, 600, false, false, true), //  16:9
 	INFO("/pages/dialog/info/info", null,  1024, 600, false, false, true), //  16:9
-	UPLOAD_TASK("/pages/dialog/upload/uploadPdfToTask", null,  640, 360, false, false, true);
+	UPLOAD_TASK("/pages/dialog/upload/uploadPdfToTask", null,  640, 360, false, false, true),
+	SETTINGS_USER_ROLE_CHANGE("/pages/dialog/settings/userRoleChanged", null,  480, 272, false, false, true); //  16:9
+	
 	
 	private final String path;
 	private final boolean useOptions;

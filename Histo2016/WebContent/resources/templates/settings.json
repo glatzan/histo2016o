@@ -1,37 +1,43 @@
 {
- 
-  "defaultSlideLableLayout": "^XA^FO05,00^A0N,16,12^FDAugenklinik Freiburg Histologie^FS^FO07,20^BY1^BCN,40,N,N,N,A^FD%slideNumber%^FS^FO2,70^A0N,30,20^FD%slideName%^FS^FO02,100^A0N,14,14^FD%slideText%^FS^FO02,118^A0N,14,14^FD%date%^FS^XZ",
-  "currentVersion" : "0.95a",
-  
-  
-  "mail": {
-    "server": "smtp.ukl.uni-freiburg.de",
-    "port": 465,
-    "ssl": true,
-    "debug": true,
-    "fromMail": "augenklinik.histologie@uniklinik-freiburg.de",
-    "fromName": "Histologisches Labor der Augenklinik Freiburg",
-    "defaultReportEmailSubject": "Histologiebefung für %name%, geb. %birthday%, PIZ: %piz% abeschlossen.",
-    "defaultReportEmailText": "Hier steht ein Text"
-  },
- 
-  "ldap": {
-    "host": "ldap.ukl.uni-freiburg.de",
-    "port": 389,
-    "suffix": "dc=ukl,dc=uni-freiburg,dc=de",
-    "base": "ou=people"
-  },
- 
-  "adminMails": [
-    "andreas.glatz@uniklinik-freiburg.de"
-  ],
-  
-   "errorMails": [
-    "andreas.glatz@uniklinik-freiburg.de"
-  ],
-  
-  "clinicJsonHandler" : {
-  	"baseUrl" : "http://auginfo/piz",
-  	"userAgent" : "Mozilla/5.0"
-  }
+   "defaultSlideLableLayout":"^XA^FO05,00^A0N,16,12^FDAugenklinik Freiburg Histologie^FS^FO07,20^BY1^BCN,40,N,N,N,A^FD%slideNumber%^FS^FO2,70^A0N,30,20^FD%slideName%^FS^FO02,100^A0N,14,14^FD%slideText%^FS^FO02,118^A0N,14,14^FD%date%^FS^XZ",
+   "currentVersion":"0.95b",
+   "mail":{
+      "server":"smtp.ukl.uni-freiburg.de",
+      "port":465,
+      "ssl":true,
+      "debug":true,
+      "fromMail":"augenklinik.histologie@uniklinik-freiburg.de",
+      "fromName":"Histologisches Labor der Augenklinik Freiburg",
+      "mailTemplates":{
+         "TaskReport":{
+            "subject":"Histologiebefung für %name%, geb. %birthday%, PIZ: %piz% abeschlossen.",
+            "content":"Hier steht ein Text"
+         },
+         "RequestUnlock": {
+            "subject":"Freischaltung von  %name% erbeten",
+            "content":"%name%, %username%, %clinicRole% erbittet eine Freischaltung"
+         },
+         "Unlock": {
+            "subject":"Freischaltung für PathoFRO erfolgt",
+            "content":"Eine Freischaltung für PathoFRP ist erfolgt."
+         }
+         
+      }
+   },
+   "ldap":{
+      "host":"ldap.ukl.uni-freiburg.de",
+      "port":389,
+      "suffix":"dc=ukl,dc=uni-freiburg,dc=de",
+      "base":"ou=people"
+   },
+   "adminMails":[
+      "andreas.glatz@uniklinik-freiburg.de"
+   ],
+   "errorMails":[
+      "andreas.glatz@uniklinik-freiburg.de"
+   ],
+   "clinicJsonHandler":{
+      "baseUrl":"http://auginfo/piz",
+      "userAgent":"Mozilla/5.0"
+   }
 }

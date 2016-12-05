@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.staingingPerformed.Headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="dialogLayout infoDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.staingingPerformed.Headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1"
+				styleClass="infoTable smallPaddingVerticalAll standardFont"
+				style="width:100%">
+				<h:outputFormat value="#{msg['dialog.staingingPerformed.Test']}"
+					escape="false" />
+			</h:panelGrid>
+		</div>
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="1" style="float:right;">
+					<!-- ok button -->
+					<p:commandButton value="#{msg['general.confirm']}"
+						actionListener="#{slideHandlerAction.hideStainingsPerformedDialog()}"></p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

@@ -15,6 +15,7 @@ import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
+import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Council;
 import org.histo.model.MaterialPreset;
@@ -60,6 +61,9 @@ public class TaskHandlerAction implements Serializable {
 	@Autowired
 	private GenericDAO genericDAO;
 
+	@Autowired
+	private SettingsDAO settingsDAO;
+	
 	@Autowired
 	private DiagnosisHandlerAction diagnosisHandlerAction;
 
@@ -172,7 +176,7 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 
 	public void prepareBean() {
-		setAllAvailableMaterials(helperDAO.getAllStainingLists());
+		setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
 		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
 
 		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
@@ -318,7 +322,7 @@ public class TaskHandlerAction implements Serializable {
 	 * Displays a dialog for creating a new sample
 	 */
 	public void prepareNewSampleDialog(Task task) {
-		setAllAvailableMaterials(helperDAO.getAllStainingLists());
+		setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
 		// checks if default statingsList is empty
 		if (!getAllAvailableMaterials().isEmpty()) {
 			setSelectedMaterial(getAllAvailableMaterials().get(0));

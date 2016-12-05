@@ -8,6 +8,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.histo.model.interfaces.EditAbleEntity;
+import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;
 
 import com.google.gson.Gson;
@@ -16,7 +17,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "standardDiagnosis_sequencegenerator", sequenceName = "standardDiagnosis_sequence")
-public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble {
+public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble, ListOrder<DiagnosisPreset> {
 
 	@Expose
 	private long id;
@@ -32,6 +33,8 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	private String extendedDiagnosisText;
 	@Expose
 	private String commentary;
+	@Expose
+	private int indexInList;
 	
 	public DiagnosisPreset() {
 	}
@@ -105,11 +108,26 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	public void setCommentary(String commentary) {
 		this.commentary = commentary;
 	}
-
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+	
+	/********************************************************
+	 * Interface ListOrder
+	 ********************************************************/
+	@Column
+	public int getIndexInList() {
+		return indexInList;
+	}
 
+	public void setIndexInList(int indexInList) {
+		this.indexInList = indexInList;
+	}
+	/********************************************************
+	 * Interface ListOrder
+	 ********************************************************/
+	
 	@Transient
 	@Override
 	public String asGson() {

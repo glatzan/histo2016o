@@ -9,26 +9,26 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.material']} / #{settingsHandlerAction.originalStainingList eq null ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']}"
+			header="#{msg['dialog.settings.material']} / #{settingsHandlerAction.originalMaterial eq null ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']}"
 			styleClass="contentPannel" />
 
 		<p:panelGrid columns="2"
 			styleClass="noBordersAll collapsedBordersAll " style="width:100%">
 			<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
 			<p:inputText style="width:390px"
-				value="#{settingsHandlerAction.editStainingList.name}" />
+				value="#{settingsHandlerAction.editMaterial.name}" />
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.material.new.commentary']}"></h:outputLabel>
 			<p:inputTextarea rows="3" style="width:390px"
-				value="#{settingsHandlerAction.editStainingList.commentary}" />
+				value="#{settingsHandlerAction.editMaterial.commentary}" />
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.material.new.stainings']}"></h:outputLabel>
 
 			<p:dataTable var="staining" style="width:400px" scrollable="true"
 				scrollHeight="150" styleClass="defaultDataTable"
-				value="#{settingsHandlerAction.editStainingList.stainingPrototypes}">
+				value="#{settingsHandlerAction.editMaterial.stainingPrototypes}">
 
 				<p:column
 					headerText="#{msg['dialog.settings.material.new.stainings.name']}"
@@ -44,7 +44,7 @@
 
 				<p:column style="width:10%; text-align:center;">
 					<p:commandLink title="#{msg['general.remove']}"
-						actionListener="#{settingsHandlerAction.removeStainingFromStainingList(staining,settingsHandlerAction.editStainingList)}"
+						actionListener="#{settingsHandlerAction.removeStainingFromStainingList(staining,settingsHandlerAction.editMaterial)}"
 						update="@form">
 						<i class="fa fa-trash-o" />
 					</p:commandLink>
@@ -60,16 +60,16 @@
 			<h:panelGrid columns="3">
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
-					actionListener="#{settingsHandlerAction.saveStainigList(settingsHandlerAction.editStainingList, settingsHandlerAction.originalStainingList)}"
+					actionListener="#{settingsHandlerAction.saveMaterial(settingsHandlerAction.editMaterial, settingsHandlerAction.originalMaterial)}"
 					update="@form"></p:commandButton>
 				<p:commandButton
 					value="#{msg['dialog.settings.material.new.stainings.add']}"
 					icon="fa fa-fw fa-plus-circle"
-					actionListener="#{settingsHandlerAction.prepareAddStainingToStainingList()}"
+					actionListener="#{settingsHandlerAction.prepareAddStainingToMaterial()}"
 					update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
-					actionListener="#{settingsHandlerAction.discardChangesOfStainigList()}"
+					actionListener="#{settingsHandlerAction.discardChangesOfMaterial()}"
 					update="@form"></p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>

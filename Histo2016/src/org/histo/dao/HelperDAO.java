@@ -21,14 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(value = "session")
 public class HelperDAO extends AbstractDAO implements Serializable {
 
-	public List<StainingPrototype> getAllStainings() {
-		return (List<StainingPrototype>) getSession().createCriteria(StainingPrototype.class).list();
-	}
-
-	public List<MaterialPreset> getAllStainingLists() {
-		return (List<MaterialPreset>) getSession().createCriteria(MaterialPreset.class)
-				.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
-	}
 
 	/**
 	 * Inits the stainingprotoypes of a stainingprototypeList

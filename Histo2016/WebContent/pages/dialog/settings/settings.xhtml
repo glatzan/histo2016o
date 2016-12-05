@@ -60,31 +60,31 @@
 				</p:tab>
 				<!-- ************************************************************** Stainings ************************************************************** -->
 
-				<!-- ************************************************************** StainingList ************************************************************** -->
+				<!-- ************************************************************** Material ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.materials']}">
 
 					<!-- ******************* StainingsList List ******************* -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.stainingListIndex eq 0}">
-						<ui:include src="stainingListList.xhtml" />
+						rendered="#{settingsHandlerAction.materialTabIndex eq 'M_LIST'}">
+						<ui:include src="materialList.xhtml" />
 					</ui:fragment>
 					<!-- ******************* StainingsList List ******************* -->
 
 					<!-- ******************* StainingsList Edit/New ******************* -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.stainingListIndex eq 1}">
-						<ui:include src="stainingListEdit.xhtml" />
+						rendered="#{settingsHandlerAction.materialTabIndex eq 'M_EDIT'}">
+						<ui:include src="materialEdit.xhtml" />
 					</ui:fragment>
 					<!-- ******************* StainingsList Edit/New ******************* -->
 
 					<!-- ******************* StainingsList Add Staining ******************* -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.stainingListIndex eq 2}">
-						<ui:include src="stainingListAddStaining.xhtml" />
+						rendered="#{settingsHandlerAction.materialTabIndex eq 'M_ADD_STAINING'}">
+						<ui:include src="materialAddStaining.xhtml" />
 					</ui:fragment>
 					<!-- ******************* StainingsList Add Staining ******************* -->
 				</p:tab>
-				<!-- ************************************************************** StainingList ************************************************************** -->
+				<!-- ************************************************************** Material ************************************************************** -->
 
 				<!-- ************************************************************** Diagnoses ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.diagnosis']}">
@@ -119,6 +119,11 @@
 					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Persons ************************************************************** -->
+
+				<!-- ************************************************************** Static Lists ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.staticLists']}">
+				</p:tab>
+				<!-- ************************************************************** Static Lists ************************************************************** -->
 
 				<p:tab title="#{msg['dialog.settings.miscellaneous']}">
 				</p:tab>

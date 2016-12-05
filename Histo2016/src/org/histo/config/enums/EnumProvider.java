@@ -78,14 +78,15 @@ public class EnumProvider {
 	}
 
 	/**
-	 * Retnurns an array containing all values of the StainingListAction enumeration.
+	 * Returns an array containing all values of the StainingListAction
+	 * enumeration.
+	 * 
 	 * @return
 	 */
 	public StainingListAction[] getStainingListActions() {
 		return StainingListAction.values();
 	}
-	
-	
+
 	/**
 	 * Returns an array containing all values of the {@link NotificationOption}
 	 * enumeration.
@@ -117,6 +118,15 @@ public class EnumProvider {
 	}
 
 	/**
+	 * Returns an array containing all values of the StaticList enumeration.
+	 * 
+	 * @return
+	 */
+	public StaticList[] getStaticLists() {
+		return StaticList.values();
+	}
+
+	/**
 	 * Returns the path an an dialog
 	 * 
 	 * @param dialog
@@ -124,16 +134,6 @@ public class EnumProvider {
 	 */
 	public Dialog getDialog(Dialog dialog) {
 		return dialog;
-	}
-	
-	/**
-	 * Returns a dateFormat
-	 * 
-	 * @param dialog
-	 * @return
-	 */
-	public DateFormat getDateFormat(DateFormat dateFormat) {
-		return dateFormat;
 	}
 
 }

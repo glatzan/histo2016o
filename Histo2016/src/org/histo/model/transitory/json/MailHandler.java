@@ -3,6 +3,7 @@ package org.histo.model.transitory.json;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
@@ -11,8 +12,10 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.apache.log4j.Logger;
+import org.histo.config.enums.MailPresetName;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.GsonAble;
+import org.histo.util.HistoUtil;
 
 public class MailHandler implements GsonAble {
 
@@ -30,9 +33,40 @@ public class MailHandler implements GsonAble {
 
 	private String fromName;
 
-	private String defaultReportEmailSubject;
+	private HashMap<MailPresetName, MailTemplate> mailTemplates;
 
-	private String defaultReportEmailText;
+	public final boolean sendTempalteMail(String to[], MailPresetName preset, HashMap<String, String> subjectReplace,
+			HashMap<String, String> contentReplace) {
+
+		boolean result = true;
+		for (int i = 0; i < to.length; i++) {
+			if (!sendTempalteMail(to[i], preset, subjectReplace, contentReplace))
+				result = false;
+		}
+
+		return result;
+	}
+
+	public final boolean sendTempalteMail(String to, MailPresetName preset, HashMap<String, String> subjectReplace,
+			HashMap<String, String> contentReplace) {
+
+		MailTemplate template = mailTemplates.get(preset);
+		if (template == null) {
+			logger.debug("No Template found for " + preset.toString());
+			return false;
+		}
+
+		logger.debug("Template found for " + preset.toString());
+
+		// replacing wildcards if hashmap is provided
+		String subject = subjectReplace != null
+				? HistoUtil.replaceWildcardsInString(template.getSubject(), subjectReplace) : template.getSubject();
+
+		String content = contentReplace != null
+				? HistoUtil.replaceWildcardsInString(template.getContent(), contentReplace) : template.getContent();
+
+		return sendMail(to, subject, content);
+	}
 
 	/**
 	 * Sends a mail with the standard sender to several addresses
@@ -157,6 +191,12 @@ public class MailHandler implements GsonAble {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+	public MailTemplate getMailTemplate(MailPresetName presetName) {
+		if (getMailTemplates() != null)
+			return getMailTemplates().get(presetName);
+		return null;
+	}
+
 	public String getServer() {
 		return server;
 	}
@@ -205,20 +245,12 @@ public class MailHandler implements GsonAble {
 		this.fromName = fromName;
 	}
 
-	public String getDefaultReportEmailSubject() {
-		return defaultReportEmailSubject;
+	public HashMap<MailPresetName, MailTemplate> getMailTemplates() {
+		return mailTemplates;
 	}
 
-	public void setDefaultReportEmailSubject(String defaultReportEmailSubject) {
-		this.defaultReportEmailSubject = defaultReportEmailSubject;
-	}
-
-	public String getDefaultReportEmailText() {
-		return defaultReportEmailText;
-	}
-
-	public void setDefaultReportEmailText(String defaultReportEmailText) {
-		this.defaultReportEmailText = defaultReportEmailText;
+	public void setMailTemplates(HashMap<MailPresetName, MailTemplate> mailTemplates) {
+		this.mailTemplates = mailTemplates;
 	}
 
 	/********************************************************

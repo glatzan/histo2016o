@@ -13,6 +13,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StainingListAction;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
+import org.histo.dao.SettingsDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -20,7 +21,7 @@ import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.LabelPrinter;
-import org.histo.ui.StainingListChooser;
+import org.histo.ui.ListChooser;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.HistoUtil;
 import org.histo.util.SlideUtil;
@@ -44,6 +45,9 @@ public class SlideHandlerAction implements Serializable {
 	private HelperDAO helperDAO;
 
 	@Autowired
+	private SettingsDAO settingsDAO;
+	
+	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired
@@ -66,7 +70,7 @@ public class SlideHandlerAction implements Serializable {
 	 * List for selecting staining, this list contains all stainigns not added
 	 * in tmpSample
 	 */
-	private List<StainingListChooser> stainingListChooser;
+	private List<ListChooser<StainingPrototype>> stainingListChooser;
 
 	/**
 	 * used for adding new staings to block
@@ -97,12 +101,12 @@ public class SlideHandlerAction implements Serializable {
 
 		setTmpRestaining(blockToAddStaining.getParent().isReStainingPhase());
 
-		setStainingListChooser(new ArrayList<StainingListChooser>());
+		setStainingListChooser(new ArrayList<ListChooser<StainingPrototype>>());
 
-		List<StainingPrototype> allStainings = helperDAO.getAllStainings();
+		List<StainingPrototype> allStainings = settingsDAO.getAllStainingPrototypes();
 
 		for (StainingPrototype staining : allStainings) {
-			getStainingListChooser().add(new StainingListChooser(staining));
+			getStainingListChooser().add(new ListChooser<StainingPrototype>(staining));
 		}
 
 		mainHandlerAction.showDialog(Dialog.SLIDE_CREATE);
@@ -115,13 +119,13 @@ public class SlideHandlerAction implements Serializable {
 		mainHandlerAction.hideDialog(Dialog.SLIDE_CREATE);
 	}
 
-	public void addSelectedSlides(List<StainingListChooser> slideList, Block block, String commentary,
+	public void addSelectedSlides(List<ListChooser<StainingPrototype>> slideList, Block block, String commentary,
 			boolean reStaining) {
 
 		// überprüft ob eine neuer Objektträger erstellt werden soll, falls
 		// nicht wird abgebrochen
 		boolean slideChoosen = false;
-		for (StainingListChooser slide : slideList) {
+		for (ListChooser<StainingPrototype> slide : slideList) {
 			if (slide.isChoosen()) {
 				slideChoosen = true;
 				break;
@@ -134,9 +138,9 @@ public class SlideHandlerAction implements Serializable {
 		}
 
 		// fügt einen neune Objektträger hinzu
-		for (StainingListChooser slide : slideList) {
+		for (ListChooser<StainingPrototype> slide : slideList) {
 			if (slide.isChoosen()) {
-				addStaining(slide.getStainingPrototype(), block, commentary, reStaining);
+				addStaining(slide.getListItem(), block, commentary, reStaining);
 			}
 		}
 
@@ -402,11 +406,11 @@ public class SlideHandlerAction implements Serializable {
 		this.tmpBlock = tmpBlock;
 	}
 
-	public List<StainingListChooser> getStainingListChooser() {
+	public List<ListChooser<StainingPrototype>> getStainingListChooser() {
 		return stainingListChooser;
 	}
 
-	public void setStainingListChooser(List<StainingListChooser> stainingListChooser) {
+	public void setStainingListChooser(List<ListChooser<StainingPrototype>> stainingListChooser) {
 		this.stainingListChooser = stainingListChooser;
 	}
 

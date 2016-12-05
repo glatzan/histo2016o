@@ -36,11 +36,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+// TODO Email benachrichtigung bei role change Hisotuserrole
 // ++++ urgent: status und info dialog
 // ++++ check patient fetch from jason form clinik -> zu viele patienten
 
 // TODO Bug from email!
-// TODO wenn kein patient gefunden, darf dieser nicht ausgewählt werden können
+// ++++ wenn kein patient gefunden, darf dieser nicht ausgewählt werden können
 // TODO print dialog auswahl der ärtze geht nicht
 // TODO report in task muss umbeannt werden
 // TODO List für Patienten übersicht

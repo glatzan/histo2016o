@@ -1,4 +1,13 @@
-[  
+[  {  
+   
+      "version":"0.95b",
+      "changes":[  
+         "<b>Change:</b> Email-Text nun über Datei konfigurierbar",     
+         "<b>Added:</b> Färbungen können nun mittels drag and drop sortiert werden",
+         "<b>Added:</b> Materialien können nun mittels drag and drop sortiert werden",
+         "<b>Added:</b> Diagnose können nun mittels drag and drop sortiert werden"
+       ]
+   },  
    {  
       "version":"0.95a",
       "changes":[  

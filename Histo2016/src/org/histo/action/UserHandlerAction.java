@@ -1,8 +1,11 @@
 package org.histo.action;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
+import org.histo.config.enums.MailPresetName;
 import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
@@ -17,6 +20,8 @@ import org.springframework.stereotype.Component;
 public class UserHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -8314968695816748306L;
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -136,7 +141,7 @@ public class UserHandlerAction implements Serializable {
 	 * @param histoUser
 	 */
 	public void roleOfuserHasChanged(HistoUser histoUser) {
-		System.out.println("role changes");
+		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getRole().toString());
 		genericDAO.save(histoUser, resourceBundle.get("log.user.role.changed", histoUser.getRole()));
 	}
 
@@ -145,17 +150,26 @@ public class UserHandlerAction implements Serializable {
 	 */
 	public void requestUnlock() {
 		HistoUser currentUser = getCurrentUser();
+
+		HashMap<String, String> subject = new HashMap<String, String>();
+		subject.put("%name%", currentUser.getPhysician().getPerson().getFullName());
+
+		HashMap<String, String> content = new HashMap<String, String>();
+		content.put("%name%", currentUser.getPhysician().getPerson().getFullName());
+		content.put("%username%", currentUser.getUsername());
+		content.put("%i%", currentUser.getPhysician().getClinicRole());
+
 		// sending mail to inform about unlocking request
-		mainHandlerAction.getSettings().getMail().sendMail(mainHandlerAction.getSettings().getAdminMails(),
-				"Freischaltung von " + currentUser.getUsername(),
-				currentUser.getUsername() + " erbittet eine Freischaltung\r\n\r\nAutomatische Email");
+		mainHandlerAction.getSettings().getMail().sendTempalteMail(mainHandlerAction.getSettings().getAdminMails(),
+				MailPresetName.RequestUnlock, subject, content);
+
 		setUnlockRequestSend(true);
 	}
 
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	
+
 	public boolean isUnlockRequestSend() {
 		return unlockRequestSend;
 	}
@@ -163,9 +177,9 @@ public class UserHandlerAction implements Serializable {
 	public void setUnlockRequestSend(boolean unlockRequestSend) {
 		this.unlockRequestSend = unlockRequestSend;
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	
+
 }

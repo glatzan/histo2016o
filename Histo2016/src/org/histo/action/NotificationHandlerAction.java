@@ -12,12 +12,14 @@ import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.MailPresetName;
 import org.histo.config.enums.Notification;
 import org.histo.config.enums.NotificationOption;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.json.MailTemplate;
 import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.ui.NotificationChooser;
 import org.histo.util.HistoUtil;
@@ -164,7 +166,7 @@ public class NotificationHandlerAction implements Serializable {
 
 	public void showinfoDialog(Task task, boolean show) {
 		setTmpTask(task);
-		
+
 		// loading all pfs
 		taskDAO.initializePdfData(task);
 
@@ -198,11 +200,11 @@ public class NotificationHandlerAction implements Serializable {
 				mainHandlerAction.date(task.getPatient().getPerson().getBirthday(), DateFormat.GERMAN_DATE));
 		toReplace.put("%piz%", task.getPatient() == null ? "Keine Piz" : task.getPatient().getPiz());
 
-		String emailSubject = HistoUtil.replaceWildcardsInString(
-				mainHandlerAction.getSettings().getMail().getDefaultReportEmailSubject(), toReplace);
-		setEmailSubject(emailSubject);
+		MailTemplate taskReport = mainHandlerAction.getSettings().getMail().getMailTemplate(MailPresetName.TaskReport);
 
-		setEmailText(mainHandlerAction.getSettings().getMail().getDefaultReportEmailText());
+		setEmailSubject(HistoUtil.replaceWildcardsInString(taskReport.getSubject(), toReplace));
+
+		setEmailText(taskReport.getContent());
 
 		setNotificationPerformed(false);
 
@@ -268,7 +270,6 @@ public class NotificationHandlerAction implements Serializable {
 
 	public void showPreviewDialog(NotificationChooser chooser) {
 		setCustomPdfToPhysician(chooser);
-
 
 		if (getNotificationTab() == Notification.EMAIL) {
 
@@ -428,11 +429,12 @@ public class NotificationHandlerAction implements Serializable {
 
 						// setting the contact to perfomed
 						notificationChooser.getContact().setNotificationPerformed(true);
-						genericDAO.save(notificationChooser.getContact(),
-								resourceBundle.get("log.patient.task.contact.notification.performed",
-										getTmpTask().getTaskID(),
-										notificationChooser.getContact().getPhysician().getPerson().getFullName()),
-								getTmpTask().getPatient());
+						genericDAO
+								.save(notificationChooser.getContact(),
+										resourceBundle.get("log.patient.task.contact.notification.performed",
+												getTmpTask().getTaskID(), notificationChooser.getContact()
+														.getPhysician().getPerson().getFullName()),
+										getTmpTask().getPatient());
 
 						notificationChooser.setPerformed(true);
 						result.append(resourceBundle.get("pdf.notification.email.performed") + "r\n");
@@ -489,11 +491,12 @@ public class NotificationHandlerAction implements Serializable {
 
 						notificationChooser.getContact().setNotificationPerformed(true);
 
-						genericDAO.save(notificationChooser.getContact(),
-								resourceBundle.get("log.patient.task.contact.notification.fax.performed",
-										getTmpTask().getTaskID(),
-										notificationChooser.getContact().getPhysician().getPerson().getFullName()),
-								getTmpTask().getPatient());
+						genericDAO
+								.save(notificationChooser.getContact(),
+										resourceBundle.get("log.patient.task.contact.notification.fax.performed",
+												getTmpTask().getTaskID(), notificationChooser.getContact()
+														.getPhysician().getPerson().getFullName()),
+										getTmpTask().getPatient());
 					}
 				}
 
@@ -516,11 +519,12 @@ public class NotificationHandlerAction implements Serializable {
 						continue;
 					} else {
 						notificationChooser.getContact().setNotificationPerformed(true);
-						genericDAO.save(getTmpTask(),
-								resourceBundle.get("log.patient.task.contact.notification.telefon.performed",
-										getTmpTask().getTaskID(),
-										notificationChooser.getContact().getPhysician().getPerson().getFullName()),
-								getTmpTask().getPatient());
+						genericDAO
+								.save(getTmpTask(),
+										resourceBundle.get("log.patient.task.contact.notification.telefon.performed",
+												getTmpTask().getTaskID(), notificationChooser.getContact()
+														.getPhysician().getPerson().getFullName()),
+										getTmpTask().getPatient());
 					}
 
 				}

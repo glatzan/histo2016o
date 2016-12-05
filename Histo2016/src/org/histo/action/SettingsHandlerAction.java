@@ -2,20 +2,21 @@ package org.histo.action;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.MailPresetName;
 import org.histo.config.enums.SettingsTab;
+import org.histo.config.enums.StaticList;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.PhysicianDAO;
+import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.HistoUser;
@@ -23,12 +24,14 @@ import org.histo.model.MaterialPreset;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
+import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
 import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.model.transitory.json.LdapHandler;
-import org.histo.ui.StainingListChooser;
+import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
 import org.histo.util.SlideUtil;
+import org.primefaces.event.ReorderEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -41,15 +44,12 @@ public class SettingsHandlerAction {
 
 	public static final int TAB_USER = 0;
 	public static final int TAB_STAINING = 1;
-	public static final int TAB_STAINING_LIST = 2;
+	public static final int TAB_MATERIAL = 2;
 	public static final int TAB_DIAGNOSIS = 3;
 	public static final int TAB_PERSON = 4;
-	public static final int TAB_MISELLANEOUS = 5;
-	public static final int TAB_LOG = 6;
-
-	public static final int STAINING_LIST_LIST = 0;
-	public static final int STAINING_LIST_EDIT = 1;
-	public static final int STAINING_LIST_ADD_STAINING = 2;
+	public static final int TAB_STATIC_LISTS = 5;
+	public static final int TAB_MISELLANEOUS = 6;
+	public static final int TAB_LOG = 7;
 
 	public static final int DIAGNOSIS_LIST = 0;
 	public static final int DIAGNOSIS_EDIT = 1;
@@ -73,10 +73,11 @@ public class SettingsHandlerAction {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
-	/**
-	 * List with all users of the program
-	 */
-	private List<HistoUser> users;
+	@Autowired
+	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	private SettingsDAO settingsDAO;
 
 	/**
 	 * Tabindex of settings dialog
@@ -87,6 +88,29 @@ public class SettingsHandlerAction {
 	 * Tabindex of the settings tab
 	 */
 	private SettingsTab physicianTabIndex = SettingsTab.P_LIST;
+
+	/**
+	 * Tabindex of the material tab
+	 */
+	private SettingsTab materialTabIndex = SettingsTab.M_LIST;
+
+	/********************************************************
+	 * User
+	 ********************************************************/
+
+	/**
+	 * List with all users of the program
+	 */
+	private List<HistoUser> users;
+
+	/**
+	 * Selected user for changing role
+	 */
+	private HistoUser selectedUser;
+
+	/********************************************************
+	 * User
+	 ********************************************************/
 
 	/******************************************************** Staining ********************************************************/
 	/**
@@ -110,34 +134,34 @@ public class SettingsHandlerAction {
 	private StainingPrototype originalStaining;
 	/******************************************************** Staining ********************************************************/
 
-	/******************************************************** StainingListChooser ********************************************************/
+	/********************************************************
+	 * Material
+	 ********************************************************/
+	
 	/**
-	 * all staininglists
+	 * all materials
 	 */
 	private List<MaterialPreset> allAvailableMaterials;
 
 	/**
-	 * used in manageStaingsList dialog to show overview or single stainingList
-	 */
-	private int stainingListIndex;
-
-	/**
 	 * StainingPrototype for creating and editing
 	 */
-	private MaterialPreset editStainingList;
+	private MaterialPreset editMaterial;
 
 	/**
 	 * original StainingPrototypeList for editing
 	 */
-	private MaterialPreset originalStainingList;
+	private MaterialPreset originalMaterial;
 
 	/**
 	 * List for selecting staining, this list contains all stainings. They can
-	 * be choosen and added to the staininglist
+	 * be choosen and added to the material
 	 */
-	private List<StainingListChooser> stainingListChooserForStainingList;
-	/******************************************************** StainingListChooser ********************************************************/
-
+	private List<ListChooser<StainingPrototype>> stainingListChooserForMaterial;
+	/********************************************************
+	 * Material
+	 ********************************************************/
+	
 	/********************************************************
 	 * Standard Diagnosis
 	 ********************************************************/
@@ -206,6 +230,22 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * Physician
 	 ********************************************************/
+	
+	/********************************************************
+	 * static lists
+	 ********************************************************/
+	/**
+	 * Current static list to edit
+	 */
+	private StaticList selectedStaticList = StaticList.WARDS;
+	
+	/**
+	 * Content of the current static list
+	 */
+	private List<StaticList> staticListContent;
+	/********************************************************
+	 * static lists
+	 ********************************************************/
 
 	/********************************************************
 	 * General
@@ -265,20 +305,26 @@ public class SettingsHandlerAction {
 			loadGeneralHistory();
 			break;
 		case TAB_STAINING:
-			setAllAvailableStainings(helperDAO.getAllStainings());
+			setAllAvailableStainings(settingsDAO.getAllStainingPrototypes());
 			break;
-		case TAB_STAINING_LIST:
-			setAllAvailableMaterials(helperDAO.getAllStainingLists());
+		case TAB_MATERIAL:
+			logger.debug("Selecting tag material");
+			setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
 			helperDAO.initStainingPrototypeList(getAllAvailableMaterials());
-			// update statinglist if selected
-			if (getStainingListIndex() == STAINING_LIST_EDIT)
-				setStainingListChooserForStainingList(SlideUtil.getStainingListChooser(helperDAO.getAllStainings()));
+
+			// update stainings if selected
+			if (getMaterialTabIndex() == SettingsTab.M_EDIT)
+				setStainingListChooserForMaterial(
+						SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
 			break;
 		case TAB_PERSON:
 			preparePhysicianList();
 			break;
 		case TAB_DIAGNOSIS:
 			updateAllDiagnosisPrototypes();
+			break;
+		case TAB_STATIC_LISTS:
+			prepareStaticLists();
 			break;
 		default:
 			break;
@@ -289,7 +335,28 @@ public class SettingsHandlerAction {
 	 * General
 	 ********************************************************/
 
-	/******************************************************** Staining ********************************************************/
+	/********************************************************
+	 * User
+	 ********************************************************/
+	public void onChangeUserRole(HistoUser histoUser) {
+		userHandlerAction.roleOfuserHasChanged(histoUser);
+		mainHandlerAction.showDialog(Dialog.SETTINGS_USER_ROLE_CHANGE);
+		setSelectedUser(histoUser);
+	}
+
+	public void informUserAboutChangedRole(HistoUser histoUser) {
+		// sending mail to inform about unlocking request
+		mainHandlerAction.getSettings().getMail().sendTempalteMail(mainHandlerAction.getSettings().getAdminMails(),
+				MailPresetName.Unlock, null, null);
+	}
+
+	/********************************************************
+	 * User
+	 ********************************************************/
+
+	/********************************************************
+	 * Staining
+	 ********************************************************/
 	/**
 	 * Prepares a new Staining for editing
 	 */
@@ -318,20 +385,31 @@ public class SettingsHandlerAction {
 	 */
 	public void saveStainig(StainingPrototype newStainingPrototype, StainingPrototype origStainingPrototype) {
 		if (origStainingPrototype == null) {
+			logger.debug("Creating new staining " + newStainingPrototype.getName());
 			// case new, save
 			getAllAvailableStainings().add(newStainingPrototype);
-			genericDAO.save(getAllAvailableStainings());
-			// log.info("Neue Färbung erstellt: " +
-			// newStainingPrototype.asGson());
+			genericDAO.save(newStainingPrototype,
+					resourceBundle.get("log.settings.staining.new", newStainingPrototype.getName()));
+			ListOrder.reOrderList(getAllAvailableStainings());
+			genericDAO.save(getAllAvailableStainings(), resourceBundle.get("log.settings.staining.list.reoder"));
 		} else {
 			// case edit: update an save
-			// log.info("Färbung veränder, Original: " +
-			// origStainingPrototype.asGson() + " Neu:"
-			// + newStainingPrototype.asGson());
 			origStainingPrototype.update(newStainingPrototype);
-			genericDAO.save(origStainingPrototype);
+			genericDAO.save(origStainingPrototype,
+					resourceBundle.get("log.settings.material.update", origStainingPrototype.getName()));
 		}
 		discardChangesOfStainig();
+	}
+
+	/**
+	 * Is fired if the list is reordered by the user via drag and drop
+	 * 
+	 * @param event
+	 */
+	public void onReorderStainingList(ReorderEvent event) {
+		logger.debug("List order changed, moved staining from " + event.getFromIndex() + " to " + event.getToIndex());
+		ListOrder.reOrderList(getAllAvailableStainings());
+		genericDAO.save(getAllAvailableStainings(), resourceBundle.get("log.settings.staining.list.reoder"));
 	}
 
 	/**
@@ -343,96 +421,99 @@ public class SettingsHandlerAction {
 		setEditStaining(null);
 	}
 
-	/******************************************************** Staining ********************************************************/
+	/********************************************************
+	 * Staining
+	 ********************************************************/
 
-	/******************************************************** StainingListChooser ********************************************************/
+	/********************************************************
+	 * Material
+	 ********************************************************/
 	/**
 	 * Prepares a new StainingListChooser for editing
 	 */
-	public void prepareNewStainingList() {
-		setStainingListIndex(STAINING_LIST_EDIT);
-		setEditStainingList(new MaterialPreset());
-		setOriginalStainingList(null);
+	public void prepareNewMaterial() {
+		setMaterialTabIndex(SettingsTab.M_EDIT);
+		setEditMaterial(new MaterialPreset());
+		setOriginalMaterial(null);
 	}
 
 	/**
-	 * Shows the edit staininglist form
+	 * Shows the edit material form
 	 * 
 	 * @param stainingPrototype
 	 */
-	public void prepareEditStainingList(MaterialPreset stainingPrototypeList) {
-		setStainingListIndex(STAINING_LIST_EDIT);
-		setEditStainingList(new MaterialPreset(stainingPrototypeList));
-		setOriginalStainingList(stainingPrototypeList);
-		setStainingListChooserForStainingList(SlideUtil.getStainingListChooser(helperDAO.getAllStainings()));
+	public void prepareEditMaterial(MaterialPreset material) {
+		setMaterialTabIndex(SettingsTab.M_EDIT);
+		setEditMaterial(new MaterialPreset(material));
+		setOriginalMaterial(material);
+		setStainingListChooserForMaterial(SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
 	}
 
 	/**
-	 * Saves a staininglist form or creats a new one
+	 * Saves a material or creates a new one
 	 * 
 	 * @param newStainingPrototypeList
 	 * @param origStainingPrototypeList
 	 */
-	public void saveStainigList(MaterialPreset newStainingPrototypeList, MaterialPreset origStainingPrototypeList) {
-		if (origStainingPrototypeList == null) {
+	public void saveMaterial(MaterialPreset newMaterial, MaterialPreset originalMaterial) {
+		if (originalMaterial == null) {
+			logger.debug("Creating new Material " + newMaterial.getName());
 			// case new, save
-			getAllAvailableMaterials().add(newStainingPrototypeList);
-			genericDAO.save(newStainingPrototypeList);
-			genericDAO.save(getAllAvailableMaterials());
-			// log.info("Neue Färbeliste erstellt: " +
-			// newStainingPrototypeList.asGson());
+			getAllAvailableMaterials().add(newMaterial);
+			genericDAO.save(newMaterial, resourceBundle.get("log.settings.material.new", newMaterial.getName()));
+			ListOrder.reOrderList(getAllAvailableMaterials());
+			genericDAO.save(getAllAvailableMaterials(), resourceBundle.get("log.settings.material.list.reoder"));
 		} else {
+			logger.debug("Updating Material " + originalMaterial.getName());
 			// case edit: update an save
-			// log.info("Färbungsliste veränder, Original: " +
-			// origStainingPrototypeList.asGson() + " Neu:"
-			// + newStainingPrototypeList.asGson());
-			origStainingPrototypeList.update(newStainingPrototypeList);
-			genericDAO.save(origStainingPrototypeList);
+			originalMaterial.update(newMaterial);
+			genericDAO.save(originalMaterial,
+					resourceBundle.get("log.settings.material.update", originalMaterial.getName()));
 		}
-		discardChangesOfStainigList();
+		discardChangesOfMaterial();
 	}
 
 	public void prepareDeleteStainingList(MaterialPreset stainingPrototypeList) {
-		setEditStainingList(stainingPrototypeList);
-		setOriginalStainingList(null);
+		setEditMaterial(stainingPrototypeList);
+		setOriginalMaterial(null);
 	}
 
 	/**
 	 * discards all changes for the stainingList
 	 */
-	public void discardChangesOfStainigList() {
-		setStainingListIndex(STAINING_LIST_LIST);
-		setOriginalStainingList(null);
-		setEditStainingList(null);
+	public void discardChangesOfMaterial() {
+		setMaterialTabIndex(SettingsTab.M_LIST);
+		setOriginalMaterial(null);
+		setEditMaterial(null);
 	}
 
 	/**
-	 * show a list with all stanings for adding them to a staininglist
+	 * show a list with all stanings for adding them to a material
 	 */
-	public void prepareAddStainingToStainingList() {
-		setStainingListIndex(STAINING_LIST_ADD_STAINING);
-		setStainingListChooserForStainingList(SlideUtil.getStainingListChooser(helperDAO.getAllStainings()));
+	public void prepareAddStainingToMaterial() {
+		setMaterialTabIndex(SettingsTab.M_ADD_STAINING);
+		setStainingListChooserForMaterial(SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
 	}
 
 	/**
-	 * Adds all selected staining prototypes to the staininglist
+	 * Adds all selected staining prototypes to the material
 	 * 
 	 * @param stainingListChoosers
 	 * @param stainingPrototypeList
 	 */
-	public void addStainingToStainingList(List<StainingListChooser> stainingListChoosers,
+	public void addStainingToMaterial(List<ListChooser<StainingPrototype>> stainingListChoosers,
 			MaterialPreset stainingPrototypeList) {
-		for (StainingListChooser staining : stainingListChoosers) {
+		for (ListChooser<StainingPrototype> staining : stainingListChoosers) {
 			if (staining.isChoosen()) {
-				stainingPrototypeList.getStainingPrototypes().add(staining.getStainingPrototype());
+				stainingPrototypeList.getStainingPrototypes().add(staining.getListItem());
 			}
 		}
 
-		discardAddStainingToStainingList();
+		discardAddStainingToMaterial();
 	}
 
 	/**
-	 * Removes a staining from a staininglist
+	 * Removes a staining from a material
 	 * 
 	 * @param toRemove
 	 * @param stainingPrototypeList
@@ -441,11 +522,24 @@ public class SettingsHandlerAction {
 		stainingPrototypeList.getStainingPrototypes().remove(toRemove);
 	}
 
-	public void discardAddStainingToStainingList() {
-		setStainingListIndex(STAINING_LIST_EDIT);
+	public void discardAddStainingToMaterial() {
+		setMaterialTabIndex(SettingsTab.M_EDIT);
 	}
 
-	/******************************************************** StainingListChooser ********************************************************/
+	/**
+	 * Is fired if the list is reordered by the user via drag and drop
+	 * 
+	 * @param event
+	 */
+	public void onReorderMaterialList(ReorderEvent event) {
+		logger.debug("List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
+		ListOrder.reOrderList(getAllAvailableMaterials());
+		genericDAO.save(getAllAvailableMaterials(), resourceBundle.get("log.settings.staining.list.reoder"));
+	}
+
+	/********************************************************
+	 * Material
+	 ********************************************************/
 
 	/********************************************************
 	 * Standard Diagnosis
@@ -465,18 +559,19 @@ public class SettingsHandlerAction {
 	public void saveDiagnosisPrototype(DiagnosisPreset newDiagnosisPrototype, DiagnosisPreset origDiagnosisPrototype) {
 		if (origDiagnosisPrototype == null) {
 			// case new, save
+			logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getName());
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
-			genericDAO.save(newDiagnosisPrototype);
-			genericDAO.save(getAllAvailableDiagnosisPrototypes());
-			// log.info("Neue Diagnose erstellt: " +
-			// newDiagnosisPrototype.asGson());
+			genericDAO.save(newDiagnosisPrototype,
+					resourceBundle.get("log.settings.diagnosis.new", newDiagnosisPrototype.getName()));
+			ListOrder.reOrderList(getAllAvailableDiagnosisPrototypes());
+			genericDAO.save(getAllAvailableDiagnosisPrototypes(),
+					resourceBundle.get("log.settings.diagnosis.list.reoder"));
 		} else {
 			// case edit: update an save
-			// log.info("Diagnose veränder, Original: " +
-			// origDiagnosisPrototype.asGson() + " Neu:"
-			// + newDiagnosisPrototype.asGson());
+			logger.debug("Updating  diagnosis " + origDiagnosisPrototype.getName());
 			origDiagnosisPrototype.update(newDiagnosisPrototype);
-			genericDAO.save(origDiagnosisPrototype);
+			genericDAO.save(origDiagnosisPrototype,
+					resourceBundle.get("log.settings.diagnosis.update", origDiagnosisPrototype.getName()));
 		}
 		discardDiagnosisPrototype();
 	}
@@ -486,8 +581,8 @@ public class SettingsHandlerAction {
 	 */
 	public void discardDiagnosisPrototype() {
 		setDiagnosisIndex(DIAGNOSIS_LIST);
-		setOriginalStainingList(null);
-		setEditStainingList(null);
+		setOriginalMaterial(null);
+		setEditMaterial(null);
 	}
 
 	public void prepareEditDiagnosisPrototypeTemplate() {
@@ -496,6 +591,17 @@ public class SettingsHandlerAction {
 
 	public void discardEditDiagnosisPrototypeTemplate() {
 		setDiagnosisIndex(DIAGNOSIS_EDIT);
+	}
+
+	/**
+	 * Is fired if the list is reordered by the user via drag and drop
+	 * 
+	 * @param event
+	 */
+	public void onReorderDiagnosisList(ReorderEvent event) {
+		logger.debug("List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
+		ListOrder.reOrderList(getAllAvailableMaterials());
+		genericDAO.save(getAllAvailableMaterials(), resourceBundle.get("log.settings.diagnosis.list.reoder"));
 	}
 
 	/********************************************************
@@ -577,7 +683,7 @@ public class SettingsHandlerAction {
 			logger.debug("Search for " + request.toString());
 
 			LdapHandler connection = mainHandlerAction.getSettings().getLdap();
-			
+
 			// searching for physicians
 			connection.openConnection();
 			setLdapPhysicianList(connection.getListOfPhysicians(request.toString()));
@@ -693,8 +799,20 @@ public class SettingsHandlerAction {
 		preparePhysicianList();
 		setPhysicianTabIndex(SettingsTab.P_LIST);
 	}
+	/********************************************************
+	 * Physician
+	 ********************************************************/
 
-	/******************************************************** Physician ********************************************************/
+	/********************************************************
+	 * Static Lists
+	 ********************************************************/
+	public void prepareStaticLists() {
+		
+	}
+	
+	/********************************************************
+	 * Static Lists
+	 ********************************************************/
 
 	/******************************************************** History ********************************************************/
 	/**
@@ -792,36 +910,28 @@ public class SettingsHandlerAction {
 		this.allAvailableMaterials = allAvailableMaterials;
 	}
 
-	public int getStainingListIndex() {
-		return stainingListIndex;
+	public MaterialPreset getEditMaterial() {
+		return editMaterial;
 	}
 
-	public void setStainingListIndex(int stainingListIndex) {
-		this.stainingListIndex = stainingListIndex;
+	public void setEditMaterial(MaterialPreset editMaterial) {
+		this.editMaterial = editMaterial;
 	}
 
-	public MaterialPreset getEditStainingList() {
-		return editStainingList;
+	public MaterialPreset getOriginalMaterial() {
+		return originalMaterial;
 	}
 
-	public void setEditStainingList(MaterialPreset editStainingList) {
-		this.editStainingList = editStainingList;
+	public void setOriginalMaterial(MaterialPreset originalMaterial) {
+		this.originalMaterial = originalMaterial;
 	}
 
-	public MaterialPreset getOriginalStainingList() {
-		return originalStainingList;
+	public List<ListChooser<StainingPrototype>> getStainingListChooserForMaterial() {
+		return stainingListChooserForMaterial;
 	}
 
-	public void setOriginalStainingList(MaterialPreset originalStainingList) {
-		this.originalStainingList = originalStainingList;
-	}
-
-	public List<StainingListChooser> getStainingListChooserForStainingList() {
-		return stainingListChooserForStainingList;
-	}
-
-	public void setStainingListChooserForStainingList(List<StainingListChooser> stainingListChooserForStainingList) {
-		this.stainingListChooserForStainingList = stainingListChooserForStainingList;
+	public void setStainingListChooserForMaterial(List<ListChooser<StainingPrototype>> stainingListChooserForMaterial) {
+		this.stainingListChooserForMaterial = stainingListChooserForMaterial;
 	}
 
 	public List<DiagnosisPreset> getAllAvailableDiagnosisPrototypes() {
@@ -921,6 +1031,38 @@ public class SettingsHandlerAction {
 		this.physicianTabIndex = physicianTabIndex;
 	}
 
+	public HistoUser getSelectedUser() {
+		return selectedUser;
+	}
+
+	public void setSelectedUser(HistoUser selectedUser) {
+		this.selectedUser = selectedUser;
+	}
+
+	public SettingsTab getMaterialTabIndex() {
+		return materialTabIndex;
+	}
+
+	public void setMaterialTabIndex(SettingsTab materialTabIndex) {
+		this.materialTabIndex = materialTabIndex;
+	}
+
+	public StaticList getSelectedStaticList() {
+		return selectedStaticList;
+	}
+
+	public void setSelectedStaticList(StaticList selectedStaticList) {
+		this.selectedStaticList = selectedStaticList;
+	}
+
+	public List<StaticList> getStaticListContent() {
+		return staticListContent;
+	}
+
+	public void setStaticListContent(List<StaticList> staticListContent) {
+		this.staticListContent = staticListContent;
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

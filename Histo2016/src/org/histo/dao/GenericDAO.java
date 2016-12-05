@@ -90,8 +90,8 @@ public class GenericDAO extends AbstractDAO {
 		// passing variables to the revisionListener
 		if (logInfo != null) {
 			logger.info("Loginfo: " + logInfo.getInfo() + ", Patient");
-			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO,
-					logInfo.getInfo() + " for " + (logInfo.getPatient() != null ?  logInfo.getPatient().getPerson().getFullName() : "" ));
+			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo.getInfo() + " for "
+					+ (logInfo.getPatient() != null ? logInfo.getPatient().getPerson().getFullName() : ""));
 		}
 
 		Session session = getSession();
@@ -112,15 +112,9 @@ public class GenericDAO extends AbstractDAO {
 		return object;
 	}
 
-	public void save(Collection<?> objects) {
-		Session session = getSession();
+	public void save(Collection<?> objects, String logMessage) {
 		for (Object object : objects) {
-			try {
-				session.saveOrUpdate(object);
-			} catch (HibernateException hibernateException) {
-				object = session.merge(object);
-				hibernateException.printStackTrace();
-			}
+			save(object, logMessage);
 		}
 	}
 

@@ -39,4 +39,5 @@ public enum Role implements GrantedAuthority {
 
 		return NONE_AUTH;
 	}
+
 }

@@ -9,7 +9,7 @@ import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.ui.StainingListChooser;
+import org.histo.ui.ListChooser;
 
 public class SlideUtil {
 
@@ -20,11 +20,11 @@ public class SlideUtil {
 	 * @param stainingPrototypes
 	 * @return
 	 */
-	public final static ArrayList<StainingListChooser> getStainingListChooser(
+	public final static ArrayList<ListChooser<StainingPrototype>> getStainingListChooser(
 			List<StainingPrototype> stainingPrototypes) {
-		ArrayList<StainingListChooser> res = new ArrayList<StainingListChooser>();
+		ArrayList<ListChooser<StainingPrototype>> res = new ArrayList<ListChooser<StainingPrototype>>();
 		for (StainingPrototype staining : stainingPrototypes) {
-			res.add(new StainingListChooser(staining));
+			res.add(new ListChooser<StainingPrototype>(staining));
 		}
 		return res;
 	}
@@ -70,6 +70,5 @@ public class SlideUtil {
 
 		return atLeastOneSlide;
 	}
-
 
 }

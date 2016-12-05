@@ -12,7 +12,7 @@
 			header="#{msg['dialog.settings.stainings']}"
 			styleClass="contentPannel" />
 		<p:dataTable var="staining" style="width:100%;" scrollable="true"
-			scrollHeight="460"
+			scrollHeight="460" draggableRows="true"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 			value="#{settingsHandlerAction.allAvailableStainings}">
 
@@ -35,10 +35,11 @@
 				</f:facet>
 				<p:commandLink title="#{msg['dialog.settings.stainings.edit']}"
 					actionListener="#{settingsHandlerAction.prepareEditStaining(staining)}"
-					update="@form">
+					update="@form" styleClass="noUnderlineAtLink">
 					<i class="fa fa-cog" />
 				</p:commandLink>
 			</p:column>
+			<p:ajax event="rowReorder" listener="#{settingsHandlerAction.onReorderStainingList}"  />
 		</p:dataTable>
 	</div>
 	<div class="bottomDiv">
