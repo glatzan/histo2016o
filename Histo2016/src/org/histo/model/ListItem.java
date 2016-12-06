@@ -7,12 +7,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RevisionNumber;
+import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StaticList;
+import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.ListOrder;
 
 @Entity
@@ -20,7 +23,7 @@ import org.histo.model.interfaces.ListOrder;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "listItem_sequencegenerator", sequenceName = "listItem_sequence")
-public class ListItem implements ListOrder<ListItem> {
+public class ListItem implements ListOrder<ListItem>, ArchivAble {
 
 	private long id;
 
@@ -29,6 +32,8 @@ public class ListItem implements ListOrder<ListItem> {
 	private String value;
 
 	private int indexInList;
+	
+	private boolean archived;
 
 	@Id
 	@GeneratedValue(generator = "listItem_sequencegenerator")
@@ -59,6 +64,13 @@ public class ListItem implements ListOrder<ListItem> {
 		this.value = value;
 	}
 
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
 	/********************************************************
 	 * Interface ListOrder
 	 ********************************************************/
@@ -72,5 +84,23 @@ public class ListItem implements ListOrder<ListItem> {
 	}
 	/********************************************************
 	 * Interface ListOrder
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getTextIdentifier() {
+		return null;
+	}
+
+	@Override
+	@Transient
+	public Dialog getArchiveDialog() {
+		return null;
+	}
+	/********************************************************
+	 * Interface ArchiveAble
 	 ********************************************************/
 }

@@ -5,7 +5,8 @@
          "<b>Change:</b> Email-Text nun über Datei konfigurierbar",     
          "<b>Added:</b> Färbungen können nun mittels drag and drop sortiert werden",
          "<b>Added:</b> Materialien können nun mittels drag and drop sortiert werden",
-         "<b>Added:</b> Diagnose können nun mittels drag and drop sortiert werden"
+         "<b>Added:</b> Diagnose können nun mittels drag and drop sortiert werden",
+         "<b>Added:</b> Listen für Stationen und Vorgeschichte können selbst erstellt und geändert werden.",
        ]
    },  
    {  

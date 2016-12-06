@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.settings.stainings']} / #{settingsHandlerAction.originalStaining eq null ? msg['dialog.settings.stainings.new.new'] : msg['dialog.settings.stainings.new.edit']}"
+			styleClass="contentPannel" />
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+
+			<h:outputLabel value="#{msg['dialog.settings.stainings.new.name']}"></h:outputLabel>
+			<p:inputText value="#{settingsHandlerAction.tmpListItem.value}"></p:inputText>
+		</p:panelGrid>
+	</div>
+	<div class="bottomDiv">
+		<h:panelGrid
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2">
+				<p:commandButton value="#{msg['general.save']}"
+					icon="fa fa-fw fa-floppy-o"
+					actionListener="#{settingsHandlerAction.saveListItem(settingsHandlerAction.tmpListItem, settingsHandlerAction.selectedStaticList)}"
+					update="@form"></p:commandButton>
+
+				<p:commandButton value="#{msg['general.abort']}"
+					icon="fa fa-fw fa-times-circle"
+					actionListener="#{settingsHandlerAction.discardChangesOfMaterial(settingsHandlerAction.tmpListItem)}"
+					update="@form"></p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+</ui:composition>

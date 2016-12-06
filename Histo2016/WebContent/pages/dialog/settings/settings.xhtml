@@ -122,6 +122,14 @@
 
 				<!-- ************************************************************** Static Lists ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.staticLists']}">
+					<ui:fragment
+						rendered="#{settingsHandlerAction.staticListTabIndex eq 'S_LIST'}">
+						<ui:include src="staticLists.xhtml" />
+					</ui:fragment>
+								<ui:fragment
+						rendered="#{settingsHandlerAction.staticListTabIndex eq 'S_EDIT'}">
+						<ui:include src="staticListsEdit.xhtml" />
+					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Static Lists ************************************************************** -->
 

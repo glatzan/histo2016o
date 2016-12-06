@@ -20,6 +20,7 @@ import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.HistoUser;
+import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Person;
 import org.histo.model.Physician;
@@ -94,6 +95,11 @@ public class SettingsHandlerAction {
 	 */
 	private SettingsTab materialTabIndex = SettingsTab.M_LIST;
 
+	/**
+	 * Tabindex of the static list tab
+	 */
+	private SettingsTab staticListTabIndex = SettingsTab.S_LIST;
+
 	/********************************************************
 	 * User
 	 ********************************************************/
@@ -137,7 +143,7 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * Material
 	 ********************************************************/
-	
+
 	/**
 	 * all materials
 	 */
@@ -161,7 +167,7 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * Material
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Standard Diagnosis
 	 ********************************************************/
@@ -230,7 +236,7 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * Physician
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * static lists
 	 ********************************************************/
@@ -238,11 +244,22 @@ public class SettingsHandlerAction {
 	 * Current static list to edit
 	 */
 	private StaticList selectedStaticList = StaticList.WARDS;
-	
+
 	/**
 	 * Content of the current static list
 	 */
-	private List<StaticList> staticListContent;
+	private List<ListItem> staticListContent;
+
+	/**
+	 * Is used for creating and editing static lists items
+	 */
+	private ListItem tmpListItem;
+	
+	/**
+	 * If true archived object will be shown.
+	 */
+	private boolean showArchivedListItems;
+
 	/********************************************************
 	 * static lists
 	 ********************************************************/
@@ -799,6 +816,7 @@ public class SettingsHandlerAction {
 		preparePhysicianList();
 		setPhysicianTabIndex(SettingsTab.P_LIST);
 	}
+
 	/********************************************************
 	 * Physician
 	 ********************************************************/
@@ -807,9 +825,76 @@ public class SettingsHandlerAction {
 	 * Static Lists
 	 ********************************************************/
 	public void prepareStaticLists() {
-		
+		logger.debug("Preparing list for " + getSelectedStaticList().toString());
+		setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(),isShowArchivedListItems()));
+		logger.debug("Found " + (getStaticListContent() == null ? "no" : getStaticListContent().size()) + " items");
 	}
-	
+
+	public void prepareNewListItem() {
+		setStaticListTabIndex(SettingsTab.S_EDIT);
+		setTmpListItem(new ListItem());
+	}
+
+	public void prepareEditListItem(ListItem listItem) {
+		setStaticListTabIndex(SettingsTab.S_EDIT);
+		setTmpListItem(listItem);
+	}
+
+	public void saveListItem(ListItem item, StaticList type) {
+
+		item.setListType(type);
+
+		if (item.getId() == 0) {
+			logger.debug("Creating new ListItem " + item.getValue() + " for " + type.toString());
+			// case new, save
+			getStaticListContent().add(item);
+			genericDAO.save(item, resourceBundle.get("log.settings.staticList.new", item.getValue(), type.toString()));
+			ListOrder.reOrderList(getStaticListContent());
+			genericDAO.save(getStaticListContent(),
+					resourceBundle.get("log.settings.staticList.list.reoder", type.toString()));
+		} else {
+			logger.debug("Updating ListItem " + item.getValue());
+			// case edit: update an save
+			genericDAO.save(item,
+					resourceBundle.get("log.settings.staticList.update", item.getValue(), type.toString()));
+		}
+
+		discardChangeOfListItem();
+	}
+
+	public void discardChangeOfListItem() {
+		discardChangesOfMaterial(null);
+	}
+
+	public void discardChangesOfMaterial(ListItem item) {
+		if (item != null)
+			genericDAO.refresh(item);
+
+		setStaticListTabIndex(SettingsTab.S_LIST);
+		setTmpListItem(null);
+	}
+
+	public void archiveListItem(ListItem item, boolean archive) {
+		item.setArchived(archive);
+		if (archive)
+			genericDAO.save(item, resourceBundle.get("log.settings.staticList.archive", item.getValue(),
+					getSelectedStaticList().toString()));
+		else
+			genericDAO.save(item, resourceBundle.get("log.settings.staticList.dearchive", item.getValue(),
+					getSelectedStaticList().toString()));
+		
+		// removing item from current list
+		getStaticListContent().remove(item);
+	}
+
+	public void onReorderStaticLists(ReorderEvent event) {
+		logger.debug("List order changed, moved static list item from " + event.getFromIndex() + " to "
+				+ event.getToIndex());
+		ListOrder.reOrderList(getStaticListContent());
+		genericDAO.save(getStaticListContent(),
+				resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()));
+	}
+
 	/********************************************************
 	 * Static Lists
 	 ********************************************************/
@@ -1055,14 +1140,38 @@ public class SettingsHandlerAction {
 		this.selectedStaticList = selectedStaticList;
 	}
 
-	public List<StaticList> getStaticListContent() {
+	public List<ListItem> getStaticListContent() {
 		return staticListContent;
 	}
 
-	public void setStaticListContent(List<StaticList> staticListContent) {
+	public void setStaticListContent(List<ListItem> staticListContent) {
 		this.staticListContent = staticListContent;
 	}
-	
+
+	public SettingsTab getStaticListTabIndex() {
+		return staticListTabIndex;
+	}
+
+	public void setStaticListTabIndex(SettingsTab staticListTabIndex) {
+		this.staticListTabIndex = staticListTabIndex;
+	}
+
+	public ListItem getTmpListItem() {
+		return tmpListItem;
+	}
+
+	public void setTmpListItem(ListItem tmpListItem) {
+		this.tmpListItem = tmpListItem;
+	}
+
+	public boolean isShowArchivedListItems() {
+		return showArchivedListItems;
+	}
+
+	public void setShowArchivedListItems(boolean showArchivedListItems) {
+		this.showArchivedListItems = showArchivedListItems;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
