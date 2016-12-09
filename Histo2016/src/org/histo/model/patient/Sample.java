@@ -46,7 +46,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo, CreationDate, LogAble, ArchivAble {
+public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, LogAble, ArchivAble {
 
 	private long id;
 
@@ -77,10 +77,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	 */
 	private List<Block> blocks;
 
-	/**
-	 * All diagnoses of this sample
-	 */
-	private List<Diagnosis> diagnoses;
 
 	/**
 	 * Wenn archived true ist, wird dieser sample nicht mehr angezeigt
@@ -127,29 +123,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 
 	}
 
-	/******************************************************** Transient ********************************************************/
-
-	@Transient
-	public Diagnosis getLastRelevantDiagnosis() {
-		return getDiagnoses().get(getDiagnoses().size()-1);
-	}
-
-	/**
-	 * Returns true if a diagnosis is marked as malign.
-	 * 
-	 * @return
-	 */
-	@Transient
-	public boolean isMalign() {
-		for (Diagnosis diagnosis : getDiagnoses()) {
-			if (diagnosis.isMalign())
-				return true;
-		}
-		return false;
-	}
-
-	/******************************************************** Transient ********************************************************/
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -184,19 +157,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 
 	public void setBlocks(List<Block> blocks) {
 		this.blocks = blocks;
-	}
-
-	@OneToMany(cascade = { CascadeType.REFRESH, CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("diagnosisOrder ASC")
-	public List<Diagnosis> getDiagnoses() {
-		if (diagnoses == null)
-			diagnoses = new ArrayList<>();
-		return diagnoses;
-	}
-
-	public void setDiagnoses(List<Diagnosis> diagnoses) {
-		this.diagnoses = diagnoses;
 	}
 
 	@Basic
@@ -251,54 +211,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	/******************************************************** Transient ********************************************************/
 
 	/******************************************************** Transient ********************************************************/
-
-	/********************************************************
-	 * Interface DiagnosisInfo
-	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
-	 * of the diagnoses.
-	 */
-	@Override
-	@Transient
-	public DiagnosisStatus getDiagnosisStatus() {
-		if (getDiagnoses().isEmpty())
-			return DiagnosisStatus.DIAGNOSIS_NEEDED;
-
-		boolean diagnosisNeeded = false;
-
-		for (Diagnosis diagnosis : getDiagnoses()) {
-
-			if (diagnosis.isArchived())
-				continue;
-
-			// continue if no diangosis is needed
-			if (diagnosis.isFinalized())
-				continue;
-			else {
-				// check if restaining is needed (restaining > staining) so
-				// return that it is needed
-				if (diagnosis.isDiagnosisRevision())
-					return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-				else
-					diagnosisNeeded = true;
-			}
-
-		}
-
-		
-		
-		// if there is more then one diagnosis a revision was created
-		if (getDiagnoses().size() > 1 && diagnosisNeeded) {
-			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-		} else {
-			return diagnosisNeeded ? DiagnosisStatus.DIAGNOSIS_NEEDED : DiagnosisStatus.PERFORMED;
-		}
-	}
-
-	/********************************************************
-	 * Interface DiagnosisInfo
-	 ********************************************************/
 
 	/********************************************************
 	 * Interface StainingInfo

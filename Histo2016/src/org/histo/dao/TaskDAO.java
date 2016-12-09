@@ -6,7 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.histo.model.Report;
+import org.histo.model.patient.Report;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;

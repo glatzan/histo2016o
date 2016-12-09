@@ -39,7 +39,6 @@ import org.histo.model.Accounting;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
-import org.histo.model.Report;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DiagnosisInfo;
@@ -179,9 +178,9 @@ public class Task
 
 	private Accounting accounting;
 
-	private Council council;
+	private List<Council> council;
 
-	private Report report;
+	private List<Report> reports;
 
 	/********************************************************
 	 * Transient Variables
@@ -468,16 +467,18 @@ public class Task
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY)
-	public Council getCouncil() {
+	@OneToMany(fetch = FetchType.LAZY)
+	public List<Council> getCouncil() {
 		return council;
 	}
 
-	public void setCouncil(Council council) {
+	public void setCouncil(List<Council> council) {
 		this.council = council;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("reportOrder ASC")
 	public Accounting getAccounting() {
 		return accounting;
 	}
