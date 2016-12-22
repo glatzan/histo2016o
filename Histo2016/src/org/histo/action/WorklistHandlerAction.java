@@ -305,6 +305,7 @@ public class WorklistHandlerAction implements Serializable {
 		}
 
 		getWorkList().add(patient);
+		
 		if (asSelectedPatient)
 			setSelectedPatient(patient);
 	}

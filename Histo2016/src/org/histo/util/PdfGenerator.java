@@ -52,33 +52,34 @@ public class PdfGenerator {
 
 	public PDFContainer generatePdfForTemplate(Task task, PdfTemplate template, long dateOfReport,
 			ContactRole addressPhysicianRole, Physician externalPhysician, Physician signingPhysician) {
-		PDFContainer result = null;
-
-		switch (template.getType()) {
-		case "COUNCIL":
-			if (task.getCouncil() != null) {
-				result = generatePdf(task, template, task.getCouncil().getDateOfRequest(),
-						task.getCouncil().getCouncilPhysician(), task.getCouncil().getPhysicianRequestingCouncil());
-			}
-			break;
-		case "INTERNAL":
-			result = generatePdf(task, template, task.getReport().getSignatureDate(), null, null);
-			break;
-		default:
-			Physician addressPhysician = null;
-			if (addressPhysicianRole == ContactRole.FAMILY_PHYSICIAN
-					|| addressPhysicianRole == ContactRole.PRIVATE_PHYSICIAN) {
-				Contact tmp = task.getPrimaryContact(addressPhysicianRole);
-				addressPhysician = (tmp == null ? null : tmp.getPhysician());
-			} else {
-				addressPhysician = externalPhysician;
-			}
-
-			result = generatePdf(task, template, dateOfReport, addressPhysician, signingPhysician);
-			break;
-		}
-
-		return result;
+//		PDFContainer result = null;
+//
+//		switch (template.getType()) {
+//		case "COUNCIL":
+//			if (task.getCouncil() != null) {
+//				result = generatePdf(task, template, task.getCouncil().getDateOfRequest(),
+//						task.getCouncil().getCouncilPhysician(), task.getCouncil().getPhysicianRequestingCouncil());
+//			}
+//			break;
+//		case "INTERNAL":
+//			result = generatePdf(task, template, task.getReport().getSignatureDate(), null, null);
+//			break;
+//		default:
+//			Physician addressPhysician = null;
+//			if (addressPhysicianRole == ContactRole.FAMILY_PHYSICIAN
+//					|| addressPhysicianRole == ContactRole.PRIVATE_PHYSICIAN) {
+//				Contact tmp = task.getPrimaryContact(addressPhysicianRole);
+//				addressPhysician = (tmp == null ? null : tmp.getPhysician());
+//			} else {
+//				addressPhysician = externalPhysician;
+//			}
+//
+//			result = generatePdf(task, template, dateOfReport, addressPhysician, signingPhysician);
+//			break;
+//		}
+		// TODO: rework
+//		return result;
+		return null;
 	}
 
 	public PDFContainer generatePdf(Task task, PdfTemplate template, long dateOfReport, Physician addressPhysician,
@@ -173,76 +174,77 @@ public class PdfGenerator {
 
 	public final void populateBody(PdfStamper stamper, Task task, long dateOfReport) {
 
-		List<Sample> samples = task.getSamples();
-
-		StringBuffer material = new StringBuffer();
-		StringBuffer diagonsisList = new StringBuffer();
-		StringBuffer reDiagonsisList = new StringBuffer();
-
-		for (Sample sample : samples) {
-			material.append(sample.getSampleID() + " " + sample.getMaterial() + "\r\n");
-			diagonsisList
-					.append(sample.getSampleID() + " " + sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
-
-			if (sample.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED)
-				reDiagonsisList.append(sample.getSampleID() + " "
-						+ sample.getLastRelevantDiagnosis().getDiagnosisRevisionText() + "\r\n");
-		}
-
-		setStamperField(stamper, "B_DATE", mainHandlerAction.date(dateOfReport));
-		setStamperField(stamper, "B_Name",
-				task.getParent().getPerson().getName() + ", " + task.getParent().getPerson().getSurname());
-		setStamperField(stamper, "B_Birthday", resourceBundle.get("pdf.birthday") + " "
-				+ mainHandlerAction.date(task.getParent().getPerson().getBirthday()));
-
-		setStamperField(stamper, "B_SAMPLES", material.toString());
-		setStamperField(stamper, "B_EDATE", mainHandlerAction.date(task.getDateOfSugeryAsDate()));
-		setStamperField(stamper, "B_TASK_NUMBER", task.getTaskID());
-		setStamperField(stamper, "B_PIZ", task.getParent().getPiz().isEmpty() ? "" : task.getParent().getPiz());
-
-		setStamperField(stamper, "B_EYE", resourceBundle.get("enum.eye." + task.getEye().toString()));
-		setStamperField(stamper, "B_HISTORY", task.getCaseHistory());
-		setStamperField(stamper, "B_INSURANCE_NORMAL", task.getPatient().isPrivateInsurance() ? "0" : "1");
-		setStamperField(stamper, "B_INSURANCE_PRIVATE", task.getPatient().isPrivateInsurance() ? "1" : "0");
-		setStamperField(stamper, "B_WARD", task.getWard());
-		setStamperField(stamper, "B_MALIGN", task.isMalign() ? "1" : "0");
-
-		Contact privatePhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
-		Contact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
-
-		setStamperField(stamper, "B_PRIVATE_PHYSICIAN",
-				privatePhysician == null ? "" : privatePhysician.getPhysician().getPerson().getFullName());
-		setStamperField(stamper, "B_SURGEON", surgeon == null ? "" : surgeon.getPhysician().getPerson().getFullName());
-		setStamperField(stamper, "B_DIAGNOSIS", diagonsisList.toString());
-		setStamperField(stamper, "B_DATE", mainHandlerAction.date(dateOfReport));
-
-		if (task.getCouncil() != null && task.getCouncil().getCouncilPhysician() != null) {
-			setStamperField(stamper, "B_COUNCIL", task.getCouncil().getCouncilPhysician().getPerson().getFullName());
-			setStamperField(stamper, "B_TEXT", task.getCouncil().getCouncilText());
-			setStamperField(stamper, "B_APPENDIX", task.getCouncil().getAttachment());
-		}
-
-		if (task.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
-			setStamperField(stamper, "B_RE_DIAGNOSIS", "1");
-			setStamperField(stamper, "B_RE_DIAGNOSIS_TEXT", reDiagonsisList.toString());
-		}
-
-		if (task.getReport() != null) {
-
-			setStamperField(stamper, "B_HISTOLOGICAL_RECORD", task.getReport().getHistologicalRecord());
-
-			if (task.getReport().getPhysicianToSign().getPhysician() != null) {
-				setStamperField(stamper, "S_PHYSICIAN",
-						task.getReport().getPhysicianToSign().getPhysician().getPerson().getFullName());
-				setStamperField(stamper, "S_PHYSICIAN_ROLE", task.getReport().getPhysicianToSign().getRole());
-			}
-
-			if (task.getReport().getConsultantToSign().getPhysician() != null) {
-				setStamperField(stamper, "S_CONSULTANT",
-						task.getReport().getConsultantToSign().getPhysician().getPerson().getFullName());
-				setStamperField(stamper, "S_CONSULTANT_ROLE", task.getReport().getConsultantToSign().getRole());
-			}
-		}
+//		List<Sample> samples = task.getSamples();
+//
+//		StringBuffer material = new StringBuffer();
+//		StringBuffer diagonsisList = new StringBuffer();
+//		StringBuffer reDiagonsisList = new StringBuffer();
+//
+//		for (Sample sample : samples) {
+//			material.append(sample.getSampleID() + " " + sample.getMaterial() + "\r\n");
+//			diagonsisList
+//					.append(sample.getSampleID() + " " + sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
+//
+//			if (sample.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED)
+//				reDiagonsisList.append(sample.getSampleID() + " "
+//						+ sample.getLastRelevantDiagnosis().getDiagnosisRevisionText() + "\r\n");
+//		}
+//
+//		setStamperField(stamper, "B_DATE", mainHandlerAction.date(dateOfReport));
+//		setStamperField(stamper, "B_Name",
+//				task.getParent().getPerson().getName() + ", " + task.getParent().getPerson().getSurname());
+//		setStamperField(stamper, "B_Birthday", resourceBundle.get("pdf.birthday") + " "
+//				+ mainHandlerAction.date(task.getParent().getPerson().getBirthday()));
+//
+//		setStamperField(stamper, "B_SAMPLES", material.toString());
+//		setStamperField(stamper, "B_EDATE", mainHandlerAction.date(task.getDateOfSugeryAsDate()));
+//		setStamperField(stamper, "B_TASK_NUMBER", task.getTaskID());
+//		setStamperField(stamper, "B_PIZ", task.getParent().getPiz().isEmpty() ? "" : task.getParent().getPiz());
+//
+//		setStamperField(stamper, "B_EYE", resourceBundle.get("enum.eye." + task.getEye().toString()));
+//		setStamperField(stamper, "B_HISTORY", task.getCaseHistory());
+//		setStamperField(stamper, "B_INSURANCE_NORMAL", task.getPatient().isPrivateInsurance() ? "0" : "1");
+//		setStamperField(stamper, "B_INSURANCE_PRIVATE", task.getPatient().isPrivateInsurance() ? "1" : "0");
+//		setStamperField(stamper, "B_WARD", task.getWard());
+//		setStamperField(stamper, "B_MALIGN", task.isMalign() ? "1" : "0");
+//
+//		Contact privatePhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
+//		Contact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
+//
+//		setStamperField(stamper, "B_PRIVATE_PHYSICIAN",
+//				privatePhysician == null ? "" : privatePhysician.getPhysician().getPerson().getFullName());
+//		setStamperField(stamper, "B_SURGEON", surgeon == null ? "" : surgeon.getPhysician().getPerson().getFullName());
+//		setStamperField(stamper, "B_DIAGNOSIS", diagonsisList.toString());
+//		setStamperField(stamper, "B_DATE", mainHandlerAction.date(dateOfReport));
+//
+//		if (task.getCouncil() != null && task.getCouncil().getCouncilPhysician() != null) {
+//			setStamperField(stamper, "B_COUNCIL", task.getCouncil().getCouncilPhysician().getPerson().getFullName());
+//			setStamperField(stamper, "B_TEXT", task.getCouncil().getCouncilText());
+//			setStamperField(stamper, "B_APPENDIX", task.getCouncil().getAttachment());
+//		}
+//
+//		if (task.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
+//			setStamperField(stamper, "B_RE_DIAGNOSIS", "1");
+//			setStamperField(stamper, "B_RE_DIAGNOSIS_TEXT", reDiagonsisList.toString());
+//		}
+//
+//		if (task.getReport() != null) {
+//
+//			setStamperField(stamper, "B_HISTOLOGICAL_RECORD", task.getReport().getHistologicalRecord());
+//
+//			if (task.getReport().getPhysicianToSign().getPhysician() != null) {
+//				setStamperField(stamper, "S_PHYSICIAN",
+//						task.getReport().getPhysicianToSign().getPhysician().getPerson().getFullName());
+//				setStamperField(stamper, "S_PHYSICIAN_ROLE", task.getReport().getPhysicianToSign().getRole());
+//			}
+//
+//			if (task.getReport().getConsultantToSign().getPhysician() != null) {
+//				setStamperField(stamper, "S_CONSULTANT",
+//						task.getReport().getConsultantToSign().getPhysician().getPerson().getFullName());
+//				setStamperField(stamper, "S_CONSULTANT_ROLE", task.getReport().getConsultantToSign().getRole());
+//			}
+//		}
+		// TODO: rework
 	}
 
 	/**

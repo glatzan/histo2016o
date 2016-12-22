@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,11 +26,16 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.Dialog;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
+import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.Parent;
+import org.histo.util.TaskUtil;
 
 @Entity
 @Audited
@@ -37,41 +43,31 @@ import org.histo.model.interfaces.Parent;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "signatureContainer_sequencegenerator", sequenceName = "signatureContainer_sequence")
-public class Report implements DiagnosisInfo, Parent<Task> {
+public class Report implements DiagnosisInfo, Parent<Task>, ArchivAble {
 
 	private long id;
+
+	private String reportName;
 
 	private long version;
 
 	private Task parent;
 
 	private int reportOrder;
-	
-	/**
-	 * Selected physician to sign the report
-	 */
-	private Signature physicianToSign;
 
-	/**
-	 * Selected consultant to sign the report
-	 */
-	private Signature consultantToSign;
+	private boolean archived;
 
 	/**
 	 * Text containing the histological record for all samples.
 	 */
 	private String histologicalRecord = "";
 
-	private long signatureDate;
-	
 	/**
 	 * All diagnoses
 	 */
 	private List<Diagnosis> diagnoses;
 
 	public Report() {
-		physicianToSign = new Signature();
-		consultantToSign = new Signature();
 	}
 
 	/******************************************************** Transient ********************************************************/
@@ -93,6 +89,20 @@ public class Report implements DiagnosisInfo, Parent<Task> {
 				return true;
 		}
 		return false;
+	}
+
+	@Transient
+	public final Diagnosis createNewDiagnosis(DiagnosisType type, ResourceBundle resourceBundle) {
+		Diagnosis diagnosis = new Diagnosis();
+		diagnosis.setGenerationDate(System.currentTimeMillis());
+		diagnosis.setType(type);
+		diagnosis.setDiagnosisOrder(getDiagnoses().size());
+		diagnosis.setName(TaskUtil.getDiagnosisName(getDiagnoses(), diagnosis, resourceBundle));
+		diagnosis.setParent(this);
+
+		getDiagnoses().add(diagnosis);
+
+		return diagnosis;
 	}
 
 	/******************************************************** Transient ********************************************************/
@@ -117,41 +127,6 @@ public class Report implements DiagnosisInfo, Parent<Task> {
 		this.version = version;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	public Signature getPhysicianToSign() {
-		return physicianToSign;
-	}
-
-	public void setPhysicianToSign(Signature physicianToSign) {
-		this.physicianToSign = physicianToSign;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	public Signature getConsultantToSign() {
-		return consultantToSign;
-	}
-
-	public void setConsultantToSign(Signature consultantToSign) {
-		this.consultantToSign = consultantToSign;
-	}
-
-	public long getSignatureDate() {
-		return signatureDate;
-	}
-
-	public void setSignatureDate(long signatureDate) {
-		this.signatureDate = signatureDate;
-	}
-
-	@Transient
-	public Date getSignatureDateAsDate() {
-		return new Date(signatureDate);
-	}
-
-	public void setSignatureDateAsDate(Date signatureDateAsDate) {
-		this.signatureDate = signatureDateAsDate.getTime();
-	}
-
 	@Column(columnDefinition = "text")
 	public String getHistologicalRecord() {
 		return histologicalRecord;
@@ -174,15 +149,20 @@ public class Report implements DiagnosisInfo, Parent<Task> {
 		this.diagnoses = diagnoses;
 	}
 
-	/**
-	 * Updates the physician and the consultant of the report
-	 * 
-	 * @param physician
-	 * @param consultant
-	 */
-	public void updatePhysiciansToSign(Physician physician, Physician consultant) {
-		getPhysicianToSign().updateSignature(physician);
-		getConsultantToSign().updateSignature(consultant);
+	public int getReportOrder() {
+		return reportOrder;
+	}
+
+	public void setReportOrder(int reportOrder) {
+		this.reportOrder = reportOrder;
+	}
+
+	public String getReportName() {
+		return reportName;
+	}
+
+	public void setReportName(String reportName) {
+		this.reportName = reportName;
 	}
 
 	/********************************************************
@@ -192,45 +172,49 @@ public class Report implements DiagnosisInfo, Parent<Task> {
 	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
 	 * of the diagnoses.
 	 */
-	@Override
 	@Transient
+	@Override
 	public DiagnosisStatus getDiagnosisStatus() {
-		if (getDiagnoses().isEmpty())
-			return DiagnosisStatus.DIAGNOSIS_NEEDED;
+//		if (getDiagnoses().isEmpty())
+//			return DiagnosisStatus.DIAGNOSIS_NEEDED;
+//
+//		boolean diagnosisNeeded = false;
+//
+//		for (Diagnosis diagnosis : getDiagnoses()) {
+//
+//			if (diagnosis.isArchived())
+//				continue;
+//
+//			// continue if no diangosis is needed
+//			if (diagnosis.isFinalized())
+//				continue;
+//			else {
+//				// check if restaining is needed (restaining > staining) so
+//				// return that it is needed
+//				if (diagnosis.isDiagnosisRevision())
+//					return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
+//				else
+//					diagnosisNeeded = true;
+//			}
+//
+//		}
 
-		boolean diagnosisNeeded = false;
-
-		for (Diagnosis diagnosis : getDiagnoses()) {
-
-			if (diagnosis.isArchived())
-				continue;
-
-			// continue if no diangosis is needed
-			if (diagnosis.isFinalized())
-				continue;
-			else {
-				// check if restaining is needed (restaining > staining) so
-				// return that it is needed
-				if (diagnosis.isDiagnosisRevision())
-					return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-				else
-					diagnosisNeeded = true;
-			}
-
-		}
-
-		// if there is more then one diagnosis a revision was created
-		if (getDiagnoses().size() > 1 && diagnosisNeeded) {
-			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-		} else {
-			return diagnosisNeeded ? DiagnosisStatus.DIAGNOSIS_NEEDED : DiagnosisStatus.PERFORMED;
-		}
+//		// if there is more then one diagnosis a revision was created
+//		if (getDiagnoses().size() > 1 && diagnosisNeeded) {
+//			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
+//		} else {
+//			return diagnosisNeeded ? DiagnosisStatus.DIAGNOSIS_NEEDED : DiagnosisStatus.PERFORMED;
+//		}
+		
+		
+//		TODO: rework
+		return DiagnosisStatus.DIAGNOSIS_NEEDED;
 	}
 
 	/********************************************************
 	 * Interface DiagnosisInfo
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -255,4 +239,48 @@ public class Report implements DiagnosisInfo, Parent<Task> {
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
+
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
+	/**
+	 * Overwrites Interface ArchiveAble
+	 */
+	@Basic
+	public boolean isArchived() {
+		return archived;
+	}
+
+	/**
+	 * Overwrites Interface ArchiveAble, sets all chides as well
+	 */
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+		// setzt Kinder
+		for (Diagnosis diagnosis : getDiagnoses()) {
+			diagnosis.setArchived(archived);
+		}
+	}
+
+	/**
+	 * Overwrites Interface ArchiveAble
+	 */
+	@Transient
+	@Override
+	public String getTextIdentifier() {
+		return "";
+	}
+
+	/**
+	 * Overwrites Interface ArchiveAble
+	 */
+	@Transient
+	@Override
+	public Dialog getArchiveDialog() {
+		return null;
+	}
+	/********************************************************
+	 * Interface ArchiveAble
+	 ********************************************************/
+
 }

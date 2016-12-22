@@ -41,7 +41,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble {
+public class Diagnosis implements Parent<Report>, GsonAble, LogAble, ArchivAble {
 
 	private long id;
 
@@ -50,7 +50,7 @@ public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble 
 	/**
 	 * Parent of the diagnosis, sample objekt
 	 */
-	private Sample parent;
+	private Report parent;
 
 	/**
 	 * Nothing can be deleted. Mark deleted entities as achieved.
@@ -101,18 +101,6 @@ public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble 
 	private String icd10 = "";
 
 	/**
-	 * If true the followUp field will be used.
-	 */
-	@Expose
-	private boolean diagnosisRevision;
-
-	/**
-	 * Followup field for adding follow up comments.
-	 */
-	@Expose
-	private String diagnosisRevisionText = "";
-
-	/**
 	 * Diagnosis type, normal = 0, follow up = 1 , revision = 2.
 	 */
 	@Expose
@@ -129,6 +117,11 @@ public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble 
 	 */
 	private DiagnosisPreset diagnosisPreset;
 
+	/**
+	 * Associated sample
+	 */
+	private Sample sample;
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -215,23 +208,6 @@ public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble 
 		this.name = name;
 	}
 
-	public boolean isDiagnosisRevision() {
-		return diagnosisRevision;
-	}
-
-	public String getDiagnosisRevisionText() {
-		return diagnosisRevisionText;
-	}
-
-	@Column(columnDefinition = "text")
-	public void setDiagnosisRevision(boolean diagnosisRevision) {
-		this.diagnosisRevision = diagnosisRevision;
-	}
-
-	public void setDiagnosisRevisionText(String diagnosisRevisionText) {
-		this.diagnosisRevisionText = diagnosisRevisionText;
-	}
-
 	@Basic
 	public boolean isMalign() {
 		return malign;
@@ -258,6 +234,15 @@ public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble 
 	public void setDiagnosisPrototype(DiagnosisPreset diagnosisPreset) {
 		this.diagnosisPreset = diagnosisPreset;
 	}
+	
+	@OneToOne
+	public Sample getSample() {
+		return sample;
+	}
+
+	public void setSample(Sample sample) {
+		this.sample = sample;
+	}
 
 	/********************************************************
 	 * Getter/Setter
@@ -271,11 +256,11 @@ public class Diagnosis implements Parent<Sample>, GsonAble, LogAble, ArchivAble 
 	 * StainingTreeParent.
 	 */
 	@ManyToOne
-	public Sample getParent() {
+	public Report getParent() {
 		return parent;
 	}
 
-	public void setParent(Sample parent) {
+	public void setParent(Report parent) {
 		this.parent = parent;
 	}
 

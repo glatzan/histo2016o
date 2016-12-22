@@ -347,7 +347,7 @@ public class MainHandlerAction {
 		else if (archive instanceof Diagnosis)
 			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
 					((Diagnosis) archive).getParent().getParent().getTaskID(),
-					((Diagnosis) archive).getParent().getSampleID(), ((Diagnosis) archive).getName());
+					((Diagnosis) archive).getParent().getReportName(), ((Diagnosis) archive).getName());
 		else if (archive instanceof Block)
 			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
 					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),

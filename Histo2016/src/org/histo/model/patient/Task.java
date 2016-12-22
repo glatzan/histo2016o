@@ -29,8 +29,10 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.StainingStatus;
@@ -39,6 +41,8 @@ import org.histo.model.Accounting;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
+import org.histo.model.Physician;
+import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DiagnosisInfo;
@@ -58,7 +62,7 @@ import org.springframework.core.annotation.Order;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 public class Task
-		implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<Sample>, CreationDate, LogAble, ArchivAble {
+		implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<Report>, CreationDate, LogAble, ArchivAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -182,6 +186,18 @@ public class Task
 
 	private List<Report> reports;
 
+	/**
+	 * Selected physician to sign the report
+	 */
+	private Signature physicianSignature;
+
+	/**
+	 * Selected consultant to sign the report
+	 */
+	private Signature consultantSignature;
+
+	private long signatureDate;
+
 	/********************************************************
 	 * Transient Variables
 	 ********************************************************/
@@ -216,10 +232,26 @@ public class Task
 	 ********************************************************/
 
 	public Task() {
+		// TODO: check if not overwriting the current settings
+		setPhysicianSignature(new Signature());
+		setConsultantSignature(new Signature());
 	}
 
+	/**
+	 *  Initializes a task with important values.
+	 * @param parent
+	 */
 	public Task(Patient parent) {
-		this.parent = parent;
+		this();
+		
+		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
+		setCreationDate(currentDay);
+		setDateOfReceipt(currentDay);
+		setDueDate(currentDay);
+		setDateOfSugery(currentDay);
+		// 20xx -2000 = tasknumber
+		setParent(parent);
+		
 	}
 
 	/********************************************************
@@ -476,9 +508,7 @@ public class Task
 		this.council = council;
 	}
 
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("reportOrder ASC")
+	@OneToOne(fetch = FetchType.LAZY)
 	public Accounting getAccounting() {
 		return accounting;
 	}
@@ -487,13 +517,50 @@ public class Task
 		this.accounting = accounting;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY)
-	public Report getReport() {
-		return report;
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("reportOrder ASC")
+	public List<Report> getReports() {
+		return reports;
 	}
 
-	public void setReport(Report report) {
-		this.report = report;
+	public void setReports(List<Report> reports) {
+		this.reports = reports;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public Signature getPhysicianSignature() {
+		return physicianSignature;
+	}
+
+	public void setPhysicianSignature(Signature physicianSignature) {
+		this.physicianSignature = physicianSignature;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	public Signature getConsultantSignature() {
+		return consultantSignature;
+	}
+
+	public void setConsultantSignature(Signature consultantSignature) {
+		this.consultantSignature = consultantSignature;
+	}
+
+	public long getSignatureDate() {
+		return signatureDate;
+	}
+
+	public void setSignatureDate(long signatureDate) {
+		this.signatureDate = signatureDate;
+	}
+
+	@Transient
+	public Date getSignatureDateAsDate() {
+		return new Date(signatureDate);
+	}
+
+	public void setSignatureDateAsDate(Date signatureDateAsDate) {
+		this.signatureDate = signatureDateAsDate.getTime();
 	}
 
 	/********************************************************
@@ -666,8 +733,8 @@ public class Task
 	 */
 	@Transient
 	public boolean isMalign() {
-		for (Sample sample : getSamples()) {
-			if (sample.isMalign())
+		for (Report report : getReports()) {
+			if (report.isMalign())
 				return true;
 		}
 		return false;
@@ -707,6 +774,7 @@ public class Task
 	 * 
 	 * @param sample
 	 */
+	@Transient
 	public static final boolean checkIfAllSlidesAreStained(Task task) {
 		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
 			task.setStainingCompleted(true);
@@ -727,7 +795,7 @@ public class Task
 	@Override
 	@Transient
 	public DiagnosisStatus getDiagnosisStatus() {
-		return getDiagnosisStatus(getSamples());
+		return getDiagnosisStatus(getReports());
 	}
 
 	/********************************************************

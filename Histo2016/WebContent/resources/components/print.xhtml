@@ -297,7 +297,7 @@
 												<p:commandButton style="display:none" update="@form"
 													id="submitPhysicianChange1" onclick="alert();">
 													<f:actionListener
-														binding="#{cc.attrs.taskToPrint.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
+														binding="#{cc.attrs.taskToPrint.report.physicianToSign(taskHandlerAction.physicianToSign)}"></f:actionListener>
 													<f:actionListener
 														binding="#{mainHandlerAction.saveChangedData(cc.attrs.taskToPrint.report,cc.attrs.taskToPrint.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',cc.attrs.taskToPrint.taskID, (cc.attrs.taskToPrint.report.physicianToSign.physician ne null ?  cc.attrs.taskToPrint.report.physicianToSign.physician.person.fullName : '') ))}"></f:actionListener>
 													<f:actionListener

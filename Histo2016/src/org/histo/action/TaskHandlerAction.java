@@ -86,6 +86,10 @@ public class TaskHandlerAction implements Serializable {
 	@Lazy
 	private PdfHandlerAction pdfHandlerAction;
 
+	@Autowired
+	@Lazy
+	private WorklistHandlerAction worklistHandlerAction;
+
 	private HashMap<String, String> selectableWards;
 
 	/********************************************************
@@ -208,11 +212,11 @@ public class TaskHandlerAction implements Serializable {
 
 		// setting the report time to the current date
 		if (!task.isDiagnosisCompleted()) {
-			task.getReport().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
+			task.setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		}
 
-		setPhysicianToSign(task.getReport().getPhysicianToSign().getPhysician());
-		setConsultantToSign(task.getReport().getConsultantToSign().getPhysician());
+		setPhysicianToSign(task.getPhysicianSignature().getPhysician());
+		setConsultantToSign(task.getConsultantSignature().getPhysician());
 	}
 
 	/**
@@ -221,10 +225,10 @@ public class TaskHandlerAction implements Serializable {
 	public void prepareNewTaskDialog() {
 		prepareBean();
 
-		setTemporaryTask(new Task());
+		setTemporaryTask(new Task(worklistHandlerAction.getSelectedPatient()));
 		getTemporaryTask().setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000)
 				+ HistoUtil.fitString(taskDAO.countSamplesOfCurrentYear(), 4, '0'));
-		getTemporaryTask().setReport(new Report());
+		getTemporaryTask().setReports(new ArrayList<Report>());
 		getTemporaryTask().setTaskPriority(TaskPriority.NONE);
 		getTemporaryTask().setDateOfReceipt(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		setTemporaryTaskSampleCount(1);
@@ -268,12 +272,12 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void createNewTask(Patient patient, Task phantomTask, boolean useAutoNomenclature) {
+	public void createNewTask(Patient patient, Task task, boolean useAutoNomenclature) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
 
-		Task task = TaskUtil.createNewTask(phantomTask, patient);
+		
 		patient.getTasks().add(0, task);
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
@@ -284,7 +288,7 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		// saving report to datanase
-		genericDAO.save(task.getReport(), resourceBundle.get("log.patient.task.report.new", task.getTaskID()),
+		genericDAO.save(task.getReports(), resourceBundle.get("log.patient.task.report.new", task.getTaskID()),
 				task.getPatient());
 
 		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
@@ -480,25 +484,26 @@ public class TaskHandlerAction implements Serializable {
 
 		taskDAO.initializeCouncilData(task);
 
-		if (task.getCouncil() == null) {
-			// only saving if the diagnosis process has not been finished jet
-			if (task.isDiagnosisCompleted()) {
-				setTmpCouncil(new Council());
-			} else {
-				setTmpCouncil(new Council());
-				task.setCouncil(getTmpCouncil());
-				// setting current user als requesting physician
-				task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
-
-				genericDAO.save(task.getCouncil(), resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
-						task.getPatient());
-			}
-		} else
-			setTmpCouncil(task.getCouncil());
-
-		updateCouncilDialog();
-
-		if (show)
+//		if (task.getCouncil() == null) {
+//			// only saving if the diagnosis process has not been finished jet
+//			if (task.isDiagnosisCompleted()) {
+//				setTmpCouncil(new Council());
+//			} else {
+//				setTmpCouncil(new Council());
+//				task.setCouncil(getTmpCouncil());
+//				// setting current user als requesting physician
+//				task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
+//
+//				genericDAO.save(task.getCouncil(), resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
+//						task.getPatient());
+//			}
+//		} else
+//			setTmpCouncil(task.getCouncil());
+//
+//		updateCouncilDialog();
+//
+//		if (show)
+		// TODO: rework
 			mainHandlerAction.showDialog(Dialog.COUNCIL);
 	}
 

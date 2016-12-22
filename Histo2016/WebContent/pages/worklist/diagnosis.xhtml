@@ -350,7 +350,7 @@
 						<p:commandButton style="display:none" update="@form"
 							id="submitPhysicianChange">
 							<f:actionListener
-								binding="#{selectedTask.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
+								binding="#{selectedTask.report.physicianToSign(taskHandlerAction.physicianToSign)}"></f:actionListener>
 							<f:actionListener
 								binding="#{mainHandlerAction.saveChangedData(selectedTask.report,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',selectedTask.taskID, (selectedTask.report.physicianToSign.physician ne null ?  selectedTask.report.physicianToSign.physician.person.fullName : '') ))}"></f:actionListener>
 						</p:commandButton>

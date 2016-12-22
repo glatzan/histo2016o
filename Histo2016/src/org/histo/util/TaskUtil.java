@@ -20,53 +20,6 @@ public class TaskUtil {
 
 	private static Logger logger = Logger.getRootLogger();
 
-	/**
-	 * Creates a new Task for a patient.
-	 * 
-	 * @param patient
-	 * @param taskNumer
-	 * @return
-	 */
-	public final static Task createNewTask(Patient patient, int taskNumer) {
-		return createNewTask(new Task(), patient);
-	}
-
-	/**
-	 * Initializes a task with important values.
-	 * 
-	 * @param taskNumer
-	 * @return
-	 */
-	public final static Task createNewTask(Task result, Patient patient) {
-		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
-		result.setCreationDate(currentDay);
-		result.setDateOfReceipt(currentDay);
-		result.setDueDate(currentDay);
-		result.setDateOfSugery(currentDay);
-		// 20xx -2000 = tasknumber
-		result.setParent(patient);
-
-		return result;
-	}
-
-	/**
-	 * Creates a diagnosis an adds it to the given sample
-	 * 
-	 * @param sample
-	 * @return
-	 */
-	public final static Diagnosis createNewDiagnosis(Sample sample, DiagnosisType type, ResourceBundle resourceBundle) {
-		Diagnosis diagnosis = new Diagnosis();
-		diagnosis.setGenerationDate(System.currentTimeMillis());
-		diagnosis.setType(type);
-		diagnosis.setDiagnosisOrder(sample.getDiagnoses().size());
-		diagnosis.setName(getDiagnosisName(sample, diagnosis, resourceBundle));
-		diagnosis.setParent(sample);
-
-		sample.getDiagnoses().add(diagnosis);
-
-		return diagnosis;
-	}
 
 	/**
 	 * Creats a new block and adds it to the sample
@@ -354,10 +307,10 @@ public class TaskUtil {
 		return null;
 	}
 
-	public static final String getDiagnosisName(Sample sample, Diagnosis diagnosis, ResourceBundle resourceBundle) {
+	public static final String getDiagnosisName(List<Diagnosis> diagnoses, Diagnosis diagnosis, ResourceBundle resourceBundle) {
 		int number = 1;
 
-		for (Diagnosis diagnosisOfSample : sample.getDiagnoses()) {
+		for (Diagnosis diagnosisOfSample : diagnoses) {
 			if (diagnosisOfSample.getType() == diagnosis.getType()) {
 				number++;
 			}
