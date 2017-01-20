@@ -1,5 +1,14 @@
 [  {  
    
+      "version":"0.95c",
+      "changes":[  
+         "<b>Fix:</b> Bug im Add Slide-Dialog behoben",
+          "<b>Fix:</b> PIZ-Suche funktioniert wieder",
+          "<b>Fix:</b> Bearbeitung von Diagnosen wieder möglich"
+       ]
+   },  
+   {  
+   
       "version":"0.95b",
       "changes":[  
          "<b>Change:</b> Email-Text nun über Datei konfigurierbar",     

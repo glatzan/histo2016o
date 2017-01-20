@@ -113,6 +113,12 @@ public class GenericDAO extends AbstractDAO {
 		return object;
 	}
 
+	public void saveCollection(Collection<?> objects) {
+		for (Object object : objects) {
+			save(object);
+		}
+	}
+	
 	public void save(Collection<?> objects, String logMessage) {
 		for (Object object : objects) {
 			save(object, logMessage);

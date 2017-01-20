@@ -212,7 +212,7 @@ public class PatientHandlerAction implements Serializable {
 			}
 
 			// saves the results
-			genericDAO.save(patients);
+			genericDAO.saveCollection(patients);
 
 			// only get patient from clinic backend if piz is completely
 			// provided and was not added to the local database before
