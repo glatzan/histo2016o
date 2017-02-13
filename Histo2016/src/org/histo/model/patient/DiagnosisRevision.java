@@ -91,18 +91,6 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public DiagnosisRevision() {
 	}
 
-	public DiagnosisRevision(DiagnosisInfo parent, List<Sample> samples, DiagnosisRevisionType type){
-		parent.getDiagnosisRevisions().add(this);
-		setSequenceNumber(parent.getDiagnosisRevisions().size());
-		
-		setType(type);
-		
-		// creating a diagnosis for every sample
-		for (Sample sample : samples) {
-			new Diagnosis(this, sample);
-		}
-	}
-	
 	/******************************************************** Transient ********************************************************/
 
 	@Transient

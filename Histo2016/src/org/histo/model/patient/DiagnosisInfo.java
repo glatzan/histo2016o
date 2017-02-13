@@ -41,64 +41,6 @@ public class DiagnosisInfo implements Parent<Task> {
 
 	private List<DiagnosisRevision> diagnosisRevisions;
 
-	/******** Transient ********/
-
-	/**
-	 * Adds a new default revision to the revision list
-	 */
-	@Transient
-	public DiagnosisRevision addDiagnosisRevision() {
-		return addDiagnosisRevision(DiagnosisRevisionType.DIAGNOSIS);
-	}
-
-	@Transient
-	public DiagnosisRevision addDiagnosisRevision(DiagnosisRevisionType type) {
-		// init array if not done
-		if (getDiagnosisRevisions() == null) {
-			setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
-		}
-
-		logger.info("Creating new DiagnosisRevision");
-		return new DiagnosisRevision(this, parent.getSamples(), type);
-	}
-
-	@Transient
-	public DiagnosisRevision removeDiagnosisRevision(DiagnosisRevision revision) {
-		logger.info("Creating new DiagnosisRevision");
-		getDiagnosisRevisions().remove(revision);
-		return revision;
-	}
-
-	public void updateDiagnosisRevisionToSampleCount(DiagnosisRevision diagnosisRevision, List<Sample> samples){
-		logger.info("Updating diagnosis list with sample list");
-		List<Diagnosis> diagnosesInRevision = diagnosisRevision.getDiagnoses();
-
-		List<Sample> samplesToAddDiagnosis = new ArrayList<Sample>(samples);
-		ArrayList<Diagnosis> diagnosesToDelete = new ArrayList<Diagnosis>();
-		
-		outerLoop: for (Diagnosis diagnosis : diagnosesToDelete) {
-			// sample already in diagnosisList, removing from to add array
-			for (Sample sample : samplesToAddDiagnosis) {
-				if(sample.getId() == diagnosis.getSample().getId()){
-					samplesToAddDiagnosis.remove(sample);
-					logger.trace("Sample found, Removing sample " + sample.getId() + " from list.");
-					continue outerLoop;
-				}
-			}
-			logger.trace("Diagnosis has no sample, removing diagnosis " + diagnosis.getId());
-			// not found within samples, so sample was deleted, deleting diagnosis as well.
-			diagnosesToDelete.add(diagnosis);
-			diagnosesInRevision.remove(diagnosis);
-		}
-		
-		// adding new diagnoses if there are new samples
-		for (Sample sample : samplesToAddDiagnosis) {
-			new Diagnosis(diagnosesInRevision, sample, )));
-		}
-	}
-
-	/******** Transient ********/
-
 	@Id
 	@GeneratedValue(generator = "diagnosisInfo_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -112,7 +54,7 @@ public class DiagnosisInfo implements Parent<Task> {
 
 	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("reportOrder ASC")
+	@OrderBy("sequenceNumber ASC")
 	public List<DiagnosisRevision> getDiagnosisRevisions() {
 		return diagnosisRevisions;
 	}

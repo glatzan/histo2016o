@@ -47,7 +47,7 @@ public class SlideHandlerAction implements Serializable {
 
 	@Autowired
 	private SettingsDAO settingsDAO;
-	
+
 	@Autowired
 	private ResourceBundle resourceBundle;
 
@@ -141,12 +141,12 @@ public class SlideHandlerAction implements Serializable {
 		// fügt einen neune Objektträger hinzu
 		for (ListChooser<StainingPrototype> slide : slideList) {
 			if (slide.isChoosen()) {
-				addStaining(slide.getListItem(), block, commentary, reStaining);
+				createSlide(slide.getListItem(), block, commentary, reStaining);
 			}
 		}
 
 		// updating statining list
-		TaskUtil.generateSlideGuiList(block.getParent().getParent());
+		block.getParent().getParent().generateSlideGuiList();
 
 		// if staining is needed set the staining flag of the task object to
 		// true
@@ -270,12 +270,12 @@ public class SlideHandlerAction implements Serializable {
 							task.getPatient());
 				}
 			}
-			
+
 			if (task.updateStainingStatus()) {
 				mainHandlerAction.showDialog(Dialog.STAINING_PERFORMED);
 				genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 			}
-			
+
 			break;
 		case ARCHIVE:
 			// TODO implement
@@ -342,8 +342,8 @@ public class SlideHandlerAction implements Serializable {
 	 * @param block
 	 * @param patientOfSample
 	 */
-	public void addStaining(StainingPrototype prototype, Block block) {
-		addStaining(prototype, block, null, false);
+	public void createSlide(StainingPrototype prototype, Block block) {
+		createSlide(prototype, block, null, false);
 	}
 
 	/**
@@ -356,10 +356,26 @@ public class SlideHandlerAction implements Serializable {
 	 * @param commentary
 	 * @param patientOfSample
 	 */
-	public void addStaining(StainingPrototype prototype, Block block, String commentary, boolean reStaining) {
-		Slide slide = TaskUtil.createNewStaining(block, prototype);
+	public void createSlide(StainingPrototype prototype, Block block, String commentary, boolean reStaining) {
+		Slide slide = new Slide();
 
-		logger.debug("New Slide created " + slide.getSlideID());
+		slide.setCreationDate(System.currentTimeMillis());
+		slide.setSlidePrototype(prototype);
+		slide.setParent(block);
+
+		// generating block id
+		String number = "";
+		int stainingsInBlock = TaskUtil.getNumerOfSameStainings(block, prototype);
+
+		if (stainingsInBlock > 1)
+			number = " " + String.valueOf(stainingsInBlock);
+
+		slide.setSlideID(block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
+
+		// setting unique slide number
+		slide.setUniqueIDinBlock(block.getNextSlideNumber());
+
+		block.getSlides().add(slide);
 
 		if (commentary != null && !commentary.isEmpty())
 			slide.setCommentary(commentary);
@@ -370,20 +386,6 @@ public class SlideHandlerAction implements Serializable {
 				slide.getParent().getParent().getParent().getTaskID(), slide.getParent().getParent().getSampleID(),
 				slide.getParent().getBlockID(), slide.getSlideID()), slide.getPatient());
 
-		// setting restaining flag of the diagnosis
-//		if (reStaining) {
-//			List<DiagnosisRevision> reports = slide.getParent().getParent().getParent().getReports();
-//			if (diagnoses.size() > 0) {
-//				Diagnosis diagnosis = diagnoses.get(diagnoses.size() - 1);
-//				if (!diagnosis.isDiagnosisRevision()) {
-//					diagnosis.setDiagnosisRevision(true);
-//					diagnosisHandlerAction.diagnosisDataChanged(diagnosis,
-//							"log.patient.task.sample.diagnosis.changed.followUP", diagnosis.isDiagnosisRevision());
-//				}
-//			}
-//		}
-		
-		// TODO: rework
 	}
 
 	/********************************************************

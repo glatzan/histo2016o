@@ -31,6 +31,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.StainingStatus;
@@ -82,6 +83,11 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 */
 	private Patient parent;
 
+	/**
+	 * If true the program will provide default names for samples and blocks
+	 */
+	private boolean useAutoNomenclature;
+	
 	/**
 	 * Date of creation
 	 */
@@ -176,7 +182,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	/**
 	 * Element containg all diangnoses
 	 */
-	private org.histo.model.patient.DiagnosisInfo diagnosisInfo;
+	private DiagnosisInfo diagnosisInfo;
 
 	/**
 	 * Generated PDFs of this task
@@ -294,9 +300,10 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 */
 	@Transient
 	public boolean isActiveOrActionToPerform() {
-		return isActive() || getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED
-				|| getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED
-				|| getStainingStatus() != StainingStatus.PERFORMED;
+		return true;
+//		isActive() || getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED
+//				|| getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED
+//				|| getStainingStatus() != StainingStatus.PERFORMED;
 	}
 
 	@Transient
@@ -304,6 +311,106 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 		if (isNew() && (!isStainingCompleted() || !isDiagnosisCompleted()))
 			return true;
 		return false;
+	}
+
+	/**
+	 * Creates linear list of all slides of the given task. The
+	 * StainingTableChosser is used as holder class in order to offer an option
+	 * to select the slides by clicking on a checkbox. Archived elements will
+	 * not be shown if showArchived is false.
+	 */
+	@Transient
+	public final void generateSlideGuiList() {
+		generateSlideGuiList(false);
+	}
+
+	/**
+	 * Creates linear list of all slides of the given task. The
+	 * StainingTableChosser is used as holder class in order to offer an option
+	 * to select the slides by clicking on a checkbox. Archived elements will
+	 * not be shown if showArchived is false.
+	 * 
+	 * @param showArchived
+	 */
+	@Transient
+	public final void generateSlideGuiList(boolean showArchived) {
+		if (getStainingTableRows() == null)
+			setStainingTableRows(new ArrayList<>());
+		else
+			getStainingTableRows().clear();
+
+		boolean even = false;
+
+		for (Sample sample : getSamples()) {
+			// skips archived tasks
+			if (sample.isArchived() && !showArchived)
+				continue;
+
+			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
+			getStainingTableRows().add(sampleChooser);
+
+			for (Block block : sample.getBlocks()) {
+				// skips archived blocks
+				if (block.isArchived() && !showArchived)
+					continue;
+
+				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
+				getStainingTableRows().add(blockChooser);
+				sampleChooser.addChild(blockChooser);
+
+				for (Slide staining : block.getSlides()) {
+					// skips archived sliedes
+					if (staining.isArchived() && !showArchived)
+						continue;
+
+					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
+					getStainingTableRows().add(stainingChooser);
+					blockChooser.addChild(stainingChooser);
+				}
+			}
+			even = !even;
+		}
+	}
+
+	/**
+	 * Checks if all staings are performed an returns true if the status has
+	 * changed. If no change occurred false will be returned.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean updateStainingStatus() {
+		if (getStainingStatus() == StainingStatus.PERFORMED) {
+			if (!isStainingCompleted()) {
+				setStainingCompleted(true);
+				setStainingCompletionDate(System.currentTimeMillis());
+				return true;
+			}
+		} else {
+			if (isStainingCompleted()) {
+				setStainingCompleted(false);
+				setStainingCompletionDate(0);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if all slides are staind and stets the allStainingsPerformed flag
+	 * in the task object to true.
+	 * 
+	 * @param sample
+	 */
+	@Transient
+	public static final boolean checkIfAllSlidesAreStained(Task task) {
+		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
+			task.setStainingCompleted(true);
+			task.setStainingCompletionDate(System.currentTimeMillis());
+		} else
+			task.setStainingCompleted(false);
+
+		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
 	}
 
 	/********************************************************
@@ -520,15 +627,12 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 		this.accounting = accounting;
 	}
 
-	
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("reportOrder ASC")
-	public org.histo.model.patient.DiagnosisInfo getDiagnosisInfo() {
+	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY)
+	public DiagnosisInfo getDiagnosisInfo() {
 		return diagnosisInfo;
 	}
 
-	public void setDiagnosisInfo(org.histo.model.patient.DiagnosisInfo diagnosisInfo) {
+	public void setDiagnosisInfo(DiagnosisInfo diagnosisInfo) {
 		this.diagnosisInfo = diagnosisInfo;
 	}
 
@@ -557,7 +661,21 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public void setSignatureDate(long signatureDate) {
 		this.signatureDate = signatureDate;
 	}
+	
+	public boolean isUseAutoNomenclature() {
+		return useAutoNomenclature;
+	}
 
+	public void setUseAutoNomenclature(boolean useAutoNomenclature) {
+		this.useAutoNomenclature = useAutoNomenclature;
+	}
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+
+	/********************************************************
+	 * Transient Getter/Setter
+	 ********************************************************/
 	@Transient
 	public Date getSignatureDateAsDate() {
 		return new Date(signatureDate);
@@ -566,14 +684,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public void setSignatureDateAsDate(Date signatureDateAsDate) {
 		this.signatureDate = signatureDateAsDate.getTime();
 	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	/********************************************************
-	 * Transient Getter/Setter
-	 ********************************************************/
+	
 	@Transient
 	public Date getCreationDateAsDate() {
 		return new Date(getCreationDate());
@@ -737,10 +848,10 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 */
 	@Transient
 	public boolean isMalign() {
-		for (DiagnosisRevision diagnosisRevision : getReports()) {
-			if (diagnosisRevision.isMalign())
-				return true;
-		}
+//		for (DiagnosisRevision diagnosisRevision : getReports()) {
+//			if (diagnosisRevision.isMalign())
+//				return true;
+//		}
 		return false;
 	}
 
@@ -748,58 +859,18 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 * Transient Getter/Setter
 	 ********************************************************/
 
-	/**
-	 * Checks if all staings are performed an returns true if the status has
-	 * changed. If no change occurred false will be returned.
-	 * 
-	 * @return
-	 */
-	@Transient
-	public boolean updateStainingStatus() {
-		if (getStainingStatus() == StainingStatus.PERFORMED) {
-			if (!isStainingCompleted()) {
-				setStainingCompleted(true);
-				setStainingCompletionDate(System.currentTimeMillis());
-				return true;
-			}
-		} else {
-			if (isStainingCompleted()) {
-				setStainingCompleted(false);
-				setStainingCompletionDate(0);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if all slides are staind and stets the allStainingsPerformed flag
-	 * in the task object to true.
-	 * 
-	 * @param sample
-	 */
-	@Transient
-	public static final boolean checkIfAllSlidesAreStained(Task task) {
-		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
-			task.setStainingCompleted(true);
-			task.setStainingCompletionDate(System.currentTimeMillis());
-		} else
-			task.setStainingCompleted(false);
-
-		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
-	}
-
 	/********************************************************
 	 * Interface DiagnosisStatusState
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the status
-	 * of the diagnoses.
+	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the
+	 * status of the diagnoses.
 	 */
 	@Override
 	@Transient
-	public DiagnosisStatus getDiagnosisStatus() {
-		return getDiagnosisStatus(getReports());
+	public DiagnosisStatusState getDiagnosisStatus() {
+//		return getDiagnosisStatus(getReports());
+		return DiagnosisStatusState.DIAGNOSIS_NEEDED;
 	}
 
 	/********************************************************

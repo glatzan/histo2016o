@@ -229,7 +229,7 @@ public class WorklistHandlerAction implements Serializable {
 
 		Role userRole = userHandlerAction.getCurrentUser().getRole();
 
-		TaskUtil.generateSlideGuiList(task);
+		task.generateSlideGuiList();
 
 		// Setzte action to none
 		slideHandlerAction.setActionOnMany(StainingListAction.NONE);

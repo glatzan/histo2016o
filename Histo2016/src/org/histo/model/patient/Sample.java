@@ -102,7 +102,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 * @param task
 	 */
 	public Sample(Task task) {
-		this(task, null, true);
+		this(task, null);
 	}
 
 	/**
@@ -111,14 +111,14 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 * 
 	 * @param task
 	 */
-	public Sample(Task task, MaterialPreset material, boolean useAutoNomenclature) {
+	public Sample(Task task, MaterialPreset material) {
 		setCreationDate(System.currentTimeMillis());
 		setParent(task);
 		setMaterilaPreset(material);
 		setMaterial(material == null ? "" : material.getName());
 		task.getSamples().add(this);
 
-		updateNameOfSample(useAutoNomenclature);
+		updateNameOfSample(task.isUseAutoNomenclature());
 	}
 
 	/**

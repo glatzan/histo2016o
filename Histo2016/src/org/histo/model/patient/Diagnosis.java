@@ -108,21 +108,6 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	public Diagnosis() {
 	}
 
-	/**
-	 * Constructor for adding a sample to the diagnosis
-	 * 
-	 * @param sample
-	 */
-	public Diagnosis(DiagnosisRevision revision, Sample sample) {
-		this.sample = sample;
-		setGenerationDate(System.currentTimeMillis());
-		setParent(revision);
-		
-		revision.getDiagnoses().add(this);
-
-		// setName(getDiagnosisName(sample, diagnosis, resourceBundle));
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

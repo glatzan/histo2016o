@@ -21,52 +21,7 @@ public class TaskUtil {
 	private static Logger logger = Logger.getRootLogger();
 
 
-	/**
-	 * Creats a new block and adds it to the sample
-	 * 
-	 * @param sample
-	 * @return
-	 */
-	public final static Block createNewBlock(Sample sample) {
-		Block block = new Block();
-		block.setBlockID(getCharNumber(sample.getBlocks().size()));
-		block.setParent(sample);
-		sample.getBlocks().add(block);
-		return block;
-	}
 
-	/**
-	 * Creats a staining and adds it to the sample.
-	 * 
-	 * @param sample
-	 * @param prototype
-	 * @return
-	 */
-	public final static Slide createNewStaining(Block block, StainingPrototype prototype) {
-		Slide staining = new Slide();
-
-		staining.setReStaining(block.getParent().isReStainingPhase());
-		staining.setCreationDate(System.currentTimeMillis());
-		staining.setSlidePrototype(prototype);
-		staining.setParent(block);
-
-		// generating block id
-		String number = "";
-		int stainingsInBlock = getNumerOfSameStainings(block, prototype);
-
-		if (stainingsInBlock > 1)
-			number = " " + String.valueOf(stainingsInBlock);
-		staining.setSlideID(block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
-
-		// setting unique slide number
-		staining.setUniqueIDinBlock(block.getNextSlideNumber());
-
-		block.getSlides().add(staining);
-
-		logger.info("New staining created " + staining.getSlideID());
-
-		return staining;
-	}
 
 	/**
 	 * Returns the number of the same stainings used within this block
@@ -172,62 +127,7 @@ public class TaskUtil {
 		return String.valueOf(Character.toChars(((int) 'a') + number));
 	}
 
-	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
-	 */
-	public static final void generateSlideGuiList(Task task) {
-		generateSlideGuiList(task, false);
-	}
-
-	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
-	 * 
-	 * @param showArchived
-	 */
-	public static final void generateSlideGuiList(Task task, boolean showArchived) {
-		if (task.getStainingTableRows() == null)
-			task.setStainingTableRows(new ArrayList<>());
-		else
-			task.getStainingTableRows().clear();
-
-		boolean even = false;
-
-		for (Sample sample : task.getSamples()) {
-			// skips archived tasks
-			if (sample.isArchived() && !showArchived)
-				continue;
-
-			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
-			task.getStainingTableRows().add(sampleChooser);
-
-			for (Block block : sample.getBlocks()) {
-				// skips archived blocks
-				if (block.isArchived() && !showArchived)
-					continue;
-
-				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
-				task.getStainingTableRows().add(blockChooser);
-				sampleChooser.addChild(blockChooser);
-
-				for (Slide staining : block.getSlides()) {
-					// skips archived sliedes
-					if (staining.isArchived() && !showArchived)
-						continue;
-
-					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
-					task.getStainingTableRows().add(stainingChooser);
-					blockChooser.addChild(stainingChooser);
-				}
-			}
-			even = !even;
-		}
-	}
+	
 
 	/**
 	 * Returns the task with the highest taskID. (Is always the first task
@@ -310,13 +210,14 @@ public class TaskUtil {
 	public static final String getDiagnosisName(List<Diagnosis> diagnoses, Diagnosis diagnosis, ResourceBundle resourceBundle) {
 		int number = 1;
 
-		for (Diagnosis diagnosisOfSample : diagnoses) {
-			if (diagnosisOfSample.getType() == diagnosis.getType()) {
-				number++;
-			}
-		}
+//		for (Diagnosis diagnosisOfSample : diagnoses) {
+//			if (diagnosisOfSample.getType() == diagnosis.getType()) {
+//				number++;
+//			}
+//		}
 
-		return resourceBundle.get("enum.diagnosisType." + diagnosis.getType()) + (number == 1 ? "" : " " + number);
+		return "was";
+//				resourceBundle.get("enum.diagnosisType." + diagnosis.getType()) + (number == 1 ? "" : " " + number);
 	}
 
 	/**

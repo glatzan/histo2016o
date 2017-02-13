@@ -50,7 +50,7 @@
 					<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}" />
 					<p:selectBooleanCheckbox id="autoNomenclature"
 						title="#{msg['dialog.createTask.autoNomenclature.text']}"
-						value="#{taskHandlerAction.useAutoNomenclature}">
+						value="#{taskHandlerAction.temporaryTask.useAutoNomenclature}">
 						<p:ajax listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
 					</p:selectBooleanCheckbox>
 
