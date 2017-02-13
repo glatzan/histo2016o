@@ -7,7 +7,7 @@ import java.net.URLClassLoader;
 import java.util.List;
 
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.model.DiagnosisPreset;
@@ -80,7 +80,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param sample
 	 * @param type
 	 */
-	public void createDiagnosisFromGui(Sample sample, DiagnosisType type) {
+	public void createDiagnosisFromGui(Sample sample, DiagnosisRevisionType type) {
 		createDiagnosis(sample, type);
 		genericDAO.save(sample.getPatient(), resourceBundle.get("log.patient.save"), sample.getPatient());
 	}
@@ -89,7 +89,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		
 	}
 
-	public void createDiagnosis(Sample sample, DiagnosisType type) {
+	public void createDiagnosis(Sample sample, DiagnosisRevisionType type) {
 //		Diagnosis diagnosis = TaskUtil.createNewDiagnosis(sample, type, resourceBundle);
 //		genericDAO.save(diagnosis, resourceBundle.get("log.patient.task.sample.diagnosis.new",
 //				sample.getParent().getTaskID(), sample.getSampleID(), diagnosis.getName()), diagnosis.getPatient());

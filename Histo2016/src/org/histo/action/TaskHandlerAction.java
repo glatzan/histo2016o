@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
@@ -249,34 +249,45 @@ public class TaskHandlerAction implements Serializable {
 	 * creation process. Adds or removes a new Material for the new Sample.
 	 */
 	public void updateNewTaskDilaog(Task task, boolean useAutoNomenclature) {
-
+		logger.debug("Updating sample tree");
 		// changing autoNomeclature of samples, if no change was made manually
-		if (temporaryTaskSampleCount >= 1 && !isAutoNomenclatureChangedManually()) {
+		if (temporaryTaskSampleCount > 1 && !isAutoNomenclatureChangedManually()) {
+			logger.debug("Setting autonomeclature to true");
 			setUseAutoNomenclature(true);
 		} else if (temporaryTaskSampleCount == 1 && !isAutoNomenclatureChangedManually()) {
+			logger.debug("Setting autonomeclature to false");
 			setUseAutoNomenclature(false);
 		}
 
 		if (temporaryTaskSampleCount >= 1) {
-
-			if (temporaryTaskSampleCount > task.getSamples().size())
+			if (temporaryTaskSampleCount > task.getSamples().size()) {
+				logger.debug("Adding new samples");
 				// adding samples if count is bigger then the current sample
 				// count
-				while (temporaryTaskSampleCount > task.getSamples().size()) {
-				Sample tmp = new Sample(task, null, useAutoNomenclature);
-				tmp.setMaterilaPreset(settingsHandlerAction.getAllAvailableMaterials() != null ? settingsHandlerAction.getAllAvailableMaterials().get(0) : null);
-				}
-			else if (temporaryTaskSampleCount < task.getSamples().size())
+				while (temporaryTaskSampleCount > task.getSamples().size())
+					new Sample(task,
+							!settingsHandlerAction.getAllAvailableMaterials().isEmpty()
+									? settingsHandlerAction.getAllAvailableMaterials().get(0) : null,
+							useAutoNomenclature);
+			} else if (temporaryTaskSampleCount < task.getSamples().size()) {
+				logger.debug("Removing samples");
 				// removing samples if count is less then current sample count
-				while (temporaryTaskSampleCount < task.getSamples().size()) {
-				task.getSamples().remove(task.getSamples().size() - 1);
-				}
+				while (temporaryTaskSampleCount < task.getSamples().size())
+					task.getSamples().remove(task.getSamples().size() - 1);
+			}
 		}
 
+		logger.debug("Updating sample names");
 		// updates the name of all other samples
 		for (Sample sample : task.getSamples()) {
 			sample.updateNameOfSample(isUseAutoNomenclature());
 		}
+	}
+
+	public void manuallyChangeAutoNomenclature() {
+		logger.debug("Autonomeclature change manually");
+		setAutoNomenclatureChangedManually(true);
+		updateNewTaskDilaog(getTemporaryTask(), isUseAutoNomenclature());
 	}
 
 	/**
@@ -293,11 +304,6 @@ public class TaskHandlerAction implements Serializable {
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		if (task.getReport(PdfTemplate.UREPORT) != null) {
-			genericDAO.save(task.getReport(PdfTemplate.UREPORT), resourceBundle.get("log.patient.task.upload.orderList",
-					task.getTaskID(), task.getReport(PdfTemplate.UREPORT).getName()), patient);
-		}
-
 		// saving report to datanase
 		genericDAO.save(task.getReports(), resourceBundle.get("log.patient.task.report.new", task.getTaskID()),
 				task.getPatient());
@@ -311,7 +317,7 @@ public class TaskHandlerAction implements Serializable {
 					sample.getSampleID(), sample.getMaterial()), task.getPatient());
 
 			// creating first default diagnosis
-			diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
+			diagnosisHandlerAction.createDiagnosis(sample, DiagnosisRevisionType.DIAGNOSIS);
 			// creating needed blocks
 			createNewBlock(sample, false);
 		}
@@ -388,7 +394,7 @@ public class TaskHandlerAction implements Serializable {
 				sample.getSampleID(), material.getName()), task.getPatient());
 
 		// creating first default diagnosis
-		diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
+		diagnosisHandlerAction.createDiagnosis(sample, DiagnosisRevisionType.DIAGNOSIS);
 		// creating needed blocks
 		createNewBlock(sample, false);
 	}

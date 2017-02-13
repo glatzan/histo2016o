@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
-import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.QuickSearchOptions;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.StainingListAction;
@@ -399,10 +399,10 @@ public class WorklistHandlerAction implements Serializable {
 				List<Patient> paints = patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false);
 				for (Patient patient : paints) {
 					if (searchOptions.isStaining_diagnosis()
-							&& patient.getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED) {
+							&& patient.getDiagnosisStatus() == DiagnosisStatusState.DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					} else if (searchOptions.isStaining_rediagnosis()
-							&& patient.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
+							&& patient.getDiagnosisStatus() == DiagnosisStatusState.RE_DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					}
 				}

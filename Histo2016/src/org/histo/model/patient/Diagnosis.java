@@ -19,7 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.interfaces.ArchivAble;
@@ -48,69 +48,49 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	private long version;
 
 	/**
-	 * Parent of the diagnosis, sample objekt
+	 * Parent of the diagnosis, sample bject
 	 */
 	private DiagnosisRevision parent;
 
 	/**
 	 * Nothing can be deleted. Mark deleted entities as achieved.
 	 */
-	@Expose
 	private boolean archived;
 
 	/**
 	 * Date of diagnosis creation.
 	 */
-	@Expose
 	private long generationDate;
 
 	/**
 	 * Date of diagnosis finalization.
 	 */
-	@Expose
 	private long finalizedDate;
 
 	/**
 	 * True if finalized.
 	 */
-	@Expose
 	private boolean finalized;
 
 	/**
 	 * Name of the diagnosis.
 	 */
-	@Expose
 	private String name = "";
 
 	/**
 	 * Diagnosis as short string.
 	 */
-	@Expose
 	private String diagnosis = "";
 
 	/**
 	 * True if finding is malign.
 	 */
-	@Expose
 	private boolean malign;
 
 	/**
 	 * ICD10 Number of this diagnosis
 	 */
-	@Expose
 	private String icd10 = "";
-
-	/**
-	 * Diagnosis type, normal = 0, follow up = 1 , revision = 2.
-	 */
-	@Expose
-	private DiagnosisType type;
-
-	/**
-	 * Order in diagnosis array
-	 */
-	@Expose
-	private int diagnosisOrder;
 
 	/**
 	 * Protoype used for this diagnosis.
@@ -121,7 +101,28 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	 * Associated sample
 	 */
 	private Sample sample;
-	
+
+	/**
+	 * Standard constructor
+	 */
+	public Diagnosis() {
+	}
+
+	/**
+	 * Constructor for adding a sample to the diagnosis
+	 * 
+	 * @param sample
+	 */
+	public Diagnosis(DiagnosisRevision revision, Sample sample) {
+		this.sample = sample;
+		setGenerationDate(System.currentTimeMillis());
+		setParent(revision);
+		
+		revision.getDiagnoses().add(this);
+
+		// setName(getDiagnosisName(sample, diagnosis, resourceBundle));
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -161,24 +162,6 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 
 	public void setGenerationDate(long generationDate) {
 		this.generationDate = generationDate;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public DiagnosisType getType() {
-		return type;
-	}
-
-	public void setType(DiagnosisType type) {
-		this.type = type;
-	}
-
-	@Basic
-	public int getDiagnosisOrder() {
-		return diagnosisOrder;
-	}
-
-	public void setDiagnosisOrder(int diagnosisOrder) {
-		this.diagnosisOrder = diagnosisOrder;
 	}
 
 	@Basic
@@ -234,7 +217,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	public void setDiagnosisPrototype(DiagnosisPreset diagnosisPreset) {
 		this.diagnosisPreset = diagnosisPreset;
 	}
-	
+
 	@OneToOne
 	public Sample getSample() {
 		return sample;
@@ -273,6 +256,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/

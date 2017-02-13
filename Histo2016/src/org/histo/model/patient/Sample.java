@@ -26,14 +26,14 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.DiagnosisStatus;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StainingStatus;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.StainingInfo;
@@ -119,7 +119,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 		task.getSamples().add(this);
 
 		updateNameOfSample(useAutoNomenclature);
-
 	}
 
 	/**
@@ -130,7 +129,9 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 */
 	public void updateNameOfSample(boolean useAutoNomenclature) {
 		if (useAutoNomenclature)
-			setSampleID(TaskUtil.getRomanNumber(getParent().getSamples().size() + 1));
+			setSampleID(TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1));
+		else
+			setSampleID("");
 	}
 
 	/********************************************************

@@ -11,7 +11,7 @@ import java.util.Set;
 import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Gender;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
@@ -185,7 +185,7 @@ public class PdfGenerator {
 //			diagonsisList
 //					.append(sample.getSampleID() + " " + sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
 //
-//			if (sample.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED)
+//			if (sample.getDiagnosisStatus() == DiagnosisStatusState.RE_DIAGNOSIS_NEEDED)
 //				reDiagonsisList.append(sample.getSampleID() + " "
 //						+ sample.getLastRelevantDiagnosis().getDiagnosisRevisionText() + "\r\n");
 //		}
@@ -223,7 +223,7 @@ public class PdfGenerator {
 //			setStamperField(stamper, "B_APPENDIX", task.getCouncil().getAttachment());
 //		}
 //
-//		if (task.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
+//		if (task.getDiagnosisStatus() == DiagnosisStatusState.RE_DIAGNOSIS_NEEDED) {
 //			setStamperField(stamper, "B_RE_DIAGNOSIS", "1");
 //			setStamperField(stamper, "B_RE_DIAGNOSIS_TEXT", reDiagonsisList.toString());
 //		}

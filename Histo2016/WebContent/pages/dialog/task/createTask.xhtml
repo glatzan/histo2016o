@@ -50,7 +50,9 @@
 					<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}" />
 					<p:selectBooleanCheckbox id="autoNomenclature"
 						title="#{msg['dialog.createTask.autoNomenclature.text']}"
-						value="#{taskHandlerAction.useAutoNomenclature}" />
+						value="#{taskHandlerAction.useAutoNomenclature}">
+						<p:ajax listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
+					</p:selectBooleanCheckbox>
 
 					<!-- priority -->
 					<h:outputLabel value="#{msg['dialog.createTask.priority']}" />
@@ -80,8 +82,7 @@
 
 
 					<!-- biobank -->
-					<h:outputLabel
-						value="#{msg['dialog.createTask.bioBank']}" />
+					<h:outputLabel value="#{msg['dialog.createTask.bioBank']}" />
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<h:panelGrid columns="2">
 							<h:outputLabel

@@ -31,8 +31,6 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisStatus;
-import org.histo.config.enums.DiagnosisType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.StainingStatus;
@@ -45,7 +43,7 @@ import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.StainingInfo;
@@ -61,8 +59,8 @@ import org.springframework.core.annotation.Order;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task
-		implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<DiagnosisRevision>, CreationDate, LogAble, ArchivAble {
+public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisStatus<DiagnosisRevision>, CreationDate,
+		LogAble, ArchivAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -110,11 +108,6 @@ public class Task
 	private long dueDate = 0;
 
 	/**
-	 * Liste aller Personen die über die Diangose informiert werden sollen.
-	 */
-	private List<Contact> contacts;
-
-	/**
 	 * Stationär/ambulant/Extern
 	 */
 	private byte typeOfOperation;
@@ -134,18 +127,6 @@ public class Task
 	 */
 	private Eye eye = Eye.RIGHT;
 
-	/**
-	 * List with all samples
-	 */
-	private List<Sample> samples;
-
-	/**
-	 * Lists of all diagnosis revisions
-	 */
-	private List<DiagnosisRevision> diagnosisRevisions;
-
-	
-	
 	/**
 	 * Der Task ist archiviert und wird nicht mehr angezeigt wenn true
 	 */
@@ -183,6 +164,21 @@ public class Task
 	private long notificationCompletionDate = 0;
 
 	/**
+	 * Liste aller Personen die über die Diangose informiert werden sollen.
+	 */
+	private List<Contact> contacts;
+
+	/**
+	 * List with all samples
+	 */
+	private List<Sample> samples;
+
+	/**
+	 * Element containg all diangnoses
+	 */
+	private org.histo.model.patient.DiagnosisInfo diagnosisInfo;
+
+	/**
 	 * Generated PDFs of this task
 	 */
 	private List<PDFContainer> attachedPdfs;
@@ -190,7 +186,6 @@ public class Task
 	private Accounting accounting;
 
 	private List<Council> council;
-
 
 	/**
 	 * Selected physician to sign the report
@@ -244,20 +239,22 @@ public class Task
 	}
 
 	/**
-	 *  Initializes a task with important values.
+	 * Initializes a task with important values.
+	 * 
 	 * @param parent
 	 */
 	public Task(Patient parent) {
 		this();
-		
+
 		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
 		setCreationDate(currentDay);
 		setDateOfReceipt(currentDay);
 		setDueDate(currentDay);
 		setDateOfSugery(currentDay);
+
 		// 20xx -2000 = tasknumber
 		setParent(parent);
-		
+
 	}
 
 	/********************************************************
@@ -523,15 +520,16 @@ public class Task
 		this.accounting = accounting;
 	}
 
+	
 	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("reportOrder ASC")
-	public List<DiagnosisRevision> getReports() {
-		return diagnosisRevisions;
+	public org.histo.model.patient.DiagnosisInfo getDiagnosisInfo() {
+		return diagnosisInfo;
 	}
 
-	public void setReports(List<DiagnosisRevision> diagnosisRevisions) {
-		this.diagnosisRevisions = diagnosisRevisions;
+	public void setDiagnosisInfo(org.histo.model.patient.DiagnosisInfo diagnosisInfo) {
+		this.diagnosisInfo = diagnosisInfo;
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -792,10 +790,10 @@ public class Task
 	}
 
 	/********************************************************
-	 * Interface DiagnosisInfo
+	 * Interface DiagnosisStatusState
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
+	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the status
 	 * of the diagnoses.
 	 */
 	@Override
@@ -805,7 +803,7 @@ public class Task
 	}
 
 	/********************************************************
-	 * Interface DiagnosisInfo
+	 * Interface DiagnosisStatusState
 	 ********************************************************/
 
 	/********************************************************

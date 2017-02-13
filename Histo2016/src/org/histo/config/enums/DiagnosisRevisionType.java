@@ -6,6 +6,6 @@ package org.histo.config.enums;
  * @author andi
  *
  */
-public enum DiagnosisType {
+public enum DiagnosisRevisionType {
 	DIAGNOSIS, DIAGNOSIS_REVISION;
 }

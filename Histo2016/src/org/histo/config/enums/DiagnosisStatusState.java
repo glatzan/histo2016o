@@ -7,6 +7,6 @@ package org.histo.config.enums;
  * @author andi
  *
  */
-public enum DiagnosisStatus {
+public enum DiagnosisStatusState {
 	PERFORMED, DIAGNOSIS_NEEDED, RE_DIAGNOSIS_NEEDED;
 }

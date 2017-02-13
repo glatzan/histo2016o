@@ -8,6 +8,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -27,23 +29,25 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.DiagnosisStatus;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
-import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.Parent;
 import org.histo.util.TaskUtil;
+
+import com.google.gson.annotations.Expose;
 
 @Entity
 @Audited
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
-@SequenceGenerator(name = "signatureContainer_sequencegenerator", sequenceName = "signatureContainer_sequence")
-public class DiagnosisRevision implements DiagnosisInfo, Parent<Task>, ArchivAble {
+@SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
+public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>, ArchivAble {
 
 	private long id;
 
@@ -51,11 +55,30 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<Task>, ArchivAbl
 
 	private long version;
 
-	private Task parent;
+	/**
+	 * Parent of the Diagnosis
+	 */
+	private DiagnosisInfo parent;
 
-	private int revisionOrder;
+	/**
+	 * Number of the revision in the revision sequence
+	 */
+	private int sequenceNumber;
 
+	/**
+	 * True if archived
+	 */
 	private boolean archived;
+
+	/**
+	 * Type of the revison @see {@link DiagnosisRevisionType}
+	 */
+	private DiagnosisRevisionType type;
+
+	/**
+	 * All diagnoses
+	 */
+	private List<Diagnosis> diagnoses;
 
 	/**
 	 * Text containing the histological record for all samples.
@@ -63,13 +86,23 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<Task>, ArchivAbl
 	private String histologicalRecord = "";
 
 	/**
-	 * All diagnoses
+	 * Standardt consutructor
 	 */
-	private List<Diagnosis> diagnoses;
-
 	public DiagnosisRevision() {
 	}
 
+	public DiagnosisRevision(DiagnosisInfo parent, List<Sample> samples, DiagnosisRevisionType type){
+		parent.getDiagnosisRevisions().add(this);
+		setSequenceNumber(parent.getDiagnosisRevisions().size());
+		
+		setType(type);
+		
+		// creating a diagnosis for every sample
+		for (Sample sample : samples) {
+			new Diagnosis(this, sample);
+		}
+	}
+	
 	/******************************************************** Transient ********************************************************/
 
 	@Transient
@@ -91,24 +124,10 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<Task>, ArchivAbl
 		return false;
 	}
 
-	@Transient
-	public final Diagnosis createNewDiagnosis(DiagnosisType type, ResourceBundle resourceBundle) {
-		Diagnosis diagnosis = new Diagnosis();
-		diagnosis.setGenerationDate(System.currentTimeMillis());
-		diagnosis.setType(type);
-		diagnosis.setDiagnosisOrder(getDiagnoses().size());
-		diagnosis.setName(TaskUtil.getDiagnosisName(getDiagnoses(), diagnosis, resourceBundle));
-		diagnosis.setParent(this);
-
-		getDiagnoses().add(diagnosis);
-
-		return diagnosis;
-	}
-
 	/******************************************************** Transient ********************************************************/
 
 	@Id
-	@GeneratedValue(generator = "signatureContainer_sequencegenerator")
+	@GeneratedValue(generator = "diagnosisRevision_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	public long getId() {
 		return id;
@@ -136,26 +155,26 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<Task>, ArchivAbl
 		this.histologicalRecord = histologicalRecord;
 	}
 
-	@OneToMany(cascade = { CascadeType.REFRESH, CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL , mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("diagnosisOrder ASC")
+	@OrderBy("sample.id ASC")
 	public List<Diagnosis> getDiagnoses() {
 		if (diagnoses == null)
 			diagnoses = new ArrayList<>();
 		return diagnoses;
 	}
 
+	@Enumerated(EnumType.STRING)
+	public DiagnosisRevisionType getType() {
+		return type;
+	}
+
+	public void setType(DiagnosisRevisionType type) {
+		this.type = type;
+	}
+
 	public void setDiagnoses(List<Diagnosis> diagnoses) {
 		this.diagnoses = diagnoses;
-	}
-
-
-	public int getRevisionOrder() {
-		return revisionOrder;
-	}
-
-	public void setRevisionOrder(int revisionOrder) {
-		this.revisionOrder = revisionOrder;
 	}
 
 	public String getName() {
@@ -166,65 +185,73 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<Task>, ArchivAbl
 		this.name = name;
 	}
 
-	/********************************************************
-	 * Interface DiagnosisInfo
-	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
-	 * of the diagnoses.
-	 */
-	@Transient
-	@Override
-	public DiagnosisStatus getDiagnosisStatus() {
-//		if (getDiagnoses().isEmpty())
-//			return DiagnosisStatus.DIAGNOSIS_NEEDED;
-//
-//		boolean diagnosisNeeded = false;
-//
-//		for (Diagnosis diagnosis : getDiagnoses()) {
-//
-//			if (diagnosis.isArchived())
-//				continue;
-//
-//			// continue if no diangosis is needed
-//			if (diagnosis.isFinalized())
-//				continue;
-//			else {
-//				// check if restaining is needed (restaining > staining) so
-//				// return that it is needed
-//				if (diagnosis.isDiagnosisRevision())
-//					return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-//				else
-//					diagnosisNeeded = true;
-//			}
-//
-//		}
+	public int getSequenceNumber() {
+		return sequenceNumber;
+	}
 
-//		// if there is more then one diagnosis a revision was created
-//		if (getDiagnoses().size() > 1 && diagnosisNeeded) {
-//			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-//		} else {
-//			return diagnosisNeeded ? DiagnosisStatus.DIAGNOSIS_NEEDED : DiagnosisStatus.PERFORMED;
-//		}
-		
-		
-//		TODO: rework
-		return DiagnosisStatus.DIAGNOSIS_NEEDED;
+	public void setSequenceNumber(int sequenceNumber) {
+		this.sequenceNumber = sequenceNumber;
 	}
 
 	/********************************************************
-	 * Interface DiagnosisInfo
+	 * Interface DiagnosisStatusState
+	 ********************************************************/
+	/**
+	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the
+	 * status of the diagnoses.
+	 */
+	@Transient
+	@Override
+	public DiagnosisStatusState getDiagnosisStatus() {
+		// if (getDiagnoses().isEmpty())
+		// return DiagnosisStatusState.DIAGNOSIS_NEEDED;
+		//
+		// boolean diagnosisNeeded = false;
+		//
+		// for (Diagnosis diagnosis : getDiagnoses()) {
+		//
+		// if (diagnosis.isArchived())
+		// continue;
+		//
+		// // continue if no diangosis is needed
+		// if (diagnosis.isFinalized())
+		// continue;
+		// else {
+		// // check if restaining is needed (restaining > staining) so
+		// // return that it is needed
+		// if (diagnosis.isDiagnosisRevision())
+		// return DiagnosisStatusState.RE_DIAGNOSIS_NEEDED;
+		// else
+		// diagnosisNeeded = true;
+		// }
+		//
+		// }
+
+		// // if there is more then one diagnosis a revision was created
+		// if (getDiagnoses().size() > 1 && diagnosisNeeded) {
+		// return DiagnosisStatusState.RE_DIAGNOSIS_NEEDED;
+		// } else {
+		// return diagnosisNeeded ? DiagnosisStatusState.DIAGNOSIS_NEEDED :
+		// DiagnosisStatusState.PERFORMED;
+		// }
+
+		// TODO: rework
+		return DiagnosisStatusState.DIAGNOSIS_NEEDED;
+	}
+
+	/********************************************************
+	 * Interface DiagnosisStatusState
 	 ********************************************************/
 
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
 	@ManyToOne(targetEntity = Task.class)
-	public Task getParent() {
+	public DiagnosisInfo getParent() {
 		return parent;
 	}
 
-	public void setParent(Task parent) {
+	public void setParent(DiagnosisInfo parent) {
 		this.parent = parent;
 	}
 
