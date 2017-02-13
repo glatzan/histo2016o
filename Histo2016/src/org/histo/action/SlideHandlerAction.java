@@ -17,7 +17,7 @@ import org.histo.dao.SettingsDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.Report;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
@@ -372,7 +372,7 @@ public class SlideHandlerAction implements Serializable {
 
 		// setting restaining flag of the diagnosis
 //		if (reStaining) {
-//			List<Report> reports = slide.getParent().getParent().getParent().getReports();
+//			List<DiagnosisRevision> reports = slide.getParent().getParent().getParent().getReports();
 //			if (diagnoses.size() > 0) {
 //				Diagnosis diagnosis = diagnoses.get(diagnoses.size() - 1);
 //				if (!diagnosis.isDiagnosisRevision()) {

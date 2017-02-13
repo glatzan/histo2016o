@@ -46,7 +46,7 @@ public class MaintenanceHandlerAction {
 	 * @param errorMessage
 	 */
 	public void sendErrorMessage(Date dateOfError, String errorMessage) {
-		logger.debug("Sending Error Report Date + "
+		logger.debug("Sending Error DiagnosisRevision Date + "
 				+ TimeUtil.formatDate(dateOfError, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " Message: "
 				+ errorMessage);
 

@@ -77,7 +77,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 */
 	private List<Block> blocks;
 
-
 	/**
 	 * Wenn archived true ist, wird dieser sample nicht mehr angezeigt
 	 */
@@ -114,13 +113,24 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 */
 	public Sample(Task task, MaterialPreset material, boolean useAutoNomenclature) {
 		setCreationDate(System.currentTimeMillis());
-		if(useAutoNomenclature)
-			setSampleID(TaskUtil.getRomanNumber(task.getSamples().size() + 1));
 		setParent(task);
 		setMaterilaPreset(material);
 		setMaterial(material == null ? "" : material.getName());
 		task.getSamples().add(this);
 
+		updateNameOfSample(useAutoNomenclature);
+
+	}
+
+	/**
+	 * Generates a sample name, if useAutoNomenclature is true an name will be
+	 * auto generated
+	 * 
+	 * @param useAutoNomenclature
+	 */
+	public void updateNameOfSample(boolean useAutoNomenclature) {
+		if (useAutoNomenclature)
+			setSampleID(TaskUtil.getRomanNumber(getParent().getSamples().size() + 1));
 	}
 
 	/********************************************************

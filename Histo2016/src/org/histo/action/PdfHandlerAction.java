@@ -295,7 +295,7 @@ public class PdfHandlerAction {
 
 		// also initializing taskHandlerAction, generating lists to choos
 		// physicians from
-		taskHandlerAction.prepareBean();
+		taskHandlerAction.initBean();
 	}
 
 	/**

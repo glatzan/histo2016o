@@ -19,7 +19,9 @@
 
 		<p:commandButton id="idSubmitQuickSearch"
 			actionListener="#{worklistHandlerAction.quickSearch()}"
-			style="display:none" update=":contentForm :headerForm :navigationForm"/>
+			style="display:none">
+			<p:ajax event="dialogReturn" update="navigationForm contentForm :headerForm" />
+		</p:commandButton>
 	</h:panelGroup>
 
 	<!-- Nav Table -->

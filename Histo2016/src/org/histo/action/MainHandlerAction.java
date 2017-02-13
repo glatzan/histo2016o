@@ -335,38 +335,39 @@ public class MainHandlerAction {
 	 */
 	public void archiveObject(ArchivAble archive, boolean archived) {
 
+		//TODO 
 		archive.setArchived(archived);
 
 		String logString = "log.error";
 
-		if (archive instanceof Slide)
-			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived",
-					((Slide) archive).getParent().getParent().getParent().getTaskID(),
-					((Slide) archive).getParent().getParent().getSampleID(), ((Slide) archive).getParent().getBlockID(),
-					((Slide) archive).getSlideID());
-		else if (archive instanceof Diagnosis)
-			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
-					((Diagnosis) archive).getParent().getParent().getTaskID(),
-					((Diagnosis) archive).getParent().getReportName(), ((Diagnosis) archive).getName());
-		else if (archive instanceof Block)
-			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
-					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),
-					((Block) archive).getBlockID());
-		else if (archive instanceof Sample)
-			logString = resourceBundle.get("log.patient.task.sample.archived",
-					((Sample) archive).getParent().getTaskID(), ((Sample) archive).getSampleID());
-		else if (archive instanceof Task)
-			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
+//		if (archive instanceof Slide)
+//			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived",
+//					((Slide) archive).getParent().getParent().getParent().getTaskID(),
+//					((Slide) archive).getParent().getParent().getSampleID(), ((Slide) archive).getParent().getBlockID(),
+//					((Slide) archive).getSlideID());
+//		else if (archive instanceof Diagnosis)
+//			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
+//					((Diagnosis) archive).getParent().getParent().getTaskID(),
+//					((Diagnosis) archive).getParent().getReportName(), ((Diagnosis) archive).getName());
+//		else if (archive instanceof Block)
+//			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
+//					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),
+//					((Block) archive).getBlockID());
+//		else if (archive instanceof Sample)
+//			logString = resourceBundle.get("log.patient.task.sample.archived",
+//					((Sample) archive).getParent().getTaskID(), ((Sample) archive).getSampleID());
+//		else if (archive instanceof Task)
+//			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
+//
+//		Patient patient = null;
+//
+//		if (archive instanceof Parent<?>) {
+//			patient = ((Parent<?>) archive).getPatient();
+//			// update the gui list for displaying in the receiptlog
+//			TaskUtil.generateSlideGuiList(patient.getSelectedTask());
+//		}
 
-		Patient patient = null;
-
-		if (archive instanceof Parent<?>) {
-			patient = ((Parent<?>) archive).getPatient();
-			// update the gui list for displaying in the receiptlog
-			TaskUtil.generateSlideGuiList(patient.getSelectedTask());
-		}
-
-		genericDAO.save(archive, logString, patient);
+//		genericDAO.save(archive, logString, patient);
 
 		hideArchiveObjectDialog();
 	}

@@ -43,17 +43,17 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "signatureContainer_sequencegenerator", sequenceName = "signatureContainer_sequence")
-public class Report implements DiagnosisInfo, Parent<Task>, ArchivAble {
+public class DiagnosisRevision implements DiagnosisInfo, Parent<Task>, ArchivAble {
 
 	private long id;
 
-	private String reportName;
+	private String name;
 
 	private long version;
 
 	private Task parent;
 
-	private int reportOrder;
+	private int revisionOrder;
 
 	private boolean archived;
 
@@ -67,7 +67,7 @@ public class Report implements DiagnosisInfo, Parent<Task>, ArchivAble {
 	 */
 	private List<Diagnosis> diagnoses;
 
-	public Report() {
+	public DiagnosisRevision() {
 	}
 
 	/******************************************************** Transient ********************************************************/
@@ -149,20 +149,21 @@ public class Report implements DiagnosisInfo, Parent<Task>, ArchivAble {
 		this.diagnoses = diagnoses;
 	}
 
-	public int getReportOrder() {
-		return reportOrder;
+
+	public int getRevisionOrder() {
+		return revisionOrder;
 	}
 
-	public void setReportOrder(int reportOrder) {
-		this.reportOrder = reportOrder;
+	public void setRevisionOrder(int revisionOrder) {
+		this.revisionOrder = revisionOrder;
 	}
 
-	public String getReportName() {
-		return reportName;
+	public String getName() {
+		return name;
 	}
 
-	public void setReportName(String reportName) {
-		this.reportName = reportName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/********************************************************

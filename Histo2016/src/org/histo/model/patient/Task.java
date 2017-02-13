@@ -62,7 +62,7 @@ import org.springframework.core.annotation.Order;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 public class Task
-		implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<Report>, CreationDate, LogAble, ArchivAble {
+		implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<DiagnosisRevision>, CreationDate, LogAble, ArchivAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -140,6 +140,13 @@ public class Task
 	private List<Sample> samples;
 
 	/**
+	 * Lists of all diagnosis revisions
+	 */
+	private List<DiagnosisRevision> diagnosisRevisions;
+
+	
+	
+	/**
 	 * Der Task ist archiviert und wird nicht mehr angezeigt wenn true
 	 */
 	private boolean archived = false;
@@ -184,7 +191,6 @@ public class Task
 
 	private List<Council> council;
 
-	private List<Report> reports;
 
 	/**
 	 * Selected physician to sign the report
@@ -520,12 +526,12 @@ public class Task
 	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("reportOrder ASC")
-	public List<Report> getReports() {
-		return reports;
+	public List<DiagnosisRevision> getReports() {
+		return diagnosisRevisions;
 	}
 
-	public void setReports(List<Report> reports) {
-		this.reports = reports;
+	public void setReports(List<DiagnosisRevision> diagnosisRevisions) {
+		this.diagnosisRevisions = diagnosisRevisions;
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -733,8 +739,8 @@ public class Task
 	 */
 	@Transient
 	public boolean isMalign() {
-		for (Report report : getReports()) {
-			if (report.isMalign())
+		for (DiagnosisRevision diagnosisRevision : getReports()) {
+			if (diagnosisRevision.isMalign())
 				return true;
 		}
 		return false;

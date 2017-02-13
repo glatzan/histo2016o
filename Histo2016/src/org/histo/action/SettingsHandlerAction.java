@@ -254,7 +254,7 @@ public class SettingsHandlerAction {
 	 * Is used for creating and editing static lists items
 	 */
 	private ListItem tmpListItem;
-	
+
 	/**
 	 * If true archived object will be shown.
 	 */
@@ -326,9 +326,7 @@ public class SettingsHandlerAction {
 			break;
 		case TAB_MATERIAL:
 			logger.debug("Selecting tag material");
-			setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
-			helperDAO.initStainingPrototypeList(getAllAvailableMaterials());
-
+			initMaterialPresets();
 			// update stainings if selected
 			if (getMaterialTabIndex() == SettingsTab.M_EDIT)
 				setStainingListChooserForMaterial(
@@ -445,6 +443,11 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * Material
 	 ********************************************************/
+	public void initMaterialPresets() {
+		setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
+		helperDAO.initStainingPrototypeList(getAllAvailableMaterials());
+	}
+
 	/**
 	 * Prepares a new StainingListChooser for editing
 	 */
@@ -826,7 +829,7 @@ public class SettingsHandlerAction {
 	 ********************************************************/
 	public void prepareStaticLists() {
 		logger.debug("Preparing list for " + getSelectedStaticList().toString());
-		setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(),isShowArchivedListItems()));
+		setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(), isShowArchivedListItems()));
 		logger.debug("Found " + (getStaticListContent() == null ? "no" : getStaticListContent().size()) + " items");
 	}
 
@@ -882,7 +885,7 @@ public class SettingsHandlerAction {
 		else
 			genericDAO.save(item, resourceBundle.get("log.settings.staticList.dearchive", item.getValue(),
 					getSelectedStaticList().toString()));
-		
+
 		// removing item from current list
 		getStaticListContent().remove(item);
 	}

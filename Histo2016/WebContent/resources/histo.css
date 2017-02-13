@@ -3,6 +3,74 @@ body {
 	font-size: 0.8em !important;
 }
 
+
+/* Default table container for two spacings*/
+.defaultListingTableTwoLineContainer{
+	width: 100%;
+}
+
+.defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(1), .defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(3) {
+	width: 47%;
+	vertical-align: top !important;
+}
+
+.defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(2){
+	width: 6%;
+}
+/* Default table container for two spacings*/
+
+
+/* Default table containter, no padding at all*/
+.defaultListingTableContainer{
+	width: 100%;
+}
+.defaultListingTableContainer>tbody>tr>td{
+	padding: 0px !important;
+	border-collapse: collapse !important;
+}
+/* Default table containter, no padding at all*/
+
+
+/* Default table for listing inputfields*/
+.defaultListingTableCss{
+	width: 100%;
+}
+
+.defaultListingTableCss>tbody>tr>td:first-child{
+	min-width: 150px;
+	width: 200px;
+		vertical-align: top;
+}
+
+.defaultListingTableCss>tbody>tr>td:first-child label{
+	font-weight: bold !important;
+	font-size: 1.2em !important;
+}
+
+.defaultListingTableCss td{
+	padding: 3px !important;	
+}
+
+.defaultListingTableCss input {
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+	font-size: 1.0em !important;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 22px;
+}
+
+.defaultListingTableCss label {
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+	font-size: 1.0em !important;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 22px;
+}
+/* Default table for listing inputfields*/
+
+
 .noBorders>tr, .noBorders>td, .noBorders {
 	border: none !important;
 }

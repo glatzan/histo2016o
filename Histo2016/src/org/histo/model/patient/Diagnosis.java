@@ -41,7 +41,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements Parent<Report>, GsonAble, LogAble, ArchivAble {
+public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, ArchivAble {
 
 	private long id;
 
@@ -50,7 +50,7 @@ public class Diagnosis implements Parent<Report>, GsonAble, LogAble, ArchivAble 
 	/**
 	 * Parent of the diagnosis, sample objekt
 	 */
-	private Report parent;
+	private DiagnosisRevision parent;
 
 	/**
 	 * Nothing can be deleted. Mark deleted entities as achieved.
@@ -256,11 +256,11 @@ public class Diagnosis implements Parent<Report>, GsonAble, LogAble, ArchivAble 
 	 * StainingTreeParent.
 	 */
 	@ManyToOne
-	public Report getParent() {
+	public DiagnosisRevision getParent() {
 		return parent;
 	}
 
-	public void setParent(Report parent) {
+	public void setParent(DiagnosisRevision parent) {
 		this.parent = parent;
 	}
 

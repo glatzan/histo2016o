@@ -1,4 +1,13 @@
-[  {  
+[  
+	{  
+      "version":"0.96",
+      "changes":[  
+         "<b>Fix:</b> Patienten erscheinen nach dem Hinzufügen über die Schnellsuch-Funktion in der Arbeitsliste",   
+           "<b>Fix:</b> Rechstschreibfehler gefixt",    
+         
+       ]
+   }, 
+	{  
    
       "version":"0.95b",
       "changes":[  
