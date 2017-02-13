@@ -125,7 +125,15 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
-
+	
+	/********************************************************
+	 * Sample creation
+	 ********************************************************/
+	private MaterialPreset selectedMaterial;
+	/********************************************************
+	 * Sample creation
+	 ********************************************************/
+	
 	/********************************************************
 	 * Task
 	 ********************************************************/
@@ -205,15 +213,15 @@ public class TaskHandlerAction implements Serializable {
 	public void prepareTask(Task task) {
 		initBean();
 
-		taskDAO.initializeReportData(task);
+		taskDAO.initializeDiagnosisData(task);
 
 		// setting the report time to the current date
 		if (!task.isDiagnosisCompleted()) {
 			task.setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		}
 
-		setPhysicianToSign(task.getPhysicianSignature().getPhysician());
-		setConsultantToSign(task.getConsultantSignature().getPhysician());
+//		setPhysicianToSign(task.getPhysicianSignature().getPhysician());
+//		setConsultantToSign(task.getConsultantSignature().getPhysician());
 	}
 
 	/**
@@ -225,7 +233,6 @@ public class TaskHandlerAction implements Serializable {
 		setTemporaryTask(new Task(worklistHandlerAction.getSelectedPatient()));
 		getTemporaryTask().setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000)
 				+ HistoUtil.fitString(taskDAO.countSamplesOfCurrentYear(), 4, '0'));
-		getTemporaryTask().setDiagnosisInfo(new DiagnosisInfo());
 		getTemporaryTask().setTaskPriority(TaskPriority.NONE);
 		getTemporaryTask().setDateOfReceipt(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		setTemporaryTaskSampleCount(1);
@@ -290,7 +297,7 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void createNewTask(Patient patient, Task task, boolean useAutoNomenclature) {
+	public void createNewTask(Patient patient, Task task) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
@@ -299,9 +306,14 @@ public class TaskHandlerAction implements Serializable {
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
+		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
+		
+		task.setDiagnosisInfo(new DiagnosisInfo(task));
+		task.getDiagnosisInfo().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
+		
 		genericDAO.save(task.getDiagnosisInfo(),
 				resourceBundle.get("log.patient.task.diagnosisInfo.new", task.getTaskID()), patient);
-		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
+		
 
 		for (Sample sample : task.getSamples()) {
 			// set name of material for changing it manually
@@ -340,12 +352,13 @@ public class TaskHandlerAction implements Serializable {
 	 * Displays a dialog for creating a new sample
 	 */
 	public void prepareNewSampleDialog(Task task) {
+		
+		settingsHandlerAction.initMaterialPresets();
 		// checks if default statingsList is empty
 		if (!settingsHandlerAction.getAllAvailableMaterials().isEmpty()) {
 			// setSelectedMaterial(settingsHandlerAction.getAllAvailableMaterials().get(0));
 			setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
 		}
-
 		setTemporaryTask(task);
 
 		mainHandlerAction.showDialog(Dialog.SAMPLE_CREATE);
@@ -395,7 +408,6 @@ public class TaskHandlerAction implements Serializable {
 		
 		// creating first default diagnosis
 		diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(task.getDiagnosisInfo(), task.getSamples());
-
 	}
 
 	/********************************************************
@@ -638,6 +650,13 @@ public class TaskHandlerAction implements Serializable {
 		this.autoNomenclatureChangedManually = autoNomenclatureChangedManually;
 	}
 
+	public MaterialPreset getSelectedMaterial() {
+		return selectedMaterial;
+	}
+
+	public void setSelectedMaterial(MaterialPreset selectedMaterial) {
+		this.selectedMaterial = selectedMaterial;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

@@ -41,6 +41,13 @@ public class DiagnosisInfo implements Parent<Task> {
 
 	private List<DiagnosisRevision> diagnosisRevisions;
 
+	public DiagnosisInfo() {
+	}
+
+	public DiagnosisInfo(Task parent) {
+		this.parent = parent;
+	}
+
 	@Id
 	@GeneratedValue(generator = "diagnosisInfo_sequencegenerator")
 	@Column(unique = true, nullable = false)

@@ -19,7 +19,8 @@
 			<p:panelGrid styleClass="noBorders" style="border: 1px solid black;">
 				<p:row styleClass="noBorders">
 					<p:column colspan="4">
-					 <h:outputLabel style="font-size:20px;font-weight: bold;" value="#{msg['body.receiptlog.taskId']} #{worklistHandlerAction.selectedPatient.selectedTask.taskID}"/>
+						<h:outputLabel style="font-size:20px;font-weight: bold;"
+							value="#{msg['body.receiptlog.taskId']} #{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
 					</p:column>
 				</p:row>
 
@@ -139,8 +140,8 @@
 										itemLabel="#{msg['body.receiptlog.material.select']}"
 										itemValue="none" />
 									<f:selectItems
-										value="#{taskHandlerAction.allAvailableMaterials}" var="list"
-										itemLabel="#{list.name}" itemValue="#{list.name}" />
+										value="#{settingsHandlerAction.allAvailableMaterials}"
+										var="list" itemLabel="#{list.name}" itemValue="#{list.name}" />
 
 									<p:ajax event="change" execute="@this"
 										listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.dataChange.sample.material',worklistHandlerAction.selectedPatient.selectedTask.taskID,sample.material.name)}" />
@@ -232,33 +233,34 @@
 
 				<p:row styleClass="noBorders">
 					<p:column colspan="6">
-						<p:tabView styleClass="tabView">
+						<!-- *********** Staining *********** -->
+						<h:outputLabel value="#{msg['body.statiningView.tab.name']}" />
+						<!-- staining completed -->
+						<h:panelGroup
+							rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'PERFORMED'}">
+							<div class="fa fa-check-circle icon-green"
+								title="#{msg['body.statiningView.tab.completed']}" />
+						</h:panelGroup>
+						<!-- staining to perform -->
+						<h:panelGroup
+							rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'STAINING_NEEDED'}">
+							<div class="fa fa-exclamation-circle icon-orange"
+								title="#{msg['body.statiningView.tab.staining']}" />
+						</h:panelGroup>
+						<!-- restaining to perform -->
+						<h:panelGroup
+							rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
+							<div class="fa fa-exclamation-circle ic-custom icon-orange"
+								title="#{msg['body.statiningView.tab.restaining']}" />
+						</h:panelGroup>
+					</p:column>
+				</p:row>
+
+				<p:row styleClass="noBorders">
+					<p:column colspan="6">
 
 							<!-- ******************************** Staining ******************************** -->
-							<p:tab>
 								<!-- Sample -->
-								<f:facet name="title">
-									<!-- *********** Staining *********** -->
-									<h:outputLabel value="#{msg['body.statiningView.tab.name']}" />
-									<!-- staining completed -->
-									<h:panelGroup
-										rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'PERFORMED'}">
-										<div class="fa fa-check-circle icon-green"
-											title="#{msg['body.statiningView.tab.completed']}" />
-									</h:panelGroup>
-									<!-- staining to perform -->
-									<h:panelGroup
-										rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'STAINING_NEEDED'}">
-										<div class="fa fa-exclamation-circle icon-orange"
-											title="#{msg['body.statiningView.tab.staining']}" />
-									</h:panelGroup>
-									<!-- restaining to perform -->
-									<h:panelGroup
-										rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
-										<div class="fa fa-exclamation-circle ic-custom icon-orange"
-											title="#{msg['body.statiningView.tab.restaining']}" />
-									</h:panelGroup>
-								</f:facet>
 
 								<p:panelGrid styleClass="stainingTable">
 									<f:facet name="header">
@@ -517,9 +519,7 @@
 										</p:commandButton>
 									</h:panelGroup>
 								</h:panelGrid>
-							</p:tab>
 							<!-- ******************************** Staining ******************************** -->
-						</p:tabView>
 					</p:column>
 				</p:row>
 			</p:panelGrid>

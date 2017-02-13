@@ -122,8 +122,14 @@ public class DiagnosisHandlerAction implements Serializable {
 		diagnosisRevision.setType(type);
 		diagnosisRevision.setParent(parent);
 
+		// saving to database
+		genericDAO.save(diagnosisRevision,
+				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.new",
+						diagnosisRevision.getParent().getParent().getTaskID(), diagnosisRevision.getName()),
+				diagnosisRevision.getPatient());
+		
 		parent.getDiagnosisRevisions().add(diagnosisRevision);
-
+		
 		// creating a diagnosis for every sample
 		for (Sample sample : parent.getParent().getSamples()) {
 			createDiagnosis(diagnosisRevision, sample);
@@ -131,7 +137,7 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		// saving to database
 		genericDAO.save(diagnosisRevision,
-				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.new",
+				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.update",
 						diagnosisRevision.getParent().getParent().getTaskID(), diagnosisRevision.getName()),
 				diagnosisRevision.getPatient());
 

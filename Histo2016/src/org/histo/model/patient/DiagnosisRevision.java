@@ -234,7 +234,7 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
-	@ManyToOne(targetEntity = Task.class)
+	@ManyToOne
 	public DiagnosisInfo getParent() {
 		return parent;
 	}

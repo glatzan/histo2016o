@@ -337,7 +337,7 @@ public class NotificationHandlerAction implements Serializable {
 		notificationRunning.set(true);
 
 		taskDAO.initializeCouncilData(getTmpTask());
-		taskDAO.initializeReportData(getTmpTask());
+		taskDAO.initializeDiagnosisData(getTmpTask());
 
 		if (isUseFax() || isUsePhone() || isUseEmail()) {
 

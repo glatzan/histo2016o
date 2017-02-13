@@ -51,7 +51,8 @@
 					<p:selectBooleanCheckbox id="autoNomenclature"
 						title="#{msg['dialog.createTask.autoNomenclature.text']}"
 						value="#{taskHandlerAction.temporaryTask.useAutoNomenclature}">
-						<p:ajax listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
+						<p:ajax
+							listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
 					</p:selectBooleanCheckbox>
 
 					<!-- priority -->
@@ -88,8 +89,7 @@
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
 							<p:selectBooleanCheckbox id="informedConsent"
-								title="#{msg['dialog.createTask.bioBank.informedConsent.signed']}"
-								value="#{taskHandlerAction.useAutoNomenclature}" />
+								title="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
 							<p:selectOneMenu id="consentType">
@@ -121,7 +121,7 @@
 							styleClass="taskSpinner" min="1" max="5">
 							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
 								event="change"
-								listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask, taskHandlerAction.useAutoNomenclature)}"></p:ajax>
+								listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask)}"></p:ajax>
 						</p:spinner>
 
 
@@ -165,13 +165,13 @@
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
 						icon="fa fa-print" disabled="true"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 
 
 					<!-- Abort button -->

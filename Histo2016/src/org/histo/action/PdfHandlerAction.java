@@ -289,8 +289,8 @@ public class PdfHandlerAction {
 
 		// initializes teh task
 		taskDAO.initializeCouncilData(task);
-		taskDAO.initializeReportData(task);
-
+		taskDAO.initializeDiagnosisData(task);
+		
 		taskDAO.initializePdfData(task);
 
 		// also initializing taskHandlerAction, generating lists to choos
