@@ -95,11 +95,15 @@ public class DiagnosisHandlerAction implements Serializable {
 	public Diagnosis removeDiagnosis(Diagnosis diagnosis) {
 		logger.info("Removing diagnosis " + diagnosis.getName());
 
+		Sample tmp = diagnosis.getSample();
+		
+		diagnosis.setSample(null);
+		
 		diagnosis.getParent().getDiagnoses().remove(diagnosis);
 
 		genericDAO.delete(diagnosis,
 				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosis.remove",
-						diagnosis.getParent().getParent().getParent().getTaskID(), diagnosis.getSample().getSampleID(),
+						diagnosis.getParent().getParent().getParent().getTaskID(), tmp.getSampleID(),
 						diagnosis.getParent().getId(), diagnosis.getName()),
 				diagnosis.getPatient());
 

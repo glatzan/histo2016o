@@ -54,14 +54,10 @@ public class SlideUtil {
 
 		for (Block block : sample.getBlocks()) {
 			// weiter, wenn block archiviert wurde
-			if (block.isArchived())
-				continue;
 
 			lone: for (Slide slide : block.getSlides()) {
 
 				// weiter, wenn slide archiviert wurde
-				if (slide.isArchived())
-					continue;
 
 				atLeastOneSlide = true;
 				break lone;

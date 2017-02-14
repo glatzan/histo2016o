@@ -363,15 +363,10 @@ public class SlideHandlerAction implements Serializable {
 		slide.setSlidePrototype(prototype);
 		slide.setParent(block);
 
-		// generating block id
-		String number = "";
-		int stainingsInBlock = TaskUtil.getNumerOfSameStainings(block, prototype);
+		
 
-		if (stainingsInBlock > 1)
-			number = " " + String.valueOf(stainingsInBlock);
-
-		slide.setSlideID(block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
-
+		slide.updateNameOfSlide();
+		
 		// setting unique slide number
 		slide.setUniqueIDinBlock(block.getNextSlideNumber());
 
@@ -382,7 +377,7 @@ public class SlideHandlerAction implements Serializable {
 
 		slide.setReStaining(reStaining);
 
-		genericDAO.save(slide, resourceBundle.get("log.patient.task.sample.blok.slide.new",
+		genericDAO.save(slide, resourceBundle.get("log.patient.task.sample.block.slide.new",
 				slide.getParent().getParent().getParent().getTaskID(), slide.getParent().getParent().getSampleID(),
 				slide.getParent().getBlockID(), slide.getSlideID()), slide.getPatient());
 

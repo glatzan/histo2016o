@@ -17,10 +17,7 @@ public enum Dialog {
 	TASK_CREATE("/pages/dialog/task/createTask", null, 858, 484, false, false, true), // 16:9
 	TASK_ARCHIV("/pages/dialog/task/archivTask", null, 0, 0, false, false, true), 
 	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9
-	SAMPLE_ARCHIV("/pages/dialog/task/archivSample", null, 0, 0, false, false, true), 
-	BLOCK_ARCHIV("/pages/dialog/task/archivBlock", null, 0, 0, false, false, true), 
 	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 0, 0, false, false, true),
-	SLIDE_ARCHIV("/pages/dialog/task/archivSlide", null, 0, 0, false, false, true),
 	DIAGNOSIS_FINALIZE("/pages/dialog/diagnosis/finalizeDiagnosis", null, 480, 272, false, false, true),// 16:9
 	DIAGNOSIS_UNFINALIZE("/pages/dialog/diagnosis/unfinalizeDiagnosis", null, 0, 0, false, false, true),
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/diagnosis/histologicalRecordOverwrite", null, 0, 0, false, false, true),
@@ -35,7 +32,8 @@ public enum Dialog {
 	INFO("/pages/dialog/info/info", null,  1024, 600, false, false, true), //  16:9
 	UPLOAD_TASK("/pages/dialog/upload/uploadPdfToTask", null,  640, 360, false, false, true),
 	SETTINGS_USER_ROLE_CHANGE("/pages/dialog/settings/userRoleChanged", null,  480, 272, false, false, true), //  16:9
-	SELECT_MATERIAL("/pages/dialog/task/selectMaterial", null, 640, 360, false, false, true); // 16:9
+	SELECT_MATERIAL("/pages/dialog/task/selectMaterial", null, 640, 360, false, false, true), // 16:9
+	DELETE_TREE_ENTITY("/pages/dialog/task/deleteTreeEntity", null,  480, 272, false, false, true); //  16:9
 	
 	
 	private final String path;

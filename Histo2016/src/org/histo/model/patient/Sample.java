@@ -33,6 +33,7 @@ import org.histo.config.enums.StainingStatus;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
+import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -46,7 +47,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, LogAble, ArchivAble {
+public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, LogAble, DeleteAble {
 
 	private long id;
 
@@ -76,11 +77,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 * blocks array
 	 */
 	private List<Block> blocks;
-
-	/**
-	 * Wenn archived true ist, wird dieser sample nicht mehr angezeigt
-	 */
-	private boolean archived;
 
 	/**
 	 * Material name is first initialized with the name of the typeOfMaterial.
@@ -127,11 +123,23 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 * 
 	 * @param useAutoNomenclature
 	 */
+	@Transient
 	public void updateNameOfSample(boolean useAutoNomenclature) {
-		if (useAutoNomenclature)
+		if (useAutoNomenclature && getParent().getSamples().size() > 1)
 			setSampleID(TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1));
 		else
-			setSampleID("");
+			setSampleID(" ");
+	}
+
+	/**
+	 * Updates the name of all block children
+	 * 
+	 * @param useAutoNomenclature
+	 */
+	public void updateNameOfAllBlocks(boolean useAutoNomenclature) {
+		for (Block block : blocks) {
+			block.updateNameOfBlock(useAutoNomenclature);
+		}
 	}
 
 	/********************************************************
@@ -280,28 +288,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	/********************************************************
 	 * Interface ArchiveAble
 	 ********************************************************/
-
-	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
-	 * Setzt alle Kinder
-	 */
-	@Basic
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-		// setzt alle Kinder
-		for (Block block : getBlocks()) {
-			block.setArchived(archived);
-		}
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
-	 */
-	@Basic
-	public boolean isArchived() {
-		return archived;
-	}
-
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt die SampleID als
 	 * identifier zurück
@@ -309,7 +295,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	@Transient
 	@Override
 	public String getTextIdentifier() {
-		return getSampleID();
+		return "Probe " + getSampleID();
 	}
 
 	/**
@@ -319,7 +305,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	@Transient
 	@Override
 	public Dialog getArchiveDialog() {
-		return Dialog.SAMPLE_ARCHIV;
+		return Dialog.DELETE_TREE_ENTITY;
 	}
 	/********************************************************
 	 * Interface ArchiveAble

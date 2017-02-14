@@ -28,9 +28,11 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StainingStatus;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
+import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.StainingInfo;
+import org.histo.util.TaskUtil;
 
 @Entity
 @Audited
@@ -38,7 +40,7 @@ import org.histo.model.interfaces.StainingInfo;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAble, ArchivAble {
+public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAble, DeleteAble {
 
 	private long id;
 
@@ -65,11 +67,6 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	private long creationDate;
 
 	/**
-	 * Wenn true wird dieser block nicht mehr angezeigt.
-	 */
-	private boolean archived;
-
-	/**
 	 * Unique slide counter is increased for every added slide;
 	 */
 	private int uniqueSlideCounter = 0;
@@ -83,6 +80,20 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 		return ++uniqueSlideCounter;
 	}
 
+	@Transient
+	public void updateNameOfBlock(boolean useAutoNomenclature) {
+		if (useAutoNomenclature && parent.getBlocks().size() > 1) {
+			setBlockID(TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this)));
+		} else
+			setBlockID(" ");
+	}
+
+	@Transient
+	public void updateNamesOfSlides(boolean useAutoNomenclature){
+		for (Slide slide : slides) {
+			slide.updateNameOfSlide();
+		}
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -175,10 +186,6 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 
 		for (Slide staining : slides) {
 
-			// contiune if archived
-			if (staining.isArchived())
-				continue;
-
 			// continue if no staining is needed
 			if (staining.isStainingPerformed())
 				continue;
@@ -227,34 +234,13 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	 * Interface ArchiveAble
 	 ********************************************************/
 	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble
-	 */
-	@Basic
-	public boolean isArchived() {
-		return archived;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
-	 * Setzt alle Kinder
-	 */
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-
-		// setzt alle Kinder
-		for (Slide staining : getSlides()) {
-			staining.setArchived(archived);
-		}
-	}
-
-	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
 	 * Gibt die BlockID als identifier zurück
 	 */
 	@Transient
 	@Override
 	public String getTextIdentifier() {
-		return getBlockID();
+		return "Block " + getBlockID();
 	}
 
 	/**
@@ -264,7 +250,7 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	@Transient
 	@Override
 	public Dialog getArchiveDialog() {
-		return Dialog.BLOCK_ARCHIV;
+		return Dialog.DELETE_TREE_ENTITY;
 	}
 	/********************************************************
 	 * Interface ArchiveAble

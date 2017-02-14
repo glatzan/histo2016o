@@ -222,28 +222,28 @@
 					<p:row>
 						<p:column styleClass="columnSample">
 							<h:outputLabel
-								value="#{msg['body.receiptlog.slidele.headline.sample']}"></h:outputLabel>
+								value="#{msg['body.receiptlog.slide.headline.sample']}"></h:outputLabel>
 						</p:column>
 						<p:column styleClass="columnBlock">
 							<h:outputLabel
-								value="#{msg['body.receiptlog.slidele.headline.block']}"></h:outputLabel>
+								value="#{msg['body.receiptlog.slide.headline.block']}"></h:outputLabel>
 						</p:column>
 						<p:column styleClass="columnChoose"></p:column>
 						<p:column styleClass="columnStainingID">
 							<h:outputLabel
-								value="#{msg['body.receiptlog.slidele.headline.staining.id']}"></h:outputLabel>
+								value="#{msg['body.receiptlog.slide.headline.staining.id']}"></h:outputLabel>
 						</p:column>
 						<p:column styleClass="columnStaining">
 							<h:outputLabel
-								value="#{msg['body.receiptlog.slidele.headline.staining.staining']}"></h:outputLabel>
+								value="#{msg['body.receiptlog.slide.headline.staining.staining']}"></h:outputLabel>
 						</p:column>
 						<p:column styleClass="columnStatus">
 							<h:outputLabel
-								value="#{msg['body.receiptlog.slidele.headline.status']}"></h:outputLabel>
+								value="#{msg['body.receiptlog.slide.headline.status']}"></h:outputLabel>
 						</p:column>
 						<p:column styleClass="columnOptions">
 							<h:outputLabel
-								value="#{msg['body.receiptlog.slidele.headline.options']}"></h:outputLabel>
+								value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
 						</p:column>
 					</p:row>
 				</f:facet>
@@ -257,7 +257,7 @@
 						<p:column
 							styleClass="columnSample #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.sampleType}">
-								<h:outputLabel for="basic" value="Probe " />
+								<h:outputLabel for="basic" value="#{msg['body.receiptlog.slide.sample']} " />
 								<p:inplace id="basic" styleClass="inplaceInput">
 									<p:inputText value="#{stainingRow.sample.sampleID}" />
 								</p:inplace>
@@ -268,7 +268,7 @@
 						<p:column
 							styleClass="columnBlock #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.blockType}">
-								<h:outputLabel for="block" value="Block "
+								<h:outputLabel for="block" value="#{msg['body.receiptlog.slide.block']} "
 									rendered="#{stainingRow.block ne null}" />
 								<p:inplace id="block" styleClass="inplaceInput"
 									rendered="#{stainingRow.block ne null}">
@@ -377,7 +377,7 @@
 								<!-- ********** Delete Button ********** -->
 								<p:commandLink styleClass="noUnderlineAtLink"
 									title="#{msg['body.statiningView.archiveSample']}"
-									actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.sample, true)}">
+									actionListener="#{taskHandlerAction.prepareDeleteTaskTreeEntityDialog(stainingRow.sample)}">
 									<i class="fa fa-fw fa-times-circle"></i>
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -398,7 +398,7 @@
 								<!-- ********** Delete Button ********** -->
 								<p:commandLink styleClass="noUnderlineAtLink"
 									title="#{msg['body.statiningView.archiveBlock']}"
-									actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.block, true)}">
+									actionListener="#{taskHandlerAction.prepareDeleteTaskTreeEntityDialog(stainingRow.block)}">
 									<i class="fa fa-fw fa-times-circle"></i>
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -425,7 +425,7 @@
 								<!-- ********** Delete Button ********** -->
 								<p:commandLink styleClass="noUnderlineAtLink"
 									title="#{msg['body.statiningView.archiveStaining']}"
-									actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.staining, true)}">
+									actionListener="#{taskHandlerAction.prepareDeleteTaskTreeEntityDialog(stainingRow.staining)}">
 									<i class="fa fa-fw fa-times-circle" />
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />

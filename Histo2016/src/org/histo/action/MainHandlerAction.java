@@ -103,11 +103,6 @@ public class MainHandlerAction {
 	 */
 	private ArchivAble toArchive;
 
-	/**
-	 * the toArchive object will be archived if true
-	 */
-	private boolean archived;
-
 	/********************************************************
 	 * Archive able
 	 ********************************************************/
@@ -316,9 +311,7 @@ public class MainHandlerAction {
 	 * @param sample
 	 * @param archived
 	 */
-	public void prepareArchiveObject(ArchivAble archive, boolean archived) {
-		setArchived(archived);
-		setToArchive(archive);
+	public void prepareDeleteObject(ArchivAble archive, boolean archived) {
 		// if no dialog is provieded the object will be archived immediately
 		if (archive.getArchiveDialog() == null)
 			archiveObject(archive, archived);
@@ -474,14 +467,6 @@ public class MainHandlerAction {
 
 	public void setToArchive(ArchivAble toArchive) {
 		this.toArchive = toArchive;
-	}
-
-	public boolean isArchived() {
-		return archived;
-	}
-
-	public void setArchived(boolean archived) {
-		this.archived = archived;
 	}
 
 	public HistoSettings getSettings() {

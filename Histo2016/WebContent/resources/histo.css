@@ -518,6 +518,7 @@ body {
 .content .body   .inplaceInput .ui-inputfield {
 	padding: 0px 0px 0px 5px;
 	width: 60% !important;
+	background: black;
 }
 
 /* Alle Unterstriche bei links interhalb der Färbungstabelle entfernen*/

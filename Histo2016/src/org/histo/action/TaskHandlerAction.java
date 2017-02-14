@@ -26,6 +26,7 @@ import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -133,9 +134,10 @@ public class TaskHandlerAction implements Serializable {
 	 * Used to save a sample while changing the material
 	 */
 	private Sample temporarySample;
-	
+
 	/**
-	 * Used to save the material while creating a new sample / changing the material
+	 * Used to save the material while creating a new sample / changing the
+	 * material
 	 */
 	private MaterialPreset selectedMaterial;
 	/********************************************************
@@ -154,19 +156,30 @@ public class TaskHandlerAction implements Serializable {
 	 * List of all physicians known in the database
 	 */
 	private DefaultTransformer<Physician> allAvailablePhysiciansTransformer;
-	
+
 	/**
 	 * Contains all available case histories
 	 */
 	private List<ListItem> caseHistoryList;
-	
+
 	/**
 	 * Contains all available wards
 	 */
 	private List<ListItem> wardList;
-	
+
 	/********************************************************
 	 * Task
+	 ********************************************************/
+
+	/********************************************************
+	 * Delete
+	 ********************************************************/
+	/**
+	 * Temporary save for a task tree entity (sample, slide, block)
+	 */
+	private DeleteAble taskTreeEntityToDelete;
+	/********************************************************
+	 * Delete
 	 ********************************************************/
 
 	/********************************************************
@@ -215,7 +228,7 @@ public class TaskHandlerAction implements Serializable {
 		initBean();
 
 		taskDAO.initializeDiagnosisData(task);
-		
+
 		// setting the report time to the current date
 		if (!task.isDiagnosisCompleted()) {
 			task.getDiagnosisInfo().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
@@ -224,7 +237,7 @@ public class TaskHandlerAction implements Serializable {
 				// TODO set if physician to the left, if consultant to the right
 			}
 		}
-		
+
 		// loading lists
 		setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
 		setWardList(settingsDAO.getAllStaticListItems(StaticList.WARDS));
@@ -243,7 +256,7 @@ public class TaskHandlerAction implements Serializable {
 		getTemporaryTask().setDateOfReceipt(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		setTemporaryTaskSampleCount(1);
 
-		getTemporaryTask().setUseAutoNomenclature(false);
+		getTemporaryTask().setUseAutoNomenclature(true);
 		setAutoNomenclatureChangedManually(false);
 
 		// creates a new sample
@@ -322,7 +335,7 @@ public class TaskHandlerAction implements Serializable {
 
 		task.setCaseHistory("");
 		task.setWard("");
-		
+
 		genericDAO.save(task.getDiagnosisInfo(),
 				resourceBundle.get("log.patient.task.diagnosisInfo.new", task.getTaskID()), patient);
 
@@ -372,6 +385,10 @@ public class TaskHandlerAction implements Serializable {
 		}
 		setTemporaryTask(task);
 
+		// more the one task = use autonomeclature
+		if (task.getSamples().size() > 0)
+			task.setUseAutoNomenclature(true);
+
 		mainHandlerAction.showDialog(Dialog.SAMPLE_CREATE);
 	}
 
@@ -392,12 +409,13 @@ public class TaskHandlerAction implements Serializable {
 	public void createNewSampleFromGui(Task task, MaterialPreset material) {
 		createNewSample(task, material);
 
+		// updating names
+		task.updateNameOfAllSamples();
 		// checking if staining flag of the task object has to be false
 		task.updateStainingStatus();
 		// generating gui list
 		task.generateSlideGuiList();
 		// saving patient
-		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
 		hideNewSampleDialog();
 	}
@@ -417,6 +435,9 @@ public class TaskHandlerAction implements Serializable {
 		// creating needed blocks
 		createNewBlock(sample, false);
 
+		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.update", sample.getParent().getTaskID(),
+				sample.getSampleID()), sample.getPatient());
+
 		// creating first default diagnosis
 		diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(task.getDiagnosisInfo(), task.getSamples());
 	}
@@ -432,6 +453,7 @@ public class TaskHandlerAction implements Serializable {
 
 	/**
 	 * Changes the material of the sample to the given material.
+	 * 
 	 * @param sample
 	 * @param materialPreset
 	 */
@@ -439,9 +461,10 @@ public class TaskHandlerAction implements Serializable {
 		sample.setMaterial(materialPreset.getName());
 		sample.setMaterilaPreset(materialPreset);
 
-		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.material.update", sample.getParent().getTaskID(),
-				sample.getSampleID(), materialPreset.getName()), sample.getParent().getPatient());
-		
+		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.material.update",
+				sample.getParent().getTaskID(), sample.getSampleID(), materialPreset.getName()),
+				sample.getParent().getPatient());
+
 		hideSelectMaterialDialog();
 	}
 
@@ -469,6 +492,11 @@ public class TaskHandlerAction implements Serializable {
 	 */
 	public void createNewBlockFromGui(Sample sample) {
 		createNewBlock(sample, false);
+
+		// updates the name of all other samples
+		for (Block block : sample.getBlocks()) {
+			block.updateNameOfBlock(sample.getParent().isUseAutoNomenclature());
+		}
 
 		// checking if staining flag of the task object has to be false
 		sample.getParent().updateStainingStatus();
@@ -502,7 +530,7 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		genericDAO.save(
-				block, resourceBundle.get("log.patient.task.sample.blok.update",
+				block, resourceBundle.get("log.patient.task.sample.block.update",
 						block.getParent().getParent().getTaskID(), block.getParent().getSampleID(), block.getBlockID()),
 				sample.getPatient());
 
@@ -543,6 +571,96 @@ public class TaskHandlerAction implements Serializable {
 		genericDAO.save(task, resourceBundle.get("log.patient.task.change", task.getTaskID(), detailedInfoString),
 				task.getParent());
 		System.out.println("saving data");
+	}
+
+	public void prepareDeleteTaskTreeEntityDialog(DeleteAble toDelete) {
+		setTaskTreeEntityToDelete(toDelete);
+		mainHandlerAction.showDialog(Dialog.DELETE_TREE_ENTITY);
+	}
+
+	public void deleteTaskTreeEntity(DeleteAble toDelete) {
+		if (toDelete instanceof Slide) {
+			Slide toDeleteSlide = (Slide) toDelete;
+
+			logger.info("Deleting slide " + toDeleteSlide.getSlideID());
+
+			Block parent = toDeleteSlide.getParent();
+
+			parent.getSlides().remove(toDeleteSlide);
+
+			parent.updateNamesOfSlides(parent.getParent().getParent().isUseAutoNomenclature());
+			
+			genericDAO.save(parent,
+					resourceBundle.get("log.patient.task.sample.block.update",
+							parent.getParent().getParent().getTaskID(), parent.getParent().getSampleID(),
+							parent.getBlockID()),
+					parent.getPatient());
+
+			genericDAO.delete(toDeleteSlide,
+					resourceBundle.get("log.patient.task.sample.block.slide.update",
+							parent.getParent().getParent().getTaskID(), parent.getParent().getSampleID(),
+							parent.getBlockID(), toDeleteSlide.getSlideID()),
+					parent.getPatient());
+
+			// checking if staining flag of the task object has to be false
+			parent.getParent().getParent().updateStainingStatus();
+			// generating gui list
+			parent.getParent().getParent().generateSlideGuiList();
+			
+			
+		} else if (toDelete instanceof Block) {
+			Block toDeleteBlock = (Block) toDelete;
+			logger.info("Deleting block " + toDeleteBlock.getBlockID());
+
+			Sample parent = toDeleteBlock.getParent();
+
+			parent.getBlocks().remove(toDeleteBlock);
+
+			parent.updateNameOfAllBlocks(parent.getParent().isUseAutoNomenclature());
+			
+			genericDAO.save(parent, resourceBundle.get("log.patient.task.sample.update", parent.getParent().getTaskID(),
+					parent.getSampleID()), parent.getPatient());
+
+			genericDAO.delete(
+					toDeleteBlock, resourceBundle.get("log.patient.task.sample.block.delete",
+							parent.getParent().getId(), parent.getSampleID(), toDeleteBlock.getBlockID()),
+					toDeleteBlock.getPatient());
+
+			// checking if staining flag of the task object has to be false
+			parent.getParent().updateStainingStatus();
+			// generating gui list
+			parent.getParent().generateSlideGuiList();
+
+		} else if (toDelete instanceof Sample) {
+			Sample toDeleteSample = (Sample) toDelete;
+			logger.info("Deleting sample " + toDeleteSample.getSampleID());
+
+			Task parent = toDeleteSample.getParent();
+
+			parent.getSamples().remove(toDeleteSample);
+
+			diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(parent.getDiagnosisInfo(), parent.getSamples());
+			
+			parent.updateNameOfAllSamples();
+
+			genericDAO.save(parent, resourceBundle.get("log.patient.task.update", parent.getId()), parent.getPatient());
+
+			genericDAO.delete(toDeleteSample,
+					resourceBundle.get("log.patient.task.sample.delete", parent.getId(), toDeleteSample.getSampleID()),
+					toDeleteSample.getParent().getPatient());
+
+			// checking if staining flag of the task object has to be false
+			parent.updateStainingStatus();
+			// generating gui list
+			parent.generateSlideGuiList();
+		}
+
+		hideDeleteTaskTreeEntityDialog();
+	}
+
+	public void hideDeleteTaskTreeEntityDialog() {
+		setTaskTreeEntityToDelete(null);
+		mainHandlerAction.hideDialog(Dialog.DELETE_TREE_ENTITY);
 	}
 
 	/********************************************************
@@ -716,7 +834,14 @@ public class TaskHandlerAction implements Serializable {
 	public void setWardList(List<ListItem> wardList) {
 		this.wardList = wardList;
 	}
-	
+
+	public DeleteAble getTaskTreeEntityToDelete() {
+		return taskTreeEntityToDelete;
+	}
+
+	public void setTaskTreeEntityToDelete(DeleteAble taskTreeEntityToDelete) {
+		this.taskTreeEntityToDelete = taskTreeEntityToDelete;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

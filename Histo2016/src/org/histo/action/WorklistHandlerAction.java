@@ -240,14 +240,6 @@ public class WorklistHandlerAction implements Serializable {
 		// init all available materials
 		taskHandlerAction.prepareTask(task);
 
-		if (mainHandlerAction.getCurrentView() == View.WORKLIST_RECEIPTLOG) {
-			if (userRole == Role.MTA) {
-				task.setTabIndex(Task.TAB_STAINIG);
-			} else {
-				task.setTabIndex(Task.TAB_DIAGNOSIS);
-			}
-		}
-
 		return View.WORKLIST.getPath();
 	}
 

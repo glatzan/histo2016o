@@ -44,6 +44,7 @@ import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
+import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -61,7 +62,7 @@ import org.springframework.core.annotation.Order;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisStatus<DiagnosisRevision>, CreationDate,
-		LogAble, ArchivAble {
+		DeleteAble, LogAble, ArchivAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -202,11 +203,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	private Sample selectedSample;
 
 	/**
-	 * Der Index des TabViews 0 = Diangosen Tab 1 = Objektträger Tab
-	 */
-	private int tabIndex;
-
-	/**
 	 * Currently selected task in table form, transient, used for gui
 	 */
 	private ArrayList<StainingTableChooser> stainingTableChoosers;
@@ -250,15 +246,18 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	/********************************************************
 	 * Transient
 	 ********************************************************/
+
 	/**
-	 * Updated den Tabindex wenn ein andere Tab (Diagnose oder Färbung) in der
-	 * Gui ausgewählt wurde TODO: Remove or use
+	 * Updates the name of all block children
 	 * 
-	 * @param event
+	 * @param useAutoNomenclature
 	 */
-	public void onTabChange(TabChangeEvent event) {
-		setTabIndex(((TabView) event.getSource()).getIndex());
+	public void updateNameOfAllSamples() {
+		for (Sample sample : samples) {
+			sample.updateNameOfSample(useAutoNomenclature);
+		}
 	}
+
 
 	/**
 	 * Returns a contact marked als primary with the given role.
@@ -328,16 +327,12 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 
 		for (Sample sample : getSamples()) {
 			// skips archived tasks
-			if (sample.isArchived() && !showArchived)
-				continue;
 
 			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
 			getStainingTableRows().add(sampleChooser);
 
 			for (Block block : sample.getBlocks()) {
 				// skips archived blocks
-				if (block.isArchived() && !showArchived)
-					continue;
 
 				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
 				getStainingTableRows().add(blockChooser);
@@ -345,8 +340,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 
 				for (Slide staining : block.getSlides()) {
 					// skips archived sliedes
-					if (staining.isArchived() && !showArchived)
-						continue;
 
 					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
 					getStainingTableRows().add(stainingChooser);
@@ -683,15 +676,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	}
 
 	@Transient
-	public int getTabIndex() {
-		return tabIndex;
-	}
-
-	public void setTabIndex(int tabIndex) {
-		this.tabIndex = tabIndex;
-	}
-
-	@Transient
 	public Date getDueDateAsDate() {
 		return new Date(getDueDate());
 	}
@@ -898,10 +882,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 */
 	public void setArchived(boolean archived) {
 		this.archived = archived;
-		// setzt Kinder
-		for (Sample sample : getSamples()) {
-			sample.setArchived(archived);
-		}
 	}
 
 	/**
