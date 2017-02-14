@@ -87,7 +87,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 * If true the program will provide default names for samples and blocks
 	 */
 	private boolean useAutoNomenclature;
-	
+
 	/**
 	 * Date of creation
 	 */
@@ -193,18 +193,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 
 	private List<Council> council;
 
-	/**
-	 * Selected physician to sign the report
-	 */
-	private Signature physicianSignature;
-
-	/**
-	 * Selected consultant to sign the report
-	 */
-	private Signature consultantSignature;
-
-	private long signatureDate;
-
 	/********************************************************
 	 * Transient Variables
 	 ********************************************************/
@@ -239,9 +227,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 ********************************************************/
 
 	public Task() {
-		// TODO: check if not overwriting the current settings
-		setPhysicianSignature(new Signature());
-		setConsultantSignature(new Signature());
 	}
 
 	/**
@@ -250,7 +235,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 * @param parent
 	 */
 	public Task(Patient parent) {
-		this();
 
 		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
 		setCreationDate(currentDay);
@@ -301,9 +285,10 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	@Transient
 	public boolean isActiveOrActionToPerform() {
 		return true;
-//		isActive() || getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED
-//				|| getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED
-//				|| getStainingStatus() != StainingStatus.PERFORMED;
+		// isActive() || getDiagnosisStatus() ==
+		// DiagnosisStatus.DIAGNOSIS_NEEDED
+		// || getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED
+		// || getStainingStatus() != StainingStatus.PERFORMED;
 	}
 
 	@Transient
@@ -636,32 +621,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 		this.diagnosisInfo = diagnosisInfo;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public Signature getPhysicianSignature() {
-		return physicianSignature;
-	}
-
-	public void setPhysicianSignature(Signature physicianSignature) {
-		this.physicianSignature = physicianSignature;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	public Signature getConsultantSignature() {
-		return consultantSignature;
-	}
-
-	public void setConsultantSignature(Signature consultantSignature) {
-		this.consultantSignature = consultantSignature;
-	}
-
-	public long getSignatureDate() {
-		return signatureDate;
-	}
-
-	public void setSignatureDate(long signatureDate) {
-		this.signatureDate = signatureDate;
-	}
-	
 	public boolean isUseAutoNomenclature() {
 		return useAutoNomenclature;
 	}
@@ -669,6 +628,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public void setUseAutoNomenclature(boolean useAutoNomenclature) {
 		this.useAutoNomenclature = useAutoNomenclature;
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -676,15 +636,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
-	@Transient
-	public Date getSignatureDateAsDate() {
-		return new Date(signatureDate);
-	}
 
-	public void setSignatureDateAsDate(Date signatureDateAsDate) {
-		this.signatureDate = signatureDateAsDate.getTime();
-	}
-	
 	@Transient
 	public Date getCreationDateAsDate() {
 		return new Date(getCreationDate());
@@ -848,10 +800,10 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 */
 	@Transient
 	public boolean isMalign() {
-//		for (DiagnosisRevision diagnosisRevision : getReports()) {
-//			if (diagnosisRevision.isMalign())
-//				return true;
-//		}
+		// for (DiagnosisRevision diagnosisRevision : getReports()) {
+		// if (diagnosisRevision.isMalign())
+		// return true;
+		// }
 		return false;
 	}
 
@@ -869,7 +821,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	@Override
 	@Transient
 	public DiagnosisStatusState getDiagnosisStatus() {
-//		return getDiagnosisStatus(getReports());
+		// return getDiagnosisStatus(getReports());
 		return DiagnosisStatusState.DIAGNOSIS_NEEDED;
 	}
 

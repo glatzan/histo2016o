@@ -12,6 +12,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -19,6 +20,7 @@ import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Council;
+import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
@@ -95,8 +97,6 @@ public class TaskHandlerAction implements Serializable {
 	@Autowired
 	private SettingsHandlerAction settingsHandlerAction;
 
-	private HashMap<String, String> selectableWards;
-
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -125,15 +125,23 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Sample creation
 	 ********************************************************/
+	/**
+	 * Used to save a sample while changing the material
+	 */
+	private Sample temporarySample;
+	
+	/**
+	 * Used to save the material while creating a new sample / changing the material
+	 */
 	private MaterialPreset selectedMaterial;
 	/********************************************************
 	 * Sample creation
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Task
 	 ********************************************************/
@@ -146,6 +154,17 @@ public class TaskHandlerAction implements Serializable {
 	 * List of all physicians known in the database
 	 */
 	private DefaultTransformer<Physician> allAvailablePhysiciansTransformer;
+	
+	/**
+	 * Contains all available case histories
+	 */
+	private List<ListItem> caseHistoryList;
+	
+	/**
+	 * Contains all available wards
+	 */
+	private List<ListItem> wardList;
+	
 	/********************************************************
 	 * Task
 	 ********************************************************/
@@ -179,7 +198,7 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * DiagnosisRevision
 	 ********************************************************/
-	
+
 	public void initBean() {
 		// init materials in settingshandlerAction
 		settingsHandlerAction.initMaterialPresets();
@@ -187,24 +206,6 @@ public class TaskHandlerAction implements Serializable {
 
 		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
 		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
-
-		// initis all wards
-		if (selectableWards == null) {
-			selectableWards = new HashMap<String, String>();
-			selectableWards.put("none", resourceBundle.get("#{msg['body.receiptlog.ward.select']}"));
-			selectableWards.put("ambulant", resourceBundle.get("#{msg['body.receiptlog.ward.ambulant']}"));
-			selectableWards.put("impatient", resourceBundle.get("#{msg['body.receiptlog.ward.inpatient']}"));
-			selectableWards.put("private", resourceBundle.get("#{msg['body.receiptlog.ward.ambulant.private']}"));
-			selectableWards.put("impatient-private",
-					resourceBundle.get("#{msg['body.receiptlog.ward.inpatient.private']}"));
-			selectableWards.put("ims", resourceBundle.get("#{msg['body.receiptlog.ward.ims']}"));
-			selectableWards.put("extern", resourceBundle.get("#{msg['body.receiptlog.ward.extern']}"));
-			selectableWards.put("extern-private", resourceBundle.get("#{msg['body.receiptlog.ward.exern.private']}"));
-			selectableWards.put("fda", resourceBundle.get("#{msg['body.receiptlog.ward.fda']}"));
-			selectableWards.put("manz", resourceBundle.get("#{msg['body.receiptlog.ward.manz']}"));
-			selectableWards.put("beck", resourceBundle.get("#{msg['body.receiptlog.ward.beck']}"));
-			selectableWards.put("axenfeld", resourceBundle.get("#{msg['body.receiptlog.ward.axenfeld']}"));
-		}
 	}
 
 	/********************************************************
@@ -214,14 +215,19 @@ public class TaskHandlerAction implements Serializable {
 		initBean();
 
 		taskDAO.initializeDiagnosisData(task);
-
+		
 		// setting the report time to the current date
 		if (!task.isDiagnosisCompleted()) {
-			task.setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
+			task.getDiagnosisInfo().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
+			if (task.getDiagnosisInfo().getSignatureOne().getPhysician() == null
+					|| task.getDiagnosisInfo().getSignatureTwo().getPhysician() == null) {
+				// TODO set if physician to the left, if consultant to the right
+			}
 		}
-
-//		setPhysicianToSign(task.getPhysicianSignature().getPhysician());
-//		setConsultantToSign(task.getConsultantSignature().getPhysician());
+		
+		// loading lists
+		setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
+		setWardList(settingsDAO.getAllStaticListItems(StaticList.WARDS));
 	}
 
 	/**
@@ -268,9 +274,8 @@ public class TaskHandlerAction implements Serializable {
 				// adding samples if count is bigger then the current sample
 				// count
 				while (temporaryTaskSampleCount > task.getSamples().size())
-					new Sample(task,
-							!settingsHandlerAction.getAllAvailableMaterials().isEmpty()
-									? settingsHandlerAction.getAllAvailableMaterials().get(0) : null);
+					new Sample(task, !settingsHandlerAction.getAllAvailableMaterials().isEmpty()
+							? settingsHandlerAction.getAllAvailableMaterials().get(0) : null);
 			} else if (temporaryTaskSampleCount < task.getSamples().size()) {
 				logger.debug("Removing samples");
 				// removing samples if count is less then current sample count
@@ -307,13 +312,19 @@ public class TaskHandlerAction implements Serializable {
 		patient.setSelectedTask(task);
 
 		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
-		
+
 		task.setDiagnosisInfo(new DiagnosisInfo(task));
 		task.getDiagnosisInfo().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
+
+		// setting signature
+		task.getDiagnosisInfo().setSignatureOne(new Signature());
+		task.getDiagnosisInfo().setSignatureTwo(new Signature());
+
+		task.setCaseHistory("");
+		task.setWard("");
 		
 		genericDAO.save(task.getDiagnosisInfo(),
 				resourceBundle.get("log.patient.task.diagnosisInfo.new", task.getTaskID()), patient);
-		
 
 		for (Sample sample : task.getSamples()) {
 			// set name of material for changing it manually
@@ -352,7 +363,7 @@ public class TaskHandlerAction implements Serializable {
 	 * Displays a dialog for creating a new sample
 	 */
 	public void prepareNewSampleDialog(Task task) {
-		
+
 		settingsHandlerAction.initMaterialPresets();
 		// checks if default statingsList is empty
 		if (!settingsHandlerAction.getAllAvailableMaterials().isEmpty()) {
@@ -405,9 +416,41 @@ public class TaskHandlerAction implements Serializable {
 
 		// creating needed blocks
 		createNewBlock(sample, false);
-		
+
 		// creating first default diagnosis
 		diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(task.getDiagnosisInfo(), task.getSamples());
+	}
+
+	/**
+	 * Shows a dialog for changing the material of a sample
+	 */
+	public void prepareSelectMaterialDialog(Sample sample) {
+		setTemporarySample(sample);
+		setSelectedMaterial(sample.getMaterilaPreset());
+		mainHandlerAction.showDialog(Dialog.SELECT_MATERIAL);
+	}
+
+	/**
+	 * Changes the material of the sample to the given material.
+	 * @param sample
+	 * @param materialPreset
+	 */
+	public void changeSelectedMaterial(Sample sample, MaterialPreset materialPreset) {
+		sample.setMaterial(materialPreset.getName());
+		sample.setMaterilaPreset(materialPreset);
+
+		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.material.update", sample.getParent().getTaskID(),
+				sample.getSampleID(), materialPreset.getName()), sample.getParent().getPatient());
+		
+		hideSelectMaterialDialog();
+	}
+
+	/**
+	 * Hides the change material dialog
+	 */
+	public void hideSelectMaterialDialog() {
+		setTemporarySample(null);
+		mainHandlerAction.hideDialog(Dialog.SELECT_MATERIAL);
 	}
 
 	/********************************************************
@@ -497,7 +540,7 @@ public class TaskHandlerAction implements Serializable {
 		if (detailedInfoResourcesKey != null)
 			detailedInfoString = resourceBundle.get(detailedInfoResourcesKey, detailedInfoParams);
 
-		genericDAO.save(task, resourceBundle.get("log.patient.task.dataChange", task.getTaskID(), detailedInfoString),
+		genericDAO.save(task, resourceBundle.get("log.patient.task.change", task.getTaskID(), detailedInfoString),
 				task.getParent());
 		System.out.println("saving data");
 	}
@@ -586,14 +629,6 @@ public class TaskHandlerAction implements Serializable {
 		this.temporaryTask = temporaryTask;
 	}
 
-	public HashMap<String, String> getSelectableWards() {
-		return selectableWards;
-	}
-
-	public void setSelectableWards(HashMap<String, String> selectableWards) {
-		this.selectableWards = selectableWards;
-	}
-
 	public int getTemporaryTaskSampleCount() {
 		return temporaryTaskSampleCount;
 	}
@@ -657,6 +692,31 @@ public class TaskHandlerAction implements Serializable {
 	public void setSelectedMaterial(MaterialPreset selectedMaterial) {
 		this.selectedMaterial = selectedMaterial;
 	}
+
+	public Sample getTemporarySample() {
+		return temporarySample;
+	}
+
+	public void setTemporarySample(Sample temporarySample) {
+		this.temporarySample = temporarySample;
+	}
+
+	public List<ListItem> getCaseHistoryList() {
+		return caseHistoryList;
+	}
+
+	public void setCaseHistoryList(List<ListItem> caseHistoryList) {
+		this.caseHistoryList = caseHistoryList;
+	}
+
+	public List<ListItem> getWardList() {
+		return wardList;
+	}
+
+	public void setWardList(List<ListItem> wardList) {
+		this.wardList = wardList;
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

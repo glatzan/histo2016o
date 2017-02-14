@@ -2,53 +2,76 @@ body {
 	margin: 0px !important;
 	font-size: 0.8em !important;
 }
-
-
+/************************************* DEFAULT TABLE *************************************/
 /* Default table container for two spacings*/
-.defaultListingTableTwoLineContainer{
+.defaultListingTableTwoLineContainer {
 	width: 100%;
 }
 
-.defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(1), .defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(3) {
+.defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(1),
+	.defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(3) {
 	width: 47%;
 	vertical-align: top !important;
 }
 
-.defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(2){
+.defaultListingTableTwoLineContainer>tbody>tr>td:nth-child(2) {
 	width: 6%;
 }
 /* Default table container for two spacings*/
 
-
 /* Default table containter, no padding at all*/
-.defaultListingTableContainer{
+.defaultListingTableContainer {
 	width: 100%;
 }
-.defaultListingTableContainer>tbody>tr>td{
+
+.defaultListingTableContainer>tbody>tr>td {
 	padding: 0px !important;
 	border-collapse: collapse !important;
 }
 /* Default table containter, no padding at all*/
 
-
-/* Default table for listing inputfields*/
-.defaultListingTableCss{
+/* Default table for listing inputfields, one col*/
+.defaultListingTableCssOneCol {
 	width: 100%;
 }
 
-.defaultListingTableCss>tbody>tr>td:first-child{
-	min-width: 150px;
-	width: 200px;
-		vertical-align: top;
+.defaultListingTableCssOneCol td {
+	padding: 3px !important;
 }
 
-.defaultListingTableCss>tbody>tr>td:first-child label{
+.defaultListingTableCssOneCol .bold-text {
 	font-weight: bold !important;
 	font-size: 1.2em !important;
 }
 
-.defaultListingTableCss td{
-	padding: 3px !important;	
+.defaultListingTableCssOneCol label {
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+	font-size: 1.0em !important;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 22px;
+}
+/* Default table for listing inputfields, one col*/
+
+/* Default table for listing inputfields, two cols*/
+.defaultListingTableCss {
+	width: 100%;
+}
+
+.defaultListingTableCss>tbody>tr>td:first-child {
+	min-width: 150px;
+	width: 200px;
+	vertical-align: top;
+}
+
+.defaultListingTableCss>tbody>tr>td:first-child label {
+	font-weight: bold !important;
+	font-size: 1.2em !important;
+}
+
+.defaultListingTableCss td {
+	padding: 3px !important;
 }
 
 .defaultListingTableCss input {
@@ -68,9 +91,10 @@ body {
 	font-weight: 500;
 	line-height: 22px;
 }
+/************************************* DEFAULT TABLE *************************************/
+
+
 /* Default table for listing inputfields*/
-
-
 .noBorders>tr, .noBorders>td, .noBorders {
 	border: none !important;
 }
@@ -214,11 +238,11 @@ body {
 	margin-left: 0.5em !important;
 }
 
-.buttonRighMarginInList{
+.buttonRighMarginInList {
 	margin-right: 0.5em !important;
 }
 
-.buttonRighMarginInListExtended{
+.buttonRighMarginInListExtended {
 	margin-right: 1em !important;
 }
 
@@ -428,25 +452,6 @@ body {
 	width: 97%;
 }
 
-/* Material table*/
-.materialTable {
-	width: 100%;
-	margin: 0px 0px 3px 0px;
-}
-
-.materialTable .firstColumn {
-	width: 25%;
-}
-
-.materialTable .secondColumn {
-	width: 10%;
-}
-
-.materialTable .thirdColumn {
-	width: auto;
-}
-
-
 /* ################# Diagnosis View ################# */
 
 /* ################# Diagnoses ################# */
@@ -637,7 +642,7 @@ body {
 	padding: 5px;
 }
 
-.infoDialog .infoTable{
+.infoDialog .infoTable {
 	width: 100%;
 }
 
@@ -734,16 +739,16 @@ body {
 /*	################# Settings ################# */
 
 /*	################# print dialog ################# */
-
-.printTable{
+.printTable {
 	width: 100%;
 }
 
-.printTable .menuColumn{
+.printTable .menuColumn {
 	vertical-align: top;
 	width: 320px;
 	height: 500px;
 }
+
 .printTable .pdfColumn {
 	vertical-align: top;
 	width: *;
@@ -751,8 +756,8 @@ body {
 	text-align: right;
 }
 
-.attachedPDFTable table{
-	width:100%;
+.attachedPDFTable table {
+	width: 100%;
 }
 
 .attachedPDFTable .attachedPDFTableLink:hover {
@@ -761,13 +766,11 @@ body {
 	background-color: black !important;
 }
 
-
-.attachedPDFTable .ui-datagrid-content div:nth-child(even) td{
+.attachedPDFTable .ui-datagrid-content div:nth-child(even) td {
 	background: #f9f9f9;
 }
 
 /*	################# print dialog ################# */
-
 
 /*	################# Contact ################# */
 /* Layout für den ContactSelect Datatable */
@@ -902,12 +905,12 @@ body {
 /*	################# council dialog ################# */
 
 /*	################# notification dialog ################# */
-.notificationTable{
+.notificationTable {
 	width: 100%;
 	margin-top: 5px;
 }
 
-.notificationTable .textColumn{
+.notificationTable .textColumn {
 	width: 200px;
 }
 

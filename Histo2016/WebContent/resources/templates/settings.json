@@ -29,7 +29,7 @@
       "port":389,
       "suffix":"dc=ukl,dc=uni-freiburg,dc=de",
       "base":"ou=people",
-      "disabled" : true
+      "disabled" : false
    },
    "adminMails":[
       "andreas.glatz@uniklinik-freiburg.de"

@@ -832,7 +832,7 @@ public class SettingsHandlerAction {
 		setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(), isShowArchivedListItems()));
 		logger.debug("Found " + (getStaticListContent() == null ? "no" : getStaticListContent().size()) + " items");
 	}
-
+	
 	public void prepareNewListItem() {
 		setStaticListTabIndex(SettingsTab.S_EDIT);
 		setTmpListItem(new ListItem());

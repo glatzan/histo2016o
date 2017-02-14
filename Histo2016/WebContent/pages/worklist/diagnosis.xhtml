@@ -13,98 +13,104 @@
 	<c:set var="selectedTask"
 		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
 
-	<p:panel style="width:100%;" id="diagnosisView"
-		styleClass=" collapsedBorders noPadding noBorders">
+	<p:panel style="width: 60%"
+		styleClass="collapsedBorders noPadding noBorders">
 
-		<h:panelGrid columns="1" styleClass="noPadding">
-			<h:outputLabel value="#{msg['body.diagnosis.headline']}"
-				style="font-size:1.5em;"></h:outputLabel>
+		<h:outputLabel value="#{msg['body.diagnosis.headline']}"
+			style="font-size:1.5em;"></h:outputLabel>
 
-			<h:panelGrid columns="2" style="margin-top:20px"
-				styleClass="noPaddingAll noBordersAll collapsedBordersAll"
-				columnClasses="verticalAlignTop,verticalAlignTop">
 
-				<h:panelGrid columns="1" style="width:410px"
-					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
-					<!-- TODO Update background object, e.g. .blure() (inputtext) -->
-					<!-- material -->
-					<c:forEach items="#{selectedTask.samples}" var="sample"
-						varStatus="loopCount">
-						<h:panelGrid columns="3" id="materialTable"
-							columnClasses="firstColumn, secondColumn, thirdColumn"
-							styleClass="materialTable noPaddingAll noBordersAll collapsedBordersAll">
+		<h:panelGrid columns="3"
+			styleClass="defaultListingTableTwoLineContainer">
 
-							<h:panelGroup>
-								<h:outputLabel value="#{msg['body.diagnosis.material']}"
-									style="font-size:1.2em" rendered="#{loopCount.index eq 0}"></h:outputLabel>
-							</h:panelGroup>
+			<!-- Left Column -->
+			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+				<!-- material -->
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
 
-							<h:outputLabel value="#{sample.sampleID}" />
+					<h:outputLabel value="#{msg['body.diagnosis.material']}" />
 
-							<p:selectOneMenu value="#{sample.material}"
-								disabled="#{selectedTask.diagnosisCompleted}"
-								styleClass="smallInput" editable="true"
-								style="width:200px;float:right;margin-right:30px;">
-								<f:selectItem
-									itemLabel="#{msg['body.receiptlog.material.select']}"
-									itemValue="none" />
-								<f:selectItems
-									value="#{taskHandlerAction.allAvailableMaterials}" var="list"
-									itemLabel="#{list.name}" itemValue="#{list.name}" />
+					<h:panelGrid columns="1" styleClass="defaultListingTableContainer"
+						style="width:410px">
+						<c:forEach items="#{selectedTask.samples}" var="sample"
+							varStatus="loopCount">
 
-								<p:ajax event="change" execute="@this"
-									listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.sample.material',selectedTask.taskID,sample.material.name)}" />
-							</p:selectOneMenu>
-						</h:panelGrid>
-					</c:forEach>
+							<h:panelGrid columns="3"
+								styleClass="defaultListingTableContainer">
 
-					<h:panelGroup layout="block"
-						style="font-size:1.0em;margin-top:10px;">
-						<h:outputLabel value="#{msg['body.diagnosis.story']}"></h:outputLabel>
-					</h:panelGroup>
+								<h:outputLabel
+									value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
+
+								<p:inputText value="#{sample.material}"
+									disabled="#{selectedTask.diagnosisCompleted}"
+									styleClass="smallInput" style="width:200px;float:right;" />
+								<p:commandLink
+									title="#{msg['body.receiptlog.notification.hint']}"
+									rendered="#{!selectedTask.diagnosisCompleted}"
+									style="float: right; margin-right:5px;"
+									actionListener="#{taskHandlerAction.prepareSelectMaterialDialog(sample)}">
+									<i class="fa fa-fw fa-cog" />
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+							</h:panelGrid>
+						</c:forEach>
+					</h:panelGrid>
+
+				</h:panelGrid>
+				<!-- material -->
+
+				<!-- historical record -->
+				<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+					<h:outputLabel value="#{msg['body.diagnosis.story']}"
+						styleClass="bold-text" />
 
 					<h:graphicImage value="/resources/gfx/augen.png"
-						style="width: 280px;float:right;margin-right:30px;" />
-
-					<!-- eye -->
-					<h:panelGrid columns="2" columnClasses="verticalAlignTop,"
-						style="width:100%"
-						styleClass="noPaddingAll noBordersAll collapsedBordersAll">
-						<p:selectOneMenu styleClass="smallInput"
-							disabled="#{selectedTask.diagnosisCompleted}"
-							value="#{selectedTask.eye}">
-
-							<f:selectItems value="#{enumProvider.eyes}" var="eye"
-								itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
-
-							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.eye',msg['enum.eye.'.concat(selectedTask.eye)])}" />
-						</p:selectOneMenu>
-
-						<p:inputTextarea rows="2" id="stroyField"
-							disabled="#{selectedTask.diagnosisCompleted}"
-							style="width: 270px;float:right;margin-right:30px;"
-							value="#{selectedTask.caseHistory}">
-							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.caseHistory',selectedTask.caseHistory)}" />
-							<p:watermark value="#{msg['body.diagnosis.story.watermark']}"
-								for="stroyField" />
-						</p:inputTextarea>
-					</h:panelGrid>
+						style="width: 280px;float:right;margin-right:50px;" />
 				</h:panelGrid>
+				<!-- historical record -->
 
+				<!-- Eye -->
+				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
+					<p:selectOneMenu styleClass="smallInput"
+						disabled="#{selectedTask.diagnosisCompleted}"
+						value="#{selectedTask.eye}">
 
-				<h:panelGrid columns="2"
-					styleClass="noPaddingAll noBordersAll collapsedBordersAll">
+						<f:selectItems value="#{enumProvider.eyes}" var="eye"
+							itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
+
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.eye',msg['enum.eye.'.concat(selectedTask.eye)])}" />
+					</p:selectOneMenu>
+
+					<p:selectOneMenu id="historyText" style="width: 80%"
+						value="#{selectedTask.caseHistory}" editable="true">
+						<f:selectItem itemLabel="Select One" itemValue="#{msg['body.diagnosis.story.watermark']}" />
+						<f:selectItems value="#{taskHandlerAction.caseHistoryList}" var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
+						
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
+						
+					</p:selectOneMenu>
+				</h:panelGrid>
+				<!-- Eye -->
+			</h:panelGrid>
+			<!-- Left Column -->
+
+			<h:panelGroup />
+
+			<!-- Right Column -->
+			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
 						disabled="#{selectedTask.diagnosisCompleted}"
 						value="#{selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 					</p:calendar>
 
 					<!-- date of receipt -->
@@ -113,9 +119,9 @@
 						disabled="#{selectedTask.diagnosisCompleted}"
 						value="#{selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 					</p:calendar>
 
 					<!-- Task Number -->
@@ -137,9 +143,9 @@
 					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
 						effect="fold" editable="true"
 						disabled="#{selectedTask.diagnosisCompleted}">
-						<f:selectItems value="#{taskHandlerAction.selectableWards}" />
+						<f:selectItems value="#{taskHandlerAction.wardList}" />
 						<p:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.ward',selectedTask.ward)}" />
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.ward',selectedTask.ward)}" />
 					</p:selectOneMenu>
 
 					<!-- surgeon -->
@@ -176,280 +182,250 @@
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 					</h:panelGroup>
+
 				</h:panelGrid>
 			</h:panelGrid>
+			<!-- Right Column -->
 
-			<p:separator />
+		</h:panelGrid>
 
-			<h:outputLabel value="#{msg['body.diagnosis.histologicalRecord']}"></h:outputLabel>
-			<h:panelGroup id="extendedTextParent">
-				<!-- <p:editor id="extendedText" widgetVar="extendedText"
-					disabled="#{selectedTask.diagnosisCompleted}"
-					value="#{selectedTask.report.histologicalRecord}"
-					style="width:100%"
-					valueChangeListener="#{helperHandlerAction.valueChanged}">
-				</p:editor> -->
+		<p:separator />
 
-				<p:inputTextarea style="width:100%" id="extendedText" rows="15"
-					disabled="#{selectedTask.diagnosisCompleted}"
-					value="#{selectedTask.report.histologicalRecord}">
+		<!-- Diagnoses -->
+		<ui:repeat var="revision"
+			value="#{selectedTask.diagnosisInfo.diagnosisRevisions}">
 
-					<p:ajax event="change" execute="@this"
-						listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.histologicalRecord',selectedTask.report.histologicalRecord)}" />
-				</p:inputTextarea>
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<!-- Extended Diagnosis Text -->
+				<h:outputLabel value="#{revision.name}"></h:outputLabel>
+				<h:panelGroup id="extendedTextParent">
+					<p:inputTextarea style="width:100%" id="extendedText" rows="15"
+						disabled="#{selectedTask.diagnosisCompleted}"
+						value="#{revision.text}">
+
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.histologicalRecord',selectedTask.report.histologicalRecord)}" />
+					</p:inputTextarea>
 
 
-				<p:commandButton style="display:none" id="submitDiagnosisChange"
-					name="submitDiagnosisChange" process="extendedTextParent"></p:commandButton>
+					<p:commandButton style="display:none" id="submitDiagnosisChange"
+						name="submitDiagnosisChange" process="extendedTextParent"></p:commandButton>
+				</h:panelGroup>
 
-				<!--  	<f:verbatim>
-					<script type="text/javascript">
-						$(document)
-								.ready(
-										function() {
-											var first = true;
-											//documentation is the editor widgetVar
-											PF('extendedText').jq
-													.find("iframe")
-													.contents()
-													.find('body')
-													.blur(
-															function() {
-																if (first) {
-																	first = false;
-																	return;
-																}
-																$(
-																		'#contentForm\\:submitDiagnosisChange')
-																		.click();
-															});
-										});
-					</script>
-				</f:verbatim>-->
-			</h:panelGroup>
+				<!-- Diagnosis for sample -->
+				<h:outputLabel value="#{msg['body.diagnosis.diagnosis']}"></h:outputLabel>
+				<ui:repeat var="diagnosis" value="#{revision.diagnoses}">
+					<h:panelGrid columns="3" styleClass="defaultListingTableContainer">
+						<!-- sample -->
+						<h:outputLabel
+							value="#{msg['body.diagnosis.diagnosis.sample']} #{diagnosis.sample.sampleID}"></h:outputLabel>
 
-			<h:outputLabel value="#{msg['body.diagnosis.diagnosis']}"></h:outputLabel>
+						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
+							<!-- diagnosis category -->
+							<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
+								disabled="#{diagnosis.finalized}"
+								styleClass="customSerachSelectMenu"
+								panelStyleClass="customSerachSelectMenuPanel"
+								converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
+								filter="true" filterMatchMode="startsWith">
+								<f:selectItem
+									itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
+									itemValue="#{null}" />
 
-			<ui:repeat var="sampel" value="#{selectedTask.samples}">
+								<f:selectItems
+									value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
+									var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.name}"
+									itemValue="#{diagnosisPrototype}" />
 
-				<c:set var="diagnosis" value="#{sampel.getLastRelevantDiagnosis()}" />
+								<p:ajax event="change"
+									listener="#{diagnosis.updateDiagnosisWithPrest(diagnosis.diagnosisPrototype)}" />
+								<p:ajax event="change"
+									listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
+							</p:selectOneMenu>
 
-				<!-- Diagnosis -->
-				<p:panelGrid id="diagnosisTable"
-					styleClass="diagnosisTable noPaddingAll noBordersAll collapsedBordersAll"
-					columnClasses="firstColumn,secondColumn,thirdColumn,fourthColumn">
+							<!-- copy diagnosis text -->
+							<p:commandLink styleClass="noUnderlineAtLink"
+								style="margin-left:20px;"
+								title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
+								rendered="#{diagnosis.diagnosisPrototype ne null}"
+								actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
+								update=":contentForm:extendedText">
+								<i class="fa fa-hand-o-up"></i>
+								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							</p:commandLink>
+						</h:panelGrid>
 
-					<p:row>
-						<p:column style=" width:100px;">
+						<!-- malign -->
+						<h:panelGrid columns="2" style="float:right;margin-right:20px;"
+							styleClass="verticalAlignMiddleAll">
 							<h:outputLabel
-								value="#{msg['body.diagnosis.diagnosis.sample']} #{sampel.sampleID}"></h:outputLabel>
-						</p:column>
-						<p:column>
-							<h:panelGrid columns="2"
-								styleClass="noPaddingAll noBordersAll collapsedBordersAll">
-								<!-- Diagnosis select -->
-								<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-									disabled="#{diagnosis.finalized}"
-									styleClass="customSerachSelectMenu"
-									panelStyleClass="customSerachSelectMenuPanel"
-									converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
-									filter="true" filterMatchMode="startsWith">
-									<f:selectItem
-										itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-										itemValue="#{null}" />
+								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
+							<p:selectBooleanCheckbox value="#{diagnosis.malign}"
+								style="margin:3px 0px 0px 3px;"
+								disabled="#{diagnosis.finalized}">
 
-									<f:selectItems
-										value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
-										var="diagnosisPrototype"
-										itemLabel="#{diagnosisPrototype.name}"
-										itemValue="#{diagnosisPrototype}" />
-
-									<p:ajax event="change"
-										listener="#{diagnosis.updateDiagnosisWithPrest(diagnosis.diagnosisPrototype)}" />
-									<p:ajax event="change"
-										update="diagnosisTable :contentForm:extendedText"
-										listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
-								</p:selectOneMenu>
-								<!-- copy diagnosis text -->
-								<p:commandLink styleClass="noUnderlineAtLink"
-									style="margin-left:20px;"
-									title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
-									rendered="#{diagnosis.diagnosisPrototype ne null}"
-									actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
-									update=":contentForm:extendedText">
-									<i class="fa fa-hand-o-up"></i>
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-							</h:panelGrid>
-						</p:column>
-						<p:column>
-							<!-- malign -->
-							<h:panelGrid columns="2" style="float:right;margin-right:20px;"
-								styleClass="verticalAlignMiddleAll">
-								<h:outputLabel
-									value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
-								<p:selectBooleanCheckbox value="#{diagnosis.malign}"
-									style="margin:3px 0px 0px 3px;"
-									disabled="#{diagnosis.finalized}">
-
-									<f:ajax event="change" execute="@this"
-										listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
-								</p:selectBooleanCheckbox>
-							</h:panelGrid>
-						</p:column>
-					</p:row>
-					<p:row>
-						<p:column></p:column>
-						<p:column colspan="2">
-							<!-- diagnosis text -->
-							<p:inputTextarea value="#{diagnosis.diagnosis}"
-								id="diagnosisText" style="margin-top:5px;"
-								disabled="#{diagnosis.finalized}" styleClass="diagnosisText"
-								rows="1">
-								<p:watermark for="diagnosisText"
-									value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
 								<f:ajax event="change" execute="@this"
-									listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
-							</p:inputTextarea>
+									listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
+							</p:selectBooleanCheckbox>
+						</h:panelGrid>
+					</h:panelGrid>
 
-						</p:column>
-					</p:row>
-				</p:panelGrid>
-				<!-- Diagnosis -->
-			</ui:repeat>
-
-			<p:panelGrid style="width:100%;margin-top:30px;"
-				styleClass="noPaddingAll noBordersAll collapsedBordersAll">
-
-				<p:row>
-					<!-- Date -->
-					<p:column style="width:30%">
-						<h:outputLabel value="Datum Unterschrift"></h:outputLabel>
-					</p:column>
-
-					<!-- Physician -->
-					<p:column style="width:30%">
-						<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
-							styleClass="customSerachSelectMenu"
-							panelStyleClass="customSerachSelectMenuPanel"
-							value="#{taskHandlerAction.physicianToSign}"
-							converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
-							filter="true" filterMatchMode="contains">
-							<f:selectItem itemLabel="Arzt auswählen" itemValue="#{null}" />
-
-							<f:selectItems
-								value="#{taskHandlerAction.allAvailablePhysicians}"
-								var="physician" itemLabel="#{physician.person.fullName}"
-								itemValue="#{physician}" />
-
-							<p:ajax event="change"
-								onstart="$('#contentForm\\:submitPhysicianChange').click();" />
-						</p:selectOneMenu>
-
-						<p:commandButton style="display:none" update="@form"
-							id="submitPhysicianChange">
-							<f:actionListener
-								binding="#{selectedTask.report.physicianToSign(taskHandlerAction.physicianToSign)}"></f:actionListener>
-							<f:actionListener
-								binding="#{mainHandlerAction.saveChangedData(selectedTask.report,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',selectedTask.taskID, (selectedTask.report.physicianToSign.physician ne null ?  selectedTask.report.physicianToSign.physician.person.fullName : '') ))}"></f:actionListener>
-						</p:commandButton>
-
-					</p:column>
-
-					<!-- consultant -->
-					<p:column style="width:30%">
-						<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
-							styleClass="customSerachSelectMenu"
-							panelStyleClass="customSerachSelectMenuPanel"
-							value="#{taskHandlerAction.consultantToSign}"
-							converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
-							filter="true" filterMatchMode="contains">
-							<f:selectItem itemLabel="Oberarzt auswählen" itemValue="#{null}" />
-
-							<f:selectItems
-								value="#{taskHandlerAction.allAvailablePhysicians}"
-								var="physician" itemLabel="#{physician.person.fullName}"
-								itemValue="#{physician}" />
-
-							<p:ajax event="change"
-								oncomplete="$('#contentForm\\:submitConsultantChange').click();" />
-						</p:selectOneMenu>
-
-						<!-- hidden button for updating on consultant change -->
-						<p:commandButton style="display:none" update="@form"
-							id="submitConsultantChange">
-							<f:actionListener
-								binding="#{selectedTask.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
-							<f:actionListener
-								binding="#{mainHandlerAction.saveChangedData(selectedTask.report, selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.consultant',selectedTask.taskID, (selectedTask.report.consultantToSign.physician ne null ?  selectedTask.report.consultantToSign.physician.person.fullName : '') ))}"></f:actionListener>
-						</p:commandButton>
-					</p:column>
-				</p:row>
-
-				<p:row>
-					<!-- Date -->
-					<p:column>
-						<p:calendar pattern="dd.MM.yyyy" mask="true"
-							disabled="#{selectedTask.diagnosisCompleted}"
-							value="#{selectedTask.dateOfSugeryAsDate}">
-							<p:ajax event="dateSelect"
-								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+					<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+						style="width:100%">
+						<h:panelGroup />
+						<!-- diagnosis text -->
+						<p:inputTextarea value="#{diagnosis.diagnosis}" id="diagnosisText"
+							style="margin-top:5px;" disabled="#{diagnosis.finalized}"
+							styleClass="diagnosisText" rows="1">
+							<p:watermark for="diagnosisText"
+								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
 							<f:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.dataChange.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
-						</p:calendar>
-					</p:column>
+								listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
+						</p:inputTextarea>
+					</h:panelGrid>
+					<!-- Diagnosis for sample -->
+				</ui:repeat>
+			</h:panelGrid>
+		</ui:repeat>
 
-					<!-- Physician -->
-					<p:column>
-						<p:selectOneMenu styleClass="customSerachSelectMenu"
-							id="pysicianToSignRole" editable="true"
-							style="width:80% !important;"
-							disabled="#{selectedTask.report.physicianToSign.physician eq null or diagnosis.finalized}"
-							value="#{selectedTask.report.physicianToSign.role}">
-							<f:selectItems value="#{enumProvider.signatureRoles}"
-								var="signatureRole"
-								itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
-								itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
-							<p:ajax event="change"
-								onstart="$('#contentForm\\:submitPhysicianRoleChange').click();" />
-						</p:selectOneMenu>
+		<h:panelGrid columns="3"
+			styleClass="defaultListingTableTwoLineContainer">
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<h:outputLabel value="Datum Unterschrift"></h:outputLabel>
+				<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
+					styleClass="customSerachSelectMenu"
+					panelStyleClass="customSerachSelectMenuPanel"
+					value="#{taskHandlerAction.physicianToSign}"
+					converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
+					filter="true" filterMatchMode="contains">
+					<f:selectItem itemLabel="Arzt auswählen" itemValue="#{null}" />
 
-						<!-- hidden button for updating on physician role change -->
-						<p:commandButton style="display:none" update="@form"
-							id="submitPhysicianRoleChange">
-							<f:actionListener
-								binding="#{mainHandlerAction.saveChangedData(selectedTask.report,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician.role',selectedTask.taskID, selectedTask.report.physicianToSign.role ))}"></f:actionListener>
-						</p:commandButton>
+					<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
+						var="physician" itemLabel="#{physician.person.fullName}"
+						itemValue="#{physician}" />
 
-					</p:column>
+					<p:ajax event="change"
+						onstart="$('#contentForm\\:submitPhysicianChange').click();" />
+				</p:selectOneMenu>
+			</h:panelGrid>
 
-					<!-- Consultant -->
-					<p:column>
-						<p:selectOneMenu styleClass="customSerachSelectMenu"
-							id="consultantToSignRole" editable="true"
-							style="width:80% !important"
-							disabled="#{selectedTask.report.consultantToSign.physician eq null or diagnosis.finalized}"
-							value="#{selectedTask.report.consultantToSign.role}">
-							<f:selectItems value="#{enumProvider.signatureRoles}"
-								var="signatureRole"
-								itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
-								itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
-							<p:ajax event="change"
-								oncomplete="$('#contentForm\\:submitConsultantRoleChange').click();" />
-						</p:selectOneMenu>
+			<h:panelGroup />
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<!-- physician -->
+				<h:outputLabel value="Arzt" />
+				<h:panelGroup>
+					<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
+						styleClass="customSerachSelectMenu"
+						panelStyleClass="customSerachSelectMenuPanel"
+						value="#{taskHandlerAction.physicianToSign}"
+						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Arzt auswählen" itemValue="#{null}" />
 
+						<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
+							var="physician" itemLabel="#{physician.person.fullName}"
+							itemValue="#{physician}" />
 
-						<!-- hidden button for updating on consultant role change -->
-						<p:commandButton style="display:none" update="@form"
-							id="submitConsultantRoleChange">
-							<f:actionListener
-								binding="#{mainHandlerAction.saveChangedData(selectedTask.report,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.consultant.role',selectedTask.taskID, selectedTask.report.physicianToSign.role ))}"></f:actionListener>
-						</p:commandButton>
-					</p:column>
-				</p:row>
-			</p:panelGrid>
+						<p:ajax event="change"
+							onstart="$('#contentForm\\:submitPhysicianChange').click();" />
+					</p:selectOneMenu>
+					<!--  
+								<p:commandButton style="display:none" update="@form"
+									id="submitPhysicianChange">
+									<f:actionListener
+										binding="#{selectedTask.diagnosis.physicianToSign(taskHandlerAction.physicianToSign)}"></f:actionListener>
+									<f:actionListener
+										binding="#{mainHandlerAction.saveChangedData(selectedTask.report,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician',selectedTask.taskID, (selectedTask.report.physicianToSign.physician ne null ?  selectedTask.report.physicianToSign.physician.person.fullName : '') ))}"></f:actionListener>
+								</p:commandButton>-->
+				</h:panelGroup>
+
+				<!-- physician role -->
+				<h:panelGroup />
+				<h:panelGroup>
+					<!-- 
+					<p:selectOneMenu styleClass="customSerachSelectMenu"
+						id="pysicianToSignRole" editable="true"
+						style="width:80% !important;"
+						disabled="#{selectedTask.diagnosisInfo.signatureOne.physician eq null or diagnosis.finalized}"
+						value="#{selectedTask.diagnosisInfo.signatureOne.role}">
+						<f:selectItems value="#{enumProvider.signatureRoles}"
+							var="signatureRole"
+							itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
+							itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
+						<p:ajax event="change"
+							onstart="$('#contentForm\\:submitPhysicianRoleChange').click();" />
+					</p:selectOneMenu>
+ -->
+					<!-- hidden button for updating on physician role change -->
+					<!-- 
+								<p:commandButton style="display:none" update="@form"
+									id="submitPhysicianRoleChange">
+									<f:actionListener
+										binding="#{mainHandlerAction.saveChangedData(selectedTask.report,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.physician.role',selectedTask.taskID, selectedTask.report.physicianToSign.role ))}"></f:actionListener>
+								</p:commandButton>-->
+				</h:panelGroup>
+
+				<h:outputLabel value="Oberarzt" />
+				<!-- Consultant -->
+				<h:panelGroup>
+
+					<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
+						styleClass="customSerachSelectMenu"
+						panelStyleClass="customSerachSelectMenuPanel"
+						value="#{taskHandlerAction.consultantToSign}"
+						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItem itemLabel="Oberarzt auswählen" itemValue="#{null}" />
+
+						<f:selectItems value="#{taskHandlerAction.allAvailablePhysicians}"
+							var="physician" itemLabel="#{physician.person.fullName}"
+							itemValue="#{physician}" />
+
+						<p:ajax event="change"
+							oncomplete="$('#contentForm\\:submitConsultantChange').click();" />
+					</p:selectOneMenu>
+
+					<!-- hidden button for updating on consultant change -->
+					<!-- 
+								<p:commandButton style="display:none" update="@form"
+									id="submitConsultantChange">
+									<f:actionListener
+										binding="#{selectedTask.report.updatePhysiciansToSign(taskHandlerAction.physicianToSign,taskHandlerAction.consultantToSign)}"></f:actionListener>
+									<f:actionListener
+										binding="#{mainHandlerAction.saveChangedData(selectedTask.report, selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.consultant',selectedTask.taskID, (selectedTask.report.consultantToSign.physician ne null ?  selectedTask.report.consultantToSign.physician.person.fullName : '') ))}"></f:actionListener>
+								</p:commandButton>
+								 -->
+				</h:panelGroup>
+				<!-- Consultant role -->
+				<h:panelGroup />
+				<h:panelGroup>
+					<!-- 
+					<p:selectOneMenu styleClass="customSerachSelectMenu"
+						id="consultantToSignRole" editable="true"
+						style="width:80% !important"
+						disabled="#{selectedTask.diagnosisInfo.signatureTwo.physician eq null or diagnosis.finalized}"
+						value="#{selectedTask.diagnosisInfo.signatureTwo.role}">
+						<f:selectItems value="#{enumProvider.signatureRoles}"
+							var="signatureRole"
+							itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
+							itemValue="#{msg['enum.signatureRole.'.concat(signatureRole)]}" />
+						<p:ajax event="change"
+							oncomplete="$('#contentForm\\:submitConsultantRoleChange').click();" />
+					</p:selectOneMenu>
+-->
+
+					<!-- hidden button for updating on consultant role change -->
+					<!-- 
+								<p:commandButton style="display:none" update="@form"
+									id="submitConsultantRoleChange">
+									<f:actionListener
+										binding="#{mainHandlerAction.saveChangedData(selectedTask.report,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.report.data.change.consultant.role',selectedTask.taskID, selectedTask.report.physicianToSign.role ))}"></f:actionListener>
+								</p:commandButton>
+								 -->
+				</h:panelGroup>
+			</h:panelGrid>
 		</h:panelGrid>
 	</p:panel>
+
 </ui:composition>
 

@@ -51,6 +51,9 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 
 	private long id;
 
+	/**
+	 * Name of this revision
+	 */
 	private String name;
 
 	private long version;
@@ -83,8 +86,8 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	/**
 	 * Text containing the histological record for all samples.
 	 */
-	private String histologicalRecord = "";
-
+	private String text = "";
+	
 	/**
 	 * Standardt consutructor
 	 */
@@ -133,16 +136,16 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public void setVersion(long version) {
 		this.version = version;
 	}
-
+	
 	@Column(columnDefinition = "text")
-	public String getHistologicalRecord() {
-		return histologicalRecord;
+	public String getText() {
+		return text;
 	}
 
-	public void setHistologicalRecord(String histologicalRecord) {
-		this.histologicalRecord = histologicalRecord;
+	public void setText(String text) {
+		this.text = text;
 	}
-
+	
 	@OneToMany(cascade = CascadeType.ALL , mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("sample.id ASC")

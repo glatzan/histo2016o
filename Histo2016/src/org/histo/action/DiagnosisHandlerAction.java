@@ -396,7 +396,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		// setTmpDiagnosis(null);
 		//
 		// taskHandlerAction.taskDataChanged(tmpDiagnosis.getParent().getParent(),
-		// "log.patient.task.dataChange.histologicalRecord",
+		// "log.patient.task.change.histologicalRecord",
 		// tmpDiagnosis.getParent().getParent().getReport().getHistologicalRecord());
 		// System.out.println("---------!!!!!!!!!");
 		// TODO: rework
