@@ -3,6 +3,19 @@ body {
 	font-size: 0.8em !important;
 }
 /************************************* DEFAULT TABLE *************************************/
+/*******************************************/
+/* Default table containter, no padding at all*/
+.defaultListingTableContainer {
+	width: 100%;
+}
+
+.defaultListingTableContainer>tbody>tr>td {
+	padding: 0px !important;
+	border-collapse: collapse !important;
+}
+/* Default table containter, no padding at all*/
+
+/*******************************************/
 /* Default table container for two spacings*/
 .defaultListingTableTwoLineContainer {
 	width: 100%;
@@ -19,24 +32,33 @@ body {
 }
 /* Default table container for two spacings*/
 
-/* Default table containter, no padding at all*/
-.defaultListingTableContainer {
+/*******************************************/
+/* Default table container for three spacings*/
+.defaultListingTableThreeLineContainer {
 	width: 100%;
 }
 
-.defaultListingTableContainer>tbody>tr>td {
-	padding: 0px !important;
-	border-collapse: collapse !important;
+.defaultListingTableThreeLineContainer>tbody>tr>td:nth-child(1),
+	.defaultListingTableThreeLineContainer>tbody>tr>td:nth-child(3),
+	.defaultListingTableThreeLineContainer>tbody>tr>td:nth-child(5) {
+	width: 30%;
+	vertical-align: top !important;
 }
-/* Default table containter, no padding at all*/
 
+.defaultListingTableThreeLineContainer>tbody>tr>td:nth-child(2),
+	.defaultListingTableThreeLineContainer>tbody>tr>td:nth-child(4) {
+	width: 5%;
+}
+/* Default table container for three spacings*/
+
+/*******************************************/
 /* Default table for listing inputfields, one col*/
 .defaultListingTableCssOneCol {
 	width: 100%;
 }
 
 .defaultListingTableCssOneCol td {
-	padding: 3px !important;
+	padding: 3px;
 }
 
 .defaultListingTableCssOneCol .bold-text {
@@ -54,6 +76,7 @@ body {
 }
 /* Default table for listing inputfields, one col*/
 
+/*******************************************/
 /* Default table for listing inputfields, two cols*/
 .defaultListingTableCss {
 	width: 100%;
@@ -62,7 +85,6 @@ body {
 .defaultListingTableCss>tbody>tr>td:first-child {
 	min-width: 150px;
 	width: 200px;
-	vertical-align: top;
 }
 
 .defaultListingTableCss>tbody>tr>td:first-child label {
@@ -91,8 +113,14 @@ body {
 	font-weight: 500;
 	line-height: 22px;
 }
-/************************************* DEFAULT TABLE *************************************/
 
+/*******************************************/
+/* Colunm orientation for all */
+.defaultListingTableColumnTop{
+	vertical-align: top;
+	padding-top: 8px !important;
+}
+/************************************* DEFAULT TABLE *************************************/
 
 /* Default table for listing inputfields*/
 .noBorders>tr, .noBorders>td, .noBorders {
@@ -423,46 +451,6 @@ body {
 /* 	################# AddContectTable ################# */
 
 /* 	################# Body ################# */
-
-/* ################# Diagnosis View ################# */
-
-/* Diagnosis table */
-.diagnosisTable {
-	width: 100%;
-	margin: 6px 0px 0px 10px;
-}
-
-.diagnosisTable .firstColumn {
-	width: 10% !important;
-}
-
-.diagnosisTable .secondColumn {
-	width: 25% !important;
-}
-
-.diagnosisTable .thirdColumn {
-	width: auto;
-}
-
-.diagnosisTable .fourthColumn {
-	width: 3% !important;
-}
-
-.diagnosisTable .diagnosisText {
-	width: 97%;
-}
-
-/* ################# Diagnosis View ################# */
-
-/* ################# Diagnoses ################# */
-/* content of the diagnosis body */
-.content .body .diagnosesAccordion .ui-accordion-content {
-	border: 1px solid #aaaaaa;
-	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 4px;
-}
-
-/* ################# Diagnoses ################# */
 
 /* ################# Stainings ################# */
 

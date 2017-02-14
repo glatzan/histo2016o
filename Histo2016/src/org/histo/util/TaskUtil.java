@@ -10,6 +10,7 @@ import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
@@ -19,9 +20,6 @@ import org.histo.ui.StainingTableChooser;
 public class TaskUtil {
 
 	private static Logger logger = Logger.getRootLogger();
-
-
-
 
 	/**
 	 * Returns the number of the same stainings used within this block
@@ -127,8 +125,6 @@ public class TaskUtil {
 		return String.valueOf(Character.toChars(((int) 'a') + number));
 	}
 
-	
-
 	/**
 	 * Returns the task with the highest taskID. (Is always the first task
 	 * because of the descending order)
@@ -207,19 +203,27 @@ public class TaskUtil {
 		return null;
 	}
 
-	public static final String getDiagnosisName(List<Diagnosis> diagnoses, Diagnosis diagnosis, ResourceBundle resourceBundle) {
+	/**
+	 * Returns a name for a diagnosis revision
+	 * @param revisions
+	 * @param revision
+	 * @param resourceBundle
+	 * @return
+	 */
+	public static final String getDiagnosisName(List<DiagnosisRevision> revisions, DiagnosisRevision revision,
+			ResourceBundle resourceBundle) {
 		int number = 1;
 
-//		for (Diagnosis diagnosisOfSample : diagnoses) {
-//			if (diagnosisOfSample.getType() == diagnosis.getType()) {
-//				number++;
-//			}
-//		}
+		for (DiagnosisRevision revisionListItem : revisions) {
+			if (revisionListItem.getType() == revision.getType()) {
+				number++;
+			}
+		}
 
-		return "was";
-//				resourceBundle.get("enum.diagnosisType." + diagnosis.getType()) + (number == 1 ? "" : " " + number);
+		return resourceBundle.get("enum.diagnosisType." + revision.getType()) + (number == 0 ? "" : " " + number);
 	}
 
+	
 	/**
 	 * Returns the task with the highest priority. If several tasks share the
 	 * same priority the first one is returned.

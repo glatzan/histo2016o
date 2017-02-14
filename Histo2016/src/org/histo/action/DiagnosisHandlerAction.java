@@ -121,6 +121,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().size());
 		diagnosisRevision.setType(type);
 		diagnosisRevision.setParent(parent);
+		diagnosisRevision.setName(TaskUtil.getDiagnosisName(parent.getDiagnosisRevisions(), diagnosisRevision, resourceBundle));
 
 		// saving to database
 		genericDAO.save(diagnosisRevision,

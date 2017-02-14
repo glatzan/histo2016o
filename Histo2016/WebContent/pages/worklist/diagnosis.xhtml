@@ -26,7 +26,7 @@
 			<!-- Left Column -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 				<!-- material -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss" columnClasses="defaultListingTableColumnTop,">
 
 					<h:outputLabel value="#{msg['body.diagnosis.material']}" />
 
@@ -85,12 +85,14 @@
 
 					<p:selectOneMenu id="historyText" style="width: 80%"
 						value="#{selectedTask.caseHistory}" editable="true">
-						<f:selectItem itemLabel="Select One" itemValue="#{msg['body.diagnosis.story.watermark']}" />
-						<f:selectItems value="#{taskHandlerAction.caseHistoryList}" var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
-						
+						<f:selectItem itemLabel="Select One"
+							itemValue="#{msg['body.diagnosis.story.watermark']}" />
+						<f:selectItems value="#{taskHandlerAction.caseHistoryList}"
+							var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
+
 						<p:ajax event="change" execute="@this"
 							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
-						
+
 					</p:selectOneMenu>
 				</h:panelGrid>
 				<!-- Eye -->
@@ -133,17 +135,22 @@
 
 					<p:selectOneButton disabled="#{selectedTask.diagnosisCompleted}"
 						value="#{worklistHandlerAction.selectedPatient.privateInsurance}">
-						<f:selectItem itemLabel="regulär" itemValue="#{false}]" />
-						<f:selectItem itemLabel="privat" itemValue="#{true}" />
+						<f:selectItem
+							itemLabel="#{msg['body.diagnosis.insurance.private']}"
+							itemValue="#{false}]" />
+						<f:selectItem
+							itemLabel="#{msg['body.diagnosis.insurance.normal']}"
+							itemValue="#{true}" />
+						<p:ajax event="change" execute="@this"
+							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.insurance', worklistHandlerAction.selectedPatient.privateInsurance)}" />
 					</p:selectOneButton>
 
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
-
 					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
-						effect="fold" editable="true"
-						disabled="#{selectedTask.diagnosisCompleted}">
-						<f:selectItems value="#{taskHandlerAction.wardList}" />
+						editable="true" disabled="#{selectedTask.diagnosisCompleted}">
+						<f:selectItems value="#{taskHandlerAction.wardList}"
+							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
 							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.ward',selectedTask.ward)}" />
 					</p:selectOneMenu>

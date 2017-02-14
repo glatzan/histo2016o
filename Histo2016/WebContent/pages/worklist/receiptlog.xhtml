@@ -10,520 +10,467 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<p:panel style="width:100%;"
-		styleClass=" collapsedBorders noPadding noBorders">
+	<c:set var="selectedTask"
+		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
 
-		<!-- Task -->
-		<h:panelGroup styleClass="contentHolder" layout="block"
-			style="padding:5px; width:auto">
-			<p:panelGrid styleClass="noBorders" style="border: 1px solid black;">
-				<p:row styleClass="noBorders">
-					<p:column colspan="4">
-						<h:outputLabel style="font-size:20px;font-weight: bold;"
-							value="#{msg['body.receiptlog.taskId']} #{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
-					</p:column>
-				</p:row>
+	<p:panel style="width: 60%"
+		styleClass="collapsedBorders noPadding noBorders">
 
-				<p:row styleClass="noBorders">
-					<!-- Receipt Date -->
-					<p:column>
-						<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
-					</p:column>
-					<p:column>
-						<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
-							<p:ajax event="dateSelect"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}"
-								update="receiptDate" />
-							<f:ajax event="change" execute="@this" render="receiptDate"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
-						</p:calendar>
-					</p:column>
+		<h:outputLabel
+			value="#{msg['body.receiptlog.taskId']} #{worklistHandlerAction.selectedPatient.selectedTask.taskID}"
+			style="font-size:1.5em;"></h:outputLabel>
 
-					<!-- Termin Date -->
-					<p:column>
-						<h:outputLabel value="#{msg['body.receiptlog.taskDueDate']}" />
-					</p:column>
-					<p:column>
-						<h:panelGrid columns="2" styleClass="collapsedBorders noPadding">
-							<p:selectBooleanCheckbox style="padding-right:5px;"
-								title="#{msg['body.receiptlog.taskDueDate.hint']}"
-								value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
-								<p:ajax event="change" execute="@this"
-									update="navigationForm contentForm"
-									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate',worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected)}">
-								</p:ajax>
-							</p:selectBooleanCheckbox>
-							<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
-								value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
-								disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
-								<p:ajax event="dateSelect"
-									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}"
-									update="dueDate" />
-								<f:ajax event="change" execute="@this" render="dueDate"
-									listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}" />
-							</p:calendar>
+		<h:panelGrid columns="5"
+			styleClass="defaultListingTableThreeLineContainer">
+
+			<!-- left column -->
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<!-- Receipt Date -->
+				<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
+				<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
+					styleClass="smallInput"
+					value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
+					<p:ajax event="dateSelect"
+						listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}"
+						update="receiptDate" />
+					<f:ajax event="change" execute="@this" render="receiptDate"
+						listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+				</p:calendar>
+
+				<!-- Termin Date -->
+				<h:outputLabel value="#{msg['body.receiptlog.taskDueDate']}" />
+				<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
+					<p:selectBooleanCheckbox style="padding-right:5px;"
+						title="#{msg['body.receiptlog.taskDueDate.hint']}"
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
+						<p:ajax event="change" execute="@this"
+							update="navigationForm contentForm"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate',worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected)}">
+						</p:ajax>
+					</p:selectBooleanCheckbox>
+					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
+						styleClass="smallInput"
+						value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
+						disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
+						<p:ajax event="dateSelect"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}"
+							update="dueDate" />
+						<f:ajax event="change" execute="@this" render="dueDate"
+							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}" />
+					</p:calendar>
+				</h:panelGrid>
+
+				<!-- ward -->
+				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
+				<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
+					styleClass="smallInput" editable="true"
+					disabled="#{selectedTask.diagnosisCompleted}">
+					<f:selectItems value="#{taskHandlerAction.wardList}"
+						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
+					<p:ajax event="change" execute="@this"
+						listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.ward',selectedTask.ward)}" />
+				</p:selectOneMenu>
+
+				<!-- History -->
+				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
+				<p:selectOneMenu id="historyText" style="width: auto"
+					styleClass="smallInput" value="#{selectedTask.caseHistory}"
+					editable="true">
+					<f:selectItem itemLabel="Select One"
+						itemValue="#{msg['body.diagnosis.story.watermark']}" />
+					<f:selectItems value="#{taskHandlerAction.caseHistoryList}"
+						var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
+
+					<p:ajax event="change" execute="@this"
+						listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
+
+				</p:selectOneMenu>
+
+				<!-- EYE -->
+				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
+				<p:selectOneMenu styleClass="smallInput"
+					value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}">
+
+					<f:selectItems value="#{enumProvider.eyes}" var="eye"
+						itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
+
+					<p:ajax event="change" execute="@this"
+						listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.eye',msg['enum.eye.'.concat(worklistHandlerAction.selectedPatient.selectedTask.eye)])}" />
+				</p:selectOneMenu>
+
+				<!-- other -->
+				<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />
+				<h:panelGroup>
+					<p:commandButton icon="fa fa-fw fa-taxi"
+						title="#{msg['body.receiptlog.miscellaneous.borrow']}" />
+					<p:commandButton icon="fa fa-fw fa-dollar"
+						actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ACCOUNTING'))}"
+						title="#{msg['body.receiptlog.miscellaneous.accounting']}" />
+				</h:panelGroup>
+			</h:panelGrid>
+			<!-- left column -->
+
+			<h:panelGroup />
+
+			<!-- middle column -->
+			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+				<!-- material -->
+				<p:outputLabel value="#{msg['body.receiptlog.material']}"
+					styleClass="bold-text" />
+				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+					<c:forEach items="#{selectedTask.samples}" var="sample"
+						varStatus="loopCount">
+
+						<h:panelGrid columns="3" styleClass="defaultListingTableContainer">
+							<h:outputLabel
+								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
+
+							<p:inputText value="#{sample.material}" style="margin-left:10px;"
+								disabled="#{selectedTask.diagnosisCompleted}"
+								styleClass="smallInput" />
+
+							<p:commandLink
+								title="#{msg['body.receiptlog.notification.hint']}"
+								rendered="#{!selectedTask.diagnosisCompleted}"
+								actionListener="#{taskHandlerAction.prepareSelectMaterialDialog(sample)}">
+								<i class="fa fa-fw fa-cog" />
+								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							</p:commandLink>
 						</h:panelGrid>
-					</p:column>
+					</c:forEach>
+				</h:panelGrid>
+			</h:panelGrid>
+			<!-- middle column -->
 
+			<h:panelGroup />
+
+			<!-- right column -->
+			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
 					<!-- contact -->
+					<h:outputLabel value="#{msg['body.receiptlog.notification']}"
+						styleClass="bold-text" />
+					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+						style="float: right"
+						actionListener="#{contactHandlerAction.showContacts(worklistHandlerAction.selectedPatient.selectedTask)}">
+						<i class="fa fa-fw fa-cog" />
+						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+					</p:commandLink>
+				</h:panelGrid>
+				<p:dataTable var="contact" scrollable="true" scrollHeight="90"
+					styleClass="noBordersAll collapsedBordersAll addedContactDataTable"
+					value="#{worklistHandlerAction.selectedPatient.selectedTask.contacts}">
+
+					<p:column headerText="#{msg['body.receiptlog.contact.name']}">
+						<h:outputText value="#{contact.physician.person.fullName}" />
+					</p:column>
+
+					<p:column headerText="#{msg['body.receiptlog.contact.role']}">
+						<h:outputText
+							value="#{msg['body.receiptlog.contact.role.surgeon']}"
+							rendered="#{contact.role eq 'SURGEON'}" />
+						<h:outputText
+							value="#{msg['body.receiptlog.contact.role.privatePhysician']}"
+							rendered="#{contact.role eq 'PRIVATE_PHYSICIAN'}" />
+						<h:outputText value="#{msg['body.receiptlog.contact.role.other']}"
+							rendered="#{contact.role eq 'OTHER'}" />
+					</p:column>
+
 					<p:column>
-						<h:outputLabel value="#{msg['body.receiptlog.notification']}"></h:outputLabel>
-
-						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							style="float: right"
-							actionListener="#{contactHandlerAction.showContacts(worklistHandlerAction.selectedPatient.selectedTask)}">
-							<i class="fa fa-fw fa-cog" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
-						</p:commandLink>
+						<f:facet name="header">
+							<i class="fa fa-check-square-o"
+								title="#{msg['body.receiptlog.contact.type.performed']}" />
+						</f:facet>
+						<ui:fragment rendered="#{contact.notificationPerformed}">
+							<i class="fa fa-check icon-green" />
+						</ui:fragment>
 					</p:column>
-				</p:row>
+				</p:dataTable>
+			</h:panelGrid>
+			<!-- right column -->
+		</h:panelGrid>
 
-				<p:row styleClass="noBorders">
-					<!-- ward -->
-					<p:column>
-						<p:outputLabel value="#{msg['body.receiptlog.ward']}" />
-					</p:column>
-					<p:column>
-						<p:selectOneMenu styleClass="taskSelectOnMenu" editable="true"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.ward}">
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.select']}"
-								itemValue="none" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.ambulant']}"
-								itemValue="ambulant" />
-							<f:selectItem
-								itemLabel="#{msg['body.receiptlog.ward.inpatient']}"
-								itemValue="impatient" />
-							<f:selectItem
-								itemLabel="#{msg['body.receiptlog.ward.ambulant.private']}"
-								itemValue="private" />
-							<f:selectItem
-								itemLabel="#{msg['body.receiptlog.ward.inpatient.private']}"
-								itemValue="impatient-private" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.ims']}"
-								itemValue="ims" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.extern']}"
-								itemValue="extern" />
-							<f:selectItem
-								itemLabel="#{msg['body.receiptlog.ward.exern.private']}"
-								itemValue="extern-private" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.fda']}"
-								itemValue="fda" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.manz']}"
-								itemValue="manz" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.beck']}"
-								itemValue="beck" />
-							<f:selectItem itemLabel="#{msg['body.receiptlog.ward.axenfeld']}"
-								itemValue="axenfeld" />
+		<!-- Slides -->
+		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+			<!-- healinse -->
+			<h:panelGroup>
+				<h:outputLabel value="#{msg['body.receiptlog.slide.name']}" />
+				<!-- staining completed -->
+				<h:panelGroup
+					rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'PERFORMED'}">
+					<div class="fa fa-check-circle icon-green"
+						title="#{msg['body.receiptlog.slide.completed']}" />
+				</h:panelGroup>
+				<!-- staining to perform -->
+				<h:panelGroup
+					rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'STAINING_NEEDED'}">
+					<div class="fa fa-exclamation-circle icon-orange"
+						title="#{msg['body.receiptlog.slide.staining']}" />
+				</h:panelGroup>
+				<!-- restaining to perform -->
+				<h:panelGroup
+					rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
+					<div class="fa fa-exclamation-circle ic-custom icon-orange"
+						title="#{msg['body.receiptlog.slide.restaining']}" />
+				</h:panelGroup>
+			</h:panelGroup>
 
-							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.ward',worklistHandlerAction.selectedPatient.selectedTask.ward)}" />
 
-						</p:selectOneMenu>
-					</p:column>
+			<!-- ******************************** Slides ******************************** -->
+			<p:panelGrid styleClass="stainingTable">
+				<f:facet name="header">
+					<p:row>
+						<p:column styleClass="columnSample">
+							<h:outputLabel
+								value="#{msg['body.receiptlog.slidele.headline.sample']}"></h:outputLabel>
+						</p:column>
+						<p:column styleClass="columnBlock">
+							<h:outputLabel
+								value="#{msg['body.receiptlog.slidele.headline.block']}"></h:outputLabel>
+						</p:column>
+						<p:column styleClass="columnChoose"></p:column>
+						<p:column styleClass="columnStainingID">
+							<h:outputLabel
+								value="#{msg['body.receiptlog.slidele.headline.staining.id']}"></h:outputLabel>
+						</p:column>
+						<p:column styleClass="columnStaining">
+							<h:outputLabel
+								value="#{msg['body.receiptlog.slidele.headline.staining.staining']}"></h:outputLabel>
+						</p:column>
+						<p:column styleClass="columnStatus">
+							<h:outputLabel
+								value="#{msg['body.receiptlog.slidele.headline.status']}"></h:outputLabel>
+						</p:column>
+						<p:column styleClass="columnOptions">
+							<h:outputLabel
+								value="#{msg['body.receiptlog.slidele.headline.options']}"></h:outputLabel>
+						</p:column>
+					</p:row>
+				</f:facet>
 
-					<!-- material -->
-					<p:column>
-						<p:outputLabel value="#{msg['body.receiptlog.material']}" />
-					</p:column>
-					<p:column rowspan="2" styleClass="verticalAlignTopAll">
-						<p:panelGrid columns="2"
-							styleClass="noBordersAll collapsedBordersAll verticalAlignMiddleAll smallPaddingAll">
-							<!-- TODO Update background object, e.g. .blure() (inputtext) -->
-							<c:forEach
-								items="#{worklistHandlerAction.selectedPatient.selectedTask.samples}"
-								var="sample">
-								<h:outputLabel value="#{sample.sampleID}" />
-								<p:selectOneMenu value="#{sample.material}"
-									styleClass="smallInput" editable="true" style="width:100px;">
-									<f:selectItem
-										itemLabel="#{msg['body.receiptlog.material.select']}"
-										itemValue="none" />
-									<f:selectItems
-										value="#{settingsHandlerAction.allAvailableMaterials}"
-										var="list" itemLabel="#{list.name}" itemValue="#{list.name}" />
+				<c:forEach
+					items="#{worklistHandlerAction.selectedPatient.selectedTask.stainingTableRows}"
+					var="stainingRow">
+					<p:row>
 
-									<p:ajax event="change" execute="@this"
-										listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.sample.material',worklistHandlerAction.selectedPatient.selectedTask.taskID,sample.material.name)}" />
-								</p:selectOneMenu>
-							</c:forEach>
-						</p:panelGrid>
-					</p:column>
+						<!-- Sample -->
+						<p:column
+							styleClass="columnSample #{stainingRow.even ? 'darkBackround' : ''}">
+							<h:panelGroup rendered="#{stainingRow.sampleType}">
+								<h:outputLabel for="basic" value="Probe " />
+								<p:inplace id="basic" styleClass="inplaceInput">
+									<p:inputText value="#{stainingRow.sample.sampleID}" />
+								</p:inplace>
+							</h:panelGroup>
+						</p:column>
 
-					<!-- contact -->
-					<p:column rowspan="3" style="padding-top:0px;">
-						<p:dataTable var="contact" scrollable="true" scrollHeight="90"
-							styleClass="noBordersAll collapsedBordersAll addedContactDataTable"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.contacts}">
+						<!-- Block -->
+						<p:column
+							styleClass="columnBlock #{stainingRow.even ? 'darkBackround' : ''}">
+							<h:panelGroup rendered="#{stainingRow.blockType}">
+								<h:outputLabel for="block" value="Block "
+									rendered="#{stainingRow.block ne null}" />
+								<p:inplace id="block" styleClass="inplaceInput"
+									rendered="#{stainingRow.block ne null}">
+									<p:inputText value="#{stainingRow.block.blockID}"
+										styleClass="inplaceInput" />
+								</p:inplace>
+							</h:panelGroup>
+						</p:column>
 
-							<p:column headerText="#{msg['body.receiptlog.contact.name']}">
-								<h:outputText value="#{contact.physician.person.fullName}" />
-							</p:column>
+						<!-- Staining chooser -->
+						<p:column
+							styleClass="columnChoose #{stainingRow.even ? 'darkBackround' : ''}">
+							<h:panelGroup
+								rendered="#{stainingRow.sampleType or stainingRow.blockType}">
+								<p:commandLink
+									actionListener="#{slideHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
+									update="contentForm"
+									title="#{stainingRow.sampleType ? msg['body.statiningView.chooseSample'] : msg['body.statiningView.chooseBlock']}">
+									<i class="fa fa-fw fa-check-circle" />
+								</p:commandLink>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{stainingRow.stainingType}">
+								<p:selectBooleanCheckbox value="#{stainingRow.choosen}" />
+							</h:panelGroup>
+						</p:column>
 
-							<p:column headerText="#{msg['body.receiptlog.contact.role']}">
+						<!-- Staining Name -->
+						<p:column
+							styleClass="columnStainingID #{stainingRow.even ? 'darkBackround' : ''}">
+							<h:panelGroup rendered="#{stainingRow.stainingType}">
+								<p:inplace styleClass="inplaceInput">
+									<p:inputText value="#{stainingRow.staining.slideID}"
+										style="width:100% !important;" />
+								</p:inplace>
+							</h:panelGroup>
+						</p:column>
+
+						<!-- Staining staining -->
+						<p:column
+							styleClass="columnStaining #{stainingRow.even ? 'darkBackround' : ''}">
+							<h:panelGroup rendered="#{stainingRow.stainingType}">
 								<h:outputText
-									value="#{msg['body.receiptlog.contact.role.surgeon']}"
-									rendered="#{contact.role eq 'SURGEON'}" />
-								<h:outputText
-									value="#{msg['body.receiptlog.contact.role.privatePhysician']}"
-									rendered="#{contact.role eq 'PRIVATE_PHYSICIAN'}" />
-								<h:outputText
-									value="#{msg['body.receiptlog.contact.role.other']}"
-									rendered="#{contact.role eq 'OTHER'}" />
-							</p:column>
+									value="#{stainingRow.staining.slidePrototype.name}" />
+							</h:panelGroup>
+						</p:column>
 
-							<p:column>
-								<f:facet name="header">
-									<i class="fa fa-check-square-o"
-										title="#{msg['body.receiptlog.contact.type.performed']}" />
-								</f:facet>
-								<ui:fragment rendered="#{contact.notificationPerformed}">
-									<i class="fa fa-check icon-green" />
-								</ui:fragment>
-							</p:column>
-						</p:dataTable>
-					</p:column>
-				</p:row>
+						<!-- Staining status -->
+						<p:column
+							styleClass="columnStatus #{stainingRow.even ? 'darkBackround' : ''}">
+							<!-- Sample status -->
+							<h:panelGroup rendered="#{stainingRow.sampleType}">
+								<!-- ********** Staining performed ********** -->
+								<h:panelGroup
+									rendered="#{stainingRow.sample.getStainingStatus() eq 'PERFORMED'}">
+									<i class="fa fa-fw fa-check-circle icon-green"
+										title="#{msg['body.statiningView.status.performed']}" />
+								</h:panelGroup>
+							</h:panelGroup>
+							<!-- Block status -->
+							<h:panelGroup rendered="#{stainingRow.blockType}">
+								<!-- ********** Staining performed ********** -->
+								<h:panelGroup
+									rendered="#{stainingRow.block.getStainingStatus() eq 'PERFORMED'}">
+									<i class="fa fa-fw fa-check-circle icon-green"
+										title="#{msg['body.statiningView.status.performed']}" />
+								</h:panelGroup>
+							</h:panelGroup>
 
-				<!-- story -->
-				<p:row styleClass="noBorders">
-					<p:column>
-						<h:outputLabel value="#{msg['body.receiptlog.story']}" />
-					</p:column>
-					<p:column>
-						<p:inputTextarea rows="2" cols="22" id="stroyField"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.caseHistory}">
-							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.caseHistory',worklistHandlerAction.selectedPatient.selectedTask.caseHistory)}" />
-						</p:inputTextarea>
-						<p:watermark value="#{msg['body.receiptlog.story.watermark']}"
-							for="stroyField" />
-					</p:column>
-				</p:row>
+							<!-- Slide status -->
+							<h:panelGroup rendered="#{stainingRow.stainingType}">
+								<!-- ********** Staining performed ********** -->
+								<h:panelGroup
+									rendered="#{stainingRow.staining.stainingPerformed}">
+									<i class="fa fa-fw fa-check-circle icon-green"
+										title="#{msg['body.statiningView.status.performed']}" />
+								</h:panelGroup>
 
-				<p:row styleClass="noBorders">
-					<!-- eye -->
-					<p:column>
-						<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
-					</p:column>
-					<p:column>
-						<p:selectOneMenu styleClass="smallInput"
-							value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}">
+								<h:panelGroup rendered="#{stainingRow.staining.reStaining}">
+									<i class="fa fa-fw fa-th-list icon-orange"
+										title="#{msg['body.statiningView.status.restaining']}" />
+								</h:panelGroup>
 
-							<f:selectItems value="#{enumProvider.eyes}" var="eye"
-								itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
+								<!-- ********** Info Button ********** -->
+								<p:commandLink id="info" type="button"
+									styleClass="noUnderlineAtLink"
+									title="#{stainingRow.staining.commentary}"
+									rendered="#{stainingRow.staining.commentary ne ''}">
+									<i class="fa fa-fw fa-info-circle" />
+								</p:commandLink>
+							</h:panelGroup>
+						</p:column>
 
-							<p:ajax event="change" execute="@this"
-								listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.eye',msg['enum.eye.'.concat(worklistHandlerAction.selectedPatient.selectedTask.eye)])}" />
-						</p:selectOneMenu>
-					</p:column>
+						<!-- Options -->
+						<p:column
+							styleClass="columnOptions #{stainingRow.even ? 'darkBackround' : ''}">
+							<!-- Sample -->
+							<h:panelGroup rendered="#{stainingRow.sampleType}"
+								style="float: right">
+								<!-- ********** New Block Button ********** -->
+								<p:commandLink title="#{msg['body.statiningView.newBlock']}"
+									styleClass="noUnderlineAtLink"
+									update="navigationForm contentForm"
+									actionListener="#{taskHandlerAction.createNewBlockFromGui(stainingRow.sample)}">
+									<i class="fa fa-fw fa-th-large"></i>
+								</p:commandLink>
+								<!-- ********** Delete Button ********** -->
+								<p:commandLink styleClass="noUnderlineAtLink"
+									title="#{msg['body.statiningView.archiveSample']}"
+									actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.sample, true)}">
+									<i class="fa fa-fw fa-times-circle"></i>
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+							</h:panelGroup>
 
-					<!-- other -->
-					<p:column>
-						<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />
-					</p:column>
-					<p:column>
-						<p:commandButton icon="fa fa-fw fa-taxi"
-							title="#{msg['body.receiptlog.miscellaneous.borrow']}" />
-						<p:commandButton icon="fa fa-fw fa-dollar"
-							actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ACCOUNTING'))}"
-							title="#{msg['body.receiptlog.miscellaneous.accounting']}" />
-					</p:column>
-				</p:row>
+							<!-- Block -->
+							<h:panelGroup rendered="#{stainingRow.blockType}"
+								style="float: right">
+								<!-- ********** New Staining Button ********** -->
+								<p:commandLink title="#{msg['body.statiningView.newStaining']}"
+									styleClass="noUnderlineAtLink"
+									actionListener="#{slideHandlerAction.prepareAddSlideDialog(stainingRow.block)}">
+									<i class="fa fa-fw fa-paint-brush"></i>
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+								<!-- ********** Delete Button ********** -->
+								<p:commandLink styleClass="noUnderlineAtLink"
+									title="#{msg['body.statiningView.archiveBlock']}"
+									actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.block, true)}">
+									<i class="fa fa-fw fa-times-circle"></i>
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+							</h:panelGroup>
 
-				<p:row styleClass="noBorders">
-					<p:column colspan="6">
-						<!-- *********** Staining *********** -->
-						<h:outputLabel value="#{msg['body.statiningView.tab.name']}" />
-						<!-- staining completed -->
-						<h:panelGroup
-							rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'PERFORMED'}">
-							<div class="fa fa-check-circle icon-green"
-								title="#{msg['body.statiningView.tab.completed']}" />
-						</h:panelGroup>
-						<!-- staining to perform -->
-						<h:panelGroup
-							rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'STAINING_NEEDED'}">
-							<div class="fa fa-exclamation-circle icon-orange"
-								title="#{msg['body.statiningView.tab.staining']}" />
-						</h:panelGroup>
-						<!-- restaining to perform -->
-						<h:panelGroup
-							rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
-							<div class="fa fa-exclamation-circle ic-custom icon-orange"
-								title="#{msg['body.statiningView.tab.restaining']}" />
-						</h:panelGroup>
-					</p:column>
-				</p:row>
-
-				<p:row styleClass="noBorders">
-					<p:column colspan="6">
-
-							<!-- ******************************** Staining ******************************** -->
-								<!-- Sample -->
-
-								<p:panelGrid styleClass="stainingTable">
-									<f:facet name="header">
-										<p:row>
-											<p:column styleClass="columnSample">
-												<h:outputLabel
-													value="#{msg['body.statiningView.table.headline.sample']}"></h:outputLabel>
-											</p:column>
-											<p:column styleClass="columnBlock">
-												<h:outputLabel
-													value="#{msg['body.statiningView.table.headline.block']}"></h:outputLabel>
-											</p:column>
-											<p:column styleClass="columnChoose"></p:column>
-											<p:column styleClass="columnStainingID">
-												<h:outputLabel
-													value="#{msg['body.statiningView.table.headline.staining.id']}"></h:outputLabel>
-											</p:column>
-											<p:column styleClass="columnStaining">
-												<h:outputLabel
-													value="#{msg['body.statiningView.table.headline.staining.staining']}"></h:outputLabel>
-											</p:column>
-											<p:column styleClass="columnStatus">
-												<h:outputLabel
-													value="#{msg['body.statiningView.table.headline.status']}"></h:outputLabel>
-											</p:column>
-											<p:column styleClass="columnOptions">
-												<h:outputLabel
-													value="#{msg['body.statiningView.table.headline.options']}"></h:outputLabel>
-											</p:column>
-										</p:row>
-									</f:facet>
-
-									<c:forEach
-										items="#{worklistHandlerAction.selectedPatient.selectedTask.stainingTableRows}"
-										var="stainingRow">
-										<p:row>
-
-											<!-- Sample -->
-											<p:column
-												styleClass="columnSample #{stainingRow.even ? 'darkBackround' : ''}">
-												<h:panelGroup rendered="#{stainingRow.sampleType}">
-													<h:outputLabel for="basic" value="Probe " />
-													<p:inplace id="basic" styleClass="inplaceInput">
-														<p:inputText value="#{stainingRow.sample.sampleID}" />
-													</p:inplace>
-												</h:panelGroup>
-											</p:column>
-
-											<!-- Block -->
-											<p:column
-												styleClass="columnBlock #{stainingRow.even ? 'darkBackround' : ''}">
-												<h:panelGroup rendered="#{stainingRow.blockType}">
-													<h:outputLabel for="block" value="Block "
-														rendered="#{stainingRow.block ne null}" />
-													<p:inplace id="block" styleClass="inplaceInput"
-														rendered="#{stainingRow.block ne null}">
-														<p:inputText value="#{stainingRow.block.blockID}"
-															styleClass="inplaceInput" />
-													</p:inplace>
-												</h:panelGroup>
-											</p:column>
-
-											<!-- Staining chooser -->
-											<p:column
-												styleClass="columnChoose #{stainingRow.even ? 'darkBackround' : ''}">
-												<h:panelGroup
-													rendered="#{stainingRow.sampleType or stainingRow.blockType}">
-													<p:commandLink
-														actionListener="#{slideHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
-														update="contentForm"
-														title="#{stainingRow.sampleType ? msg['body.statiningView.chooseSample'] : msg['body.statiningView.chooseBlock']}">
-														<i class="fa fa-fw fa-check-circle" />
-													</p:commandLink>
-												</h:panelGroup>
-												<h:panelGroup rendered="#{stainingRow.stainingType}">
-													<p:selectBooleanCheckbox value="#{stainingRow.choosen}" />
-												</h:panelGroup>
-											</p:column>
-
-											<!-- Staining Name -->
-											<p:column
-												styleClass="columnStainingID #{stainingRow.even ? 'darkBackround' : ''}">
-												<h:panelGroup rendered="#{stainingRow.stainingType}">
-													<p:inplace styleClass="inplaceInput">
-														<p:inputText value="#{stainingRow.staining.slideID}"
-															style="width:100% !important;" />
-													</p:inplace>
-												</h:panelGroup>
-											</p:column>
-
-											<!-- Staining staining -->
-											<p:column
-												styleClass="columnStaining #{stainingRow.even ? 'darkBackround' : ''}">
-												<h:panelGroup rendered="#{stainingRow.stainingType}">
-													<h:outputText
-														value="#{stainingRow.staining.slidePrototype.name}" />
-												</h:panelGroup>
-											</p:column>
-
-											<!-- Staining status -->
-											<p:column
-												styleClass="columnStatus #{stainingRow.even ? 'darkBackround' : ''}">
-												<!-- Sample status -->
-												<h:panelGroup rendered="#{stainingRow.sampleType}">
-													<!-- ********** Staining performed ********** -->
-													<h:panelGroup
-														rendered="#{stainingRow.sample.getStainingStatus() eq 'PERFORMED'}">
-														<i class="fa fa-fw fa-check-circle icon-green"
-															title="#{msg['body.statiningView.status.performed']}" />
-													</h:panelGroup>
-												</h:panelGroup>
-												<!-- Block status -->
-												<h:panelGroup rendered="#{stainingRow.blockType}">
-													<!-- ********** Staining performed ********** -->
-													<h:panelGroup
-														rendered="#{stainingRow.block.getStainingStatus() eq 'PERFORMED'}">
-														<i class="fa fa-fw fa-check-circle icon-green"
-															title="#{msg['body.statiningView.status.performed']}" />
-													</h:panelGroup>
-												</h:panelGroup>
-
-												<!-- Slide status -->
-												<h:panelGroup rendered="#{stainingRow.stainingType}">
-													<!-- ********** Staining performed ********** -->
-													<h:panelGroup
-														rendered="#{stainingRow.staining.stainingPerformed}">
-														<i class="fa fa-fw fa-check-circle icon-green"
-															title="#{msg['body.statiningView.status.performed']}" />
-													</h:panelGroup>
-
-													<h:panelGroup rendered="#{stainingRow.staining.reStaining}">
-														<i class="fa fa-fw fa-th-list icon-orange"
-															title="#{msg['body.statiningView.status.restaining']}" />
-													</h:panelGroup>
-
-													<!-- ********** Info Button ********** -->
-													<p:commandLink id="info" type="button"
-														styleClass="noUnderlineAtLink"
-														title="#{stainingRow.staining.commentary}"
-														rendered="#{stainingRow.staining.commentary ne ''}">
-														<i class="fa fa-fw fa-info-circle" />
-													</p:commandLink>
-												</h:panelGroup>
-											</p:column>
-
-											<!-- Options -->
-											<p:column
-												styleClass="columnOptions #{stainingRow.even ? 'darkBackround' : ''}">
-												<!-- Sample -->
-												<h:panelGroup rendered="#{stainingRow.sampleType}"
-													style="float: right">
-													<!-- ********** New Block Button ********** -->
-													<p:commandLink
-														title="#{msg['body.statiningView.newBlock']}"
-														styleClass="noUnderlineAtLink"
-														update="navigationForm contentForm"
-														actionListener="#{taskHandlerAction.createNewBlockFromGui(stainingRow.sample)}">
-														<i class="fa fa-fw fa-th-large"></i>
-													</p:commandLink>
-													<!-- ********** Delete Button ********** -->
-													<p:commandLink styleClass="noUnderlineAtLink"
-														title="#{msg['body.statiningView.archiveSample']}"
-														actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.sample, true)}">
-														<i class="fa fa-fw fa-times-circle"></i>
-														<p:ajax event="dialogReturn"
-															update="navigationForm contentForm" />
-													</p:commandLink>
-												</h:panelGroup>
-
-												<!-- Block -->
-												<h:panelGroup rendered="#{stainingRow.blockType}"
-													style="float: right">
-													<!-- ********** New Staining Button ********** -->
-													<p:commandLink
-														title="#{msg['body.statiningView.newStaining']}"
-														styleClass="noUnderlineAtLink"
-														actionListener="#{slideHandlerAction.prepareAddSlideDialog(stainingRow.block)}">
-														<i class="fa fa-fw fa-paint-brush"></i>
-														<p:ajax event="dialogReturn"
-															update="navigationForm contentForm" />
-													</p:commandLink>
-													<!-- ********** Delete Button ********** -->
-													<p:commandLink styleClass="noUnderlineAtLink"
-														title="#{msg['body.statiningView.archiveBlock']}"
-														actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.block, true)}">
-														<i class="fa fa-fw fa-times-circle"></i>
-														<p:ajax event="dialogReturn"
-															update="navigationForm contentForm" />
-													</p:commandLink>
-												</h:panelGroup>
-
-												<!-- Staining -->
-												<h:panelGroup rendered="#{stainingRow.stainingType}"
-													style="float: right">
-													<!-- ********** Print Button ********** -->
-													<p:commandLink styleClass="noUnderlineAtLink"
-														title="#{msg['body.statiningView.printStaining']}">
-														<i class="fa fa-fw fa-print" />
-														<p:ajax event="dialogReturn"
-															update="navigationForm contentForm" />
-													</p:commandLink>
-													<!-- ********** Cloud Button ********** -->
-													<p:commandLink styleClass="noUnderlineAtLink"
-														title="#{msg['body.statiningView.showStaining']}">
-														<i class="fa fa-fw fa-file-photo-o" />
-														<p:ajax event="dialogReturn"
-															update="navigationForm contentForm" />
-													</p:commandLink>
-													<!-- ********** Delete Button ********** -->
-													<p:commandLink styleClass="noUnderlineAtLink"
-														title="#{msg['body.statiningView.archiveStaining']}"
-														actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.staining, true)}">
-														<i class="fa fa-fw fa-times-circle" />
-														<p:ajax event="dialogReturn"
-															update="navigationForm contentForm" />
-													</p:commandLink>
-												</h:panelGroup>
-											</p:column>
-										</p:row>
-									</c:forEach>
-								</p:panelGrid>
-
-								<h:panelGrid columns="5" style="margin-top:10px;">
-
-									<!-- New sample -->
-									<p:commandButton icon="fa fa-fw fa-plus-circle"
-										styleClass="taskButton"
-										value="#{msg['body.statiningView.newSample']}"
-										actionListener="#{taskHandlerAction.prepareNewSampleDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-										<p:ajax event="dialogReturn"
-											update="navigationForm contentForm" />
-									</p:commandButton>
-
-									<p:commandButton icon="fa fa-fw fa-check-circle"
-										update="contentForm"
-										value="#{msg['body.statiningView.chooseAll']}"
-										actionListener="#{slideHandlerAction.setListAsChoosen(worklistHandlerAction.selectedPatient.selectedTask.stainingTableRows,true)}" />
-
-									<h:outputLabel
-										value="#{msg['body.statiningView.choosenElements']}"
-										style="margin-left:20px;"></h:outputLabel>
-									<h:panelGroup>
-										<p:selectOneMenu value="#{slideHandlerAction.actionOnMany}"
-											onchange="PF('performOnMay').jq.click();">
-
-											<f:selectItems value="#{enumProvider.stainingListActions}"
-												var="action"
-												itemLabel="#{msg['enum.stainingListAction.'.concat(action)]}" />
-
-											<p:ajax update="navigationForm contentForm" />
-										</p:selectOneMenu>
-
-										<p:commandButton id="changeZone" widgetVar="performOnMay"
-											style="display:none;"
-											actionListener="#{slideHandlerAction.performActionOnMany(worklistHandlerAction.selectedPatient.selectedTask)}">
-										</p:commandButton>
-									</h:panelGroup>
-								</h:panelGrid>
-							<!-- ******************************** Staining ******************************** -->
-					</p:column>
-				</p:row>
+							<!-- Staining -->
+							<h:panelGroup rendered="#{stainingRow.stainingType}"
+								style="float: right">
+								<!-- ********** Print Button ********** -->
+								<p:commandLink styleClass="noUnderlineAtLink"
+									title="#{msg['body.statiningView.printStaining']}">
+									<i class="fa fa-fw fa-print" />
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+								<!-- ********** Cloud Button ********** -->
+								<p:commandLink styleClass="noUnderlineAtLink"
+									title="#{msg['body.statiningView.showStaining']}">
+									<i class="fa fa-fw fa-file-photo-o" />
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+								<!-- ********** Delete Button ********** -->
+								<p:commandLink styleClass="noUnderlineAtLink"
+									title="#{msg['body.statiningView.archiveStaining']}"
+									actionListener="#{mainHandlerAction.prepareArchiveObject(stainingRow.staining, true)}">
+									<i class="fa fa-fw fa-times-circle" />
+									<p:ajax event="dialogReturn"
+										update="navigationForm contentForm" />
+								</p:commandLink>
+							</h:panelGroup>
+						</p:column>
+					</p:row>
+				</c:forEach>
 			</p:panelGrid>
-		</h:panelGroup>
+
+			<h:panelGrid columns="5" style="margin-top:10px;">
+
+				<!-- New sample -->
+				<p:commandButton icon="fa fa-fw fa-plus-circle"
+					styleClass="taskButton"
+					value="#{msg['body.statiningView.newSample']}"
+					actionListener="#{taskHandlerAction.prepareNewSampleDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				</p:commandButton>
+
+				<p:commandButton icon="fa fa-fw fa-check-circle"
+					update="contentForm" value="#{msg['body.statiningView.chooseAll']}"
+					actionListener="#{slideHandlerAction.setListAsChoosen(worklistHandlerAction.selectedPatient.selectedTask.stainingTableRows,true)}" />
+
+				<h:outputLabel value="#{msg['body.statiningView.choosenElements']}"
+					style="margin-left:20px;"></h:outputLabel>
+				<h:panelGroup>
+					<p:selectOneMenu value="#{slideHandlerAction.actionOnMany}"
+						onchange="PF('performOnMay').jq.click();">
+
+						<f:selectItems value="#{enumProvider.stainingListActions}"
+							var="action"
+							itemLabel="#{msg['enum.stainingListAction.'.concat(action)]}" />
+
+						<p:ajax update="navigationForm contentForm" />
+					</p:selectOneMenu>
+
+					<p:commandButton id="changeZone" widgetVar="performOnMay"
+						style="display:none;"
+						actionListener="#{slideHandlerAction.performActionOnMany(worklistHandlerAction.selectedPatient.selectedTask)}">
+					</p:commandButton>
+				</h:panelGroup>
+			</h:panelGrid>
+			<!-- ******************************** Slides ******************************** -->
+		</h:panelGrid>
 	</p:panel>
 
 </ui:composition>
