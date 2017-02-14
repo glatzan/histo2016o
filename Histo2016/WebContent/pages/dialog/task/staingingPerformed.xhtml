@@ -11,8 +11,7 @@
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
-<h:body styleClass="dialogLayout infoDialog">
-
+<h:body styleClass="defaultDialogLayout infoDialog">
 	<h:form id="dialogContent">
 
 		<div class="defaulDilaogHeaderDivWithBackground">
@@ -35,15 +34,17 @@
 					escape="false" />
 			</h:panelGrid>
 		</div>
+
 		<div class="buttonContainer">
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="1" style="float:right;">
-					<!-- ok button -->
-					<p:commandButton value="#{msg['general.confirm']}"
+					<p:commandButton value="#{msg['general.confirm']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
 						actionListener="#{slideHandlerAction.hideStainingsPerformedDialog()}"></p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
+
 		</div>
 	</h:form>
 </h:body>

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.histo.config.enums.DiagnosisStatusState;
 
-public interface DiagnosisStatus<T extends DiagnosisStatus<?> & ArchivAble> {
+public interface DiagnosisStatus<T extends DiagnosisStatus<?> & DeleteAble> {
 
 	public DiagnosisStatusState getDiagnosisStatus();
 
@@ -15,9 +15,6 @@ public interface DiagnosisStatus<T extends DiagnosisStatus<?> & ArchivAble> {
 		boolean diagnosisNeeded = false;
 
 		for (T listObject : diagnosisList) {
-
-			if (listObject.isArchived())
-				continue;
 
 			DiagnosisStatusState diagnosisStatusofChild = listObject.getDiagnosisStatus();
 

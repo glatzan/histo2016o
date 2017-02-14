@@ -40,6 +40,7 @@ import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONObject;
@@ -51,7 +52,7 @@ import org.primefaces.json.JSONObject;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 public class Patient
-		implements Parent<Patient>, DiagnosisStatus<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble {
+		implements Parent<Patient>, DiagnosisStatus<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble, SaveAble {
 
 	private long id;
 
@@ -399,10 +400,9 @@ public class Patient
 	 * Interface StainingInfo
 	 ********************************************************/
 
-	/*
-	 * ************************** Interface StainingTreeParent
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
 	@Transient
 	@Override
 	public Patient getPatient() {
@@ -440,8 +440,30 @@ public class Patient
 	@Override
 	public void setParent(Patient parent) {
 	}
-	/*
-	 * ************************** Interface StainingTreeParent
-	 * ****************************
-	 */
+	
+	@Override
+	@Transient
+	public Task getTask() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
+	
+
+
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return "Patient-Name: " + getPerson().getFullName() + " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
 }

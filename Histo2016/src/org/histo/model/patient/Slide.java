@@ -25,6 +25,7 @@ import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.util.TaskUtil;
 
 @Entity
@@ -33,7 +34,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble {
+public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, SaveAble {
 
 	private long id;
 
@@ -169,7 +170,15 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble {
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
-
+	
+	/**
+	 * Returns the parent task
+	 */
+	@Override
+	@Transient
+	public Task getTask() {
+		return getParent().getTask();
+	}
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -198,5 +207,17 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble {
 	}
 	/********************************************************
 	 * Interface ArchiveAble
+	 ********************************************************/
+	
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return getParent().getLogPath() + ", Slide-ID: " + getSlideID() + " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
 	 ********************************************************/
 }

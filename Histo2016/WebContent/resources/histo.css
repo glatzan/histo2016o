@@ -61,8 +61,7 @@ body {
 	padding: 3px;
 }
 
-.defaultListingTableCssOneCol .bold-text {
-	font-weight: bold !important;
+.defaultListingTableCssOneCol .big-text{
 	font-size: 1.2em !important;
 }
 
@@ -88,7 +87,10 @@ body {
 }
 
 .defaultListingTableCss>tbody>tr>td:first-child label {
-	font-weight: bold !important;
+	font-size: 1.2em !important;
+}
+
+.defaultListingTableCss .big-text{
 	font-size: 1.2em !important;
 }
 
@@ -119,6 +121,10 @@ body {
 .defaultListingTableColumnTop{
 	vertical-align: top;
 	padding-top: 8px !important;
+}
+
+.defaultListingTableColumn15{
+	width: 15%;
 }
 /************************************* DEFAULT TABLE *************************************/
 

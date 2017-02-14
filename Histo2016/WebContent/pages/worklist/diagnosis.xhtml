@@ -20,13 +20,14 @@
 			style="font-size:1.5em;"></h:outputLabel>
 
 
-		<h:panelGrid columns="3"
+		<h:panelGrid columns="3" style="margin-top:10px;"
 			styleClass="defaultListingTableTwoLineContainer">
 
 			<!-- Left Column -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 				<!-- material -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableCss" columnClasses="defaultListingTableColumnTop,">
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+					columnClasses="defaultListingTableColumnTop,">
 
 					<h:outputLabel value="#{msg['body.diagnosis.material']}" />
 
@@ -63,7 +64,7 @@
 				<!-- historical record -->
 				<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 					<h:outputLabel value="#{msg['body.diagnosis.story']}"
-						styleClass="bold-text" />
+						styleClass="big-text" />
 
 					<h:graphicImage value="/resources/gfx/augen.png"
 						style="width: 280px;float:right;margin-right:50px;" />
@@ -80,7 +81,7 @@
 							itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 						<p:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.eye',msg['enum.eye.'.concat(selectedTask.eye)])}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.eye',selectedTask.eye)}" />
 					</p:selectOneMenu>
 
 					<p:selectOneMenu id="historyText" style="width: 80%"
@@ -91,8 +92,7 @@
 							var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 						<p:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
-
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
 					</p:selectOneMenu>
 				</h:panelGrid>
 				<!-- Eye -->
@@ -110,9 +110,9 @@
 						disabled="#{selectedTask.diagnosisCompleted}"
 						value="#{selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 					</p:calendar>
 
 					<!-- date of receipt -->
@@ -121,9 +121,9 @@
 						disabled="#{selectedTask.diagnosisCompleted}"
 						value="#{selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 					</p:calendar>
 
 					<!-- Task Number -->
@@ -142,7 +142,7 @@
 							itemLabel="#{msg['body.diagnosis.insurance.normal']}"
 							itemValue="#{true}" />
 						<p:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.insurance', worklistHandlerAction.selectedPatient.privateInsurance)}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.insurance', worklistHandlerAction.selectedPatient.privateInsurance)}" />
 					</p:selectOneButton>
 
 					<!-- ward -->
@@ -152,7 +152,7 @@
 						<f:selectItems value="#{taskHandlerAction.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.ward',selectedTask.ward)}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
 					</p:selectOneMenu>
 
 					<!-- surgeon -->
@@ -202,7 +202,8 @@
 		<ui:repeat var="revision"
 			value="#{selectedTask.diagnosisInfo.diagnosisRevisions}">
 
-			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+				columnClasses="defaultListingTableColumnTop,">
 				<!-- Extended Diagnosis Text -->
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
 				<h:panelGroup id="extendedTextParent">
@@ -211,7 +212,7 @@
 						value="#{revision.text}">
 
 						<p:ajax event="change" execute="@this"
-							listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.histologicalRecord',selectedTask.report.histologicalRecord)}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.histologicalRecord', revision.text)}" />
 					</p:inputTextarea>
 
 
@@ -220,9 +221,10 @@
 				</h:panelGroup>
 
 				<!-- Diagnosis for sample -->
-				<h:outputLabel value="#{msg['body.diagnosis.diagnosis']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['body.diagnosis.diagnoses']}"></h:outputLabel>
 				<ui:repeat var="diagnosis" value="#{revision.diagnoses}">
-					<h:panelGrid columns="3" styleClass="defaultListingTableContainer">
+					<h:panelGrid columns="3" styleClass="defaultListingTableContainer"
+						columnClasses="defaultListingTableColumn15,">
 						<!-- sample -->
 						<h:outputLabel
 							value="#{msg['body.diagnosis.diagnosis.sample']} #{diagnosis.sample.sampleID}"></h:outputLabel>
@@ -244,10 +246,9 @@
 									var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.name}"
 									itemValue="#{diagnosisPrototype}" />
 
-								<p:ajax event="change"
-									listener="#{diagnosis.updateDiagnosisWithPrest(diagnosis.diagnosisPrototype)}" />
-								<p:ajax event="change"
+								<p:ajax event="change" update="contentForm"
 									listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
+
 							</p:selectOneMenu>
 
 							<!-- copy diagnosis text -->
@@ -255,8 +256,8 @@
 								style="margin-left:20px;"
 								title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
 								rendered="#{diagnosis.diagnosisPrototype ne null}"
-								actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecord(diagnosis)}"
-								update=":contentForm:extendedText">
+								actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecordDialog(diagnosis)}"
+								update="contentForm">
 								<i class="fa fa-hand-o-up"></i>
 								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							</p:commandLink>
@@ -271,29 +272,31 @@
 								style="margin:3px 0px 0px 3px;"
 								disabled="#{diagnosis.finalized}">
 
-								<f:ajax event="change" execute="@this"
-									listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
+								<f:ajax event="change"
+									listener="#{mainHandlerAction.saveDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
 					</h:panelGrid>
 
 					<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-						style="width:100%">
-						<h:panelGroup />
+						style="width:100%" columnClasses="defaultListingTableColumn15,">
+						<h:outputLabel />
 						<!-- diagnosis text -->
 						<p:inputTextarea value="#{diagnosis.diagnosis}" id="diagnosisText"
-							style="margin-top:5px;" disabled="#{diagnosis.finalized}"
-							styleClass="diagnosisText" rows="1">
+							style="width:100%" disabled="#{diagnosis.finalized}"
+							styleClass="">
 							<p:watermark for="diagnosisText"
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
 							<f:ajax event="change" execute="@this"
-								listener="#{diagnosisHandlerAction.diagnosisDataChanged(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
+								listener="#{mainHandlerAction.saveDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
 						</p:inputTextarea>
 					</h:panelGrid>
 					<!-- Diagnosis for sample -->
 				</ui:repeat>
 			</h:panelGrid>
 		</ui:repeat>
+
+		<p:separator />
 
 		<h:panelGrid columns="3"
 			styleClass="defaultListingTableTwoLineContainer">

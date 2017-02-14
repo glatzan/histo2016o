@@ -37,6 +37,7 @@ import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
@@ -47,7 +48,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, LogAble, DeleteAble {
+public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, LogAble, DeleteAble, SaveAble {
 
 	private long id;
 
@@ -281,6 +282,14 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 		return getParent().getPatient();
 	}
 
+	/**
+	 * Returns the parent task
+	 */
+	@Override
+	@Transient
+	public Task getTask() {
+		return getParent();
+	}
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -307,7 +316,20 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	public Dialog getArchiveDialog() {
 		return Dialog.DELETE_TREE_ENTITY;
 	}
+
 	/********************************************************
 	 * Interface ArchiveAble
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return getParent().getLogPath() + ", Sample-ID: " + getSampleID() + " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
 	 ********************************************************/
 }

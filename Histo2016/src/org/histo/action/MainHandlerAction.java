@@ -21,7 +21,9 @@ import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
@@ -333,34 +335,6 @@ public class MainHandlerAction {
 
 		String logString = "log.error";
 
-//		if (archive instanceof Slide)
-//			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived",
-//					((Slide) archive).getParent().getParent().getParent().getTaskID(),
-//					((Slide) archive).getParent().getParent().getSampleID(), ((Slide) archive).getParent().getBlockID(),
-//					((Slide) archive).getSlideID());
-//		else if (archive instanceof Diagnosis)
-//			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
-//					((Diagnosis) archive).getParent().getParent().getTaskID(),
-//					((Diagnosis) archive).getParent().getReportName(), ((Diagnosis) archive).getName());
-//		else if (archive instanceof Block)
-//			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
-//					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),
-//					((Block) archive).getBlockID());
-//		else if (archive instanceof Sample)
-//			logString = resourceBundle.get("log.patient.task.sample.archived",
-//					((Sample) archive).getParent().getTaskID(), ((Sample) archive).getSampleID());
-//		else if (archive instanceof Task)
-//			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
-//
-//		Patient patient = null;
-//
-//		if (archive instanceof Parent<?>) {
-//			patient = ((Parent<?>) archive).getPatient();
-//			// update the gui list for displaying in the receiptlog
-//			TaskUtil.generateSlideGuiList(patient.getSelectedTask());
-//		}
-
-//		genericDAO.save(archive, logString, patient);
 
 		hideArchiveObjectDialog();
 	}
@@ -376,6 +350,10 @@ public class MainHandlerAction {
 	 * Archive
 	 ********************************************************/
 
+	public void saveDataChange(SaveAble toSave, String resourcesKey,String... arr){
+		genericDAO.save(toSave, resourceBundle.get(resourcesKey,toSave.getLogPath(),arr), toSave.getPatient());
+	}
+	
 	/**
 	 * Takes a object to save and an resourcesString with optional wildcards.
 	 * This method will replace wildcard recursively ("log.test",

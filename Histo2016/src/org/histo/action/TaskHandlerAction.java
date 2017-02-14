@@ -544,40 +544,6 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task Data
 	 ********************************************************/
-	/**
-	 * Method is called if the user changes task data.
-	 * 
-	 * @param task
-	 */
-	public void taskDataChanged(Task task) {
-		taskDataChanged(task, null);
-	}
-
-	/**
-	 * Method is called if the user changes task data. A detail resources string
-	 * can be passed. This string can contain placeholder which will be replaced
-	 * by the additional parameters.
-	 * 
-	 * @param task
-	 * @param detailedInfoResourcesKey
-	 * @param detailedInfoParams
-	 */
-	public void taskDataChanged(Task task, String detailedInfoResourcesKey, Object... detailedInfoParams) {
-		String detailedInfoString = "";
-
-		if (detailedInfoResourcesKey != null)
-			detailedInfoString = resourceBundle.get(detailedInfoResourcesKey, detailedInfoParams);
-
-		genericDAO.save(task, resourceBundle.get("log.patient.task.change", task.getTaskID(), detailedInfoString),
-				task.getParent());
-		System.out.println("saving data");
-	}
-
-	public void prepareDeleteTaskTreeEntityDialog(DeleteAble toDelete) {
-		setTaskTreeEntityToDelete(toDelete);
-		mainHandlerAction.showDialog(Dialog.DELETE_TREE_ENTITY);
-	}
-
 	public void deleteTaskTreeEntity(DeleteAble toDelete) {
 		if (toDelete instanceof Slide) {
 			Slide toDeleteSlide = (Slide) toDelete;

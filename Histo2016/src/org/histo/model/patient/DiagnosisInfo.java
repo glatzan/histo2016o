@@ -27,7 +27,10 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.model.Signature;
+import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 
 @Entity
 @Audited
@@ -35,7 +38,7 @@ import org.histo.model.interfaces.Parent;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisInfo_sequencegenerator", sequenceName = "diagnosisInfo_sequence")
-public class DiagnosisInfo implements Parent<Task> {
+public class DiagnosisInfo implements Parent<Task>, LogAble, SaveAble {
 
 	private static Logger logger = Logger.getLogger(DiagnosisInfo.class);
 
@@ -76,6 +79,7 @@ public class DiagnosisInfo implements Parent<Task> {
 	public void setSignatureDateAsDate(Date signatureDateAsDate) {
 		this.signatureDate = signatureDateAsDate.getTime();
 	}
+
 	/******** Transient ********/
 
 	/******** Interface Parent ********/
@@ -148,5 +152,27 @@ public class DiagnosisInfo implements Parent<Task> {
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
+
+	/**
+	 * Returns the parent task
+	 */
+	@Override
+	@Transient
+	public Task getTask() {
+		return getParent().getTask();
+	}
+
 	/******** Interface Parent ********/
+
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return getParent().getLogPath();
+	}
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
 }

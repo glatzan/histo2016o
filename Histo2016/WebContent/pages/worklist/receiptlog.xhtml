@@ -20,7 +20,7 @@
 			value="#{msg['body.receiptlog.taskId']} #{worklistHandlerAction.selectedPatient.selectedTask.taskID}"
 			style="font-size:1.5em;"></h:outputLabel>
 
-		<h:panelGrid columns="5"
+		<h:panelGrid columns="5" style="margin-top:10px;"
 			styleClass="defaultListingTableThreeLineContainer">
 
 			<!-- left column -->
@@ -31,10 +31,10 @@
 					styleClass="smallInput"
 					value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
 					<p:ajax event="dateSelect"
-						listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}"
+						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}"
 						update="receiptDate" />
 					<f:ajax event="change" execute="@this" render="receiptDate"
-						listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate))}" />
+						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 				</p:calendar>
 
 				<!-- Termin Date -->
@@ -45,7 +45,7 @@
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
 						<p:ajax event="change" execute="@this"
 							update="navigationForm contentForm"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate',worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected)}">
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate',selectedTask.dueDateSelected)}">
 						</p:ajax>
 					</p:selectBooleanCheckbox>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
@@ -53,10 +53,10 @@
 						value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
 						disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
 						<p:ajax event="dateSelect"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}"
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}"
 							update="dueDate" />
 						<f:ajax event="change" execute="@this" render="dueDate"
-							listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.dueDate.date',mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate))}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}" />
 					</p:calendar>
 				</h:panelGrid>
 
@@ -68,7 +68,7 @@
 					<f:selectItems value="#{taskHandlerAction.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 					<p:ajax event="change" execute="@this"
-						listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.ward',selectedTask.ward)}" />
+						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
 				</p:selectOneMenu>
 
 				<!-- History -->
@@ -82,8 +82,7 @@
 						var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 					<p:ajax event="change" execute="@this"
-						listener="#{taskHandlerAction.taskDataChanged(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
-
+						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
 				</p:selectOneMenu>
 
 				<!-- EYE -->
@@ -95,7 +94,7 @@
 						itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 					<p:ajax event="change" execute="@this"
-						listener="#{taskHandlerAction.taskDataChanged(worklistHandlerAction.selectedPatient.selectedTask,'log.patient.task.change.eye',msg['enum.eye.'.concat(worklistHandlerAction.selectedPatient.selectedTask.eye)])}" />
+						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.eye')}" />
 				</p:selectOneMenu>
 
 				<!-- other -->
@@ -116,7 +115,7 @@
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 				<!-- material -->
 				<p:outputLabel value="#{msg['body.receiptlog.material']}"
-					styleClass="bold-text" />
+					styleClass="big-text" />
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 					<c:forEach items="#{selectedTask.samples}" var="sample"
 						varStatus="loopCount">
@@ -149,7 +148,7 @@
 				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
 					<!-- contact -->
 					<h:outputLabel value="#{msg['body.receiptlog.notification']}"
-						styleClass="bold-text" />
+						styleClass="big-text" />
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right"
 						actionListener="#{contactHandlerAction.showContacts(worklistHandlerAction.selectedPatient.selectedTask)}">
@@ -194,7 +193,8 @@
 		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 			<!-- healinse -->
 			<h:panelGroup>
-				<h:outputLabel value="#{msg['body.receiptlog.slide.name']}" />
+				<h:outputLabel value="#{msg['body.receiptlog.slide.name']}"
+					style="font-size:1.2em !important;"></h:outputLabel>
 				<!-- staining completed -->
 				<h:panelGroup
 					rendered="#{worklistHandlerAction.selectedPatient.selectedTask.getStainingStatus() eq 'PERFORMED'}">
@@ -257,7 +257,8 @@
 						<p:column
 							styleClass="columnSample #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.sampleType}">
-								<h:outputLabel for="basic" value="#{msg['body.receiptlog.slide.sample']} " />
+								<h:outputLabel for="basic"
+									value="#{msg['body.receiptlog.slide.sample']} " />
 								<p:inplace id="basic" styleClass="inplaceInput">
 									<p:inputText value="#{stainingRow.sample.sampleID}" />
 								</p:inplace>
@@ -268,7 +269,8 @@
 						<p:column
 							styleClass="columnBlock #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.blockType}">
-								<h:outputLabel for="block" value="#{msg['body.receiptlog.slide.block']} "
+								<h:outputLabel for="block"
+									value="#{msg['body.receiptlog.slide.block']} "
 									rendered="#{stainingRow.block ne null}" />
 								<p:inplace id="block" styleClass="inplaceInput"
 									rendered="#{stainingRow.block ne null}">

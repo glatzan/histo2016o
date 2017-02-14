@@ -17,10 +17,10 @@ public enum Dialog {
 	TASK_CREATE("/pages/dialog/task/createTask", null, 858, 484, false, false, true), // 16:9
 	TASK_ARCHIV("/pages/dialog/task/archivTask", null, 0, 0, false, false, true), 
 	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9
-	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 0, 0, false, false, true),
+	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
 	DIAGNOSIS_FINALIZE("/pages/dialog/diagnosis/finalizeDiagnosis", null, 480, 272, false, false, true),// 16:9
 	DIAGNOSIS_UNFINALIZE("/pages/dialog/diagnosis/unfinalizeDiagnosis", null, 0, 0, false, false, true),
-	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/diagnosis/histologicalRecordOverwrite", null, 0, 0, false, false, true),
+	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/diagnosis/histologicalRecordOverwrite", null, 480, 272, false, false, true), // 16:9
 	STAINING_PERFORMED("/pages/dialog/task/staingingPerformed", null, 480, 272, false, false, true), // 16:9
 	CONTACTS("/pages/dialog/contact/contact", null, 1024, 600, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9

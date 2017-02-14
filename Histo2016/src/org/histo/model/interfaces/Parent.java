@@ -1,6 +1,7 @@
 package org.histo.model.interfaces;
 
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 
 /**
  * Interface for every object of the task tree (Task->Sample->Block->Staining).
@@ -13,6 +14,8 @@ import org.histo.model.patient.Patient;
 public interface Parent<T>{
     public Patient getPatient();
 
+    public Task getTask();
+    
     public T getParent();
 
     public void setParent(T parent);

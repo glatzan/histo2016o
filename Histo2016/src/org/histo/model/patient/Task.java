@@ -48,6 +48,7 @@ import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
@@ -62,7 +63,7 @@ import org.springframework.core.annotation.Order;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisStatus<DiagnosisRevision>, CreationDate,
-		DeleteAble, LogAble, ArchivAble {
+		DeleteAble, LogAble, ArchivAble, SaveAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -861,7 +862,15 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public Patient getPatient() {
 		return getParent();
 	}
-
+	
+	/**
+	 * Returns the parent task
+	 */
+	@Override
+	@Transient
+	public Task getTask() {
+		return this;
+	}
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -907,4 +916,16 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 * Interface ArchiveAble
 	 ********************************************************/
 
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return "Task-ID: " + getTaskID()+ " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	
 }

@@ -96,9 +96,9 @@ public class DiagnosisHandlerAction implements Serializable {
 		logger.info("Removing diagnosis " + diagnosis.getName());
 
 		Sample tmp = diagnosis.getSample();
-		
+
 		diagnosis.setSample(null);
-		
+
 		diagnosis.getParent().getDiagnoses().remove(diagnosis);
 
 		genericDAO.delete(diagnosis,
@@ -125,16 +125,17 @@ public class DiagnosisHandlerAction implements Serializable {
 		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().size());
 		diagnosisRevision.setType(type);
 		diagnosisRevision.setParent(parent);
-		diagnosisRevision.setName(TaskUtil.getDiagnosisName(parent.getDiagnosisRevisions(), diagnosisRevision, resourceBundle));
+		diagnosisRevision
+				.setName(TaskUtil.getDiagnosisName(parent.getDiagnosisRevisions(), diagnosisRevision, resourceBundle));
 
 		// saving to database
 		genericDAO.save(diagnosisRevision,
 				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.new",
 						diagnosisRevision.getParent().getParent().getTaskID(), diagnosisRevision.getName()),
 				diagnosisRevision.getPatient());
-		
+
 		parent.getDiagnosisRevisions().add(diagnosisRevision);
-		
+
 		// creating a diagnosis for every sample
 		for (Sample sample : parent.getParent().getSamples()) {
 			createDiagnosis(diagnosisRevision, sample);
@@ -183,6 +184,8 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		List<Sample> samplesToAddDiagnosis = new ArrayList<Sample>(samples);
 
+		List<Diagnosis> toRemoveDiagnosis = new ArrayList<Diagnosis>();
+
 		outerLoop: for (Diagnosis diagnosis : diagnosesInRevision) {
 			// sample already in diagnosisList, removing from to add array
 			for (Sample sample : samplesToAddDiagnosis) {
@@ -195,6 +198,11 @@ public class DiagnosisHandlerAction implements Serializable {
 			logger.trace("Diagnosis has no sample, removing diagnosis " + diagnosis.getId());
 			// not found within samples, so sample was deleted, deleting
 			// diagnosis as well.
+			toRemoveDiagnosis.add(diagnosis);
+		}
+
+		// removing diagnose if necessary
+		for (Diagnosis diagnosis : toRemoveDiagnosis) {
 			removeDiagnosis(diagnosis);
 		}
 
@@ -339,72 +347,82 @@ public class DiagnosisHandlerAction implements Serializable {
 		hideUnfinalizeDiangosisDialog();
 	}
 
-	public void diagnosisDataChanged(Diagnosis diagnosis) {
-		diagnosisDataChanged(diagnosis, null);
-	}
-
-	public void diagnosisDataChanged(Diagnosis diagnosis, String detailedInfoResourcesKey,
-			Object... detailedInfoParams) {
-		// String detailedInfoString = "";
-		//
-		// if (detailedInfoResourcesKey != null)
-		// detailedInfoString = resourceBundle.get(detailedInfoResourcesKey,
-		// detailedInfoParams);
-		//
-		// genericDAO.save(diagnosis,
-		// resourceBundle.get("log.patient.task.sample.diagnosis.changed",
-		// diagnosis.getParent().getParent().getTaskID(),
-		// diagnosis.getParent().getSampleID(),
-		// detailedInfoString),
-		// diagnosis.getPatient());
-
-		// TODO: rework
-	}
-
 	public void onDiagnosisPrototypeChanged(Diagnosis diagnosis) {
-		// Task task = diagnosis.getParent().getParent();
-		//
-		// // only setting diagnosis text if one sample and no text has been
-		// added
-		// // jet
-		// if (task.getSamples().size() == 1 &&
-		// (task.getReport().getHistologicalRecord() != null
-		// || task.getReport().getHistologicalRecord().isEmpty()))
-		// task.getReport().setHistologicalRecord(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
-		//
-		// genericDAO.save(diagnosis, "hallo", diagnosis.getPatient());
-		// System.out.println("changed");
+		logger.debug("Updating diagnosis prototype");
+		Task task = diagnosis.getParent().getParent().getParent();
 
-		// TODO: rework
+		diagnosis.updateDiagnosisWithPrest(diagnosis.getDiagnosisPrototype());
+
+		genericDAO.save(diagnosis,
+				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosis.update", diagnosis.getLogPath()),
+				diagnosis.getPatient());
+
+		// only setting diagnosis text if one sample and no text has been added
+		// jet
+		if (task.getSamples().size() == 1
+				&& (diagnosis.getParent().getText() != null || diagnosis.getParent().getText().isEmpty())) {
+			diagnosis.getParent().setText(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+			logger.debug("Updating revision extended text");
+			genericDAO.save(diagnosis.getParent(),
+					resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.update", task.getId(),
+							diagnosis.getParent().getName()),
+					diagnosis.getPatient());
+		}
+
 	}
 
-	public void prepareCopyHistologicalRecord(Diagnosis tmpDiagnosis) {
+	/**
+	 * Overwrites the extended text of the diagnosisRevison if no text is
+	 * present. If text was entered, a dialog will be shown.
+	 * 
+	 * @param tmpDiagnosis
+	 */
+	public void prepareCopyHistologicalRecordDialog(Diagnosis tmpDiagnosis) {
 		setTmpDiagnosis(tmpDiagnosis);
-		//
-		// // setting diagnosistext if no text is set
-		// if
-		// (tmpDiagnosis.getParent().getParent().getReport().getHistologicalRecord().isEmpty()
-		// && tmpDiagnosis.getDiagnosisPrototype() != null) {
-		// copyHistologicalRecord(tmpDiagnosis);
-		// return;
-		// }
-		//
-		// if (tmpDiagnosis.getDiagnosisPrototype() != null)
-		// mainHandlerAction.showDialog(Dialog.DIAGNOSIS_RECORD_OVERWRITE);
 
-		// TODO: rework
+		// setting diagnosistext if no text is set
+		if ((tmpDiagnosis.getParent().getText() == null || tmpDiagnosis.getParent().getText().isEmpty())
+				&& tmpDiagnosis.getDiagnosisPrototype() != null) {
+			copyHistologicalRecord(tmpDiagnosis, true);
+			logger.debug("No extended diagnosistext found, text copied");
+			return;
+		}
+
+		if (tmpDiagnosis.getDiagnosisPrototype() != null) {
+			logger.debug("Extended diagnosistext found, showing confing dialog");
+			mainHandlerAction.showDialog(Dialog.DIAGNOSIS_RECORD_OVERWRITE);
+		}
+
 	}
 
-	public void copyHistologicalRecord(Diagnosis tmpDiagnosis) {
-		// tmpDiagnosis.getParent().getParent().getReport()
-		// .setHistologicalRecord(tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
-		// setTmpDiagnosis(null);
-		//
-		// taskHandlerAction.taskDataChanged(tmpDiagnosis.getParent().getParent(),
-		// "log.patient.task.change.histologicalRecord",
-		// tmpDiagnosis.getParent().getParent().getReport().getHistologicalRecord());
-		// System.out.println("---------!!!!!!!!!");
-		// TODO: rework
+	/**
+	 * Will overwrite the diangosisrevision text if overwrite ist true,
+	 * ostherwise the text of the diagnosis will be added
+	 * 
+	 * @param tmpDiagnosis
+	 * @param overwrite
+	 */
+	public void copyHistologicalRecord(Diagnosis tmpDiagnosis, boolean overwrite) {
+		logger.debug("Setting extended diagnosistext text");
+		tmpDiagnosis.getParent()
+				.setText(overwrite ? tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText()
+						: tmpDiagnosis.getParent().getText() + "\r\n"
+								+ tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+
+		genericDAO.save(tmpDiagnosis.getParent(),
+				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.update",
+						tmpDiagnosis.getParent().getParent().getParent().getId(), tmpDiagnosis.getParent().getName()),
+				tmpDiagnosis.getPatient());
+
+		hideCopyHistologicalRecordDialog();
+	}
+
+	/**
+	 * Hides the overwrite warning dialog
+	 */
+	public void hideCopyHistologicalRecordDialog() {
+		setTmpDiagnosis(null);
+		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_RECORD_OVERWRITE);
 	}
 
 	/********************************************************

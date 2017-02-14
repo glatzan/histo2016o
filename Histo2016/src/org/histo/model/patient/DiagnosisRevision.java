@@ -35,8 +35,11 @@ import org.histo.config.enums.Dialog;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisStatus;
+import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.util.TaskUtil;
 
 import com.google.gson.annotations.Expose;
@@ -47,7 +50,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
-public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>, ArchivAble {
+public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>, DeleteAble, LogAble, SaveAble {
 
 	private long id;
 
@@ -254,7 +257,16 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
-
+	
+	/**
+	 * Returns the parent task
+	 */
+	@Override
+	@Transient
+	public Task getTask() {
+		return getParent().getTask();
+	}
+	
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -262,25 +274,6 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	/********************************************************
 	 * Interface ArchiveAble
 	 ********************************************************/
-	/**
-	 * Overwrites Interface ArchiveAble
-	 */
-	@Basic
-	public boolean isArchived() {
-		return archived;
-	}
-
-	/**
-	 * Overwrites Interface ArchiveAble, sets all chides as well
-	 */
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-		// setzt Kinder
-		for (Diagnosis diagnosis : getDiagnoses()) {
-			diagnosis.setArchived(archived);
-		}
-	}
-
 	/**
 	 * Overwrites Interface ArchiveAble
 	 */
@@ -302,4 +295,15 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	 * Interface ArchiveAble
 	 ********************************************************/
 
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return getParent().getLogPath() + ", Revision-ID: " + getName() + " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
 }
