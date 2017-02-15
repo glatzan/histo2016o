@@ -1,23 +1,59 @@
-\documentclass{scrreprt}
+\documentclass[12pt]{g-brief}
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage{graphicx}
+%\usepackage[left=1.5cm,right=1.5cm,top=3cm,bottom=2cm]{geometry}
 \usepackage{wallpaper}
 \usepackage[absolute]{textpos}
-\usepackage{tabularx} 
 \usepackage[T1]{fontenc}
-\usepackage{supertabular}
-\usepackage[left=1.5cm,right=1.5cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
 
-\renewcommand{\familydefault}{\sfdefault} 
+
+
+\usepackage{ifthen}
+\usepackage{everypage}
+
+
+\usepackage{tabularx} 
+\usepackage{supertabular}
 \usepackage{helvet} 
 
+\usepackage{helvet}
+
+\usepackage{array,longtable,calc}
+\renewcommand{\familydefault}{\sfdefault}
+
+\renewcommand{\datum}{}
+\renewcommand{\datumtext}{}
+
+ \fenstermarken
+ \faltmarken
 
 
-\setcounter{secnumdepth}{0}
+ \Unterschrift {Max Mustermann}
+ \Postvermerk {Einschreiben}
+ \Adresse {Lena Musterfrau \\
+ Musterstraße 1 \\
+ 08150 Musterstadt}
+ \Betreff {\Large Histologisches Gutachten}
+ \Gruss {Mit freundlichen Grüßen}{1cm}
+ \Anlagen {Beispielanhang}
+
+
+%deactive pagenumbering%
+\pagenumbering{gobble}
+
+\pagestyle{fancy}
+
+\AddEverypageHook{%
+   \ifthenelse{\value{page}=1}%
+     {\renewcommand{\headrulewidth}{0.0pt}}%
+     {\renewcommand{\headrulewidth}{0.4pt}}%
+}
+
 
 \begin{document}
-\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
+%\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
  \input{d:/latex/code128.tex}
 
 \baselineskip10pt
@@ -26,10 +62,54 @@
 \setlength{\TPHorizModule}{1mm}
 \setlength{\TPVertModule}{1mm}
 
+{
+\scriptsize
+\begin{textblock}{100}(165, 265) 
+\includegraphics[scale=0.4]{LogoFrei.png}
+\end{textblock}
+}
+{
+\scriptsize
+\begin{textblock}{100}(123, 7) 
+\includegraphics[scale=0.25]{Formuladr.png}
+\end{textblock}
+}
 
 {
-\footnotesize
-\begin{textblock}{100}(25, 10) 
+\scriptsize
+\begin{textblock}{100}(115, 40) 
+Klinik für Augenheilkunde \\
+\textbf{Histologisches Labor}\\\\
+Ärztlicher Direktor\\
+\textbf{Universitätsprofessor\\
+Dr. Thomas Reinhard}\\\\
+Killianstr. 5\\
+79183 Freiburg\\
+Tel. 0761/ 270-40060\\
+\end{textblock}
+}
+
+{
+\scriptsize
+\begin{textblock}{100}(155, 40) 
+Leiterin Histologisches Labors\\
+\textbf{Prof. Dr. Claudia Auw-Hädrich}\\
+Tel.0761/270-41950\\
+Fax0761/270-41090\\\\
+\textbf{Befundauskunft}\\
+Tel.0761/270-40760\\
+Fax0761/270-41090\\\\
+\textbf{Histologisches Labor}\\
+c/o Engesserstr. 4\\
+79183 Freiburg\\
+Tel.0761/270-40580\\
+Fax0761/270-40581
+\end{textblock}
+}
+
+{
+\scriptsize
+\begin{textblock}{100}(19, 8) 
 \noindent <PATname>, <PATvorname>\\
 <PAanschrift>\\
 <PATplz> <PATort>\\\\
@@ -40,8 +120,22 @@
 \end{textblock}
 }
 
-\begin{center}{100}(25, 250) 
-\vspace{150mm} %5mm vertical space
+
+
+%\vspace*{0.5\textheight}
+
+\begin{g-brief}
+\begin{longtable}{|@{}*{2}{m{0.5\linewidth}|}}\hline
+\begin{tabular}{m{0.5\linewidth-\tabcolsep}|m{0.5\linewidth-\tabcolsep}@{}}
+A & B\\\hline
+C & D
+\end{tabular}%
+     & E \tabularnewline\hline
+\hspace{\tabcolsep}F       & G \tabularnewline\hline
+\end{longtable}
+
+
+
 Finster war's, der Mond schien helle auf die grünbeschneite Flur, als 
 saßen stehend Leute schweigend ins Gespräch vertieft, als ein
 totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
@@ -117,6 +211,7 @@ saßen stehend Leute schweigend ins Gespräch vertieft, als ein
 totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
 blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
 sich setzte, die gelb angestrichen war.
-\end{center}
+
+ \end{g-brief}
 
 \end{document}
