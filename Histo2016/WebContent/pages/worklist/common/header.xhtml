@@ -237,7 +237,7 @@
 			<!-- Print button -->
 			<p:commandButton id="printBtn" style="display:none"
 				widgetVar="printBtnVar"
-				actionListener="#{pdfHandlerAction.showPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				actionListener="#{printHandlerAction.showDefaultPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>

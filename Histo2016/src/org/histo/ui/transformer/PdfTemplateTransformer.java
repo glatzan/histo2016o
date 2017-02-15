@@ -6,7 +6,7 @@ import javax.faces.convert.Converter;
 
 import org.histo.model.transitory.json.PdfTemplate;
 
-
+// TODO DELETE
 public class PdfTemplateTransformer implements Converter {
 
 	private PdfTemplate[] templates;

@@ -122,9 +122,24 @@ body {
 	vertical-align: top;
 	padding-top: 8px !important;
 }
+.defaultListingTableColumn10{
+	width: 10%;
+}
 
 .defaultListingTableColumn15{
 	width: 15%;
+}
+
+.defaultListingTableColumn20{
+	width: 20%;
+}
+
+.defaultListingTableColumn25{
+	width: 25%;
+}
+
+.defaultListingTableColumn30{
+	width: 30%;
 }
 /************************************* DEFAULT TABLE *************************************/
 
@@ -751,19 +766,6 @@ body {
 	text-align: right;
 }
 
-.attachedPDFTable table {
-	width: 100%;
-}
-
-.attachedPDFTable .attachedPDFTableLink:hover {
-	text-decoration: underline !important;
-	font-weight: normal !important;
-	background-color: black !important;
-}
-
-.attachedPDFTable .ui-datagrid-content div:nth-child(even) td {
-	background: #f9f9f9;
-}
 
 /*	################# print dialog ################# */
 

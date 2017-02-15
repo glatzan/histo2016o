@@ -49,22 +49,13 @@ public class UserHandlerAction implements Serializable {
 	 * login
 	 ********************************************************/
 	
-	/********************************************************
-	 * user settings dialog
-	 ********************************************************/
-	private ClinicPrinterTransformer clinicPrinterTransformer;
-	/********************************************************
-	 * user settings dialog
-	 ********************************************************/
-	
-	
 	
 	/********************************************************
 	 * user settings dialog
 	 ********************************************************/
 	public void prepareUserSettingsDialog() {
 		mainHandlerAction.showDialog(Dialog.USER_SETTINGS);
-		setClinicPrinterTransformer(new ClinicPrinterTransformer(mainHandlerAction.getSettings().getPrinter().getPrinters()));
+		mainHandlerAction.setClinicPrinterTransformer(new ClinicPrinterTransformer(mainHandlerAction.getSettings().getPrinter().getPrinters()));
 	}
 	
 	public void saveUserSettings(){
@@ -73,13 +64,13 @@ public class UserHandlerAction implements Serializable {
 	}
 	
 	public void updateSelectedPrinterWithinSettings(ClinicPrinter clinicPrinter){
-		mainHandlerAction.getSettings().getPrinter().setSelectedPrinter(getCurrentUser().getPreferedPrinter());
+		mainHandlerAction.getSettings().getPrinter().setDefaultPrinter(getCurrentUser().getPreferedPrinter());
 	}
 	
 	public void hideUserSettingsDialog(){
 		genericDAO.refresh(getCurrentUser());
-		setClinicPrinterTransformer(null);
-		mainHandlerAction.getSettings().getPrinter().setSelectedPrinter(getCurrentUser().getPreferedPrinter());
+		mainHandlerAction.setClinicPrinterTransformer(null);
+		mainHandlerAction.getSettings().getPrinter().setDefaultPrinter(getCurrentUser().getPreferedPrinter());
 		mainHandlerAction.hideDialog(Dialog.USER_SETTINGS);
 	}
 	/********************************************************
@@ -220,14 +211,6 @@ public class UserHandlerAction implements Serializable {
 
 	public void setUnlockRequestSend(boolean unlockRequestSend) {
 		this.unlockRequestSend = unlockRequestSend;
-	}
-
-	public ClinicPrinterTransformer getClinicPrinterTransformer() {
-		return clinicPrinterTransformer;
-	}
-
-	public void setClinicPrinterTransformer(ClinicPrinterTransformer clinicPrinterTransformer) {
-		this.clinicPrinterTransformer = clinicPrinterTransformer;
 	}
 	/********************************************************
 	 * Getter/Setter

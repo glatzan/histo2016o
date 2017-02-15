@@ -7,9 +7,10 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import org.histo.model.DiagnosisPreset;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 
-public class DefaultTransformer<T extends LogAble> implements Converter {
+public class DefaultTransformer<T extends HasID> implements Converter {
 
 	private List<T> objects;
 
@@ -35,7 +36,7 @@ public class DefaultTransformer<T extends LogAble> implements Converter {
 	}
 
 	public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-		if (object != null && object instanceof LogAble) {
+		if (object != null && object instanceof HasID) {
 			return String.valueOf(((T) object).getId());
 		} else {
 			return "";

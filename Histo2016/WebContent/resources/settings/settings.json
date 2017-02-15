@@ -23,6 +23,7 @@
          }
       }
    },
+   
    "ldap":{  
       "host":"ldap.ukl.uni-freiburg.de",
       "port":389,
@@ -36,13 +37,17 @@
    "errorMails":[  
       "andreas.glatz@uniklinik-freiburg.de"
    ],
+   
    "clinicJsonHandler":{  
       "baseUrl":"http://auginfo/piz",
       "userAgent":"Mozilla/5.0"
    },
+   
    "printer":{  
       "host":"10.210.21.254/printers/",
       "port":631,
       "testPage":"classpath:templates/testPage.pdf"
-   }
+   },
+   
+   "workingDirectory" : "classpath:templates/print"
 }

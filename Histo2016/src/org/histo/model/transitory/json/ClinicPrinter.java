@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.net.URL;
 
 import org.cups4j.CupsPrinter;
-import org.histo.model.interfaces.LogAble;
 
 public class ClinicPrinter implements Serializable {
 

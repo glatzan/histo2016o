@@ -25,6 +25,7 @@ public enum Dialog {
 	CONTACTS("/pages/dialog/contact/contact", null, 1024, 600, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
+	PRINT_NEW("/pages/dialog/print/printNew", null, 1280, 720, false, false, true), // 16:9
 	COUNCIL("/pages/dialog/task/council", null,  640, 360, false, false, true), // 16:9
 	USER_SETTINGS("/pages/dialog/settings/histoUserSettings", null,  640, 360, false, false, true), // 16:9
 	NOTIFICATION_ALREADY_PERFORMED("/pages/dialog/notification/notification_already_performed", null,  480, 272, false, false, true), //  16:9

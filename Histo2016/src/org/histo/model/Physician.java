@@ -23,6 +23,7 @@ import org.hibernate.envers.Audited;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 
 import com.google.gson.annotations.Expose;
@@ -32,7 +33,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "physician_sequencegenerator", sequenceName = "physician_sequence")
-public class Physician implements Serializable, ArchivAble, LogAble {
+public class Physician implements Serializable, ArchivAble, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 

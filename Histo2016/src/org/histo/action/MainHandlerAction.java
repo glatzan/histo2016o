@@ -30,6 +30,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.ui.transformer.ClinicPrinterTransformer;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -114,6 +115,14 @@ public class MainHandlerAction {
 	 */
 	private HistoSettings settings;
 
+	/********************************************************
+	 * printing
+	 ********************************************************/
+	private ClinicPrinterTransformer clinicPrinterTransformer;
+
+	/********************************************************
+	 * printing
+	 ********************************************************/
 	
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
@@ -130,7 +139,7 @@ public class MainHandlerAction {
 
 		// setting preferred printer
 		if(userHandlerAction.getCurrentUser().getPreferedPrinter() != null){
-			getSettings().getPrinter().setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
+			getSettings().getPrinter().setDefaultPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 		}
 		
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
@@ -462,6 +471,13 @@ public class MainHandlerAction {
 		this.settings = settings;
 	}
 
+	public ClinicPrinterTransformer getClinicPrinterTransformer() {
+		return clinicPrinterTransformer;
+	}
+
+	public void setClinicPrinterTransformer(ClinicPrinterTransformer clinicPrinterTransformer) {
+		this.clinicPrinterTransformer = clinicPrinterTransformer;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

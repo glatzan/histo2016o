@@ -1,5 +1,6 @@
 package org.histo.model.transitory.json;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
+import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.GsonAble;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
@@ -32,14 +34,38 @@ public class ClinicPrinterManager implements GsonAble {
 
 	private List<ClinicPrinter> printers;
 
-	private ClinicPrinter selectedPrinter;
-
+	private ClinicPrinter defaultPrinter;
+	
 	public final void print(File file) {
 		CupsClient cupsClient;
 		try {
 			cupsClient = new CupsClient(host, port);
-			CupsPrinter printer = cupsClient.getPrinter(selectedPrinter.getPrinterURL());
+			CupsPrinter printer = cupsClient.getPrinter(getDefaultPrinter().getPrinterURL());
 			PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
+			printer.print(printJob);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public final void print(ClinicPrinter cPrinter, File file) {
+		CupsClient cupsClient;
+		try {
+			cupsClient = new CupsClient(host, port);
+			CupsPrinter printer = cupsClient.getPrinter(cPrinter.getPrinterURL());
+			PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
+			printer.print(printJob);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public final void print(ClinicPrinter cPrinter, PDFContainer container) {
+		CupsClient cupsClient;
+		try {
+			cupsClient = new CupsClient(host, port);
+			CupsPrinter printer = cupsClient.getPrinter(cPrinter.getPrinterURL());
+			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
 			printer.print(printJob);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -55,9 +81,9 @@ public class ClinicPrinterManager implements GsonAble {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			appContext.close();
 		}
-//		print(new File(
-//				"D:\\Dropbox\\Projekte\\Histo2016offline\\Histo2016\\WebContent\\resources\\templates\\testPage.pdf"));
 	}
 
 	public final boolean initPrinters() {
@@ -74,7 +100,7 @@ public class ClinicPrinterManager implements GsonAble {
 
 			// setting default printer
 			if (printers != null && printers.size() > 1) {
-				setSelectedPrinter(printers.get(0));
+				setDefaultPrinter(printers.get(0));
 			}
 
 			logger.debug("Printers init successful");
@@ -98,10 +124,6 @@ public class ClinicPrinterManager implements GsonAble {
 		return printers;
 	}
 
-	public ClinicPrinter getSelectedPrinter() {
-		return selectedPrinter;
-	}
-
 	public void setHost(String host) {
 		this.host = host;
 	}
@@ -114,8 +136,13 @@ public class ClinicPrinterManager implements GsonAble {
 		this.printers = printers;
 	}
 
-	public void setSelectedPrinter(ClinicPrinter selectedPrinter) {
-		this.selectedPrinter = selectedPrinter;
+	public ClinicPrinter getDefaultPrinter() {
+		return defaultPrinter;
 	}
 
+	public void setDefaultPrinter(ClinicPrinter defaultPrinter) {
+		this.defaultPrinter = defaultPrinter;
+	}
+	
+	
 }

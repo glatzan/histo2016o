@@ -1,11 +1,17 @@
 package org.histo.config;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+
 import org.apache.log4j.Logger;
 import org.histo.model.transitory.json.ClinicJsonHandler;
 import org.histo.model.transitory.json.ClinicPrinterManager;
 import org.histo.model.transitory.json.LdapHandler;
 import org.histo.model.transitory.json.MailHandler;
 import org.histo.util.HistoUtil;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.Resource;
 
 import com.google.gson.Gson;
 
@@ -13,6 +19,8 @@ public class HistoSettings {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	public static final String TEX_TEMPLATE_JSON = "classpath:templates/print.json";
+	
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
 	public static final String DEFAULT_SETTINGS_JSON = "classpath:settings/settings.json";
 	public static final String VERSION_JSON = "classpath:templates/version.json";
@@ -37,7 +45,7 @@ public class HistoSettings {
 	 * Handels clinic printers
 	 */
 	private ClinicPrinterManager printer;
-	
+
 	/**
 	 * Object for sending mails via clini backend
 	 */
@@ -73,11 +81,32 @@ public class HistoSettings {
 	 * The current version of the program
 	 */
 	private String currentVersion;
-	
+
+	/**
+	 * Directory for creating pdfs
+	 */
+	private String workingDirectory;
+
+	public URI getAbsolutePath(String path) {
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
+		Resource resource = appContext.getResource(path);
+		URI result = null;
+		try {
+			result = resource.getURI();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			appContext.close();
+		}
+
+		return result;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	
+
 	public String getDefaultSlideLableLayout() {
 		return defaultSlideLableLayout;
 	}
@@ -141,6 +170,15 @@ public class HistoSettings {
 	public void setPrinter(ClinicPrinterManager printer) {
 		this.printer = printer;
 	}
+
+	public String getWorkingDirectory() {
+		return workingDirectory;
+	}
+
+	public void setWorkingDirectory(String workingDirectory) {
+		this.workingDirectory = workingDirectory;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
