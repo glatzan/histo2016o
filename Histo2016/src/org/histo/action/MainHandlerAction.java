@@ -125,7 +125,14 @@ public class MainHandlerAction {
 		navigationPages.add(View.USERLIST);
 
 		setSettings(HistoSettings.factory());
+		
+		getSettings().getPrinter().initPrinters();
 
+		// setting preferred printer
+		if(userHandlerAction.getCurrentUser().getPreferedPrinter() != null){
+			getSettings().getPrinter().setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
+		}
+		
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);
 			navigationPages.add(View.WORKLIST_RECEIPTLOG);

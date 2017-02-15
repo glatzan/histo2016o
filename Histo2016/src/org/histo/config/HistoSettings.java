@@ -2,6 +2,7 @@ package org.histo.config;
 
 import org.apache.log4j.Logger;
 import org.histo.model.transitory.json.ClinicJsonHandler;
+import org.histo.model.transitory.json.ClinicPrinterManager;
 import org.histo.model.transitory.json.LdapHandler;
 import org.histo.model.transitory.json.MailHandler;
 import org.histo.util.HistoUtil;
@@ -13,7 +14,7 @@ public class HistoSettings {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
-	public static final String DEFAULT_SETTINGS_JSON = "classpath:templates/settings.json";
+	public static final String DEFAULT_SETTINGS_JSON = "classpath:settings/settings.json";
 	public static final String VERSION_JSON = "classpath:templates/version.json";
 	public static final String LABEL_PRINTER_JSON = "classpath:templates/labelPrinter.json";
 
@@ -32,6 +33,11 @@ public class HistoSettings {
 		return result;
 	}
 
+	/**
+	 * Handels clinic printers
+	 */
+	private ClinicPrinterManager printer;
+	
 	/**
 	 * Object for sending mails via clini backend
 	 */
@@ -126,6 +132,14 @@ public class HistoSettings {
 
 	public void setCurrentVersion(String currentVersion) {
 		this.currentVersion = currentVersion;
+	}
+
+	public ClinicPrinterManager getPrinter() {
+		return printer;
+	}
+
+	public void setPrinter(ClinicPrinterManager printer) {
+		this.printer = printer;
 	}
 	/********************************************************
 	 * Getter/Setter

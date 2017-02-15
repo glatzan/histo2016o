@@ -12,11 +12,12 @@
 		styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 		style="width:100%">
 		<h:panelGrid columns="4">
-			
-			<p:selectBooleanCheckbox value="#{worklistHandlerAction.filterWorklist}" disabled="true" />
+
+			<p:selectBooleanCheckbox
+				value="#{worklistHandlerAction.filterWorklist}" disabled="true" />
 			<h:outputLabel value="#{msg['body.worklist.header.filter']}" />
-			
-			<p:commandButton 
+
+			<p:commandButton
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
 				actionListener="#{patientHandlerAction.showAndInitAddPatientDialog()}">
@@ -274,12 +275,14 @@
 			<p:tieredMenu overlay="true" trigger="menuBtn" my="left top"
 				id="tiredMenu" at="left bottom" style="width:200px">
 
-				<!-- settings button -->
+				<!-- s button -->
 				<p:menuitem value="#{msg['body.worklist.header.button.settings']}"
 					onclick="$('#headerForm\\:settingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
 
 				<!-- notification -->
-				<p:menuitem value="Einstellungen"></p:menuitem>
+				<p:menuitem
+					value="#{msg['body.worklist.header.button.userSettings']}"
+					onclick="$('#headerForm\\:userSettingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
 
 				<!-- info button -->
 				<p:menuitem value="#{msg['body.worklist.header.button.info']}"
@@ -296,14 +299,17 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
+			<!-- userSettings button -->
+			<p:commandButton id="userSettingsDialogBtn" style="display:none"
+				actionListener="#{userHandlerAction.prepareUserSettingsDialog()}">
+				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+			</p:commandButton>
+
 			<!-- Info button -->
 			<p:commandButton id="infoDialogBtn" style="display:none"
 				actionListener="#{maintenanceHandlerAction.prepareInfoDialog()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
-
-
-
 
 
 
