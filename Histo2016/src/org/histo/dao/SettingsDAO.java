@@ -41,6 +41,10 @@ public class SettingsDAO extends AbstractDAO implements Serializable {
 		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	public List<ListItem> getAllStaticListItems(StaticList list) {
+		return getAllStaticListItems(list, false);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<ListItem> getAllStaticListItems(StaticList list, boolean archived) {
 		logger.debug("Searching for " + list.toString() + " in Database. " + (archived ? " Showing archived items." : " Showing none archived items."));

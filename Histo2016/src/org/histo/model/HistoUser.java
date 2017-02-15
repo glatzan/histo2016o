@@ -24,6 +24,7 @@ import org.hibernate.envers.Audited;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.model.interfaces.LogAble;
+import org.histo.model.transitory.json.ClinicPrinter;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
@@ -46,6 +47,11 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	private Role role;
 
 	private View defaultView;
+	
+	/**
+	 * Url of the prefered Printer
+	 */
+	private ClinicPrinter preferedPrinter;
 
 	private Physician physician;
 
@@ -189,6 +195,14 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
+	}
+
+	public ClinicPrinter getPreferedPrinter() {
+		return preferedPrinter;
+	}
+
+	public void setPreferedPrinter(ClinicPrinter preferedPrinter) {
+		this.preferedPrinter = preferedPrinter;
 	}
 
 }

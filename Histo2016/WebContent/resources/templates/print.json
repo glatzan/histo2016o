@@ -1,0 +1,22 @@
+[{
+	"id" : 0,
+	"name" : "Eingangsbogen",
+	"file" : "classpath:templates/print/Report_Intern.tex",
+	"file2" : "",
+	"documentTyp"	: "U_REPORT",
+	"defaultDocument" : false
+},{
+	"id" : 1,
+	"name" : "Befundbericht",
+	"file" : "classpath:templates/print/Report_Intern.tex",
+	"file2" : "",
+	"documentTyp"	: "DIAGNOSIS_REPORT",
+	"defaultDocument" : true
+},{
+	"id" : 2,
+	"name" : "Befundbericht Extern",
+	"file" : "classpath:templates/print/Report_Extern.tex",
+	"file2" : "",
+	"documentTyp"	: "DIAGNOSIS_REPORT_EXTERN",
+	"defaultDocument" : false
+}]

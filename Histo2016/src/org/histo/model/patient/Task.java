@@ -29,8 +29,9 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.StainingStatus;
@@ -39,12 +40,15 @@ import org.histo.model.Accounting;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
-import org.histo.model.Report;
+import org.histo.model.Physician;
+import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
@@ -58,8 +62,8 @@ import org.springframework.core.annotation.Order;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task
-		implements Parent<Patient>, StainingInfo<Sample>, DiagnosisInfo<Sample>, CreationDate, LogAble, ArchivAble {
+public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisStatus<DiagnosisRevision>, CreationDate,
+		DeleteAble, LogAble, ArchivAble, SaveAble {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -80,6 +84,11 @@ public class Task
 	 * The Patient of the task;
 	 */
 	private Patient parent;
+
+	/**
+	 * If true the program will provide default names for samples and blocks
+	 */
+	private boolean useAutoNomenclature;
 
 	/**
 	 * Date of creation
@@ -107,11 +116,6 @@ public class Task
 	private long dueDate = 0;
 
 	/**
-	 * Liste aller Personen die über die Diangose informiert werden sollen.
-	 */
-	private List<Contact> contacts;
-
-	/**
 	 * Stationär/ambulant/Extern
 	 */
 	private byte typeOfOperation;
@@ -130,11 +134,6 @@ public class Task
 	 * Ey of the samples right/left/both
 	 */
 	private Eye eye = Eye.RIGHT;
-
-	/**
-	 * List with all samples
-	 */
-	private List<Sample> samples;
 
 	/**
 	 * Der Task ist archiviert und wird nicht mehr angezeigt wenn true
@@ -173,15 +172,28 @@ public class Task
 	private long notificationCompletionDate = 0;
 
 	/**
+	 * Liste aller Personen die über die Diangose informiert werden sollen.
+	 */
+	private List<Contact> contacts;
+
+	/**
+	 * List with all samples
+	 */
+	private List<Sample> samples;
+
+	/**
+	 * Element containg all diangnoses
+	 */
+	private DiagnosisInfo diagnosisInfo;
+
+	/**
 	 * Generated PDFs of this task
 	 */
 	private List<PDFContainer> attachedPdfs;
 
 	private Accounting accounting;
 
-	private Council council;
-
-	private Report report;
+	private List<Council> council;
 
 	/********************************************************
 	 * Transient Variables
@@ -190,11 +202,6 @@ public class Task
 	 * Die Ausgewählte Probe
 	 */
 	private Sample selectedSample;
-
-	/**
-	 * Der Index des TabViews 0 = Diangosen Tab 1 = Objektträger Tab
-	 */
-	private int tabIndex;
 
 	/**
 	 * Currently selected task in table form, transient, used for gui
@@ -219,21 +226,32 @@ public class Task
 	public Task() {
 	}
 
+	/**
+	 * Initializes a task with important values.
+	 * 
+	 * @param parent
+	 */
 	public Task(Patient parent) {
-		this.parent = parent;
+
+		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
+		setCreationDate(currentDay);
+		setDateOfReceipt(currentDay);
+		setDueDate(currentDay);
+		setDateOfSugery(currentDay);
+
+		// 20xx -2000 = tasknumber
+		setParent(parent);
+
 	}
 
 	/********************************************************
 	 * Transient
 	 ********************************************************/
-	/**
-	 * Updated den Tabindex wenn ein andere Tab (Diagnose oder Färbung) in der
-	 * Gui ausgewählt wurde TODO: Remove or use
-	 * 
-	 * @param event
-	 */
-	public void onTabChange(TabChangeEvent event) {
-		setTabIndex(((TabView) event.getSource()).getIndex());
+
+	public void updateAllNames() {
+		for (Sample sample : samples) {
+			sample.updateAllNames(useAutoNomenclature);
+		}
 	}
 
 	/**
@@ -260,9 +278,11 @@ public class Task
 	 */
 	@Transient
 	public boolean isActiveOrActionToPerform() {
-		return isActive() || getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED
-				|| getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED
-				|| getStainingStatus() != StainingStatus.PERFORMED;
+		return true;
+		// isActive() || getDiagnosisStatus() ==
+		// DiagnosisStatus.DIAGNOSIS_NEEDED
+		// || getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED
+		// || getStainingStatus() != StainingStatus.PERFORMED;
 	}
 
 	@Transient
@@ -270,6 +290,100 @@ public class Task
 		if (isNew() && (!isStainingCompleted() || !isDiagnosisCompleted()))
 			return true;
 		return false;
+	}
+
+	/**
+	 * Creates linear list of all slides of the given task. The
+	 * StainingTableChosser is used as holder class in order to offer an option
+	 * to select the slides by clicking on a checkbox. Archived elements will
+	 * not be shown if showArchived is false.
+	 */
+	@Transient
+	public final void generateSlideGuiList() {
+		generateSlideGuiList(false);
+	}
+
+	/**
+	 * Creates linear list of all slides of the given task. The
+	 * StainingTableChosser is used as holder class in order to offer an option
+	 * to select the slides by clicking on a checkbox. Archived elements will
+	 * not be shown if showArchived is false.
+	 * 
+	 * @param showArchived
+	 */
+	@Transient
+	public final void generateSlideGuiList(boolean showArchived) {
+		if (getStainingTableRows() == null)
+			setStainingTableRows(new ArrayList<>());
+		else
+			getStainingTableRows().clear();
+
+		boolean even = false;
+
+		for (Sample sample : getSamples()) {
+			// skips archived tasks
+
+			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
+			getStainingTableRows().add(sampleChooser);
+
+			for (Block block : sample.getBlocks()) {
+				// skips archived blocks
+
+				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
+				getStainingTableRows().add(blockChooser);
+				sampleChooser.addChild(blockChooser);
+
+				for (Slide staining : block.getSlides()) {
+					// skips archived sliedes
+
+					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
+					getStainingTableRows().add(stainingChooser);
+					blockChooser.addChild(stainingChooser);
+				}
+			}
+			even = !even;
+		}
+	}
+
+	/**
+	 * Checks if all staings are performed an returns true if the status has
+	 * changed. If no change occurred false will be returned.
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean updateStainingStatus() {
+		if (getStainingStatus() == StainingStatus.PERFORMED) {
+			if (!isStainingCompleted()) {
+				setStainingCompleted(true);
+				setStainingCompletionDate(System.currentTimeMillis());
+				return true;
+			}
+		} else {
+			if (isStainingCompleted()) {
+				setStainingCompleted(false);
+				setStainingCompletionDate(0);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if all slides are staind and stets the allStainingsPerformed flag
+	 * in the task object to true.
+	 * 
+	 * @param sample
+	 */
+	@Transient
+	public static final boolean checkIfAllSlidesAreStained(Task task) {
+		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
+			task.setStainingCompleted(true);
+			task.setStainingCompletionDate(System.currentTimeMillis());
+		} else
+			task.setStainingCompleted(false);
+
+		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
 	}
 
 	/********************************************************
@@ -468,12 +582,12 @@ public class Task
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY)
-	public Council getCouncil() {
+	@OneToMany(fetch = FetchType.LAZY)
+	public List<Council> getCouncil() {
 		return council;
 	}
 
-	public void setCouncil(Council council) {
+	public void setCouncil(List<Council> council) {
 		this.council = council;
 	}
 
@@ -486,13 +600,21 @@ public class Task
 		this.accounting = accounting;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY)
-	public Report getReport() {
-		return report;
+	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY)
+	public DiagnosisInfo getDiagnosisInfo() {
+		return diagnosisInfo;
 	}
 
-	public void setReport(Report report) {
-		this.report = report;
+	public void setDiagnosisInfo(DiagnosisInfo diagnosisInfo) {
+		this.diagnosisInfo = diagnosisInfo;
+	}
+
+	public boolean isUseAutoNomenclature() {
+		return useAutoNomenclature;
+	}
+
+	public void setUseAutoNomenclature(boolean useAutoNomenclature) {
+		this.useAutoNomenclature = useAutoNomenclature;
 	}
 
 	/********************************************************
@@ -502,6 +624,7 @@ public class Task
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
+
 	@Transient
 	public Date getCreationDateAsDate() {
 		return new Date(getCreationDate());
@@ -545,15 +668,6 @@ public class Task
 
 	public void setStainingTableRows(ArrayList<StainingTableChooser> stainingTableChoosers) {
 		this.stainingTableChoosers = stainingTableChoosers;
-	}
-
-	@Transient
-	public int getTabIndex() {
-		return tabIndex;
-	}
-
-	public void setTabIndex(int tabIndex) {
-		this.tabIndex = tabIndex;
 	}
 
 	@Transient
@@ -665,10 +779,10 @@ public class Task
 	 */
 	@Transient
 	public boolean isMalign() {
-		for (Sample sample : getSamples()) {
-			if (sample.isMalign())
-				return true;
-		}
+		// for (DiagnosisRevision diagnosisRevision : getReports()) {
+		// if (diagnosisRevision.isMalign())
+		// return true;
+		// }
 		return false;
 	}
 
@@ -676,61 +790,22 @@ public class Task
 	 * Transient Getter/Setter
 	 ********************************************************/
 
-	/**
-	 * Checks if all staings are performed an returns true if the status has
-	 * changed. If no change occurred false will be returned.
-	 * 
-	 * @return
-	 */
-	@Transient
-	public boolean updateStainingStatus() {
-		if (getStainingStatus() == StainingStatus.PERFORMED) {
-			if (!isStainingCompleted()) {
-				setStainingCompleted(true);
-				setStainingCompletionDate(System.currentTimeMillis());
-				return true;
-			}
-		} else {
-			if (isStainingCompleted()) {
-				setStainingCompleted(false);
-				setStainingCompletionDate(0);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if all slides are staind and stets the allStainingsPerformed flag
-	 * in the task object to true.
-	 * 
-	 * @param sample
-	 */
-	public static final boolean checkIfAllSlidesAreStained(Task task) {
-		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
-			task.setStainingCompleted(true);
-			task.setStainingCompletionDate(System.currentTimeMillis());
-		} else
-			task.setStainingCompleted(false);
-
-		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
-	}
-
 	/********************************************************
-	 * Interface DiagnosisInfo
+	 * Interface DiagnosisStatusState
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
-	 * of the diagnoses.
+	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the
+	 * status of the diagnoses.
 	 */
 	@Override
 	@Transient
-	public DiagnosisStatus getDiagnosisStatus() {
-		return getDiagnosisStatus(getSamples());
+	public DiagnosisStatusState getDiagnosisStatus() {
+		// return getDiagnosisStatus(getReports());
+		return DiagnosisStatusState.DIAGNOSIS_NEEDED;
 	}
 
 	/********************************************************
-	 * Interface DiagnosisInfo
+	 * Interface DiagnosisStatusState
 	 ********************************************************/
 
 	/********************************************************
@@ -781,7 +856,15 @@ public class Task
 	public Patient getPatient() {
 		return getParent();
 	}
-
+	
+	/**
+	 * Returns the parent task
+	 */
+	@Override
+	@Transient
+	public Task getTask() {
+		return this;
+	}
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -802,10 +885,6 @@ public class Task
 	 */
 	public void setArchived(boolean archived) {
 		this.archived = archived;
-		// setzt Kinder
-		for (Sample sample : getSamples()) {
-			sample.setArchived(archived);
-		}
 	}
 
 	/**
@@ -831,4 +910,16 @@ public class Task
 	 * Interface ArchiveAble
 	 ********************************************************/
 
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return "Task-ID: " + getTaskID()+ " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	
 }

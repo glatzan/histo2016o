@@ -5,10 +5,15 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
+import org.histo.config.enums.Dialog;
 import org.histo.config.enums.MailPresetName;
 import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
+import org.histo.model.Physician;
+import org.histo.model.transitory.json.ClinicPrinter;
+import org.histo.ui.transformer.ClinicPrinterTransformer;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -33,15 +38,45 @@ public class UserHandlerAction implements Serializable {
 	@Lazy
 	private MainHandlerAction mainHandlerAction;
 
+	/********************************************************
+	 * login
+	 ********************************************************/
 	/**
 	 * True if unlock button was clicked
 	 */
 	private boolean unlockRequestSend;
-
+	/********************************************************
+	 * login
+	 ********************************************************/
+	
+	
+	/********************************************************
+	 * user settings dialog
+	 ********************************************************/
 	public void prepareUserSettingsDialog() {
-
+		mainHandlerAction.showDialog(Dialog.USER_SETTINGS);
+		mainHandlerAction.setClinicPrinterTransformer(new ClinicPrinterTransformer(mainHandlerAction.getSettings().getPrinter().getPrinters()));
 	}
-
+	
+	public void saveUserSettings(){
+		genericDAO.save(getCurrentUser(), resourceBundle.get("log.userSettings.update", getCurrentUser().getUsername()));
+		hideUserSettingsDialog();
+	}
+	
+	public void updateSelectedPrinterWithinSettings(ClinicPrinter clinicPrinter){
+		mainHandlerAction.getSettings().getPrinter().setDefaultPrinter(getCurrentUser().getPreferedPrinter());
+	}
+	
+	public void hideUserSettingsDialog(){
+		genericDAO.refresh(getCurrentUser());
+		mainHandlerAction.setClinicPrinterTransformer(null);
+		mainHandlerAction.getSettings().getPrinter().setDefaultPrinter(getCurrentUser().getPreferedPrinter());
+		mainHandlerAction.hideDialog(Dialog.USER_SETTINGS);
+	}
+	/********************************************************
+	 * user settings dialog
+	 ********************************************************/
+	
 	/**
 	 * Checks if the session is associated with a user.
 	 * 
@@ -177,7 +212,6 @@ public class UserHandlerAction implements Serializable {
 	public void setUnlockRequestSend(boolean unlockRequestSend) {
 		this.unlockRequestSend = unlockRequestSend;
 	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

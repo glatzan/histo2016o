@@ -21,13 +21,16 @@ import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.ui.transformer.ClinicPrinterTransformer;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -103,11 +106,6 @@ public class MainHandlerAction {
 	 */
 	private ArchivAble toArchive;
 
-	/**
-	 * the toArchive object will be archived if true
-	 */
-	private boolean archived;
-
 	/********************************************************
 	 * Archive able
 	 ********************************************************/
@@ -117,6 +115,14 @@ public class MainHandlerAction {
 	 */
 	private HistoSettings settings;
 
+	/********************************************************
+	 * printing
+	 ********************************************************/
+	private ClinicPrinterTransformer clinicPrinterTransformer;
+
+	/********************************************************
+	 * printing
+	 ********************************************************/
 	
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
@@ -128,7 +134,14 @@ public class MainHandlerAction {
 		navigationPages.add(View.USERLIST);
 
 		setSettings(HistoSettings.factory());
+		
+		getSettings().getPrinter().initPrinters();
 
+		// setting preferred printer
+		if(userHandlerAction.getCurrentUser().getPreferedPrinter() != null){
+			getSettings().getPrinter().setDefaultPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
+		}
+		
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);
 			navigationPages.add(View.WORKLIST_RECEIPTLOG);
@@ -316,9 +329,7 @@ public class MainHandlerAction {
 	 * @param sample
 	 * @param archived
 	 */
-	public void prepareArchiveObject(ArchivAble archive, boolean archived) {
-		setArchived(archived);
-		setToArchive(archive);
+	public void prepareDeleteObject(ArchivAble archive, boolean archived) {
 		// if no dialog is provieded the object will be archived immediately
 		if (archive.getArchiveDialog() == null)
 			archiveObject(archive, archived);
@@ -335,38 +346,11 @@ public class MainHandlerAction {
 	 */
 	public void archiveObject(ArchivAble archive, boolean archived) {
 
+		//TODO 
 		archive.setArchived(archived);
 
 		String logString = "log.error";
 
-		if (archive instanceof Slide)
-			logString = resourceBundle.get("log.patient.task.sample.blok.slide.archived",
-					((Slide) archive).getParent().getParent().getParent().getTaskID(),
-					((Slide) archive).getParent().getParent().getSampleID(), ((Slide) archive).getParent().getBlockID(),
-					((Slide) archive).getSlideID());
-		else if (archive instanceof Diagnosis)
-			logString = resourceBundle.get("log.patient.task.sample.diagnosis.archived",
-					((Diagnosis) archive).getParent().getParent().getTaskID(),
-					((Diagnosis) archive).getParent().getSampleID(), ((Diagnosis) archive).getName());
-		else if (archive instanceof Block)
-			logString = resourceBundle.get("log.patient.task.sample.blok.archived",
-					((Block) archive).getParent().getParent().getTaskID(), ((Block) archive).getParent().getSampleID(),
-					((Block) archive).getBlockID());
-		else if (archive instanceof Sample)
-			logString = resourceBundle.get("log.patient.task.sample.archived",
-					((Sample) archive).getParent().getTaskID(), ((Sample) archive).getSampleID());
-		else if (archive instanceof Task)
-			logString = resourceBundle.get("log.patient.task.archived", ((Task) archive).getTaskID());
-
-		Patient patient = null;
-
-		if (archive instanceof Parent<?>) {
-			patient = ((Parent<?>) archive).getPatient();
-			// update the gui list for displaying in the receiptlog
-			TaskUtil.generateSlideGuiList(patient.getSelectedTask());
-		}
-
-		genericDAO.save(archive, logString, patient);
 
 		hideArchiveObjectDialog();
 	}
@@ -382,6 +366,10 @@ public class MainHandlerAction {
 	 * Archive
 	 ********************************************************/
 
+	public void saveDataChange(SaveAble toSave, String resourcesKey,String... arr){
+		genericDAO.save(toSave, resourceBundle.get(resourcesKey,toSave.getLogPath(),arr), toSave.getPatient());
+	}
+	
 	/**
 	 * Takes a object to save and an resourcesString with optional wildcards.
 	 * This method will replace wildcard recursively ("log.test",
@@ -475,14 +463,6 @@ public class MainHandlerAction {
 		this.toArchive = toArchive;
 	}
 
-	public boolean isArchived() {
-		return archived;
-	}
-
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-	}
-
 	public HistoSettings getSettings() {
 		return settings;
 	}
@@ -491,6 +471,13 @@ public class MainHandlerAction {
 		this.settings = settings;
 	}
 
+	public ClinicPrinterTransformer getClinicPrinterTransformer() {
+		return clinicPrinterTransformer;
+	}
+
+	public void setClinicPrinterTransformer(ClinicPrinterTransformer clinicPrinterTransformer) {
+		this.clinicPrinterTransformer = clinicPrinterTransformer;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

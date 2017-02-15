@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
-import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.QuickSearchOptions;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.StainingListAction;
@@ -206,8 +206,21 @@ public class WorklistHandlerAction implements Serializable {
 
 		if (mainHandlerAction.getCurrentView() != View.WORKLIST_RECEIPTLOG
 				|| mainHandlerAction.getCurrentView() != View.WORKLIST_DIAGNOSIS) {
-			// TODO set favorite view depending on user
-			mainHandlerAction.setCurrentView(View.WORKLIST_RECEIPTLOG);
+
+			if (userHandlerAction.getCurrentUser().getRole().getRoleValue() >= Role.PHYSICIAN.getRoleValue()){
+				// all roles > mta
+				logger.debug("User is physician, show diagnoses screen");
+				mainHandlerAction.setCurrentView(View.WORKLIST_DIAGNOSIS);
+			}else if (userHandlerAction.getCurrentUser().getRole() == Role.MTA){
+				// mta
+				logger.debug("User is mta, show receiptlog screen");
+				mainHandlerAction.setCurrentView(View.WORKLIST_RECEIPTLOG);
+			}else{
+				// normal users
+				logger.debug("User is normal user, show simple list");
+				mainHandlerAction.setCurrentView(View.USERLIST);
+			}
+
 		}
 
 		System.out.println(task.getPatient());
@@ -229,7 +242,7 @@ public class WorklistHandlerAction implements Serializable {
 
 		Role userRole = userHandlerAction.getCurrentUser().getRole();
 
-		TaskUtil.generateSlideGuiList(task);
+		task.generateSlideGuiList();
 
 		// Setzte action to none
 		slideHandlerAction.setActionOnMany(StainingListAction.NONE);
@@ -239,14 +252,6 @@ public class WorklistHandlerAction implements Serializable {
 
 		// init all available materials
 		taskHandlerAction.prepareTask(task);
-
-		if (mainHandlerAction.getCurrentView() == View.WORKLIST_RECEIPTLOG) {
-			if (userRole == Role.MTA) {
-				task.setTabIndex(Task.TAB_STAINIG);
-			} else {
-				task.setTabIndex(Task.TAB_DIAGNOSIS);
-			}
-		}
 
 		return View.WORKLIST.getPath();
 	}
@@ -305,6 +310,7 @@ public class WorklistHandlerAction implements Serializable {
 		}
 
 		getWorkList().add(patient);
+
 		if (asSelectedPatient)
 			setSelectedPatient(patient);
 	}
@@ -398,10 +404,10 @@ public class WorklistHandlerAction implements Serializable {
 				List<Patient> paints = patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false);
 				for (Patient patient : paints) {
 					if (searchOptions.isStaining_diagnosis()
-							&& patient.getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED) {
+							&& patient.getDiagnosisStatus() == DiagnosisStatusState.DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					} else if (searchOptions.isStaining_rediagnosis()
-							&& patient.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
+							&& patient.getDiagnosisStatus() == DiagnosisStatusState.RE_DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					}
 				}
@@ -567,11 +573,11 @@ public class WorklistHandlerAction implements Serializable {
 					logger.debug("To many results found in clinic database, open addPatient dialog (" + resultArr[0]
 							+ "," + resultArr[1] + ")");
 					boolean toMany = false;
-					if(patientHandlerAction.isToManyMatchesInClinicDatabase())
-						toMany= true;
-					
+					if (patientHandlerAction.isToManyMatchesInClinicDatabase())
+						toMany = true;
+
 					patientHandlerAction.initAddPatientDialog();
-					
+
 					patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
 					patientHandlerAction.setActivePatientDialogIndex(0);
 					patientHandlerAction.setSearchForPatientName(resultArr[0]);
@@ -586,16 +592,14 @@ public class WorklistHandlerAction implements Serializable {
 			case NAME:
 				logger.debug("Searching for name, open addPatient dialog");
 
-				
-
 				result = patientHandlerAction.searchForPatientList("", resultArr[0], null, null);
 
 				boolean toMany = false;
-				if(patientHandlerAction.isToManyMatchesInClinicDatabase())
-					toMany= true;
-				
+				if (patientHandlerAction.isToManyMatchesInClinicDatabase())
+					toMany = true;
+
 				patientHandlerAction.initAddPatientDialog();
-				
+
 				patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
 				patientHandlerAction.setActivePatientDialogIndex(0);
 				patientHandlerAction.setSearchForPatientName(resultArr[0]);

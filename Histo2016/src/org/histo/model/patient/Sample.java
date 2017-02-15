@@ -26,16 +26,18 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.DiagnosisStatus;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StainingStatus;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
@@ -46,7 +48,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo, CreationDate, LogAble, ArchivAble {
+public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, LogAble, DeleteAble, SaveAble {
 
 	private long id;
 
@@ -78,16 +80,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	private List<Block> blocks;
 
 	/**
-	 * All diagnoses of this sample
-	 */
-	private List<Diagnosis> diagnoses;
-
-	/**
-	 * Wenn archived true ist, wird dieser sample nicht mehr angezeigt
-	 */
-	private boolean archived;
-
-	/**
 	 * Material name is first initialized with the name of the typeOfMaterial.
 	 * Can be later changed.
 	 */
@@ -107,7 +99,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	 * @param task
 	 */
 	public Sample(Task task) {
-		this(task, null, true);
+		this(task, null);
 	}
 
 	/**
@@ -116,39 +108,41 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	 * 
 	 * @param task
 	 */
-	public Sample(Task task, MaterialPreset material, boolean useAutoNomenclature) {
+	public Sample(Task task, MaterialPreset material) {
 		setCreationDate(System.currentTimeMillis());
-		if(useAutoNomenclature)
-			setSampleID(TaskUtil.getRomanNumber(task.getSamples().size() + 1));
 		setParent(task);
 		setMaterilaPreset(material);
 		setMaterial(material == null ? "" : material.getName());
 		task.getSamples().add(this);
 
-	}
-
-	/******************************************************** Transient ********************************************************/
-
-	@Transient
-	public Diagnosis getLastRelevantDiagnosis() {
-		return getDiagnoses().get(getDiagnoses().size()-1);
+		updateNameOfSample(task.isUseAutoNomenclature());
 	}
 
 	/**
-	 * Returns true if a diagnosis is marked as malign.
+	 * Generates a sample name, if useAutoNomenclature is true an name will be
+	 * auto generated
 	 * 
-	 * @return
+	 * @param useAutoNomenclature
 	 */
 	@Transient
-	public boolean isMalign() {
-		for (Diagnosis diagnosis : getDiagnoses()) {
-			if (diagnosis.isMalign())
-				return true;
-		}
-		return false;
+	public void updateNameOfSample(boolean useAutoNomenclature) {
+		if (useAutoNomenclature && getParent().getSamples().size() > 1)
+			setSampleID(TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1));
+		else
+			setSampleID(" ");
 	}
 
-	/******************************************************** Transient ********************************************************/
+	/**
+	 * Updates the name of all block children
+	 * 
+	 * @param useAutoNomenclature
+	 */
+	public void updateAllNames(boolean useAutoNomenclature) {
+		updateNameOfSample(useAutoNomenclature);
+		for (Block block : blocks) {
+			block.updateAllNames(useAutoNomenclature);
+		}
+	}
 
 	/********************************************************
 	 * Getter/Setter
@@ -184,19 +178,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 
 	public void setBlocks(List<Block> blocks) {
 		this.blocks = blocks;
-	}
-
-	@OneToMany(cascade = { CascadeType.REFRESH, CascadeType.ALL }, mappedBy = "parent", fetch = FetchType.EAGER)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("diagnosisOrder ASC")
-	public List<Diagnosis> getDiagnoses() {
-		if (diagnoses == null)
-			diagnoses = new ArrayList<>();
-		return diagnoses;
-	}
-
-	public void setDiagnoses(List<Diagnosis> diagnoses) {
-		this.diagnoses = diagnoses;
 	}
 
 	@Basic
@@ -253,54 +234,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	/******************************************************** Transient ********************************************************/
 
 	/********************************************************
-	 * Interface DiagnosisInfo
-	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
-	 * of the diagnoses.
-	 */
-	@Override
-	@Transient
-	public DiagnosisStatus getDiagnosisStatus() {
-		if (getDiagnoses().isEmpty())
-			return DiagnosisStatus.DIAGNOSIS_NEEDED;
-
-		boolean diagnosisNeeded = false;
-
-		for (Diagnosis diagnosis : getDiagnoses()) {
-
-			if (diagnosis.isArchived())
-				continue;
-
-			// continue if no diangosis is needed
-			if (diagnosis.isFinalized())
-				continue;
-			else {
-				// check if restaining is needed (restaining > staining) so
-				// return that it is needed
-				if (diagnosis.isDiagnosisRevision())
-					return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-				else
-					diagnosisNeeded = true;
-			}
-
-		}
-
-		
-		
-		// if there is more then one diagnosis a revision was created
-		if (getDiagnoses().size() > 1 && diagnosisNeeded) {
-			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-		} else {
-			return diagnosisNeeded ? DiagnosisStatus.DIAGNOSIS_NEEDED : DiagnosisStatus.PERFORMED;
-		}
-	}
-
-	/********************************************************
-	 * Interface DiagnosisInfo
-	 ********************************************************/
-
-	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/
 
@@ -350,6 +283,14 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 		return getParent().getPatient();
 	}
 
+	/**
+	 * Returns the parent task
+	 */
+	@Override
+	@Transient
+	public Task getTask() {
+		return getParent();
+	}
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -357,28 +298,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	/********************************************************
 	 * Interface ArchiveAble
 	 ********************************************************/
-
-	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
-	 * Setzt alle Kinder
-	 */
-	@Basic
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-		// setzt alle Kinder
-		for (Block block : getBlocks()) {
-			block.setArchived(archived);
-		}
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
-	 */
-	@Basic
-	public boolean isArchived() {
-		return archived;
-	}
-
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt die SampleID als
 	 * identifier zurück
@@ -386,7 +305,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	@Transient
 	@Override
 	public String getTextIdentifier() {
-		return getSampleID();
+		return "Probe " + getSampleID();
 	}
 
 	/**
@@ -396,9 +315,22 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, DiagnosisInfo,
 	@Transient
 	@Override
 	public Dialog getArchiveDialog() {
-		return Dialog.SAMPLE_ARCHIV;
+		return Dialog.DELETE_TREE_ENTITY;
 	}
+
 	/********************************************************
 	 * Interface ArchiveAble
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return getParent().getLogPath() + ", Sample-ID: " + getSampleID() + " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
 	 ********************************************************/
 }

@@ -6,10 +6,11 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.histo.action.SlideHandlerAction;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
@@ -21,112 +22,20 @@ public class TaskUtil {
 	private static Logger logger = Logger.getRootLogger();
 
 	/**
-	 * Creates a new Task for a patient.
-	 * 
-	 * @param patient
-	 * @param taskNumer
-	 * @return
-	 */
-	public final static Task createNewTask(Patient patient, int taskNumer) {
-		return createNewTask(new Task(), patient);
-	}
-
-	/**
-	 * Initializes a task with important values.
-	 * 
-	 * @param taskNumer
-	 * @return
-	 */
-	public final static Task createNewTask(Task result, Patient patient) {
-		long currentDay = TimeUtil.setDayBeginning(System.currentTimeMillis());
-		result.setCreationDate(currentDay);
-		result.setDateOfReceipt(currentDay);
-		result.setDueDate(currentDay);
-		result.setDateOfSugery(currentDay);
-		// 20xx -2000 = tasknumber
-		result.setParent(patient);
-
-		return result;
-	}
-
-	/**
-	 * Creates a diagnosis an adds it to the given sample
-	 * 
-	 * @param sample
-	 * @return
-	 */
-	public final static Diagnosis createNewDiagnosis(Sample sample, DiagnosisType type, ResourceBundle resourceBundle) {
-		Diagnosis diagnosis = new Diagnosis();
-		diagnosis.setGenerationDate(System.currentTimeMillis());
-		diagnosis.setType(type);
-		diagnosis.setDiagnosisOrder(sample.getDiagnoses().size());
-		diagnosis.setName(getDiagnosisName(sample, diagnosis, resourceBundle));
-		diagnosis.setParent(sample);
-
-		sample.getDiagnoses().add(diagnosis);
-
-		return diagnosis;
-	}
-
-	/**
-	 * Creats a new block and adds it to the sample
-	 * 
-	 * @param sample
-	 * @return
-	 */
-	public final static Block createNewBlock(Sample sample) {
-		Block block = new Block();
-		block.setBlockID(getCharNumber(sample.getBlocks().size()));
-		block.setParent(sample);
-		sample.getBlocks().add(block);
-		return block;
-	}
-
-	/**
-	 * Creats a staining and adds it to the sample.
-	 * 
-	 * @param sample
-	 * @param prototype
-	 * @return
-	 */
-	public final static Slide createNewStaining(Block block, StainingPrototype prototype) {
-		Slide staining = new Slide();
-
-		staining.setReStaining(block.getParent().isReStainingPhase());
-		staining.setCreationDate(System.currentTimeMillis());
-		staining.setSlidePrototype(prototype);
-		staining.setParent(block);
-
-		// generating block id
-		String number = "";
-		int stainingsInBlock = getNumerOfSameStainings(block, prototype);
-
-		if (stainingsInBlock > 1)
-			number = " " + String.valueOf(stainingsInBlock);
-		staining.setSlideID(block.getParent().getSampleID() + block.getBlockID() + " " + prototype.getName() + number);
-
-		// setting unique slide number
-		staining.setUniqueIDinBlock(block.getNextSlideNumber());
-
-		block.getSlides().add(staining);
-
-		logger.info("New staining created " + staining.getSlideID());
-
-		return staining;
-	}
-
-	/**
 	 * Returns the number of the same stainings used within this block
 	 * 
 	 * @param block
 	 * @param prototype
 	 * @return
 	 */
-	public final static int getNumerOfSameStainings(Block block, StainingPrototype prototype) {
-		int count = 1;
-		for (Slide staining : block.getSlides()) {
-			if (staining.getSlidePrototype().getId() == prototype.getId())
+	public final static int getNumerOfSameStainings(Slide slide) {
+		int count = 0;
+		for (Slide slideInBlock : slide.getParent().getSlides()) {
+			if (slideInBlock.getSlidePrototype().getId() == slide.getSlidePrototype().getId())
 				count++;
+			
+			if(slideInBlock == slide)
+				break;
 		}
 		return count;
 	}
@@ -220,63 +129,6 @@ public class TaskUtil {
 	}
 
 	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
-	 */
-	public static final void generateSlideGuiList(Task task) {
-		generateSlideGuiList(task, false);
-	}
-
-	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
-	 * 
-	 * @param showArchived
-	 */
-	public static final void generateSlideGuiList(Task task, boolean showArchived) {
-		if (task.getStainingTableRows() == null)
-			task.setStainingTableRows(new ArrayList<>());
-		else
-			task.getStainingTableRows().clear();
-
-		boolean even = false;
-
-		for (Sample sample : task.getSamples()) {
-			// skips archived tasks
-			if (sample.isArchived() && !showArchived)
-				continue;
-
-			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
-			task.getStainingTableRows().add(sampleChooser);
-
-			for (Block block : sample.getBlocks()) {
-				// skips archived blocks
-				if (block.isArchived() && !showArchived)
-					continue;
-
-				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
-				task.getStainingTableRows().add(blockChooser);
-				sampleChooser.addChild(blockChooser);
-
-				for (Slide staining : block.getSlides()) {
-					// skips archived sliedes
-					if (staining.isArchived() && !showArchived)
-						continue;
-
-					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
-					task.getStainingTableRows().add(stainingChooser);
-					blockChooser.addChild(stainingChooser);
-				}
-			}
-			even = !even;
-		}
-	}
-
-	/**
 	 * Returns the task with the highest taskID. (Is always the first task
 	 * because of the descending order)
 	 * 
@@ -354,18 +206,27 @@ public class TaskUtil {
 		return null;
 	}
 
-	public static final String getDiagnosisName(Sample sample, Diagnosis diagnosis, ResourceBundle resourceBundle) {
+	/**
+	 * Returns a name for a diagnosis revision
+	 * @param revisions
+	 * @param revision
+	 * @param resourceBundle
+	 * @return
+	 */
+	public static final String getDiagnosisName(List<DiagnosisRevision> revisions, DiagnosisRevision revision,
+			ResourceBundle resourceBundle) {
 		int number = 1;
 
-		for (Diagnosis diagnosisOfSample : sample.getDiagnoses()) {
-			if (diagnosisOfSample.getType() == diagnosis.getType()) {
+		for (DiagnosisRevision revisionListItem : revisions) {
+			if (revisionListItem.getType() == revision.getType()) {
 				number++;
 			}
 		}
 
-		return resourceBundle.get("enum.diagnosisType." + diagnosis.getType()) + (number == 1 ? "" : " " + number);
+		return resourceBundle.get("enum.diagnosisType." + revision.getType()) + (number == 0 ? "" : " " + number);
 	}
 
+	
 	/**
 	 * Returns the task with the highest priority. If several tasks share the
 	 * same priority the first one is returned.

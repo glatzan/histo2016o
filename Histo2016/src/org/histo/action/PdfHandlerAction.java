@@ -12,7 +12,6 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PrintTab;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.interfaces.DynamicHandler;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
@@ -91,7 +90,7 @@ public class PdfHandlerAction {
 	private PDFContainer tmpPdfContainer;
 
 	/**
-	 * The printtab to diasplay (Print view or pdf view)
+	 * The print tab to display (Print view or pdf view)
 	 */
 	private PrintTab printTab;
 
@@ -289,13 +288,13 @@ public class PdfHandlerAction {
 
 		// initializes teh task
 		taskDAO.initializeCouncilData(task);
-		taskDAO.initializeReportData(task);
-
+		taskDAO.initializeDiagnosisData(task);
+		
 		taskDAO.initializePdfData(task);
 
 		// also initializing taskHandlerAction, generating lists to choos
 		// physicians from
-		taskHandlerAction.prepareBean();
+		taskHandlerAction.initBean();
 	}
 
 	/**

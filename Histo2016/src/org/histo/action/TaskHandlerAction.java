@@ -9,8 +9,10 @@ import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisType;
+import org.histo.config.enums.DiagnosisRevisionType;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -18,16 +20,19 @@ import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Council;
+import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
-import org.histo.model.Report;
 import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.DiagnosisInfo;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
@@ -63,7 +68,7 @@ public class TaskHandlerAction implements Serializable {
 
 	@Autowired
 	private SettingsDAO settingsDAO;
-	
+
 	@Autowired
 	private DiagnosisHandlerAction diagnosisHandlerAction;
 
@@ -86,25 +91,21 @@ public class TaskHandlerAction implements Serializable {
 	@Lazy
 	private PdfHandlerAction pdfHandlerAction;
 
-	private HashMap<String, String> selectableWards;
+	@Autowired
+	@Lazy
+	private WorklistHandlerAction worklistHandlerAction;
+
+	@Autowired
+	private SettingsHandlerAction settingsHandlerAction;
 
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
-	/**
-	 * all staininglists, default not initialized
-	 */
-	private List<MaterialPreset> allAvailableMaterials;
 
 	/**
 	 * Transformer for selecting staininglist
 	 */
 	private StainingListTransformer materialListTransformer;
-
-	/**
-	 * selected stainingList for sample
-	 */
-	private MaterialPreset selectedMaterial;
 
 	/**
 	 * Temporary task for creating samples
@@ -118,27 +119,62 @@ public class TaskHandlerAction implements Serializable {
 	private int temporaryTaskSampleCount;
 
 	/**
-	 * If true the program will name all samples, and blocks
+	 * True if the user change the useAutoNomeclature setting manually
 	 */
-	private boolean useAutoNomenclature;
+	private boolean autoNomenclatureChangedManually;
+
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
 
 	/********************************************************
+	 * Sample creation
+	 ********************************************************/
+	/**
+	 * Used to save a sample while changing the material
+	 */
+	private Sample temporarySample;
+
+	/**
+	 * Used to save the material while creating a new sample / changing the
+	 * material
+	 */
+	private MaterialPreset selectedMaterial;
+	/********************************************************
+	 * Sample creation
+	 ********************************************************/
+
+	/********************************************************
 	 * Task
 	 ********************************************************/
 	/**
 	 * List of all physicians known in the database
 	 */
-	private List<Physician> allAvailablePhysicians;
+	private DefaultTransformer<Physician> allAvailablePhysiciansTransformer;
 
 	/**
-	 * List of all physicians known in the database
+	 * Contains all available case histories
 	 */
-	private DefaultTransformer<Physician> allAvailablePhysiciansTransformer;
+	private List<ListItem> caseHistoryList;
+
+	/**
+	 * Contains all available wards
+	 */
+	private List<ListItem> wardList;
+
 	/********************************************************
 	 * Task
+	 ********************************************************/
+
+	/********************************************************
+	 * Delete
+	 ********************************************************/
+	/**
+	 * Temporary save for a task tree entity (sample, slide, block)
+	 */
+	private DeleteAble taskTreeEntityToDelete;
+	/********************************************************
+	 * Delete
 	 ********************************************************/
 
 	/********************************************************
@@ -155,87 +191,76 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Report
+	 * DiagnosisRevision
 	 ********************************************************/
 	/**
 	 * Selected physician to sign the report
 	 */
-	private Physician physicianToSign;
+	private Physician signatureOne;
 
 	/**
 	 * Selected consultant to sign the report
 	 */
-	private Physician consultantToSign;
+	private Physician signatureTwo;
 
 	/********************************************************
-	 * Report
+	 * DiagnosisRevision
 	 ********************************************************/
+
+	public void initBean() {
+		// init materials in settingshandlerAction
+		settingsHandlerAction.initMaterialPresets();
+		setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
+
+		settingsHandlerAction.setPhysicianList(physicianDAO.getPhysicians(ContactRole.values(), false));
+		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(settingsHandlerAction.getPhysicianList()));
+	}
 
 	/********************************************************
 	 * Task
 	 ********************************************************/
-
-	public void prepareBean() {
-		setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
-		setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
-
-		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
-		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
-
-		// initis all wards
-		if (selectableWards == null) {
-			selectableWards = new HashMap<String, String>();
-			selectableWards.put("none", resourceBundle.get("#{msg['body.receiptlog.ward.select']}"));
-			selectableWards.put("ambulant", resourceBundle.get("#{msg['body.receiptlog.ward.ambulant']}"));
-			selectableWards.put("impatient", resourceBundle.get("#{msg['body.receiptlog.ward.inpatient']}"));
-			selectableWards.put("private", resourceBundle.get("#{msg['body.receiptlog.ward.ambulant.private']}"));
-			selectableWards.put("impatient-private",
-					resourceBundle.get("#{msg['body.receiptlog.ward.inpatient.private']}"));
-			selectableWards.put("ims", resourceBundle.get("#{msg['body.receiptlog.ward.ims']}"));
-			selectableWards.put("extern", resourceBundle.get("#{msg['body.receiptlog.ward.extern']}"));
-			selectableWards.put("extern-private", resourceBundle.get("#{msg['body.receiptlog.ward.exern.private']}"));
-			selectableWards.put("fda", resourceBundle.get("#{msg['body.receiptlog.ward.fda']}"));
-			selectableWards.put("manz", resourceBundle.get("#{msg['body.receiptlog.ward.manz']}"));
-			selectableWards.put("beck", resourceBundle.get("#{msg['body.receiptlog.ward.beck']}"));
-			selectableWards.put("axenfeld", resourceBundle.get("#{msg['body.receiptlog.ward.axenfeld']}"));
-		}
-	}
-
 	public void prepareTask(Task task) {
-		prepareBean();
+		initBean();
 
-		taskDAO.initializeReportData(task);
+		taskDAO.initializeDiagnosisData(task);
 
 		// setting the report time to the current date
 		if (!task.isDiagnosisCompleted()) {
-			task.getReport().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
+			task.getDiagnosisInfo().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
+			if (task.getDiagnosisInfo().getSignatureOne().getPhysician() == null
+					|| task.getDiagnosisInfo().getSignatureTwo().getPhysician() == null) {
+				// TODO set if physician to the left, if consultant to the right
+			}
 		}
 
-		setPhysicianToSign(task.getReport().getPhysicianToSign().getPhysician());
-		setConsultantToSign(task.getReport().getConsultantToSign().getPhysician());
+		// loading lists
+		setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
+		setWardList(settingsDAO.getAllStaticListItems(StaticList.WARDS));
+		
+		setSignatureOne(task.getDiagnosisInfo().getSignatureOne().getPhysician());
+		setSignatureTwo(task.getDiagnosisInfo().getSignatureTwo().getPhysician());
 	}
 
 	/**
 	 * Displays a dialog for creating a new task
 	 */
 	public void prepareNewTaskDialog() {
-		prepareBean();
+		initBean();
 
-		setTemporaryTask(new Task());
+		setTemporaryTask(new Task(worklistHandlerAction.getSelectedPatient()));
 		getTemporaryTask().setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000)
 				+ HistoUtil.fitString(taskDAO.countSamplesOfCurrentYear(), 4, '0'));
-		getTemporaryTask().setReport(new Report());
 		getTemporaryTask().setTaskPriority(TaskPriority.NONE);
 		getTemporaryTask().setDateOfReceipt(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		setTemporaryTaskSampleCount(1);
-		Sample tmp = new Sample(getTemporaryTask());
 
-		// checks if default statingsList is empty
-		if (!getAllAvailableMaterials().isEmpty()) {
-			tmp.setMaterilaPreset(getAllAvailableMaterials().get(0));
-		}
+		getTemporaryTask().setUseAutoNomenclature(true);
+		setAutoNomenclatureChangedManually(false);
 
-		setUseAutoNomenclature(false);
+		// creates a new sample
+		new Sample(getTemporaryTask(), !settingsHandlerAction.getAllAvailableMaterials().isEmpty()
+				? settingsHandlerAction.getAllAvailableMaterials().get(0) : null);
+
 		mainHandlerAction.showDialog(Dialog.TASK_CREATE);
 	}
 
@@ -243,24 +268,44 @@ public class TaskHandlerAction implements Serializable {
 	 * Method is called if user adds or removes a sample within the task
 	 * creation process. Adds or removes a new Material for the new Sample.
 	 */
-	public void updateNewTaskDilaog(Task task, boolean useAutoNomenclature) {
-		if (temporaryTaskSampleCount >= 1) {
-			if (temporaryTaskSampleCount > task.getSamples().size())
-				while (temporaryTaskSampleCount > task.getSamples().size()) {
-					Sample tmp = new Sample(task, null, useAutoNomenclature);
-					tmp.setMaterilaPreset(getAllAvailableMaterials().get(0));
-				}
-			else if (temporaryTaskSampleCount < task.getSamples().size())
-				while (temporaryTaskSampleCount < task.getSamples().size()) {
-					task.getSamples().remove(task.getSamples().size() - 1);
-				}
-			if (temporaryTaskSampleCount > 1)
-				// if there are more then one sample use auto nomenclature
-				setUseAutoNomenclature(true);
-			else
-				// if there is only one sample don't use auto nomenclature
-				setUseAutoNomenclature(false);
+	public void updateNewTaskDilaog(Task task) {
+		logger.debug("Updating sample tree");
+		// changing autoNomeclature of samples, if no change was made manually
+		if (temporaryTaskSampleCount > 1 && !isAutoNomenclatureChangedManually()) {
+			logger.debug("Setting autonomeclature to true");
+			getTemporaryTask().setUseAutoNomenclature(true);
+		} else if (temporaryTaskSampleCount == 1 && !isAutoNomenclatureChangedManually()) {
+			logger.debug("Setting autonomeclature to false");
+			getTemporaryTask().setUseAutoNomenclature(false);
 		}
+
+		if (temporaryTaskSampleCount >= 1) {
+			if (temporaryTaskSampleCount > task.getSamples().size()) {
+				logger.debug("Adding new samples");
+				// adding samples if count is bigger then the current sample
+				// count
+				while (temporaryTaskSampleCount > task.getSamples().size())
+					new Sample(task, !settingsHandlerAction.getAllAvailableMaterials().isEmpty()
+							? settingsHandlerAction.getAllAvailableMaterials().get(0) : null);
+			} else if (temporaryTaskSampleCount < task.getSamples().size()) {
+				logger.debug("Removing samples");
+				// removing samples if count is less then current sample count
+				while (temporaryTaskSampleCount < task.getSamples().size())
+					task.getSamples().remove(task.getSamples().size() - 1);
+			}
+		}
+
+		logger.debug("Updating sample names");
+		// updates the name of all other samples
+		for (Sample sample : task.getSamples()) {
+			sample.updateNameOfSample(getTemporaryTask().isUseAutoNomenclature());
+		}
+	}
+
+	public void manuallyChangeAutoNomenclature() {
+		logger.debug("Autonomeclature change manually");
+		setAutoNomenclatureChangedManually(true);
+		updateNewTaskDilaog(getTemporaryTask());
 	}
 
 	/**
@@ -268,44 +313,50 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void createNewTask(Patient patient, Task phantomTask, boolean useAutoNomenclature) {
+	public void createNewTask(Patient patient, Task task) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
 
-		Task task = TaskUtil.createNewTask(phantomTask, patient);
 		patient.getTasks().add(0, task);
 		// sets the new task as the selected task
 		patient.setSelectedTask(task);
 
-		if (task.getReport(PdfTemplate.UREPORT) != null) {
-			genericDAO.save(task.getReport(PdfTemplate.UREPORT), resourceBundle.get("log.patient.task.upload.orderList",
-					task.getTaskID(), task.getReport(PdfTemplate.UREPORT).getName()), patient);
-		}
-
-		// saving report to datanase
-		genericDAO.save(task.getReport(), resourceBundle.get("log.patient.task.report.new", task.getTaskID()),
-				task.getPatient());
-
 		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
 
+		task.setDiagnosisInfo(new DiagnosisInfo(task));
+		task.getDiagnosisInfo().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
+
+		// setting signature
+		task.getDiagnosisInfo().setSignatureOne(new Signature());
+		task.getDiagnosisInfo().setSignatureTwo(new Signature());
+
+		task.setCaseHistory("");
+		task.setWard("");
+
+		genericDAO.save(task.getDiagnosisInfo(),
+				resourceBundle.get("log.patient.task.diagnosisInfo.new", task.getTaskID()), patient);
+
 		for (Sample sample : task.getSamples()) {
+			// set name of material for changing it manually
 			sample.setMaterial(sample.getMaterilaPreset().getName());
 
 			genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
 					sample.getSampleID(), sample.getMaterial()), task.getPatient());
 
-			// creating first default diagnosis
-			diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
 			// creating needed blocks
 			createNewBlock(sample, false);
 		}
 
+		// standard diagnose erstellen
+		diagnosisHandlerAction.createDiagnosisRevision(task.getDiagnosisInfo(), DiagnosisRevisionType.DIAGNOSIS);
+
 		// checking if staining flag of the task object has to be false
 		task.updateStainingStatus();
 		// generating gui list
-		TaskUtil.generateSlideGuiList(task);
+		task.generateSlideGuiList();
 		// saving patient
+
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
 		mainHandlerAction.hideDialog(Dialog.TASK_CREATE);
@@ -314,6 +365,7 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task
 	 ********************************************************/
+
 	/********************************************************
 	 * Sample
 	 ********************************************************/
@@ -322,14 +374,18 @@ public class TaskHandlerAction implements Serializable {
 	 * Displays a dialog for creating a new sample
 	 */
 	public void prepareNewSampleDialog(Task task) {
-		setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
-		// checks if default statingsList is empty
-		if (!getAllAvailableMaterials().isEmpty()) {
-			setSelectedMaterial(getAllAvailableMaterials().get(0));
-			setMaterialListTransformer(new StainingListTransformer(getAllAvailableMaterials()));
-		}
 
+		settingsHandlerAction.initMaterialPresets();
+		// checks if default statingsList is empty
+		if (!settingsHandlerAction.getAllAvailableMaterials().isEmpty()) {
+			// setSelectedMaterial(settingsHandlerAction.getAllAvailableMaterials().get(0));
+			setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
+		}
 		setTemporaryTask(task);
+
+		// more the one task = use autonomeclature
+		if (task.getSamples().size() > 0)
+			task.setUseAutoNomenclature(true);
 
 		mainHandlerAction.showDialog(Dialog.SAMPLE_CREATE);
 	}
@@ -351,12 +407,13 @@ public class TaskHandlerAction implements Serializable {
 	public void createNewSampleFromGui(Task task, MaterialPreset material) {
 		createNewSample(task, material);
 
+		// updating names
+		task.updateAllNames();
 		// checking if staining flag of the task object has to be false
 		task.updateStainingStatus();
 		// generating gui list
-		TaskUtil.generateSlideGuiList(task);
+		task.generateSlideGuiList();
 		// saving patient
-		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
 		hideNewSampleDialog();
 	}
@@ -368,15 +425,53 @@ public class TaskHandlerAction implements Serializable {
 	 * @param task
 	 */
 	public void createNewSample(Task task, MaterialPreset material) {
-		Sample sample = new Sample(task, material, false);
+		Sample sample = new Sample(task, material);
 
 		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
 				sample.getSampleID(), material.getName()), task.getPatient());
 
-		// creating first default diagnosis
-		diagnosisHandlerAction.createDiagnosis(sample, DiagnosisType.DIAGNOSIS);
 		// creating needed blocks
 		createNewBlock(sample, false);
+
+		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.update", sample.getParent().getTaskID(),
+				sample.getSampleID()), sample.getPatient());
+
+		// creating first default diagnosis
+		diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(task.getDiagnosisInfo(), task.getSamples());
+	}
+
+	/**
+	 * Shows a dialog for changing the material of a sample
+	 */
+	public void prepareSelectMaterialDialog(Sample sample) {
+		setTemporarySample(sample);
+		setSelectedMaterial(sample.getMaterilaPreset());
+		mainHandlerAction.showDialog(Dialog.SELECT_MATERIAL);
+	}
+
+	/**
+	 * Changes the material of the sample to the given material.
+	 * 
+	 * @param sample
+	 * @param materialPreset
+	 */
+	public void changeSelectedMaterial(Sample sample, MaterialPreset materialPreset) {
+		sample.setMaterial(materialPreset.getName());
+		sample.setMaterilaPreset(materialPreset);
+
+		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.material.update",
+				sample.getParent().getTaskID(), sample.getSampleID(), materialPreset.getName()),
+				sample.getParent().getPatient());
+
+		hideSelectMaterialDialog();
+	}
+
+	/**
+	 * Hides the change material dialog
+	 */
+	public void hideSelectMaterialDialog() {
+		setTemporarySample(null);
+		mainHandlerAction.hideDialog(Dialog.SELECT_MATERIAL);
 	}
 
 	/********************************************************
@@ -396,10 +491,15 @@ public class TaskHandlerAction implements Serializable {
 	public void createNewBlockFromGui(Sample sample) {
 		createNewBlock(sample, false);
 
+		// updates the name of all other samples
+		for (Block block : sample.getBlocks()) {
+			block.updateNameOfBlock(sample.getParent().isUseAutoNomenclature());
+		}
+
 		// checking if staining flag of the task object has to be false
 		sample.getParent().updateStainingStatus();
 		// generating gui list
-		TaskUtil.generateSlideGuiList(sample.getParent());
+		sample.getParent().generateSlideGuiList();
 		// saving patient
 		genericDAO.save(sample.getPatient(), resourceBundle.get("log.patient.save"), sample.getPatient());
 	}
@@ -411,21 +511,28 @@ public class TaskHandlerAction implements Serializable {
 	 * @param sample
 	 * @param material
 	 */
-	public void createNewBlock(Sample sample, boolean useAutoNomenclature) {
-		Block block = TaskUtil.createNewBlock(sample);
-
-		logger.debug("Creating new block " + block.getBlockID());
+	public Block createNewBlock(Sample sample, boolean useAutoNomenclature) {
+		Block block = new Block();
+		block.setBlockID(useAutoNomenclature ? TaskUtil.getCharNumber(sample.getBlocks().size()) : "");
+		block.setParent(sample);
+		sample.getBlocks().add(block);
 
 		genericDAO.save(block, resourceBundle.get("log.patient.task.sample.blok.new",
 				block.getParent().getParent().getTaskID(), block.getParent().getSampleID(), block.getBlockID()),
 				sample.getPatient());
 
-		logger.debug("Block saved, adding default slides");
+		logger.debug("Creating new block " + block.getBlockID());
 
 		for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
-			slideHandlerAction.addStaining(proto, block);
+			slideHandlerAction.createSlide(proto, block);
 		}
 
+		genericDAO.save(
+				block, resourceBundle.get("log.patient.task.sample.block.update",
+						block.getParent().getParent().getTaskID(), block.getParent().getSampleID(), block.getBlockID()),
+				sample.getPatient());
+
+		return block;
 	}
 
 	/********************************************************
@@ -435,33 +542,94 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task Data
 	 ********************************************************/
-	/**
-	 * Method is called if the user changes task data.
-	 * 
-	 * @param task
-	 */
-	public void taskDataChanged(Task task) {
-		taskDataChanged(task, null);
+	public void prepareDeleteTaskTreeEntityDialog(DeleteAble toDelete) {
+		setTaskTreeEntityToDelete(toDelete);
+		mainHandlerAction.showDialog(Dialog.DELETE_TREE_ENTITY);
+	}
+	
+	public void deleteTaskTreeEntity(DeleteAble toDelete) {
+		if (toDelete instanceof Slide) {
+			Slide toDeleteSlide = (Slide) toDelete;
+
+			logger.info("Deleting slide " + toDeleteSlide.getSlideID());
+
+			Block parent = toDeleteSlide.getParent();
+
+			parent.getSlides().remove(toDeleteSlide);
+
+			parent.updateAllNames(parent.getParent().getParent().isUseAutoNomenclature());
+			
+			genericDAO.save(parent,
+					resourceBundle.get("log.patient.task.sample.block.update",
+							parent.getParent().getParent().getTaskID(), parent.getParent().getSampleID(),
+							parent.getBlockID()),
+					parent.getPatient());
+
+			genericDAO.delete(toDeleteSlide,
+					resourceBundle.get("log.patient.task.sample.block.slide.update",
+							parent.getParent().getParent().getTaskID(), parent.getParent().getSampleID(),
+							parent.getBlockID(), toDeleteSlide.getSlideID()),
+					parent.getPatient());
+
+			// checking if staining flag of the task object has to be false
+			parent.getParent().getParent().updateStainingStatus();
+			// generating gui list
+			parent.getParent().getParent().generateSlideGuiList();
+			
+			
+		} else if (toDelete instanceof Block) {
+			Block toDeleteBlock = (Block) toDelete;
+			logger.info("Deleting block " + toDeleteBlock.getBlockID());
+
+			Sample parent = toDeleteBlock.getParent();
+
+			parent.getBlocks().remove(toDeleteBlock);
+
+			parent.updateAllNames(parent.getParent().isUseAutoNomenclature());
+			
+			genericDAO.save(parent, resourceBundle.get("log.patient.task.sample.update", parent.getParent().getTaskID(),
+					parent.getSampleID()), parent.getPatient());
+
+			genericDAO.delete(
+					toDeleteBlock, resourceBundle.get("log.patient.task.sample.block.delete",
+							parent.getParent().getId(), parent.getSampleID(), toDeleteBlock.getBlockID()),
+					toDeleteBlock.getPatient());
+
+			// checking if staining flag of the task object has to be false
+			parent.getParent().updateStainingStatus();
+			// generating gui list
+			parent.getParent().generateSlideGuiList();
+
+		} else if (toDelete instanceof Sample) {
+			Sample toDeleteSample = (Sample) toDelete;
+			logger.info("Deleting sample " + toDeleteSample.getSampleID());
+
+			Task parent = toDeleteSample.getParent();
+
+			parent.getSamples().remove(toDeleteSample);
+
+			diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(parent.getDiagnosisInfo(), parent.getSamples());
+			
+			parent.updateAllNames();
+
+			genericDAO.save(parent, resourceBundle.get("log.patient.task.update", parent.getId()), parent.getPatient());
+
+			genericDAO.delete(toDeleteSample,
+					resourceBundle.get("log.patient.task.sample.delete", parent.getId(), toDeleteSample.getSampleID()),
+					toDeleteSample.getParent().getPatient());
+
+			// checking if staining flag of the task object has to be false
+			parent.updateStainingStatus();
+			// generating gui list
+			parent.generateSlideGuiList();
+		}
+
+		hideDeleteTaskTreeEntityDialog();
 	}
 
-	/**
-	 * Method is called if the user changes task data. A detail resources string
-	 * can be passed. This string can contain placeholder which will be replaced
-	 * by the additional parameters.
-	 * 
-	 * @param task
-	 * @param detailedInfoResourcesKey
-	 * @param detailedInfoParams
-	 */
-	public void taskDataChanged(Task task, String detailedInfoResourcesKey, Object... detailedInfoParams) {
-		String detailedInfoString = "";
-
-		if (detailedInfoResourcesKey != null)
-			detailedInfoString = resourceBundle.get(detailedInfoResourcesKey, detailedInfoParams);
-
-		genericDAO.save(task, resourceBundle.get("log.patient.task.dataChange", task.getTaskID(), detailedInfoString),
-				task.getParent());
-		System.out.println("saving data");
+	public void hideDeleteTaskTreeEntityDialog() {
+		setTaskTreeEntityToDelete(null);
+		mainHandlerAction.hideDialog(Dialog.DELETE_TREE_ENTITY);
 	}
 
 	/********************************************************
@@ -480,31 +648,33 @@ public class TaskHandlerAction implements Serializable {
 
 		taskDAO.initializeCouncilData(task);
 
-		if (task.getCouncil() == null) {
-			// only saving if the diagnosis process has not been finished jet
-			if (task.isDiagnosisCompleted()) {
-				setTmpCouncil(new Council());
-			} else {
-				setTmpCouncil(new Council());
-				task.setCouncil(getTmpCouncil());
-				// setting current user als requesting physician
-				task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
-
-				genericDAO.save(task.getCouncil(), resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
-						task.getPatient());
-			}
-		} else
-			setTmpCouncil(task.getCouncil());
-
-		updateCouncilDialog();
-
-		if (show)
-			mainHandlerAction.showDialog(Dialog.COUNCIL);
+		// if (task.getCouncil() == null) {
+		// // only saving if the diagnosis process has not been finished jet
+		// if (task.isDiagnosisCompleted()) {
+		// setTmpCouncil(new Council());
+		// } else {
+		// setTmpCouncil(new Council());
+		// task.setCouncil(getTmpCouncil());
+		// // setting current user als requesting physician
+		// task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
+		//
+		// genericDAO.save(task.getCouncil(),
+		// resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
+		// task.getPatient());
+		// }
+		// } else
+		// setTmpCouncil(task.getCouncil());
+		//
+		// updateCouncilDialog();
+		//
+		// if (show)
+		// TODO: rework
+		mainHandlerAction.showDialog(Dialog.COUNCIL);
 	}
 
 	public void updateCouncilDialog() {
-		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
-		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
+//		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
+//		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
 	}
 
 	public void hideCouncilDialog() {
@@ -530,22 +700,6 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	public List<MaterialPreset> getAllAvailableMaterials() {
-		return allAvailableMaterials;
-	}
-
-	public void setAllAvailableMaterials(List<MaterialPreset> allAvailableMaterials) {
-		this.allAvailableMaterials = allAvailableMaterials;
-	}
-
-	public MaterialPreset getSelectedMaterial() {
-		return selectedMaterial;
-	}
-
-	public void setSelectedMaterial(MaterialPreset selectedMaterial) {
-		this.selectedMaterial = selectedMaterial;
-	}
-
 	public StainingListTransformer getMaterialListTransformer() {
 		return materialListTransformer;
 	}
@@ -562,28 +716,12 @@ public class TaskHandlerAction implements Serializable {
 		this.temporaryTask = temporaryTask;
 	}
 
-	public HashMap<String, String> getSelectableWards() {
-		return selectableWards;
-	}
-
-	public void setSelectableWards(HashMap<String, String> selectableWards) {
-		this.selectableWards = selectableWards;
-	}
-
 	public int getTemporaryTaskSampleCount() {
 		return temporaryTaskSampleCount;
 	}
 
 	public void setTemporaryTaskSampleCount(int temporaryTaskSampleCount) {
 		this.temporaryTaskSampleCount = temporaryTaskSampleCount;
-	}
-
-	public List<Physician> getAllAvailablePhysicians() {
-		return allAvailablePhysicians;
-	}
-
-	public void setAllAvailablePhysicians(List<Physician> allAvailablePhysicians) {
-		this.allAvailablePhysicians = allAvailablePhysicians;
 	}
 
 	public DefaultTransformer<Physician> getAllAvailablePhysiciansTransformer() {
@@ -602,28 +740,68 @@ public class TaskHandlerAction implements Serializable {
 		this.tmpCouncil = tmpCouncil;
 	}
 
-	public Physician getPhysicianToSign() {
-		return physicianToSign;
+	public Physician getSignatureOne() {
+		return signatureOne;
 	}
 
-	public Physician getConsultantToSign() {
-		return consultantToSign;
+	public Physician getSignatureTwo() {
+		return signatureTwo;
 	}
 
-	public void setPhysicianToSign(Physician physicianToSign) {
-		this.physicianToSign = physicianToSign;
+	public void setSignatureOne(Physician signatureOne) {
+		this.signatureOne = signatureOne;
 	}
 
-	public void setConsultantToSign(Physician consultantToSign) {
-		this.consultantToSign = consultantToSign;
+	public void setSignatureTwo(Physician signatureTwo) {
+		this.signatureTwo = signatureTwo;
 	}
 
-	public boolean isUseAutoNomenclature() {
-		return useAutoNomenclature;
+	public boolean isAutoNomenclatureChangedManually() {
+		return autoNomenclatureChangedManually;
 	}
 
-	public void setUseAutoNomenclature(boolean useAutoNomenclature) {
-		this.useAutoNomenclature = useAutoNomenclature;
+	public void setAutoNomenclatureChangedManually(boolean autoNomenclatureChangedManually) {
+		this.autoNomenclatureChangedManually = autoNomenclatureChangedManually;
+	}
+
+	public MaterialPreset getSelectedMaterial() {
+		return selectedMaterial;
+	}
+
+	public void setSelectedMaterial(MaterialPreset selectedMaterial) {
+		this.selectedMaterial = selectedMaterial;
+	}
+
+	public Sample getTemporarySample() {
+		return temporarySample;
+	}
+
+	public void setTemporarySample(Sample temporarySample) {
+		this.temporarySample = temporarySample;
+	}
+
+	public List<ListItem> getCaseHistoryList() {
+		return caseHistoryList;
+	}
+
+	public void setCaseHistoryList(List<ListItem> caseHistoryList) {
+		this.caseHistoryList = caseHistoryList;
+	}
+
+	public List<ListItem> getWardList() {
+		return wardList;
+	}
+
+	public void setWardList(List<ListItem> wardList) {
+		this.wardList = wardList;
+	}
+
+	public DeleteAble getTaskTreeEntityToDelete() {
+		return taskTreeEntityToDelete;
+	}
+
+	public void setTaskTreeEntityToDelete(DeleteAble taskTreeEntityToDelete) {
+		this.taskTreeEntityToDelete = taskTreeEntityToDelete;
 	}
 	/********************************************************
 	 * Getter/Setter

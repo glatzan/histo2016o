@@ -2,7 +2,11 @@ package org.histo.util;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +15,18 @@ import java.util.Set;
 import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Gender;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
+import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.model.transitory.json.PdfTemplate.CodeRectangle;
+import org.histo.model.transitory.json.TexTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,7 +44,11 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfSmartCopy;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
+import com.sun.faces.facelets.util.Path;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
+
+import de.nixosoft.jlr.JLRConverter;
+import de.nixosoft.jlr.JLRGenerator;
 
 public class PdfGenerator {
 
@@ -50,35 +61,180 @@ public class PdfGenerator {
 		this.mainHandlerAction = mainHandlerAction;
 	}
 
-	public PDFContainer generatePdfForTemplate(Task task, PdfTemplate template, long dateOfReport,
-			ContactRole addressPhysicianRole, Physician externalPhysician, Physician signingPhysician) {
-		PDFContainer result = null;
+	public PDFContainer generatePDFForReport(Patient patient, Task task, TexTemplate texTemplate,
+			Person toSendAddress) {
+		;
+		File workingDirectory = new File(
+				mainHandlerAction.getSettings().getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
 
-		switch (template.getType()) {
-		case "COUNCIL":
-			if (task.getCouncil() != null) {
-				result = generatePdf(task, template, task.getCouncil().getDateOfRequest(),
-						task.getCouncil().getCouncilPhysician(), task.getCouncil().getPhysicianRequestingCouncil());
-			}
-			break;
-		case "INTERNAL":
-			result = generatePdf(task, template, task.getReport().getSignatureDate(), null, null);
-			break;
-		default:
-			Physician addressPhysician = null;
-			if (addressPhysicianRole == ContactRole.FAMILY_PHYSICIAN
-					|| addressPhysicianRole == ContactRole.PRIVATE_PHYSICIAN) {
-				Contact tmp = task.getPrimaryContact(addressPhysicianRole);
-				addressPhysician = (tmp == null ? null : tmp.getPhysician());
-			} else {
-				addressPhysician = externalPhysician;
-			}
+		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-			result = generatePdf(task, template, dateOfReport, addressPhysician, signingPhysician);
-			break;
+		System.out.println(mainHandlerAction.getSettings().getAbsolutePath(texTemplate.getFile()));
+		// loading tex file
+		File template = new File(mainHandlerAction.getSettings().getAbsolutePath(texTemplate.getFile()));
+
+		File processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
+
+		JLRConverter converter = new JLRConverter(workingDirectory);
+
+		// $name
+		converter.replace("name", task.getParent().getPerson().getName());
+		// $surName
+		converter.replace("surName", task.getParent().getPerson().getSurname());
+		// $birthday
+		converter.replace("birthday", resourceBundle.get("pdf.birthday") + " "
+				+ mainHandlerAction.date(task.getParent().getPerson().getBirthday()));
+		// $piz
+		converter.replace("piz", mainHandlerAction.date(task.getDiagnosisInfo().getSignatureDate()));
+
+		// $reportDate
+		converter.replace("reportDate", task.getParent().getPerson().getSurname());
+
+		// $address
+		if (toSendAddress == null) {
+			// converter.replace("toSendAress",
+			// resourceBundle.get("pdf.address.none"));
+		} else {
+			// StringBuffer re
+			// converter.replace("toSendAressSex", (toSendAddress.getGender() ==
+			// Gender.FEMALE
+			// ? resourceBundle.get("pdf.address.female") :
+			// resourceBundle.get("pdf.address.male")));
+			// converter.replace("toSendAressTitle", toSendAddress.getTitle());
+			// converter.replace("toSendAressName", toSendAddress.getName());
+			// converter.replace("toSendAressStreet",
+			// toSendAddress.getStreet());
+			// converter.replace("toSendAressHouseNumber",
+			// toSendAddress.getHouseNumber());
+			//
+			// converter.replace("toSendAressTown", "");
 		}
 
-		return result;
+		try {
+
+			if (!converter.parse(template, processedTex)) {
+				System.out.println(converter.getErrorMessage());
+			}
+
+			JLRGenerator pdfGen = new JLRGenerator();
+
+			if (!pdfGen.generate(processedTex, output, workingDirectory)) {
+				System.out.println(pdfGen.getErrorMessage());
+			}
+
+			File test = pdfGen.getPDF();
+			byte[] data = readContentIntoByteArray(test);
+
+			return new PDFContainer(texTemplate.getDocumentTyp().toString(),
+					"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+
+		// ArrayList<ArrayList<String>> services = new
+		// ArrayList<ArrayList<String>>();
+		//
+		// ArrayList<String> subservice1 = new ArrayList<String>();
+		// ArrayList<String> subservice2 = new ArrayList<String>();
+		// ArrayList<String> subservice3 = new ArrayList<String>();
+		//
+		// subservice1.add("Software");
+		// subservice1.add("50");
+		// subservice2.add("Hardware1");
+		// subservice2.add("500");
+		// subservice3.add("Hardware2");
+		// subservice3.add("850");
+		//
+		// services.add(subservice1);
+		// services.add(subservice2);
+		// services.add(subservice3);
+		//
+		// converter.replace("services", services);
+		//
+		// System.out.println(converter.parse(template, invoice1));
+		//
+		// converter.replace("Number", "2");
+		// converter.replace("CustomerName", "Mike Mueller");
+		// converter.replace("CustomerStreet", "Prenzlauer Berg 12");
+		// converter.replace("CustomerZip", "10405 Berlin");
+		//
+		// services = new ArrayList<ArrayList<String>>();
+		//
+		// subservice1 = new ArrayList<String>();
+		// subservice2 = new ArrayList<String>();
+		// subservice3 = new ArrayList<String>();
+		//
+		// subservice1.add("Software");
+		// subservice1.add("150");
+		// subservice2.add("Hardware");
+		// subservice2.add("500");
+		// subservice3.add("Test");
+		// subservice3.add("350");
+		//
+		// services.add(subservice1);
+		// services.add(subservice2);
+		// services.add(subservice3);
+		//
+		// converter.replace("services", services);
+		//
+		// converter.parse(template, invoice2);
+		//
+		// if (!converter.parse(template, invoice2)) {
+		// System.out.println(converter.getErrorMessage());
+		// }
+
+	}
+
+	private static byte[] readContentIntoByteArray(File file) {
+		FileInputStream fileInputStream = null;
+		byte[] bFile = new byte[(int) file.length()];
+		try {
+			// convert file into array of bytes
+			fileInputStream = new FileInputStream(file);
+			fileInputStream.read(bFile);
+			fileInputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bFile;
+	}
+
+	public PDFContainer generatePdfForTemplate(Task task, PdfTemplate template, long dateOfReport,
+			ContactRole addressPhysicianRole, Physician externalPhysician, Physician signingPhysician) {
+		// PDFContainer result = null;
+		//
+		// switch (template.getType()) {
+		// case "COUNCIL":
+		// if (task.getCouncil() != null) {
+		// result = generatePdf(task, template,
+		// task.getCouncil().getDateOfRequest(),
+		// task.getCouncil().getCouncilPhysician(),
+		// task.getCouncil().getPhysicianRequestingCouncil());
+		// }
+		// break;
+		// case "INTERNAL":
+		// result = generatePdf(task, template,
+		// task.getReport().getSignatureDate(), null, null);
+		// break;
+		// default:
+		// Physician addressPhysician = null;
+		// if (addressPhysicianRole == ContactRole.FAMILY_PHYSICIAN
+		// || addressPhysicianRole == ContactRole.PRIVATE_PHYSICIAN) {
+		// Contact tmp = task.getPrimaryContact(addressPhysicianRole);
+		// addressPhysician = (tmp == null ? null : tmp.getPhysician());
+		// } else {
+		// addressPhysician = externalPhysician;
+		// }
+		//
+		// result = generatePdf(task, template, dateOfReport, addressPhysician,
+		// signingPhysician);
+		// break;
+		// }
+		// TODO: rework
+		// return result;
+		return null;
 	}
 
 	public PDFContainer generatePdf(Task task, PdfTemplate template, long dateOfReport, Physician addressPhysician,
@@ -94,10 +250,10 @@ public class PdfGenerator {
 		PdfStamper pdf = getPdfStamper(pdfReader, out);
 
 		// header
-		populateReportHead(pdf, task, dateOfReport);
-
-		// address
-		populateReportAddress(pdf, addressPhysician);
+		// populateReportHead(pdf, task, dateOfReport);
+		//
+		// // address
+		// populateReportAddress(pdf, addressPhysician);
 
 		// body
 		populateBody(pdf, task, dateOfReport);
@@ -117,7 +273,7 @@ public class PdfGenerator {
 				setStamperField(pdf, key, value);
 			}
 		}
-		
+
 		pdf.setFormFlattening(true);
 
 		closePdf(pdfReader, pdf);
@@ -145,104 +301,105 @@ public class PdfGenerator {
 		setStamperField(stamper, "B_SIGANTURE", physician.getPerson().getFullName());
 	}
 
-	public final void populateReportHead(PdfStamper stamper, Task task, long dateOfReport) {
-		setStamperField(stamper, "H_Name",
-				task.getParent().getPerson().getName() + ", " + task.getParent().getPerson().getSurname());
-		setStamperField(stamper, "H_Birthday", resourceBundle.get("pdf.birthday") + " "
-				+ mainHandlerAction.date(task.getParent().getPerson().getBirthday()));
-		setStamperField(stamper, "H_Insurance", task.getParent().getInsurance());
-		setStamperField(stamper, "H_PIZ", task.getParent().getPiz().isEmpty()
-				? resourceBundle.get("pdf.address.piz.none") : task.getParent().getPiz());
-		setStamperField(stamper, "H_Date", mainHandlerAction.date(dateOfReport));
-	}
-
-	public final void populateReportAddress(PdfStamper stamper, Physician physician) {
-		StringBuffer contAdr = new StringBuffer();
-
-		if (physician != null) {
-			contAdr.append(physician.getPerson().getGender() == Gender.FEMALE ? resourceBundle.get("pdf.address.female")
-					: resourceBundle.get("pdf.address.male") + "\r\n");
-			contAdr.append(physician.getPerson().getFullName() + "\r\n");
-			contAdr.append(physician.getPerson().getStreet() + " " + physician.getPerson().getHouseNumber() + "\r\n");
-			contAdr.append(physician.getPerson().getPostcode() + " " + physician.getPerson().getTown() + "\r\n");
-		} else
-			contAdr.append(resourceBundle.get("pdf.address.none"));
-
-		setStamperField(stamper, "H_ADDRESS", contAdr.toString());
-	}
-
 	public final void populateBody(PdfStamper stamper, Task task, long dateOfReport) {
 
-		List<Sample> samples = task.getSamples();
-
-		StringBuffer material = new StringBuffer();
-		StringBuffer diagonsisList = new StringBuffer();
-		StringBuffer reDiagonsisList = new StringBuffer();
-
-		for (Sample sample : samples) {
-			material.append(sample.getSampleID() + " " + sample.getMaterial() + "\r\n");
-			diagonsisList
-					.append(sample.getSampleID() + " " + sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
-
-			if (sample.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED)
-				reDiagonsisList.append(sample.getSampleID() + " "
-						+ sample.getLastRelevantDiagnosis().getDiagnosisRevisionText() + "\r\n");
-		}
-
-		setStamperField(stamper, "B_DATE", mainHandlerAction.date(dateOfReport));
-		setStamperField(stamper, "B_Name",
-				task.getParent().getPerson().getName() + ", " + task.getParent().getPerson().getSurname());
-		setStamperField(stamper, "B_Birthday", resourceBundle.get("pdf.birthday") + " "
-				+ mainHandlerAction.date(task.getParent().getPerson().getBirthday()));
-
-		setStamperField(stamper, "B_SAMPLES", material.toString());
-		setStamperField(stamper, "B_EDATE", mainHandlerAction.date(task.getDateOfSugeryAsDate()));
-		setStamperField(stamper, "B_TASK_NUMBER", task.getTaskID());
-		setStamperField(stamper, "B_PIZ", task.getParent().getPiz().isEmpty() ? "" : task.getParent().getPiz());
-
-		setStamperField(stamper, "B_EYE", resourceBundle.get("enum.eye." + task.getEye().toString()));
-		setStamperField(stamper, "B_HISTORY", task.getCaseHistory());
-		setStamperField(stamper, "B_INSURANCE_NORMAL", task.getPatient().isPrivateInsurance() ? "0" : "1");
-		setStamperField(stamper, "B_INSURANCE_PRIVATE", task.getPatient().isPrivateInsurance() ? "1" : "0");
-		setStamperField(stamper, "B_WARD", task.getWard());
-		setStamperField(stamper, "B_MALIGN", task.isMalign() ? "1" : "0");
-
-		Contact privatePhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
-		Contact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
-
-		setStamperField(stamper, "B_PRIVATE_PHYSICIAN",
-				privatePhysician == null ? "" : privatePhysician.getPhysician().getPerson().getFullName());
-		setStamperField(stamper, "B_SURGEON", surgeon == null ? "" : surgeon.getPhysician().getPerson().getFullName());
-		setStamperField(stamper, "B_DIAGNOSIS", diagonsisList.toString());
-		setStamperField(stamper, "B_DATE", mainHandlerAction.date(dateOfReport));
-
-		if (task.getCouncil() != null && task.getCouncil().getCouncilPhysician() != null) {
-			setStamperField(stamper, "B_COUNCIL", task.getCouncil().getCouncilPhysician().getPerson().getFullName());
-			setStamperField(stamper, "B_TEXT", task.getCouncil().getCouncilText());
-			setStamperField(stamper, "B_APPENDIX", task.getCouncil().getAttachment());
-		}
-
-		if (task.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
-			setStamperField(stamper, "B_RE_DIAGNOSIS", "1");
-			setStamperField(stamper, "B_RE_DIAGNOSIS_TEXT", reDiagonsisList.toString());
-		}
-
-		if (task.getReport() != null) {
-
-			setStamperField(stamper, "B_HISTOLOGICAL_RECORD", task.getReport().getHistologicalRecord());
-
-			if (task.getReport().getPhysicianToSign().getPhysician() != null) {
-				setStamperField(stamper, "S_PHYSICIAN",
-						task.getReport().getPhysicianToSign().getPhysician().getPerson().getFullName());
-				setStamperField(stamper, "S_PHYSICIAN_ROLE", task.getReport().getPhysicianToSign().getRole());
-			}
-
-			if (task.getReport().getConsultantToSign().getPhysician() != null) {
-				setStamperField(stamper, "S_CONSULTANT",
-						task.getReport().getConsultantToSign().getPhysician().getPerson().getFullName());
-				setStamperField(stamper, "S_CONSULTANT_ROLE", task.getReport().getConsultantToSign().getRole());
-			}
-		}
+		// List<Sample> samples = task.getSamples();
+		//
+		// StringBuffer material = new StringBuffer();
+		// StringBuffer diagonsisList = new StringBuffer();
+		// StringBuffer reDiagonsisList = new StringBuffer();
+		//
+		// for (Sample sample : samples) {
+		// material.append(sample.getSampleID() + " " + sample.getMaterial() +
+		// "\r\n");
+		// diagonsisList
+		// .append(sample.getSampleID() + " " +
+		// sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
+		//
+		// if (sample.getDiagnosisStatus() ==
+		// DiagnosisStatusState.RE_DIAGNOSIS_NEEDED)
+		// reDiagonsisList.append(sample.getSampleID() + " "
+		// + sample.getLastRelevantDiagnosis().getDiagnosisRevisionText() +
+		// "\r\n");
+		// }
+		//
+		// setStamperField(stamper, "B_DATE",
+		// mainHandlerAction.date(dateOfReport));
+		// setStamperField(stamper, "B_Name",
+		// task.getParent().getPerson().getName() + ", " +
+		// task.getParent().getPerson().getSurname());
+		// setStamperField(stamper, "B_Birthday",
+		// resourceBundle.get("pdf.birthday") + " "
+		// +
+		// mainHandlerAction.date(task.getParent().getPerson().getBirthday()));
+		//
+		// setStamperField(stamper, "B_SAMPLES", material.toString());
+		// setStamperField(stamper, "B_EDATE",
+		// mainHandlerAction.date(task.getDateOfSugeryAsDate()));
+		// setStamperField(stamper, "B_TASK_NUMBER", task.getTaskID());
+		// setStamperField(stamper, "B_PIZ", task.getParent().getPiz().isEmpty()
+		// ? "" : task.getParent().getPiz());
+		//
+		// setStamperField(stamper, "B_EYE", resourceBundle.get("enum.eye." +
+		// task.getEye().toString()));
+		// setStamperField(stamper, "B_HISTORY", task.getCaseHistory());
+		// setStamperField(stamper, "B_INSURANCE_NORMAL",
+		// task.getPatient().isPrivateInsurance() ? "0" : "1");
+		// setStamperField(stamper, "B_INSURANCE_PRIVATE",
+		// task.getPatient().isPrivateInsurance() ? "1" : "0");
+		// setStamperField(stamper, "B_WARD", task.getWard());
+		// setStamperField(stamper, "B_MALIGN", task.isMalign() ? "1" : "0");
+		//
+		// Contact privatePhysician =
+		// task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
+		// Contact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
+		//
+		// setStamperField(stamper, "B_PRIVATE_PHYSICIAN",
+		// privatePhysician == null ? "" :
+		// privatePhysician.getPhysician().getPerson().getFullName());
+		// setStamperField(stamper, "B_SURGEON", surgeon == null ? "" :
+		// surgeon.getPhysician().getPerson().getFullName());
+		// setStamperField(stamper, "B_DIAGNOSIS", diagonsisList.toString());
+		// setStamperField(stamper, "B_DATE",
+		// mainHandlerAction.date(dateOfReport));
+		//
+		// if (task.getCouncil() != null &&
+		// task.getCouncil().getCouncilPhysician() != null) {
+		// setStamperField(stamper, "B_COUNCIL",
+		// task.getCouncil().getCouncilPhysician().getPerson().getFullName());
+		// setStamperField(stamper, "B_TEXT",
+		// task.getCouncil().getCouncilText());
+		// setStamperField(stamper, "B_APPENDIX",
+		// task.getCouncil().getAttachment());
+		// }
+		//
+		// if (task.getDiagnosisStatus() ==
+		// DiagnosisStatusState.RE_DIAGNOSIS_NEEDED) {
+		// setStamperField(stamper, "B_RE_DIAGNOSIS", "1");
+		// setStamperField(stamper, "B_RE_DIAGNOSIS_TEXT",
+		// reDiagonsisList.toString());
+		// }
+		//
+		// if (task.getReport() != null) {
+		//
+		// setStamperField(stamper, "B_HISTOLOGICAL_RECORD",
+		// task.getReport().getHistologicalRecord());
+		//
+		// if (task.getReport().getPhysicianToSign().getPhysician() != null) {
+		// setStamperField(stamper, "S_PHYSICIAN",
+		// task.getReport().getPhysicianToSign().getPhysician().getPerson().getFullName());
+		// setStamperField(stamper, "S_PHYSICIAN_ROLE",
+		// task.getReport().getPhysicianToSign().getRole());
+		// }
+		//
+		// if (task.getReport().getConsultantToSign().getPhysician() != null) {
+		// setStamperField(stamper, "S_CONSULTANT",
+		// task.getReport().getConsultantToSign().getPhysician().getPerson().getFullName());
+		// setStamperField(stamper, "S_CONSULTANT_ROLE",
+		// task.getReport().getConsultantToSign().getRole());
+		// }
+		// }
+		// TODO: rework
 	}
 
 	/**

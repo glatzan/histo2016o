@@ -5,7 +5,7 @@ import java.util.List;
 import org.histo.config.enums.StainingStatus;
 import org.histo.util.TimeUtil;
 
-public interface StainingInfo<T extends StainingInfo<?> & ArchivAble & CreationDate>{
+public interface StainingInfo<T extends StainingInfo<?> & DeleteAble & CreationDate>{
 	
 	public boolean isNew();
 	
@@ -26,8 +26,6 @@ public interface StainingInfo<T extends StainingInfo<?> & ArchivAble & CreationD
 
 		for (T listObjects : list) {
 			// contiune if archived
-			if (listObjects.isArchived())
-				continue;
 			
 			StainingStatus stainingStatusofChild = listObjects.getStainingStatus();
 			

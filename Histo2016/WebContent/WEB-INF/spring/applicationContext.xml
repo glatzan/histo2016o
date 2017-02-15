@@ -19,7 +19,6 @@
 	<mvc:annotation-driven />
 	<tx:annotation-driven />
 
-
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />

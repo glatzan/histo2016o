@@ -12,26 +12,54 @@
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout">
-	<h:form>
-		<div class="dialogContent">
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel
+					value="#{msg['dialog.histologicalRecordOverwrite.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
 			<h:outputLabel
 				value="#{msg['dialog.histologicalRecordOverwrite.text']}"
 				escape="false" />
 		</div>
-		<div class="buttonContainer">
-			<p:commandButton
-				value="#{msg['dialog.histologicalRecordOverwrite.button.overwrite']}">
-				<f:actionListener
-					binding="#{diagnosisHandlerAction.copyHistologicalRecord(diagnosisHandlerAction.tmpDiagnosis)}"></f:actionListener>
-				<f:actionListener
-					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('DIAGNOSIS_RECORD_OVERWRITE'))}"></f:actionListener>
-			</p:commandButton>
 
-			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="buttonLeftMarginInList"
-				actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('DIAGNOSIS_RECORD_OVERWRITE'))}" />
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="3" style="float:right;">
+					<p:commandButton icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						value="#{msg['dialog.histologicalRecordOverwrite.button.overwrite']}">
+						<f:actionListener
+							binding="#{diagnosisHandlerAction.copyHistologicalRecord(diagnosisHandlerAction.tmpDiagnosis, true)}"></f:actionListener>
+					</p:commandButton>
+
+					<p:commandButton icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						value="#{msg['dialog.histologicalRecordOverwrite.button.add']}">
+						<f:actionListener
+							binding="#{diagnosisHandlerAction.copyHistologicalRecord(diagnosisHandlerAction.tmpDiagnosis, false)}"></f:actionListener>
+					</p:commandButton>
+
+					<p:commandButton id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						value="#{msg['general.abort']}" icon="fa fa-times-circle"
+						actionListener="#{diagnosisHandlerAction.hideCopyHistologicalRecordDialog()}" />
+				</h:panelGrid>
+			</h:panelGrid>
 		</div>
+
 	</h:form>
 </h:body>
 </html>

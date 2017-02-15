@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+
+<h:head>
+	<title><h:outputFormat value="#{msg['dialog.print.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="defaultDialogLayout bigDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.print.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					actionListener="#{printHandlerAction.hidePrintDialog()}">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<!-- print tab -->
+			<ui:fragment
+				rendered="#{printHandlerAction.printTab eq 'PRINT_PDFs'}">
+				<ui:include src="printTab.xhtml" />
+			</ui:fragment>
+
+			<ui:fragment
+				rendered="#{printHandlerAction.printTab eq 'ATTACHED_PDFs'}">
+				<ui:include src="attachedTab.xhtml" />
+			</ui:fragment>
+		</div>
+
+		<div class="buttonContainer" style="width: 100% !important">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="2">
+					<p:selectOneButton value="#{printHandlerAction.printTab}"
+						id="changeTab" styleClass="buttonLeftMarginInList">
+						<f:selectItem itemLabel="Gespeicherte Dokumente () "
+							itemValue="ATTACHED_PDFs" />
+						<f:selectItem itemLabel="Neues Dokument" itemValue="PRINT_PDFs" />
+						<p:ajax update="@form" onstart="PF('blockUIWidget').block()"
+							oncomplete="PF('blockUIWidget').unblock()"
+							listener="#{printHandlerAction.onChangeTab()}"></p:ajax>
+					</p:selectOneButton>
+				</h:panelGrid>
+
+
+				<h:panelGrid columns="3" style="float:right;">
+					<!-- confirm -->
+					<p:commandButton value="Drucken" icon="fa fa-print"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{printHandlerAction.onPrintPdf()}"></p:commandButton>
+
+					<p:commandButton value="Öffnen" icon="fa fa-download" ajax="false"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{printHandlerAction.onDownloadPdf}">
+						<p:fileDownload value="#{printHandlerAction.pdfContent}" />
+					</p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{printHandlerAction.hidePrintDialog()}" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+		<pe:blockUI widgetVar="blockUIWidget">
+			<h:panelGrid columns="1">
+				<h:outputText value="Please wait..." style="white-space: nowrap;" />
+			</h:panelGrid>
+		</pe:blockUI>
+	</h:form>
+</h:body>
+</html>

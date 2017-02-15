@@ -12,12 +12,25 @@
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout">
-	<h:form>
-		<div class="dialogContent">
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.addSlide.Headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
 			<p:dataTable var="staining"
 				styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll"
-				style="width:100%" scrollable="true" scrollHeight="250"
+				scrollable="true" scrollHeight="190"
 				value="#{slideHandlerAction.stainingListChooser}">
 				<p:column headerText="#{msg['dialog.addSlide.staining']}">
 					<h:outputLabel value="#{staining.listItem.name}" />
@@ -37,13 +50,27 @@
 
 			</h:panelGrid>
 		</div>
+
 		<div class="buttonContainer">
-			<p:commandButton value="#{msg['general.create']}"
-				actionListener="#{slideHandlerAction.addSelectedSlides(slideHandlerAction.stainingListChooser, slideHandlerAction.tmpBlock, slideHandlerAction.tmpCommentary, slideHandlerAction.tmpRestaining)}"></p:commandButton>
-			<p:commandButton value="#{msg['general.abort']}"
-				actionListener="#{slideHandlerAction.hideAddSlideDialog()}"
-				style="margin-left:20px;"></p:commandButton>
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+					<!-- confirm -->
+					<p:commandButton value="#{msg['general.create']}"
+						icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{slideHandlerAction.addSelectedSlides(slideHandlerAction.stainingListChooser, slideHandlerAction.tmpBlock, slideHandlerAction.tmpCommentary, slideHandlerAction.tmpRestaining)}"></p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						actionListener="#{slideHandlerAction.hideAddSlideDialog()}"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"></p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
 		</div>
+
+		<div class="buttonContainer"></div>
 	</h:form>
 </h:body>
 </html>

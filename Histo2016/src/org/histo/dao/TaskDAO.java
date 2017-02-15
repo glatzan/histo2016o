@@ -6,7 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.histo.model.Report;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
@@ -34,9 +34,12 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		Hibernate.initialize(task.getAttachedPdfs());
 	}
 	
-	public void initializeReportData(Task task) {
+	public void initializeDiagnosisData(Task task) {
 		getSession().update(task);
-		Hibernate.initialize(task.getReport());
+		Hibernate.initialize(task.getDiagnosisInfo());
+		getSession().update(task.getDiagnosisInfo());
+		Hibernate.initialize(task.getDiagnosisInfo().getSignatureOne());
+		Hibernate.initialize(task.getDiagnosisInfo().getSignatureTwo());
 	}
 	
 	public void initializeCouncilData(Task task) {

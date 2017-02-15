@@ -1,4 +1,15 @@
-[  {  
+[  
+	{  
+      "version":"0.96",
+      "changes":[  
+         "<b>Fix:</b> Patienten erscheinen nach dem Hinzufügen über die Schnellsuch-Funktion in der Arbeitsliste",   
+         "<b>Fix:</b> Rechstschreibfehler gefixt",    
+         "<b>Fix:</b> Autonomeklatur für Proben repariert",
+         "<b>Change:</b> Autrag-Dialog überarbeitet",      
+         
+       ]
+   }, 
+	{  
    
       "version":"0.95c",
       "changes":[  

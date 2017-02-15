@@ -30,97 +30,131 @@
 
 
 		<div class="contentDiv">
-			<h:panelGrid columns="2"
-				styleClass="infoTable smallPaddingVerticalAll standardFont"
-				style="width:100%" columnClasses="textColumn,">
+			<h:panelGrid columns="3"
+				styleClass="defaultListingTableTwoLineContainer">
+				<!-- Left Column -->
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
 
-				<!-- Task number -->
-				<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
-				<h:outputLabel value="#{taskHandlerAction.temporaryTask.taskID}"></h:outputLabel>
+					<!-- Task number -->
+					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
+					<h:outputLabel value="#{taskHandlerAction.temporaryTask.taskID}"></h:outputLabel>
 
-				<!-- Task Date -->
+					<!-- Task Date -->
 
-				<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
-				<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
-					value="#{taskHandlerAction.temporaryTask.dateOfReceiptAsDate}">
-				</p:calendar>
+					<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
+					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
+						value="#{taskHandlerAction.temporaryTask.dateOfReceiptAsDate}">
+					</p:calendar>
 
-				<!-- priority -->
-				<h:outputLabel value="#{msg['dialog.createTask.priority']}"></h:outputLabel>
-				<p:panelGrid columns="1"
-					styleClass="noBordersAll noPaddingAll collapsedBorders">
-					<p:row>
-						<p:column colspan="2">
-							<p:selectOneRadio id="console"
-								value="#{taskHandlerAction.temporaryTask.taskPriority}">
-								<f:selectItem itemLabel="#{msg['enum.taskPriority.LOW']}"
-									itemValue="NONE" />
-								<f:selectItem itemLabel="#{msg['enum.taskPriority.HIGHT']}"
-									itemValue="HIGH" />
-								<f:selectItem itemLabel="#{msg['enum.taskPriority.TIME']}"
-									itemValue="TIME" />
+					<!-- Auto nomenclature -->
+					<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}" />
+					<p:selectBooleanCheckbox id="autoNomenclature"
+						title="#{msg['dialog.createTask.autoNomenclature.text']}"
+						value="#{taskHandlerAction.temporaryTask.useAutoNomenclature}">
+						<p:ajax
+							listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
+					</p:selectBooleanCheckbox>
 
-								<p:ajax update="@form"></p:ajax>
-							</p:selectOneRadio>
-						</p:column>
-					</p:row>
-					<p:row>
-						<p:column>
+					<!-- priority -->
+					<h:outputLabel value="#{msg['dialog.createTask.priority']}" />
+
+					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+						<p:selectOneRadio id="console"
+							value="#{taskHandlerAction.temporaryTask.taskPriority}">
+							<f:selectItem itemLabel="#{msg['enum.taskPriority.LOW']}"
+								itemValue="NONE" />
+							<f:selectItem itemLabel="#{msg['enum.taskPriority.HIGHT']}"
+								itemValue="HIGH" />
+							<f:selectItem itemLabel="#{msg['enum.taskPriority.TIME']}"
+								itemValue="TIME" />
+
+							<p:ajax update="@form"></p:ajax>
+						</p:selectOneRadio>
+
+						<h:panelGrid columns="2">
 							<h:outputLabel
 								value="#{msg['dialog.createTask.priority.dueDate']}" />
-						</p:column>
-						<p:column>
 							<p:calendar pattern="dd.MM.yyyy" mask="true"
 								disabled="#{!taskHandlerAction.temporaryTask.dueDateSelected}"
 								value="#{taskHandlerAction.temporaryTask.dueDateAsDate}">
 							</p:calendar>
+						</h:panelGrid>
+					</h:panelGrid>
+
+
+					<!-- biobank -->
+					<h:outputLabel value="#{msg['dialog.createTask.bioBank']}" />
+					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+						<h:panelGrid columns="2">
+							<h:outputLabel
+								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
+							<p:selectBooleanCheckbox id="informedConsent"
+								title="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
+							<h:outputLabel
+								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
+							<p:selectOneMenu id="consentType">
+								<f:selectItem itemLabel="Select One" itemValue="" />
+								<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+								<f:selectItem itemLabel="PS4" itemValue="PS4" />
+								<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+							</p:selectOneMenu>
+							<h:outputLabel
+								value="#{msg['dialog.createTask.bioBank.informedConsent.upload']}" />
+							<p:fileUpload mode="simple" skinSimple="true" />
+						</h:panelGrid>
+					</h:panelGrid>
+
+				</h:panelGrid>
+				<!-- Left column -->
+
+				<!-- spacer -->
+				<h:panelGroup></h:panelGroup>
+
+				<!-- Right column -->
+				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+					<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+
+						<!-- samplecount -->
+						<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
+						<p:spinner id="basic"
+							value="#{taskHandlerAction.temporaryTaskSampleCount}"
+							styleClass="taskSpinner" min="1" max="5">
+							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
+								event="change"
+								listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask)}"></p:ajax>
+						</p:spinner>
+
+
+					</h:panelGrid>
+					<p:dataTable var="sample" id="sampleMaterial"
+						styleClass="smallPaddingAll noBordersAll hide-column-names standardFont"
+						value="#{taskHandlerAction.temporaryTask.samples}">
+						<p:column style="width: 40px;">
+							<ul style="margin: 0px;">
+								<LI style="margin: 0px;" />
+							</ul>
 						</p:column>
-					</p:row>
-				</p:panelGrid>
 
-				<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}"></h:outputLabel>
-				<p:selectBooleanCheckbox id="autoNomenclature"
-					title="#{msg['dialog.createTask.autoNomenclature.text']}"
-					value="#{taskHandlerAction.useAutoNomenclature}" />
-
-				<!-- samplecount -->
-				<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
-				<p:spinner id="basic"
-					value="#{taskHandlerAction.temporaryTaskSampleCount}"
-					styleClass="taskSpinner" min="1" max="5">
-					<p:ajax update="sampleMaterial autoNomenclature" process="@this"
-						event="change"
-						listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask, taskHandlerAction.useAutoNomenclature)}"></p:ajax>
-				</p:spinner>
-
+						<p:column style="width: 62px;">
+							<h:outputLabel
+								value="#{msg['dialog.createTask.task']} #{sample.sampleID}"></h:outputLabel>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
+								style="margin-left:30px;"
+								converter="#{taskHandlerAction.materialListTransformer}"
+								value="#{sample.materilaPreset}">
+								<f:selectItems
+									value="#{settingsHandlerAction.allAvailableMaterials}"
+									var="materialSelect" itemLabel="#{materialSelect.name}"
+									itemValue="#{materialSelect}">
+								</f:selectItems>
+							</p:selectOneMenu>
+						</p:column>
+					</p:dataTable>
+				</h:panelGrid>
+				<!-- Right column -->
 			</h:panelGrid>
-
-			<p:dataTable var="sample" id="sampleMaterial"
-				styleClass="smallPaddingAll noBordersAll hide-column-names standardFont"
-				value="#{taskHandlerAction.temporaryTask.samples}">
-				<p:column style="width: 40px;">
-					<ul style="margin: 0px;">
-						<LI style="margin: 0px;" />
-					</ul>
-				</p:column>
-
-				<p:column style="width: 62px;">
-					<h:outputLabel
-						value="#{msg['dialog.createTask.task']} #{sample.sampleID}"></h:outputLabel>
-				</p:column>
-				<p:column>
-					<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-						style="margin-left:30px;"
-						converter="#{taskHandlerAction.materialListTransformer}"
-						value="#{sample.materilaPreset}">
-						<f:selectItems value="#{taskHandlerAction.allAvailableMaterials}"
-							var="materialSelect" itemLabel="#{materialSelect.name}"
-							itemValue="#{materialSelect}">
-						</f:selectItems>
-					</p:selectOneMenu>
-				</p:column>
-			</p:dataTable>
-
 		</div>
 
 		<div class="buttonContainer">
@@ -131,19 +165,14 @@
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
-						icon="fa fa-print"
+						icon="fa fa-print" disabled="true"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 
-					<!-- print dummy ureport -->
-					<p:commandButton value="#{msg['dialog.createTask.print.dummyUReport']}"
-						icon="fa fa-print"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask,taskHandlerAction.useAutoNomenclature)}"></p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"

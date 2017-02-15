@@ -29,18 +29,22 @@
 		</div>
 
 		<div class="contentDiv">
-			<h:panelGrid columns="2" columnClasses="textColumn,"
-				styleClass="infoTable smallPaddingVerticalAll standardFont">
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<!-- material -->
 				<h:outputLabel value="#{msg['dialog.createSample.material']}"></h:outputLabel>
 				<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
 					style="margin-left:30px;"
 					converter="#{taskHandlerAction.materialListTransformer}"
 					value="#{taskHandlerAction.selectedMaterial}">
-					<f:selectItems value="#{taskHandlerAction.allAvailableMaterials}"
+					<f:selectItems value="#{settingsHandlerAction.allAvailableMaterials}"
 						var="material" itemLabel="#{material.name}"
 						itemValue="#{material}">
 					</f:selectItems>
 				</p:selectOneMenu>
+				
+				<!-- Autonomeclature -->
+				<h:outputLabel value="#{msg['dialog.createSample.autoNomeclature']}"></h:outputLabel>
+				<p:selectBooleanCheckbox value="#{taskHandlerAction.temporaryTask.useAutoNomenclature}" />
 			</h:panelGrid>
 		</div>
 

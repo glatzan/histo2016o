@@ -30,16 +30,17 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Gender;
 import org.histo.config.enums.StainingStatus;
 import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.DiagnosisStatus;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONObject;
@@ -51,7 +52,7 @@ import org.primefaces.json.JSONObject;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 public class Patient
-		implements Parent<Patient>, DiagnosisInfo<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble {
+		implements Parent<Patient>, DiagnosisStatus<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble, SaveAble {
 
 	private long id;
 
@@ -348,20 +349,20 @@ public class Patient
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface DiagnosisInfo
+	 * Interface DiagnosisStatusState
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisInfo} interfaces, and returns the status
+	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the status
 	 * of the diagnoses.
 	 */
 	@Override
 	@Transient
-	public DiagnosisStatus getDiagnosisStatus() {
+	public DiagnosisStatusState getDiagnosisStatus() {
 		return getDiagnosisStatus(getTasks());
 	}
 
 	/********************************************************
-	 * Interface DiagnosisInfo
+	 * Interface DiagnosisStatusState
 	 ********************************************************/
 
 	/********************************************************
@@ -399,10 +400,9 @@ public class Patient
 	 * Interface StainingInfo
 	 ********************************************************/
 
-	/*
-	 * ************************** Interface StainingTreeParent
-	 * ****************************
-	 */
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
 	@Transient
 	@Override
 	public Patient getPatient() {
@@ -440,8 +440,30 @@ public class Patient
 	@Override
 	public void setParent(Patient parent) {
 	}
-	/*
-	 * ************************** Interface StainingTreeParent
-	 * ****************************
-	 */
+	
+	@Override
+	@Transient
+	public Task getTask() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	/********************************************************
+	 * Interface StainingTreeParent
+	 ********************************************************/
+	
+
+
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
+	@Override
+	@Transient
+	public String getLogPath() {
+		return "Patient-Name: " + getPerson().getFullName() + " (" + getId() + ")";
+	}
+	/********************************************************
+	 * Interface SaveAble
+	 ********************************************************/
 }
