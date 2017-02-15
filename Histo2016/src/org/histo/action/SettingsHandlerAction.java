@@ -328,9 +328,16 @@ public class SettingsHandlerAction {
 			logger.debug("Selecting tag material");
 			initMaterialPresets();
 			// update stainings if selected
-			if (getMaterialTabIndex() == SettingsTab.M_EDIT)
+			if (getMaterialTabIndex() == SettingsTab.M_EDIT){
 				setStainingListChooserForMaterial(
 						SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
+				
+				// bugfix, if material is null an diet tab is shown
+				if(getEditMaterial() == null){
+					setEditMaterial(new MaterialPreset());
+					setOriginalMaterial(null);
+				}
+			}
 			break;
 		case TAB_PERSON:
 			preparePhysicianList();
@@ -931,7 +938,6 @@ public class SettingsHandlerAction {
 	 * transformer
 	 */
 	public void updateAllDiagnosisPrototypes() {
-		System.out.println("updating diagnosis");
 		setAllAvailableDiagnosisPrototypes(helperDAO.getAllDiagnosisPrototypes());
 		setDiagnosisPrototypeListTransformer(
 				new DiagnosisPrototypeListTransformer(getAllAvailableDiagnosisPrototypes()));

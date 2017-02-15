@@ -26,6 +26,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.DiagnosisRevisionType;
+import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.LogAble;
@@ -78,6 +79,28 @@ public class DiagnosisInfo implements Parent<Task>, LogAble, SaveAble {
 
 	public void setSignatureDateAsDate(Date signatureDateAsDate) {
 		this.signatureDate = signatureDateAsDate.getTime();
+	}
+
+	/**
+	 * Creates a signature object with the given physician
+	 * 
+	 * @param physician
+	 */
+	public void setPhysicianAsSignatureOne(Physician physician) {
+		Signature signature = new Signature(physician);
+		signature.setRole(physician.getClinicRole());
+		setSignatureOne(signature);
+	}
+	
+	/**
+	 * Creates a signature object with the given physician
+	 * 
+	 * @param physician
+	 */
+	public void setPhysicianAsSignatureTwo(Physician physician) {
+		Signature signature = new Signature(physician);
+		signature.setRole(physician.getClinicRole());
+		setSignatureTwo(signature);
 	}
 
 	/******** Transient ********/

@@ -359,8 +359,7 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		// only setting diagnosis text if one sample and no text has been added
 		// jet
-		if (task.getSamples().size() == 1
-				&& (diagnosis.getParent().getText() != null || diagnosis.getParent().getText().isEmpty())) {
+		if (diagnosis.getParent().getText() == null || diagnosis.getParent().getText().isEmpty()) {
 			diagnosis.getParent().setText(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 			logger.debug("Updating revision extended text");
 			genericDAO.save(diagnosis.getParent(),

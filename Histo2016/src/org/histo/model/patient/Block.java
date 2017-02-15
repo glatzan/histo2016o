@@ -90,7 +90,8 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	}
 
 	@Transient
-	public void updateNamesOfSlides(boolean useAutoNomenclature){
+	public void updateAllNames(boolean useAutoNomenclature){
+		updateNameOfBlock(useAutoNomenclature);
 		for (Slide slide : slides) {
 			slide.updateNameOfSlide();
 		}

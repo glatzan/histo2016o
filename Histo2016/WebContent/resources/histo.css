@@ -658,7 +658,7 @@ body {
 
 /* Layout in the tabview center tab*/
 .settingsDialogLayout .settingsPannel .settingsTabView .tabLayout {
-	height: 560px;
+	height: 555px;
 	width: 100%
 }
 
@@ -673,7 +673,7 @@ body {
 /* Settings tab view hight + width*/
 .settingsDialogLayout .settingsPannel .settingsTabView {
 	width: 100%;
-	height: 570px;
+	height: 565px;
 }
 
 /* Layout in the tabview center tab, center div*/

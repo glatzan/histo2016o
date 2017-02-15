@@ -100,9 +100,9 @@
 				<!-- other -->
 				<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />
 				<h:panelGroup>
-					<p:commandButton icon="fa fa-fw fa-taxi"
+					<p:commandButton icon="fa fa-fw fa-taxi" disabled="true"
 						title="#{msg['body.receiptlog.miscellaneous.borrow']}" />
-					<p:commandButton icon="fa fa-fw fa-dollar"
+					<p:commandButton icon="fa fa-fw fa-dollar" disabled="true"
 						actionListener="#{mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ACCOUNTING'))}"
 						title="#{msg['body.receiptlog.miscellaneous.accounting']}" />
 				</h:panelGroup>

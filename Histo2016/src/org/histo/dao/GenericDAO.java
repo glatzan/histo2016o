@@ -120,14 +120,14 @@ public class GenericDAO extends AbstractDAO {
 	}
 
 	public <C> C delete(C object) {
-		return save(object, (LogInfo) null);
+		return delete(object, (LogInfo) null);
 	}
 
 	public <C> C delete(C object, String logMessage, Patient patient) {
-		return save(object, new LogInfo(logMessage, patient));
+		return delete(object, new LogInfo(logMessage, patient));
 	}
 
-	public void delete(Object object, LogInfo logInfo) {
+	public <C> C delete(C object, LogInfo logInfo) {
 
 		// sets a logMessage to the securityContext, this is a workaround for
 		// passing variables to the revisionListener
@@ -141,6 +141,8 @@ public class GenericDAO extends AbstractDAO {
 		} catch (HibernateException hibernateException) {
 			session.delete(session.merge(object));
 		}
+
+		return object;
 	}
 
 	public void delete(Collection<?> objects) {

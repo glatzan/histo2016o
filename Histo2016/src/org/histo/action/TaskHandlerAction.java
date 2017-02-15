@@ -150,11 +150,6 @@ public class TaskHandlerAction implements Serializable {
 	/**
 	 * List of all physicians known in the database
 	 */
-	private List<Physician> allAvailablePhysicians;
-
-	/**
-	 * List of all physicians known in the database
-	 */
 	private DefaultTransformer<Physician> allAvailablePhysiciansTransformer;
 
 	/**
@@ -201,12 +196,12 @@ public class TaskHandlerAction implements Serializable {
 	/**
 	 * Selected physician to sign the report
 	 */
-	private Physician physicianToSign;
+	private Physician signatureOne;
 
 	/**
 	 * Selected consultant to sign the report
 	 */
-	private Physician consultantToSign;
+	private Physician signatureTwo;
 
 	/********************************************************
 	 * DiagnosisRevision
@@ -217,8 +212,8 @@ public class TaskHandlerAction implements Serializable {
 		settingsHandlerAction.initMaterialPresets();
 		setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
 
-		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
-		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
+		settingsHandlerAction.setPhysicianList(physicianDAO.getPhysicians(ContactRole.values(), false));
+		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(settingsHandlerAction.getPhysicianList()));
 	}
 
 	/********************************************************
@@ -241,6 +236,9 @@ public class TaskHandlerAction implements Serializable {
 		// loading lists
 		setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
 		setWardList(settingsDAO.getAllStaticListItems(StaticList.WARDS));
+		
+		setSignatureOne(task.getDiagnosisInfo().getSignatureOne().getPhysician());
+		setSignatureTwo(task.getDiagnosisInfo().getSignatureTwo().getPhysician());
 	}
 
 	/**
@@ -410,7 +408,7 @@ public class TaskHandlerAction implements Serializable {
 		createNewSample(task, material);
 
 		// updating names
-		task.updateNameOfAllSamples();
+		task.updateAllNames();
 		// checking if staining flag of the task object has to be false
 		task.updateStainingStatus();
 		// generating gui list
@@ -544,6 +542,11 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task Data
 	 ********************************************************/
+	public void prepareDeleteTaskTreeEntityDialog(DeleteAble toDelete) {
+		setTaskTreeEntityToDelete(toDelete);
+		mainHandlerAction.showDialog(Dialog.DELETE_TREE_ENTITY);
+	}
+	
 	public void deleteTaskTreeEntity(DeleteAble toDelete) {
 		if (toDelete instanceof Slide) {
 			Slide toDeleteSlide = (Slide) toDelete;
@@ -554,7 +557,7 @@ public class TaskHandlerAction implements Serializable {
 
 			parent.getSlides().remove(toDeleteSlide);
 
-			parent.updateNamesOfSlides(parent.getParent().getParent().isUseAutoNomenclature());
+			parent.updateAllNames(parent.getParent().getParent().isUseAutoNomenclature());
 			
 			genericDAO.save(parent,
 					resourceBundle.get("log.patient.task.sample.block.update",
@@ -582,7 +585,7 @@ public class TaskHandlerAction implements Serializable {
 
 			parent.getBlocks().remove(toDeleteBlock);
 
-			parent.updateNameOfAllBlocks(parent.getParent().isUseAutoNomenclature());
+			parent.updateAllNames(parent.getParent().isUseAutoNomenclature());
 			
 			genericDAO.save(parent, resourceBundle.get("log.patient.task.sample.update", parent.getParent().getTaskID(),
 					parent.getSampleID()), parent.getPatient());
@@ -607,7 +610,7 @@ public class TaskHandlerAction implements Serializable {
 
 			diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(parent.getDiagnosisInfo(), parent.getSamples());
 			
-			parent.updateNameOfAllSamples();
+			parent.updateAllNames();
 
 			genericDAO.save(parent, resourceBundle.get("log.patient.task.update", parent.getId()), parent.getPatient());
 
@@ -670,8 +673,8 @@ public class TaskHandlerAction implements Serializable {
 	}
 
 	public void updateCouncilDialog() {
-		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
-		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
+//		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
+//		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
 	}
 
 	public void hideCouncilDialog() {
@@ -721,14 +724,6 @@ public class TaskHandlerAction implements Serializable {
 		this.temporaryTaskSampleCount = temporaryTaskSampleCount;
 	}
 
-	public List<Physician> getAllAvailablePhysicians() {
-		return allAvailablePhysicians;
-	}
-
-	public void setAllAvailablePhysicians(List<Physician> allAvailablePhysicians) {
-		this.allAvailablePhysicians = allAvailablePhysicians;
-	}
-
 	public DefaultTransformer<Physician> getAllAvailablePhysiciansTransformer() {
 		return allAvailablePhysiciansTransformer;
 	}
@@ -745,20 +740,20 @@ public class TaskHandlerAction implements Serializable {
 		this.tmpCouncil = tmpCouncil;
 	}
 
-	public Physician getPhysicianToSign() {
-		return physicianToSign;
+	public Physician getSignatureOne() {
+		return signatureOne;
 	}
 
-	public Physician getConsultantToSign() {
-		return consultantToSign;
+	public Physician getSignatureTwo() {
+		return signatureTwo;
 	}
 
-	public void setPhysicianToSign(Physician physicianToSign) {
-		this.physicianToSign = physicianToSign;
+	public void setSignatureOne(Physician signatureOne) {
+		this.signatureOne = signatureOne;
 	}
 
-	public void setConsultantToSign(Physician consultantToSign) {
-		this.consultantToSign = consultantToSign;
+	public void setSignatureTwo(Physician signatureTwo) {
+		this.signatureTwo = signatureTwo;
 	}
 
 	public boolean isAutoNomenclatureChangedManually() {

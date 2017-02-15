@@ -28,11 +28,14 @@ public class TaskUtil {
 	 * @param prototype
 	 * @return
 	 */
-	public final static int getNumerOfSameStainings(Block block, StainingPrototype prototype) {
-		int count = 1;
-		for (Slide staining : block.getSlides()) {
-			if (staining.getSlidePrototype().getId() == prototype.getId())
+	public final static int getNumerOfSameStainings(Slide slide) {
+		int count = 0;
+		for (Slide slideInBlock : slide.getParent().getSlides()) {
+			if (slideInBlock.getSlidePrototype().getId() == slide.getSlidePrototype().getId())
 				count++;
+			
+			if(slideInBlock == slide)
+				break;
 		}
 		return count;
 	}

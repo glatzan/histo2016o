@@ -363,15 +363,13 @@ public class SlideHandlerAction implements Serializable {
 		slide.setSlidePrototype(prototype);
 		slide.setParent(block);
 
-		
-
-		slide.updateNameOfSlide();
-		
 		// setting unique slide number
 		slide.setUniqueIDinBlock(block.getNextSlideNumber());
 
 		block.getSlides().add(slide);
 
+		slide.updateNameOfSlide();
+		
 		if (commentary != null && !commentary.isEmpty())
 			slide.setCommentary(commentary);
 

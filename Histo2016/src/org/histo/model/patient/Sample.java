@@ -137,9 +137,10 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 * 
 	 * @param useAutoNomenclature
 	 */
-	public void updateNameOfAllBlocks(boolean useAutoNomenclature) {
+	public void updateAllNames(boolean useAutoNomenclature) {
+		updateNameOfSample(useAutoNomenclature);
 		for (Block block : blocks) {
-			block.updateNameOfBlock(useAutoNomenclature);
+			block.updateAllNames(useAutoNomenclature);
 		}
 	}
 

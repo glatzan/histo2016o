@@ -63,8 +63,9 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, 
 	public void updateNameOfSlide() {
 		// generating block id
 		String number = "";
-		int stainingsInBlock = TaskUtil.getNumerOfSameStainings(parent, slidePrototype);
+		int stainingsInBlock = TaskUtil.getNumerOfSameStainings(this);
 
+		System.out.println(stainingsInBlock + "--");
 		if (stainingsInBlock > 1)
 			number = " " + String.valueOf(stainingsInBlock);
 

@@ -248,17 +248,11 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 * Transient
 	 ********************************************************/
 
-	/**
-	 * Updates the name of all block children
-	 * 
-	 * @param useAutoNomenclature
-	 */
-	public void updateNameOfAllSamples() {
+	public void updateAllNames() {
 		for (Sample sample : samples) {
-			sample.updateNameOfSample(useAutoNomenclature);
+			sample.updateAllNames(useAutoNomenclature);
 		}
 	}
-
 
 	/**
 	 * Returns a contact marked als primary with the given role.
