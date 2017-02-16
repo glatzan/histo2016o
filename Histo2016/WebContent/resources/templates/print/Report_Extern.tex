@@ -13,6 +13,8 @@
 \usepackage{ifthen}
 \usepackage{everypage}
 
+\usepackage{multirow,lipsum,longtable,colortbl,xcolor}
+\usepackage{dcolumn}%,tabularx,tabulary}%,threeparttable,longtable,tabu}
 
 \usepackage{tabularx} 
 \usepackage{supertabular}
@@ -20,7 +22,13 @@
 
 \usepackage{helvet}
 
-\usepackage{array,longtable,calc}
+\usepackage{longtable}
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
 \renewcommand{\familydefault}{\sfdefault}
 
 \renewcommand{\datum}{}
@@ -119,21 +127,69 @@ Fax0761/270-40581
 <PATpiz>\\
 \end{textblock}
 }
+\newcommand{\Top}{\rule{0pt}{2.6ex}}       % strut for \hline above
+\newcommand{\Bot}{\rule[-1.2ex]{0pt}{0pt}} % strut for \hline below
 
+% Create an underline as long as the given text would be
+\newcommand*{\srule}[2][0pt]{\setbox0\hbox{#2}\rule[#1]{\wd0}{0.4pt}}
 
+% New tabularx column type: C is like X, just centered.
+\newcolumntype{C}{>{\centering\arraybackslash}X}
 
-%\vspace*{0.5\textheight}
+% Making \cellwidth the width of the tabularx cell we are currently in
+\makeatletter
+\newcommand{\cellwidth}{\TX@col@width}
+\makeatother
+
+%\vspace*{0.5\textheight} Eingangsdatum: &  asd \\
 
 \begin{g-brief}
-\begin{longtable}{|@{}*{2}{m{0.5\linewidth}|}}\hline
-\begin{tabular}{m{0.5\linewidth-\tabcolsep}|m{0.5\linewidth-\tabcolsep}@{}}
-A & B\\\hline
-C & D
-\end{tabular}%
-     & E \tabularnewline\hline
-\hspace{\tabcolsep}F       & G \tabularnewline\hline
-\end{longtable}
 
+ 
+\vspace*{-0.5cm}
+
+
+% --------------------------------------
+% In the document...
+% --------------------------------------
+
+% Full-width table with three cells, each containing a table in turn
+% @{} suppressing padding -- the sub-tables take care of that.
+\noindent\begin{tabularx}{\textwidth}{@{}X@{}X@{}}
+{
+% Cell 1 -- Character description
+\begin{tabularx}{\cellwidth}{|lX}
+\hline
+\multicolumn{2}{|c}{\scshape\textbf{Character}\Top{}\Bot{}}\\
+\textbf{Name:}        & \hrulefill\Top{}\\
+\textbf{Race:}        & \hrulefill\\
+\textbf{Height:}      & \hrulefill\\
+\textbf{Build:}       & \hrulefill\\
+\textbf{Hair:}        & \hrulefill\\
+\textbf{Eyes:}        & \hrulefill\\
+\textbf{Hair:}        & \hrulefill\\
+\textbf{Eyes:}        & \hrulefill\\
+\textbf{Outlook:}     & \hrulefill\\
+\textbf{Age:}         & \hrulefill\Bot{}\\
+\hline
+\end{tabularx}
+} & {
+\begin{tabularx}{\cellwidth}{|Xcc|}
+\hline
+\multicolumn{3}{|c|}{\scshape\textbf{Languages}}\Top{}\Bot{}\\
+\textbf{Language} & \textbf{Spoken} & \textbf{Written}\Top{}\\
+\hrulefill       & \srule{Spoken}  & \srule{Written}\\
+\hrulefill       & \srule{Spoken}  & \srule{Written}\\
+\hrulefill       & \srule{Spoken}  & \srule{Written}\\
+\hrulefill       & \srule{Spoken}  & \srule{Written}\\
+\hrulefill       & \srule{Spoken}  & \srule{Written}\\
+\hrulefill       & \srule{Spoken}  & \srule{Written}\\
+\hrulefill       & \srule{Spoken}  & \srule{Written}\Bot{}\\
+\hline
+\end{tabularx}
+}\\
+
+\end{tabularx}
 
 
 Finster war's, der Mond schien helle auf die grünbeschneite Flur, als 

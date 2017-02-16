@@ -29,7 +29,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
@@ -40,8 +39,6 @@ import org.histo.model.Accounting;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
-import org.histo.model.Physician;
-import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
@@ -52,9 +49,6 @@ import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
-import org.primefaces.component.tabview.TabView;
-import org.primefaces.event.TabChangeEvent;
-import org.springframework.core.annotation.Order;
 
 @Entity
 @Audited
