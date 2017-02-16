@@ -9,18 +9,17 @@ import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.PrintTab;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PdfTemplate;
-import org.histo.ui.transformer.PdfTemplateTransformer;
+import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.util.PdfGenerator;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -64,35 +63,29 @@ public class PdfHandlerAction {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	private UploadedFile file;
+
+	public UploadedFile getFile() {
+		return file;
+	}
+
+	public void setFile(UploadedFile file) {
+		this.file = file;
+	}
+
+	public void test(){
+		System.out.println(file);
+	}
 	/**
 	 * The selected task for that a report should be generated
 	 */
 	private Task taskToPrint;
 
-	/**
-	 * List with all templates available for printing.
-	 */
-	private PdfTemplate[] templates;
-
-	/**
-	 * Selected template for printing
-	 */
-	private PdfTemplate selectedTemplate;
-
-	/**
-	 * The TemplateListtransformer for selecting a template
-	 */
-	private PdfTemplateTransformer templateTransformer;
 
 	/**
 	 * Generated or loaded PDf
 	 */
 	private PDFContainer tmpPdfContainer;
-
-	/**
-	 * The print tab to display (Print view or pdf view)
-	 */
-	private PrintTab printTab;
 
 	/**
 	 * True if pdf should be rendere in the gui
@@ -177,56 +170,54 @@ public class PdfHandlerAction {
 	}
 
 	public void prepareForPdf(Task task, String selectedTemplateName) {
-		prepareForPdf(task, null, selectedTemplateName);
+//		prepareForPdf(task, null, selectedTemplateName);
 	}
 
-	public void prepareForPdf(Task task, PdfTemplate[] templates, String selectedTemplateName) {
-		prepareBean(task, templates, selectedTemplateName);
+	public void prepareForPdf(Task task, PrintTemplate[] templates, String selectedTemplateName) {
+//		prepareBean(task, templates, selectedTemplateName);
 
-		setPrintTab(PrintTab.PRINT_PDFs);
 
 		onChangeTemplate();
 	}
 
 	public void prepareForAttachedPdf(Task task, PDFContainer selectedPdfContainer) {
-		prepareBean(task, null, null);
-
-		setTmpPdfContainer(selectedPdfContainer);
-
-		if (selectedPdfContainer != null) {
-			setSelectedTemplate(PdfTemplate.getTemplateByType(getTemplates(), selectedPdfContainer.getType()));
-		} else
-			setSelectedTemplate(PdfTemplate.getDefaultTemplate(getTemplates()));
-
-		setPrintTab(PrintTab.ATTACHED_PDFs);
-
-		onChangeTemplate();
+//		prepareBean(task, null, null);
+//
+//		setTmpPdfContainer(selectedPdfContainer);
+//
+//		if (selectedPdfContainer != null) {
+//			setSelectedTemplate(PdfTemplate.getTemplateByType(getTemplates(), selectedPdfContainer.getType()));
+//		} else
+//			setSelectedTemplate(PdfTemplate.getDefaultTemplate(getTemplates()));
+//
+//
+//		onChangeTemplate();
 	}
 
 	public void onChangeTemplate() {
-		if (getPrintTab() == PrintTab.PRINT_PDFs) {
-			setTmpPdfContainer((new PdfGenerator(mainHandlerAction, resourceBundle)).generatePdfForTemplate(
-					getTaskToPrint(), getSelectedTemplate(), getDateOfReport(), getExternalReportPhysicianType(),
-					getExternalPhysician(), getSignatureTmpPhysician()));
-
-			if (getTmpPdfContainer() == null) {
-				setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
-				setRenderPDF(false);
-			} else
-				setRenderPDF(true);
-
-		} else {
-			if (getTmpPdfContainer() == null || getTmpPdfContainer().getId() == 0) {
-				if (!getTaskToPrint().getAttachedPdfs().isEmpty()) {
-					setTmpPdfContainer(getTaskToPrint().getAttachedPdfs().get(0));
-					setRenderPDF(true);
-				} else {
-					setRenderPDF(false);
-					setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
-				}
-			} else
-				setRenderPDF(true);
-		}
+//		if (getPrintTab() == PrintTab.PRINT_PDFs) {
+//			setTmpPdfContainer((new PdfGenerator(mainHandlerAction, resourceBundle)).generatePdfForTemplate(
+//					getTaskToPrint(), getSelectedTemplate(), getDateOfReport(), getExternalReportPhysicianType(),
+//					getExternalPhysician(), getSignatureTmpPhysician()));
+//
+//			if (getTmpPdfContainer() == null) {
+//				setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
+//				setRenderPDF(false);
+//			} else
+//				setRenderPDF(true);
+//
+//		} else {
+//			if (getTmpPdfContainer() == null || getTmpPdfContainer().getId() == 0) {
+//				if (!getTaskToPrint().getAttachedPdfs().isEmpty()) {
+//					setTmpPdfContainer(getTaskToPrint().getAttachedPdfs().get(0));
+//					setRenderPDF(true);
+//				} else {
+//					setRenderPDF(false);
+//					setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
+//				}
+//			} else
+//				setRenderPDF(true);
+//		}
 
 	}
 
@@ -259,53 +250,53 @@ public class PdfHandlerAction {
 	 * @param templates
 	 * @param selectedTemplateType
 	 */
-	public void prepareBean(Task task, PdfTemplate[] templates, String selectedTemplateType) {
+	public void prepareBean(Task task, PrintTemplate[] templates, String selectedTemplateType) {
 
-		// loading templates if no are passed
-		if (templates != null)
-			setTemplates(templates);
-		else
-			setTemplates(PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON));
-
-		setTemplateTransformer(new PdfTemplateTransformer(getTemplates()));
-
-		setTaskToPrint(task);
-
-		// loads the default template if no type is passed
-		if (selectedTemplateType != null) {
-			setSelectedTemplate(PdfTemplate.getTemplateByType(getTemplates(), selectedTemplateType));
-		} else {
-			setSelectedTemplate(PdfTemplate.getDefaultTemplate(getTemplates()));
-		}
-
-		// setting default external receiver to family physician
-		if (getExternalReportPhysicianType() == null)
-			setExternalReportPhysicianType(ContactRole.FAMILY_PHYSICIAN);
-
-		// changing the time of signature if 0
-		if (getDateOfReport() == 0)
-			setDateOfReport(System.currentTimeMillis());
-
-		// initializes teh task
-		taskDAO.initializeCouncilData(task);
-		taskDAO.initializeDiagnosisData(task);
-		
-		taskDAO.initializePdfData(task);
-
-		// also initializing taskHandlerAction, generating lists to choos
-		// physicians from
-		taskHandlerAction.initBean();
+//		// loading templates if no are passed
+//		if (templates != null)
+//			setTemplates(templates);
+//		else
+//			setTemplates(PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON));
+//
+//		setTemplateTransformer(new PdfTemplateTransformer(getTemplates()));
+//
+//		setTaskToPrint(task);
+//
+//		// loads the default template if no type is passed
+//		if (selectedTemplateType != null) {
+//			setSelectedTemplate(PdfTemplate.getTemplateByType(getTemplates(), selectedTemplateType));
+//		} else {
+//			setSelectedTemplate(PdfTemplate.getDefaultTemplate(getTemplates()));
+//		}
+//
+//		// setting default external receiver to family physician
+//		if (getExternalReportPhysicianType() == null)
+//			setExternalReportPhysicianType(ContactRole.FAMILY_PHYSICIAN);
+//
+//		// changing the time of signature if 0
+//		if (getDateOfReport() == 0)
+//			setDateOfReport(System.currentTimeMillis());
+//
+//		// initializes teh task
+//		taskDAO.initializeCouncilData(task);
+//		taskDAO.initializeDiagnosisData(task);
+//
+//		taskDAO.initializeTaskData(task);
+//
+//		// also initializing taskHandlerAction, generating lists to choos
+//		// physicians from
+//		taskHandlerAction.initBean();
 	}
 
 	/**
 	 * Clears all values of the bean.
 	 */
 	public void clearData() {
-		setTaskToPrint(null);
-		setTemplates(null);
-		setSelectedTemplate(null);
-		setTemplateTransformer(null);
-		setTmpPdfContainer(null);
+//		setTaskToPrint(null);
+//		setTemplates(null);
+//		setSelectedTemplate(null);
+//		setTemplateTransformer(null);
+//		setTmpPdfContainer(null);
 	}
 
 	/********************************************************
@@ -314,7 +305,7 @@ public class PdfHandlerAction {
 	public void preparePdfUploadDialog(Task task) {
 		setUploadedFile(null);
 		setTaskToPrint(task);
-		setUploadedFileType(PdfTemplate.OTHER);
+//		setUploadedFileType(PdfTemplate.OTHER);
 		mainHandlerAction.showDialog(Dialog.UPLOAD_TASK);
 	}
 
@@ -322,7 +313,7 @@ public class PdfHandlerAction {
 		container = getUploadedFile();
 		if (container != null) {
 			System.out.println(container.getId());
-			taskDAO.initializePdfData(task);
+			taskDAO.initializeTaskData(task);
 
 			genericDAO.save(container, resourceBundle.get("log.patient.task.pdf.uploded", container.getName()),
 					task.getPatient());
@@ -338,23 +329,23 @@ public class PdfHandlerAction {
 	}
 
 	public void onChangeFileType() {
-		if (getUploadedFile() != null) {
-			getUploadedFile().setType(getUploadedFileType());
-
-			// generating a name
-			if (getUploadedFileType() != null && !getUploadedFileType().equals(PdfTemplate.OTHER)) {
-				String pdfName = "";
-				System.out.println(getUploadedFileType());
-				if (getUploadedFileType().equals(PdfTemplate.BIOBANK)) {
-					pdfName = resourceBundle.get("json.pdfTemplate.biobank") + "_"
-							+ getTaskToPrint().getPatient().getPiz() + ".pdf";
-				} else if (getUploadedFileType().equals(PdfTemplate.UREPORT)) {
-					pdfName = resourceBundle.get("json.pdfTemplate.council") + "_"
-							+ getTaskToPrint().getPatient().getPiz() + ".pdf";
-				}
-				getUploadedFile().setName(pdfName);
-			}
-		}
+//		if (getUploadedFile() != null) {
+//			getUploadedFile().setType(getUploadedFileType());
+//
+//			// generating a name
+//			if (getUploadedFileType() != null && !getUploadedFileType().equals(PdfTemplate.OTHER)) {
+//				String pdfName = "";
+//				System.out.println(getUploadedFileType());
+//				if (getUploadedFileType().equals(PdfTemplate.BIOBANK)) {
+//					pdfName = resourceBundle.get("json.pdfTemplate.biobank") + "_"
+//							+ getTaskToPrint().getPatient().getPiz() + ".pdf";
+//				} else if (getUploadedFileType().equals(PdfTemplate.UREPORT)) {
+//					pdfName = resourceBundle.get("json.pdfTemplate.council") + "_"
+//							+ getTaskToPrint().getPatient().getPiz() + ".pdf";
+//				}
+//				getUploadedFile().setName(pdfName);
+//			}
+//		}
 	}
 
 	/**
@@ -363,18 +354,18 @@ public class PdfHandlerAction {
 	 * @param event
 	 */
 	public void uploadPdfForTask(FileUploadEvent event) {
-		PDFContainer requestReport = new PDFContainer();
-		// requestReport.setType("application/pdf");
-		requestReport.setData(event.getFile().getContents());
-		requestReport.setName(event.getFile().getFileName());
-
-		if (getUploadedFileType() != null || !getUploadedFileType().isEmpty()) {
-			requestReport.setType(getUploadedFileType());
-		}
-
-		setUploadedFile(requestReport);
-
-		onChangeFileType();
+//		PDFContainer requestReport = new PDFContainer();
+//		// requestReport.setType("application/pdf");
+//		requestReport.setData(event.getFile().getContents());
+//		requestReport.setName(event.getFile().getFileName());
+//
+//		if (getUploadedFileType() != null || !getUploadedFileType().isEmpty()) {
+//			requestReport.setType(getUploadedFileType());
+//		}
+//
+//		setUploadedFile(requestReport);
+//
+//		onChangeFileType();
 
 	}
 
@@ -392,30 +383,6 @@ public class PdfHandlerAction {
 
 	public void setTaskToPrint(Task taskToPrint) {
 		this.taskToPrint = taskToPrint;
-	}
-
-	public PdfTemplate[] getTemplates() {
-		return templates;
-	}
-
-	public void setTemplates(PdfTemplate[] templates) {
-		this.templates = templates;
-	}
-
-	public PdfTemplate getSelectedTemplate() {
-		return selectedTemplate;
-	}
-
-	public void setSelectedTemplate(PdfTemplate selectedTemplate) {
-		this.selectedTemplate = selectedTemplate;
-	}
-
-	public PdfTemplateTransformer getTemplateTransformer() {
-		return templateTransformer;
-	}
-
-	public void setTemplateTransformer(PdfTemplateTransformer templateTransformer) {
-		this.templateTransformer = templateTransformer;
 	}
 
 	public StreamedContent getPdfContent() {
@@ -444,14 +411,6 @@ public class PdfHandlerAction {
 
 	public void setCopies(int copies) {
 		this.copies = copies;
-	}
-
-	public PrintTab getPrintTab() {
-		return printTab;
-	}
-
-	public void setPrintTab(PrintTab printTab) {
-		this.printTab = printTab;
 	}
 
 	public boolean isRenderPDF() {

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -15,6 +16,7 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -308,5 +310,10 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			return result.get(0);
 		
 		return null;
+	}
+	
+	public void initializePatientPdfData(Patient patient) {
+		getSession().update(patient);
+		Hibernate.initialize(patient.getAttachedPdfs());
 	}
 }

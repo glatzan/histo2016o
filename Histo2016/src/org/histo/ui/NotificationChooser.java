@@ -11,7 +11,6 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.NotificationOption;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
-import org.histo.model.transitory.json.PdfTemplate;
 
 public class NotificationChooser {
 

@@ -136,4 +136,16 @@ public class EnumProvider {
 		return dialog;
 	}
 
+	/**
+	 * Returns a dateformat, is used, because in mainHandlerAction the date
+	 * method can take a string, an primefaces prefers the string method other
+	 * the DateFormat method.
+	 * 
+	 * @param dateFormat
+	 * @return
+	 */
+	public DateFormat getDateFormat(DateFormat dateFormat) {
+		return dateFormat;
+	}
+
 }

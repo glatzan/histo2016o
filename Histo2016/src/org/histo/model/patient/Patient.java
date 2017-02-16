@@ -34,6 +34,7 @@ import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Gender;
 import org.histo.config.enums.StainingStatus;
+import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
@@ -98,6 +99,11 @@ public class Patient
 	 */
 	private boolean externalPatient = false;
 
+	/**
+	 * Pdf attached to this patient, this might be an informed consent
+	 */
+	private List<PDFContainer> attachedPdfs;
+	
 	/**
 	 * If true the patient is archived. Thus he won't be displayed.
 	 */
@@ -447,7 +453,19 @@ public class Patient
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("creationDate DESC")
+	public List<PDFContainer> getAttachedPdfs() {
+		if (attachedPdfs == null)
+			attachedPdfs = new ArrayList<PDFContainer>();
+		return attachedPdfs;
+	}
+
+	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
+		this.attachedPdfs = attachedPdfs;
+	}
+
 	
 	/********************************************************
 	 * Interface StainingTreeParent

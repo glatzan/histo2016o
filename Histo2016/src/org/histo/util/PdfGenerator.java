@@ -16,6 +16,7 @@ import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Gender;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
@@ -24,9 +25,7 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PdfTemplate;
-import org.histo.model.transitory.json.PdfTemplate.CodeRectangle;
-import org.histo.model.transitory.json.TexTemplate;
+import org.histo.model.transitory.json.PrintTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -61,7 +60,7 @@ public class PdfGenerator {
 		this.mainHandlerAction = mainHandlerAction;
 	}
 
-	public PDFContainer generatePDFForReport(Patient patient, Task task, TexTemplate texTemplate,
+	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate,
 			Person toSendAddress) {
 		;
 		File workingDirectory = new File(
@@ -69,9 +68,9 @@ public class PdfGenerator {
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		System.out.println(mainHandlerAction.getSettings().getAbsolutePath(texTemplate.getFile()));
+		System.out.println(mainHandlerAction.getSettings().getAbsolutePath(printTemplate.getFile()));
 		// loading tex file
-		File template = new File(mainHandlerAction.getSettings().getAbsolutePath(texTemplate.getFile()));
+		File template = new File(mainHandlerAction.getSettings().getAbsolutePath(printTemplate.getFile()));
 
 		File processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
 
@@ -125,7 +124,7 @@ public class PdfGenerator {
 			File test = pdfGen.getPDF();
 			byte[] data = readContentIntoByteArray(test);
 
-			return new PDFContainer(texTemplate.getDocumentTyp().toString(),
+			return new PDFContainer(printTemplate.getDocumentTyp(),
 					"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
 
 		} catch (IOException e) {
@@ -201,7 +200,7 @@ public class PdfGenerator {
 		return bFile;
 	}
 
-	public PDFContainer generatePdfForTemplate(Task task, PdfTemplate template, long dateOfReport,
+	public PDFContainer generatePdfForTemplate(Task task,  PrintTemplate tempalte, long dateOfReport,
 			ContactRole addressPhysicianRole, Physician externalPhysician, Physician signingPhysician) {
 		// PDFContainer result = null;
 		//
@@ -237,16 +236,16 @@ public class PdfGenerator {
 		return null;
 	}
 
-	public PDFContainer generatePdf(Task task, PdfTemplate template, long dateOfReport, Physician addressPhysician,
+	public PDFContainer generatePdf(Task task, PrintTemplate template, long dateOfReport, Physician addressPhysician,
 			Physician signingPhysician) {
 		return generatePdf(task, template, dateOfReport, addressPhysician, signingPhysician, null);
 	}
 
-	public PDFContainer generatePdf(Task task, PdfTemplate template, long dateOfReport, Physician addressPhysician,
+	public PDFContainer generatePdf(Task task, PrintTemplate template, long dateOfReport, Physician addressPhysician,
 			Physician signingPhysician, HashMap<String, String> additionalFields) {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PdfReader pdfReader = getPdfFile(template.getFileWithLogo());
+		PdfReader pdfReader = getPdfFile(template.getFile());
 		PdfStamper pdf = getPdfStamper(pdfReader, out);
 
 		// header
@@ -263,7 +262,7 @@ public class PdfGenerator {
 			populateSingleSignature(pdf, signingPhysician);
 
 		// barcodes
-		drawBarCodes(task, template, pdfReader, pdf);
+		//drawBarCodes(task, template, pdfReader, pdf);
 
 		// additional fields for special pdfs
 		if (additionalFields != null) {
@@ -278,24 +277,15 @@ public class PdfGenerator {
 
 		closePdf(pdfReader, pdf);
 
-		String pdfName = (template.isNameAsResources() ? resourceBundle.get(template.getName()) : template.getName())
-				+ "_" + task.getPatient().getPiz();
+//		String pdfName = (template.isNameAsResources() ? resourceBundle.get(template.getName()) : template.getName())
+//				+ "_" + task.getPatient().getPiz();
 
-		return new PDFContainer(template.getType(),
-				pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
-				out.toByteArray());
+//		return new PDFContainer(template.getType(),
+//				pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
+//				out.toByteArray());
+		return null;
 	}
 
-	public final void drawBarCodes(Task task, PdfTemplate template, PdfReader reader, PdfStamper stamper) {
-		if (template.getPizCode() != null && task.getParent().getPiz() != null
-				&& !task.getParent().getPiz().isEmpty()) {
-			drawBarCode(reader, stamper, task.getParent().getPiz(), template.getPizCode());
-		}
-
-		if (template.getTaskCode() != null) {
-			drawBarCode(reader, stamper, task.getTaskID(), template.getTaskCode());
-		}
-	}
 
 	public final void populateSingleSignature(PdfStamper stamper, Physician physician) {
 		setStamperField(stamper, "B_SIGANTURE", physician.getPerson().getFullName());
@@ -519,21 +509,8 @@ public class PdfGenerator {
 		}
 	}
 
-	/**
-	 * Draws a given barcode into the pdf file
-	 * 
-	 * @param reader
-	 * @param stamper
-	 * @param piz
-	 * @param codes
-	 */
-	public static final void drawBarCode(PdfReader reader, PdfStamper stamper, String codeStr, CodeRectangle[] codes) {
-		for (CodeRectangle code : codes) {
-			generateCode128Field(reader, stamper, codeStr, code.getX(), code.getY(), code.getWidth(), code.getHeight());
-		}
-	}
 
-	public static final PDFContainer mergePdfs(List<PDFContainer> containers, String name, String type) {
+	public static final PDFContainer mergePdfs(List<PDFContainer> containers, String name, DocumentType type) {
 		Document document = new Document();
 		ByteOutputStream out = new ByteOutputStream();
 

@@ -36,6 +36,9 @@ public class LabelPrinter implements GsonAble {
 	private String name;
 
 	@Expose
+	private String uuid;
+
+	@Expose
 	private String location;
 
 	@Expose
@@ -254,6 +257,15 @@ public class LabelPrinter implements GsonAble {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

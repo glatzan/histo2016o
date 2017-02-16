@@ -17,6 +17,7 @@ import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
@@ -30,10 +31,10 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.ui.transformer.ClinicPrinterTransformer;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
+import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -115,15 +116,6 @@ public class MainHandlerAction {
 	 */
 	private HistoSettings settings;
 
-	/********************************************************
-	 * printing
-	 ********************************************************/
-	private ClinicPrinterTransformer clinicPrinterTransformer;
-
-	/********************************************************
-	 * printing
-	 ********************************************************/
-	
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
@@ -134,14 +126,16 @@ public class MainHandlerAction {
 		navigationPages.add(View.USERLIST);
 
 		setSettings(HistoSettings.factory());
-		
-		getSettings().getPrinter().initPrinters();
 
 		// setting preferred printer
-		if(userHandlerAction.getCurrentUser().getPreferedPrinter() != null){
-			getSettings().getPrinter().setDefaultPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
-		}
-		
+		if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null)
+			userHandlerAction.getCurrentUser()
+					.setPreferedPrinter(getSettings().getPrinterManager().getPrinters().get(0).getName());
+
+		if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
+			userHandlerAction.getCurrentUser()
+					.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getUuid());
+
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);
 			navigationPages.add(View.WORKLIST_RECEIPTLOG);
@@ -346,11 +340,10 @@ public class MainHandlerAction {
 	 */
 	public void archiveObject(ArchivAble archive, boolean archived) {
 
-		//TODO 
+		// TODO
 		archive.setArchived(archived);
 
 		String logString = "log.error";
-
 
 		hideArchiveObjectDialog();
 	}
@@ -366,10 +359,10 @@ public class MainHandlerAction {
 	 * Archive
 	 ********************************************************/
 
-	public void saveDataChange(SaveAble toSave, String resourcesKey,String... arr){
-		genericDAO.save(toSave, resourceBundle.get(resourcesKey,toSave.getLogPath(),arr), toSave.getPatient());
+	public void saveDataChange(SaveAble toSave, String resourcesKey, String... arr) {
+		genericDAO.save(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
-	
+
 	/**
 	 * Takes a object to save and an resourcesString with optional wildcards.
 	 * This method will replace wildcard recursively ("log.test",
@@ -471,13 +464,6 @@ public class MainHandlerAction {
 		this.settings = settings;
 	}
 
-	public ClinicPrinterTransformer getClinicPrinterTransformer() {
-		return clinicPrinterTransformer;
-	}
-
-	public void setClinicPrinterTransformer(ClinicPrinterTransformer clinicPrinterTransformer) {
-		this.clinicPrinterTransformer = clinicPrinterTransformer;
-	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

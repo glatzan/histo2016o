@@ -1,6 +1,7 @@
 [{
 	"name" : "Aug-Histo-Etikettendrucker-1",
-	"location" : "",
+	"uuid" : 1,
+	"location" : "Histologie-Engesserstraße",
 	"commentary" : "",
 	"ip"	: "172.30.1.70",
 	"ftpPort" : 21,
@@ -8,13 +9,14 @@
 	"password" : "1234",
 	"fileName" : "print%count%.zpl"
 },{
-	"name" : "Aug-Histo-Etikettendrucker-1",
-	"location" : "",
+	"name" : "Aug-Histo-Etikettendrucker-2",
+	"uuid" : 2,
+	"location" : "Histologie-Hörsaal",
 	"commentary" : "",
-	"ip"	: "10.210.98.143",
+	"ip"	: "10.210.98.144",
 	"ftpPort" : 21,
 	"userName" : "admin",
 	"password" : "1234",
-	"fileName" : "print.zpl"
+	"fileName" : "print%count%.zpl"
 }]
 

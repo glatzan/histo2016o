@@ -40,20 +40,47 @@
 						style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
 						value="#{userHandlerAction.currentUser.preferedPrinter}"
-						converter="#{mainHandlerAction.clinicPrinterTransformer}"
 						filter="true" filterMatchMode="contains">
 
 						<f:selectItems
-							value="#{mainHandlerAction.settings.printer.printers}"
-							var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
+							value="#{mainHandlerAction.settings.printerManager.printers}"
+							var="printer" itemLabel="#{printer.name}"
+							itemValue="#{printer.name}" />
 
-						<p:ajax update="@form" listener="#{userHandlerAction.updateSelectedPrinterWithinSettings(printer)}" />
+						<p:ajax event="change" process="@this" />
 					</p:selectOneMenu>
 
 					<!-- testprint -->
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right; margin-right:5px;"
-						actionListener="#{mainHandlerAction.settings.printer.printTestPage()}">
+						actionListener="#{mainHandlerAction.settings.printerManager.printTestPage(userHandlerAction.currentUser.preferedPrinter)}">
+						<i class="fa fa-fw fa-print" />
+					</p:commandLink>
+				</h:panelGrid>
+
+				<!-- label printer -->
+				<h:outputLabel value="#{msg['dialog.userSettings.labelPrinter']}"></h:outputLabel>
+
+				<h:panelGrid columns="2">
+					<!-- select printer -->
+					<p:selectOneMenu styleClass="customSerachSelectMenu"
+						style="width:80% !important;"
+						panelStyleClass="customSerachSelectMenuPanel"
+						value="#{userHandlerAction.currentUser.preferedLabelPritner}"
+						filter="true" filterMatchMode="contains">
+
+						<f:selectItems
+							value="#{mainHandlerAction.settings.labelPrinterManager.printers}"
+							var="printer" itemLabel="#{printer.name}"
+							itemValue="#{printer.name}" />
+
+						<p:ajax event="change" process="@this" />
+					</p:selectOneMenu>
+
+					<!-- testprint -->
+					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+						style="float: right; margin-right:5px;"
+						actionListener="#{mainHandlerAction.settings.labelPrinterManager.printTestPage(userHandlerAction.currentUser.preferedLabelPritner)}">
 						<i class="fa fa-fw fa-print" />
 					</p:commandLink>
 				</h:panelGrid>

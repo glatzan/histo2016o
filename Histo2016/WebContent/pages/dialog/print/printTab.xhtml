@@ -37,12 +37,11 @@
 					style="width:90% !important;"
 					panelStyleClass="customSerachSelectMenuPanel"
 					value="#{printHandlerAction.selectedPrinter}"
-					converter="#{mainHandlerAction.clinicPrinterTransformer}"
 					filter="true" filterMatchMode="contains">
 
 					<f:selectItems
-						value="#{mainHandlerAction.settings.printer.printers}"
-						var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
+						value="#{mainHandlerAction.settings.printerManager.printers}"
+						var="printer" itemLabel="#{printer.name}" itemValue="#{printer.name}" />
 
 				</p:selectOneMenu>
 

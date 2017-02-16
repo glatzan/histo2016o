@@ -6,7 +6,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
@@ -29,11 +28,15 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return totalResult.intValue();
 	}
 	
-	public void initializePdfData(Task task) {
+	public void initializeTaskData(Task task) {
 		getSession().update(task);
 		Hibernate.initialize(task.getAttachedPdfs());
 	}
 	
+	/**
+	 * Initializes diagnosisInfo with all diagnoses
+	 * @param task
+	 */
 	public void initializeDiagnosisData(Task task) {
 		getSession().update(task);
 		Hibernate.initialize(task.getDiagnosisInfo());
@@ -42,8 +45,12 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		Hibernate.initialize(task.getDiagnosisInfo().getSignatureTwo());
 	}
 	
+	/**
+	 * Initializes councils
+	 * @param task
+	 */
 	public void initializeCouncilData(Task task) {
 		getSession().update(task);
-		Hibernate.initialize(task.getCouncil());
+		Hibernate.initialize(task.getCouncils());
 	}
 }

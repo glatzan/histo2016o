@@ -20,7 +20,6 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.MailTemplate;
-import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.ui.NotificationChooser;
 import org.histo.util.HistoUtil;
 import org.histo.util.PdfGenerator;
@@ -168,12 +167,12 @@ public class NotificationHandlerAction implements Serializable {
 		setTmpTask(task);
 
 		// loading all pfs
-		taskDAO.initializePdfData(task);
+		taskDAO.initializeTaskData(task);
 
 		if (task.isNotificationCompleted() && !show) {
 			// setting last manual report ready for download
-			PDFContainer maunalReport = task.getReport(PdfTemplate.MANUAL_REPOT);
-			pdfHandlerAction.setTmpPdfContainer(maunalReport);
+//			PDFContainer maunalReport = task.getReport(PdfTemplate.MANUAL_REPOT);
+//			pdfHandlerAction.setTmpPdfContainer(maunalReport);
 			mainHandlerAction.showDialog(Dialog.NOTIFICATION_ALREADY_PERFORMED);
 		} else {
 			prepareForNotification(task);
@@ -271,31 +270,31 @@ public class NotificationHandlerAction implements Serializable {
 	public void showPreviewDialog(NotificationChooser chooser) {
 		setCustomPdfToPhysician(chooser);
 
-		if (getNotificationTab() == Notification.EMAIL) {
-
-			PDFContainer container = getTmpTask().getReport(PdfTemplate.INTERNAL);
-
-			if (container != null) {
-				pdfHandlerAction.prepareForAttachedPdf(getTmpTask(), container);
-			} else {
-				pdfHandlerAction.prepareForPdf(getTmpTask(), PdfTemplate.INTERNAL);
-			}
-
-		} else if (getNotificationTab() == Notification.FAX) {
-			PDFContainer container = getTmpTask().getReportByName(
-					chooser.getContact().getPhysician().getPerson().getFullName().replace(" ", "_").replace(".", ""));
-
-			if (container != null) {
-				pdfHandlerAction.prepareForAttachedPdf(getTmpTask(), container);
-			} else {
-				pdfHandlerAction.setExternalPhysician(chooser.getContact().getPhysician());
-				pdfHandlerAction.setExternalReportPhysicianType(ContactRole.OTHER);
-				if (pdfHandlerAction.getSignatureTmpPhysician() == null) {
-					pdfHandlerAction.setSignatureTmpPhysician(userHandlerAction.getCurrentUser().getPhysician());
-				}
-				pdfHandlerAction.prepareForPdf(getTmpTask(), PdfTemplate.EXTERN);
-			}
-		}
+//		if (getNotificationTab() == Notification.EMAIL) {
+//
+//			PDFContainer container = getTmpTask().getReport(PdfTemplate.INTERNAL);
+//
+//			if (container != null) {
+//				pdfHandlerAction.prepareForAttachedPdf(getTmpTask(), container);
+//			} else {
+//				pdfHandlerAction.prepareForPdf(getTmpTask(), PdfTemplate.INTERNAL);
+//			}
+//
+//		} else if (getNotificationTab() == Notification.FAX) {
+//			PDFContainer container = getTmpTask().getReportByName(
+//					chooser.getContact().getPhysician().getPerson().getFullName().replace(" ", "_").replace(".", ""));
+//
+//			if (container != null) {
+//				pdfHandlerAction.prepareForAttachedPdf(getTmpTask(), container);
+//			} else {
+//				pdfHandlerAction.setExternalPhysician(chooser.getContact().getPhysician());
+//				pdfHandlerAction.setExternalReportPhysicianType(ContactRole.OTHER);
+//				if (pdfHandlerAction.getSignatureTmpPhysician() == null) {
+//					pdfHandlerAction.setSignatureTmpPhysician(userHandlerAction.getCurrentUser().getPhysician());
+//				}
+//				pdfHandlerAction.prepareForPdf(getTmpTask(), PdfTemplate.EXTERN);
+//			}
+//		}
 
 		mainHandlerAction.showDialog(Dialog.NOTIFICATION_PREVIEW);
 	}
@@ -532,50 +531,50 @@ public class NotificationHandlerAction implements Serializable {
 				result.append("\r\n");
 			}
 
-			// getting the template for the report
-			PdfTemplate manuelReport = PdfTemplate.getTemplateByType(HistoSettings.PDF_TEMPLATE_JSON,
-					PdfTemplate.MANUAL_REPOT);
-
-			// addition field
-			HashMap<String, String> addtionalFields = new HashMap<String, String>();
-			addtionalFields.put("B_NOTIFY", result.toString());
-
-			// generating report
-			PDFContainer manelReportPdf = (new PdfGenerator(mainHandlerAction, resourceBundle))
-					.generatePdf(getTmpTask(), manuelReport, System.currentTimeMillis(), null, null, addtionalFields);
-
-			// adding as first page to the printout
-			resultPdfs.add(0, manelReportPdf);
-			resultPdfsToDownload.add(0, manelReportPdf);
-
-			// generating full report to save in database
-			String pdfName = (manuelReport.isNameAsResources() ? resourceBundle.get(manuelReport.getName())
-					: manuelReport.getName());
-
-			PDFContainer resultPdf = PdfGenerator.mergePdfs(resultPdfs,
-					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
-					"MANUAL_REPOT");
-			getTmpTask().addReport(resultPdf);
-			getTmpTask().setNotificationCompleted(true);
-			getTmpTask().setNotificationCompletionDate(System.currentTimeMillis());
-
-			// savin complete report
-			genericDAO.save(resultPdf, resourceBundle.get("log.patient.task.pdf.created", resultPdf.getName()),
-					getTmpTask().getPatient());
-
-			// saving task
-			genericDAO.save(getTmpTask(),
-					resourceBundle.get("log.patient.task.pdf.attached", getTmpTask().getTaskID(), resultPdf.getName()),
-					getTmpTask().getPatient());
-
-			// generated report without email pdfs is returned to download
-			PDFContainer resultPdfToDownload = PdfGenerator.mergePdfs(resultPdfs,
-					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
-					"MANUAL_REPOT");
-
-			pdfHandlerAction.setTmpPdfContainer(resultPdfToDownload);
-
-			setNotificationPerformed(true);
+//			// getting the template for the report
+//			PdfTemplate manuelReport = PdfTemplate.getTemplateByType(HistoSettings.PDF_TEMPLATE_JSON,
+//					PdfTemplate.MANUAL_REPOT);
+//
+//			// addition field
+//			HashMap<String, String> addtionalFields = new HashMap<String, String>();
+//			addtionalFields.put("B_NOTIFY", result.toString());
+//
+//			// generating report
+//			PDFContainer manelReportPdf = (new PdfGenerator(mainHandlerAction, resourceBundle))
+//					.generatePdf(getTmpTask(), manuelReport, System.currentTimeMillis(), null, null, addtionalFields);
+//
+//			// adding as first page to the printout
+//			resultPdfs.add(0, manelReportPdf);
+//			resultPdfsToDownload.add(0, manelReportPdf);
+//
+//			// generating full report to save in database
+//			String pdfName = (manuelReport.isNameAsResources() ? resourceBundle.get(manuelReport.getName())
+//					: manuelReport.getName());
+//
+//			PDFContainer resultPdf = PdfGenerator.mergePdfs(resultPdfs,
+//					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
+//					"MANUAL_REPOT");
+//			getTmpTask().addReport(resultPdf);
+//			getTmpTask().setNotificationCompleted(true);
+//			getTmpTask().setNotificationCompletionDate(System.currentTimeMillis());
+//
+//			// savin complete report
+//			genericDAO.save(resultPdf, resourceBundle.get("log.patient.task.pdf.created", resultPdf.getName()),
+//					getTmpTask().getPatient());
+//
+//			// saving task
+//			genericDAO.save(getTmpTask(),
+//					resourceBundle.get("log.patient.task.pdf.attached", getTmpTask().getTaskID(), resultPdf.getName()),
+//					getTmpTask().getPatient());
+//
+//			// generated report without email pdfs is returned to download
+//			PDFContainer resultPdfToDownload = PdfGenerator.mergePdfs(resultPdfs,
+//					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
+//					"MANUAL_REPOT");
+//
+//			pdfHandlerAction.setTmpPdfContainer(resultPdfToDownload);
+//
+//			setNotificationPerformed(true);
 
 		}
 

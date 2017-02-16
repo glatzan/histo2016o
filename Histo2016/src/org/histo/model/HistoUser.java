@@ -47,11 +47,16 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	private Role role;
 
 	private View defaultView;
-	
+
 	/**
-	 * Url of the prefered Printer
+	 * Name of the preferred cups printer
 	 */
-	private ClinicPrinter preferedPrinter;
+	private String preferedPrinter;
+
+	/**
+	 * The uuid of the preferred labelprinter
+	 */
+	private String preferedLabelPritner;
 
 	private Physician physician;
 
@@ -68,6 +73,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	/**
 	 * Consturctor for creating new Histouser
+	 * 
 	 * @param name
 	 */
 	public HistoUser(String name) {
@@ -75,7 +81,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 		setRole(Role.GUEST);
 		setPhysician(new Physician());
 		getPhysician().setPerson(new Person());
-		
+
 		// set role clinicalDoctor or clical personnel
 		getPhysician().setClinicEmployee(true);
 	}
@@ -197,12 +203,20 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
 
-	public ClinicPrinter getPreferedPrinter() {
+	public String getPreferedPrinter() {
 		return preferedPrinter;
 	}
-
-	public void setPreferedPrinter(ClinicPrinter preferedPrinter) {
+	
+	public void setPreferedPrinter(String preferedPrinter) {
 		this.preferedPrinter = preferedPrinter;
+	}
+
+	public String getPreferedLabelPritner() {
+		return preferedLabelPritner;
+	}
+
+	public void setPreferedLabelPritner(String preferedLabelPritner) {
+		this.preferedLabelPritner = preferedLabelPritner;
 	}
 
 }

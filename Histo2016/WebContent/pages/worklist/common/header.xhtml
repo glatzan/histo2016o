@@ -74,6 +74,12 @@
 						onclick="$('#headerForm\\:showPatientOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
 
+					<!-- upload to patient -->
+					<p:menuitem value="#{msg['header.menu.patient.upload']}"
+						icon="fa fa-cloud-upload"
+						onclick="$('#headerForm\\:uploadBtnToPatient').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{worklistHandlerAction.selectedPatient ne null }" />
+
 					<!-- edit patient, rendered if selected patient is not null, disabled  if patient is not extern -->
 					<p:menuitem value="#{msg['header.menu.patient.edit']}"
 						title="#{!worklistHandlerAction.selectedPatient.externalPatient ? msg['header.menu.patient.edit.disabled'] : ''}"
@@ -136,18 +142,10 @@
 						onclick="$('#headerForm\\:notificationContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
-					<!-- Print -->
-					<p:menuitem value="#{msg['header.menu.task.sample.print']}"
-						icon="fa fa-print"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}"
-						onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-
 					<!-- accounting -->
 					<p:menuitem value="#{msg['header.menu.task.sample.accounting']}"
 						icon="fa fa-dollar"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
+						disabled="true"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
@@ -158,6 +156,14 @@
 						icon="fa fa-comment-o"
 						onclick="$('#headerForm\\:councilBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
+
+					<!-- Print -->
+					<p:menuitem value="#{msg['header.menu.task.sample.print']}"
+						icon="fa fa-print"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
+						rendered="#{worklistHandlerAction.selectedPatient ne null}"
+						onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
 					<!-- upload -->
 					<p:menuitem value="#{msg['header.menu.task.upload']}"
@@ -186,6 +192,14 @@
 				actionListener="#{worklistHandlerAction.onDeselectTask(worklistHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
+
+			<!-- upload button to patient -->
+			<p:commandButton id="uploadBtnToPatient" style="display:none"
+				actionListener="#{mediaHandlerAction.preparePatientDataUploadDialog(worklistHandlerAction.selectedPatient)}">
+				<p:ajax event="dialogReturn" update="contentForm"
+					listener="#{mainHandlerAction.showQueueDialog()}" />
+			</p:commandButton>
+
 			<!-- Edit Patient data -->
 			<p:commandButton id="editPatientData" style="display:none"
 				actionListener="#{patientHandlerAction.prepareEditExternalPatientDialog(worklistHandlerAction.selectedPatient)}">
@@ -251,7 +265,7 @@
 
 			<!-- upload button -->
 			<p:commandButton id="uploadBtn" style="display:none"
-				actionListener="#{pdfHandlerAction.preparePdfUploadDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
@@ -316,7 +330,7 @@
 
 			<!-- show only button for print dialog, workaround for closing and showing dialogs -->
 			<p:commandButton id="printBtnShowOnly" style="display:none"
-				actionListener="#{pdfHandlerAction.showPrintDialog()}">
+				actionListener="#{printHandlerAction.showPrintDialog()}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>

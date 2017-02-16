@@ -187,13 +187,17 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	private DiagnosisInfo diagnosisInfo;
 
 	/**
-	 * Generated PDFs of this task
+	 * Generated PDFs of this task, lazy
 	 */
 	private List<PDFContainer> attachedPdfs;
 
+	/**
+	 * List of all councils of this task, lazy 
+	 */
+	private List<Council> councils;
+	
 	private Accounting accounting;
 
-	private List<Council> council;
 
 	/********************************************************
 	 * Transient Variables
@@ -581,14 +585,15 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public void setNotificationCompletionDate(long notificationCompletionDate) {
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
-
-	@OneToMany(fetch = FetchType.LAZY)
-	public List<Council> getCouncil() {
-		return council;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("dateOfRequest DESC")
+	public List<Council> getCouncils() {
+		return councils;
 	}
 
-	public void setCouncil(List<Council> council) {
-		this.council = council;
+	public void setCouncils(List<Council> councils) {
+		this.councils = councils;
 	}
 
 	@OneToOne(fetch = FetchType.LAZY)

@@ -1,0 +1,23 @@
+^XA
+^FO05,00
+^A0N,16,12
+^FDAugenklinik Freiburg Histologie
+^FS
+^FO07,20
+^BY1
+^BCN,40,N,N,N,A
+^FD%slideNumber%
+^FS
+^FO2,70
+^A0N,30,20
+^FD%slideName%
+^FS
+^FO02,100
+^A0N,14,14
+^FD%slideText%
+^FS
+^FO02,118
+^A0N,14,14
+^FD%date%
+^FS
+^XZ

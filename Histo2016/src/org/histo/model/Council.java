@@ -16,6 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
+import org.histo.model.interfaces.HasID;
 
 @Entity
 @Audited
@@ -23,7 +24,7 @@ import org.hibernate.envers.Audited;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "council_sequencegenerator", sequenceName = "council_sequence")
-public class Council {
+public class Council implements HasID {
 	private long id;
 
 	private long version;

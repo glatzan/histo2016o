@@ -34,20 +34,11 @@ public class ClinicPrinterManager implements GsonAble {
 
 	private List<ClinicPrinter> printers;
 
-	private ClinicPrinter defaultPrinter;
-	
-	public final void print(File file) {
-		CupsClient cupsClient;
-		try {
-			cupsClient = new CupsClient(host, port);
-			CupsPrinter printer = cupsClient.getPrinter(getDefaultPrinter().getPrinterURL());
-			PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
-			printer.print(printJob);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	/**
+	 * Prints a file
+	 * @param cPrinter
+	 * @param file
+	 */
 	public final void print(ClinicPrinter cPrinter, File file) {
 		CupsClient cupsClient;
 		try {
@@ -59,7 +50,19 @@ public class ClinicPrinterManager implements GsonAble {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Prints a pdf, serach for printer
+	 * @param cPrinter
+	 * @param container
+	 */
+	public final void print(String cPrinter, PDFContainer container) {
+		ClinicPrinter p = getPrinterByName(cPrinter);
+		if (p != null) {
+			print(p, container);
+		}
+	}
+
 	public final void print(ClinicPrinter cPrinter, PDFContainer container) {
 		CupsClient cupsClient;
 		try {
@@ -72,11 +75,18 @@ public class ClinicPrinterManager implements GsonAble {
 		}
 	}
 
-	public final void printTestPage() {
+	public final void printTestPage(String printer) {
+		ClinicPrinter p = getPrinterByName(printer);
+		if (p != null) {
+			printTestPage(p);
+		}
+	}
+
+	public final void printTestPage(ClinicPrinter cPrinter) {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
 		Resource resource = appContext.getResource(testPage);
 		try {
-			print(new File(resource.getURI()));
+			print(cPrinter, new File(resource.getURI()));
 			System.out.println(resource.getURI());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -98,11 +108,6 @@ public class ClinicPrinterManager implements GsonAble {
 				printers.add(new ClinicPrinter(p));
 			}
 
-			// setting default printer
-			if (printers != null && printers.size() > 1) {
-				setDefaultPrinter(printers.get(0));
-			}
-
 			logger.debug("Printers init successful");
 
 			return true;
@@ -110,6 +115,14 @@ public class ClinicPrinterManager implements GsonAble {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public ClinicPrinter getPrinterByName(String name) {
+		for (ClinicPrinter clinicPrinter : printers) {
+			if (clinicPrinter.getName().equals(name))
+				return clinicPrinter;
+		}
+		return null;
 	}
 
 	public String getHost() {
@@ -136,13 +149,4 @@ public class ClinicPrinterManager implements GsonAble {
 		this.printers = printers;
 	}
 
-	public ClinicPrinter getDefaultPrinter() {
-		return defaultPrinter;
-	}
-
-	public void setDefaultPrinter(ClinicPrinter defaultPrinter) {
-		this.defaultPrinter = defaultPrinter;
-	}
-	
-	
 }

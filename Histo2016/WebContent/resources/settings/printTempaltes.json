@@ -19,4 +19,14 @@
 	"file2" : "",
 	"documentTyp"	: "DIAGNOSIS_REPORT_EXTERN",
 	"defaultDocument" : false
+},{
+	"id" : 100,
+	"name" : "Default Slide Lable",
+	"file" : "classpath:templates/print_labels/defaultLable.lab",
+	"file2" : "",
+	"documentTyp"	: "LABLE",
+	"defaultDocument" : true
 }]
+
+
+

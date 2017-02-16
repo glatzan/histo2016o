@@ -11,22 +11,16 @@ import javax.faces.event.PhaseId;
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.PrintDocumentTyp;
-import org.histo.config.enums.PrintTab;
+import org.histo.config.enums.DocumentType;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.model.Contact;
+import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.ClinicPrinter;
-import org.histo.model.transitory.json.PdfTemplate;
-import org.histo.model.transitory.json.TexTemplate;
+import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.ContactChooser;
-import org.histo.ui.transformer.ClinicPrinterTransformer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.ui.transformer.PdfTemplateTransformer;
 import org.histo.util.PdfGenerator;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -34,8 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 
 @Controller
 @Scope("session")
@@ -70,17 +62,17 @@ public class PrintHandlerAction {
 	/**
 	 * List of all templates for printing
 	 */
-	private List<TexTemplate> templateList;
+	private List<PrintTemplate> templateList;
 
 	/**
 	 * The TemplateListtransformer for selecting a template
 	 */
-	private DefaultTransformer<TexTemplate> templateTransformer;
+	private DefaultTransformer<PrintTemplate> templateTransformer;
 
 	/**
 	 * Selected template for printing
 	 */
-	private TexTemplate selectedTemplate;
+	private PrintTemplate selectedTemplate;
 
 	/**
 	 * True if the pdf should be rendered
@@ -95,7 +87,7 @@ public class PrintHandlerAction {
 	/**
 	 * Selected pritner to print the document
 	 */
-	private ClinicPrinter selectedPrinter;
+	private String selectedPrinter;
 
 	/**
 	 * class for creating pdfs
@@ -107,26 +99,17 @@ public class PrintHandlerAction {
 	 */
 	private List<ContactChooser> contactChooser;
 
-	/**
-	 * The print tab to display (Print view or pdf view)
-	 */
-	private PrintTab printTab;
 
-	// // loading templates if no are passed
-	// if (templates != null)
-	// setTemplates(templates);
-	// else
-	// setTemplates(PdfTemplate.getInternalReportsOnly(HistoSettings.PDF_TEMPLATE_JSON));
 
-	public void initBean(Task task, TexTemplate[] templates, TexTemplate selectedTemplate) {
+	public void initBean(Task task, PrintTemplate[] templates, PrintTemplate selectedTemplate) {
 
 		setTaskToPrint(task);
 
 		pdfGenerator = new PdfGenerator(mainHandlerAction, resourceBundle);
 
-		setTemplateList(new ArrayList<TexTemplate>(Arrays.asList(templates)));
+		setTemplateList(new ArrayList<PrintTemplate>(Arrays.asList(templates)));
 
-		setTemplateTransformer(new DefaultTransformer<TexTemplate>(getTemplateList()));
+		setTemplateTransformer(new DefaultTransformer<PrintTemplate>(getTemplateList()));
 
 		// sets the selected template
 		if (selectedTemplate == null && !getTemplateList().isEmpty())
@@ -134,9 +117,6 @@ public class PrintHandlerAction {
 		else
 			setSelectedTemplate(selectedTemplate);
 
-		// settings printers
-		mainHandlerAction.setClinicPrinterTransformer(
-				new ClinicPrinterTransformer(mainHandlerAction.getSettings().getPrinter().getPrinters()));
 		setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 
 		if (task.getContacts() != null)
@@ -154,7 +134,7 @@ public class PrintHandlerAction {
 		// taskDAO.initializeCouncilData(task);
 		// taskDAO.initializeDiagnosisData(task);
 		//
-		taskDAO.initializePdfData(task);
+		taskDAO.initializeTaskData(task);
 		//
 		// // also initializing taskHandlerAction, generating lists to choos
 		// // physicians from
@@ -167,7 +147,13 @@ public class PrintHandlerAction {
 		setSelectedTemplate(null);
 		setTemplateTransformer(null);
 		setTmpPdfContainer(null);
-		mainHandlerAction.setClinicPrinterTransformer(null);
+	}
+
+	/**
+	 * Showing only the dialog, no init will be done
+	 */
+	public void showPrintDialog() {
+		mainHandlerAction.showDialog(Dialog.PRINT_NEW);
 	}
 
 	/**
@@ -176,18 +162,30 @@ public class PrintHandlerAction {
 	 * @param task
 	 */
 	public void showDefaultPrintDialog(Task task) {
-		TexTemplate[] templates = TexTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON);
-		TexTemplate[] subSelect = TexTemplate.getTemplatesByTypes(templates,
-				new PrintDocumentTyp[] { PrintDocumentTyp.DIAGNOSIS_REPORT, PrintDocumentTyp.U_REPORT,
-						PrintDocumentTyp.DIAGNOSIS_REPORT_EXTERN });
+		PrintTemplate[] templates = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON);
+		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(templates, new DocumentType[] {
+				DocumentType.DIAGNOSIS_REPORT, DocumentType.U_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN });
 
-		initBean(task, templates, TexTemplate.getDefaultTemplate(subSelect));
+		initBean(task, templates, PrintTemplate.getDefaultTemplate(subSelect));
 
 		onChangePrintTemplate();
 
-		setPrintTab(PrintTab.PRINT_PDFs);
-		
 		mainHandlerAction.showDialog(Dialog.PRINT_NEW);
+	}
+
+	/**
+	 * Prepares the print dialog for printing a case conference request.
+	 * 
+	 * @param task
+	 */
+	public void showCouncilPrintDialog(Task task) {
+		PrintTemplate[] templates = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON);
+		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(templates,
+				new DocumentType[] { DocumentType.CASE_CONFERENCE });
+
+		initBean(task, templates, PrintTemplate.getDefaultTemplate(subSelect));
+
+		onChangePrintTemplate();
 	}
 
 	/**
@@ -203,37 +201,16 @@ public class PrintHandlerAction {
 	 */
 	public void onChangePrintTemplate() {
 		setTmpPdfContainer(pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
-				getSelectedTemplate(),
-				getTaskToPrint().getDiagnosisInfo().getSignatureOne().getPhysician().getPerson()));
+				getSelectedTemplate(), null));
 
 		if (getTmpPdfContainer() == null) {
-			setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
+			setTmpPdfContainer(new PDFContainer(DocumentType.EMPTY, "", new byte[0]));
 			setRenderPdf(false);
 			logger.debug("No Pdf created, hiding pdf display");
 		} else {
 			logger.debug("Pdf created");
 			setRenderPdf(true);
 		}
-	}
-	
-	public void onChangeAttachedTemplate() {
-		if (getTmpPdfContainer() == null || getTmpPdfContainer().getId() == 0) {
-			if (!getTaskToPrint().getAttachedPdfs().isEmpty()) {
-				setTmpPdfContainer(getTaskToPrint().getAttachedPdfs().get(0));
-				setRenderPdf(true);
-			} else {
-				setRenderPdf(false);
-				setTmpPdfContainer(new PDFContainer("", "", new byte[0]));
-			}
-		} else
-			setRenderPdf(true);
-	}
-	
-	public void onChangeTab(){
-		if(getPrintTab() == PrintTab.PRINT_PDFs)
-			onChangePrintTemplate();
-		else
-			onChangeAttachedTemplate();
 	}
 
 	public StreamedContent getPdfContent() {
@@ -271,7 +248,7 @@ public class PrintHandlerAction {
 			saveGeneratedPdf(getTmpPdfContainer());
 		}
 
-		mainHandlerAction.getSettings().getPrinter().print(selectedPrinter, getTmpPdfContainer());
+		mainHandlerAction.getSettings().getPrinterManager().print(selectedPrinter, getTmpPdfContainer());
 	}
 
 	/********************************************************
@@ -285,27 +262,27 @@ public class PrintHandlerAction {
 		this.taskToPrint = taskToPrint;
 	}
 
-	public DefaultTransformer<TexTemplate> getTemplateTransformer() {
+	public DefaultTransformer<PrintTemplate> getTemplateTransformer() {
 		return templateTransformer;
 	}
 
-	public void setTemplateTransformer(DefaultTransformer<TexTemplate> templateTransformer) {
+	public void setTemplateTransformer(DefaultTransformer<PrintTemplate> templateTransformer) {
 		this.templateTransformer = templateTransformer;
 	}
 
-	public List<TexTemplate> getTemplateList() {
+	public List<PrintTemplate> getTemplateList() {
 		return templateList;
 	}
 
-	public void setTemplateList(List<TexTemplate> templateList) {
+	public void setTemplateList(List<PrintTemplate> templateList) {
 		this.templateList = templateList;
 	}
 
-	public TexTemplate getSelectedTemplate() {
+	public PrintTemplate getSelectedTemplate() {
 		return selectedTemplate;
 	}
 
-	public void setSelectedTemplate(TexTemplate selectedTemplate) {
+	public void setSelectedTemplate(PrintTemplate selectedTemplate) {
 		this.selectedTemplate = selectedTemplate;
 	}
 
@@ -325,11 +302,11 @@ public class PrintHandlerAction {
 		this.renderPdf = renderPdf;
 	}
 
-	public ClinicPrinter getSelectedPrinter() {
+	public String getSelectedPrinter() {
 		return selectedPrinter;
 	}
 
-	public void setSelectedPrinter(ClinicPrinter selectedPrinter) {
+	public void setSelectedPrinter(String selectedPrinter) {
 		this.selectedPrinter = selectedPrinter;
 	}
 
@@ -339,14 +316,6 @@ public class PrintHandlerAction {
 
 	public void setContactChooser(List<ContactChooser> contactChooser) {
 		this.contactChooser = contactChooser;
-	}
-
-	public PrintTab getPrintTab() {
-		return printTab;
-	}
-
-	public void setPrintTab(PrintTab printTab) {
-		this.printTab = printTab;
 	}
 
 	/********************************************************

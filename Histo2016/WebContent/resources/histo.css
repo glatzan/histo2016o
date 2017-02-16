@@ -9,9 +9,10 @@ body {
 	width: 100%;
 }
 
-.defaultListingTableContainer>tbody>tr>td {
+.defaultListingTableContainer>tbody>tr>td, .defaultListingTableContainer>tbody>tr {
 	padding: 0px !important;
 	border-collapse: collapse !important;
+	border: 0px !important
 }
 /* Default table containter, no padding at all*/
 

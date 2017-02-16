@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+
+
+<composite:interface>
+	<!-- fileToUpload -->
+	<composite:attribute name="fileToUpload" required="true" />
+
+	<!-- fileToUploadType -->
+	<composite:attribute name="fileToUploadType" required="true" />
+
+	<!-- fileToUploadCommentary -->
+	<composite:attribute name="fileToUploadCommentary" required="true" />
+
+</composite:interface>
+
+<composite:implementation>
+
+	<!-- upload of files -->
+	<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+		<h:outputLabel value="#{msg['dialog.upload.pdf']}" />
+		<p:fileUpload value="#{cc.attrs.fileToUpload}" mode="simple"
+			skinSimple="true" />
+
+		<h:outputLabel value="#{msg['dialog.upload.type']}" />
+		<p:selectOneMenu styleClass="taskSelectOnMenu"
+			value="#{cc.attrs.fileToUploadType}">
+			<f:selectItem itemLabel="#{msg['enum.documentType.U_REPORT']}"
+				itemValue="U_REPORT" />
+			<f:selectItem itemLabel="#{msg['enum.documentType.CASE_CONFERENCE']}"
+				itemValue="CASE_CONFERENCE" />
+			<f:selectItem
+				itemLabel="#{msg['enum.documentType.BIOBANK_INFORMED_CONSENT']}"
+				itemValue="BIOBANK_INFORMED_CONSENT" />
+			<f:selectItem itemLabel="#{msg['enum.documentType.OTHER']}"
+				itemValue="OTHER" />
+
+		</p:selectOneMenu>
+
+		<h:outputLabel value="#{msg['dialog.upload.commentary']}" />
+		<p:inputTextarea rows="4" value="#{cc.attrs.fileToUploadCommentary}" />
+	</h:panelGrid>
+</composite:implementation>
+</html>
+

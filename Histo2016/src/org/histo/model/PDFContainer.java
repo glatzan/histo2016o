@@ -1,10 +1,15 @@
 package org.histo.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -12,6 +17,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
+import org.histo.config.enums.DocumentType;
 
 @Entity
 @Audited
@@ -25,7 +31,7 @@ public class PDFContainer {
 
 	private byte data[];
 
-	private String type;
+	private DocumentType type;
 
 	private String name;
 
@@ -33,20 +39,22 @@ public class PDFContainer {
 
 	private boolean finalDocument;
 
+	private String commentary;
+
 	public PDFContainer() {
 		this.creationDate = System.currentTimeMillis();
 	}
 
-	public PDFContainer(String pdfTemplate) {
-		this(pdfTemplate, null);
+	public PDFContainer(DocumentType type) {
+		this(type, null);
 	}
 
-	public PDFContainer(String pdfTemplate, byte[] data) {
-		this(pdfTemplate, null, data);
+	public PDFContainer(DocumentType type, byte[] data) {
+		this(type, null, data);
 	}
 
-	public PDFContainer(String pdfTemplate, String name, byte[] data) {
-		this.type = pdfTemplate;
+	public PDFContainer(DocumentType type, String name, byte[] data) {
+		this.type = type;
 		this.data = data;
 		this.name = name;
 		this.creationDate = System.currentTimeMillis();
@@ -80,11 +88,12 @@ public class PDFContainer {
 		this.finalDocument = finalDocument;
 	}
 
-	public String getType() {
+	@Enumerated(EnumType.STRING)
+	public DocumentType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(DocumentType type) {
 		this.type = type;
 	}
 
@@ -103,4 +112,30 @@ public class PDFContainer {
 	public void setCreationDate(long creationDate) {
 		this.creationDate = creationDate;
 	}
+
+	@Column(columnDefinition = "text")
+	public String getCommentary() {
+		return commentary;
+	}
+
+	public void setCommentary(String commentary) {
+		this.commentary = commentary;
+	}
+
+	/********************************************************
+	 * Transient
+	 ********************************************************/
+	@Transient
+	public Date getCreationDateAsDate() {
+		return new Date(creationDate);
+	}
+
+	public void setCreationDateAsDate(Date creationDate) {
+		this.creationDate = creationDate.getTime();
+	}
+
+	/********************************************************
+	 * Transient
+	 ********************************************************/
+
 }

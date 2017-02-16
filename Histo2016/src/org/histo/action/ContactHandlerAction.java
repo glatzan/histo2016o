@@ -21,7 +21,6 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PhysicianRoleOptions;
-import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.ui.NotificationChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

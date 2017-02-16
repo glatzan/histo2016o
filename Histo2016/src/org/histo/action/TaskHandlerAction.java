@@ -2,15 +2,12 @@ package org.histo.action;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisRevisionType;
-import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
@@ -25,23 +22,17 @@ import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
-import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.DeleteAble;
-import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Block;
-import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisInfo;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.LabelPrinter;
-import org.histo.model.transitory.json.PdfTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.HistoUtil;
-import org.histo.util.SlideUtil;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +85,10 @@ public class TaskHandlerAction implements Serializable {
 	@Autowired
 	@Lazy
 	private WorklistHandlerAction worklistHandlerAction;
+
+	@Autowired
+	@Lazy
+	private PrintHandlerAction printHandlerAction;
 
 	@Autowired
 	private SettingsHandlerAction settingsHandlerAction;
@@ -184,8 +179,17 @@ public class TaskHandlerAction implements Serializable {
 	/**
 	 * Temporary object for council dialog
 	 */
-	private Council tmpCouncil;
+	private Council temporaryCouncil;
 
+	/**
+	 * Temporary object for council dialog
+	 */
+	private Council selectedCouncil;
+
+	/**
+	 * Converter for selecting councils
+	 */
+	private DefaultTransformer<Council> councilConverter;
 	/********************************************************
 	 * Council
 	 ********************************************************/
@@ -213,7 +217,8 @@ public class TaskHandlerAction implements Serializable {
 		setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
 
 		settingsHandlerAction.setPhysicianList(physicianDAO.getPhysicians(ContactRole.values(), false));
-		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(settingsHandlerAction.getPhysicianList()));
+		setAllAvailablePhysiciansTransformer(
+				new DefaultTransformer<Physician>(settingsHandlerAction.getPhysicianList()));
 	}
 
 	/********************************************************
@@ -236,7 +241,7 @@ public class TaskHandlerAction implements Serializable {
 		// loading lists
 		setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
 		setWardList(settingsDAO.getAllStaticListItems(StaticList.WARDS));
-		
+
 		setSignatureOne(task.getDiagnosisInfo().getSignatureOne().getPhysician());
 		setSignatureTwo(task.getDiagnosisInfo().getSignatureTwo().getPhysician());
 	}
@@ -333,6 +338,8 @@ public class TaskHandlerAction implements Serializable {
 
 		task.setCaseHistory("");
 		task.setWard("");
+		
+		task.setCouncils(new ArrayList<Council>());
 
 		genericDAO.save(task.getDiagnosisInfo(),
 				resourceBundle.get("log.patient.task.diagnosisInfo.new", task.getTaskID()), patient);
@@ -546,7 +553,7 @@ public class TaskHandlerAction implements Serializable {
 		setTaskTreeEntityToDelete(toDelete);
 		mainHandlerAction.showDialog(Dialog.DELETE_TREE_ENTITY);
 	}
-	
+
 	public void deleteTaskTreeEntity(DeleteAble toDelete) {
 		if (toDelete instanceof Slide) {
 			Slide toDeleteSlide = (Slide) toDelete;
@@ -558,7 +565,7 @@ public class TaskHandlerAction implements Serializable {
 			parent.getSlides().remove(toDeleteSlide);
 
 			parent.updateAllNames(parent.getParent().getParent().isUseAutoNomenclature());
-			
+
 			genericDAO.save(parent,
 					resourceBundle.get("log.patient.task.sample.block.update",
 							parent.getParent().getParent().getTaskID(), parent.getParent().getSampleID(),
@@ -575,8 +582,7 @@ public class TaskHandlerAction implements Serializable {
 			parent.getParent().getParent().updateStainingStatus();
 			// generating gui list
 			parent.getParent().getParent().generateSlideGuiList();
-			
-			
+
 		} else if (toDelete instanceof Block) {
 			Block toDeleteBlock = (Block) toDelete;
 			logger.info("Deleting block " + toDeleteBlock.getBlockID());
@@ -586,7 +592,7 @@ public class TaskHandlerAction implements Serializable {
 			parent.getBlocks().remove(toDeleteBlock);
 
 			parent.updateAllNames(parent.getParent().isUseAutoNomenclature());
-			
+
 			genericDAO.save(parent, resourceBundle.get("log.patient.task.sample.update", parent.getParent().getTaskID(),
 					parent.getSampleID()), parent.getPatient());
 
@@ -609,7 +615,7 @@ public class TaskHandlerAction implements Serializable {
 			parent.getSamples().remove(toDeleteSample);
 
 			diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(parent.getDiagnosisInfo(), parent.getSamples());
-			
+
 			parent.updateAllNames();
 
 			genericDAO.save(parent, resourceBundle.get("log.patient.task.update", parent.getId()), parent.getPatient());
@@ -643,54 +649,89 @@ public class TaskHandlerAction implements Serializable {
 		prepareCouncilDialog(task, true);
 	}
 
+	/**
+	 * Prepares the council dialog
+	 * @param task
+	 * @param show
+	 */
 	public void prepareCouncilDialog(Task task, boolean show) {
 		setTemporaryTask(task);
 
 		taskDAO.initializeCouncilData(task);
 
-		// if (task.getCouncil() == null) {
-		// // only saving if the diagnosis process has not been finished jet
-		// if (task.isDiagnosisCompleted()) {
-		// setTmpCouncil(new Council());
-		// } else {
-		// setTmpCouncil(new Council());
-		// task.setCouncil(getTmpCouncil());
-		// // setting current user als requesting physician
-		// task.getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
-		//
-		// genericDAO.save(task.getCouncil(),
-		// resourceBundle.get("log.patient.task.council.new", task.getTaskID()),
-		// task.getPatient());
-		// }
-		// } else
-		// setTmpCouncil(task.getCouncil());
-		//
-		// updateCouncilDialog();
-		//
-		// if (show)
-		// TODO: rework
-		mainHandlerAction.showDialog(Dialog.COUNCIL);
-	}
-
-	public void updateCouncilDialog() {
-//		setAllAvailablePhysicians(physicianDAO.getPhysicians(ContactRole.values(), false));
-//		setAllAvailablePhysiciansTransformer(new DefaultTransformer<Physician>(getAllAvailablePhysicians()));
-	}
-
-	public void hideCouncilDialog() {
-		hideCouncilDialogAndPrintReport(false);
-	}
-
-	public void hideCouncilDialogAndPrintReport(boolean print) {
-		if (print) {
-			pdfHandlerAction.prepareForPdf(getTemporaryTask(), PdfTemplate.COUNCIL);
-			// workaround for showing and hiding two dialogues
-			mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
+		// setting council as default
+		if (task.getCouncils().size() == 0) {
+			logger.debug("Creating new");
+			setTemporaryCouncil(new Council());
+			getTemporaryCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
+		} else {
+			// selected council is need for selectlist, temporary council is for editing (new council can't be in task list)
+			setSelectedCouncil(task.getCouncils().get(0));
+			setTemporaryCouncil(getSelectedCouncil());
 		}
 
-		setTmpCouncil(null);
+		setCouncilConverter(new DefaultTransformer<Council>(task.getCouncils()));
+		setAllAvailablePhysiciansTransformer(
+				new DefaultTransformer<Physician>(settingsHandlerAction.getPhysicianList()));
+
+		if (show)
+			mainHandlerAction.showDialog(Dialog.COUNCIL);
+	}
+
+	/**
+	 * If onld council was selected copy to temporaryCouncil in order to edit
+	 * @param council
+	 */
+	public void selectOldCouncilToEdit(Council council) {
+		setTemporaryCouncil(council);
+	}
+
+	/**
+	 * Saves a council, if not present the new council will be added to the
+	 * council list
+	 * 
+	 * @param council
+	 */
+	public void saveCouncilData(Task task,Council council) {
+		// new
+		if (council.getId() == 0) {
+			logger.debug("Creating new council");
+			genericDAO.save(council, resourceBundle.get("log.patient.task.council.create", "TODO"),
+					task.getPatient());
+
+			System.out.println(council.getId() + ".-----------------------------------");
+			task.getCouncils().add(council);
+
+			mainHandlerAction.saveDataChange(task, "log.patient.task.council.attached",
+					String.valueOf(council.getId()));
+		} else {
+			logger.debug("Saving council");
+			// only saving
+			genericDAO.save(council, resourceBundle.get("log.patient.task.council.update",
+					String.valueOf(council.getId()), task.getTaskID()), task.getPatient());
+		}
+	}
+
+	/**
+	 * Hieds the council dialog
+	 */
+	public void hideCouncilDialog() {
+		setTemporaryCouncil(null);
 		setTemporaryTask(null);
 		mainHandlerAction.hideDialog(Dialog.COUNCIL);
+	}
+
+	/**
+	 * Hides the council dialog and opens the print dialog
+	 * 
+	 * @param print
+	 */
+	public void hideCouncilDialogAndPrintReport(Task task,Council council) {
+		saveCouncilData(task,council);
+		printHandlerAction.showCouncilPrintDialog(task);
+		// workaround for showing and hiding two dialogues
+		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
+
 	}
 
 	/********************************************************
@@ -732,12 +773,12 @@ public class TaskHandlerAction implements Serializable {
 		this.allAvailablePhysiciansTransformer = allAvailablePhysiciansTransformer;
 	}
 
-	public Council getTmpCouncil() {
-		return tmpCouncil;
+	public Council getTemporaryCouncil() {
+		return temporaryCouncil;
 	}
 
-	public void setTmpCouncil(Council tmpCouncil) {
-		this.tmpCouncil = tmpCouncil;
+	public void setTemporaryCouncil(Council temporaryCouncil) {
+		this.temporaryCouncil = temporaryCouncil;
 	}
 
 	public Physician getSignatureOne() {
@@ -803,6 +844,23 @@ public class TaskHandlerAction implements Serializable {
 	public void setTaskTreeEntityToDelete(DeleteAble taskTreeEntityToDelete) {
 		this.taskTreeEntityToDelete = taskTreeEntityToDelete;
 	}
+
+	public DefaultTransformer<Council> getCouncilConverter() {
+		return councilConverter;
+	}
+
+	public void setCouncilConverter(DefaultTransformer<Council> councilConverter) {
+		this.councilConverter = councilConverter;
+	}
+
+	public Council getSelectedCouncil() {
+		return selectedCouncil;
+	}
+
+	public void setSelectedCouncil(Council selectedCouncil) {
+		this.selectedCouncil = selectedCouncil;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

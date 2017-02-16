@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.config.enums.PrintDocumentTyp;
+import org.histo.config.enums.DocumentType;
 import org.histo.model.interfaces.HasID;
 import org.histo.util.HistoUtil;
 
@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
-public class TexTemplate implements HasID {
+public class PrintTemplate implements HasID {
 
 	@Expose
 	private long id;
@@ -27,7 +27,7 @@ public class TexTemplate implements HasID {
 	private String file2;
 
 	@Expose
-	private PrintDocumentTyp documentTyp;
+	private DocumentType documentType;
 
 	@Expose
 	private boolean defaultDocument;
@@ -38,13 +38,13 @@ public class TexTemplate implements HasID {
 	 * @param jsonFile
 	 * @return
 	 */
-	public static final TexTemplate[] factroy(String jsonFile) {
+	public static final PrintTemplate[] factroy(String jsonFile) {
 
-		Type type = new TypeToken<TexTemplate[]>() {
+		Type type = new TypeToken<PrintTemplate[]>() {
 		}.getType();
 
 		Gson gson = new Gson();
-		TexTemplate[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
+		PrintTemplate[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
 		return result;
 	}
 
@@ -55,8 +55,8 @@ public class TexTemplate implements HasID {
 	 * @param type
 	 * @return
 	 */
-	public static final TexTemplate[] getTemplatesByType(TexTemplate[] tempaltes, PrintDocumentTyp type) {
-		return getTemplatesByTypes(tempaltes, new PrintDocumentTyp[] { type });
+	public static final PrintTemplate[] getTemplatesByType(PrintTemplate[] tempaltes, DocumentType type) {
+		return getTemplatesByTypes(tempaltes, new DocumentType[] { type });
 	}
 
 	/**
@@ -65,19 +65,19 @@ public class TexTemplate implements HasID {
 	 * @param type
 	 * @return
 	 */
-	public static final TexTemplate[] getTemplatesByTypes(TexTemplate[] tempaltes, PrintDocumentTyp[] type) {
-		List<TexTemplate> result = new ArrayList<TexTemplate>();
+	public static final PrintTemplate[] getTemplatesByTypes(PrintTemplate[] tempaltes, DocumentType[] type) {
+		List<PrintTemplate> result = new ArrayList<PrintTemplate>();
 
-		for (int y = 0; y < tempaltes.length; y++) {
-			for (int i = 0; i < type.length; i++) {
-				if (type[i] == tempaltes[y].getDocumentTyp()) {
+		for (int i = 0; i < tempaltes.length; i++) {
+			for (int y = 0; y < type.length; y++) {
+				if (tempaltes[y].getDocumentTyp() == type[i]) {
 					result.add(tempaltes[y]);
 					break;
 				}
 			}
 		}
 
-		TexTemplate[] resultArr = new TexTemplate[result.size()];
+		PrintTemplate[] resultArr = new PrintTemplate[result.size()];
 
 		return result.toArray(resultArr);
 	}
@@ -88,7 +88,7 @@ public class TexTemplate implements HasID {
 	 * @param array
 	 * @return
 	 */
-	public static final TexTemplate getDefaultTemplate(TexTemplate[] array) {
+	public static final PrintTemplate getDefaultTemplate(PrintTemplate[] array) {
 		for (int i = 0; i < array.length; i++) {
 			if (array[i].isDefaultDocument())
 				return array[i];
@@ -112,8 +112,8 @@ public class TexTemplate implements HasID {
 		return file2;
 	}
 
-	public PrintDocumentTyp getDocumentTyp() {
-		return documentTyp;
+	public DocumentType getDocumentTyp() {
+		return documentType;
 	}
 
 	public boolean isDefaultDocument() {
@@ -136,8 +136,8 @@ public class TexTemplate implements HasID {
 		this.file2 = file2;
 	}
 
-	public void setDocumentTyp(PrintDocumentTyp documentTyp) {
-		this.documentTyp = documentTyp;
+	public void setDocumentTyp(DocumentType documentType) {
+		this.documentType = documentType;
 	}
 
 	public void setDefaultDocument(boolean defaultDocument) {

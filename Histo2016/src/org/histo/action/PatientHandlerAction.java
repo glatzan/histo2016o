@@ -9,9 +9,11 @@ import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
+import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.ui.PatientList;
@@ -19,6 +21,8 @@ import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.sun.prism.paint.Paint;
 
 @Component
 @Scope(value = "session")
@@ -90,16 +94,18 @@ public class PatientHandlerAction implements Serializable {
 	 */
 	private boolean toManyMatchesInClinicDatabase;
 
-	public void showAndInitAddPatientDialog(){
+
+
+	public void showAndInitAddPatientDialog() {
 		initAddPatientDialog();
 		showAddPatientDialog();
 	}
-	
+
 	public void showAddPatientDialog() {
 		mainHandlerAction.showDialog(Dialog.WORKLIST_ADD_PATIENT);
 	}
 
-	public void initAddPatientDialog(){
+	public void initAddPatientDialog() {
 		setTmpPatient(new Patient());
 		getTmpPatient().setPerson(new Person());
 
@@ -113,7 +119,7 @@ public class PatientHandlerAction implements Serializable {
 
 		setToManyMatchesInClinicDatabase(false);
 	}
-	
+
 	/**
 	 * Adds an external Patient to the database.
 	 * 
@@ -163,15 +169,6 @@ public class PatientHandlerAction implements Serializable {
 		}
 	}
 
-	// <f:actionListener
-	// binding="#{patientHandlerAction.addNewInternalPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}"
-	// />
-	// <f:actionListener
-	// binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.selectedPatientFromSearchList.patient,true)}"
-	// />
-	// <f:actionListener
-	// binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
-
 	/**
 	 * Sets the tmpPatient to bull
 	 */
@@ -179,7 +176,6 @@ public class PatientHandlerAction implements Serializable {
 		setTmpPatient(null);
 	}
 
-	
 	public void searchPatients() {
 		setSearchForPatientList(searchForPatientList(getSearchForPatientPiz(), getSearchForPatientName(),
 				getSearchForPatientSurname(), getSearchForPatientBirthday()));
@@ -194,7 +190,7 @@ public class PatientHandlerAction implements Serializable {
 	 */
 	public List<PatientList> searchForPatientList(String piz, String name, String surname, Date birthday) {
 		ArrayList<PatientList> result = new ArrayList<>();
-		
+
 		// id for patientList, used by primefaces to get the selected row
 		int id = 0;
 
@@ -224,9 +220,10 @@ public class PatientHandlerAction implements Serializable {
 			}
 
 			// TODO: remove or write to an other method
-//			if (!result.isEmpty())
-//				// only one match is expected, set this as selected patient
-//				setSelectedPatientFromSearchList(result.isEmpty() ? null : result.get(0));
+			// if (!result.isEmpty())
+			// // only one match is expected, set this as selected patient
+			// setSelectedPatientFromSearchList(result.isEmpty() ? null :
+			// result.get(0));
 
 		} else if ((name != null && !name.isEmpty()) || (surname != null && !surname.isEmpty()) || birthday != null) {
 
@@ -239,8 +236,8 @@ public class PatientHandlerAction implements Serializable {
 			ArrayList<String> foundPiz = new ArrayList<String>();
 
 			try {
-				clinicPatients = mainHandlerAction.getSettings().getClinicJsonHandler()
-						.getPatientsFromClinicJson("?name=" + name + ( surname != null ? ("&vorname=" + surname) : "") + (birthday != null
+				clinicPatients = mainHandlerAction.getSettings().getClinicJsonHandler().getPatientsFromClinicJson(
+						"?name=" + name + (surname != null ? ("&vorname=" + surname) : "") + (birthday != null
 								? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
 
 				// list of pizes to serach in the histo database
@@ -303,7 +300,7 @@ public class PatientHandlerAction implements Serializable {
 			}
 
 		}
-		
+
 		return result;
 	}
 
@@ -327,7 +324,6 @@ public class PatientHandlerAction implements Serializable {
 		genericDAO.save(patient, resourceBundle.get("log.patient.extern.edit"), patient);
 		mainHandlerAction.hideDialog(Dialog.PATIENT_EDIT);
 	}
-
 
 	/********************************************************
 	 * Getter/Setter

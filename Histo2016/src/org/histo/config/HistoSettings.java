@@ -7,6 +7,8 @@ import java.net.URL;
 import org.apache.log4j.Logger;
 import org.histo.model.transitory.json.ClinicJsonHandler;
 import org.histo.model.transitory.json.ClinicPrinterManager;
+import org.histo.model.transitory.json.LabelPrinter;
+import org.histo.model.transitory.json.LabelPrinterManager;
 import org.histo.model.transitory.json.LdapHandler;
 import org.histo.model.transitory.json.MailHandler;
 import org.histo.util.HistoUtil;
@@ -19,13 +21,14 @@ public class HistoSettings {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
-	public static final String TEX_TEMPLATE_JSON = "classpath:templates/print.json";
+	public static final String DEFAULT_SETTINGS_JSON = "classpath:settings/settings.json";
+	public static final String TEX_TEMPLATE_JSON = "classpath:settings/printTempaltes.json";
+	public static final String LABEL_PRINTER_JSON = "classpath:settings/labelPrinter.json";
+	public static final String VERSION_JSON = "classpath:settings/version.json";
+	
 	
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
-	public static final String DEFAULT_SETTINGS_JSON = "classpath:settings/settings.json";
-	public static final String VERSION_JSON = "classpath:templates/version.json";
-	public static final String LABEL_PRINTER_JSON = "classpath:templates/labelPrinter.json";
-
+	
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
 
@@ -38,14 +41,34 @@ public class HistoSettings {
 		logger.debug("Creating Settings Object ");
 
 		HistoSettings result = gson.fromJson(HistoUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
+		
+		// init printers
+		result.getPrinterManager().initPrinters();
+		result.getLabelPrinterManager().initPrinters();
+		
 		return result;
 	}
 
 	/**
-	 * Handels clinic printers
+	 * Directory for creating pdfs
 	 */
-	private ClinicPrinterManager printer;
+	private  String workingDirectory;
 
+	/**
+	 * The current version of the program
+	 */
+	private String currentVersion;
+	
+	/**
+	 * Handles clinic printers
+	 */
+	private ClinicPrinterManager printerManager;
+
+	/**
+	 * Handles all labelPrinters
+	 */
+	private LabelPrinterManager labelPrinterManager;
+	
 	/**
 	 * Object for sending mails via clini backend
 	 */
@@ -77,17 +100,8 @@ public class HistoSettings {
 	 */
 	private String defaultSlideLableLayout;
 
-	/**
-	 * The current version of the program
-	 */
-	private String currentVersion;
 
-	/**
-	 * Directory for creating pdfs
-	 */
-	private String workingDirectory;
-
-	public URI getAbsolutePath(String path) {
+	public static final URI getAbsolutePath(String path) {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
 		Resource resource = appContext.getResource(path);
 		URI result = null;
@@ -155,29 +169,31 @@ public class HistoSettings {
 		this.errorMails = errorMails;
 	}
 
-	public String getCurrentVersion() {
-		return currentVersion;
+	public ClinicPrinterManager getPrinterManager() {
+		return printerManager;
 	}
 
-	public void setCurrentVersion(String currentVersion) {
-		this.currentVersion = currentVersion;
-	}
-
-	public ClinicPrinterManager getPrinter() {
-		return printer;
-	}
-
-	public void setPrinter(ClinicPrinterManager printer) {
-		this.printer = printer;
+	public void setPrinterManager(ClinicPrinterManager printerManager) {
+		this.printerManager = printerManager;
 	}
 
 	public String getWorkingDirectory() {
 		return workingDirectory;
 	}
-
-	public void setWorkingDirectory(String workingDirectory) {
-		this.workingDirectory = workingDirectory;
+	
+	public String getCurrentVersion() {
+		return currentVersion;
 	}
+
+	public LabelPrinterManager getLabelPrinterManager() {
+		return labelPrinterManager;
+	}
+
+	public void setLabelPrinterManager(LabelPrinterManager labelPrinterManager) {
+		this.labelPrinterManager = labelPrinterManager;
+	}
+
+	
 
 	/********************************************************
 	 * Getter/Setter

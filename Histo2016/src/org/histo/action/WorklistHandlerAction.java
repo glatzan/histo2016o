@@ -177,6 +177,10 @@ public class WorklistHandlerAction implements Serializable {
 		if (patient == null)
 			return View.WORKLIST.getPath();
 
+		logger.debug("Select patient " + patient.getPerson().getFullName());
+		
+		patientDao.initializePatientPdfData(patient);
+		
 		switch (mainHandlerAction.getCurrentView()) {
 		case WORKLIST_PATIENT:
 		case WORKLIST_RECEIPTLOG:

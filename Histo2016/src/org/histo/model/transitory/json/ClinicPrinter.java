@@ -26,7 +26,7 @@ public class ClinicPrinter implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ClinicPrinter && ((ClinicPrinter) obj).getPrinterURL().equals(printerURL))
+		if (obj instanceof ClinicPrinter && ((ClinicPrinter) obj).getName().equals(name))
 			return true;
 
 		return super.equals(obj);
