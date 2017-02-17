@@ -1,22 +1,15 @@
 package org.histo.model.transitory.json;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrinter;
 import org.histo.config.HistoSettings;
 import org.histo.model.patient.Slide;
-import org.histo.ui.StainingTableChooser;
 import org.histo.util.HistoUtil;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.Resource;
 
 public class LabelPrinterManager {
 
@@ -25,16 +18,20 @@ public class LabelPrinterManager {
 	private String testPage;
 
 	private List<LabelPrinter> printers;
+	
+	private LabelPrinter printerToUse;
 
-	public final void print(String uuid, PrintTemplate printTemplate, Slide slide, String date) {
-		print(getPrinterByUuid(uuid), printTemplate, slide, date);
+	public final boolean loadPrinter(String name){
+		setPrinterToUse(getPrinterByUuid(name));
+		return getPrinterToUse() == null ? false : true;
 	}
 
-	public final void print(LabelPrinter printer, PrintTemplate printTemplate, Slide slide, String date) {
+	public final void print(PrintTemplate printTemplate, Slide slide, String date) {
 		String taskID = slide.getTask().getTaskID();
 
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
-		Resource resource = appContext.getResource(testPage);
+		logger.debug("Using printer " + getPrinterToUse().getName());
+
+		String toPrint = PrintTemplate.getContentOfFile(printTemplate.getFile());
 
 		HashMap<String, String> args = new HashMap<String, String>();
 		args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 2, '0'));
@@ -42,41 +39,21 @@ public class LabelPrinterManager {
 		args.put("%slideText%", slide.getCommentary());
 		args.put("%date%", date);
 
-		try {
-			String toPrint = IOUtils.toString(resource.getInputStream(), "UTF-8");
-			logger.debug("Printing Testpage an flushing, printer " + printer.getFileName());
-			printer.addTaskToBuffer(HistoUtil.replaceWildcardsInString(toPrint, args));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			appContext.close();
-		}
+		getPrinterToUse().addTaskToBuffer(HistoUtil.replaceWildcardsInString(toPrint, args));
 
 	}
 
-	public final void printTestPage(String printer) {
-		printTestPage(getPrinterByUuid(printer));
-	}
 
-	public final void printTestPage(LabelPrinter printer) {
-		if(printer == null){
-			logger.debug("No printer given");
+	public final void printTestPage() {
+
+		String toPrint = PrintTemplate.getContentOfFile(testPage);
+
+		if (toPrint == null)
 			return;
-		}
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
-		Resource resource = appContext.getResource(testPage);
 
-		try {
-			String toPrint = IOUtils.toString(resource.getInputStream(), "UTF-8");
-			logger.debug("Printing Testpage an flushing, printer " + printer.getFileName());
-			printer.addTaskToBuffer(toPrint);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			appContext.close();
-		}
+		logger.debug("Printing Testpage an flushing, printer " + getPrinterToUse().getFileName());
+		getPrinterToUse().addTaskToBuffer(toPrint);
+		flushPrints();
 	}
 
 	/**
@@ -85,19 +62,19 @@ public class LabelPrinterManager {
 	 * @param printer
 	 * @return
 	 */
-	public boolean flushPrints(LabelPrinter printer) {
-		if (printer.isBufferNotEmpty()) {
+	public boolean flushPrints() {
+		if (getPrinterToUse().isBufferNotEmpty()) {
 			try {
-				printer.openConnection();
-				printer.flushBuffer();
-				printer.closeConnection();
+				getPrinterToUse().openConnection();
+				getPrinterToUse().flushBuffer();
+				getPrinterToUse().closeConnection();
 			} catch (IOException e) {
 				logger.error(e);
 			}
-			logger.debug("Flushing prints of printer " + printer.getName());
+			logger.debug("Flushing prints of printer " + getPrinterToUse().getName());
 			return true;
 		} else
-			logger.debug("Nothing in buffer of printer " + printer.getName());
+			logger.debug("Nothing in buffer of printer " + getPrinterToUse().getName());
 
 		return false;
 	}
@@ -110,9 +87,12 @@ public class LabelPrinterManager {
 	 */
 	public LabelPrinter getPrinterByUuid(String name) {
 		for (LabelPrinter labelPrinter : printers) {
-			if (labelPrinter.getName().equals(name))
+			if (labelPrinter.getName().equals(name)){
+				logger.debug("Printer found, " + name);
 				return labelPrinter;
+			}
 		}
+		logger.debug("No printer found for " + name);
 		return null;
 	}
 
@@ -121,7 +101,7 @@ public class LabelPrinterManager {
 	 * 
 	 * @return
 	 */
-	public final boolean initPrinters() {
+	public final boolean loadFtpPrinters() {
 		LabelPrinter[] printers = LabelPrinter.factroy(HistoSettings.LABEL_PRINTER_JSON);
 		setPrinters(new ArrayList<LabelPrinter>(Arrays.asList(printers)));
 
@@ -136,4 +116,13 @@ public class LabelPrinterManager {
 		this.printers = printers;
 	}
 
+	public LabelPrinter getPrinterToUse() {
+		return printerToUse;
+	}
+
+	public void setPrinterToUse(LabelPrinter printerToUse) {
+		this.printerToUse = printerToUse;
+	}
+
+	
 }

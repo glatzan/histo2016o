@@ -40,7 +40,6 @@ public class Council implements HasID {
 	private long dateOfRequest;
 	
 	public Council() {
-		dateOfRequest = 0;
 	}
 	
 	@Id

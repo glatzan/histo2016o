@@ -3,6 +3,7 @@ package org.histo.action;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.StainingListAction;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
@@ -22,6 +24,7 @@ import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.LabelPrinter;
+import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.ListChooser;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.HistoUtil;
@@ -56,6 +59,9 @@ public class SlideHandlerAction implements Serializable {
 
 	@Autowired
 	DiagnosisHandlerAction diagnosisHandlerAction;
+
+	@Autowired
+	UserHandlerAction userHandlerAction;
 
 	/**
 	 * Temporäres Blockobjekt, wird verwendet um neue Objektträger zu erstellen.
@@ -282,36 +288,28 @@ public class SlideHandlerAction implements Serializable {
 			System.out.println("To impliment");
 			break;
 		case PRINT:
-			LabelPrinter[] test = LabelPrinter.factroy(HistoSettings.LABEL_PRINTER_JSON);
+			mainHandlerAction.getSettings().getLabelPrinterManager()
+					.loadPrinter(userHandlerAction.getCurrentUser().getPreferedLabelPritner());
+
+			PrintTemplate[] arr = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
+					new DocumentType[] { DocumentType.LABLE });
+
+			if (arr.length == 0) {
+				logger.debug("No Template found, returning.");
+				return;
+			}
 
 			for (StainingTableChooser stainingTableChooser : list) {
 				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
 
 					Slide slide = stainingTableChooser.getStaining();
-					String taskID = slide.getParent().getParent().getParent().getTaskID();
 
-					HashMap<String, String> args = new HashMap<String, String>();
-					args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 2, '0'));
-					args.put("%slideName%", taskID + " " + slide.getSlideID());
-					args.put("%slideText%", slide.getCommentary());
-					args.put("%date%", mainHandlerAction.date(System.currentTimeMillis()));
-
-					test[0].addTaskToBuffer(HistoUtil.replaceWildcardsInString(
-							mainHandlerAction.getSettings().getDefaultSlideLableLayout(), args));
+					mainHandlerAction.getSettings().getLabelPrinterManager().print(arr[0], slide,
+							mainHandlerAction.date(System.currentTimeMillis()));
 				}
 			}
 
-			if (test[0].isBufferNotEmpty()) {
-				try {
-					test[0].openConnection();
-					test[0].flushBuffer();
-					test[0].closeConnection();
-					System.out.println(test[0].isBufferNotEmpty());
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			mainHandlerAction.getSettings().getLabelPrinterManager().flushPrints();
 
 			break;
 		default:
@@ -324,6 +322,25 @@ public class SlideHandlerAction implements Serializable {
 
 	public void hideStainingsPerformedDialog() {
 		mainHandlerAction.hideDialog(Dialog.STAINING_PERFORMED);
+	}
+
+	public void printLableForSlide(Slide slide) {
+
+		mainHandlerAction.getSettings().getLabelPrinterManager()
+				.loadPrinter(userHandlerAction.getCurrentUser().getPreferedLabelPritner());
+
+		PrintTemplate[] arr = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
+				new DocumentType[] { DocumentType.LABLE });
+
+		if (arr.length == 0) {
+			logger.debug("No Template found, returning.");
+			return;
+		}
+
+		mainHandlerAction.getSettings().getLabelPrinterManager().print(arr[0], slide,
+				mainHandlerAction.date(System.currentTimeMillis()));
+		mainHandlerAction.getSettings().getLabelPrinterManager().flushPrints();
+
 	}
 
 	/********************************************************
@@ -369,7 +386,7 @@ public class SlideHandlerAction implements Serializable {
 		block.getSlides().add(slide);
 
 		slide.updateNameOfSlide();
-		
+
 		if (commentary != null && !commentary.isEmpty())
 			slide.setCommentary(commentary);
 

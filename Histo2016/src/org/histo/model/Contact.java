@@ -1,13 +1,18 @@
 package org.histo.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
+import org.apache.log4j.Logger;
+import org.histo.action.TaskHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.interfaces.LogAble;
 
@@ -15,9 +20,11 @@ import org.histo.model.interfaces.LogAble;
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
 public class Contact implements LogAble {
 
+	private static Logger logger = Logger.getLogger(TaskHandlerAction.class);
+
 	private long id;
 
-	private Physician physician;
+	private Person person;
 
 	private ContactRole role = ContactRole.NONE;
 
@@ -42,8 +49,15 @@ public class Contact implements LogAble {
 	public Contact() {
 	}
 
-	public Contact(Physician physician) {
-		this.physician = physician;
+	public Contact(Person person) {
+		this(person, ContactRole.NONE);
+		logger.debug("Creating contact for " + person.getFullName());
+	}
+
+	public Contact(Person person, ContactRole role) {
+		logger.debug("Creating contact for " + person.getFullName());
+		this.person = person;
+		this.role = role;
 	}
 
 	/********************************************************
@@ -60,15 +74,16 @@ public class Contact implements LogAble {
 		this.id = id;
 	}
 
-	@OneToOne()
-	public Physician getPhysician() {
-		return physician;
+	@OneToOne(cascade = CascadeType.ALL)
+	public Person getPerson() {
+		return person;
 	}
 
-	public void setPhysician(Physician physician) {
-		this.physician = physician;
+	public void setPerson(Person person) {
+		this.person = person;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public ContactRole getRole() {
 		return role;
 	}
@@ -150,10 +165,10 @@ public class Contact implements LogAble {
 
 	@Override
 	public String toString() {
-		if (getPhysician().getPerson().getFullName() != null && !getPhysician().getPerson().getFullName().isEmpty())
-			return getPhysician().getPerson().getFullName();
+		if (getPerson().getFullName() != null && !getPerson().getFullName().isEmpty())
+			return getPerson().getFullName();
 		else
-			return getPhysician().getPerson().getTitle() + " " + getPhysician().getPerson().getSurname() + " " + getPhysician().getPerson().getName();
+			return getPerson().getTitle() + " " + getPerson().getSurname() + " " + getPerson().getName();
 	}
 
 }

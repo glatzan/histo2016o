@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
+import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisStatusState;
@@ -51,6 +53,8 @@ import de.nixosoft.jlr.JLRGenerator;
 
 public class PdfGenerator {
 
+	private static Logger logger = Logger.getLogger("org.histo");
+
 	private ResourceBundle resourceBundle;
 
 	private MainHandlerAction mainHandlerAction;
@@ -60,55 +64,36 @@ public class PdfGenerator {
 		this.mainHandlerAction = mainHandlerAction;
 	}
 
+	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate) {
+		return generatePDFForReport(patient, task, printTemplate, null);
+	}
+
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate,
 			Person toSendAddress) {
-		;
+
+		mainHandlerAction.getSettings();
 		File workingDirectory = new File(
-				mainHandlerAction.getSettings().getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
+				HistoSettings.getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		System.out.println(mainHandlerAction.getSettings().getAbsolutePath(printTemplate.getFile()));
+		mainHandlerAction.getSettings();
+		System.out.println(HistoSettings.getAbsolutePath(printTemplate.getFile()));
 		// loading tex file
-		File template = new File(mainHandlerAction.getSettings().getAbsolutePath(printTemplate.getFile()));
+		File template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
 
 		File processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
 
 		JLRConverter converter = new JLRConverter(workingDirectory);
 
-		// $name
-		converter.replace("name", task.getParent().getPerson().getName());
-		// $surName
-		converter.replace("surName", task.getParent().getPerson().getSurname());
-		// $birthday
-		converter.replace("birthday", resourceBundle.get("pdf.birthday") + " "
-				+ mainHandlerAction.date(task.getParent().getPerson().getBirthday()));
-		// $piz
-		converter.replace("piz", mainHandlerAction.date(task.getDiagnosisInfo().getSignatureDate()));
+		replacePatientData(converter, patient);
+		
+		replaceAddressData(converter, toSendAddress);
 
-		// $reportDate
-		converter.replace("reportDate", task.getParent().getPerson().getSurname());
-
-		// $address
-		if (toSendAddress == null) {
-			// converter.replace("toSendAress",
-			// resourceBundle.get("pdf.address.none"));
-		} else {
-			// StringBuffer re
-			// converter.replace("toSendAressSex", (toSendAddress.getGender() ==
-			// Gender.FEMALE
-			// ? resourceBundle.get("pdf.address.female") :
-			// resourceBundle.get("pdf.address.male")));
-			// converter.replace("toSendAressTitle", toSendAddress.getTitle());
-			// converter.replace("toSendAressName", toSendAddress.getName());
-			// converter.replace("toSendAressStreet",
-			// toSendAddress.getStreet());
-			// converter.replace("toSendAressHouseNumber",
-			// toSendAddress.getHouseNumber());
-			//
-			// converter.replace("toSendAressTown", "");
+		if(printTemplate.getDocumentTyp() == DocumentType.U_REPORT || printTemplate.getDocumentTyp() == DocumentType.U_REPORT_EMTY){
+			replaceUReportData(converter, task);
 		}
-
+		
 		try {
 
 			if (!converter.parse(template, processedTex)) {
@@ -186,6 +171,44 @@ public class PdfGenerator {
 
 	}
 
+	public final void replacePatientData(JLRConverter converter, Patient patient) {
+		converter.replace("patName", patient.getPerson().getName());
+		converter.replace("patSurName", patient.getPerson().getSurname());
+		converter.replace("patAddress", patient.getPerson().getStreet());
+		converter.replace("patPlz", patient.getPerson().getPostcode());
+		converter.replace("patCity", patient.getPerson().getTown());
+		converter.replace("piz", patient.getPiz());
+	}
+
+	public final void replaceAddressData(JLRConverter converter, Person person) {
+		if (person != null) {
+			logger.debug("Replacing address for " + person.getFullName());
+			// name +
+			converter.replace("addName",
+					(person.getGender() == Gender.FEMALE ? resourceBundle.get("pdf.address.female")
+							: resourceBundle.get("pdf.address.male")) + " "
+							+ (!person.getTitle().isEmpty() ? (person.getTitle() + " ") : "") + person.getName());
+			converter.replace("addSurName", person.getSurname());
+			converter.replace("addAddress", person.getStreet());
+			converter.replace("addPlz", person.getPostcode());
+			converter.replace("addCity", person.getTown());
+			converter.replace("addSubject", "");
+		} else {
+			logger.debug("No Address provided");
+			converter.replace("addName", resourceBundle.get("pdf.address.none"));
+			converter.replace("addSurName", "");
+			converter.replace("addAddress", "");
+			converter.replace("addPlz", "");
+			converter.replace("addCity", "");
+			converter.replace("addSubject", "");
+		}
+	}
+	
+	public final void replaceUReportData(JLRConverter converter, Task task){
+		converter.replace("taskNumber", task.getTaskID());
+		converter.replace("eDate", mainHandlerAction.date(task.getDateOfReceipt()));
+	}
+
 	private static byte[] readContentIntoByteArray(File file) {
 		FileInputStream fileInputStream = null;
 		byte[] bFile = new byte[(int) file.length()];
@@ -200,7 +223,7 @@ public class PdfGenerator {
 		return bFile;
 	}
 
-	public PDFContainer generatePdfForTemplate(Task task,  PrintTemplate tempalte, long dateOfReport,
+	public PDFContainer generatePdfForTemplate(Task task, PrintTemplate tempalte, long dateOfReport,
 			ContactRole addressPhysicianRole, Physician externalPhysician, Physician signingPhysician) {
 		// PDFContainer result = null;
 		//
@@ -262,7 +285,7 @@ public class PdfGenerator {
 			populateSingleSignature(pdf, signingPhysician);
 
 		// barcodes
-		//drawBarCodes(task, template, pdfReader, pdf);
+		// drawBarCodes(task, template, pdfReader, pdf);
 
 		// additional fields for special pdfs
 		if (additionalFields != null) {
@@ -277,15 +300,17 @@ public class PdfGenerator {
 
 		closePdf(pdfReader, pdf);
 
-//		String pdfName = (template.isNameAsResources() ? resourceBundle.get(template.getName()) : template.getName())
-//				+ "_" + task.getPatient().getPiz();
+		// String pdfName = (template.isNameAsResources() ?
+		// resourceBundle.get(template.getName()) : template.getName())
+		// + "_" + task.getPatient().getPiz();
 
-//		return new PDFContainer(template.getType(),
-//				pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
-//				out.toByteArray());
+		// return new PDFContainer(template.getType(),
+		// pdfName + "_" +
+		// mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_")
+		// + ".pdf",
+		// out.toByteArray());
 		return null;
 	}
-
 
 	public final void populateSingleSignature(PdfStamper stamper, Physician physician) {
 		setStamperField(stamper, "B_SIGANTURE", physician.getPerson().getFullName());
@@ -508,7 +533,6 @@ public class PdfGenerator {
 			System.out.println(fldName + ": " + fields.getField(fldName));
 		}
 	}
-
 
 	public static final PDFContainer mergePdfs(List<PDFContainer> containers, String name, DocumentType type) {
 		Document document = new Document();

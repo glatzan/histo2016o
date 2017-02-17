@@ -9,6 +9,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
@@ -30,6 +31,7 @@ import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.HistoUtil;
@@ -182,11 +184,6 @@ public class TaskHandlerAction implements Serializable {
 	private Council temporaryCouncil;
 
 	/**
-	 * Temporary object for council dialog
-	 */
-	private Council selectedCouncil;
-
-	/**
 	 * Converter for selecting councils
 	 */
 	private DefaultTransformer<Council> councilConverter;
@@ -318,7 +315,7 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public void createNewTask(Patient patient, Task task) {
+	public Task createNewTask(Patient patient, Task task) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
@@ -338,7 +335,7 @@ public class TaskHandlerAction implements Serializable {
 
 		task.setCaseHistory("");
 		task.setWard("");
-		
+
 		task.setCouncils(new ArrayList<Council>());
 
 		genericDAO.save(task.getDiagnosisInfo(),
@@ -367,6 +364,24 @@ public class TaskHandlerAction implements Serializable {
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
 		mainHandlerAction.hideDialog(Dialog.TASK_CREATE);
+		
+		return task;
+	}
+	
+	public void createNewTaskAndPrintUReport(Patient patient, Task task) {
+		Task newTask = createNewTask(patient,task);
+		
+		printHandlerAction.initBean(newTask);
+		
+		PrintTemplate[] subSelect = PrintTemplate
+				.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
+		
+		if(subSelect.length == 0){
+			logger.debug("No Template for UReport found");
+			return;
+		}
+		
+		printHandlerAction.onPrintPdf(subSelect[0]);
 	}
 
 	/********************************************************
@@ -651,6 +666,7 @@ public class TaskHandlerAction implements Serializable {
 
 	/**
 	 * Prepares the council dialog
+	 * 
 	 * @param task
 	 * @param show
 	 */
@@ -665,9 +681,9 @@ public class TaskHandlerAction implements Serializable {
 			setTemporaryCouncil(new Council());
 			getTemporaryCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
 		} else {
-			// selected council is need for selectlist, temporary council is for editing (new council can't be in task list)
-			setSelectedCouncil(task.getCouncils().get(0));
-			setTemporaryCouncil(getSelectedCouncil());
+			// selected council is need for selectlist, temporary council is for
+			// editing (new council can't be in task list)
+			setTemporaryCouncil(task.getCouncils().get(0));
 		}
 
 		setCouncilConverter(new DefaultTransformer<Council>(task.getCouncils()));
@@ -678,12 +694,10 @@ public class TaskHandlerAction implements Serializable {
 			mainHandlerAction.showDialog(Dialog.COUNCIL);
 	}
 
-	/**
-	 * If onld council was selected copy to temporaryCouncil in order to edit
-	 * @param council
-	 */
-	public void selectOldCouncilToEdit(Council council) {
-		setTemporaryCouncil(council);
+	public void addNewCouncil(Task task) {
+		Council newCouncil = new Council();
+		saveCouncilData(task, newCouncil);
+		setTemporaryCouncil(newCouncil);
 	}
 
 	/**
@@ -692,12 +706,12 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param council
 	 */
-	public void saveCouncilData(Task task,Council council) {
+	public void saveCouncilData(Task task, Council council) {
 		// new
 		if (council.getId() == 0) {
+			council.setDateOfRequest(System.currentTimeMillis());
 			logger.debug("Creating new council");
-			genericDAO.save(council, resourceBundle.get("log.patient.task.council.create", "TODO"),
-					task.getPatient());
+			genericDAO.save(council, resourceBundle.get("log.patient.task.council.create", "TODO"), task.getPatient());
 
 			System.out.println(council.getId() + ".-----------------------------------");
 			task.getCouncils().add(council);
@@ -716,8 +730,8 @@ public class TaskHandlerAction implements Serializable {
 	 * Hieds the council dialog
 	 */
 	public void hideCouncilDialog() {
-		setTemporaryCouncil(null);
 		setTemporaryTask(null);
+		setTemporaryCouncil(null);
 		mainHandlerAction.hideDialog(Dialog.COUNCIL);
 	}
 
@@ -726,9 +740,11 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param print
 	 */
-	public void hideCouncilDialogAndPrintReport(Task task,Council council) {
-		saveCouncilData(task,council);
-		printHandlerAction.showCouncilPrintDialog(task);
+	public void hideCouncilDialogAndPrintReport(Task task, Council council) {
+		saveCouncilData(task, council);
+		printHandlerAction.showCouncilPrintDialog(task, council);
+		
+		hideCouncilDialog();
 		// workaround for showing and hiding two dialogues
 		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
 
@@ -771,14 +787,6 @@ public class TaskHandlerAction implements Serializable {
 
 	public void setAllAvailablePhysiciansTransformer(DefaultTransformer<Physician> allAvailablePhysiciansTransformer) {
 		this.allAvailablePhysiciansTransformer = allAvailablePhysiciansTransformer;
-	}
-
-	public Council getTemporaryCouncil() {
-		return temporaryCouncil;
-	}
-
-	public void setTemporaryCouncil(Council temporaryCouncil) {
-		this.temporaryCouncil = temporaryCouncil;
 	}
 
 	public Physician getSignatureOne() {
@@ -853,12 +861,12 @@ public class TaskHandlerAction implements Serializable {
 		this.councilConverter = councilConverter;
 	}
 
-	public Council getSelectedCouncil() {
-		return selectedCouncil;
+	public Council getTemporaryCouncil() {
+		return temporaryCouncil;
 	}
 
-	public void setSelectedCouncil(Council selectedCouncil) {
-		this.selectedCouncil = selectedCouncil;
+	public void setTemporaryCouncil(Council temporaryCouncil) {
+		this.temporaryCouncil = temporaryCouncil;
 	}
 
 	/********************************************************

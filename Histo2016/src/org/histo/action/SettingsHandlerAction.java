@@ -652,7 +652,7 @@ public class SettingsHandlerAction {
 		if (getPhysicianRoleOptions().isPrivatePhysician())
 			contactRoles.add(ContactRole.PRIVATE_PHYSICIAN);
 		if (getPhysicianRoleOptions().isOther())
-			contactRoles.add(ContactRole.OTHER);
+			contactRoles.add(ContactRole.OTHER_PHYSICIAN);
 
 		setPhysicianList(physicianDAO.getPhysicians(contactRoles, getPhysicianRoleOptions().isArchived()));
 	}
@@ -735,7 +735,7 @@ public class SettingsHandlerAction {
 	 */
 	public void saveEditPhysician(Physician physician) {
 		if (physician.getDefaultContactRole() == ContactRole.NONE)
-			physician.setDefaultContactRole(ContactRole.OTHER);
+			physician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
 
 		genericDAO.save(physician,
 				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
@@ -751,7 +751,7 @@ public class SettingsHandlerAction {
 	public void saveNewPrivatePhysician(Physician physician) {
 		// always set role to miscellaneous if no other role was selected
 		if (physician.getDefaultContactRole() == ContactRole.NONE)
-			physician.setDefaultContactRole(ContactRole.OTHER);
+			physician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
 
 		genericDAO.save(physician, resourceBundle.get("log.settings.physician.privatePhysician.save",
 				physician.getPerson().getFullName()));
@@ -771,7 +771,7 @@ public class SettingsHandlerAction {
 		ldapPhysician.setId(0);
 
 		if (role == ContactRole.NONE)
-			ldapPhysician.setDefaultContactRole(ContactRole.OTHER);
+			ldapPhysician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
 		else
 			ldapPhysician.setDefaultContactRole(role);
 

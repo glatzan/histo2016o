@@ -134,7 +134,7 @@ public class MainHandlerAction {
 
 		if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
 			userHandlerAction.getCurrentUser()
-					.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getUuid());
+					.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getName());
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);

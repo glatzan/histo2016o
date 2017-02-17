@@ -34,16 +34,23 @@ public class ClinicPrinterManager implements GsonAble {
 
 	private List<ClinicPrinter> printers;
 
+	private ClinicPrinter printerToUse;
+	
+	public final boolean loadPrinter(String name){
+		setPrinterToUse(getPrinterByName(name));
+		return getPrinterToUse() == null ? false : true;
+	}
+	
 	/**
 	 * Prints a file
 	 * @param cPrinter
 	 * @param file
 	 */
-	public final void print(ClinicPrinter cPrinter, File file) {
+	public final void print(File file) {
 		CupsClient cupsClient;
 		try {
 			cupsClient = new CupsClient(host, port);
-			CupsPrinter printer = cupsClient.getPrinter(cPrinter.getPrinterURL());
+			CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
 			PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
 			printer.print(printJob);
 		} catch (Exception e) {
@@ -51,23 +58,12 @@ public class ClinicPrinterManager implements GsonAble {
 		}
 	}
 
-	/**
-	 * Prints a pdf, serach for printer
-	 * @param cPrinter
-	 * @param container
-	 */
-	public final void print(String cPrinter, PDFContainer container) {
-		ClinicPrinter p = getPrinterByName(cPrinter);
-		if (p != null) {
-			print(p, container);
-		}
-	}
 
-	public final void print(ClinicPrinter cPrinter, PDFContainer container) {
+	public final void print(PDFContainer container) {
 		CupsClient cupsClient;
 		try {
 			cupsClient = new CupsClient(host, port);
-			CupsPrinter printer = cupsClient.getPrinter(cPrinter.getPrinterURL());
+			CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
 			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
 			printer.print(printJob);
 		} catch (Exception e) {
@@ -75,18 +71,11 @@ public class ClinicPrinterManager implements GsonAble {
 		}
 	}
 
-	public final void printTestPage(String printer) {
-		ClinicPrinter p = getPrinterByName(printer);
-		if (p != null) {
-			printTestPage(p);
-		}
-	}
-
-	public final void printTestPage(ClinicPrinter cPrinter) {
+	public final void printTestPage() {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
 		Resource resource = appContext.getResource(testPage);
 		try {
-			print(cPrinter, new File(resource.getURI()));
+			print(new File(resource.getURI()));
 			System.out.println(resource.getURI());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -96,7 +85,7 @@ public class ClinicPrinterManager implements GsonAble {
 		}
 	}
 
-	public final boolean initPrinters() {
+	public final boolean loadCupsPrinters() {
 		CupsClient cupsClient;
 		try {
 			cupsClient = new CupsClient(host, port);
@@ -149,4 +138,12 @@ public class ClinicPrinterManager implements GsonAble {
 		this.printers = printers;
 	}
 
+	public ClinicPrinter getPrinterToUse() {
+		return printerToUse;
+	}
+
+	public void setPrinterToUse(ClinicPrinter printerToUse) {
+		this.printerToUse = printerToUse;
+	}
+	
 }

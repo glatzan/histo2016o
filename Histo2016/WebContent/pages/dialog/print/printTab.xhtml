@@ -27,6 +27,8 @@
 						itemValue="#{template}" />
 
 					<p:ajax update="@form" event="change"
+						onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()"
 						listener="#{printHandlerAction.onChangePrintTemplate()}"></p:ajax>
 				</p:selectOneMenu>
 
@@ -36,19 +38,15 @@
 				<p:selectOneMenu styleClass="customSerachSelectMenu"
 					style="width:90% !important;"
 					panelStyleClass="customSerachSelectMenuPanel"
-					value="#{printHandlerAction.selectedPrinter}"
-					filter="true" filterMatchMode="contains">
+					value="#{printHandlerAction.selectedPrinter}" filter="true"
+					filterMatchMode="contains">
 
 					<f:selectItems
 						value="#{mainHandlerAction.settings.printerManager.printers}"
-						var="printer" itemLabel="#{printer.name}" itemValue="#{printer.name}" />
+						var="printer" itemLabel="#{printer.name}"
+						itemValue="#{printer.name}" />
 
 				</p:selectOneMenu>
-
-				<!-- amount -->
-				<h:outputLabel value="Anzahl" />
-				<p:spinner min="1" size="13" value="1" disabled="true"
-					styleClass="taskSpinner" />
 
 				<h:panelGroup>
 					<h:outputLabel value=" " />
@@ -60,19 +58,30 @@
 			</h:panelGrid>
 			<!-- to -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
-				<h:outputLabel value="Adressat" />
+				<h:outputLabel value="Adressaten" />
 				<p:dataTable var="chooser"
-					value="#{printHandlerAction.contactChooser}">
+					value="#{printHandlerAction.contactChoosers}">
+					<p:column headerText="#" style="width:18px;">
+						<p:selectBooleanCheckbox value="#{chooser.selected}">
+							<p:ajax event="change" process="@form"
+								onstart="PF('blockUIWidget').block()"
+								oncomplete="PF('blockUIWidget').unblock()"
+								listener="#{printHandlerAction.onChooseContact()}"></p:ajax>
+						</p:selectBooleanCheckbox>
+					</p:column>
+
+					<p:column headerText="Anz." style="width:30px;">
+						<p:spinner value="#{chooser.copies}" styleClass="miniSpinner"
+							min="1" max="9"></p:spinner>
+					</p:column>
+
 					<p:column headerText="">
-						<p:selectBooleanCheckbox value="#{chooser.selected}" />
+						<h:outputText
+							value="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}" />
 					</p:column>
 
-					<p:column headerText="#">
-						<h:outputText value="#{chooser.copies}" />
-					</p:column>
-
-					<p:column headerText="Adress">
-						<h:outputText value="#{chooser.contact.physician.person.fullName}" />
+					<p:column headerText="Name">
+						<h:outputText value="#{chooser.contact.person.fullName}" />
 					</p:column>
 
 				</p:dataTable>

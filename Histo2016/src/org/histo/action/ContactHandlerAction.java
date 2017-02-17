@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
@@ -33,6 +34,8 @@ import org.springframework.stereotype.Component;
 public class ContactHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -3672859612072175725L;
+
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -128,18 +131,22 @@ public class ContactHandlerAction implements Serializable {
 				.getPhysicians(ContactRole.getRoles(surgeon, extern, other, familyPhsysician), false);
 
 		if (!showAddedContactsOnly) {
+			logger.debug("Show all contacts");
 			// shows all contacts but marks the already selected contacts with
 			// the selected flag.
 			loop: for (Physician physician : databaseContacts) {
 				for (Contact contact : contacts) {
-					if (contact.getPhysician().getId() == physician.getId()) {
+					logger.debug("Physician id " + physician.getPerson().getId() +", name: "+ physician.getPerson().getFullName()+ ", contact person id " + contact.getPerson().getId());
+					if (contact.getPerson().getId() == physician.getPerson().getId()) {
+						logger.debug("Found " + contact.getPerson().getFullName() + " in contacts, role "
+								+ contact.getRole());
 						contact.setSelected(true);
 						getAllAvailableContact().add(contact);
 						continue loop;
 					}
 				}
 
-				getAllAvailableContact().add(new Contact(physician));
+				getAllAvailableContact().add(new Contact(physician.getPerson()));
 
 			}
 		} else {
@@ -166,7 +173,7 @@ public class ContactHandlerAction implements Serializable {
 			contact.setUseFax(false);
 			contact.setUsePhone(false);
 			genericDAO.delete(contact, resourceBundle.get("log.patient.task.contact.remove", task.getTaskID(),
-					contact.getPhysician().getPerson().getName()), task.getPatient());
+					contact.getPerson().getName()), task.getPatient());
 		} else {
 
 			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax()) {
@@ -175,11 +182,11 @@ public class ContactHandlerAction implements Serializable {
 				// surgeon use email per default
 				contact.setUseEmail(true);
 			} else if ((contact.getRole() == ContactRole.PRIVATE_PHYSICIAN
-					|| contact.getRole() == ContactRole.FAMILY_PHYSICIAN) && contact.getPhysician().getPerson().getFax() != null
-					&& !contact.getPhysician().getPerson().getFax().isEmpty()) {
+					|| contact.getRole() == ContactRole.FAMILY_PHYSICIAN) && contact.getPerson().getFax() != null
+					&& !contact.getPerson().getFax().isEmpty()) {
 				// private physician use fax per default
 				contact.setUseFax(true);
-			} else if (contact.getPhysician().getPerson().getEmail() != null && !contact.getPhysician().getPerson().getEmail().isEmpty()) {
+			} else if (contact.getPerson().getEmail() != null && !contact.getPerson().getEmail().isEmpty()) {
 				// other contacts use email per default
 				contact.setUseEmail(true);
 			}
@@ -189,8 +196,9 @@ public class ContactHandlerAction implements Serializable {
 				task.getContacts().add(contact);
 			}
 
-			genericDAO.save(contact, resourceBundle.get("log.patient.task.contact.add", task.getTaskID(),
-					contact.getPhysician().getPerson().getName()), task.getPatient());
+			genericDAO.save(contact,
+					resourceBundle.get("log.patient.task.contact.add", task.getTaskID(), contact.getPerson().getName()),
+					task.getPatient());
 
 			System.out.println("saving");
 
@@ -238,7 +246,7 @@ public class ContactHandlerAction implements Serializable {
 						genericDAO
 								.save(contactListItem,
 										resourceBundle.get("log.patient.task.contact.primaryRole.removed",
-												task.getTaskID(), contactListItem.getPhysician().getPerson().getName()),
+												task.getTaskID(), contactListItem.getPerson().getName()),
 										task.getPatient());
 
 					} else
@@ -250,7 +258,7 @@ public class ContactHandlerAction implements Serializable {
 		if (!primary && first != null) {
 			first.setPrimaryContact(true);
 			genericDAO.save(first, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
-					first.getPhysician().getPerson().getName()), task.getPatient());
+					first.getPerson().getName()), task.getPatient());
 		}
 	}
 
@@ -272,7 +280,7 @@ public class ContactHandlerAction implements Serializable {
 					// otherwise set to false
 					contactListItem.setPrimaryContact(false);
 					genericDAO.save(contactListItem, resourceBundle.get("log.patient.task.contact.primaryRole.removed",
-							task.getTaskID(), contactListItem.getPhysician().getPerson().getName()), task.getPatient());
+							task.getTaskID(), contactListItem.getPerson().getName()), task.getPatient());
 				}
 			}
 		}
@@ -280,7 +288,7 @@ public class ContactHandlerAction implements Serializable {
 		if (!contact.isPrimaryContact()) {
 			contact.setPrimaryContact(true);
 			genericDAO.save(contact, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
-					contact.getPhysician().getPerson().getName()), task.getPatient());
+					contact.getPerson().getName()), task.getPatient());
 		}
 	}
 

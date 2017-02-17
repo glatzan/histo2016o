@@ -3,7 +3,7 @@ package org.histo.config.enums;
 import java.util.ArrayList;
 
 public enum ContactRole {
-	NONE, FAMILY_PHYSICIAN, PRIVATE_PHYSICIAN, SURGEON, OTHER;
+	NONE, FAMILY_PHYSICIAN, PRIVATE_PHYSICIAN, SURGEON, OTHER_PHYSICIAN, PATIENT, RELATIVES, CASE_CONFERENCE;
 
 	/**
 	 * Returns an arry with the passed roles.
@@ -22,7 +22,7 @@ public enum ContactRole {
 		if (extern)
 			roles.add(PRIVATE_PHYSICIAN);
 		if (other)
-			roles.add(OTHER);
+			roles.add(OTHER_PHYSICIAN);
 		if (familyPhsysician)
 			roles.add(FAMILY_PHYSICIAN);
 

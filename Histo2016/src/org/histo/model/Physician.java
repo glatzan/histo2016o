@@ -10,11 +10,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.DynamicUpdate;
@@ -24,7 +26,6 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
-import org.histo.model.interfaces.LogAble;
 
 import com.google.gson.annotations.Expose;
 
@@ -41,10 +42,6 @@ public class Physician implements Serializable, ArchivAble, HasID {
 
 	private long version;
 
-	@Expose
-	@Id
-	@GeneratedValue(generator = "physician_sequencegenerator")
-	@Column(unique = true, nullable = false)
 	protected long id;
 
 	/**
@@ -74,7 +71,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	/**
 	 * Default role of this physician
 	 */
-	private ContactRole defaultContactRole = ContactRole.OTHER;
+	private ContactRole defaultContactRole = ContactRole.OTHER_PHYSICIAN;
 
 	/**
 	 * True if clinic employee
@@ -215,6 +212,9 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		}
 	}
 
+	@Id
+	@GeneratedValue(generator = "physician_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	public long getId() {
 		return id;
 	}
@@ -223,6 +223,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		this.id = id;
 	}
 
+	@Version
 	public long getVersion() {
 		return version;
 	}

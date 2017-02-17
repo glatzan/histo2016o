@@ -43,8 +43,8 @@ public class HistoSettings {
 		HistoSettings result = gson.fromJson(HistoUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
 		
 		// init printers
-		result.getPrinterManager().initPrinters();
-		result.getLabelPrinterManager().initPrinters();
+		result.getPrinterManager().loadCupsPrinters();
+		result.getLabelPrinterManager().loadFtpPrinters();
 		
 		return result;
 	}
@@ -94,13 +94,6 @@ public class HistoSettings {
 	 */
 	private String[] errorMails;
 
-	/**
-	 * Default layout of the slides labels, contains %slideNumber%, slideText%
-	 * %slideName% and %date% as wildcards
-	 */
-	private String defaultSlideLableLayout;
-
-
 	public static final URI getAbsolutePath(String path) {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
 		Resource resource = appContext.getResource(path);
@@ -120,14 +113,6 @@ public class HistoSettings {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-
-	public String getDefaultSlideLableLayout() {
-		return defaultSlideLableLayout;
-	}
-
-	public void setDefaultSlideLableLayout(String defaultSlideLableLayout) {
-		this.defaultSlideLableLayout = defaultSlideLableLayout;
-	}
 
 	public MailHandler getMail() {
 		return mail;

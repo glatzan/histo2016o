@@ -3,7 +3,9 @@ package org.histo.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.config.enums.ContactRole;
 import org.histo.model.Contact;
+import org.histo.model.Person;
 
 public class ContactChooser {
 
@@ -13,6 +15,10 @@ public class ContactChooser {
 
 	public boolean selected;
 
+	public ContactChooser(Person person, ContactRole role) {
+		this(new Contact(person, role));
+	}
+	
 	public ContactChooser(Contact contact){
 		this.contact = contact;
 		this.copies = 1;

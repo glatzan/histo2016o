@@ -161,7 +161,7 @@
 					value="#{worklistHandlerAction.selectedPatient.selectedTask.contacts}">
 
 					<p:column headerText="#{msg['body.receiptlog.contact.name']}">
-						<h:outputText value="#{contact.physician.person.fullName}" />
+						<h:outputText value="#{contact.person.fullName}" />
 					</p:column>
 
 					<p:column headerText="#{msg['body.receiptlog.contact.role']}">
@@ -172,7 +172,7 @@
 							value="#{msg['body.receiptlog.contact.role.privatePhysician']}"
 							rendered="#{contact.role eq 'PRIVATE_PHYSICIAN'}" />
 						<h:outputText value="#{msg['body.receiptlog.contact.role.other']}"
-							rendered="#{contact.role eq 'OTHER'}" />
+							rendered="#{contact.role eq 'OTHER_PHYSICIAN'}" />
 					</p:column>
 
 					<p:column>
@@ -411,7 +411,7 @@
 							<h:panelGroup rendered="#{stainingRow.stainingType}"
 								style="float: right">
 								<!-- ********** Print Button ********** -->
-								<p:commandLink styleClass="noUnderlineAtLink"
+								<p:commandLink styleClass="noUnderlineAtLink" actionListener="#{slideHandlerAction.printLableForSlide(stainingRow.staining)}"
 									title="#{msg['body.statiningView.printStaining']}">
 									<i class="fa fa-fw fa-print" />
 									<p:ajax event="dialogReturn"

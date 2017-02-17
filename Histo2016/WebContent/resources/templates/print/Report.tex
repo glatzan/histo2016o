@@ -1,0 +1,75 @@
+\documentclass{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+%\usepackage[left=1.5cm,right=1.5cm,top=3cm,bottom=2cm]{geometry}
+\usepackage[absolute]{textpos}
+\usepackage[T1]{fontenc}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{everypage}
+\usepackage{helvet}
+\usepackage{setspace}
+\usepackage{wallpaper}
+
+\usepackage{array}
+
+% font
+\renewcommand{\familydefault}{\sfdefault}
+
+%deactive pagenumbering%
+\pagenumbering{gobble}
+
+% header
+\pagestyle{fancy}
+
+% header size first page, other
+\AddEverypageHook{%
+   \ifthenelse{\value{page}=1}%
+     {\renewcommand{\headrulewidth}{0.0pt}}%
+     {\renewcommand{\headrulewidth}{0.4pt}}%
+}
+
+
+
+\begin{document}
+\ThisCenterWallPaper{1}{background.pdf}
+ \input{code128.tex}
+ 
+\baselineskip10pt
+
+% textblog
+\textblockorigin{0in}{0in}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+
+% pat block
+{
+\scriptsize
+\begin{textblock}{100}(19, 8) 
+\noindent $patName #if(!$StringUtils.isEmpty($patSurName)), #end $patSurName\\
+$patAddress\\
+$patPlz $patCity\\
+\X=.35mm        
+\barheight=1cm 
+\code{$piz}\\
+$piz\\
+\end{textblock}
+}
+
+% add block
+{
+
+\begin{textblock}{100}(25, 43) 
+\setstretch{1.0}
+\noindent 
+\textbf{$addSubject} \\\\
+$addName, $addSurName\\
+$addAddress\\
+$addPlz $addCity\\
+\end{textblock}
+}
+
+\end{document}
+
+

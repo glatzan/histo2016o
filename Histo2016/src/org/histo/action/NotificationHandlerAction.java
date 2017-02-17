@@ -356,9 +356,9 @@ public class NotificationHandlerAction implements Serializable {
 					boolean emailSuccessful = false;
 
 					// name and mail
-					result.append(notificationChooser.getContact().getPhysician().getPerson().getFullName() + "\t ");
+					result.append(notificationChooser.getContact().getPerson().getFullName() + "\t ");
 					result.append(resourceBundle.get("pdf.notification.email")
-							+ notificationChooser.getContact().getPhysician().getPerson().getEmail() + "\t");
+							+ notificationChooser.getContact().getPerson().getEmail() + "\t");
 
 					// no notification
 					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
@@ -431,8 +431,7 @@ public class NotificationHandlerAction implements Serializable {
 						genericDAO
 								.save(notificationChooser.getContact(),
 										resourceBundle.get("log.patient.task.contact.notification.performed",
-												getTmpTask().getTaskID(), notificationChooser.getContact()
-														.getPhysician().getPerson().getFullName()),
+												getTmpTask().getTaskID(), notificationChooser.getContact().getPerson().getFullName()),
 										getTmpTask().getPatient());
 
 						notificationChooser.setPerformed(true);
@@ -452,9 +451,9 @@ public class NotificationHandlerAction implements Serializable {
 
 				for (NotificationChooser notificationChooser : notificationFaxList) {
 
-					result.append(notificationChooser.getContact().getPhysician().getPerson().getFullName() + "\t");
+					result.append(notificationChooser.getContact().getPerson().getFullName() + "\t");
 					result.append(resourceBundle.get("pdf.notification.fax.number") + " "
-							+ notificationChooser.getContact().getPhysician().getPerson().getFax() + "\t");
+							+ notificationChooser.getContact().getPerson().getFax() + "\t");
 
 					// no notification
 					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
@@ -493,8 +492,7 @@ public class NotificationHandlerAction implements Serializable {
 						genericDAO
 								.save(notificationChooser.getContact(),
 										resourceBundle.get("log.patient.task.contact.notification.fax.performed",
-												getTmpTask().getTaskID(), notificationChooser.getContact()
-														.getPhysician().getPerson().getFullName()),
+												getTmpTask().getTaskID(), notificationChooser.getContact().getPerson().getFullName()),
 										getTmpTask().getPatient());
 					}
 				}
@@ -509,9 +507,9 @@ public class NotificationHandlerAction implements Serializable {
 
 				for (NotificationChooser notificationChooser : notificationPhoneList) {
 
-					result.append(notificationChooser.getContact().getPhysician().getPerson().getFullName() + "\t");
+					result.append(notificationChooser.getContact().getPerson().getFullName() + "\t");
 					result.append(resourceBundle.get("pdf.notification.phone.number") + " "
-							+ notificationChooser.getContact().getPhysician().getPerson().getPhoneNumber() + "\t");
+							+ notificationChooser.getContact().getPerson().getPhoneNumber() + "\t");
 
 					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
 						result.append(resourceBundle.get("pdf.notification.none") + "\r\n");
@@ -521,8 +519,7 @@ public class NotificationHandlerAction implements Serializable {
 						genericDAO
 								.save(getTmpTask(),
 										resourceBundle.get("log.patient.task.contact.notification.telefon.performed",
-												getTmpTask().getTaskID(), notificationChooser.getContact()
-														.getPhysician().getPerson().getFullName()),
+												getTmpTask().getTaskID(), notificationChooser.getContact().getPerson().getFullName()),
 										getTmpTask().getPatient());
 					}
 

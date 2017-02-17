@@ -38,27 +38,12 @@
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
-				<h:panelGrid columns="4" style="float:right;">
-					<!-- print -->
+				<h:panelGrid columns="3" style="float:right;">
+					<!-- confirm -->
 					<p:commandButton value="Drucken" icon="fa fa-print"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						onstart="PF('blockUIWidget').block()"
-						oncomplete="PF('blockUIWidget').unblock()"
-						actionListener="#{printHandlerAction.onPrintNewPdf()}"></p:commandButton>
+						actionListener="#{printHandlerAction.onPrintPdf()}"></p:commandButton>
 
-					<!-- select printer -->
-					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						panelStyleClass="customSerachSelectMenuPanel"
-						value="#{printHandlerAction.selectedPrinter}" filter="true"
-						filterMatchMode="contains" style="margin-right:10px">
-
-						<f:selectItems
-							value="#{mainHandlerAction.settings.printerManager.printers}"
-							var="printer" itemLabel="#{printer.name}"
-							itemValue="#{printer.name}" />
-					</p:selectOneMenu>
-
-					<!-- download -->
 					<p:commandButton value="Öffnen" icon="fa fa-download" ajax="false"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{printHandlerAction.onDownloadPdf}">
@@ -73,7 +58,11 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
-		<ui:include src="../../template/blockUi.xhtml"></ui:include>
+		<pe:blockUI widgetVar="blockUIWidget">
+			<h:panelGrid columns="1">
+				<h:outputText value="Please wait..." style="white-space: nowrap;" />
+			</h:panelGrid>
+		</pe:blockUI>
 	</h:form>
 </h:body>
 </html>

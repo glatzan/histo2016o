@@ -540,7 +540,6 @@ body {
 .content .body   .inplaceInput .ui-inputfield {
 	padding: 0px 0px 0px 5px;
 	width: 60% !important;
-	background: black;
 }
 
 /* Alle Unterstriche bei links interhalb der Färbungstabelle entfernen*/
@@ -820,6 +819,17 @@ body {
 }
 
 /*	################# WorklistOptionsDilaog ################# */
+
+/*	################# print dialog ################# */
+.miniSpinner{
+	width: 32px;	
+}
+
+.miniSpinner .ui-spinner-input {
+	padding: 2px 2px 2px 2px !important;
+	width: 10px;
+}
+/*	################# print dialog ################# */
 
 /*	################# addPatient dialog ################# */
 

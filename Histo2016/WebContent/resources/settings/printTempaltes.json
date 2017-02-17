@@ -1,31 +1,60 @@
 [{
 	"id" : 0,
 	"name" : "Eingangsbogen",
-	"file" : "classpath:templates/print/Report_Intern.tex",
+	"file" : "classpath:templates/print/USchein_full.tex",
 	"file2" : "",
-	"documentTyp"	: "U_REPORT",
-	"defaultDocument" : false
+	"documentType"	: "U_REPORT",
+	"defaultDocument" : false,
+	"doNotSave" : true
 },{
 	"id" : 1,
+	"name" : "Eingangsbogen bedrucken",
+	"file" : "classpath:templates/print/USchein_empty.tex",
+	"file2" : "",
+	"documentType"	: "U_REPORT_EMTY",
+	"defaultDocument" : false,
+	"doNotSave" : true
+},
+{
+	"id" : 10,
 	"name" : "Befundbericht",
 	"file" : "classpath:templates/print/Report_Intern.tex",
 	"file2" : "",
-	"documentTyp"	: "DIAGNOSIS_REPORT",
-	"defaultDocument" : true
+	"documentType"	: "DIAGNOSIS_REPORT",
+	"defaultDocument" : false,
+	"doNotSave" : false
 },{
-	"id" : 2,
+	"id" : 20,
 	"name" : "Befundbericht Extern",
 	"file" : "classpath:templates/print/Report_Extern.tex",
 	"file2" : "",
-	"documentTyp"	: "DIAGNOSIS_REPORT_EXTERN",
-	"defaultDocument" : false
+	"documentType"	: "DIAGNOSIS_REPORT_EXTERN",
+	"defaultDocument" : false,
+	"doNotSave" : false
+},{
+	"id" : 30,
+	"name" : "Befundbericht",
+	"file" : "classpath:templates/print/Report.tex",
+	"file2" : "",
+	"documentType"	: "DIAGNOSIS_REPORT",
+	"defaultDocument" : true,
+	"doNotSave" : false
+},{
+	"id" : 50,
+	"name" : "Konsil",
+	"file" : "classpath:templates/print/Report_Intern.tex",
+	"file2" : "",
+	"documentType"	: "CASE_CONFERENCE",
+	"defaultDocument" : true,
+	"doNotSave" : false
 },{
 	"id" : 100,
 	"name" : "Default Slide Lable",
-	"file" : "classpath:templates/print_labels/defaultLable.lab",
+	"file" : "classpath:templates/print_label/defaultLable.zpl",
 	"file2" : "",
-	"documentTyp"	: "LABLE",
-	"defaultDocument" : true
+	"documentType"	: "LABLE",
+	"defaultDocument" : true,
+	"doNotSave" : false
 }]
 
 

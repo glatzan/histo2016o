@@ -43,7 +43,6 @@
 						rowKey="#{pdf.id}" styleClass="navTable">
 
 						<p:ajax event="rowSelect" update="@form" />
-						<!-- 		listener="#{worklistHandlerAction.onSelectPatient(worklistHandlerAction.selectedPatient)}" /> -->
 
 						<p:column>
 							<!-- Header -->
@@ -98,7 +97,7 @@
 					<!-- print -->
 					<p:commandButton value="Drucken" icon="fa fa-print"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{printHandlerAction.onPrintPdf()}"></p:commandButton>
+						actionListener="#{printHandlerAction.onPrintPdf(mediaHandlerAction.temporaryPdfContainer)}"></p:commandButton>
 					
 					
 					<!-- select printer -->

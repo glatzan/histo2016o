@@ -169,9 +169,9 @@
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
-						icon="fa fa-print" disabled="true"
+						icon="fa fa-print" 
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTaskAndPrintUReport(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 
 
 					<!-- Abort button -->

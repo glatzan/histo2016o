@@ -6,6 +6,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
+
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.createSample.headline']}" /></title>
@@ -19,7 +20,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.createSample.headline']}" />
+				<h:outputLabel value="#{msg['dialog.council.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -29,27 +30,32 @@
 		</div>
 
 		<div class="contentDiv">
-			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
-				<!-- material -->
-				<h:outputLabel value="Vorhandene Konsile"></h:outputLabel>
-				<p:selectOneMenu styleClass="smallInput" style="margin-left:30px;"
-					converter="#{taskHandlerAction.councilConverter}"
-					value="#{taskHandlerAction.selectedCouncil}">
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+				columnClasses="defaultListingTableColumnTop,">
 
-					<f:selectItem itemLabel="Neues Konsil" itemValue="#{null}" />
+				<!-- council -->
+				<h:outputLabel value="#{msg['dialog.council.council']}"></h:outputLabel>
+				<h:panelGroup>
+					<p:selectOneMenu styleClass="smallInput"
+						converter="#{taskHandlerAction.councilConverter}"
+						value="#{taskHandlerAction.temporaryCouncil}"
+						rendered="#{((taskHandlerAction.temporaryTask.councils ne null) and !taskHandlerAction.temporaryTask.councils.isEmpty())}">
 
+						<f:selectItems value="#{taskHandlerAction.temporaryTask.councils}"
+							var="council"
+							itemLabel="#{council.councilPhysician ne null ? (council.councilPhysician.person.fullName.concat(' - ').concat(mainHandlerAction.date(council.dateOfRequest))) : msg['dialog.council.council.none']}"
+							itemValue="#{council}">
+						</f:selectItems>
 
-					<f:selectItems value="#{taskHandlerAction.temporaryTask.councils}"
-						var="council"
-						itemLabel="#{council.councilPhysician ne null ? council.councilPhysician.person.fullName : 'Neues Konsil'}"
-						itemValue="#{council}">
-					</f:selectItems>
-					<p:ajax event="change"
-						listener="#{taskHandlerAction.selectOldCouncilToEdit(taskHandlerAction.selectedCouncil)}"></p:ajax>
-				</p:selectOneMenu>
+						<p:ajax event="change" update="@form"></p:ajax>
 
+					</p:selectOneMenu>
+					<h:outputLabel value="Keine Konsile vorhanden"
+						rendered="#{!((taskHandlerAction.temporaryTask.councils ne null) and !taskHandlerAction.temporaryTask.councils.isEmpty())}" />
+				</h:panelGroup>
+
+				<!-- Consultant -->
 				<h:outputLabel value="#{msg['dialog.council.consultant']}"></h:outputLabel>
-
 				<h:panelGrid columns="2"
 					styleClass="noBordersAll, collapsedBordersAll, noPaddingAll">
 					<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
@@ -58,19 +64,14 @@
 						panelStyleClass="customSerachSelectMenuPanel"
 						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
 						filter="true" filterMatchMode="contains">
-
 						<f:selectItem
 							itemLabel="#{msg['dialog.council.consultant.choose']}"
 							itemValue="#{null}" />
-
 						<f:selectItems value="#{settingsHandlerAction.physicianList}"
 							var="allAvailablePhysicians"
 							itemLabel="#{allAvailablePhysicians.person.fullName}"
 							itemValue="#{allAvailablePhysicians}" />
-						<!-- 
-						<p:ajax process="@this" event="change"
-							listener="#{mainHandlerAction.saveChangedData(selectedTask.council,selectedTask.patient,mainHandlerAction.replaceWildcard('log.patient.task.change',selectedTask.taskID,mainHandlerAction.replaceWildcard('log.patient.task.council.counselor.change',selectedTask.council.councilPhysician.fullName)))}">
-						</p:ajax> -->
+						<p:ajax event="change" update="@form"></p:ajax>
 					</p:selectOneMenu>
 
 					<p:commandLink title="#{msg['dialog.council.consultant.edit']}"
@@ -119,36 +120,47 @@
 
 					</p:selectOneMenu>
 
-					<p:commandLink title="#{msg['dialog.council.consultant.edit']}"
+					<p:commandLink title="#{msg['dialog.council.physician.edit']}"
 						rendered="#{!selectedTask.diagnosisCompleted}"
 						style=" margin-left:10px;" styleClass="noUnderlineAtLink"
 						actionListener="#{settingsHandlerAction.prepareSettingsDialog('P_LIST')}">
 						<i class="fa fa-fw fa-cog icon-grey" />
-						<p:ajax event="dialogReturn" update="@form"
-							listener="#{taskHandlerAction.updateCouncilDialog()}" />
+						<p:ajax event="dialogReturn" update="@form" />
 					</p:commandLink>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
+			<h:panelGrid columns="2" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="3" style="float:right;">
-					<!-- confirm -->
-					<p:commandButton value="#{msg['general.print']}"
+				<h:panelGrid columns="1">
+					<p:commandButton value="#{msg['dialog.council.button.create']}"
 						icon="fa fa-check-circle-o"
+						rendered="#{((taskHandlerAction.temporaryTask.councils ne null) and !taskHandlerAction.temporaryTask.councils.isEmpty())}"
+						styleClass="smallButton buttonLeftMarginInList" update="@form"
+						actionListener="#{taskHandlerAction.addNewCouncil(taskHandlerAction.temporaryTask)}"></p:commandButton>
+				</h:panelGrid>
+
+
+				<h:panelGrid columns="3" style="float:right;">
+					<!-- create and print -->
+					<p:commandButton
+						value="#{msg['dialog.council.button.submitAndPrint']}"
+						icon="fa fa-check-circle-o" onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{taskHandlerAction.hideCouncilDialogAndPrintReport(taskHandlerAction.temporaryTask,taskHandlerAction.temporaryCouncil)}"></p:commandButton>
 
-					<!-- confirm -->
-					<p:commandButton value="#{msg['general.create']}"
+					<!-- create -->
+					<p:commandButton value="#{msg['general.save']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended">
+						styleClass="smallButton buttonRighMarginInListExtended"
+						update="@form">
 						<f:actionListener
 							binding="#{taskHandlerAction.saveCouncilData(taskHandlerAction.temporaryTask,taskHandlerAction.temporaryCouncil)}" />
-					<!--  	<f:actionListener
-							binding="#{taskHandlerAction.hideCouncilDialog()}"></f:actionListener>-->
+						<f:actionListener
+							binding="#{taskHandlerAction.hideCouncilDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- Abort button -->
@@ -160,6 +172,8 @@
 			</h:panelGrid>
 		</div>
 
+		<ui:include src="../../template/blockUi.xhtml"></ui:include>
+	
 	</h:form>
 </h:body>
 </html>

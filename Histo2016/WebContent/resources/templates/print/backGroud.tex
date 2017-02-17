@@ -1,0 +1,117 @@
+\documentclass[12pt]{g-brief}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+%\usepackage[left=1.5cm,right=1.5cm,top=3cm,bottom=2cm]{geometry}
+\usepackage[absolute]{textpos}
+\usepackage[T1]{fontenc}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{everypage}
+\usepackage{helvet}
+\usepackage{setspace}
+
+
+\usepackage{array}
+
+% font
+\renewcommand{\familydefault}{\sfdefault}
+
+% remove date
+\renewcommand{\datum}{}
+\renewcommand{\datumtext}{}
+
+%deactive pagenumbering%
+\pagenumbering{gobble}
+
+% header
+\pagestyle{fancy}
+
+% header size first page, other
+\AddEverypageHook{%
+   \ifthenelse{\value{page}=1}%
+     {\renewcommand{\headrulewidth}{0.0pt}}%
+     {\renewcommand{\headrulewidth}{0.4pt}}%
+}
+
+% marker g brief
+\fenstermarken
+\faltmarken
+
+
+%\Unterschrift {Max Mustermann}
+ \Postvermerk {}
+ \Adresse {
+ %Lena Musterfrau \\
+% Musterstraße 1 \\
+ %08150 Musterstadt
+ }
+ \Betreff {}
+ \Gruss {}{1cm}
+ \Anlagen {}
+
+
+
+
+
+\begin{document}
+
+\baselineskip10pt
+
+% textblog
+\textblockorigin{0in}{0in}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+
+% logo cert
+{
+\begin{textblock}{100}(165, 265) 
+\includegraphics[scale=0.4]{LogoFrei.png}
+\end{textblock}
+}
+
+% header
+{
+\begin{textblock}{100}(123, 7) 
+\includegraphics[scale=0.25]{Formuladr.png}
+\end{textblock}
+}
+
+% clinic
+{
+\scriptsize
+\begin{textblock}{100}(115, 40) 
+Klinik für Augenheilkunde \\
+\textbf{Histologisches Labor}\\\\
+Ärztlicher Direktor\\
+\textbf{Universitätsprofessor\\
+Dr. Thomas Reinhard}\\\\
+Killianstr. 5\\
+79183 Freiburg\\
+Tel. 0761/ 270-40060\\
+\end{textblock}
+}
+
+%clinic 2
+{
+\scriptsize
+\begin{textblock}{100}(155, 40) 
+Leiterin Histologisches Labors\\
+\textbf{Prof. Dr. Claudia Auw-Hädrich}\\
+Tel.0761/270-41950\\
+Fax0761/270-41090\\\\
+\textbf{Befundauskunft}\\
+Tel.0761/270-40760\\
+Fax0761/270-41090\\\\
+\textbf{Histologisches Labor}\\
+c/o Engesserstr. 4\\
+79183 Freiburg\\
+Tel.0761/270-40580\\
+Fax0761/270-40581
+\end{textblock}
+}
+
+\begin{g-brief}
+ \end{g-brief}
+
+\end{document}

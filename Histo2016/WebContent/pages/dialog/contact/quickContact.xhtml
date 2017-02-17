@@ -70,7 +70,7 @@
 							title="#{msg['dialog.contact.table.primaryContact']}" />
 					</f:facet>
 					<p:selectBooleanCheckbox
-						rendered="#{contact.role ne 'NONE' and contact.role ne 'OTHER_PHYSICIAN'}"
+						rendered="#{contact.role ne 'NONE' and contact.role ne 'OTHER'}"
 						value="#{contact.primaryContact}"
 						title="#{contact.role eq 'SURGEON' ? msg['dialog.contact.table.primaryContact.surgeon.selected'] :  msg['dialog.contact.table.primaryContact.privatePhysician.selected'] }">
 						<p:ajax event="change"

@@ -1,22 +1,22 @@
 ^XA
-^FO05,00
+^FO05,20
 ^A0N,16,12
 ^FDAugenklinik Freiburg Histologie
 ^FS
-^FO07,20
+^FO07,40
 ^BY1
 ^BCN,40,N,N,N,A
 ^FD%slideNumber%
 ^FS
-^FO2,70
+^FO2,90
 ^A0N,30,20
 ^FD%slideName%
 ^FS
-^FO02,100
+^FO02,120
 ^A0N,14,14
 ^FD%slideText%
 ^FS
-^FO02,118
+^FO02,138
 ^A0N,14,14
 ^FD%date%
 ^FS

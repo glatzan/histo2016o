@@ -11,17 +11,21 @@ import javax.faces.event.PhaseId;
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
+import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.ContactChooser;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.PdfGenerator;
+import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +62,11 @@ public class PrintHandlerAction {
 	 * The selected task for that a report should be generated
 	 */
 	private Task taskToPrint;
+
+	/**
+	 * The selected council to print
+	 */
+	private Council concilToPrint;
 
 	/**
 	 * List of all templates for printing
@@ -97,31 +106,51 @@ public class PrintHandlerAction {
 	/**
 	 * List with all associated contacts
 	 */
-	private List<ContactChooser> contactChooser;
+	private List<ContactChooser> contactChoosers;
 
+	/**
+	 * The contact rendered, the first one will always be rendered, if not
+	 * changed, no rendering necessary
+	 */
+	private Contact contactRendered;
 
+	/**
+	 * Bare init for printing from another bean without using the gui
+	 * 
+	 * @param task
+	 */
+	public void initBean(Task task) {
+		initBean(task, null, null);
+	}
 
+	/**
+	 * Init of the bean, for printing with gui
+	 * 
+	 * @param task
+	 * @param templates
+	 * @param selectedTemplate
+	 */
 	public void initBean(Task task, PrintTemplate[] templates, PrintTemplate selectedTemplate) {
 
 		setTaskToPrint(task);
 
 		pdfGenerator = new PdfGenerator(mainHandlerAction, resourceBundle);
 
-		setTemplateList(new ArrayList<PrintTemplate>(Arrays.asList(templates)));
-
-		setTemplateTransformer(new DefaultTransformer<PrintTemplate>(getTemplateList()));
-
-		// sets the selected template
-		if (selectedTemplate == null && !getTemplateList().isEmpty())
-			setSelectedTemplate(getTemplateList().get(0));
-		else
-			setSelectedTemplate(selectedTemplate);
+		taskDAO.initializeTaskData(task);
 
 		setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 
-		if (task.getContacts() != null)
-			setContactChooser(ContactChooser.getContactChooserList(task.getContacts()));
+		if (templates != null) {
+			setTemplateList(new ArrayList<PrintTemplate>(Arrays.asList(templates)));
 
+			setTemplateTransformer(new DefaultTransformer<PrintTemplate>(getTemplateList()));
+
+			// sets the selected template
+			if (selectedTemplate == null && !getTemplateList().isEmpty())
+				setSelectedTemplate(getTemplateList().get(0));
+			else
+				setSelectedTemplate(selectedTemplate);
+		}
 		// // setting default external receiver to family physician
 		// if (getExternalReportPhysicianType() == null)
 		// setExternalReportPhysicianType(ContactRole.FAMILY_PHYSICIAN);
@@ -134,7 +163,7 @@ public class PrintHandlerAction {
 		// taskDAO.initializeCouncilData(task);
 		// taskDAO.initializeDiagnosisData(task);
 		//
-		taskDAO.initializeTaskData(task);
+
 		//
 		// // also initializing taskHandlerAction, generating lists to choos
 		// // physicians from
@@ -162,12 +191,26 @@ public class PrintHandlerAction {
 	 * @param task
 	 */
 	public void showDefaultPrintDialog(Task task) {
-		PrintTemplate[] templates = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON);
-		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(templates, new DocumentType[] {
-				DocumentType.DIAGNOSIS_REPORT, DocumentType.U_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN });
+		PrintTemplate[] subSelect = PrintTemplate
+				.getTemplatesByTypes(new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.U_REPORT,
+						DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN });
 
-		initBean(task, templates, PrintTemplate.getDefaultTemplate(subSelect));
+		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect));
 
+		// contacts for printing
+		setContactChoosers(new ArrayList<ContactChooser>());
+
+		// setting patient
+		getContactChoosers().add(new ContactChooser(task.getPatient().getPerson(), ContactRole.PATIENT));
+
+		// setting other contacts (physicians)
+		for (Contact contact : task.getContacts()) {
+			getContactChoosers().add(new ContactChooser(contact));
+		}
+
+		setContactRendered(null);
+
+		// rendering the template
 		onChangePrintTemplate();
 
 		mainHandlerAction.showDialog(Dialog.PRINT_NEW);
@@ -178,12 +221,28 @@ public class PrintHandlerAction {
 	 * 
 	 * @param task
 	 */
-	public void showCouncilPrintDialog(Task task) {
-		PrintTemplate[] templates = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON);
-		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(templates,
-				new DocumentType[] { DocumentType.CASE_CONFERENCE });
+	public void showCouncilPrintDialog(Task task, Council council) {
+		PrintTemplate[] subSelect = PrintTemplate
+				.getTemplatesByTypes(new DocumentType[] { DocumentType.CASE_CONFERENCE });
 
-		initBean(task, templates, PrintTemplate.getDefaultTemplate(subSelect));
+		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect));
+
+		// contacts for printing
+		setContactChoosers(new ArrayList<ContactChooser>());
+
+		setConcilToPrint(council);
+
+		// only one adress so set as chosen
+		if (council.getCouncilPhysician() != null) {
+			ContactChooser chosser = new ContactChooser(council.getCouncilPhysician().getPerson(),
+					ContactRole.CASE_CONFERENCE);
+			chosser.setSelected(true);
+			// setting patient
+			getContactChoosers().add(chosser);
+
+			// setting council physicians data as rendere contact data
+			setContactRendered(new Contact(council.getCouncilPhysician().getPerson(), ContactRole.CASE_CONFERENCE));
+		}
 
 		onChangePrintTemplate();
 	}
@@ -196,12 +255,41 @@ public class PrintHandlerAction {
 		resetBean();
 	}
 
+	public void onChooseContact() {
+		List<ContactChooser> selectedContacts = getSelectedContactChooser();
+
+		if (getContactRendered() == null && !selectedContacts.isEmpty()) {
+			setContactRendered(selectedContacts.get(0).getContact());
+			onChangePrintTemplate();
+			RequestContext.getCurrentInstance().update("dialogContent");
+		} else if (getContactRendered() != null) {
+			boolean found = false;
+			for (ContactChooser contactChooser : selectedContacts) {
+				if (contactChooser.getContact() == getContactRendered()) {
+					found = true;
+					break;
+				}
+			}
+
+			if (!found) {
+				if (!selectedContacts.isEmpty()) {
+					setContactRendered(selectedContacts.get(0).getContact());
+				} else
+					setContactRendered(null);
+				onChangePrintTemplate();
+				RequestContext.getCurrentInstance().update("dialogContent");
+			}
+		}
+	}
+
 	/**
 	 * Renders the new template after a template was changed
 	 */
 	public void onChangePrintTemplate() {
+
+		// always render the pdf with the fist contact chosen
 		setTmpPdfContainer(pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
-				getSelectedTemplate(), null));
+				getSelectedTemplate(), getContactRendered() == null ? null : getContactRendered().getPerson()));
 
 		if (getTmpPdfContainer() == null) {
 			setTmpPdfContainer(new PDFContainer(DocumentType.EMPTY, "", new byte[0]));
@@ -226,29 +314,109 @@ public class PrintHandlerAction {
 	}
 
 	public void saveGeneratedPdf(PDFContainer pdf) {
-		logger.debug("Saving Pdf " + pdf.getName());
-		genericDAO.save(pdf, resourceBundle.get("log.patient.task.pdf.created", pdf.getName()),
-				getTaskToPrint().getPatient());
+		if (pdf.getId() == 0) {
+			logger.debug("Pdf not saved jet, saving" + pdf.getName());
 
-		getTaskToPrint().getAttachedPdfs().add(pdf);
+			genericDAO.save(pdf, resourceBundle.get("log.patient.task.pdf.created", pdf.getName()),
+					getTaskToPrint().getPatient());
 
-		mainHandlerAction.saveDataChange(getTaskToPrint(), "log.patient.task.pdf.attached", pdf.getName());
+			getTaskToPrint().getAttachedPdfs().add(pdf);
+
+			mainHandlerAction.saveDataChange(getTaskToPrint(), "log.patient.task.pdf.attached", pdf.getName());
+		} else {
+			logger.debug("PDF allready saved, not saving. " + pdf.getName());
+		}
 	}
 
 	public void onDownloadPdf() {
 		if (getTmpPdfContainer().getId() == 0) {
 			logger.debug("Pdf not saved jet, saving");
-			saveGeneratedPdf(getTmpPdfContainer());
+			if (!getSelectedTemplate().isDoNotSave())
+				saveGeneratedPdf(getTmpPdfContainer());
 		}
 	}
 
-	public void onPrintPdf() {
-		if (getTmpPdfContainer().getId() == 0) {
-			logger.debug("Pdf not saved jet, saving");
-			saveGeneratedPdf(getTmpPdfContainer());
+	public void onPrintNewPdf() {
+		onPrintNewPdf(getSelectedContactChooser(), getTmpPdfContainer(), getContactRendered(),
+				getSelectedTemplate().isDoNotSave());
+	}
+
+	public void onPrintNewPdf(List<ContactChooser> list, PDFContainer preview, Contact contactRenderedInPrevew,
+			boolean doNotSave) {
+		mainHandlerAction.getSettings().getPrinterManager().loadPrinter(selectedPrinter);
+		// no address was chosen, so the address will be "An den
+		// weiterbehandelden Kollegen" this was generated and saved in
+		// tmpPdfContainer
+		if (list.isEmpty()) {
+			if (!doNotSave)
+				saveGeneratedPdf(preview);
+			mainHandlerAction.getSettings().getPrinterManager().print(preview);
+		} else {
+			// addresses where chosen
+			for (ContactChooser contactChooser : list) {
+				// address of the rendered pdf, not rendering twice
+				if (contactChooser.getContact() == contactRenderedInPrevew) {
+					if (!doNotSave)
+						saveGeneratedPdf(preview);
+					for (int i = 0; i < contactChooser.getCopies(); i++) {
+						mainHandlerAction.getSettings().getPrinterManager().print(preview);
+					}
+				} else {
+					// render all other pdfs
+					PDFContainer otherAddress = pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(),
+							getTaskToPrint(), getSelectedTemplate(), contactChooser.getContact().getPerson());
+					for (int i = 0; i < contactChooser.getCopies(); i++) {
+						mainHandlerAction.getSettings().getPrinterManager().print(otherAddress);
+					}
+				}
+
+			}
 		}
 
-		mainHandlerAction.getSettings().getPrinterManager().print(selectedPrinter, getTmpPdfContainer());
+	}
+
+	/**
+	 * External printing with template
+	 * @param template
+	 */
+	public void onPrintPdf(PrintTemplate template) {
+		PDFContainer newPdf = pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
+				template);
+		onPrintPdf(newPdf, false);
+	}
+
+	public void onPrintPdf(PDFContainer pdf) {
+		onPrintPdf(pdf, true);
+	}
+
+	/**
+	 * External printing
+	 * @param pdf
+	 * @param saveIfNew
+	 */
+	public void onPrintPdf(PDFContainer pdf, boolean saveIfNew) {
+
+		if (saveIfNew)
+			saveGeneratedPdf(pdf);
+
+		mainHandlerAction.getSettings().getPrinterManager().loadPrinter(selectedPrinter);
+		mainHandlerAction.getSettings().getPrinterManager().print(pdf);
+	}
+
+	/**
+	 * Gets the selected contacts an returns an list including them
+	 * 
+	 * @return
+	 */
+	private List<ContactChooser> getSelectedContactChooser() {
+		ArrayList<ContactChooser> result = new ArrayList<ContactChooser>();
+		for (ContactChooser contactChooser : getContactChoosers()) {
+			if (contactChooser.isSelected())
+				result.add(contactChooser);
+		}
+
+		logger.debug("Return " + result.size() + " selected contatcs");
+		return result;
 	}
 
 	/********************************************************
@@ -310,12 +478,28 @@ public class PrintHandlerAction {
 		this.selectedPrinter = selectedPrinter;
 	}
 
-	public List<ContactChooser> getContactChooser() {
-		return contactChooser;
+	public List<ContactChooser> getContactChoosers() {
+		return contactChoosers;
 	}
 
-	public void setContactChooser(List<ContactChooser> contactChooser) {
-		this.contactChooser = contactChooser;
+	public void setContactChoosers(List<ContactChooser> contactChoosers) {
+		this.contactChoosers = contactChoosers;
+	}
+
+	public Council getConcilToPrint() {
+		return concilToPrint;
+	}
+
+	public void setConcilToPrint(Council concilToPrint) {
+		this.concilToPrint = concilToPrint;
+	}
+
+	public Contact getContactRendered() {
+		return contactRendered;
+	}
+
+	public void setContactRendered(Contact contactRendered) {
+		this.contactRendered = contactRendered;
 	}
 
 	/********************************************************

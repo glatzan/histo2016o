@@ -144,8 +144,7 @@
 
 					<!-- accounting -->
 					<p:menuitem value="#{msg['header.menu.task.sample.accounting']}"
-						icon="fa fa-dollar"
-						disabled="true"
+						icon="fa fa-dollar" disabled="true"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
@@ -250,7 +249,8 @@
 
 			<!-- Print button -->
 			<p:commandButton id="printBtn" style="display:none"
-				widgetVar="printBtnVar"
+				widgetVar="printBtnVar" onstart="PF('blockUIWidget').block()"
+				oncomplete="PF('blockUIWidget').unblock()"
 				actionListener="#{printHandlerAction.showDefaultPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />

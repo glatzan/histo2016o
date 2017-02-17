@@ -19,6 +19,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,14 @@ public class MediaHandlerAction {
 
 	@Autowired
 	private PatientDao patientDao;
+	
+	@Autowired
+	private UserHandlerAction userHandlerAction;
+	
+	@Autowired
+	@Lazy
+	private PrintHandlerAction printHandlerAction;
+	
 	/********************************************************
 	 * data upload
 	 ********************************************************/
@@ -195,6 +204,8 @@ public class MediaHandlerAction {
 		mainHandlerAction.showDialog(Dialog.TASK_MEDIA_PREVIEW);
 		taskHandlerAction.setTemporaryTask(task);
 		taskDAO.initializeTaskData(task);
+		
+		printHandlerAction.initBean(task);
 
 		if (mediaToDisplay == null && task.getAttachedPdfs().size() > 0)
 			mediaToDisplay = task.getAttachedPdfs().get(0);

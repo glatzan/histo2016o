@@ -30,7 +30,7 @@ import com.google.gson.reflect.TypeToken;
  */
 public class LabelPrinter implements GsonAble {
 
-	private static Logger logger = Logger.getRootLogger();
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Expose
 	private String name;
@@ -108,10 +108,11 @@ public class LabelPrinter implements GsonAble {
 			String value = entry.getValue();
 			if (!print(value, key)) {
 				result = false;
-			} else
-				printBuffer.remove(entry);
+			}
 		}
-
+		
+		printBuffer.clear();
+		
 		return result;
 	}
 
@@ -130,7 +131,7 @@ public class LabelPrinter implements GsonAble {
 			logger.debug("Upload " + file + ", ok");
 			return true;
 		} else {
-			logger.debug("Upload " + file + ", ok");
+			logger.debug("Upload " + file + ", failed");
 			return false;
 		}
 	}
