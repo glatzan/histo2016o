@@ -7,8 +7,8 @@
 \usepackage{tabularx} 
 \usepackage[T1]{fontenc}
 \usepackage{supertabular}
-\usepackage[left=1.5cm,right=1.5cm,top=3cm,bottom=2cm]{geometry}
-
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
 \renewcommand{\familydefault}{\sfdefault} 
 \usepackage{helvet} 
 
@@ -17,7 +17,9 @@
 \setcounter{secnumdepth}{0}
 
 \begin{document}
-\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
+%\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
+\ThisCenterWallPaper{1}{background.pdf}
+%
  \input{d:/latex/code128.tex}
 
 \baselineskip10pt
@@ -40,8 +42,50 @@
 \end{textblock}
 }
 
+~\\
+\vspace{5.0cm}\\
+{\huge Histologisches Gutachten} 
+
+\begin{center}
+{\renewcommand{\arraystretch}{0}
+\setlength{\tabcolsep}{.16667em}
+\begin{tabular}{|p{0.52\linewidth}|p{0.48\linewidth}|}
+\hline 
+{\renewcommand{\arraystretch}{1}
+\begin{tabular}[t]{|p{0.3\linewidth}|p{0.67\linewidth}|}
+\hline 
+ Präperat& asd \\
+ ~& asd \\
+ ~& asd \\
+ ~& asd \\
+ \multicolumn{2}{|l|}{Vorgeschichte, klinischer Befund und Fragestellung} \\
+ \huge RA &  {\includegraphics[scale=0.4]{augen.png}} \\
+ \multicolumn{2}{|l|}{asdasdasdsadasdasdasd} \\
+\hline 
+\end{tabular}} & %
+{\renewcommand{\arraystretch}{1}
+\begin{tabular}[t]{|p{0.46\linewidth}|p{0.5\linewidth}|}
+\hline 
+Eingangsnummer & 1234567 \\
+~ & \X=.30mm        % The width of code will be greater
+\barheight=1cm % the height will be smaller.
+\code{<PATpiz>} \\
+Versicherung & 
+\begin{tabular}{c|c|c|c|}
+$\boxtimes$ &regulär & $\boxtimes$ & privat
+\end{tabular}
+ \\
+Station & asd \\
+Maligner Tumor & $\boxtimes$ \\
+Operateur/Einsender & asd \\
+Augenarzt & asd \\
+\hline 
+\end{tabular}}\tabularnewline
+\hline 
+\end{tabular}}
+\end{center}
 \begin{center}{100}(25, 250) 
-\vspace{150mm} %5mm vertical space
+
 Finster war's, der Mond schien helle auf die grünbeschneite Flur, als 
 saßen stehend Leute schweigend ins Gespräch vertieft, als ein
 totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
