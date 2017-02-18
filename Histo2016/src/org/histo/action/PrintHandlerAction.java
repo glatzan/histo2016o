@@ -382,11 +382,7 @@ public class PrintHandlerAction {
 	public void onPrintPdf(PrintTemplate template) {
 		PDFContainer newPdf = pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
 				template);
-		onPrintPdf(newPdf, false);
-	}
-
-	public void onPrintPdf(PDFContainer pdf) {
-		onPrintPdf(pdf, true);
+		onPrintPdf(newPdf);
 	}
 
 	/**
@@ -394,10 +390,8 @@ public class PrintHandlerAction {
 	 * @param pdf
 	 * @param saveIfNew
 	 */
-	public void onPrintPdf(PDFContainer pdf, boolean saveIfNew) {
+	public void onPrintPdf(PDFContainer pdf) {
 
-		if (saveIfNew)
-			saveGeneratedPdf(pdf);
 
 		mainHandlerAction.getSettings().getPrinterManager().loadPrinter(selectedPrinter);
 		mainHandlerAction.getSettings().getPrinterManager().print(pdf);

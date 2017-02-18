@@ -86,10 +86,6 @@ public class TaskHandlerAction implements Serializable {
 
 	@Autowired
 	@Lazy
-	private PdfHandlerAction pdfHandlerAction;
-
-	@Autowired
-	@Lazy
 	private WorklistHandlerAction worklistHandlerAction;
 
 	@Autowired

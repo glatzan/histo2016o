@@ -49,9 +49,6 @@ public class NotificationHandlerAction implements Serializable {
 	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
-	private PdfHandlerAction pdfHandlerAction;
-
-	@Autowired
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
@@ -307,26 +304,26 @@ public class NotificationHandlerAction implements Serializable {
 
 		mainHandlerAction.hideDialog(Dialog.NOTIFICATION_PREVIEW);
 
-		if (useSelectedPdf) {
-			if (getNotificationTab() == Notification.EMAIL) {
-				if (getCustomPdfToPhysician() == null) {
-					setDefaultEmailPdf(pdfHandlerAction.getTmpPdfContainer());
-
-					for (NotificationChooser notificationChooser : notificationEmailList) {
-						if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
-								&& notificationChooser.getPdf() == null) {
-							notificationChooser.setPdf(getDefaultEmailPdf());
-						}
-					}
-				} else {
-					if (getCustomPdfToPhysician().getNotificationAttachment() == NotificationOption.PDF)
-						getCustomPdfToPhysician().setPdf(pdfHandlerAction.getTmpPdfContainer());
-				}
-			} else if (getNotificationTab() == Notification.FAX) {
-				if (getCustomPdfToPhysician().getNotificationAttachment() == NotificationOption.FAX)
-					getCustomPdfToPhysician().setPdf(pdfHandlerAction.getTmpPdfContainer());
-			}
-		}
+//		if (useSelectedPdf) {
+//			if (getNotificationTab() == Notification.EMAIL) {
+//				if (getCustomPdfToPhysician() == null) {
+//					setDefaultEmailPdf(pdfHandlerAction.getTmpPdfContainer());
+//
+//					for (NotificationChooser notificationChooser : notificationEmailList) {
+//						if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
+//								&& notificationChooser.getPdf() == null) {
+//							notificationChooser.setPdf(getDefaultEmailPdf());
+//						}
+//					}
+//				} else {
+//					if (getCustomPdfToPhysician().getNotificationAttachment() == NotificationOption.PDF)
+//						getCustomPdfToPhysician().setPdf(pdfHandlerAction.getTmpPdfContainer());
+//				}
+//			} else if (getNotificationTab() == Notification.FAX) {
+//				if (getCustomPdfToPhysician().getNotificationAttachment() == NotificationOption.FAX)
+//					getCustomPdfToPhysician().setPdf(pdfHandlerAction.getTmpPdfContainer());
+//			}
+//		}
 
 		// pdfHandlerAction.clearData();
 	}
