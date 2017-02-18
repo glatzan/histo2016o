@@ -102,6 +102,13 @@
 								value="#{msg['dialog.createTask.bioBank.informedConsent.upload']}" />
 							<p:fileUpload mode="simple" skinSimple="true" />
 						</h:panelGrid>
+						<p:commandLink
+							actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(worklistHandlerAction.selectedPatient)}">
+							<p:ajax event="dialogReturn" update="@form" />
+							<i class="fa fa-search"></i>
+						</p:commandLink>
+						<h:outputFormat
+							value="#{mediaHandlerAction.selectedPdfContainer.name}"></h:outputFormat>
 					</h:panelGrid>
 
 				</h:panelGrid>
@@ -169,7 +176,7 @@
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
-						icon="fa fa-print" 
+						icon="fa fa-print"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{taskHandlerAction.createNewTaskAndPrintUReport(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 

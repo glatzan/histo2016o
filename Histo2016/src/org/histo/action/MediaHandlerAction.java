@@ -93,6 +93,11 @@ public class MediaHandlerAction {
 	 */
 	private PDFContainer temporaryPdfContainer;
 
+	/**
+	 * Selected container, will not be set to null after dialog was closed
+	 */
+	private PDFContainer selectedPdfContainer;
+
 	/********************************************************
 	 * media display
 	 ********************************************************/
@@ -157,7 +162,7 @@ public class MediaHandlerAction {
 	 ********************************************************/
 
 	/********************************************************
-	 * Task Media display
+	 * Media display
 	 ********************************************************/
 	public void prepareMediaDisplayDialog(HasDataList dataList) {
 		prepareMediaDisplayDialog(dataList, null);
@@ -193,7 +198,40 @@ public class MediaHandlerAction {
 	}
 
 	/********************************************************
-	 * Task Media display
+	 * Media display
+	 ********************************************************/
+
+	/********************************************************
+	 * Media select display
+	 ********************************************************/
+	public void prepareMediaDisplaySelectDialog(HasDataList dataList) {
+		prepareMediaDisplaySelectDialog(dataList, null);
+	}
+
+	public void prepareMediaDisplaySelectDialog(HasDataList dataList, PDFContainer mediaToDisplay) {
+		mainHandlerAction.showDialog(Dialog.MEDIA_SELECT);
+		patientDao.initializeDataList(dataList);
+		setTemporaryDataList(dataList);
+
+		if (mediaToDisplay == null && dataList.getAttachedPdfs().size() > 0)
+			mediaToDisplay = dataList.getAttachedPdfs().get(0);
+
+		setTemporaryPdfContainer(mediaToDisplay);
+	}
+
+	public void selectMedia(PDFContainer mediaToDisplay) {
+		setSelectedPdfContainer(mediaToDisplay);
+		hideMediaDisplaySelectDialog();
+	}
+
+	public void hideMediaDisplaySelectDialog() {
+		mainHandlerAction.hideDialog(Dialog.MEDIA_SELECT);
+		setTemporaryPdfContainer(null);
+		setTemporaryDataList(null);
+	}
+
+	/********************************************************
+	 * Media select display
 	 ********************************************************/
 
 	/********************************************************
@@ -237,6 +275,14 @@ public class MediaHandlerAction {
 
 	public void setTemporaryDataList(HasDataList temporaryDataList) {
 		this.temporaryDataList = temporaryDataList;
+	}
+
+	public PDFContainer getSelectedPdfContainer() {
+		return selectedPdfContainer;
+	}
+
+	public void setSelectedPdfContainer(PDFContainer selectedPdfContainer) {
+		this.selectedPdfContainer = selectedPdfContainer;
 	}
 	/********************************************************
 	 * Getter/Setter
