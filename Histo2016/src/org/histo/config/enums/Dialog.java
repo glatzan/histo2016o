@@ -37,7 +37,8 @@ public enum Dialog {
 	SETTINGS_USER_ROLE_CHANGE("/pages/dialog/settings/userRoleChanged", null,  480, 272, false, false, true), //  16:9
 	SELECT_MATERIAL("/pages/dialog/task/selectMaterial", null, 640, 360, false, false, true), // 16:9
 	DELETE_TREE_ENTITY("/pages/dialog/task/deleteTreeEntity", null,  480, 272, false, false, true), //  16:9
-	TASK_MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true);  // 16:9
+	TASK_MEDIA_PREVIEW("/pages/dialog/upload/mediaPreviewTask", null,  1280, 720,  false, false, true),  // 16:9
+	PATIENT_MEDIA_PREVIEW("/pages/dialog/upload/mediaPreviewPatient", null,  1280, 720,  false, false, true);  // 16:9
 	
 	
 	private final String path;

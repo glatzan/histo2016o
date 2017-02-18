@@ -49,14 +49,14 @@ public class MediaHandlerAction {
 
 	@Autowired
 	private PatientDao patientDao;
-	
+
 	@Autowired
 	private UserHandlerAction userHandlerAction;
-	
+
 	@Autowired
 	@Lazy
 	private PrintHandlerAction printHandlerAction;
-	
+
 	/********************************************************
 	 * data upload
 	 ********************************************************/
@@ -94,6 +94,21 @@ public class MediaHandlerAction {
 	/********************************************************
 	 * PatientData Upload
 	 ********************************************************/
+	public void preparePatientMediaDisplayDialog(Patient patient) {
+		preparePatientMediaDisplayDialog(patient, null);
+	}
+
+	public void preparePatientMediaDisplayDialog(Patient patient, PDFContainer mediaToDisplay) {
+		patientDao.initializePatientPdfData(patient);
+
+		if (mediaToDisplay == null && patient.getAttachedPdfs().size() > 0)
+			mediaToDisplay = patient.getAttachedPdfs().get(0);
+
+		setTemporaryPdfContainer(mediaToDisplay);
+
+		mainHandlerAction.showDialog(Dialog.PATIENT_MEDIA_PREVIEW);
+	}
+	
 	/**
 	 * Shows the upload file dialog for a patient
 	 */
@@ -144,9 +159,13 @@ public class MediaHandlerAction {
 	/********************************************************
 	 * PatientData Upload
 	 ********************************************************/
+
 	/********************************************************
 	 * Task Data Upload
 	 ********************************************************/
+
+
+
 	/**
 	 * Shows a dialog for uploading files to a task
 	 */
@@ -204,7 +223,7 @@ public class MediaHandlerAction {
 		mainHandlerAction.showDialog(Dialog.TASK_MEDIA_PREVIEW);
 		taskHandlerAction.setTemporaryTask(task);
 		taskDAO.initializeTaskData(task);
-		
+
 		printHandlerAction.initBean(task);
 
 		if (mediaToDisplay == null && task.getAttachedPdfs().size() > 0)

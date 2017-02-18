@@ -204,7 +204,7 @@
 					</h:panelGrid>
 				</f:facet>
 				<p:commandLink
-					actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(attachedPdf)}">
+					actionListener="#{mediaHandlerAction.preparePatientMediaDisplayDialog(worklistHandlerAction.selectedPatient,attachedPdf)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					<i class="fa fa-search"></i>
 				</p:commandLink>
