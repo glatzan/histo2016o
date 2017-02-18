@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
 import org.histo.config.HistoSettings;
@@ -24,6 +25,7 @@ import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.Signature;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
@@ -87,17 +89,24 @@ public class PdfGenerator {
 		JLRConverter converter = new JLRConverter(workingDirectory);
 
 		replacePatientData(converter, patient);
-		
+
 		replaceAddressData(converter, toSendAddress);
 
-		if(printTemplate.getDocumentTyp() == DocumentType.U_REPORT || printTemplate.getDocumentTyp() == DocumentType.U_REPORT_EMTY){
+		if (printTemplate.getDocumentTyp() == DocumentType.U_REPORT
+				|| printTemplate.getDocumentTyp() == DocumentType.U_REPORT_EMTY) {
 			replaceUReportData(converter, task);
 		}
-		
+
+		if (printTemplate.getDocumentTyp() == DocumentType.DIAGNOSIS_REPORT
+				|| printTemplate.getDocumentTyp() == DocumentType.DIAGNOSIS_REPORT_EXTERN) {
+			replaceReportData(converter, task);
+			replaceSignature(converter, task);
+		}
+
 		try {
 
 			if (!converter.parse(template, processedTex)) {
-				System.out.println(converter.getErrorMessage());
+				logger.error(converter.getErrorMessage());
 			}
 
 			JLRGenerator pdfGen = new JLRGenerator();
@@ -203,12 +212,69 @@ public class PdfGenerator {
 			converter.replace("addSubject", "");
 		}
 	}
-	
-	public final void replaceUReportData(JLRConverter converter, Task task){
+
+	public final void replaceUReportData(JLRConverter converter, Task task) {
 		converter.replace("taskNumber", task.getTaskID());
 		converter.replace("eDate", mainHandlerAction.date(task.getDateOfReceipt()));
 	}
 
+	public final void replaceReportData(JLRConverter converter, Task task) {
+		converter.replace("eDate", mainHandlerAction.date(task.getDateOfReceipt()));
+		converter.replace("taskNumber", task.getTaskID());
+		converter.replace("ward", task.getWard());
+		converter.replace("eye", resourceBundle.get("enum.eye." + task.getEye()));
+		converter.replace("history", convertWord(task.getCaseHistory()));
+		converter.replace("samples", task.getSamples());
+		converter.replace("diagnosisRevisions", task.getDiagnosisInfo().getDiagnosisRevisions());
+
+		Contact tmpPhysician = task.getPrimaryContact(ContactRole.SURGEON);
+		converter.replace("surgeon", tmpPhysician == null ? "" : convertWord(convertWord(tmpPhysician.getPerson().getFullNameAndTitle())));
+		tmpPhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
+		converter.replace("privatePhysician", tmpPhysician == null ? "" : convertWord(tmpPhysician.getPerson().getFullNameAndTitle()));
+		converter.replace("insurancePrivate", task.getPatient().isPrivateInsurance());
+
+	}
+
+	public final void replaceSignature(JLRConverter converter, Task task) {
+		converter.replace("sigantureDate", mainHandlerAction.date(task.getDiagnosisInfo().getSignatureDate()));
+		
+		Signature signature = task.getDiagnosisInfo().getSignatureOne();
+		if(signature != null && signature.getPhysician() != null){
+			converter.replace("signatureOne", convertWord(signature.getPhysician().getPerson().getFullNameAndTitle()));
+			converter.replace("signatureOneRole", convertWord(signature.getRole()));
+		}
+		
+		signature = task.getDiagnosisInfo().getSignatureTwo();
+		if(signature != null && signature.getPhysician() != null){
+			converter.replace("sigantureTwo", convertWord(signature.getPhysician().getPerson().getFullNameAndTitle()));
+			converter.replace("signatureTwoRole", convertWord(signature.getRole()));
+		}
+	}
+	
+	private static final String[] REPLACEMENT = new String[Character.MAX_VALUE+1];
+	static {
+	    for(int i=Character.MIN_VALUE;i<=Character.MAX_VALUE;i++)
+	        REPLACEMENT[i] = Character.toString((char) i);
+	    // substitute
+	    REPLACEMENT['ä'] =  "{\\\"a}";
+	    // remove
+	    REPLACEMENT['ü'] =  "{\\\"u}";
+	    // expand
+	    REPLACEMENT['ö'] = "{\\\"o}";
+	    
+	    REPLACEMENT['Ä'] = "{\\\"A}";
+	    REPLACEMENT['Ü'] = "{\\\"U}";
+	    REPLACEMENT['Ö'] = "{\\\"O}";
+	    REPLACEMENT['ß'] = "{\\ss}";
+	}
+	
+	public String convertWord(String word) {
+	    StringBuilder sb = new StringBuilder(word.length());
+	    for(int i=0;i<word.length();i++)
+	        sb.append(REPLACEMENT[word.charAt(i)]);
+	    return sb.toString();
+	} 
+	
 	private static byte[] readContentIntoByteArray(File file) {
 		FileInputStream fileInputStream = null;
 		byte[] bFile = new byte[(int) file.length()];

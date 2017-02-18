@@ -80,6 +80,7 @@ public class LdapHandler implements GsonAble {
 				// check if uid is not a number, only people with a name as
 				// uid are active
 				Attribute attr = attrs.get("uid");
+				printAllAttributes(attrs);
 				if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
 					Physician newPhysician = new Physician(new Person());
 					newPhysician.setUid(attr.get().toString());
@@ -134,7 +135,7 @@ public class LdapHandler implements GsonAble {
 				attr = (Attribute) ae.next();
 				String attrId = attr.getID();
 				for (Enumeration<?> vals = attr.getAll(); vals.hasMoreElements(); logger
-						.info(attrId + ": " + vals.nextElement()))
+						.debug(attrId + ": " + vals.nextElement()))
 					;
 			} catch (NamingException e) {
 				logger.error("Error while listing physician data ", e);

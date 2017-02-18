@@ -215,7 +215,7 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	
+
 	public String getMobileNumber() {
 		return mobileNumber;
 	}
@@ -259,6 +259,36 @@ public class Person implements Serializable, LogAble, ArchivAble {
 			result.append(getSurname() + " ");
 
 		// remove the last space from the string
+		return result.substring(0, result.length() - 1);
+	}
+
+	/**
+	 * Returns a title + name, if no title is provided,
+	 * 
+	 * @return
+	 */
+	@Transient
+	public String getFullNameAndTitle() {
+		StringBuilder result = new StringBuilder();
+
+		if (getTitle() != null && !getTitle().isEmpty())
+			result.append(getTitle() + " ");
+		else {
+			// TODO hardcoded!
+			if (getGender() == Gender.FEMALE)
+				result.append("Frau ");
+			else
+				result.append("Herr ");
+
+		}
+
+		int index = result.indexOf("Apl.");
+		if (index != -1)
+			result.replace(index, 4, "");
+
+		if (getName() != null && !getName().isEmpty())
+			result.append(getName() + " ");
+
 		return result.substring(0, result.length() - 1);
 	}
 

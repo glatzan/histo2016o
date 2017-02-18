@@ -47,26 +47,26 @@
 {
 \scriptsize
 \begin{textblock}{100}(19, 8) 
-\noindent $patName #if(!$StringUtils.isEmpty($patSurName)), #end $patSurName\\
-$patAddress\\
-$patPlz $patCity\\
+\noindent ::patName ::patSurName\\
+::patAddress\\
+::patPlz ::patCity\\
 \X=.35mm        
 \barheight=1cm 
-\code{$piz}\\
-$piz\\
+\code{::piz}\\
+::piz\\
 \end{textblock}
 }
 
 % add block
 {
 
-\begin{textblock}{100}(25, 43) 
+\begin{textblock}{100}(22, 50) 
 \setstretch{1.0}
 \noindent 
-\textbf{$addSubject} \\\\
-$addName, $addSurName\\
-$addAddress\\
-$addPlz $addCity\\
+\textbf{::addSubject} \\\\
+::addName, ::addSurName\\
+::addAddress\\
+::addPlz ::addCity\\
 \end{textblock}
 }
 

@@ -56,13 +56,13 @@
 {
 \scriptsize
 \begin{textblock}{100}(19, 8) 
-\noindent ::patName ::patSurName\\
-::patAddress\\
-::patPlz ::patCity\\
+\noindent $patName #if(!$patSurName), #end $patSurName\\
+$patAddress\\
+$patPlz $patCity\\
 \X=.35mm        
 \barheight=1cm 
-\code{::piz}\\
-::piz\\
+\code{$piz}\\
+$piz\\
 \end{textblock}
 }
 
@@ -71,10 +71,10 @@
 \begin{textblock}{100}(22, 50) 
 \setstretch{1.0}
 \noindent 
-\textbf{::addSubject} \\\\
-::addName, ::addSurName\\
-::addAddress\\
-::addPlz ::addCity\\
+\textbf{$addSubject} \\\\
+$addName #if(!$addSurName), #end $addSurName\\
+$addAddress\\
+$addPlz $addCity\\
 \end{textblock}
 }
 
@@ -93,16 +93,17 @@
 			\renewcommand{\arraystretch}{1}
 			\begin{tabular}[t]{p{0.3\linewidth}p{0.67\linewidth}}
 				
- 				Präperat & ::material \\
- 				~& asd \\
-			 	~& asd \\
- 				~& asd \\
- 				
+				#foreach ($sample in $samples)
+					#if( $foreach.index == 0 )
+	   				 	Präperat & $sample.getMaterial() \\
+	   				#else
+						~ & $sample.getMaterial() \\	   				
+	   				#end
+				#end
  				\\
- 				
  				\multicolumn{2}{l}{Vorgeschichte, klinischer Befund und Fragestellung} \\
- 				\huge ::eye &  {\includegraphics[scale=0.4]{augen.png}} \\
- 				\multicolumn{2}{l}{::history} 
+ 				\huge $eye &  {\includegraphics[scale=0.4]{augen.png}} \\
+ 				\multicolumn{2}{l}{$history} 
 			
 			\end{tabular}
 		} 
@@ -111,23 +112,38 @@
 			\renewcommand{\arraystretch}{1}
 			\begin{tabular}[t]{p{0.46\linewidth}p{0.5\linewidth}}
 				
-				Eingangsdatum & ::eDate \\
-				Eingangsnummer & ::taskNumber \\
+				Eingangsdatum & $eDate \\
+				Eingangsnummer & $taskNumber \\
 				~ & 
 					\X=.30mm        % The width of code will be greater
 					\barheight=1cm % the height will be smaller.
-					\code{::taskNumber} \\
+					\code{$taskNumber} \\
 				Versicherung &
 					{
 						\setlength{\tabcolsep}{0em}
 						\begin{tabular}{c c c c }
-						$\boxtimes$ &~regulär~ & $\boxtimes$ & ~privat
+						
+						#if( !$insurancePrivate )
+						$\boxtimes$
+						#else
+						$\Box$
+						#end
+						
+						&~regulär~ & 
+						
+						#if( $insurancePrivate )
+						$\boxtimes$
+						#else
+						$\Box$
+						#end
+ 						& ~privat
+										
 						\end{tabular}
 					}\\
-				Station & ::ward \\
+				Station & $ward \\
 				Maligner Tumor & $ \Box$  \\
-				Operateur/Einsender & ::surgeon \\
-				Augenarzt & ::privatePhysician
+				Operateur/Einsender & $surgeon \\
+				Augenarzt & $privatePhysician
 			 
 			\end{tabular}
 		}
@@ -139,25 +155,38 @@
 
 \begin{center}
 \setlength{\tabcolsep}{0em}
-\begin{longtable}{p{\linewidth}}
-	\large \underline{ Befund: }\\*
+
+
+	#foreach ($diagnosisRevision in $diagnosisRevisions)
+		
+	\begin{longtable}{p{\linewidth}}
+	\large \underline{ $diagnosisRevision.name: }\\*
 	\begin{addmargin}{0.2cm}
-		\normalsize ::histologicalRecord
+		\normalsize $diagnosisRevision.text
 	\end{addmargin}\\
 	\large \underline{ Diagnose: }\\*
 	\begin{addmargin}{0.2cm}
-		\begin{tabular}{p{0.15\linewidth}p{0.85\linewidth}}
-			Präperat I & tut \\
-		\end{tabular}
+		#if($diagnosisRevision.getDiagnoses().size == 1)
+			\normalsize $diagnosisRevision.getDiagnoses().get(0).getDiagnosis();
+		#else
+			\begin{tabular}{p{0.15\linewidth}p{0.85\linewidth}}
+			#foreach ($diagnosis in $diagnosisRevision.getDiagnoses())
+				Präperat $diagnosis.getSample().getSampleID() & $diagnosis.getDiagnosis() \\
+			#end
+			\end{tabular}
+		#end
+		
 	\end{addmargin} 
-\end{longtable}
+	\end{longtable}
+
+	#end
 \end{center}
 
 \begin{center}
 \begin{tabular}{p{0.15\linewidth}p{0.25\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
 	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
-	Freiburg den & & ::signatureOne & ::sigantureTwo \\
-	~~ ::sigantureDate & ~ & ::signatureOneRole & ::signatureTwoRole\\\\
+	Freiburg den & & $signatureOne & $sigantureTwo \\
+	~~ $sigantureDate & ~ & $signatureOneRole & $signatureTwoRole\\\\
 
 \end{tabular}
 \end{center}
