@@ -143,6 +143,29 @@ body {
 	width: 30%;
 }
 /************************************* DEFAULT TABLE *************************************/
+/************************************* Fonts *************************************/
+.bold-text {
+	font-weight: bold;
+}
+
+.standardFont label, .standardFont input {
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+	font-size: 15px !important;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 500;
+	line-height: 22px;
+}
+
+.smallFont, .smallFont label, .smallFont input{
+	font-size: 0.8em !important;
+	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+	font-style: normal;
+	font-variant: normal;
+}
+/************************************* Fonts *************************************/
+
+
 
 /* Default table for listing inputfields*/
 .noBorders>tr, .noBorders>td, .noBorders {
@@ -246,18 +269,7 @@ body {
 	font-weight: bold;
 }
 
-.bold-text {
-	font-weight: bold;
-}
 
-.standardFont label, .standardFont input {
-	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-	font-size: 15px !important;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 500;
-	line-height: 22px;
-}
 
 .noUnderlineAtLink {
 	text-decoration: none !important;
@@ -274,10 +286,6 @@ body {
 /* hides the tbody border of a p:datatable */
 .hide-tbody-borer tbody {
 	border: none !important;
-}
-
-.smallFont {
-	font-size: 0.8em !important;
 }
 
 .smallCalendarInput input {
@@ -361,6 +369,10 @@ body {
 
 .navigation .navTable .contentTable .info {
 	font-size: 0.7em;
+}
+
+.navigation .navTable .ui-datatable-scrollable-theadclone{
+	display: none;
 }
 
 /*

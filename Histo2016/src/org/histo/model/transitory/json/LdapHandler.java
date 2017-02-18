@@ -44,8 +44,6 @@ public class LdapHandler implements GsonAble {
 	private String suffix;
 	@Expose
 	private String base;
-	@Expose
-	private boolean disabled;
 	
 	private DirContext connection;
 
@@ -182,14 +180,6 @@ public class LdapHandler implements GsonAble {
 
 	public void setBase(String base) {
 		this.base = base;
-	}
-
-	public boolean isDisabled() {
-		return disabled;
-	}
-
-	public void setDisabled(boolean disabled) {
-		this.disabled = disabled;
 	}
 
 	/********************************************************

@@ -39,11 +39,11 @@ import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DiagnosisStatus;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
-import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONObject;
 
 @Entity
@@ -52,8 +52,8 @@ import org.primefaces.json.JSONObject;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient
-		implements Parent<Patient>, DiagnosisStatus<Task>, StainingInfo<Task>, CreationDate, LogAble, ArchivAble, SaveAble {
+public class Patient implements Parent<Patient>, DiagnosisStatus<Task>, StainingInfo<Task>, CreationDate, LogAble,
+		ArchivAble, SaveAble, HasDataList {
 
 	private long id;
 
@@ -103,7 +103,7 @@ public class Patient
 	 * Pdf attached to this patient, this might be an informed consent
 	 */
 	private List<PDFContainer> attachedPdfs;
-	
+
 	/**
 	 * If true the patient is archived. Thus he won't be displayed.
 	 */
@@ -114,11 +114,10 @@ public class Patient
 	 */
 	public Patient() {
 	}
-	
+
 	public Patient(Person person) {
 		this.person = person;
 	}
-
 
 	/********************************************************
 	 * Transient Methods
@@ -126,9 +125,10 @@ public class Patient
 
 	/**
 	 * Updates the patient data with a given patient dummy
+	 * 
 	 * @param patient
 	 */
-	public final void  copyIntoObject(Patient patient) {
+	public final void copyIntoObject(Patient patient) {
 		setPiz(patient.getPiz());
 		setInsurance(getInsurance());
 		getPerson().setTitle(patient.getPerson().getTitle());
@@ -147,14 +147,16 @@ public class Patient
 
 	/**
 	 * Updates the patient data with a given json string.
+	 * 
 	 * @param json
 	 */
-	public final void  copyIntoObject(String json) {
+	public final void copyIntoObject(String json) {
 		copyIntoObject(new JSONObject(json));
 	}
-	
+
 	/**
-	 * Updates the patient object with a given json array from the clinic backend
+	 * Updates the patient object with a given json array from the clinic
+	 * backend
 	 *
 	 * { "vorname":"Test", "mode":"W", "status":null, "piz":"25201957",
 	 * "sonderinfo":"", "iknr":"00190", "kvnr":null, "titel":"Prof. Dr. med.",
@@ -216,8 +218,6 @@ public class Patient
 	public ArrayList<Task> getActivTasks() {
 		ArrayList<Task> result = new ArrayList<Task>();
 		for (Task task : tasks) {
-			if (task.isArchived())
-				continue;
 
 			if (task.isActiveOrActionToPerform())
 				result.add(task);
@@ -241,9 +241,10 @@ public class Patient
 	@Override
 	@Transient
 	public String toString() {
-		return "ID: " +getId() + ", Name: " + getPerson().getFullName() +", PIZ: " + (getPiz() == null ? "extern" : getPiz());
+		return "ID: " + getId() + ", Name: " + getPerson().getFullName() + ", PIZ: "
+				+ (getPiz() == null ? "extern" : getPiz());
 	}
-	
+
 	/********************************************************
 	 * Transient Methods
 	 ********************************************************/
@@ -358,8 +359,8 @@ public class Patient
 	 * Interface DiagnosisStatusState
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the status
-	 * of the diagnoses.
+	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the
+	 * status of the diagnoses.
 	 */
 	@Override
 	@Transient
@@ -446,7 +447,7 @@ public class Patient
 	@Override
 	public void setParent(Patient parent) {
 	}
-	
+
 	@Override
 	@Transient
 	public Task getTask() {
@@ -466,12 +467,9 @@ public class Patient
 		this.attachedPdfs = attachedPdfs;
 	}
 
-	
 	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
-	
-
 
 	/********************************************************
 	 * Interface SaveAble

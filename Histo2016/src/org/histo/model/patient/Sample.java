@@ -296,7 +296,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt die SampleID als
@@ -319,7 +319,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	}
 
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 
 	/********************************************************

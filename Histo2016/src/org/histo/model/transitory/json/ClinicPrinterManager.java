@@ -32,56 +32,72 @@ public class ClinicPrinterManager implements GsonAble {
 	@Expose
 	private String testPage;
 
+	@Expose
+	private boolean offline;
+
 	private List<ClinicPrinter> printers;
 
 	private ClinicPrinter printerToUse;
-	
-	public final boolean loadPrinter(String name){
+
+	public final boolean loadPrinter(String name) {
 		setPrinterToUse(getPrinterByName(name));
 		return getPrinterToUse() == null ? false : true;
 	}
-	
+
 	/**
 	 * Prints a file
+	 * 
 	 * @param cPrinter
 	 * @param file
 	 */
 	public final void print(File file) {
-		CupsClient cupsClient;
-		try {
-			cupsClient = new CupsClient(host, port);
-			CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
-			PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
-			printer.print(printJob);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!isOffline()) {
+			CupsClient cupsClient;
+			try {
+				cupsClient = new CupsClient(host, port);
+				CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
+				PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
+				printer.print(printJob);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			logger.debug("Is offline do nothing");
 		}
+
 	}
 
-
 	public final void print(PDFContainer container) {
-		CupsClient cupsClient;
-		try {
-			cupsClient = new CupsClient(host, port);
-			CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
-			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
-			printer.print(printJob);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (!isOffline()) {
+			CupsClient cupsClient;
+			try {
+				cupsClient = new CupsClient(host, port);
+				CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
+				PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
+				printer.print(printJob);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			logger.debug("Is offline do nothing");
 		}
 	}
 
 	public final void printTestPage() {
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
-		Resource resource = appContext.getResource(testPage);
-		try {
-			print(new File(resource.getURI()));
-			System.out.println(resource.getURI());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			appContext.close();
+		if (!isOffline()) {
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
+			Resource resource = appContext.getResource(testPage);
+			try {
+				print(new File(resource.getURI()));
+				System.out.println(resource.getURI());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				appContext.close();
+			}
+		} else {
+			logger.debug("Is offline do nothing");
 		}
 	}
 
@@ -101,7 +117,9 @@ public class ClinicPrinterManager implements GsonAble {
 
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			setOffline(true);
+			logger.error("Printers failed successful");
+			logger.error(e);
 			return false;
 		}
 	}
@@ -145,5 +163,13 @@ public class ClinicPrinterManager implements GsonAble {
 	public void setPrinterToUse(ClinicPrinter printerToUse) {
 		this.printerToUse = printerToUse;
 	}
-	
+
+	public boolean isOffline() {
+		return offline;
+	}
+
+	public void setOffline(boolean offline) {
+		this.offline = offline;
+	}
+
 }

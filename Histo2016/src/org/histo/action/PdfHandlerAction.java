@@ -306,7 +306,7 @@ public class PdfHandlerAction {
 		setUploadedFile(null);
 		setTaskToPrint(task);
 //		setUploadedFileType(PdfTemplate.OTHER);
-		mainHandlerAction.showDialog(Dialog.UPLOAD_TASK);
+		mainHandlerAction.showDialog(Dialog.UPLOAD);
 	}
 
 	public void saveUploadedPdfToTask(PDFContainer container, Task task) {
@@ -324,7 +324,7 @@ public class PdfHandlerAction {
 					resourceBundle.get("log.patient.task.pdf.attached", task.getTaskID(), container.getName()),
 					task.getPatient());
 
-			mainHandlerAction.hideDialog(Dialog.UPLOAD_TASK);
+			mainHandlerAction.hideDialog(Dialog.UPLOAD);
 		}
 	}
 

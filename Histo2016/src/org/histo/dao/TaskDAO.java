@@ -45,12 +45,4 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		Hibernate.initialize(task.getDiagnosisInfo().getSignatureTwo());
 	}
 	
-	/**
-	 * Initializes councils
-	 * @param task
-	 */
-	public void initializeCouncilData(Task task) {
-		getSession().update(task);
-		Hibernate.initialize(task.getCouncils());
-	}
 }

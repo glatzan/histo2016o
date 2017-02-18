@@ -17,6 +17,9 @@ public class ClinicPrinter implements Serializable {
 
 	private String location;
 
+	public ClinicPrinter(){
+	}
+	
 	public ClinicPrinter(CupsPrinter cupsPrinter) {
 		printerURL = cupsPrinter.getPrinterURL();
 		name = cupsPrinter.getName();

@@ -16,6 +16,7 @@ import org.histo.config.enums.MailPresetName;
 import org.histo.config.enums.Notification;
 import org.histo.config.enums.NotificationOption;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
@@ -56,6 +57,9 @@ public class NotificationHandlerAction implements Serializable {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	@Autowired
+	private PatientDao patientDao;
+	
 	/**
 	 * Task to perfome notification
 	 */
@@ -335,7 +339,7 @@ public class NotificationHandlerAction implements Serializable {
 
 		notificationRunning.set(true);
 
-		taskDAO.initializeCouncilData(getTmpTask());
+		patientDao.initializeDataList(getTmpTask());
 		taskDAO.initializeDiagnosisData(getTmpTask());
 
 		if (isUseFax() || isUsePhone() || isUseEmail()) {

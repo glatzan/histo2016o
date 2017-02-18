@@ -13,6 +13,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.primefaces.model.DefaultStreamedContent;
@@ -83,6 +84,11 @@ public class MediaHandlerAction {
 	 * media display
 	 ********************************************************/
 	/**
+	 * Temporary task
+	 */
+	private HasDataList temporaryDataList;
+
+	/**
 	 * Used for showing pdf in a dialog
 	 */
 	private PDFContainer temporaryPdfContainer;
@@ -92,95 +98,24 @@ public class MediaHandlerAction {
 	 ********************************************************/
 
 	/********************************************************
-	 * PatientData Upload
+	 * Data Upload
 	 ********************************************************/
-	public void preparePatientMediaDisplayDialog(Patient patient) {
-		preparePatientMediaDisplayDialog(patient, null);
-	}
-
-	public void preparePatientMediaDisplayDialog(Patient patient, PDFContainer mediaToDisplay) {
-		patientDao.initializePatientPdfData(patient);
-
-		if (mediaToDisplay == null && patient.getAttachedPdfs().size() > 0)
-			mediaToDisplay = patient.getAttachedPdfs().get(0);
-
-		setTemporaryPdfContainer(mediaToDisplay);
-
-		mainHandlerAction.showDialog(Dialog.PATIENT_MEDIA_PREVIEW);
-	}
-	
-	/**
-	 * Shows the upload file dialog for a patient
-	 */
-	public void preparePatientDataUploadDialog(Patient patient) {
-		patientDao.initializePatientPdfData(patient);
-		patientHandlerAction.setTmpPatient(patient);
-		setUploadedFileCommentary("");
-		setUploadedFileType(DocumentType.OTHER);
-		mainHandlerAction.showDialog(Dialog.UPLOAD_PATIENT);
-	}
-
-	/**
-	 * Uploads a file to the patient file array
-	 */
-	public void uploadPatientData(Patient patient) {
-		logger.debug("Uploadting new file to " + patient.getPerson().getFullName());
-		if (getUploadedFile() != null) {
-			PDFContainer upload = new PDFContainer();
-
-			upload.setData(getUploadedFile().getContents());
-			upload.setName(getUploadedFile().getFileName());
-			upload.setType(getUploadedFileType());
-			upload.setCommentary(getUploadedFileCommentary());
-
-			// saving pdf
-			genericDAO.save(upload, resourceBundle.get("log.patient.pdf.created", upload.getName()), patient);
-
-			patient.getAttachedPdfs().add(upload);
-			System.out.println(patient.getAttachedPdfs().size());
-			// saving patient
-			mainHandlerAction.saveDataChange(patient, "log.patient.pdf.attached", upload.getName());
-		} else
-			logger.debug("No file provided");
-
-		hidePatientDataUploadDialog();
-
-	}
-
-	/**
-	 * Hides the upload file dialog of the patient
-	 */
-	public void hidePatientDataUploadDialog() {
-		mainHandlerAction.hideDialog(Dialog.UPLOAD_PATIENT);
-		setUploadedFile(null);
-		patientHandlerAction.setTmpPatient(null);
-	}
-
-	/********************************************************
-	 * PatientData Upload
-	 ********************************************************/
-
-	/********************************************************
-	 * Task Data Upload
-	 ********************************************************/
-
-
 
 	/**
 	 * Shows a dialog for uploading files to a task
 	 */
-	public void prepareTaskDataUploadDialog(Task task) {
-		taskDAO.initializeTaskData(task);
-		taskHandlerAction.setTemporaryTask(task);
+	public void prepareUploadDialog(HasDataList dataList) {
+		patientDao.initializeDataList(dataList);
+		setTemporaryDataList(dataList);
 		setUploadedFileCommentary("");
 		setUploadedFileType(DocumentType.OTHER);
-		mainHandlerAction.showDialog(Dialog.UPLOAD_TASK);
+		mainHandlerAction.showDialog(Dialog.UPLOAD);
 	}
 
 	/**
 	 * Uploads a file to the selected task
 	 */
-	public void uploadTaskData(Task task) {
+	public void uploadData(HasDataList dataList) {
 		if (getUploadedFile() != null) {
 			PDFContainer upload = new PDFContainer();
 
@@ -190,44 +125,51 @@ public class MediaHandlerAction {
 			upload.setCommentary(getUploadedFileCommentary());
 
 			// saving pdf
-			genericDAO.save(upload, resourceBundle.get("log.patient.pdf.created", upload.getName()), task.getPatient());
+			genericDAO.save(upload, resourceBundle.get("log.patient.pdf.created", upload.getName()),
+					dataList.getPatient());
 
-			task.getAttachedPdfs().add(upload);
+			dataList.getAttachedPdfs().add(upload);
 
-			// saving patient
-			mainHandlerAction.saveDataChange(task, "log.patient.task.pdf.attached", upload.getName());
+			String logRef = "";
+
+			if (dataList instanceof Patient) {
+				logRef = "log.patient.pdf.attached";
+			} else {
+				logRef = "log.patient.task.pdf.attached";
+			}
+
+			// saving list
+			mainHandlerAction.saveDataChange(dataList, logRef, upload.getName());
 		}
-		hideTaskDataUploadDialog();
+		hideDataUploadDialog();
 	}
 
 	/**
 	 * Hides the dialog for uploading files to a task
 	 */
-	public void hideTaskDataUploadDialog() {
-		mainHandlerAction.hideDialog(Dialog.UPLOAD_TASK);
+	public void hideDataUploadDialog() {
+		mainHandlerAction.hideDialog(Dialog.UPLOAD);
 		setUploadedFile(null);
 	}
 
 	/********************************************************
-	 * Task Data Upload
+	 * Data Upload
 	 ********************************************************/
 
 	/********************************************************
 	 * Task Media display
 	 ********************************************************/
-	public void prepareMediaDisplayDialog(Task task) {
-		prepareMediaDisplayDialog(task, null);
+	public void prepareMediaDisplayDialog(HasDataList dataList) {
+		prepareMediaDisplayDialog(dataList, null);
 	}
 
-	public void prepareMediaDisplayDialog(Task task, PDFContainer mediaToDisplay) {
-		mainHandlerAction.showDialog(Dialog.TASK_MEDIA_PREVIEW);
-		taskHandlerAction.setTemporaryTask(task);
-		taskDAO.initializeTaskData(task);
+	public void prepareMediaDisplayDialog(HasDataList dataList, PDFContainer mediaToDisplay) {
+		mainHandlerAction.showDialog(Dialog.MEDIA_PREVIEW);
+		patientDao.initializeDataList(dataList);
+		setTemporaryDataList(dataList);
 
-		printHandlerAction.initBean(task);
-
-		if (mediaToDisplay == null && task.getAttachedPdfs().size() > 0)
-			mediaToDisplay = task.getAttachedPdfs().get(0);
+		if (mediaToDisplay == null && dataList.getAttachedPdfs().size() > 0)
+			mediaToDisplay = dataList.getAttachedPdfs().get(0);
 
 		setTemporaryPdfContainer(mediaToDisplay);
 	}
@@ -245,9 +187,9 @@ public class MediaHandlerAction {
 	}
 
 	public void hideMediaDisplayDialog() {
-		mainHandlerAction.hideDialog(Dialog.TASK_MEDIA_PREVIEW);
-		taskHandlerAction.setTemporaryTask(null);
+		mainHandlerAction.hideDialog(Dialog.MEDIA_PREVIEW);
 		setTemporaryPdfContainer(null);
+		setTemporaryDataList(null);
 	}
 
 	/********************************************************
@@ -289,6 +231,13 @@ public class MediaHandlerAction {
 		this.temporaryPdfContainer = temporaryPdfContainer;
 	}
 
+	public HasDataList getTemporaryDataList() {
+		return temporaryDataList;
+	}
+
+	public void setTemporaryDataList(HasDataList temporaryDataList) {
+		this.temporaryDataList = temporaryDataList;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

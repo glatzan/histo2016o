@@ -39,10 +39,10 @@ import org.histo.model.Accounting;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisStatus;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
@@ -57,7 +57,7 @@ import org.histo.util.TimeUtil;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisStatus<DiagnosisRevision>, CreationDate,
-		DeleteAble, LogAble, ArchivAble, SaveAble {
+		DeleteAble, LogAble, SaveAble, HasDataList {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -186,12 +186,11 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	private List<PDFContainer> attachedPdfs;
 
 	/**
-	 * List of all councils of this task, lazy 
+	 * List of all councils of this task, lazy
 	 */
 	private List<Council> councils;
-	
-	private Accounting accounting;
 
+	private Accounting accounting;
 
 	/********************************************************
 	 * Transient Variables
@@ -579,7 +578,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public void setNotificationCompletionDate(long notificationCompletionDate) {
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
-	
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OrderBy("dateOfRequest DESC")
 	public List<Council> getCouncils() {
@@ -855,7 +854,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public Patient getPatient() {
 		return getParent();
 	}
-	
+
 	/**
 	 * Returns the parent task
 	 */
@@ -864,28 +863,14 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public Task getTask() {
 		return this;
 	}
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
-	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble
-	 */
-	@Basic
-	public boolean isArchived() {
-		return archived;
-	}
-
-	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble Setzt alle Kinder
-	 */
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-	}
-
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt die TaskID als
 	 * identifier zurück
@@ -905,8 +890,9 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public Dialog getArchiveDialog() {
 		return Dialog.TASK_ARCHIV;
 	}
+
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 
 	/********************************************************
@@ -915,10 +901,10 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	@Override
 	@Transient
 	public String getLogPath() {
-		return "Task-ID: " + getTaskID()+ " (" + getId() + ")";
+		return "Task-ID: " + getTaskID() + " (" + getId() + ")";
 	}
 	/********************************************************
 	 * Interface SaveAble
 	 ********************************************************/
-	
+
 }

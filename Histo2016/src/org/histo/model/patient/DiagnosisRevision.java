@@ -272,7 +272,7 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 	/**
 	 * Overwrites Interface ArchiveAble
@@ -292,7 +292,7 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 		return null;
 	}
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 
 	/********************************************************

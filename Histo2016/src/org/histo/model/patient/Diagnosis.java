@@ -258,7 +258,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 
 	/**
@@ -280,7 +280,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	}
 
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 
 	/********************************************************

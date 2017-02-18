@@ -40,15 +40,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			HistoSettings settings = HistoSettings.factory();
 			LdapHandler connection = settings.getLdap();
 
-			if(connection.isDisabled()){
+			if (settings.isOfflineMode()) {
 				logger.info("LDAP login disabled");
-				
+
 				HistoUser histoUser = userDAO.loadUserByName(userName);
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
 					histoUser = new HistoUser(userName);
 				}
-				
+
 				histoUser.setLastLogin(System.currentTimeMillis());
 
 				userDAO.saveUser(histoUser, "Benutzerdaten geupdated");
@@ -57,7 +57,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
 			}
-			
+
 			connection.openConnection();
 
 			Physician physician = connection.getPhyscican(userName);

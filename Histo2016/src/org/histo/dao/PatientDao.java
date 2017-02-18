@@ -15,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.model.Person;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
@@ -312,8 +313,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 	
-	public void initializePatientPdfData(Patient patient) {
-		getSession().update(patient);
-		Hibernate.initialize(patient.getAttachedPdfs());
+	public void initializeDataList(HasDataList dataList) {
+		getSession().update(dataList);
+		Hibernate.initialize(dataList.getAttachedPdfs());
 	}
 }

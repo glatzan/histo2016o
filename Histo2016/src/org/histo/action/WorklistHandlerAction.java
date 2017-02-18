@@ -179,7 +179,7 @@ public class WorklistHandlerAction implements Serializable {
 
 		logger.debug("Select patient " + patient.getPerson().getFullName());
 		
-		patientDao.initializePatientPdfData(patient);
+		patientDao.initializeDataList(patient);
 		
 		switch (mainHandlerAction.getCurrentView()) {
 		case WORKLIST_PATIENT:

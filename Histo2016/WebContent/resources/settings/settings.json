@@ -52,5 +52,7 @@
       "testPage":"classpath:templates/print_label/testLable.zpl"
    },
    
-   "workingDirectory" : "classpath:templates/print"
+   "workingDirectory" : "classpath:templates/print",
+   
+   "offlineMode": true
 }

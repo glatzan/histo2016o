@@ -241,7 +241,7 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 	/**
 	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
@@ -263,7 +263,7 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 		return Dialog.DELETE_TREE_ENTITY;
 	}
 	/********************************************************
-	 * Interface ArchiveAble
+	 * Interface Delete Able
 	 ********************************************************/
 	
 	/********************************************************

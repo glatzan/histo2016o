@@ -14,6 +14,7 @@ import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
+import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
@@ -62,6 +63,9 @@ public class TaskHandlerAction implements Serializable {
 	@Autowired
 	private SettingsDAO settingsDAO;
 
+	@Autowired
+	private PatientDao patientDao;
+	
 	@Autowired
 	private DiagnosisHandlerAction diagnosisHandlerAction;
 
@@ -673,7 +677,7 @@ public class TaskHandlerAction implements Serializable {
 	public void prepareCouncilDialog(Task task, boolean show) {
 		setTemporaryTask(task);
 
-		taskDAO.initializeCouncilData(task);
+		patientDao.initializeDataList(task);
 
 		// setting council as default
 		if (task.getCouncils().size() == 0) {

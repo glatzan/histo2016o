@@ -48,6 +48,11 @@ public class HistoSettings {
 		
 		return result;
 	}
+	
+	/**
+	 * If true offline mode
+	 */
+	private boolean offlineMode;
 
 	/**
 	 * Directory for creating pdfs
@@ -176,6 +181,10 @@ public class HistoSettings {
 
 	public void setLabelPrinterManager(LabelPrinterManager labelPrinterManager) {
 		this.labelPrinterManager = labelPrinterManager;
+	}
+
+	public boolean isOfflineMode() {
+		return offlineMode;
 	}
 
 	
