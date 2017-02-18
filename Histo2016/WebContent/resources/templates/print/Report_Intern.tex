@@ -11,6 +11,14 @@
 \usepackage{amssymb}
 \renewcommand{\familydefault}{\sfdefault} 
 \usepackage{helvet} 
+\usepackage{lipsum} 
+ \usepackage{longtable}
+
+
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
 
 
 
@@ -21,6 +29,8 @@
 \ThisCenterWallPaper{1}{background.pdf}
 %
  \input{d:/latex/code128.tex}
+
+\cfoot{\thepage\ of \pageref{LastPage}}
 
 \baselineskip10pt
 
@@ -47,120 +57,77 @@
 {\huge Histologisches Gutachten} 
 
 \begin{center}
-{\renewcommand{\arraystretch}{0}
-\setlength{\tabcolsep}{.16667em}
-\begin{tabular}{|p{0.52\linewidth}|p{0.48\linewidth}|}
-\hline 
-{\renewcommand{\arraystretch}{1}
-\begin{tabular}[t]{|p{0.3\linewidth}|p{0.67\linewidth}|}
-\hline 
- Präperat& asd \\
- ~& asd \\
- ~& asd \\
- ~& asd \\
- \multicolumn{2}{|l|}{Vorgeschichte, klinischer Befund und Fragestellung} \\
- \huge RA &  {\includegraphics[scale=0.4]{augen.png}} \\
- \multicolumn{2}{|l|}{asdasdasdsadasdasdasd} \\
-\hline 
-\end{tabular}} & %
-{\renewcommand{\arraystretch}{1}
-\begin{tabular}[t]{|p{0.46\linewidth}|p{0.5\linewidth}|}
-\hline 
-Eingangsnummer & 1234567 \\
-~ & \X=.30mm        % The width of code will be greater
-\barheight=1cm % the height will be smaller.
-\code{<PATpiz>} \\
-Versicherung & 
-\begin{tabular}{c|c|c|c|}
-$\boxtimes$ &regulär & $\boxtimes$ & privat
+{
+	\renewcommand{\arraystretch}{0}
+	\setlength{\tabcolsep}{.16667em}
+	\begin{tabular}{p{0.53\linewidth}p{0.47\linewidth}}
+	
+		{
+			\renewcommand{\arraystretch}{1}
+			\begin{tabular}[t]{p{0.3\linewidth}p{0.67\linewidth}}
+				
+ 				Präperat& ::material \\
+ 				~& asd \\
+			 	~& asd \\
+ 				~& asd \\
+ 				
+ 				\\
+ 				
+ 				\multicolumn{2}{l}{Vorgeschichte, klinischer Befund und Fragestellung} \\
+ 				\huge RA &  {\includegraphics[scale=0.4]{augen.png}} \\
+ 				\multicolumn{2}{l}{asdasdasdsadasdasdasd} 
+			
+			\end{tabular}
+		} 
+		& 
+		{
+			\renewcommand{\arraystretch}{1}
+			\begin{tabular}[t]{p{0.46\linewidth}p{0.5\linewidth}}
+				
+				Eingangsdatum & 10.10.2016 \\
+				Eingangsnummer & 1234567 \\
+				~ & 
+					\X=.30mm        % The width of code will be greater
+					\barheight=1cm % the height will be smaller.
+					\code{123456} \\
+				Versicherung &
+					{
+						\setlength{\tabcolsep}{0em}
+						\begin{tabular}{c c c c }
+						$\boxtimes$ &~regulär~ & $\boxtimes$ & ~privat
+						\end{tabular}
+					}\\
+				Station & asd \\
+				Maligner Tumor & $ \Box$  \\
+				Operateur/Einsender & asd \\
+				Augenarzt & asd
+			 
+			\end{tabular}
+		}
+		\tabularnewline
+		
+	\end{tabular}
+}
+\end{center}
+
+\begin{center}
+\setlength{\tabcolsep}{0em}
+\begin{longtable}{p{\linewidth}}
+	\Large  Befund \\*
+	\begin{addmargin}{0.2cm}
+		\normalsize \lipsum[2-4] 
+	\end{addmargin}\\
+	\Large Diangosen \\*
+	\begin{addmargin}{0.2cm}
+		\normalsize \lipsum[2-4] 
+	\end{addmargin} 
+\end{longtable}
+\end{center}
+
+\begin{center}
+\begin{tabular}{p{0.15\linewidth}p{0.25\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
+	Freiburg den & 10.10.2016 & Dr HAse & Dr maus \\
+	~ & ~ &  ~Arzt & ~Oberazt
 \end{tabular}
- \\
-Station & asd \\
-Maligner Tumor & $\boxtimes$ \\
-Operateur/Einsender & asd \\
-Augenarzt & asd \\
-\hline 
-\end{tabular}}\tabularnewline
-\hline 
-\end{tabular}}
 \end{center}
-\begin{center}{100}(25, 250) 
-
-Finster war's, der Mond schien helle auf die grünbeschneite Flur, als 
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.
-Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.
-Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.
-\end{center}
-
 \end{document}
