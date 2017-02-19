@@ -178,11 +178,11 @@ public class WorklistHandlerAction implements Serializable {
 			return View.WORKLIST.getPath();
 
 		logger.debug("Select patient " + patient.getPerson().getFullName());
-		
+
 		patientDao.initializeDataList(patient);
-		
 		switch (mainHandlerAction.getCurrentView()) {
 		case WORKLIST_PATIENT:
+			return onDeselectTask(patient);
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
 			Task task = patient.getSelectedTask();
@@ -211,15 +211,15 @@ public class WorklistHandlerAction implements Serializable {
 		if (mainHandlerAction.getCurrentView() != View.WORKLIST_RECEIPTLOG
 				|| mainHandlerAction.getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 
-			if (userHandlerAction.getCurrentUser().getRole().getRoleValue() >= Role.PHYSICIAN.getRoleValue()){
+			if (userHandlerAction.getCurrentUser().getRole().getRoleValue() >= Role.PHYSICIAN.getRoleValue()) {
 				// all roles > mta
 				logger.debug("User is physician, show diagnoses screen");
 				mainHandlerAction.setCurrentView(View.WORKLIST_DIAGNOSIS);
-			}else if (userHandlerAction.getCurrentUser().getRole() == Role.MTA){
+			} else if (userHandlerAction.getCurrentUser().getRole() == Role.MTA) {
 				// mta
 				logger.debug("User is mta, show receiptlog screen");
 				mainHandlerAction.setCurrentView(View.WORKLIST_RECEIPTLOG);
-			}else{
+			} else {
 				// normal users
 				logger.debug("User is normal user, show simple list");
 				mainHandlerAction.setCurrentView(View.USERLIST);

@@ -33,7 +33,8 @@
 			<h:panelGrid columns="3"
 				styleClass="defaultListingTableTwoLineContainer">
 				<!-- Left Column -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+					columnClasses="defaultListingTableColumnTop,">
 
 					<!-- Task number -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
@@ -43,6 +44,7 @@
 
 					<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
+						styleClass="smallInput"
 						value="#{taskHandlerAction.temporaryTask.dateOfReceiptAsDate}">
 					</p:calendar>
 
@@ -75,6 +77,7 @@
 							<h:outputLabel
 								value="#{msg['dialog.createTask.priority.dueDate']}" />
 							<p:calendar pattern="dd.MM.yyyy" mask="true"
+								styleClass="smallInput"
 								disabled="#{!taskHandlerAction.temporaryTask.dueDateSelected}"
 								value="#{taskHandlerAction.temporaryTask.dueDateAsDate}">
 							</p:calendar>
@@ -85,30 +88,42 @@
 					<!-- biobank -->
 					<h:outputLabel value="#{msg['dialog.createTask.bioBank']}" />
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="3">
+							<!-- select file -->
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
-							<p:selectBooleanCheckbox id="informedConsent"
-								title="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
+							<p:commandLink
+								actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(worklistHandlerAction.selectedPatient)}">
+								<p:ajax event="dialogReturn" update="@form" />
+								<i class="fa fa-search icon-grey"></i>
+							</p:commandLink>
+							<p:commandLink style="margin-right:5px"
+								rendered="#{mediaHandlerAction.selectedPdfContainer != null}"
+								actionListener="#{mediaHandlerAction.setSelectedPdfContainer(null)}">
+								<p:ajax event="dialogReturn" update="@form" />
+								<i class="fa fa-close icon-grey"></i>
+							</p:commandLink>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<!-- selected file /remove file -->
+							<h:outputLabel
+								value="#{msg['dialog.createTask.bioBank.informedConsent.file']}:" />
+							<h:outputLabel style="float:right"
+								value="#{mediaHandlerAction.selectedPdfContainer.name}"></h:outputLabel>
+
+
+							<!-- type of informed consent -->
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
-							<p:selectOneMenu id="consentType">
+							<p:selectOneMenu id="consentType" styleClass="smallInput"
+								disabled="#{mediaHandlerAction.selectedPdfContainer == null}">
 								<f:selectItem itemLabel="Select One" itemValue="" />
 								<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-								<f:selectItem itemLabel="PS4" itemValue="PS4" />
-								<f:selectItem itemLabel="Wii U" itemValue="Wii U" />
 							</p:selectOneMenu>
-							<h:outputLabel
-								value="#{msg['dialog.createTask.bioBank.informedConsent.upload']}" />
-							<p:fileUpload mode="simple" skinSimple="true" />
+
 						</h:panelGrid>
-						<p:commandLink
-							actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(worklistHandlerAction.selectedPatient)}">
-							<p:ajax event="dialogReturn" update="@form" />
-							<i class="fa fa-search"></i>
-						</p:commandLink>
-						<h:outputFormat
-							value="#{mediaHandlerAction.selectedPdfContainer.name}"></h:outputFormat>
+
+
 					</h:panelGrid>
 
 				</h:panelGrid>

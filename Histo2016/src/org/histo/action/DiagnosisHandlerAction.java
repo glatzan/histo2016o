@@ -5,10 +5,12 @@ import java.io.Serializable;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Transient;
 
+import org.apache.commons.collections.map.MultiKeyMap;
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
@@ -54,10 +56,19 @@ public class DiagnosisHandlerAction implements Serializable {
 	@Lazy
 	private TaskHandlerAction taskHandlerAction;
 
-	private Task tmpTask;
+	private Task temporaryTask;
 
 	private Diagnosis tmpDiagnosis;
 
+	/**
+	 * List containing all old revisions and a new revision. The string contains
+	 * the proposed new name
+	 */
+	private MultiKeyMap newRevisionList;
+
+	/********************************************************
+	 * Diagnosis
+	 ********************************************************/
 	/**
 	 * Creates a new diagnosis and adds it to the given diagnosisRevision
 	 * 
@@ -110,6 +121,13 @@ public class DiagnosisHandlerAction implements Serializable {
 		return diagnosis;
 	}
 
+	/********************************************************
+	 * Diagnosis
+	 ********************************************************/
+
+	/********************************************************
+	 * Diagnosis Revision
+	 ********************************************************/
 	/**
 	 * Creates a diagnosisRevision, adds it to the given DiagnosisInfo and
 	 * creates also all needed diagnoses
@@ -218,6 +236,34 @@ public class DiagnosisHandlerAction implements Serializable {
 				diagnosisRevision.getPatient());
 	}
 
+	/********************************************************
+	 * Diagnosis Revision
+	 ********************************************************/
+
+	/********************************************************
+	 * Diagnosis Gui
+	 ********************************************************/
+	public void prepareDiagnosisRevisionDialog(Task task) {
+		setTemporaryTask(task);
+		setNewRevisionList(new MultiKeyMap());
+		for (DiagnosisRevision revision : task.getDiagnosisInfo().getDiagnosisRevisions()) {
+			getNewRevisionList().put(revision.getName(), revision);
+		}
+		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_REVISION_CREATE);
+	}
+	
+	public void hideDiagnosisRevisionDialog() {
+		setNewRevisionList(null);
+		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_REVISION_CREATE);
+	}
+
+	/********************************************************
+	 * Diagnosis Gui
+	 ********************************************************/
+
+	/********************************************************
+	 * Diagnosis Info
+	 ********************************************************/
 	/**
 	 * Updates all diagnosisRevision of the given diagnosisInfo
 	 * 
@@ -234,6 +280,10 @@ public class DiagnosisHandlerAction implements Serializable {
 				resourceBundle.get("log.patient.task.diagnosisInfo.update", diagnosisInfo.getParent().getTaskID()),
 				diagnosisInfo.getPatient());
 	}
+
+	/********************************************************
+	 * Diagnosis Info
+	 ********************************************************/
 
 	/**
 	 * Checks if a diagnosis revision can be created. This in only possible if
@@ -279,7 +329,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Shows a waring dialog before finalizing a diagnosis.
 	 */
 	public void prepareFinalizeDiagnosisDialog(Task task) {
-		setTmpTask(task);
+		setTemporaryTask(task);
 		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_FINALIZE);
 	}
 
@@ -287,7 +337,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Hides the waring dialog for finalizing diagnoses
 	 */
 	public void hideFinalizeDiangosisDialog() {
-		setTmpTask(null);
+		setTemporaryTask(null);
 		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_FINALIZE);
 	}
 
@@ -427,12 +477,13 @@ public class DiagnosisHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	public Task getTmpTask() {
-		return tmpTask;
+
+	public Task getTemporaryTask() {
+		return temporaryTask;
 	}
 
-	public void setTmpTask(Task tmpTask) {
-		this.tmpTask = tmpTask;
+	public void setTemporaryTask(Task temporaryTask) {
+		this.temporaryTask = temporaryTask;
 	}
 
 	public Diagnosis getTmpDiagnosis() {
@@ -443,6 +494,13 @@ public class DiagnosisHandlerAction implements Serializable {
 		this.tmpDiagnosis = tmpDiagnosis;
 	}
 
+	public MultiKeyMap getNewRevisionList() {
+		return newRevisionList;
+	}
+
+	public void setNewRevisionList(MultiKeyMap newRevisionList) {
+		this.newRevisionList = newRevisionList;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

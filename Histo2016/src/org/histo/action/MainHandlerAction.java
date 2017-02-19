@@ -43,32 +43,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-// TODO Email benachrichtigung bei role change Hisotuserrole
-// ++++ urgent: status und info dialog
-// ++++ check patient fetch from jason form clinik -> zu viele patienten
-
-// TODO Bug from email!
-// ++++ wenn kein patient gefunden, darf dieser nicht ausgewählt werden können
-// TODO print dialog auswahl der ärtze geht nicht
-// TODO report in task muss umbeannt werden
-// TODO List für Patienten übersicht
-// TODO UREPORT Printing from create dialog
-// TODO Multible councils
-
-//http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
-// ++++: Diagnose page
-// TODO: Biobank
-// TODO: favouriten
-// ++++ edit page patient external
-// TODO: Logout warn
-// ++++ status display (in navigation)
-// TODO: log in settings rework
-// ++++: Edit external patient from menu bar
-// ++++: Priorisierung
-// TODO: prevent overwriting of data from clinic physicians if changed
-// TODO: change event of histological record in diagnosis page, located in helphandler action
-// ++++: Re-Diagnosis reduce options 
-// ++++: fullName propertie of physician move to person
 
 @Component
 @Scope(value = "session")
@@ -135,6 +109,7 @@ public class MainHandlerAction {
 			userHandlerAction.getCurrentUser()
 					.setPreferedPrinter(getSettings().getPrinterManager().getPrinters().get(0).getName());
 
+		// setting label printer
 		if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
 			userHandlerAction.getCurrentUser()
 					.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getName());

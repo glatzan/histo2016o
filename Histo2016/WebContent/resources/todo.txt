@@ -1,0 +1,56 @@
+UTF 8 Tomcat: -Dfile.encoding=UTF8
+
+Merke: keine kurzbefunde
+
+
+TODO: 2: Diagnosen Kategory
+TODO: 2.5: Kopf für mehrer Diangose einabuen, Histologischer Befund als normalbefund, Ändern zu vorläufiger befund, Konsilbefund, nachbefund
+
+Dialog
+Name Histlosigischer Befund -> Vorläufiger Befund (scrolliste + edit)
+Name Neu					-> Nachbefund (scrolliste + edit)
+
+Todo: 3: boolean felder von task überarbeiten TODO: Archivieren + Dearchivieren
+TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
+TODO: 4: Liste für normale benutzer
+TODO: 5: rechte durchsetzten
+TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
+
+TODO: Auswahl der Operatuere/Einsender im diagnsoe bildschirm vereinfachen
+TODO: Geschlecht von ldap rausfinden
+TODO: Ansicht abhängige Knöpfe
+TODO: Schnelle Nachfärbug Dialog
+TODO: Freischaltungs link
+TODO: Biobank
+TODO: favouriten
+TODO: log in settings rework
+TODO: prevent overwriting of data from clinic physicians if changed
+TODO: verbessern der patientenauswahl links
+
+++++: urgent: status und info dialog
+++++: check patient fetch from jason form clinik -> zu viele patienten
+++++: wenn kein patient gefunden, darf dieser nicht ausgewählt werden können
+++++: print dialog auswahl der ärtze geht nicht
+++++: UREPORT Printing from create dialog
+++++: Multible councils
+++++: Diagnose page
+++++: edit page patient external
+++++: Logout warn
+++++: status display (in navigation)
+++++: Edit external patient from menu bar
+++++: Priorisierung
+++++: fullName propertie of physician move to person
+++++: Print-Dialog und auswahl von Files in patientenmaske
+
+http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
+Session Refresh: http://stackoverflow.com/questions/3642919/javax-faces-application-viewexpiredexception-view-could-not-be-restored
+
+
+
+
+
+
+
+
+
+

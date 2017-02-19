@@ -4,15 +4,162 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core"
-	xmlns:histo="http://java.sun.com/jsf/composite/components">
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 
-<histo:print taskToPrint="#{pdfHandlerAction.taskToPrint}"
-	closeListener="#{pdfHandlerAction.hidePrintDialog()}"
-	submitButtonIncludeLink="/pages/dialog/print/print_submit.xhtml"
-	headline="#{msg['dialog.print.headline']}" />
+<h:head>
+	<title><h:outputFormat value="#{msg['dialog.print.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
 
+
+<h:body styleClass="defaultDialogLayout bigDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.print.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					actionListener="#{printHandlerAction.hidePrintDialog()}">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="3" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumnTop defaultListingTableColumn30,">
+				<!-- left column -->
+
+				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+					<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol"
+						columnClasses="defaultListingTableColumn20,">
+
+						<!-- document type -->
+						<h:outputLabel value="#{msg['dialog.print.document']}" />
+						<p:selectOneMenu value="#{printHandlerAction.selectedTemplate}"
+							style="width:90% !important;"
+							converter="#{printHandlerAction.templateTransformer}"
+							styleClass="customSerachSelectMenu">
+							<f:selectItems value="#{printHandlerAction.templateList}"
+								var="template" itemLabel="#{template.name}"
+								itemValue="#{template}" />
+
+							<p:ajax update="@form" event="change"
+								onstart="PF('blockUIWidget').block()"
+								oncomplete="PF('blockUIWidget').unblock()"
+								listener="#{printHandlerAction.onChangePrintTemplate()}"></p:ajax>
+						</p:selectOneMenu>
+
+						<!-- printer -->
+						<h:outputLabel value="#{msg['dialog.print.printer']}" />
+						<!-- select printer -->
+						<p:selectOneMenu styleClass="customSerachSelectMenu"
+							style="width:90% !important;"
+							panelStyleClass="customSerachSelectMenuPanel"
+							value="#{printHandlerAction.selectedPrinter}" filter="true"
+							filterMatchMode="contains">
+
+							<f:selectItems
+								value="#{mainHandlerAction.settings.printerManager.printers}"
+								var="printer" itemLabel="#{printer.name}"
+								itemValue="#{printer.name}" />
+
+						</p:selectOneMenu>
+					</h:panelGrid>
+					
+					<!-- to -->
+					<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol" style="margin-top:20px;">
+						<h:outputLabel value="#{msg['dialog.print.addresses']}" />
+						<p:dataTable var="chooser"
+							value="#{printHandlerAction.contactChoosers}">
+							<!-- select -->
+							<p:column headerText="#" style="width:18px;">
+								<p:selectBooleanCheckbox value="#{chooser.selected}" styleClass="smallInput">
+									<p:ajax event="change" process="@form"
+										onstart="PF('blockUIWidget').block()"
+										oncomplete="PF('blockUIWidget').unblock()"
+										listener="#{printHandlerAction.onChooseContact()}"></p:ajax>
+								</p:selectBooleanCheckbox>
+							</p:column>
+							
+							<!-- count -->
+							<p:column headerText="#{msg['dialog.print.count']}" style="width:30px;">
+								<p:spinner value="#{chooser.copies}" styleClass="miniSpinner"
+									min="1" max="9"></p:spinner>
+							</p:column>
+							
+							<!-- role -->
+							<p:column headerText="" styleClass="smallFont">
+								<h:outputText
+									value="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}" />
+							</p:column>
+							
+							<!-- name -->
+							<p:column headerText="#{msg['dialog.print.name']}" styleClass="smallFont">
+								<h:outputText value="#{chooser.contact.person.fullName}" />
+							</p:column>
+
+						</p:dataTable>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGroup />
+
+				<!-- right column -->
+				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+
+					<h:panelGroup id="pdfRender">
+						<p:media player="pdf" value="#{printHandlerAction.pdfContent}"
+							width="100%" rendered="#{printHandlerAction.renderPdf}"
+							height="630px"></p:media>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer" style="width: 100% !important">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="4" style="float:right;">
+					<!-- print -->
+					<p:commandButton value="Drucken" icon="fa fa-print"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()"
+						actionListener="#{printHandlerAction.onPrintNewPdf()}"></p:commandButton>
+
+					<!-- select printer -->
+					<p:selectOneMenu styleClass="customSerachSelectMenu"
+						panelStyleClass="customSerachSelectMenuPanel"
+						value="#{printHandlerAction.selectedPrinter}" filter="true"
+						filterMatchMode="contains" style="margin-right:10px">
+
+						<f:selectItems
+							value="#{mainHandlerAction.settings.printerManager.printers}"
+							var="printer" itemLabel="#{printer.name}"
+							itemValue="#{printer.name}" />
+					</p:selectOneMenu>
+
+					<!-- download -->
+					<p:commandButton value="Öffnen" icon="fa fa-download" ajax="false"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{printHandlerAction.onDownloadPdf}">
+						<p:fileDownload value="#{printHandlerAction.pdfContent}" />
+					</p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{printHandlerAction.hidePrintDialog()}" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+		<ui:include src="../../template/blockUi.xhtml"></ui:include>
+	</h:form>
+</h:body>
 </html>
-
-

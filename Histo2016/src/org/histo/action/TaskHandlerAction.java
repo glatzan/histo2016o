@@ -93,8 +93,12 @@ public class TaskHandlerAction implements Serializable {
 	private PrintHandlerAction printHandlerAction;
 
 	@Autowired
+	@Lazy
 	private SettingsHandlerAction settingsHandlerAction;
 
+	@Autowired
+	@Lazy
+	private MediaHandlerAction mediaHandlerAction;
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -259,6 +263,9 @@ public class TaskHandlerAction implements Serializable {
 		getTemporaryTask().setUseAutoNomenclature(true);
 		setAutoNomenclatureChangedManually(false);
 
+		// resetting selected pdf container for informed consent upload
+		mediaHandlerAction.setSelectedPdfContainer(null);
+		
 		// creates a new sample
 		new Sample(getTemporaryTask(), !settingsHandlerAction.getAllAvailableMaterials().isEmpty()
 				? settingsHandlerAction.getAllAvailableMaterials().get(0) : null);
@@ -369,9 +376,7 @@ public class TaskHandlerAction implements Serializable {
 	}
 	
 	public void createNewTaskAndPrintUReport(Patient patient, Task task) {
-		Task newTask = createNewTask(patient,task);
-		
-		printHandlerAction.initBean(newTask);
+		createNewTask(patient,task);
 		
 		PrintTemplate[] subSelect = PrintTemplate
 				.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
@@ -381,7 +386,7 @@ public class TaskHandlerAction implements Serializable {
 			return;
 		}
 		
-		printHandlerAction.onPrintPdf(subSelect[0]);
+		printHandlerAction.printPdfFromExternalBean(subSelect[0]);
 	}
 
 	/********************************************************
@@ -675,6 +680,8 @@ public class TaskHandlerAction implements Serializable {
 
 		patientDao.initializeDataList(task);
 
+		taskDAO.initializeCouncilData(task);
+		
 		// setting council as default
 		if (task.getCouncils().size() == 0) {
 			logger.debug("Creating new");

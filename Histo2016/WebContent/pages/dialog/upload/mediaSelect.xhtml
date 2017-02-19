@@ -43,6 +43,10 @@
 						selection="#{mediaHandlerAction.temporaryPdfContainer}"
 						rowKey="#{pdf.id}" styleClass="navTable">
 
+
+						<p:ajax event="rowDblselect"
+							listener="#{mediaHandlerAction.selectMedia(mediaHandlerAction.temporaryPdfContainer)}" />
+							
 						<p:ajax event="rowSelect" update="@form" />
 
 						<p:column>

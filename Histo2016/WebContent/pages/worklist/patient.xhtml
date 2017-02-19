@@ -97,11 +97,9 @@
 			rendered="#{worklistHandlerAction.selectedPatient != null}"
 			selection="#{worklistHandlerAction.selectedPatient.selectedTask}"
 			rowKey="#{task.id}">
+			
 			<p:ajax event="rowSelect" update=":contentForm, :headerForm"
 				listener="#{worklistHandlerAction.onSelectTaskAndPatient(worklistHandlerAction.selectedPatient.selectedTask)}" />
-
-			<p:ajax event="rowSelect"
-				oncomplete="$('#contentForm\\:selectTaskBtn').click();" />
 
 			<p:column>
 				<f:facet name="header">

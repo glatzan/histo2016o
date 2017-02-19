@@ -168,7 +168,7 @@ public class NotificationHandlerAction implements Serializable {
 		setTmpTask(task);
 
 		// loading all pfs
-		taskDAO.initializeTaskData(task);
+		patientDao.initializeDataList(task);
 
 		if (task.isNotificationCompleted() && !show) {
 			// setting last manual report ready for download

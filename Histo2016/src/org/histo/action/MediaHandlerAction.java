@@ -172,6 +172,9 @@ public class MediaHandlerAction {
 		mainHandlerAction.showDialog(Dialog.MEDIA_PREVIEW);
 		patientDao.initializeDataList(dataList);
 		setTemporaryDataList(dataList);
+		
+		// setting default printer
+		printHandlerAction.setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 
 		if (mediaToDisplay == null && dataList.getAttachedPdfs().size() > 0)
 			mediaToDisplay = dataList.getAttachedPdfs().get(0);

@@ -5,20 +5,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisStatusState;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Gender;
 import org.histo.model.Contact;
@@ -27,13 +24,16 @@ import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.PrintTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -41,30 +41,28 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.AcroFields;
 import com.lowagie.text.pdf.Barcode128;
 import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfSmartCopy;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
-import com.sun.faces.facelets.util.Path;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 import de.nixosoft.jlr.JLRConverter;
 import de.nixosoft.jlr.JLRGenerator;
 
+@Component
+@Scope(value = "session")
 public class PdfGenerator {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	@Autowired
+	@Lazy
 	private ResourceBundle resourceBundle;
 
+	@Autowired
+	@Lazy
 	private MainHandlerAction mainHandlerAction;
-
-	public PdfGenerator(MainHandlerAction mainHandlerAction, ResourceBundle resourceBundle) {
-		this.resourceBundle = resourceBundle;
-		this.mainHandlerAction = mainHandlerAction;
-	}
 
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate) {
 		return generatePDFForReport(patient, task, printTemplate, null);
@@ -79,8 +77,8 @@ public class PdfGenerator {
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		mainHandlerAction.getSettings();
-		System.out.println(HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		logger.debug("Template File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+
 		// loading tex file
 		File template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
 
@@ -112,7 +110,7 @@ public class PdfGenerator {
 			JLRGenerator pdfGen = new JLRGenerator();
 
 			if (!pdfGen.generate(processedTex, output, workingDirectory)) {
-				System.out.println(pdfGen.getErrorMessage());
+				logger.error(pdfGen.getErrorMessage());
 			}
 
 			File test = pdfGen.getPDF();
@@ -223,58 +221,36 @@ public class PdfGenerator {
 		converter.replace("taskNumber", task.getTaskID());
 		converter.replace("ward", task.getWard());
 		converter.replace("eye", resourceBundle.get("enum.eye." + task.getEye()));
-		converter.replace("history", convertWord(task.getCaseHistory()));
+		converter.replace("history", task.getCaseHistory());
 		converter.replace("samples", task.getSamples());
 		converter.replace("diagnosisRevisions", task.getDiagnosisInfo().getDiagnosisRevisions());
 
 		Contact tmpPhysician = task.getPrimaryContact(ContactRole.SURGEON);
-		converter.replace("surgeon", tmpPhysician == null ? "" : convertWord(convertWord(tmpPhysician.getPerson().getFullNameAndTitle())));
+		converter.replace("surgeon",
+				tmpPhysician == null ? "" : tmpPhysician.getPerson().getFullNameAndTitle());
 		tmpPhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
-		converter.replace("privatePhysician", tmpPhysician == null ? "" : convertWord(tmpPhysician.getPerson().getFullNameAndTitle()));
+		converter.replace("privatePhysician",
+				tmpPhysician == null ? "" : tmpPhysician.getPerson().getFullNameAndTitle());
 		converter.replace("insurancePrivate", task.getPatient().isPrivateInsurance());
 
 	}
 
 	public final void replaceSignature(JLRConverter converter, Task task) {
 		converter.replace("sigantureDate", mainHandlerAction.date(task.getDiagnosisInfo().getSignatureDate()));
-		
+
 		Signature signature = task.getDiagnosisInfo().getSignatureOne();
-		if(signature != null && signature.getPhysician() != null){
-			converter.replace("signatureOne", convertWord(signature.getPhysician().getPerson().getFullNameAndTitle()));
-			converter.replace("signatureOneRole", convertWord(signature.getRole()));
+		if (signature != null && signature.getPhysician() != null) {
+			converter.replace("signatureOne", signature.getPhysician().getPerson().getFullNameAndTitle());
+			converter.replace("signatureOneRole", signature.getRole());
 		}
-		
+
 		signature = task.getDiagnosisInfo().getSignatureTwo();
-		if(signature != null && signature.getPhysician() != null){
-			converter.replace("sigantureTwo", convertWord(signature.getPhysician().getPerson().getFullNameAndTitle()));
-			converter.replace("signatureTwoRole", convertWord(signature.getRole()));
+		if (signature != null && signature.getPhysician() != null) {
+			converter.replace("sigantureTwo", signature.getPhysician().getPerson().getFullNameAndTitle());
+			converter.replace("signatureTwoRole", signature.getRole());
 		}
 	}
-	
-	private static final String[] REPLACEMENT = new String[Character.MAX_VALUE+1];
-	static {
-	    for(int i=Character.MIN_VALUE;i<=Character.MAX_VALUE;i++)
-	        REPLACEMENT[i] = Character.toString((char) i);
-	    // substitute
-	    REPLACEMENT['ä'] =  "{\\\"a}";
-	    // remove
-	    REPLACEMENT['ü'] =  "{\\\"u}";
-	    // expand
-	    REPLACEMENT['ö'] = "{\\\"o}";
-	    
-	    REPLACEMENT['Ä'] = "{\\\"A}";
-	    REPLACEMENT['Ü'] = "{\\\"U}";
-	    REPLACEMENT['Ö'] = "{\\\"O}";
-	    REPLACEMENT['ß'] = "{\\ss}";
-	}
-	
-	public String convertWord(String word) {
-	    StringBuilder sb = new StringBuilder(word.length());
-	    for(int i=0;i<word.length();i++)
-	        sb.append(REPLACEMENT[word.charAt(i)]);
-	    return sb.toString();
-	} 
-	
+
 	private static byte[] readContentIntoByteArray(File file) {
 		FileInputStream fileInputStream = null;
 		byte[] bFile = new byte[(int) file.length()];

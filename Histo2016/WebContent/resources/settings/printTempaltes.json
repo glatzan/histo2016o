@@ -17,8 +17,17 @@
 },
 {
 	"id" : 10,
-	"name" : "Befundbericht",
+	"name" : "Befundbericht UTF8",
 	"file" : "classpath:templates/print/Report_Intern_test.tex",
+	"file2" : "",
+	"documentType"	: "DIAGNOSIS_REPORT",
+	"defaultDocument" : false,
+	"doNotSave" : false
+},
+{
+	"id" : 11,
+	"name" : "Befundbericht Ascii",
+	"file" : "classpath:templates/print/Report_Intern_test2.tex",
 	"file2" : "",
 	"documentType"	: "DIAGNOSIS_REPORT",
 	"defaultDocument" : false,

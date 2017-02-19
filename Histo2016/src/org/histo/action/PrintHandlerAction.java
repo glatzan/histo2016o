@@ -15,6 +15,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Contact;
 import org.histo.model.Council;
@@ -58,6 +59,15 @@ public class PrintHandlerAction {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	@Autowired
+	private PatientDao patientDao;
+	
+	/**
+	 * class for creating pdfs
+	 */
+	@Autowired
+	private PdfGenerator pdfGenerator;
+
 	/**
 	 * The selected task for that a report should be generated
 	 */
@@ -99,11 +109,6 @@ public class PrintHandlerAction {
 	private String selectedPrinter;
 
 	/**
-	 * class for creating pdfs
-	 */
-	private PdfGenerator pdfGenerator;
-
-	/**
 	 * List with all associated contacts
 	 */
 	private List<ContactChooser> contactChoosers;
@@ -113,15 +118,6 @@ public class PrintHandlerAction {
 	 * changed, no rendering necessary
 	 */
 	private Contact contactRendered;
-
-	/**
-	 * Bare init for printing from another bean without using the gui
-	 * 
-	 * @param task
-	 */
-	public void initBean(Task task) {
-		initBean(task, null, null);
-	}
 
 	/**
 	 * Init of the bean, for printing with gui
@@ -134,9 +130,7 @@ public class PrintHandlerAction {
 
 		setTaskToPrint(task);
 
-		pdfGenerator = new PdfGenerator(mainHandlerAction, resourceBundle);
-
-		taskDAO.initializeTaskData(task);
+		patientDao.initializeDataList(task);
 
 		setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 
@@ -151,23 +145,6 @@ public class PrintHandlerAction {
 			else
 				setSelectedTemplate(selectedTemplate);
 		}
-		// // setting default external receiver to family physician
-		// if (getExternalReportPhysicianType() == null)
-		// setExternalReportPhysicianType(ContactRole.FAMILY_PHYSICIAN);
-		//
-		// // changing the time of signature if 0
-		// if (getDateOfReport() == 0)
-		// setDateOfReport(System.currentTimeMillis());
-		//
-		// // initializes teh task
-		// taskDAO.initializeCouncilData(task);
-		// taskDAO.initializeDiagnosisData(task);
-		//
-
-		//
-		// // also initializing taskHandlerAction, generating lists to choos
-		// // physicians from
-		// taskHandlerAction.initBean();
 	}
 
 	public void resetBean() {
@@ -182,7 +159,7 @@ public class PrintHandlerAction {
 	 * Showing only the dialog, no init will be done
 	 */
 	public void showPrintDialog() {
-		mainHandlerAction.showDialog(Dialog.PRINT_NEW);
+		mainHandlerAction.showDialog(Dialog.PRINT);
 	}
 
 	/**
@@ -213,7 +190,7 @@ public class PrintHandlerAction {
 		// rendering the template
 		onChangePrintTemplate();
 
-		mainHandlerAction.showDialog(Dialog.PRINT_NEW);
+		mainHandlerAction.showDialog(Dialog.PRINT);
 	}
 
 	/**
@@ -251,10 +228,13 @@ public class PrintHandlerAction {
 	 * Hides the print dialog and clears the print data.
 	 */
 	public void hidePrintDialog() {
-		mainHandlerAction.hideDialog(Dialog.PRINT_NEW);
+		mainHandlerAction.hideDialog(Dialog.PRINT);
 		resetBean();
 	}
 
+	/**
+	 * Updates the pdf content if a contact was chosen for the first time
+	 */
 	public void onChooseContact() {
 		List<ContactChooser> selectedContacts = getSelectedContactChooser();
 
@@ -286,7 +266,6 @@ public class PrintHandlerAction {
 	 * Renders the new template after a template was changed
 	 */
 	public void onChangePrintTemplate() {
-
 		// always render the pdf with the fist contact chosen
 		setTmpPdfContainer(pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
 				getSelectedTemplate(), getContactRendered() == null ? null : getContactRendered().getPerson()));
@@ -301,6 +280,11 @@ public class PrintHandlerAction {
 		}
 	}
 
+	/**
+	 * Return the pdf as streamed content
+	 * 
+	 * @return
+	 */
 	public StreamedContent getPdfContent() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
@@ -313,6 +297,11 @@ public class PrintHandlerAction {
 		}
 	}
 
+	/**
+	 * Saves a new pdf within the task
+	 * 
+	 * @param pdf
+	 */
 	public void saveGeneratedPdf(PDFContainer pdf) {
 		if (pdf.getId() == 0) {
 			logger.debug("Pdf not saved jet, saving" + pdf.getName());
@@ -376,23 +365,25 @@ public class PrintHandlerAction {
 	}
 
 	/**
-	 * External printing with template
+	 * External printing, no bean initialization necessary. File is not saved.
+	 * Printer has to be set
+	 * 
 	 * @param template
 	 */
-	public void onPrintPdf(PrintTemplate template) {
+	public void printPdfFromExternalBean(PrintTemplate template) {
 		PDFContainer newPdf = pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
 				template);
-		onPrintPdf(newPdf);
+		printPdfFromExternalBean(newPdf);
 	}
 
 	/**
-	 * External printing
+	 * External printing, no bean initialization necessary. File is not saved.
+	 * Printer has to be set
+	 * 
 	 * @param pdf
 	 * @param saveIfNew
 	 */
-	public void onPrintPdf(PDFContainer pdf) {
-
-
+	public void printPdfFromExternalBean(PDFContainer pdf) {
 		mainHandlerAction.getSettings().getPrinterManager().loadPrinter(selectedPrinter);
 		mainHandlerAction.getSettings().getPrinterManager().print(pdf);
 	}
