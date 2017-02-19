@@ -11,6 +11,11 @@
 		</param-value>
 	</context-param>
 
+	<error-page>
+   		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+    	<location>/WEB-INF/errorpages/expired.xhtml</location>
+	</error-page>
+
 	<context-param>
 		<param-name>log4jConfigLocation</param-name>
 		<param-value>/WEB-INF/log4j.properties</param-value>

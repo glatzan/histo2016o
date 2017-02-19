@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.event.ValueChangeListener;
+import javax.servlet.http.HttpServletRequest;
 
 import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
@@ -32,7 +33,7 @@ public class HelperHandlerAction implements Serializable {
 
 	@Autowired
 	private LogDAO logDAO;
-	
+
 	/**
 	 * Log Overlaypanel calls the getRevsionList method several times. This is a
 	 * Buffer to increase performance. It contains LogListcontainers with a
@@ -41,9 +42,9 @@ public class HelperHandlerAction implements Serializable {
 	private ArrayList<LogListContainer> logTmpMempory = new ArrayList<LogListContainer>();
 
 	/**
-	 * Returns a list with all Log for a passed object implementing LogAble. This
-	 * method uses a caching mechanism because the overlaypanel calls this
-	 * method several times. Logs will be updated after some time atomically. 
+	 * Returns a list with all Log for a passed object implementing LogAble.
+	 * This method uses a caching mechanism because the overlaypanel calls this
+	 * method several times. Logs will be updated after some time atomically.
 	 * 
 	 * @param logAble
 	 * @return
@@ -51,7 +52,7 @@ public class HelperHandlerAction implements Serializable {
 	public List<Log> getRevisionList(LogAble logAble) {
 		return getRevisionList(logAble, false);
 	}
-	
+
 	/**
 	 * Saves the given Object to the database
 	 * 
@@ -60,11 +61,12 @@ public class HelperHandlerAction implements Serializable {
 	public void saveObject(Object object) {
 		genericDAO.save(object);
 	}
-	
+
 	/**
-	 * Returns a list with all Log for a passed object implementing LogAble. This
-	 * method uses a caching mechanism because the overlaypanel calls this
+	 * Returns a list with all Log for a passed object implementing LogAble.
+	 * This method uses a caching mechanism because the overlaypanel calls this
 	 * method several times. Logs will be updated after some time atomically.
+	 * 
 	 * @param logAble
 	 * @param igonreTimestamp
 	 * @return
@@ -88,12 +90,13 @@ public class HelperHandlerAction implements Serializable {
 		}
 
 	}
-	
+
 	/**
 	 * Forces an update of the revsion list.
+	 * 
 	 * @param logAble
 	 */
-	public void updateRevision(LogAble logAble){
+	public void updateRevision(LogAble logAble) {
 		getRevisionList(logAble, true);
 	}
 
@@ -106,26 +109,4 @@ public class HelperHandlerAction implements Serializable {
 	public void archiveObject(ArchivAble archiveAble, boolean archived) {
 		archiveAble.setArchived(archived);
 	}
-
-	public void timeout() throws IOException {
-		//showDialog(HistoSettings.dialog(HistoSettings.DIALOG_LOGOUT));
-		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-		FacesContext.getCurrentInstance().getExternalContext()
-				.redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);
-	}
-
-	  public void valueChanged() {
-	      System.out.println("called: valueChanged()");
-	   }
-	   
-	   public void valueChanged(ValueChangeEvent event) {
-		   System.out.println(event.getOldValue());
-		   System.out.println(event.getNewValue());
-		   
-	      System.out.println("called: valueChanged(ValueChangeEvent event)");
-	   }
-	   
-	   public void valueChanged(ValueChangeListener listener) {
-	      System.out.println("called: valueChanged(ValueChangeListener listener)");
-	   }
 }

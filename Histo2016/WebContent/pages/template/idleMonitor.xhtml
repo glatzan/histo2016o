@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition>
+
+	<h:form prependId="false">
+		<!--  #{session.maxInactiveInterval * 1000 - 125000}-->
+		<p:idleMonitor timeout="#{session.maxInactiveInterval * 1000 - 125000}" onidle="startIdleMonitor()"
+			onactive="PF('timeoutDialog').hide();" />
+
+		<p:dialog id="timeoutSession" header="#{msg['session.expire']}"
+			widgetVar="timeoutDialog" showEffect="fade" hideEffect="fade"
+			modal="true" width="400" height="130" closable="false"
+			draggable="false" resizable="false" appendToBody="true"
+			onHide="stopCount()" onShow="doTimer()">
+
+			<p>
+				<p:panel>
+					<span class="ui-icon ui-icon-alert"
+						style="float: left; margin: 2px 8px" />
+					<h:outputLabel value="#{msg['dialog.logoff.text.1']}" />
+					<span id="dialog-countdown" style="font-weight: bold"></span>
+					<h:outputLabel value="#{msg['dialog.logoff.text.2']}" />
+				</p:panel>
+			</p>
+			<h:outputLabel value="#{msg['dialog.logoff.move.cursor']}" />
+		</p:dialog>
+
+		<p:commandButton style="display: none" id="keepAlive"
+			widgetVar="keepAlive"
+			actionListener="#{mainHandlerAction.keepSessionAlive()}" />
+
+		<p:commandButton style="display: none" id="destroySession"
+			widgetVar="destroySession"
+			actionListener="#{mainHandlerAction.destroySession()}" />
+
+
+		<p:commandButton style="display: none" id="refreshContent"
+			widgetVar="refreshContent" update="@all" />
+
+		<script type="text/javascript">
+			var TIME = 120; // in seconds
+			var countTimer = TIME;
+			var processTimer;
+			var timer_is_on = 0;
+			var redirectPage = "#{request.contextPath}/login.xhtml";
+
+			var countDownDiv = "dialog-countdown";
+			var txtCountDown = null;
+			if (!txtCountDown)
+				txtCountDown = document.getElementById(countDownDiv);
+
+			function startIdleMonitor() {
+
+				countTimer = TIME;
+				txtCountDown.innerHTML = countTimer;
+				PF('timeoutDialog').show();
+			}
+
+			function timedCount() {
+				txtCountDown.innerHTML = countTimer;
+				if (countTimer == 0) {
+					stopCount();
+					PF('destroySession').jq.click();
+					window.location.href = redirectPage;
+					return;
+				}
+				countTimer = countTimer - 1;
+				processTimer = setTimeout("timedCount()", 1000);
+			}
+			function doTimer() {
+				if (!timer_is_on) {
+					timer_is_on = 1;
+					timedCount();
+				}
+			}
+			function stopCount() {
+				clearTimeout(processTimer);
+				timer_is_on = 0;
+				PF('keepAlive').jq.click();
+			}
+		</script>
+	</h:form>
+</ui:composition>
+</html>

@@ -14,6 +14,29 @@ import javax.faces.event.ExceptionQueuedEventContext;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+/**
+ * 	<!--  
+		<factory>
+			<exception-handler-factory>
+				org.histo.config.exception.CustomExceptionHandlerFactory
+			</exception-handler-factory>
+		</factory>-->
+		can be actived in faces config again if needed
+		
+		<mvc:interceptors>
+		<bean id="webContentInterceptor"
+			class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+			<property name="cacheSeconds" value="0" />
+			<property name="useExpiresHeader" value="true" />
+			<property name="useCacheControlHeader" value="true" />
+			<property name="useCacheControlNoStore" value="true" />
+		</bean>
+	</mvc:interceptors>
+	
+	this is used instead in spring config
+ * @author andi
+ *
+ */
 public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 	private static final Logger log = Logger.getLogger(CustomExceptionHandler.class.getCanonicalName());
 	private ExceptionHandler wrapped;

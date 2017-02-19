@@ -1,5 +1,6 @@
 package org.histo.action;
 
+import java.io.IOException;
 import java.net.URL;
 // http://stackoverflow.com/questions/3642919/javax-faces-application-viewexpiredexception-view-could-not-be-restored
 import java.net.URLClassLoader;
@@ -11,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
@@ -160,6 +163,35 @@ public class MainHandlerAction {
 			setCurrentView(View.GUEST);
 
 	}
+
+	/********************************************************
+	 * Session
+	 ********************************************************/
+	/**
+	 * Destroys the current session
+	 * 
+	 * @throws IOException
+	 */
+	public void destroySession() throws IOException {
+		logger.debug("Destroying Session");
+		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+		FacesContext.getCurrentInstance().getExternalContext()
+				.redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);
+	}
+
+	/**
+	 * Refreshes the current Session
+	 */
+	public void keepSessionAlive() {
+		logger.debug("Refreshing Session");
+		FacesContext fc = FacesContext.getCurrentInstance();
+		HttpServletRequest request = (HttpServletRequest) fc.getExternalContext().getRequest();
+		request.getSession();
+	}
+
+	/********************************************************
+	 * Session
+	 ********************************************************/
 
 	/*
 	 * ************************** Navigation ****************************

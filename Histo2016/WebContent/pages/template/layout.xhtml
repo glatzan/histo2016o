@@ -41,11 +41,12 @@
 		</div>
 	</div>
 
-	<h:form>
-		<p:idleMonitor timeout="900000">
+
+	<ui:include src="idleMonitor.xhtml" />
+	<!-- <h:form>		<p:idleMonitor timeout="900000">
 			<p:ajax event="idle" listener="#{helperHandlerAction.timeout()}"
 				oncomplete="alert('Session expired!')" />
-		</p:idleMonitor>
-	</h:form>
+		</p:idleMonitor></h:form>-->
+
 </h:body>
 </html>

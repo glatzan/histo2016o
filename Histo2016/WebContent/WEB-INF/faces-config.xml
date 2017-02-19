@@ -16,10 +16,11 @@
 		</locale-config>
 		
 	</application>
-	
+	<!--  
 		<factory>
 			<exception-handler-factory>
 				org.histo.config.exception.CustomExceptionHandlerFactory
 			</exception-handler-factory>
-		</factory>
+		</factory>-->
+		
 </faces-config> 
