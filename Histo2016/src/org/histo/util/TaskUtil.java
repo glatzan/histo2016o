@@ -10,6 +10,7 @@ import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.DiagnosisInfo;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
@@ -19,7 +20,7 @@ import org.histo.ui.StainingTableChooser;
 
 public class TaskUtil {
 
-	private static Logger logger = Logger.getRootLogger();
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	/**
 	 * Returns the number of the same stainings used within this block
@@ -33,8 +34,8 @@ public class TaskUtil {
 		for (Slide slideInBlock : slide.getParent().getSlides()) {
 			if (slideInBlock.getSlidePrototype().getId() == slide.getSlidePrototype().getId())
 				count++;
-			
-			if(slideInBlock == slide)
+
+			if (slideInBlock == slide)
 				break;
 		}
 		return count;
@@ -208,25 +209,44 @@ public class TaskUtil {
 
 	/**
 	 * Returns a name for a diagnosis revision
+	 * 
 	 * @param revisions
 	 * @param revision
 	 * @param resourceBundle
 	 * @return
+	 * 
 	 */
-	public static final String getDiagnosisName(List<DiagnosisRevision> revisions, DiagnosisRevision revision,
+	public static final String getDiagnosisRevisionName(List<DiagnosisRevision> revisions, DiagnosisRevision revision,
 			ResourceBundle resourceBundle) {
-		int number = 1;
 
-		for (DiagnosisRevision revisionListItem : revisions) {
-			if (revisionListItem.getType() == revision.getType()) {
-				number++;
+		// if default diagnosis
+		if (revision.getType() == DiagnosisRevisionType.DIAGNOSIS) {
+			// if there are other diagnoses then the default one
+			if (revisions.size() > 1) {
+				logger.debug("DiagnosisRevision name " + resourceBundle.get("enum.diagnosisType.DIAGNOSIS.temp"));
+				return resourceBundle.get("enum.diagnosisType.DIAGNOSIS.temp");
+			} else {
+				// default diagnosis only
+				logger.debug("DiagnosisRevision name " + resourceBundle.get("enum.diagnosisType.DIAGNOSIS"));
+				return resourceBundle.get("enum.diagnosisType.DIAGNOSIS");
 			}
-		}
 
-		return resourceBundle.get("enum.diagnosisType." + revision.getType()) + (number == 0 ? "" : " " + number);
+		} else {
+			int number = 0;
+			for (DiagnosisRevision diagnosisRevision : revisions) {
+				if (diagnosisRevision == revision)
+					break;
+
+				if (diagnosisRevision.getType() == revision.getType())
+					number++;
+			}
+			String result = resourceBundle.get("enum.diagnosisType." + revision.getType())
+					+ (number == 0 ? "" : " " + number);
+			logger.debug("DiagnosisRevision name " + result);
+			return result;
+		}
 	}
 
-	
 	/**
 	 * Returns the task with the highest priority. If several tasks share the
 	 * same priority the first one is returned.

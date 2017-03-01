@@ -22,6 +22,7 @@ import org.histo.model.patient.DiagnosisInfo;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
+import org.histo.ui.RevisionHolder;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -64,8 +65,17 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * List containing all old revisions and a new revision. The string contains
 	 * the proposed new name
 	 */
-	private MultiKeyMap newRevisionList;
+	private List<RevisionHolder> newRevisionList;
 
+	/**
+	 * Type of the new revision
+	 */
+	private DiagnosisRevisionType newRevisionType;
+
+	/**
+	 * Types of all available revisionTypes to create
+	 */
+	private DiagnosisRevisionType[] selectableRevisionTypes;
 	/********************************************************
 	 * Diagnosis
 	 ********************************************************/
@@ -140,19 +150,23 @@ public class DiagnosisHandlerAction implements Serializable {
 		logger.info("Creating new diagnosisRevision");
 
 		DiagnosisRevision diagnosisRevision = new DiagnosisRevision();
-		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().size());
 		diagnosisRevision.setType(type);
-		diagnosisRevision.setParent(parent);
-		diagnosisRevision
-				.setName(TaskUtil.getDiagnosisName(parent.getDiagnosisRevisions(), diagnosisRevision, resourceBundle));
+		diagnosisRevision.setName(
+				TaskUtil.getDiagnosisRevisionName(parent.getDiagnosisRevisions(), diagnosisRevision, resourceBundle));
 
+		addDiagnosisRevision(parent, diagnosisRevision);
+
+		return diagnosisRevision;
+	}
+
+	public void addDiagnosisRevision(DiagnosisInfo parent, DiagnosisRevision diagnosisRevision) {
 		// saving to database
-		genericDAO.save(diagnosisRevision,
-				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.new",
-						diagnosisRevision.getParent().getParent().getTaskID(), diagnosisRevision.getName()),
-				diagnosisRevision.getPatient());
+		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisInfo.diagnosisRevision.new",
+				diagnosisRevision.getName());
 
+		diagnosisRevision.setParent(parent);
 		parent.getDiagnosisRevisions().add(diagnosisRevision);
+		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().indexOf(diagnosisRevision));
 
 		// creating a diagnosis for every sample
 		for (Sample sample : parent.getParent().getSamples()) {
@@ -160,12 +174,9 @@ public class DiagnosisHandlerAction implements Serializable {
 		}
 
 		// saving to database
-		genericDAO.save(diagnosisRevision,
-				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.update",
-						diagnosisRevision.getParent().getParent().getTaskID(), diagnosisRevision.getName()),
-				diagnosisRevision.getPatient());
+		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisInfo.diagnosisRevision.update",
+				diagnosisRevision.getName());
 
-		return diagnosisRevision;
 	}
 
 	/**
@@ -230,10 +241,8 @@ public class DiagnosisHandlerAction implements Serializable {
 			createDiagnosis(diagnosisRevision, sample);
 		}
 
-		genericDAO.save(diagnosisRevision,
-				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.new",
-						diagnosisRevision.getParent().getParent().getTaskID(), diagnosisRevision.getName()),
-				diagnosisRevision.getPatient());
+		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisInfo.diagnosisRevision.new",
+				diagnosisRevision.getName());
 	}
 
 	/********************************************************
@@ -245,18 +254,68 @@ public class DiagnosisHandlerAction implements Serializable {
 	 ********************************************************/
 	public void prepareDiagnosisRevisionDialog(Task task) {
 		setTemporaryTask(task);
-		setNewRevisionList(new MultiKeyMap());
-		for (DiagnosisRevision revision : task.getDiagnosisInfo().getDiagnosisRevisions()) {
-			getNewRevisionList().put(revision.getName(), revision);
-		}
+
+		DiagnosisRevisionType[] types = new DiagnosisRevisionType[3];
+		types[0] = DiagnosisRevisionType.DIAGNOSIS_REVISION;
+		types[1] = DiagnosisRevisionType.DIAGNOSIS_CORRECTION;
+		types[2] = DiagnosisRevisionType.DIAGNOSIS_COUNCIL;
+		
+		setSelectableRevisionTypes(types);
+		
+		updateDiagnosisRevisionType();
 		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_REVISION_CREATE);
 	}
-	
+
+	public void updateDiagnosisRevisionType() {
+		setNewRevisionList(new ArrayList<RevisionHolder>());
+
+		List<DiagnosisRevision> newList = new ArrayList<DiagnosisRevision>(
+				getTemporaryTask().getDiagnosisInfo().getDiagnosisRevisions());
+		newList.add(new DiagnosisRevision(getTemporaryTask().getDiagnosisInfo(), getNewRevisionType()));
+
+		for (DiagnosisRevision revision : newList) {
+			getNewRevisionList().add(
+					new RevisionHolder(revision, TaskUtil.getDiagnosisRevisionName(newList, revision, resourceBundle)));
+		}
+	}
+
+	public void copyOldNameFromDiagnosisRevision(DiagnosisRevision diagnosisRevision) {
+		for (RevisionHolder revisionHolder : newRevisionList) {
+			if (revisionHolder.getRevision() == diagnosisRevision)
+				revisionHolder.setName(diagnosisRevision.getName());
+		}
+	}
+
+	public void createDiagnosisRevisionFromGui() {
+
+		for (RevisionHolder revisionHolder : getNewRevisionList()) {
+			if (!revisionHolder.getName().equals(revisionHolder.getRevision().getName())) {
+				logger.debug("Updating revision name from " + revisionHolder.getRevision().getName() + " to "
+						+ revisionHolder.getName());
+				// updating name
+				revisionHolder.getRevision().setName(revisionHolder.getName());
+
+				// new revision
+				if (revisionHolder.getRevision().getId() == 0) {
+					addDiagnosisRevision(revisionHolder.getRevision().getParent(), revisionHolder.getRevision());
+				} else {
+					// update revision
+					mainHandlerAction.saveDataChange(revisionHolder.getRevision(),
+							"log.patient.task.diagnosisInfo.diagnosisRevision.update",
+							revisionHolder.getRevision().getName());
+				}
+			}
+		}
+
+		// saving task to database
+		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.update", getTemporaryTask().getTaskID());
+		hideDiagnosisRevisionDialog();
+	}
+
 	public void hideDiagnosisRevisionDialog() {
 		setNewRevisionList(null);
 		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_REVISION_CREATE);
 	}
-
 	/********************************************************
 	 * Diagnosis Gui
 	 ********************************************************/
@@ -412,10 +471,8 @@ public class DiagnosisHandlerAction implements Serializable {
 		if (diagnosis.getParent().getText() == null || diagnosis.getParent().getText().isEmpty()) {
 			diagnosis.getParent().setText(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 			logger.debug("Updating revision extended text");
-			genericDAO.save(diagnosis.getParent(),
-					resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.update", task.getId(),
-							diagnosis.getParent().getName()),
-					diagnosis.getPatient());
+			mainHandlerAction.saveDataChange(diagnosis.getParent(),
+					"log.patient.task.diagnosisInfo.diagnosisRevision.update", diagnosis.getParent().getName());
 		}
 
 	}
@@ -458,10 +515,8 @@ public class DiagnosisHandlerAction implements Serializable {
 						: tmpDiagnosis.getParent().getText() + "\r\n"
 								+ tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 
-		genericDAO.save(tmpDiagnosis.getParent(),
-				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.update",
-						tmpDiagnosis.getParent().getParent().getParent().getId(), tmpDiagnosis.getParent().getName()),
-				tmpDiagnosis.getPatient());
+		mainHandlerAction.saveDataChange(tmpDiagnosis.getParent(),
+				"log.patient.task.diagnosisInfo.diagnosisRevision.update", tmpDiagnosis.getParent().getName());
 
 		hideCopyHistologicalRecordDialog();
 	}
@@ -494,12 +549,28 @@ public class DiagnosisHandlerAction implements Serializable {
 		this.tmpDiagnosis = tmpDiagnosis;
 	}
 
-	public MultiKeyMap getNewRevisionList() {
+	public List<RevisionHolder> getNewRevisionList() {
 		return newRevisionList;
 	}
 
-	public void setNewRevisionList(MultiKeyMap newRevisionList) {
+	public void setNewRevisionList(List<RevisionHolder> newRevisionList) {
 		this.newRevisionList = newRevisionList;
+	}
+
+	public DiagnosisRevisionType getNewRevisionType() {
+		return newRevisionType;
+	}
+
+	public void setNewRevisionType(DiagnosisRevisionType newRevisionType) {
+		this.newRevisionType = newRevisionType;
+	}
+
+	public DiagnosisRevisionType[] getSelectableRevisionTypes() {
+		return selectableRevisionTypes;
+	}
+
+	public void setSelectableRevisionTypes(DiagnosisRevisionType[] selectableRevisionTypes) {
+		this.selectableRevisionTypes = selectableRevisionTypes;
 	}
 	/********************************************************
 	 * Getter/Setter

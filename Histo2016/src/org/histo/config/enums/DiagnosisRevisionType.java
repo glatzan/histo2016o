@@ -7,5 +7,5 @@ package org.histo.config.enums;
  *
  */
 public enum DiagnosisRevisionType {
-	DIAGNOSIS, DIAGNOSIS_REVISION;
+	DIAGNOSIS, DIAGNOSIS_REVISION, DIAGNOSIS_CORRECTION, DIAGNOSIS_COUNCIL;
 }

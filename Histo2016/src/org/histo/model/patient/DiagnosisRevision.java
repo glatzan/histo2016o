@@ -97,6 +97,11 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public DiagnosisRevision() {
 	}
 
+	public DiagnosisRevision(DiagnosisInfo parent, DiagnosisRevisionType type) {
+		this.parent = parent;
+		this.type = type;
+	}
+
 	/******************************************************** Transient ********************************************************/
 
 	@Transient
