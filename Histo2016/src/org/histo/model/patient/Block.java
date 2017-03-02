@@ -41,7 +41,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAble, DeleteAble, SaveAble {
+public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, SaveAble {
 
 	private long id;
 
@@ -90,12 +90,13 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	}
 
 	@Transient
-	public void updateAllNames(boolean useAutoNomenclature){
+	public void updateAllNames(boolean useAutoNomenclature) {
 		updateNameOfBlock(useAutoNomenclature);
 		for (Slide slide : slides) {
 			slide.updateNameOfSlide();
 		}
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -163,16 +164,6 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	 * Interface StainingStauts
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link StainingInfo} interfaces new method. Returns true
-	 * if the creation date was on the same as the current day.
-	 */
-	@Override
-	@Transient
-	public boolean isNew() {
-		return isNew(getCreationDate());
-	}
-
-	/**
 	 * Returns the status of the staining process. Either it can return staining
 	 * performed, staining needed, restaining needed (restaining is returned if
 	 * at least one staining is marked as restaining).
@@ -184,23 +175,15 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 		if (slides.isEmpty())
 			return StainingStatus.STAINING_NEEDED;
 
-		boolean stainingNeeded = false;
+		int level = StainingStatus.PERFORMED.getLevel();
 
-		for (Slide staining : slides) {
+		for (Slide slide : slides) {
 
-			// continue if no staining is needed
-			if (staining.isStainingPerformed())
-				continue;
-			else {
-				// check if restaining is needed (restaining > staining) so
-				// return that it is needed
-				if (staining.isReStaining())
-					return StainingStatus.RE_STAINING_NEEDED;
-				else
-					stainingNeeded = true;
-			}
+			if (slide.getStainingStatus().getLevel() > level)
+				level = slide.getStainingStatus().getLevel();
 		}
-		return stainingNeeded ? StainingStatus.STAINING_NEEDED : StainingStatus.PERFORMED;
+
+		return StainingStatus.getStainingStatusByLevel(level);
 	}
 
 	/********************************************************
@@ -236,6 +219,7 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	public Task getTask() {
 		return getParent().getTask();
 	}
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -262,10 +246,11 @@ public class Block implements Parent<Sample>, StainingInfo, CreationDate, LogAbl
 	public Dialog getArchiveDialog() {
 		return Dialog.DELETE_TREE_ENTITY;
 	}
+
 	/********************************************************
 	 * Interface Delete Able
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Interface SaveAble
 	 ********************************************************/

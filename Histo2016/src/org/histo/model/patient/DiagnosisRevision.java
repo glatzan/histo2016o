@@ -29,14 +29,15 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.StainingStatus;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.DeleteAble;
-import org.histo.model.interfaces.DiagnosisStatus;
+import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
@@ -50,7 +51,7 @@ import com.google.gson.annotations.Expose;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
-public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>, DeleteAble, LogAble, SaveAble {
+public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContainer>, DeleteAble, LogAble, SaveAble {
 
 	private long id;
 
@@ -59,12 +60,15 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	 */
 	private String name;
 
+	/**
+	 * Version
+	 */
 	private long version;
 
 	/**
 	 * Parent of the Diagnosis
 	 */
-	private DiagnosisInfo parent;
+	private DiagnosisContainer parent;
 
 	/**
 	 * Number of the revision in the revision sequence
@@ -72,14 +76,29 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	private int sequenceNumber;
 
 	/**
-	 * True if archived
-	 */
-	private boolean archived;
-
-	/**
 	 * Type of the revison @see {@link DiagnosisRevisionType}
 	 */
 	private DiagnosisRevisionType type;
+
+	/**
+	 * Date of diagnosis creation.
+	 */
+	private long creationDate;
+
+	/**
+	 * Date of diagnosis finalization.
+	 */
+	private long compleationDate;
+
+	/**
+	 * True if finalized.
+	 */
+	private boolean diagnosisCompleted;
+
+	/**
+	 * 
+	 */
+	private boolean reDiagnosis;
 
 	/**
 	 * All diagnoses
@@ -90,14 +109,14 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	 * Text containing the histological record for all samples.
 	 */
 	private String text = "";
-	
+
 	/**
 	 * Standardt consutructor
 	 */
 	public DiagnosisRevision() {
 	}
 
-	public DiagnosisRevision(DiagnosisInfo parent, DiagnosisRevisionType type) {
+	public DiagnosisRevision(DiagnosisContainer parent, DiagnosisRevisionType type) {
 		this.parent = parent;
 		this.type = type;
 	}
@@ -144,7 +163,7 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public void setVersion(long version) {
 		this.version = version;
 	}
-	
+
 	@Column(columnDefinition = "text")
 	public String getText() {
 		return text;
@@ -153,8 +172,8 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public void setText(String text) {
 		this.text = text;
 	}
-	
-	@OneToMany(cascade = CascadeType.ALL , mappedBy = "parent", fetch = FetchType.EAGER)
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("sample.id ASC")
 	public List<Diagnosis> getDiagnoses() {
@@ -192,65 +211,73 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 		this.sequenceNumber = sequenceNumber;
 	}
 
-	/********************************************************
-	 * Interface DiagnosisStatusState
-	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the
-	 * status of the diagnoses.
-	 */
-	@Transient
-	@Override
-	public DiagnosisStatusState getDiagnosisStatus() {
-		// if (getDiagnoses().isEmpty())
-		// return DiagnosisStatusState.DIAGNOSIS_NEEDED;
-		//
-		// boolean diagnosisNeeded = false;
-		//
-		// for (Diagnosis diagnosis : getDiagnoses()) {
-		//
-		// if (diagnosis.isArchived())
-		// continue;
-		//
-		// // continue if no diangosis is needed
-		// if (diagnosis.isFinalized())
-		// continue;
-		// else {
-		// // check if restaining is needed (restaining > staining) so
-		// // return that it is needed
-		// if (diagnosis.isDiagnosisRevision())
-		// return DiagnosisStatusState.RE_DIAGNOSIS_NEEDED;
-		// else
-		// diagnosisNeeded = true;
-		// }
-		//
-		// }
+	public long getCreationDate() {
+		return creationDate;
+	}
 
-		// // if there is more then one diagnosis a revision was created
-		// if (getDiagnoses().size() > 1 && diagnosisNeeded) {
-		// return DiagnosisStatusState.RE_DIAGNOSIS_NEEDED;
-		// } else {
-		// return diagnosisNeeded ? DiagnosisStatusState.DIAGNOSIS_NEEDED :
-		// DiagnosisStatusState.PERFORMED;
-		// }
+	public long getCompleationDate() {
+		return compleationDate;
+	}
 
-		// TODO: rework
-		return DiagnosisStatusState.DIAGNOSIS_NEEDED;
+	public boolean isDiagnosisCompleted() {
+		return diagnosisCompleted;
+	}
+
+	public boolean isReDiagnosis() {
+		return reDiagnosis;
+	}
+
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
+	}
+
+	public void setCompleationDate(long compleationDate) {
+		this.compleationDate = compleationDate;
+	}
+
+	public void setDiagnosisCompleted(boolean diagnosisCompleted) {
+		this.diagnosisCompleted = diagnosisCompleted;
+	}
+
+	public void setReDiagnosis(boolean reDiagnosis) {
+		this.reDiagnosis = reDiagnosis;
 	}
 
 	/********************************************************
-	 * Interface DiagnosisStatusState
+	 * Interface DiagnosisStatus
+	 ********************************************************/
+	/**
+	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
+	 * of the diagnoses.
+	 */
+	@Transient
+	@Override
+	public DiagnosisStatus getDiagnosisStatus() {
+		// if empty return staining needed
+		if (getDiagnoses().isEmpty())
+			return DiagnosisStatus.DIAGNOSIS_NEEDED;
+
+		if (isDiagnosisCompleted())
+			return DiagnosisStatus.PERFORMED;
+		else if (!isDiagnosisCompleted() && isReDiagnosis())
+			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
+		else
+			return DiagnosisStatus.DIAGNOSIS_NEEDED;
+	}
+
+	/********************************************************
+	 * Interface DiagnosisStatus
 	 ********************************************************/
 
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
 	@ManyToOne
-	public DiagnosisInfo getParent() {
+	public DiagnosisContainer getParent() {
 		return parent;
 	}
 
-	public void setParent(DiagnosisInfo parent) {
+	public void setParent(DiagnosisContainer parent) {
 		this.parent = parent;
 	}
 
@@ -262,7 +289,7 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
-	
+
 	/**
 	 * Returns the parent task
 	 */
@@ -271,7 +298,7 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public Task getTask() {
 		return getParent().getTask();
 	}
-	
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -296,6 +323,7 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	public Dialog getArchiveDialog() {
 		return null;
 	}
+
 	/********************************************************
 	 * Interface Delete Able
 	 ********************************************************/
@@ -311,4 +339,5 @@ public class DiagnosisRevision implements DiagnosisStatus, Parent<DiagnosisInfo>
 	/********************************************************
 	 * Interface SaveAble
 	 ********************************************************/
+
 }

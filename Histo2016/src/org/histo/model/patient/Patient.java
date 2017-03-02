@@ -30,7 +30,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Gender;
 import org.histo.config.enums.StainingStatus;
@@ -38,7 +38,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.DiagnosisStatus;
+import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -52,7 +52,7 @@ import org.primefaces.json.JSONObject;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient implements Parent<Patient>, DiagnosisStatus<Task>, StainingInfo<Task>, CreationDate, LogAble,
+public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, CreationDate, LogAble,
 		ArchivAble, SaveAble, HasDataList {
 
 	private long id;
@@ -356,20 +356,20 @@ public class Patient implements Parent<Patient>, DiagnosisStatus<Task>, Staining
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface DiagnosisStatusState
+	 * Interface DiagnosisStatus
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the
+	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the
 	 * status of the diagnoses.
 	 */
 	@Override
 	@Transient
-	public DiagnosisStatusState getDiagnosisStatus() {
+	public DiagnosisStatus getDiagnosisStatus() {
 		return getDiagnosisStatus(getTasks());
 	}
 
 	/********************************************************
-	 * Interface DiagnosisStatusState
+	 * Interface DiagnosisStatus
 	 ********************************************************/
 
 	/********************************************************

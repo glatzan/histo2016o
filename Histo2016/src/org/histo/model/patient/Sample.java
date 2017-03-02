@@ -26,7 +26,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StainingStatus;
@@ -34,7 +34,7 @@ import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
-import org.histo.model.interfaces.DiagnosisStatus;
+import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
@@ -48,7 +48,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, LogAble, DeleteAble, SaveAble {
+public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, SaveAble {
 
 	private long id;
 
@@ -236,17 +236,6 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/
-
-	/**
-	 * Overwrites the {@link StainingInfo} interfaces new method. Returns true
-	 * if the creation date was on the same as the current day.
-	 */
-	@Override
-	@Transient
-	public boolean isNew() {
-		return isNew(getCreationDate());
-	}
-
 	/**
 	 * Returns the status of the staining process. Either it can return staining
 	 * performed, staining needed, restaining needed (restaining is returned if
@@ -255,7 +244,19 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	@Override
 	@Transient
 	public StainingStatus getStainingStatus() {
-		return getStainingStatus(getBlocks());
+		// if empty return staining needed
+		if (getBlocks().isEmpty())
+			return StainingStatus.STAINING_NEEDED;
+
+		int level = StainingStatus.PERFORMED.getLevel();
+
+		for (Block block : getBlocks()) {
+
+			if (block.getStainingStatus().getLevel() > level)
+				level = block.getStainingStatus().getLevel();
+		}
+
+		return StainingStatus.getStainingStatusByLevel(level);
 	}
 
 	/********************************************************
@@ -291,6 +292,7 @@ public class Sample implements Parent<Task>, StainingInfo<Block>, CreationDate, 
 	public Task getTask() {
 		return getParent();
 	}
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/

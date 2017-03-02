@@ -8,5 +8,24 @@ package org.histo.config.enums;
  *
  */
 public enum StainingStatus {
-	PERFORMED, STAINING_NEEDED, RE_STAINING_NEEDED;
+	PERFORMED(1), STAINING_NEEDED(2), RE_STAINING_NEEDED(3);
+
+	private final int level;
+
+	StainingStatus(int level) {
+		this.level = level;
+	}
+
+	public static final StainingStatus getStainingStatusByLevel(int level) {
+		if (level == 1)
+			return StainingStatus.PERFORMED;
+		if (level == 2)
+			return StainingStatus.STAINING_NEEDED;
+
+		return StainingStatus.RE_STAINING_NEEDED;
+	}
+
+	public int getLevel() {
+		return level;
+	}
 }

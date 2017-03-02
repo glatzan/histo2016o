@@ -223,7 +223,7 @@ public class PdfGenerator {
 		converter.replace("eye", resourceBundle.get("enum.eye." + task.getEye()));
 		converter.replace("history", task.getCaseHistory());
 		converter.replace("samples", task.getSamples());
-		converter.replace("diagnosisRevisions", task.getDiagnosisInfo().getDiagnosisRevisions());
+		converter.replace("diagnosisRevisions", task.getDiagnosisContainer().getDiagnosisRevisions());
 
 		Contact tmpPhysician = task.getPrimaryContact(ContactRole.SURGEON);
 		converter.replace("surgeon",
@@ -236,15 +236,15 @@ public class PdfGenerator {
 	}
 
 	public final void replaceSignature(JLRConverter converter, Task task) {
-		converter.replace("sigantureDate", mainHandlerAction.date(task.getDiagnosisInfo().getSignatureDate()));
+		converter.replace("sigantureDate", mainHandlerAction.date(task.getDiagnosisContainer().getSignatureDate()));
 
-		Signature signature = task.getDiagnosisInfo().getSignatureOne();
+		Signature signature = task.getDiagnosisContainer().getSignatureOne();
 		if (signature != null && signature.getPhysician() != null) {
 			converter.replace("signatureOne", signature.getPhysician().getPerson().getFullNameAndTitle());
 			converter.replace("signatureOneRole", signature.getRole());
 		}
 
-		signature = task.getDiagnosisInfo().getSignatureTwo();
+		signature = task.getDiagnosisContainer().getSignatureTwo();
 		if (signature != null && signature.getPhysician() != null) {
 			converter.replace("sigantureTwo", signature.getPhysician().getPerson().getFullNameAndTitle());
 			converter.replace("signatureTwoRole", signature.getRole());
@@ -374,7 +374,7 @@ public class PdfGenerator {
 		// sample.getLastRelevantDiagnosis().getDiagnosis() + "\r\n");
 		//
 		// if (sample.getDiagnosisStatus() ==
-		// DiagnosisStatusState.RE_DIAGNOSIS_NEEDED)
+		// DiagnosisStatus.RE_DIAGNOSIS_NEEDED)
 		// reDiagonsisList.append(sample.getSampleID() + " "
 		// + sample.getLastRelevantDiagnosis().getDiagnosisRevisionText() +
 		// "\r\n");
@@ -431,7 +431,7 @@ public class PdfGenerator {
 		// }
 		//
 		// if (task.getDiagnosisStatus() ==
-		// DiagnosisStatusState.RE_DIAGNOSIS_NEEDED) {
+		// DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
 		// setStamperField(stamper, "B_RE_DIAGNOSIS", "1");
 		// setStamperField(stamper, "B_RE_DIAGNOSIS_TEXT",
 		// reDiagonsisList.toString());

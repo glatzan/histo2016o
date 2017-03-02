@@ -10,7 +10,7 @@ import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.DiagnosisInfo;
+import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;

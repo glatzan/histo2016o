@@ -200,7 +200,7 @@
 
 		<!-- Diagnoses -->
 		<ui:repeat var="revision"
-			value="#{selectedTask.diagnosisInfo.diagnosisRevisions}">
+			value="#{selectedTask.diagnosisContainer.diagnosisRevisions}">
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
 				columnClasses="defaultListingTableColumnTop,">
@@ -307,11 +307,11 @@
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.date']}"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
 					disabled="#{selectedTask.diagnosisCompleted}"
-					value="#{selectedTask.diagnosisInfo.signatureDateAsDate}">
+					value="#{selectedTask.diagnosisContainer.signatureDateAsDate}">
 					<p:ajax event="dateSelect"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisInfo,'log.patient.task.diagnosisInfo.signautre.date',mainHandlerAction.date(selectedTask.diagnosisInfo.signatureDate))}" />
+						listener="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
 					<f:ajax event="change" execute="@this"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisInfo,'log.patient.task.diagnosisInfo.signautre.date',mainHandlerAction.date(selectedTask.diagnosisInfo.signatureDate))}" />
+						listener="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
 				</p:calendar>
 			</h:panelGrid>
 
@@ -348,9 +348,9 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitPhysicianChange">
 						<f:actionListener
-							binding="#{selectedTask.diagnosisInfo.setPhysicianAsSignatureOne(taskHandlerAction.signatureOne)}" />
+							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureOne(taskHandlerAction.signatureOne)}" />
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisInfo,'log.patient.task.diagnosisInfo.signature.one',selectedTask.diagnosisInfo.signatureOne.physician.person.fullName)}" />
+							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one',selectedTask.diagnosisContainer.signatureOne.physician.person.fullName)}" />
 					</p:commandButton>
 				</h:panelGroup>
 
@@ -362,8 +362,8 @@
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="pysicianToSignRole" editable="true"
 						style="width:80% !important;"
-						disabled="#{selectedTask.diagnosisInfo.signatureOne.physician eq null or diagnosis.finalized}"
-						value="#{selectedTask.diagnosisInfo.signatureOne.role}">
+						disabled="#{selectedTask.diagnosisContainer.signatureOne.physician eq null or diagnosis.finalized}"
+						value="#{selectedTask.diagnosisContainer.signatureOne.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"
 							itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
@@ -377,7 +377,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitPhysicianRoleChange">
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisInfo,'log.patient.task.diagnosisInfo.signature.one.role',selectedTask.diagnosisInfo.signatureOne.role)}" />
+							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one.role',selectedTask.diagnosisContainer.signatureOne.role)}" />
 					</p:commandButton>
 				</h:panelGroup>
 
@@ -411,9 +411,9 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitConsultantChange">
 						<f:actionListener
-							binding="#{selectedTask.diagnosisInfo.setPhysicianAsSignatureTwo(taskHandlerAction.signatureTwo)}" />
+							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureTwo(taskHandlerAction.signatureTwo)}" />
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisInfo,'log.patient.task.diagnosisInfo.signature.two',selectedTask.diagnosisInfo.signatureTwo.physician.person.fullName)}" />
+							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two',selectedTask.diagnosisContainer.signatureTwo.physician.person.fullName)}" />
 					</p:commandButton>
 
 				</h:panelGroup>
@@ -424,8 +424,8 @@
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="consultantToSignRole" editable="true"
 						style="width:80% !important"
-						disabled="#{selectedTask.diagnosisInfo.signatureTwo.physician eq null or diagnosis.finalized}"
-						value="#{selectedTask.diagnosisInfo.signatureTwo.role}">
+						disabled="#{selectedTask.diagnosisContainer.signatureTwo.physician eq null or diagnosis.finalized}"
+						value="#{selectedTask.diagnosisContainer.signatureTwo.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"
 							itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
@@ -440,7 +440,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitConsultantRoleChange">
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisInfo,'log.patient.task.diagnosisInfo.signature.two.role',selectedTask.diagnosisInfo.signatureTwo.role)}" />
+							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two.role',selectedTask.diagnosisContainer.signatureTwo.role)}" />
 					</p:commandButton>
 
 				</h:panelGroup>

@@ -19,6 +19,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.StainingStatus;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
@@ -26,6 +27,7 @@ import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 
 @Entity
@@ -34,19 +36,21 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, SaveAble {
+public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, SaveAble {
 
 	private long id;
 
 	private long version;
 
-	private long creationDate;
+	private int uniqueIDinBlock;
 
 	private String slideID = "";
 
-	private int uniqueIDinBlock;
+	private long creationDate;
 
-	private boolean stainingPerformed;
+	private long completionDate;
+
+	private boolean stainingCompleted;
 
 	private boolean reStaining;
 
@@ -92,12 +96,12 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, 
 		this.version = version;
 	}
 
-	public boolean isStainingPerformed() {
-		return stainingPerformed;
+	public boolean isStainingCompleted() {
+		return stainingCompleted;
 	}
 
-	public void setStainingPerformed(boolean stainingPerformed) {
-		this.stainingPerformed = stainingPerformed;
+	public void setStainingCompleted(boolean stainingCompleted) {
+		this.stainingCompleted = stainingCompleted;
 	}
 
 	@OneToOne
@@ -116,6 +120,14 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, 
 
 	public void setCreationDate(long creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public long getCompletionDate() {
+		return completionDate;
+	}
+
+	public void setCompletionDate(long completionDate) {
+		this.completionDate = completionDate;
 	}
 
 	public String getSlideID() {
@@ -171,7 +183,7 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, 
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
-	
+
 	/**
 	 * Returns the parent task
 	 */
@@ -180,6 +192,7 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, 
 	public Task getTask() {
 		return getParent().getTask();
 	}
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -206,10 +219,11 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, 
 	public Dialog getArchiveDialog() {
 		return Dialog.DELETE_TREE_ENTITY;
 	}
+
 	/********************************************************
 	 * Interface Delete Able
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Interface SaveAble
 	 ********************************************************/
@@ -218,7 +232,29 @@ public class Slide implements Parent<Block>, LogAble, CreationDate, DeleteAble, 
 	public String getLogPath() {
 		return getParent().getLogPath() + ", Slide-ID: " + getSlideID() + " (" + getId() + ")";
 	}
+
 	/********************************************************
 	 * Interface SaveAble
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface StainingStauts
+	 ********************************************************/
+	/**
+	 * Checks the status of the stating process 
+	 */
+	@Override
+	@Transient 
+	public StainingStatus getStainingStatus() {
+		if(isStainingCompleted())
+			return StainingStatus.PERFORMED;
+		else if(!isStainingCompleted() && isReStaining())
+			return StainingStatus.RE_STAINING_NEEDED;
+		else
+			return StainingStatus.STAINING_NEEDED;
+	}
+
+	/********************************************************
+	 * Interface StainingStauts
 	 ********************************************************/
 }

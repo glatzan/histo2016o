@@ -26,7 +26,7 @@ import org.histo.model.Signature;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.patient.Block;
-import org.histo.model.patient.DiagnosisInfo;
+import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
@@ -232,9 +232,9 @@ public class TaskHandlerAction implements Serializable {
 
 		// setting the report time to the current date
 		if (!task.isDiagnosisCompleted()) {
-			task.getDiagnosisInfo().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
-			if (task.getDiagnosisInfo().getSignatureOne().getPhysician() == null
-					|| task.getDiagnosisInfo().getSignatureTwo().getPhysician() == null) {
+			task.getDiagnosisContainer().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
+			if (task.getDiagnosisContainer().getSignatureOne().getPhysician() == null
+					|| task.getDiagnosisContainer().getSignatureTwo().getPhysician() == null) {
 				// TODO set if physician to the left, if consultant to the right
 			}
 		}
@@ -243,8 +243,8 @@ public class TaskHandlerAction implements Serializable {
 		setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
 		setWardList(settingsDAO.getAllStaticListItems(StaticList.WARDS));
 
-		setSignatureOne(task.getDiagnosisInfo().getSignatureOne().getPhysician());
-		setSignatureTwo(task.getDiagnosisInfo().getSignatureTwo().getPhysician());
+		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
+		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());
 	}
 
 	/**
@@ -333,20 +333,20 @@ public class TaskHandlerAction implements Serializable {
 
 		genericDAO.save(task, resourceBundle.get("log.patient.task.new", task.getTaskID()), patient);
 
-		task.setDiagnosisInfo(new DiagnosisInfo(task));
-		task.getDiagnosisInfo().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
+		task.setDiagnosisContainer(new DiagnosisContainer(task));
+		task.getDiagnosisContainer().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
 
 		// setting signature
-		task.getDiagnosisInfo().setSignatureOne(new Signature());
-		task.getDiagnosisInfo().setSignatureTwo(new Signature());
+		task.getDiagnosisContainer().setSignatureOne(new Signature());
+		task.getDiagnosisContainer().setSignatureTwo(new Signature());
 
 		task.setCaseHistory("");
 		task.setWard("");
 
 		task.setCouncils(new ArrayList<Council>());
 
-		genericDAO.save(task.getDiagnosisInfo(),
-				resourceBundle.get("log.patient.task.diagnosisInfo.new", task.getTaskID()), patient);
+		genericDAO.save(task.getDiagnosisContainer(),
+				resourceBundle.get("log.patient.task.diagnosisContainer.new", task.getTaskID()), patient);
 
 		for (Sample sample : task.getSamples()) {
 			// set name of material for changing it manually
@@ -360,7 +360,7 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		// standard diagnose erstellen
-		diagnosisHandlerAction.createDiagnosisRevision(task.getDiagnosisInfo(), DiagnosisRevisionType.DIAGNOSIS);
+		diagnosisHandlerAction.createDiagnosisRevision(task.getDiagnosisContainer(), DiagnosisRevisionType.DIAGNOSIS);
 
 		// checking if staining flag of the task object has to be false
 		task.updateStainingStatus();
@@ -464,7 +464,7 @@ public class TaskHandlerAction implements Serializable {
 				sample.getSampleID()), sample.getPatient());
 
 		// creating first default diagnosis
-		diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(task.getDiagnosisInfo(), task.getSamples());
+		diagnosisHandlerAction.updateDiagnosisContainerToSampleCount(task.getDiagnosisContainer(), task.getSamples());
 	}
 
 	/**
@@ -634,7 +634,7 @@ public class TaskHandlerAction implements Serializable {
 
 			parent.getSamples().remove(toDeleteSample);
 
-			diagnosisHandlerAction.updateDiagnosisInfoToSampleCount(parent.getDiagnosisInfo(), parent.getSamples());
+			diagnosisHandlerAction.updateDiagnosisContainerToSampleCount(parent.getDiagnosisContainer(), parent.getSamples());
 
 			parent.updateAllNames();
 

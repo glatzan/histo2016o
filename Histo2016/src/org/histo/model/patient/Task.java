@@ -30,7 +30,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisStatusState;
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.StainingStatus;
@@ -41,7 +41,7 @@ import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
-import org.histo.model.interfaces.DiagnosisStatus;
+import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -56,8 +56,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisStatus<DiagnosisRevision>, CreationDate,
-		DeleteAble, LogAble, SaveAble, HasDataList {
+public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, SaveAble, HasDataList {
 
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
@@ -130,24 +129,9 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	private Eye eye = Eye.RIGHT;
 
 	/**
-	 * Der Task ist archiviert und wird nicht mehr angezeigt wenn true
-	 */
-	private boolean archived = false;
-
-	/**
-	 * all stainings completed
-	 */
-	private boolean stainingCompleted = false;
-
-	/**
 	 * date of staining completion
 	 */
 	private long stainingCompletionDate = 0;
-
-	/**
-	 * True if every diagnosis is finalized
-	 */
-	private boolean diagnosisCompleted = false;
 
 	/**
 	 * Date of diagnosis finalization
@@ -155,15 +139,24 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	private long diagnosisCompletionDate = 0;
 
 	/**
-	 * True if all persons within the contact list have been notified about the
-	 * result.
-	 */
-	private boolean notificationCompleted = false;
-
-	/**
 	 * The date of the completion of the notificaiton.
 	 */
 	private long notificationCompletionDate = 0;
+
+	/**
+	 * True if staining has to be performed
+	 */
+	private boolean stainingPhase;
+
+	/**
+	 * True if diagnosis has to be done
+	 */
+	private boolean diagnosisPhase;
+
+	/**
+	 * True if notification is pending
+	 */
+	private boolean notificationPhase;
 
 	/**
 	 * Liste aller Personen die über die Diangose informiert werden sollen.
@@ -178,7 +171,7 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	/**
 	 * Element containg all diangnoses
 	 */
-	private DiagnosisInfo diagnosisInfo;
+	private DiagnosisContainer diagnosisContainer;
 
 	/**
 	 * Generated PDFs of this task, lazy
@@ -277,8 +270,8 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	public boolean isActiveOrActionToPerform() {
 		return true;
 		// isActive() || getDiagnosisStatus() ==
-		// DiagnosisStatus.DIAGNOSIS_NEEDED
-		// || getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED
+		// DiagnosisInfo.DIAGNOSIS_NEEDED
+		// || getDiagnosisStatus() == DiagnosisInfo.RE_DIAGNOSIS_NEEDED
 		// || getStainingStatus() != StainingStatus.PERFORMED;
 	}
 
@@ -514,28 +507,12 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 		this.eye = eye;
 	}
 
-	public boolean isStainingCompleted() {
-		return stainingCompleted;
-	}
-
-	public void setStainingCompleted(boolean stainingCompleted) {
-		this.stainingCompleted = stainingCompleted;
-	}
-
 	public long getStainingCompletionDate() {
 		return stainingCompletionDate;
 	}
 
 	public void setStainingCompletionDate(long stainingCompletionDate) {
 		this.stainingCompletionDate = stainingCompletionDate;
-	}
-
-	public boolean isDiagnosisCompleted() {
-		return diagnosisCompleted;
-	}
-
-	public void setDiagnosisCompleted(boolean diagnosisCompleted) {
-		this.diagnosisCompleted = diagnosisCompleted;
 	}
 
 	public long getDiagnosisCompletionDate() {
@@ -561,14 +538,6 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 
 	public void setTaskPriority(TaskPriority taskPriority) {
 		this.taskPriority = taskPriority;
-	}
-
-	public boolean isNotificationCompleted() {
-		return notificationCompleted;
-	}
-
-	public void setNotificationCompleted(boolean notificationCompleted) {
-		this.notificationCompleted = notificationCompleted;
 	}
 
 	public long getNotificationCompletionDate() {
@@ -599,12 +568,12 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	}
 
 	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY)
-	public DiagnosisInfo getDiagnosisInfo() {
-		return diagnosisInfo;
+	public DiagnosisContainer getDiagnosisContainer() {
+		return diagnosisContainer;
 	}
 
-	public void setDiagnosisInfo(DiagnosisInfo diagnosisInfo) {
-		this.diagnosisInfo = diagnosisInfo;
+	public void setDiagnosisContainer(DiagnosisContainer diagnosisContainer) {
+		this.diagnosisContainer = diagnosisContainer;
 	}
 
 	public boolean isUseAutoNomenclature() {
@@ -613,6 +582,30 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 
 	public void setUseAutoNomenclature(boolean useAutoNomenclature) {
 		this.useAutoNomenclature = useAutoNomenclature;
+	}
+
+	public boolean isStainingPhase() {
+		return stainingPhase;
+	}
+
+	public boolean isDiagnosisPhase() {
+		return diagnosisPhase;
+	}
+
+	public boolean isNotificationPhase() {
+		return notificationPhase;
+	}
+
+	public void setStainingPhase(boolean stainingPhase) {
+		this.stainingPhase = stainingPhase;
+	}
+
+	public void setDiagnosisPhase(boolean diagnosisPhase) {
+		this.diagnosisPhase = diagnosisPhase;
+	}
+
+	public void setNotificationPhase(boolean notificationPhase) {
+		this.notificationPhase = notificationPhase;
 	}
 
 	/********************************************************
@@ -789,36 +782,25 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface DiagnosisStatusState
+	 * Interface DiagnosisStatus
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisStatusState} interfaces, and returns the
-	 * status of the diagnoses.
+	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
+	 * of the diagnoses.
 	 */
 	@Override
 	@Transient
-	public DiagnosisStatusState getDiagnosisStatus() {
-		// return getDiagnosisStatus(getReports());
-		return DiagnosisStatusState.DIAGNOSIS_NEEDED;
+	public DiagnosisStatus getDiagnosisStatus() {
+		return getDiagnosisContainer().getDiagnosisStatus();
 	}
 
 	/********************************************************
-	 * Interface DiagnosisStatusState
+	 * Interface DiagnosisStatus
 	 ********************************************************/
 
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/
-	/**
-	 * Overwrites the {@link StainingInfo} interfaces new method. Returns true
-	 * if the creation date was on the same as the current day.
-	 */
-	@Override
-	@Transient
-	public boolean isNew() {
-		return isNew(getCreationDate());
-	}
-
 	/**
 	 * Returns the status of the staining process. Either it can return staining
 	 * performed, staining needed, restaining needed (restaining is returned if
@@ -827,7 +809,19 @@ public class Task implements Parent<Patient>, StainingInfo<Sample>, DiagnosisSta
 	@Override
 	@Transient
 	public StainingStatus getStainingStatus() {
-		return getStainingStatus(getSamples());
+		// if empty return staining needed
+		if (getSamples().isEmpty())
+			return StainingStatus.STAINING_NEEDED;
+
+		int level = StainingStatus.PERFORMED.getLevel();
+
+		for (Sample sample : getSamples()) {
+
+			if (sample.getStainingStatus().getLevel() > level)
+				level = sample.getStainingStatus().getLevel();
+		}
+
+		return StainingStatus.getStainingStatusByLevel(level);
 	}
 
 	/********************************************************

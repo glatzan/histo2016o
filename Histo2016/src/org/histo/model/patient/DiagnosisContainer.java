@@ -26,9 +26,12 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.DiagnosisRevisionType;
+import org.histo.config.enums.DiagnosisStatus;
+import org.histo.config.enums.StainingStatus;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
@@ -38,10 +41,8 @@ import org.histo.model.interfaces.SaveAble;
 @Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
-@SequenceGenerator(name = "diagnosisInfo_sequencegenerator", sequenceName = "diagnosisInfo_sequence")
-public class DiagnosisInfo implements Parent<Task>, LogAble, SaveAble {
-
-	private static Logger logger = Logger.getLogger(DiagnosisInfo.class);
+@SequenceGenerator(name = "diagnosisContainer_sequencegenerator", sequenceName = "diagnosisContainer_sequence")
+public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, DiagnosisInfo {
 
 	private long id;
 
@@ -64,10 +65,10 @@ public class DiagnosisInfo implements Parent<Task>, LogAble, SaveAble {
 	 */
 	private long signatureDate;
 
-	public DiagnosisInfo() {
+	public DiagnosisContainer() {
 	}
 
-	public DiagnosisInfo(Task parent) {
+	public DiagnosisContainer(Task parent) {
 		this.parent = parent;
 	}
 
@@ -91,7 +92,7 @@ public class DiagnosisInfo implements Parent<Task>, LogAble, SaveAble {
 		signature.setRole(physician.getClinicRole());
 		setSignatureOne(signature);
 	}
-	
+
 	/**
 	 * Creates a signature object with the given physician
 	 * 
@@ -107,7 +108,7 @@ public class DiagnosisInfo implements Parent<Task>, LogAble, SaveAble {
 
 	/******** Interface Parent ********/
 	@Id
-	@GeneratedValue(generator = "diagnosisInfo_sequencegenerator")
+	@GeneratedValue(generator = "diagnosisContainer_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	public long getId() {
 		return id;
@@ -195,7 +196,37 @@ public class DiagnosisInfo implements Parent<Task>, LogAble, SaveAble {
 	public String getLogPath() {
 		return getParent().getLogPath();
 	}
+
 	/********************************************************
 	 * Interface SaveAble
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface DiagnosisStatus
+	 ********************************************************/
+	/**
+	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
+	 * of the diagnoses.
+	 */
+	@Transient
+	@Override
+	public DiagnosisStatus getDiagnosisStatus() {
+		// if empty return staining needed
+		if (getDiagnosisRevisions().isEmpty())
+			return DiagnosisStatus.DIAGNOSIS_NEEDED;
+
+		int level = DiagnosisStatus.PERFORMED.getLevel();
+
+		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
+
+			if (revision.getDiagnosisStatus().getLevel() > level)
+				level = revision.getDiagnosisStatus().getLevel();
+		}
+
+		return DiagnosisStatus.getDiagnosisStatusByLevel(level);
+	}
+
+	/********************************************************
+	 * Interface DiagnosisStatus
 	 ********************************************************/
 }

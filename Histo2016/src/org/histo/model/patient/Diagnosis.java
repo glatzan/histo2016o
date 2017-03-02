@@ -20,10 +20,12 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.DiagnosisRevisionType;
+import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -53,26 +55,6 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	 * Parent of the diagnosis, sample bject
 	 */
 	private DiagnosisRevision parent;
-
-	/**
-	 * Nothing can be deleted. Mark deleted entities as achieved.
-	 */
-	private boolean archived;
-
-	/**
-	 * Date of diagnosis creation.
-	 */
-	private long generationDate;
-
-	/**
-	 * Date of diagnosis finalization.
-	 */
-	private long finalizedDate;
-
-	/**
-	 * True if finalized.
-	 */
-	private boolean finalized;
 
 	/**
 	 * Name of the diagnosis.
@@ -140,33 +122,6 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 
 	public void setDiagnosis(String diagnosis) {
 		this.diagnosis = diagnosis;
-	}
-
-	@Basic
-	public long getGenerationDate() {
-		return generationDate;
-	}
-
-	public void setGenerationDate(long generationDate) {
-		this.generationDate = generationDate;
-	}
-
-	@Basic
-	public long getFinalizedDate() {
-		return finalizedDate;
-	}
-
-	public void setFinalizedDate(long finalizedDate) {
-		this.finalizedDate = finalizedDate;
-	}
-
-	@Basic
-	public boolean isFinalized() {
-		return finalized;
-	}
-
-	public void setFinalized(boolean finalized) {
-		this.finalized = finalized;
 	}
 
 	@Basic
@@ -252,7 +207,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	public Task getTask() {
 		return getParent().getTask();
 	}
-	
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -301,7 +256,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	/********************************************************
 	 * Transient
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Interface SaveAble
 	 ********************************************************/

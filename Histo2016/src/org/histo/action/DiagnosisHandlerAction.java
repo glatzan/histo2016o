@@ -18,7 +18,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.DiagnosisInfo;
+import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
@@ -100,7 +100,7 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		// saving to database
 		genericDAO.save(
-				diagnosis, resourceBundle.get("log.patient.task.diagnosisInfo.diagnosis.new",
+				diagnosis, resourceBundle.get("log.patient.task.diagnosisContainer.diagnosis.new",
 						sample.getParent().getTaskID(), sample.getSampleID(), revision.getId(), diagnosis.getName()),
 				diagnosis.getPatient());
 
@@ -123,7 +123,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		diagnosis.getParent().getDiagnoses().remove(diagnosis);
 
 		genericDAO.delete(diagnosis,
-				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosis.remove",
+				resourceBundle.get("log.patient.task.diagnosisContainer.diagnosis.remove",
 						diagnosis.getParent().getParent().getParent().getTaskID(), tmp.getSampleID(),
 						diagnosis.getParent().getId(), diagnosis.getName()),
 				diagnosis.getPatient());
@@ -139,14 +139,14 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Diagnosis Revision
 	 ********************************************************/
 	/**
-	 * Creates a diagnosisRevision, adds it to the given DiagnosisInfo and
+	 * Creates a diagnosisRevision, adds it to the given DiagnosisContainer and
 	 * creates also all needed diagnoses
 	 * 
 	 * @param parent
 	 * @param type
 	 * @return
 	 */
-	public DiagnosisRevision createDiagnosisRevision(DiagnosisInfo parent, DiagnosisRevisionType type) {
+	public DiagnosisRevision createDiagnosisRevision(DiagnosisContainer parent, DiagnosisRevisionType type) {
 		logger.info("Creating new diagnosisRevision");
 
 		DiagnosisRevision diagnosisRevision = new DiagnosisRevision();
@@ -159,9 +159,9 @@ public class DiagnosisHandlerAction implements Serializable {
 		return diagnosisRevision;
 	}
 
-	public void addDiagnosisRevision(DiagnosisInfo parent, DiagnosisRevision diagnosisRevision) {
+	public void addDiagnosisRevision(DiagnosisContainer parent, DiagnosisRevision diagnosisRevision) {
 		// saving to database
-		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisInfo.diagnosisRevision.new",
+		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
 				diagnosisRevision.getName());
 
 		diagnosisRevision.setParent(parent);
@@ -174,7 +174,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		}
 
 		// saving to database
-		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisInfo.diagnosisRevision.update",
+		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.update",
 				diagnosisRevision.getName());
 
 	}
@@ -192,7 +192,7 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		genericDAO
 				.delete(revision,
-						resourceBundle.get("log.patient.task.diagnosisInfo.diagnosisRevision.delete",
+						resourceBundle.get("log.patient.task.diagnosisContainer.diagnosisRevision.delete",
 								revision.getParent().getParent().getTaskID(), revision.getName()),
 						revision.getPatient());
 
@@ -241,7 +241,7 @@ public class DiagnosisHandlerAction implements Serializable {
 			createDiagnosis(diagnosisRevision, sample);
 		}
 
-		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisInfo.diagnosisRevision.new",
+		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
 				diagnosisRevision.getName());
 	}
 
@@ -270,8 +270,8 @@ public class DiagnosisHandlerAction implements Serializable {
 		setNewRevisionList(new ArrayList<RevisionHolder>());
 
 		List<DiagnosisRevision> newList = new ArrayList<DiagnosisRevision>(
-				getTemporaryTask().getDiagnosisInfo().getDiagnosisRevisions());
-		newList.add(new DiagnosisRevision(getTemporaryTask().getDiagnosisInfo(), getNewRevisionType()));
+				getTemporaryTask().getDiagnosisContainer().getDiagnosisRevisions());
+		newList.add(new DiagnosisRevision(getTemporaryTask().getDiagnosisContainer(), getNewRevisionType()));
 
 		for (DiagnosisRevision revision : newList) {
 			getNewRevisionList().add(
@@ -301,7 +301,7 @@ public class DiagnosisHandlerAction implements Serializable {
 				} else {
 					// update revision
 					mainHandlerAction.saveDataChange(revisionHolder.getRevision(),
-							"log.patient.task.diagnosisInfo.diagnosisRevision.update",
+							"log.patient.task.diagnosisContainer.diagnosisRevision.update",
 							revisionHolder.getRevision().getName());
 				}
 			}
@@ -324,20 +324,20 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Diagnosis Info
 	 ********************************************************/
 	/**
-	 * Updates all diagnosisRevision of the given diagnosisInfo
+	 * Updates all diagnosisRevision of the given diagnosisContainer
 	 * 
-	 * @param diagnosisInfo
+	 * @param diagnosisContainer
 	 * @param samples
 	 */
-	public void updateDiagnosisInfoToSampleCount(DiagnosisInfo diagnosisInfo, List<Sample> samples) {
+	public void updateDiagnosisContainerToSampleCount(DiagnosisContainer diagnosisContainer, List<Sample> samples) {
 		logger.info("Updating diagnosis info to new sample list");
-		for (DiagnosisRevision revision : diagnosisInfo.getDiagnosisRevisions()) {
+		for (DiagnosisRevision revision : diagnosisContainer.getDiagnosisRevisions()) {
 			updateDiagnosisRevisionToSampleCount(revision, samples);
 		}
 
-		genericDAO.save(diagnosisInfo,
-				resourceBundle.get("log.patient.task.diagnosisInfo.update", diagnosisInfo.getParent().getTaskID()),
-				diagnosisInfo.getPatient());
+		genericDAO.save(diagnosisContainer,
+				resourceBundle.get("log.patient.task.diagnosisContainer.update", diagnosisContainer.getParent().getTaskID()),
+				diagnosisContainer.getPatient());
 	}
 
 	/********************************************************
@@ -463,7 +463,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		diagnosis.updateDiagnosisWithPrest(diagnosis.getDiagnosisPrototype());
 
 		genericDAO.save(diagnosis,
-				resourceBundle.get("log.patient.task.diagnosisInfo.diagnosis.update", diagnosis.getLogPath()),
+				resourceBundle.get("log.patient.task.diagnosisContainer.diagnosis.update", diagnosis.getLogPath()),
 				diagnosis.getPatient());
 
 		// only setting diagnosis text if one sample and no text has been added
@@ -472,7 +472,7 @@ public class DiagnosisHandlerAction implements Serializable {
 			diagnosis.getParent().setText(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 			logger.debug("Updating revision extended text");
 			mainHandlerAction.saveDataChange(diagnosis.getParent(),
-					"log.patient.task.diagnosisInfo.diagnosisRevision.update", diagnosis.getParent().getName());
+					"log.patient.task.diagnosisContainer.diagnosisRevision.update", diagnosis.getParent().getName());
 		}
 
 	}
@@ -516,7 +516,7 @@ public class DiagnosisHandlerAction implements Serializable {
 								+ tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 
 		mainHandlerAction.saveDataChange(tmpDiagnosis.getParent(),
-				"log.patient.task.diagnosisInfo.diagnosisRevision.update", tmpDiagnosis.getParent().getName());
+				"log.patient.task.diagnosisContainer.diagnosisRevision.update", tmpDiagnosis.getParent().getName());
 
 		hideCopyHistologicalRecordDialog();
 	}
