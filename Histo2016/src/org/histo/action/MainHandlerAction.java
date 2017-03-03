@@ -43,7 +43,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-
 @Component
 @Scope(value = "session")
 public class MainHandlerAction {
@@ -104,15 +103,18 @@ public class MainHandlerAction {
 
 		setSettings(HistoSettings.factory());
 
-		// setting preferred printer
-		if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null)
-			userHandlerAction.getCurrentUser()
-					.setPreferedPrinter(getSettings().getPrinterManager().getPrinters().get(0).getName());
+		//TODO remove
+		if (!getSettings().isOfflineMode()) {
+			// setting preferred printer
+			if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null)
+				userHandlerAction.getCurrentUser()
+						.setPreferedPrinter(getSettings().getPrinterManager().getPrinters().get(0).getName());
 
-		// setting label printer
-		if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
-			userHandlerAction.getCurrentUser()
-					.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getName());
+			// setting label printer
+			if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
+				userHandlerAction.getCurrentUser()
+						.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getName());
+		}
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_PATIENT);

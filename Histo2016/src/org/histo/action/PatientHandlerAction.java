@@ -196,7 +196,7 @@ public class PatientHandlerAction implements Serializable {
 
 		// if piz is given ignore other parameters
 		if (piz != null && piz.matches("^[0-9]{6,8}$")) {
-			List<Patient> patients = patientDao.searchForPatientsPiz(piz);
+			List<Patient> patients = patientDao.searchForPatientsByPiz(piz);
 
 			// updates all patients from the local database with data from the
 			// clinic backend
@@ -257,7 +257,7 @@ public class PatientHandlerAction implements Serializable {
 					// creating a list of patient from the histo backend pizes
 					// wich
 					// where obtaind from the clinic backend
-					histoMatchList = patientDao.searchForPatientPizes(toSearchPizes);
+					histoMatchList = patientDao.searchForPatientPizList(toSearchPizes);
 
 					for (Patient cPatient : clinicPatients) {
 

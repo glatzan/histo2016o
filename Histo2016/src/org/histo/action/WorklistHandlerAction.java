@@ -378,22 +378,25 @@ public class WorklistHandlerAction implements Serializable {
 		switch (searchOptions.getSearchIndex()) {
 		case STAINING_LIST:
 			logger.debug("Staining list selected");
+
+			// getting new stainigs
 			if (searchOptions.isStaining_new()) {
 				result.addAll(patientDao.getPatientWithoutTasks(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
 						TimeUtil.setDayEnding(cal).getTimeInMillis()));
 			}
 
+			// getting stainigs and restainings
 			if (searchOptions.isStaining_staining() && searchOptions.isStaining_restaining()) {
-				result.addAll(patientDao.getPatientByStainingsBetweenDates(0, System.currentTimeMillis(), false));
+				result.addAll(patientDao.getPatientByStainings(true));
 			} else {
-				List<Patient> paints = patientDao.getPatientByStainingsBetweenDates(0, System.currentTimeMillis(),
-						false);
+
+				List<Patient> paints = patientDao.getPatientByStainings(true);
 				for (Patient patient : paints) {
-					if (searchOptions.isStaining_staining()
-							&& patient.getStainingStatus() == StainingStatus.STAINING_NEEDED) {
+					StainingStatus status = patient.getStainingStatus();
+
+					if (searchOptions.isStaining_staining() && status == StainingStatus.STAINING_NEEDED) {
 						result.add(patient);
-					} else if (searchOptions.isStaining_restaining()
-							&& patient.getStainingStatus() == StainingStatus.RE_STAINING_NEEDED) {
+					} else if (searchOptions.isStaining_restaining() && status == StainingStatus.RE_STAINING_NEEDED) {
 						result.add(patient);
 					}
 				}
@@ -402,16 +405,19 @@ public class WorklistHandlerAction implements Serializable {
 			break;
 		case DIAGNOSIS_LIST:
 			logger.debug("Diagnosis list selected");
+			// getting diagnoses an re_diagnoses
 			if (searchOptions.isStaining_diagnosis() && searchOptions.isStaining_rediagnosis()) {
-				result.addAll(patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false));
+				result.addAll(patientDao.getPatientByDiagnosis(true));
 			} else {
-				List<Patient> paints = patientDao.getPatientByDiagnosBetweenDates(0, System.currentTimeMillis(), false);
+				List<Patient> paints = patientDao.getPatientByDiagnosis(true);
 				for (Patient patient : paints) {
-					if (searchOptions.isStaining_diagnosis()
-							&& patient.getDiagnosisStatus() == DiagnosisStatus.DIAGNOSIS_NEEDED) {
+
+					DiagnosisStatus status = patient.getDiagnosisStatus();
+
+					if (searchOptions.isStaining_diagnosis() && status == DiagnosisStatus.DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					} else if (searchOptions.isStaining_rediagnosis()
-							&& patient.getDiagnosisStatus() == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
+							&& status == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
 						result.add(patient);
 					}
 				}
@@ -419,9 +425,7 @@ public class WorklistHandlerAction implements Serializable {
 			break;
 		case NOTIFICATION_LIST:
 			logger.debug("Notification list selected");
-			result.addAll(
-					patientDao.getPatientByNotificationBetweenDates(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-							TimeUtil.setDayEnding(cal).getTimeInMillis(), false));
+			result.addAll(patientDao.getPatientByNotification(true));
 			break;
 		case TODAY:
 			logger.debug("Today selected");

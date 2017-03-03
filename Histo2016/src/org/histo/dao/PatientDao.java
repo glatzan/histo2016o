@@ -30,17 +30,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
-	public void getAllPaitent() {
-		Person p = new Person();
-		System.out.println(getSession().save(p));
-	}
-
-	public void getPatitentByDate(long from, long to) {
-		Criteria c = getSession().createCriteria(Person.class, "pat");
-		c.createAlias("pat.tasks", "tasks"); // inner join by default
-		c.add(Restrictions.gt("tasks.taskOccoured", from)).add(Restrictions.lt("tasks.taskOccoured", to)).list();
-	}
-
 	/**
 	 * Returns a list of useres with the given piz. At least 6 numbers of the
 	 * piz are needed.
@@ -48,14 +37,19 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	 * @param piz
 	 * @return
 	 */
-	public List<Patient> searchForPatientsPiz(String piz) {
-		Criteria c = getSession().createCriteria(Patient.class);
+	@SuppressWarnings("unchecked")
+	public List<Patient> searchForPatientsByPiz(String piz) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
 		String regex = "";
 		if (piz.length() != 8) {
 			regex = "[0-9]{" + (8 - piz.length()) + "}";
 		}
-		c.add(Restrictions.like("piz", piz + regex));
-		return c.list();
+
+		query.add(Restrictions.like("piz", piz + regex));
+
+		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+		return result;
 	}
 
 	/**
@@ -65,13 +59,17 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	 * @param piz
 	 * @return
 	 */
-	public Patient searchForPatientPiz(String piz) {
+	@SuppressWarnings("unchecked")
+	public Patient searchForPatientByPiz(String piz) {
 		if (piz.length() != 8)
 			return null;
 
-		Criteria c = getSession().createCriteria(Patient.class);
-		c.add(Restrictions.eq("piz", piz));
-		List<Patient> result = c.list();
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
+		query.add(Restrictions.eq("piz", piz));
+
+		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+
 		if (result != null && result.size() == 1)
 			return result.get(0);
 
@@ -85,7 +83,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Patient> searchForPatientPizes(List<String> piz) {
+	public List<Patient> searchForPatientPizList(List<String> piz) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 		query.add(Restrictions.in("piz", piz));
 		return query.getExecutableCriteria(getSession()).list();
@@ -155,42 +153,37 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientByStainingsBetweenDates(long fromDate, long toDate, boolean completed) {
+	public List<Patient> getPatientByStainings(boolean inPhase) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
 		query.createAlias("patient.tasks", "_tasks");
-		query.add(Restrictions.ge("_tasks.creationDate", fromDate)).add(Restrictions.le("_tasks.creationDate", toDate));
-		query.add(Restrictions.eq("_tasks.stainingCompleted", completed));
+		query.add(Restrictions.eq("_tasks.stainingPhase", inPhase));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		return query.getExecutableCriteria(getSession()).list();
 	}
 
 	/**
-	 * Returns a list of patients which had the diagnosis completed between the
-	 * two given dates.
+	 * Returns a list of patients for that the staining had been completed
+	 * within the time period. Don't start with zero.
 	 * 
 	 * @param fromDate
 	 * @param toDate
-	 * @param completed
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientByDiagnosBetweenDates(long fromDate, long toDate, boolean completed) {
+	public List<Patient> getPatientByStainingsBetweenDates(long fromDate, long toDate) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
 		query.createAlias("patient.tasks", "_tasks");
 		query.add(Restrictions.ge("_tasks.stainingCompletionDate", fromDate))
 				.add(Restrictions.le("_tasks.stainingCompletionDate", toDate));
-		query.add(Restrictions.eq("_tasks.stainingCompleted", true));
-		query.add(Restrictions.eq("_tasks.diagnosisCompleted", completed));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}
-
+	
 	/**
-	 * Returns a list of patients which had the diagnosis completed between the
-	 * two given dats.
+	 * Returns a list of patients deepening on the diagnosis phase.
 	 * 
 	 * @param fromDate
 	 * @param toDate
@@ -198,14 +191,66 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientByNotificationBetweenDates(long fromDate, long toDate, boolean completed) {
+	public List<Patient> getPatientByDiagnosis(boolean inPhase) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		query.createAlias("patient.tasks", "_tasks");
+		query.add(Restrictions.eq("_tasks.diagnosisPhase", inPhase));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
+	}
+
+	/**
+	 * Returns a list of patients for that the notification had been completed
+	 * within the time period. Don't start with zero.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Patient> getPatientByDiagnosisBetweenDates(long fromDate, long toDate) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
+		query.createAlias("patient.tasks", "_tasks");
+		query.add(Restrictions.ge("_tasks.diagnosisCompletionDate", fromDate))
+				.add(Restrictions.le("_tasks.diagnosisCompletionDate", toDate));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
+	}
+
+	/**
+	 * Returns patient deepening on the phase.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @param completed
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Patient> getPatientByNotification(boolean inPhase) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+
+		query.createAlias("patient.tasks", "_tasks");
+		query.add(Restrictions.eq("_tasks.notificationPhase", inPhase));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
+	}
+
+	/**
+	 * Returns a list of patients for that the diagnosis had been completed
+	 * within the time period. Don't start with zero.
+	 * 
+	 * @param fromDate
+	 * @param toDate
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Patient> getPatientByNotificationBetweenDates(long fromDate, long toDate) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
 		query.createAlias("patient.tasks", "_tasks");
 		query.add(Restrictions.ge("_tasks.notificationCompletionDate", fromDate))
 				.add(Restrictions.le("_tasks.notificationCompletionDate", toDate));
-		query.add(Restrictions.eq("_tasks.diagnosisCompleted", true));
-		query.add(Restrictions.eq("_tasks.notificationCompleted", completed));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}
@@ -234,12 +279,12 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			logger.debug("Searching for staining completed "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return getPatientByStainingsBetweenDates(fromDate, toDate, true);
+			return getPatientByStainingsBetweenDates(fromDate, toDate);
 		case DIAGNOSIS_COMPLETED:
 			logger.debug("Searching for diagnosis completed "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return getPatientByDiagnosBetweenDates(fromDate, toDate, true);
+			return getPatientByDiagnosisBetweenDates(fromDate, toDate);
 		default:
 			return null;
 		}
@@ -249,7 +294,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			List<String> pizesToExclude) {
 
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-		
+
 		query.createAlias("patient.person", "_person");
 
 		if (name != null && !name.isEmpty())
@@ -264,12 +309,13 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		List<Patient> result = query.getExecutableCriteria(getSession()).list();
-		
+
 		return result != null ? result : new ArrayList<>();
 	}
-	
+
 	/**
 	 * Searches for an taskID and returns the patient whom the task belongs to
+	 * 
 	 * @param taskID
 	 * @return
 	 */
@@ -280,39 +326,38 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.createAlias("patient.tasks", "_tasks");
 		query.add(Restrictions.eq("_tasks.taskID", taskID));
 
-		
 		List<Patient> result = query.getExecutableCriteria(getSession()).list();
 
 		if (result.size() == 1)
 			return result.get(0);
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Searches for an slideID and returns the patient whom the slide belongs to
+	 * 
 	 * @param slideID
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public Patient getPatientBySlidID(String slideID) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-		
+
 		query.createAlias("patient.tasks", "_tasks");
 		query.createAlias("_tasks.samples", "_samples");
 		query.createAlias("_samples.blocks", "_blocks");
 		query.createAlias("_blocks.slides", "_slides");
 		query.add(Restrictions.eq("_slides.slideID", slideID));
-		
 
 		List<Patient> result = query.getExecutableCriteria(getSession()).list();
 
 		if (result.size() == 1)
 			return result.get(0);
-		
+
 		return null;
 	}
-	
+
 	public void initializeDataList(HasDataList dataList) {
 		getSession().update(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
