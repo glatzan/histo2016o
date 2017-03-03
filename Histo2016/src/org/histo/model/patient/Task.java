@@ -267,17 +267,9 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 * @return
 	 */
 	@Transient
-	public boolean isActiveOrActionToPerform() {
-		return true;
-		// isActive() || getDiagnosisStatus() ==
-		// DiagnosisInfo.DIAGNOSIS_NEEDED
-		// || getDiagnosisStatus() == DiagnosisInfo.RE_DIAGNOSIS_NEEDED
-		// || getStainingStatus() != StainingStatus.PERFORMED;
-	}
-
-	@Transient
-	public boolean isNewAndActionsPending() {
-		if (isNew() && (!isStainingCompleted() || !isDiagnosisCompleted()))
+	public boolean isActiveOrActionPending() {
+		if (isActive() || getDiagnosisStatus().getLevel() >= DiagnosisStatus.DIAGNOSIS_NEEDED.getLevel()
+				|| getStainingStatus().getLevel() >= StainingStatus.STAINING_NEEDED.getLevel())
 			return true;
 		return false;
 	}
@@ -343,37 +335,21 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 */
 	@Transient
 	public boolean updateStainingStatus() {
+
 		if (getStainingStatus() == StainingStatus.PERFORMED) {
-			if (!isStainingCompleted()) {
-				setStainingCompleted(true);
+			if (isStainingPhase()) {
+				setStainingPhase(false);
 				setStainingCompletionDate(System.currentTimeMillis());
 				return true;
 			}
 		} else {
-			if (isStainingCompleted()) {
-				setStainingCompleted(false);
+			if (!isStainingPhase()) {
+				setStainingPhase(true);
 				setStainingCompletionDate(0);
 				return true;
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Checks if all slides are staind and stets the allStainingsPerformed flag
-	 * in the task object to true.
-	 * 
-	 * @param sample
-	 */
-	@Transient
-	public static final boolean checkIfAllSlidesAreStained(Task task) {
-		if (task.getStainingStatus() == StainingStatus.PERFORMED) {
-			task.setStainingCompleted(true);
-			task.setStainingCompletionDate(System.currentTimeMillis());
-		} else
-			task.setStainingCompleted(false);
-
-		return task.getStainingStatus() == StainingStatus.PERFORMED ? true : false;
 	}
 
 	/********************************************************

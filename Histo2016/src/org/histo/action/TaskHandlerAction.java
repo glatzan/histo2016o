@@ -231,7 +231,7 @@ public class TaskHandlerAction implements Serializable {
 		taskDAO.initializeDiagnosisData(task);
 
 		// setting the report time to the current date
-		if (!task.isDiagnosisCompleted()) {
+		if (task.isDiagnosisPhase()) {
 			task.getDiagnosisContainer().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 			if (task.getDiagnosisContainer().getSignatureOne().getPhysician() == null
 					|| task.getDiagnosisContainer().getSignatureTwo().getPhysician() == null) {

@@ -147,7 +147,7 @@ public class TaskUtil {
 				return tasks.get(0);
 
 			for (Task task : tasks) {
-				if (task.isActiveOrActionToPerform())
+				if (task.isActiveOrActionPending())
 					return task;
 			}
 		}
@@ -166,7 +166,7 @@ public class TaskUtil {
 				return tasks.get(tasks.size() - 1);
 
 			for (int i = tasks.size() - 1; i >= 0; i--) {
-				if (tasks.get(i).isActiveOrActionToPerform())
+				if (tasks.get(i).isActiveOrActionPending())
 					return tasks.get(i);
 				else
 					continue;
@@ -183,7 +183,7 @@ public class TaskUtil {
 
 		for (int i = index - 1; i >= 0; i--) {
 			if (activeOnle) {
-				if (tasks.get(i).isActiveOrActionToPerform())
+				if (tasks.get(i).isActiveOrActionPending())
 					return tasks.get(i);
 			} else
 				return tasks.get(i);
@@ -199,7 +199,7 @@ public class TaskUtil {
 
 		for (int i = index + 1; i < tasks.size(); i++) {
 			if (activeOnle) {
-				if (tasks.get(i).isActiveOrActionToPerform())
+				if (tasks.get(i).isActiveOrActionPending())
 					return tasks.get(i);
 			} else
 				return tasks.get(i);

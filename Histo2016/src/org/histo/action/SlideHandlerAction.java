@@ -157,7 +157,7 @@ public class SlideHandlerAction implements Serializable {
 		// if staining is needed set the staining flag of the task object to
 		// true
 		// TODO save indepenetly from patient
-		block.getParent().getParent().updateStainingStatus();
+		block.getTask().updateStainingStatus();
 
 		genericDAO.save(block.getPatient(), resourceBundle.get("log.patient.save"), block.getPatient());
 
@@ -238,9 +238,9 @@ public class SlideHandlerAction implements Serializable {
 		case PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
 				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()
-						&& !stainingTableChooser.getStaining().isStainingPerformed()) {
+						&& !stainingTableChooser.getStaining().isStainingCompleted()) {
 					Slide slide = stainingTableChooser.getStaining();
-					slide.setStainingPerformed(true);
+					slide.setStainingCompleted(true);
 
 					genericDAO.save(slide,
 							resourceBundle.get("log.patient.task.sample.blok.slide.stainingPerformed",
@@ -262,11 +262,11 @@ public class SlideHandlerAction implements Serializable {
 		case NOT_PERFORMED:
 			for (StainingTableChooser stainingTableChooser : list) {
 				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()
-						&& stainingTableChooser.getStaining().isStainingPerformed()) {
-					stainingTableChooser.getStaining().setStainingPerformed(false);
+						&& stainingTableChooser.getStaining().isStainingCompleted()) {
+					stainingTableChooser.getStaining().setStainingCompleted(false);
 
 					Slide slide = stainingTableChooser.getStaining();
-					slide.setStainingPerformed(false);
+					slide.setStainingCompleted(false);
 
 					genericDAO.save(slide,
 							resourceBundle.get("log.patient.task.sample.blok.slide.stainingNotPerformed",

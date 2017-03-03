@@ -172,12 +172,12 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 	@Transient
 	public StainingStatus getStainingStatus() {
 		// if empty return staining needed
-		if (slides.isEmpty())
+		if (getSlides().isEmpty())
 			return StainingStatus.STAINING_NEEDED;
 
 		int level = StainingStatus.PERFORMED.getLevel();
 
-		for (Slide slide : slides) {
+		for (Slide slide : getSlides()) {
 
 			if (slide.getStainingStatus().getLevel() > level)
 				level = slide.getStainingStatus().getLevel();

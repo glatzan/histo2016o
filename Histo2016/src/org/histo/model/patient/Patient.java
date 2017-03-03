@@ -52,8 +52,8 @@ import org.primefaces.json.JSONObject;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, CreationDate, LogAble,
-		ArchivAble, SaveAble, HasDataList {
+public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, CreationDate, LogAble, ArchivAble,
+		SaveAble, HasDataList {
 
 	private long id;
 
@@ -219,7 +219,7 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		ArrayList<Task> result = new ArrayList<Task>();
 		for (Task task : tasks) {
 
-			if (task.isActiveOrActionToPerform())
+			if (task.isActiveOrActionPending())
 				result.add(task);
 		}
 
@@ -359,13 +359,25 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	 * Interface DiagnosisStatus
 	 ********************************************************/
 	/**
-	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the
-	 * status of the diagnoses.
+	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
+	 * of the diagnoses.
 	 */
 	@Override
 	@Transient
 	public DiagnosisStatus getDiagnosisStatus() {
-		return getDiagnosisStatus(getTasks());
+		// if empty return staining needed
+		if (getTasks().isEmpty())
+			return DiagnosisStatus.PERFORMED;
+
+		int level = DiagnosisStatus.PERFORMED.getLevel();
+
+		for (Task Task : getTasks()) {
+
+			if (Task.getDiagnosisStatus().getLevel() > level)
+				level = Task.getDiagnosisStatus().getLevel();
+		}
+
+		return DiagnosisStatus.getDiagnosisStatusByLevel(level);
 	}
 
 	/********************************************************
@@ -382,7 +394,7 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	@Override
 	@Transient
 	public boolean isNew() {
-		if (isNew(getCreationDate()))
+		if (StainingInfo.super.isNew())
 			return true;
 
 		for (Task task : getTasks()) {
@@ -400,7 +412,19 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	@Override
 	@Transient
 	public StainingStatus getStainingStatus() {
-		return getStainingStatus(getTasks());
+		// if empty return staining needed
+		if (getTasks().isEmpty())
+			return StainingStatus.STAINING_NEEDED;
+
+		int level = StainingStatus.PERFORMED.getLevel();
+
+		for (Task task : getTasks()) {
+
+			if (task.getStainingStatus().getLevel() > level)
+				level = task.getStainingStatus().getLevel();
+		}
+
+		return StainingStatus.getStainingStatusByLevel(level);
 	}
 
 	/********************************************************

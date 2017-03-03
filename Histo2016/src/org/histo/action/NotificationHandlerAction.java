@@ -170,7 +170,7 @@ public class NotificationHandlerAction implements Serializable {
 		// loading all pfs
 		patientDao.initializeDataList(task);
 
-		if (task.isNotificationCompleted() && !show) {
+		if (!task.isNotificationPhase() && !show) {
 			// setting last manual report ready for download
 //			PDFContainer maunalReport = task.getReport(PdfTemplate.MANUAL_REPOT);
 //			pdfHandlerAction.setTmpPdfContainer(maunalReport);
