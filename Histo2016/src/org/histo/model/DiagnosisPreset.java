@@ -16,7 +16,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@SequenceGenerator(name = "standardDiagnosis_sequencegenerator", sequenceName = "standardDiagnosis_sequence")
+@SequenceGenerator(name = "diagnosisPreset_sequencegenerator", sequenceName = "diagnosisPreset_sequence")
 public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble, ListOrder<DiagnosisPreset> {
 
 	@Expose
@@ -48,7 +48,7 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	 * Getter/Setter
 	 ********************************************************/
 	@Id
-	@GeneratedValue(generator = "standardDiagnosis_sequencegenerator")
+	@GeneratedValue(generator = "diagnosisPreset_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	public long getId() {
 		return id;

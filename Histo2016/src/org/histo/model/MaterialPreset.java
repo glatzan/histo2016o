@@ -23,7 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
 @Entity
-@SequenceGenerator(name = "stainingPrototypeList_sequencegenerator", sequenceName = "stainingPrototypeList_sequence")
+@SequenceGenerator(name = "materialPreset_sequencegenerator", sequenceName = "materialPreset_sequence")
 public class MaterialPreset implements EditAbleEntity<MaterialPreset>, LogAble, ListOrder<MaterialPreset> {
 
 	@Expose
@@ -53,7 +53,7 @@ public class MaterialPreset implements EditAbleEntity<MaterialPreset>, LogAble, 
 	 * Getter/Setter
 	 ********************************************************/
 	@Id
-	@GeneratedValue(generator = "stainingPrototypeList_sequencegenerator")
+	@GeneratedValue(generator = "materialPreset_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	public long getId() {
 		return id;

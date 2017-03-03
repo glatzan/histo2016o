@@ -3,10 +3,11 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 Merke: keine kurzbefunde
 
 TODO: 2: Diagnosen Kategory, im erstellungs dialog
-Todo: 3: boolean felder von task überarbeiten TODO: Archivieren + Dearchivieren
+Todo: 3.2 Manuellen Phasenwechsel zugänglich machen 
 TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
 TODO: 4: Liste für normale benutzer
 TODO: 5: rechte durchsetzten
+TODO: 5.5: erweiterte Suche
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
 
 TODO: Auswahl der Operatuere/Einsender im diagnsoe bildschirm vereinfachen
@@ -19,7 +20,9 @@ TODO: favouriten
 TODO: log in settings rework
 TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
+TODO: Archivieren + Dearchivieren
 
+++++: boolean felder von task überarbeiten
 ++++: Kopf für mehrer Diangose einabuen, Histologischer Befund als normalbefund, Ändern zu vorläufiger befund, Konsilbefund, nachbefund
 ++++: urgent: status und info dialog
 ++++: check patient fetch from jason form clinik -> zu viele patienten
