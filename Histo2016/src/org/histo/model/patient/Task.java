@@ -159,6 +159,11 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	private boolean notificationPhase;
 
 	/**
+	 * 
+	 */
+	private boolean finalized;
+	
+	/**
 	 * Liste aller Personen die über die Diangose informiert werden sollen.
 	 */
 	private List<Contact> contacts;
@@ -584,6 +589,13 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.notificationPhase = notificationPhase;
 	}
 
+	public boolean isFinalized() {
+		return finalized;
+	}
+
+	public void setFinalized(boolean finalized) {
+		this.finalized = finalized;
+	}
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

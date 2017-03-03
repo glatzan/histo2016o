@@ -10,9 +10,12 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<c:set var="selectedTask"
+	<c:set var="selectedTask" 
 		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
 
+	<c:set var="taskEditable" scope="request"
+		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
+		
 	<p:panel style="width: 60%"
 		styleClass="collapsedBorders noPadding noBorders">
 
@@ -43,11 +46,11 @@
 									value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
 								<p:inputText value="#{sample.material}"
-									disabled="#{selectedTask.diagnosisCompleted}"
+									disabled="#{!taskEditable}"
 									styleClass="smallInput" style="width:200px;float:right;" />
 								<p:commandLink
 									title="#{msg['body.receiptlog.notification.hint']}"
-									rendered="#{!selectedTask.diagnosisCompleted}"
+									rendered="#{taskEditable}"
 									style="float: right; margin-right:5px;"
 									actionListener="#{taskHandlerAction.prepareSelectMaterialDialog(sample)}">
 									<i class="fa fa-fw fa-cog" />
@@ -74,7 +77,7 @@
 				<!-- Eye -->
 				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
 					<p:selectOneMenu styleClass="smallInput"
-						disabled="#{selectedTask.diagnosisCompleted}"
+						disabled="#{!taskEditable}"
 						value="#{selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
@@ -107,7 +110,7 @@
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						disabled="#{selectedTask.diagnosisCompleted}"
+						disabled="#{!taskEditable}"
 						value="#{selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
@@ -118,7 +121,7 @@
 					<!-- date of receipt -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskEDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						disabled="#{selectedTask.diagnosisCompleted}"
+						disabled="#{!taskEditable}"
 						value="#{selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
@@ -133,7 +136,7 @@
 					<!-- insurance -->
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
 
-					<p:selectOneButton disabled="#{selectedTask.diagnosisCompleted}"
+					<p:selectOneButton disabled="#{!taskEditable}"
 						value="#{worklistHandlerAction.selectedPatient.privateInsurance}">
 						<f:selectItem
 							itemLabel="#{msg['body.diagnosis.insurance.private']}"
@@ -148,7 +151,7 @@
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
-						editable="true" disabled="#{selectedTask.diagnosisCompleted}">
+						editable="true" disabled="#{!taskEditable}">
 						<f:selectItems value="#{taskHandlerAction.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
@@ -165,7 +168,7 @@
 							value="#{selectedTask.getPrimaryContact('SURGEON')}"></h:outputLabel>
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							rendered="#{!selectedTask.diagnosisCompleted}"
+							rendered="#{taskEditable}"
 							style="float: right; margin-right:5px;"
 							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
@@ -183,7 +186,7 @@
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 							style="float: right; margin-right:5px;"
-							rendered="#{!selectedTask.diagnosisCompleted}"
+							rendered="#{taskEditable}"
 							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -208,7 +211,7 @@
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
 				<h:panelGroup id="extendedTextParent">
 					<p:inputTextarea style="width:100%" id="extendedText" rows="15"
-						disabled="#{selectedTask.diagnosisCompleted}"
+						disabled="#{!taskEditable}"
 						value="#{revision.text}">
 
 						<p:ajax event="change" execute="@this"
@@ -232,7 +235,7 @@
 						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
 							<!-- diagnosis category -->
 							<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-								disabled="#{diagnosis.finalized}"
+								
 								styleClass="customSerachSelectMenu"
 								panelStyleClass="customSerachSelectMenuPanel"
 								converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
@@ -270,7 +273,7 @@
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
 							<p:selectBooleanCheckbox value="#{diagnosis.malign}"
 								style="margin:3px 0px 0px 3px;"
-								disabled="#{diagnosis.finalized}">
+								>
 
 								<f:ajax event="change"
 									listener="#{mainHandlerAction.saveDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
@@ -283,7 +286,7 @@
 						<h:outputLabel />
 						<!-- diagnosis text -->
 						<p:inputTextarea value="#{diagnosis.diagnosis}" id="diagnosisText"
-							style="width:100%" disabled="#{diagnosis.finalized}"
+							style="width:100%" 
 							styleClass="">
 							<p:watermark for="diagnosisText"
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
@@ -306,7 +309,7 @@
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.date']}"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
-					disabled="#{selectedTask.diagnosisCompleted}"
+					disabled="#{!taskEditable}"
 					value="#{selectedTask.diagnosisContainer.signatureDateAsDate}">
 					<p:ajax event="dateSelect"
 						listener="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
@@ -324,7 +327,7 @@
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician']}" />
 				<h:panelGroup>
-					<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
+					<p:selectOneMenu disabled="#{!taskEditable}"
 						styleClass="customSerachSelectMenu"
 						style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
@@ -362,7 +365,7 @@
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="pysicianToSignRole" editable="true"
 						style="width:80% !important;"
-						disabled="#{selectedTask.diagnosisContainer.signatureOne.physician eq null or diagnosis.finalized}"
+						disabled="#{selectedTask.diagnosisContainer.signatureOne.physician eq null}"
 						value="#{selectedTask.diagnosisContainer.signatureOne.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"
@@ -387,7 +390,7 @@
 				<!-- Consultant -->
 				<h:panelGroup>
 
-					<p:selectOneMenu disabled="#{selectedTask.diagnosisCompleted}"
+					<p:selectOneMenu disabled="#{!taskEditable}"
 						styleClass="customSerachSelectMenu"
 						style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
@@ -424,7 +427,7 @@
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="consultantToSignRole" editable="true"
 						style="width:80% !important"
-						disabled="#{selectedTask.diagnosisContainer.signatureTwo.physician eq null or diagnosis.finalized}"
+						disabled="#{selectedTask.diagnosisContainer.signatureTwo.physician eq null}"
 						value="#{selectedTask.diagnosisContainer.signatureTwo.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"

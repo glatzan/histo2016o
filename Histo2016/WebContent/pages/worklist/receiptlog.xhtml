@@ -13,6 +13,10 @@
 	<c:set var="selectedTask"
 		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
 
+	<c:set var="taskEditable" scope="request"
+		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
+
+
 	<p:panel style="width: 60%"
 		styleClass="collapsedBorders noPadding noBorders">
 
@@ -64,7 +68,7 @@
 				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 				<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
 					styleClass="smallInput" editable="true"
-					disabled="#{selectedTask.diagnosisCompleted}">
+					disabled="#{!taskEditable}">
 					<f:selectItems value="#{taskHandlerAction.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 					<p:ajax event="change" execute="@this"
@@ -125,12 +129,12 @@
 								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
 							<p:inputText value="#{sample.material}" style="margin-left:10px;"
-								disabled="#{selectedTask.diagnosisCompleted}"
+								disabled="#{!taskEditable}"
 								styleClass="smallInput" />
 
 							<p:commandLink
 								title="#{msg['body.receiptlog.notification.hint']}"
-								rendered="#{!selectedTask.diagnosisCompleted}"
+								rendered="#{taskEditable}"
 								actionListener="#{taskHandlerAction.prepareSelectMaterialDialog(sample)}">
 								<i class="fa fa-fw fa-cog" />
 								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -343,7 +347,7 @@
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
 								<!-- ********** Staining performed ********** -->
 								<h:panelGroup
-									rendered="#{stainingRow.staining.stainingPerformed}">
+									rendered="#{stainingRow.staining.stainingCompleted}">
 									<i class="fa fa-fw fa-check-circle icon-green"
 										title="#{msg['body.statiningView.status.performed']}" />
 								</h:panelGroup>
@@ -411,7 +415,8 @@
 							<h:panelGroup rendered="#{stainingRow.stainingType}"
 								style="float: right">
 								<!-- ********** Print Button ********** -->
-								<p:commandLink styleClass="noUnderlineAtLink" actionListener="#{slideHandlerAction.printLableForSlide(stainingRow.staining)}"
+								<p:commandLink styleClass="noUnderlineAtLink"
+									actionListener="#{slideHandlerAction.printLableForSlide(stainingRow.staining)}"
 									title="#{msg['body.statiningView.printStaining']}">
 									<i class="fa fa-fw fa-print" />
 									<p:ajax event="dialogReturn"

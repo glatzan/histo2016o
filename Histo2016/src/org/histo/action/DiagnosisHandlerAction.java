@@ -76,6 +76,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Types of all available revisionTypes to create
 	 */
 	private DiagnosisRevisionType[] selectableRevisionTypes;
+
 	/********************************************************
 	 * Diagnosis
 	 ********************************************************/
@@ -160,13 +161,14 @@ public class DiagnosisHandlerAction implements Serializable {
 	}
 
 	public void addDiagnosisRevision(DiagnosisContainer parent, DiagnosisRevision diagnosisRevision) {
-		// saving to database
-		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
-				diagnosisRevision.getName());
 
 		diagnosisRevision.setParent(parent);
 		parent.getDiagnosisRevisions().add(diagnosisRevision);
 		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().indexOf(diagnosisRevision));
+
+		// saving to database
+		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
+				diagnosisRevision.getName());
 
 		// creating a diagnosis for every sample
 		for (Sample sample : parent.getParent().getSamples()) {
@@ -174,8 +176,11 @@ public class DiagnosisHandlerAction implements Serializable {
 		}
 
 		// saving to database
-		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.update",
-				diagnosisRevision.getName());
+		mainHandlerAction.saveDataChange(diagnosisRevision,
+				"log.patient.task.diagnosisContainer.diagnosisRevision.update", diagnosisRevision.getName());
+
+		// saving parent
+		mainHandlerAction.saveDataChange(parent, "log.patient.task.diagnosisContainer.update");
 
 	}
 
@@ -259,9 +264,9 @@ public class DiagnosisHandlerAction implements Serializable {
 		types[0] = DiagnosisRevisionType.DIAGNOSIS_REVISION;
 		types[1] = DiagnosisRevisionType.DIAGNOSIS_CORRECTION;
 		types[2] = DiagnosisRevisionType.DIAGNOSIS_COUNCIL;
-		
+
 		setSelectableRevisionTypes(types);
-		
+
 		updateDiagnosisRevisionType();
 		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_REVISION_CREATE);
 	}
@@ -316,6 +321,7 @@ public class DiagnosisHandlerAction implements Serializable {
 		setNewRevisionList(null);
 		mainHandlerAction.hideDialog(Dialog.DIAGNOSIS_REVISION_CREATE);
 	}
+
 	/********************************************************
 	 * Diagnosis Gui
 	 ********************************************************/
@@ -335,9 +341,7 @@ public class DiagnosisHandlerAction implements Serializable {
 			updateDiagnosisRevisionToSampleCount(revision, samples);
 		}
 
-		genericDAO.save(diagnosisContainer,
-				resourceBundle.get("log.patient.task.diagnosisContainer.update", diagnosisContainer.getParent().getTaskID()),
-				diagnosisContainer.getPatient());
+		mainHandlerAction.saveDataChange(diagnosisContainer, "log.patient.task.diagnosisContainer.update");
 	}
 
 	/********************************************************
@@ -420,8 +424,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param diagnosis
 	 */
 	public void finalizeDiagnosis(Diagnosis diagnosis) {
-//		diagnosis.setFinalized(true);
-//		diagnosis.setFinalizedDate(System.currentTimeMillis());
+		// diagnosis.setFinalized(true);
+		// diagnosis.setFinalizedDate(System.currentTimeMillis());
 
 		genericDAO.save(diagnosis, resourceBundle.get("log.patient.diagnosis.finaziled"), diagnosis.getPatient());
 		genericDAO.refresh(diagnosis.getPatient());
@@ -449,8 +453,8 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param diagnosis
 	 */
 	public void unfinalizeDiagnosis(Diagnosis diagnosis) {
-//		diagnosis.setFinalized(false);
-//		diagnosis.setFinalizedDate(0);
+		// diagnosis.setFinalized(false);
+		// diagnosis.setFinalizedDate(0);
 		genericDAO.save(diagnosis, resourceBundle.get("log.patient.diagnosis.unfinalize"), diagnosis.getPatient());
 
 		hideUnfinalizeDiangosisDialog();

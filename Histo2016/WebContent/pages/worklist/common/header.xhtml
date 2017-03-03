@@ -108,6 +108,36 @@
 
 					<p:separator />
 
+					<!-- Patient -->
+					<p:submenu label="Status">
+
+						<!-- add Patient -->
+						<p:menuitem value="#{msg['header.menu.patient.new']}"
+							onclick="$('#headerForm\\:addPatient').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+
+						<p:separator
+							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+
+						<!-- Overview, rendered if selected patient is not null -->
+						<p:menuitem value="#{msg['header.menu.patient.overview']}"
+							onclick="$('#headerForm\\:showPatientOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
+							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+
+						<!-- upload to patient -->
+						<p:menuitem value="#{msg['header.menu.patient.upload']}"
+							icon="fa fa-cloud-upload"
+							onclick="$('#headerForm\\:uploadBtnToPatient').click();$('#headerForm\\:tieredOptions').hide();return false;"
+							rendered="#{worklistHandlerAction.selectedPatient ne null }" />
+
+						<!-- edit patient, rendered if selected patient is not null, disabled  if patient is not extern -->
+						<p:menuitem value="#{msg['header.menu.patient.edit']}"
+							title="#{!worklistHandlerAction.selectedPatient.externalPatient ? msg['header.menu.patient.edit.disabled'] : ''}"
+							disabled="#{!worklistHandlerAction.selectedPatient.externalPatient}"
+							onclick="$('#headerForm\\:editPatientData').click();$('#headerForm\\:tieredOptions').hide();return false;"
+							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+
+					</p:submenu>
+
 					<!-- Finish diagnostics, rendered if selected patient is not null, disabled if no task was selected -->
 					<p:menuitem icon="fa fa-picture-o"
 						value="#{msg['header.menu.task.sample.staining.finish']}"
@@ -124,7 +154,7 @@
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						onclick="$('#headerForm\\:newDiagnosisRevision').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-						
+
 					<!-- Finish diagnostics, rendered if selected patient is not null, disabled if no task was selected -->
 					<p:menuitem icon="fa fa-pencil-square-o"
 						value="#{msg['header.menu.task.sample.diagnosis.finish']}"
@@ -242,7 +272,7 @@
 				actionListener="#{diagnosisHandlerAction.prepareDiagnosisRevisionDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
-			
+
 			<!-- Finalize diagnosis -->
 			<p:commandButton id="finalizeDiagnosis" style="display:none"
 				actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(worklistHandlerAction.selectedPatient.selectedTask)}">

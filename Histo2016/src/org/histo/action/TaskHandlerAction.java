@@ -10,6 +10,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
+import org.histo.config.enums.Role;
 import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
@@ -343,6 +344,8 @@ public class TaskHandlerAction implements Serializable {
 		task.setCaseHistory("");
 		task.setWard("");
 
+		task.setStainingPhase(true);
+		
 		task.setCouncils(new ArrayList<Council>());
 
 		genericDAO.save(task.getDiagnosisContainer(),
@@ -662,6 +665,32 @@ public class TaskHandlerAction implements Serializable {
 	 * Task Data
 	 ********************************************************/
 
+	/********************************************************
+	 * Task editable
+	 ********************************************************/
+	public boolean isTaskEditable(Task task){
+		
+		
+		// users and guest can't edit anything
+		if(!userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)){
+			logger.debug("Task not editable, user has no permission");
+			return false;
+		}
+		
+		// finalized
+		if(task.isFinalized()){
+			logger.debug("Task not editable, is finalized");
+			return false;
+		}
+		
+		//Blocked
+		// TODO: Blocking
+		
+		logger.debug("Task is editable");
+		return true;
+	}
+	
+	
 	/********************************************************
 	 * Council
 	 ********************************************************/
