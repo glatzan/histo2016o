@@ -22,7 +22,6 @@ public enum Dialog {
 	DIAGNOSIS_UNFINALIZE("/pages/dialog/diagnosis/unfinalizeDiagnosis", null, 0, 0, false, false, true),
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/diagnosis/histologicalRecordOverwrite", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_REVISION_CREATE("/pages/dialog/diagnosis/createDiagnosisRevision", null, 640, 360, false, false, true), // 16:9
-	STAINING_PERFORMED("/pages/dialog/task/staingingPerformed", null, 480, 272, false, false, true), // 16:9
 	CONTACTS("/pages/dialog/contact/contact", null, 1024, 600, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
@@ -37,7 +36,10 @@ public enum Dialog {
 	SELECT_MATERIAL("/pages/dialog/task/selectMaterial", null, 640, 360, false, false, true), // 16:9
 	DELETE_TREE_ENTITY("/pages/dialog/task/deleteTreeEntity", null,  480, 272, false, false, true), //  16:9
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
-	MEDIA_SELECT("/pages/dialog/upload/mediaSelect", null,  1280, 720,  false, false, true); // 16:9
+	MEDIA_SELECT("/pages/dialog/upload/mediaSelect", null,  1280, 720,  false, false, true), // 16:9
+	ADMINISTRATE_TASK("/pages/dialog/task/administrateTask", null, 480, 272, false, false, true), // 16:9
+	STAINING_PHASE("/pages/dialog/task/stainingPhase", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE("/pages/dialog/task/diagnosisPhase", null, 480, 272, false, false, true); // 16:9
 	
 	private final String path;
 	private final boolean useOptions;

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.staingingPhase.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.staingingPhase.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1"
+				styleClass="defaultListingTableContainer, standardFont">
+				<h:outputLabel
+					rendered="#{slideHandlerAction.temporaryTask.getStainingStatus() eq 'PERFORMED'}"
+					value="#{msg['dialog.staingingPhase.allPerformed']}"></h:outputLabel>
+				<h:outputLabel
+					rendered="#{slideHandlerAction.temporaryTask.getStainingStatus() ne 'PERFORMED'}"
+					value="#{msg['dialog.staingingPhase.pending']}"></h:outputLabel>"></h:outputLabel>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" style="margin-top:60px;"
+				styleClass="defaultListingTableContainer , standardFont">
+				<!-- material -->
+				<h:outputLabel
+					value="Auftrag in der Arbeitliste für Färbungen belassen"></h:outputLabel>
+				<p:selectBooleanCheckbox
+					value="#{slideHandlerAction.keepInStainingPhase}" />
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+					<!-- confirm -->
+					<p:commandButton value="#{msg['general.create']}"
+						icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{slideHandlerAction.endStainingPhaseDialog()}"></p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{slideHandlerAction.hideStainingPhaseDialog()}" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+
+	</h:form>
+</h:body>
+</html>

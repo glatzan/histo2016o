@@ -107,36 +107,16 @@
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
 					<p:separator />
+					<!-- Staining -->
+					<p:menuitem
+						value="#{msg['header.menu.task.sample.stainingPhase.end']}"
+						icon="fa fa-image"
+						onclick="$('#headerForm\\:finalizeStaining').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null }"
+						rendered="#{worklistHandlerAction.selectedPatient ne null}"
+						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
-					<!-- Patient -->
-					<p:submenu label="Status">
-
-						<!-- add Patient -->
-						<p:menuitem value="#{msg['header.menu.patient.new']}"
-							onclick="$('#headerForm\\:addPatient').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-
-						<p:separator
-							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
-
-						<!-- Overview, rendered if selected patient is not null -->
-						<p:menuitem value="#{msg['header.menu.patient.overview']}"
-							onclick="$('#headerForm\\:showPatientOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
-
-						<!-- upload to patient -->
-						<p:menuitem value="#{msg['header.menu.patient.upload']}"
-							icon="fa fa-cloud-upload"
-							onclick="$('#headerForm\\:uploadBtnToPatient').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{worklistHandlerAction.selectedPatient ne null }" />
-
-						<!-- edit patient, rendered if selected patient is not null, disabled  if patient is not extern -->
-						<p:menuitem value="#{msg['header.menu.patient.edit']}"
-							title="#{!worklistHandlerAction.selectedPatient.externalPatient ? msg['header.menu.patient.edit.disabled'] : ''}"
-							disabled="#{!worklistHandlerAction.selectedPatient.externalPatient}"
-							onclick="$('#headerForm\\:editPatientData').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{worklistHandlerAction.selectedPatient ne null}" />
-
-					</p:submenu>
+					<p:separator />
 
 					<!-- Finish diagnostics, rendered if selected patient is not null, disabled if no task was selected -->
 					<p:menuitem icon="fa fa-picture-o"
@@ -211,6 +191,16 @@
 
 				</p:submenu>
 
+				<!-- Admin -->
+				<p:submenu label="#{msg['header.menu.admin']}"
+					rendered="#{userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}">
+					<p:menuitem value="#{msg['header.menu.admin.task']}"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }"
+						onclick="$('#headerForm\\:showAdministerTask').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+
+				</p:submenu>
+
+
 				<!-- Log -->
 				<p:menuitem value="#{msg['header.menu.log']}"
 					onclick="$('#headerForm\\:logBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
@@ -263,7 +253,7 @@
 
 			<!-- Finalize staining -->
 			<p:commandButton id="finalizeStaining" style="display:none"
-				actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				actionListener="#{slideHandlerAction.showStainingPhaseDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 
@@ -314,9 +304,15 @@
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
-
-
 			<!-- *************** Task Menu *************** -->
+
+			<!-- *************** Admin Menu *************** -->
+			<p:commandButton id="showAdministerTask" style="display:none"
+				actionListener="#{taskHandlerAction.showAdministrateTask(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+			</p:commandButton>
+			<!-- *************** Admin Menu *************** -->
+
 
 			<!-- *************** Log Menu *************** -->
 			<p:commandButton id="logBtn" style="display:none"

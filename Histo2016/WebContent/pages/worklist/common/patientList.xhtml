@@ -20,7 +20,8 @@
 		<p:commandButton id="idSubmitQuickSearch"
 			actionListener="#{worklistHandlerAction.quickSearch()}"
 			style="display:none">
-			<p:ajax event="dialogReturn" update="navigationForm contentForm :headerForm" />
+			<p:ajax event="dialogReturn"
+				update="navigationForm contentForm :headerForm" />
 		</p:commandButton>
 	</h:panelGroup>
 
@@ -142,19 +143,51 @@
 								</h:panelGroup>
 
 								<!-- staining needed -->
-								<h:panelGroup
-									rendered="#{task.getStainingStatus() eq 'STAINING_NEEDED'  or task.getStainingStatus() eq 'RE_STAINING_NEEDED'}">
-									<i style="margin-left: 5px;"
-										class="fa fa-image #{task.getStainingStatus() eq 'STAINING_NEEDED'  ? 'icon-green' : 'icon-orange'}"
-										title="#{task.getStainingStatus() eq 'STAINING_NEEDED' ? msg['body.worklist.navigation.activtasks.staining'] : msg['body.worklist.navigation.activtasks.restaining']}" />
+								<h:panelGroup rendered="#{task.stainingPhase}">
+									<!-- staining needed = green -->
+									<ui:fragment
+										rendered="#{task.getStainingStatus() eq 'STAINING_NEEDED' }">
+										<i style="margin-left: 5px;" class="fa fa-image icon-green"
+											title="#{msg['body.worklist.navigation.activtasks.staining']}" />
+									</ui:fragment>
+
+									<!-- re-staining needed = orange -->
+									<ui:fragment
+										rendered="#{task.getStainingStatus() eq 'RE_STAINING_NEEDED' }">
+										<i style="margin-left: 5px;" class="fa fa-image icon-orange"
+											title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
+									</ui:fragment>
+
+									<!--  no staining needed = yellow -->
+									<ui:fragment
+										rendered="#{task.getStainingStatus() eq 'PERFORMED' }">
+										<i style="margin-left: 5px;" class="fa fa-image icon-purple"
+											title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
+									</ui:fragment>
 								</h:panelGroup>
 
 								<!-- diagnosis needed -->
-								<h:panelGroup
-									rendered="#{task.getStainingStatus() eq 'PERFORMED' and (task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' or task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED')}">
-									<i style="margin-left: 5px;"
-										class="fa fa-eye #{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' ? 'icon-green' : 'icon-orange'}"
-										title="#{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' ? msg['body.worklist.navigation.activtasks.diagnosis'] : msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+								<h:panelGroup rendered="#{task.diagnosisPhase}">
+									<!-- diagnosis needed = green -->
+									<ui:fragment
+										rendered="#{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' }">
+										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
+											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
+									</ui:fragment>
+
+									<!-- re-diagnosis needed = orange -->
+									<ui:fragment
+										rendered="#{task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED' }">
+										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
+											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+									</ui:fragment>
+
+									<!-- no diagnosis needed = yellow -->
+									<ui:fragment
+										rendered="#{task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED' }">
+										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
+											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
+									</ui:fragment>
 								</h:panelGroup>
 
 								<!-- Pendings completed -->

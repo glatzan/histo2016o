@@ -13,6 +13,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.StainingListAction;
+import org.histo.config.enums.StainingStatus;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.HelperDAO;
 import org.histo.dao.SettingsDAO;
@@ -46,9 +47,6 @@ public class SlideHandlerAction implements Serializable {
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private HelperDAO helperDAO;
-
-	@Autowired
 	private SettingsDAO settingsDAO;
 
 	@Autowired
@@ -64,15 +62,18 @@ public class SlideHandlerAction implements Serializable {
 	UserHandlerAction userHandlerAction;
 
 	/**
-	 * Temporäres Blockobjekt, wird verwendet um neue Objektträger zu erstellen.
+	 * Temporary task object, for finalizing stainigs
 	 */
-	private Block tmpBlock;
+	private Task temporaryTask;
 
 	/**
 	 * Used for
 	 */
 	private Sample tmpSample;
 
+	/********************************************************
+	 * Create new slide
+	 ********************************************************/
 	/**
 	 * List for selecting staining, this list contains all stainigns not added
 	 * in tmpSample
@@ -80,14 +81,33 @@ public class SlideHandlerAction implements Serializable {
 	private List<ListChooser<StainingPrototype>> stainingListChooser;
 
 	/**
+	 * Temporary Block for creating new slides
+	 */
+	private Block tmpBlock;
+
+	/**
 	 * used for adding new staings to block
 	 */
 	private String tmpCommentary;
 
 	/**
-	 * 
+	 * used for adding new staings to block
 	 */
 	private boolean tmpRestaining;
+	/********************************************************
+	 * Create new slide
+	 ********************************************************/
+
+	/********************************************************
+	 * Staining Phase
+	 ********************************************************/
+	/**
+	 * True if the task should be kept in staining phase
+	 */
+	private boolean keepInStainingPhase;
+	/********************************************************
+	 * Staining Phase
+	 ********************************************************/
 
 	/**
 	 * This variable is used to save the selected action, which sho In dieser
@@ -242,20 +262,14 @@ public class SlideHandlerAction implements Serializable {
 					Slide slide = stainingTableChooser.getStaining();
 					slide.setStainingCompleted(true);
 
-					genericDAO.save(slide,
-							resourceBundle.get("log.patient.task.sample.blok.slide.stainingPerformed",
-									slide.getParent().getParent().getParent().getTaskID(),
-									slide.getParent().getParent().getSampleID(), slide.getParent().getBlockID(),
-									slide.getSlideID()),
-							task.getPatient());
-
+					mainHandlerAction.saveDataChange(slide, "log.patient.task.sample.blok.slide.stainingPerformed",
+							String.valueOf(slide.getId()));
 				}
 			}
 			// shows dialog for informing the user that all stainings are
 			// performed
 			if (task.updateStainingStatus()) {
-				mainHandlerAction.showDialog(Dialog.STAINING_PERFORMED);
-				genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
+				showStainingPhaseDialog(task);
 			}
 
 			break;
@@ -278,8 +292,7 @@ public class SlideHandlerAction implements Serializable {
 			}
 
 			if (task.updateStainingStatus()) {
-				mainHandlerAction.showDialog(Dialog.STAINING_PERFORMED);
-				genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
+				showStainingPhaseDialog(task);
 			}
 
 			break;
@@ -318,10 +331,6 @@ public class SlideHandlerAction implements Serializable {
 
 		setActionOnMany(StainingListAction.NONE);
 
-	}
-
-	public void hideStainingsPerformedDialog() {
-		mainHandlerAction.hideDialog(Dialog.STAINING_PERFORMED);
 	}
 
 	public void printLableForSlide(Slide slide) {
@@ -403,6 +412,44 @@ public class SlideHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
+	 * Staining Phase Dialog
+	 ********************************************************/
+	public void showStainingPhaseDialog(Task task) {
+		mainHandlerAction.showDialog(Dialog.STAINING_PHASE);
+		setTemporaryTask(task);
+
+		// if every staining has been completed do not keep in stating phase
+		if (task.getStainingStatus() == StainingStatus.PERFORMED)
+			setKeepInStainingPhase(false);
+		else
+			setKeepInStainingPhase(true);
+	}
+
+	public void endStainingPhaseDialog() {
+		if (isKeepInStainingPhase()) {
+			temporaryTask.setStainingPhase(true);
+		} else
+			temporaryTask.setStainingPhase(false);
+
+		if (getTemporaryTask().getStainingStatus() == StainingStatus.PERFORMED)
+			temporaryTask.setStainingCompletionDate(System.currentTimeMillis());
+
+		// TODO Check if diagnosisPhase was completed, should not occur
+		temporaryTask.setDiagnosisPhase(true);
+
+		hideStainingPhaseDialog();
+	}
+
+	public void hideStainingPhaseDialog() {
+		mainHandlerAction.hideDialog(Dialog.STAINING_PHASE);
+		setTemporaryTask(null);
+	}
+
+	/********************************************************
+	 * Staining Phase Dialog
+	 ********************************************************/
+
+	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
 	public String getTmpCommentary() {
@@ -445,10 +492,6 @@ public class SlideHandlerAction implements Serializable {
 		this.actionOnMany = actionOnMany;
 	}
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
 	public boolean isTmpRestaining() {
 		return tmpRestaining;
 	}
@@ -456,4 +499,24 @@ public class SlideHandlerAction implements Serializable {
 	public void setTmpRestaining(boolean tmpRestaining) {
 		this.tmpRestaining = tmpRestaining;
 	}
+
+	public Task getTemporaryTask() {
+		return temporaryTask;
+	}
+
+	public void setTemporaryTask(Task temporaryTask) {
+		this.temporaryTask = temporaryTask;
+	}
+
+	public boolean isKeepInStainingPhase() {
+		return keepInStainingPhase;
+	}
+
+	public void setKeepInStainingPhase(boolean keepInStainingPhase) {
+		this.keepInStainingPhase = keepInStainingPhase;
+	}
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
+
 }

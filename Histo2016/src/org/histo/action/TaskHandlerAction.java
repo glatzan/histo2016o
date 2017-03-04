@@ -666,6 +666,28 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
+	 * Task Admin
+	 ********************************************************/
+	public void showAdministrateTask(Task task){
+		setTemporaryTask(task);
+		mainHandlerAction.showDialog(Dialog.ADMINISTRATE_TASK);
+	}
+	
+	public void saveAdministrateTask(){
+		genericDAO.save(getTemporaryTask());
+		hideAdministrateTask();
+	}
+	
+	public void hideAdministrateTask(){
+		genericDAO.refresh(getTemporaryTask());
+		setTemporaryTask(null);
+		mainHandlerAction.hideDialog(Dialog.ADMINISTRATE_TASK);
+	}
+	/********************************************************
+	 * Task Admin
+	 ********************************************************/
+	
+	/********************************************************
 	 * Task editable
 	 ********************************************************/
 	public boolean isTaskEditable(Task task){
