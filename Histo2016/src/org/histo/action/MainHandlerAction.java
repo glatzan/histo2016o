@@ -246,7 +246,7 @@ public class MainHandlerAction {
 	 */
 	public void hideDialog(Dialog dialog) {
 		logger.debug("Hiding Dialog: " + dialog);
-		RequestContext.getCurrentInstance().closeDialog(dialog);
+		RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
 	}
 
 	/*

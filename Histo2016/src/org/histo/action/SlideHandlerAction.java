@@ -223,6 +223,7 @@ public class SlideHandlerAction implements Serializable {
 	 * @param choosen
 	 */
 	public void setListAsChoosen(List<StainingTableChooser> choosers, boolean choosen) {
+		logger.debug("Settings list choosen as: " + choosen);
 		for (StainingTableChooser chooser : choosers) {
 			if (chooser.isSampleType()) {
 				setChildrenAsChoosen(chooser, choosen);

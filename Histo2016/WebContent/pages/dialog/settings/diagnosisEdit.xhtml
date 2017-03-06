@@ -15,14 +15,21 @@
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
 			<h:outputLabel
-				value="#{msg['dialog.settings.diagnosis.edit.diagnosis']}" />
+				value="#{msg['dialog.settings.diagnosis.edit.category']}" />
 			<p:inputText
 				value="#{settingsHandlerAction.editDiagnosisPrototype.name}"
 				id="diagnosisName">
 				<p:watermark for="diagnosisName"
-					value="#{msg['dialog.settings.diagnosis.edit.diagnosis.watermark']}" />
+					value="#{msg['dialog.settings.diagnosis.edit.category.watermark']}" />
 			</p:inputText>
 
+			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
+			<p:inputTextarea id="diagnosisText"
+				value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosisText}">
+				<p:watermark for="diagnosisText"
+					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
+			</p:inputTextarea>
+			
 			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.icd10']}" />
 			<p:inputText
 				value="#{settingsHandlerAction.editDiagnosisPrototype.icd10}"
@@ -35,13 +42,6 @@
 				value="#{msg['dialog.settings.diagnosis.edit.malign']}" />
 			<p:selectBooleanCheckbox
 				value="#{settingsHandlerAction.editDiagnosisPrototype.malign}" />
-
-			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
-			<p:inputTextarea id="diagnosisText"
-				value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosisText}">
-				<p:watermark for="diagnosisText"
-					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
-			</p:inputTextarea>
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.commentary']}" />

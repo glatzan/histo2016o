@@ -249,6 +249,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param tmpDiagnosis
 	 */
 	public void prepareCopyHistologicalRecordDialog(Diagnosis tmpDiagnosis) {
+		if(tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText() == null)
+			return;
+		
 		setTmpDiagnosis(tmpDiagnosis);
 
 		// setting diagnosistext if no text is set

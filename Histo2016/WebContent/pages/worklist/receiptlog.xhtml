@@ -13,7 +13,7 @@
 	<c:set var="selectedTask"
 		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
 
-	<c:set var="taskEditable" scope="request"
+	<c:set var="taskEditable" scope="session"
 		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
 
 	<p:panel style="width: 60%"
@@ -475,7 +475,6 @@
 
 					<p:commandButton id="changeZone" widgetVar="performOnMay"
 						style="display:none;"
-						update="navigationForm contentForm headerForm"
 						actionListener="#{slideHandlerAction.performActionOnMany(worklistHandlerAction.selectedPatient.selectedTask)}">
 						<p:ajax event="dialogReturn"
 							update="navigationForm contentForm headerForm" />

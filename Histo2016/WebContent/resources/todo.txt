@@ -2,8 +2,8 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-TODO: 2: Diagnosen Kategory, im erstellungs dialog
-Todo: 3.2 Manuellen Phasenwechsel zugänglich machen 
+TODO: 2: DiagnosenPrest Namen feld in category umbenennen
+
 TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
 TODO: 4: Liste für normale benutzer
 TODO: 5: rechte durchsetzten
@@ -22,6 +22,8 @@ TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
 TODO: Archivieren + Dearchivieren
 
+++++: Diagnosen Kategory, im erstellungs dialog
+++++: Manuellen Phasenwechsel zugänglich machen 
 ++++: boolean felder von task überarbeiten
 ++++: Kopf für mehrer Diangose einabuen, Histologischer Befund als normalbefund, Ändern zu vorläufiger befund, Konsilbefund, nachbefund
 ++++: urgent: status und info dialog

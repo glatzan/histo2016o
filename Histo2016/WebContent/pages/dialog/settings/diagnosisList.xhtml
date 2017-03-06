@@ -17,15 +17,22 @@
 			value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
-			<p:column sortBy="#{diagnosisPreset.name}"
+			<p:column sortBy="#{diagnosisPreset.diagnosisText}"
 				headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
-				style="width:20%">
+				style="width:40%">
+				<h:outputText value="#{diagnosisPreset.diagnosisText}" />
+			</p:column>
+
+			<p:column sortBy="#{diagnosisPreset.name}"
+				headerText="#{msg['dialog.settings.diagnosis.list.category']}"
+				style="width:auto">
 				<h:outputText value="#{diagnosisPreset.name}" />
 			</p:column>
 
+
 			<p:column
 				headerText="#{msg['dialog.settings.diagnosis.list.commentary']}"
-				style="width:53%">
+				style="width:20%">
 				<h:outputLabel value="#{diagnosisPreset.commentary}">
 					<f:converter converterId="org.histo.ui.TruncateConverter"
 						truncateAt="40" />
