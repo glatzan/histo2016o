@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<!-- navigation -->
+	<h:panelGrid columns="2" styleClass="navigation">
+		<h:panelGroup
+			rendered="#{worklistHandlerAction.selectedPatient ne null}">
+			<h:outputLabel value="Übersicht" styleClass="navigationText"></h:outputLabel>
+		</h:panelGroup>
+	</h:panelGrid>
+
+
+
+	<p:panel style="width: 60%"
+		styleClass="collapsedBorders noPadding noBorders">
+
+		<h:outputLabel value="Überischt" style="font-size:1.5em;"></h:outputLabel>
+
+		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol"
+			style="margin-top:10px;">
+			<p:dataTable var="task" value="#{taskListHandlerAction.taskList}"
+				scrollHeight="600" draggableRows="true"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+				selectionMode="single" rowKey="#{task.id}"
+				selection="#{taskListHandlerAction.selectedTask}">
+
+				<p:ajax event="rowSelect"
+					listener="#{taskListHandlerAction.onAddTask(taskListHandlerAction.selectedTask)}"
+					update="navigationForm contentForm" />
+
+				<p:column headerText="Auftrag" style="width:180px">
+					<h:outputText
+						value="#{task.taskID} (#{mainHandlerAction.date(task.dateOfReceipt)})" />
+				</p:column>
+
+				<p:column headerText="Patient">
+					<h:outputText value="#{task.patient.person.fullName}" />
+				</p:column>
+
+				<p:column headerText="Geb." style="width:80px">
+					<h:outputText
+						value="#{mainHandlerAction.date(task.patient.person.birthday)}" />
+				</p:column>
+
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-image"></i>
+					</f:facet>
+					<ui:fragment
+						rendered="#{task.stainingPhase and task.getStainingStatus() ne 'PERFORMED' }">
+						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
+							title="" />
+					</ui:fragment>
+				</p:column>
+
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-eye"></i>
+					</f:facet>
+					<ui:fragment
+						rendered="#{task.diagnosisPhase and task.getDiagnosisStatus() ne 'PERFORMED' }">
+						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
+							title="" />
+					</ui:fragment>
+				</p:column>
+
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-volume-up"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.notificationPhase }">
+						<i style="margin-left: 3px;" class="fa fa-check-circle icon-red"
+							title="" />
+					</ui:fragment>
+				</p:column>
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-exclamation"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.taskPriority ne 'NONE'}">
+						<i style="margin-left: 3px;" class="fa fa-exclamation icon-red"
+							title="" />
+					</ui:fragment>
+				</p:column>
+
+				<p:column headerText="" style="width:40px;">
+					<p:commandLink title="View"
+						actionListener="#{settingsHandlerAction.prepareEditStaining(staining)}"
+						update="@form" styleClass="noUnderlineAtLink">
+						<i class="fa fa-search" />
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+		</h:panelGrid>
+		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				style="float:right">
+
+				<p:selectOneMenu value="#{taskListHandlerAction.taskPerPull}">
+					<f:selectItem itemLabel="20" itemValue="20" />
+					<f:selectItem itemLabel="50" itemValue="50" />
+					<f:selectItem itemLabel="100" itemValue="100" />
+				</p:selectOneMenu>
+
+				<p:selectOneMenu id="page" value="#{taskListHandlerAction.pages}">
+					<f:selectItems value="#{page}" />
+				</p:selectOneMenu>
+
+
+			</h:panelGrid>
+		</h:panelGrid>
+
+	</p:panel>
+
+</ui:composition>

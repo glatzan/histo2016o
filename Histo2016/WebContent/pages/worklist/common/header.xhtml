@@ -86,14 +86,23 @@
 
 					<!-- add Patient -->
 					<p:menuitem value="#{msg['header.menu.patient.new']}"
+						icon="fa fa-user"
 						onclick="$('#headerForm\\:addPatient').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 					<p:separator
 						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
 
 					<!-- Overview, rendered if selected patient is not null -->
-					<p:menuitem value="#{msg['header.menu.patient.overview']}"
+					<p:menuitem value="#{msg['header.menu.patient.overview']}" icon="fa fa-tablet"
 						onclick="$('#headerForm\\:showPatientOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{patientIsNotNull}" />
+
+					<!-- edit patient, rendered if selected patient is not null, disabled  if patient is not extern -->
+					<p:menuitem value="#{msg['header.menu.patient.edit']}"
+						icon="fa fa-pencil-square-o"
+						title="#{!worklistHandlerAction.selectedPatient.externalPatient ? msg['header.menu.patient.edit.disabled'] : ''}"
+						disabled="#{!worklistHandlerAction.selectedPatient.externalPatient}"
+						onclick="$('#headerForm\\:editPatientData').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{patientIsNotNull}" />
 
 					<!-- upload to patient -->
@@ -101,14 +110,6 @@
 						icon="fa fa-cloud-upload"
 						onclick="$('#headerForm\\:uploadBtnToPatient').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{patientIsNotNull}" />
-
-					<!-- edit patient, rendered if selected patient is not null, disabled  if patient is not extern -->
-					<p:menuitem value="#{msg['header.menu.patient.edit']}"
-						title="#{!worklistHandlerAction.selectedPatient.externalPatient ? msg['header.menu.patient.edit.disabled'] : ''}"
-						disabled="#{!worklistHandlerAction.selectedPatient.externalPatient}"
-						onclick="$('#headerForm\\:editPatientData').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{patientIsNotNull}" />
-
 				</p:submenu>
 
 				<!-- Task -->

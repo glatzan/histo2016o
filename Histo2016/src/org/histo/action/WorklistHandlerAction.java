@@ -73,6 +73,8 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
 
+	@Autowired
+	private TaskListHandlerAction taskListHandlerAction;
 	/*
 	 * ************************** Patient ****************************
 	 */
@@ -227,7 +229,6 @@ public class WorklistHandlerAction implements Serializable {
 
 		}
 
-		System.out.println(task.getPatient());
 		task.getPatient().setSelectedTask(task);
 
 		onSelectPatient(task.getPatient());
@@ -280,12 +281,15 @@ public class WorklistHandlerAction implements Serializable {
 	public String getCenterView() {
 		View currentView = mainHandlerAction.getCurrentView();
 
-		if (getSelectedPatient() == null || currentView == View.WORKLIST_BLANK)
+		if (currentView == View.WORKLIST_BLANK)
 			return View.WORKLIST_BLANK.getPath();
-		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT)
+		if (getSelectedPatient() == null || currentView == View.WORKLIST_TASKS) {
+			taskListHandlerAction.initBean();
+			return View.WORKLIST_TASKS.getPath();
+		}
+		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
 			return View.WORKLIST_PATIENT.getPath();
-		else if (currentView == View.WORKLIST_DIAGNOSIS) {
-
+		} else if (currentView == View.WORKLIST_DIAGNOSIS) {
 			return View.WORKLIST_DIAGNOSIS.getPath();
 		} else if (currentView == View.WORKLIST_RECEIPTLOG) {
 			return View.WORKLIST_RECEIPTLOG.getPath();
@@ -304,16 +308,8 @@ public class WorklistHandlerAction implements Serializable {
 	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
 
 		// checks if patient is already in database
-		for (Patient patientInWorklis : getWorkList()) {
-
-			if (patientInWorklis.getId() == patient.getId()) {
-				if (asSelectedPatient)
-					setSelectedPatient(patientInWorklis);
-				return;
-			}
-		}
-
-		getWorkList().add(patient);
+		if (!getWorkList().contains(patient))
+			getWorkList().add(patient);
 
 		if (asSelectedPatient)
 			setSelectedPatient(patient);

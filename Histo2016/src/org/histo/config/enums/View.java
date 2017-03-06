@@ -8,6 +8,7 @@ public enum View {
 	USERLIST("/pages/userList.xhtml"),
 	WORKLIST("/pages/worklist.xhtml"),
 	WORKLIST_BLANK("/pages/worklist/blank.xhtml", WORKLIST),
+	WORKLIST_TASKS("/pages/worklist/taskList.xhtml", WORKLIST),
 	WORKLIST_PATIENT("/pages/worklist/patient.xhtml", WORKLIST),
 	WORKLIST_RECEIPTLOG("/pages/worklist/receiptlog.xhtml", WORKLIST),
 	WORKLIST_DIAGNOSIS("/pages/worklist/diagnosis.xhtml", WORKLIST);

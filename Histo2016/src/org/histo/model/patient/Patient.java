@@ -245,10 +245,20 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 				+ (getPiz() == null ? "extern" : getPiz());
 	}
 
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if(obj instanceof Patient && ((Patient)obj).getId() == getId())
+			return true;
+
+		return super.equals(obj);
+	}
+
+	
 	/********************************************************
 	 * Transient Methods
 	 ********************************************************/
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

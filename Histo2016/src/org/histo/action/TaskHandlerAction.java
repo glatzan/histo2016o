@@ -51,7 +51,7 @@ public class TaskHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -1460063099758733063L;
 
-	private static Logger logger = Logger.getLogger(TaskHandlerAction.class);
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
 	private TaskDAO taskDAO;
@@ -254,7 +254,7 @@ public class TaskHandlerAction implements Serializable {
 
 		setTemporaryTask(new Task(worklistHandlerAction.getSelectedPatient()));
 		getTemporaryTask().setTaskID(Integer.toString(TimeUtil.getCurrentYear() - 2000)
-				+ HistoUtil.fitString(taskDAO.countSamplesOfCurrentYear(), 4, '0'));
+				+ HistoUtil.fitString(taskDAO.countTasksOfCurrentYear(), 4, '0'));
 		getTemporaryTask().setTaskPriority(TaskPriority.NONE);
 		getTemporaryTask().setDateOfReceipt(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		setTemporaryTaskSampleCount(1);

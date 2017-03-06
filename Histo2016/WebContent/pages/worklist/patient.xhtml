@@ -195,7 +195,7 @@
 				<f:facet name="header">
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="upload"
-							actionListener="#{mediaHandlerAction.prepareDataUploadDialog(worklistHandlerAction.selectedPatient)}">
+							actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient)}">
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							<i class="fa fa-plus"></i>
 						</p:commandLink>

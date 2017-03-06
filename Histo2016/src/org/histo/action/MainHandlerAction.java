@@ -99,7 +99,7 @@ public class MainHandlerAction {
 	public void init() {
 
 		navigationPages = new ArrayList<View>();
-		navigationPages.add(View.USERLIST);
+		
 
 		setSettings(HistoSettings.factory());
 
@@ -117,6 +117,7 @@ public class MainHandlerAction {
 		}
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
+			navigationPages.add(View.WORKLIST_TASKS);
 			navigationPages.add(View.WORKLIST_PATIENT);
 			navigationPages.add(View.WORKLIST_RECEIPTLOG);
 			navigationPages.add(View.WORKLIST_DIAGNOSIS);

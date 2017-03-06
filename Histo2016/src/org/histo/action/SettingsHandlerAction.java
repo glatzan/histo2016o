@@ -573,6 +573,7 @@ public class SettingsHandlerAction {
 	 ********************************************************/
 	public void prepareNewDiagnosisPrototype() {
 		setEditDiagnosisPrototype(new DiagnosisPreset());
+		getEditDiagnosisPrototype().setExtendedDiagnosisText("");
 		setOriginalDiagnosisPrototype(null);
 		setDiagnosisIndex(DIAGNOSIS_EDIT);
 	}
@@ -585,6 +586,7 @@ public class SettingsHandlerAction {
 
 	public void saveDiagnosisPrototype(DiagnosisPreset newDiagnosisPrototype, DiagnosisPreset origDiagnosisPrototype) {
 		if (origDiagnosisPrototype == null) {
+			
 			// case new, save
 			logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getName());
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
