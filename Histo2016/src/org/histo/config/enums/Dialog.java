@@ -18,10 +18,8 @@ public enum Dialog {
 	TASK_ARCHIV("/pages/dialog/task/archivTask", null, 0, 0, false, false, true), 
 	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9
 	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
-	DIAGNOSIS_FINALIZE("/pages/dialog/diagnosis/finalizeDiagnosis", null, 480, 272, false, false, true),// 16:9
-	DIAGNOSIS_UNFINALIZE("/pages/dialog/diagnosis/unfinalizeDiagnosis", null, 0, 0, false, false, true),
-	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/diagnosis/histologicalRecordOverwrite", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_REVISION_CREATE("/pages/dialog/diagnosis/createDiagnosisRevision", null, 640, 360, false, false, true), // 16:9
+	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/task/diagnosisRecordOverwrite", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisCreateRevision", null, 640, 360, false, false, true), // 16:9
 	CONTACTS("/pages/dialog/contact/contact", null, 1024, 600, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
@@ -38,8 +36,13 @@ public enum Dialog {
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
 	MEDIA_SELECT("/pages/dialog/upload/mediaSelect", null,  1280, 720,  false, false, true), // 16:9
 	ADMINISTRATE_TASK("/pages/dialog/task/administrateTask", null, 480, 272, false, false, true), // 16:9
-	STAINING_PHASE("/pages/dialog/task/stainingPhase", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE("/pages/dialog/task/diagnosisPhase", null, 480, 272, false, false, true); // 16:9
+	STAINING_PHASE_END_AUTO("/pages/dialog/task/stainingPhaseEndAuto", null, 480, 272, false, false, true), // 16:9
+	STAINING_PHASE_END_MANUAL("/pages/dialog/task/stainingPhaseEndManual", null, 480, 272, false, false, true), // 16:9
+	STAINING_PHASE_FORCED("/pages/dialog/task/stainingPhaseForced", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_FORCED("/pages/dialog/task/diagnosisPhaseForced", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_UNLOCK("/pages/dialog/task/diagnosisPhaseUnlock", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_END_AUTO("/pages/dialog/task/diagnosisPhaseEndAuto", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_END_MANUAL("/pages/dialog/task/diagnosisPhaseEndManual", null, 480, 272, false, false, true); // 16:9
 	
 	private final String path;
 	private final boolean useOptions;

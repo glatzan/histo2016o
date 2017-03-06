@@ -158,7 +158,7 @@
 											title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
 									</ui:fragment>
 
-									<!--  no staining needed = yellow -->
+									<!--  no staining needed = purple -->
 									<ui:fragment
 										rendered="#{task.getStainingStatus() eq 'PERFORMED' }">
 										<i style="margin-left: 5px;" class="fa fa-image icon-purple"
@@ -182,18 +182,18 @@
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 									</ui:fragment>
 
-									<!-- no diagnosis needed = yellow -->
+									<!-- no diagnosis needed = purple -->
 									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED' }">
+										rendered="#{task.getDiagnosisStatus() eq 'PERFORMED' }">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
 									</ui:fragment>
 								</h:panelGroup>
 
 								<!-- Pendings completed -->
-								<h:panelGroup
-									rendered="#{(task.getDiagnosisStatus() eq 'PERFORMED')}">
-									<i style="margin-left: 5px;" class="fa fa-check-circle "
+								<h:panelGroup rendered="#{task.finalized}">
+									<i style="margin-left: 5px;"
+										class="fa fa-check-circle icon-green"
 										title="#{msg['body.worklist.navigation.activtasks.pendencies']}" />
 								</h:panelGroup>
 

@@ -162,7 +162,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 * 
 	 */
 	private boolean finalized;
-	
+
 	/**
 	 * Liste aller Personen die über die Diangose informiert werden sollen.
 	 */
@@ -274,7 +274,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	@Transient
 	public boolean isActiveOrActionPending() {
 		if (isActive() || getDiagnosisStatus().getLevel() >= DiagnosisStatus.DIAGNOSIS_NEEDED.getLevel()
-				|| getStainingStatus().getLevel() >= StainingStatus.STAINING_NEEDED.getLevel())
+				|| getStainingStatus().getLevel() >= StainingStatus.STAINING_NEEDED.getLevel() || isNotificationPhase())
 			return true;
 		return false;
 	}
@@ -339,21 +339,22 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 * @return
 	 */
 	@Transient
-	public boolean updateStainingStatus() {
-
-		if (getStainingStatus() == StainingStatus.PERFORMED) {
-			if (isStainingPhase()) {
-				setStainingPhase(false);
-				setStainingCompletionDate(System.currentTimeMillis());
-				return true;
-			}
-		} else {
-			if (!isStainingPhase()) {
-				setStainingPhase(true);
-				setStainingCompletionDate(0);
-				return true;
-			}
+	public boolean hasStatingStatusChanged() {
+		// staining is performed and date = 0, so staining was performed
+		// recently
+		if (getStainingStatus() == StainingStatus.PERFORMED && getStainingCompletionDate() == 0) {
+			setStainingCompletionDate(System.currentTimeMillis());
+			setStainingPhase(false);
+			return true;
+			// the staining process was performed (date != 0), but there are new
+			// slides to stain
+		} else if (getStainingStatus() != StainingStatus.PERFORMED && getStainingCompletionDate() != 0) {
+			setStainingCompletionDate(0);
+			setStainingPhase(true);
+			return true;
 		}
+
+		// status has not changed
 		return false;
 	}
 
@@ -596,6 +597,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	public void setFinalized(boolean finalized) {
 		this.finalized = finalized;
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.staingingPhaseEndAuto.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel
+					value="#{msg['dialog.staingingPhaseEndAuto.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1"
+				styleClass="defaultListingTableContainer, standardFont">
+				<h:outputLabel value="#{msg['dialog.staingingPhaseEndAuto.text']}"></h:outputLabel>
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+
+					<!-- Ok button -->
+					<p:commandButton value="#{msg['general.ok']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-check-circle-o"
+						actionListener="#{slideHandlerAction.stayInStainingPhase(false)}"></p:commandButton>
+
+					<!-- stay in staining list -->
+					<p:commandButton
+						value="#{msg['dialog.staingingPhaseEndAuto.button.stay']}"
+						icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{slideHandlerAction.stayInStainingPhase(true)}"></p:commandButton>
+
+
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+
+	</h:form>
+</h:body>
+</html>

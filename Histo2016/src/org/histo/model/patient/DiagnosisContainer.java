@@ -48,6 +48,9 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 
 	private Task parent;
 
+	/**
+	 * List of diagnosis revisions
+	 */
 	private List<DiagnosisRevision> diagnosisRevisions;
 
 	/**

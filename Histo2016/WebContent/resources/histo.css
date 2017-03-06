@@ -9,7 +9,8 @@ body {
 	width: 100%;
 }
 
-.defaultListingTableContainer>tbody>tr>td, .defaultListingTableContainer>tbody>tr {
+.defaultListingTableContainer>tbody>tr>td, .defaultListingTableContainer>tbody>tr
+	{
 	padding: 0px !important;
 	border-collapse: collapse !important;
 	border: 0px !important
@@ -62,7 +63,7 @@ body {
 	padding: 3px;
 }
 
-.defaultListingTableCssOneCol .big-text{
+.defaultListingTableCssOneCol .big-text {
 	font-size: 1.2em !important;
 }
 
@@ -91,7 +92,7 @@ body {
 	font-size: 1.2em !important;
 }
 
-.defaultListingTableCss .big-text{
+.defaultListingTableCss .big-text {
 	font-size: 1.2em !important;
 }
 
@@ -119,27 +120,28 @@ body {
 
 /*******************************************/
 /* Colunm orientation for all */
-.defaultListingTableColumnTop{
+.defaultListingTableColumnTop {
 	vertical-align: top;
 	padding-top: 8px !important;
 }
-.defaultListingTableColumn10{
+
+.defaultListingTableColumn10 {
 	width: 10%;
 }
 
-.defaultListingTableColumn15{
+.defaultListingTableColumn15 {
 	width: 15%;
 }
 
-.defaultListingTableColumn20{
+.defaultListingTableColumn20 {
 	width: 20%;
 }
 
-.defaultListingTableColumn25{
+.defaultListingTableColumn25 {
 	width: 25%;
 }
 
-.defaultListingTableColumn30{
+.defaultListingTableColumn30 {
 	width: 30%;
 }
 /************************************* DEFAULT TABLE *************************************/
@@ -157,15 +159,18 @@ body {
 	line-height: 22px;
 }
 
-.smallFont, .smallFont label, .smallFont input{
+.smallFont, .smallFont label, .smallFont input {
 	font-size: 0.8em !important;
 	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-style: normal;
 	font-variant: normal;
 }
 /************************************* Fonts *************************************/
-
-
+/* Auto width for menu on top */
+ul.ui-menu-child {
+	white-space: nowrap;
+	width: auto !important;
+}
 
 /* Default table for listing inputfields*/
 .noBorders>tr, .noBorders>td, .noBorders {
@@ -269,8 +274,6 @@ body {
 	font-weight: bold;
 }
 
-
-
 .noUnderlineAtLink {
 	text-decoration: none !important;
 }
@@ -371,7 +374,7 @@ body {
 	font-size: 0.7em;
 }
 
-.navigation .navTable .ui-datatable-scrollable-theadclone{
+.navigation .navTable .ui-datatable-scrollable-theadclone {
 	display: none;
 }
 
@@ -778,7 +781,6 @@ body {
 	text-align: right;
 }
 
-
 /*	################# print dialog ################# */
 
 /*	################# Contact ################# */
@@ -833,8 +835,8 @@ body {
 /*	################# WorklistOptionsDilaog ################# */
 
 /*	################# print dialog ################# */
-.miniSpinner{
-	width: 32px;	
+.miniSpinner {
+	width: 32px;
 }
 
 .miniSpinner .ui-spinner-input {

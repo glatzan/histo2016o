@@ -103,7 +103,7 @@ public class MainHandlerAction {
 
 		setSettings(HistoSettings.factory());
 
-		//TODO remove
+		// TODO remove
 		if (!getSettings().isOfflineMode()) {
 			// setting preferred printer
 			if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null)
@@ -322,90 +322,28 @@ public class MainHandlerAction {
 	/*
 	 * ************************** Time ****************************
 	 */
+
 	/********************************************************
-	 * Archive
+	 * Delete
 	 ********************************************************/
-
-	/**
-	 * Shows a Dialog for deleting (archiving) the sample/task/bock/image
-	 * 
-	 * @param sample
-	 * @param archived
-	 */
-	public void prepareDeleteObject(ArchivAble archive, boolean archived) {
-		// if no dialog is provieded the object will be archived immediately
-		if (archive.getArchiveDialog() == null)
-			archiveObject(archive, archived);
-		else
-			showDialog(archive.getArchiveDialog());
-	}
-
-	/**
-	 * Archives a Object implementing Parent.
-	 * 
-	 * @param task
-	 * @param archiveAble
-	 * @param archived
-	 */
-	public void archiveObject(ArchivAble archive, boolean archived) {
-
-		// TODO
-		archive.setArchived(archived);
-
-		String logString = "log.error";
-
-		hideArchiveObjectDialog();
-	}
-
-	/**
-	 * Hides the Dialog for achieving an object
-	 */
-	public void hideArchiveObjectDialog() {
-		hideDialog(getToArchive().getArchiveDialog());
+	public void deleteDate(SaveAble toSave, String resourcesKey, String... arr) {
+		genericDAO.delete(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
 
 	/********************************************************
-	 * Archive
+	 * Delete
 	 ********************************************************/
 
+	/********************************************************
+	 * Save
+	 ********************************************************/
 	public void saveDataChange(SaveAble toSave, String resourcesKey, String... arr) {
 		genericDAO.save(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
 
-	/**
-	 * Takes a object to save and an resourcesString with optional wildcards.
-	 * This method will replace wildcard recursively ("log.test",
-	 * "{'log.hallo', 'wuuu'}", "replace other"). If an object is associated
-	 * with a patient but does not implement Parent the patient object can be
-	 * passed separately.
-	 * 
-	 * @param toSave
-	 * @param resourcesKey
-	 * @param detailedInfoParams
-	 */
-	public void saveChangedData(Object toSave, Patient patient, String logInfo) {
-		if (patient != null) {
-			genericDAO.save(toSave, logInfo, patient);
-		} else
-			genericDAO.save(toSave, logInfo);
-	}
-
-	/**
-	 * Takes a object to save and an resourcesString with optional wildcards.
-	 * This method will replace wildcard recursively ("log.test",
-	 * "{'log.hallo', 'wuuu'}", "replace other")
-	 * 
-	 * @param toSave
-	 * @param resourcesKey
-	 * @param detailedInfoParams
-	 */
-	public void saveChangedData(Object toSave, String resourcesKey) {
-
-		if (toSave instanceof Parent) {
-			saveChangedData(toSave, ((Parent<?>) toSave).getPatient(), resourcesKey);
-		} else
-			saveChangedData(toSave, null, resourcesKey);
-	}
+	/********************************************************
+	 * Save
+	 ********************************************************/
 
 	/**
 	 * Replaces wildcards in resoucesString.

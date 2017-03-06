@@ -8,6 +8,28 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+
+	<c:set var="selectedPatient"
+		value="#{worklistHandlerAction.selectedPatient}" />
+
+	<c:set var="selectedTask"
+		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
+
+	<c:set var="taskEditable" scope="request"
+		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
+
+	<c:set var="patientIsNotNull" scope="request"
+		value="#{selectedPatient ne null}" />
+
+	<c:set var="taskIsNotNull" scope="request"
+		value="#{selectedPatient ne null and selectedTask ne null }" />
+
+	<c:set var="stainingStatus" scope="request"
+		value="#{selectedTask.stainingStatus}" />
+
+	<c:set var="diagnosisStatus" scope="request"
+		value="#{selectedTask.diagnosisStatus}" />
+
 	<h:panelGrid columns="2"
 		styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 		style="width:100%">
@@ -72,83 +94,105 @@
 					<!-- Overview, rendered if selected patient is not null -->
 					<p:menuitem value="#{msg['header.menu.patient.overview']}"
 						onclick="$('#headerForm\\:showPatientOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+						rendered="#{patientIsNotNull}" />
 
 					<!-- upload to patient -->
 					<p:menuitem value="#{msg['header.menu.patient.upload']}"
 						icon="fa fa-cloud-upload"
 						onclick="$('#headerForm\\:uploadBtnToPatient').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{worklistHandlerAction.selectedPatient ne null }" />
+						rendered="#{patientIsNotNull}" />
 
 					<!-- edit patient, rendered if selected patient is not null, disabled  if patient is not extern -->
 					<p:menuitem value="#{msg['header.menu.patient.edit']}"
 						title="#{!worklistHandlerAction.selectedPatient.externalPatient ? msg['header.menu.patient.edit.disabled'] : ''}"
 						disabled="#{!worklistHandlerAction.selectedPatient.externalPatient}"
 						onclick="$('#headerForm\\:editPatientData').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+						rendered="#{patientIsNotNull}" />
 
 				</p:submenu>
 
 				<!-- Task -->
 				<p:submenu label="#{msg['header.menu.task']}"
-					rendered="#{worklistHandlerAction.selectedPatient ne null}">
+					rendered="#{selectedPatient ne null}">
+					<!-- ************ Task ************ -->
 					<!-- New Task, rendered if selected patient not null -->
 					<p:menuitem value="#{msg['header.menu.task.create']}"
 						icon="fa fa-plus"
 						onclick="$('#headerForm\\:newTaskBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
+						rendered="#{patientIsNotNull}" />
 
 					<!-- New Sample, rendered if selected patient is not null, disabled if no task was selected -->
 					<p:menuitem value="#{msg['header.menu.task.sample.create']}"
 						icon="fa fa-plus"
 						onclick="$('#headerForm\\:newSampleBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null }"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}"
-						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
+						disabled="#{!taskIsNotNull or !taskEditable}"
+						rendered="#{patientIsNotNull}"
+						title="#{!taskIsNotNull ? msg['header.menu.task.selectTaskFirst'] : ''}" />
+					<!-- ************ Task ************ -->
 
-					<p:separator />
-					<!-- Staining -->
+					<!-- ************ Staining ************ -->
+					<p:separator rendered="#{taskIsNotNull}" />
+					<!-- New Slides -->
+					<p:menuitem value="#{msg['header.menu.task.sample.newSlide']}"
+						disabled="#{true}" icon="fa fa-fw fa-image"
+						rendered="#{taskIsNotNull}" />
+
+					<!-- Staining, add to staining phase, if all staining tasks have been completed-->
+					<p:menuitem
+						value="#{msg['header.menu.task.sample.stainingPhase.add']}"
+						disabled="#{!taskEditable}" icon="fa fa-fw fa-image"
+						onclick="$('#headerForm\\:stainingPhaseForce').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{taskIsNotNull and !selectedTask.stainingPhase}" />
+
+					<!-- Staining, end staining phase if all staining tasks have been completed-->
 					<p:menuitem
 						value="#{msg['header.menu.task.sample.stainingPhase.end']}"
-						icon="fa fa-image"
-						onclick="$('#headerForm\\:finalizeStaining').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null }"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}"
-						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
+						icon="fa fa-fw fa-image"
+						onclick="$('#headerForm\\:stainingPhaseEndManual').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{taskIsNotNull and selectedTask.stainingPhase and stainingStatus eq 'PERFORMED'}" />
 
+					<!-- Diagnosis, force diagnosis phase if not all staining tasks have been completed -->
+					<p:menuitem disabled="#{!taskEditable}"
+						value="#{msg['header.menu.task.sample.diangosisPhase.add']}"
+						icon="fa fa-fw fa-image"
+						onclick="$('#headerForm\\:diagnosisPhaseForceFromStaining').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{taskIsNotNull and stainingStatus ne 'PERFORMED' and !selectedTask.diagnosisPhase}" />
+					<!-- ************ Staining ************ -->
+
+					<!-- ************ Diagnosis ************ -->
 					<p:separator />
 
-					<!-- Finish diagnostics, rendered if selected patient is not null, disabled if no task was selected -->
-					<p:menuitem icon="fa fa-picture-o"
-						value="#{msg['header.menu.task.sample.staining.finish']}"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null or true}"
-						onclick="$('#headerForm\\:finalizeStaining').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-
-
-					<!-- Finish diagnostics, rendered if selected patient is not null, disabled if no task was selected -->
+					<!-- New Diagnosis revision-->
 					<p:menuitem icon="fa fa-pencil-square-o"
 						value="#{msg['header.menu.task.sample.diagnosisRevion']}"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}"
-						onclick="$('#headerForm\\:newDiagnosisRevision').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
+						disabled="#{!taskEditable}" rendered="#{taskIsNotNull}"
+						onclick="$('#headerForm\\:newDiagnosisRevision').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
-					<!-- Finish diagnostics, rendered if selected patient is not null, disabled if no task was selected -->
+					<!-- Remove if locked -->
 					<p:menuitem icon="fa fa-pencil-square-o"
-						value="#{msg['header.menu.task.sample.diagnosis.finish']}"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
-						rendered="#{worklistHandlerAction.selectedPatient ne null}"
-						onclick="$('#headerForm\\:finalizeDiagnosis').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
+						value="#{msg['header.menu.task.sample.diagnosisPhase.remove']}"
+						rendered="#{taskIsNotNull and diagnosisStatus eq 'PERFORMED' and selectedTask.diagnosisPhase}"
+						onclick="$('#headerForm\\:diagnosisPhaseEndManual').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
+					<!-- Lock diagnosis -->
+					<p:menuitem icon="fa fa-pencil-square-o"
+						value="#{msg['header.menu.task.sample.diagnosisPhase.lock']}"
+						disabled="#{!taskEditable}"
+						rendered="#{taskIsNotNull and diagnosisStatus ne 'PERFORMED'}"
+						onclick="$('#headerForm\\:diagnosisPhaseEndAuto').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+
+					<!-- Unlock -->
+					<p:menuitem
+						value="#{msg['header.menu.task.sample.diagnosisPhase.unlock']}"
+						icon="fa fa-fw fa-image"
+						onclick="$('#headerForm\\:diagnosisPhaseUnlock').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{taskIsNotNull and selectedTask.finalized}" />
 					<p:separator />
+					<!-- ************ Diagnosis ************ -->
 
 					<!-- Contacts -->
 					<p:menuitem value="#{msg['header.menu.task.sample.contact']}"
-						icon="fa fa-envelope-o"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
+						icon="fa fa-envelope-o" disabled="#{!taskEditable}"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
@@ -171,7 +215,7 @@
 
 					<!-- council -->
 					<p:menuitem value="#{msg['header.menu.task.council']}"
-						icon="fa fa-comment-o"
+						disabled="#{!taskEditable}" icon="fa fa-comment-o"
 						onclick="$('#headerForm\\:councilBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
 
@@ -251,23 +295,57 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
-			<!-- Finalize staining -->
-			<p:commandButton id="finalizeStaining" style="display:none"
-				actionListener="#{slideHandlerAction.showStainingPhaseDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm" />
+			<!-- Remove from staining list -->
+			<p:commandButton id="stainingPhaseEndManual" style="display:none"
+				actionListener="#{slideHandlerAction.showStaingPhaseEndManualDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandButton>
+
+			<!-- Force add to staining list -->
+			<p:commandButton id="stainingPhaseForce" style="display:none"
+				actionListener="#{slideHandlerAction.showForceStainingPhaseDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandButton>
+
+			<!-- Force add to diagnosis list from stainig list -->
+			<p:commandButton id="diagnosisPhaseForceFromStaining"
+				style="display:none"
+				actionListener="#{stainingHandlerAction.showForceDiagnosisPhaseDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- New diagnosis revision -->
 			<p:commandButton id="newDiagnosisRevision" style="display:none"
 				actionListener="#{diagnosisHandlerAction.prepareDiagnosisRevisionDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Finalize diagnosis -->
-			<p:commandButton id="finalizeDiagnosis" style="display:none"
-				actionListener="#{diagnosisHandlerAction.prepareFinalizeDiagnosisDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm" />
+			<!-- Remove diagnosis from worklist if remained in worklist after finished -->
+			<p:commandButton id="diagnosisPhaseEndManual" style="display:none"
+				actionListener="#{diagnosisHandlerAction.showDiagnosisPhaseEndManual(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
+
+			<!-- Lock diagnosis -->
+			<p:commandButton id="diagnosisPhaseEndAuto" style="display:none"
+				actionListener="#{diagnosisHandlerAction.showDiagnosisPhaseEndAutoDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandButton>
+
+			<!-- Unlock diagnosis -->
+			<p:commandButton id="diagnosisPhaseUnlock" style="display:none"
+				actionListener="#{diagnosisHandlerAction.showUnlockDiagnosisPhaseDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandButton>
+
+
 
 			<!-- Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
@@ -309,7 +387,8 @@
 			<!-- *************** Admin Menu *************** -->
 			<p:commandButton id="showAdministerTask" style="display:none"
 				actionListener="#{taskHandlerAction.showAdministrateTask(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 			<!-- *************** Admin Menu *************** -->
 

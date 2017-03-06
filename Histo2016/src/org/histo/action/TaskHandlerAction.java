@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisRevisionType;
@@ -53,9 +54,6 @@ public class TaskHandlerAction implements Serializable {
 	private static Logger logger = Logger.getLogger(TaskHandlerAction.class);
 
 	@Autowired
-	private HelperDAO helperDAO;
-
-	@Autowired
 	private TaskDAO taskDAO;
 
 	@Autowired
@@ -66,12 +64,9 @@ public class TaskHandlerAction implements Serializable {
 
 	@Autowired
 	private PatientDao patientDao;
-	
-	@Autowired
-	private DiagnosisHandlerAction diagnosisHandlerAction;
 
 	@Autowired
-	private SlideHandlerAction slideHandlerAction;
+	private DiagnosisHandlerAction diagnosisHandlerAction;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
@@ -100,6 +95,9 @@ public class TaskHandlerAction implements Serializable {
 	@Autowired
 	@Lazy
 	private MediaHandlerAction mediaHandlerAction;
+
+	@Autowired
+	private TaskManipulationHandler taskManipulationHandler;
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -266,7 +264,7 @@ public class TaskHandlerAction implements Serializable {
 
 		// resetting selected pdf container for informed consent upload
 		mediaHandlerAction.setSelectedPdfContainer(null);
-		
+
 		// creates a new sample
 		new Sample(getTemporaryTask(), !settingsHandlerAction.getAllAvailableMaterials().isEmpty()
 				? settingsHandlerAction.getAllAvailableMaterials().get(0) : null);
@@ -323,7 +321,7 @@ public class TaskHandlerAction implements Serializable {
 	 * 
 	 * @param patient
 	 */
-	public Task createNewTask(Patient patient, Task task) {
+	public Task createNewTaskFromGui(Patient patient, Task task) {
 		if (patient.getTasks() == null) {
 			patient.setTasks(new ArrayList<>());
 		}
@@ -345,7 +343,7 @@ public class TaskHandlerAction implements Serializable {
 		task.setWard("");
 
 		task.setStainingPhase(true);
-		
+
 		task.setCouncils(new ArrayList<Council>());
 
 		genericDAO.save(task.getDiagnosisContainer(),
@@ -355,18 +353,20 @@ public class TaskHandlerAction implements Serializable {
 			// set name of material for changing it manually
 			sample.setMaterial(sample.getMaterilaPreset().getName());
 
-			genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
-					sample.getSampleID(), sample.getMaterial()), task.getPatient());
+			// saving sample
+			mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.new", sample.getSampleID());
 
 			// creating needed blocks
-			createNewBlock(sample, false);
+			taskManipulationHandler.createNewBlock(sample, false);
+
+			// saving the sample
+			mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.update", sample.getSampleID());
 		}
 
-		// standard diagnose erstellen
-		diagnosisHandlerAction.createDiagnosisRevision(task.getDiagnosisContainer(), DiagnosisRevisionType.DIAGNOSIS);
+		// creating standard diagnoses
+		taskManipulationHandler.createDiagnosisRevision(task.getDiagnosisContainer(), DiagnosisRevisionType.DIAGNOSIS);
 
-		// checking if staining flag of the task object has to be false
-		task.updateStainingStatus();
+		task.hasStatingStatusChanged();
 		// generating gui list
 		task.generateSlideGuiList();
 		// saving patient
@@ -374,21 +374,20 @@ public class TaskHandlerAction implements Serializable {
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
 		mainHandlerAction.hideDialog(Dialog.TASK_CREATE);
-		
+
 		return task;
 	}
-	
-	public void createNewTaskAndPrintUReport(Patient patient, Task task) {
-		createNewTask(patient,task);
-		
-		PrintTemplate[] subSelect = PrintTemplate
-				.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
-		
-		if(subSelect.length == 0){
+
+	public void createNewTaskFromGuiAndPrintUReport(Patient patient, Task task) {
+		createNewTaskFromGui(patient, task);
+
+		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
+
+		if (subSelect.length == 0) {
 			logger.debug("No Template for UReport found");
 			return;
 		}
-		
+
 		printHandlerAction.printPdfFromExternalBean(subSelect[0]);
 	}
 
@@ -397,7 +396,7 @@ public class TaskHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Sample
+	 * Sample creation from Gui
 	 ********************************************************/
 
 	/**
@@ -435,39 +434,17 @@ public class TaskHandlerAction implements Serializable {
 	 * @param material
 	 */
 	public void createNewSampleFromGui(Task task, MaterialPreset material) {
-		createNewSample(task, material);
+		taskManipulationHandler.createNewSample(task, material);
 
 		// updating names
 		task.updateAllNames();
 		// checking if staining flag of the task object has to be false
-		task.updateStainingStatus();
+		task.hasStatingStatusChanged();
 		// generating gui list
 		task.generateSlideGuiList();
 		// saving patient
 
 		hideNewSampleDialog();
-	}
-
-	/**
-	 * Creates a new sample and adds this sample to the given task. Creates a
-	 * new diagnosis and a new block with slides as well.
-	 * 
-	 * @param task
-	 */
-	public void createNewSample(Task task, MaterialPreset material) {
-		Sample sample = new Sample(task, material);
-
-		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.new", task.getTaskID(),
-				sample.getSampleID(), material.getName()), task.getPatient());
-
-		// creating needed blocks
-		createNewBlock(sample, false);
-
-		genericDAO.save(sample, resourceBundle.get("log.patient.task.sample.update", sample.getParent().getTaskID(),
-				sample.getSampleID()), sample.getPatient());
-
-		// creating first default diagnosis
-		diagnosisHandlerAction.updateDiagnosisContainerToSampleCount(task.getDiagnosisContainer(), task.getSamples());
 	}
 
 	/**
@@ -505,13 +482,12 @@ public class TaskHandlerAction implements Serializable {
 	}
 
 	/********************************************************
-	 * Sample
+	 * Sample creation from Gui
 	 ********************************************************/
 
 	/********************************************************
-	 * Block
+	 * Create Block from Gui
 	 ********************************************************/
-
 	/**
 	 * Method used by the gui for creating a new sample
 	 * 
@@ -519,7 +495,7 @@ public class TaskHandlerAction implements Serializable {
 	 * @param material
 	 */
 	public void createNewBlockFromGui(Sample sample) {
-		createNewBlock(sample, false);
+		taskManipulationHandler.createNewBlock(sample, false);
 
 		// updates the name of all other samples
 		for (Block block : sample.getBlocks()) {
@@ -527,46 +503,15 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		// checking if staining flag of the task object has to be false
-		sample.getParent().updateStainingStatus();
+		sample.getParent().hasStatingStatusChanged();
 		// generating gui list
 		sample.getParent().generateSlideGuiList();
 		// saving patient
 		genericDAO.save(sample.getPatient(), resourceBundle.get("log.patient.save"), sample.getPatient());
 	}
 
-	/**
-	 * Creates a new block for the given sample. Adds all slides from the
-	 * material preset to the block.
-	 * 
-	 * @param sample
-	 * @param material
-	 */
-	public Block createNewBlock(Sample sample, boolean useAutoNomenclature) {
-		Block block = new Block();
-		block.setBlockID(useAutoNomenclature ? TaskUtil.getCharNumber(sample.getBlocks().size()) : "");
-		block.setParent(sample);
-		sample.getBlocks().add(block);
-
-		genericDAO.save(block, resourceBundle.get("log.patient.task.sample.blok.new",
-				block.getParent().getParent().getTaskID(), block.getParent().getSampleID(), block.getBlockID()),
-				sample.getPatient());
-
-		logger.debug("Creating new block " + block.getBlockID());
-
-		for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
-			slideHandlerAction.createSlide(proto, block);
-		}
-
-		genericDAO.save(
-				block, resourceBundle.get("log.patient.task.sample.block.update",
-						block.getParent().getParent().getTaskID(), block.getParent().getSampleID(), block.getBlockID()),
-				sample.getPatient());
-
-		return block;
-	}
-
 	/********************************************************
-	 * Block
+	 * Create Block from Gui
 	 ********************************************************/
 
 	/********************************************************
@@ -602,7 +547,7 @@ public class TaskHandlerAction implements Serializable {
 					parent.getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.getParent().getParent().updateStainingStatus();
+			parent.getParent().getParent().hasStatingStatusChanged();
 			// generating gui list
 			parent.getParent().getParent().generateSlideGuiList();
 
@@ -625,7 +570,7 @@ public class TaskHandlerAction implements Serializable {
 					toDeleteBlock.getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.getParent().updateStainingStatus();
+			parent.getParent().hasStatingStatusChanged();
 			// generating gui list
 			parent.getParent().generateSlideGuiList();
 
@@ -637,7 +582,8 @@ public class TaskHandlerAction implements Serializable {
 
 			parent.getSamples().remove(toDeleteSample);
 
-			diagnosisHandlerAction.updateDiagnosisContainerToSampleCount(parent.getDiagnosisContainer(), parent.getSamples());
+			taskManipulationHandler.updateDiagnosisContainerToSampleCount(parent.getDiagnosisContainer(),
+					parent.getSamples());
 
 			parent.updateAllNames();
 
@@ -648,7 +594,7 @@ public class TaskHandlerAction implements Serializable {
 					toDeleteSample.getParent().getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.updateStainingStatus();
+			parent.hasStatingStatusChanged();
 			// generating gui list
 			parent.generateSlideGuiList();
 		}
@@ -668,51 +614,53 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task Admin
 	 ********************************************************/
-	public void showAdministrateTask(Task task){
+	public void showAdministrateTask(Task task) {
 		setTemporaryTask(task);
 		mainHandlerAction.showDialog(Dialog.ADMINISTRATE_TASK);
 	}
-	
-	public void saveAdministrateTask(){
+
+	public void saveAdministrateTask() {
 		genericDAO.save(getTemporaryTask());
 		hideAdministrateTask();
 	}
-	
-	public void hideAdministrateTask(){
+
+	public void hideAdministrateTask() {
 		genericDAO.refresh(getTemporaryTask());
 		setTemporaryTask(null);
 		mainHandlerAction.hideDialog(Dialog.ADMINISTRATE_TASK);
 	}
+
 	/********************************************************
 	 * Task Admin
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Task editable
 	 ********************************************************/
-	public boolean isTaskEditable(Task task){
-		
-		
+	public boolean isTaskEditable(Task task) {
+
+		if (task == null)
+			return false;
+
 		// users and guest can't edit anything
-		if(!userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)){
+		if (!userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			logger.debug("Task not editable, user has no permission");
 			return false;
 		}
-		
+
 		// finalized
-		if(task.isFinalized()){
+		if (task.isFinalized()) {
 			logger.debug("Task not editable, is finalized");
 			return false;
 		}
-		
-		//Blocked
+
+		// Blocked
 		// TODO: Blocking
-		
+
 		logger.debug("Task is editable");
 		return true;
 	}
-	
-	
+
 	/********************************************************
 	 * Council
 	 ********************************************************/
@@ -732,7 +680,7 @@ public class TaskHandlerAction implements Serializable {
 		patientDao.initializeDataList(task);
 
 		taskDAO.initializeCouncilData(task);
-		
+
 		// setting council as default
 		if (task.getCouncils().size() == 0) {
 			logger.debug("Creating new");
@@ -801,7 +749,7 @@ public class TaskHandlerAction implements Serializable {
 	public void hideCouncilDialogAndPrintReport(Task task, Council council) {
 		saveCouncilData(task, council);
 		printHandlerAction.showCouncilPrintDialog(task, council);
-		
+
 		hideCouncilDialog();
 		// workaround for showing and hiding two dialogues
 		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");

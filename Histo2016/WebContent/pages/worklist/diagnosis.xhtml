@@ -10,12 +10,12 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<c:set var="selectedTask" 
+	<c:set var="selectedTask"
 		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
 
 	<c:set var="taskEditable" scope="request"
 		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
-		
+
 	<p:panel style="width: 60%"
 		styleClass="collapsedBorders noPadding noBorders">
 
@@ -46,8 +46,8 @@
 									value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
 								<p:inputText value="#{sample.material}"
-									disabled="#{!taskEditable}"
-									styleClass="smallInput" style="width:200px;float:right;" />
+									disabled="#{!taskEditable}" styleClass="smallInput"
+									style="width:200px;float:right;" />
 								<p:commandLink
 									title="#{msg['body.receiptlog.notification.hint']}"
 									rendered="#{taskEditable}"
@@ -77,8 +77,7 @@
 				<!-- Eye -->
 				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
 					<p:selectOneMenu styleClass="smallInput"
-						disabled="#{!taskEditable}"
-						value="#{selectedTask.eye}">
+						disabled="#{!taskEditable}" value="#{selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
 							itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
@@ -88,7 +87,8 @@
 					</p:selectOneMenu>
 
 					<p:selectOneMenu id="historyText" style="width: 80%"
-						value="#{selectedTask.caseHistory}" editable="true">
+						disabled="#{!taskEditable}" value="#{selectedTask.caseHistory}"
+						editable="true">
 						<f:selectItem itemLabel="Select One"
 							itemValue="#{msg['body.diagnosis.story.watermark']}" />
 						<f:selectItems value="#{taskHandlerAction.caseHistoryList}"
@@ -168,7 +168,7 @@
 							value="#{selectedTask.getPrimaryContact('SURGEON')}"></h:outputLabel>
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							rendered="#{taskEditable}"
+							disabled="#{!taskEditable}"
 							style="float: right; margin-right:5px;"
 							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
@@ -186,7 +186,7 @@
 
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 							style="float: right; margin-right:5px;"
-							rendered="#{taskEditable}"
+							disabled="#{!taskEditable}"
 							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -211,8 +211,7 @@
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
 				<h:panelGroup id="extendedTextParent">
 					<p:inputTextarea style="width:100%" id="extendedText" rows="15"
-						disabled="#{!taskEditable}"
-						value="#{revision.text}">
+						disabled="#{!taskEditable}" value="#{revision.text}">
 
 						<p:ajax event="change" execute="@this"
 							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.histologicalRecord', revision.text)}" />
@@ -235,8 +234,7 @@
 						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
 							<!-- diagnosis category -->
 							<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-								
-								styleClass="customSerachSelectMenu"
+								styleClass="customSerachSelectMenu" disabled="#{!taskEditable}"
 								panelStyleClass="customSerachSelectMenuPanel"
 								converter="#{settingsHandlerAction.diagnosisPrototypeListTransformer}"
 								filter="true" filterMatchMode="startsWith">
@@ -256,7 +254,7 @@
 
 							<!-- copy diagnosis text -->
 							<p:commandLink styleClass="noUnderlineAtLink"
-								style="margin-left:20px;"
+								style="margin-left:20px;" disabled="#{!taskEditable}"
 								title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
 								rendered="#{diagnosis.diagnosisPrototype ne null}"
 								actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecordDialog(diagnosis)}"
@@ -272,8 +270,7 @@
 							<h:outputLabel
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
 							<p:selectBooleanCheckbox value="#{diagnosis.malign}"
-								style="margin:3px 0px 0px 3px;"
-								>
+								disabled="#{!taskEditable}" style="margin:3px 0px 0px 3px;">
 
 								<f:ajax event="change"
 									listener="#{mainHandlerAction.saveDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
@@ -286,8 +283,7 @@
 						<h:outputLabel />
 						<!-- diagnosis text -->
 						<p:inputTextarea value="#{diagnosis.diagnosis}" id="diagnosisText"
-							style="width:100%" 
-							styleClass="">
+							disabled="#{!taskEditable}" style="width:100%">
 							<p:watermark for="diagnosisText"
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
 							<f:ajax event="change" execute="@this"
@@ -328,8 +324,7 @@
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician']}" />
 				<h:panelGroup>
 					<p:selectOneMenu disabled="#{!taskEditable}"
-						styleClass="customSerachSelectMenu"
-						style="width:80% !important;"
+						styleClass="customSerachSelectMenu" style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
 						value="#{taskHandlerAction.signatureOne}"
 						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
@@ -391,8 +386,7 @@
 				<h:panelGroup>
 
 					<p:selectOneMenu disabled="#{!taskEditable}"
-						styleClass="customSerachSelectMenu"
-						style="width:80% !important;"
+						styleClass="customSerachSelectMenu" style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
 						value="#{taskHandlerAction.signatureTwo}"
 						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"

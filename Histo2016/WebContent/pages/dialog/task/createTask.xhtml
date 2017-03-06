@@ -187,13 +187,13 @@
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTask(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTaskFromGui(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
 						icon="fa fa-print"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTaskAndPrintUReport(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
+						actionListener="#{taskHandlerAction.createNewTaskFromGuiAndPrintUReport(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
 
 
 					<!-- Abort button -->

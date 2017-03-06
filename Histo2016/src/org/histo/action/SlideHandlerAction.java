@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
@@ -53,13 +54,13 @@ public class SlideHandlerAction implements Serializable {
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	MainHandlerAction mainHandlerAction;
+	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
-	DiagnosisHandlerAction diagnosisHandlerAction;
+	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	UserHandlerAction userHandlerAction;
+	private TaskManipulationHandler taskManipulationHandler;
 
 	/**
 	 * Temporary task object, for finalizing stainigs
@@ -83,30 +84,20 @@ public class SlideHandlerAction implements Serializable {
 	/**
 	 * Temporary Block for creating new slides
 	 */
-	private Block tmpBlock;
+	private Block temporaryBlock;
 
 	/**
 	 * used for adding new staings to block
 	 */
-	private String tmpCommentary;
+	private String slideCommentary;
 
 	/**
 	 * used for adding new staings to block
 	 */
-	private boolean tmpRestaining;
+	private boolean slideRestaining;
+
 	/********************************************************
 	 * Create new slide
-	 ********************************************************/
-
-	/********************************************************
-	 * Staining Phase
-	 ********************************************************/
-	/**
-	 * True if the task should be kept in staining phase
-	 */
-	private boolean keepInStainingPhase;
-	/********************************************************
-	 * Staining Phase
 	 ********************************************************/
 
 	/**
@@ -117,16 +108,31 @@ public class SlideHandlerAction implements Serializable {
 	private StainingListAction actionOnMany;
 
 	/**
+	 * Hides dialogs associated with the slideHandlerAction, resets all
+	 * variables
+	 * 
+	 * @param dialog
+	 */
+	public void hideDialog(Dialog dialog) {
+		setTemporaryBlock(null);
+		setTemporaryTask(null);
+		mainHandlerAction.hideDialog(dialog);
+	}
+
+	/********************************************************
+	 * Add Slide from Gui
+	 ********************************************************/
+	/**
 	 * Show a dialog for adding new slides to a block
 	 * 
 	 * @param sample
 	 */
 	public void prepareAddSlideDialog(Block blockToAddStaining) {
-		setTmpBlock(blockToAddStaining);
+		setTemporaryBlock(blockToAddStaining);
 
-		setTmpCommentary(new String());
+		setSlideCommentary("");
 
-		setTmpRestaining(blockToAddStaining.getParent().isReStainingPhase());
+		setSlideRestaining(blockToAddStaining.getParent().isReStainingPhase());
 
 		setStainingListChooser(new ArrayList<ListChooser<StainingPrototype>>());
 
@@ -139,20 +145,12 @@ public class SlideHandlerAction implements Serializable {
 		mainHandlerAction.showDialog(Dialog.SLIDE_CREATE);
 	}
 
-	/**
-	 * Hides the dialog for adding new slides
-	 */
-	public void hideAddSlideDialog() {
-		mainHandlerAction.hideDialog(Dialog.SLIDE_CREATE);
-	}
-
-	public void addSelectedSlides(List<ListChooser<StainingPrototype>> slideList, Block block, String commentary,
-			boolean reStaining) {
+	public void addSlidesFromGui() {
 
 		// überprüft ob eine neuer Objektträger erstellt werden soll, falls
 		// nicht wird abgebrochen
 		boolean slideChoosen = false;
-		for (ListChooser<StainingPrototype> slide : slideList) {
+		for (ListChooser<StainingPrototype> slide : getStainingListChooser()) {
 			if (slide.isChoosen()) {
 				slideChoosen = true;
 				break;
@@ -160,30 +158,34 @@ public class SlideHandlerAction implements Serializable {
 		}
 
 		if (!slideChoosen) {
-			hideAddSlideDialog();
+			hideDialog(Dialog.SLIDE_CREATE);
 			return;
 		}
 
 		// fügt einen neune Objektträger hinzu
-		for (ListChooser<StainingPrototype> slide : slideList) {
+		for (ListChooser<StainingPrototype> slide : getStainingListChooser()) {
 			if (slide.isChoosen()) {
-				createSlide(slide.getListItem(), block, commentary, reStaining);
+				taskManipulationHandler.createSlide(slide.getListItem(), getTemporaryBlock(), getSlideCommentary(),
+						isSlideRestaining());
 			}
 		}
 
-		// updating statining list
-		block.getParent().getParent().generateSlideGuiList();
-
 		// if staining is needed set the staining flag of the task object to
 		// true
-		// TODO save indepenetly from patient
-		block.getTask().updateStainingStatus();
+		getTemporaryBlock().getTask().hasStatingStatusChanged();
 
-		genericDAO.save(block.getPatient(), resourceBundle.get("log.patient.save"), block.getPatient());
+		// updating statining list
+		getTemporaryBlock().getTask().generateSlideGuiList();
 
-		hideAddSlideDialog();
+		mainHandlerAction.saveDataChange(getTemporaryBlock(), "log.patient.task.sample.block.update",
+				getTemporaryBlock().getBlockID());
 
+		hideDialog(Dialog.SLIDE_CREATE);
 	}
+
+	/********************************************************
+	 * Add Slide from Gui
+	 ********************************************************/
 
 	/********************************************************
 	 * Many Staining Manipulation
@@ -268,9 +270,7 @@ public class SlideHandlerAction implements Serializable {
 			}
 			// shows dialog for informing the user that all stainings are
 			// performed
-			if (task.updateStainingStatus()) {
-				showStainingPhaseDialog(task);
-			}
+			showStainingPhaseEndAutoDialog(task);
 
 			break;
 		case NOT_PERFORMED:
@@ -291,9 +291,7 @@ public class SlideHandlerAction implements Serializable {
 				}
 			}
 
-			if (task.updateStainingStatus()) {
-				showStainingPhaseDialog(task);
-			}
+			showStainingPhaseEndAutoDialog(task);
 
 			break;
 		case ARCHIVE:
@@ -357,115 +355,152 @@ public class SlideHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Staining Manipulation
+	 * Staining Phase Dialog Auto
 	 ********************************************************/
 	/**
-	 * Adds a new staining to a block. Needs the sample an the patient for
-	 * logging. Commentary will be null.
-	 * 
-	 * @param prototype
-	 * @param sample
-	 * @param block
-	 * @param patientOfSample
+	 * Checks if all staings are completed an shows a dialog informing the user about this fact and offering the opportunity to keep the task in the staining phase
+	 * @formatter:off
+	 * Option one -> Task in staining phase, staining completed -> End? (dialog, showEndStaingPhaseDialog)
+	 * Option two -> Task in staining phase, staining is about to be completed -> Shift to diagnosis (dialog)
+	 * Option three -> Task in staining phase, staining not completed -> Force to diagnosis (dialog, showForceDiagnosisPhaseDialog)
+	 * Option four -> Task is not in staining phase, new slide -> staining phase (no dialog)
+	 * @formatter:on
+	 * @param task
 	 */
-	public void createSlide(StainingPrototype prototype, Block block) {
-		createSlide(prototype, block, null, false);
+	public void showStainingPhaseEndAutoDialog(Task task) {
+
+		// if task has changed
+		if (task.hasStatingStatusChanged()) {
+			if (task.getStainingStatus() == StainingStatus.PERFORMED) {
+				// staining is now performed
+				// setting time of completion
+
+				setTemporaryTask(task);
+
+				// show dialog for notifying the user that the task will be
+				// passed to diagnosis phase, and offering the option to hold
+				// the task also in staining phase
+				mainHandlerAction.showDialog(Dialog.STAINING_PHASE_END_AUTO);
+
+				mainHandlerAction.saveDataChange(task, "log.patient.task.change.stainingPhase.end");
+			} else {
+				// there are new slides to stain, the stain-process was finished
+				// before, so re-enter the staining phase
+				mainHandlerAction.saveDataChange(task, "log.patient.task.change.stainingPhase.reentered");
+			}
+		}
+
 	}
 
 	/**
-	 * Adds a new staining to a block. Needs the sample an the patient for
-	 * logging. Commentary the given string.
+	 * Keeps the task in staining phase if phase is true. Hides the
+	 * Dialog.STAINING_PHASE_END_AUTO dialog.
 	 * 
-	 * @param prototype
-	 * @param sample
-	 * @param block
-	 * @param commentary
-	 * @param patientOfSample
+	 * @param phase
 	 */
-	public void createSlide(StainingPrototype prototype, Block block, String commentary, boolean reStaining) {
-		Slide slide = new Slide();
-
-		slide.setCreationDate(System.currentTimeMillis());
-		slide.setSlidePrototype(prototype);
-		slide.setParent(block);
-
-		// setting unique slide number
-		slide.setUniqueIDinBlock(block.getNextSlideNumber());
-
-		block.getSlides().add(slide);
-
-		slide.updateNameOfSlide();
-
-		if (commentary != null && !commentary.isEmpty())
-			slide.setCommentary(commentary);
-
-		slide.setReStaining(reStaining);
-
-		genericDAO.save(slide, resourceBundle.get("log.patient.task.sample.block.slide.new",
-				slide.getParent().getParent().getParent().getTaskID(), slide.getParent().getParent().getSampleID(),
-				slide.getParent().getBlockID(), slide.getSlideID()), slide.getPatient());
-
+	public void stayInStainingPhase(boolean phase) {
+		getTemporaryTask().setStainingPhase(phase);
+		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
+		hideDialog(Dialog.STAINING_PHASE_END_AUTO);
 	}
 
 	/********************************************************
-	 * Staining Manipulation
+	 * Staining Phase Dialog Auto
 	 ********************************************************/
 
 	/********************************************************
-	 * Staining Phase Dialog
+	 * Staining Phase Dialog Manual
 	 ********************************************************/
-	public void showStainingPhaseDialog(Task task) {
-		mainHandlerAction.showDialog(Dialog.STAINING_PHASE);
+	/**
+	 * Shows a dialog for ending the staining phase manually, if no stainig task
+	 * is left and the user had kept the task in staining phase
+	 * 
+	 * @param task
+	 */
+	public void showStaingPhaseEndManualDialog(Task task) {
+		// if task was hold in staining phase but the staining had been
+		// performed, show dialog to end staining phase
+		mainHandlerAction.showDialog(Dialog.STAINING_PHASE_END_MANUAL);
 		setTemporaryTask(task);
-
-		// if every staining has been completed do not keep in stating phase
-		if (task.getStainingStatus() == StainingStatus.PERFORMED)
-			setKeepInStainingPhase(false);
-		else
-			setKeepInStainingPhase(true);
 	}
 
-	public void endStainingPhaseDialog() {
-		if (isKeepInStainingPhase()) {
-			temporaryTask.setStainingPhase(true);
-		} else
-			temporaryTask.setStainingPhase(false);
+	/**
+	 * Removes the task from the staining phase, enables diagnosis phase if
+	 * diagnosis was not done jet.
+	 */
+	public void removeFromStainingPhase() {
+		temporaryTask.setStainingPhase(false);
 
-		if (getTemporaryTask().getStainingStatus() == StainingStatus.PERFORMED)
-			temporaryTask.setStainingCompletionDate(System.currentTimeMillis());
+		// if the diagnoses process of the task has not been finished, set to
+		// diagnosis phase
+		if (!getTemporaryTask().isFinalized() && getTemporaryTask().getDiagnosisCompletionDate() == 0) {
+			logger.debug("Setting diagnosis phase to true");
+			getTemporaryTask().setDiagnosisPhase(true);
+		}
 
-		// TODO Check if diagnosisPhase was completed, should not occur
-		temporaryTask.setDiagnosisPhase(true);
+		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.end");
 
-		hideStainingPhaseDialog();
-	}
-
-	public void hideStainingPhaseDialog() {
-		mainHandlerAction.hideDialog(Dialog.STAINING_PHASE);
-		setTemporaryTask(null);
+		hideDialog(Dialog.STAINING_PHASE_END_MANUAL);
 	}
 
 	/********************************************************
-	 * Staining Phase Dialog
+	 * Staining Phase Dialog Manual
 	 ********************************************************/
 
+	/********************************************************
+	 * Force Staining phase
+	 ********************************************************/
+	public void showForceStainingPhaseDialog(Task task) {
+		mainHandlerAction.showDialog(Dialog.STAINING_PHASE_FORCED);
+		setTemporaryTask(task);
+	}
+
+	public void forceStainingPhase() {
+		getTemporaryTask().setStainingPhase(true);
+		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
+		hideDialog(Dialog.STAINING_PHASE_FORCED);
+	}
+
+	/********************************************************
+	 * Force Staining phase
+	 ********************************************************/
+
+	/********************************************************
+	 * Force Diagnosis Phase Dialog From Staining 
+	 ********************************************************/
+	/**
+	 * Shows a dialog for shifting the task to diagnosis phase even if not all
+	 * staining tasks are completed.
+	 * 
+	 * @param task
+	 */
+	public void showForceDiagnosisPhaseDialog(Task task) {
+		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_FORCED);
+		setTemporaryTask(task);
+	}
+
+	/**
+	 * Shifts the task to diagnosis phase, leave the staining phase as is
+	 */
+	public void forceDiagnosisPhase() {
+		getTemporaryTask().setDiagnosisPhase(true);
+		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.forced");
+		hideDialog(Dialog.DIAGNOSIS_PHASE_FORCED);
+	}
+
+	/********************************************************
+	 * Force Diagnosis Phase Dialog From Staining 
+	 ********************************************************/
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-	public String getTmpCommentary() {
-		return tmpCommentary;
+
+	public Block getTemporaryBlock() {
+		return temporaryBlock;
 	}
 
-	public void setTmpCommentary(String tmpCommentary) {
-		this.tmpCommentary = tmpCommentary;
-	}
-
-	public Block getTmpBlock() {
-		return tmpBlock;
-	}
-
-	public void setTmpBlock(Block tmpBlock) {
-		this.tmpBlock = tmpBlock;
+	public void setTemporaryBlock(Block temporaryBlock) {
+		this.temporaryBlock = temporaryBlock;
 	}
 
 	public List<ListChooser<StainingPrototype>> getStainingListChooser() {
@@ -492,14 +527,6 @@ public class SlideHandlerAction implements Serializable {
 		this.actionOnMany = actionOnMany;
 	}
 
-	public boolean isTmpRestaining() {
-		return tmpRestaining;
-	}
-
-	public void setTmpRestaining(boolean tmpRestaining) {
-		this.tmpRestaining = tmpRestaining;
-	}
-
 	public Task getTemporaryTask() {
 		return temporaryTask;
 	}
@@ -508,13 +535,22 @@ public class SlideHandlerAction implements Serializable {
 		this.temporaryTask = temporaryTask;
 	}
 
-	public boolean isKeepInStainingPhase() {
-		return keepInStainingPhase;
+	public String getSlideCommentary() {
+		return slideCommentary;
 	}
 
-	public void setKeepInStainingPhase(boolean keepInStainingPhase) {
-		this.keepInStainingPhase = keepInStainingPhase;
+	public boolean isSlideRestaining() {
+		return slideRestaining;
 	}
+
+	public void setSlideCommentary(String slideCommentary) {
+		this.slideCommentary = slideCommentary;
+	}
+
+	public void setSlideRestaining(boolean slideRestaining) {
+		this.slideRestaining = slideRestaining;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

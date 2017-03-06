@@ -5,12 +5,12 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
+
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.addSlide.Headline']}" /></title>
+			value="#{msg['dialog.staingingPhaseEndManual.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
-
 
 <h:body styleClass="defaultDialogLayout infoDialog">
 	<h:form id="dialogContent">
@@ -18,7 +18,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.addSlide.Headline']}" />
+				<h:outputLabel value="#{msg['dialog.staingingPhaseEndManual.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -28,26 +28,10 @@
 		</div>
 
 		<div class="contentDiv">
-			<p:dataTable var="staining"
-				styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll"
-				scrollable="true" scrollHeight="190"
-				value="#{slideHandlerAction.stainingListChooser}">
-				<p:column headerText="#{msg['dialog.addSlide.staining']}">
-					<h:outputLabel value="#{staining.listItem.name}" />
-				</p:column>
-				<p:column headerText="#{msg['dialog.addSlide.addSlide']}"
-					style="width:20%; text-align:center;">
-					<p:selectBooleanCheckbox value="#{staining.choosen}" />
-				</p:column>
-			</p:dataTable>
-
-			<h:panelGrid columns="2" style="width:100%">
-				<h:outputLabel value="#{msg['dialog.addSlide.commentray']}" />
-				<p:inputText value="#{slideHandlerAction.slideCommentary}"
-					styleClass="smallInput" style="width:90%"></p:inputText>
-				<h:outputLabel value="#{msg['dialog.addSlide.restaining']}" />
-				<p:selectBooleanCheckbox value="#{slideHandlerAction.slideRestaining}" />
-
+			<h:panelGrid columns="1"
+				styleClass="defaultListingTableContainer, standardFont">
+				<h:outputLabel
+					value="#{msg['dialog.staingingPhaseEndManual.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -56,21 +40,20 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['general.create']}"
+					<p:commandButton value="#{msg['dialog.staingingPhaseEndManual.button.remove']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{slideHandlerAction.addSlidesFromGui()}"></p:commandButton>
+						actionListener="#{slideHandlerAction.removeFromStainingPhase()}"></p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						actionListener="#{slideHandlerAction.hideDialog('SLIDE_CREATE')}"
 						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-times-circle"></p:commandButton>
+						icon="fa fa-times-circle"
+						actionListener="#{slideHandlerAction.hideDialog('STAINING_PHASE_END_MANUAL')}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
 
-		<div class="buttonContainer"></div>
 	</h:form>
 </h:body>
 </html>
