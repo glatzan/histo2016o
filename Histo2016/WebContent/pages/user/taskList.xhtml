@@ -27,13 +27,7 @@
 			style="margin-top:10px;">
 			<p:dataTable var="task" value="#{taskListHandlerAction.taskList}"
 				scrollHeight="600" draggableRows="true"
-				styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-				selectionMode="single" rowKey="#{task.id}"
-				selection="#{taskListHandlerAction.selectedTask}">
-
-				<p:ajax event="rowSelect"
-					listener="#{taskListHandlerAction.onAddTask(taskListHandlerAction.selectedTask)}"
-					update="navigationForm contentForm headerForm" />
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 				<p:column headerText="#{msg['body.taskList.table.task']}"
 					style="width:180px">

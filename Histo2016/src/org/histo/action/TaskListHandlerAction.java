@@ -1,5 +1,6 @@
 package org.histo.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -41,7 +42,7 @@ public class TaskListHandlerAction {
 	/**
 	 * List of available pages
 	 */
-	private int[] pages;
+	private List<Integer> pages;
 
 	/**
 	 * Page of list
@@ -52,24 +53,25 @@ public class TaskListHandlerAction {
 	 * Inits the taskList;
 	 */
 	public void initBean() {
-		worklistHandlerAction.setSelectedPatient(null);
-
+		logger.debug("Init Task list");
+		
 		if (taskPerPull == 0) {
 			setTaskPerPull(20);
 			setPage(1);
-			
-			int maxPages = taskDAO.countTotalTasks();
-			double pagesCount = Math.ceil((float)maxPages/ taskPerPull);
-			
-			pages = new int[(int)pagesCount];
-			
-			for (int i = 0; i < (int)pagesCount; i++) {
-				pages[i] = i+1;
-			}
-			
 		}
 
-		taskList = taskDAO.getTasks(getTaskPerPull(), getPage() - 1);
+		int maxPages = taskDAO.countTotalTasks();
+		int pagesCount = (int) Math.ceil((double) maxPages / taskPerPull);
+
+		logger.debug("Count of pages " + pagesCount);
+
+		setPages(new ArrayList<Integer>(pagesCount));
+
+		for (int i = 0; i < pagesCount; i++) {
+			getPages().add(i + 1);
+		}
+
+		onChangeSelectionCriteria();
 	}
 
 	public void onAddTask(Task task) {
@@ -85,14 +87,17 @@ public class TaskListHandlerAction {
 
 	}
 
-	public void onSelectTask(Task task) {
-		logger.debug("Showing task " + task.getTaskID());
+	public void onChangeSelectionCriteria() {
+		setTaskList(taskDAO.getTasks(getTaskPerPull(), getPage() - 1));
 	}
 
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
 	public List<Task> getTaskList() {
+		if(taskList == null)
+			initBean();
+		
 		return taskList;
 	}
 
@@ -124,11 +129,11 @@ public class TaskListHandlerAction {
 		this.selectedTask = selectedTask;
 	}
 
-	public int[] getPages() {
+	public List<Integer> getPages() {
 		return pages;
 	}
 
-	public void setPages(int[] pages) {
+	public void setPages(List<Integer> pages) {
 		this.pages = pages;
 	}
 

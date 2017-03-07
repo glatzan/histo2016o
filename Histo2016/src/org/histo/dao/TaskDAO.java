@@ -36,7 +36,8 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 				TimeUtil.getDateInUnixTimestamp(TimeUtil.getCurrentYear(), 0, 0, 0, 0, 0)))
 				.add(Restrictions.le("creationDate",
 						TimeUtil.getDateInUnixTimestamp(TimeUtil.getCurrentYear(), 12, 31, 23, 59, 59)));
-
+		query.setProjection(Projections.rowCount());
+		
 		Number result = (Number) query.getExecutableCriteria(getSession()).uniqueResult();
 
 		return result.intValue();
@@ -49,7 +50,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	 */
 	public int countTotalTasks() {
 		DetachedCriteria query = DetachedCriteria.forClass(Task.class, "task");
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		query.setProjection(Projections.rowCount());
 		Number result = (Number) query.getExecutableCriteria(getSession()).uniqueResult();
 
 		return result.intValue();

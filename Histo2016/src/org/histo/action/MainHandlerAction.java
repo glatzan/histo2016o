@@ -58,7 +58,10 @@ public class MainHandlerAction {
 
 	@Autowired
 	private ResourceBundle resourceBundle;
-
+	
+	/********************************************************
+	 * Navigation
+	 ********************************************************/
 	/**
 	 * View options, dynamically generated depending on the users role
 	 */
@@ -74,19 +77,6 @@ public class MainHandlerAction {
 	 */
 	private String queueDialog;
 
-	/********************************************************
-	 * Archive able
-	 ********************************************************/
-
-	/**
-	 * Object to archive
-	 */
-	private ArchivAble toArchive;
-
-	/********************************************************
-	 * Archive able
-	 ********************************************************/
-
 	/**
 	 * Dynamic Texts which are used rarely are stroed here.
 	 */
@@ -99,7 +89,6 @@ public class MainHandlerAction {
 	public void init() {
 
 		navigationPages = new ArrayList<View>();
-		
 
 		setSettings(HistoSettings.factory());
 
@@ -121,6 +110,8 @@ public class MainHandlerAction {
 			navigationPages.add(View.WORKLIST_PATIENT);
 			navigationPages.add(View.WORKLIST_RECEIPTLOG);
 			navigationPages.add(View.WORKLIST_DIAGNOSIS);
+		} else {
+			navigationPages.add(View.USERLIST);
 		}
 
 		// setting the current view depending on the users role
@@ -130,13 +121,15 @@ public class MainHandlerAction {
 		else if (userHandlerAction.currentUserHasRole(Role.SCIENTIST))
 			// no names are displayed
 			setCurrentView(View.SCIENTIST);
-		else if (userHandlerAction.currentUserHasRoleOrHigher(Role.USER)) {
+		else if (userHandlerAction.currentUserHasRole(Role.USER)){
+			setCurrentView(View.USERLIST);
+		}else if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			// if a default view is selected for the user
 			if (userHandlerAction.getCurrentUser().getDefaultView() != null)
 				setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
 
 			// normal work environment
-			setCurrentView(View.WORKLIST_PATIENT);
+			setCurrentView(View.WORKLIST_TASKS);
 		} else
 			setCurrentView(View.GUEST);
 
@@ -171,9 +164,12 @@ public class MainHandlerAction {
 	 * Session
 	 ********************************************************/
 
-	/*
-	 * ************************** Navigation ****************************
-	 */
+	/********************************************************
+	 * Navigation
+	 ********************************************************/
+	public String goToNavigation() {
+		return goToNavigation(getCurrentView());
+	}
 
 	/**
 	 * Method is called for chaning the current view with an p:selectOneMenu
@@ -185,16 +181,19 @@ public class MainHandlerAction {
 	 */
 	public String goToNavigation(View view) {
 		setCurrentView(view);
-		return view.getParentView() == null ? view.getPath() : view.getParentView().getPath();
+		if (view.getParentView() != null) {
+			return view.getParentView().getPath();
+		} else
+			return view.getPath();
 	}
-	/*
-	 * ************************** Navigation ****************************
-	 */
 
-	/*
-	 * ************************** Dialog ****************************
-	 */
+	/********************************************************
+	 * Navigation
+	 ********************************************************/
 
+	/********************************************************
+	 * Dialog
+	 ********************************************************/
 	public void showQueueDialog() {
 		logger.trace("Showing Dialog from queue called");
 		if (getQueueDialog() != null) {
@@ -250,13 +249,13 @@ public class MainHandlerAction {
 		RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
 	}
 
-	/*
-	 * ************************** Dialog ****************************
-	 */
+	/********************************************************
+	 * Dialog
+	 ********************************************************/
 
-	/*
-	 * ************************** Time ****************************
-	 */
+	/********************************************************
+	 * Date
+	 ********************************************************/
 
 	/**
 	 * Takes a long timestamp and returns a formatted date in standard format.
@@ -320,9 +319,9 @@ public class MainHandlerAction {
 		return TimeUtil.formatDate(date, format);
 	}
 
-	/*
-	 * ************************** Time ****************************
-	 */
+	/********************************************************
+	 * Date
+	 ********************************************************/
 
 	/********************************************************
 	 * Delete
@@ -361,11 +360,6 @@ public class MainHandlerAction {
 	 * Getter/Setter
 	 ********************************************************/
 
-	/**
-	 * Returns the current active worklist.
-	 * 
-	 * @return
-	 */
 	public List<View> getNavigationPages() {
 		return navigationPages;
 	}
@@ -374,11 +368,6 @@ public class MainHandlerAction {
 		this.navigationPages = navigationPages;
 	}
 
-	/**
-	 * The current view
-	 * 
-	 * @return
-	 */
 	public View getCurrentView() {
 		return currentView;
 	}
@@ -396,14 +385,6 @@ public class MainHandlerAction {
 		this.queueDialog = queueDialog;
 	}
 
-	public ArchivAble getToArchive() {
-		return toArchive;
-	}
-
-	public void setToArchive(ArchivAble toArchive) {
-		this.toArchive = toArchive;
-	}
-
 	public HistoSettings getSettings() {
 		return settings;
 	}
@@ -411,7 +392,6 @@ public class MainHandlerAction {
 	public void setSettings(HistoSettings settings) {
 		this.settings = settings;
 	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

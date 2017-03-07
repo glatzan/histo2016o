@@ -88,6 +88,17 @@ public class WorklistHandlerAction implements Serializable {
 	 * ************************** Patient ****************************
 	 */
 
+	/********************************************************
+	 * Navigation
+	 ********************************************************/
+	/**
+	 * Subview is saved
+	 */
+	private View lastSubView;
+
+	/********************************************************
+	 * Navigation
+	 ********************************************************/
 	/*
 	 * ************************** Worklist ****************************
 	 */
@@ -172,35 +183,17 @@ public class WorklistHandlerAction implements Serializable {
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("incomplete-switch")
 	public String onSelectPatient(Patient patient) {
 		setSelectedPatient(patient);
 
 		if (patient == null)
-			return View.WORKLIST.getPath();
+			return mainHandlerAction.goToNavigation(View.WORKLIST);
 
 		logger.debug("Select patient " + patient.getPerson().getFullName());
 
 		patientDao.initializeDataList(patient);
-		switch (mainHandlerAction.getCurrentView()) {
-		case WORKLIST_PATIENT:
-			return onDeselectTask(patient);
-		case WORKLIST_RECEIPTLOG:
-		case WORKLIST_DIAGNOSIS:
-			Task task = patient.getSelectedTask();
-			if (task == null && !patient.getTasks().isEmpty()) {
-				task = TaskUtil.getLastTask(patient.getTasks(),
-						!getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks());
-			}
 
-			if (task != null)
-				return onSelectTask(task);
-			else
-				return View.WORKLIST_PATIENT.getPath();
-
-		}
-
-		return View.WORKLIST.getPath();
+		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
 
 	/**
@@ -208,44 +201,15 @@ public class WorklistHandlerAction implements Serializable {
 	 * 
 	 * @param task
 	 */
-	public void onSelectTaskAndPatient(Task task) {
+	public String onSelectTaskAndPatient(Task task) {
+		if (task == null)
+			return mainHandlerAction.goToNavigation(View.WORKLIST);
 
-		if (mainHandlerAction.getCurrentView() != View.WORKLIST_RECEIPTLOG
-				|| mainHandlerAction.getCurrentView() != View.WORKLIST_DIAGNOSIS) {
+		logger.debug(
+				"Selecting patient and task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
 
-			if (userHandlerAction.getCurrentUser().getRole().getRoleValue() >= Role.PHYSICIAN.getRoleValue()) {
-				// all roles > mta
-				logger.debug("User is physician, show diagnoses screen");
-				mainHandlerAction.setCurrentView(View.WORKLIST_DIAGNOSIS);
-			} else if (userHandlerAction.getCurrentUser().getRole() == Role.MTA) {
-				// mta
-				logger.debug("User is mta, show receiptlog screen");
-				mainHandlerAction.setCurrentView(View.WORKLIST_RECEIPTLOG);
-			} else {
-				// normal users
-				logger.debug("User is normal user, show simple list");
-				mainHandlerAction.setCurrentView(View.USERLIST);
-			}
-
-		}
-
+		setSelectedPatient(task.getPatient());
 		task.getPatient().setSelectedTask(task);
-
-		onSelectPatient(task.getPatient());
-	}
-
-	/**
-	 * Task - Select and init
-	 */
-	public String onSelectTask(Task task) {
-		// set patient.selectedTask is performed by the gui
-		// sets this task as active, so it will be show in the navigation column
-		// whether there is an action to perform or not
-		// task.setActive(true);
-
-		task.getPatient().setSelectedTask(task);
-
-		Role userRole = userHandlerAction.getCurrentUser().getRole();
 
 		task.generateSlideGuiList();
 
@@ -258,7 +222,26 @@ public class WorklistHandlerAction implements Serializable {
 		// init all available materials
 		taskHandlerAction.prepareTask(task);
 
-		return View.WORKLIST.getPath();
+		if (getLastSubView() == null) {
+			if (userHandlerAction.getCurrentUser().getRole().getRoleValue() >= Role.PHYSICIAN.getRoleValue()) {
+				// all roles > mta
+				logger.debug("User is physician, show diagnoses screen");
+				setLastSubView(View.WORKLIST_DIAGNOSIS);
+				return mainHandlerAction.goToNavigation(View.WORKLIST_DIAGNOSIS);
+			} else if (userHandlerAction.getCurrentUser().getRole() == Role.MTA) {
+				// mta
+				logger.debug("User is mta, show receiptlog screen");
+				setLastSubView(View.WORKLIST_RECEIPTLOG);
+				return mainHandlerAction.goToNavigation(View.WORKLIST_RECEIPTLOG);
+			} else {
+				// normal users
+				logger.debug("User is normal user, show simple list");
+				setLastSubView(View.WORKLIST_TASKS);
+				return mainHandlerAction.goToNavigation(View.WORKLIST_TASKS);
+			}
+		} else {
+			return mainHandlerAction.goToNavigation(getLastSubView());
+		}
 	}
 
 	/**
@@ -269,8 +252,7 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	public String onDeselectTask(Patient patient) {
 		patient.setSelectedTask(null);
-		mainHandlerAction.setCurrentView(View.WORKLIST_PATIENT);
-		return View.WORKLIST.getPath();
+		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
 
 	/**
@@ -288,10 +270,13 @@ public class WorklistHandlerAction implements Serializable {
 			return View.WORKLIST_TASKS.getPath();
 		}
 		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
+			patientDao.initializeDataList(getSelectedPatient());
 			return View.WORKLIST_PATIENT.getPath();
 		} else if (currentView == View.WORKLIST_DIAGNOSIS) {
+			setLastSubView(View.WORKLIST_DIAGNOSIS);
 			return View.WORKLIST_DIAGNOSIS.getPath();
 		} else if (currentView == View.WORKLIST_RECEIPTLOG) {
+			setLastSubView(View.WORKLIST_RECEIPTLOG);
 			return View.WORKLIST_RECEIPTLOG.getPath();
 		} else
 			return View.WORKLIST_BLANK.getPath();
@@ -493,7 +478,7 @@ public class WorklistHandlerAction implements Serializable {
 				Task nextTask = TaskUtil.getNextTask(getSelectedPatient().getTasks(),
 						getSelectedPatient().getSelectedTask(), activeOnly);
 				if (nextTask != null) {
-					onSelectTask(nextTask);
+					onSelectTaskAndPatient(nextTask);
 					return;
 				}
 
@@ -517,7 +502,7 @@ public class WorklistHandlerAction implements Serializable {
 					getSelectedPatient().getSelectedTask(), activeOnly);
 
 			if (nextTask != null) {
-				onSelectTask(nextTask);
+				onSelectTaskAndPatient(nextTask);
 				return;
 			}
 
@@ -717,6 +702,14 @@ public class WorklistHandlerAction implements Serializable {
 
 	public void setFilterWorklist(boolean filterWorklist) {
 		this.filterWorklist = filterWorklist;
+	}
+
+	public View getLastSubView() {
+		return lastSubView;
+	}
+
+	public void setLastSubView(View lastSubView) {
+		this.lastSubView = lastSubView;
 	}
 
 	/********************************************************

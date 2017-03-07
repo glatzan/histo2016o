@@ -67,10 +67,12 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 			else if (userRole == Role.GUEST)
 				// guest need to be unlocked first
 				return View.GUEST.getPath();
+			else if(userRole == Role.USER)
+				return View.USERLIST.getPath();
 			else if (userRole == Role.SCIENTIST)
 				// no names are displayed
 				return View.SCIENTIST.getPath();
-			else if (userRole.getRoleValue() >= Role.USER.getRoleValue()) {
+			else if (userRole.getRoleValue() >= Role.MTA.getRoleValue()) {
 				// if a default view is selected for the user
 				if (user.getDefaultView() != null)
 					return user.getDefaultView().getPath();

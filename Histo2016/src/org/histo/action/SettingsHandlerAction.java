@@ -588,19 +588,19 @@ public class SettingsHandlerAction {
 		if (origDiagnosisPrototype == null) {
 			
 			// case new, save
-			logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getName());
+			logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getCategory());
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
 			genericDAO.save(newDiagnosisPrototype,
-					resourceBundle.get("log.settings.diagnosis.new", newDiagnosisPrototype.getName()));
+					resourceBundle.get("log.settings.diagnosis.new", newDiagnosisPrototype.getCategory()));
 			ListOrder.reOrderList(getAllAvailableDiagnosisPrototypes());
 			genericDAO.save(getAllAvailableDiagnosisPrototypes(),
 					resourceBundle.get("log.settings.diagnosis.list.reoder"));
 		} else {
 			// case edit: update an save
-			logger.debug("Updating  diagnosis " + origDiagnosisPrototype.getName());
+			logger.debug("Updating  diagnosis " + origDiagnosisPrototype.getCategory());
 			origDiagnosisPrototype.update(newDiagnosisPrototype);
 			genericDAO.save(origDiagnosisPrototype,
-					resourceBundle.get("log.settings.diagnosis.update", origDiagnosisPrototype.getName()));
+					resourceBundle.get("log.settings.diagnosis.update", origDiagnosisPrototype.getCategory()));
 		}
 		discardDiagnosisPrototype();
 	}

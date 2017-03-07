@@ -22,13 +22,13 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	@Expose
 	private long id;
 	@Expose
-	private String name;
+	private String category;
 	@Expose
 	private String icd10;
 	@Expose
 	private boolean malign;
 	@Expose
-	private String diagnosisText;
+	private String diagnosis;
 	@Expose
 	private String extendedDiagnosisText;
 	@Expose
@@ -58,12 +58,12 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getCategory() {
+		return category;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public String getIcd10() {
@@ -83,12 +83,12 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	}
 
 	@Column(columnDefinition = "text")
-	public String getDiagnosisText() {
-		return diagnosisText;
+	public String getDiagnosis() {
+		return diagnosis;
 	}
 
-	public void setDiagnosisText(String diagnosisText) {
-		this.diagnosisText = diagnosisText;
+	public void setDiagnosis(String diagnosis) {
+		this.diagnosis = diagnosis;
 	}
 
 	@Column(columnDefinition = "text")
@@ -140,10 +140,10 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	@Transient
 	@Override
 	public void update(DiagnosisPreset diagnosisPreset) {
-		this.name = diagnosisPreset.getName();
+		this.category = diagnosisPreset.getCategory();
 		this.icd10 = diagnosisPreset.getIcd10();
 		this.malign = diagnosisPreset.isMalign();
-		this.diagnosisText = diagnosisPreset.getDiagnosisText();
+		this.diagnosis = diagnosisPreset.getDiagnosis();
 		this.extendedDiagnosisText = diagnosisPreset.getExtendedDiagnosisText();
 	}
 

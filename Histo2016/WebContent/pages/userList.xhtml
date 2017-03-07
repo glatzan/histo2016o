@@ -16,10 +16,15 @@
 
 <h:body>
 
-	<div class="container">
-		<h:form>
-			<h:outputLabel value="userlist"></h:outputLabel>
-		</h:form>
-	</div>
+	<ui:composition template="template/layoutUser.xhtml">
+		<!-- Header -->
+		<ui:define name="header">
+			<ui:include src="user/header.xhtml" />
+		</ui:define>
+
+		<ui:define name="content">
+			<ui:include src="user/taskList.xhtml" />
+		</ui:define>
+	</ui:composition>
 </h:body>
 </html>

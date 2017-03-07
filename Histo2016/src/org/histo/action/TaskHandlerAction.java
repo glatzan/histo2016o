@@ -66,9 +66,6 @@ public class TaskHandlerAction implements Serializable {
 	private PatientDao patientDao;
 
 	@Autowired
-	private DiagnosisHandlerAction diagnosisHandlerAction;
-
-	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired

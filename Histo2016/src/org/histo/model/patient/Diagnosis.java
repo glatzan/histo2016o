@@ -248,7 +248,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	 */
 	@Transient
 	public void updateDiagnosisWithPrest(DiagnosisPreset diagnosisPreset) {
-		setDiagnosis(diagnosisPreset.getDiagnosisText());
+		setDiagnosis(diagnosisPreset.getDiagnosis());
 		setMalign(diagnosisPreset.isMalign());
 		setIcd10(diagnosisPreset.getIcd10());
 	}
