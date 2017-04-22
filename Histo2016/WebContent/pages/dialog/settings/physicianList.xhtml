@@ -74,17 +74,14 @@
 			</p:column>
 		</p:dataTable>
 	</div>
+
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="2">
-				<p:commandButton
-					value="#{msg['dialog.settings.person.list.button.new']}"
-					icon="fa fa-fw fa-plus-circle"
-					actionListener="#{settingsHandlerAction.prepareNewPhysician()}"
-					update="@form"></p:commandButton>
 
-				<h:panelGrid columns="2" style="margin-left: 20px;">
+			<h:panelGrid columns="1">
+				<h:panelGrid columns="9" style="margin-left: 20px;">
+					<!-- archived -->
 					<p:selectBooleanCheckbox styleClass="smallCheckbox"
 						value="#{settingsHandlerAction.physicianRoleOptions.archived}">
 						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
@@ -93,37 +90,50 @@
 					<h:outputLabel
 						value="#{msg['dialog.settings.person.list.checkbox.archived']}"
 						style="margin-left:5px;"></h:outputLabel>
+
+					<h:panelGroup layout="block" style="width:20px!important"></h:panelGroup>
+
+					<!-- surgeon -->
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						value="#{settingsHandlerAction.physicianRoleOptions.surgeon}">
+						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+							update="physician"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel
+						value="#{msg['dialog.settings.person.list.surgeon']}"
+						style="margin-left:5px;"></h:outputLabel>
+
+					<!-- private physician -->
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:10px;"
+						value="#{settingsHandlerAction.physicianRoleOptions.privatePhysician}">
+						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+							update="physician"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel
+						value="#{msg['dialog.settings.person.list.privatePhysician']}"
+						style="margin-left:5px;"></h:outputLabel>
+					<!-- Other -->
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						style="margin-left:10px;"
+						value="#{settingsHandlerAction.physicianRoleOptions.other}">
+						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+							update="physician"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value="#{msg['dialog.settings.person.list.other']}"
+						style="margin-left:5px;"></h:outputLabel>
 				</h:panelGrid>
 			</h:panelGrid>
 
-			<h:panelGrid columns="6" style="float:right; margin-right:10px;">
-				<p:selectBooleanCheckbox styleClass="smallCheckbox"
-					value="#{settingsHandlerAction.physicianRoleOptions.surgeon}">
-					<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
-						update="physician"></p:ajax>
-				</p:selectBooleanCheckbox>
-				<h:outputLabel value="#{msg['dialog.settings.person.list.surgeon']}"
-					style="margin-left:5px;"></h:outputLabel>
-
-				<p:selectBooleanCheckbox styleClass="smallCheckbox"
-					style="margin-left:10px;"
-					value="#{settingsHandlerAction.physicianRoleOptions.privatePhysician}">
-					<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
-						update="physician"></p:ajax>
-				</p:selectBooleanCheckbox>
-				<h:outputLabel
-					value="#{msg['dialog.settings.person.list.privatePhysician']}"
-					style="margin-left:5px;"></h:outputLabel>
-
-				<p:selectBooleanCheckbox styleClass="smallCheckbox"
-					style="margin-left:10px;"
-					value="#{settingsHandlerAction.physicianRoleOptions.other}">
-					<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
-						update="physician"></p:ajax>
-				</p:selectBooleanCheckbox>
-				<h:outputLabel value="#{msg['dialog.settings.person.list.other']}"
-					style="margin-left:5px;"></h:outputLabel>
+			<h:panelGrid columns="1" style="float:right;">
+				<p:commandButton
+					value="#{msg['dialog.settings.person.list.button.new']}"
+					icon="fa fa-fw fa-plus-circle"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{settingsHandlerAction.prepareNewPhysician()}"
+					update="@form"></p:commandButton>
 			</h:panelGrid>
+
 		</h:panelGrid>
 	</div>
 </ui:composition>

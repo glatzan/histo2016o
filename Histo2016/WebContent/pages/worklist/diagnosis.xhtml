@@ -15,8 +15,8 @@
 
 	<c:set var="taskEditable" scope="session"
 		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
-		
-	<p:panel style="width: 60%"
+
+	<p:panel style="width: 80%"
 		styleClass="collapsedBorders noPadding noBorders">
 
 		<h:outputLabel value="#{msg['body.diagnosis.headline']}"
@@ -167,11 +167,13 @@
 						<h:outputLabel style="margin-left:10px;"
 							value="#{selectedTask.getPrimaryContact('SURGEON')}"></h:outputLabel>
 
-						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							disabled="#{!taskEditable}"
-							style="float: right; margin-right:5px;"
-							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
-							<i class="fa fa-fw fa-cog" />
+						<!-- quickContact surgeon -->
+						<p:commandLink style="float: right; margin-right:5px;"
+							styleClass="noUnderlineAtLink"
+							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
+							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'SURGEON')}"
+							disabled="#{!taskEditable}">
+							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 					</h:panelGroup>
@@ -184,11 +186,13 @@
 						<h:outputLabel style="margin-left:10px;"
 							value="#{selectedTask.getPrimaryContact('PRIVATE_PHYSICIAN')}"></h:outputLabel>
 
-						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							style="float: right; margin-right:5px;"
-							disabled="#{!taskEditable}"
-							actionListener="#{contactHandlerAction.showContacts(selectedTask)}">
-							<i class="fa fa-fw fa-cog" />
+						<!-- quickcontact private physician  -->
+						<p:commandLink style="float: right; margin-right:5px;"
+							styleClass="noUnderlineAtLink"
+							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
+							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'PRIVATE_PHYSICIAN')}"
+							disabled="#{!taskEditable}">
+							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 					</h:panelGroup>
@@ -244,7 +248,8 @@
 
 								<f:selectItems
 									value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
-									var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.diagnosis}"
+									var="diagnosisPrototype"
+									itemLabel="#{diagnosisPrototype.diagnosis}"
 									itemValue="#{diagnosisPrototype}" />
 
 								<p:ajax event="change" update="contentForm"
@@ -359,8 +364,7 @@
 				<h:panelGroup>
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="pysicianToSignRole" editable="true"
-						style="width:80% !important;" 
-						disabled="#{!taskEditable}"
+						style="width:80% !important;" disabled="#{!taskEditable}"
 						value="#{selectedTask.diagnosisContainer.signatureOne.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"

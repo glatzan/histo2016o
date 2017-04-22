@@ -33,9 +33,11 @@
 					editable="true" disabled="#{cc.attrs.disabled}"
 					value="#{cc.attrs.person.title}">
 					<f:selectItem itemLabel="" itemValue="" />
-					<f:selectItem itemLabel="#{msg['component.personDataMask.title.dr']}"
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.title.dr']}"
 						itemValue="#{msg['component.personDataMask.title.dr']}" />
-					<f:selectItem itemLabel="#{msg['component.personDataMask.title.prof']}"
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.title.prof']}"
 						itemValue="#{msg['component.personDataMask.title.prof']}" />
 				</p:selectOneMenu>
 				<p:outputLabel value="#{msg['component.personDataMask.title']}" />
@@ -66,11 +68,14 @@
 				<p:selectOneMenu id="#{cc.attrs.pannelID}_gender"
 					style="width:100px" disabled="#{cc.attrs.disabled}"
 					value="#{cc.attrs.person.gender}">
-					<f:selectItem itemLabel="#{msg['component.personDataMask.gender.select']}"
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.select']}"
 						itemValue="UNKNOWN" />
-					<f:selectItem itemLabel="#{msg['component.personDataMask.gender.male']}"
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.male']}"
 						itemValue="MALE" />
-					<f:selectItem itemLabel="#{msg['component.personDataMask.gender.female']}"
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.female']}"
 						itemValue="FEMALE" />
 				</p:selectOneMenu>
 				<p:outputLabel value="#{msg['component.personDataMask.gender']}" />
@@ -91,13 +96,15 @@
 				style="float:left;margin-right:20px;">
 				<p:inputText id="#{cc.attrs.pannelID}_street"
 					value="#{cc.attrs.person.street}" disabled="#{cc.attrs.disabled}" />
-				<p:outputLabel value="#{msg['component.personDataMask.adress.street']}" />
+				<p:outputLabel
+					value="#{msg['component.personDataMask.adress.street']}" />
 			</p:panelGrid>
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText style="width:75px;"
 					value="#{cc.attrs.person.houseNumber}"
 					disabled="#{cc.attrs.disabled}" />
-				<p:outputLabel value="#{msg['component.personDataMask.adress.housenumber']}" />
+				<p:outputLabel
+					value="#{msg['component.personDataMask.adress.housenumber']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
@@ -112,11 +119,13 @@
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText id="#{cc.attrs.pannelID}_town"
 					value="#{cc.attrs.person.town}" disabled="#{cc.attrs.disabled}" />
-				<p:outputLabel value="#{msg['component.personDataMask.adress.town']}" />
+				<p:outputLabel
+					value="#{msg['component.personDataMask.adress.town']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
-		<h:outputLabel value="#{msg['component.personDataMask.miscellaneous']}" />
+		<h:outputLabel
+			value="#{msg['component.personDataMask.miscellaneous']}" />
 		<h:panelGrid columns="2">
 			<p:panelGrid columns="1" styleClass="inputTable"
 				style="float:left;margin-right:20px;">
@@ -128,7 +137,8 @@
 			<p:panelGrid columns="1" styleClass="inputTable">
 				<p:inputText id="#{cc.attrs.pannelID}_email"
 					value="#{cc.attrs.person.email}" disabled="#{cc.attrs.disabled}" />
-				<p:outputLabel value="#{msg['component.personDataMask.miscellaneous.mail']}" />
+				<p:outputLabel
+					value="#{msg['component.personDataMask.miscellaneous.mail']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 
@@ -138,7 +148,8 @@
 				style="float:left;margin-right:20px;">
 				<p:inputText value="#{cc.attrs.person.fax}"
 					disabled="#{cc.attrs.disabled}" />
-				<p:outputLabel value="#{msg['component.personDataMask.miscellaneous.fax']}" />
+				<p:outputLabel
+					value="#{msg['component.personDataMask.miscellaneous.fax']}" />
 			</p:panelGrid>
 		</h:panelGrid>
 	</p:panelGrid>

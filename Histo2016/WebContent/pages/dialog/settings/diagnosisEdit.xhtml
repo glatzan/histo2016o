@@ -31,7 +31,7 @@
 				<p:watermark for="diagnosisText"
 					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
 			</p:inputTextarea>
-			
+
 			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.icd10']}" />
 			<p:inputText
 				value="#{settingsHandlerAction.editDiagnosisPrototype.icd10}"
@@ -56,21 +56,32 @@
 	</div>
 
 	<div class="bottomDiv">
-		<h:panelGrid columns="2" style="width:100%"
+		<h:panelGrid columns="1" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="3">
+			<h:panelGrid columns="4" style="float:right;">
+				<!-- save -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o" update="@form"
+					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.saveDiagnosisPrototype(settingsHandlerAction.editDiagnosisPrototype,settingsHandlerAction.originalDiagnosisPrototype)}" />
+
 				<p:commandButton
 					value="#{msg['dialog.settings.diagnosis.edit.button.textPreset']}"
 					icon="fa fa-fw fa-pencil-square-o" update="@form"
+					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototypeTemplate()}" />
+
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle" update="@form"
+					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.discardDiagnosisPrototype()}" />
+
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
-
 </ui:composition>

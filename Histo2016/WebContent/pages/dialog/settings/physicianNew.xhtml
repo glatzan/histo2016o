@@ -15,57 +15,57 @@
 			styleClass="contentPannel" />
 
 		<!-- Employee  -->
-		<p:panelGrid styleClass="patientSearchTable" columns="2"
-			columnClasses="categoryColum,">
-			<h:outputLabel value="Mitarbeiter" />
-			<!-- title -->
-			<h:panelGrid>
-				<p:panelGrid columns="1" styleClass="inputTable"
-					style="float:left;margin-right:20px;">
-					<p:selectOneButton
-						value="#{settingsHandlerAction.physicianTabIndex}">
-						<f:selectItem
-							itemLabel="#{msg['dialog.settings.person.new.external']}"
-							itemValue="P_ADD_EXTER" />
-						<f:selectItem
-							itemLabel="#{msg['dialog.settings.person.new.employee']}"
-							itemValue="P_ADD_LDPA" />
-						<p:ajax update="@form"></p:ajax>
-					</p:selectOneButton>
-				</p:panelGrid>
+		<h:panelGrid columns="2" columnClasses="defaultListingTableColumn15,"
+			styleClass="defaultListingTableCss">
+
+			<!-- ****************** Person ****************** -->
+			<h:outputLabel value="#{msg['dialog.settings.person.new.employee']}" />
+
+			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+				<p:selectOneButton
+					value="#{settingsHandlerAction.physicianTabIndex}">
+					<f:selectItem
+						itemLabel="#{msg['dialog.settings.person.new.external']}"
+						itemValue="P_ADD_EXTER" />
+					<f:selectItem
+						itemLabel="#{msg['dialog.settings.person.new.employee']}"
+						itemValue="P_ADD_LDPA" />
+					<p:ajax update="@form"></p:ajax>
+				</p:selectOneButton>
 			</h:panelGrid>
-		</p:panelGrid>
+		</h:panelGrid>
 
 		<!-- Internal Physician (Employee, get data from LDAP)-->
 		<ui:fragment
 			rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}">
-			<ui:include src="../../template/ldapPhysician.xhtml">
-				<ui:param name="physicianList"
-					value="#{settingsHandlerAction.ldapPhysicianList}" />
-				<ui:param name="searchString"
-					value="#{settingsHandlerAction.ldapPhysicianSearchString}" />
-				<ui:param name="performAction" value="searchForPhysician" />
-				<ui:param name="performObject" value="#{settingsHandlerAction}" />
-				<ui:param name="selection"
-					value="#{settingsHandlerAction.tmpLdapPhysician}" />
-			</ui:include>
+			<histo:ldapPhysicianDataMask
+				physicianList="#{settingsHandlerAction.ldapPhysicianList}"
+				searchString="#{settingsHandlerAction.ldapPhysicianSearchString}"
+				performSearch="searchForPhysician"
+				performObject="#{settingsHandlerAction}" selection="#{settingsHandlerAction.tmpLdapPhysician}"></histo:ldapPhysicianDataMask>
 		</ui:fragment>
 
-		<!-- External Physician -->
 
+		<!-- External Physician -->
 		<ui:fragment
 			rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER'}">
-			<histo:personDataMask 
+			<histo:newPersonDataMask
 				person="#{settingsHandlerAction.tmpPhysician.person}"
-				pannelID="newPhysician" disabled="false" />
+				pannelID="editPhysician" disabled="false" />
 		</ui:fragment>
 
 		<!-- Role -->
-		<p:panelGrid styleClass="patientSearchTable" columns="2"
-			columnClasses="categoryColum,">
-			<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
-			<!-- title -->
-			<h:panelGrid columns="3">
+		<h:panelGrid columns="3"
+			columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
+			styleClass="defaultListingTableCss">
+
+			<!-- ****************** Person ****************** -->
+			<h:outputLabel value=" " />
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- role -->
+				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
 				<p:selectOneMenu
 					value="#{settingsHandlerAction.tmpPhysician.defaultContactRole}">
 
@@ -75,15 +75,24 @@
 
 				</p:selectOneMenu>
 			</h:panelGrid>
-		</p:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<h:panelGroup />
+				<h:panelGroup />
+			</h:panelGrid>
+		</h:panelGrid>
 	</div>
+
 	<div class="bottomDiv">
-		<h:panelGrid columns="2" style="width:100%"
+		<h:panelGrid columns="3" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="2">
+			<h:panelGrid columns="3" style="float:right;">
+
 				<!-- Button for creating a new external physician -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
+					styleClass="smallButton buttonRighMarginInList"
 					rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER'}"
 					actionListener="#{settingsHandlerAction.saveNewPrivatePhysician(settingsHandlerAction.tmpPhysician)}"
 					update="@form" />
@@ -91,6 +100,7 @@
 				<!-- Button for adding a physician from ldap -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
+					styleClass="smallButton buttonRighMarginInList"
 					rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}"
 					actionListener="#{settingsHandlerAction.savePhysicianFromLdap(settingsHandlerAction.tmpLdapPhysician, settingsHandlerAction.tmpPhysician.defaultContactRole)}"
 					update="@form" />
@@ -98,7 +108,12 @@
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					actionListener="#{settingsHandlerAction.discardTmpPhysician()}"
-					update="@form" />
+					update="@form" styleClass="smallButton buttonRighMarginInList" />
+
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

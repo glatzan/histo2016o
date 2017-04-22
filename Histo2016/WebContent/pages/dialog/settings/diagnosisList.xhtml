@@ -58,26 +58,26 @@
 				listener="#{settingsHandlerAction.onReorderDiagnosisList}" />
 		</p:dataTable>
 	</div>
-	<div class="bottomDiv">
 
+	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
-			<h:panelGrid columns="2">
-				<p:commandButton
-					value="#{msg['dialog.settings.diagnosis.list.button.new']}"
-					icon="fa fa-fw fa-plus-circle" styleClass="smallButton"
-					actionListener="#{settingsHandlerAction.prepareNewDiagnosisPrototype()}"
-					update="@form"></p:commandButton>
-
+			<h:panelGrid columns="1">
 				<h:panelGrid columns="2" style="margin-left: 20px;">
 					<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
-					<h:outputLabel
+					<h:outputLabel style="margin-left:5px;"
 						value="#{msg['dialog.settings.diagnosis.list.checkbox.archived']}"></h:outputLabel>
 				</h:panelGrid>
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" style="float:right;">
+			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton
+					value="#{msg['dialog.settings.diagnosis.list.button.new']}"
+					icon="fa fa-fw fa-plus-circle"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{settingsHandlerAction.prepareNewDiagnosisPrototype()}"
+					update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"

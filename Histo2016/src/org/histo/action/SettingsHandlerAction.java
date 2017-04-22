@@ -88,6 +88,11 @@ public class SettingsHandlerAction {
 	/**
 	 * Tabindex of the settings tab
 	 */
+	private SettingsTab userListTabIndex = SettingsTab.U_LIST;
+
+	/**
+	 * Tabindex of the settings tab
+	 */
 	private SettingsTab physicianTabIndex = SettingsTab.P_LIST;
 
 	/**
@@ -316,7 +321,7 @@ public class SettingsHandlerAction {
 	public void onSettingsTabChange() {
 		switch (getActiveSettingsIndex()) {
 		case TAB_USER:
-			setUsers(userDAO.loadAllUsers());
+			prepareUserList();
 			break;
 		case TAB_LOG:
 			loadGeneralHistory();
@@ -328,12 +333,12 @@ public class SettingsHandlerAction {
 			logger.debug("Selecting tag material");
 			initMaterialPresets();
 			// update stainings if selected
-			if (getMaterialTabIndex() == SettingsTab.M_EDIT){
+			if (getMaterialTabIndex() == SettingsTab.M_EDIT) {
 				setStainingListChooserForMaterial(
 						SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
-				
+
 				// bugfix, if material is null an diet tab is shown
-				if(getEditMaterial() == null){
+				if (getEditMaterial() == null) {
 					setEditMaterial(new MaterialPreset());
 					setOriginalMaterial(null);
 				}
@@ -360,6 +365,10 @@ public class SettingsHandlerAction {
 	/********************************************************
 	 * User
 	 ********************************************************/
+	public void prepareUserList() {
+		setUsers(userDAO.loadAllUsers());
+	}
+
 	public void onChangeUserRole(HistoUser histoUser) {
 		userHandlerAction.roleOfuserHasChanged(histoUser);
 		mainHandlerAction.showDialog(Dialog.SETTINGS_USER_ROLE_CHANGE);
@@ -370,6 +379,41 @@ public class SettingsHandlerAction {
 		// sending mail to inform about unlocking request
 		mainHandlerAction.getSettings().getMail().sendTempalteMail(mainHandlerAction.getSettings().getAdminMails(),
 				MailPresetName.Unlock, null, null);
+	}
+
+	/**
+	 * prepares an edit dialog for editing user data, only avaliable for admins
+	 * 
+	 * @param physician
+	 */
+	public void prepareEditPhysicianFromUserList(Physician physician) {
+		setTmpPhysician(physician);
+		setUserListTabIndex(SettingsTab.U_EDIT);
+	}
+
+	/**
+	 * Saves an edited physician to the database
+	 * 
+	 * @param physician
+	 */
+	public void saveEditPhysicianFromUserList(Physician physician) {
+		if (physician.getDefaultContactRole() == ContactRole.NONE)
+			physician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
+
+		genericDAO.save(physician,
+				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
+		discardTmpPhysicianFromUserList();
+	}
+
+	/**
+	 * Shows the userlist aganin
+	 */
+	public void discardTmpPhysicianFromUserList() {
+		genericDAO.refresh(getTmpPhysician());
+
+		setUserListTabIndex(SettingsTab.U_LIST);
+		prepareUserList();
+		setTmpPhysician(null);
 	}
 
 	/********************************************************
@@ -586,7 +630,7 @@ public class SettingsHandlerAction {
 
 	public void saveDiagnosisPrototype(DiagnosisPreset newDiagnosisPrototype, DiagnosisPreset origDiagnosisPrototype) {
 		if (origDiagnosisPrototype == null) {
-			
+
 			// case new, save
 			logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getCategory());
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
@@ -685,10 +729,14 @@ public class SettingsHandlerAction {
 	 * 
 	 * @param contact
 	 */
-	public void prepareEditPhysicianFromExtern(Physician physician) {
-		prepareEditPhysician(physician);
-		setActiveSettingsIndex(SettingsHandlerAction.TAB_PERSON);
-		prepareSettingsDialog();
+	public void prepareEditPhysicianFromExtern(Person person) {
+		Physician result = physicianDAO.getPhysicianByPerson(person);
+		if (result != null) {
+			setTmpPhysician(result);
+			setPhysicianTabIndex(SettingsTab.P_EDIT_EXTERN);
+			setActiveSettingsIndex(SettingsHandlerAction.TAB_PERSON);
+			prepareSettingsDialog();
+		}
 	}
 
 	/**
@@ -817,15 +865,23 @@ public class SettingsHandlerAction {
 	 * Clears the temporary variables and the the physician list to display
 	 */
 	public void discardTmpPhysician() {
-		// if a physician was edited remove all chagnes
-		if (getPhysicianTabIndex() == SettingsTab.P_EDIT && getTmpPhysician().getId() != 0)
+		// if a physician is in database and changes should be discarded, so
+		// refresh from database
+		if ((getPhysicianTabIndex() == SettingsTab.P_EDIT || getPhysicianTabIndex() == SettingsTab.P_EDIT_EXTERN)
+				&& getTmpPhysician().getId() != 0)
 			genericDAO.refresh(getTmpPhysician());
 
 		setTmpPhysician(null);
 		setTmpLdapPhysician(null);
 
-		// update physician list
-		preparePhysicianList();
+		if (getPhysicianTabIndex() != SettingsTab.P_EDIT_EXTERN) {
+			// update physician list
+			preparePhysicianList();
+		} else {
+			// if the edit was called externally close the dialog
+			hideSettingsDialog();
+		}
+		
 		setPhysicianTabIndex(SettingsTab.P_LIST);
 	}
 
@@ -841,7 +897,7 @@ public class SettingsHandlerAction {
 		setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(), isShowArchivedListItems()));
 		logger.debug("Found " + (getStaticListContent() == null ? "no" : getStaticListContent().size()) + " items");
 	}
-	
+
 	public void prepareNewListItem() {
 		setStaticListTabIndex(SettingsTab.S_EDIT);
 		setTmpListItem(new ListItem());
@@ -1181,6 +1237,14 @@ public class SettingsHandlerAction {
 
 	public void setShowArchivedListItems(boolean showArchivedListItems) {
 		this.showArchivedListItems = showArchivedListItems;
+	}
+
+	public SettingsTab getUserListTabIndex() {
+		return userListTabIndex;
+	}
+
+	public void setUserListTabIndex(SettingsTab userListTabIndex) {
+		this.userListTabIndex = userListTabIndex;
 	}
 
 	/********************************************************

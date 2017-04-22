@@ -6,11 +6,14 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.ContactRole;
+import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.patient.Patient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,6 +94,28 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		}
 
 		return res.get(0);
+	}
+	
+	/**
+	 * Gets a physician for the provided person, returns null if none physician
+	 * is available
+	 * 
+	 * @param person
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Physician getPhysicianByPerson(Person person){
+		
+		DetachedCriteria query = DetachedCriteria.forClass(Physician.class, "physician");
+
+		query.add(Restrictions.eq("person", person));
+
+		List<Physician> result = query.getExecutableCriteria(getSession()).list();
+
+		if (result != null && result.size() == 1)
+			return result.get(0);
+
+		return null;
 	}
 
 }

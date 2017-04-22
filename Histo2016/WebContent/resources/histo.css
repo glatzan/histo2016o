@@ -126,11 +126,13 @@ body {
 }
 
 .defaultListingTableColumn10 {
-	width: 10%;
+	width: 10% !important;
+	min-width: 10% !important;
 }
 
 .defaultListingTableColumn15 {
-	width: 15%;
+	width: 15% !important;
+	min-width: 15% !important;
 }
 
 .defaultListingTableColumn20 {

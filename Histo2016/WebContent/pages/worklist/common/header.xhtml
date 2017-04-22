@@ -350,7 +350,7 @@
 
 			<!-- Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
-				actionListener="#{contactHandlerAction.showContacts(worklistHandlerAction.selectedPatient.selectedTask)}">
+				actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 

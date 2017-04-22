@@ -54,25 +54,36 @@
 
 		</p:panelGrid>
 	</div>
+
 	<div class="bottomDiv">
-		<h:panelGrid
+		<h:panelGrid columns="1" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="3">
+			<h:panelGrid columns="4" style="float:right;">
+				<!-- save -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
+					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.saveMaterial(settingsHandlerAction.editMaterial, settingsHandlerAction.originalMaterial)}"
 					update="@form"></p:commandButton>
+
 				<p:commandButton
 					value="#{msg['dialog.settings.material.new.stainings.add']}"
 					icon="fa fa-fw fa-plus-circle"
+					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.prepareAddStainingToMaterial()}"
 					update="@form"></p:commandButton>
+
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
+					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.discardChangesOfMaterial()}"
 					update="@form"></p:commandButton>
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
-
 </ui:composition>

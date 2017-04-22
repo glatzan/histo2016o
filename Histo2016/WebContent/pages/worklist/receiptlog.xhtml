@@ -154,22 +154,24 @@
 						styleClass="big-text" />
 					<h:panelGrid columns="3" style="float: right">
 						<!-- quickContact surgeon -->
-						<p:commandLink title="#{msg['body.receiptlog.notification.surgeon.hint']}"
+						<p:commandLink
+							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
 							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'SURGEON')}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
-						
+
 						<!-- quickcontact private physician  -->
-						<p:commandLink title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
+						<p:commandLink
+							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
 							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'PRIVATE_PHYSICIAN')}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
-						
+
 						<!-- edit contacts -->
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							actionListener="#{contactHandlerAction.showContacts(worklistHandlerAction.selectedPatient.selectedTask)}">
+							actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>

@@ -40,7 +40,17 @@
 
 				<!-- ************************************************************** Benutzer ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.user']}">
-					<ui:include src="userList.xhtml" />
+					<!-- User List -->
+					<ui:fragment
+						rendered="#{settingsHandlerAction.userListTabIndex eq 'U_LIST'}">
+						<ui:include src="userList.xhtml" />
+					</ui:fragment>
+					
+					<!-- User Edit -->
+					<ui:fragment
+						rendered="#{settingsHandlerAction.userListTabIndex eq 'U_EDIT'}">
+						<ui:include src="userListEdit.xhtml" />
+					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Benutzer ************************************************************** -->
 
@@ -110,7 +120,7 @@
 						<ui:include src="physicianList.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_EDIT'}">
+						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_EDIT' or settingsHandlerAction.physicianTabIndex eq 'P_EDIT_EXTERN'}">
 						<ui:include src="physicianEdit.xhtml" />
 					</ui:fragment>
 					<ui:fragment
@@ -126,7 +136,7 @@
 						rendered="#{settingsHandlerAction.staticListTabIndex eq 'S_LIST'}">
 						<ui:include src="staticLists.xhtml" />
 					</ui:fragment>
-								<ui:fragment
+					<ui:fragment
 						rendered="#{settingsHandlerAction.staticListTabIndex eq 'S_EDIT'}">
 						<ui:include src="staticListsEdit.xhtml" />
 					</ui:fragment>

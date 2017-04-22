@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+
+<composite:interface>
+	<!-- list of all physicians in ldap -->
+	<composite:attribute name="physicianList" required="true" />
+
+	<!-- search string -->
+	<composite:attribute name="searchString" required="true" />
+
+	<!-- action to perform on search -->
+	<composite:attribute name="performSearch" required="true" />
+
+	<!-- object which provides the action to perform on search -->
+	<composite:attribute name="performObject" required="true" />
+
+	<!-- selection variable for the selected physician -->
+	<composite:attribute name="selection" required="true" />
+</composite:interface>
+
+<composite:implementation>
+
+	<h:panelGrid columns="2" columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, "
+		styleClass="defaultListingTableCss">
+
+		<h:outputLabel value="#{msg['include.ladpPhysician.search']}" />
+
+		<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+
+			<h:panelGroup>
+				<p:inputText value="#{cc.attrs.searchString}" id="searchStringInput"
+					widgetVar="searchStringInput" style="width: 98%">
+					<p:ajax event="keyup" delay="500"
+						listener="#{cc.attrs.performObject[cc.attrs.performSearch](cc.attrs.searchString)}"
+						update="ldapPhysicianList" process="@this" />
+				</p:inputText>
+				<p:watermark for="searchStringInput"
+					value="#{msg['include.ladpPhysician.search.watermark']}" />
+			</h:panelGroup>
+
+			<p:dataTable var="physician" value="#{cc.attrs.physicianList}"
+				id="ldapPhysicianList" selectionMode="single" scrollable="true"
+				scrollHeight="300" rowKey="#{physician.id}" selection="#{cc.attrs.selection}"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll">
+
+				<!-- title -->
+				<p:column sortBy="#{physician.person.name}"
+					headerText="#{msg['include.ladpPhysician.search.name']}"
+					style="width:20%">
+					<h:outputText value="#{physician.person.fullName}" />
+				</p:column>
+
+				<p:column sortBy="#{physician.clinicRole}"
+					headerText="#{msg['include.ladpPhysician.search.role']}"
+					style="width:20%">
+					<h:outputText value="#{physician.clinicRole}" />
+				</p:column>
+			</p:dataTable>
+
+		</h:panelGrid>
+	</h:panelGrid>
+</composite:implementation>
+</html>

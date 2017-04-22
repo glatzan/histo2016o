@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+
+
+<composite:interface>
+	<!-- tperson object -->
+	<composite:attribute name="person" required="true" />
+
+	<!-- cc.attrs.pannelID  -->
+	<composite:attribute name="pannelID" required="true" />
+
+	<!-- edit not permitted -->
+	<composite:attribute name="disabled" required="true" />
+</composite:interface>
+
+<composite:implementation>
+
+
+	<h:panelGrid columns="3"
+		columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
+		styleClass="defaultListingTableCss">
+
+		<!-- ****************** Person ****************** -->
+		<h:outputLabel value="#{msg['component.personDataMask.person']}" />
+
+		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+			columnClasses="defaultListingTableColumn30,">
+			<!-- Title -->
+			<p:outputLabel value="#{msg['component.personDataMask.title']}" />
+			<p:selectOneMenu style="width:100px" id="#{cc.attrs.pannelID}_title"
+				editable="true" disabled="#{cc.attrs.disabled}"
+				value="#{cc.attrs.person.title}">
+				<f:selectItem itemLabel="" itemValue="" />
+				<f:selectItem
+					itemLabel="#{msg['component.personDataMask.title.dr']}"
+					itemValue="#{msg['component.personDataMask.title.dr']}" />
+				<f:selectItem
+					itemLabel="#{msg['component.personDataMask.title.prof']}"
+					itemValue="#{msg['component.personDataMask.title.prof']}" />
+			</p:selectOneMenu>
+
+			<!-- Name -->
+			<p:outputLabel value="#{msg['component.personDataMask.name']}" />
+			<p:inputText id="#{cc.attrs.pannelID}_name"
+				value="#{cc.attrs.person.name}" disabled="#{cc.attrs.disabled}" />
+			<!-- Surname -->
+			<p:outputLabel value="#{msg['component.personDataMask.surname']}" />
+			<p:inputText id="#{cc.attrs.pannelID}_surname"
+				value="#{cc.attrs.person.surname}" disabled="#{cc.attrs.disabled}" />
+		</h:panelGrid>
+
+		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+			columnClasses="defaultListingTableColumn30,">
+			<!-- birthday -->
+			<p:outputLabel value="#{msg['component.personDataMask.birthday']}" />
+			<p:calendar id="#{cc.attrs.pannelID}_birthday"
+				value="#{cc.attrs.person.birthday}" locale="de"
+				disabled="#{cc.attrs.disabled}" navigator="true"
+				pattern="dd.MM.yyyy" mask="true" />
+
+			<!-- gender -->
+			<p:outputLabel value="#{msg['component.personDataMask.gender']}" />
+			<p:selectOneMenu id="#{cc.attrs.pannelID}_gender" style="width:100px"
+				disabled="#{cc.attrs.disabled}" value="#{cc.attrs.person.gender}">
+				<f:selectItem
+					itemLabel="#{msg['component.personDataMask.gender.select']}"
+					itemValue="UNKNOWN" />
+				<f:selectItem
+					itemLabel="#{msg['component.personDataMask.gender.male']}"
+					itemValue="MALE" />
+				<f:selectItem
+					itemLabel="#{msg['component.personDataMask.gender.female']}"
+					itemValue="FEMALE" />
+			</p:selectOneMenu>
+		</h:panelGrid>
+		<!-- ****************** Person ****************** -->
+
+		<!-- ****************** Adress ****************** -->
+		<h:outputLabel value="#{msg['component.personDataMask.adress']}" />
+
+		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+			columnClasses="defaultListingTableColumn30,">
+			<!-- street -->
+			<p:outputLabel
+				value="#{msg['component.personDataMask.adress.street']}" />
+			<p:inputText id="#{cc.attrs.pannelID}_street"
+				value="#{cc.attrs.person.street}" disabled="#{cc.attrs.disabled}" />
+
+			<!-- housenumber -->
+			<p:outputLabel
+				value="#{msg['component.personDataMask.adress.housenumber']}" />
+			<p:inputText style="width:75px;"
+				value="#{cc.attrs.person.houseNumber}"
+				disabled="#{cc.attrs.disabled}" />
+		</h:panelGrid>
+
+		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+			columnClasses="defaultListingTableColumn30,">
+			<!-- Town -->
+			<p:outputLabel value="#{msg['component.personDataMask.adress.town']}" />
+			<p:inputText id="#{cc.attrs.pannelID}_town"
+				value="#{cc.attrs.person.town}" disabled="#{cc.attrs.disabled}" />
+
+			<!-- Postcode -->
+			<p:outputLabel value="#{msg['component.personDataMask.adress.plz']}" />
+			<p:inputText style="width:75px;" value="#{cc.attrs.person.postcode}"
+				disabled="#{cc.attrs.disabled}" />
+		</h:panelGrid>
+		<!-- ****************** Adress ****************** -->
+
+		<!-- ****************** Contact ****************** -->
+		<h:outputLabel
+			value="#{msg['component.personDataMask.miscellaneous']}" />
+		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+			columnClasses="defaultListingTableColumn30,">
+			<!-- phone -->
+			<p:outputLabel
+				value="#{msg['component.personDataMask.miscellaneous.phonenumber']}" />
+			<p:inputText value="#{cc.attrs.person.phoneNumber}"
+				disabled="#{cc.attrs.disabled}" />
+			<!-- mail -->
+			<p:outputLabel
+				value="#{msg['component.personDataMask.miscellaneous.mail']}" />
+			<p:inputText id="#{cc.attrs.pannelID}_email"
+				value="#{cc.attrs.person.email}" disabled="#{cc.attrs.disabled}" />
+		</h:panelGrid>
+
+		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+			columnClasses="defaultListingTableColumn30,">
+			<!-- fax -->
+			<p:outputLabel
+				value="#{msg['component.personDataMask.miscellaneous.fax']}" />
+			<p:inputText value="#{cc.attrs.person.fax}"
+				disabled="#{cc.attrs.disabled}" />
+		</h:panelGrid>
+		<!-- ****************** Contact ****************** -->
+	</h:panelGrid>
+</composite:implementation>
+</html>

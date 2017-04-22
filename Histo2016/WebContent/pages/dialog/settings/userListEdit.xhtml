@@ -10,13 +10,13 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.person.edit.headline']}"
+			header="#{msg['dialog.settings.user.edit.headline']}"
 			styleClass="contentPannel" />
 
 		<histo:newPersonDataMask
 			person="#{settingsHandlerAction.tmpPhysician.person}"
-			pannelID="tmpPhysician"
-			disabled="#{settingsHandlerAction.tmpPhysician.clinicEmployee and !userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}" />
+			pannelID="userEditPhysician"
+			disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}" />
 
 		<!-- Role -->
 		<h:panelGrid columns="3"
@@ -49,21 +49,24 @@
 	</div>
 
 	<div class="bottomDiv">
-		<h:panelGrid columns="3" style="width:100%"
+		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="3" style="float:right;">
+				<!-- save -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.saveEditPhysician(settingsHandlerAction.tmpPhysician)}"
+					actionListener="#{settingsHandlerAction.saveEditPhysicianFromUserList(settingsHandlerAction.tmpPhysician)}"
 					update="@form" />
-
+				
+				<!-- abort -->
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.discardTmpPhysician()}"
+					actionListener="#{settingsHandlerAction.discardTmpPhysicianFromUserList()}"
 					update="@form" />
-
+					
+				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
@@ -71,4 +74,5 @@
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 </ui:composition>

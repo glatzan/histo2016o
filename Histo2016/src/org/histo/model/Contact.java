@@ -41,11 +41,15 @@ public class Contact implements LogAble {
 	private long notificationDate;
 
 	/**
-	 * Transient, wird für das Auswählen neuer Kontakte und das abwählen alter
-	 * benötigt
+	 * Transient, is used for selecting contacts an marking already selected ones.
 	 */
 	private boolean selected;
 
+	/**
+	 * Transient, is used for selecting contacts from a list
+	 */
+	private int tmpId;
+	
 	public Contact() {
 	}
 
@@ -161,6 +165,15 @@ public class Contact implements LogAble {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+	
+	@Transient
+	public int getTmpId() {
+		return tmpId;
+	}
+
+	public void setTmpId(int tmpId) {
+		this.tmpId = tmpId;
 	}
 
 	/********************************************************

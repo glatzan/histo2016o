@@ -17,6 +17,14 @@ public class PhysicianRoleOptions {
 
 	private boolean showAddedContactsOnly = false;
 
+	public void setAll(boolean surgeon, boolean privatePhysician, boolean familyPhysician, boolean other, boolean showAddedContactsOnly){
+		this.surgeon = surgeon;
+		this.privatePhysician = privatePhysician;
+		this.familyPhysician = familyPhysician;
+		this.other = other;
+		this.showAddedContactsOnly = showAddedContactsOnly;
+	}
+	
 	public boolean isSurgeon() {
 		return surgeon;
 	}
