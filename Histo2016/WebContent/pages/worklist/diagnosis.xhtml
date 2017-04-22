@@ -244,7 +244,7 @@
 
 								<f:selectItems
 									value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
-									var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.name}"
+									var="diagnosisPrototype" itemLabel="#{diagnosisPrototype.diagnosis}"
 									itemValue="#{diagnosisPrototype}" />
 
 								<p:ajax event="change" update="contentForm"
@@ -359,8 +359,8 @@
 				<h:panelGroup>
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="pysicianToSignRole" editable="true"
-						style="width:80% !important;"
-						disabled="#{selectedTask.diagnosisContainer.signatureOne.physician eq null}"
+						style="width:80% !important;" 
+						disabled="#{!taskEditable}"
 						value="#{selectedTask.diagnosisContainer.signatureOne.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"

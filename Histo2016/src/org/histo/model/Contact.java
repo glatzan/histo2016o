@@ -74,7 +74,11 @@ public class Contact implements LogAble {
 		this.id = id;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL)
+	/**
+	 * All cascade types, but not removing!
+	 * @return
+	 */
+	@OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
 	public Person getPerson() {
 		return person;
 	}

@@ -8,16 +8,9 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<!-- navigation -->
-	<h:panelGrid columns="2" styleClass="navigation">
-		<h:panelGroup
-			rendered="#{worklistHandlerAction.selectedPatient ne null}">
-			<h:outputLabel value="Übersicht" styleClass="navigationText"></h:outputLabel>
-		</h:panelGroup>
-	</h:panelGrid>
 
 
-	<p:panel style="width: 60%"
+	<p:panel style="width: 100%"
 		styleClass="collapsedBorders noPadding noBorders">
 
 		<h:outputLabel value="#{msg['body.taskList.headline']}"

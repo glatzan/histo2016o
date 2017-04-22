@@ -2,13 +2,14 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
+TODO: 1 Benachrichtigung
+TODO: 2: erweiterte Suche
 TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
-TODO: 3.7 Benachrichtigung
-TODO: 4: Liste für normale benutzer
 TODO: 5: rechte durchsetzten
-TODO: 5.5: erweiterte Suche
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
 TODO: 7: Sort Optionen für worklist arbeitet nicht richtig
+TODO: 8: Liste für normale benutzer überarbeiten
+TODO: 9: Latex Datein
 
 TODO: Auswahl der Operatuere/Einsender im diagnsoe bildschirm vereinfachen
 TODO: Geschlecht von ldap rausfinden

@@ -35,12 +35,8 @@
 		style="width:100%">
 		<h:panelGrid columns="4">
 
-			<p:selectBooleanCheckbox
-				value="#{worklistHandlerAction.filterWorklist}" disabled="true" />
-			<h:outputLabel value="#{msg['body.worklist.header.filter']}" />
-
-			<p:commandButton
-				value="#{msg['body.worklist.header.button.addPatient']}"
+			<p:commandButton disabled="true"
+				value="#{msg['body.userlist.header.button.searchPatient']}"
 				styleClass="buttonMarginLeft"
 				actionListener="#{patientHandlerAction.showAndInitAddPatientDialog()}">
 				<p:ajax event="dialogReturn" update=" contentForm" />
@@ -61,6 +57,7 @@
 			<p:commandButton id="changeView" ajax="false"
 				action="#{mainHandlerAction.goToNavigation(mainHandlerAction.currentView)}"
 				style="display:none" />
+				
 		</h:panelGrid>
 
 		<!-- Buttons on the right -->

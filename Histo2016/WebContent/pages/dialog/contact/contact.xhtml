@@ -35,8 +35,7 @@
 
 				<!-- Name -->
 				<p:column headerText="#{msg['dialog.contact.table.name']}"
-					filterBy="#{contact.person.name}"
-					filterMatchMode="contains">
+					filterBy="#{contact.person.name}" filterMatchMode="contains">
 					<h:outputLabel
 						value="#{contact.person.title} #{contact.person.name}, #{contact.person.surname}" />
 				</p:column>
@@ -44,7 +43,7 @@
 				<!-- default function-->
 				<p:column
 					headerText="#{msg['dialog.contact.table.defaultFunction']}">
-				<!-- 	<h:outputLabel
+					<!-- 	<h:outputLabel
 						value="#{msg['enum.contactRole.'.concat(contact.physician.defaultContactRole)]}" /> -->
 				</p:column>
 
@@ -57,9 +56,16 @@
 							itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
 							itemValue="#{role}" />
 
-						<p:ajax update="@form"
-							listener="#{contactHandlerAction.onContactChangeRole(contact,worklistHandlerAction.selectedPatient.selectedTask)}"></p:ajax>
+						<p:ajax oncomplete="onContactChangeRole()"></p:ajax>
 					</p:selectOneMenu>
+
+					<!-- change role of contact and set the new primary contact -->
+					<p:remoteCommand name="onContactChangeRole" update="@form">
+						<f:actionListener
+							binding="#{contactHandlerAction.onContactChangeRole(contact,worklistHandlerAction.selectedPatient.selectedTask)}" />
+						<f:actionListener
+							binding="#{contactHandlerAction.updateContactRolePrimary(worklistHandlerAction.selectedPatient.selectedTask)}" />
+					</p:remoteCommand>
 				</p:column>
 
 

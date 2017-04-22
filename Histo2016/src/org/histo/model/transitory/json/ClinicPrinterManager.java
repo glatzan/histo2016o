@@ -118,7 +118,7 @@ public class ClinicPrinterManager implements GsonAble {
 			return true;
 		} catch (Exception e) {
 			setOffline(true);
-			logger.error("Printers failed successful");
+			logger.error("Printers failed");
 			logger.error(e);
 			return false;
 		}
@@ -171,5 +171,5 @@ public class ClinicPrinterManager implements GsonAble {
 	public void setOffline(boolean offline) {
 		this.offline = offline;
 	}
-
+	
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 import javax.naming.NamingException;
 import org.apache.log4j.Logger;
+import org.histo.config.enums.Role;
 import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.Person;
@@ -46,7 +47,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				HistoUser histoUser = userDAO.loadUserByName(userName);
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
-					histoUser = new HistoUser(userName);
+					histoUser = new HistoUser(userName, Role.USER);
 				}
 
 				histoUser.setLastLogin(System.currentTimeMillis());

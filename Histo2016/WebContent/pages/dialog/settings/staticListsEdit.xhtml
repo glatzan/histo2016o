@@ -9,15 +9,16 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.stainings']} / #{settingsHandlerAction.originalStaining eq null ? msg['dialog.settings.stainings.new.new'] : msg['dialog.settings.stainings.new.edit']}"
+			header="#{msg['dialog.settings.list.new.headline']} #{msg['enum.staticList.'.concat(settingsHandlerAction.selectedStaticList)]}"
 			styleClass="contentPannel" />
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
 
-			<h:outputLabel value="#{msg['dialog.settings.stainings.new.name']}"></h:outputLabel>
+			<h:outputLabel value="#{msg['dialog.settings.list.new.name']}"></h:outputLabel>
 			<p:inputText value="#{settingsHandlerAction.tmpListItem.value}"></p:inputText>
 		</p:panelGrid>
 	</div>
+	
 	<div class="bottomDiv">
 		<h:panelGrid
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">

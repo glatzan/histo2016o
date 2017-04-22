@@ -20,13 +20,13 @@
 			<p:column sortBy="#{diagnosisPreset.diagnosisText}"
 				headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
 				style="width:40%">
-				<h:outputText value="#{diagnosisPreset.diagnosisText}" />
+				<h:outputText value="#{diagnosisPreset.diagnosis}" />
 			</p:column>
 
 			<p:column sortBy="#{diagnosisPreset.name}"
 				headerText="#{msg['dialog.settings.diagnosis.list.category']}"
 				style="width:auto">
-				<h:outputText value="#{diagnosisPreset.name}" />
+				<h:outputText value="#{diagnosisPreset.category}" />
 			</p:column>
 
 

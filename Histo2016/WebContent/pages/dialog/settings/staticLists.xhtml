@@ -72,12 +72,13 @@
 
 		</p:dataTable>
 	</div>
+	
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 			<h:panelGrid columns="2">
-				<p:commandButton value="#{msg['dialog.settings.material.new']}"
+				<p:commandButton value="#{msg['dialog.settings.list.new']}"
 					icon="fa fa-fw fa-plus-circle" styleClass="smallButton"
 					actionListener="#{settingsHandlerAction.prepareNewListItem()}"
 					update="@form" />
@@ -89,7 +90,7 @@
 							listener="#{settingsHandlerAction.prepareStaticLists()}" />
 					</p:selectBooleanCheckbox>
 
-					<h:outputLabel value="#{msg['dialog.settings.material.archived']}"
+					<h:outputLabel value="#{msg['dialog.settings.list.archived']}"
 						style="margin-left:5px;" />
 				</h:panelGrid>
 			</h:panelGrid>

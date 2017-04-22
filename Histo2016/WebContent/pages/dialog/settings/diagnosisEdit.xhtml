@@ -14,18 +14,20 @@
 
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
+			<!-- category -->
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.category']}" />
 			<p:inputText
-				value="#{settingsHandlerAction.editDiagnosisPrototype.name}"
+				value="#{settingsHandlerAction.editDiagnosisPrototype.category}"
 				id="diagnosisName">
 				<p:watermark for="diagnosisName"
 					value="#{msg['dialog.settings.diagnosis.edit.category.watermark']}" />
 			</p:inputText>
 
+			<!-- text -->
 			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
 			<p:inputTextarea id="diagnosisText"
-				value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosisText}">
+				value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosis}">
 				<p:watermark for="diagnosisText"
 					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
 			</p:inputTextarea>

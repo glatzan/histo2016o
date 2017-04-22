@@ -12,6 +12,7 @@ import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Notification;
+import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
@@ -58,6 +59,17 @@ public class ContactHandlerAction implements Serializable {
 	 * containing options for the physician list
 	 */
 	private PhysicianRoleOptions physicianRoleOptions;
+
+	/**
+	 * Role of the quick contact select dialog, either SURGEON or
+	 * PRIVATE_PHYSICIAN
+	 */
+	private ContactRole quickContactRole;
+
+	/**
+	 * Temporary task
+	 */
+	private Task temporaryTask;
 
 	@PostConstruct
 	public void prepareBean() {
@@ -136,7 +148,9 @@ public class ContactHandlerAction implements Serializable {
 			// the selected flag.
 			loop: for (Physician physician : databaseContacts) {
 				for (Contact contact : contacts) {
-					logger.debug("Physician id " + physician.getPerson().getId() +", name: "+ physician.getPerson().getFullName()+ ", contact person id " + contact.getPerson().getId());
+					logger.debug("Physician id " + physician.getPerson().getId() + ", name: "
+							+ physician.getPerson().getFullName() + ", contact person id "
+							+ contact.getPerson().getId());
 					if (contact.getPerson().getId() == physician.getPerson().getId()) {
 						logger.debug("Found " + contact.getPerson().getFullName() + " in contacts, role "
 								+ contact.getRole());
@@ -168,14 +182,22 @@ public class ContactHandlerAction implements Serializable {
 	public void onContactChangeRole(Contact contact, Task task) {
 		// role was set to none so deselect every marker
 		if (contact.getRole() == ContactRole.NONE) {
+			logger.debug("Removing contact");
 			task.getContacts().remove(contact);
 			contact.setUseEmail(false);
 			contact.setUseFax(false);
 			contact.setUsePhone(false);
+
+			genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
+			
 			genericDAO.delete(contact, resourceBundle.get("log.patient.task.contact.remove", task.getTaskID(),
 					contact.getPerson().getName()), task.getPatient());
+			
+			// remove id, if someone wants to readd the contact in the same dialog session			
+			contact.setId(0);
 		} else {
-
+			logger.debug("Changing or adding contact");
+			
 			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax()) {
 				// something was already select, do nothing
 			} else if (contact.getRole() == ContactRole.SURGEON) {
@@ -191,22 +213,21 @@ public class ContactHandlerAction implements Serializable {
 				contact.setUseEmail(true);
 			}
 
-			// adds contact if not added jet
-			if (!task.getContacts().contains(contact)) {
-				task.getContacts().add(contact);
-			}
-
 			genericDAO.save(contact,
 					resourceBundle.get("log.patient.task.contact.add", task.getTaskID(), contact.getPerson().getName()),
 					task.getPatient());
+			
+			// adds contact if not added jet
+			if (!task.getContacts().contains(contact)) {
+				task.getContacts().add(contact);
+				genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
+			}
 
 			System.out.println("saving");
 
 		}
 
-		updateContactRolePrimary(task);
-
-		genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
+		
 	}
 
 	/**
@@ -222,6 +243,10 @@ public class ContactHandlerAction implements Serializable {
 		updateContactRolePrimary(task, ContactRole.SURGEON);
 	}
 
+	public void updateContactRolePrimary(Task task, ContactRole role) {
+
+	}
+
 	/**
 	 * Checks if the contact list contains a primary contact for the given role.
 	 * If there are multiple contact marked as primary the only the first one
@@ -231,7 +256,7 @@ public class ContactHandlerAction implements Serializable {
 	 * @param task
 	 * @param role
 	 */
-	public void updateContactRolePrimary(Task task, ContactRole role) {
+	public void updateContactRolePrimary(Task task, ContactRole role, Contact primaryContact) {
 		Contact first = null;
 		boolean primary = false;
 
@@ -293,6 +318,55 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	/********************************************************
+	 * Quick Contacts
+	 ********************************************************/
+	public void prepareQuickContactsDialog(Task task, ContactRole contactRole) {
+		setTemporaryTask(task);
+		updateContactList(task, getPhysicianRoleOptions().isSurgeon(), getPhysicianRoleOptions().isPrivatePhysician(),
+				getPhysicianRoleOptions().isOther(), getPhysicianRoleOptions().isFamilyPhysician(), false);
+
+		setQuickContactRole(contactRole);
+
+		mainHandlerAction.showDialog(Dialog.QUICK_CONTACTS);
+	}
+
+	public void onSelectContactAsRole(Task task, Contact contact) {
+		contact.setRole(getQuickContactRole());
+		onContactChangeRole(contact, task);
+
+		updateContactRoleListForPrimaryContact(task, contact);
+	}
+
+	public void hideQuickContactsDialog() {
+		mainHandlerAction.hideDialog(Dialog.QUICK_CONTACTS);
+	}
+
+	/**
+	 * Sets all other contacts with the same role to none primary
+	 * 
+	 * @param task
+	 * @param primaryContact
+	 */
+	public void updateContactRoleListForPrimaryContact(Task task, Contact primaryContact) {
+		for (Contact contactListItem : task.getContacts()) {
+			if (primaryContact.getRole() == contactListItem.getRole()) {
+				contactListItem.setPrimaryContact(false);
+				genericDAO.save(contactListItem, resourceBundle.get("log.patient.task.contact.primaryRole.removed",
+						task.getTaskID(), contactListItem.getPerson().getName()), task.getPatient());
+			}
+		}
+
+		if (!primaryContact.isPrimaryContact()) {
+			primaryContact.setPrimaryContact(true);
+			genericDAO.save(primaryContact, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
+					primaryContact.getPerson().getName()), task.getPatient());
+		}
+	}
+
+	/********************************************************
+	 * Quick Contacts
+	 ********************************************************/
+	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
 
@@ -310,6 +384,22 @@ public class ContactHandlerAction implements Serializable {
 
 	public void setPhysicianRoleOptions(PhysicianRoleOptions physicianRoleOptions) {
 		this.physicianRoleOptions = physicianRoleOptions;
+	}
+
+	public ContactRole getQuickContactRole() {
+		return quickContactRole;
+	}
+
+	public void setQuickContactRole(ContactRole quickContactRole) {
+		this.quickContactRole = quickContactRole;
+	}
+
+	public Task getTemporaryTask() {
+		return temporaryTask;
+	}
+
+	public void setTemporaryTask(Task temporaryTask) {
+		this.temporaryTask = temporaryTask;
 	}
 
 	/********************************************************

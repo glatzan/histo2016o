@@ -77,8 +77,12 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	 * @param name
 	 */
 	public HistoUser(String name) {
+		this(name,Role.GUEST);
+	}
+	
+	public HistoUser(String name, Role role){
 		setUsername(name);
-		setRole(Role.GUEST);
+		setRole(role);
 		setPhysician(new Physician());
 		getPhysician().setPerson(new Person());
 

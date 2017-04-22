@@ -25,10 +25,9 @@ public class HistoSettings {
 	public static final String TEX_TEMPLATE_JSON = "classpath:settings/printTempaltes.json";
 	public static final String LABEL_PRINTER_JSON = "classpath:settings/labelPrinter.json";
 	public static final String VERSION_JSON = "classpath:settings/version.json";
-	
-	
+
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
-	
+
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
 
@@ -41,14 +40,17 @@ public class HistoSettings {
 		logger.debug("Creating Settings Object ");
 
 		HistoSettings result = gson.fromJson(HistoUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
-		
+
 		// init printers
-		result.getPrinterManager().loadCupsPrinters();
-		result.getLabelPrinterManager().loadFtpPrinters();
-		
+		if (!result.isOfflineMode()) {
+			result.getPrinterManager().loadCupsPrinters();
+			result.getLabelPrinterManager().loadFtpPrinters();
+		}else
+			logger.debug("Skipping printer initializiation, offline");
+
 		return result;
 	}
-	
+
 	/**
 	 * If true offline mode
 	 */
@@ -57,13 +59,13 @@ public class HistoSettings {
 	/**
 	 * Directory for creating pdfs
 	 */
-	private  String workingDirectory;
+	private String workingDirectory;
 
 	/**
 	 * The current version of the program
 	 */
 	private String currentVersion;
-	
+
 	/**
 	 * Handles clinic printers
 	 */
@@ -73,7 +75,7 @@ public class HistoSettings {
 	 * Handles all labelPrinters
 	 */
 	private LabelPrinterManager labelPrinterManager;
-	
+
 	/**
 	 * Object for sending mails via clini backend
 	 */
@@ -170,7 +172,7 @@ public class HistoSettings {
 	public String getWorkingDirectory() {
 		return workingDirectory;
 	}
-	
+
 	public String getCurrentVersion() {
 		return currentVersion;
 	}
@@ -186,8 +188,6 @@ public class HistoSettings {
 	public boolean isOfflineMode() {
 		return offlineMode;
 	}
-
-	
 
 	/********************************************************
 	 * Getter/Setter
