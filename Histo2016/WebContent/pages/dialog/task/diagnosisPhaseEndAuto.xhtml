@@ -30,26 +30,56 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseEndAuto.text']}"></h:outputLabel>
+				<p:media player="pdf" value="#{printHandlerAction.pdfContent}"
+					width="100%" rendered="#{printHandlerAction.renderPdf}"
+					height="460px"></p:media>
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseEndAuto.text']} asdas"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
+			<h:panelGrid columns="2" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="3" style="float:right;">
-					<!-- confirm -->
-					<p:commandButton value="#{msg['general.ok']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{diagnosisHandlerAction.stayInDiagnosisPhase(false)}"></p:commandButton>
+				<h:panelGrid columns="1">
+					<h:panelGrid columns="4" styleClass="buttonLeftMarginInList">
+						<!-- archived -->
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{diagnosisHandlerAction.stayInDiagnosisPhase}" />
+						<h:outputLabel
+							value="#{msg['dialog.diagnosisPhaseEndAuto.button.stay']}"
+							style="margin-left:5px;" />
 
-					<!-- ok and stay in diagnosis list -->
+						<h:panelGroup layout="block" style="width:20px;" />
+						
+						<p:selectOneMenu value="#{printHandlerAction.selectedTemplate}"
+							converter="#{printHandlerAction.templateTransformer}"
+							styleClass="customSerachSelectMenu">
+							<f:selectItems value="#{printHandlerAction.templateList}"
+								var="template" itemLabel="#{template.name}"
+								itemValue="#{template}" />
+
+							<p:ajax update="@form" event="change"
+								onstart="PF('blockUIWidget').block()"
+								oncomplete="PF('blockUIWidget').unblock()"
+								listener="#{printHandlerAction.onChangePrintTemplate()}"></p:ajax>
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="3" style="float:right;">
 					<p:commandButton
-						value="#{msg['dialog.diagnosisPhaseEndAuto.button.stay']}"
+						value="#{msg['dialog.diagnosisPhaseEndAuto.button.notify']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{diagnosisHandlerAction.stayInDiagnosisPhase(true)}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInList"
+						actionListener="#{diagnosisHandlerAction.endDiangosisPhase(diagnosisHandlerAction.stayInDiagnosisPhase)}"></p:commandButton>
+
+
+					<p:commandButton
+						value="#{msg['dialog.diagnosisPhaseEndAuto.button.notify.tmp']}"
+						icon="fa fa-check-circle-o" disabled="true"
+						styleClass="smallButton buttonRighMarginInList"
+						actionListener="#{diagnosisHandlerAction.endDiangosisPhase(false)}"></p:commandButton>
 
 
 					<!-- Abort button -->
@@ -60,7 +90,7 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
-
+		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>
 </html>

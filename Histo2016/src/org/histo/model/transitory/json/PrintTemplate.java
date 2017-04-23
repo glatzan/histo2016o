@@ -166,6 +166,21 @@ public class PrintTemplate implements HasID {
 		}
 		return null;
 	}
+	
+	/**
+	 * Returns the defaultTempalte of an list;
+	 * 
+	 * @param array
+	 * @return
+	 */
+	public static final PrintTemplate getDefaultTemplate(PrintTemplate[] array, DocumentType ofType) {
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].isDefaultDocument() && array[i].getDocumentTyp() == ofType)
+				return array[i];
+		}
+		return null;
+	}
+	
 
 	/**
 	 * Reads the content of a template and returns the content as string.

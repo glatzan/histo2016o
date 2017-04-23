@@ -1,0 +1,93 @@
+\documentclass{scrreprt}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{wallpaper}
+\usepackage[absolute]{textpos}
+\usepackage{tabularx} 
+\usepackage[T1]{fontenc}
+\usepackage{supertabular}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{helvet} 
+\usepackage{lipsum} 
+\usepackage{longtable}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{ifthen}
+\usepackage{setspace}
+\usepackage{everypage}
+
+\renewcommand{\familydefault}{\sfdefault} 
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+% header
+\pagestyle{fancy}
+
+\AddEverypageHook{
+   \ifthenelse{\value{page}=1}
+     {\renewcommand{\headrulewidth}{0.0pt}}
+     {\renewcommand{\headrulewidth}{0.4pt}}
+}
+
+% footer 
+\cfoot{\thepage\ of \pageref{LastPage}}
+
+\setcounter{secnumdepth}{0}
+
+
+
+
+
+\begin{document}
+%\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
+\ThisCenterWallPaper{1}{background.pdf}
+%
+ \input{code128.tex}
+
+
+\baselineskip10pt
+
+\textblockorigin{0in}{0in}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+
+
+% pat block
+{
+\scriptsize
+\begin{textblock}{100}(19, 8) 
+\noindent $patName  $patSurName\\
+$patAddress\\
+$patPlz $patCity\\
+\X=.35mm        
+\barheight=1cm 
+\code{$piz}\\
+$piz\\
+\end{textblock}
+}
+
+% add block
+{
+\begin{textblock}{100}(22, 50) 
+\setstretch{1.0}
+\noindent 
+\textbf{$addSubject} \\\\
+$addName $addSurName\\
+$addAddress\\
+$addPlz $addCity\\
+\end{textblock}
+}
+
+~\\
+\vspace{5.0cm}\\
+\noindent\makebox[\linewidth]{\rule{\linewidth}{0.4pt}}\\\\
+{\huge Sendebericht, vom $reportDate} \\\\
+{\normalsize $reportData \\}
+
+
+
+     
+	
+
+\end{document}

@@ -112,6 +112,7 @@ public class PdfGenerator {
 
 			if (!pdfGen.generate(processedTex, output, workingDirectory)) {
 				logger.error(pdfGen.getErrorMessage());
+				return null;
 			}
 
 			File test = pdfGen.getPDF();

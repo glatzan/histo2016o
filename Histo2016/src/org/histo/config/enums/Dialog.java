@@ -43,7 +43,7 @@ public enum Dialog {
 	STAINING_PHASE_FORCED("/pages/dialog/task/stainingPhaseForced", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_FORCED("/pages/dialog/task/diagnosisPhaseForced", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_UNLOCK("/pages/dialog/task/diagnosisPhaseUnlock", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_END_AUTO("/pages/dialog/task/diagnosisPhaseEndAuto", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_END_AUTO("/pages/dialog/task/diagnosisPhaseEndAuto", null, 1024, 600, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_END_MANUAL("/pages/dialog/task/diagnosisPhaseEndManual", null, 480, 272, false, false, true); // 16:9
 	
 	private final String path;

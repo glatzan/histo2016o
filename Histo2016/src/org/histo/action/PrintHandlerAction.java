@@ -61,7 +61,7 @@ public class PrintHandlerAction {
 
 	@Autowired
 	private PatientDao patientDao;
-	
+
 	/**
 	 * class for creating pdfs
 	 */
@@ -145,6 +145,22 @@ public class PrintHandlerAction {
 			else
 				setSelectedTemplate(selectedTemplate);
 		}
+	}
+
+	/**
+	 * Initializes a bean for creating and displaying pdf from an external bean.
+	 * Bean should be cleared after use via resetBean()
+	 */
+	public void perpareBeanForExternalView(Task task, DocumentType[] types, DocumentType defaultType) {
+		logger.trace("Prepare PDF generation form external bean");
+		// init bean
+		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(types);
+		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect, defaultType));
+
+		setContactRendered(null);
+
+		// rendering the template
+		onChangePrintTemplate();
 	}
 
 	public void resetBean() {
@@ -302,16 +318,15 @@ public class PrintHandlerAction {
 	 * 
 	 * @param pdf
 	 */
-	public void saveGeneratedPdf(PDFContainer pdf) {
+	public void saveGeneratedPdf(Task task, PDFContainer pdf) {
 		if (pdf.getId() == 0) {
 			logger.debug("Pdf not saved jet, saving" + pdf.getName());
 
-			genericDAO.save(pdf, resourceBundle.get("log.patient.task.pdf.created", pdf.getName()),
-					getTaskToPrint().getPatient());
+			genericDAO.save(pdf, resourceBundle.get("log.patient.task.pdf.created", pdf.getName()), task.getPatient());
 
-			getTaskToPrint().getAttachedPdfs().add(pdf);
+			task.getAttachedPdfs().add(pdf);
 
-			mainHandlerAction.saveDataChange(getTaskToPrint(), "log.patient.task.pdf.attached", pdf.getName());
+			mainHandlerAction.saveDataChange(task, "log.patient.task.pdf.attached", pdf.getName());
 		} else {
 			logger.debug("PDF allready saved, not saving. " + pdf.getName());
 		}
@@ -321,7 +336,7 @@ public class PrintHandlerAction {
 		if (getTmpPdfContainer().getId() == 0) {
 			logger.debug("Pdf not saved jet, saving");
 			if (!getSelectedTemplate().isDoNotSave())
-				saveGeneratedPdf(getTmpPdfContainer());
+				saveGeneratedPdf(getTaskToPrint(), getTmpPdfContainer());
 		}
 	}
 
@@ -338,7 +353,7 @@ public class PrintHandlerAction {
 		// tmpPdfContainer
 		if (list.isEmpty()) {
 			if (!doNotSave)
-				saveGeneratedPdf(preview);
+				saveGeneratedPdf(getTaskToPrint(), preview);
 			mainHandlerAction.getSettings().getPrinterManager().print(preview);
 		} else {
 			// addresses where chosen
@@ -346,7 +361,7 @@ public class PrintHandlerAction {
 				// address of the rendered pdf, not rendering twice
 				if (contactChooser.getContact() == contactRenderedInPrevew) {
 					if (!doNotSave)
-						saveGeneratedPdf(preview);
+						saveGeneratedPdf(getTaskToPrint(), preview);
 					for (int i = 0; i < contactChooser.getCopies(); i++) {
 						mainHandlerAction.getSettings().getPrinterManager().print(preview);
 					}

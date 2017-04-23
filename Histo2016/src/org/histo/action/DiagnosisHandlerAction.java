@@ -9,9 +9,11 @@ import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.DocumentType;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
+import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.RevisionHolder;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
 
+	@Autowired
+	private PrintHandlerAction printHandlerAction;
+
 	private Task temporaryTask;
 
 	private Diagnosis tmpDiagnosis;
@@ -60,6 +65,11 @@ public class DiagnosisHandlerAction implements Serializable {
 	 */
 	private DiagnosisRevisionType[] selectableRevisionTypes;
 
+	/**
+	 * Can be set to true if the task should stay in diagnosis phase.
+	 */
+	private boolean stayInDiagnosisPhase;
+	
 	/**
 	 * Hides dialogs associated with the slideHandlerAction, resets all
 	 * variables
@@ -184,14 +194,22 @@ public class DiagnosisHandlerAction implements Serializable {
 	 ********************************************************/
 	public void showDiagnosisPhaseEndAutoDialog(Task task) {
 		setTemporaryTask(task);
+		
+		setStayInDiagnosisPhase(false);
+
+		// inits a template for previewing 
+		printHandlerAction.perpareBeanForExternalView(task,
+				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
+				DocumentType.DIAGNOSIS_REPORT_EXTERN);
+
 		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_END_AUTO);
 	}
 
-	public void stayInDiagnosisPhase(boolean phase) {
+	public void endDiangosisPhase(boolean stayInphase) {
 		taskManipulationHandler.finalizeAllDiangosisRevisions(
 				getTemporaryTask().getDiagnosisContainer().getDiagnosisRevisions(), true);
 		getTemporaryTask().setNotificationPhase(true);
-		getTemporaryTask().setDiagnosisPhase(phase);
+		getTemporaryTask().setDiagnosisPhase(stayInphase);
 		getTemporaryTask().setFinalized(true);
 
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.end");
@@ -249,7 +267,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * @param tmpDiagnosis
 	 */
 	public void prepareCopyHistologicalRecordDialog(Diagnosis tmpDiagnosis) {
-		
+
 		setTmpDiagnosis(tmpDiagnosis);
 
 		// setting diagnosistext if no text is set
@@ -337,6 +355,14 @@ public class DiagnosisHandlerAction implements Serializable {
 
 	public void setSelectableRevisionTypes(DiagnosisRevisionType[] selectableRevisionTypes) {
 		this.selectableRevisionTypes = selectableRevisionTypes;
+	}
+
+	public boolean isStayInDiagnosisPhase() {
+		return stayInDiagnosisPhase;
+	}
+
+	public void setStayInDiagnosisPhase(boolean stayInDiagnosisPhase) {
+		this.stayInDiagnosisPhase = stayInDiagnosisPhase;
 	}
 	/********************************************************
 	 * Getter/Setter

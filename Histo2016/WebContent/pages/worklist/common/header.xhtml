@@ -93,7 +93,8 @@
 						rendered="#{worklistHandlerAction.selectedPatient ne null}" />
 
 					<!-- Overview, rendered if selected patient is not null -->
-					<p:menuitem value="#{msg['header.menu.patient.overview']}" icon="fa fa-tablet"
+					<p:menuitem value="#{msg['header.menu.patient.overview']}"
+						icon="fa fa-tablet"
 						onclick="$('#headerForm\\:showPatientOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{patientIsNotNull}" />
 
@@ -213,7 +214,7 @@
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						onclick="$('#headerForm\\:medicalFindingsContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-						
+
 					<!-- accounting -->
 					<p:menuitem value="#{msg['header.menu.task.sample.accounting']}"
 						icon="fa fa-dollar" disabled="true"
@@ -276,7 +277,7 @@
 
 			<!-- upload button to patient -->
 			<p:commandButton id="uploadBtnToPatient" style="display:none"
-				actionListener="#{mediaHandlerAction.preparePatientDataUploadDialog(worklistHandlerAction.selectedPatient)}">
+				actionListener="#{mediaHandlerAction.prepareUploadDialog(worklistHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
@@ -342,6 +343,8 @@
 
 			<!-- Lock diagnosis -->
 			<p:commandButton id="diagnosisPhaseEndAuto" style="display:none"
+				onstart="PF('blockUIWidget').block()"
+				oncomplete="PF('blockUIWidget').unblock()"
 				actionListener="#{diagnosisHandlerAction.showDiagnosisPhaseEndAutoDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />

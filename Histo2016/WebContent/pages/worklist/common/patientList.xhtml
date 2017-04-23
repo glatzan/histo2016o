@@ -190,6 +190,30 @@
 									</ui:fragment>
 								</h:panelGroup>
 
+								<!-- diagnosis needed -->
+								<h:panelGroup rendered="#{task.notificationPhase}">
+									<!-- diagnosis needed = green -->
+									<ui:fragment
+										rendered="#{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' }">
+										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
+											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
+									</ui:fragment>
+
+									<!-- re-diagnosis needed = orange -->
+									<ui:fragment
+										rendered="#{task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED' }">
+										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
+											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+									</ui:fragment>
+
+									<!-- no diagnosis needed = purple -->
+									<ui:fragment
+										rendered="#{task.getDiagnosisStatus() eq 'PERFORMED' }">
+										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
+											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
+									</ui:fragment>
+								</h:panelGroup>
+
 								<!-- Pendings completed -->
 								<h:panelGroup rendered="#{task.finalized}">
 									<i style="margin-left: 5px;"

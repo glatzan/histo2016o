@@ -3,9 +3,12 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 Merke: keine kurzbefunde
 
 TODO: 1 -> Sendefunktion testen!
+TODO: 1.01 -> anzeige des status, notification search
 TODO: 1.1 Kontakte, testen ob primarycontact aktuallisiert wird
-
+TODO: 1.2 Arzt muss als untersucher markiert werden für unterschriften
+TODO: 1.3 Diangose beenden, auswahl der templates
 TODO: 2: erweiterte Suche
+
 TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
 TODO: 5: rechte durchsetzten
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld

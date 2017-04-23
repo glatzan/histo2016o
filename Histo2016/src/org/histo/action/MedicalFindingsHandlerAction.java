@@ -191,47 +191,55 @@ public class MedicalFindingsHandlerAction {
 
 		StringBuilder sendLog = new StringBuilder();
 
+		
 		if (emailNotificationSettings.isUseEmail() || faxNotificationSettings.isUseFax()
 				|| phoneNotificationSettings.isUsePhone()) {
 			ArrayList<PDFContainer> resultPdfs = new ArrayList<PDFContainer>();
-			ArrayList<PDFContainer> resultPdfsToDownload = new ArrayList<PDFContainer>();
 
+			// EMAIL
+			sendLog.append(resourceBundle.get("pdf.notification.emailNotification.notify"));
 			if (emailNotificationSettings.isUseEmail()) {
 				logger.trace("Email notification");
-				sendLog.append(resourceBundle.get("pdf.notification.email.text") + "\r\n");
+				
 
 				for (MedicalFindingsChooser notificationChooser : emailNotificationSettings
 						.getNotificationEmailList()) {
 					boolean emailSuccessful = false;
 
 					// name and mail
-					sendLog.append(notificationChooser.getContact().getPerson().getFullName() + "\t ");
-					sendLog.append(resourceBundle.get("pdf.notification.email")
-							+ notificationChooser.getContact().getPerson().getEmail() + "\t");
+					logger.trace("Email to " + notificationChooser.getContact().getPerson().getFullName() + " ("
+							+ notificationChooser.getContact().getPerson().getEmail() + ")");
+					sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.to",
+							notificationChooser.getContact().getPerson().getFullName(),
+							notificationChooser.getContact().getPerson().getEmail()));
 
 					// no notification
 					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
-						sendLog.append(resourceBundle.get("pdf.notification.none") + "\r\n");
+						logger.trace("No notification desired");
+						sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.none"));
 						continue;
 					} else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
 							&& notificationChooser.getPrintTemplate() != null) {
 						// attach pdf to mail
-
 						PDFContainer pdfToSend = pdfGenerator.generatePDFForReport(getTemporaryTask().getPatient(),
 								getTemporaryTask(), notificationChooser.getPrintTemplate(),
 								notificationChooser.getContact().getPerson());
 
-						if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-								notificationChooser.getContact().getPerson().getEmail(),
-								emailNotificationSettings.getEmailSubject(), emailNotificationSettings.getEmailText(),
-								pdfToSend)) {
-							emailSuccessful = true;
-							// adding mail to the result array
-							resultPdfs.add(pdfToSend);
-							sendLog.append(pdfToSend.getName() + "\t");
-						} else {
-							// TODO: HAndle fault
-						}
+						// if
+						// (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+						// notificationChooser.getContact().getPerson().getEmail(),
+						// emailNotificationSettings.getEmailSubject(),
+						// emailNotificationSettings.getEmailText(),
+						// pdfToSend)) {
+						emailSuccessful = true;
+						// adding mail to the result array
+						resultPdfs.add(pdfToSend);
+						logger.trace("PDF successfully send");
+						sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.success.pdf"));
+						// } else {
+						// sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.error.pdf"));
+						// // TODO: HAndle fault
+						// }
 
 					} else {
 						// plain text mail
@@ -240,11 +248,13 @@ public class MedicalFindingsHandlerAction {
 								emailNotificationSettings.getEmailSubject(),
 								emailNotificationSettings.getEmailText())) {
 							emailSuccessful = true;
+							logger.trace("Text successfully send");
+							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.success.text"));
 						} else {
-							// TODO: HAndle fault
+							// TODO: Handle fault
+							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.error.text"));
 						}
 
-						sendLog.append(resourceBundle.get("pdf.notification.email.text") + "\t");
 					}
 
 					// check if mail was send
@@ -260,35 +270,43 @@ public class MedicalFindingsHandlerAction {
 										notificationChooser.getContact().getPerson().getFullName()),
 								getTemporaryTask().getPatient());
 
-						sendLog.append(resourceBundle.get("pdf.notification.email.performed") + "r\n");
-					} else
-						sendLog.append(resourceBundle.get("pdf.notification.email.failed") + "\r\n");
+					}
 				}
 
-				sendLog.append("\r\n");
-				sendLog.append("\r\n");
+				sendLog.append(resourceBundle.get("pdf.notification.spacer"));
+
+			} else {
+				logger.trace("No Email notification");
+				sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.noNotification"));
+				sendLog.append(resourceBundle.get("pdf.notification.spacer"));
 			}
 
+			// FAX
+			sendLog.append(resourceBundle.get("pdf.notification.faxNotification.notify"));
 			if (faxNotificationSettings.isUseFax()) {
 				logger.trace("Fax notification");
-				sendLog.append(resourceBundle.get("pdf.notification.fax.text") + "\r\n");
 
 				for (MedicalFindingsChooser notificationChooser : faxNotificationSettings.getNotificationFaxList()) {
 					boolean faxSuccessful = false;
 
-					sendLog.append(notificationChooser.getContact().getPerson().getFullName() + "\t");
-					sendLog.append(resourceBundle.get("pdf.notification.fax.number") + " "
-							+ notificationChooser.getContact().getPerson().getFax() + "\t");
+					// name and number
+					logger.trace("Fax to " + notificationChooser.getContact().getPerson().getFullName() + " ("
+							+ notificationChooser.getContact().getPerson().getEmail() + ")");
+					sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.to",
+							notificationChooser.getContact().getPerson().getFullName(),
+							notificationChooser.getContact().getPerson().getFax()));
 
 					// no notification
 					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
-						sendLog.append(resourceBundle.get("pdf.notification.none") + "\r\n");
+						logger.trace("No notification desired");
+						sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.none"));
 						continue;
 					} else if (notificationChooser.getPrintTemplate() == null
 							|| notificationChooser.getContact().getPerson().getFax() == null
 							|| notificationChooser.getContact().getPerson().getFax().isEmpty()) {
 						// error no templat or number
-						sendLog.append(resourceBundle.get("pdf.notification.fax.notPossible") + "\r\n");
+						logger.trace("Error, no Fax-Number or Template");
+						sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.notPossible"));
 					} else {
 						// creating pdf
 						PDFContainer pdfToSend = pdfGenerator.generatePDFForReport(getTemporaryTask().getPatient(),
@@ -298,6 +316,10 @@ public class MedicalFindingsHandlerAction {
 
 						// TODO: SEND FAX
 
+						logger.trace("Fax send successfully");
+						sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.success"));
+
+						// sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.error"));
 					}
 
 					if (faxSuccessful) {
@@ -309,29 +331,32 @@ public class MedicalFindingsHandlerAction {
 										getTemporaryTask().getTaskID(),
 										notificationChooser.getContact().getPerson().getFullName()),
 								getTemporaryTask().getPatient());
-
-						sendLog.append(resourceBundle.get("pdf.notification.fax.performed") + "r\n");
-					} else
-						sendLog.append(resourceBundle.get("pdf.notification.fax.failed") + "\r\n");
-
+					}
 				}
 
-				sendLog.append("\r\n");
-				sendLog.append("\r\n");
+				sendLog.append(resourceBundle.get("pdf.notification.spacer"));
+			} else {
+				logger.trace("No Fax notification");
+				sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.noNotification"));
+				sendLog.append(resourceBundle.get("pdf.notification.spacer"));
 			}
 
+			// PHONE
+			sendLog.append(resourceBundle.get("pdf.notification.phoneNotification.notify"));
 			if (phoneNotificationSettings.isUsePhone()) {
-				sendLog.append(resourceBundle.get("pdf.notification.phone.text"));
+				logger.trace("Phone notification");
 
 				for (MedicalFindingsChooser notificationChooser : phoneNotificationSettings
 						.getNotificationPhoneList()) {
 
-					sendLog.append(notificationChooser.getContact().getPerson().getFullName() + "\t");
-					sendLog.append(resourceBundle.get("pdf.notification.phone.number") + " "
-							+ notificationChooser.getContact().getPerson().getPhoneNumber() + "\t");
+					// name and number
+					logger.trace("Phone to " + notificationChooser.getContact().getPerson().getFullName() + " ("
+							+ notificationChooser.getContact().getPerson().getPhoneNumber() + ")");
+					sendLog.append(resourceBundle.get("pdf.notification.phoneNotification.phone.to",
+							notificationChooser.getContact().getPerson().getFullName(),
+							notificationChooser.getContact().getPerson().getPhoneNumber()));
 
 					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
-						sendLog.append(resourceBundle.get("pdf.notification.none") + "\r\n");
 						continue;
 					} else {
 						notificationChooser.getContact().setNotificationPerformed(true);
@@ -344,7 +369,10 @@ public class MedicalFindingsHandlerAction {
 					}
 
 				}
-				sendLog.append("\r\n");
+				sendLog.append(resourceBundle.get("pdf.notification.spacer"));
+			} else {
+				logger.trace("No phone notification");
+				sendLog.append(resourceBundle.get("pdf.notification.phoneNotification.phone.noNotification"));
 			}
 
 			// getting the template for the send report
@@ -353,8 +381,8 @@ public class MedicalFindingsHandlerAction {
 
 			// sendreport has date and datafiled
 			HashMap<String, String> addtionalFields = new HashMap<String, String>();
-			addtionalFields.put("REPORT_DATE", mainHandlerAction.date(System.currentTimeMillis()));
-			addtionalFields.put("REPORT_DATA", sendLog.toString());
+			addtionalFields.put("reportDate", mainHandlerAction.date(System.currentTimeMillis()));
+			addtionalFields.put("reportData", sendLog.toString());
 
 			PDFContainer sendReportPDF = pdfGenerator.generateSimplePDF(getTemporaryTask().getPatient(), sendReport,
 					addtionalFields);
@@ -364,7 +392,7 @@ public class MedicalFindingsHandlerAction {
 			PDFContainer resultPdf = PdfGenerator.mergePdfs(resultPdfs, sendReportPDF.getName(),
 					DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
 
-			printHandlerAction.saveGeneratedPdf(resultPdf);
+			printHandlerAction.saveGeneratedPdf(getTemporaryTask(), resultPdf);
 
 			getTemporaryTask().setNotificationPhase(false);
 			getTemporaryTask().setNotificationCompletionDate(System.currentTimeMillis());
