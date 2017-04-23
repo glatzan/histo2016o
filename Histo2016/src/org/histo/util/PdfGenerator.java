@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -226,8 +227,7 @@ public class PdfGenerator {
 		converter.replace("diagnosisRevisions", task.getDiagnosisContainer().getDiagnosisRevisions());
 
 		Contact tmpPhysician = task.getPrimaryContact(ContactRole.SURGEON);
-		converter.replace("surgeon",
-				tmpPhysician == null ? "" : tmpPhysician.getPerson().getFullNameAndTitle());
+		converter.replace("surgeon", tmpPhysician == null ? "" : tmpPhysician.getPerson().getFullNameAndTitle());
 		tmpPhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
 		converter.replace("privatePhysician",
 				tmpPhysician == null ? "" : tmpPhysician.getPerson().getFullNameAndTitle());
@@ -251,18 +251,74 @@ public class PdfGenerator {
 		}
 	}
 
-	private static byte[] readContentIntoByteArray(File file) {
-		FileInputStream fileInputStream = null;
-		byte[] bFile = new byte[(int) file.length()];
+	/**
+	 * Fills a simple PDF with the values given in the hashmap.
+	 * @param printTemplate
+	 * @param replacements
+	 * @return
+	 */
+	public PDFContainer generateSimplePDF(PrintTemplate printTemplate, HashMap<String, String> replacements) {
+		return generateSimplePDF(null, printTemplate, replacements);
+	}
+
+	/**
+	 * Generates a simple PDF using the template an the given hashmap to replace
+	 * all datafields. If Patient is given, the patient datafield will be
+	 * replace automatically
+	 * 
+	 * @param printTemplate
+	 * @param replacements
+	 * @return
+	 */
+	public PDFContainer generateSimplePDF(Patient patient, PrintTemplate printTemplate,
+			HashMap<String, String> replacements) {
+		mainHandlerAction.getSettings();
+		File workingDirectory = new File(
+				HistoSettings.getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
+
+		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
+
+		logger.debug("Template File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+
+		// loading tex file
+		File template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
+
+		File processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
+
+		JLRConverter converter = new JLRConverter(workingDirectory);
+
+		if(patient != null)
+			replacePatientData(converter, patient);
+			
+		for (Map.Entry<String, String> entry : replacements.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+
+			converter.replace(key, value);
+		}
+
 		try {
-			// convert file into array of bytes
-			fileInputStream = new FileInputStream(file);
-			fileInputStream.read(bFile);
-			fileInputStream.close();
-		} catch (Exception e) {
+
+			if (!converter.parse(template, processedTex)) {
+				logger.error(converter.getErrorMessage());
+			}
+
+			JLRGenerator pdfGen = new JLRGenerator();
+
+			if (!pdfGen.generate(processedTex, output, workingDirectory)) {
+				logger.error(pdfGen.getErrorMessage());
+			}
+
+			File test = pdfGen.getPDF();
+			byte[] data = readContentIntoByteArray(test);
+
+			return new PDFContainer(printTemplate.getDocumentTyp(),
+					"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
+
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return bFile;
+		return null;
 	}
 
 	public PDFContainer generatePdfForTemplate(Task task, PrintTemplate tempalte, long dateOfReport,
@@ -459,6 +515,20 @@ public class PdfGenerator {
 		// TODO: rework
 	}
 
+
+	private static byte[] readContentIntoByteArray(File file) {
+		FileInputStream fileInputStream = null;
+		byte[] bFile = new byte[(int) file.length()];
+		try {
+			// convert file into array of bytes
+			fileInputStream = new FileInputStream(file);
+			fileInputStream.read(bFile);
+			fileInputStream.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bFile;
+	}
 	/**
 	 * Loads a PdfReader from a file
 	 * 

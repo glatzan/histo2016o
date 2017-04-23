@@ -38,7 +38,7 @@
 	"file" : "classpath:templates/print/Report_Extern.tex",
 	"file2" : "",
 	"documentType"	: "DIAGNOSIS_REPORT_EXTERN",
-	"defaultDocument" : false,
+	"defaultDocument" : true,
 	"doNotSave" : false
 },{
 	"id" : 30,

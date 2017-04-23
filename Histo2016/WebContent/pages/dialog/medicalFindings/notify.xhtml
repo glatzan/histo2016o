@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.medicalFindings.tab.notify.tabHeadline']}"
+			styleClass="contentPannel" />
+
+		<p:scrollPanel style="width:100%;height:500px">
+			<h:panelGrid columns="1" styleClass="defaultListingTableCss"
+				columnClasses="defaultListingTableColumnTop">
+
+				<!-- Email -->
+				<h:panelGroup>
+					<h:outputText
+						value="#{msg['dialog.medicalFindings.tab.notify.email']}: "
+						styleClass="bold-text" />
+					<h:outputText
+						value="#{medicalFindingsHandlerAction.emailNotificationSettings.useEmail ? msg['dialog.medicalFindings.tab.notify.email.enabled'] : msg['dialog.medicalFindings.tab.notify.email.disenabled']}"
+						styleClass="bold-text #{medicalFindingsHandlerAction.emailNotificationSettings.useEmail ? 'icon-green' : 'icon-red'}" />
+				</h:panelGroup>
+
+				<p:dataTable var="emailNotification"
+					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+					value="#{medicalFindingsHandlerAction.emailNotificationSettings.notificationEmailList}">
+					<!-- name -->
+					<p:column style="width: auto"
+						headerText="#{msg['dialog.medicalFindings.tab.notify.email.name']}">
+						<h:outputText value="#{emailNotification.contact.person.fullName}" />
+					</p:column>
+					<!-- status -->
+					<p:column style="width: 20%"
+						headerText="#{msg['dialog.medicalFindings.tab.notify.email.status']}">
+						<!-- No notification -->
+						<h:outputLabel
+							rendered="#{emailNotification.notificationAttachment eq 'NONE'}"
+							value="#{msg['dialog.medicalFindings.tab.notify.email.status.none']}" />
+						<!-- notification successful -->
+						<ui:fragment rendered="#{emailNotification.performed}">
+							<i class="fa fa-check icon-green"
+								title="#{msg['dialog.medicalFindings.tab.notify.email.status.performed']}" />
+						</ui:fragment>
+						<!-- error oh notification -->
+						<ui:fragment rendered="#{emailNotification.error}">
+							<i class="fa fa-times icon-red"
+								title="#{msg['dialog.medicalFindings.tab.notify.email.status.error']}" />
+						</ui:fragment>
+					</p:column>
+				</p:dataTable>
+
+				<!-- Blank -->
+				<h:outputLabel value=" " />
+				<h:outputLabel value=" " />
+
+				<!-- Fax -->
+				<h:panelGroup>
+					<h:outputText
+						value="#{msg['dialog.medicalFindings.tab.notify.fax']}: "
+						styleClass="bold-text" />
+					<h:outputText
+						value="#{medicalFindingsHandlerAction.faxNotificationSettings.useFax ? msg['dialog.medicalFindings.tab.notify.fax.enabled'] : msg['dialog.medicalFindings.tab.notify.fax.disenabled']}"
+						styleClass="bold-text #{medicalFindingsHandlerAction.faxNotificationSettings.useFax ? 'icon-green' : 'icon-red'}" />
+				</h:panelGroup>
+
+				<p:dataTable var="faxNotification"
+					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+					value="#{medicalFindingsHandlerAction.faxNotificationSettings.notificationFaxList}">
+
+					<!-- name -->
+					<p:column style="width: auto"
+						headerText="#{msg['dialog.medicalFindings.tab.notify.fax.name']}">
+						<h:outputText value="#{faxNotification.contact.person.fullName}" />
+					</p:column>
+
+					<!-- status -->
+					<p:column style="width: 20%"
+						headerText="#{msg['dialog.medicalFindings.tab.notify.fax.status']}">
+						<h:outputLabel
+							rendered="#{faxNotification.notificationAttachment eq 'NONE'}"
+							value="#{msg['dialog.medicalFindings.tab.notify.fax.status.none']}" />
+					</p:column>
+				</p:dataTable>
+
+				<!-- Blank -->
+				<h:outputLabel value=" " />
+				<h:outputLabel value=" " />
+
+				<!-- Phone -->
+				<h:panelGroup>
+					<h:outputText
+						value="#{msg['dialog.medicalFindings.tab.notify.phone']}: "
+						styleClass="bold-text" />
+					<h:outputText
+						value="#{medicalFindingsHandlerAction.phoneNotificationSettings.usePhone ? msg['dialog.medicalFindings.tab.notify.phone.enabled'] : msg['dialog.medicalFindings.tab.notify.phone.disenabled']}"
+						styleClass="bold-text #{medicalFindingsHandlerAction.phoneNotificationSettings.usePhone ? 'icon-green' : 'icon-red'}" />
+				</h:panelGroup>
+
+				<p:dataTable var="phoneNotification"
+					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+					value="#{medicalFindingsHandlerAction.phoneNotificationSettings.notificationPhoneList}">
+					<!-- name -->
+					<p:column style="width: auto"
+						headerText="#{msg['dialog.medicalFindings.tab.notify.phone.name']}">
+						<h:outputLabel
+							value="#{phoneNotification.contact.physician.person.fullName}" />
+					</p:column>
+
+					<!-- status -->
+					<p:column style="width: 20%"
+						headerText="#{msg['dialog.medicalFindings.tab.notify.phone.number']}">
+						<h:outputLabel
+							value="#{phoneNotification.contact.physician.person.phoneNumber}" />
+					</p:column>
+				</p:dataTable>
+
+			</h:panelGrid>
+		</p:scrollPanel>
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="3" style="float:right;">
+				<!-- save -->
+				<p:commandButton value="#{msg['general.back']}"
+					icon="fa fa-fw fa-arrow-left"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{medicalFindingsHandlerAction.previousStep()}"
+					update="@form" />
+
+				<!-- submit -->
+				<p:commandButton
+					value="#{msg['dialog.medicalFindings.tab.notify.button.send']}"
+					icon="fa fa-fw fa-check-circle-o"
+					styleClass="smallButton buttonRighMarginInList"
+					onstart="PF('blockUIWidget').block()"
+					oncomplete="PF('blockUIWidget').unblock()"
+					actionListener="#{printHandlerAction.onPrintNewPdf()"
+					update="@form" />
+
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>

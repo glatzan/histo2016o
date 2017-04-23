@@ -54,7 +54,7 @@ public class MaintenanceHandlerAction {
 			errorMessage = errorMessage + "\r\n\r\nAbsender: "
 					+ userHandlerAction.getCurrentUser().getPhysician().getPerson().getFullName();
 
-			mainHandlerAction.getSettings().getMail().sendMail(mainHandlerAction.getSettings().getErrorMails(),
+			mainHandlerAction.getSettings().getMail().sendMailFromSystem(mainHandlerAction.getSettings().getErrorMails(),
 					"Fehlermeldung vom "
 							+ TimeUtil.formatDate(dateOfError, DateFormat.GERMAN_DATE_TIME.getDateFormat()),
 					errorMessage);

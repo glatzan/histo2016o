@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.medicalFindings.tab.fax.tabHeadline']}"
+			styleClass="contentPannel" />
+
+
+
+
+
+		<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+			columnClasses="defaultListingTableColumnTop defaultListingTableColumn150, ">
+
+			<!-- use Fax -->
+			<h:outputLabel
+				value="#{msg['dialog.medicalFindings.tab.fax.useFax']}" />
+			<p:selectBooleanCheckbox
+				value="#{medicalFindingsHandlerAction.faxNotificationSettings.useFax}">
+				<p:ajax event="change"
+					listener="#{medicalFindingsHandlerAction.faxNotificationSettings.onUseFaxChanges()}"
+					update="@form" />
+			</p:selectBooleanCheckbox>
+
+			<!-- Fax list -->
+			<h:outputLabel
+				value="#{msg['dialog.medicalFindings.tab.fax.receiver']}" />
+			<p:dataTable var="faxNotification"
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+				value="#{medicalFindingsHandlerAction.faxNotificationSettings.notificationFaxList}">
+
+				<!-- name -->
+				<p:column
+					headerText="#{msg['dialog.medicalFindings.tab.fax.receiver.name']}"
+					style="width:auto">
+					<h:outputText value="#{faxNotification.contact.person.fullName}" />
+				</p:column>
+
+				<!-- method -->
+				<p:column
+					headerText="#{msg['dialog.medicalFindings.tab.fax.receiver.type']}"
+					style="width:18%">
+					<p:selectOneMenu styleClass="customSerachSelectMenu"
+						disabled="#{!medicalFindingsHandlerAction.faxNotificationSettings.useFax}"
+						value="#{faxNotification.notificationAttachment}">
+
+						<f:selectItems
+							value="#{medicalFindingsHandlerAction.faxNotificationSettings.getNotificationFaxOptions()}"
+							var="option"
+							itemLabel="#{msg['enum.notification.'.concat(option)]}" />
+
+						<p:ajax event="change" update="@form" />
+					</p:selectOneMenu>
+				</p:column>
+
+				<!-- PDF template -->
+				<p:column style="width:34%"
+					headerText="#{msg['dialog.medicalFindings.tab.fax.receiver.template']}">
+					<p:selectOneMenu styleClass="customSerachSelectMenu"
+						converter="#{medicalFindingsHandlerAction.faxNotificationSettings.templateTransformer}"
+						rendered="#{faxNotification.notificationAttachment eq 'FAX'}"
+						disabled="#{!medicalFindingsHandlerAction.faxNotificationSettings.useFax}"
+						value="#{faxNotification.printTemplate}">
+						<f:selectItems
+							value="#{medicalFindingsHandlerAction.faxNotificationSettings.printTemplates}"
+							var="template" itemValue="#{template}"
+							itemLabel="#{template.name}" />
+						<p:ajax event="change" update="@form" />
+					</p:selectOneMenu>
+				</p:column>
+				
+				<!-- change pdf for user -->
+				<p:column style="width:4%">
+					<p:commandLink
+						rendered="#{faxNotification.notificationAttachment eq 'FAX'}"
+						disabled="#{!medicalFindingsHandlerAction.faxNotificationSettings.useFax}"
+						title="#{msg['dialog.medicalFindings.tab.fax.receiver.template.show.hint']}"
+						style="float: right"
+						actionListener="#{notificationHandlerAction.showPreviewDialog(faxNotification)}">
+						<i class="fa fa-fw fa-search" />
+						<p:ajax event="dialogReturn" update="@form" />
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
+		</h:panelGrid>
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="3" style="float:right;">
+				<!-- save -->
+				<p:commandButton value="#{msg['general.back']}"
+					icon="fa fa-fw fa-arrow-left"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{medicalFindingsHandlerAction.previousStep()}"
+					update="@form" />
+
+				<!-- abort -->
+				<p:commandButton value="#{msg['general.next']}"
+					icon="fa fa-fw fa-arrow-right"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{medicalFindingsHandlerAction.nextStep()}"
+					update="@form" />
+
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>

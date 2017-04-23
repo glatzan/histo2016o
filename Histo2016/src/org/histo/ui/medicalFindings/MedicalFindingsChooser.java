@@ -1,4 +1,4 @@
-package org.histo.ui;
+package org.histo.ui.medicalFindings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,35 +11,36 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.NotificationOption;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
+import org.histo.model.transitory.json.PrintTemplate;
 
-public class NotificationChooser {
+public class MedicalFindingsChooser {
 
 	private Contact contact;
 
 	private NotificationOption notificationAttachment;
 
-	private PDFContainer pdf;
+	private PrintTemplate printTemplate;
 
 	private AtomicBoolean performed;
 	
 	private AtomicBoolean error;
 	
-	public NotificationChooser(){
+	public MedicalFindingsChooser(){
 		performed = new AtomicBoolean(false);
 		error = new AtomicBoolean(false);
 	}
 
-	public NotificationChooser(Contact contact) {
+	public MedicalFindingsChooser(Contact contact) {
 		this();
 		this.contact = contact;
 		this.performed = new AtomicBoolean(false);
 	}
 
-	public static final List<NotificationChooser> getSublist(List<Contact> contacts, ContactMethod contactMethod) {
-		ArrayList<NotificationChooser> result = new ArrayList<NotificationChooser>(contacts.size());
+	public static final List<MedicalFindingsChooser> getSublist(List<Contact> contacts, ContactMethod contactMethod) {
+		ArrayList<MedicalFindingsChooser> result = new ArrayList<MedicalFindingsChooser>(contacts.size());
 
 		for (Contact contact : contacts) {
-			NotificationChooser chooser = new NotificationChooser(contact);
+			MedicalFindingsChooser chooser = new MedicalFindingsChooser(contact);
 			if (contactMethod == ContactMethod.ALL) {
 				result.add(chooser);
 				chooser.setNotificationAttachment(NotificationOption.NONE);
@@ -65,14 +66,6 @@ public class NotificationChooser {
 		this.contact = contact;
 	}
 
-	public PDFContainer getPdf() {
-		return pdf;
-	}
-
-	public void setPdf(PDFContainer pdf) {
-		this.pdf = pdf;
-	}
-
 	public NotificationOption getNotificationAttachment() {
 		return notificationAttachment;
 	}
@@ -95,5 +88,13 @@ public class NotificationChooser {
 
 	public void setError(boolean error) {
 		this.error.set(error);
+	}
+
+	public PrintTemplate getPrintTemplate() {
+		return printTemplate;
+	}
+
+	public void setPrintTemplate(PrintTemplate printTemplate) {
+		this.printTemplate = printTemplate;
 	}
 }

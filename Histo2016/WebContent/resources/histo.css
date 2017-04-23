@@ -146,6 +146,12 @@ body {
 .defaultListingTableColumn30 {
 	width: 30%;
 }
+
+.defaultListingTableColumn150{
+	width: 150px !important;
+	min-width: 150px !important;
+}
+
 /************************************* DEFAULT TABLE *************************************/
 /************************************* Fonts *************************************/
 .bold-text {
@@ -927,22 +933,6 @@ ul.ui-menu-child {
 	valign: middle;
 }
 /*	################# council dialog ################# */
-
-/*	################# notification dialog ################# */
-.notificationTable {
-	width: 100%;
-	margin-top: 5px;
-}
-
-.notificationTable .textColumn {
-	width: 200px;
-}
-
-.notificationTable .physicianList tr:nth-child(even) td {
-	background-color: #f9f9f9;
-}
-
-/*	################# notification dialog ################# */
 
 /*	######################################## Dialog ######################################## */
 

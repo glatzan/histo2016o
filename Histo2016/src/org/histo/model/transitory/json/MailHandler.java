@@ -29,9 +29,9 @@ public class MailHandler implements GsonAble {
 
 	private boolean debug;
 
-	private String fromMail;
+	private String systemMail;
 
-	private String fromName;
+	private String systemName;
 
 	private HashMap<MailPresetName, MailTemplate> mailTemplates;
 
@@ -65,7 +65,7 @@ public class MailHandler implements GsonAble {
 		String content = contentReplace != null
 				? HistoUtil.replaceWildcardsInString(template.getContent(), contentReplace) : template.getContent();
 
-		return sendMail(to, subject, content);
+		return sendMailFromSystem(to, subject, content);
 	}
 
 	/**
@@ -76,8 +76,8 @@ public class MailHandler implements GsonAble {
 	 * @param text
 	 * @return
 	 */
-	public final boolean sendMail(String to[], String subject, String text) {
-		return sendMail(to, getFromMail(), getFromName(), subject, text);
+	public final boolean sendMailFromSystem(String to[], String subject, String text) {
+		return sendMail(to, getSystemMail(), getSystemName(), subject, text);
 	}
 
 	/**
@@ -110,8 +110,20 @@ public class MailHandler implements GsonAble {
 	 * @param text
 	 * @return
 	 */
-	public final boolean sendMail(String to, String subject, String text) {
-		return sendMail(to, getFromMail(), getFromName(), subject, text);
+	public final boolean sendMailFromSystem(String to, String subject, String text) {
+		return sendMail(to, getSystemMail(), getSystemName(), subject, text);
+	}
+
+	/**
+	 * Sends a pdf mail, using the system's adress and name
+	 * 
+	 * @param to
+	 * @param subject
+	 * @param text
+	 * @return
+	 */
+	public final boolean sendMailFromSystem(String to, String subject, String text, PDFContainer container) {
+		return sendMail(to, getSystemMail(), getSystemName(), subject, text, container);
 	}
 
 	/**
@@ -229,20 +241,20 @@ public class MailHandler implements GsonAble {
 		this.debug = debug;
 	}
 
-	public String getFromMail() {
-		return fromMail;
+	public String getSystemMail() {
+		return systemMail;
 	}
 
-	public void setFromMail(String fromMail) {
-		this.fromMail = fromMail;
+	public void setSystemMail(String systemMail) {
+		this.systemMail = systemMail;
 	}
 
-	public String getFromName() {
-		return fromName;
+	public String getSystemName() {
+		return systemName;
 	}
 
-	public void setFromName(String fromName) {
-		this.fromName = fromName;
+	public void setSystemName(String systemName) {
+		this.systemName = systemName;
 	}
 
 	public HashMap<MailPresetName, MailTemplate> getMailTemplates() {

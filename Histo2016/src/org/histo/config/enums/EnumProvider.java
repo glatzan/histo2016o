@@ -88,36 +88,6 @@ public class EnumProvider {
 	}
 
 	/**
-	 * Returns an array containing all values of the {@link NotificationOption}
-	 * enumeration.
-	 * 
-	 * @return
-	 */
-	public NotificationOption[] getNotificationEmailOptions() {
-		return new NotificationOption[] { NotificationOption.NONE, NotificationOption.TEXT, NotificationOption.PDF };
-	}
-
-	/**
-	 * Returns an array containing all values of the {@link NotificationOption}
-	 * enumeration.
-	 * 
-	 * @return
-	 */
-	public NotificationOption[] getNotificationFaxOptions() {
-		return new NotificationOption[] { NotificationOption.NONE, NotificationOption.FAX };
-	}
-
-	/**
-	 * Returns an array containing all values of the {@link NotificationOption}
-	 * enumeration.
-	 * 
-	 * @return
-	 */
-	public NotificationOption[] getNotificationPhoneOptions() {
-		return new NotificationOption[] { NotificationOption.NONE, NotificationOption.PHONE };
-	}
-
-	/**
 	 * Returns an array containing all values of the StaticList enumeration.
 	 * 
 	 * @return

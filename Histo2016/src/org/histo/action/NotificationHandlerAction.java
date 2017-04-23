@@ -21,7 +21,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.MailTemplate;
-import org.histo.ui.NotificationChooser;
+import org.histo.ui.medicalFindings.NotificationChooser;
 import org.histo.util.HistoUtil;
 import org.histo.util.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

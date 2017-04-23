@@ -1,19 +1,23 @@
 package org.histo.ui.transformer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import org.histo.model.DiagnosisPreset;
 import org.histo.model.interfaces.HasID;
-import org.histo.model.interfaces.LogAble;
 
 public class DefaultTransformer<T extends HasID> implements Converter {
 
 	private List<T> objects;
 
+	public DefaultTransformer(T[] objects) {
+		this.objects = Arrays.asList(objects);
+	}
+	
 	public DefaultTransformer(List<T> objects) {
 		this.objects = objects;
 	}

@@ -234,9 +234,9 @@ public class MainHandlerAction {
 		if (dialog.getHeader() != null)
 			options.put("headerElement", "dialogForm:header");
 
-		logger.debug("Showing Dialog: " + dialog);
-
 		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
+		
+		logger.debug("Showing Dialog: " + dialog);
 	}
 
 	/**

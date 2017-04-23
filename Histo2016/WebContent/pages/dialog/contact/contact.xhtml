@@ -64,7 +64,7 @@
 						<!-- change role of contact and set the new primary contact -->
 						<p:remoteCommand name="onContactChangeRole" update="@form">
 							<f:actionListener
-								binding="#{contactHandlerAction.onContactChangeRole(contact,worklistHandlerAction.selectedPatient.selectedTask)}" />
+								binding="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}" />
 							<f:actionListener
 								binding="#{contactHandlerAction.updateContactRolePrimary(worklistHandlerAction.selectedPatient.selectedTask)}" />
 						</p:remoteCommand>
@@ -96,7 +96,11 @@
 						<p:selectBooleanCheckbox
 							disabled="#{contact.role eq 'NONE' or contact.person.email eq '' or contact.role eq 'NONE' }"
 							value="#{contact.useEmail}"
-							title="#{contact.person.email eq '' ?  msg['dialog.contact.table.mail.none'] : msg['dialog.contact.table.mail']}" />
+							title="#{contact.person.email eq '' ?  msg['dialog.contact.table.mail.none'] : msg['dialog.contact.table.mail']}">
+							<p:ajax event="change"
+								listener="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
 					</p:column>
 
 					<!-- Phone -->
@@ -108,7 +112,11 @@
 						<p:selectBooleanCheckbox
 							disabled="#{contact.role eq 'NONE' or contact.person.phoneNumber eq '' or contact.role eq 'NONE'  }"
 							value="#{contact.usePhone}"
-							title="#{contact.person.phoneNumber eq '' ? msg['dialog.contact.table.phone.none'] : msg['dialog.contact.table.phone']}" />
+							title="#{contact.person.phoneNumber eq '' ? msg['dialog.contact.table.phone.none'] : msg['dialog.contact.table.phone']}">
+							<p:ajax event="change"
+								listener="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
 					</p:column>
 
 					<!-- Fax -->
@@ -119,7 +127,11 @@
 						<p:selectBooleanCheckbox
 							disabled="#{contact.role eq 'NONE' or contact.person.fax eq '' or contact.role eq 'NONE' }"
 							value="#{contact.useFax}"
-							title="#{ contact.person.fax eq '' ? msg['dialog.contact.table.fax.none'] : msg['dialog.contact.table.fax']}" />
+							title="#{ contact.person.fax eq '' ? msg['dialog.contact.table.fax.none'] : msg['dialog.contact.table.fax']}">
+							<p:ajax event="change"
+								listener="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
 					</p:column>
 
 					<!-- notification performed -->

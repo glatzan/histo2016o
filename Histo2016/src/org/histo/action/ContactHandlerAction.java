@@ -24,7 +24,7 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PhysicianRoleOptions;
-import org.histo.ui.NotificationChooser;
+import org.histo.ui.medicalFindings.NotificationChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -187,7 +187,8 @@ public class ContactHandlerAction implements Serializable {
 	 * 
 	 * @param contact
 	 */
-	public void onContactChangeRole(Contact contact, Task task) {
+	public void onContactChangeRole(Task task, Contact contact) {
+		logger.trace("Called onContactChangeRole(Task task, Contact contact)");
 		// role was set to none so deselect every marker
 		if (contact.getRole() == ContactRole.NONE) {
 			logger.debug("Removing contact");
@@ -356,7 +357,7 @@ public class ContactHandlerAction implements Serializable {
 
 	public void selectContactAsRole(Contact contact, ContactRole role) {
 		contact.setRole(role);
-		onContactChangeRole(contact, getTemporaryTask());
+		onContactChangeRole(getTemporaryTask(),contact);
 
 		if (role != ContactRole.NONE)
 			updateContactRoleListForPrimaryContact(getTemporaryTask(), contact);

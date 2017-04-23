@@ -43,6 +43,7 @@ public class PrintTemplate implements HasID {
 
 	@Expose
 	private boolean doNotSave;
+
 	/**
 	 * Creates an array of texTample objects
 	 * 
@@ -52,9 +53,10 @@ public class PrintTemplate implements HasID {
 	public static final PrintTemplate[] factroy(String jsonFile) {
 		return factroy(jsonFile, null);
 	}
-	
+
 	/**
 	 * Returns a filtered template list
+	 * 
 	 * @param jsonFile
 	 * @param types
 	 * @return
@@ -66,31 +68,48 @@ public class PrintTemplate implements HasID {
 
 		Gson gson = new Gson();
 		PrintTemplate[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
-		
+
 		if (types != null)
 			result = PrintTemplate.getTemplatesByTypes(result, types);
-		
+
 		return result;
 	}
 
-
 	/**
-	 * Loads the default template list an returns a subselection containing the given type
+	 * Loads the default template list an returns a subselection containing the
+	 * given type
+	 * 
 	 * @param types
 	 * @return
 	 */
 	public static final PrintTemplate[] getTemplatesByType(DocumentType types) {
-		return getTemplatesByTypes(new DocumentType[]{types});
+		return getTemplatesByTypes(new DocumentType[] { types });
 	}
-	
+
 	/**
-	 * Loads the default list an returns a subselection containing the given types
+	 * Loads the default list an returns a subselection containing the given
+	 * types
+	 * 
 	 * @param types
 	 * @return
 	 */
 	public static final PrintTemplate[] getTemplatesByTypes(DocumentType[] types) {
 		PrintTemplate[] templates = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON);
 		return getTemplatesByTypes(templates, types);
+	}
+
+	/**
+	 * Returns templates matching the given types
+	 * 
+	 * @param tempaltes
+	 * @param type
+	 * @return
+	 */
+	public static final PrintTemplate getTemplateByType(PrintTemplate[] tempaltes, DocumentType type) {
+		PrintTemplate[] result = getTemplatesByType(tempaltes, type);
+		if (result.length > 0)
+			return result[0];
+		return null;
 	}
 	
 	/**
@@ -162,13 +181,13 @@ public class PrintTemplate implements HasID {
 		String toPrint = null;
 		try {
 			toPrint = IOUtils.toString(resource.getInputStream(), "UTF-8");
-			logger.debug("File found, size " +toPrint.length());
+			logger.debug("File found, size " + toPrint.length());
 		} catch (IOException e) {
 			logger.error(e);
 		} finally {
 			appContext.close();
 		}
-		
+
 		return toPrint;
 	}
 

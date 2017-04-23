@@ -2,7 +2,9 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-TODO: 1 Benachrichtigung
+TODO: 1 -> Sendefunktion testen!
+TODO: 1.1 Kontakte, testen ob primarycontact aktuallisiert wird
+
 TODO: 2: erweiterte Suche
 TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
 TODO: 5: rechte durchsetzten
@@ -11,7 +13,6 @@ TODO: 7: Sort Optionen für worklist arbeitet nicht richtig
 TODO: 8: Liste für normale benutzer überarbeiten
 TODO: 9: Latex Datein
 
-TODO: Auswahl der Operatuere/Einsender im diagnsoe bildschirm vereinfachen
 TODO: Geschlecht von ldap rausfinden
 TODO: Ansicht abhängige Knöpfe
 TODO: Schnelle Nachfärbug Dialog
@@ -23,6 +24,8 @@ TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
 TODO: Archivieren + Dearchivieren
 
+++++: Auswahl der Operatuere/Einsender im diagnsoe bildschirm vereinfachen
+++++: Benachrichtigung überarbeiten
 ++++: DiagnosenPrest Namen feld in category umbenennen
 ++++: Diagnosen Kategory, im erstellungs dialog
 ++++: Manuellen Phasenwechsel zugänglich machen 

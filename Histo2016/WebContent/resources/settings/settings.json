@@ -5,8 +5,8 @@
       "port":465,
       "ssl":true,
       "debug":true,
-      "fromMail":"augenklinik.histologie@uniklinik-freiburg.de",
-      "fromName":"Histologisches Labor der Augenklinik Freiburg",
+      "systemMail":"augenklinik.histologie@uniklinik-freiburg.de",
+      "systemName":"Histologisches Labor der Augenklinik Freiburg",
       "mailTemplates":{  
          "TaskReport":{  
             "subject":"Histologiebefung für %name%, geb. %birthday%, PIZ: %piz% abeschlossen.",
