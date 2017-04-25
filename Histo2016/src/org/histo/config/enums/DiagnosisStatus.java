@@ -8,7 +8,7 @@ package org.histo.config.enums;
  *
  */
 public enum DiagnosisStatus {
-	PERFORMED(1), DIAGNOSIS_NEEDED(2), RE_DIAGNOSIS_NEEDED(3);
+	PERFORMED(1), STAY_IN_PHASE(2), DIAGNOSIS_NEEDED(3), RE_DIAGNOSIS_NEEDED(4);
 
 	private final int level;
 
@@ -17,12 +17,19 @@ public enum DiagnosisStatus {
 	}
 
 	public static final DiagnosisStatus getDiagnosisStatusByLevel(int level) {
-		if (level == 1)
+		if (level == DiagnosisStatus.PERFORMED.getLevel())
 			return DiagnosisStatus.PERFORMED;
-		if (level == 2)
+		
+		if (level == DiagnosisStatus.DIAGNOSIS_NEEDED.getLevel())
 			return DiagnosisStatus.DIAGNOSIS_NEEDED;
-
-		return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
+		
+		if (level == DiagnosisStatus.STAY_IN_PHASE.getLevel())
+			return DiagnosisStatus.STAY_IN_PHASE;
+		
+		if (level == DiagnosisStatus.RE_DIAGNOSIS_NEEDED.getLevel())
+			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
+		
+		return null;
 	}
 
 	public int getLevel() {

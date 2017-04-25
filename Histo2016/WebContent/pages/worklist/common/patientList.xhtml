@@ -160,7 +160,7 @@
 
 									<!--  no staining needed = purple -->
 									<ui:fragment
-										rendered="#{task.getStainingStatus() eq 'PERFORMED' }">
+										rendered="#{task.getStainingStatus() eq 'STAY_IN_PHASE' }">
 										<i style="margin-left: 5px;" class="fa fa-image icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
 									</ui:fragment>
@@ -184,7 +184,7 @@
 
 									<!-- no diagnosis needed = purple -->
 									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'PERFORMED' }">
+										rendered="#{task.getDiagnosisStatus() eq 'STAY_IN_PHASE' }">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
 									</ui:fragment>
@@ -192,25 +192,18 @@
 
 								<!-- diagnosis needed -->
 								<h:panelGroup rendered="#{task.notificationPhase}">
-									<!-- diagnosis needed = green -->
+									<!-- notification need = green -->
 									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' }">
+										rendered="#{task.getNotificationStatus() eq 'NOTIFICATION_NEEDED' }">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
 									</ui:fragment>
 
-									<!-- re-diagnosis needed = orange -->
+									<!-- stay in phase = orange -->
 									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED' }">
+										rendered="#{task.getNotificationStatus() eq 'STAY_IN_PHASE' }">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
-									</ui:fragment>
-
-									<!-- no diagnosis needed = purple -->
-									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'PERFORMED' }">
-										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
-											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
 									</ui:fragment>
 								</h:panelGroup>
 

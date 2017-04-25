@@ -21,6 +21,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
+import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
@@ -33,6 +34,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
+import org.histo.config.enums.NotificationStatus;
 import org.histo.config.enums.StainingStatus;
 import org.histo.config.enums.TaskPriority;
 import org.histo.model.Accounting;
@@ -44,6 +46,7 @@ import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
+import org.histo.model.interfaces.NotificationInfo;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
@@ -56,8 +59,11 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, SaveAble, HasDataList {
+public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, NotificationInfo, DeleteAble, LogAble,
+		SaveAble, HasDataList {
 
+	private static Logger logger = Logger.getLogger("org.histo");
+	
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
 
@@ -340,6 +346,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 */
 	@Transient
 	public boolean hasStatingStatusChanged() {
+		logger.trace("Method: hasStatingStatusChanged()");
 		// staining is performed and date = 0, so staining was performed
 		// recently
 		if (getStainingStatus() == StainingStatus.PERFORMED && getStainingCompletionDate() == 0) {
@@ -781,6 +788,10 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	@Override
 	@Transient
 	public DiagnosisStatus getDiagnosisStatus() {
+		DiagnosisStatus status = getDiagnosisContainer().getDiagnosisStatus();
+		if (status == DiagnosisStatus.PERFORMED && isDiagnosisPhase())
+			return DiagnosisStatus.STAY_IN_PHASE;
+
 		return getDiagnosisContainer().getDiagnosisStatus();
 	}
 
@@ -811,11 +822,38 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 				level = sample.getStainingStatus().getLevel();
 		}
 
+		if (StainingStatus.getStainingStatusByLevel(level) == StainingStatus.PERFORMED && isStainingPhase())
+			return StainingStatus.STAY_IN_PHASE;
+
 		return StainingStatus.getStainingStatusByLevel(level);
 	}
 
 	/********************************************************
 	 * Interface StainingInfo
+	 ********************************************************/
+
+	/********************************************************
+	 * Interface NotificationInfo
+	 ********************************************************/
+
+	/**
+	 * Returns the status of the notification process
+	 */
+	@Transient
+	@Override
+	public NotificationStatus getNotificationStatus() {
+		if (getNotificationCompletionDate() == 0 && isNotificationPhase())
+			return NotificationStatus.NOTIFICATION_NEEDED;
+		else if (getNotificationCompletionDate() != 0 && isNotificationPhase())
+			return NotificationStatus.STAY_IN_PHASE;
+		else if (getNotificationCompletionDate() != 0 && !isNotificationPhase())
+			return NotificationStatus.PERFORMED;
+		else
+			return NotificationStatus.NOT_IN_PHASE;
+	}
+
+	/********************************************************
+	 * Interface NotificationInfo
 	 ********************************************************/
 
 	/********************************************************

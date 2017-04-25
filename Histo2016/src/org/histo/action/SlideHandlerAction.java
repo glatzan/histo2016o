@@ -42,7 +42,7 @@ public class SlideHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -7212398949353596573L;
 
-	private static Logger logger = Logger.getRootLogger();
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -369,7 +369,7 @@ public class SlideHandlerAction implements Serializable {
 	 * @param task
 	 */
 	public void showStainingPhaseEndAutoDialog(Task task) {
-
+		logger.trace("Method: showStainingPhaseEndAutoDialog(Task task)");
 		// if task has changed
 		if (task.hasStatingStatusChanged()) {
 			if (task.getStainingStatus() == StainingStatus.PERFORMED) {
@@ -467,7 +467,7 @@ public class SlideHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Force Diagnosis Phase Dialog From Staining 
+	 * Force Diagnosis Phase Dialog From Staining
 	 ********************************************************/
 	/**
 	 * Shows a dialog for shifting the task to diagnosis phase even if not all
@@ -490,7 +490,7 @@ public class SlideHandlerAction implements Serializable {
 	}
 
 	/********************************************************
-	 * Force Diagnosis Phase Dialog From Staining 
+	 * Force Diagnosis Phase Dialog From Staining
 	 ********************************************************/
 	/********************************************************
 	 * Getter/Setter
