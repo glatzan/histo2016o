@@ -163,29 +163,47 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 	/********************************************************
 	 * Interface StainingStauts
 	 ********************************************************/
-	/**
-	 * Returns the status of the staining process. Either it can return staining
-	 * performed, staining needed, restaining needed (restaining is returned if
-	 * at least one staining is marked as restaining).
-	 */
 	@Override
 	@Transient
-	public StainingStatus getStainingStatus() {
-		// if empty return staining needed
+	public boolean isStaningPerformed() {
 		if (getSlides().isEmpty())
-			return StainingStatus.STAINING_NEEDED;
-
-		int level = StainingStatus.PERFORMED.getLevel();
+			return false;
 
 		for (Slide slide : getSlides()) {
-
-			if (slide.getStainingStatus().getLevel() > level)
-				level = slide.getStainingStatus().getLevel();
+			if (slide.isStaningPerformed())
+				return true;
 		}
 
-		return StainingStatus.getStainingStatusByLevel(level);
+		return false;
 	}
 
+	@Override
+	@Transient
+	public boolean isStainingNeeded() {
+		if (getSlides().isEmpty())
+			return true;
+
+		for (Slide slide : getSlides()) {
+			if (slide.isStainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	@Transient
+	public boolean isRestainingNeeded() {
+		if (getSlides().isEmpty())
+			return true;
+
+		for (Slide slide : getSlides()) {
+			if (slide.isRestainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
 	/********************************************************
 	 * Interface StainingStauts
 	 ********************************************************/

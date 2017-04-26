@@ -11,6 +11,9 @@ public interface StainingInfo extends CreationDate {
 		return false;
 	}
 
-	public StainingStatus getStainingStatus();
+	public boolean isStaningPerformed();
 
+	public boolean isStainingNeeded();
+
+	public boolean isRestainingNeeded();
 }

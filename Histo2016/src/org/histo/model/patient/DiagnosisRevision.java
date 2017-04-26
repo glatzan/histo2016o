@@ -246,25 +246,31 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
-	 * of the diagnoses.
-	 */
-	@Transient
 	@Override
-	public DiagnosisStatus getDiagnosisStatus() {
-		// if empty return staining needed
+	@Transient
+	public boolean isDiagnosisPerformed() {
 		if (getDiagnoses().isEmpty())
-			return DiagnosisStatus.DIAGNOSIS_NEEDED;
-
-		if (isDiagnosisCompleted())
-			return DiagnosisStatus.PERFORMED;
-		else if (!isDiagnosisCompleted() && isReDiagnosis())
-			return DiagnosisStatus.RE_DIAGNOSIS_NEEDED;
-		else
-			return DiagnosisStatus.DIAGNOSIS_NEEDED;
+			return false;
+		
+		return isDiagnosisCompleted();
 	}
 
+	@Override
+	@Transient
+	public boolean isDiagnosisNeeded() {
+		if (getDiagnoses().isEmpty())
+			return false;
+		
+		return !isDiagnosisCompleted() && !isReDiagnosis();
+	}
+
+	@Override
+	@Transient
+	public boolean isReDiagnosisNeeded() {
+		if (getDiagnoses().isEmpty())
+			return false;
+		return !isDiagnosisCompleted() && isReDiagnosis();
+	}
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/

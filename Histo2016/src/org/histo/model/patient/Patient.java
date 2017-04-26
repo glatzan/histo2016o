@@ -368,28 +368,45 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
-	 * of the diagnoses.
-	 */
+	
 	@Override
 	@Transient
-	public DiagnosisStatus getDiagnosisStatus() {
-		// if empty return staining needed
+	public boolean isDiagnosisPerformed() {
 		if (getTasks().isEmpty())
-			return DiagnosisStatus.PERFORMED;
-
-		int level = DiagnosisStatus.PERFORMED.getLevel();
-
-		for (Task Task : getTasks()) {
-
-			if (Task.getDiagnosisStatus().getLevel() > level)
-				level = Task.getDiagnosisStatus().getLevel();
+			return false;
+		
+		for (Task task : getTasks()) {
+			if(task.isDiagnosisPerformed())
+				return true;
 		}
-
-		return DiagnosisStatus.getDiagnosisStatusByLevel(level);
+		return false;
 	}
 
+	@Override
+	@Transient
+	public boolean isDiagnosisNeeded() {
+		if (getTasks().isEmpty())
+			return false;
+		
+		for (Task task : getTasks()) {
+			if(task.isDiagnosisNeeded())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	@Transient
+	public boolean isReDiagnosisNeeded() {
+		if (getTasks().isEmpty())
+			return false;
+		
+		for (Task task : getTasks()) {
+			if(task.isReDiagnosisNeeded())
+				return true;
+		}
+		return false;
+	}
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
@@ -414,29 +431,47 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		return false;
 	}
 
-	/**
-	 * Returns the status of the staining process. Either it can return staining
-	 * performed, staining needed, restaining needed (restaining is returned if
-	 * at least one staining is marked as restaining).
-	 */
 	@Override
 	@Transient
-	public StainingStatus getStainingStatus() {
-		// if empty return staining needed
+	public boolean isStaningPerformed() {
 		if (getTasks().isEmpty())
-			return StainingStatus.STAINING_NEEDED;
-
-		int level = StainingStatus.PERFORMED.getLevel();
+			return false;
 
 		for (Task task : getTasks()) {
-
-			if (task.getStainingStatus().getLevel() > level)
-				level = task.getStainingStatus().getLevel();
+			if (task.isStaningPerformed())
+				return true;
 		}
 
-		return StainingStatus.getStainingStatusByLevel(level);
+		return false;
 	}
 
+	@Override
+	@Transient
+	public boolean isStainingNeeded() {
+		if (getTasks().isEmpty())
+			return true;
+
+		for (Task task : getTasks()) {
+			if (task.isStainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	@Transient
+	public boolean isRestainingNeeded() {
+		if (getTasks().isEmpty())
+			return true;
+
+		for (Task task : getTasks()) {
+			if (task.isRestainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/

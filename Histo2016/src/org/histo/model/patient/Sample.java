@@ -236,29 +236,47 @@ public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, 
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/
-	/**
-	 * Returns the status of the staining process. Either it can return staining
-	 * performed, staining needed, restaining needed (restaining is returned if
-	 * at least one staining is marked as restaining).
-	 */
 	@Override
 	@Transient
-	public StainingStatus getStainingStatus() {
-		// if empty return staining needed
+	public boolean isStaningPerformed() {
 		if (getBlocks().isEmpty())
-			return StainingStatus.STAINING_NEEDED;
-
-		int level = StainingStatus.PERFORMED.getLevel();
+			return false;
 
 		for (Block block : getBlocks()) {
-
-			if (block.getStainingStatus().getLevel() > level)
-				level = block.getStainingStatus().getLevel();
+			if (block.isStaningPerformed())
+				return true;
 		}
 
-		return StainingStatus.getStainingStatusByLevel(level);
+		return false;
 	}
 
+	@Override
+	@Transient
+	public boolean isStainingNeeded() {
+		if (getBlocks().isEmpty())
+			return true;
+
+		for (Block block : getBlocks()) {
+			if (block.isStainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	@Transient
+	public boolean isRestainingNeeded() {
+		if (getBlocks().isEmpty())
+			return true;
+
+		for (Block block : getBlocks()) {
+			if (block.isRestainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/

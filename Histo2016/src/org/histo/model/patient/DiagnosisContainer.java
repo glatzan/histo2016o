@@ -207,28 +207,44 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
-	 * of the diagnoses.
-	 */
-	@Transient
 	@Override
-	public DiagnosisStatus getDiagnosisStatus() {
-		// if empty return staining needed
+	@Transient
+	public boolean isDiagnosisPerformed() {
 		if (getDiagnosisRevisions().isEmpty())
-			return DiagnosisStatus.DIAGNOSIS_NEEDED;
-
-		int level = DiagnosisStatus.PERFORMED.getLevel();
-
+			return false;
+		
 		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-
-			if (revision.getDiagnosisStatus().getLevel() > level)
-				level = revision.getDiagnosisStatus().getLevel();
+			if(revision.isDiagnosisCompleted())
+				return true;
 		}
-
-		return DiagnosisStatus.getDiagnosisStatusByLevel(level);
+		return false;
 	}
 
+	@Override
+	@Transient
+	public boolean isDiagnosisNeeded() {
+		if (getDiagnosisRevisions().isEmpty())
+			return false;
+		
+		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
+			if(revision.isDiagnosisCompleted())
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	@Transient
+	public boolean isReDiagnosisNeeded() {
+		if (getDiagnosisRevisions().isEmpty())
+			return false;
+		
+		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
+			if(revision.isDiagnosisCompleted())
+				return true;
+		}
+		return false;
+	}
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/

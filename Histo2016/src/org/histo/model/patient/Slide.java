@@ -240,20 +240,24 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	/********************************************************
 	 * Interface StainingStauts
 	 ********************************************************/
-	/**
-	 * Checks the status of the stating process 
-	 */
 	@Override
 	@Transient 
-	public StainingStatus getStainingStatus() {
-		if(isStainingCompleted())
-			return StainingStatus.PERFORMED;
-		else if(!isStainingCompleted() && isReStaining())
-			return StainingStatus.RE_STAINING_NEEDED;
-		else
-			return StainingStatus.STAINING_NEEDED;
+	public boolean isStaningPerformed() {
+		return isStainingCompleted();
 	}
 
+	@Override
+	@Transient 
+	public boolean isStainingNeeded() {
+		return !isStainingCompleted() && !isReStaining();
+	}
+
+	@Override
+	@Transient 
+	public boolean isRestainingNeeded() {
+		// TODO Auto-generated method stub
+		return !isStainingCompleted() && isReStaining();
+	}
 	/********************************************************
 	 * Interface StainingStauts
 	 ********************************************************/

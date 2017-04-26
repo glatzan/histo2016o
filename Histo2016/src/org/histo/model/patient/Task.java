@@ -59,7 +59,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, NotificationInfo, DeleteAble, LogAble,
+public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble,
 		SaveAble, HasDataList {
 
 	private static Logger logger = Logger.getLogger("org.histo");
@@ -336,33 +336,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Notif
 			}
 			even = !even;
 		}
-	}
-
-	/**
-	 * Checks if all staings are performed an returns true if the status has
-	 * changed. If no change occurred false will be returned.
-	 * 
-	 * @return
-	 */
-	@Transient
-	public boolean hasStatingStatusChanged() {
-		logger.trace("Method: hasStatingStatusChanged()");
-		// staining is performed and date = 0, so staining was performed
-		// recently
-		if (getStainingStatus() == StainingStatus.PERFORMED && getStainingCompletionDate() == 0) {
-			setStainingCompletionDate(System.currentTimeMillis());
-			setStainingPhase(false);
-			return true;
-			// the staining process was performed (date != 0), but there are new
-			// slides to stain
-		} else if (getStainingStatus() != StainingStatus.PERFORMED && getStainingCompletionDate() != 0) {
-			setStainingCompletionDate(0);
-			setStainingPhase(true);
-			return true;
-		}
-
-		// status has not changed
-		return false;
 	}
 
 	/********************************************************
@@ -781,20 +754,23 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Notif
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
-	/**
-	 * Overwrites the {@link DiagnosisStatus} interfaces, and returns the status
-	 * of the diagnoses.
-	 */
 	@Override
 	@Transient
-	public DiagnosisStatus getDiagnosisStatus() {
-		DiagnosisStatus status = getDiagnosisContainer().getDiagnosisStatus();
-		if (status == DiagnosisStatus.PERFORMED && isDiagnosisPhase())
-			return DiagnosisStatus.STAY_IN_PHASE;
-
-		return getDiagnosisContainer().getDiagnosisStatus();
+	public boolean isDiagnosisPerformed() {
+		return getDiagnosisContainer().isDiagnosisPerformed();
 	}
 
+	@Override
+	@Transient
+	public boolean isDiagnosisNeeded() {
+		return getDiagnosisContainer().isDiagnosisNeeded();
+	}
+
+	@Override
+	@Transient
+	public boolean isReDiagnosisNeeded() {
+		return getDiagnosisContainer().isDiagnosisPerformed();
+	}
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
@@ -802,58 +778,49 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Notif
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/
-	/**
-	 * Returns the status of the staining process. Either it can return staining
-	 * performed, staining needed, restaining needed (restaining is returned if
-	 * at least one staining is marked as restaining).
-	 */
 	@Override
 	@Transient
-	public StainingStatus getStainingStatus() {
-		// if empty return staining needed
+	public boolean isStaningPerformed() {
 		if (getSamples().isEmpty())
-			return StainingStatus.STAINING_NEEDED;
-
-		int level = StainingStatus.PERFORMED.getLevel();
+			return false;
 
 		for (Sample sample : getSamples()) {
-
-			if (sample.getStainingStatus().getLevel() > level)
-				level = sample.getStainingStatus().getLevel();
+			if (sample.isStaningPerformed())
+				return true;
 		}
 
-		if (StainingStatus.getStainingStatusByLevel(level) == StainingStatus.PERFORMED && isStainingPhase())
-			return StainingStatus.STAY_IN_PHASE;
-
-		return StainingStatus.getStainingStatusByLevel(level);
+		return false;
 	}
 
+	@Override
+	@Transient
+	public boolean isStainingNeeded() {
+		if (getSamples().isEmpty())
+			return true;
+
+		for (Sample sample : getSamples()) {
+			if (sample.isStainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	@Transient
+	public boolean isRestainingNeeded() {
+		if (getSamples().isEmpty())
+			return true;
+
+		for (Sample sample : getSamples()) {
+			if (sample.isRestainingNeeded())
+				return true;
+		}
+
+		return false;
+	}
 	/********************************************************
 	 * Interface StainingInfo
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface NotificationInfo
-	 ********************************************************/
-
-	/**
-	 * Returns the status of the notification process
-	 */
-	@Transient
-	@Override
-	public NotificationStatus getNotificationStatus() {
-		if (getNotificationCompletionDate() == 0 && isNotificationPhase())
-			return NotificationStatus.NOTIFICATION_NEEDED;
-		else if (getNotificationCompletionDate() != 0 && isNotificationPhase())
-			return NotificationStatus.STAY_IN_PHASE;
-		else if (getNotificationCompletionDate() != 0 && !isNotificationPhase())
-			return NotificationStatus.PERFORMED;
-		else
-			return NotificationStatus.NOT_IN_PHASE;
-	}
-
-	/********************************************************
-	 * Interface NotificationInfo
 	 ********************************************************/
 
 	/********************************************************
