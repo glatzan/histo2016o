@@ -31,25 +31,21 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
-import org.histo.config.enums.NotificationStatus;
-import org.histo.config.enums.StainingStatus;
 import org.histo.config.enums.TaskPriority;
 import org.histo.model.Accounting;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
-import org.histo.model.interfaces.NotificationInfo;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
 import org.histo.model.interfaces.StainingInfo;
+import org.histo.model.util.TaskStatusHandler;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 
@@ -59,11 +55,10 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble,
-		SaveAble, HasDataList {
+public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, SaveAble, HasDataList {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-	
+
 	public static final int TAB_DIAGNOSIS = 0;
 	public static final int TAB_STAINIG = 1;
 
@@ -165,7 +160,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	private boolean notificationPhase;
 
 	/**
-	 * 
+	 * True if the task can't be edited
 	 */
 	private boolean finalized;
 
@@ -216,9 +211,14 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	private boolean active;
 
 	/**
-	 * True if lazy initialision was successful.
+	 * True if lazy initialization was successful.
 	 */
 	private boolean initialized;
+
+	/**
+	 * Routines for changing the status of the task
+	 */
+	private TaskStatusHandler status;
 
 	/********************************************************
 	 * Transient Variables
@@ -279,10 +279,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 */
 	@Transient
 	public boolean isActiveOrActionPending() {
-		if (isActive() || getDiagnosisStatus().getLevel() >= DiagnosisStatus.DIAGNOSIS_NEEDED.getLevel()
-				|| getStainingStatus().getLevel() >= StainingStatus.STAINING_NEEDED.getLevel() || isNotificationPhase())
-			return true;
-		return false;
+		return isActive() || getStatus().isActive();
 	}
 
 	/**
@@ -733,18 +730,15 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		return null;
 	}
 
-	/**
-	 * Returns true if a diagnosis is marked as malign.
-	 * 
-	 * @return
-	 */
 	@Transient
-	public boolean isMalign() {
-		// for (DiagnosisRevision diagnosisRevision : getReports()) {
-		// if (diagnosisRevision.isMalign())
-		// return true;
-		// }
-		return false;
+	public TaskStatusHandler getStatus() {
+		if (status == null)
+			status = new TaskStatusHandler(this);
+		return status;
+	}
+
+	public void setStatus(TaskStatusHandler status) {
+		this.status = status;
 	}
 
 	/********************************************************
@@ -771,6 +765,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	public boolean isReDiagnosisNeeded() {
 		return getDiagnosisContainer().isDiagnosisPerformed();
 	}
+
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
@@ -819,6 +814,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 
 		return false;
 	}
+
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/

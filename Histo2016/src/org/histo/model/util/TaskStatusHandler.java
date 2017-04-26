@@ -43,16 +43,16 @@ public class TaskStatusHandler {
 				task.setDiagnosisCompletionDate(System.currentTimeMillis());
 				task.setDiagnosisPhase(stayInPhase);
 				return true;
-			}else{
+			} else {
 				task.setDiagnosisPhase(stayInPhase);
 				return false;
 			}
-		}else{
-			if(task.getDiagnosisCompletionDate() != 0){
+		} else {
+			if (task.getDiagnosisCompletionDate() != 0) {
 				task.setDiagnosisCompletionDate(0);
 				task.setDiagnosisPhase(true);
 				return true;
-			}else
+			} else
 				return true;
 		}
 
@@ -65,30 +65,36 @@ public class TaskStatusHandler {
 				task.setNotificationCompletionDate(System.currentTimeMillis());
 				task.setNotificationPhase(stayInPhase);
 				return true;
-			}else{
+			} else {
 				task.setNotificationPhase(stayInPhase);
 				return false;
 			}
-		}else{
-			if(task.getNotificationCompletionDate() != 0){
+		} else {
+			if (task.getNotificationCompletionDate() != 0) {
 				task.setNotificationCompletionDate(0);
 				task.setNotificationPhase(true);
 				return true;
-			}else
+			} else
 				return true;
 		}
 
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-
 	public Task getTask() {
 		return task;
 	}
 
 	public void setTask(Task task) {
 		this.task = task;
+	}
+
+	public boolean isActive() {
+		return isDiagnosisNeeded() || isReDiangosisNeeded() || isNotificationStayInPhase() || isStainingNeeded()
+				|| isReStainingNeeded() || isStayInStainingPhase() || isNotificationNeeded()
+				|| isNotificationStayInPhase();
 	}
 
 	public boolean isDiagnosisPerformed() {
