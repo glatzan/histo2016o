@@ -23,7 +23,7 @@
 				<h:outputLabel value="#{msg['dialog.worklistsearch.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -33,14 +33,14 @@
 			<p:tabView orientation="left" styleClass="settingsTabView">
 
 				<!-- ************************************************************** Simple ************************************************************** -->
-				<p:tab title="#{msg['dialog.settings.user']}">
+				<p:tab title="#{msg['dialog.worklistsearch.simple']}">
 					<ui:include src="worklistSearchSimple.xhtml" />
 				</p:tab>
 				<!-- ************************************************************** Simple ************************************************************** -->
 
 				<!-- ************************************************************** Advanced ************************************************************** -->
-				<p:tab title="#{msg['dialog.settings.stainings']}">
-
+				<p:tab title="#{msg['dialog.worklistsearch.extended']}">
+					<ui:include src="worklistSearchExtended.xhtml" />
 				</p:tab>
 				<!-- ************************************************************** Advanced ************************************************************** -->
 
