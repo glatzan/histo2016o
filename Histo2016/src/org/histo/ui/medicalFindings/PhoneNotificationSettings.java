@@ -3,13 +3,8 @@ package org.histo.ui.medicalFindings;
 import java.util.List;
 
 import org.histo.config.enums.ContactMethod;
-import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.NotificationOption;
-import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PrintTemplate;
-import org.histo.ui.transformer.DefaultTransformer;
 
 public class PhoneNotificationSettings {
 	/**

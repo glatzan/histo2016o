@@ -24,7 +24,6 @@ import org.hibernate.envers.Audited;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.model.interfaces.LogAble;
-import org.histo.model.transitory.json.ClinicPrinter;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity

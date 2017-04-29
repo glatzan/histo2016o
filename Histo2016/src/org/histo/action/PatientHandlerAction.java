@@ -6,14 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
-import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.ui.PatientList;
@@ -21,8 +18,6 @@ import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.sun.prism.paint.Paint;
 
 @Component
 @Scope(value = "session")

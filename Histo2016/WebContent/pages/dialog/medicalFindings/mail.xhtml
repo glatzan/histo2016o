@@ -109,9 +109,9 @@
 						disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}"
 						title="#{msg['dialog.medicalFindings.tab.mail.receiver.template.show.hint']}"
 						style="float: right"
-						actionListener="#{notificationHandlerAction.showPreviewDialog(emailNotification)}">
-						<i class="fa fa-fw fa-cog" />
-						<p:ajax event="dialogReturn" update="@form" />
+						update="@form"
+						actionListener="#{medicalFindingsHandlerAction.showPreviewForContact(emailNotification)}">
+						<i class="fa fa-fw fa-search" />
 					</p:commandLink>
 				</p:column>
 			</p:dataTable>

@@ -2,12 +2,10 @@ package org.histo.config;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 
 import org.apache.log4j.Logger;
 import org.histo.model.transitory.json.ClinicJsonHandler;
 import org.histo.model.transitory.json.ClinicPrinterManager;
-import org.histo.model.transitory.json.LabelPrinter;
 import org.histo.model.transitory.json.LabelPrinterManager;
 import org.histo.model.transitory.json.LdapHandler;
 import org.histo.model.transitory.json.MailHandler;

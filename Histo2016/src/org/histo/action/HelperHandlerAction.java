@@ -1,19 +1,11 @@
 package org.histo.action;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.event.ValueChangeListener;
-import javax.servlet.http.HttpServletRequest;
-
-import org.histo.config.HistoSettings;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.LogDAO;
-import org.histo.dao.TaskDAO;
 import org.histo.model.Log;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.LogAble;

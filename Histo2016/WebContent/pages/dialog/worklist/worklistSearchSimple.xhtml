@@ -271,25 +271,25 @@
 					<h:panelGrid columns="10" cellpadding="5">
 						<!-- Patient added -->
 						<p:radioButton id="filter0" for="filterIndexRadio" itemIndex="0"
-							disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
+							disabled="#{!worklistHandlerAction.searchOptions.enableFilterOption}" />
 						<h:outputLabel for="filter0" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.patient']}" />
 
 						<!-- Task created -->
 						<p:radioButton id="filter1" for="filterIndexRadio" itemIndex="1"
-							disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
+							disabled="#{!worklistHandlerAction.searchOptions.enableFilterOption}" />
 						<h:outputLabel for="filter1" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.task']}" />
 
 						<!-- Staining -->
 						<p:radioButton id="filter2" for="filterIndexRadio" itemIndex="2"
-							disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
+							disabled="#{!worklistHandlerAction.searchOptions.enableFilterOption}" />
 						<h:outputLabel for="filter2" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.staining']}" />
 
 						<!-- Diagnosis -->
 						<p:radioButton id="filter3" for="filterIndexRadio" itemIndex="3"
-							disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
+							disabled="#{!worklistHandlerAction.searchOptions.enableFilterOption}" />
 						<h:outputLabel for="filter3" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.diagnosis']}" />
 					</h:panelGrid>

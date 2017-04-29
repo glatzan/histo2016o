@@ -3,8 +3,6 @@ package org.histo.model.patient;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -19,19 +17,13 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.DiagnosisRevisionType;
-import org.histo.config.enums.DiagnosisStatus;
 import org.histo.config.enums.Dialog;
 import org.histo.model.DiagnosisPreset;
-import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.DeleteAble;
-import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
-
-import com.google.gson.annotations.Expose;
 
 /**
  * Diagnose NAchbefundung Revision

@@ -118,10 +118,6 @@ public class TaskStatusHandler {
 		return task.isDiagnosisPhase() && task.isDiagnosisPerformed();
 	}
 
-	public boolean isDiagnosisPerformedAndNotInStainingPhase() {
-		return task.isDiagnosisPhase() && !task.isDiagnosisPerformed();
-	}
-
 	public boolean isDiagnosisNeeded() {
 		return task.isDiagnosisNeeded();
 	}

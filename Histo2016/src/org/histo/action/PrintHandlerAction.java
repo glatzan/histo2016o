@@ -9,7 +9,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.apache.log4j.Logger;
-import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -20,7 +19,6 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
-import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.ContactChooser;
@@ -146,23 +144,7 @@ public class PrintHandlerAction {
 				setSelectedTemplate(selectedTemplate);
 		}
 	}
-
-	/**
-	 * Initializes a bean for creating and displaying pdf from an external bean.
-	 * Bean should be cleared after use via resetBean()
-	 */
-	public void perpareBeanForExternalView(Task task, DocumentType[] types, DocumentType defaultType) {
-		logger.trace("Prepare PDF generation form external bean");
-		// init bean
-		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(types);
-		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect, defaultType));
-
-		setContactRendered(null);
-
-		// rendering the template
-		onChangePrintTemplate();
-	}
-
+	
 	public void resetBean() {
 		setTaskToPrint(null);
 		setTemplateList(null);
@@ -170,6 +152,39 @@ public class PrintHandlerAction {
 		setTemplateTransformer(null);
 		setTmpPdfContainer(null);
 	}
+
+
+	/********************************************************
+	 * Prepare bean from external 
+	 ********************************************************/
+	public void perpareBeanForExternalView(Task task, DocumentType[] types, DocumentType defaultType) {
+		perpareBeanForExternalView(task, types, defaultType, null);
+	}
+
+	/**
+	 * Initializes a bean for creating and displaying pdf from an external bean.
+	 * Bean should be cleared after use via resetBean()
+	 */
+	public void perpareBeanForExternalView(Task task, DocumentType[] types, DocumentType defaultType, Contact sendTo) {
+		logger.trace("Prepare PDF generation form external bean");
+
+		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(types);
+		perpareBeanForExternalView(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect, defaultType), sendTo);
+	}
+
+	public void perpareBeanForExternalView(Task task, PrintTemplate[] types, PrintTemplate defaultType,
+			Contact sendTo) {
+		// init bean
+		initBean(task, types, defaultType);
+
+		setContactRendered(sendTo);
+		// rendering the template
+		onChangePrintTemplate();
+	}
+	/********************************************************
+	 * Prepare bean from external 
+	 ********************************************************/
+	
 
 	/**
 	 * Showing only the dialog, no init will be done

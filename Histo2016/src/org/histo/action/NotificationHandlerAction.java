@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactMethod;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.MailPresetName;
@@ -23,7 +21,6 @@ import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.MailTemplate;
 import org.histo.ui.medicalFindings.NotificationChooser;
 import org.histo.util.HistoUtil;
-import org.histo.util.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;

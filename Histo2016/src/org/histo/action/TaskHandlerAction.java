@@ -15,7 +15,6 @@ import org.histo.config.enums.Role;
 import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.HelperDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
@@ -25,12 +24,11 @@ import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
-import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.DiagnosisContainer;
-import org.histo.model.patient.Patient;
 import org.histo.model.patient.DiagnosisRevision;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
@@ -38,7 +36,6 @@ import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.HistoUtil;
-import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -655,6 +652,9 @@ public class TaskHandlerAction implements Serializable {
 			logger.debug("Task not editable, is finalized");
 			return false;
 		}
+		
+		if(task.getStatus().isDiagnosisPerformed() && task.getStatus().isStainingPerformed())
+			return false;
 
 		// Blocked
 		// TODO: Blocking

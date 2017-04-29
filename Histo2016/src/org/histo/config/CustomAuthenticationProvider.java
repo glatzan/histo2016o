@@ -2,7 +2,9 @@ package org.histo.config;
 
 import java.io.IOException;
 import java.util.Collection;
+
 import javax.naming.NamingException;
+
 import org.apache.log4j.Logger;
 import org.histo.config.enums.Role;
 import org.histo.dao.UserDAO;

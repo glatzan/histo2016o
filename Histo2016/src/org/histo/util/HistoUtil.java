@@ -10,8 +10,6 @@ import java.util.Map;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
-import com.lowagie.text.pdf.PdfReader;
-
 public class HistoUtil {
 
 	/**

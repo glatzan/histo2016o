@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.naming.directory.AttributeModificationException;
-
 import org.histo.config.enums.ContactMethod;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.NotificationOption;
 import org.histo.model.Contact;
 import org.histo.model.PDFContainer;

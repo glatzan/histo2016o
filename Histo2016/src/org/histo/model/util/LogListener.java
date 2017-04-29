@@ -1,7 +1,5 @@
 package org.histo.model.util;
 
-import javax.sound.midi.MidiDevice.Info;
-
 import org.apache.log4j.Logger;
 import org.hibernate.envers.RevisionListener;
 import org.histo.config.SecurityContextHolderUtil;

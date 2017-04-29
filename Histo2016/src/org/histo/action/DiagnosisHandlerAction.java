@@ -13,7 +13,6 @@ import org.histo.config.enums.DocumentType;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.RevisionHolder;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;

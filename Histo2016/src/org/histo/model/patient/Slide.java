@@ -1,6 +1,5 @@
 package org.histo.model.patient;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,10 +18,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.StainingStatus;
 import org.histo.model.StainingPrototype;
-import org.histo.model.interfaces.ArchivAble;
-import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;

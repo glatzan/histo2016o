@@ -1,4 +1,4 @@
-package org.histo.interfaces;
+package org.histo.experimental;
 
 public interface DynamicHandler {
 	public void initVolatileData();

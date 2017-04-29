@@ -1,12 +1,10 @@
 package org.histo.model.transitory.json;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -19,18 +17,12 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
 import org.apache.log4j.Logger;
-import org.histo.config.HistoSettings;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.GsonAble;
-import org.histo.util.HistoUtil;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
-import com.google.gson.reflect.TypeToken;
 
 public class LdapHandler implements GsonAble {
 

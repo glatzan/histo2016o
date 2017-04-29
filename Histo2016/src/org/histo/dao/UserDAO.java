@@ -13,7 +13,6 @@ import org.histo.config.SecurityContextHolderUtil;
 import org.histo.model.HistoUser;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.LogInfo;
-import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

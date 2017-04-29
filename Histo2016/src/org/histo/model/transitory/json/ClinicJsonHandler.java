@@ -1,24 +1,14 @@
 package org.histo.model.transitory.json;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
-
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.MultiPartEmail;
-import org.apache.commons.mail.SimpleEmail;
 import org.apache.log4j.Logger;
 import org.histo.config.exception.CustomExceptionToManyEntries;
-import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.model.patient.Patient;

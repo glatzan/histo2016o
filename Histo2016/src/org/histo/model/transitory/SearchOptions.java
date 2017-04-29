@@ -75,6 +75,21 @@ public class SearchOptions {
 		setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
 	}
 
+	/**
+	 * Returns false if any pre configured list is selected. All Filter options will be disabled
+	 * @return
+	 */
+	public boolean isEnableFilterOption() {
+		switch (getSearchIndex()) {
+		case STAINING_LIST:
+		case NOTIFICATION_LIST:
+		case DIAGNOSIS_LIST:
+			return false;
+		default:
+			return true;
+		}
+	}
+
 	public WorklistSearchOption getSearchIndex() {
 		return searchIndex;
 	}

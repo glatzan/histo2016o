@@ -2,7 +2,6 @@ package org.histo.experimental;
 
 import org.histo.action.ContactHandlerAction;
 import org.histo.dao.GenericDAO;
-import org.histo.model.patient.Slide;
 
 public class NotificationHandler implements Runnable {
 

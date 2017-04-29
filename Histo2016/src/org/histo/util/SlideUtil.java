@@ -3,7 +3,6 @@ package org.histo.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.config.enums.StainingStatus;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;

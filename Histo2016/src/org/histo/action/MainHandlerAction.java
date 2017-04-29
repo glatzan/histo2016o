@@ -1,9 +1,6 @@
 package org.histo.action;
 
 import java.io.IOException;
-import java.net.URL;
-// http://stackoverflow.com/questions/3642919/javax-faces-application-viewexpiredexception-view-could-not-be-restored
-import java.net.URLClassLoader;
 // TODO urgent: status und info dialog
 // TODO check patient fetch from jason form clinik -> zu viele patienten
 import java.util.ArrayList;
@@ -20,24 +17,12 @@ import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
-import org.histo.model.interfaces.ArchivAble;
-import org.histo.model.interfaces.LogAble;
-import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
-import org.histo.model.patient.Block;
-import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.Patient;
-import org.histo.model.patient.Sample;
-import org.histo.model.patient.Slide;
-import org.histo.model.patient.Task;
-import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
-import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;

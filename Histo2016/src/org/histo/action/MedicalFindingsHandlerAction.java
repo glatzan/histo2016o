@@ -56,6 +56,8 @@ public class MedicalFindingsHandlerAction {
 	@Autowired
 	private PrintHandlerAction printHandlerAction;
 
+	@Autowired
+	private MediaHandlerAction mediaHandlerAction;
 	/**
 	 * class for creating pdfs
 	 */
@@ -103,6 +105,11 @@ public class MedicalFindingsHandlerAction {
 	 * Notification
 	 ********************************************************/
 	/**
+	 * True if preview should be displayed
+	 */
+	private boolean showPreview;
+	
+	/**
 	 * True if the notification is running at the moment
 	 */
 	private AtomicBoolean notificationRunning = new AtomicBoolean(false);
@@ -128,6 +135,8 @@ public class MedicalFindingsHandlerAction {
 		setFaxNotificationSettings(new FaxNotificationSettings(task));
 		setPhoneNotificationSettings(new PhoneNotificationSettings(task));
 
+		setShowPreview(false);
+		
 		mainHandlerAction.showDialog(Dialog.MEDICAL_FINDINGS);
 	}
 
@@ -147,33 +156,8 @@ public class MedicalFindingsHandlerAction {
 			setActiveTabIndex(getActiveTabIndex() - 1);
 	}
 
-	public void prepareForNotification(Task task) {
+	public void finalizeTask() {
 
-		//
-		//
-		// HashMap<String, String> toReplace = new HashMap<String, String>();
-		// toReplace.put("%name%",
-		// task.getPatient().getPerson().getName() + ", " +
-		// task.getPatient().getPerson().getSurname());
-		// toReplace.put("%birthday%",
-		// mainHandlerAction.date(task.getPatient().getPerson().getBirthday(),
-		// DateFormat.GERMAN_DATE));
-		// toReplace.put("%piz%", task.getPatient() == null ? "Keine Piz" :
-		// task.getPatient().getPiz());
-		//
-		// MailTemplate taskReport =
-		// mainHandlerAction.getSettings().getMail().getMailTemplate(MailPresetName.TaskReport);
-		//
-		// setEmailSubject(HistoUtil.replaceWildcardsInString(taskReport.getSubject(),
-		// toReplace));
-		//
-		// setEmailText(taskReport.getContent());
-		//
-		// setNotificationPerformed(false);
-		//
-		// onAttachPdfToEmailChange();
-		// onUseFaxChanges();
-		// onUsePhoneChanges();
 	}
 
 	@Async("taskExecutor")
@@ -191,7 +175,6 @@ public class MedicalFindingsHandlerAction {
 
 		StringBuilder sendLog = new StringBuilder();
 
-		
 		if (emailNotificationSettings.isUseEmail() || faxNotificationSettings.isUseFax()
 				|| phoneNotificationSettings.isUsePhone()) {
 			ArrayList<PDFContainer> resultPdfs = new ArrayList<PDFContainer>();
@@ -200,7 +183,6 @@ public class MedicalFindingsHandlerAction {
 			sendLog.append(resourceBundle.get("pdf.notification.emailNotification.notify"));
 			if (emailNotificationSettings.isUseEmail()) {
 				logger.trace("Email notification");
-				
 
 				for (MedicalFindingsChooser notificationChooser : emailNotificationSettings
 						.getNotificationEmailList()) {
@@ -398,9 +380,31 @@ public class MedicalFindingsHandlerAction {
 			getTemporaryTask().setNotificationCompletionDate(System.currentTimeMillis());
 
 			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.update");
+
+			mediaHandlerAction.perpareBeanForExternalForSinglView(resultPdf);
+
 			notificationRunning.set(false);
+			notificationPerformed.set(true);
 		}
 	}
+
+	/********************************************************
+	 * Preview
+	 ********************************************************/
+	public void showPreviewForContact(MedicalFindingsChooser notificationEmailList) {
+		printHandlerAction.perpareBeanForExternalView(getTemporaryTask(),
+				new PrintTemplate[] { notificationEmailList.getPrintTemplate() },
+				notificationEmailList.getPrintTemplate(), notificationEmailList.getContact());
+		setShowPreview(true);
+	}
+
+	public void hidePreviewForContact() {
+		setShowPreview(false);
+	}
+
+	/********************************************************
+	 * Preview
+	 ********************************************************/
 
 	/********************************************************
 	 * Getter/Setter
@@ -443,6 +447,22 @@ public class MedicalFindingsHandlerAction {
 
 	public void setPhoneNotificationSettings(PhoneNotificationSettings phoneNotificationSettings) {
 		this.phoneNotificationSettings = phoneNotificationSettings;
+	}
+
+	public boolean getNotificationPerformed() {
+		return notificationPerformed.get();
+	}
+
+	public void setNotificationPerformed(boolean notificationPerformed) {
+		this.notificationPerformed.set(notificationPerformed);
+	}
+
+	public boolean isShowPreview() {
+		return showPreview;
+	}
+
+	public void setShowPreview(boolean showPreview) {
+		this.showPreview = showPreview;
 	}
 	/********************************************************
 	 * Getter/Setter

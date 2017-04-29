@@ -1,6 +1,5 @@
 package org.histo.model.patient;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +16,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
-import org.apache.log4j.Logger;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
@@ -25,12 +23,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
-import org.histo.config.enums.DiagnosisRevisionType;
-import org.histo.config.enums.DiagnosisStatus;
-import org.histo.config.enums.StainingStatus;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
-import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;

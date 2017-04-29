@@ -34,25 +34,37 @@
 				activeIndex="#{medicalFindingsHandlerAction.activeTabIndex}"
 				styleClass="settingsTabView">
 
-				<p:ajax event="tabChange"
-					listener="#{settingsHandlerAction.onSettingsTabChange}"
-					update="@form" />
-
 				<!-- ************************************************************** Mail ************************************************************** -->
-				<p:tab title="#{msg['dialog.medicalFindings.tab.mail']}">
-					<ui:include src="mail.xhtml" />
+				<p:tab title="#{msg['dialog.medicalFindings.tab.mail']}"
+					disabled="#{medicalFindingsHandlerAction.notificationPerformed}">
+					<ui:fragment
+						rendered="#{!medicalFindingsHandlerAction.showPreview}">
+						<ui:include src="mail.xhtml" />
+					</ui:fragment>
+					<ui:fragment rendered="#{medicalFindingsHandlerAction.showPreview}">
+						<ui:include src="preview.xhtml" />
+					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Mail ************************************************************** -->
 
 				<!-- ************************************************************** Fax ************************************************************** -->
-				<p:tab title="#{msg['dialog.medicalFindings.tab.fax']}">
+				<p:tab title="#{msg['dialog.medicalFindings.tab.fax']}"
+					disabled="#{medicalFindingsHandlerAction.notificationPerformed}">
 					<ui:include src="fax.xhtml" />
 				</p:tab>
 				<!-- ************************************************************** Fax ************************************************************** -->
 
 				<!-- ************************************************************** Submit ************************************************************** -->
-				<p:tab title="#{msg['dialog.medicalFindings.tab.send']}">
-					<ui:include src="notify.xhtml" />
+				<p:tab title="#{msg['dialog.medicalFindings.tab.send']}"
+					disabled="#{medicalFindingsHandlerAction.notificationPerformed}">
+					<ui:fragment
+						rendered="#{!medicalFindingsHandlerAction.notificationPerformed}">
+						<ui:include src="notify.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{medicalFindingsHandlerAction.notificationPerformed}">
+						<ui:include src="finalizeTask.xhtml" />
+					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Submit ************************************************************** -->
 			</p:tabView>

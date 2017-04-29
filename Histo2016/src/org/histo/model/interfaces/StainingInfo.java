@@ -1,6 +1,5 @@
 package org.histo.model.interfaces;
 
-import org.histo.config.enums.StainingStatus;
 import org.histo.util.TimeUtil;
 
 public interface StainingInfo extends CreationDate {

@@ -3,7 +3,6 @@ package org.histo.model.transitory.json;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;

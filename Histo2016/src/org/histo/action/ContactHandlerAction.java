@@ -8,27 +8,17 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.Notification;
-import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
-import org.histo.dao.TaskDAO;
-import org.histo.experimental.NotificationHandler;
 import org.histo.model.Contact;
-import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.PhysicianRoleOptions;
-import org.histo.ui.medicalFindings.NotificationChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Component

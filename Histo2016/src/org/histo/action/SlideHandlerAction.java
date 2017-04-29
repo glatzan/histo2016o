@@ -1,10 +1,7 @@
 package org.histo.action;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,24 +11,16 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.StainingListAction;
-import org.histo.config.enums.StainingStatus;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.HelperDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
-import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.LabelPrinter;
 import org.histo.model.transitory.json.PrintTemplate;
 import org.histo.ui.ListChooser;
 import org.histo.ui.StainingTableChooser;
-import org.histo.util.HistoUtil;
-import org.histo.util.SlideUtil;
-import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.medicalFindings.tab.notify.tabHeadline']}"
+			styleClass="contentPannel" />
+
+		<!-- right column -->
+		<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+			<h:panelGroup id="pdfRender2">
+				<p:media player="pdf" value="#{mediaHandlerAction.pdfContent}"
+					rendered="#{mediaHandlerAction.temporaryPdfContainer ne null}"
+					width="100%" height="480px"></p:media>
+			</h:panelGroup>
+		</h:panelGrid>
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="1">
+				<h:panelGrid columns="2" styleClass="buttonLeftMarginInList">
+					<!-- archived -->
+					<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						value="#{diagnosisHandlerAction.stayInDiagnosisPhase}" />
+					<h:outputLabel
+						value="#{msg['dialog.diagnosisPhaseLeave.button.stay']}"
+						style="margin-left:5px;" />
+				</h:panelGrid>
+			</h:panelGrid>
+			
+			<h:panelGrid columns="2" style="float:right;">
+				<!-- submit -->
+				<p:commandButton value="Benchrichtigung erneut durchführen"
+					icon="fa fa-fw fa-check-circle-o"
+					styleClass="smallButton buttonRighMarginInList"
+					onstart="PF('blockUIWidget').block()"
+					oncomplete="PF('blockUIWidget').unblock()"
+					actionListener="#{medicalFindingsHandlerAction.performeNotification()}"
+					update="@form" />
+
+				<!-- close -->
+				<p:commandButton value="Auftrag archivieren"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>

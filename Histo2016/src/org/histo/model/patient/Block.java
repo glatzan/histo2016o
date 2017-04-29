@@ -3,7 +3,6 @@ package org.histo.model.patient;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,9 +24,6 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.StainingStatus;
-import org.histo.model.interfaces.ArchivAble;
-import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;

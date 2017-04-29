@@ -13,7 +13,6 @@ import javax.persistence.Transient;
 import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
