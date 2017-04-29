@@ -1,9 +1,6 @@
 package org.histo.model.util;
 
-import javax.persistence.Transient;
-
 import org.apache.log4j.Logger;
-import org.histo.config.enums.StainingStatus;
 import org.histo.model.patient.Task;
 
 public class TaskStatusHandler {
@@ -16,24 +13,33 @@ public class TaskStatusHandler {
 		this.task = task;
 	}
 
+	public boolean updateStainingStatus() {
+		return updateStainingStatus(false);
+	}
+
 	public boolean updateStainingStatus(boolean stayInPhase) {
 		logger.trace("Method: hasStatingStatusChanged()");
-		// staining is performed and date = 0, so staining was performed
-		// recently
+
+		// staining was performed
 		if (isStainingPerformed() && task.getStainingCompletionDate() == 0) {
+			// setting phase
+			logger.trace("Status has changed: Staining performed and no date set");
 			task.setStainingCompletionDate(System.currentTimeMillis());
 			task.setStainingPhase(stayInPhase);
-			return true;
-			// the staining process was performed (date != 0), but there are new
-			// slides to stain
+			task.setDiagnosisPhase(true);
 		} else if (!isStainingPerformed() && task.getStainingCompletionDate() != 0) {
+			// new stainings created, set completion date to 0
+			logger.trace("Status has changed: Staining was performed, new slides are avalibale");
 			task.setStainingCompletionDate(0);
 			task.setStainingPhase(true);
-			return true;
+		} else {
+			// status has not changed
+			logger.trace("Stainingstatus has not changed (Staining performed: " + isStainingPerformed()
+					+ ") (CompletionDate: " + task.getStainingCompletionDate() + ")");
+			return false;
 		}
+		return true;
 
-		// status has not changed
-		return false;
 	}
 
 	public boolean updateDiagnosisStatus(boolean performed, boolean stayInPhase) {
@@ -92,9 +98,16 @@ public class TaskStatusHandler {
 	}
 
 	public boolean isActive() {
-		return isDiagnosisNeeded() || isReDiangosisNeeded() || isNotificationStayInPhase() || isStainingNeeded()
+		return isDiagnosisNeeded() || isReDiagnosisNeeded() || isNotificationStayInPhase() || isStainingNeeded()
 				|| isReStainingNeeded() || isStayInStainingPhase() || isNotificationNeeded()
 				|| isNotificationStayInPhase();
+	}
+
+	/********************************************************
+	 * Diagnosis
+	 ********************************************************/
+	public boolean isDiagnosisPhase() {
+		return task.isDiagnosisPhase();
 	}
 
 	public boolean isDiagnosisPerformed() {
@@ -105,20 +118,43 @@ public class TaskStatusHandler {
 		return task.isDiagnosisPhase() && task.isDiagnosisPerformed();
 	}
 
+	public boolean isDiagnosisPerformedAndNotInStainingPhase() {
+		return task.isDiagnosisPhase() && !task.isDiagnosisPerformed();
+	}
+
 	public boolean isDiagnosisNeeded() {
 		return task.isDiagnosisNeeded();
 	}
 
-	public boolean isReDiangosisNeeded() {
+	public boolean isReDiagnosisNeeded() {
 		return task.isReDiagnosisNeeded();
 	}
 
+	public boolean isDiagnosisPhaseAndOtherPhase() {
+		return isDiagnosisPhase() && (task.isStainingPhase() || task.isNotificationPhase());
+	}
+
+	/********************************************************
+	 * Diagnosis
+	 ********************************************************/
+
+	/********************************************************
+	 * Staining
+	 ********************************************************/
+	public boolean isStainingPhase() {
+		return task.isStainingPhase();
+	}
+
 	public boolean isStainingPerformed() {
-		return task.isStaningPerformed();
+		return task.isStainingPerformed();
 	}
 
 	public boolean isStayInStainingPhase() {
-		return task.isStainingPhase() && task.isStainingPhase();
+		return task.isStainingPhase() && task.isStainingPerformed();
+	}
+
+	public boolean isStainingPerformedAndNotInStainingPhase() {
+		return !task.isStainingPhase() && task.isStainingPerformed();
 	}
 
 	public boolean isStainingNeeded() {
@@ -129,19 +165,34 @@ public class TaskStatusHandler {
 		return task.isRestainingNeeded();
 	}
 
+	public boolean isStainingPhaseAndOtherPhase() {
+		return isStainingPhase() && (task.isDiagnosisPhase() || task.isNotificationPhase());
+	}
+
+	/********************************************************
+	 * Staining
+	 ********************************************************/
+
+	/********************************************************
+	 * Notification
+	 ********************************************************/
+	public boolean isNotificationPhase() {
+		return task.isNotificationPhase();
+	}
+
 	public boolean isNotificationPerformed() {
 		return !task.isNotificationPhase() && task.getNotificationCompletionDate() != 0;
 	}
 
 	public boolean isNotificationStayInPhase() {
-		return task.isNotificationPhase() && isNotificationPerformed();
+		return task.isNotificationPhase() && task.getNotificationCompletionDate() != 0;
 	}
 
 	public boolean isNotificationNeeded() {
 		return task.isNotificationPhase() && task.getNotificationCompletionDate() == 0;
 	}
 	/********************************************************
-	 * Getter/Setter
+	 * Notification
 	 ********************************************************/
 
 }

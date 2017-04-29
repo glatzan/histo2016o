@@ -224,7 +224,12 @@ public class TaskHandlerAction implements Serializable {
 	public void prepareTask(Task task) {
 		initBean();
 
-		taskDAO.initializeDiagnosisData(task);
+		genericDAO.refresh(task);
+		if (!task.isInitialized()) {
+			taskDAO.initializeCouncilData(task);
+			taskDAO.initializeDiagnosisData(task);
+			task.setInitialized(true);
+		}
 
 		// setting the report time to the current date
 		if (task.isDiagnosisPhase()) {
@@ -363,7 +368,7 @@ public class TaskHandlerAction implements Serializable {
 		// creating standard diagnoses
 		taskManipulationHandler.createDiagnosisRevision(task.getDiagnosisContainer(), DiagnosisRevisionType.DIAGNOSIS);
 
-		task.hasStatingStatusChanged();
+		task.getStatus().updateStainingStatus();
 		// generating gui list
 		task.generateSlideGuiList();
 		// saving patient
@@ -436,7 +441,7 @@ public class TaskHandlerAction implements Serializable {
 		// updating names
 		task.updateAllNames();
 		// checking if staining flag of the task object has to be false
-		task.hasStatingStatusChanged();
+		task.getStatus().updateStainingStatus();
 		// generating gui list
 		task.generateSlideGuiList();
 		// saving patient
@@ -500,7 +505,7 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		// checking if staining flag of the task object has to be false
-		sample.getParent().hasStatingStatusChanged();
+		sample.getParent().getStatus().updateStainingStatus();
 		// generating gui list
 		sample.getParent().generateSlideGuiList();
 		// saving patient
@@ -544,7 +549,7 @@ public class TaskHandlerAction implements Serializable {
 					parent.getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.getParent().getParent().hasStatingStatusChanged();
+			parent.getParent().getParent().getStatus().updateStainingStatus();
 			// generating gui list
 			parent.getParent().getParent().generateSlideGuiList();
 
@@ -567,7 +572,7 @@ public class TaskHandlerAction implements Serializable {
 					toDeleteBlock.getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.getParent().hasStatingStatusChanged();
+			parent.getParent().getStatus().updateStainingStatus();
 			// generating gui list
 			parent.getParent().generateSlideGuiList();
 
@@ -591,7 +596,7 @@ public class TaskHandlerAction implements Serializable {
 					toDeleteSample.getParent().getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.hasStatingStatusChanged();
+			parent.getStatus().updateStainingStatus();
 			// generating gui list
 			parent.generateSlideGuiList();
 		}

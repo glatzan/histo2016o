@@ -214,20 +214,20 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 			return false;
 		
 		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if(revision.isDiagnosisCompleted())
-				return true;
+			if(!revision.isDiagnosisPerformed())
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
 	@Transient
 	public boolean isDiagnosisNeeded() {
 		if (getDiagnosisRevisions().isEmpty())
-			return false;
+			return true;
 		
 		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if(revision.isDiagnosisCompleted())
+			if(revision.isDiagnosisNeeded())
 				return true;
 		}
 		return false;
@@ -237,10 +237,10 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 	@Transient
 	public boolean isReDiagnosisNeeded() {
 		if (getDiagnosisRevisions().isEmpty())
-			return false;
+			return true;
 		
 		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if(revision.isDiagnosisCompleted())
+			if(revision.isReDiagnosisNeeded())
 				return true;
 		}
 		return false;

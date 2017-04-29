@@ -242,7 +242,7 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	 ********************************************************/
 	@Override
 	@Transient 
-	public boolean isStaningPerformed() {
+	public boolean isStainingPerformed() {
 		return isStainingCompleted();
 	}
 
@@ -255,7 +255,6 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	@Override
 	@Transient 
 	public boolean isRestainingNeeded() {
-		// TODO Auto-generated method stub
 		return !isStainingCompleted() && isReStaining();
 	}
 	/********************************************************

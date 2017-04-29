@@ -5,20 +5,20 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-
 <h:head>
-	<title><h:outputFormat
-			value="#{msg['dialog.staingingPhaseEndManual.headline']}" /></title>
+	<title>#{msg['dialog.worklistsearch.headline']}</title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
+
 <h:body styleClass="defaultDialogLayout infoDialog">
+
 	<h:form id="dialogContent">
 
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.staingingPhaseEndManual.headline']}" />
+				<h:outputLabel value="#{msg['dialog.worklistsearch.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -27,33 +27,30 @@
 			</h:panelGrid>
 		</div>
 
-		<div class="contentDiv">
-			<h:panelGrid columns="1"
-				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel
-					value="#{msg['dialog.staingingPhaseEndManual.text']}"></h:outputLabel>
-			</h:panelGrid>
+		<div class="dialogContent">
+
+
 		</div>
+
 
 		<div class="buttonContainer">
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
-					<!-- confirm -->
-					<p:commandButton value="#{msg['dialog.staingingPhaseEndManual.button.remove']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{slideHandlerAction.removeFromStainingPhase()}"></p:commandButton>
-
-					<!-- Abort button -->
+					<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
+						process="@form">
+						<f:actionListener
+							binding="#{worklistHandlerAction.createWorklist()}" />
+						<f:actionListener
+							binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}" />
+					</p:commandButton>
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-times-circle"
-						actionListener="#{slideHandlerAction.hideDialog('STAINING_PHASE_END_MANUAL')}" />
+						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}"
+						style="margin-left:20px;"></p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
-
 	</h:form>
 </h:body>
 </html>
+

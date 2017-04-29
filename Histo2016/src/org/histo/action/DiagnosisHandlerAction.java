@@ -157,42 +157,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Force Diagnosis Phase Dialog
+	 * Default Dialog for ending diagnosis phase
 	 ********************************************************/
-	/**
-	 * Shows a dialog for shifting the task to diagnosis phase even if not all
-	 * staining tasks are completed.
-	 * 
-	 * @param task
-	 */
-	public void showUnlockDiagnosisPhaseDialog(Task task) {
-		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_UNLOCK);
-		setTemporaryTask(task);
-	}
-
-	/**
-	 * Shifts the task to diagnosis phase, leave the staining phase as is
-	 */
-	public void unlockDiagnosisPhase() {
-		getTemporaryTask().setDiagnosisPhase(true);
-
-		logger.debug("Unlocking all diangoses");
-		taskManipulationHandler.finalizeAllDiangosisRevisions(
-				getTemporaryTask().getDiagnosisContainer().getDiagnosisRevisions(), false);
-		getTemporaryTask().setFinalized(false);
-
-		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.reentered");
-		hideDialog(Dialog.DIAGNOSIS_PHASE_UNLOCK);
-	}
-
-	/********************************************************
-	 * Force Diagnosis Phase Dialog
-	 ********************************************************/
-
-	/********************************************************
-	 * End diagnosis phase Dialog Auto
-	 ********************************************************/
-	public void showDiagnosisPhaseEndAutoDialog(Task task) {
+	public void showDiagnosisPhaseEndDialog(Task task) {
 		setTemporaryTask(task);
 		
 		setStayInDiagnosisPhase(false);
@@ -202,43 +169,75 @@ public class DiagnosisHandlerAction implements Serializable {
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
 				DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
-		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_END_AUTO);
+		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_LEAVE);
 	}
 
-	public void endDiangosisPhase(boolean stayInphase) {
+	public void hideDiagnosisPhaseEndDialog(boolean stayInPhase){
 		taskManipulationHandler.finalizeAllDiangosisRevisions(
 				getTemporaryTask().getDiagnosisContainer().getDiagnosisRevisions(), true);
 		getTemporaryTask().setNotificationPhase(true);
-		getTemporaryTask().setDiagnosisPhase(stayInphase);
-		getTemporaryTask().setFinalized(true);
-
+		getTemporaryTask().setDiagnosisCompletionDate(System.currentTimeMillis());
+		getTemporaryTask().setDiagnosisPhase(stayInPhase);
+		
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.end");
-		hideDialog(Dialog.DIAGNOSIS_PHASE_END_AUTO);
+		hideDialog(Dialog.DIAGNOSIS_PHASE_LEAVE);
 	}
 
 	/********************************************************
-	 * End diagnosis phase Dialog Auto
+	 *  Default Dialog for ending diagnosis phase
 	 ********************************************************/
 
-	public void showDiagnosisPhaseEndManual(Task task) {
+	/********************************************************
+	 *  Dialog for forcing stay and leave of diagnosis phase
+	 ********************************************************/
+	/**
+	 * Show a dialog for forcing leave or stay in diagnosis phase.
+	 * @param task
+	 * @param stay
+	 */
+	public void showDiagnosisForcePhaseDialog(Task task, boolean force) {
 		setTemporaryTask(task);
-		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_END_MANUAL);
+		
+		if(force)
+			mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_FORCE_ENTER);
+		else
+			mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_FORCE_LEAVE);
 	}
 
-	public void removeFromDiagnosisPhase() {
-		getTemporaryTask().setDiagnosisPhase(false);
-
-		// if the diagnoses process of the task has not been finished, set to
-		// diagnosis phase
-		if (!getTemporaryTask().isFinalized() && getTemporaryTask().getNotificationCompletionDate() == 0) {
+	/**
+	 * Sets the diagnosis phase to false and finalizes all diagnoses
+	 */
+	public void forceLeaveDiagnosisPhaseAndHideDialog(){
+		// set to notification phase if task is not finalized an no other phase is active
+		if (!getTemporaryTask().isFinalized() && !getTemporaryTask().getStatus().isDiagnosisPhaseAndOtherPhase()) {
 			logger.debug("Setting notification phase to true");
 			getTemporaryTask().setNotificationPhase(true);
 		}
 
+		getTemporaryTask().setDiagnosisPhase(false);
+
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.end");
 
-		hideDialog(Dialog.DIAGNOSIS_PHASE_END_MANUAL);
+		hideDialog(Dialog.DIAGNOSIS_PHASE_FORCE_LEAVE);
 	}
+	
+	/**
+	 * Sets the diagnosis phase to true and unfinalizes all diagnoses
+	 */
+	public void forceEnterDiagnosisPhaseAndHideDialog() {
+		getTemporaryTask().setDiagnosisPhase(true);
+
+		logger.debug("Unlocking all diangoses");
+		taskManipulationHandler.finalizeAllDiangosisRevisions(
+				getTemporaryTask().getDiagnosisContainer().getDiagnosisRevisions(), false);
+
+		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.reentered");
+		hideDialog(Dialog.DIAGNOSIS_PHASE_FORCE_ENTER);
+	}
+	/********************************************************
+	 *  Dialog for forcing stay and leave of diagnosis phase
+	 ********************************************************/
+
 
 	public void onDiagnosisPrototypeChanged(Diagnosis diagnosis) {
 		logger.debug("Updating diagnosis prototype");

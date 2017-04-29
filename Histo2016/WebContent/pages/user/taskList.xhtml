@@ -43,7 +43,7 @@
 						<i class="fa fa-image"
 							title="#{msg['body.taskList.table.staining']}"></i>
 					</f:facet>
-					<ui:fragment rendered="#{task.getStainingStatus() eq 'PERFORMED' }">
+					<ui:fragment rendered="#{task.status.stainingPerformed}">
 						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
 							title="" />
 					</ui:fragment>
@@ -55,7 +55,7 @@
 							title="#{msg['body.taskList.table.diagnosis']}"></i>
 					</f:facet>
 					<ui:fragment
-						rendered="#{task.getDiagnosisStatus() eq 'PERFORMED' }">
+						rendered="#{task.status.diagnosisPerformed}">
 						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
 							title="" />
 					</ui:fragment>

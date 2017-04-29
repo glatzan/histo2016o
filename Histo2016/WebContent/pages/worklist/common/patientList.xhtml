@@ -143,66 +143,66 @@
 								</h:panelGroup>
 
 								<!-- staining needed -->
-								<h:panelGroup rendered="#{task.stainingPhase}">
+								<h:panelGroup rendered="#{task.status.stainingPhase}">
 									<!-- staining needed = green -->
 									<ui:fragment
-										rendered="#{task.getStainingStatus() eq 'STAINING_NEEDED' }">
+										rendered="#{task.status.stainingNeeded}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.staining']}" />
 									</ui:fragment>
 
 									<!-- re-staining needed = orange -->
 									<ui:fragment
-										rendered="#{task.getStainingStatus() eq 'RE_STAINING_NEEDED' }">
+										rendered="#{task.status.reStainingNeeded}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-orange"
 											title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
 									</ui:fragment>
 
 									<!--  no staining needed = purple -->
 									<ui:fragment
-										rendered="#{task.getStainingStatus() eq 'STAY_IN_PHASE' }">
+										rendered="#{task.status.stayInStainingPhase}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
 									</ui:fragment>
 								</h:panelGroup>
 
 								<!-- diagnosis needed -->
-								<h:panelGroup rendered="#{task.diagnosisPhase}">
+								<h:panelGroup rendered="#{task.status.diagnosisPhase}">
 									<!-- diagnosis needed = green -->
 									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'DIAGNOSIS_NEEDED' }">
+										rendered="#{task.status.diagnosisNeeded}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
 									</ui:fragment>
 
 									<!-- re-diagnosis needed = orange -->
 									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'RE_DIAGNOSIS_NEEDED' }">
+										rendered="#{task.status.reDiagnosisNeeded}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 									</ui:fragment>
 
 									<!-- no diagnosis needed = purple -->
 									<ui:fragment
-										rendered="#{task.getDiagnosisStatus() eq 'STAY_IN_PHASE' }">
+										rendered="#{task.status.diagnosisStayInPhase}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
 									</ui:fragment>
 								</h:panelGroup>
 
-								<!-- diagnosis needed -->
-								<h:panelGroup rendered="#{task.notificationPhase}">
+								<!-- notification needed -->
+								<h:panelGroup rendered="#{task.status.notificationPhase}">
 									<!-- notification need = green -->
 									<ui:fragment
-										rendered="#{task.getNotificationStatus() eq 'NOTIFICATION_NEEDED' }">
-										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
+										rendered="#{task.status.notificationNeeded}">
+										<i style="margin-left: 5px;" class="fa fa-volume-up icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
 									</ui:fragment>
 
-									<!-- stay in phase = orange -->
+									<!-- stay in phase = purple -->
 									<ui:fragment
-										rendered="#{task.getNotificationStatus() eq 'STAY_IN_PHASE' }">
-										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
+										rendered="#{task.status.notificationStayInPhase}">
+										<i style="margin-left: 5px;" class="fa fa-volume-up icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 									</ui:fragment>
 								</h:panelGroup>

@@ -376,17 +376,17 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 			return false;
 		
 		for (Task task : getTasks()) {
-			if(task.isDiagnosisPerformed())
-				return true;
+			if(!task.isDiagnosisPerformed())
+				return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
 	@Transient
 	public boolean isDiagnosisNeeded() {
 		if (getTasks().isEmpty())
-			return false;
+			return true;
 		
 		for (Task task : getTasks()) {
 			if(task.isDiagnosisNeeded())
@@ -399,7 +399,7 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	@Transient
 	public boolean isReDiagnosisNeeded() {
 		if (getTasks().isEmpty())
-			return false;
+			return true;
 		
 		for (Task task : getTasks()) {
 			if(task.isReDiagnosisNeeded())
@@ -433,16 +433,17 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 
 	@Override
 	@Transient
-	public boolean isStaningPerformed() {
+	public boolean isStainingPerformed() {
 		if (getTasks().isEmpty())
 			return false;
 
 		for (Task task : getTasks()) {
-			if (task.isStaningPerformed())
-				return true;
+			if (!task.isStainingPerformed()){
+				return false;
+			}
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override

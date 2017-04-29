@@ -259,7 +259,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 	@Transient
 	public boolean isDiagnosisNeeded() {
 		if (getDiagnoses().isEmpty())
-			return false;
+			return true;
 		
 		return !isDiagnosisCompleted() && !isReDiagnosis();
 	}
@@ -268,7 +268,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 	@Transient
 	public boolean isReDiagnosisNeeded() {
 		if (getDiagnoses().isEmpty())
-			return false;
+			return true;
 		return !isDiagnosisCompleted() && isReDiagnosis();
 	}
 	/********************************************************

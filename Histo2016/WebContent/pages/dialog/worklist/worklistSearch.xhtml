@@ -5,15 +5,17 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
+
 <h:head>
-	<title>#{msg['dialog.worklistsearch.headline']}</title>
+	<title><h:outputFormat
+			value="#{msg['dialog.worklistsearch.headline']}">
+		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="grid/grid.css" library="primefaces" />
 </h:head>
 
-
-<h:body styleClass="defaultDialogLayout infoDialog">
-
-	<h:form id="dialogContent">
+<h:body styleClass="settingsDialogLayout">
+	<h:form id="adminForm">
 
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
@@ -27,312 +29,23 @@
 			</h:panelGrid>
 		</div>
 
-		<div class="dialogContent">
+		<p:panel styleClass="settingsPannel">
+			<p:tabView orientation="left" styleClass="settingsTabView">
 
-			<!-- Select -->
-			<p:selectOneRadio id="searchIndexRadio"
-				value="#{worklistHandlerAction.searchOptions.searchIndex}"
-				layout="custom">
-				<!-- 0 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.staininglist']}"
-					itemValue="STAINING_LIST" />
+				<!-- ************************************************************** Simple ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.user']}">
+					<ui:include src="worklistSearchSimple.xhtml" />
+				</p:tab>
+				<!-- ************************************************************** Simple ************************************************************** -->
 
-				<!-- 1 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.diagnosislist']}"
-					itemValue="DIAGNOSIS_LIST" />
+				<!-- ************************************************************** Advanced ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.stainings']}">
 
-				<!-- 2 -->
-				<f:selectItem itemLabel="#{msg['dialog.worklistsearch.date.today']}"
-					itemValue="TODAY" />
+				</p:tab>
+				<!-- ************************************************************** Advanced ************************************************************** -->
 
-				<!-- 3 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.date.yesterday']}"
-					itemValue="YESTERDAY" />
-
-				<!-- 4 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.date.thisweek']}"
-					itemValue="CURRENTWEEK" />
-
-				<!-- 5 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.date.lastweek']}"
-					itemValue="LASTWEEK" />
-
-				<!-- 6 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.date.lastmonth']}"
-					itemValue="LASTMONTH" />
-
-				<!-- 7 -->
-				<f:selectItem itemLabel="#{msg['dialog.worklistsearch.date.day']}"
-					itemValue="DAY" />
-
-				<!-- 8 -->
-				<f:selectItem itemLabel="#{msg['dialog.worklistsearch.date.month']}"
-					itemValue="MONTH" />
-
-				<!-- 9 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.date.timespan']}"
-					itemValue="TIME" />
-
-				<!-- 10 -->
-				<f:selectItem
-					itemLabel="#{msg['dialog.worklistsearch.date.timespan']}"
-					itemValue="NOTIFICATION_LIST" />
-
-				<p:ajax update="@form"></p:ajax>
-			</p:selectOneRadio>
-
-			<h:panelGrid columns="1" style="width:100%;"
-				styleClass="noBordersAll collapsedBordersAll">
-				<h:panelGrid columns="1">
-
-
-					<h:panelGrid columns="3" cellpadding="5">
-
-						<!-- Staining List -->
-						<p:radioButton id="opt1" for="searchIndexRadio" itemIndex="0" />
-						<h:outputLabel for="opt1" styleClass="smallFont"
-							value="#{msg['dialog.worklistsearch.staininglist']}" />
-
-						<p:panelGrid columns="8" styleClass="noBorders">
-							<!-- new -->
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.staininglist.new']}"
-								for="newPatient"></h:outputLabel>
-							<p:selectBooleanCheckbox id="newPatient"
-								value="#{worklistHandlerAction.searchOptions.staining_new}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'STAINING_LIST'}" />
-							<!-- stain -->
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.staininglist.stain']}"
-								for="staining"></h:outputLabel>
-							<p:selectBooleanCheckbox id="staining"
-								value="#{worklistHandlerAction.searchOptions.staining_staining}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'STAINING_LIST'}" />
-
-							<!-- restain -->
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.staininglist.restain']}"></h:outputLabel>
-							<p:selectBooleanCheckbox
-								value="#{worklistHandlerAction.searchOptions.staining_restaining}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'STAINING_LIST'}" />
-
-							<!-- dueDate -->
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.staininglist.dueDate']}"></h:outputLabel>
-							<p:selectBooleanCheckbox
-								value="#{worklistHandlerAction.searchOptions.deadline_staining}"
-								disabled="true" />
-						</p:panelGrid>
-
-						<!-- Diagnosis List -->
-						<p:radioButton id="opt2" for="searchIndexRadio" itemIndex="1" />
-						<h:outputLabel for="opt2" styleClass="smallFont"
-							value="#{msg['dialog.worklistsearch.diagnosislist']}" />
-
-						<p:panelGrid columns="6" styleClass="noBorders">
-
-							<!-- diagnoses -->
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.diagnosislist.diagnosis']}"></h:outputLabel>
-							<p:selectBooleanCheckbox
-								value="#{worklistHandlerAction.searchOptions.staining_diagnosis}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'DIAGNOSIS_LIST'}" />
-
-							<!-- rediagnoses -->
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.diagnosislist.rediagnosis']}"></h:outputLabel>
-							<p:selectBooleanCheckbox
-								value="#{worklistHandlerAction.searchOptions.staining_rediagnosis}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'DIAGNOSIS_LIST'}" />
-
-							<!-- dueDate -->
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.diagnosislist.dueDate']}"></h:outputLabel>
-							<p:selectBooleanCheckbox
-								value="#{worklistHandlerAction.searchOptions.deadline_diagnosis}"
-								disabled="true" />
-						</p:panelGrid>
-
-						<!-- Diagnosis List -->
-						<p:radioButton id="opt11" for="searchIndexRadio" itemIndex="10" />
-						<h:outputLabel for="opt11" styleClass="smallFont"
-							value="#{msg['dialog.worklistsearch.notificationlist']}" />
-
-						<p:panelGrid columns="1" styleClass="noBorders">
-						</p:panelGrid>
-						
-					</h:panelGrid>
-				</h:panelGrid>
-
-				<!-- date -->
-				<h:panelGrid columns="1">
-					<h:panelGrid columns="1">
-						<h:panelGrid columns="1" cellpadding="5">
-							<h:outputLabel value="#{msg['dialog.worklistsearch.date']}" />
-						</h:panelGrid>
-						<h:panelGrid columns="10" cellpadding="5">
-							<!-- Today -->
-							<p:radioButton id="opt3" for="searchIndexRadio" itemIndex="2" />
-							<h:outputLabel for="opt3" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.today']}" />
-
-							<!-- Yesterday -->
-							<p:radioButton id="opt4" for="searchIndexRadio" itemIndex="3" />
-							<h:outputLabel for="opt4" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.yesterday']}" />
-
-							<!-- This week -->
-							<p:radioButton id="opt5" for="searchIndexRadio" itemIndex="4" />
-							<h:outputLabel for="opt5" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.thisweek']}" />
-
-							<!-- Last week -->
-							<p:radioButton id="opt6" for="searchIndexRadio" itemIndex="5" />
-							<h:outputLabel for="opt6" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.lastweek']}" />
-
-							<!-- Last month -->
-							<p:radioButton id="opt7" for="searchIndexRadio" itemIndex="6" />
-							<h:outputLabel for="opt7" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.lastmonth']}" />
-						</h:panelGrid>
-
-						<!-- day -->
-						<h:panelGrid columns="3" cellpadding="5">
-							<p:radioButton id="opt8" for="searchIndexRadio" itemIndex="7" />
-							<h:outputLabel for="opt8" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.day']}" />
-							<p:calendar value="#{worklistHandlerAction.searchOptions.day}"
-								styleClass="smallFont smallInput" locale="de" navigator="true"
-								pattern="dd.MM.yyyy" mask="true"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'DAY'}" />
-						</h:panelGrid>
-
-						<!-- Month -->
-						<h:panelGrid columns="4" cellpadding="5">
-							<p:radioButton id="opt9" for="searchIndexRadio" itemIndex="8" />
-							<h:outputLabel for="opt9" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.month']}" />
-
-							<p:selectOneMenu id="month_pick" style="width:125px"
-								styleClass="smallFont smallInput"
-								value="#{worklistHandlerAction.searchOptions.searchMonth}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'MONTH'}">
-
-								<f:selectItems value="#{enumProvider.month}" var="month"
-									itemValue="#{month}"
-									itemLabel="#{msg['enum.month.'.concat(month)]}" />
-							</p:selectOneMenu>
-
-							<p:selectOneMenu id="year_pick" style="width:125px"
-								styleClass="smallFont smallInput"
-								value="#{worklistHandlerAction.searchOptions.year}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'MONTH'}">
-								<f:selectItems
-									value="#{worklistHandlerAction.searchOptions.years}" />
-							</p:selectOneMenu>
-						</h:panelGrid>
-
-						<!-- Timespan -->
-						<h:panelGrid columns="6" cellpadding="5">
-							<p:radioButton id="opt10" for="searchIndexRadio" itemIndex="9" />
-							<h:outputLabel for="opt10" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.timespan']}" />
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.timespan.from']}" />
-							<p:calendar styleClass="smallFont smallInput smallCalendarInput"
-								value="#{worklistHandlerAction.searchOptions.searchFrom}"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'TIME'}"
-								locale="de" navigator="true" pattern="dd.MM.yyyy" mask="true" />
-							<h:outputLabel styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.date.timespan.to']}" />
-							<p:calendar
-								value="#{worklistHandlerAction.searchOptions.searchTo}"
-								locale="de" styleClass="smallFont smallInput smallCalendarInput"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex != 'TIME'}"
-								navigator="true" pattern="dd.MM.yyyy" mask="true" />
-						</h:panelGrid>
-					</h:panelGrid>
-
-					<!-- Filter -->
-
-					<p:selectOneRadio id="filterIndexRadio"
-						value="#{worklistHandlerAction.searchOptions.filterIndex}"
-						layout="custom">
-						<f:selectItem
-							itemLabel="#{msg['dialog.worklistsearch.filter.patient']}"
-							itemValue="ADDED_TO_WORKLIST" />
-						<f:selectItem
-							itemLabel="#{msg['dialog.worklistsearch.filter.task']}"
-							itemValue="TASK_CREATION" />
-						<f:selectItem
-							itemLabel="#{msg['dialog.worklistsearch.filter.staining']}"
-							itemValue="STAINING_COMPLETED" />
-						<f:selectItem
-							itemLabel="#{msg['dialog.worklistsearch.filter.diagnosis']}"
-							itemValue="DIAGNOSIS_COMPLETED" />
-					</p:selectOneRadio>
-
-					<h:panelGrid columns="1">
-						<h:panelGrid columns="1" cellpadding="5">
-							<h:outputLabel value="#{msg['dialog.worklistsearch.filter']}" />
-						</h:panelGrid>
-						<h:panelGrid columns="10" cellpadding="5">
-							<!-- Patient added -->
-							<p:radioButton id="filter0" for="filterIndexRadio" itemIndex="0"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
-							<h:outputLabel for="filter0" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.filter.patient']}" />
-
-							<!-- Task created -->
-							<p:radioButton id="filter1" for="filterIndexRadio" itemIndex="1"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
-							<h:outputLabel for="filter1" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.filter.task']}" />
-
-							<!-- Staining -->
-							<p:radioButton id="filter2" for="filterIndexRadio" itemIndex="2"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
-							<h:outputLabel for="filter2" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.filter.staining']}" />
-
-							<!-- Diagnosis -->
-							<p:radioButton id="filter3" for="filterIndexRadio" itemIndex="3"
-								disabled="#{worklistHandlerAction.searchOptions.searchIndex eq 'STAINING_LIST' or worklistHandlerAction.searchOptions.searchIndex eq 'DIAGNOSIS_LIST'}" />
-							<h:outputLabel for="filter3" styleClass="smallFont"
-								value="#{msg['dialog.worklistsearch.filter.diagnosis']}" />
-						</h:panelGrid>
-					</h:panelGrid>
-				</h:panelGrid>
-			</h:panelGrid>
-		</div>
-
-
-		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="2" style="float:right;">
-					<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
-						process="@form">
-						<f:actionListener
-							binding="#{worklistHandlerAction.createWorklist()}" />
-						<f:actionListener
-							binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}" />
-					</p:commandButton>
-					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}"
-						style="margin-left:20px;"></p:commandButton>
-				</h:panelGrid>
-			</h:panelGrid>
-		</div>
+			</p:tabView>
+		</p:panel>
 	</h:form>
 </h:body>
 </html>
-

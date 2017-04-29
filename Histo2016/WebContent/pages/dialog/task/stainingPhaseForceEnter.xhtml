@@ -42,13 +42,13 @@
 					<p:commandButton value="#{msg['dialog.staingingPhaseForced.button.add']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{slideHandlerAction.forceStainingPhase()}"></p:commandButton>
+						actionListener="#{slideHandlerAction.forceEnterStainingPhaseAndHideDialog()}"></p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{slideHandlerAction.hideDialog('STAINING_PHASE_FORCED')}" />
+						actionListener="#{slideHandlerAction.hideDialog('STAINING_PHASE_FORCE_ENTER')}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

@@ -763,7 +763,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	@Override
 	@Transient
 	public boolean isReDiagnosisNeeded() {
-		return getDiagnosisContainer().isDiagnosisPerformed();
+		return getDiagnosisContainer().isReDiagnosisNeeded();
 	}
 
 	/********************************************************
@@ -775,16 +775,16 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 ********************************************************/
 	@Override
 	@Transient
-	public boolean isStaningPerformed() {
+	public boolean isStainingPerformed() {
 		if (getSamples().isEmpty())
 			return false;
 
 		for (Sample sample : getSamples()) {
-			if (sample.isStaningPerformed())
-				return true;
+			if (!sample.isStainingPerformed())
+				return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override

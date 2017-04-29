@@ -237,17 +237,17 @@ public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, 
 	 * Interface StainingInfo
 	 ********************************************************/
 	@Override
-	@Transient
-	public boolean isStaningPerformed() {
+	@Transient       
+	public boolean isStainingPerformed() {
 		if (getBlocks().isEmpty())
 			return false;
 
 		for (Block block : getBlocks()) {
-			if (block.isStaningPerformed())
-				return true;
+			if (!block.isStainingPerformed())
+				return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override

@@ -373,11 +373,10 @@ public class WorklistHandlerAction implements Serializable {
 
 				List<Patient> paints = patientDao.getPatientByStainings(true);
 				for (Patient patient : paints) {
-					StainingStatus status = patient.getStainingStatus();
 
-					if (searchOptions.isStaining_staining() && status == StainingStatus.STAINING_NEEDED) {
+					if (searchOptions.isStaining_staining() && patient.isStainingNeeded()) {
 						result.add(patient);
-					} else if (searchOptions.isStaining_restaining() && status == StainingStatus.RE_STAINING_NEEDED) {
+					} else if (searchOptions.isStaining_restaining() && patient.isRestainingNeeded()) {
 						result.add(patient);
 					}
 				}
@@ -393,12 +392,9 @@ public class WorklistHandlerAction implements Serializable {
 				List<Patient> paints = patientDao.getPatientByDiagnosis(true);
 				for (Patient patient : paints) {
 
-					DiagnosisStatus status = patient.getDiagnosisStatus();
-
-					if (searchOptions.isStaining_diagnosis() && status == DiagnosisStatus.DIAGNOSIS_NEEDED) {
+					if (searchOptions.isStaining_diagnosis() && patient.isDiagnosisNeeded()) {
 						result.add(patient);
-					} else if (searchOptions.isStaining_rediagnosis()
-							&& status == DiagnosisStatus.RE_DIAGNOSIS_NEEDED) {
+					} else if (searchOptions.isStaining_rediagnosis() && patient.isReDiagnosisNeeded()) {
 						result.add(patient);
 					}
 				}

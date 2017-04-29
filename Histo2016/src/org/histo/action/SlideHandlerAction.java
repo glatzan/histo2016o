@@ -172,7 +172,7 @@ public class SlideHandlerAction implements Serializable {
 
 		// if staining is needed set the staining flag of the task object to
 		// true
-		getTemporaryBlock().getTask().hasStatingStatusChanged();
+		getTemporaryBlock().getTask().getStatus().updateStainingStatus();
 
 		// updating statining list
 		getTemporaryBlock().getTask().generateSlideGuiList();
@@ -271,7 +271,7 @@ public class SlideHandlerAction implements Serializable {
 			}
 			// shows dialog for informing the user that all stainings are
 			// performed
-			showStainingPhaseEndAutoDialog(task);
+			showStainingPhaseLeave(task);
 
 			break;
 		case NOT_PERFORMED:
@@ -283,16 +283,12 @@ public class SlideHandlerAction implements Serializable {
 					Slide slide = stainingTableChooser.getStaining();
 					slide.setStainingCompleted(false);
 
-					genericDAO.save(slide,
-							resourceBundle.get("log.patient.task.sample.blok.slide.stainingNotPerformed",
-									slide.getParent().getParent().getParent().getTaskID(),
-									slide.getParent().getParent().getSampleID(), slide.getParent().getBlockID(),
-									slide.getSlideID()),
-							task.getPatient());
+					mainHandlerAction.saveDataChange(slide, "log.patient.task.sample.blok.slide.stainingNotPerformed",
+							String.valueOf(slide.getId()));
 				}
 			}
 
-			showStainingPhaseEndAutoDialog(task);
+			showStainingPhaseLeave(task);
 
 			break;
 		case ARCHIVE:
@@ -356,34 +352,45 @@ public class SlideHandlerAction implements Serializable {
 	 ********************************************************/
 
 	/********************************************************
-	 * Staining Phase Dialog Auto
+	 * Default leave Staining Phase Dialog
 	 ********************************************************/
-	/**
-	 * Checks if all staings are completed an shows a dialog informing the user about this fact and offering the opportunity to keep the task in the staining phase
-	 * @formatter:off
-	 * Option one -> Task in staining phase, staining completed -> End? (dialog, showEndStaingPhaseDialog)
-	 * Option two -> Task in staining phase, staining is about to be completed -> Shift to diagnosis (dialog)
-	 * Option three -> Task in staining phase, staining not completed -> Force to diagnosis (dialog, showForceDiagnosisPhaseDialog)
-	 * Option four -> Task is not in staining phase, new slide -> staining phase (no dialog)
-	 * @formatter:on
-	 * @param task
-	 */
-	public void showStainingPhaseEndAutoDialog(Task task) {
-		logger.trace("Method: showStainingPhaseEndAutoDialog(Task task)");
+
+	public void showStainingPhaseLeave(Task task) {
+		showStainingPhaseLeave(task, false);
+	}
+
+	public void showStainingPhaseLeave(Task task, boolean setAll) {
+		logger.trace("Method: showStainingPhaseLeave(Task task)");
+
+		// setting all to performed
+		if (setAll) {
+			for (StainingTableChooser stainingTableChooser : task.getStainingTableRows()) {
+				if (stainingTableChooser.isStainingType()
+						&& !stainingTableChooser.getStaining().isStainingCompleted()) {
+					Slide slide = stainingTableChooser.getStaining();
+					slide.setStainingCompleted(true);
+
+					mainHandlerAction.saveDataChange(slide, "log.patient.task.sample.blok.slide.stainingPerformed",
+							String.valueOf(slide.getId()));
+				}
+			}
+		}
+
 		// if task has changed
-		if (task.hasStatingStatusChanged()) {
-			if (task.getStainingStatus() == StainingStatus.PERFORMED) {
+		if (task.getStatus().updateStainingStatus()) {
+			logger.trace("Status has changed!");
+			if (task.getStatus().isStainingPerformed()) {
 				// staining is now performed
 				// setting time of completion
 
 				setTemporaryTask(task);
 
+				mainHandlerAction.saveDataChange(task, "log.patient.task.change.stainingPhase.end");
+
 				// show dialog for notifying the user that the task will be
 				// passed to diagnosis phase, and offering the option to hold
 				// the task also in staining phase
-				mainHandlerAction.showDialog(Dialog.STAINING_PHASE_END_AUTO);
-
-				mainHandlerAction.saveDataChange(task, "log.patient.task.change.stainingPhase.end");
+				mainHandlerAction.showDialog(Dialog.STAINING_PHASE_LEAVE);
 			} else {
 				// there are new slides to stain, the stain-process was finished
 				// before, so re-enter the staining phase
@@ -395,103 +402,72 @@ public class SlideHandlerAction implements Serializable {
 
 	/**
 	 * Keeps the task in staining phase if phase is true. Hides the
-	 * Dialog.STAINING_PHASE_END_AUTO dialog.
+	 * Dialog.STAINING_PHASE_LEAVE dialog.
 	 * 
 	 * @param phase
 	 */
-	public void stayInStainingPhase(boolean phase) {
-		getTemporaryTask().setStainingPhase(phase);
-		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
-		hideDialog(Dialog.STAINING_PHASE_END_AUTO);
+	public void hideStainingPhaseLeave(boolean stayInPhase) {
+		logger.trace("Method: hideStainingPhaseLeave(boolean stayInPhase)");
+		if (stayInPhase) {
+			logger.debug("StayInPhase is true");
+			getTemporaryTask().getStatus().updateStainingStatus(stayInPhase);
+			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
+		}
+		hideDialog(Dialog.STAINING_PHASE_LEAVE);
 	}
 
 	/********************************************************
-	 * Staining Phase Dialog Auto
+	 * Default leave Staining Phase Dialog
 	 ********************************************************/
 
 	/********************************************************
-	 * Staining Phase Dialog Manual
+	 * Dialog for forcing stay and leave of staining phase
 	 ********************************************************/
 	/**
-	 * Shows a dialog for ending the staining phase manually, if no stainig task
-	 * is left and the user had kept the task in staining phase
+	 * Shows the dialog for forcing the phase leave or entering
 	 * 
 	 * @param task
 	 */
-	public void showStaingPhaseEndManualDialog(Task task) {
-		// if task was hold in staining phase but the staining had been
-		// performed, show dialog to end staining phase
-		mainHandlerAction.showDialog(Dialog.STAINING_PHASE_END_MANUAL);
+	public void showStaingPhaseForceDialog(Task task, boolean force) {
 		setTemporaryTask(task);
+		if (force)
+			mainHandlerAction.showDialog(Dialog.STAINING_PHASE_FORCE_ENTER);
+		else
+			mainHandlerAction.showDialog(Dialog.STAINING_PHASE_FORCE_LEAVE);
 	}
 
 	/**
-	 * Removes the task from the staining phase, enables diagnosis phase if
-	 * diagnosis was not done jet.
+	 * Removes the task from the staining list, if task is not finalized enter
+	 * diangosis phase
 	 */
-	public void removeFromStainingPhase() {
-		temporaryTask.setStainingPhase(false);
-
-		// if the diagnoses process of the task has not been finished, set to
-		// diagnosis phase
-		if (!getTemporaryTask().isFinalized() && getTemporaryTask().getDiagnosisCompletionDate() == 0) {
+	public void forceLeaveStainingPhaseAndHideDialog() {
+		// sets diagnosis phase if task is not finalized and no other phase is
+		// active
+		if (!getTemporaryTask().isFinalized() && !getTemporaryTask().getStatus().isStainingPhaseAndOtherPhase()) {
 			logger.debug("Setting diagnosis phase to true");
 			getTemporaryTask().setDiagnosisPhase(true);
 		}
 
+		temporaryTask.setStainingPhase(false);
+
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.end");
 
-		hideDialog(Dialog.STAINING_PHASE_END_MANUAL);
+		hideDialog(Dialog.STAINING_PHASE_FORCE_LEAVE);
 	}
 
-	/********************************************************
-	 * Staining Phase Dialog Manual
-	 ********************************************************/
-
-	/********************************************************
-	 * Force Staining phase
-	 ********************************************************/
-	public void showForceStainingPhaseDialog(Task task) {
-		mainHandlerAction.showDialog(Dialog.STAINING_PHASE_FORCED);
-		setTemporaryTask(task);
-	}
-
-	public void forceStainingPhase() {
+	/**
+	 * Adds the task to the stating list, even if all stanings are completed
+	 */
+	public void forceEnterStainingPhaseAndHideDialog() {
 		getTemporaryTask().setStainingPhase(true);
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
-		hideDialog(Dialog.STAINING_PHASE_FORCED);
+		hideDialog(Dialog.STAINING_PHASE_FORCE_ENTER);
 	}
 
 	/********************************************************
-	 * Force Staining phase
+	 * Dialog for forcing stay and leave of staining phase
 	 ********************************************************/
 
-	/********************************************************
-	 * Force Diagnosis Phase Dialog From Staining
-	 ********************************************************/
-	/**
-	 * Shows a dialog for shifting the task to diagnosis phase even if not all
-	 * staining tasks are completed.
-	 * 
-	 * @param task
-	 */
-	public void showForceDiagnosisPhaseDialog(Task task) {
-		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_FORCED);
-		setTemporaryTask(task);
-	}
-
-	/**
-	 * Shifts the task to diagnosis phase, leave the staining phase as is
-	 */
-	public void forceDiagnosisPhase() {
-		getTemporaryTask().setDiagnosisPhase(true);
-		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.forced");
-		hideDialog(Dialog.DIAGNOSIS_PHASE_FORCED);
-	}
-
-	/********************************************************
-	 * Force Diagnosis Phase Dialog From Staining
-	 ********************************************************/
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

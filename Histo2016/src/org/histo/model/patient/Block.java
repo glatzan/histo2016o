@@ -165,16 +165,16 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 	 ********************************************************/
 	@Override
 	@Transient
-	public boolean isStaningPerformed() {
+	public boolean isStainingPerformed() {
 		if (getSlides().isEmpty())
 			return false;
 
 		for (Slide slide : getSlides()) {
-			if (slide.isStaningPerformed())
-				return true;
+			if (!slide.isStainingPerformed())
+				return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override

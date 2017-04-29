@@ -7,7 +7,7 @@ package org.histo.config.enums;
  */
 public enum Dialog {
 	
-	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", null, 858, 484, false, false, true), // 16:9
+	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", null, 1024, 600, false, false, true), // 16:9
 	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", null, 1024, 600, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,430, 270, false, false, true), 
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), 
@@ -38,13 +38,14 @@ public enum Dialog {
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
 	MEDIA_SELECT("/pages/dialog/upload/mediaSelect", null,  1280, 720,  false, false, true), // 16:9
 	ADMINISTRATE_TASK("/pages/dialog/task/administrateTask", null, 480, 272, false, false, true), // 16:9
-	STAINING_PHASE_END_AUTO("/pages/dialog/task/stainingPhaseEndAuto", null, 480, 272, false, false, true), // 16:9
-	STAINING_PHASE_END_MANUAL("/pages/dialog/task/stainingPhaseEndManual", null, 480, 272, false, false, true), // 16:9
-	STAINING_PHASE_FORCED("/pages/dialog/task/stainingPhaseForced", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_FORCED("/pages/dialog/task/diagnosisPhaseForced", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_UNLOCK("/pages/dialog/task/diagnosisPhaseUnlock", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_END_AUTO("/pages/dialog/task/diagnosisPhaseEndAuto", null, 1024, 600, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_END_MANUAL("/pages/dialog/task/diagnosisPhaseEndManual", null, 480, 272, false, false, true); // 16:9
+	STAINING_PHASE_LEAVE("/pages/dialog/task/stainingPhaseLeave", null, 480, 272, false, false, true), // 16:9
+	STAINING_PHASE_FORCE_ENTER("/pages/dialog/task/stainingPhaseForceEnter", null, 480, 272, false, false, true), // 16:9
+	STAINING_PHASE_FORCE_LEAVE("/pages/dialog/task/stainingPhaseForceLeave", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_LEAVE("/pages/dialog/task/diagnosisPhaseLeave", null, 1024, 600, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_FORCE_ENTER("/pages/dialog/task/diagnosisPhaseForceEnter", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_FORCE_LEAVE("/pages/dialog/task/diagnosisPhaseForceLeave", null, 480, 272, false, false, true); // 16:9
+	
+	
 	
 	private final String path;
 	private final boolean useOptions;

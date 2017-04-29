@@ -4,11 +4,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-
-
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.diagnosisPhaseForced.headline']}" /></title>
+			value="#{msg['dialog.diagnosisPhaseForceLeave.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -18,7 +16,8 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseForced.headline']}" />
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseForceLeave.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -30,8 +29,7 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseForced.text']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.diagnosisPhaseForceLeave.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -40,16 +38,16 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['dialog.diagnosisPhaseForced.button.add']}"
+					<p:commandButton value="#{msg['dialog.diagnosisPhaseForceLeave.button.remove']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{stainingHandlerAction.forceDiagnosisPhase()}"></p:commandButton>
+						actionListener="#{diagnosisHandlerAction.forceLeaveDiagnosisPhaseAndHideDialog()}"></p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{stainingHandlerAction.hideDialog('DIAGNOSIS_PHASE_FORCED')}" />
+						actionListener="#{diagnosisHandlerAction.hideDialog('DIAGNOSIS_PHASE_FORCE_LEAVE')}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

@@ -7,7 +7,7 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.diagnosisPhaseUnlock.headline']}" /></title>
+			value="#{msg['dialog.diagnosisPhaseForceEnter.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -18,7 +18,7 @@
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
 				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseUnlock.headline']}" />
+					value="#{msg['dialog.diagnosisPhaseForceEnter.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -30,7 +30,7 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseUnlock.text']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.diagnosisPhaseForceEnter.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -42,13 +42,13 @@
 					<p:commandButton value="#{msg['general.ok']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{diagnosisHandlerAction.unlockDiagnosisPhase()}"></p:commandButton>
+						actionListener="#{diagnosisHandlerAction.forceEnterDiagnosisPhaseAndHideDialog()}"></p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{diagnosisHandlerAction.hideDialog('DIAGNOSIS_PHASE_UNLOCK')}" />
+						actionListener="#{diagnosisHandlerAction.hideDialog('DIAGNOSIS_PHASE_FORCE_ENTER')}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
