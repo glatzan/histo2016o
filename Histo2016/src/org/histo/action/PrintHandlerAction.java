@@ -20,7 +20,7 @@ import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PrintTemplate;
+import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.ContactChooser;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.PdfGenerator;

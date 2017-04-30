@@ -32,7 +32,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PrintTemplate;
+import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.StainingListTransformer;
 import org.histo.util.HistoUtil;
@@ -383,7 +383,7 @@ public class TaskHandlerAction implements Serializable {
 		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
 
 		if (subSelect.length == 0) {
-			logger.debug("No Template for UReport found");
+			logger.debug("No TemplateUtil for UReport found");
 			return;
 		}
 

@@ -24,7 +24,7 @@ import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PrintTemplate;
+import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -74,7 +74,7 @@ public class PdfGenerator {
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		logger.debug("Template File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		logger.debug("TemplateUtil File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
 
 		// loading tex file
 		File template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
@@ -275,7 +275,7 @@ public class PdfGenerator {
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		logger.debug("Template File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		logger.debug("TemplateUtil File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
 
 		// loading tex file
 		File template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));

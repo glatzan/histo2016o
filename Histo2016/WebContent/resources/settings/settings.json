@@ -8,17 +8,17 @@
       "systemMail":"augenklinik.histologie@uniklinik-freiburg.de",
       "systemName":"Histologisches Labor der Augenklinik Freiburg",
       "mailTemplates":{  
-         "TaskReport":{  
+         "MedicalFindingsReport":{  
             "subject":"Histologiebefung für %name%, geb. %birthday%, PIZ: %piz% abeschlossen.",
-            "content":"Hier steht ein Text"
+            "contentPath":"mailMedicalFindingsReport.txt"
          },
          "RequestUnlock":{  
             "subject":"Freischaltung von  %name% erbeten",
-            "content":"%name%, %username%, %clinicRole% erbittet eine Freischaltung"
+            "contentPath":"mail/mailRequestUnlock.txt"
          },
          "Unlock":{  
             "subject":"Freischaltung für PathoFRO erfolgt",
-            "content":"Eine Freischaltung für PathoFRP ist erfolgt."
+            "contentPath":"mail/mailUnlock.txt"
          }
       }
    },
@@ -49,7 +49,6 @@
    },
    
    "labelPrinterManager":{  
-      "testPage":"classpath:templates/print_label/testLable.zpl"
    },
    
    "workingDirectory" : "classpath:templates/print",

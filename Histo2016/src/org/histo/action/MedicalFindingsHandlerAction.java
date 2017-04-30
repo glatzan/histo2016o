@@ -8,17 +8,20 @@ import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
+import org.histo.config.enums.MailType;
 import org.histo.config.enums.NotificationOption;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PrintTemplate;
+import org.histo.model.transitory.json.mail.MailTemplate;
+import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.medicalFindings.EmailNotificationSettings;
 import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.MedicalFindingsChooser;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
+import org.histo.util.HistoUtil;
 import org.histo.util.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -135,6 +138,11 @@ public class MedicalFindingsHandlerAction {
 		setFaxNotificationSettings(new FaxNotificationSettings(task));
 		setPhoneNotificationSettings(new PhoneNotificationSettings(task));
 
+		MailTemplate taskReport = MailTemplate.factroy(MailType.MedicalFindingsReport);
+		
+		emailNotificationSettings.setEmailSubject(taskReport.getSubject());
+		emailNotificationSettings.setEmailText(taskReport.getContent());
+		
 		setShowPreview(false);
 		
 		mainHandlerAction.showDialog(Dialog.MEDICAL_FINDINGS);
@@ -287,7 +295,7 @@ public class MedicalFindingsHandlerAction {
 							|| notificationChooser.getContact().getPerson().getFax() == null
 							|| notificationChooser.getContact().getPerson().getFax().isEmpty()) {
 						// error no templat or number
-						logger.trace("Error, no Fax-Number or Template");
+						logger.trace("Error, no Fax-Number or TemplateUtil");
 						sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.notPossible"));
 					} else {
 						// creating pdf

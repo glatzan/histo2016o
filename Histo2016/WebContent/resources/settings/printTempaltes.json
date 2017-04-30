@@ -65,6 +65,14 @@
 	"defaultDocument" : true,
 	"doNotSave" : false
 },{
+	"id" : 150,
+	"name" : "Default Slide Lable",
+	"file" : "classpath:templates/print_label/testLable.zpl",
+	"file2" : "",
+	"documentType"	: "TEST_LABLE",
+	"defaultDocument" : true,
+	"doNotSave" : false
+},{
 	"id" : 1000,
 	"name" : "Send Report",
 	"file" : "classpath:templates/print/SendReport.tex",

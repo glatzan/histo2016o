@@ -6,7 +6,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.MailPresetName;
+import org.histo.config.enums.MailType;
 import org.histo.config.enums.Role;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
@@ -187,7 +187,7 @@ public class UserHandlerAction implements Serializable {
 
 		// sending mail to inform about unlocking request
 		mainHandlerAction.getSettings().getMail().sendTempalteMail(mainHandlerAction.getSettings().getAdminMails(),
-				MailPresetName.RequestUnlock, subject, content);
+				MailType.RequestUnlock, subject, content);
 
 		setUnlockRequestSend(true);
 	}

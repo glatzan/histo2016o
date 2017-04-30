@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 
 import org.histo.model.interfaces.GsonAble;
 import org.histo.util.HistoUtil;
+import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -45,7 +46,7 @@ public class ProgramVersion implements GsonAble {
 		}.getType();
 
 		Gson gson = new Gson();
-		ProgramVersion[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
+		ProgramVersion[] result = gson.fromJson(FileHandlerUtil.getContentOfFile(jsonFile), type);
 		return result;
 	}
 

@@ -5,11 +5,12 @@ import java.net.URI;
 
 import org.apache.log4j.Logger;
 import org.histo.model.transitory.json.ClinicJsonHandler;
-import org.histo.model.transitory.json.ClinicPrinterManager;
-import org.histo.model.transitory.json.LabelPrinterManager;
 import org.histo.model.transitory.json.LdapHandler;
-import org.histo.model.transitory.json.MailHandler;
+import org.histo.model.transitory.json.mail.MailHandler;
+import org.histo.model.transitory.json.printing.ClinicPrinterManager;
+import org.histo.model.transitory.json.printing.LabelPrinterManager;
 import org.histo.util.HistoUtil;
+import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -21,6 +22,7 @@ public class HistoSettings {
 
 	public static final String DEFAULT_SETTINGS_JSON = "classpath:settings/settings.json";
 	public static final String TEX_TEMPLATE_JSON = "classpath:settings/printTempaltes.json";
+	public static final String MAIL_TEMPLATE_JSON = "classpath:settings/mailTemplates.json";
 	public static final String LABEL_PRINTER_JSON = "classpath:settings/labelPrinter.json";
 	public static final String VERSION_JSON = "classpath:settings/version.json";
 
@@ -37,7 +39,7 @@ public class HistoSettings {
 
 		logger.debug("Creating Settings Object ");
 
-		HistoSettings result = gson.fromJson(HistoUtil.loadTextFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
+		HistoSettings result = gson.fromJson(FileHandlerUtil.getContentOfFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
 
 		// init printers
 		if (!result.isOfflineMode()) {

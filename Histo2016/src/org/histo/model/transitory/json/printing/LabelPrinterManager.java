@@ -1,4 +1,4 @@
-package org.histo.model.transitory.json;
+package org.histo.model.transitory.json.printing;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
+import org.histo.config.enums.DocumentType;
 import org.histo.model.patient.Slide;
 import org.histo.util.HistoUtil;
 
@@ -31,7 +32,7 @@ public class LabelPrinterManager {
 
 		logger.debug("Using printer " + getPrinterToUse().getName());
 
-		String toPrint = PrintTemplate.getContentOfFile(printTemplate.getFile());
+		String toPrint = printTemplate.getContentOfFile();
 
 		HashMap<String, String> args = new HashMap<String, String>();
 		args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 2, '0'));
@@ -46,7 +47,9 @@ public class LabelPrinterManager {
 
 	public final void printTestPage() {
 
-		String toPrint = PrintTemplate.getContentOfFile(testPage);
+		PrintTemplate test = PrintTemplate.getDefaultTemplate(PrintTemplate.getTemplatesByType(DocumentType.TEST_LABLE));
+		
+		String toPrint = test.getContentOfFile();
 
 		if (toPrint == null)
 			return;

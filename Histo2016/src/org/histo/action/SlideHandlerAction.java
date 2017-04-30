@@ -18,7 +18,7 @@ import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.PrintTemplate;
+import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.ListChooser;
 import org.histo.ui.StainingTableChooser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -292,7 +292,7 @@ public class SlideHandlerAction implements Serializable {
 					new DocumentType[] { DocumentType.LABLE });
 
 			if (arr.length == 0) {
-				logger.debug("No Template found, returning.");
+				logger.debug("No TemplateUtil found, returning.");
 				return;
 			}
 
@@ -326,7 +326,7 @@ public class SlideHandlerAction implements Serializable {
 				new DocumentType[] { DocumentType.LABLE });
 
 		if (arr.length == 0) {
-			logger.debug("No Template found, returning.");
+			logger.debug("No TemplateUtil found, returning.");
 			return;
 		}
 

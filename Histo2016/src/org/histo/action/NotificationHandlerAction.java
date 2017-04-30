@@ -10,7 +10,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.MailPresetName;
+import org.histo.config.enums.MailType;
 import org.histo.config.enums.Notification;
 import org.histo.config.enums.NotificationOption;
 import org.histo.dao.GenericDAO;
@@ -18,7 +18,7 @@ import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.MailTemplate;
+import org.histo.model.transitory.json.mail.MailTemplate;
 import org.histo.ui.medicalFindings.NotificationChooser;
 import org.histo.util.HistoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,18 +190,13 @@ public class NotificationHandlerAction implements Serializable {
 		setUseFax(!getNotificationFaxList().isEmpty() ? true : false);
 		setUsePhone(!getNotificationPhoneList().isEmpty() ? true : false);
 
-		HashMap<String, String> toReplace = new HashMap<String, String>();
-		toReplace.put("%name%",
-				task.getPatient().getPerson().getName() + ", " + task.getPatient().getPerson().getSurname());
-		toReplace.put("%birthday%",
-				mainHandlerAction.date(task.getPatient().getPerson().getBirthday(), DateFormat.GERMAN_DATE));
-		toReplace.put("%piz%", task.getPatient() == null ? "Keine Piz" : task.getPatient().getPiz());
+		
 
-		MailTemplate taskReport = mainHandlerAction.getSettings().getMail().getMailTemplate(MailPresetName.TaskReport);
+//		MailTemplate taskReport = mainHandlerAction.getSettings().getMail().getMailTemplate(MailType.TaskReport);
+//
+//		setEmailSubject(HistoUtil.replaceWildcardsInString(taskReport.getSubject(), toReplace));
 
-		setEmailSubject(HistoUtil.replaceWildcardsInString(taskReport.getSubject(), toReplace));
-
-		setEmailText(taskReport.getContent());
+//		setEmailText(taskReport.getContent());
 
 		setNotificationPerformed(false);
 

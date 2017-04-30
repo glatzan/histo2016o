@@ -5,6 +5,6 @@ package org.histo.config.enums;
  * @author glatza
  *
  */
-public enum MailPresetName {
-	TaskReport, RequestUnlock, Unlock;
+public enum MailType {
+	MedicalFindingsReport, RequestUnlock, Unlock;
 }

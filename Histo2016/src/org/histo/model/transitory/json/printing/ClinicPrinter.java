@@ -1,4 +1,4 @@
-package org.histo.model.transitory.json;
+package org.histo.model.transitory.json.printing;
 
 import java.io.Serializable;
 import java.net.URL;

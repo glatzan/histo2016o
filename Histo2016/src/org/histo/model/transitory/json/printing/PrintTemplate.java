@@ -1,26 +1,20 @@
-package org.histo.model.transitory.json;
+package org.histo.model.transitory.json.printing;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.interfaces.HasID;
 import org.histo.util.HistoUtil;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.core.io.Resource;
+import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
-public class PrintTemplate implements HasID {
-
-	private static Logger logger = Logger.getLogger("org.histo");
+public class PrintTemplate implements HasID, FileHandlerUtil {
 
 	@Expose
 	private long id;
@@ -66,7 +60,7 @@ public class PrintTemplate implements HasID {
 		}.getType();
 
 		Gson gson = new Gson();
-		PrintTemplate[] result = gson.fromJson(HistoUtil.loadTextFile(jsonFile), type);
+		PrintTemplate[] result = gson.fromJson(FileHandlerUtil.getContentOfFile(jsonFile), type);
 
 		if (types != null)
 			result = PrintTemplate.getTemplatesByTypes(result, types);
@@ -181,30 +175,17 @@ public class PrintTemplate implements HasID {
 	}
 	
 
-	/**
-	 * Reads the content of a template and returns the content as string.
-	 * 
-	 * @param file
-	 * @return
-	 */
-	public static final String getContentOfFile(String file) {
-
-		logger.debug("Getting content of file one of " + file);
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
-		Resource resource = appContext.getResource(file);
-		String toPrint = null;
-		try {
-			toPrint = IOUtils.toString(resource.getInputStream(), "UTF-8");
-			logger.debug("File found, size " + toPrint.length());
-		} catch (IOException e) {
-			logger.error(e);
-		} finally {
-			appContext.close();
-		}
-
-		return toPrint;
+	public String getContentOfFile(){
+		return FileHandlerUtil.getContentOfFile(getFile());
 	}
-
+	
+	public String getContentOfFile2(){
+		return FileHandlerUtil.getContentOfFile(getFile2());
+	}
+	
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 	public long getId() {
 		return id;
 	}
@@ -260,4 +241,7 @@ public class PrintTemplate implements HasID {
 	public void setDoNotSave(boolean doNotSave) {
 		this.doNotSave = doNotSave;
 	}
+	/********************************************************
+	 * Getter/Setter
+	 ********************************************************/
 }

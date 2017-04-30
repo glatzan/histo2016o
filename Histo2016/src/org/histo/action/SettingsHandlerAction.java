@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.MailPresetName;
+import org.histo.config.enums.MailType;
 import org.histo.config.enums.SettingsTab;
 import org.histo.config.enums.StaticList;
 import org.histo.dao.GenericDAO;
@@ -378,7 +378,7 @@ public class SettingsHandlerAction {
 	public void informUserAboutChangedRole(HistoUser histoUser) {
 		// sending mail to inform about unlocking request
 		mainHandlerAction.getSettings().getMail().sendTempalteMail(mainHandlerAction.getSettings().getAdminMails(),
-				MailPresetName.Unlock, null, null);
+				MailType.Unlock, null, null);
 	}
 
 	/**
