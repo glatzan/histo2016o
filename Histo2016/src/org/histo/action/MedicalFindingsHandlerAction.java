@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
@@ -22,7 +23,6 @@ import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.MedicalFindingsChooser;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
 import org.histo.util.HistoUtil;
-import org.histo.util.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -65,7 +65,7 @@ public class MedicalFindingsHandlerAction {
 	 * class for creating pdfs
 	 */
 	@Autowired
-	private PdfGenerator pdfGenerator;
+	private PDFGeneratorHandler pDFGeneratorHandler;
 	/********************************************************
 	 * General
 	 ********************************************************/
@@ -111,7 +111,7 @@ public class MedicalFindingsHandlerAction {
 	 * True if preview should be displayed
 	 */
 	private boolean showPreview;
-	
+
 	/**
 	 * True if the notification is running at the moment
 	 */
@@ -133,18 +133,18 @@ public class MedicalFindingsHandlerAction {
 		patientDao.initializeDataList(task);
 
 		setActiveTabIndex(0);
-
+		
 		setEmailNotificationSettings(new EmailNotificationSettings(task));
 		setFaxNotificationSettings(new FaxNotificationSettings(task));
 		setPhoneNotificationSettings(new PhoneNotificationSettings(task));
 
 		MailTemplate taskReport = MailTemplate.factroy(MailType.MedicalFindingsReport);
-		
+
 		emailNotificationSettings.setEmailSubject(taskReport.getSubject());
 		emailNotificationSettings.setEmailText(taskReport.getContent());
-		
+
 		setShowPreview(false);
-		
+
 		mainHandlerAction.showDialog(Dialog.MEDICAL_FINDINGS);
 	}
 
@@ -163,9 +163,19 @@ public class MedicalFindingsHandlerAction {
 		if (getActiveTabIndex() > 0)
 			setActiveTabIndex(getActiveTabIndex() - 1);
 	}
+	
+	
+	public void reSendMedicialFindings(){
+		logger.trace("Resend medical findings");
+		notificationPerformed.set(false);
+		setActiveTabIndex(0);
+	}
 
 	public void finalizeTask() {
-
+		logger.trace("Finalize Task");
+		
+		getTemporaryTask().setFinalized(true);
+		hideMedicalFindingsDialog();
 	}
 
 	@Async("taskExecutor")
@@ -211,25 +221,23 @@ public class MedicalFindingsHandlerAction {
 					} else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
 							&& notificationChooser.getPrintTemplate() != null) {
 						// attach pdf to mail
-						PDFContainer pdfToSend = pdfGenerator.generatePDFForReport(getTemporaryTask().getPatient(),
+						PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(getTemporaryTask().getPatient(),
 								getTemporaryTask(), notificationChooser.getPrintTemplate(),
 								notificationChooser.getContact().getPerson());
 
-						// if
-						// (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-						// notificationChooser.getContact().getPerson().getEmail(),
-						// emailNotificationSettings.getEmailSubject(),
-						// emailNotificationSettings.getEmailText(),
-						// pdfToSend)) {
-						emailSuccessful = true;
-						// adding mail to the result array
-						resultPdfs.add(pdfToSend);
-						logger.trace("PDF successfully send");
-						sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.success.pdf"));
-						// } else {
-						// sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.error.pdf"));
-						// // TODO: HAndle fault
-						// }
+						if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+								notificationChooser.getContact().getPerson().getEmail(),
+								emailNotificationSettings.getEmailSubject(), emailNotificationSettings.getEmailText(),
+								pdfToSend)) {
+							emailSuccessful = true;
+							// adding mail to the result array
+							resultPdfs.add(pdfToSend);
+							logger.trace("PDF successfully send");
+							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.success.pdf"));
+						} else {
+							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.error.pdf"));
+							// TODO: HAndle fault
+						}
 
 					} else {
 						// plain text mail
@@ -299,7 +307,7 @@ public class MedicalFindingsHandlerAction {
 						sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.notPossible"));
 					} else {
 						// creating pdf
-						PDFContainer pdfToSend = pdfGenerator.generatePDFForReport(getTemporaryTask().getPatient(),
+						PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(getTemporaryTask().getPatient(),
 								getTemporaryTask(), notificationChooser.getPrintTemplate(),
 								notificationChooser.getContact().getPerson());
 						resultPdfs.add(pdfToSend);
@@ -374,12 +382,12 @@ public class MedicalFindingsHandlerAction {
 			addtionalFields.put("reportDate", mainHandlerAction.date(System.currentTimeMillis()));
 			addtionalFields.put("reportData", sendLog.toString());
 
-			PDFContainer sendReportPDF = pdfGenerator.generateSimplePDF(getTemporaryTask().getPatient(), sendReport,
+			PDFContainer sendReportPDF = pDFGeneratorHandler.generateSimplePDF(getTemporaryTask().getPatient(), sendReport,
 					addtionalFields);
 
 			resultPdfs.add(0, sendReportPDF);
 
-			PDFContainer resultPdf = PdfGenerator.mergePdfs(resultPdfs, sendReportPDF.getName(),
+			PDFContainer resultPdf = PDFGeneratorHandler.mergePdfs(resultPdfs, sendReportPDF.getName(),
 					DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
 
 			printHandlerAction.saveGeneratedPdf(getTemporaryTask(), resultPdf);

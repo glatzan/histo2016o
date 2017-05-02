@@ -9,7 +9,7 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.medicalFindings.tab.notify.tabHeadline']}"
+			header="#{msg['dialog.medicalFindings.tab.finalizeTask.headline']}"
 			styleClass="contentPannel" />
 
 		<!-- right column -->
@@ -23,34 +23,22 @@
 	</div>
 
 	<div class="bottomDiv">
-		<h:panelGrid columns="2" style="width:100%"
+		<h:panelGrid columns="1" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="1">
-				<h:panelGrid columns="2" styleClass="buttonLeftMarginInList">
-					<!-- archived -->
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						value="#{diagnosisHandlerAction.stayInDiagnosisPhase}" />
-					<h:outputLabel
-						value="#{msg['dialog.diagnosisPhaseLeave.button.stay']}"
-						style="margin-left:5px;" />
-				</h:panelGrid>
-			</h:panelGrid>
 			
 			<h:panelGrid columns="2" style="float:right;">
 				<!-- submit -->
-				<p:commandButton value="Benchrichtigung erneut durchführen"
+				<p:commandButton value="#{msg['dialog.medicalFindings.tab.finalizeTask.resend']}"
 					icon="fa fa-fw fa-check-circle-o"
 					styleClass="smallButton buttonRighMarginInList"
-					onstart="PF('blockUIWidget').block()"
-					oncomplete="PF('blockUIWidget').unblock()"
-					actionListener="#{medicalFindingsHandlerAction.performeNotification()}"
+					actionListener="#{medicalFindingsHandlerAction.reSendMedicialFindings()}"
 					update="@form" />
 
 				<!-- close -->
-				<p:commandButton value="Auftrag archivieren"
+				<p:commandButton value="#{msg['dialog.medicalFindings.tab.finalizeTask.archive']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+					actionListener="#{medicalFindingsHandlerAction.finalizeTask()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

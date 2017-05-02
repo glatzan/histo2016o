@@ -11,28 +11,28 @@
 		<p:panel style="width:100%;"
 			header="#{msg['dialog.medicalFindings.tab.notify.tabHeadline']}"
 			styleClass="contentPannel" />
-
-		<!-- right column -->
-		<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-			<h:panelGroup>
-				<p:media player="pdf" value="#{printHandlerAction.pdfContent}"
-					width="100%" rendered="#{printHandlerAction.renderPdf}"
-					height="460px"></p:media>
-			</h:panelGroup>
+		<h:panelGrid styleClass="defaultListingTableCssOneCol">
+			<h:outputLabel>#{msg['dialog.medicalFindings.tab.performed.text']}</h:outputLabel>
 		</h:panelGrid>
 	</div>
 
 	<div class="bottomDiv">
-		<h:panelGrid columns="1" style="width:100%"
+		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="1" style="float:right;">
-				<!-- close -->
-				<p:commandButton value="#{msg['general.exit']}"
+			<h:panelGrid columns="3" style="float:right;">
+				<!-- submit -->
+				<p:commandButton
+					value="#{msg['dialog.medicalFindings.tab.performed.resend']}"
+					icon="fa fa-fw fa-check-circle-o"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle" update="@form"
-					onstart="PF('blockUIWidget').block()"
-					oncomplete="PF('blockUIWidget').unblock()"
-					actionListener="#{medicalFindingsHandlerAction.hidePreviewForContact()}" />
+					actionListener="#{medicalFindingsHandlerAction.reSendMedicialFindings()}"
+					update="@form" />
+
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

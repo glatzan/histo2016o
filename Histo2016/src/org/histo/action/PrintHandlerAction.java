@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -23,7 +24,6 @@ import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.ContactChooser;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.PdfGenerator;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -64,7 +64,7 @@ public class PrintHandlerAction {
 	 * class for creating pdfs
 	 */
 	@Autowired
-	private PdfGenerator pdfGenerator;
+	private PDFGeneratorHandler pDFGeneratorHandler;
 
 	/**
 	 * The selected task for that a report should be generated
@@ -298,7 +298,7 @@ public class PrintHandlerAction {
 	 */
 	public void onChangePrintTemplate() {
 		// always render the pdf with the fist contact chosen
-		setTmpPdfContainer(pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
+		setTmpPdfContainer(pDFGeneratorHandler.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
 				getSelectedTemplate(), getContactRendered() == null ? null : getContactRendered().getPerson()));
 
 		if (getTmpPdfContainer() == null) {
@@ -382,7 +382,7 @@ public class PrintHandlerAction {
 					}
 				} else {
 					// render all other pdfs
-					PDFContainer otherAddress = pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(),
+					PDFContainer otherAddress = pDFGeneratorHandler.generatePDFForReport(getTaskToPrint().getPatient(),
 							getTaskToPrint(), getSelectedTemplate(), contactChooser.getContact().getPerson());
 					for (int i = 0; i < contactChooser.getCopies(); i++) {
 						mainHandlerAction.getSettings().getPrinterManager().print(otherAddress);
@@ -401,7 +401,7 @@ public class PrintHandlerAction {
 	 * @param template
 	 */
 	public void printPdfFromExternalBean(PrintTemplate template) {
-		PDFContainer newPdf = pdfGenerator.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
+		PDFContainer newPdf = pDFGeneratorHandler.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
 				template);
 		printPdfFromExternalBean(newPdf);
 	}

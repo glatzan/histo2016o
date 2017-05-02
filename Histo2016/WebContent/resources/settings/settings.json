@@ -53,5 +53,5 @@
    
    "workingDirectory" : "classpath:templates/print",
    
-   "offlineMode": true
+   "offlineMode": false
 }

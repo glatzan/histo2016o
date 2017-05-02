@@ -1,4 +1,4 @@
-package org.histo.util;
+package org.histo.action.handler;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
@@ -49,7 +49,7 @@ import de.nixosoft.jlr.JLRGenerator;
 
 @Component
 @Scope(value = "session")
-public class PdfGenerator {
+public class PDFGeneratorHandler {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -65,10 +65,15 @@ public class PdfGenerator {
 		return generatePDFForReport(patient, task, printTemplate, null);
 	}
 
+	public PDFContainer generateSendReport(PrintTemplate printTemplate, Patient patient) {
+		PDFGenerator generator = new PDFGenerator(printTemplate);
+		
+		return generator.generatePDF();
+	}
+
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate,
 			Person toSendAddress) {
 
-		mainHandlerAction.getSettings();
 		File workingDirectory = new File(
 				HistoSettings.getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
 
@@ -250,6 +255,7 @@ public class PdfGenerator {
 
 	/**
 	 * Fills a simple PDF with the values given in the hashmap.
+	 * 
 	 * @param printTemplate
 	 * @param replacements
 	 * @return
@@ -284,9 +290,9 @@ public class PdfGenerator {
 
 		JLRConverter converter = new JLRConverter(workingDirectory);
 
-		if(patient != null)
+		if (patient != null)
 			replacePatientData(converter, patient);
-			
+
 		for (Map.Entry<String, String> entry : replacements.entrySet()) {
 			String key = entry.getKey();
 			String value = entry.getValue();
@@ -512,7 +518,6 @@ public class PdfGenerator {
 		// TODO: rework
 	}
 
-
 	private static byte[] readContentIntoByteArray(File file) {
 		FileInputStream fileInputStream = null;
 		byte[] bFile = new byte[(int) file.length()];
@@ -526,6 +531,7 @@ public class PdfGenerator {
 		}
 		return bFile;
 	}
+
 	/**
 	 * Loads a PdfReader from a file
 	 * 
@@ -670,5 +676,112 @@ public class PdfGenerator {
 		}
 
 		return new PDFContainer(type, name, out.getBytes());
+	}
+
+	class PDFGenerator {
+
+		private File workingDirectory;
+		private File output;
+		private File template;
+		private File processedTex;
+		private JLRConverter converter;
+		private PrintTemplate printTemplate;
+
+		public PDFGenerator(PrintTemplate printTemplate) {
+			openNewPDf(printTemplate);
+		}
+
+		public JLRConverter openNewPDf(PrintTemplate printTemplate) {
+			this.printTemplate = printTemplate;
+			workingDirectory = new File(
+					HistoSettings.getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
+
+			output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
+
+			logger.debug("TemplateUtil File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+
+			template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
+
+			processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
+
+			converter = new JLRConverter(workingDirectory);
+
+			return converter;
+		}
+
+		public PDFContainer generatePDF() {
+			try {
+
+				if (!converter.parse(template, processedTex)) {
+					logger.error(converter.getErrorMessage());
+				}
+
+				JLRGenerator pdfGen = new JLRGenerator();
+
+				if (!pdfGen.generate(processedTex, output, workingDirectory)) {
+					logger.error(pdfGen.getErrorMessage());
+					return null;
+				}
+
+				File test = pdfGen.getPDF();
+				byte[] data = readContentIntoByteArray(test);
+
+				return new PDFContainer(printTemplate.getDocumentTyp(),
+						"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		public File getWorkingDirectory() {
+			return workingDirectory;
+		}
+
+		public File getOutput() {
+			return output;
+		}
+
+		public File getTemplate() {
+			return template;
+		}
+
+		public File getProcessedTex() {
+			return processedTex;
+		}
+
+		public JLRConverter getConverter() {
+			return converter;
+		}
+
+		public PrintTemplate getPrintTemplate() {
+			return printTemplate;
+		}
+
+		public void setWorkingDirectory(File workingDirectory) {
+			this.workingDirectory = workingDirectory;
+		}
+
+		public void setOutput(File output) {
+			this.output = output;
+		}
+
+		public void setTemplate(File template) {
+			this.template = template;
+		}
+
+		public void setProcessedTex(File processedTex) {
+			this.processedTex = processedTex;
+		}
+
+		public void setConverter(JLRConverter converter) {
+			this.converter = converter;
+		}
+
+		public void setPrintTemplate(PrintTemplate printTemplate) {
+			this.printTemplate = printTemplate;
+		}
+
 	}
 }

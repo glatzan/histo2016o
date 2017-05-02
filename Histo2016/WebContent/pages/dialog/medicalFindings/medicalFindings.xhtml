@@ -38,10 +38,15 @@
 				<p:tab title="#{msg['dialog.medicalFindings.tab.mail']}"
 					disabled="#{medicalFindingsHandlerAction.notificationPerformed}">
 					<ui:fragment
-						rendered="#{!medicalFindingsHandlerAction.showPreview}">
+						rendered="#{medicalFindingsHandlerAction.notificationPerformed}">
+						<ui:include src="performed.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{!medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
 						<ui:include src="mail.xhtml" />
 					</ui:fragment>
-					<ui:fragment rendered="#{medicalFindingsHandlerAction.showPreview}">
+					<ui:fragment
+						rendered="#{medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
 						<ui:include src="preview.xhtml" />
 					</ui:fragment>
 				</p:tab>
@@ -50,7 +55,18 @@
 				<!-- ************************************************************** Fax ************************************************************** -->
 				<p:tab title="#{msg['dialog.medicalFindings.tab.fax']}"
 					disabled="#{medicalFindingsHandlerAction.notificationPerformed}">
-					<ui:include src="fax.xhtml" />
+					<ui:fragment
+						rendered="#{medicalFindingsHandlerAction.notificationPerformed}">
+						<ui:include src="performed.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{!medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
+						<ui:include src="fax.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
+						<ui:include src="preview.xhtml" />
+					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Fax ************************************************************** -->
 

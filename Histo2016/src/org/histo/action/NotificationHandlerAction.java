@@ -530,7 +530,7 @@ public class NotificationHandlerAction implements Serializable {
 //			addtionalFields.put("B_NOTIFY", result.toString());
 //
 //			// generating report
-//			PDFContainer manelReportPdf = (new PdfGenerator(mainHandlerAction, resourceBundle))
+//			PDFContainer manelReportPdf = (new PDFGeneratorHandler(mainHandlerAction, resourceBundle))
 //					.generatePdf(getTmpTask(), manuelReport, System.currentTimeMillis(), null, null, addtionalFields);
 //
 //			// adding as first page to the printout
@@ -541,7 +541,7 @@ public class NotificationHandlerAction implements Serializable {
 //			String pdfName = (manuelReport.isNameAsResources() ? resourceBundle.get(manuelReport.getName())
 //					: manuelReport.getName());
 //
-//			PDFContainer resultPdf = PdfGenerator.mergePdfs(resultPdfs,
+//			PDFContainer resultPdf = PDFGeneratorHandler.mergePdfs(resultPdfs,
 //					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
 //					"MANUAL_REPOT");
 //			getTmpTask().addReport(resultPdf);
@@ -558,7 +558,7 @@ public class NotificationHandlerAction implements Serializable {
 //					getTmpTask().getPatient());
 //
 //			// generated report without email pdfs is returned to download
-//			PDFContainer resultPdfToDownload = PdfGenerator.mergePdfs(resultPdfs,
+//			PDFContainer resultPdfToDownload = PDFGeneratorHandler.mergePdfs(resultPdfs,
 //					pdfName + "_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf",
 //					"MANUAL_REPOT");
 //
