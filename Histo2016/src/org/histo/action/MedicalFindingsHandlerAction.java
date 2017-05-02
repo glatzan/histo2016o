@@ -133,7 +133,7 @@ public class MedicalFindingsHandlerAction {
 		patientDao.initializeDataList(task);
 
 		setActiveTabIndex(0);
-		
+
 		setEmailNotificationSettings(new EmailNotificationSettings(task));
 		setFaxNotificationSettings(new FaxNotificationSettings(task));
 		setPhoneNotificationSettings(new PhoneNotificationSettings(task));
@@ -163,9 +163,8 @@ public class MedicalFindingsHandlerAction {
 		if (getActiveTabIndex() > 0)
 			setActiveTabIndex(getActiveTabIndex() - 1);
 	}
-	
-	
-	public void reSendMedicialFindings(){
+
+	public void reSendMedicialFindings() {
 		logger.trace("Resend medical findings");
 		notificationPerformed.set(false);
 		setActiveTabIndex(0);
@@ -173,7 +172,7 @@ public class MedicalFindingsHandlerAction {
 
 	public void finalizeTask() {
 		logger.trace("Finalize Task");
-		
+
 		getTemporaryTask().setFinalized(true);
 		hideMedicalFindingsDialog();
 	}
@@ -221,38 +220,55 @@ public class MedicalFindingsHandlerAction {
 					} else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
 							&& notificationChooser.getPrintTemplate() != null) {
 						// attach pdf to mail
-						PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(getTemporaryTask().getPatient(),
-								getTemporaryTask(), notificationChooser.getPrintTemplate(),
-								notificationChooser.getContact().getPerson());
+						PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
+								getTemporaryTask().getPatient(), getTemporaryTask(),
+								notificationChooser.getPrintTemplate(), notificationChooser.getContact().getPerson());
 
-						if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-								notificationChooser.getContact().getPerson().getEmail(),
-								emailNotificationSettings.getEmailSubject(), emailNotificationSettings.getEmailText(),
-								pdfToSend)) {
+						if (!mainHandlerAction.getSettings().isOfflineMode()) {
+							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+									notificationChooser.getContact().getPerson().getEmail(),
+									emailNotificationSettings.getEmailSubject(),
+									emailNotificationSettings.getEmailText(), pdfToSend)) {
+								emailSuccessful = true;
+								// adding mail to the result array
+								resultPdfs.add(pdfToSend);
+								logger.trace("PDF successfully send");
+								sendLog.append(
+										resourceBundle.get("pdf.notification.emailNotification.email.success.pdf"));
+							} else {
+								sendLog.append(
+										resourceBundle.get("pdf.notification.emailNotification.email.error.pdf"));
+								// TODO: HAndle fault
+							}
+						} else {
+							// TODO REmove, only for testing
 							emailSuccessful = true;
 							// adding mail to the result array
 							resultPdfs.add(pdfToSend);
 							logger.trace("PDF successfully send");
-							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.success.pdf"));
-						} else {
-							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.error.pdf"));
-							// TODO: HAndle fault
 						}
 
 					} else {
-						// plain text mail
-						if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-								notificationChooser.getContact().getPerson().getEmail(),
-								emailNotificationSettings.getEmailSubject(),
-								emailNotificationSettings.getEmailText())) {
+						if (!mainHandlerAction.getSettings().isOfflineMode()) {
+							// plain text mail
+							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+									notificationChooser.getContact().getPerson().getEmail(),
+									emailNotificationSettings.getEmailSubject(),
+									emailNotificationSettings.getEmailText())) {
+								emailSuccessful = true;
+								logger.trace("Text successfully send");
+								sendLog.append(
+										resourceBundle.get("pdf.notification.emailNotification.email.success.text"));
+							} else {
+								// TODO: Handle fault
+								sendLog.append(
+										resourceBundle.get("pdf.notification.emailNotification.email.error.text"));
+							}
+						} else {
+							// TODO REmove, only for testing
 							emailSuccessful = true;
 							logger.trace("Text successfully send");
-							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.success.text"));
-						} else {
-							// TODO: Handle fault
-							sendLog.append(resourceBundle.get("pdf.notification.emailNotification.email.error.text"));
 						}
-
 					}
 
 					// check if mail was send
@@ -307,9 +323,9 @@ public class MedicalFindingsHandlerAction {
 						sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.notPossible"));
 					} else {
 						// creating pdf
-						PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(getTemporaryTask().getPatient(),
-								getTemporaryTask(), notificationChooser.getPrintTemplate(),
-								notificationChooser.getContact().getPerson());
+						PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
+								getTemporaryTask().getPatient(), getTemporaryTask(),
+								notificationChooser.getPrintTemplate(), notificationChooser.getContact().getPerson());
 						resultPdfs.add(pdfToSend);
 
 						// TODO: SEND FAX
@@ -382,8 +398,13 @@ public class MedicalFindingsHandlerAction {
 			addtionalFields.put("reportDate", mainHandlerAction.date(System.currentTimeMillis()));
 			addtionalFields.put("reportData", sendLog.toString());
 
-			PDFContainer sendReportPDF = pDFGeneratorHandler.generateSimplePDF(getTemporaryTask().getPatient(), sendReport,
-					addtionalFields);
+			// PDFContainer sendReportPDF =
+			// pDFGeneratorHandler.generateSimplePDF(getTemporaryTask().getPatient(),
+			// sendReport, addtionalFields);
+
+			PDFContainer sendReportPDF = pDFGeneratorHandler.generateSendReport(sendReport,
+					getTemporaryTask().getPatient(), getEmailNotificationSettings(), getFaxNotificationSettings(),
+					getPhoneNotificationSettings());
 
 			resultPdfs.add(0, sendReportPDF);
 

@@ -25,6 +25,9 @@ import org.histo.model.Signature;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.printing.PrintTemplate;
+import org.histo.ui.medicalFindings.EmailNotificationSettings;
+import org.histo.ui.medicalFindings.FaxNotificationSettings;
+import org.histo.ui.medicalFindings.PhoneNotificationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -65,8 +68,14 @@ public class PDFGeneratorHandler {
 		return generatePDFForReport(patient, task, printTemplate, null);
 	}
 
-	public PDFContainer generateSendReport(PrintTemplate printTemplate, Patient patient) {
+	public PDFContainer generateSendReport(PrintTemplate printTemplate, Patient patient, EmailNotificationSettings emails, FaxNotificationSettings fax, PhoneNotificationSettings phone) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
+		
+		generator.getConverter().replace("patient", patient);
+		
+		generator.getConverter().replace("emailInfos", emails);
+		generator.getConverter().replace("faxInfos", fax);
+		generator.getConverter().replace("phoneInfos", phone);
 		
 		return generator.generatePDF();
 	}
@@ -718,7 +727,9 @@ public class PDFGeneratorHandler {
 
 				JLRGenerator pdfGen = new JLRGenerator();
 
+				
 				if (!pdfGen.generate(processedTex, output, workingDirectory)) {
+					logger.debug("Error ind File " + processedTex.getAbsolutePath());
 					logger.error(pdfGen.getErrorMessage());
 					return null;
 				}

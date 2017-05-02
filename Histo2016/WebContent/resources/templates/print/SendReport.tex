@@ -52,18 +52,19 @@
 \setlength{\TPHorizModule}{1mm}
 \setlength{\TPVertModule}{1mm}
 
+#set($checkIfEmpty = "")
 
 % pat block
 {
 \scriptsize
 \begin{textblock}{100}(19, 8) 
-\noindent ::patName  ::patSurName\\
-::patAddress\\
-::patPlz ::patCity\\
+\noindent $patient.person.fullName\\
+$patient.person.street\\
+$patient.person.postcode $patient.person.town\\
 \X=.35mm        
 \barheight=1cm 
-\code{::piz}\\
-::piz\\
+\code{#if($patient.piz == $checkIfEmpty) 0 #else $patient.piz #end}\\
+$patient.piz\\
 \end{textblock}
 }
 
@@ -73,23 +74,39 @@
 {\huge Sendebericht, vom ::reportDate} \\\\
 {\normalsize Email-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
-	#foreach( $email in $emailInfos )
-		Dr. Glatz Andreas (andreas.glatz@uniklinik-freiburg.de) & ::eDate \\
-	#end 
+	#if($emailInfos.useEmail)
+		#foreach( $email in $emailInfos.notificationEmailList)
+			$email.contact.person.fullName ($email.contact.person.email) & #if ($email.performed) \textcolor{green}{OK ($email.notificationAttachment)} #elseif($email.error) \textcolor{red}{Fehler} #else - #end \\
+		#end
+	#else
+		Keine Email-Benachrichtigung
+	#end  
 	\end{tabular}
 }
 \\\\
 \noindent
 {\normalsize Fax-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
-	Dr. Glatz Andreas (andreas.glatz@uniklinik-freiburg.de) & ::eDate \\
+	#if($faxInfos.useFax)
+		#foreach( $fax in $faxInfos.notificationFaxList)
+			$fax.contact.person.fullName ($fax.contact.person.fax) & #if ($fax.performed) \textcolor{green}{OK ($fax.notificationAttachment)} #elseif($fax.error) \textcolor{red}{Fehler} #else - #end \\
+		#end
+	#else
+		Keine Fax-Benachrichtigung
+	#end  
 	\end{tabular}
 }
 \\\\
 \noindent
 {\normalsize Telefon-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
-	Dr. Glatz Andreas (andreas.glatz@uniklinik-freiburg.de) & ::eDate \\
+	#if($phoneInfos.usePhone)
+		#foreach( $phone in $phoneInfos.notificationFaxList)
+			$phone.contact.person.fullName ($phone.contact.person.phoneNumber) & - \\
+		#end
+	#else
+		Keine Telefon-Benachrichtigung
+	#end  
 	\end{tabular}
 }
 
