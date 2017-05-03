@@ -180,12 +180,19 @@
 						rendered="#{taskIsNotNull and taskStatus.diagnosisStayInPhase}"
 						onclick="$('#headerForm\\:diagnosisPhaseForceLeave').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
-					<!-- Enter phase to unfinalize all diagnoses or to enter phase from staining phase manually -->
+					<!-- to enter phase from staining phase manually -->
 					<p:menuitem
 						value="#{msg['header.menu.task.sample.diagnosisPhase.force.enter']}"
 						icon="fa fa-fw fa-image"
 						onclick="$('#headerForm\\:diagnosisPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{taskIsNotNull and !taskStatus.diagnosisPhase}" />
+						rendered="#{taskIsNotNull and taskStatus.stainingPhase}" />
+						
+					<!-- Enter phase to unfinalize all diagnoses -->
+					<p:menuitem
+						value="#{msg['header.menu.task.sample.diagnosisPhase.force.enter2']}"
+						icon="fa fa-fw fa-image"
+						onclick="$('#headerForm\\:diagnosisPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{taskIsNotNull and (taskStatus.notificationPhase or taskStatus.finalized)}" />
 					<!-- ************ Diagnosis ************ -->
 
 					<!-- ************ Notification ************ -->
@@ -304,7 +311,7 @@
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
-			
+
 			<!-- Staining List, force add to list -->
 			<p:commandButton id="stainingPhaseForceEnter" style="display:none"
 				actionListener="#{slideHandlerAction.showStaingPhaseForceDialog(worklistHandlerAction.selectedPatient.selectedTask, true)}">

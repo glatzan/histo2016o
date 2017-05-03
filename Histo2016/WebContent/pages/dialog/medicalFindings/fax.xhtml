@@ -75,7 +75,7 @@
 						<p:ajax event="change" update="@form" />
 					</p:selectOneMenu>
 				</p:column>
-				
+
 				<!-- change pdf for user -->
 				<p:column style="width:4%">
 					<p:commandLink
@@ -95,6 +95,18 @@
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+			<h:panelGrid columns="1">
+				<!-- Contact -->
+				<p:commandButton
+					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
+					icon="fa fa-fw fa-cog"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}"
+					update="@form" />
+			</h:panelGrid>
+
+
 			<h:panelGrid columns="3" style="float:right;">
 				<!-- save -->
 				<p:commandButton value="#{msg['general.back']}"

@@ -191,4 +191,7 @@ public class TaskStatusHandler {
 	 * Notification
 	 ********************************************************/
 
+	public boolean isFinalized(){
+		return task.isFinalized();
+	}
 }

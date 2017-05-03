@@ -8,9 +8,12 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.medicalFindings.tab.mail.tabHeadline']}"
-			styleClass="contentPannel" />
+		<p:panel style="width:100%;" styleClass="contentPannel">
+			<f:facet name="header">
+				<h:outputLabel
+					value="#{msg['dialog.medicalFindings.tab.mail.tabHeadline']}"></h:outputLabel>
+			</f:facet>
+		</p:panel>
 
 
 
@@ -76,13 +79,14 @@
 					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.type']}"
 					style="width:27%">
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail or !medicalFindingsHandlerAction.emailNotificationSettings.attachPdfToEmail}"
+						disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}"
 						value="#{emailNotification.notificationAttachment}">
 						<f:selectItems
 							value="#{medicalFindingsHandlerAction.emailNotificationSettings.getNotificationEmailOptions()}"
 							var="option"
 							itemLabel="#{msg['enum.notification.'.concat(option)]}" />
-						<p:ajax event="change" update="@form" />
+						<p:ajax event="change" update="@form"
+							listener="#{medicalFindingsHandlerAction.emailNotificationSettings.onAttachTypChanged()}" />
 					</p:selectOneMenu>
 				</p:column>
 
@@ -102,14 +106,27 @@
 					</p:selectOneMenu>
 				</p:column>
 
+				<!-- notified -->
+				<p:column style="width:4%">
+					<f:facet name="header">
+						<i class="fa fa-check fa-volume-up" style="margin-left: -5px;"
+							title="#{msg['dialog.medicalFindings.tab.mail.receiver.template.performed']}" />
+					</f:facet>
+					<!-- notification successful -->
+					<ui:fragment
+						rendered="#{emailNotification.contact.notificationPerformed}">
+						<i class="fa fa-check icon-green"
+							title="#{msg['dialog.medicalFindings.tab.mail.receiver.template.performed']}" />
+					</ui:fragment>
+				</p:column>
+
 				<!-- options -->
 				<p:column style="width:4%">
 					<p:commandLink
 						rendered="#{emailNotification.notificationAttachment eq 'PDF' and medicalFindingsHandlerAction.emailNotificationSettings.attachPdfToEmail}"
 						disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}"
 						title="#{msg['dialog.medicalFindings.tab.mail.receiver.template.show.hint']}"
-						style="float: right"
-						update="@form"
+						style="float: right" update="@form"
 						actionListener="#{medicalFindingsHandlerAction.showPreviewForContact(emailNotification)}">
 						<i class="fa fa-fw fa-search" />
 					</p:commandLink>
@@ -122,6 +139,17 @@
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			
+			<h:panelGrid columns="1">
+				<!-- Contact -->
+				<p:commandButton
+					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
+					icon="fa fa-fw fa-cog"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}"
+					update="@form" />
+			</h:panelGrid>
+			
 			<h:panelGrid columns="2" style="float:right;">
 
 				<!-- next -->

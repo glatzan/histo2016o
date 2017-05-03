@@ -40,12 +40,12 @@ public class EmailNotificationSettings {
 	 * List of all templates to select from
 	 */
 	private PrintTemplate[] printTemplates;
-	
+
 	/**
 	 * The TemplateListtransformer for selecting a template
 	 */
 	private DefaultTransformer<PrintTemplate> templateTransformer;
-	
+
 	public EmailNotificationSettings(Task task) {
 		setNotificationEmailList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.EMAIL));
 		setUseEmail(!getNotificationEmailList().isEmpty() ? true : false);
@@ -66,12 +66,19 @@ public class EmailNotificationSettings {
 		for (MedicalFindingsChooser notificationChooser : getNotificationEmailList()) {
 			if (isAttachPdfToEmail()) {
 				if (notificationChooser.getNotificationAttachment() != NotificationOption.NONE) {
+					// if notification was performed
+					if(notificationChooser.getContact().isNotificationPerformed()){
+						notificationChooser.setNotificationAttachment(NotificationOption.NONE);
+						continue;
+					}
+					
 					notificationChooser.setNotificationAttachment(NotificationOption.PDF);
 
 					// external physician get an other template then clinic
 					// employees, sets the default template
 					if (notificationChooser.getContact().getRole() == ContactRole.FAMILY_PHYSICIAN
 							|| notificationChooser.getContact().getRole() == ContactRole.PRIVATE_PHYSICIAN)
+
 						notificationChooser.setPrintTemplate(PrintTemplate.getDefaultTemplate(PrintTemplate
 								.getTemplatesByType(getPrintTemplates(), DocumentType.DIAGNOSIS_REPORT_EXTERN)));
 					else
@@ -80,6 +87,13 @@ public class EmailNotificationSettings {
 				}
 			} else {
 				if (notificationChooser.getNotificationAttachment() != NotificationOption.NONE) {
+					
+					// if notification was performed
+					if(notificationChooser.getContact().isNotificationPerformed()){
+						notificationChooser.setNotificationAttachment(NotificationOption.NONE);
+						continue;
+					}
+					
 					notificationChooser.setNotificationAttachment(NotificationOption.TEXT);
 					notificationChooser.setPrintTemplate(null);
 				}
@@ -87,6 +101,14 @@ public class EmailNotificationSettings {
 		}
 	}
 
+	public void onAttachTypChanged() {
+		for (MedicalFindingsChooser medicalFindingsChooser : notificationEmailList) {
+			if (medicalFindingsChooser.getNotificationAttachment() == NotificationOption.PDF) {
+				setAttachPdfToEmail(true);
+				return;
+			}
+		}
+	}
 
 	/**
 	 * Returns an array containing all values of the {@link NotificationOption}
@@ -97,7 +119,7 @@ public class EmailNotificationSettings {
 	public NotificationOption[] getNotificationEmailOptions() {
 		return new NotificationOption[] { NotificationOption.NONE, NotificationOption.TEXT, NotificationOption.PDF };
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
