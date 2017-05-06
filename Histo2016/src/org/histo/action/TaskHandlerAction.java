@@ -191,6 +191,17 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * DiagnosisRevision
 	 ********************************************************/
+	
+	/**
+	 * List of physicians which have the role signature
+	 */
+	private List<Physician> physiciansToSignList;
+	
+	/**
+	 * Transfomer for physiciansToSign
+	 */
+	private DefaultTransformer<Physician> physiciansToSignListTransformer;
+	
 	/**
 	 * Selected physician to sign the report
 	 */
@@ -210,9 +221,9 @@ public class TaskHandlerAction implements Serializable {
 		settingsHandlerAction.initMaterialPresets();
 		setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
 
-		settingsHandlerAction.setPhysicianList(physicianDAO.getPhysicians(ContactRole.values(), false));
-		setAllAvailablePhysiciansTransformer(
-				new DefaultTransformer<Physician>(settingsHandlerAction.getPhysicianList()));
+		
+		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
+		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
 	}
 
 	/********************************************************
@@ -222,6 +233,7 @@ public class TaskHandlerAction implements Serializable {
 		initBean();
 
 		genericDAO.refresh(task);
+		
 		if (!task.isInitialized()) {
 			taskDAO.initializeCouncilData(task);
 			taskDAO.initializeDiagnosisData(task);
@@ -875,6 +887,22 @@ public class TaskHandlerAction implements Serializable {
 
 	public void setTemporaryCouncil(Council temporaryCouncil) {
 		this.temporaryCouncil = temporaryCouncil;
+	}
+
+	public List<Physician> getPhysiciansToSignList() {
+		return physiciansToSignList;
+	}
+
+	public DefaultTransformer<Physician> getPhysiciansToSignListTransformer() {
+		return physiciansToSignListTransformer;
+	}
+
+	public void setPhysiciansToSignList(List<Physician> physiciansToSignList) {
+		this.physiciansToSignList = physiciansToSignList;
+	}
+
+	public void setPhysiciansToSignListTransformer(DefaultTransformer<Physician> physiciansToSignListTransformer) {
+		this.physiciansToSignListTransformer = physiciansToSignListTransformer;
 	}
 
 	/********************************************************

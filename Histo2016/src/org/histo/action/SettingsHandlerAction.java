@@ -83,6 +83,9 @@ public class SettingsHandlerAction {
 	@Autowired
 	private SettingsDAO settingsDAO;
 
+	@Autowired
+	private CommenDataHandlerAction commenDataHandlerAction;
+	
 	/**
 	 * Tabindex of settings dialog
 	 */
@@ -250,16 +253,6 @@ public class SettingsHandlerAction {
 	 */
 	private String ldapPhysicianSearchString;
 
-	/**
-	 * List of all roles available
-	 */
-	private List<ContactRole> associatedRoles;
-
-	/**
-	 * Transformer for associatedRoles
-	 */
-	private AssociatedRoleTransformer associatedRolesTransformer;
-
 	/********************************************************
 	 * Physician
 	 ********************************************************/
@@ -311,8 +304,8 @@ public class SettingsHandlerAction {
 
 		onSettingsTabChange();
 
-		setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		setAssociatedRolesTransformer(new AssociatedRoleTransformer(getAssociatedRoles()));
+		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commenDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
 		
 		mainHandlerAction.showDialog(Dialog.SETTINGS);
 	}
@@ -1252,22 +1245,6 @@ public class SettingsHandlerAction {
 
 	public void setUserListTabIndex(SettingsTab userListTabIndex) {
 		this.userListTabIndex = userListTabIndex;
-	}
-
-	public AssociatedRoleTransformer getAssociatedRolesTransformer() {
-		return associatedRolesTransformer;
-	}
-
-	public void setAssociatedRolesTransformer(AssociatedRoleTransformer associatedRolesTransformer) {
-		this.associatedRolesTransformer = associatedRolesTransformer;
-	}
-
-	public List<ContactRole> getAssociatedRoles() {
-		return associatedRoles;
-	}
-
-	public void setAssociatedRoles(List<ContactRole> associatedRoles) {
-		this.associatedRoles = associatedRoles;
 	}
 
 	public Physician getSelectedUserPhysician() {

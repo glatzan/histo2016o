@@ -36,7 +36,7 @@
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 					scrollable="true" scrollHeight="340" selectionMode="single"
 					selection="#{contactHandlerAction.selectedContact}"
-					value="#{contactHandlerAction.allAvailableContact}">
+					value="#{commenDataHandlerAction.contactList}">
 
 					<!-- Name -->
 					<p:column headerText="#{msg['dialog.quickContact.table.name']}"
@@ -50,8 +50,13 @@
 					<p:column
 						headerText="#{msg['dialog.contact.table.defaultFunction']}"
 						style="width:30% !important">
-						<h:outputLabel
-							value="#{msg['enum.contactRole.'.concat(contactHandlerAction.getDefaultRoleForPhysician(contact.person))]}" />
+						<p:repeat
+							value="#{contactHandlerAction.getDefaultAssociatedRoleForPhysician(contact.person)}"
+							var="associatedRoles">
+							<h:outputLabel
+								value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
+							<br/>
+						</p:repeat>
 					</p:column>
 
 					<!-- already selected -->
@@ -64,7 +69,7 @@
 							<p:commandLink
 								actionListener="#{contactHandlerAction.selectContactAsRole(contact, 'NONE')}"
 								update="@form" styleClass="noUnderlineAtLink"
-								title="#{msg['dialog.quickContact.table.selected.info1']} #{msg['enum.contactRole.'.concat(contactHandlerAction.getDefaultRoleForPhysician(contact.person))]} #{msg['dialog.quickContact.table.selected.info2']}">
+								title="#{msg['dialog.quickContact.table.selected.info1']}">
 								<i class="fa fa-check icon-green" />
 							</p:commandLink>
 						</ui:fragment>
@@ -88,18 +93,19 @@
 
 				<h:panelGrid columns="1">
 					<h:panelGrid columns="1" style="margin-left: 20px;">
-
 						<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
+							panelStyleClass="customSelectCheckboxMenuContactDialogPannel"
 							label="#{msg['dialog.contact.options.show.roles']}"
+							panelStyle="width:250px"
 							value="#{contactHandlerAction.showPhysicianRoles}"
-							converter="#{contactHandlerAction.associatedRolesTransformer}">
+							converter="#{commenDataHandlerAction.associatedRolesTransformer}">
 							<f:selectItems var="role"
-								value="#{contactHandlerAction.associatedRoles}"
+								value="#{commenDataHandlerAction.associatedRoles}"
 								itemValue="#{role}"
 								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
 							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(contactHandlerAction.temporaryTask)}"
+								listener="#{contactHandlerAction.updateContactList()}"
 								update="@form"></p:ajax>
 						</p:selectCheckboxMenu>
 					</h:panelGrid>

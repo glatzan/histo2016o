@@ -100,9 +100,9 @@
 					<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
 						label="#{msg['dialog.settings.person.list.show.roles']}"
 						value="#{settingsHandlerAction.showPhysicianRoles}"
-						converter="#{settingsHandlerAction.associatedRolesTransformer}">
+						converter="#{commenDataHandlerAction.associatedRolesTransformer}">
 						<f:selectItems var="role"
-							value="#{settingsHandlerAction.associatedRoles}"
+							value="#{commenDataHandlerAction.associatedRoles}"
 							itemValue="#{role}"
 							itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
@@ -114,13 +114,17 @@
 				</h:panelGrid>
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" style="float:right;">
+			<h:panelGrid columns="2" style="float:right;">
 				<p:commandButton
 					value="#{msg['dialog.settings.person.list.button.new']}"
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.prepareNewPhysician()}"
 					update="@form"></p:commandButton>
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
 			</h:panelGrid>
 
 		</h:panelGrid>

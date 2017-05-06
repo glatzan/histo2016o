@@ -2,28 +2,30 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-TODO: 1.2 Arzt muss als untersucher markiert werden für unterschriften
+TODO: Biobank
 TODO: 2: erweiterte Suche
+TODO: 2: Diangose text speichern, geht zurzeit nicht
 TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
 TODO: 5: rechte durchsetzten
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
 TODO: 7: Sort Optionen für worklist arbeitet nicht richtig
 TODO: 8: Liste für normale benutzer überarbeiten
 TODO: 9: Latex Datein
-TODO: Settings Personen: Es müssen Hausärzte angezeigt werden können (werden bisher nur operateure, augenärtze/ andere
+TODO: Konsile gehen nicht
 TODO: Benachrichtigugen: Liste von fax/email/phone müsse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man über den contakt dialog sachen ädnert
 
 TODO: Geschlecht von ldap rausfinden
 TODO: Ansicht abhängige Knöpfe
 TODO: Schnelle Nachfärbug Dialog
 TODO: Freischaltungs link
-TODO: Biobank
 TODO: favouriten
 TODO: log in settings rework
 TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
 TODO: Archivieren + Dearchivieren
 
+++++: Settings Personen: Es müssen Hausärzte angezeigt werden können (werden bisher nur operateure, augenärtze/ andere
+++++: Arzt muss als untersucher markiert werden für unterschriften
 ++++: notification search
 ++++: Kontakte, testen ob primarycontact aktuallisiert wird
 ++++: Sendefunktion testen!

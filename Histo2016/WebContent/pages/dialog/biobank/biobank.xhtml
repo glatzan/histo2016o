@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.createTask.Headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.createTask.Headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+
+		<div class="contentDiv">
+			<h:panelGrid columns="3"
+				styleClass="defaultListingTableTwoLineContainer">
+				<!-- Left Column -->
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+					columnClasses="defaultListingTableColumnTop,">
+
+					<!-- Task number -->
+					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
+					<h:outputLabel value="#{taskHandlerAction.temporaryTask.taskID}"></h:outputLabel>
+
+					<!-- Task Date -->
+
+					<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
+					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
+						styleClass="smallInput"
+						value="#{taskHandlerAction.temporaryTask.dateOfReceiptAsDate}">
+					</p:calendar>
+
+					<!-- Auto nomenclature -->
+					<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}" />
+					<p:selectBooleanCheckbox id="autoNomenclature"
+						title="#{msg['dialog.createTask.autoNomenclature.text']}"
+						value="#{taskHandlerAction.temporaryTask.useAutoNomenclature}">
+						<p:ajax
+							listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
+					</p:selectBooleanCheckbox>
+
+					<!-- priority -->
+					<h:outputLabel value="#{msg['dialog.createTask.priority']}" />
+
+					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+						<p:selectOneRadio id="console"
+							value="#{taskHandlerAction.temporaryTask.taskPriority}">
+							<f:selectItem itemLabel="#{msg['enum.taskPriority.LOW']}"
+								itemValue="NONE" />
+							<f:selectItem itemLabel="#{msg['enum.taskPriority.HIGHT']}"
+								itemValue="HIGH" />
+							<f:selectItem itemLabel="#{msg['enum.taskPriority.TIME']}"
+								itemValue="TIME" />
+
+							<p:ajax update="@form"></p:ajax>
+						</p:selectOneRadio>
+
+						<h:panelGrid columns="2">
+							<h:outputLabel
+								value="#{msg['dialog.createTask.priority.dueDate']}" />
+							<p:calendar pattern="dd.MM.yyyy" mask="true"
+								styleClass="smallInput"
+								disabled="#{!taskHandlerAction.temporaryTask.dueDateSelected}"
+								value="#{taskHandlerAction.temporaryTask.dueDateAsDate}">
+							</p:calendar>
+						</h:panelGrid>
+					</h:panelGrid>
+
+
+					<!-- biobank -->
+					<h:outputLabel value="#{msg['dialog.createTask.bioBank']}" />
+					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+						<h:panelGrid columns="3">
+							<!-- select file -->
+							<h:outputLabel
+								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
+							<p:commandLink
+								actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(worklistHandlerAction.selectedPatient)}">
+								<p:ajax event="dialogReturn" update="@form" />
+								<i class="fa fa-search icon-grey"></i>
+							</p:commandLink>
+							<p:commandLink style="margin-right:5px"
+								rendered="#{mediaHandlerAction.selectedPdfContainer != null}"
+								actionListener="#{mediaHandlerAction.setSelectedPdfContainer(null)}">
+								<p:ajax event="dialogReturn" update="@form" />
+								<i class="fa fa-close icon-grey"></i>
+							</p:commandLink>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<!-- selected file /remove file -->
+							<h:outputLabel
+								value="#{msg['dialog.createTask.bioBank.informedConsent.file']}:" />
+							<h:outputLabel style="float:right"
+								value="#{mediaHandlerAction.selectedPdfContainer.name}"></h:outputLabel>
+
+
+							<!-- type of informed consent -->
+							<h:outputLabel
+								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
+							<p:selectOneMenu id="consentType" styleClass="smallInput"
+								disabled="#{mediaHandlerAction.selectedPdfContainer == null}">
+								<f:selectItem itemLabel="Select One" itemValue="" />
+								<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+							</p:selectOneMenu>
+
+						</h:panelGrid>
+
+
+					</h:panelGrid>
+
+				</h:panelGrid>
+				<!-- Left column -->
+
+				<!-- spacer -->
+				<h:panelGroup></h:panelGroup>
+
+				<!-- Right column -->
+				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+					<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+
+						<!-- samplecount -->
+						<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
+						<p:spinner id="basic"
+							value="#{taskHandlerAction.temporaryTaskSampleCount}"
+							styleClass="taskSpinner" min="1" max="5">
+							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
+								event="change"
+								listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask)}"></p:ajax>
+						</p:spinner>
+
+
+					</h:panelGrid>
+					<p:dataTable var="sample" id="sampleMaterial"
+						styleClass="smallPaddingAll noBordersAll hide-column-names standardFont"
+						value="#{taskHandlerAction.temporaryTask.samples}">
+						<p:column style="width: 40px;">
+							<ul style="margin: 0px;">
+								<LI style="margin: 0px;" />
+							</ul>
+						</p:column>
+
+						<p:column style="width: 62px;">
+							<h:outputLabel
+								value="#{msg['dialog.createTask.task']} #{sample.sampleID}"></h:outputLabel>
+						</p:column>
+						<p:column>
+							<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
+								style="margin-left:30px;"
+								converter="#{taskHandlerAction.materialListTransformer}"
+								value="#{sample.materilaPreset}">
+								<f:selectItems
+									value="#{settingsHandlerAction.allAvailableMaterials}"
+									var="materialSelect" itemLabel="#{materialSelect.name}"
+									itemValue="#{materialSelect}">
+								</f:selectItems>
+							</p:selectOneMenu>
+						</p:column>
+					</p:dataTable>
+				</h:panelGrid>
+				<!-- Right column -->
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="4" style="float:right;">
+					<!-- confirm -->
+					<p:commandButton value="#{msg['general.create']}"
+						icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{taskHandlerAction.createNewTaskFromGui(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
+
+					<!-- print ureport -->
+					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
+						icon="fa fa-print"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{taskHandlerAction.createNewTaskFromGuiAndPrintUReport(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('TASK_CREATE'))}" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

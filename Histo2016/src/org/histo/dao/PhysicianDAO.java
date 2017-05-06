@@ -35,6 +35,20 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
+	public List<Physician> getPhysicians(ContactRole role, boolean archived) {
+		return getPhysicians(new ContactRole[]{role}, archived);
+	}
+	
+	/**
+	 * Gets a list of physicians which are associated with one role in the
+	 * Contactrole Array. If archived is true, even archived physicians will be
+	 * Returned.
+	 * 
+	 * @param roles
+	 * @param archived
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
 	public List<Physician> getPhysicians(List<ContactRole> roles, boolean archived) {
 		ContactRole[] contactRoles = new ContactRole[roles.size()];
 		roles.toArray(contactRoles);

@@ -340,6 +340,12 @@ ul.ui-menu-child {
 .customSelectCheckboxMenu .ui-inputfield{
 	box-shadow: none;
 }
+
+/* workaround for quick contacts, menu is displayed above button*/
+.customSelectCheckboxMenuContactDialogPannel{
+	bottom: 35px !important;
+	top: auto !important;
+} 
 /*
 	######################################## Header ########################################
 */

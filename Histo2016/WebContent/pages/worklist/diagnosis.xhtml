@@ -332,14 +332,14 @@
 						styleClass="customSerachSelectMenu" style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
 						value="#{taskHandlerAction.signatureOne}"
-						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
+						converter="#{taskHandlerAction.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
 
 						<f:selectItem
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician.select']}"
 							itemValue="#{null}" />
 
-						<f:selectItems value="#{settingsHandlerAction.physicianList}"
+						<f:selectItems value="#{taskHandlerAction.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 
@@ -393,13 +393,13 @@
 						styleClass="customSerachSelectMenu" style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
 						value="#{taskHandlerAction.signatureTwo}"
-						converter="#{taskHandlerAction.allAvailablePhysiciansTransformer}"
+						converter="#{taskHandlerAction.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
 						<f:selectItem
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant.select']}"
 							itemValue="#{null}" />
 
-						<f:selectItems value="#{settingsHandlerAction.physicianList}"
+						<f:selectItems value="#{taskHandlerAction.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 

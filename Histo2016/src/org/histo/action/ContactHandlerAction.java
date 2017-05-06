@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -42,11 +40,9 @@ public class ContactHandlerAction implements Serializable {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
-	/**
-	 * List with all available contacts
-	 */
-	private List<Contact> allAvailableContact;
-
+	@Autowired
+	private CommenDataHandlerAction commenDataHandlerAction;
+	
 	/**
 	 * True if archived physicians should be display
 	 */
@@ -58,16 +54,6 @@ public class ContactHandlerAction implements Serializable {
 	private ContactRole[] showPhysicianRoles;
 
 	/**
-	 * List of all roles available
-	 */
-	private List<ContactRole> associatedRoles;
-
-	/**
-	 * Transformer for associatedRoles
-	 */
-	private AssociatedRoleTransformer associatedRolesTransformer;
-
-	/**
 	 * For quickContact selection
 	 */
 	private Contact selectedContact;
@@ -77,11 +63,6 @@ public class ContactHandlerAction implements Serializable {
 	 * PRIVATE_PHYSICIAN
 	 */
 	private ContactRole selectedContactRole;
-
-	/**
-	 * Temporary task
-	 */
-	private Task temporaryTask;
 
 	/**
 	 * Show the contact dialog using the display settings from the
@@ -105,18 +86,19 @@ public class ContactHandlerAction implements Serializable {
 	 */
 	public void prepareContactsDialog(Task task, ContactRole[] roles, boolean showAddedContactsOnly) {
 
-		setTemporaryTask(task);
+		commenDataHandlerAction.setSelectedTask(task);
+		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commenDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
 
-		setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		setAssociatedRolesTransformer(new AssociatedRoleTransformer(getAssociatedRoles()));
-
+		setShowPhysicianRoles(new ContactRole[]{ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON, ContactRole.OTHER_PHYSICIAN});
+		
 		if (roles != null)
 			setShowPhysicianRoles(roles);
 		else if (getShowPhysicianRoles() == null)
 			setShowPhysicianRoles(new ContactRole[] { ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON,
 					ContactRole.OTHER_PHYSICIAN });
 
-		updateContactList(task);
+		updateContactList();
 
 		mainHandlerAction.showDialog(Dialog.CONTACTS);
 	}
@@ -126,8 +108,8 @@ public class ContactHandlerAction implements Serializable {
 	 * 
 	 * @param task
 	 */
-	public void updateContactList(Task task) {
-		updateContactList(task, getShowPhysicianRoles(), isShowArchivedPhysicians());
+	public void updateContactList() {
+		updateContactList(commenDataHandlerAction.getSelectedTask(), getShowPhysicianRoles(), isShowArchivedPhysicians());
 	}
 
 	/**
@@ -143,8 +125,8 @@ public class ContactHandlerAction implements Serializable {
 		// refreshing the selected task
 		genericDAO.refresh(task);
 
-		setAllAvailableContact(new ArrayList<Contact>());
-
+		commenDataHandlerAction.setContactList(new ArrayList<Contact>());
+		
 		List<Contact> contacts = task.getContacts();
 
 		// getting all contact options
@@ -163,12 +145,12 @@ public class ContactHandlerAction implements Serializable {
 						logger.debug("Found " + contact.getPerson().getFullName() + " in contacts, role "
 								+ contact.getRole());
 						contact.setSelected(true);
-						getAllAvailableContact().add(contact);
+						commenDataHandlerAction.getContactList().add(contact);
 						continue loop;
 					}
 				}
 
-				getAllAvailableContact().add(new Contact(physician.getPerson()));
+				commenDataHandlerAction.getContactList().add(new Contact(physician.getPerson()));
 
 			}
 		} else {
@@ -176,12 +158,12 @@ public class ContactHandlerAction implements Serializable {
 			for (Contact contact : contacts) {
 				contact.setSelected(true);
 			}
-			getAllAvailableContact().addAll(contacts);
+			commenDataHandlerAction.getContactList().addAll(contacts);
 		}
 
 		// setting temp index for selecting via datalist
 		int i = 0;
-		for (Contact contact : getAllAvailableContact()) {
+		for (Contact contact : commenDataHandlerAction.getContactList()) {
 			contact.setTmpId(i++);
 		}
 	}
@@ -359,26 +341,46 @@ public class ContactHandlerAction implements Serializable {
 		}
 	}
 
-	public String getDefaultRoleForPhysician(Person person) {
-		Physician result = physicianDAO.getPhysicianByPerson(person);
-		if (result == null)
-			return ContactRole.NONE.toString();
+	public ContactRole[] getDefaultAssociatedRoleForPhysician(Person person) {
+		return getDefaultAssociatedRoleForPhysician(person, null);
+	}
 
-//		return result.getDefaultContactRole().toString();
-		return "tut";
+	public ContactRole[] getDefaultAssociatedRoleForPhysician(Person person, ContactRole[] showOnlyRolesIfAvailable) {
+		Physician result = physicianDAO.getPhysicianByPerson(person);
+
+		if (result == null)
+			return new ContactRole[] { ContactRole.NONE };
+		else if (showOnlyRolesIfAvailable == null)
+			return result.getAssociatedRolesAsArray();
+		else {
+			ArrayList<ContactRole> resultArr = new ArrayList<ContactRole>();
+
+			for (ContactRole contactRole : result.getAssociatedRolesAsArray()) {
+				for (ContactRole showOnly : showOnlyRolesIfAvailable) {
+					if (contactRole == showOnly) {
+						resultArr.add(contactRole);
+						break;
+					}
+				}
+			}
+
+			return resultArr.toArray(new ContactRole[resultArr.size()]);
+		}
 	}
 
 	/********************************************************
 	 * Quick Contacts
 	 ********************************************************/
 	public void prepareQuickContactsDialog(Task task, ContactRole contactRole) {
-		setTemporaryTask(task);
+		commenDataHandlerAction.setSelectedTask(task);
 		setSelectedContact(null);
 
-		setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		setAssociatedRolesTransformer(new AssociatedRoleTransformer(getAssociatedRoles()));
+		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commenDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
+
+		setShowPhysicianRoles(new ContactRole[]{contactRole});
 		
-		updateContactList(task, new ContactRole[] { contactRole }, false);
+		updateContactList(task, getShowPhysicianRoles(), false);
 
 		setSelectedContactRole(contactRole);
 
@@ -387,14 +389,14 @@ public class ContactHandlerAction implements Serializable {
 
 	public void selectContactAsRole(Contact contact, ContactRole role) {
 		contact.setRole(role);
-		onContactChangeRole(getTemporaryTask(), contact);
+		onContactChangeRole(commenDataHandlerAction.getSelectedTask(), contact);
 
 		if (role != ContactRole.NONE)
-			updateContactRolePrimary(getTemporaryTask(), role, contact);
+			updateContactRolePrimary(commenDataHandlerAction.getSelectedTask(), role, contact);
 	}
 
 	public void hideQuickContactsDialog() {
-		setTemporaryTask(null);
+		commenDataHandlerAction.setSelectedTask(null);
 		setSelectedContactRole(null);
 		setSelectedContact(null);
 		mainHandlerAction.hideDialog(Dialog.QUICK_CONTACTS);
@@ -407,28 +409,12 @@ public class ContactHandlerAction implements Serializable {
 	 * Getter/Setter
 	 ********************************************************/
 
-	public List<Contact> getAllAvailableContact() {
-		return allAvailableContact;
-	}
-
-	public void setAllAvailableContact(List<Contact> allAvailableContact) {
-		this.allAvailableContact = allAvailableContact;
-	}
-
 	public ContactRole getSelectedContactRole() {
 		return selectedContactRole;
 	}
 
 	public void setSelectedContactRole(ContactRole selectedContactRole) {
 		this.selectedContactRole = selectedContactRole;
-	}
-
-	public Task getTemporaryTask() {
-		return temporaryTask;
-	}
-
-	public void setTemporaryTask(Task temporaryTask) {
-		this.temporaryTask = temporaryTask;
 	}
 
 	public Contact getSelectedContact() {
@@ -454,23 +440,6 @@ public class ContactHandlerAction implements Serializable {
 	public void setShowPhysicianRoles(ContactRole[] showPhysicianRoles) {
 		this.showPhysicianRoles = showPhysicianRoles;
 	}
-
-	public List<ContactRole> getAssociatedRoles() {
-		return associatedRoles;
-	}
-
-	public AssociatedRoleTransformer getAssociatedRolesTransformer() {
-		return associatedRolesTransformer;
-	}
-
-	public void setAssociatedRoles(List<ContactRole> associatedRoles) {
-		this.associatedRoles = associatedRoles;
-	}
-
-	public void setAssociatedRolesTransformer(AssociatedRoleTransformer associatedRolesTransformer) {
-		this.associatedRolesTransformer = associatedRolesTransformer;
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

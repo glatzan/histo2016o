@@ -34,9 +34,9 @@
 					styleClass="customSelectCheckboxMenu"
 					value="#{settingsHandlerAction.tmpPhysician.associatedRolesAsArray}"
 					label="Cities" multiple="true"
-					converter="#{settingsHandlerAction.associatedRolesTransformer}">
+					converter="#{commenDataHandlerAction.associatedRolesTransformer}">
 					<f:selectItems var="role"
-						value="#{settingsHandlerAction.associatedRoles}"
+						value="#{commenDataHandlerAction.associatedRoles}"
 						itemValue="#{role}"
 						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 				</p:selectCheckboxMenu>
