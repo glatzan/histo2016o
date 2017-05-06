@@ -76,6 +76,7 @@ public class PDFGeneratorHandler {
 		generator.getConverter().replace("emailInfos", emails);
 		generator.getConverter().replace("faxInfos", fax);
 		generator.getConverter().replace("phoneInfos", phone);
+		generator.getConverter().replace("reportDate", mainHandlerAction.date(System.currentTimeMillis()));
 		
 		return generator.generatePDF();
 	}

@@ -1,17 +1,24 @@
 package org.histo.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
@@ -19,6 +26,8 @@ import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.ContactRole;
@@ -68,14 +77,14 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	private String uid;
 
 	/**
-	 * Default role of this physician
-	 */
-	private ContactRole defaultContactRole = ContactRole.OTHER_PHYSICIAN;
-
-	/**
 	 * True if clinic employee
 	 */
 	private boolean clinicEmployee;
+
+	/**
+	 * List of all contactRoles
+	 */
+	private Set<ContactRole> associatedRoles;
 
 	/**
 	 * Person data of the physician
@@ -133,9 +142,9 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
 		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
 		setUid(dataToUpdate.getUid());
-		setDefaultContactRole(dataToUpdate.getDefaultContactRole());
 		setPager(dataToUpdate.getPager());
 		setClinicRole(dataToUpdate.getClinicRole());
+		setAssociatedRoles(dataToUpdate.getAssociatedRoles());
 	}
 
 	/**
@@ -147,9 +156,9 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	 * @param attrs
 	 */
 	public void copyIntoObject(Attributes attrs) {
-		
+
 		logger.debug("Upadting physician data for " + getUid() + " from ldap");
-		
+
 		try {
 			// name surname title
 			Attribute attr = attrs.get("personalTitle");
@@ -272,15 +281,6 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		this.uid = uid;
 	}
 
-	@Enumerated(EnumType.STRING)
-	public ContactRole getDefaultContactRole() {
-		return defaultContactRole;
-	}
-
-	public void setDefaultContactRole(ContactRole defaultContactRole) {
-		this.defaultContactRole = defaultContactRole;
-	}
-
 	public boolean isClinicEmployee() {
 		return clinicEmployee;
 	}
@@ -288,7 +288,26 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	public void setClinicEmployee(boolean clinicEmployee) {
 		this.clinicEmployee = clinicEmployee;
 	}
+	
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
+	@Fetch(value = FetchMode.SUBSELECT)
+	public Set<ContactRole> getAssociatedRoles() {
+		if(associatedRoles == null)
+			associatedRoles = new HashSet<ContactRole>();
+		
+		return associatedRoles;
+	}
+
+	public void setAssociatedRoles(Set<ContactRole> associatedRoles) {
+		this.associatedRoles = associatedRoles;
+	}
+
+	/********************************************************
+	 * Transient
+	 ********************************************************/
+	
 	@Transient
 	public String getDnObjectName() {
 		return dnObjectName;
@@ -304,6 +323,60 @@ public class Physician implements Serializable, ArchivAble, HasID {
 			return true;
 		return super.equals(obj);
 	}
+
+	/**
+	 * Used for gui, can only handle arrays
+	 * 
+	 * @return
+	 */
+	@Transient
+	public ContactRole[] getAssociatedRolesAsArray() {
+		return (ContactRole[]) getAssociatedRoles().toArray(new ContactRole[associatedRoles.size()]);
+	}
+
+	public void setAssociatedRolesAsArray(ContactRole[] associatedRoles) {
+		this.associatedRoles = new HashSet<>(Arrays.asList(associatedRoles));
+	}
+
+	/**
+	 * Returns true if physician has role
+	 * 
+	 * @param role
+	 */
+	@Transient
+	public boolean hasAssociateRole(ContactRole role) {
+		for (ContactRole contactRole : getAssociatedRoles()) {
+			if (contactRole == role)
+				return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns true if no role is associate
+	 * @return
+	 */
+	@Transient
+	public boolean hasNoAssociateRole() {
+		if (getAssociatedRoles().size() == 0)
+			return true;
+		return false;
+	}
+	
+	/**
+	 * Returns true if no role is associate
+	 * @return
+	 */
+	@Transient
+	public void addAssociateRole(ContactRole role) {
+		getAssociatedRoles().add(role);
+	}
+
+
+	/********************************************************
+	 * Transient
+	 ********************************************************/
 
 	/********************************************************
 	 * Interace archive able

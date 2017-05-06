@@ -140,7 +140,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		getPerson().setPhoneNumber(patient.getPerson().getPhoneNumber());
 		getPerson().setGender(patient.getPerson().getGender());
 		getPerson().setEmail(patient.getPerson().getEmail());
-		getPerson().setHouseNumber(patient.getPerson().getHouseNumber());
 	}
 
 	/**
@@ -199,8 +198,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 
 		// TODO
 		person.setEmail("");
-		// todo
-		person.setHouseNumber("");
 
 		// patient data
 		setPiz(obj.optString("piz"));

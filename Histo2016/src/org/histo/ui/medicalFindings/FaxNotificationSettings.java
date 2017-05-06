@@ -31,16 +31,20 @@ public class FaxNotificationSettings {
 	 */
 	private DefaultTransformer<PrintTemplate> templateTransformer;
 	
+	/**
+	 * Temporary Task
+	 */
+	private Task task;
+	
 	public FaxNotificationSettings(Task task) {
-		setNotificationFaxList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.FAX));
+		setTask(task);
+		updateNotificationFaxList();
 		setUseFax(!getNotificationFaxList().isEmpty() ? true : false);
 
 		setPrintTemplates(PrintTemplate.getTemplatesByTypes(
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN }));
 
 		setTemplateTransformer(new DefaultTransformer<PrintTemplate>(getPrintTemplates()));
-		
-		onAttachPdfToFaxChange();
 	}
 
 	/**
@@ -50,9 +54,16 @@ public class FaxNotificationSettings {
 	public void onAttachPdfToFaxChange() {
 
 		for (MedicalFindingsChooser notificationChooser : getNotificationFaxList()) {
+			
 			if (notificationChooser.getNotificationAttachment() != NotificationOption.NONE) {
-				notificationChooser.setNotificationAttachment(NotificationOption.FAX);
 
+				if(notificationChooser.getContact().isFaxNotificationPerformed()){
+					notificationChooser.setNotificationAttachment(NotificationOption.NONE);
+					continue;
+				}
+				
+				notificationChooser.setNotificationAttachment(NotificationOption.FAX);
+				
 				// external physician get an other template then clinic
 				// employees, sets the default template
 				if (notificationChooser.getContact().getRole() == ContactRole.FAMILY_PHYSICIAN
@@ -67,7 +78,17 @@ public class FaxNotificationSettings {
 			}
 		}
 	}
-
+	
+	/**
+	 * Updates the fax list, if the contact page was used to edit contacts.
+	 */
+	public void updateNotificationFaxList(){
+		// TODO don't overwrite old list!
+		
+		setNotificationFaxList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.FAX));
+		onAttachPdfToFaxChange();
+	}
+	
 	/**
 	 * Returns an array containing all values of the {@link NotificationOption}
 	 * enumeration.
@@ -111,6 +132,14 @@ public class FaxNotificationSettings {
 
 	public void setTemplateTransformer(DefaultTransformer<PrintTemplate> templateTransformer) {
 		this.templateTransformer = templateTransformer;
+	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
 	}
 	/********************************************************
 	 * Getter/Setter

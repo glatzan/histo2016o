@@ -373,7 +373,7 @@ public class TaskHandlerAction implements Serializable {
 		genericDAO.save(task.getPatient(), resourceBundle.get("log.patient.save"), task.getPatient());
 
 		mainHandlerAction.hideDialog(Dialog.TASK_CREATE);
-
+		
 		return task;
 	}
 

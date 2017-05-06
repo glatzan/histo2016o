@@ -58,15 +58,16 @@
 								itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
 								itemValue="#{role}" />
 
-							<p:ajax oncomplete="onContactChangeRole()"></p:ajax>
+							<p:ajax oncomplete="onContactChangeRole()"
+								listener="#{contactHandlerAction.setSelectedContact(contact)}"></p:ajax>
 						</p:selectOneMenu>
 
 						<!-- change role of contact and set the new primary contact -->
 						<p:remoteCommand name="onContactChangeRole" update="@form">
 							<f:actionListener
-								binding="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}" />
+								binding="#{contactHandlerAction.onContactChangeRole(contactHandlerAction.temporaryTask, contactHandlerAction.selectedContact)}" />
 							<f:actionListener
-								binding="#{contactHandlerAction.updateContactRolePrimary(worklistHandlerAction.selectedPatient.selectedTask)}" />
+								binding="#{contactHandlerAction.updateContactRolePrimary(contactHandlerAction.temporaryTask)}" />
 						</p:remoteCommand>
 					</p:column>
 
@@ -82,7 +83,7 @@
 							value="#{contact.primaryContact}"
 							title="#{contact.role eq 'SURGEON' ? msg['dialog.contact.table.primaryContact.surgeon.selected'] :  msg['dialog.contact.table.primaryContact.privatePhysician.selected'] }">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangePrimary(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangePrimary(contactHandlerAction.temporaryTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -98,7 +99,7 @@
 							value="#{contact.useEmail}"
 							title="#{contact.person.email eq '' ?  msg['dialog.contact.table.mail.none'] : msg['dialog.contact.table.mail']}">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangeRole(contactHandlerAction.temporaryTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -114,7 +115,7 @@
 							value="#{contact.usePhone}"
 							title="#{contact.person.phoneNumber eq '' ? msg['dialog.contact.table.phone.none'] : msg['dialog.contact.table.phone']}">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangeRole(contactHandlerAction.temporaryTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -129,7 +130,7 @@
 							value="#{contact.useFax}"
 							title="#{ contact.person.fax eq '' ? msg['dialog.contact.table.fax.none'] : msg['dialog.contact.table.fax']}">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangeRole(worklistHandlerAction.selectedPatient.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangeRole(contactHandlerAction.temporaryTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -140,7 +141,8 @@
 							<i class="fa fa-volume-up"
 								title="#{msg['dialog.contact.table.notificationDone']}" />
 						</f:facet>
-						<h:panelGroup rendered="#{contact.notificationPerformed}">
+						<h:panelGroup
+							rendered="#{contact.notificationPerformed and contact.id ne 0}">
 							<i class="fa fa-fw fa-check-circle icon-green"
 								title="#{msg['dialog.contact.table.notificationDone']}" />
 						</h:panelGroup>
@@ -156,7 +158,7 @@
 							actionListener="#{settingsHandlerAction.prepareEditPhysicianFromExtern(contact.person)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="@form"
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}" />
+								listener="#{contactHandlerAction.updateContactList(contactHandlerAction.temporaryTask)}" />
 						</p:commandLink>
 
 					</p:column>
@@ -171,12 +173,12 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
-					<h:panelGrid columns="11" style="margin-left: 20px;">
+					<h:panelGrid columns="4" style="margin-left: 20px;">
 
 						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							value="#{contactHandlerAction.physicianRoleOptions.showAddedContactsOnly}">
+							value="#{contactHandlerAction.showArchivedPhysicians}">
 							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+								listener="#{contactHandlerAction.updateContactList(contactHandlerAction.temporaryTask)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 
@@ -186,55 +188,19 @@
 
 						<h:panelGroup layout="block" style="width:50px!important"></h:panelGroup>
 
-						<!-- surgeon -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							title="#{msg['dialog.contact.options.surgeon.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.surgeon}">
-							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
-								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-						<h:outputLabel value="#{msg['dialog.contact.options.surgeon']}"
-							style="margin-left:5px;"></h:outputLabel>
+						<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
+							label="#{msg['dialog.contact.options.show.roles']}"
+							value="#{contactHandlerAction.showPhysicianRoles}"
+							converter="#{contactHandlerAction.associatedRolesTransformer}">
+							<f:selectItems var="role"
+								value="#{contactHandlerAction.associatedRoles}"
+								itemValue="#{role}"
+								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
-						<!-- private physician -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							style="margin-left:10px;"
-							title="#{msg['body.receiptlog.contact.role.privatePhysician.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.privatePhysician}">
 							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+								listener="#{contactHandlerAction.updateContactList(contactHandlerAction.temporaryTask)}"
 								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-						<h:outputLabel
-							value="#{msg['body.receiptlog.contact.role.privatePhysician']}"
-							style="margin-left:5px;"></h:outputLabel>
-
-						<!-- family physician -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							style="margin-left:10px;"
-							title="#{msg['body.receiptlog.contact.role.familyPhysician.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.familyPhysician}">
-							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
-								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-
-						<h:outputLabel
-							value="#{msg['body.receiptlog.contact.role.familyPhysician']}"
-							style="margin-left:5px;"></h:outputLabel>
-
-						<!-- Other -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							style="margin-left:10px;"
-							title="#{msg['dialog.contact.options.other.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.other}">
-							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
-								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-						<h:outputLabel value="#{msg['dialog.contact.options.other']}"
-							style="margin-left:5px;"></h:outputLabel>
+						</p:selectCheckboxMenu>
 					</h:panelGrid>
 				</h:panelGrid>
 

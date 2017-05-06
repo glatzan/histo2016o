@@ -18,7 +18,7 @@
 
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableCss"
-			columnClasses="defaultListingTableColumnTop defaultListingTableColumn150, ">
+			columnClasses="defaultListingTableColumnTop defaultListingTableColumn150px, ">
 
 			<!-- Use Mail -->
 			<h:outputLabel
@@ -114,7 +114,7 @@
 					</f:facet>
 					<!-- notification successful -->
 					<ui:fragment
-						rendered="#{emailNotification.contact.notificationPerformed}">
+						rendered="#{emailNotification.contact.emailNotificationPerformed}">
 						<i class="fa fa-check icon-green"
 							title="#{msg['dialog.medicalFindings.tab.mail.receiver.template.performed']}" />
 					</ui:fragment>
@@ -139,17 +139,20 @@
 	<div class="bottomDiv">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			
+
 			<h:panelGrid columns="1">
 				<!-- Contact -->
 				<p:commandButton
 					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}"
-					update="@form" />
+					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+					<p:ajax event="dialogReturn" update="@form"
+						listener="#{medicalFindingsHandlerAction.updateNotificationLists()}" />
+				</p:commandButton>
+
 			</h:panelGrid>
-			
+
 			<h:panelGrid columns="2" style="float:right;">
 
 				<!-- next -->

@@ -13,6 +13,7 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.patient.Patient;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,24 +56,21 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		if (roles == null || roles.length == 0)
 			return new ArrayList<>();
 
-		Criteria c = getSession().createCriteria(Physician.class);
-		c.addOrder(Order.asc("defaultContactRole"));
-		c.addOrder(Order.asc("clinicEmployee"));
+		
+		DetachedCriteria query = DetachedCriteria.forClass(Physician.class,"physician");
+		query.addOrder(Order.asc("clinicEmployee"));
+		query.createAlias("physician.associatedRoles", "a");
 
 		// don't select archived physicians
 		if (!archived)
-			c.add(Restrictions.eq("archived", false));
+			query.add(Restrictions.eq("archived", false));
 
-		Disjunction objDisjunction = Restrictions.disjunction();
-
-		for (ContactRole contactRole : roles) {
-			objDisjunction.add(Restrictions.eq("defaultContactRole", contactRole));
-		}
-
-		c.add(objDisjunction);
-
-		c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return (List<Physician>) c.list();
+		query.add(Restrictions.in("a.elements", roles));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		
+		List<Physician> result = query.getExecutableCriteria(getSession()).list();
+		
+		return result;
 	}
 
 	/**
@@ -94,7 +92,7 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 
 		return res.get(0);
 	}
-	
+
 	/**
 	 * Gets a physician for the provided person, returns null if none physician
 	 * is available
@@ -103,8 +101,8 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public Physician getPhysicianByPerson(Person person){
-		
+	public Physician getPhysicianByPerson(Person person) {
+
 		DetachedCriteria query = DetachedCriteria.forClass(Physician.class, "physician");
 
 		query.add(Restrictions.eq("person", person));

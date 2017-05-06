@@ -43,7 +43,7 @@
 					</ui:fragment>
 					<ui:fragment
 						rendered="#{!medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
-						<ui:include src="mail.xhtml" />
+						<ui:include src="1_mail.xhtml" />
 					</ui:fragment>
 					<ui:fragment
 						rendered="#{medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
@@ -61,7 +61,7 @@
 					</ui:fragment>
 					<ui:fragment
 						rendered="#{!medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
-						<ui:include src="fax.xhtml" />
+						<ui:include src="2_fax.xhtml" />
 					</ui:fragment>
 					<ui:fragment
 						rendered="#{medicalFindingsHandlerAction.showPreview and !medicalFindingsHandlerAction.notificationPerformed}">
@@ -75,11 +75,11 @@
 					disabled="#{medicalFindingsHandlerAction.notificationPerformed}">
 					<ui:fragment
 						rendered="#{!medicalFindingsHandlerAction.notificationPerformed}">
-						<ui:include src="notify.xhtml" />
+						<ui:include src="3_notify.xhtml" />
 					</ui:fragment>
 					<ui:fragment
 						rendered="#{medicalFindingsHandlerAction.notificationPerformed}">
-						<ui:include src="finalizeTask.xhtml" />
+						<ui:include src="3_finalizeTask.xhtml" />
 					</ui:fragment>
 				</p:tab>
 				<!-- ************************************************************** Submit ************************************************************** -->

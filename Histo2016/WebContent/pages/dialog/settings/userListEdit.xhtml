@@ -14,7 +14,7 @@
 			styleClass="contentPannel" />
 
 		<histo:newPersonDataMask
-			person="#{settingsHandlerAction.tmpPhysician.person}"
+			person="#{settingsHandlerAction.selectedUserPhysician.person}"
 			pannelID="userEditPhysician"
 			disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}" />
 
@@ -27,17 +27,19 @@
 			<h:outputLabel value=" " />
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-				columnClasses="defaultListingTableColumn30,">
+				columnClasses="defaultListingTableColumn100px,">
 				<!-- role -->
 				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
-				<p:selectOneMenu
-					value="#{settingsHandlerAction.tmpPhysician.defaultContactRole}">
-
-					<f:selectItems value="#{enumProvider.contactRoles}" var="role"
-						itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
-						itemValue="#{role}" />
-
-				</p:selectOneMenu>
+				<p:selectCheckboxMenu updateLabel="true"
+					styleClass="customSelectCheckboxMenu"
+					value="#{settingsHandlerAction.selectedUserPhysician.associatedRolesAsArray}"
+					multiple="true"
+					converter="#{settingsHandlerAction.associatedRolesTransformer}">
+					<f:selectItems var="role"
+						value="#{settingsHandlerAction.associatedRoles}"
+						itemValue="#{role}"
+						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+				</p:selectCheckboxMenu>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
@@ -46,6 +48,12 @@
 				<h:panelGroup />
 			</h:panelGrid>
 		</h:panelGrid>
+
+
+
+
+
+
 	</div>
 
 	<div class="bottomDiv">
@@ -56,16 +64,16 @@
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.saveEditPhysicianFromUserList(settingsHandlerAction.tmpPhysician)}"
+					actionListener="#{settingsHandlerAction.saveEditPhysicianFromUserList(settingsHandlerAction.selectedUserPhysician)}"
 					update="@form" />
-				
+
 				<!-- abort -->
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{settingsHandlerAction.discardTmpPhysicianFromUserList()}"
 					update="@form" />
-					
+
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

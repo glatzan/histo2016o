@@ -17,7 +17,7 @@
 
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableCss"
-			columnClasses="defaultListingTableColumnTop defaultListingTableColumn150, ">
+			columnClasses="defaultListingTableColumnTop defaultListingTableColumn150px, ">
 
 			<!-- use Fax -->
 			<h:outputLabel
@@ -25,7 +25,7 @@
 			<p:selectBooleanCheckbox
 				value="#{medicalFindingsHandlerAction.faxNotificationSettings.useFax}">
 				<p:ajax event="change"
-					listener="#{medicalFindingsHandlerAction.faxNotificationSettings.onUseFaxChanges()}"
+					listener="#{medicalFindingsHandlerAction.faxNotificationSettings.onAttachPdfToFaxChange()}"
 					update="@form" />
 			</p:selectBooleanCheckbox>
 
@@ -46,7 +46,7 @@
 				<!-- method -->
 				<p:column
 					headerText="#{msg['dialog.medicalFindings.tab.fax.receiver.type']}"
-					style="width:18%">
+					style="width:27%">
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						disabled="#{!medicalFindingsHandlerAction.faxNotificationSettings.useFax}"
 						value="#{faxNotification.notificationAttachment}">
@@ -76,6 +76,20 @@
 					</p:selectOneMenu>
 				</p:column>
 
+				<!-- notified -->
+				<p:column style="width:4%">
+					<f:facet name="header">
+						<i class="fa fa-check fa-volume-up" style="margin-left: -5px;"
+							title="#{msg['dialog.medicalFindings.tab.fax.receiver.template.performed']}" />
+					</f:facet>
+					<!-- notification successful -->
+					<ui:fragment
+						rendered="#{faxNotification.contact.faxNotificationPerformed}">
+						<i class="fa fa-check icon-green"
+							title="#{msg['dialog.medicalFindings.tab.fax.receiver.template.performed']}" />
+					</ui:fragment>
+				</p:column>
+
 				<!-- change pdf for user -->
 				<p:column style="width:4%">
 					<p:commandLink
@@ -102,8 +116,10 @@
 					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}"
-					update="@form" />
+					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+					<p:ajax event="dialogReturn" update="@form"
+						listener="#{medicalFindingsHandlerAction.updateNotificationLists()}" />
+				</p:commandButton>
 			</h:panelGrid>
 
 

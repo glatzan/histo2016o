@@ -115,13 +115,13 @@
 					<!-- ************ Task ************ -->
 					<!-- New Task, rendered if selected patient not null -->
 					<p:menuitem value="#{msg['header.menu.task.create']}"
-						icon="fa fa-plus"
+						styleClass="headerSubMenuStyle" icon="fa fa-file"
 						onclick="$('#headerForm\\:newTaskBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{patientIsNotNull}" />
 
 					<!-- New Sample, rendered if selected patient is not null, disabled if no task was selected -->
 					<p:menuitem value="#{msg['header.menu.task.sample.create']}"
-						icon="fa fa-plus"
+						icon="fa fa-eyedropper"
 						onclick="$('#headerForm\\:newSampleBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						disabled="#{!taskIsNotNull or !taskEditable}"
 						rendered="#{patientIsNotNull}"
@@ -132,7 +132,7 @@
 					<p:separator rendered="#{taskIsNotNull}" />
 					<!-- New Slides -->
 					<p:menuitem value="#{msg['header.menu.task.sample.newSlide']}"
-						disabled="#{true}" icon="fa fa-fw fa-image"
+						disabled="#{true}" icon="fa fa-fw fa-paint-brush"
 						rendered="#{taskIsNotNull}" />
 
 					<!-- leave staining phase and set all stainings to completed -->
@@ -164,18 +164,19 @@
 					<!-- New Diagnosis revision-->
 					<p:menuitem icon="fa fa-pencil-square-o"
 						value="#{msg['header.menu.task.sample.diagnosisRevion']}"
-						disabled="#{!taskEditable}" rendered="#{taskIsNotNull}"
+						disabled="#{!taskEditable}"
+						rendered="#{taskIsNotNull and taskStatus.diagnosisPhase }"
 						onclick="$('#headerForm\\:newDiagnosisRevision').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 					<!-- Leave diagnosis phase if in phase an not completed -->
-					<p:menuitem icon="fa fa-pencil-square-o"
+					<p:menuitem icon="fa fa-eye-slash"
 						value="#{msg['header.menu.task.sample.diagnosisPhase.leave']}"
 						disabled="#{!taskEditable}"
 						rendered="#{taskIsNotNull and (taskStatus.diagnosisPhase and !taskStatus.diagnosisPerformed)}"
 						onclick="$('#headerForm\\:diagnosisPhaseLeave').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 					<!-- Leave phase if stay in phase -->
-					<p:menuitem icon="fa fa-pencil-square-o"
+					<p:menuitem icon="fa fa-eye-slash"
 						value="#{msg['header.menu.task.sample.diagnosisPhase.force.leave']}"
 						rendered="#{taskIsNotNull and taskStatus.diagnosisStayInPhase}"
 						onclick="$('#headerForm\\:diagnosisPhaseForceLeave').click();$('#headerForm\\:tieredOptions').hide();return false;" />
@@ -183,20 +184,17 @@
 					<!-- to enter phase from staining phase manually -->
 					<p:menuitem
 						value="#{msg['header.menu.task.sample.diagnosisPhase.force.enter']}"
-						icon="fa fa-fw fa-image"
+						icon="fa fa-fw fa-eye"
 						onclick="$('#headerForm\\:diagnosisPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{taskIsNotNull and taskStatus.stainingPhase}" />
-						
+
 					<!-- Enter phase to unfinalize all diagnoses -->
 					<p:menuitem
 						value="#{msg['header.menu.task.sample.diagnosisPhase.force.enter2']}"
-						icon="fa fa-fw fa-image"
+						disabled="#{taskStatus.finalized}" icon="fa fa-fw fa-eye"
 						onclick="$('#headerForm\\:diagnosisPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{taskIsNotNull and (taskStatus.notificationPhase or taskStatus.finalized)}" />
 					<!-- ************ Diagnosis ************ -->
-
-					<!-- ************ Notification ************ -->
-
 
 					<!-- ************ Notification ************ -->
 					<p:separator />
@@ -210,12 +208,20 @@
 					<!-- medical findings -->
 					<p:menuitem value="#{msg['header.menu.task.sample.notification']}"
 						icon="fa fa-volume-up"
-						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null}"
+						disabled="#{worklistHandlerAction.selectedPatient.selectedTask eq null or !taskStatus.notificationPhase}"
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						onclick="$('#headerForm\\:medicalFindingsContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
+					<!-- un finalize task -->
+					<p:menuitem value="#{msg['header.menu.task.sample.unFinalize']}"
+						disabled="#{!taskStatus.finalized}" icon="fa fa-key"
+						rendered="#{worklistHandlerAction.selectedPatient.selectedTask ne null}" />
+
 					<!-- ************ Notification ************ -->
+
+
+
 					<p:separator />
 					<!-- accounting -->
 					<p:menuitem value="#{msg['header.menu.task.sample.accounting']}"
@@ -359,20 +365,23 @@
 			<!-- Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
 				actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Notification button -->
 			<p:commandButton id="notificationContactBtn" style="display:none"
 				actionListener="#{notificationHandlerAction.showinfoDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm"
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
 			<!-- MedicalFindings button -->
 			<p:commandButton id="medicalFindingsContactBtn" style="display:none"
 				actionListener="#{medicalFindingsHandlerAction.prepareMedicalFindingsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm"
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
@@ -381,14 +390,16 @@
 				widgetVar="printBtnVar" onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
 				actionListener="#{printHandlerAction.showDefaultPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm"
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
 			<!-- Council button -->
 			<p:commandButton id="councilBtn" style="display:none"
 				actionListener="#{taskHandlerAction.prepareCouncilDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
-				<p:ajax event="dialogReturn" update="contentForm"
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 

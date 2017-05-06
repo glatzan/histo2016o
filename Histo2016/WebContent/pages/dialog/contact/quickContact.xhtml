@@ -87,57 +87,21 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
-					<h:panelGrid columns="8" style="margin-left: 20px;">
+					<h:panelGrid columns="1" style="margin-left: 20px;">
 
-						<!-- surgeon -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							title="#{msg['dialog.contact.options.surgeon.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.surgeon}">
+						<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
+							label="#{msg['dialog.contact.options.show.roles']}"
+							value="#{contactHandlerAction.showPhysicianRoles}"
+							converter="#{contactHandlerAction.associatedRolesTransformer}">
+							<f:selectItems var="role"
+								value="#{contactHandlerAction.associatedRoles}"
+								itemValue="#{role}"
+								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+
 							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
+								listener="#{contactHandlerAction.updateContactList(contactHandlerAction.temporaryTask)}"
 								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-						<h:outputLabel value="#{msg['dialog.contact.options.surgeon']}"
-							style="margin-left:5px;"></h:outputLabel>
-
-						<!-- private physician -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							style="margin-left:10px;"
-							title="#{msg['body.receiptlog.contact.role.privatePhysician.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.privatePhysician}">
-							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
-								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-						<h:outputLabel
-							value="#{msg['body.receiptlog.contact.role.privatePhysician']}"
-							style="margin-left:5px;"></h:outputLabel>
-
-						<!-- family physician -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							style="margin-left:10px;"
-							title="#{msg['body.receiptlog.contact.role.familyPhysician.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.familyPhysician}">
-							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
-								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-
-						<h:outputLabel
-							value="#{msg['body.receiptlog.contact.role.familyPhysician']}"
-							style="margin-left:5px;"></h:outputLabel>
-
-						<!-- Other -->
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							style="margin-left:10px;"
-							title="#{msg['dialog.contact.options.other.show']}"
-							value="#{contactHandlerAction.physicianRoleOptions.other}">
-							<p:ajax
-								listener="#{contactHandlerAction.updateContactList(worklistHandlerAction.selectedPatient.selectedTask)}"
-								update="@form"></p:ajax>
-						</p:selectBooleanCheckbox>
-						<h:outputLabel value="#{msg['dialog.contact.options.other']}"
-							style="margin-left:5px;"></h:outputLabel>
+						</p:selectCheckboxMenu>
 					</h:panelGrid>
 				</h:panelGrid>
 

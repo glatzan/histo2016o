@@ -2,6 +2,8 @@ package org.histo.action;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.naming.NamingException;
@@ -27,9 +29,10 @@ import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
-import org.histo.model.transitory.PhysicianRoleOptions;
 import org.histo.model.transitory.json.LdapHandler;
 import org.histo.ui.ListChooser;
+import org.histo.ui.transformer.AssociatedRoleTransformer;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
 import org.histo.util.SlideUtil;
 import org.primefaces.event.ReorderEvent;
@@ -119,6 +122,10 @@ public class SettingsHandlerAction {
 	 */
 	private HistoUser selectedUser;
 
+	/**
+	 * for editing physicians from the user list
+	 */
+	private Physician selectedUserPhysician;
 	/********************************************************
 	 * User
 	 ********************************************************/
@@ -209,9 +216,14 @@ public class SettingsHandlerAction {
 	 ********************************************************/
 
 	/**
-	 * containing options for the physician list
+	 * True if archived physicians should be display
 	 */
-	private PhysicianRoleOptions physicianRoleOptions;
+	private boolean showArchivedPhysicians = false;
+	
+	/**
+	 * Array of roles for that physicians should be shown.
+	 */
+	private ContactRole[] showPhysicianRoles;
 
 	/**
 	 * List containing all physicians known in the histo database
@@ -237,6 +249,16 @@ public class SettingsHandlerAction {
 	 * String is used for searching for internal physicians
 	 */
 	private String ldapPhysicianSearchString;
+
+	/**
+	 * List of all roles available
+	 */
+	private List<ContactRole> associatedRoles;
+
+	/**
+	 * Transformer for associatedRoles
+	 */
+	private AssociatedRoleTransformer associatedRolesTransformer;
 
 	/********************************************************
 	 * Physician
@@ -287,10 +309,11 @@ public class SettingsHandlerAction {
 		// init statings
 		setShowStainingEdit(false);
 
-		setPhysicianRoleOptions(new PhysicianRoleOptions());
-
 		onSettingsTabChange();
 
+		setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		setAssociatedRolesTransformer(new AssociatedRoleTransformer(getAssociatedRoles()));
+		
 		mainHandlerAction.showDialog(Dialog.SETTINGS);
 	}
 
@@ -387,7 +410,7 @@ public class SettingsHandlerAction {
 	 * @param physician
 	 */
 	public void prepareEditPhysicianFromUserList(Physician physician) {
-		setTmpPhysician(physician);
+		setSelectedUserPhysician(physician);
 		setUserListTabIndex(SettingsTab.U_EDIT);
 	}
 
@@ -397,8 +420,8 @@ public class SettingsHandlerAction {
 	 * @param physician
 	 */
 	public void saveEditPhysicianFromUserList(Physician physician) {
-		if (physician.getDefaultContactRole() == ContactRole.NONE)
-			physician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
+		if (physician.hasNoAssociateRole())
+			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
 		genericDAO.save(physician,
 				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
@@ -409,11 +432,11 @@ public class SettingsHandlerAction {
 	 * Shows the userlist aganin
 	 */
 	public void discardTmpPhysicianFromUserList() {
-		genericDAO.refresh(getTmpPhysician());
+		genericDAO.refresh(getSelectedUserPhysician());
 
 		setUserListTabIndex(SettingsTab.U_LIST);
 		prepareUserList();
-		setTmpPhysician(null);
+		setSelectedUserPhysician(null);
 	}
 
 	/********************************************************
@@ -688,19 +711,11 @@ public class SettingsHandlerAction {
 	 * Shows all added Physicians (ROLE: Surgeon, PrivatePhysician, Other)
 	 */
 	public void preparePhysicianList() {
-		if (getPhysicianRoleOptions() == null)
-			setPhysicianRoleOptions(new PhysicianRoleOptions());
 
-		List<ContactRole> contactRoles = new ArrayList<ContactRole>();
+		if(getShowPhysicianRoles() == null)
+			setShowPhysicianRoles(new ContactRole[]{ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON, ContactRole.OTHER_PHYSICIAN});
 
-		if (getPhysicianRoleOptions().isSurgeon())
-			contactRoles.add(ContactRole.SURGEON);
-		if (getPhysicianRoleOptions().isPrivatePhysician())
-			contactRoles.add(ContactRole.PRIVATE_PHYSICIAN);
-		if (getPhysicianRoleOptions().isOther())
-			contactRoles.add(ContactRole.OTHER_PHYSICIAN);
-
-		setPhysicianList(physicianDAO.getPhysicians(contactRoles, getPhysicianRoleOptions().isArchived()));
+		setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(), isShowArchivedPhysicians()));
 	}
 
 	/**
@@ -784,8 +799,8 @@ public class SettingsHandlerAction {
 	 * @param physician
 	 */
 	public void saveEditPhysician(Physician physician) {
-		if (physician.getDefaultContactRole() == ContactRole.NONE)
-			physician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
+		if (physician.hasNoAssociateRole())
+			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
 		genericDAO.save(physician,
 				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
@@ -800,8 +815,8 @@ public class SettingsHandlerAction {
 	 */
 	public void saveNewPrivatePhysician(Physician physician) {
 		// always set role to miscellaneous if no other role was selected
-		if (physician.getDefaultContactRole() == ContactRole.NONE)
-			physician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
+		if (physician.hasNoAssociateRole())
+			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
 		genericDAO.save(physician, resourceBundle.get("log.settings.physician.privatePhysician.save",
 				physician.getPerson().getFullName()));
@@ -813,17 +828,17 @@ public class SettingsHandlerAction {
 	 * @param ldapPhysician
 	 * @param editPhysician
 	 */
-	public void savePhysicianFromLdap(Physician ldapPhysician, ContactRole role) {
+	public void savePhysicianFromLdap(Physician ldapPhysician, HashSet<ContactRole> roles) {
 		if (ldapPhysician == null)
 			return;
 
 		// removing id from the list
 		ldapPhysician.setId(0);
 
-		if (role == ContactRole.NONE)
-			ldapPhysician.setDefaultContactRole(ContactRole.OTHER_PHYSICIAN);
+		if (roles == null || roles.size() == 0)
+			ldapPhysician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 		else
-			ldapPhysician.setDefaultContactRole(role);
+			ldapPhysician.setAssociatedRoles(roles);
 
 		// tje internal physician from ldap it might have been added before (if
 		// the the physician is a user of this programm),
@@ -881,7 +896,7 @@ public class SettingsHandlerAction {
 			// if the edit was called externally close the dialog
 			hideSettingsDialog();
 		}
-		
+
 		setPhysicianTabIndex(SettingsTab.P_LIST);
 	}
 
@@ -1167,14 +1182,6 @@ public class SettingsHandlerAction {
 		this.tmpLdapPhysician = tmpLdapPhysician;
 	}
 
-	public PhysicianRoleOptions getPhysicianRoleOptions() {
-		return physicianRoleOptions;
-	}
-
-	public void setPhysicianRoleOptions(PhysicianRoleOptions physicianRoleOptions) {
-		this.physicianRoleOptions = physicianRoleOptions;
-	}
-
 	public SettingsTab getPhysicianTabIndex() {
 		return physicianTabIndex;
 	}
@@ -1247,6 +1254,47 @@ public class SettingsHandlerAction {
 		this.userListTabIndex = userListTabIndex;
 	}
 
+	public AssociatedRoleTransformer getAssociatedRolesTransformer() {
+		return associatedRolesTransformer;
+	}
+
+	public void setAssociatedRolesTransformer(AssociatedRoleTransformer associatedRolesTransformer) {
+		this.associatedRolesTransformer = associatedRolesTransformer;
+	}
+
+	public List<ContactRole> getAssociatedRoles() {
+		return associatedRoles;
+	}
+
+	public void setAssociatedRoles(List<ContactRole> associatedRoles) {
+		this.associatedRoles = associatedRoles;
+	}
+
+	public Physician getSelectedUserPhysician() {
+		return selectedUserPhysician;
+	}
+
+	public void setSelectedUserPhysician(Physician selectedUserPhysician) {
+		this.selectedUserPhysician = selectedUserPhysician;
+	}
+
+	public boolean isShowArchivedPhysicians() {
+		return showArchivedPhysicians;
+	}
+
+	public void setShowArchivedPhysicians(boolean showArchivedPhysicians) {
+		this.showArchivedPhysicians = showArchivedPhysicians;
+	}
+
+	public ContactRole[] getShowPhysicianRoles() {
+		return showPhysicianRoles;
+	}
+
+	public void setShowPhysicianRoles(ContactRole[] showPhysicianRoles) {
+		this.showPhysicianRoles = showPhysicianRoles;
+	}
+	
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

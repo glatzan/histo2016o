@@ -146,8 +146,13 @@ body {
 .defaultListingTableColumn30 {
 	width: 30%;
 }
+ 
+.defaultListingTableColumn100px{
+	width: 100px !important;
+	min-width: 100px !important;
+}
 
-.defaultListingTableColumn150{
+.defaultListingTableColumn150px{
 	width: 150px !important;
 	min-width: 150px !important;
 }
@@ -330,6 +335,21 @@ ul.ui-menu-child {
 	width: 77% !important;
 	padding: 3px 7px;
 }
+
+/* removes the box shadow from SelectCheckboxMenu*/
+.customSelectCheckboxMenu .ui-inputfield{
+	box-shadow: none;
+}
+/*
+	######################################## Header ########################################
+*/
+/* Style of the header submenu*/
+.headerSubMenuStyle{
+	width: 200px !important;
+}
+/*
+	######################################## Header ########################################
+*/
 /*
 	######################################## Navigatoin ########################################
 */
@@ -771,26 +791,6 @@ ul.ui-menu-child {
 }
 /*	################# Settings ################# */
 
-/*	################# print dialog ################# */
-.printTable {
-	width: 100%;
-}
-
-.printTable .menuColumn {
-	vertical-align: top;
-	width: 320px;
-	height: 500px;
-}
-
-.printTable .pdfColumn {
-	vertical-align: top;
-	width: *;
-	height: 500px;
-	text-align: right;
-}
-
-/*	################# print dialog ################# */
-
 /*	################# Contact ################# */
 /* Layout für den ContactSelect Datatable */
 .contactDataTable {
@@ -832,15 +832,6 @@ ul.ui-menu-child {
 	width: 20px !important;
 }
 /*	################# Contact ################# */
-
-/*	################# WorklistOptionsDilaog ################# */
-/* Layout for big dialogs*/
-.worklistOptionsDialog .dialogPannel .dialogLayout {
-	height: 460px !important;
-	padding: 0px !important;
-}
-
-/*	################# WorklistOptionsDilaog ################# */
 
 /*	################# print dialog ################# */
 .miniSpinner {
@@ -891,32 +882,6 @@ ul.ui-menu-child {
 /*	################# addPatient dialog ################# */
 
 /*	################# create Task dialog ################# */
-.taskUpload {
-	font-size: 0.8em !important;
-}
-
-.taskUpload .ui-fileupload-buttonbar {
-	padding: 0px !important;
-	background: none !important;
-	border: none !important;
-}
-
-.taskUpload .ui-fileupload-content {
-	border-top: 1px solid rgb(170, 170, 170);
-	border-top-left-radius: 4px;
-	border-top-right-radius: 4px;
-}
-
-.taskUpload .ui-button-text {
-	font-size: 0.8em !important;
-	padding: 0px 10px 0px 30px !important;
-	font-size: 1em !important;
-}
-
-.taskUpload .ui-fileupload-filename {
-	padding: 0px 10px 0px 0px !important;
-}
-
 .taskSpinner .ui-spinner-input {
 	padding: 2px 20px 2px 7px !important;
 	width: 60px;
@@ -924,29 +889,4 @@ ul.ui-menu-child {
 
 /*	################# create Task dialog ################# */
 
-/*	################# council dialog ################# */
-.councilTableTextColumn {
-	width: 150px;
-}
-
-.councilTableInputColumn {
-	valign: middle;
-}
-/*	################# council dialog ################# */
-
 /*	######################################## Dialog ######################################## */
-
-/*	######################################## OverlayPannel ######################################## */
-.logOverlay {
-	width: 600px;
-	z-index: 5000;
-}
-
-.logOverlay .ui-overlaypanel-content {
-	padding: 0px !important;
-}
-
-.logOverlay .logDatapannel tr:nth-child(even) td {
-	background-color: #f9f9f9;
-}
-/*	######################################## OverlayPannel ######################################## */

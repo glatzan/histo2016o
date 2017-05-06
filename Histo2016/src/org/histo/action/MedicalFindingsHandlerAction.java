@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.PDFGeneratorHandler;
+import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
@@ -21,6 +22,7 @@ import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.medicalFindings.EmailNotificationSettings;
 import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.MedicalFindingsChooser;
+import org.histo.ui.medicalFindings.NoContactDataNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
 import org.histo.util.HistoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +41,8 @@ public class MedicalFindingsHandlerAction {
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private TaskDAO taskDAO;
-
-	@Autowired
-	private ThreadPoolTaskExecutor taskExecutor;
-
-	@Autowired
 	private MainHandlerAction mainHandlerAction;
 
-	@Autowired
-	private UserHandlerAction userHandlerAction;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
@@ -66,6 +60,9 @@ public class MedicalFindingsHandlerAction {
 	 */
 	@Autowired
 	private PDFGeneratorHandler pDFGeneratorHandler;
+	
+	@Autowired
+	private SlideManipulationHandler slideManipulationHandler;
 	/********************************************************
 	 * General
 	 ********************************************************/
@@ -100,6 +97,11 @@ public class MedicalFindingsHandlerAction {
 	 * Phone settings
 	 */
 	private PhoneNotificationSettings phoneNotificationSettings;
+	
+	/**
+	 * Contains all contacts with no contact data available
+	 */
+	private NoContactDataNotificationSettings noContactDataNotificationSettings;
 	/********************************************************
 	 * Settings
 	 ********************************************************/
@@ -127,24 +129,7 @@ public class MedicalFindingsHandlerAction {
 	 ********************************************************/
 	public void prepareMedicalFindingsDialog(Task task) {
 		logger.trace("Called prepareMedicalFindingsDialog(Task task)");
-
-		setTemporaryTask(task);
-
-		patientDao.initializeDataList(task);
-
-		setActiveTabIndex(0);
-
-		setEmailNotificationSettings(new EmailNotificationSettings(task));
-		setFaxNotificationSettings(new FaxNotificationSettings(task));
-		setPhoneNotificationSettings(new PhoneNotificationSettings(task));
-
-		MailTemplate taskReport = MailTemplate.factroy(MailType.MedicalFindingsReport);
-
-		emailNotificationSettings.setEmailSubject(taskReport.getSubject());
-		emailNotificationSettings.setEmailText(taskReport.getContent());
-
-		setShowPreview(false);
-
+		initBean(task);
 		mainHandlerAction.showDialog(Dialog.MEDICAL_FINDINGS);
 	}
 
@@ -167,14 +152,69 @@ public class MedicalFindingsHandlerAction {
 	public void reSendMedicialFindings() {
 		logger.trace("Resend medical findings");
 		notificationPerformed.set(false);
+		initBean(getTemporaryTask());
+	}
+
+	public void initBean(Task task) {
+		setTemporaryTask(task);
+
+		patientDao.initializeDataList(task);
+
 		setActiveTabIndex(0);
+
+		if (getEmailNotificationSettings() == null)
+			setEmailNotificationSettings(new EmailNotificationSettings(task));
+		if (getFaxNotificationSettings() == null)
+			setFaxNotificationSettings(new FaxNotificationSettings(task));
+		if (getPhoneNotificationSettings() == null)
+			setPhoneNotificationSettings(new PhoneNotificationSettings(task));
+		if(getNoContactDataNotificationSettings() == null)
+			setNoContactDataNotificationSettings(new NoContactDataNotificationSettings(task));
+		
+		updateNotificationLists();
+
+		MailTemplate taskReport = MailTemplate.factroy(MailType.MedicalFindingsReport);
+
+		if (getEmailNotificationSettings().getEmailSubject() == null)
+			emailNotificationSettings.setEmailSubject(taskReport.getSubject());
+
+		if (getEmailNotificationSettings().getEmailText() == null)
+			emailNotificationSettings.setEmailText(taskReport.getContent());
+
+		setShowPreview(false);
 	}
 
 	public void finalizeTask() {
 		logger.trace("Finalize Task");
 
 		getTemporaryTask().setFinalized(true);
+		
+		// ending stating phase
+		if(getTemporaryTask().isStainingPhase()){
+			slideManipulationHandler.setStainingCompletedForAllSlidesTo(getTemporaryTask(),true);
+			temporaryTask.setStainingPhase(false);
+			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.end");
+		}
+		
+		// ending diagnosis phase
+		if(getTemporaryTask().isDiagnosisPhase()){
+			getTemporaryTask().setDiagnosisPhase(false);
+		}
+		
+		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.finalized");
+		
 		hideMedicalFindingsDialog();
+	}
+
+	/**
+	 * Updates all notification lists. Is used if the contacts were changed
+	 * using the contact dialog!
+	 */
+	public void updateNotificationLists() {
+		getEmailNotificationSettings().updateNotificationEmailList();
+		getFaxNotificationSettings().updateNotificationFaxList();
+		getPhoneNotificationSettings().updateNotificationPhoneList();
+		getNoContactDataNotificationSettings().updateNoContactDataList();
 	}
 
 	@Async("taskExecutor")
@@ -260,7 +300,7 @@ public class MedicalFindingsHandlerAction {
 					if (emailSuccessful) {
 
 						// setting the contact to perfomed
-						notificationChooser.getContact().setNotificationPerformed(true);
+						notificationChooser.getContact().setEmailNotificationPerformed(true);
 						notificationChooser.setPerformed(true);
 
 						genericDAO.save(notificationChooser.getContact(),
@@ -305,13 +345,14 @@ public class MedicalFindingsHandlerAction {
 
 						// TODO: SEND FAX
 
+						faxSuccessful = true;
 						logger.trace("Fax send successfully");
 
 						// sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.error"));
 					}
 
 					if (faxSuccessful) {
-						notificationChooser.getContact().setNotificationPerformed(true);
+						notificationChooser.getContact().setFaxNotificationPerformed(true);
 						notificationChooser.setPerformed(true);
 
 						genericDAO.save(notificationChooser.getContact(),
@@ -340,7 +381,7 @@ public class MedicalFindingsHandlerAction {
 					if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
 						continue;
 					} else {
-						notificationChooser.getContact().setNotificationPerformed(true);
+						notificationChooser.getContact().setPhoneNotificationPerformed(true);
 						notificationChooser.setPerformed(true);
 						genericDAO.save(notificationChooser.getContact(),
 								resourceBundle.get("log.patient.task.contact.notification.telefon.performed",
@@ -460,6 +501,14 @@ public class MedicalFindingsHandlerAction {
 
 	public void setShowPreview(boolean showPreview) {
 		this.showPreview = showPreview;
+	}
+
+	public NoContactDataNotificationSettings getNoContactDataNotificationSettings() {
+		return noContactDataNotificationSettings;
+	}
+
+	public void setNoContactDataNotificationSettings(NoContactDataNotificationSettings noContactDataNotificationSettings) {
+		this.noContactDataNotificationSettings = noContactDataNotificationSettings;
 	}
 	/********************************************************
 	 * Getter/Setter

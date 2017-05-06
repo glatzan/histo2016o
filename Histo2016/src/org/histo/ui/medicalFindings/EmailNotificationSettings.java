@@ -46,15 +46,20 @@ public class EmailNotificationSettings {
 	 */
 	private DefaultTransformer<PrintTemplate> templateTransformer;
 
+	/**
+	 * Temporary Task
+	 */
+	private Task task;
+	
 	public EmailNotificationSettings(Task task) {
-		setNotificationEmailList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.EMAIL));
+		setTask(task);
+		updateNotificationEmailList();
 		setUseEmail(!getNotificationEmailList().isEmpty() ? true : false);
 
 		setPrintTemplates(PrintTemplate.getTemplatesByTypes(
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN }));
 
 		setTemplateTransformer(new DefaultTransformer<PrintTemplate>(getPrintTemplates()));
-		onAttachPdfToEmailChange();
 	}
 
 	/**
@@ -67,7 +72,7 @@ public class EmailNotificationSettings {
 			if (isAttachPdfToEmail()) {
 				if (notificationChooser.getNotificationAttachment() != NotificationOption.NONE) {
 					// if notification was performed
-					if(notificationChooser.getContact().isNotificationPerformed()){
+					if(notificationChooser.getContact().isEmailNotificationPerformed()){
 						notificationChooser.setNotificationAttachment(NotificationOption.NONE);
 						continue;
 					}
@@ -89,7 +94,7 @@ public class EmailNotificationSettings {
 				if (notificationChooser.getNotificationAttachment() != NotificationOption.NONE) {
 					
 					// if notification was performed
-					if(notificationChooser.getContact().isNotificationPerformed()){
+					if(notificationChooser.getContact().isEmailNotificationPerformed()){
 						notificationChooser.setNotificationAttachment(NotificationOption.NONE);
 						continue;
 					}
@@ -110,6 +115,16 @@ public class EmailNotificationSettings {
 		}
 	}
 
+	
+	/**
+	 * Updates the email list, if the contact page was used to edit contacts.
+	 */
+	public void updateNotificationEmailList(){
+		// TODO don't overwrite old list!
+		setNotificationEmailList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.EMAIL));
+		onAttachPdfToEmailChange();
+	}
+	
 	/**
 	 * Returns an array containing all values of the {@link NotificationOption}
 	 * enumeration.
@@ -178,6 +193,15 @@ public class EmailNotificationSettings {
 	public void setTemplateTransformer(DefaultTransformer<PrintTemplate> templateTransformer) {
 		this.templateTransformer = templateTransformer;
 	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

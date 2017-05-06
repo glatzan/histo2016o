@@ -37,9 +37,13 @@
 
 			<!-- Role -->
 			<p:column headerText="#{msg['dialog.settings.person.list.role']}"
-				style="text-align:center;">
-				<h:outputLabel
-					value="#{msg['enum.contactRole.'.concat(physician.defaultContactRole)]}"></h:outputLabel>
+				style="text-align:left;">
+				<p:repeat value="#{physician.associatedRolesAsArray}"
+					var="associatedRoles">
+					<h:outputLabel
+						value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
+					<br />
+				</p:repeat>
 			</p:column>
 
 			<!-- clinical employee -->
@@ -80,10 +84,10 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 			<h:panelGrid columns="1">
-				<h:panelGrid columns="9" style="margin-left: 20px;">
+				<h:panelGrid columns="4" style="margin-left: 20px;">
 					<!-- archived -->
 					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						value="#{settingsHandlerAction.physicianRoleOptions.archived}">
+						value="#{settingsHandlerAction.showArchivedPhysicians}">
 						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
 							update="physician"></p:ajax>
 					</p:selectBooleanCheckbox>
@@ -93,35 +97,20 @@
 
 					<h:panelGroup layout="block" style="width:20px!important"></h:panelGroup>
 
-					<!-- surgeon -->
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						value="#{settingsHandlerAction.physicianRoleOptions.surgeon}">
-						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
-							update="physician"></p:ajax>
-					</p:selectBooleanCheckbox>
-					<h:outputLabel
-						value="#{msg['dialog.settings.person.list.surgeon']}"
-						style="margin-left:5px;"></h:outputLabel>
+					<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
+						label="#{msg['dialog.settings.person.list.show.roles']}"
+						value="#{settingsHandlerAction.showPhysicianRoles}"
+						converter="#{settingsHandlerAction.associatedRolesTransformer}">
+						<f:selectItems var="role"
+							value="#{settingsHandlerAction.associatedRoles}"
+							itemValue="#{role}"
+							itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
-					<!-- private physician -->
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						style="margin-left:10px;"
-						value="#{settingsHandlerAction.physicianRoleOptions.privatePhysician}">
 						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
 							update="physician"></p:ajax>
-					</p:selectBooleanCheckbox>
-					<h:outputLabel
-						value="#{msg['dialog.settings.person.list.privatePhysician']}"
-						style="margin-left:5px;"></h:outputLabel>
-					<!-- Other -->
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						style="margin-left:10px;"
-						value="#{settingsHandlerAction.physicianRoleOptions.other}">
-						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
-							update="physician"></p:ajax>
-					</p:selectBooleanCheckbox>
-					<h:outputLabel value="#{msg['dialog.settings.person.list.other']}"
-						style="margin-left:5px;"></h:outputLabel>
+					</p:selectCheckboxMenu>
+
+
 				</h:panelGrid>
 			</h:panelGrid>
 

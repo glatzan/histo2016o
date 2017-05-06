@@ -48,27 +48,30 @@
 
 			<!-- Name -->
 			<p:outputLabel value="#{msg['component.personDataMask.name']}" />
-			<p:inputText id="#{cc.attrs.pannelID}_name"
-				value="#{cc.attrs.person.name}" disabled="#{cc.attrs.disabled}" />
+			<p:inputText id="#{cc.attrs.pannelID}_fname" name="lname"
+				autocomplete="family-name" value="#{cc.attrs.person.name}"
+				disabled="#{cc.attrs.disabled}" />
 			<!-- Surname -->
 			<p:outputLabel value="#{msg['component.personDataMask.surname']}" />
-			<p:inputText id="#{cc.attrs.pannelID}_surname"
-				value="#{cc.attrs.person.surname}" disabled="#{cc.attrs.disabled}" />
+			<p:inputText id="#{cc.attrs.pannelID}_surname" name="fname"
+				autocomplete="given-name" value="#{cc.attrs.person.surname}"
+				disabled="#{cc.attrs.disabled}" />
 		</h:panelGrid>
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 			columnClasses="defaultListingTableColumn30,">
 			<!-- birthday -->
 			<p:outputLabel value="#{msg['component.personDataMask.birthday']}" />
-			<p:calendar id="#{cc.attrs.pannelID}_birthday"
-				value="#{cc.attrs.person.birthday}" locale="de"
+			<p:calendar id="#{cc.attrs.pannelID}_birthday" name="bday"
+				autocomplete="bday" value="#{cc.attrs.person.birthday}" locale="de"
 				disabled="#{cc.attrs.disabled}" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<!-- gender -->
 			<p:outputLabel value="#{msg['component.personDataMask.gender']}" />
 			<p:selectOneMenu id="#{cc.attrs.pannelID}_gender" style="width:100px"
-				disabled="#{cc.attrs.disabled}" value="#{cc.attrs.person.gender}">
+				name="sex" autocomplete="sex" disabled="#{cc.attrs.disabled}"
+				value="#{cc.attrs.person.gender}">
 				<f:selectItem
 					itemLabel="#{msg['component.personDataMask.gender.select']}"
 					itemValue="UNKNOWN" />
@@ -90,27 +93,26 @@
 			<!-- street -->
 			<p:outputLabel
 				value="#{msg['component.personDataMask.adress.street']}" />
-			<p:inputText id="#{cc.attrs.pannelID}_street"
-				value="#{cc.attrs.person.street}" disabled="#{cc.attrs.disabled}" />
-
-			<!-- housenumber -->
-			<p:outputLabel
-				value="#{msg['component.personDataMask.adress.housenumber']}" />
-			<p:inputText style="width:75px;"
-				value="#{cc.attrs.person.houseNumber}"
+			<p:inputText id="#{cc.attrs.pannelID}_street" name="street-address"
+				autocomplete="street-address" value="#{cc.attrs.person.street}"
 				disabled="#{cc.attrs.disabled}" />
+
+			<h:panelGroup />
+			<h:panelGroup />
 		</h:panelGrid>
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 			columnClasses="defaultListingTableColumn30,">
 			<!-- Town -->
 			<p:outputLabel value="#{msg['component.personDataMask.adress.town']}" />
-			<p:inputText id="#{cc.attrs.pannelID}_town"
-				value="#{cc.attrs.person.town}" disabled="#{cc.attrs.disabled}" />
+			<p:inputText id="#{cc.attrs.pannelID}_town" name="city"
+				autocomplete="address-level2" value="#{cc.attrs.person.town}"
+				disabled="#{cc.attrs.disabled}" />
 
 			<!-- Postcode -->
 			<p:outputLabel value="#{msg['component.personDataMask.adress.plz']}" />
 			<p:inputText style="width:75px;" value="#{cc.attrs.person.postcode}"
+				name="postal-code" autocomplete="postal-code"
 				disabled="#{cc.attrs.disabled}" />
 		</h:panelGrid>
 		<!-- ****************** Adress ****************** -->
@@ -123,13 +125,13 @@
 			<!-- phone -->
 			<p:outputLabel
 				value="#{msg['component.personDataMask.miscellaneous.phonenumber']}" />
-			<p:inputText value="#{cc.attrs.person.phoneNumber}"
-				disabled="#{cc.attrs.disabled}" />
-			<!-- mail -->
+			<p:inputText value="#{cc.attrs.person.phoneNumber}" name="phone"
+				autocomplete="tel" disabled="#{cc.attrs.disabled}" />
+			<!-- mobile -->
 			<p:outputLabel
-				value="#{msg['component.personDataMask.miscellaneous.mail']}" />
-			<p:inputText id="#{cc.attrs.pannelID}_email"
-				value="#{cc.attrs.person.email}" disabled="#{cc.attrs.disabled}" />
+				value="#{msg['component.personDataMask.miscellaneous.mobile']}" />
+			<p:inputText value="#{cc.attrs.person.phoneNumber}" name="phone"
+				autocomplete="tel" disabled="#{cc.attrs.disabled}" />
 		</h:panelGrid>
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
@@ -137,7 +139,13 @@
 			<!-- fax -->
 			<p:outputLabel
 				value="#{msg['component.personDataMask.miscellaneous.fax']}" />
-			<p:inputText value="#{cc.attrs.person.fax}"
+			<p:inputText value="#{cc.attrs.person.fax}" name="fax"
+				autocomplete="fax" disabled="#{cc.attrs.disabled}" />
+			<!-- mail -->
+			<p:outputLabel
+				value="#{msg['component.personDataMask.miscellaneous.mail']}" />
+			<p:inputText id="#{cc.attrs.pannelID}_email" name="mail"
+				autocomplete="mail" value="#{cc.attrs.person.email}"
 				disabled="#{cc.attrs.disabled}" />
 		</h:panelGrid>
 		<!-- ****************** Contact ****************** -->

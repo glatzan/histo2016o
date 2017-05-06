@@ -16,9 +16,15 @@ public class PhoneNotificationSettings {
 	 * List of physician notify via email
 	 */
 	private List<MedicalFindingsChooser> notificationPhoneList;
-
+	
+	/**
+	 * Temporary Task
+	 */
+	private Task task;
+	
 	public PhoneNotificationSettings(Task task) {
-		setNotificationPhoneList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.PHONE));
+		setTask(task);
+		updateNotificationPhoneList();
 		setUsePhone(!getNotificationPhoneList().isEmpty() ? true : false);
 
 		for (MedicalFindingsChooser notificationChooser : getNotificationPhoneList()) {
@@ -26,6 +32,15 @@ public class PhoneNotificationSettings {
 		}
 	}
 
+	/**
+	 * Updates the phone list, if the contact page was used to edit contacts.
+	 */
+	public void updateNotificationPhoneList(){
+		// TODO don't overwrite old list!
+		
+		setNotificationPhoneList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.PHONE));
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -43,6 +58,14 @@ public class PhoneNotificationSettings {
 
 	public void setNotificationPhoneList(List<MedicalFindingsChooser> notificationPhoneList) {
 		this.notificationPhoneList = notificationPhoneList;
+	}
+
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
 	}
 	/********************************************************
 	 * Getter/Setter

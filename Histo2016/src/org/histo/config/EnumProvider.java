@@ -1,5 +1,16 @@
-package org.histo.config.enums;
+package org.histo.config;
 
+import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.DateFormat;
+import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Display;
+import org.histo.config.enums.Eye;
+import org.histo.config.enums.Month;
+import org.histo.config.enums.Role;
+import org.histo.config.enums.SignatureRole;
+import org.histo.config.enums.StainingListAction;
+import org.histo.config.enums.StaticList;
+import org.histo.config.enums.TaskPriority;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

@@ -18,10 +18,10 @@ public class MedicalFindingsChooser {
 	private PrintTemplate printTemplate;
 
 	private AtomicBoolean performed;
-	
+
 	private AtomicBoolean error;
-	
-	public MedicalFindingsChooser(){
+
+	public MedicalFindingsChooser() {
 		performed = new AtomicBoolean(false);
 		error = new AtomicBoolean(false);
 	}
@@ -45,10 +45,12 @@ public class MedicalFindingsChooser {
 				chooser.setNotificationAttachment(NotificationOption.TEXT);
 			} else if (contactMethod == ContactMethod.FAX && contact.isUseFax()) {
 				result.add(chooser);
-				chooser.setNotificationAttachment(NotificationOption.PDF);
+				chooser.setNotificationAttachment(NotificationOption.FAX);
 			} else if (contactMethod == ContactMethod.PHONE && contact.isUsePhone()) {
 				result.add(chooser);
 				chooser.setNotificationAttachment(NotificationOption.NONE);
+			}else if(contactMethod == ContactMethod.NO_CONTACT_DATA && !(contact.isUsePhone() || contact.isUseEmail() || contact.isUseFax())){
+				result.add(chooser);
 			}
 		}
 		return result;
@@ -77,7 +79,7 @@ public class MedicalFindingsChooser {
 	public void setPerformed(boolean performed) {
 		this.performed.set(performed);
 	}
-	
+
 	public boolean isError() {
 		return error.get();
 	}

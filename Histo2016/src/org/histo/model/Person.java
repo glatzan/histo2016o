@@ -51,8 +51,6 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	@Expose
 	protected String street = "";
 	@Expose
-	protected String houseNumber = "";
-	@Expose
 	protected String postcode = "";
 	@Expose
 	protected String town = "";
@@ -189,14 +187,6 @@ public class Person implements Serializable, LogAble, ArchivAble {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getHouseNumber() {
-		return houseNumber;
-	}
-
-	public void setHouseNumber(String houseNumber) {
-		this.houseNumber = houseNumber;
 	}
 
 	public String getFax() {

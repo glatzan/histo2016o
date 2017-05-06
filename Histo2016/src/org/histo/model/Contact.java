@@ -36,12 +36,18 @@ public class Contact implements LogAble {
 
 	private boolean useEmail;
 
-	private boolean notificationPerformed;
+	private long emailNotificationDate;
 
-	private long notificationDate;
+	private long faxNotificationDate;
 
+	private long phoneNotificationDate;
+
+	/********************************************************
+	 * Transient
+	 ********************************************************/
 	/**
-	 * Transient, is used for selecting contacts an marking already selected ones.
+	 * Transient, is used for selecting contacts an marking already selected
+	 * ones.
 	 */
 	private boolean selected;
 
@@ -49,13 +55,16 @@ public class Contact implements LogAble {
 	 * Transient, is used for selecting contacts from a list
 	 */
 	private int tmpId;
-	
+
+	/********************************************************
+	 * Transient
+	 ********************************************************/
+
 	public Contact() {
 	}
 
 	public Contact(Person person) {
 		this(person, ContactRole.NONE);
-		logger.debug("Creating contact for " + person.getFullName());
 	}
 
 	public Contact(Person person, ContactRole role) {
@@ -80,9 +89,10 @@ public class Contact implements LogAble {
 
 	/**
 	 * All cascade types, but not removing!
+	 * 
 	 * @return
 	 */
-	@OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH})
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH })
 	public Person getPerson() {
 		return person;
 	}
@@ -124,17 +134,6 @@ public class Contact implements LogAble {
 		this.useEmail = useEmail;
 	}
 
-	public boolean isNotificationPerformed() {
-		return notificationPerformed;
-	}
-
-	public void setNotificationPerformed(boolean notificationPerformed) {
-		this.notificationPerformed = notificationPerformed;
-
-		if (notificationPerformed)
-			setNotificationDate(System.currentTimeMillis());
-	}
-
 	public boolean isPrimaryContact() {
 		return primaryContact;
 	}
@@ -143,12 +142,28 @@ public class Contact implements LogAble {
 		this.primaryContact = primaryContact;
 	}
 
-	public long getNotificationDate() {
-		return notificationDate;
+	public long getEmailNotificationDate() {
+		return emailNotificationDate;
 	}
 
-	public void setNotificationDate(long notificationDate) {
-		this.notificationDate = notificationDate;
+	public long getFaxNotificationDate() {
+		return faxNotificationDate;
+	}
+
+	public long getPhoneNotificationDate() {
+		return phoneNotificationDate;
+	}
+
+	public void setEmailNotificationDate(long emailNotificationDate) {
+		this.emailNotificationDate = emailNotificationDate;
+	}
+
+	public void setFaxNotificationDate(long faxNotificationDate) {
+		this.faxNotificationDate = faxNotificationDate;
+	}
+
+	public void setPhoneNotificationDate(long phoneNotificationDate) {
+		this.phoneNotificationDate = phoneNotificationDate;
 	}
 
 	/********************************************************
@@ -166,7 +181,7 @@ public class Contact implements LogAble {
 	public void setSelected(boolean selected) {
 		this.selected = selected;
 	}
-	
+
 	@Transient
 	public int getTmpId() {
 		return tmpId;
@@ -174,6 +189,58 @@ public class Contact implements LogAble {
 
 	public void setTmpId(int tmpId) {
 		this.tmpId = tmpId;
+	}
+
+	@Transient
+	public boolean isEmailNotificationPerformed() {
+		return getEmailNotificationDate() != 0;
+	}
+
+	public void setEmailNotificationPerformed(boolean performed) {
+		setEmailNotificationDate(performed ? System.currentTimeMillis() : 0);
+	}
+
+	@Transient
+	public boolean isFaxNotificationPerformed() {
+		return getFaxNotificationDate() != 0;
+	}
+
+	public void setFaxNotificationPerformed(boolean performed) {
+		setFaxNotificationDate(performed ? System.currentTimeMillis() : 0);
+	}
+
+	@Transient
+	public boolean isPhoneNotificationPerformed() {
+		return getPhoneNotificationDate() != 0;
+	}
+
+	public void setPhoneNotificationPerformed(boolean performed) {
+		setPhoneNotificationDate(performed ? System.currentTimeMillis() : 0);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	@Transient
+	public boolean isNotificationPerformed() {
+
+		if (isUseEmail() || isUseFax() || isUsePhone()) {
+			boolean email = true, fax = true, phone = true;
+
+			// sets email to false if useEmails and not performed
+			if (isUseEmail() && getPhoneNotificationDate() == 0)
+				email = false;
+
+			if (isUseFax() && getFaxNotificationDate() == 0)
+				fax = false;
+
+			if (isUsePhone() && getPhoneNotificationDate() == 0)
+				phone = false;
+
+			return email && fax && phone;
+		}
+		return false;
 	}
 
 	/********************************************************

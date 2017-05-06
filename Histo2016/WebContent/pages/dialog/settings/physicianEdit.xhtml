@@ -27,17 +27,19 @@
 			<h:outputLabel value=" " />
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-				columnClasses="defaultListingTableColumn30,">
+				columnClasses="defaultListingTableColumn100px,">
 				<!-- role -->
 				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
-				<p:selectOneMenu
-					value="#{settingsHandlerAction.tmpPhysician.defaultContactRole}">
-
-					<f:selectItems value="#{enumProvider.contactRoles}" var="role"
-						itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
-						itemValue="#{role}" />
-
-				</p:selectOneMenu>
+				<p:selectCheckboxMenu updateLabel="true"
+					styleClass="customSelectCheckboxMenu"
+					value="#{settingsHandlerAction.tmpPhysician.associatedRolesAsArray}"
+					label="Cities" multiple="true"
+					converter="#{settingsHandlerAction.associatedRolesTransformer}">
+					<f:selectItems var="role"
+						value="#{settingsHandlerAction.associatedRoles}"
+						itemValue="#{role}"
+						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+				</p:selectCheckboxMenu>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
