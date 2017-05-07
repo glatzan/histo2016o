@@ -91,7 +91,7 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
-					<p:commandButton value="#{msg['dialog.media.upload']}"
+					<p:commandButton value="#{msg['dialog.media.upload']}" rendered="#{mediaHandlerAction.showUpload}"
 						icon="fa fa-print" styleClass="smallButton buttonLeftMarginInList"
 						actionListener="#{mediaHandlerAction.prepareUploadDialog(mediaHandlerAction.temporaryDataList)}">
 						<p:ajax event="dialogReturn" update="@form" />

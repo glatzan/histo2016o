@@ -13,8 +13,9 @@
    	http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
 	<!-- Scan for all of Spring components such as Spring Service -->
-	<context:component-scan base-package="org.histo.*" />
-	<context:spring-configured />
+	<context:component-scan base-package="org.histo.*" /> 
+	<context:spring-configured />  
+	 <!-- <context:load-time-weaver aspectj-weaving="on" /> -->
 
 	<mvc:annotation-driven />
 	<tx:annotation-driven />

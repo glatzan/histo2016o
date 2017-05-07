@@ -15,6 +15,7 @@ import org.histo.config.enums.NotificationOption;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.mail.MailTemplate;
@@ -63,6 +64,10 @@ public class MedicalFindingsHandlerAction {
 	
 	@Autowired
 	private SlideManipulationHandler slideManipulationHandler;
+	
+	@Autowired
+	private UtilDAO utilDAO;
+
 	/********************************************************
 	 * General
 	 ********************************************************/
@@ -158,7 +163,7 @@ public class MedicalFindingsHandlerAction {
 	public void initBean(Task task) {
 		setTemporaryTask(task);
 
-		patientDao.initializeDataList(task);
+		utilDAO.initializeDataList(task);
 
 		setActiveTabIndex(0);
 

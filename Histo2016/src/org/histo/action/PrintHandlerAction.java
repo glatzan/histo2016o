@@ -17,6 +17,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
@@ -52,13 +53,11 @@ public class PrintHandlerAction {
 	private TaskHandlerAction taskHandlerAction;
 
 	@Autowired
-	private TaskDAO taskDAO;
+	private UtilDAO utilDAO;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
 
-	@Autowired
-	private PatientDao patientDao;
 
 	/**
 	 * class for creating pdfs
@@ -128,7 +127,7 @@ public class PrintHandlerAction {
 
 		setTaskToPrint(task);
 
-		patientDao.initializeDataList(task);
+		utilDAO.initializeDataList(task);
 
 		setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 
@@ -341,7 +340,7 @@ public class PrintHandlerAction {
 
 			task.getAttachedPdfs().add(pdf);
 
-			mainHandlerAction.saveDataChange(task, "log.patient.task.pdf.attached", pdf.getName());
+			mainHandlerAction.saveDataChange(task, "log.patient.pdf.attached", pdf.getName());
 		} else {
 			logger.debug("PDF allready saved, not saving. " + pdf.getName());
 		}

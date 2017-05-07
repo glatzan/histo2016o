@@ -18,6 +18,7 @@ import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.dao.PatientDao;
+import org.histo.dao.UtilDAO;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.SearchOptions;
@@ -35,7 +36,7 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session")
 public class WorklistHandlerAction implements Serializable {
 
-	private static final long serialVersionUID = 7122206530891485336L;
+	protected static final long serialVersionUID = 7122206530891485336L;
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -70,6 +71,10 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	private TaskListHandlerAction taskListHandlerAction;
+	
+	@Autowired
+	private UtilDAO utilDAO;
+	
 	/*
 	 * ************************** Patient ****************************
 	 */
@@ -186,7 +191,7 @@ public class WorklistHandlerAction implements Serializable {
 
 		logger.debug("Select patient " + patient.getPerson().getFullName());
 
-		patientDao.initializeDataList(patient);
+		utilDAO.initializeDataList(patient);
 
 		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
@@ -265,7 +270,7 @@ public class WorklistHandlerAction implements Serializable {
 			return View.WORKLIST_TASKS.getPath();
 		}
 		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
-			patientDao.initializeDataList(getSelectedPatient());
+			utilDAO.initializeDataList(getSelectedPatient());
 			return View.WORKLIST_PATIENT.getPath();
 		} else if (currentView == View.WORKLIST_DIAGNOSIS) {
 			setLastSubView(View.WORKLIST_DIAGNOSIS);

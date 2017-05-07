@@ -15,6 +15,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.histo.model.interfaces.EditAbleEntity;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;
 
@@ -24,7 +25,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "materialPreset_sequencegenerator", sequenceName = "materialPreset_sequence")
-public class MaterialPreset implements EditAbleEntity<MaterialPreset>, LogAble, ListOrder<MaterialPreset> {
+public class MaterialPreset implements EditAbleEntity<MaterialPreset>, ListOrder<MaterialPreset>, LogAble, HasID {
 
 	@Expose
 	private long id;
@@ -40,7 +41,7 @@ public class MaterialPreset implements EditAbleEntity<MaterialPreset>, LogAble, 
 
 	@Expose
 	private int indexInList;
-	
+
 	public MaterialPreset() {
 	}
 
@@ -109,10 +110,11 @@ public class MaterialPreset implements EditAbleEntity<MaterialPreset>, LogAble, 
 	public void setIndexInList(int indexInList) {
 		this.indexInList = indexInList;
 	}
+
 	/********************************************************
 	 * Interface ListOrder
 	 ********************************************************/
-	
+
 	@Transient
 	public void update(MaterialPreset stainingPrototypeList) {
 		this.name = stainingPrototypeList.getName();

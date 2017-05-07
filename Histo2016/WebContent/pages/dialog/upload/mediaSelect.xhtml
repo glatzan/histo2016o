@@ -46,7 +46,7 @@
 
 						<p:ajax event="rowDblselect"
 							listener="#{mediaHandlerAction.selectMedia(mediaHandlerAction.temporaryPdfContainer)}" />
-							
+
 						<p:ajax event="rowSelect" update="@form" />
 
 						<p:column>
@@ -96,7 +96,8 @@
 
 				<h:panelGrid columns="1">
 					<p:commandButton value="#{msg['dialog.media.upload']}"
-						icon="fa fa-print" styleClass="smallButton buttonLeftMarginInList"
+						rendered="#{mediaHandlerAction.showUpload}" icon="fa fa-print"
+						styleClass="smallButton buttonLeftMarginInList"
 						actionListener="#{mediaHandlerAction.prepareUploadDialog(mediaHandlerAction.temporaryDataList)}">
 						<p:ajax event="dialogReturn" update="@form" />
 					</p:commandButton>

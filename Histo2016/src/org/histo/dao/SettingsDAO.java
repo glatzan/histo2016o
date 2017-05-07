@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -33,6 +34,10 @@ public class SettingsDAO extends AbstractDAO implements Serializable {
 		return query.getExecutableCriteria(getSession()).list();
 	}
 
+	/**
+	 * Returns a list with all available MaterialPresets.
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public List<MaterialPreset> getAllMaterialPresets() {
 		DetachedCriteria query = DetachedCriteria.forClass(MaterialPreset.class, "mPresets");
@@ -40,6 +45,25 @@ public class SettingsDAO extends AbstractDAO implements Serializable {
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}
+	
+	/**
+	 * Initializes a list of MaterialPresets, Stainings are fetched lazy
+	 * @param stainingPrototypeLists
+	 */
+	public void initMaterialPresets(List<MaterialPreset> stainingPrototypeLists) {
+		for (MaterialPreset stainingPrototypeList : stainingPrototypeLists) {
+			initMaterialPreset(stainingPrototypeList);
+		}
+	}
+	
+	/**
+	 * Initializes a MaterialPrest, stainings are fetched lazy
+	 * @param stainingPrototypeLists
+	 */
+	public void initMaterialPreset(MaterialPreset stainingPrototypeLists) {
+		Hibernate.initialize(stainingPrototypeLists.getStainingPrototypes());
+	}
+
 
 	public List<ListItem> getAllStaticListItems(StaticList list) {
 		return getAllStaticListItems(list, false);

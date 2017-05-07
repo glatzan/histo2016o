@@ -311,6 +311,7 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Delete
 	 ********************************************************/
+	@Deprecated
 	public void deleteDate(SaveAble toSave, String resourcesKey, String... arr) {
 		genericDAO.delete(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
@@ -322,6 +323,7 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Save
 	 ********************************************************/
+	@Deprecated
 	public void saveDataChange(SaveAble toSave, String resourcesKey, String... arr) {
 		genericDAO.save(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}

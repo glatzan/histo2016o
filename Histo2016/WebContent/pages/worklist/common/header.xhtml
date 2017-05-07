@@ -194,6 +194,13 @@
 						disabled="#{taskStatus.finalized}" icon="fa fa-fw fa-eye"
 						onclick="$('#headerForm\\:diagnosisPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{taskIsNotNull and (taskStatus.notificationPhase or taskStatus.finalized)}" />
+
+					<!-- council -->
+					<p:menuitem value="#{msg['header.menu.task.council']}"
+						disabled="#{!taskEditable}" icon="fa fa-comment-o"
+						onclick="$('#headerForm\\:councilBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
+
 					<!-- ************ Diagnosis ************ -->
 
 					<!-- ************ Notification ************ -->
@@ -220,8 +227,6 @@
 
 					<!-- ************ Notification ************ -->
 
-
-
 					<p:separator />
 					<!-- accounting -->
 					<p:menuitem value="#{msg['header.menu.task.sample.accounting']}"
@@ -229,10 +234,10 @@
 						rendered="#{worklistHandlerAction.selectedPatient ne null}"
 						title="#{worklistHandlerAction.selectedPatient.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
-					<!-- council -->
-					<p:menuitem value="#{msg['header.menu.task.council']}"
-						disabled="#{!taskEditable}" icon="fa fa-comment-o"
-						onclick="$('#headerForm\\:councilBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+					<!-- biobank -->
+					<p:menuitem value="#{msg['header.menu.task.biobank']}"
+						disabled="#{!taskEditable}" icon="fa fa-leaf"
+						onclick="$('#headerForm\\:bioBankBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null  }" />
 
 					<!-- Print -->
@@ -301,7 +306,7 @@
 
 			<!-- New Task Button -->
 			<p:commandButton id="newTaskBtn" style="display:none"
-				actionListener="#{taskHandlerAction.prepareNewTaskDialog()}">
+				actionListener="#{createTaskDialogHandler.initAndPrepareBean(worklistHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
@@ -362,6 +367,14 @@
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
+			<!-- Council button -->
+			<p:commandButton id="councilBtn" style="display:none"
+				actionListener="#{councilDialogHandler.initAndPrepareBean(worklistHandlerAction.selectedPatient.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm"
+					listener="#{mainHandlerAction.showQueueDialog()}" />
+			</p:commandButton>
+
 			<!-- Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
 				actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
@@ -385,19 +398,19 @@
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
-			<!-- Print button -->
-			<p:commandButton id="printBtn" style="display:none"
-				widgetVar="printBtnVar" onstart="PF('blockUIWidget').block()"
-				oncomplete="PF('blockUIWidget').unblock()"
-				actionListener="#{printHandlerAction.showDefaultPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+			<!-- Biobank button -->
+			<p:commandButton id="bioBankBtn" style="display:none"
+				actionListener="#{bioBankDialogHandler.initAndPrepareBean(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
 
-			<!-- Council button -->
-			<p:commandButton id="councilBtn" style="display:none"
-				actionListener="#{taskHandlerAction.prepareCouncilDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+			<!-- Print button -->
+			<p:commandButton id="printBtn" style="display:none"
+				widgetVar="printBtnVar" onstart="PF('blockUIWidget').block()"
+				oncomplete="PF('blockUIWidget').unblock()"
+				actionListener="#{printHandlerAction.showDefaultPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />

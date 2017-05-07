@@ -16,7 +16,7 @@ import org.histo.config.enums.MailType;
 import org.histo.config.enums.SettingsTab;
 import org.histo.config.enums.StaticList;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.HelperDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
@@ -66,7 +66,7 @@ public class SettingsHandlerAction {
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private HelperDAO helperDAO;
+	private UtilDAO utilDAO;
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
@@ -512,7 +512,7 @@ public class SettingsHandlerAction {
 	 ********************************************************/
 	public void initMaterialPresets() {
 		setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
-		helperDAO.initStainingPrototypeList(getAllAvailableMaterials());
+		utilDAO.initStainingPrototypeList(getAllAvailableMaterials());
 	}
 
 	/**
@@ -981,7 +981,7 @@ public class SettingsHandlerAction {
 	 * history dialog.
 	 */
 	public void loadGeneralHistory() {
-		// setCurrentHistory(helperDAO.getCurrentHistory(100));
+		// setCurrentHistory(utilDAO.getCurrentHistory(100));
 	}
 
 	/**
@@ -991,7 +991,7 @@ public class SettingsHandlerAction {
 	 * @param patient
 	 */
 	public void loadPatientHistory(Patient patient) {
-		// setCurrentHistory(helperDAO.getCurrentHistoryForPatient(100,
+		// setCurrentHistory(utilDAO.getCurrentHistoryForPatient(100,
 		// patient));
 	}
 
@@ -1004,7 +1004,7 @@ public class SettingsHandlerAction {
 	 * transformer
 	 */
 	public void updateAllDiagnosisPrototypes() {
-		setAllAvailableDiagnosisPrototypes(helperDAO.getAllDiagnosisPrototypes());
+		setAllAvailableDiagnosisPrototypes(utilDAO.getAllDiagnosisPrototypes());
 		setDiagnosisPrototypeListTransformer(
 				new DiagnosisPrototypeListTransformer(getAllAvailableDiagnosisPrototypes()));
 	}

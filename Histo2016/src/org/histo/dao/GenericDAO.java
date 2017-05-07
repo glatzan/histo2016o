@@ -11,10 +11,13 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
 import org.histo.model.interfaces.LogInfo;
+import org.histo.model.interfaces.SaveAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class GenericDAO extends AbstractDAO {
 
 	private static Logger logger = Logger.getLogger("org.histo");
+
+	@Autowired
+	private ResourceBundle resourceBundle;
 
 	@SuppressWarnings("unchecked")
 	public <C> C get(Class<C> clazz, Serializable serializable) {
@@ -70,19 +76,39 @@ public class GenericDAO extends AbstractDAO {
 				.setProjection(Projections.rowCount()).uniqueResult()).intValue();
 	}
 
+
+
+	// ************************ Save ************************
+	public void saveDataChange(Object toSave, String resourcesKey, Object... arr) {
+		if (toSave instanceof SaveAble) {
+			save(toSave, resourceBundle.get(resourcesKey, ((SaveAble) toSave).getLogPath(), arr),
+					((SaveAble) toSave).getPatient());
+		} else {
+			save(toSave, resourceBundle.get(resourcesKey, arr));
+		}
+	}
+
+	public void saveDataChange(Object toSave, SaveAble path, String resourcesKey, Object... arr) {
+		save(toSave, resourceBundle.get(resourcesKey, path.getLogPath(), arr), path.getPatient());
+	}
+	
+	@Deprecated
 	public <C> C save(C object) {
 		return save(object, (LogInfo) null);
 	}
 
+	@Deprecated
 	public <C> C save(C object, String logMessage) {
 		return save(object, new LogInfo(logMessage));
 	}
 
+	@Deprecated
 	public <C> C save(C object, String logMessage, Patient patient) {
 		return save(object, new LogInfo(logMessage, patient));
 	}
 
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public <C> C save(C object, LogInfo logInfo) {
 
 		logger.info("Saving " + object.toString());
@@ -118,21 +144,39 @@ public class GenericDAO extends AbstractDAO {
 			save(object);
 		}
 	}
-	
+
 	public void save(Collection<?> objects, String logMessage) {
 		for (Object object : objects) {
 			save(object, logMessage);
 		}
 	}
 
+	// ************************ Delete ************************
+	public void deleteDate(Object toSave, String resourcesKey, Object... arr) {
+		if (toSave instanceof SaveAble) {
+			delete(toSave, resourceBundle.get(resourcesKey, ((SaveAble) toSave).getLogPath(), arr),
+					((SaveAble) toSave).getPatient());
+		} else {
+			delete(toSave, resourceBundle.get(resourcesKey, arr));
+		}
+	}
+
+	@Deprecated
 	public <C> C delete(C object) {
 		return delete(object, (LogInfo) null);
 	}
 
+	@Deprecated
+	public <C> C delete(C object, String logMessage) {
+		return delete(object, new LogInfo(logMessage));
+	}
+
+	@Deprecated
 	public <C> C delete(C object, String logMessage, Patient patient) {
 		return delete(object, new LogInfo(logMessage, patient));
 	}
 
+	@Deprecated
 	public <C> C delete(C object, LogInfo logInfo) {
 
 		// sets a logMessage to the securityContext, this is a workaround for

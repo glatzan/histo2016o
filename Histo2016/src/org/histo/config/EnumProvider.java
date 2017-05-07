@@ -5,6 +5,7 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Display;
 import org.histo.config.enums.Eye;
+import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.Month;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.SignatureRole;
@@ -127,6 +128,14 @@ public class EnumProvider {
 	 */
 	public DateFormat getDateFormat(DateFormat dateFormat) {
 		return dateFormat;
+	}
+	
+	/**
+	 * Returns an array with all values of the InformedConsentInterface
+	 * @return
+	 */
+	public InformedConsentType[] getInformedConsentTypes(){
+		return InformedConsentType.values();
 	}
 
 }

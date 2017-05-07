@@ -8,7 +8,7 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.createTask.Headline']}" /></title>
+			value="#{msg['dialog.biobank.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -19,7 +19,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.createTask.Headline']}" />
+				<h:outputLabel value="#{msg['dialog.biobank.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -33,173 +33,94 @@
 			<h:panelGrid columns="3"
 				styleClass="defaultListingTableTwoLineContainer">
 				<!-- Left Column -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableCss"
-					columnClasses="defaultListingTableColumnTop,">
+				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+					<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+						columnClasses="defaultListingTableColumnTop,">
 
-					<!-- Task number -->
-					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
-					<h:outputLabel value="#{taskHandlerAction.temporaryTask.taskID}"></h:outputLabel>
-
-					<!-- Task Date -->
-
-					<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
-					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
-						styleClass="smallInput"
-						value="#{taskHandlerAction.temporaryTask.dateOfReceiptAsDate}">
-					</p:calendar>
-
-					<!-- Auto nomenclature -->
-					<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}" />
-					<p:selectBooleanCheckbox id="autoNomenclature"
-						title="#{msg['dialog.createTask.autoNomenclature.text']}"
-						value="#{taskHandlerAction.temporaryTask.useAutoNomenclature}">
-						<p:ajax
-							listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
-					</p:selectBooleanCheckbox>
-
-					<!-- priority -->
-					<h:outputLabel value="#{msg['dialog.createTask.priority']}" />
-
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-						<p:selectOneRadio id="console"
-							value="#{taskHandlerAction.temporaryTask.taskPriority}">
-							<f:selectItem itemLabel="#{msg['enum.taskPriority.LOW']}"
-								itemValue="NONE" />
-							<f:selectItem itemLabel="#{msg['enum.taskPriority.HIGHT']}"
-								itemValue="HIGH" />
-							<f:selectItem itemLabel="#{msg['enum.taskPriority.TIME']}"
-								itemValue="TIME" />
-
-							<p:ajax update="@form"></p:ajax>
-						</p:selectOneRadio>
-
-						<h:panelGrid columns="2">
-							<h:outputLabel
-								value="#{msg['dialog.createTask.priority.dueDate']}" />
-							<p:calendar pattern="dd.MM.yyyy" mask="true"
-								styleClass="smallInput"
-								disabled="#{!taskHandlerAction.temporaryTask.dueDateSelected}"
-								value="#{taskHandlerAction.temporaryTask.dueDateAsDate}">
-							</p:calendar>
-						</h:panelGrid>
-					</h:panelGrid>
-
-
-					<!-- biobank -->
-					<h:outputLabel value="#{msg['dialog.createTask.bioBank']}" />
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-						<h:panelGrid columns="3">
-							<!-- select file -->
-							<h:outputLabel
-								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
-							<p:commandLink
-								actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(worklistHandlerAction.selectedPatient)}">
-								<p:ajax event="dialogReturn" update="@form" />
-								<i class="fa fa-search icon-grey"></i>
-							</p:commandLink>
-							<p:commandLink style="margin-right:5px"
-								rendered="#{mediaHandlerAction.selectedPdfContainer != null}"
-								actionListener="#{mediaHandlerAction.setSelectedPdfContainer(null)}">
-								<p:ajax event="dialogReturn" update="@form" />
-								<i class="fa fa-close icon-grey"></i>
-							</p:commandLink>
-						</h:panelGrid>
-						<h:panelGrid columns="2">
-							<!-- selected file /remove file -->
-							<h:outputLabel
-								value="#{msg['dialog.createTask.bioBank.informedConsent.file']}:" />
-							<h:outputLabel style="float:right"
-								value="#{mediaHandlerAction.selectedPdfContainer.name}"></h:outputLabel>
-
-
-							<!-- type of informed consent -->
-							<h:outputLabel
-								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
-							<p:selectOneMenu id="consentType" styleClass="smallInput"
-								disabled="#{mediaHandlerAction.selectedPdfContainer == null}">
-								<f:selectItem itemLabel="Select One" itemValue="" />
-								<f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
-							</p:selectOneMenu>
-
-						</h:panelGrid>
-
+						<!-- type of informed consent -->
+						<h:outputLabel value="#{msg['dialog.biobank.informentConsent']}" />
+						<p:selectOneMenu id="consentType" styleClass="smallInput"
+							value="#{bioBankDialogHandler.bioBank.informedConsentType}">
+							<f:selectItems value="#{enumProvider.informedConsentTypes}"
+								var="type"
+								itemLabel="#{msg['enum.informedConsentType.'.concat(type)]}"
+								itemValue="#{type}" />
+						</p:selectOneMenu>
 
 					</h:panelGrid>
 
+					<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+						columnClasses="defaultListingTableColumnTop,">
+						<h:outputLabel value="#{msg['dialog.biobank.pdf.fromPatient']}"></h:outputLabel>
+						<!-- Get PDF from Patien -->
+						<p:commandLink
+							actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task.patient)}">
+							<p:ajax event="dialogReturn" update="@form"
+								listener="#{mediaHandlerAction.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
+							<i class="fa fa-search icon-grey"></i>
+						</p:commandLink>
+
+						<h:outputLabel value="#{msg['dialog.biobank.pdf.fromTask']}"></h:outputLabel>
+						<!-- Get PDF from Task -->
+						<p:commandLink
+							actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task)}">
+							<p:ajax event="dialogReturn" update="@form"
+								listener="#{mediaHandlerAction.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
+							<i class="fa fa-search icon-grey"></i>
+						</p:commandLink>
+
+					</h:panelGrid>
 				</h:panelGrid>
-				<!-- Left column -->
-
 				<!-- spacer -->
 				<h:panelGroup></h:panelGroup>
 
 				<!-- Right column -->
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<h:panelGrid columns="2" styleClass="defaultListingTableCss">
-
-						<!-- samplecount -->
-						<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
-						<p:spinner id="basic"
-							value="#{taskHandlerAction.temporaryTaskSampleCount}"
-							styleClass="taskSpinner" min="1" max="5">
-							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
-								event="change"
-								listener="#{taskHandlerAction.updateNewTaskDilaog(taskHandlerAction.temporaryTask)}"></p:ajax>
-						</p:spinner>
-
-
-					</h:panelGrid>
-					<p:dataTable var="sample" id="sampleMaterial"
-						styleClass="smallPaddingAll noBordersAll hide-column-names standardFont"
-						value="#{taskHandlerAction.temporaryTask.samples}">
-						<p:column style="width: 40px;">
-							<ul style="margin: 0px;">
-								<LI style="margin: 0px;" />
-							</ul>
+					<!-- Attached PDFs -->
+					<p:dataTable var="pdf"
+						value="#{bioBankDialogHandler.bioBank.attachedPdfs}"
+						styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+						style="width:100%;" scrollable="true" scrollHeight="400">
+						<p:column headerText="#{msg['dialog.biobank.table.name']}">
+							<h:outputText value="#{pdf.name}" />
 						</p:column>
-
-						<p:column style="width: 62px;">
-							<h:outputLabel
-								value="#{msg['dialog.createTask.task']} #{sample.sampleID}"></h:outputLabel>
-						</p:column>
-						<p:column>
-							<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-								style="margin-left:30px;"
-								converter="#{taskHandlerAction.materialListTransformer}"
-								value="#{sample.materilaPreset}">
-								<f:selectItems
-									value="#{settingsHandlerAction.allAvailableMaterials}"
-									var="materialSelect" itemLabel="#{materialSelect.name}"
-									itemValue="#{materialSelect}">
-								</f:selectItems>
-							</p:selectOneMenu>
+						<p:column headerText="" style="width:15%">
+							<p:commandLink styleClass="noUnderlineAtLink"
+								title="#{msg['dialog.biobank.table.preview.hint']}"
+								actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(bioBankDialogHandler.bioBank,pdf,false)}">
+								<p:ajax event="dialogReturn" update="@form" />
+								<i class="fa fa-search icon-grey"></i>
+							</p:commandLink>
+							<p:commandLink style="margin-right:5px" update="@form"
+								styleClass="noUnderlineAtLink"
+								title="#{msg['dialog.biobank.table.remove.hint']}"
+								actionListener="#{mediaHandlerAction.removeFileFormDataList(bioBankDialogHandler.bioBank,pdf)}">
+								<i class="fa fa-close icon-grey"></i>
+							</p:commandLink>
 						</p:column>
 					</p:dataTable>
 				</h:panelGrid>
-				<!-- Right column -->
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="4" style="float:right;">
-					<!-- confirm -->
-					<p:commandButton value="#{msg['general.create']}"
+				<h:panelGrid columns="2" style="float:right;">
+					<!-- Saev Button -->
+					<p:commandButton value="#{msg['general.save']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTaskFromGui(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener binding="#{bioBankDialogHandler.saveBioBank()}"></f:actionListener>
+						<f:actionListener binding="#{bioBankDialogHandler.hideDialog()}"></f:actionListener>
+					</p:commandButton>
 
-					<!-- print ureport -->
-					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
-						icon="fa fa-print"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.createNewTaskFromGuiAndPrintUReport(worklistHandlerAction.selectedPatient,taskHandlerAction.temporaryTask)}"></p:commandButton>
-
-					<!-- Abort button -->
-					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-times-circle"
-						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('TASK_CREATE'))}" />
+						icon="fa fa-times-circle">
+						<f:actionListener binding="#{bioBankDialogHandler.hideDialog()}"></f:actionListener>
+					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

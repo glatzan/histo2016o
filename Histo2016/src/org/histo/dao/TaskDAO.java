@@ -74,16 +74,6 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Initializes lazy fetch for council data
-	 * 
-	 * @param task
-	 */
-	public void initializeCouncilData(Task task) {
-		getSession().update(task);
-		Hibernate.initialize(task.getCouncils());
-	}
-
-	/**
 	 * Initializes diagnosisContainer with all diagnoses
 	 * 
 	 * @param task

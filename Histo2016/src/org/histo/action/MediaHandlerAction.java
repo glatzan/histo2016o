@@ -12,6 +12,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
@@ -41,16 +42,7 @@ public class MediaHandlerAction {
 	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
-	private PatientHandlerAction patientHandlerAction;
-
-	@Autowired
-	private TaskHandlerAction taskHandlerAction;
-
-	@Autowired
-	private TaskDAO taskDAO;
-
-	@Autowired
-	private PatientDao patientDao;
+	private UtilDAO utilDAO;
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
@@ -99,9 +91,46 @@ public class MediaHandlerAction {
 	 */
 	private PDFContainer selectedPdfContainer;
 
+	/**
+	 * True if upload button should be shown
+	 */
+	private boolean showUpload;
+
 	/********************************************************
 	 * media display
 	 ********************************************************/
+
+	public void removeFileFormDataList(HasDataList dataList, PDFContainer container) {
+		removeFileFormDataList(dataList, container, false);
+
+	}
+
+	/**
+	 * Removing file form datalist TODO: Move to other class
+	 * 
+	 * @param dataList
+	 * @param container
+	 */
+	public void removeFileFormDataList(HasDataList dataList, PDFContainer container, boolean delete) {
+		if (dataList.getAttachedPdfs().contains(container)) {
+			dataList.getAttachedPdfs().remove(container);
+			genericDAO.saveDataChange(dataList, "log.patient.pdf.removed", container.getName());
+
+			if (delete)
+				genericDAO.deleteDate(container, "log.patient.pdft.deleted", container.getName());
+		}
+
+	}
+
+	public void copySelectedFileToDataList(HasDataList dataList) {
+		if (getSelectedPdfContainer() != null) {
+			dataList.getAttachedPdfs().add(getSelectedPdfContainer());
+
+			genericDAO.saveDataChange(dataList, "log.patient.pdf.attached", getSelectedPdfContainer().getName());
+			
+			setSelectedPdfContainer(null);
+		}
+	}
 
 	/********************************************************
 	 * Data Upload
@@ -111,7 +140,7 @@ public class MediaHandlerAction {
 	 * Shows a dialog for uploading files to a task
 	 */
 	public void prepareUploadDialog(HasDataList dataList) {
-		patientDao.initializeDataList(dataList);
+		utilDAO.initializeDataList(dataList);
 		setTemporaryDataList(dataList);
 		setUploadedFileCommentary("");
 		setUploadedFileType(DocumentType.OTHER);
@@ -136,16 +165,8 @@ public class MediaHandlerAction {
 
 			dataList.getAttachedPdfs().add(upload);
 
-			String logRef = "";
-
-			if (dataList instanceof Patient) {
-				logRef = "log.patient.pdf.attached";
-			} else {
-				logRef = "log.patient.task.pdf.attached";
-			}
-
 			// saving list
-			mainHandlerAction.saveDataChange(dataList, logRef, upload.getName());
+			mainHandlerAction.saveDataChange(dataList, "log.patient.pdf.attached", upload.getName());
 		}
 		hideDataUploadDialog();
 	}
@@ -174,7 +195,7 @@ public class MediaHandlerAction {
 	/********************************************************
 	 * Single Media display from extern
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Media display
 	 ********************************************************/
@@ -183,10 +204,15 @@ public class MediaHandlerAction {
 	}
 
 	public void prepareMediaDisplayDialog(HasDataList dataList, PDFContainer mediaToDisplay) {
+		prepareMediaDisplayDialog(dataList, mediaToDisplay, true);
+	}
+
+	public void prepareMediaDisplayDialog(HasDataList dataList, PDFContainer mediaToDisplay, boolean showUpload) {
 		mainHandlerAction.showDialog(Dialog.MEDIA_PREVIEW);
-		patientDao.initializeDataList(dataList);
+		utilDAO.initializeDataList(dataList);
 		setTemporaryDataList(dataList);
-		
+		setShowUpload(showUpload);
+
 		// setting default printer
 		printHandlerAction.setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 
@@ -226,9 +252,14 @@ public class MediaHandlerAction {
 	}
 
 	public void prepareMediaDisplaySelectDialog(HasDataList dataList, PDFContainer mediaToDisplay) {
+		prepareMediaDisplaySelectDialog(dataList, mediaToDisplay, true);
+	}
+
+	public void prepareMediaDisplaySelectDialog(HasDataList dataList, PDFContainer mediaToDisplay, boolean showUpload) {
 		mainHandlerAction.showDialog(Dialog.MEDIA_SELECT);
-		patientDao.initializeDataList(dataList);
+		utilDAO.initializeDataList(dataList);
 		setTemporaryDataList(dataList);
+		setShowUpload(showUpload);
 
 		if (mediaToDisplay == null && dataList.getAttachedPdfs().size() > 0)
 			mediaToDisplay = dataList.getAttachedPdfs().get(0);
@@ -300,6 +331,14 @@ public class MediaHandlerAction {
 
 	public void setSelectedPdfContainer(PDFContainer selectedPdfContainer) {
 		this.selectedPdfContainer = selectedPdfContainer;
+	}
+
+	public boolean isShowUpload() {
+		return showUpload;
+	}
+
+	public void setShowUpload(boolean showUpload) {
+		this.showUpload = showUpload;
 	}
 	/********************************************************
 	 * Getter/Setter

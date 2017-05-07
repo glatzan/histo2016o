@@ -355,8 +355,4 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 
-	public void initializeDataList(HasDataList dataList) {
-		getSession().update(dataList);
-		Hibernate.initialize(dataList.getAttachedPdfs());
-	}
 }
