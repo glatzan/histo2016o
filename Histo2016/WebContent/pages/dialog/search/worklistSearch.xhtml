@@ -23,7 +23,7 @@
 				<h:outputLabel value="#{msg['dialog.worklistsearch.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}">
+					actionListener="#{worklistSearchDialogHandler.hideDialog()}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>

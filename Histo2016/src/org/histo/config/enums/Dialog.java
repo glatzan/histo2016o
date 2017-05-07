@@ -7,7 +7,7 @@ package org.histo.config.enums;
  */
 public enum Dialog {
 	
-	WORKLIST_SEARCH("/pages/dialog/worklist/worklistSearch", null, 1024, 600, false, false, true), // 16:9
+	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1024, 600, false, false, true), // 16:9
 	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", null, 1024, 600, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,430, 270, false, false, true), 
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), 

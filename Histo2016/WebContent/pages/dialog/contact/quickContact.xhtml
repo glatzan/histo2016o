@@ -32,7 +32,7 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 
-				<p:dataTable var="contact" rowKey="#{contact.tmpId}"
+				<p:dataTable var="contact" rowKey="#{contact.tmpId}" id="contentTable"
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 					scrollable="true" scrollHeight="340" selectionMode="single"
 					selection="#{contactHandlerAction.selectedContact}"
@@ -106,7 +106,7 @@
 
 							<p:ajax
 								listener="#{contactHandlerAction.updateContactList()}"
-								update="@form"></p:ajax>
+								update=":dialogContent:contentTable"></p:ajax>
 						</p:selectCheckboxMenu>
 					</h:panelGrid>
 				</h:panelGrid>
