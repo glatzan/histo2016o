@@ -42,7 +42,7 @@
 %\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
 \ThisCenterWallPaper{1}{background.pdf}
 %
- \input{d:/latex/code128.tex}
+ \input{code128.tex}
 
 
 \baselineskip10pt
@@ -56,13 +56,13 @@
 {
 \scriptsize
 \begin{textblock}{100}(19, 8) 
-\noindent ::patName ::patSurName\\
-::patAddress\\
-::patPlz ::patCity\\
+\noindent $patient.person.fullName\\
+$patient.person.street\\
+$patient.person.postcode $patient.person.town\\
 \X=.35mm        
 \barheight=1cm 
-\code{::piz}\\
-::piz\\
+\code{#if($patient.piz == "") 0 #else $patient.piz #end}\\
+$patient.piz\\
 \end{textblock}
 }
 
@@ -71,10 +71,10 @@
 \begin{textblock}{100}(22, 50) 
 \setstretch{1.0}
 \noindent 
-\textbf{::addSubject} \\\\
-::addName, ::addSurName\\
-::addAddress\\
-::addPlz ::addCity\\
+\textbf{$subject} \\\\
+$addressee.fullName\\
+$addressee.street\\
+$addressee.postcode $addressee.town\\
 \end{textblock}
 }
 
@@ -93,16 +93,19 @@
 			\renewcommand{\arraystretch}{1}
 			\begin{tabular}[t]{p{0.3\linewidth}p{0.67\linewidth}}
 				
- 				Präperat & ::material \\
- 				~& asd \\
-			 	~& asd \\
- 				~& asd \\
+ 				#foreach ($sample in $task.samples)
+					#if( $foreach.index == 0 )
+	   				 	Präperat & $sample.getMaterial() \\
+	   				#else
+						~ & $sample.getMaterial() \\	   				
+	   				#end
+				#end
  				
  				\\
  				
  				\multicolumn{2}{l}{Vorgeschichte, klinischer Befund und Fragestellung} \\
- 				\huge ::eye &  {\includegraphics[scale=0.4]{augen.png}} \\
- 				\multicolumn{2}{l}{::history} 
+ 				\huge $task.eye &  {\includegraphics[scale=0.4]{augen.png}} \\
+ 				\multicolumn{2}{l}{$task.caseHistory} 
 			
 			\end{tabular}
 		} 
@@ -111,23 +114,38 @@
 			\renewcommand{\arraystretch}{1}
 			\begin{tabular}[t]{p{0.46\linewidth}p{0.5\linewidth}}
 				
-				Eingangsdatum & ::eDate \\
-				Eingangsnummer & ::taskNumber \\
+				Eingangsdatum & $task.dateOfReceipt \\
+				Eingangsnummer & $task.taskID \\
 				~ & 
 					\X=.30mm        % The width of code will be greater
 					\barheight=1cm % the height will be smaller.
-					\code{::taskNumber} \\
+					\code{$task.taskID} \\
 				Versicherung &
 					{
 						\setlength{\tabcolsep}{0em}
 						\begin{tabular}{c c c c }
-						$\boxtimes$ &~regulär~ & $\boxtimes$ & ~privat
+						
+						#if( !$patient.privateInsurance)
+						$\boxtimes$
+						#else
+						$\Box$
+						#end
+						
+						&~regulär~ & 
+						
+						#if($patient.privateInsurance)
+						$\boxtimes$
+						#else
+						$\Box$
+						#end
+ 						& ~privat
+										
 						\end{tabular}
 					}\\
-				Station & ::ward \\
+				Station & $task.ward \\
 				Maligner Tumor & $ \Box$  \\
-				Operateur/Einsender & ::surgeon \\
-				Augenarzt & ::privatePhysician
+				Operateur/Einsender & $task.getPrimarySurgeon() \\
+				Augenarzt & $task.getPrimaryPrivatePhysician() 
 			 
 			\end{tabular}
 		}
@@ -139,25 +157,34 @@
 
 \begin{center}
 \setlength{\tabcolsep}{0em}
+
+#foreach ($diagnosisRevision in $task.diagnosisContainer.diagnosisRevisions)
 \begin{longtable}{p{\linewidth}}
-	\large \underline{ Befund: }\\*
+	\large \underline{ $diagnosisRevision.name: }\\*
 	\begin{addmargin}{0.2cm}
-		\normalsize ::histologicalRecord
+		\normalsize $diagnosisRevision.text
 	\end{addmargin}\\
 	\large \underline{ Diagnose: }\\*
 	\begin{addmargin}{0.2cm}
-		\begin{tabular}{p{0.15\linewidth}p{0.85\linewidth}}
-			Präperat I & tut \\
-		\end{tabular}
+		#if($diagnosisRevision.getDiagnoses().size == 1)
+			\normalsize $diagnosisRevision.diagnoses.get(0).diagnosis;
+		#else
+			\begin{tabular}{p{0.15\linewidth}p{0.85\linewidth}}
+			#foreach ($diagnosis in $diagnosisRevision.diagnoses)
+				Präperat $diagnosis.sample.sampleID & $diagnosis.diagnosis \\
+			#end
+			\end{tabular}			
+		#end
 	\end{addmargin} 
 \end{longtable}
+#end
 \end{center}
-
+ 
 \begin{center}
 \begin{tabular}{p{0.15\linewidth}p{0.25\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
 	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
-	Freiburg den & & ::signatureOne & ::sigantureTwo \\
-	~~ ::sigantureDate & ~ & ::signatureOneRole & ::signatureTwoRole\\\\
+	Freiburg den & & #if($task.diagnosisContainer.signatureOne.physician) $task.diagnosisContainer.signatureOne.physician.person.fullName #end & #if($task.diagnosisContainer.signatureTwo.physician) $task.diagnosisContainer.signatureTwo.physician.person.fullName #end \\
+	~~ $task.diagnosisContainer.signatureDateAsDate & ~ & #if($task.diagnosisContainer.signatureOne.physician) $task.diagnosisContainer.signatureOne.role #end  & #if($task.diagnosisContainer.signatureTwo.physician) $task.diagnosisContainer.signatureTwo.role #end \\\\
 
 \end{tabular}
 \end{center}

@@ -21,6 +21,7 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
+import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.ui.ContactChooser;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -57,7 +58,6 @@ public class PrintHandlerAction {
 
 	@Autowired
 	private ResourceBundle resourceBundle;
-
 
 	/**
 	 * class for creating pdfs
@@ -143,7 +143,7 @@ public class PrintHandlerAction {
 				setSelectedTemplate(selectedTemplate);
 		}
 	}
-	
+
 	public void resetBean() {
 		setTaskToPrint(null);
 		setTemplateList(null);
@@ -152,9 +152,8 @@ public class PrintHandlerAction {
 		setTmpPdfContainer(null);
 	}
 
-
 	/********************************************************
-	 * Prepare bean from external 
+	 * Prepare bean from external
 	 ********************************************************/
 	public void perpareBeanForExternalView(Task task, DocumentType[] types, DocumentType defaultType) {
 		perpareBeanForExternalView(task, types, defaultType, null);
@@ -180,10 +179,10 @@ public class PrintHandlerAction {
 		// rendering the template
 		onChangePrintTemplate();
 	}
+
 	/********************************************************
-	 * Prepare bean from external 
+	 * Prepare bean from external
 	 ********************************************************/
-	
 
 	/**
 	 * Showing only the dialog, no init will be done
@@ -296,9 +295,24 @@ public class PrintHandlerAction {
 	 * Renders the new template after a template was changed
 	 */
 	public void onChangePrintTemplate() {
-		// always render the pdf with the fist contact chosen
-		setTmpPdfContainer(pDFGeneratorHandler.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
-				getSelectedTemplate(), getContactRendered() == null ? null : getContactRendered().getPerson()));
+
+		switch (getSelectedTemplate().getDocumentTyp()) {
+		case U_REPORT:
+		case U_REPORT_EMTY:
+			setTmpPdfContainer(pDFGeneratorHandler.generateUReport(getSelectedTemplate(), getTaskToPrint().getPatient(),
+					getTaskToPrint()));
+			break;
+		case DIAGNOSIS_REPORT:
+			setTmpPdfContainer(pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(),
+					getTaskToPrint().getPatient(), getTaskToPrint(), getContactRendered() == null
+							? new Person(resourceBundle.get("pdf.address.none")) : getContactRendered().getPerson()));
+			break;
+		default:
+			// always render the pdf with the fist contact chosen
+			setTmpPdfContainer(pDFGeneratorHandler.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
+					getSelectedTemplate(), getContactRendered() == null ? null : getContactRendered().getPerson()));
+			break;
+		}
 
 		if (getTmpPdfContainer() == null) {
 			setTmpPdfContainer(new PDFContainer(DocumentType.EMPTY, "", new byte[0]));
@@ -394,9 +408,9 @@ public class PrintHandlerAction {
 	}
 
 	public void printPdfFromExternalBean(Task task, PrintTemplate template) {
-		
+
 	}
-	
+
 	/**
 	 * External printing, no bean initialization necessary. File is not saved.
 	 * Printer has to be set
@@ -404,16 +418,14 @@ public class PrintHandlerAction {
 	 * @param template
 	 */
 	public void printPdfFromExternalBean(Task task, PrintTemplate template, String printer) {
-		PDFContainer newPdf = pDFGeneratorHandler.generatePDFForReport(task.getPatient(), task,
-				template);
-		printPdfFromExternalBean(newPdf,printer);
+		PDFContainer newPdf = pDFGeneratorHandler.generatePDFForReport(task.getPatient(), task, template);
+		printPdfFromExternalBean(newPdf, printer);
 	}
 
-	
 	public void printPdfFromExternalBean(PDFContainer pdf) {
 		printPdfFromExternalBean(pdf, selectedPrinter);
 	}
-	
+
 	/**
 	 * External printing, no bean initialization necessary. File is not saved.
 	 * Printer has to be set

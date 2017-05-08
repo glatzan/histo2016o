@@ -43,32 +43,38 @@
 \setlength{\TPHorizModule}{1mm}
 \setlength{\TPVertModule}{1mm}
 
+
 % pat block
 {
 \scriptsize
 \begin{textblock}{100}(19, 8) 
-\noindent $patName $patSurName\\
-$patAddress\\
-$patPlz $patCity\\
+\noindent $patient.person.fullName\\
+$patient.person.street\\
+$patient.person.postcode $patient.person.town\\
 \X=.35mm        
 \barheight=1cm 
-\code{$piz}\\
-$piz\\
+\code{#if($patient.piz == "") 0 #else $patient.piz #end}\\
+$patient.piz\\
 \end{textblock}
 }
+
 
 % add block
 {
-
 \begin{textblock}{100}(22, 50) 
 \setstretch{1.0}
 \noindent 
-\textbf{$addSubject} \\\\
-$addName, $addSurName\\
-$addAddress\\
-$addPlz $addCity\\
+\textbf{$subject} \\\\
+$addressee.fullName\\
+$addressee.street\\
+$addressee.postcode $addressee.town\\
 \end{textblock}
 }
+
+~\\
+\vspace{5.0cm}\\
+\noindent\makebox[\linewidth]{\rule{\linewidth}{0.4pt}}\\\\
+{\huge Histologisches Gutachten} \\
 
 \end{document}
 

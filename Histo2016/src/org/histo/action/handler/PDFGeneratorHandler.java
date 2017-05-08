@@ -68,16 +68,33 @@ public class PDFGeneratorHandler {
 		return generatePDFForReport(patient, task, printTemplate, null);
 	}
 
-	public PDFContainer generateSendReport(PrintTemplate printTemplate, Patient patient, EmailNotificationSettings emails, FaxNotificationSettings fax, PhoneNotificationSettings phone) {
+	public PDFContainer generateSendReport(PrintTemplate printTemplate, Patient patient,
+			EmailNotificationSettings emails, FaxNotificationSettings fax, PhoneNotificationSettings phone) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
-		
+
 		generator.getConverter().replace("patient", patient);
-		
 		generator.getConverter().replace("emailInfos", emails);
 		generator.getConverter().replace("faxInfos", fax);
 		generator.getConverter().replace("phoneInfos", phone);
 		generator.getConverter().replace("reportDate", mainHandlerAction.date(System.currentTimeMillis()));
-		
+
+		return generator.generatePDF();
+	}
+
+	public PDFContainer generateUReport(PrintTemplate printTemplate, Patient patient, Task task) {
+		PDFGenerator generator = new PDFGenerator(printTemplate);
+		generator.getConverter().replace("patient", patient);
+		generator.getConverter().replace("task", task);
+		return generator.generatePDF();
+	}
+
+	public PDFContainer generateDiagnosisReport(PrintTemplate printTemplate, Patient patient, Task task, Person addressee) {
+		PDFGenerator generator = new PDFGenerator(printTemplate);
+		generator.getConverter().replace("patient", patient);
+		generator.getConverter().replace("task", task);
+		generator.getConverter().replace("addressee", addressee);
+		generator.getConverter().replace("subject", "");
+
 		return generator.generatePDF();
 	}
 
@@ -136,58 +153,6 @@ public class PDFGeneratorHandler {
 			e.printStackTrace();
 		}
 		return null;
-
-		// ArrayList<ArrayList<String>> services = new
-		// ArrayList<ArrayList<String>>();
-		//
-		// ArrayList<String> subservice1 = new ArrayList<String>();
-		// ArrayList<String> subservice2 = new ArrayList<String>();
-		// ArrayList<String> subservice3 = new ArrayList<String>();
-		//
-		// subservice1.add("Software");
-		// subservice1.add("50");
-		// subservice2.add("Hardware1");
-		// subservice2.add("500");
-		// subservice3.add("Hardware2");
-		// subservice3.add("850");
-		//
-		// services.add(subservice1);
-		// services.add(subservice2);
-		// services.add(subservice3);
-		//
-		// converter.replace("services", services);
-		//
-		// System.out.println(converter.parse(template, invoice1));
-		//
-		// converter.replace("Number", "2");
-		// converter.replace("CustomerName", "Mike Mueller");
-		// converter.replace("CustomerStreet", "Prenzlauer Berg 12");
-		// converter.replace("CustomerZip", "10405 Berlin");
-		//
-		// services = new ArrayList<ArrayList<String>>();
-		//
-		// subservice1 = new ArrayList<String>();
-		// subservice2 = new ArrayList<String>();
-		// subservice3 = new ArrayList<String>();
-		//
-		// subservice1.add("Software");
-		// subservice1.add("150");
-		// subservice2.add("Hardware");
-		// subservice2.add("500");
-		// subservice3.add("Test");
-		// subservice3.add("350");
-		//
-		// services.add(subservice1);
-		// services.add(subservice2);
-		// services.add(subservice3);
-		//
-		// converter.replace("services", services);
-		//
-		// converter.parse(template, invoice2);
-		//
-		// if (!converter.parse(template, invoice2)) {
-		// System.out.println(converter.getErrorMessage());
-		// }
 
 	}
 
@@ -728,9 +693,8 @@ public class PDFGeneratorHandler {
 
 				JLRGenerator pdfGen = new JLRGenerator();
 
-				
 				if (!pdfGen.generate(processedTex, output, workingDirectory)) {
-					logger.debug("Error ind File " + processedTex.getAbsolutePath());
+					logger.debug("Error in File " + processedTex.getAbsolutePath());
 					logger.error(pdfGen.getErrorMessage());
 					return null;
 				}

@@ -126,6 +126,8 @@ public class PatientHandlerAction implements Serializable {
 		patient.setExternalPatient(true);
 		patient.setCreationDate(System.currentTimeMillis());
 
+		patient.setPiz("0");
+		
 		genericDAO.save(patient, resourceBundle.get("log.patient.extern.new", patient.getPerson().getName(),
 				patient.getPerson().getSurname()), patient);
 	}

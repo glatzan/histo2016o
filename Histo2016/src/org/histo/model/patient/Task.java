@@ -254,6 +254,17 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		}
 	}
 
+	@Transient
+	public Contact getPrimarySurgeon(){
+		return getPrimaryContact(ContactRole.SURGEON);
+	}
+	
+	@Transient
+	public Contact getPrimaryPrivatePhysician(){
+		return getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
+	}
+	
+	
 	/**
 	 * Returns a contact marked als primary with the given role.
 	 * 
