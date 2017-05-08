@@ -167,6 +167,13 @@ INSERT INTO listitem VALUES (32, false, 31, 1, 'Transplantatversagen');
 INSERT INTO listitem VALUES (33, false, 32, 1, 'Re-Keratokonus');
 INSERT INTO listitem VALUES (34, false, 33, 1, 'bullöse Keratopathie');
 INSERT INTO listitem VALUES (35, false, 34, 1, 'Pinguecula');
+INSERT INTO listitem VALUES (36, false, 0, 0, 'ambulant');
+INSERT INTO listitem VALUES (37, false, 1, 0, 'stationär');
+INSERT INTO listitem VALUES (38, false, 2, 0, 'ambulant-privat');
+INSERT INTO listitem VALUES (39, false, 3, 0, 'stationär-privat');
+INSERT INTO listitem VALUES (40, false, 4, 0, 'IMS-privat');
+INSERT INTO listitem VALUES (41, false, 5, 0, 'auswärtig');
+INSERT INTO listitem VALUES (42, false, 6, 0, 'auswärtig-privat');
 
 SELECT setval('listItem_sequence', (SELECT MAX(id) FROM listitem));
 

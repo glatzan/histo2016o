@@ -7,8 +7,8 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.NotificationOption;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.printer.PrintTemplate;
 
 public class EmailNotificationSettings {
 	/**

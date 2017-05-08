@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.NotificationOption;
 import org.histo.model.Contact;
-import org.histo.model.transitory.json.printing.PrintTemplate;
+import org.histo.util.printer.PrintTemplate;
 
 public class MedicalFindingsChooser {
 

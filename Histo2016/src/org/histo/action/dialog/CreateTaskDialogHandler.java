@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.histo.action.MediaHandlerAction;
 import org.histo.action.PrintHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
@@ -23,10 +24,10 @@ import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.TimeUtil;
+import org.histo.util.printer.PrintTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -49,6 +50,9 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private MediaHandlerAction mediaHandlerAction;
+
+	@Autowired
+	private UserHandlerAction userHandlerAction;
 
 	private Patient patient;
 
@@ -224,7 +228,8 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 			return;
 		}
 
-		printHandlerAction.printPdfFromExternalBean(subSelect[0]);
+		printHandlerAction.printPdfFromExternalBean(getTask(), subSelect[0],
+				userHandlerAction.getCurrentUser().getPreferedPrinter());
 	}
 
 	/**

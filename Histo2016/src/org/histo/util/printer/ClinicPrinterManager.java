@@ -1,4 +1,4 @@
-package org.histo.model.transitory.json.printing;
+package org.histo.util.printer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
+import org.histo.action.MainHandlerAction;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.GsonAble;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -21,6 +22,8 @@ import com.google.gson.annotations.Expose;
 public class ClinicPrinterManager implements GsonAble {
 
 	private static Logger logger = Logger.getLogger("org.histo");
+
+	private MainHandlerAction mainHandlerAction;
 
 	@Expose
 	private String host;
@@ -57,6 +60,7 @@ public class ClinicPrinterManager implements GsonAble {
 				CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
 				PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
 				printer.print(printJob);
+				mainHandlerAction.sendGrowlMessages("Drucken", "Drucken erfolgreich @" + getPrinterToUse());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -74,6 +78,7 @@ public class ClinicPrinterManager implements GsonAble {
 				CupsPrinter printer = cupsClient.getPrinter(getPrinterToUse().getPrinterURL());
 				PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
 				printer.print(printJob);
+				mainHandlerAction.sendGrowlMessages("Drucken", "Drucken erfolgreich @" + getPrinterToUse());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -170,5 +175,13 @@ public class ClinicPrinterManager implements GsonAble {
 	public void setOffline(boolean offline) {
 		this.offline = offline;
 	}
-	
+
+	public MainHandlerAction getMainHandlerAction() {
+		return mainHandlerAction;
+	}
+
+	public void setMainHandlerAction(MainHandlerAction mainHandlerAction) {
+		this.mainHandlerAction = mainHandlerAction;
+	}
+
 }

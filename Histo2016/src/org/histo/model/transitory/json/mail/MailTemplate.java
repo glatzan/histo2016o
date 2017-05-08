@@ -9,9 +9,9 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.MailType;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.model.interfaces.HasID;
-import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.printer.PrintTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

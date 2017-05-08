@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,7 +44,7 @@ public class MainHandlerAction {
 
 	@Autowired
 	private ResourceBundle resourceBundle;
-	
+
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
@@ -75,14 +76,17 @@ public class MainHandlerAction {
 
 		navigationPages = new ArrayList<View>();
 
-		setSettings(HistoSettings.factory());
+		setSettings(HistoSettings.factory(this));
 
 		// TODO remove
 		if (!getSettings().isOfflineMode()) {
 			// setting preferred printer
-			if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null)
+			if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null) {
+				logger.debug("Setting default printer to "
+						+ getSettings().getPrinterManager().getPrinters().get(0).getName());
 				userHandlerAction.getCurrentUser()
 						.setPreferedPrinter(getSettings().getPrinterManager().getPrinters().get(0).getName());
+			}
 
 			// setting label printer
 			if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
@@ -106,9 +110,9 @@ public class MainHandlerAction {
 		else if (userHandlerAction.currentUserHasRole(Role.SCIENTIST))
 			// no names are displayed
 			setCurrentView(View.SCIENTIST);
-		else if (userHandlerAction.currentUserHasRole(Role.USER)){
+		else if (userHandlerAction.currentUserHasRole(Role.USER)) {
 			setCurrentView(View.USERLIST);
-		}else if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
+		} else if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			// if a default view is selected for the user
 			if (userHandlerAction.getCurrentUser().getDefaultView() != null)
 				setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
@@ -220,7 +224,7 @@ public class MainHandlerAction {
 			options.put("headerElement", "dialogForm:header");
 
 		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
-		
+
 		logger.debug("Showing Dialog: " + dialog);
 	}
 
@@ -237,6 +241,12 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Dialog
 	 ********************************************************/
+
+	public void sendGrowlMessages(String headline, String message) {
+		FacesContext context = FacesContext.getCurrentInstance();
+		context.addMessage(null, new FacesMessage(headline, message));
+		logger.debug("Growl Messagen: " + headline + " " + message);
+	}
 
 	/********************************************************
 	 * Date

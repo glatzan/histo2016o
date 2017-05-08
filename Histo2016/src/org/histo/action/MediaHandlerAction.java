@@ -17,7 +17,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.printing.PrintTemplate;
+import org.histo.util.printer.PrintTemplate;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;

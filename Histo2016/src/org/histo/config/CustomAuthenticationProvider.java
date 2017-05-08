@@ -33,6 +33,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private UserDAO userDAO;
+	
+	
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {

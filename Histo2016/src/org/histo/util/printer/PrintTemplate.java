@@ -1,4 +1,4 @@
-package org.histo.model.transitory.json.printing;
+package org.histo.util.printer;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

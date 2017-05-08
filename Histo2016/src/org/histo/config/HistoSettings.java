@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.apache.log4j.Logger;
+import org.histo.action.MainHandlerAction;
 import org.histo.model.transitory.json.ClinicJsonHandler;
 import org.histo.model.transitory.json.LdapHandler;
 import org.histo.model.transitory.json.mail.MailHandler;
-import org.histo.model.transitory.json.printing.ClinicPrinterManager;
-import org.histo.model.transitory.json.printing.LabelPrinterManager;
 import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.printer.ClinicPrinterManager;
+import org.histo.util.printer.LabelPrinterManager;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -35,12 +36,18 @@ public class HistoSettings {
 	// http://auginfo/piz?name=xx&vorname=xx&geburtsdatum=2000-01-01
 
 	public static final HistoSettings factory() {
+		return factory(null);
+	}
+	
+	public static final HistoSettings factory(MainHandlerAction mainHandlerAction) {
 		Gson gson = new Gson();
 
 		logger.debug("Creating Settings Object ");
 
 		HistoSettings result = gson.fromJson(FileHandlerUtil.getContentOfFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
 
+		result.getPrinterManager().setMainHandlerAction(mainHandlerAction);
+		
 		// init printers
 		if (!result.isOfflineMode()) {
 			result.getPrinterManager().loadCupsPrinters();

@@ -91,8 +91,9 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
-					<p:commandButton value="#{msg['dialog.media.upload']}" rendered="#{mediaHandlerAction.showUpload}"
-						icon="fa fa-print" styleClass="smallButton buttonLeftMarginInList"
+					<p:commandButton value="#{msg['dialog.media.upload']}"
+						rendered="#{mediaHandlerAction.showUpload}" icon="fa fa-print"
+						styleClass="smallButton buttonLeftMarginInList"
 						actionListener="#{mediaHandlerAction.prepareUploadDialog(mediaHandlerAction.temporaryDataList)}">
 						<p:ajax event="dialogReturn" update="@form" />
 					</p:commandButton>
@@ -104,7 +105,7 @@
 					<p:commandButton value="#{msg['dialog.media.print']}"
 						icon="fa fa-print"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{printHandlerAction.onPrintPdf(mediaHandlerAction.temporaryPdfContainer)}"></p:commandButton>
+						actionListener="#{printHandlerAction.printPdfFromExternalBean(mediaHandlerAction.temporaryPdfContainer)}"></p:commandButton>
 
 					<!-- select printer -->
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
@@ -133,6 +134,10 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
+	</h:form>
+
+	<h:form>
+		<p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true" globalOnly="" />
 	</h:form>
 </h:body>
 </html>

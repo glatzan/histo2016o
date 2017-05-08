@@ -22,9 +22,9 @@ import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.printing.PrintTemplate;
 import org.histo.ui.ContactChooser;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.printer.PrintTemplate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -393,18 +393,27 @@ public class PrintHandlerAction {
 
 	}
 
+	public void printPdfFromExternalBean(Task task, PrintTemplate template) {
+		
+	}
+	
 	/**
 	 * External printing, no bean initialization necessary. File is not saved.
 	 * Printer has to be set
 	 * 
 	 * @param template
 	 */
-	public void printPdfFromExternalBean(PrintTemplate template) {
-		PDFContainer newPdf = pDFGeneratorHandler.generatePDFForReport(getTaskToPrint().getPatient(), getTaskToPrint(),
+	public void printPdfFromExternalBean(Task task, PrintTemplate template, String printer) {
+		PDFContainer newPdf = pDFGeneratorHandler.generatePDFForReport(task.getPatient(), task,
 				template);
-		printPdfFromExternalBean(newPdf);
+		printPdfFromExternalBean(newPdf,printer);
 	}
 
+	
+	public void printPdfFromExternalBean(PDFContainer pdf) {
+		printPdfFromExternalBean(pdf, selectedPrinter);
+	}
+	
 	/**
 	 * External printing, no bean initialization necessary. File is not saved.
 	 * Printer has to be set
@@ -412,8 +421,8 @@ public class PrintHandlerAction {
 	 * @param pdf
 	 * @param saveIfNew
 	 */
-	public void printPdfFromExternalBean(PDFContainer pdf) {
-		mainHandlerAction.getSettings().getPrinterManager().loadPrinter(selectedPrinter);
+	public void printPdfFromExternalBean(PDFContainer pdf, String printer) {
+		mainHandlerAction.getSettings().getPrinterManager().loadPrinter(printer);
 		mainHandlerAction.getSettings().getPrinterManager().print(pdf);
 	}
 

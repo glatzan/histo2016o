@@ -11,7 +11,7 @@
 	<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
 	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
 	<h:outputStylesheet name="histo.css" value="histo.css" />
-	<h:outputStylesheet name="grid/grid.css" library="primefaces" />
+	<!--  <h:outputStylesheet name="grid/grid.css" library="primefaces" />-->
 </h:head>
 
 <h:body>
@@ -43,6 +43,8 @@
 
 
 	<ui:include src="idleMonitor.xhtml" />
-
+	<h:form>
+		<p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true" />
+	</h:form>
 </h:body>
 </html>
