@@ -270,7 +270,7 @@
 					</p:row>
 				</f:facet>
 
-				<c:forEach
+				<c:forEach varStatus="inner"
 					items="#{worklistHandlerAction.selectedPatient.selectedTask.stainingTableRows}"
 					var="stainingRow">
 					<p:row>
@@ -279,11 +279,21 @@
 						<p:column
 							styleClass="columnSample #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.sampleType}">
-								<h:outputLabel for="basic"
-									value="#{msg['body.receiptlog.slide.sample']} " />
-								<p:inplace id="basic" styleClass="inplaceInput">
-									<p:inputText value="#{stainingRow.sample.sampleID}" />
-								</p:inplace>
+
+								<h:outputLabel id="sampleIDInput#{inner.index}"
+									value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.sample.sampleID}" />
+
+								<p:overlayPanel for="sampleIDInput#{inner.index}"
+									showEffect="fade" widgetVar="sampleIDInputPannel#{inner.index}"
+									hideEffect="fade" showEvent="click" hideEvent="click">
+									<h:panelGrid columns="2">
+										<p:inputText value="#{stainingRow.sample.sampleID}" />
+										<p:commandButton value="#{msg['general.save']}"
+											update="contentForm"
+											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.sample,true)}"
+											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()"></p:commandButton>
+									</h:panelGrid>
+								</p:overlayPanel>
 							</h:panelGroup>
 						</p:column>
 
@@ -291,14 +301,22 @@
 						<p:column
 							styleClass="columnBlock #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.blockType}">
-								<h:outputLabel for="block"
-									value="#{msg['body.receiptlog.slide.block']} "
-									rendered="#{stainingRow.block ne null}" />
-								<p:inplace id="block" styleClass="inplaceInput"
-									rendered="#{stainingRow.block ne null}">
-									<p:inputText value="#{stainingRow.block.blockID}"
-										styleClass="inplaceInput" />
-								</p:inplace>
+
+								<h:outputLabel id="blockIDInput#{inner.index}"
+									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.block.blockID}" />
+
+								<p:overlayPanel for="blockIDInput#{inner.index}"
+									showEffect="fade" widgetVar="blockIDInputPannel#{inner.index}"
+									hideEffect="fade" showEvent="click" hideEvent="click">
+									<h:panelGrid columns="2">
+										<p:inputText value="#{stainingRow.block.blockID}" />
+										<p:commandButton value="#{msg['general.save']}"
+											update="contentForm"
+											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.block,true)}"
+											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()"></p:commandButton>
+									</h:panelGrid>
+								</p:overlayPanel>
+
 							</h:panelGroup>
 						</p:column>
 
@@ -323,10 +341,21 @@
 						<p:column
 							styleClass="columnStainingID #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
-								<p:inplace styleClass="inplaceInput">
-									<p:inputText value="#{stainingRow.staining.slideID}"
-										style="width:100% !important;" />
-								</p:inplace>
+								<h:outputLabel id="slideIDInput#{inner.index}"
+									value="#{stainingRow.staining.slideID}" />
+
+								<p:overlayPanel for="slideIDInput#{inner.index}"
+									showEffect="fade" widgetVar="slideIDInputPannel#{inner.index}"
+									hideEffect="fade" showEvent="click" hideEvent="click">
+									<h:panelGrid columns="2">
+										<p:inputText value="#{stainingRow.staining.slideID}" />
+										<p:commandButton value="#{msg['general.save']}"
+											update="contentForm"
+											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.staining,true)}"
+											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()"></p:commandButton>
+									</h:panelGrid>
+								</p:overlayPanel>
+
 							</h:panelGroup>
 						</p:column>
 

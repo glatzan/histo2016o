@@ -146,13 +146,13 @@ body {
 .defaultListingTableColumn30 {
 	width: 30%;
 }
- 
-.defaultListingTableColumn100px{
+
+.defaultListingTableColumn100px {
 	width: 100px !important;
 	min-width: 100px !important;
 }
 
-.defaultListingTableColumn150px{
+.defaultListingTableColumn150px {
 	width: 150px !important;
 	min-width: 150px !important;
 }
@@ -337,20 +337,20 @@ ul.ui-menu-child {
 }
 
 /* removes the box shadow from SelectCheckboxMenu*/
-.customSelectCheckboxMenu .ui-inputfield{
+.customSelectCheckboxMenu .ui-inputfield {
 	box-shadow: none;
 }
 
 /* workaround for quick contacts, menu is displayed above button*/
-.customSelectCheckboxMenuContactDialogPannel{
+.customSelectCheckboxMenuContactDialogPannel {
 	bottom: 35px !important;
 	top: auto !important;
-} 
+}
 /*
 	######################################## Header ########################################
 */
 /* Style of the header submenu*/
-.headerSubMenuStyle{
+.headerSubMenuStyle {
 	width: 200px !important;
 }
 /*
@@ -589,6 +589,19 @@ ul.ui-menu-child {
 .content .body   .inplaceInput .ui-inputfield {
 	padding: 0px 0px 0px 5px;
 	width: 60% !important;
+	border-radius: 0px !important;
+}
+
+.content .body   .inplaceInput .ui-inplace-display {
+	min-width: 20px !important;
+	background: black;
+	display: block;
+}
+
+
+.content .body   .inplaceInput .ui-inputfield.ui-state-focus {
+	box-shadow: none !important;
+	 border-radius: 0px !important;
 }
 
 /* Alle Unterstriche bei links interhalb der Färbungstabelle entfernen*/

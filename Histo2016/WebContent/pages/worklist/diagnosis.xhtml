@@ -218,7 +218,7 @@
 						disabled="#{!taskEditable}" value="#{revision.text}">
 
 						<p:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.histologicalRecord', revision.text)}" />
+							listener="#{mainHandlerAction.saveDataChange(revision,'log.patient.task.change.histologicalRecord', revision.text)}" />
 					</p:inputTextarea>
 
 

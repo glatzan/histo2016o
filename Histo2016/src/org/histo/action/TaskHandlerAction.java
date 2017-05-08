@@ -26,6 +26,7 @@ import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
@@ -248,7 +249,12 @@ public class TaskHandlerAction implements Serializable {
 	/********************************************************
 	 * Task
 	 ********************************************************/
-
+	public void manuallyAltered(IdManuallyAltered idManuallyAltered, boolean altered){
+		idManuallyAltered.setIdManuallyAltered(altered);
+		
+		genericDAO.saveDataChange(idManuallyAltered, "log.patient.task.idManuallyAltered");
+		logger.debug("Manually altered " + altered);
+	}
 	/********************************************************
 	 * Sample creation from Gui
 	 ********************************************************/

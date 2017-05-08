@@ -29,6 +29,7 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
@@ -41,7 +42,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, SaveAble {
+public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, SaveAble, IdManuallyAltered {
 
 	private long id;
 
@@ -56,6 +57,11 @@ public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, 
 	 * Sample ID as string
 	 */
 	private String sampleID = "";
+
+	/**
+	 * True if the user has manually altered the sample ID
+	 */
+	private boolean idManuallyAltered;
 
 	/**
 	 * Date of sample creation
@@ -122,7 +128,7 @@ public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, 
 		if (useAutoNomenclature && getParent().getSamples().size() > 1)
 			setSampleID(TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1));
 		else
-			setSampleID(" ");
+			setSampleID("");
 	}
 
 	/**
@@ -218,6 +224,14 @@ public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, 
 		this.materilaPreset = materilaPreset;
 	}
 
+	public boolean isIdManuallyAltered() {
+		return idManuallyAltered;
+	}
+
+	public void setIdManuallyAltered(boolean idManuallyAltered) {
+		this.idManuallyAltered = idManuallyAltered;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -230,7 +244,7 @@ public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, 
 	 * Interface StainingInfo
 	 ********************************************************/
 	@Override
-	@Transient       
+	@Transient
 	public boolean isStainingPerformed() {
 		if (getBlocks().isEmpty())
 			return false;
@@ -270,6 +284,7 @@ public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, 
 
 		return false;
 	}
+
 	/********************************************************
 	 * Interface StainingInfo
 	 ********************************************************/

@@ -399,7 +399,7 @@ public class SlideHandlerAction implements Serializable {
 		logger.trace("Method: hideStainingPhaseLeave(boolean stayInPhase)");
 		if (stayInPhase) {
 			logger.debug("StayInPhase is true");
-			getTemporaryTask().getStatus().updateStainingStatus(stayInPhase);
+			getTemporaryTask().setStainingPhase(true);
 			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
 		}
 		hideDialog(Dialog.STAINING_PHASE_LEAVE);

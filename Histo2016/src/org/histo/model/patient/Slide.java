@@ -20,6 +20,7 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
@@ -32,7 +33,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, SaveAble {
+public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, SaveAble, IdManuallyAltered {
 
 	private long id;
 
@@ -41,6 +42,8 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	private int uniqueIDinBlock;
 
 	private String slideID = "";
+
+	private boolean idManuallyAltered;
 
 	private long creationDate;
 
@@ -62,14 +65,20 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	@Transient
 	public void updateNameOfSlide() {
 		// generating block id
-		String number = "";
+		StringBuilder name = new StringBuilder();
+		name.append(parent.getParent().getSampleID());
+		name.append(parent.getBlockID());
+		if(name.length() > 0)
+			name.append(" ");
+		
+		name.append(slidePrototype.getName());
+		
 		int stainingsInBlock = TaskUtil.getNumerOfSameStainings(this);
 
-		System.out.println(stainingsInBlock + "--");
 		if (stainingsInBlock > 1)
-			number = " " + String.valueOf(stainingsInBlock);
+			name.append(String.valueOf(stainingsInBlock));
 
-		setSlideID(parent.getParent().getSampleID() + parent.getBlockID() + " " + slidePrototype.getName() + number);
+		setSlideID(name.toString());
 	}
 
 	@Id
@@ -159,6 +168,14 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 		this.uniqueIDinBlock = uniqueIDinBlock;
 	}
 
+	public boolean isIdManuallyAltered() {
+		return idManuallyAltered;
+	}
+
+	public void setIdManuallyAltered(boolean idManuallyAltered) {
+		this.idManuallyAltered = idManuallyAltered;
+	}
+	
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/

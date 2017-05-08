@@ -4,11 +4,10 @@ Merke: keine kurzbefunde
 
 
 TODO: 2: erweiterte Suche
-TODO: 2: Diangose text speichern, geht zurzeit nicht
-TODO: 3.5 Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
+TODO: 3: Blöcke nomeklatur überprüfen
 TODO: 5: rechte durchsetzten
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
-TODO: 7: Sort Optionen für worklist arbeitet nicht richtig
+TODO: 7: Sort Optionen für worklist arbeitet nicht richtig / anzeige selected task verbessern
 TODO: 8: Liste für normale benutzer überarbeiten
 TODO: 9: Latex Datein
 
@@ -26,6 +25,8 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin überarbeiten, methoden in generica dat shiften
 TODO: Konsile dürfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
+++++: Diangose text speichern, geht zurzeit nicht
 ++++: Konsile gehen nicht
 ++++: Biobank
 ++++: Settings Personen: Es müssen Hausärzte angezeigt werden können (werden bisher nur operateure, augenärtze/ andere

@@ -195,7 +195,7 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 			mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.new", sample.getSampleID());
 
 			// creating needed blocks
-			taskManipulationHandler.createNewBlock(sample, false);
+			taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
 
 			// saving the sample
 			mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.update", sample.getSampleID());

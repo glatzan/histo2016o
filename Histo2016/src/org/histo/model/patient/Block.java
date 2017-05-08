@@ -25,6 +25,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.SaveAble;
@@ -37,7 +38,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, SaveAble {
+public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, SaveAble, IdManuallyAltered {
 
 	private long id;
 
@@ -52,6 +53,11 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 	 * ID in block
 	 */
 	private String blockID = "";
+
+	/**
+	 * True if the user has manually altered the sample ID
+	 */
+	private boolean idManuallyAltered;
 
 	/**
 	 * staining array
@@ -82,7 +88,7 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 		if (useAutoNomenclature && parent.getBlocks().size() > 1) {
 			setBlockID(TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this)));
 		} else
-			setBlockID(" ");
+			setBlockID("");
 	}
 
 	@Transient
@@ -151,6 +157,14 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 
 	public void setUniqueSlideCounter(int uniqueSlideCounter) {
 		this.uniqueSlideCounter = uniqueSlideCounter;
+	}
+	
+	public boolean isIdManuallyAltered() {
+		return idManuallyAltered;
+	}
+
+	public void setIdManuallyAltered(boolean idManuallyAltered) {
+		this.idManuallyAltered = idManuallyAltered;
 	}
 
 	/********************************************************
