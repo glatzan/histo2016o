@@ -66,7 +66,7 @@
 							title="#{msg['body.taskList.table.notification']}"></i>
 					</f:facet>
 					<ui:fragment rendered="#{task.notificationPhase }">
-						<i style="margin-left: 3px;" class="fa fa-check-circle icon-red"
+						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
 							title="" />
 					</ui:fragment>
 				</p:column>
@@ -82,7 +82,7 @@
 				</p:column>
 
 				<p:column headerText="" style="width:40px;">
-					<p:commandLink
+					<p:commandLink disabled="true"
 						actionListener="#{settingsHandlerAction.prepareEditStaining(staining)}"
 						update="@form" styleClass="noUnderlineAtLink">
 						<i class="fa fa-search" />

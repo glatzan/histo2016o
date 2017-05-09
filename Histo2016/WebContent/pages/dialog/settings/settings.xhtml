@@ -45,7 +45,7 @@
 						rendered="#{settingsHandlerAction.userListTabIndex eq 'U_LIST'}">
 						<ui:include src="userList.xhtml" />
 					</ui:fragment>
-					
+
 					<!-- User Edit -->
 					<ui:fragment
 						rendered="#{settingsHandlerAction.userListTabIndex eq 'U_EDIT'}">
@@ -177,6 +177,8 @@
 			</p:tabView>
 
 		</p:panel>
+		<p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true"
+			for="globalgrowl" />
 	</h:form>
 </h:body>
 </html>

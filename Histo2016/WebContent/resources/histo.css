@@ -598,6 +598,9 @@ ul.ui-menu-child {
 	display: block;
 }
 
+.ui-growl {   
+    z-index:9999 !important; 
+}
 
 .content .body   .inplaceInput .ui-inputfield.ui-state-focus {
 	box-shadow: none !important;

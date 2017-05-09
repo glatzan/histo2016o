@@ -244,7 +244,7 @@ public class MainHandlerAction {
 
 	public void sendGrowlMessages(String headline, String message) {
 		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage(headline, message));
+		context.addMessage("globalgrowl", new FacesMessage(headline, message));
 		logger.debug("Growl Messagen: " + headline + " " + message);
 	}
 

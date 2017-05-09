@@ -266,6 +266,27 @@
 						<p:column styleClass="columnOptions">
 							<h:outputLabel
 								value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
+							<p:commandLink styleClass="noUnderlineAtLink"
+								id="quickTaskSettings" disabled="true">
+								<i class="fa fa-wrench" />
+							</p:commandLink>
+
+							<p:overlayPanel for="quickTaskSettings"
+								id="quickTaskSettingsOverlay" showEffect="fade"
+								widgetVar="quickTaskSettingsOverlay" hideEffect="fade"
+								showEvent="click" hideEvent="click"
+								onHide="quickTaskSettingsOverlayReset()">
+								<h:panelGrid columns="2">
+									<p:outputLabel value="dfs"></p:outputLabel>
+								</h:panelGrid>
+
+								<!-- reset on hide -->
+								<p:remoteCommand name="quickTaskSettingsOverlayReset"
+									process="@this" update="quickTaskSettingsOverlay">
+									<p:resetInput target="quickTaskSettingsOverlay" />
+								</p:remoteCommand>
+							</p:overlayPanel>
+
 						</p:column>
 					</p:row>
 				</f:facet>
@@ -285,14 +306,22 @@
 
 								<p:overlayPanel for="sampleIDInput#{inner.index}"
 									showEffect="fade" widgetVar="sampleIDInputPannel#{inner.index}"
-									hideEffect="fade" showEvent="click" hideEvent="click">
+									hideEffect="fade" showEvent="click" hideEvent="click"
+									onHide="sampleIDChangeTableReset#{inner.index}()">
 									<h:panelGrid columns="2">
-										<p:inputText value="#{stainingRow.sample.sampleID}" />
+										<p:inputText value="#{stainingRow.sample.sampleID}"
+											id="sampleIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
 											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.sample,true)}"
 											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
+
+									<!-- reset on hide -->
+									<p:remoteCommand name="sampleIDChangeTableReset#{inner.index}"
+										process="@this" update="sampleIDChangeTable#{inner.index}">
+										<p:resetInput target="sampleIDChangeTable#{inner.index}" />
+									</p:remoteCommand>
 								</p:overlayPanel>
 							</h:panelGroup>
 						</p:column>
@@ -306,15 +335,23 @@
 									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.block.blockID}" />
 
 								<p:overlayPanel for="blockIDInput#{inner.index}"
+									onHide="blockIDChangeTableReset#{inner.index}()"
 									showEffect="fade" widgetVar="blockIDInputPannel#{inner.index}"
 									hideEffect="fade" showEvent="click" hideEvent="click">
 									<h:panelGrid columns="2">
-										<p:inputText value="#{stainingRow.block.blockID}" />
+										<p:inputText value="#{stainingRow.block.blockID}"
+											id="blockIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
 											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.block,true)}"
 											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
+
+									<!-- reset on hide -->
+									<p:remoteCommand name="blockIDChangeTableReset#{inner.index}"
+										process="@this" update="blockIDChangeTable#{inner.index}">
+										<p:resetInput target="blockIDChangeTable#{inner.index}" />
+									</p:remoteCommand>
 								</p:overlayPanel>
 
 							</h:panelGroup>
@@ -346,14 +383,22 @@
 
 								<p:overlayPanel for="slideIDInput#{inner.index}"
 									showEffect="fade" widgetVar="slideIDInputPannel#{inner.index}"
-									hideEffect="fade" showEvent="click" hideEvent="click">
+									hideEffect="fade" showEvent="click" hideEvent="click"
+									onHide="slideIDChangeTableReset#{inner.index}()">
 									<h:panelGrid columns="2">
-										<p:inputText value="#{stainingRow.staining.slideID}" />
+										<p:inputText value="#{stainingRow.staining.slideID}"
+											id="slideIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
 											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.staining,true)}"
 											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
+
+									<!-- reset on hide -->
+									<p:remoteCommand name="slideIDChangeTableReset#{inner.index}"
+										process="@this" update="slideIDChangeTable#{inner.index}">
+										<p:resetInput target="slideIDChangeTable#{inner.index}" />
+									</p:remoteCommand>
 								</p:overlayPanel>
 
 							</h:panelGroup>
