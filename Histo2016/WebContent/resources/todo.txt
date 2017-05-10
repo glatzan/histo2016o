@@ -2,7 +2,7 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-
+TODO: einspeisen von operateueren abgleichen, geht zumteil nicht richtig
 TODO: 2: erweiterte Suche
 TODO: 3: Blöcke nomeklatur überprüfen
 TODO: 5: rechte durchsetzten
