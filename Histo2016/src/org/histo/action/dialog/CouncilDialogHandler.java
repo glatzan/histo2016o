@@ -8,6 +8,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
@@ -39,6 +40,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
+
+	@Autowired
+	private PatientDao patientDao;
 
 	private Council council;
 
@@ -126,7 +130,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			council.setDateOfRequest(System.currentTimeMillis());
 			logger.debug("Council Dialog: Creating new council");
 			// TODO: Better loggin
-			genericDAO.saveDataChange(council, getTask(), "log.patient.task.council.create");
+			patientDao.saveDataChange(council, getTask(), "log.patient.task.council.create");
 
 			task.getCouncils().add(council);
 
@@ -134,7 +138,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 		} else {
 			logger.debug("Council Dialog: Saving council");
-			genericDAO.saveDataChange(council, getTask(), "log.patient.task.council.update",
+			patientDao.saveDataChange(council, getTask(), "log.patient.task.council.update",
 					String.valueOf(council.getId()));
 		}
 

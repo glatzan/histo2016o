@@ -46,7 +46,6 @@ public class BioBankDAO extends AbstractDAO implements Serializable {
 	 * @param bioBank
 	 */
 	public void initializeBioBank(BioBank bioBank) {
-		getSession().update(bioBank);
 		Hibernate.initialize(bioBank.getAttachedPdfs());
 		Hibernate.initialize(bioBank.getTask());
 	}

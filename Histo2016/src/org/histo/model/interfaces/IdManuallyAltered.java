@@ -1,6 +1,6 @@
 package org.histo.model.interfaces;
 
-public interface IdManuallyAltered extends SaveAble {
+public interface IdManuallyAltered extends PatientRollbackAble {
 
 	public boolean isIdManuallyAltered();
 

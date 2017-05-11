@@ -40,7 +40,7 @@ import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.primefaces.json.JSONObject;
 
@@ -51,7 +51,7 @@ import org.primefaces.json.JSONObject;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, CreationDate, LogAble, ArchivAble,
-		SaveAble, HasDataList {
+		PatientRollbackAble, HasDataList {
 
 	private long id;
 
@@ -537,7 +537,7 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -545,6 +545,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		return "Patient-Name: " + getPerson().getFullName() + " (" + getId() + ")";
 	}
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 }

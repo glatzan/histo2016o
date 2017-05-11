@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
@@ -14,11 +15,12 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
 import org.histo.model.interfaces.LogInfo;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,22 +78,18 @@ public class GenericDAO extends AbstractDAO {
 				.setProjection(Projections.rowCount()).uniqueResult()).intValue();
 	}
 
-
-
 	// ************************ Save ************************
+
+	@Deprecated
 	public void saveDataChange(Object toSave, String resourcesKey, Object... arr) {
-		if (toSave instanceof SaveAble) {
-			save(toSave, resourceBundle.get(resourcesKey, ((SaveAble) toSave).getLogPath(), arr),
-					((SaveAble) toSave).getPatient());
+		if (toSave instanceof PatientRollbackAble) {
+			save(toSave, resourceBundle.get(resourcesKey, ((PatientRollbackAble) toSave).getLogPath(), arr),
+					((PatientRollbackAble) toSave).getPatient());
 		} else {
 			save(toSave, resourceBundle.get(resourcesKey, arr));
 		}
 	}
 
-	public void saveDataChange(Object toSave, SaveAble path, String resourcesKey, Object... arr) {
-		save(toSave, resourceBundle.get(resourcesKey, path.getLogPath(), arr), path.getPatient());
-	}
-	
 	@Deprecated
 	public <C> C save(C object) {
 		return save(object, (LogInfo) null);
@@ -153,9 +151,9 @@ public class GenericDAO extends AbstractDAO {
 
 	// ************************ Delete ************************
 	public void deleteDate(Object toSave, String resourcesKey, Object... arr) {
-		if (toSave instanceof SaveAble) {
-			delete(toSave, resourceBundle.get(resourcesKey, ((SaveAble) toSave).getLogPath(), arr),
-					((SaveAble) toSave).getPatient());
+		if (toSave instanceof PatientRollbackAble) {
+			delete(toSave, resourceBundle.get(resourcesKey, ((PatientRollbackAble) toSave).getLogPath(), arr),
+					((PatientRollbackAble) toSave).getPatient());
 		} else {
 			delete(toSave, resourceBundle.get(resourcesKey, arr));
 		}

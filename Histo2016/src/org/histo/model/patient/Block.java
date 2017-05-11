@@ -28,7 +28,7 @@ import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 
@@ -38,7 +38,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, SaveAble, IdManuallyAltered {
+public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered {
 
 	private long id;
 
@@ -280,7 +280,7 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -288,6 +288,6 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 		return getParent().getLogPath() + ", Block-ID: " + getBlockID() + " (" + getId() + ")";
 	}
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 }

@@ -79,9 +79,9 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	 * @param task
 	 */
 	public void initializeDiagnosisData(Task task) {
-		getSession().update(task);
+		getSession().saveOrUpdate(task);
 		Hibernate.initialize(task.getDiagnosisContainer());
-		getSession().update(task.getDiagnosisContainer());
+		getSession().saveOrUpdate(task.getDiagnosisContainer());
 		Hibernate.initialize(task.getDiagnosisContainer().getSignatureOne());
 		Hibernate.initialize(task.getDiagnosisContainer().getSignatureTwo());
 	}

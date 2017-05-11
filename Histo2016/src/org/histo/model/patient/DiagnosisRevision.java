@@ -31,7 +31,7 @@ import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 
 @Entity
 @Audited
@@ -39,7 +39,7 @@ import org.histo.model.interfaces.SaveAble;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
-public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContainer>, DeleteAble, LogAble, SaveAble {
+public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContainer>, DeleteAble, LogAble, PatientRollbackAble {
 
 	private long id;
 
@@ -323,7 +323,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -331,7 +331,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 		return getParent().getLogPath() + ", Revision-ID: " + getName() + " (" + getId() + ")";
 	}
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 
 }

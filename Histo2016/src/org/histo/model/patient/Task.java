@@ -42,7 +42,7 @@ import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.model.util.TaskStatusHandler;
 import org.histo.ui.StainingTableChooser;
@@ -54,7 +54,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, SaveAble, HasDataList {
+public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, PatientRollbackAble, HasDataList {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -891,7 +891,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -899,7 +899,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		return "Task-ID: " + getTaskID() + " (" + getId() + ")";
 	}
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 
 }

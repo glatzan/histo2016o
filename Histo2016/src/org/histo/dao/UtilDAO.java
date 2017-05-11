@@ -4,20 +4,25 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.ConcurrencyFailureException;
+import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional
+@Transactional(noRollbackFor=Exception.class)
 @Scope(value = "session")
 public class UtilDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = -2446285129518473844L;
+
 
 	/**
 	 * Initializes a datalist for an object
@@ -25,7 +30,6 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	 * @param dataList
 	 */
 	public void initializeDataList(HasDataList dataList) {
-		getSession().update(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
 	}
 
@@ -35,21 +39,10 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	 * @param task
 	 */
 	public void initializeCouncilData(Task task) {
-		getSession().update(task);
+		getSession().saveOrUpdate(task);
 		Hibernate.initialize(task.getCouncils());
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * Inits the stainingprotoypes of a stainingprototypeList
 	 * 

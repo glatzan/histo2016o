@@ -7,15 +7,22 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.histo.action.WorklistHandlerAction;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +33,67 @@ import org.springframework.transaction.annotation.Transactional;
 public class PatientDao extends AbstractDAO implements Serializable {
 
 	private static Logger logger = Logger.getLogger("org.histo");
+
+	@Autowired
+	private ResourceBundle resourceBundle;
+
+	@Autowired
+	private GenericDAO genericDAO;
+
+	@Autowired
+	@Lazy
+	private WorklistHandlerAction worklistHandlerAction;
+
+	public Patient saveDataChange(PatientRollbackAble rollback) {
+		return saveDataChange(rollback, rollback, null);
+	}
+
+	public Patient saveDataChange(PatientRollbackAble rollback, String resourcesKey, Object... arr) {
+		return saveDataChange(rollback, rollback, resourcesKey, arr);
+	}
+
+	/**
+	 * Saves an instance associated with a Patient, if save fails because of
+	 * optimistic logging the save will be rolledback and a new patient object
+	 * is returned. If the save succeed no object will be returned. For every
+	 * save a check should be performed if an Patient object is returned.
+	 * 
+	 * @param save
+	 * @param rollback
+	 * @param resourcesKey
+	 * @param arr
+	 * @return
+	 */
+	public Patient saveDataChange(Object save, PatientRollbackAble rollback, String resourcesKey, Object... arr) {
+		try {
+			logger.debug("----------- Saving");
+			if (resourcesKey != null)
+				genericDAO.save(save, resourceBundle.get(resourcesKey, rollback.getLogPath(), arr),
+						rollback.getPatient());
+			else {
+				Session session = getSession();
+				// TODO MOVE to generic dao
+				session.saveOrUpdate(save);
+				
+			}
+
+			getSession().flush();
+		} catch (javax.persistence.OptimisticLockException e) {
+			logger.debug("----------- Rollback!");
+			getSession().getTransaction().rollback();
+			getSession().beginTransaction();
+			Patient patient = getSession().get(Patient.class, rollback.getPatient().getId());
+			worklistHandlerAction.replaceInvaliedPatientInCurrentWorklist(patient);
+			return patient;
+		}
+		return rollback.getPatient();
+	}
+
+	public void initializePatientDate(Patient patient) {
+		
+		logger.debug("-----------New patientssdsd");
+		Hibernate.initialize(saveDataChange(patient).getAttachedPdfs());
+	}
 
 	/**
 	 * Returns a list of useres with the given piz. At least 6 numbers of the
@@ -178,7 +246,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}
-	
+
 	/**
 	 * Returns a list of patients deepening on the diagnosis phase.
 	 * 

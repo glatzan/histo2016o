@@ -21,7 +21,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -322,7 +322,7 @@ public class MainHandlerAction {
 	 * Delete
 	 ********************************************************/
 	@Deprecated
-	public void deleteDate(SaveAble toSave, String resourcesKey, String... arr) {
+	public void deleteDate(PatientRollbackAble toSave, String resourcesKey, String... arr) {
 		genericDAO.delete(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
 
@@ -334,7 +334,7 @@ public class MainHandlerAction {
 	 * Save
 	 ********************************************************/
 	@Deprecated
-	public void saveDataChange(SaveAble toSave, String resourcesKey, String... arr) {
+	public void saveDataChange(PatientRollbackAble toSave, String resourcesKey, String... arr) {
 		genericDAO.save(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
 
