@@ -38,6 +38,7 @@ import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
 import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
@@ -51,7 +52,7 @@ import org.primefaces.json.JSONObject;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, CreationDate, LogAble, ArchivAble,
-		PatientRollbackAble, HasDataList {
+		PatientRollbackAble, HasDataList, HasID {
 
 	private long id;
 

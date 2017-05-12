@@ -130,7 +130,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			council.setDateOfRequest(System.currentTimeMillis());
 			logger.debug("Council Dialog: Creating new council");
 			// TODO: Better loggin
-			patientDao.saveDataChange(council, getTask(), "log.patient.task.council.create");
+			patientDao.savePatientAssociatedData(council, getTask(), "log.patient.task.council.create");
 
 			task.getCouncils().add(council);
 
@@ -138,7 +138,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 		} else {
 			logger.debug("Council Dialog: Saving council");
-			patientDao.saveDataChange(council, getTask(), "log.patient.task.council.update",
+			patientDao.savePatientAssociatedData(council, getTask(), "log.patient.task.council.update",
 					String.valueOf(council.getId()));
 		}
 

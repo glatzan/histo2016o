@@ -249,9 +249,8 @@ public class WorklistHandlerAction implements Serializable {
 
 		
 		setSelectedPatient(task.getPatient());
-		patientDao.saveDataChange(task);
 		
-		task = getSelectedPatient().getSelectedTask();
+		task = patientDao.savePatientAssociatedData(task);
 		
 		task.getPatient().setSelectedTask(task);
 

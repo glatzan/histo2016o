@@ -18,6 +18,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;
@@ -44,55 +45,47 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	@Lazy
 	private WorklistHandlerAction worklistHandlerAction;
 
-	public Patient saveDataChange(PatientRollbackAble rollback) {
-		return saveDataChange(rollback, rollback, null);
+	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedData(C object) {
+		return savePatientAssociatedData(object, null);
 	}
 
-	public Patient saveDataChange(PatientRollbackAble rollback, String resourcesKey, Object... arr) {
-		return saveDataChange(rollback, rollback, resourcesKey, arr);
+	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedData(C object, String resourcesKey,
+			Object... resourcesKeyInsert) {
+		return savePatientAssociatedData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
-	/**
-	 * Saves an instance associated with a Patient, if save fails because of
-	 * optimistic logging the save will be rolledback and a new patient object
-	 * is returned. If the save succeed no object will be returned. For every
-	 * save a check should be performed if an Patient object is returned.
-	 * 
-	 * @param save
-	 * @param rollback
-	 * @param resourcesKey
-	 * @param arr
-	 * @return
-	 */
-	public Patient saveDataChange(Object save, PatientRollbackAble rollback, String resourcesKey, Object... arr) {
+	public <C extends HasID> C savePatientAssociatedData(C object, PatientRollbackAble hasPatient, String resourcesKey,
+			Object... resourcesKeyInsert) {
 		try {
-			logger.debug("----------- Saving");
 			if (resourcesKey != null)
-				genericDAO.save(save, resourceBundle.get(resourcesKey, rollback.getLogPath(), arr),
-						rollback.getPatient());
+				genericDAO.save(object, resourceBundle.get(resourcesKey, hasPatient.getLogPath(), resourcesKeyInsert),
+						hasPatient.getPatient());
 			else {
 				Session session = getSession();
 				// TODO MOVE to generic dao
-				session.saveOrUpdate(save);
-				
+				session.saveOrUpdate(object);
 			}
-
 			getSession().flush();
 		} catch (javax.persistence.OptimisticLockException e) {
 			logger.debug("----------- Rollback!");
 			getSession().getTransaction().rollback();
 			getSession().beginTransaction();
-			Patient patient = getSession().get(Patient.class, rollback.getPatient().getId());
+			Patient patient = getSession().get(Patient.class, hasPatient.getPatient().getId());
 			worklistHandlerAction.replaceInvaliedPatientInCurrentWorklist(patient);
-			return patient;
+			System.out.println(patient.getTasks().get(0));
+			Class<? extends HasID> klass = (Class<? extends HasID>) object.getClass();
+			C result = (C) getSession().get(klass, object.getId());
+			System.out.println(result);
+			return (C) getSession().get(klass, object.getId());
 		}
-		return rollback.getPatient();
+
+		return object;
 	}
 
 	public void initializePatientDate(Patient patient) {
-		
+
 		logger.debug("-----------New patientssdsd");
-		Hibernate.initialize(saveDataChange(patient).getAttachedPdfs());
+		Hibernate.initialize(savePatientAssociatedData(patient).getAttachedPdfs());
 	}
 
 	/**

@@ -40,6 +40,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
@@ -54,7 +55,8 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, PatientRollbackAble, HasDataList {
+public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, PatientRollbackAble,
+		HasDataList, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -255,16 +257,15 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	}
 
 	@Transient
-	public Contact getPrimarySurgeon(){
+	public Contact getPrimarySurgeon() {
 		return getPrimaryContact(ContactRole.SURGEON);
 	}
-	
+
 	@Transient
-	public Contact getPrimaryPrivatePhysician(){
+	public Contact getPrimaryPrivatePhysician() {
 		return getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
 	}
-	
-	
+
 	/**
 	 * Returns a contact marked als primary with the given role.
 	 * 
