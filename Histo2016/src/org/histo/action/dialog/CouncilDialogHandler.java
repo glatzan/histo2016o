@@ -74,7 +74,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean(task, Dialog.COUNCIL);
+		super.initBean(patientDao.savePatientAssociatedData(task), Dialog.COUNCIL);
 
 		utilDAO.initializeDataList(task);
 		utilDAO.initializeCouncilData(task);

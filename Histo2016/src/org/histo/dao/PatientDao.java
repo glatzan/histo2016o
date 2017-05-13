@@ -83,8 +83,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	public void initializePatientDate(Patient patient) {
-
-		logger.debug("-----------New patientssdsd");
 		Hibernate.initialize(savePatientAssociatedData(patient).getAttachedPdfs());
 	}
 

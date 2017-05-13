@@ -12,6 +12,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.TaskPriority;
+import org.histo.dao.PatientDao;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.BioBank;
@@ -54,6 +55,9 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	@Autowired
 	private UserHandlerAction userHandlerAction;
 
+	@Autowired
+	private PatientDao patientDao;
+	
 	private Patient patient;
 
 	private List<MaterialPreset> materialList;
@@ -84,7 +88,7 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	 * @param patient
 	 */
 	public void initBean(Patient patient) {
-		super.initBean(new Task(patient), Dialog.TASK_CREATE);
+		super.initBean(new Task(patientDao.savePatientAssociatedData(patient)), Dialog.TASK_CREATE);
 
 		setPatient(patient);
 
