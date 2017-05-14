@@ -2,7 +2,7 @@ package org.histo.model.interfaces;
 
 import org.histo.model.patient.Patient;
 
-public interface PatientRollbackAble {
+public interface PatientRollbackAble extends HasID {
 
 	public Patient getPatient();
 

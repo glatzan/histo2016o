@@ -21,6 +21,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.GsonAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
@@ -37,7 +38,7 @@ import org.histo.model.interfaces.PatientRollbackAble;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, DeleteAble, PatientRollbackAble {
+public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, DeleteAble, PatientRollbackAble, HasID {
 
 	private long id;
 

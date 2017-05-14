@@ -80,9 +80,6 @@ public class TaskHandlerAction implements Serializable {
 	@Lazy
 	private WorklistHandlerAction worklistHandlerAction;
 
-	@Autowired
-	@Lazy
-	private PrintHandlerAction printHandlerAction;
 
 	@Autowired
 	@Lazy

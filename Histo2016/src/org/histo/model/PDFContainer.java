@@ -18,6 +18,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.DocumentType;
+import org.histo.model.interfaces.HasID;
 
 @Entity
 @Audited
@@ -25,7 +26,7 @@ import org.histo.config.enums.DocumentType;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "pdfs_sequencegenerator", sequenceName = "pdfs_sequence")
-public class PDFContainer {
+public class PDFContainer implements HasID {
 
 	private long id;
 

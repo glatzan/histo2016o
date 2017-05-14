@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.action.MediaHandlerAction;
-import org.histo.action.PrintHandlerAction;
 import org.histo.action.UserHandlerAction;
+import org.histo.action.handler.PDFGeneratorHandler;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
@@ -44,9 +45,6 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
-	private PrintHandlerAction printHandlerAction;
-
-	@Autowired
 	private TaskDAO taskDAO;
 
 	@Autowired
@@ -57,6 +55,12 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private PatientDao patientDao;
+
+	@Autowired
+	private SettingsHandler settingsHandler;
+
+	@Autowired
+	private PDFGeneratorHandler pDFGeneratorHandler;
 	
 	private Patient patient;
 
@@ -88,7 +92,7 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	 * @param patient
 	 */
 	public void initBean(Patient patient) {
-		super.initBean(new Task(patientDao.savePatientAssociatedData(patient)), Dialog.TASK_CREATE);
+		super.initBean(new Task((Patient) patientDao.savePatientAssociatedData(patient)), Dialog.TASK_CREATE);
 
 		setPatient(patient);
 
@@ -231,10 +235,12 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 			logger.error("New Task: No TemplateUtil for printing UReport found");
 			return;
 		}
-
-		printHandlerAction.printPdfFromExternalBean(getTask(), subSelect[0],
-				userHandlerAction.getCurrentUser().getPreferedPrinter());
+		
+		// printing u report
+		PDFContainer newPdf = pDFGeneratorHandler.generatePDFForReport(task.getPatient(), task, subSelect[0]);
+		settingsHandler.getSelectedPrinter().print(newPdf);
 	}
+		
 
 	/**
 	 * Creates a BioBank object, an if in gui selected, the informed consent

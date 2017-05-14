@@ -42,8 +42,7 @@
 						value="#{userHandlerAction.currentUser.preferedPrinter}"
 						filter="true" filterMatchMode="contains">
 
-						<f:selectItems
-							value="#{mainHandlerAction.settings.printerManager.printers}"
+						<f:selectItems value="#{settingsHandler.printerList}"
 							var="printer" itemLabel="#{printer.name}"
 							itemValue="#{printer.name}" />
 
@@ -53,7 +52,7 @@
 					<!-- testprint -->
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right; margin-right:5px;"
-						actionListener="#{mainHandlerAction.settings.printerManager.printTestPage(userHandlerAction.currentUser.preferedPrinter)}">
+						actionListener="#{settingsHandler.selectedPrinter.printTestPage()}">
 						<i class="fa fa-fw fa-print" />
 					</p:commandLink>
 				</h:panelGrid>
@@ -69,10 +68,9 @@
 						value="#{userHandlerAction.currentUser.preferedLabelPritner}"
 						filter="true" filterMatchMode="contains">
 
-						<f:selectItems
-							value="#{mainHandlerAction.settings.labelPrinterManager.printers}"
+						<f:selectItems value="#{settingsHandler.labelPrinterList}"
 							var="printer" itemLabel="#{printer.name}"
-							itemValue="#{printer.name}" />
+							itemValue="#{printer.id}" />
 
 						<p:ajax event="change" process="@this" />
 					</p:selectOneMenu>
@@ -80,7 +78,7 @@
 					<!-- testprint -->
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right; margin-right:5px;"
-						actionListener="#{mainHandlerAction.settings.labelPrinterManager.printTestPage(userHandlerAction.currentUser.preferedLabelPritner)}">
+						actionListener="#{settingsHandler.selectedPrinter.printTestPage()}">
 						<i class="fa fa-fw fa-print" />
 					</p:commandLink>
 				</h:panelGrid>

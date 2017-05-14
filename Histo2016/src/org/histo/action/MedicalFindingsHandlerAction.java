@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.config.ResourceBundle;
@@ -44,15 +45,11 @@ public class MedicalFindingsHandlerAction {
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
 
-
 	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	private PatientDao patientDao;
-
-	@Autowired
-	private PrintHandlerAction printHandlerAction;
+	private PrintDialogHandler printDialogHandler;
 
 	@Autowired
 	private MediaHandlerAction mediaHandlerAction;
@@ -61,10 +58,10 @@ public class MedicalFindingsHandlerAction {
 	 */
 	@Autowired
 	private PDFGeneratorHandler pDFGeneratorHandler;
-	
+
 	@Autowired
 	private SlideManipulationHandler slideManipulationHandler;
-	
+
 	@Autowired
 	private UtilDAO utilDAO;
 
@@ -102,7 +99,7 @@ public class MedicalFindingsHandlerAction {
 	 * Phone settings
 	 */
 	private PhoneNotificationSettings phoneNotificationSettings;
-	
+
 	/**
 	 * Contains all contacts with no contact data available
 	 */
@@ -173,9 +170,9 @@ public class MedicalFindingsHandlerAction {
 			setFaxNotificationSettings(new FaxNotificationSettings(task));
 		if (getPhoneNotificationSettings() == null)
 			setPhoneNotificationSettings(new PhoneNotificationSettings(task));
-		if(getNoContactDataNotificationSettings() == null)
+		if (getNoContactDataNotificationSettings() == null)
 			setNoContactDataNotificationSettings(new NoContactDataNotificationSettings(task));
-		
+
 		updateNotificationLists();
 
 		MailTemplate taskReport = MailTemplate.factroy(MailType.MedicalFindingsReport);
@@ -193,21 +190,21 @@ public class MedicalFindingsHandlerAction {
 		logger.trace("Finalize Task");
 
 		getTemporaryTask().setFinalized(true);
-		
+
 		// ending stating phase
-		if(getTemporaryTask().isStainingPhase()){
-			slideManipulationHandler.setStainingCompletedForAllSlidesTo(getTemporaryTask(),true);
+		if (getTemporaryTask().isStainingPhase()) {
+			slideManipulationHandler.setStainingCompletedForAllSlidesTo(getTemporaryTask(), true);
 			temporaryTask.setStainingPhase(false);
 			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.end");
 		}
-		
+
 		// ending diagnosis phase
-		if(getTemporaryTask().isDiagnosisPhase()){
+		if (getTemporaryTask().isDiagnosisPhase()) {
 			getTemporaryTask().setDiagnosisPhase(false);
 		}
-		
+
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.finalized");
-		
+
 		hideMedicalFindingsDialog();
 	}
 
@@ -417,7 +414,7 @@ public class MedicalFindingsHandlerAction {
 			PDFContainer resultPdf = PDFGeneratorHandler.mergePdfs(resultPdfs, sendReportPDF.getName(),
 					DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
 
-			printHandlerAction.saveGeneratedPdf(getTemporaryTask(), resultPdf);
+			printDialogHandler.savePdf(getTemporaryTask(), resultPdf);
 
 			getTemporaryTask().setNotificationPhase(false);
 			getTemporaryTask().setNotificationCompletionDate(System.currentTimeMillis());
@@ -435,7 +432,7 @@ public class MedicalFindingsHandlerAction {
 	 * Preview
 	 ********************************************************/
 	public void showPreviewForContact(MedicalFindingsChooser notificationEmailList) {
-		printHandlerAction.perpareBeanForExternalView(getTemporaryTask(),
+		printDialogHandler.initBeanForExternalDisplay(getTemporaryTask(),
 				new PrintTemplate[] { notificationEmailList.getPrintTemplate() },
 				notificationEmailList.getPrintTemplate(), notificationEmailList.getContact());
 		setShowPreview(true);
@@ -512,7 +509,8 @@ public class MedicalFindingsHandlerAction {
 		return noContactDataNotificationSettings;
 	}
 
-	public void setNoContactDataNotificationSettings(NoContactDataNotificationSettings noContactDataNotificationSettings) {
+	public void setNoContactDataNotificationSettings(
+			NoContactDataNotificationSettings noContactDataNotificationSettings) {
 		this.noContactDataNotificationSettings = noContactDataNotificationSettings;
 	}
 	/********************************************************

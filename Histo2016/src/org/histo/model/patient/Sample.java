@@ -29,6 +29,7 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -42,7 +43,8 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered {
+public class Sample
+		implements Parent<Task>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 

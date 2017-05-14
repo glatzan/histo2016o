@@ -1,30 +1,95 @@
 package org.histo.util.printer;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 
+import org.apache.jasper.tagplugins.jstl.core.Url;
+import org.apache.log4j.Logger;
+import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
+import org.cups4j.PrintJob;
+import org.histo.model.PDFContainer;
+import org.histo.model.interfaces.HasID;
+import org.histo.model.transitory.json.settings.PrinterSettings;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.Resource;
 
-public class ClinicPrinter implements Serializable {
+import com.google.gson.annotations.Expose;
+import com.sun.jndi.toolkit.url.Uri;
 
-	private static final long serialVersionUID = 5960177965663431521L;
+public class ClinicPrinter extends AbstractPrinter {
 
-	private URL printerURL;
+	protected PrinterSettings settings;
 
-	private String name;
-
-	private String description;
-
-	private String location;
-
-	public ClinicPrinter(){
+	public ClinicPrinter() {
 	}
-	
-	public ClinicPrinter(CupsPrinter cupsPrinter) {
-		printerURL = cupsPrinter.getPrinterURL();
-		name = cupsPrinter.getName();
-		description = cupsPrinter.getDescription();
-		location = cupsPrinter.getLocation();
+
+	public ClinicPrinter(int id, CupsPrinter cupsPrinter, PrinterSettings settings) {
+		this.id = id;
+		this.address = cupsPrinter.getPrinterURL().toString();
+		this.name = cupsPrinter.getName();
+		this.description = cupsPrinter.getDescription();
+		this.location = cupsPrinter.getLocation();
+		this.settings = settings;
+	}
+
+	/**
+	 * Prints a file
+	 * 
+	 * @param cPrinter
+	 * @param file
+	 */
+	public boolean print(File file) {
+		CupsClient cupsClient;
+		try {
+			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
+			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
+			PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
+			printer.print(printJob);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	/**
+	 * Prints a pdfContainer
+	 * 
+	 * @param container
+	 * @return
+	 */
+	public boolean print(PDFContainer container) {
+		CupsClient cupsClient;
+		try {
+			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
+			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
+			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
+			printer.print(printJob);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean printTestPage() {
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
+		Resource resource = appContext.getResource(settings.getTestPage());
+		try {
+			print(new File(resource.getURI()));
+			System.out.println(resource.getURI());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			appContext.close();
+		}
+		return true;
 	}
 
 	@Override
@@ -35,12 +100,14 @@ public class ClinicPrinter implements Serializable {
 		return super.equals(obj);
 	}
 
-	public String getId(){
-		return getPrinterURL().toString();
+	// ************************ Getter/Setter ************************
+
+	public long getId() {
+		return id;
 	}
 
-	public URL getPrinterURL() {
-		return printerURL;
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -53,10 +120,6 @@ public class ClinicPrinter implements Serializable {
 
 	public String getLocation() {
 		return location;
-	}
-
-	public void setPrinterURL(URL printerURL) {
-		this.printerURL = printerURL;
 	}
 
 	public void setName(String name) {

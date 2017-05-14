@@ -42,15 +42,6 @@
       "userAgent":"Mozilla/5.0"
    },
    
-   "printerManager":{  
-      "host":"10.210.21.254/printers/",
-      "port":631,
-      "testPage":"classpath:templates/print/testPage.pdf"
-   },
-   
-   "labelPrinterManager":{  
-   },
-   
    "workingDirectory" : "classpath:templates/print",
    
    "offlineMode": true

@@ -14,6 +14,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
@@ -45,6 +46,8 @@ public class MainHandlerAction {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	@Autowired
+	private SettingsHandler settingsHandler;
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
@@ -76,23 +79,10 @@ public class MainHandlerAction {
 
 		navigationPages = new ArrayList<View>();
 
+		settingsHandler.initBean();
+		
+		// TODO REMOVE
 		setSettings(HistoSettings.factory(this));
-
-		// TODO remove
-		if (!getSettings().isOfflineMode()) {
-			// setting preferred printer
-			if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null) {
-				logger.debug("Setting default printer to "
-						+ getSettings().getPrinterManager().getPrinters().get(0).getName());
-				userHandlerAction.getCurrentUser()
-						.setPreferedPrinter(getSettings().getPrinterManager().getPrinters().get(0).getName());
-			}
-
-			// setting label printer
-			if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
-				userHandlerAction.getCurrentUser()
-						.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getName());
-		}
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_TASKS);

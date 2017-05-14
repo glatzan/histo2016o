@@ -38,7 +38,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean(patientDao.savePatientAssociatedData(task), Dialog.BIO_BANK);
+		super.initBean((Task)patientDao.savePatientAssociatedData(task), Dialog.BIO_BANK);
 		// setting associatedBioBank
 		setBioBank(bioBankDAO.getAssociatedBioBankObject(task));
 

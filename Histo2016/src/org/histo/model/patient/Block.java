@@ -25,6 +25,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -38,7 +39,8 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered {
+public class Block
+		implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -158,7 +160,7 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 	public void setUniqueSlideCounter(int uniqueSlideCounter) {
 		this.uniqueSlideCounter = uniqueSlideCounter;
 	}
-	
+
 	public boolean isIdManuallyAltered() {
 		return idManuallyAltered;
 	}
@@ -214,6 +216,7 @@ public class Block implements Parent<Sample>, StainingInfo, LogAble, DeleteAble,
 
 		return false;
 	}
+
 	/********************************************************
 	 * Interface StainingStauts
 	 ********************************************************/

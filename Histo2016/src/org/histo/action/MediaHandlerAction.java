@@ -47,10 +47,6 @@ public class MediaHandlerAction {
 	@Autowired
 	private UserHandlerAction userHandlerAction;
 
-	@Autowired
-	@Lazy
-	private PrintHandlerAction printHandlerAction;
-
 	/********************************************************
 	 * data upload
 	 ********************************************************/
@@ -212,9 +208,6 @@ public class MediaHandlerAction {
 		utilDAO.initializeDataList(dataList);
 		setTemporaryDataList(dataList);
 		setShowUpload(showUpload);
-
-		// setting default printer
-		printHandlerAction.setSelectedPrinter(userHandlerAction.getCurrentUser().getPreferedPrinter());
 
 		if (mediaToDisplay == null && dataList.getAttachedPdfs().size() > 0)
 			mediaToDisplay = dataList.getAttachedPdfs().get(0);

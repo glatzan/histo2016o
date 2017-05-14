@@ -45,17 +45,17 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	@Lazy
 	private WorklistHandlerAction worklistHandlerAction;
 
-	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedData(C object) {
+	public <C extends HasID & PatientRollbackAble> PatientRollbackAble savePatientAssociatedData(C object) {
 		return savePatientAssociatedData(object, null);
 	}
 
-	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedData(C object, String resourcesKey,
-			Object... resourcesKeyInsert) {
+	public <C extends HasID & PatientRollbackAble> PatientRollbackAble savePatientAssociatedData(C object,
+			String resourcesKey, Object... resourcesKeyInsert) {
 		return savePatientAssociatedData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
-	public <C extends HasID> C savePatientAssociatedData(C object, PatientRollbackAble hasPatient, String resourcesKey,
-			Object... resourcesKeyInsert) {
+	public <C extends HasID> PatientRollbackAble savePatientAssociatedData(C object, PatientRollbackAble hasPatient,
+			String resourcesKey, Object... resourcesKeyInsert) {
 		try {
 			if (resourcesKey != null)
 				genericDAO.save(object, resourceBundle.get(resourcesKey, hasPatient.getLogPath(), resourcesKeyInsert),
@@ -73,17 +73,17 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			Patient patient = getSession().get(Patient.class, hasPatient.getPatient().getId());
 			worklistHandlerAction.replaceInvaliedPatientInCurrentWorklist(patient);
 			System.out.println(patient.getTasks().get(0));
-			Class<? extends HasID> klass = (Class<? extends HasID>) object.getClass();
-			C result = (C) getSession().get(klass, object.getId());
+			Class<? extends PatientRollbackAble> klass = (Class<? extends PatientRollbackAble>) hasPatient.getClass();
+			C result = (C) getSession().get(klass, hasPatient.getId());
 			System.out.println(result);
-			return (C) getSession().get(klass, object.getId());
+			return (PatientRollbackAble) getSession().get(klass, object.getId());
 		}
 
-		return object;
+		return hasPatient;
 	}
 
 	public void initializePatientDate(Patient patient) {
-		Hibernate.initialize(savePatientAssociatedData(patient).getAttachedPdfs());
+		Hibernate.initialize(((Patient)savePatientAssociatedData(patient)).getAttachedPdfs());
 	}
 
 	/**

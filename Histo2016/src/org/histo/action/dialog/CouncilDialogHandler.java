@@ -3,7 +3,6 @@ package org.histo.action.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.action.PrintHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -14,6 +13,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
 import org.histo.model.Physician;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +33,6 @@ public class CouncilDialogHandler extends AbstractDialog {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private PrintHandlerAction printHandlerAction;
-
-	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired
@@ -44,6 +41,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 	@Autowired
 	private PatientDao patientDao;
 
+	@Autowired
+	private PrintDialogHandler printDialogHandler;
+	
 	private Council council;
 
 	private List<Council> councilList;
@@ -74,7 +74,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean(patientDao.savePatientAssociatedData(task), Dialog.COUNCIL);
+		super.initBean((Task)patientDao.savePatientAssociatedData(task), Dialog.COUNCIL);
 
 		utilDAO.initializeDataList(task);
 		utilDAO.initializeCouncilData(task);
@@ -154,7 +154,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 */
 	public void printCouncilReport() {
 		saveCouncilData();
-		printHandlerAction.showCouncilPrintDialog(task, council);
+		printDialogHandler.initBeanForCouncil(task, council);
 		// workaround for showing and hiding two dialogues
 		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
 
