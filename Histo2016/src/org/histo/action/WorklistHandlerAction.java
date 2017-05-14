@@ -223,8 +223,6 @@ public class WorklistHandlerAction implements Serializable {
 	public String onSelectPatient(Patient patient) {
 		setSelectedPatient(patient);
 
-		mainHandlerAction.sendGrowlMessages("test", "test");
-
 		if (patient == null)
 			return mainHandlerAction.goToNavigation(View.WORKLIST);
 
