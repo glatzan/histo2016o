@@ -9,6 +9,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -85,6 +86,9 @@ public class SettingsHandlerAction {
 
 	@Autowired
 	private CommenDataHandlerAction commenDataHandlerAction;
+
+	@Autowired
+	private SettingsHandler settingsHandler;
 
 	/**
 	 * Tabindex of settings dialog
@@ -772,7 +776,7 @@ public class SettingsHandlerAction {
 		try {
 			logger.debug("Search for " + request.toString());
 
-			LdapHandler connection = mainHandlerAction.getSettings().getLdap();
+			LdapHandler connection = settingsHandler.getLdapHandler();
 
 			// searching for physicians
 			connection.openConnection();

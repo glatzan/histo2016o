@@ -37,13 +37,13 @@
 {
 \scriptsize
 \begin{textblock}{100}(20, 15) 
-\noindent $patient.person.fullName\\
-$patient.person.street\\
-$patient.person.postcode $patient.person.town\\
+\noindent $!patient.person.fullName\\
+$!patient.person.street\\
+$!patient.person.postcode $!patient.person.town\\
 \X=.35mm        
 \barheight=1cm 
-\code{#if($patient.piz == "") 0 #else $patient.piz #end}\\
-$patient.piz\\
+\code{#if($patient.piz == "") 0 #else $!patient.piz #end}\\
+$!patient.piz\\
 \end{textblock}
 }
 
@@ -54,8 +54,8 @@ $patient.piz\\
 \noindent 
 \X=.35mm        
 \barheight=0.5cm 
-\code{$task.taskID}\\
-$task.taskID
+\code{$!task.taskID}\\
+$!task.taskID
 \end{textblock}
 }
 
@@ -64,7 +64,7 @@ $task.taskID
 \large
 \begin{textblock}{140}(125,144) 
 \noindent 
-$task.dateOfReceipt
+$!task.dateOfReceipt
 \end{textblock}
 }
 

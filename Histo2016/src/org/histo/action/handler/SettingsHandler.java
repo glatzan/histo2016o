@@ -9,6 +9,7 @@ import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.HistoSettings;
+import org.histo.model.transitory.json.LdapHandler;
 import org.histo.model.transitory.json.settings.PrinterSettings;
 import org.histo.model.transitory.json.settings.ProgramSettings;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -32,6 +33,7 @@ public class SettingsHandler {
 	public static final String PROGRAM_SETTINGS = "classpath:settings/general.json";
 	public static final String PRINTER_SETTINGS = "classpath:settings/cupsServer.json";
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";
+	public static final String LDAP_SETTINGS = "classpath:settings/ldap.json";
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
@@ -69,6 +71,11 @@ public class SettingsHandler {
 	 */
 	private DefaultTransformer<LabelPrinter> labelPrinterListTransformer;
 
+	/**
+	 * Object for handeling ldap connections
+	 */
+	private LdapHandler ldapHandler;
+
 	public void initBean() {
 		Gson gson = new Gson();
 
@@ -88,6 +95,9 @@ public class SettingsHandler {
 		setLabelPrinterListTransformer(new DefaultTransformer<LabelPrinter>(getLabelPrinterList()));
 
 		updateSelectedPrinters();
+
+		logger.debug("Loading LDAP Handler");
+		ldapHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(LDAP_SETTINGS), LdapHandler.class);
 	}
 
 	public void updateSelectedPrinters() {
@@ -217,6 +227,14 @@ public class SettingsHandler {
 
 	public void setLabelPrinterListTransformer(DefaultTransformer<LabelPrinter> labelPrinterListTransformer) {
 		this.labelPrinterListTransformer = labelPrinterListTransformer;
+	}
+
+	public LdapHandler getLdapHandler() {
+		return ldapHandler;
+	}
+
+	public void setLdapHandler(LdapHandler ldapHandler) {
+		this.ldapHandler = ldapHandler;
 	}
 
 }

@@ -6,12 +6,15 @@ import java.util.Collection;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.Role;
 import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.transitory.json.LdapHandler;
+import org.histo.model.transitory.json.settings.ProgramSettings;
+import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -33,8 +38,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private UserDAO userDAO;
-	
-	
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {
@@ -42,10 +45,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String password = authentication.getCredentials().toString().trim();
 
 		try {
-			HistoSettings settings = HistoSettings.factory();
-			LdapHandler connection = settings.getLdap();
-
-			if (settings.isOfflineMode()) {
+			Gson gson = new Gson();
+			
+			LdapHandler connection = gson.fromJson(FileHandlerUtil.getContentOfFile(SettingsHandler.LDAP_SETTINGS),
+					LdapHandler.class);
+			
+			ProgramSettings settings = gson.fromJson(FileHandlerUtil.getContentOfFile(SettingsHandler.PROGRAM_SETTINGS),
+					ProgramSettings.class);
+			
+			if (settings.isOffline()) {
 				logger.info("LDAP login disabled");
 
 				HistoUser histoUser = userDAO.loadUserByName(userName);

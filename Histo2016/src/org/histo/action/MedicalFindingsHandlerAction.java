@@ -259,42 +259,28 @@ public class MedicalFindingsHandlerAction {
 								getTemporaryTask().getPatient(), getTemporaryTask(),
 								notificationChooser.getPrintTemplate(), notificationChooser.getContact().getPerson());
 
-						if (!mainHandlerAction.getSettings().isOfflineMode()) {
-							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-									notificationChooser.getContact().getPerson().getEmail(),
-									emailNotificationSettings.getEmailSubject(),
-									emailNotificationSettings.getEmailText(), pdfToSend)) {
-								emailSuccessful = true;
-								// adding mail to the result array
-								resultPdfs.add(pdfToSend);
-								logger.trace("PDF successfully send");
-							} else {
-								// TODO: HAndle fault
-							}
-						} else {
-							// TODO REmove, only for testing
+						if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+								notificationChooser.getContact().getPerson().getEmail(),
+								emailNotificationSettings.getEmailSubject(), emailNotificationSettings.getEmailText(),
+								pdfToSend)) {
 							emailSuccessful = true;
 							// adding mail to the result array
 							resultPdfs.add(pdfToSend);
 							logger.trace("PDF successfully send");
+						} else {
+							// TODO: HAndle fault
 						}
 
 					} else {
-						if (!mainHandlerAction.getSettings().isOfflineMode()) {
-							// plain text mail
-							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-									notificationChooser.getContact().getPerson().getEmail(),
-									emailNotificationSettings.getEmailSubject(),
-									emailNotificationSettings.getEmailText())) {
-								emailSuccessful = true;
-								logger.trace("Text successfully send");
-							} else {
-								// TODO: Handle fault
-							}
-						} else {
-							// TODO REmove, only for testing
+						// plain text mail
+						if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+								notificationChooser.getContact().getPerson().getEmail(),
+								emailNotificationSettings.getEmailSubject(),
+								emailNotificationSettings.getEmailText())) {
 							emailSuccessful = true;
 							logger.trace("Text successfully send");
+						} else {
+							// TODO: Handle fault
 						}
 					}
 

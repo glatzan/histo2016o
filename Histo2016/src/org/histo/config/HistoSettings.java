@@ -47,11 +47,6 @@ public class HistoSettings {
 	}
 
 	/**
-	 * If true offline mode
-	 */
-	private boolean offlineMode;
-
-	/**
 	 * Directory for creating pdfs
 	 */
 	private String workingDirectory;
@@ -65,11 +60,6 @@ public class HistoSettings {
 	 * Object for sending mails via clini backend
 	 */
 	private MailHandler mail;
-
-	/**
-	 * Obejct for ldap communication with clinic backend
-	 */
-	private LdapHandler ldap;
 
 	/**
 	 * Object for handeling clinic backend requsts for patient data
@@ -113,14 +103,6 @@ public class HistoSettings {
 		this.mail = mail;
 	}
 
-	public LdapHandler getLdap() {
-		return ldap;
-	}
-
-	public void setLdap(LdapHandler ldap) {
-		this.ldap = ldap;
-	}
-
 	public String[] getAdminMails() {
 		return adminMails;
 	}
@@ -151,10 +133,6 @@ public class HistoSettings {
 
 	public String getCurrentVersion() {
 		return currentVersion;
-	}
-
-	public boolean isOfflineMode() {
-		return offlineMode;
 	}
 
 	/********************************************************

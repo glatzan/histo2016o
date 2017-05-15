@@ -63,22 +63,21 @@ public class LdapHandler implements GsonAble {
 			SearchResult result = (SearchResult) results.next();
 			Attributes attrs = result.getAttributes();
 
-//			if (logger.isTraceEnabled())
-//				printAllAttributes(attrs);
+			if (logger.isTraceEnabled())
+				printAllAttributes(attrs);
 
 			if (attrs != null) {
 				// check if uid is not a number, only people with a name as
 				// uid are active
 				Attribute attr = attrs.get("uid");
+				printAllAttributes(attrs);
 				if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
 					Physician newPhysician = new Physician(new Person());
 					newPhysician.setUid(attr.get().toString());
 					newPhysician.setClinicEmployee(true);
 					newPhysician.setDnObjectName(result.getName());
 					newPhysician.copyIntoObject(attrs);
-					newPhysician.setId(i);
 					physicians.add(newPhysician);
-					i++;
 				}
 			}
 		}
