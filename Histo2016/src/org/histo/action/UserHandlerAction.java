@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.MailType;
@@ -34,6 +35,10 @@ public class UserHandlerAction implements Serializable {
 	@Lazy
 	private MainHandlerAction mainHandlerAction;
 
+	@Autowired
+	@Lazy
+	private SettingsHandler settingsHandler;
+
 	/********************************************************
 	 * login
 	 ********************************************************/
@@ -61,6 +66,9 @@ public class UserHandlerAction implements Serializable {
 
 	public void hideUserSettingsDialog() {
 		genericDAO.refresh(getCurrentUser());
+
+		settingsHandler.updateSelectedPrinters();
+
 		mainHandlerAction.hideDialog(Dialog.USER_SETTINGS);
 	}
 

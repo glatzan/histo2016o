@@ -23,6 +23,7 @@
 
 	<!-- selection variable for the selected physician -->
 	<composite:attribute name="selection" required="true" />
+	
 </composite:interface>
 
 <composite:implementation>
@@ -62,6 +63,8 @@
 					style="width:20%">
 					<h:outputText value="#{physician.clinicRole}" />
 				</p:column>
+				
+				 <p:ajax event="rowSelect" process="@form" update="@form" />
 			</p:dataTable>
 
 		</h:panelGrid>

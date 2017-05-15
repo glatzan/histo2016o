@@ -2,6 +2,8 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
+TODO: PDF generation, wenn keien Untersucher ausgewählt sind geht nicht
+TODO: Drucker werde gerade nicht richtig eigelsen
 TODO: einspeisen von operateueren abgleichen, geht zumteil nicht richtig
 TODO: 2: erweiterte Suche
 TODO: 3: Blöcke nomeklatur überprüfen

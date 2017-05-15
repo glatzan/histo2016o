@@ -81,6 +81,17 @@ public class SettingsHandler {
 		setPrinterList(loadCupsPrinters(printerSettings));
 		setPrinterListTransformer(new DefaultTransformer<ClinicPrinter>(getPrinterList()));
 
+		logger.debug("Loading Lable Printers");
+		Type listType = new TypeToken<ArrayList<LabelPrinter>>() {
+		}.getType();
+		setLabelPrinterList(gson.fromJson(FileHandlerUtil.getContentOfFile(LABEL_PRINTER_SETTINGS), listType));
+		setLabelPrinterListTransformer(new DefaultTransformer<LabelPrinter>(getLabelPrinterList()));
+
+		updateSelectedPrinters();
+	}
+
+	public void updateSelectedPrinters() {
+
 		if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null) {
 			// dummy printer is allways there
 			setSelectedPrinter(getPrinterList().get(0));
@@ -89,18 +100,13 @@ public class SettingsHandler {
 			ClinicPrinter printer = getPrinterByName(userHandlerAction.getCurrentUser().getPreferedPrinter());
 			// if printer was found set it
 			if (printer != null) {
+				logger.debug("Settings printer " + printer.getName() + " as selected printer");
 				setSelectedPrinter(printer);
 			} else {
 				// TODO search for printer in the same room
 				setSelectedPrinter(getPrinterList().get(0));
 			}
 		}
-
-		logger.debug("Loading Lable Printers");
-		Type listType = new TypeToken<ArrayList<LabelPrinter>>() {
-		}.getType();
-		setLabelPrinterList(gson.fromJson(FileHandlerUtil.getContentOfFile(LABEL_PRINTER_SETTINGS), listType));
-		setLabelPrinterListTransformer(new DefaultTransformer<LabelPrinter>(getLabelPrinterList()));
 
 		if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null) {
 			setSelectedLabelPrinter(getLabelPrinterList().get(0));
@@ -111,6 +117,7 @@ public class SettingsHandler {
 					userHandlerAction.getCurrentUser().getPreferedLabelPritner());
 
 			if (labelPrinter != null) {
+				logger.debug("Settings printer " + labelPrinter.getName() + " as selected printer");
 				setSelectedLabelPrinter(labelPrinter);
 			} else {
 				// TODO serach for pritner in the same room
@@ -154,14 +161,12 @@ public class SettingsHandler {
 	}
 
 	private final LabelPrinter getLabelPrinterByID(String id) {
-		
+
 		for (LabelPrinter labelPrinter : getLabelPrinterList()) {
 			if (labelPrinter.getId() == Long.valueOf(id)) {
-				logger.debug("Labelprinter found, " + id);
 				return labelPrinter;
 			}
 		}
-		logger.debug("No printer found for " + id);
 		return null;
 	}
 

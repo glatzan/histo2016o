@@ -46,7 +46,7 @@
 							var="printer" itemLabel="#{printer.name}"
 							itemValue="#{printer.name}" />
 
-						<p:ajax event="change" process="@this" />
+						<p:ajax event="change" process="@this" listener="#{settingsHandler.updateSelectedPrinters()}" />
 					</p:selectOneMenu>
 
 					<!-- testprint -->
@@ -72,13 +72,13 @@
 							var="printer" itemLabel="#{printer.name}"
 							itemValue="#{printer.id}" />
 
-						<p:ajax event="change" process="@this" />
+						<p:ajax event="change" process="@this" listener="#{settingsHandler.updateSelectedPrinters()}" />
 					</p:selectOneMenu>
 
 					<!-- testprint -->
 					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
 						style="float: right; margin-right:5px;"
-						actionListener="#{settingsHandler.selectedPrinter.printTestPage()}">
+						actionListener="#{settingsHandler.selectedLabelPrinter.printTestPage()}">
 						<i class="fa fa-fw fa-print" />
 					</p:commandLink>
 				</h:panelGrid>

@@ -178,12 +178,9 @@ public class LabelPrinter extends AbstractPrinter {
 	public void openConnection() throws SocketException, IOException {
 		connection = new FTPClient();
 
-		InetAddress address = InetAddress.getByName(new URL(this.address).getHost());
-		
-		logger.debug("Connecting to label printer ftp://" + address.getHostAddress() + ":" + port);
+		logger.debug("Connecting to label printer ftp://" + address + ":" + port);
 
-		// TODO port
-		connection.connect(address.getHostAddress());
+		connection.connect(address, Integer.valueOf(getPort()));
 		connection.login(userName, password);
 		connection.setFileType(FTP.ASCII_FILE_TYPE);
 	}

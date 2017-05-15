@@ -85,7 +85,7 @@ public class SettingsHandlerAction {
 
 	@Autowired
 	private CommenDataHandlerAction commenDataHandlerAction;
-	
+
 	/**
 	 * Tabindex of settings dialog
 	 */
@@ -222,7 +222,7 @@ public class SettingsHandlerAction {
 	 * True if archived physicians should be display
 	 */
 	private boolean showArchivedPhysicians = false;
-	
+
 	/**
 	 * Array of roles for that physicians should be shown.
 	 */
@@ -305,8 +305,9 @@ public class SettingsHandlerAction {
 		onSettingsTabChange();
 
 		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		commenDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
-		
+		commenDataHandlerAction.setAssociatedRolesTransformer(
+				new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
+
 		mainHandlerAction.showDialog(Dialog.SETTINGS);
 	}
 
@@ -705,8 +706,9 @@ public class SettingsHandlerAction {
 	 */
 	public void preparePhysicianList() {
 
-		if(getShowPhysicianRoles() == null)
-			setShowPhysicianRoles(new ContactRole[]{ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON, ContactRole.OTHER_PHYSICIAN});
+		if (getShowPhysicianRoles() == null)
+			setShowPhysicianRoles(new ContactRole[] { ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON,
+					ContactRole.OTHER_PHYSICIAN, ContactRole.SIGNATURE });
 
 		setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(), isShowArchivedPhysicians()));
 	}
@@ -719,6 +721,9 @@ public class SettingsHandlerAction {
 		setTmpPhysician(new Physician());
 		getTmpPhysician().setPerson(new Person());
 		setPhysicianTabIndex(SettingsTab.P_ADD_LDPA);
+
+		setLdapPhysicianSearchString("");
+		setLdapPhysicianList(new ArrayList<Physician>());
 	}
 
 	/**
@@ -774,12 +779,8 @@ public class SettingsHandlerAction {
 			setLdapPhysicianList(connection.getListOfPhysicians(request.toString()));
 			connection.closeConnection();
 
-			// in order to choose from a list set dummy ids
-			int i = 0;
-			for (Physician physician : getLdapPhysicianList()) {
-				physician.setId(i);
-				i++;
-			}
+			setTmpLdapPhysician(null);
+
 		} catch (NamingException | IOException e) {
 			logger.error("NamingException: " + e.getMessage(), e);
 			setLdapPhysicianList(null);
@@ -822,8 +823,10 @@ public class SettingsHandlerAction {
 	 * @param editPhysician
 	 */
 	public void savePhysicianFromLdap(Physician ldapPhysician, HashSet<ContactRole> roles) {
-		if (ldapPhysician == null)
+		if (ldapPhysician == null) {
+			discardTmpPhysician();
 			return;
+		}
 
 		// removing id from the list
 		ldapPhysician.setId(0);
@@ -843,11 +846,14 @@ public class SettingsHandlerAction {
 			physicianFromDatabase.copyIntoObject(ldapPhysician);
 
 			physicianFromDatabase.setArchived(false);
-			
-			ldapPhysician = physicianFromDatabase;
 
-			genericDAO.save(ldapPhysician,
+			// overwriting roles
+			physicianFromDatabase.setAssociatedRoles(roles);
+
+			genericDAO.save(physicianFromDatabase,
 					resourceBundle.get("log.settings.physician.ldap.update", ldapPhysician.getPerson().getFullName()));
+			setTmpPhysician(physicianFromDatabase);
+			discardTmpPhysician();
 			return;
 		}
 
@@ -1150,6 +1156,7 @@ public class SettingsHandlerAction {
 	}
 
 	public void setTmpPhysician(Physician tmpPhysician) {
+
 		this.tmpPhysician = tmpPhysician;
 	}
 
@@ -1272,8 +1279,6 @@ public class SettingsHandlerAction {
 	public void setShowPhysicianRoles(ContactRole[] showPhysicianRoles) {
 		this.showPhysicianRoles = showPhysicianRoles;
 	}
-	
-	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

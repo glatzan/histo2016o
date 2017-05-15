@@ -103,7 +103,7 @@
 								<i class="fa fa-close icon-grey"></i>
 							</p:commandLink>
 						</h:panelGrid>
-						
+
 						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
 							<!-- move file -->
 							<h:outputLabel
@@ -113,7 +113,7 @@
 								value="#{createTaskDialogHandler.moveInformedConsent}">
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
-						
+
 						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
 
 
@@ -216,6 +216,17 @@
 						<f:actionListener
 							binding="#{createTaskDialogHandler.hideDialog()}"></f:actionListener>
 					</p:commandButton>
+					
+					<!-- select printer -->
+					<p:selectOneMenu styleClass="customSerachSelectMenu"
+						panelStyleClass="customSerachSelectMenuPanel"
+						converter="#{settingsHandler.printerListTransformer}"
+						value="#{settingsHandler.selectedPrinter}" filter="true"
+						filterMatchMode="contains" style="margin-right:10px">
+
+						<f:selectItems value="#{settingsHandler.printerList}"
+							var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
+					</p:selectOneMenu>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
