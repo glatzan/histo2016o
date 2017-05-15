@@ -4,7 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +14,9 @@ import java.util.Map;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.log4j.Logger;
+import org.histo.config.enums.DocumentType;
 import org.histo.model.interfaces.GsonAble;
+import org.histo.model.patient.Slide;
 import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
 
@@ -21,39 +25,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * Zebra Printer with ftp printing function. Buffer can be filled without
- * opening a connection with the printer.
+ * Zebra AbstractPrinter with ftp printing function. Buffer can be filled
+ * without opening a connection with the printer.
  * 
  * @author andi
  *
  */
-public class LabelPrinter implements GsonAble {
-
-	private static Logger logger = Logger.getLogger("org.histo");
-
-	@Expose
-	private String name;
-
-	@Expose
-	private String uuid;
-
-	@Expose
-	private String location;
-
-	@Expose
-	private String commentary;
-
-	@Expose
-	private String ip;
-
-	@Expose
-	private int port;
-
-	@Expose
-	private String userName;
-
-	@Expose
-	private String password;
+public class LabelPrinter extends AbstractPrinter {
 
 	/**
 	 * Default name of the ftp uploaded file. Should contain %counter% in order
@@ -93,6 +71,62 @@ public class LabelPrinter implements GsonAble {
 		printBuffer.put(fileName.replace("%count%", String.valueOf(++fileNameCounter)), toPrint);
 	}
 
+	public final void print(PrintTemplate printTemplate, Slide slide, String date) {
+		String taskID = slide.getTask().getTaskID();
+
+		logger.debug("Using printer " + getName());
+
+		String toPrint = printTemplate.getContentOfFile();
+
+		HashMap<String, String> args = new HashMap<String, String>();
+		args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 2, '0'));
+		args.put("%slideName%", taskID + " " + slide.getSlideID());
+		args.put("%slideText%", slide.getCommentary());
+		args.put("%date%", date);
+
+		addTaskToBuffer(HistoUtil.replaceWildcardsInString(toPrint, args));
+
+	}
+
+	public boolean printTestPage() {
+
+		PrintTemplate test = PrintTemplate
+				.getDefaultTemplate(PrintTemplate.getTemplatesByType(DocumentType.TEST_LABLE));
+
+		String toPrint = test.getContentOfFile();
+
+		if (toPrint == null)
+			return false;
+
+		logger.debug("Printing Testpage an flushing, printer " + getFileName());
+		addTaskToBuffer(toPrint);
+		flushPrints();
+		return true;
+	}
+
+	/**
+	 * Flushes all prints of the given printer
+	 * 
+	 * @param printer
+	 * @return
+	 */
+	public boolean flushPrints() {
+		if (isBufferNotEmpty()) {
+			try {
+				openConnection();
+				flushBuffer();
+				closeConnection();
+			} catch (IOException e) {
+				logger.error(e);
+			}
+			logger.debug("Flushing prints of printer " + getName());
+			return true;
+		} else
+			logger.debug("Nothing in buffer of printer " + getName());
+
+		return false;
+	}
+
 	/**
 	 * Print the whole buffer and clears it if successful.
 	 * 
@@ -109,9 +143,9 @@ public class LabelPrinter implements GsonAble {
 				result = false;
 			}
 		}
-		
+
 		printBuffer.clear();
-		
+
 		return result;
 	}
 
@@ -144,10 +178,12 @@ public class LabelPrinter implements GsonAble {
 	public void openConnection() throws SocketException, IOException {
 		connection = new FTPClient();
 
-		logger.debug("Connecting to label printer ftp://" + ip + ":" + String.valueOf(port));
+		InetAddress address = InetAddress.getByName(new URL(this.address).getHost());
+		
+		logger.debug("Connecting to label printer ftp://" + address.getHostAddress() + ":" + port);
 
 		// TODO port
-		connection.connect(ip);
+		connection.connect(address.getHostAddress());
 		connection.login(userName, password);
 		connection.setFileType(FTP.ASCII_FILE_TYPE);
 	}
@@ -160,25 +196,6 @@ public class LabelPrinter implements GsonAble {
 	public void closeConnection() throws IOException {
 		connection.logout();
 		connection.disconnect();
-	}
-
-	/**
-	 * Loads printer from json
-	 * 
-	 * @param jsonFile
-	 * @return
-	 */
-	public static final LabelPrinter[] factroy(String jsonFile) {
-
-		Type type = new TypeToken<LabelPrinter[]>() {
-		}.getType();
-
-		Gson gson = new Gson();
-		LabelPrinter[] result = gson.fromJson(FileHandlerUtil.getContentOfFile(jsonFile), type);
-
-		logger.debug("Created label printer list with " + result.length + " printern");
-
-		return result;
 	}
 
 	/********************************************************
@@ -194,76 +211,12 @@ public class LabelPrinter implements GsonAble {
 		return !printBuffer.isEmpty();
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public String getCommentary() {
-		return commentary;
-	}
-
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
-	}
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
 	public String getFileName() {
 		return fileName;
 	}
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
 	}
 
 	/********************************************************

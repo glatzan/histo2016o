@@ -7,15 +7,23 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.histo.action.WorklistHandlerAction;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.interfaces.HasID;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +34,57 @@ import org.springframework.transaction.annotation.Transactional;
 public class PatientDao extends AbstractDAO implements Serializable {
 
 	private static Logger logger = Logger.getLogger("org.histo");
+
+	@Autowired
+	private ResourceBundle resourceBundle;
+
+	@Autowired
+	private GenericDAO genericDAO;
+
+	@Autowired
+	@Lazy
+	private WorklistHandlerAction worklistHandlerAction;
+
+	public <C extends HasID & PatientRollbackAble> PatientRollbackAble savePatientAssociatedData(C object) {
+		return savePatientAssociatedData(object, null);
+	}
+
+	public <C extends HasID & PatientRollbackAble> PatientRollbackAble savePatientAssociatedData(C object,
+			String resourcesKey, Object... resourcesKeyInsert) {
+		return savePatientAssociatedData(object, object, resourcesKey, resourcesKeyInsert);
+	}
+
+	public <C extends HasID> PatientRollbackAble savePatientAssociatedData(C object, PatientRollbackAble hasPatient,
+			String resourcesKey, Object... resourcesKeyInsert) {
+		try {
+			if (resourcesKey != null)
+				genericDAO.save(object, resourceBundle.get(resourcesKey, hasPatient.getLogPath(), resourcesKeyInsert),
+						hasPatient.getPatient());
+			else {
+				Session session = getSession();
+				// TODO MOVE to generic dao
+				session.saveOrUpdate(object);
+			}
+			getSession().flush();
+		} catch (javax.persistence.OptimisticLockException e) {
+			logger.debug("----------- Rollback!");
+			getSession().getTransaction().rollback();
+			getSession().beginTransaction();
+			Patient patient = getSession().get(Patient.class, hasPatient.getPatient().getId());
+			worklistHandlerAction.replaceInvaliedPatientInCurrentWorklist(patient);
+			System.out.println(patient.getTasks().get(0));
+			Class<? extends PatientRollbackAble> klass = (Class<? extends PatientRollbackAble>) hasPatient.getClass();
+			C result = (C) getSession().get(klass, hasPatient.getId());
+			System.out.println(result);
+			return (PatientRollbackAble) getSession().get(klass, object.getId());
+		}
+
+		return hasPatient;
+	}
+
+	public void initializePatientDate(Patient patient) {
+		Hibernate.initialize(((Patient)savePatientAssociatedData(patient)).getAttachedPdfs());
+	}
 
 	/**
 	 * Returns a list of useres with the given piz. At least 6 numbers of the
@@ -178,7 +237,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}
-	
+
 	/**
 	 * Returns a list of patients deepening on the diagnosis phase.
 	 * 

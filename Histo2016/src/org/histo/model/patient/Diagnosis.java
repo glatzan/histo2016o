@@ -21,9 +21,10 @@ import org.histo.config.enums.Dialog;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.GsonAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 
 /**
  * Diagnose NAchbefundung Revision
@@ -37,7 +38,7 @@ import org.histo.model.interfaces.SaveAble;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, DeleteAble, SaveAble {
+public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, DeleteAble, PatientRollbackAble, HasID {
 
 	private long id;
 
@@ -250,7 +251,7 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -258,6 +259,6 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 		return getParent().getLogPath() + ", Diagnosis-Name: " + getDiagnosis() + " (" + getId() + ")";
 	}
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 }

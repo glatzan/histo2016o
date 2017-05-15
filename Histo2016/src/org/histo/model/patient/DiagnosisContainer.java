@@ -26,9 +26,10 @@ import org.hibernate.envers.Audited;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 
 @Entity
 @Audited
@@ -36,7 +37,7 @@ import org.histo.model.interfaces.SaveAble;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisContainer_sequencegenerator", sequenceName = "diagnosisContainer_sequence")
-public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, DiagnosisInfo {
+public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbackAble, DiagnosisInfo, HasID {
 
 	private long id;
 
@@ -186,7 +187,7 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 	/******** Interface Parent ********/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -195,7 +196,7 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 	}
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 
 	/********************************************************
@@ -206,9 +207,9 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 	public boolean isDiagnosisPerformed() {
 		if (getDiagnosisRevisions().isEmpty())
 			return false;
-		
+
 		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if(!revision.isDiagnosisPerformed())
+			if (!revision.isDiagnosisPerformed())
 				return false;
 		}
 		return true;
@@ -219,9 +220,9 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 	public boolean isDiagnosisNeeded() {
 		if (getDiagnosisRevisions().isEmpty())
 			return true;
-		
+
 		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if(revision.isDiagnosisNeeded())
+			if (revision.isDiagnosisNeeded())
 				return true;
 		}
 		return false;
@@ -232,9 +233,9 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, SaveAble, Diag
 	public boolean isReDiagnosisNeeded() {
 		if (getDiagnosisRevisions().isEmpty())
 			return true;
-		
+
 		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if(revision.isReDiagnosisNeeded())
+			if (revision.isReDiagnosisNeeded())
 				return true;
 		}
 		return false;

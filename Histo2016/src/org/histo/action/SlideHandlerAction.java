@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
@@ -34,13 +35,7 @@ public class SlideHandlerAction implements Serializable {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	private GenericDAO genericDAO;
-
-	@Autowired
 	private SettingsDAO settingsDAO;
-
-	@Autowired
-	private ResourceBundle resourceBundle;
 
 	@Autowired
 	private MainHandlerAction mainHandlerAction;
@@ -50,6 +45,9 @@ public class SlideHandlerAction implements Serializable {
 
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
+
+	@Autowired
+	private SettingsHandler settingsHandler;
 
 	/**
 	 * Temporary task object, for finalizing stainigs
@@ -285,8 +283,6 @@ public class SlideHandlerAction implements Serializable {
 			System.out.println("To impliment");
 			break;
 		case PRINT:
-			mainHandlerAction.getSettings().getLabelPrinterManager()
-					.loadPrinter(userHandlerAction.getCurrentUser().getPreferedLabelPritner());
 
 			PrintTemplate[] arr = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
 					new DocumentType[] { DocumentType.LABLE });
@@ -300,13 +296,12 @@ public class SlideHandlerAction implements Serializable {
 				if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
 
 					Slide slide = stainingTableChooser.getStaining();
-
-					mainHandlerAction.getSettings().getLabelPrinterManager().print(arr[0], slide,
+					settingsHandler.getSelectedLabelPrinter().print(arr[0], slide,
 							mainHandlerAction.date(System.currentTimeMillis()));
 				}
 			}
 
-			mainHandlerAction.getSettings().getLabelPrinterManager().flushPrints();
+			settingsHandler.getSelectedLabelPrinter().flushPrints();
 
 			break;
 		default:
@@ -319,9 +314,6 @@ public class SlideHandlerAction implements Serializable {
 
 	public void printLableForSlide(Slide slide) {
 
-		mainHandlerAction.getSettings().getLabelPrinterManager()
-				.loadPrinter(userHandlerAction.getCurrentUser().getPreferedLabelPritner());
-
 		PrintTemplate[] arr = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
 				new DocumentType[] { DocumentType.LABLE });
 
@@ -330,9 +322,9 @@ public class SlideHandlerAction implements Serializable {
 			return;
 		}
 
-		mainHandlerAction.getSettings().getLabelPrinterManager().print(arr[0], slide,
+		settingsHandler.getSelectedLabelPrinter().print(arr[0], slide,
 				mainHandlerAction.date(System.currentTimeMillis()));
-		mainHandlerAction.getSettings().getLabelPrinterManager().flushPrints();
+		settingsHandler.getSelectedLabelPrinter().flushPrints();
 
 	}
 

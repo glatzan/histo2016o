@@ -842,6 +842,8 @@ public class SettingsHandlerAction {
 		if (physicianFromDatabase != null) {
 			physicianFromDatabase.copyIntoObject(ldapPhysician);
 
+			physicianFromDatabase.setArchived(false);
+			
 			ldapPhysician = physicianFromDatabase;
 
 			genericDAO.save(ldapPhysician,

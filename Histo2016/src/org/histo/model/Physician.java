@@ -138,6 +138,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		getPerson().setEmail(dataToUpdate.getPerson().getEmail());
 		getPerson().setPhoneNumber(dataToUpdate.getPerson().getPhoneNumber());
 		getPerson().setDepartment(dataToUpdate.getPerson().getDepartment());
+		getPerson().setTitle(dataToUpdate.getPerson().getTitle());
 
 		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
 		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
@@ -288,15 +289,14 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	public void setClinicEmployee(boolean clinicEmployee) {
 		this.clinicEmployee = clinicEmployee;
 	}
-	
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@Fetch(value = FetchMode.SUBSELECT)
 	public Set<ContactRole> getAssociatedRoles() {
-		if(associatedRoles == null)
+		if (associatedRoles == null)
 			associatedRoles = new HashSet<ContactRole>();
-		
+
 		return associatedRoles;
 	}
 
@@ -307,7 +307,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	/********************************************************
 	 * Transient
 	 ********************************************************/
-	
+
 	@Transient
 	public String getDnObjectName() {
 		return dnObjectName;
@@ -355,6 +355,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 
 	/**
 	 * Returns true if no role is associate
+	 * 
 	 * @return
 	 */
 	@Transient
@@ -363,16 +364,16 @@ public class Physician implements Serializable, ArchivAble, HasID {
 			return true;
 		return false;
 	}
-	
+
 	/**
 	 * Returns true if no role is associate
+	 * 
 	 * @return
 	 */
 	@Transient
 	public void addAssociateRole(ContactRole role) {
 		getAssociatedRoles().add(role);
 	}
-
 
 	/********************************************************
 	 * Transient

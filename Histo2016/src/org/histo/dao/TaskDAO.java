@@ -9,8 +9,10 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class TaskDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = 7999598227641226109L;
+
+	@Autowired
+	private PatientDao patientDao;
+
+	public Task initializeTaskDate(Task task) {
+		Task result = (Task)patientDao.savePatientAssociatedData(task);
+		Hibernate.initialize(result.getAttachedPdfs());
+		return result;
+	}
 
 	/**
 	 * Counts all tasks of the current year
@@ -35,7 +46,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 				.add(Restrictions.le("creationDate",
 						TimeUtil.getDateInUnixTimestamp(TimeUtil.getCurrentYear(), 12, 31, 23, 59, 59)));
 		query.setProjection(Projections.rowCount());
-		
+
 		Number result = (Number) query.getExecutableCriteria(getSession()).uniqueResult();
 
 		return result.intValue();
@@ -79,9 +90,9 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	 * @param task
 	 */
 	public void initializeDiagnosisData(Task task) {
-		getSession().update(task);
+		getSession().saveOrUpdate(task);
 		Hibernate.initialize(task.getDiagnosisContainer());
-		getSession().update(task.getDiagnosisContainer());
+		getSession().saveOrUpdate(task.getDiagnosisContainer());
 		Hibernate.initialize(task.getDiagnosisContainer().getSignatureOne());
 		Hibernate.initialize(task.getDiagnosisContainer().getSignatureTwo());
 	}

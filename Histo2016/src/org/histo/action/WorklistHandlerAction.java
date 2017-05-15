@@ -71,10 +71,10 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	private TaskListHandlerAction taskListHandlerAction;
-	
+
 	@Autowired
 	private UtilDAO utilDAO;
-	
+
 	/*
 	 * ************************** Patient ****************************
 	 */
@@ -175,6 +175,43 @@ public class WorklistHandlerAction implements Serializable {
 		}
 	}
 
+	public void replaceInvaliedPatientInCurrentWorklist(Patient patient) {
+		setSelectedPatient(patient);
+		logger.debug("Replacing patient due to external changes!");
+		for (Patient pListItem : getWorkList()) {
+			if (pListItem.getId() == patient.getId()) {
+				int index = getWorkList().indexOf(pListItem);
+				getWorkList().remove(pListItem);
+				getWorkList().add(index, patient);
+
+				// setting the selected task
+				if (pListItem.getSelectedTask() != null) {
+					Task newSelectedTask = null;
+
+					for (Task task : patient.getTasks()) {
+						if (task.getId() == pListItem.getSelectedTask().getId()) {
+							newSelectedTask = task;
+							break;
+						}
+					}
+					patient.setSelectedTask(newSelectedTask);
+				}
+
+				// setting active tasks
+				for (Task activeTask : pListItem.getActivTasks()) {
+					for (Task task : patient.getTasks()) {
+						if (task.getId() == activeTask.getId()) {
+							task.setActive(true);
+							break;
+						}
+					}
+				}
+				break;
+			}
+		}
+
+	}
+
 	/**
 	 * Action is performed on selecting a patient in the patient list on the
 	 * left hand side. If the receiptlog or the diagnosis view should be used it
@@ -186,14 +223,12 @@ public class WorklistHandlerAction implements Serializable {
 	public String onSelectPatient(Patient patient) {
 		setSelectedPatient(patient);
 
-		mainHandlerAction.sendGrowlMessages("test", "test");
-		
 		if (patient == null)
 			return mainHandlerAction.goToNavigation(View.WORKLIST);
 
 		logger.debug("Select patient " + patient.getPerson().getFullName());
 
-		utilDAO.initializeDataList(patient);
+		patientDao.initializePatientDate(patient);
 
 		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
@@ -210,7 +245,11 @@ public class WorklistHandlerAction implements Serializable {
 		logger.debug(
 				"Selecting patient and task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
 
+		
 		setSelectedPatient(task.getPatient());
+		
+		task = (Task)patientDao.savePatientAssociatedData(task);
+		
 		task.getPatient().setSelectedTask(task);
 
 		task.generateSlideGuiList();

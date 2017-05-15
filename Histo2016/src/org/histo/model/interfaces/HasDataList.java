@@ -9,7 +9,7 @@ import org.histo.model.PDFContainer;
  * @author andi
  *
  */
-public interface HasDataList extends SaveAble {
+public interface HasDataList extends PatientRollbackAble {
 	public List<PDFContainer> getAttachedPdfs();
 	public void setAttachedPdfs(List<PDFContainer> attachedPdfs);
 }

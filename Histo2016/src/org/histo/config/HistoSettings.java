@@ -8,10 +8,7 @@ import org.histo.action.MainHandlerAction;
 import org.histo.model.transitory.json.ClinicJsonHandler;
 import org.histo.model.transitory.json.LdapHandler;
 import org.histo.model.transitory.json.mail.MailHandler;
-import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
-import org.histo.util.printer.ClinicPrinterManager;
-import org.histo.util.printer.LabelPrinterManager;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -46,15 +43,6 @@ public class HistoSettings {
 
 		HistoSettings result = gson.fromJson(FileHandlerUtil.getContentOfFile(DEFAULT_SETTINGS_JSON), HistoSettings.class);
 
-		result.getPrinterManager().setMainHandlerAction(mainHandlerAction);
-		
-		// init printers
-		if (!result.isOfflineMode()) {
-			result.getPrinterManager().loadCupsPrinters();
-			result.getLabelPrinterManager().loadFtpPrinters();
-		}else
-			logger.debug("Skipping printer initializiation, offline");
-
 		return result;
 	}
 
@@ -72,16 +60,6 @@ public class HistoSettings {
 	 * The current version of the program
 	 */
 	private String currentVersion;
-
-	/**
-	 * Handles clinic printers
-	 */
-	private ClinicPrinterManager printerManager;
-
-	/**
-	 * Handles all labelPrinters
-	 */
-	private LabelPrinterManager labelPrinterManager;
 
 	/**
 	 * Object for sending mails via clini backend
@@ -115,7 +93,6 @@ public class HistoSettings {
 		try {
 			result = resource.getURI();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			appContext.close();
@@ -168,28 +145,12 @@ public class HistoSettings {
 		this.errorMails = errorMails;
 	}
 
-	public ClinicPrinterManager getPrinterManager() {
-		return printerManager;
-	}
-
-	public void setPrinterManager(ClinicPrinterManager printerManager) {
-		this.printerManager = printerManager;
-	}
-
 	public String getWorkingDirectory() {
 		return workingDirectory;
 	}
 
 	public String getCurrentVersion() {
 		return currentVersion;
-	}
-
-	public LabelPrinterManager getLabelPrinterManager() {
-		return labelPrinterManager;
-	}
-
-	public void setLabelPrinterManager(LabelPrinterManager labelPrinterManager) {
-		this.labelPrinterManager = labelPrinterManager;
 	}
 
 	public boolean isOfflineMode() {

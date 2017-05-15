@@ -410,7 +410,7 @@
 			<p:commandButton id="printBtn" style="display:none"
 				widgetVar="printBtnVar" onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
-				actionListener="#{printHandlerAction.showDefaultPrintDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				actionListener="#{printDialogHandler.initAndPrepareBeanForPrinting(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
@@ -485,12 +485,9 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
-
-
-
 			<!-- show only button for print dialog, workaround for closing and showing dialogs -->
 			<p:commandButton id="printBtnShowOnly" style="display:none"
-				actionListener="#{printHandlerAction.showPrintDialog()}">
+				actionListener="#{mainHandlerAction.showDialog('PRINT')}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>

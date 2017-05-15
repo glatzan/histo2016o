@@ -29,9 +29,10 @@ import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisInfo;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 
 @Entity
 @Audited
@@ -39,7 +40,8 @@ import org.histo.model.interfaces.SaveAble;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
-public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContainer>, DeleteAble, LogAble, SaveAble {
+public class DiagnosisRevision
+		implements DiagnosisInfo, Parent<DiagnosisContainer>, DeleteAble, LogAble, PatientRollbackAble, HasID {
 
 	private long id;
 
@@ -239,7 +241,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 	public boolean isDiagnosisPerformed() {
 		if (getDiagnoses().isEmpty())
 			return false;
-		
+
 		return isDiagnosisCompleted();
 	}
 
@@ -248,7 +250,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 	public boolean isDiagnosisNeeded() {
 		if (getDiagnoses().isEmpty())
 			return true;
-		
+
 		return !isDiagnosisCompleted() && !isReDiagnosis();
 	}
 
@@ -259,6 +261,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 			return true;
 		return !isDiagnosisCompleted() && isReDiagnosis();
 	}
+
 	/********************************************************
 	 * Interface DiagnosisStatus
 	 ********************************************************/
@@ -323,7 +326,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -331,7 +334,7 @@ public class DiagnosisRevision implements DiagnosisInfo, Parent<DiagnosisContain
 		return getParent().getLogPath() + ", Revision-ID: " + getName() + " (" + getId() + ")";
 	}
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 
 }

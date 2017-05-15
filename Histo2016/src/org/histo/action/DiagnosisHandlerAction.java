@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
@@ -42,7 +43,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
-	private PrintHandlerAction printHandlerAction;
+	private PrintDialogHandler printDialogHandler;
 
 	private Task temporaryTask;
 
@@ -68,7 +69,7 @@ public class DiagnosisHandlerAction implements Serializable {
 	 * Can be set to true if the task should stay in diagnosis phase.
 	 */
 	private boolean stayInDiagnosisPhase;
-	
+
 	/**
 	 * Hides dialogs associated with the slideHandlerAction, resets all
 	 * variables
@@ -160,44 +161,45 @@ public class DiagnosisHandlerAction implements Serializable {
 	 ********************************************************/
 	public void showDiagnosisPhaseEndDialog(Task task) {
 		setTemporaryTask(task);
-		
+
 		setStayInDiagnosisPhase(false);
 
-		// inits a template for previewing 
-		printHandlerAction.perpareBeanForExternalView(task,
+		// inits a template for previewing
+		printDialogHandler.initBeanForExternalDisplay(task,
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
 				DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
 		mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_LEAVE);
 	}
 
-	public void hideDiagnosisPhaseEndDialog(boolean stayInPhase){
+	public void hideDiagnosisPhaseEndDialog(boolean stayInPhase) {
 		taskManipulationHandler.finalizeAllDiangosisRevisions(
 				getTemporaryTask().getDiagnosisContainer().getDiagnosisRevisions(), true);
 		getTemporaryTask().setNotificationPhase(true);
 		getTemporaryTask().setDiagnosisCompletionDate(System.currentTimeMillis());
 		getTemporaryTask().setDiagnosisPhase(stayInPhase);
-		
+
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.end");
 		hideDialog(Dialog.DIAGNOSIS_PHASE_LEAVE);
 	}
 
 	/********************************************************
-	 *  Default Dialog for ending diagnosis phase
+	 * Default Dialog for ending diagnosis phase
 	 ********************************************************/
 
 	/********************************************************
-	 *  Dialog for forcing stay and leave of diagnosis phase
+	 * Dialog for forcing stay and leave of diagnosis phase
 	 ********************************************************/
 	/**
 	 * Show a dialog for forcing leave or stay in diagnosis phase.
+	 * 
 	 * @param task
 	 * @param stay
 	 */
 	public void showDiagnosisForcePhaseDialog(Task task, boolean force) {
 		setTemporaryTask(task);
-		
-		if(force)
+
+		if (force)
 			mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_FORCE_ENTER);
 		else
 			mainHandlerAction.showDialog(Dialog.DIAGNOSIS_PHASE_FORCE_LEAVE);
@@ -206,8 +208,9 @@ public class DiagnosisHandlerAction implements Serializable {
 	/**
 	 * Sets the diagnosis phase to false and finalizes all diagnoses
 	 */
-	public void forceLeaveDiagnosisPhaseAndHideDialog(){
-		// set to notification phase if task is not finalized an no other phase is active
+	public void forceLeaveDiagnosisPhaseAndHideDialog() {
+		// set to notification phase if task is not finalized an no other phase
+		// is active
 		if (!getTemporaryTask().isFinalized() && !getTemporaryTask().getStatus().isDiagnosisPhaseAndOtherPhase()) {
 			logger.debug("Setting notification phase to true");
 			getTemporaryTask().setNotificationPhase(true);
@@ -219,7 +222,7 @@ public class DiagnosisHandlerAction implements Serializable {
 
 		hideDialog(Dialog.DIAGNOSIS_PHASE_FORCE_LEAVE);
 	}
-	
+
 	/**
 	 * Sets the diagnosis phase to true and unfinalizes all diagnoses
 	 */
@@ -233,10 +236,10 @@ public class DiagnosisHandlerAction implements Serializable {
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.diagnosisPhase.reentered");
 		hideDialog(Dialog.DIAGNOSIS_PHASE_FORCE_ENTER);
 	}
-	/********************************************************
-	 *  Dialog for forcing stay and leave of diagnosis phase
-	 ********************************************************/
 
+	/********************************************************
+	 * Dialog for forcing stay and leave of diagnosis phase
+	 ********************************************************/
 
 	public void onDiagnosisPrototypeChanged(Diagnosis diagnosis) {
 		logger.debug("Updating diagnosis prototype");

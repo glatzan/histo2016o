@@ -14,6 +14,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
@@ -21,7 +22,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,8 @@ public class MainHandlerAction {
 	@Autowired
 	private ResourceBundle resourceBundle;
 
+	@Autowired
+	private SettingsHandler settingsHandler;
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
@@ -76,23 +79,10 @@ public class MainHandlerAction {
 
 		navigationPages = new ArrayList<View>();
 
+		settingsHandler.initBean();
+		
+		// TODO REMOVE
 		setSettings(HistoSettings.factory(this));
-
-		// TODO remove
-		if (!getSettings().isOfflineMode()) {
-			// setting preferred printer
-			if (userHandlerAction.getCurrentUser().getPreferedPrinter() == null) {
-				logger.debug("Setting default printer to "
-						+ getSettings().getPrinterManager().getPrinters().get(0).getName());
-				userHandlerAction.getCurrentUser()
-						.setPreferedPrinter(getSettings().getPrinterManager().getPrinters().get(0).getName());
-			}
-
-			// setting label printer
-			if (userHandlerAction.getCurrentUser().getPreferedLabelPritner() == null)
-				userHandlerAction.getCurrentUser()
-						.setPreferedLabelPritner(getSettings().getLabelPrinterManager().getPrinters().get(0).getName());
-		}
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			navigationPages.add(View.WORKLIST_TASKS);
@@ -322,7 +312,7 @@ public class MainHandlerAction {
 	 * Delete
 	 ********************************************************/
 	@Deprecated
-	public void deleteDate(SaveAble toSave, String resourcesKey, String... arr) {
+	public void deleteDate(PatientRollbackAble toSave, String resourcesKey, String... arr) {
 		genericDAO.delete(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
 
@@ -334,7 +324,7 @@ public class MainHandlerAction {
 	 * Save
 	 ********************************************************/
 	@Deprecated
-	public void saveDataChange(SaveAble toSave, String resourcesKey, String... arr) {
+	public void saveDataChange(PatientRollbackAble toSave, String resourcesKey, String... arr) {
 		genericDAO.save(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
 	}
 

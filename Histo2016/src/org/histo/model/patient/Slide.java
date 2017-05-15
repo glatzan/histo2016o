@@ -20,10 +20,11 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.SaveAble;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 
@@ -33,7 +34,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, SaveAble, IdManuallyAltered {
+public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -238,7 +239,7 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	 ********************************************************/
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 	@Override
 	@Transient
@@ -247,7 +248,7 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	}
 
 	/********************************************************
-	 * Interface SaveAble
+	 * Interface PatientRollbackAble
 	 ********************************************************/
 
 	/********************************************************

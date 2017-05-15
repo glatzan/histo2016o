@@ -3,16 +3,17 @@ package org.histo.action.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.action.PrintHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
 import org.histo.model.Physician;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +33,17 @@ public class CouncilDialogHandler extends AbstractDialog {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private PrintHandlerAction printHandlerAction;
-
-	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
 
+	@Autowired
+	private PatientDao patientDao;
+
+	@Autowired
+	private PrintDialogHandler printDialogHandler;
+	
 	private Council council;
 
 	private List<Council> councilList;
@@ -70,7 +74,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean(task, Dialog.COUNCIL);
+		super.initBean((Task)patientDao.savePatientAssociatedData(task), Dialog.COUNCIL);
 
 		utilDAO.initializeDataList(task);
 		utilDAO.initializeCouncilData(task);
@@ -126,7 +130,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			council.setDateOfRequest(System.currentTimeMillis());
 			logger.debug("Council Dialog: Creating new council");
 			// TODO: Better loggin
-			genericDAO.saveDataChange(council, getTask(), "log.patient.task.council.create");
+			patientDao.savePatientAssociatedData(council, getTask(), "log.patient.task.council.create");
 
 			task.getCouncils().add(council);
 
@@ -134,7 +138,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 		} else {
 			logger.debug("Council Dialog: Saving council");
-			genericDAO.saveDataChange(council, getTask(), "log.patient.task.council.update",
+			patientDao.savePatientAssociatedData(council, getTask(), "log.patient.task.council.update",
 					String.valueOf(council.getId()));
 		}
 
@@ -150,7 +154,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 */
 	public void printCouncilReport() {
 		saveCouncilData();
-		printHandlerAction.showCouncilPrintDialog(task, council);
+		printDialogHandler.initBeanForCouncil(task, council);
 		// workaround for showing and hiding two dialogues
 		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
 

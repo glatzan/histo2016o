@@ -105,18 +105,18 @@
 					<p:commandButton value="#{msg['dialog.media.print']}"
 						icon="fa fa-print"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{printHandlerAction.printPdfFromExternalBean(mediaHandlerAction.temporaryPdfContainer)}"></p:commandButton>
+						actionListener="#{settingsHandler.selectedPrinter.print(mediaHandlerAction.temporaryPdfContainer)}"></p:commandButton>
 
 					<!-- select printer -->
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						panelStyleClass="customSerachSelectMenuPanel"
-						value="#{printHandlerAction.selectedPrinter}" filter="true"
+						converter="#{settingsHandler.printerListTransformer}"
+						value="#{settingsHandler.selectedPrinter}" filter="true"
 						filterMatchMode="contains" style="margin-right:10px">
 
-						<f:selectItems
-							value="#{mainHandlerAction.settings.printerManager.printers}"
+						<f:selectItems value="#{settingsHandler.printerList}"
 							var="printer" itemLabel="#{printer.name}"
-							itemValue="#{printer.name}" />
+							itemValue="#{printer}" />
 					</p:selectOneMenu>
 
 					<p:commandButton value="#{msg['dialog.media.open']}"
@@ -137,7 +137,8 @@
 	</h:form>
 
 	<h:form>
-		<p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true" globalOnly="" />
+		<p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true"
+			globalOnly="" />
 	</h:form>
 </h:body>
 </html>
