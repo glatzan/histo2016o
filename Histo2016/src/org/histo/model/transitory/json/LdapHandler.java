@@ -36,7 +36,7 @@ public class LdapHandler implements GsonAble {
 	private String suffix;
 	@Expose
 	private String base;
-	
+
 	private DirContext connection;
 
 	public Physician getPhyscican(String userName) throws NamingException, SocketException, IOException {
@@ -77,9 +77,13 @@ public class LdapHandler implements GsonAble {
 					newPhysician.setClinicEmployee(true);
 					newPhysician.setDnObjectName(result.getName());
 					newPhysician.copyIntoObject(attrs);
+					newPhysician.setId(i);
 					physicians.add(newPhysician);
+
 				}
+
 			}
+			i++;
 		}
 
 		return physicians;
@@ -117,7 +121,7 @@ public class LdapHandler implements GsonAble {
 	/********************************************************
 	 * static
 	 ********************************************************/
-	
+
 	public static final void printAllAttributes(Attributes attrs) {
 		for (NamingEnumeration<?> ae = attrs.getAll(); ae.hasMoreElements();) {
 			Attribute attr;
@@ -137,7 +141,7 @@ public class LdapHandler implements GsonAble {
 	/********************************************************
 	 * static
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

@@ -40,6 +40,9 @@ public class LabelPrinter extends AbstractPrinter {
 	@Expose
 	private String fileName;
 
+	@Expose
+	private int timeout;
+	
 	/**
 	 * Saves the current number of printed files.
 	 */
@@ -180,6 +183,7 @@ public class LabelPrinter extends AbstractPrinter {
 
 		logger.debug("Connecting to label printer ftp://" + address + ":" + port);
 
+		connection.setConnectTimeout(getTimeout());
 		connection.connect(address, Integer.valueOf(getPort()));
 		connection.login(userName, password);
 		connection.setFileType(FTP.ASCII_FILE_TYPE);
@@ -215,6 +219,16 @@ public class LabelPrinter extends AbstractPrinter {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+	
+	
 
 	/********************************************************
 	 * Getter/Setter

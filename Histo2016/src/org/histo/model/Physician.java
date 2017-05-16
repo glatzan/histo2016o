@@ -25,6 +25,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -145,7 +146,9 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		setUid(dataToUpdate.getUid());
 		setPager(dataToUpdate.getPager());
 		setClinicRole(dataToUpdate.getClinicRole());
-		setAssociatedRoles(dataToUpdate.getAssociatedRoles());
+		
+		// TODO is this necessary ?
+//		setAssociatedRoles(dataToUpdate.getAssociatedRoles());
 	}
 
 	/**
@@ -293,6 +296,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@Fetch(value = FetchMode.SUBSELECT)
+	@Cascade(value={org.hibernate.annotations.CascadeType.ALL})
 	public Set<ContactRole> getAssociatedRoles() {
 		if (associatedRoles == null)
 			associatedRoles = new HashSet<ContactRole>();

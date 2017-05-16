@@ -308,6 +308,7 @@ public class PrintDialogHandler extends AbstractDialog {
 				savePdf(getTask(), getPdfContainer());
 			settingsHandler.getSelectedPrinter().print(getPdfContainer());
 		} else {
+			boolean oneContactSelected = false;
 			// addresses where chosen
 			for (ContactChooser contactChooser : getContactList()) {
 				if (contactChooser.isSelected()) {
@@ -330,8 +331,15 @@ public class PrintDialogHandler extends AbstractDialog {
 						// settings the old selected contact as selected contact
 						setSelectedContact(tmp);
 					}
+					
+					oneContactSelected = true;
 				}
 
+			}
+			
+			// printin if no container was selected, with the default address 
+			if(!oneContactSelected){
+				settingsHandler.getSelectedPrinter().print(getPdfContainer());
 			}
 		}
 
