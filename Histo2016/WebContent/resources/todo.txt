@@ -2,9 +2,7 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-TODO: PDF generation, wenn keien Untersucher ausgewählt sind geht nicht
-TODO: Drucker werde gerade nicht richtig eigelsen
-TODO: einspeisen von operateueren abgleichen, geht zumteil nicht richtig
+
 TODO: 2: erweiterte Suche
 TODO: 3: Blöcke nomeklatur überprüfen
 TODO: 5: rechte durchsetzten
@@ -27,6 +25,9 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin überarbeiten, methoden in generica dat shiften
 TODO: Konsile dürfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: einspeisen von operateueren abgleichen, geht zumteil nicht richtig
+++++: Drucker werde gerade nicht richtig eigelsen
+++++: PDF generation, wenn keien Untersucher ausgewählt sind geht nicht
 ++++: Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
 ++++: Diangose text speichern, geht zurzeit nicht
 ++++: Konsile gehen nicht

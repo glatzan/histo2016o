@@ -14,6 +14,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogInfo;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
@@ -23,6 +24,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 
 /**
  * The DAO class for generic entities
@@ -79,6 +82,29 @@ public class GenericDAO extends AbstractDAO {
 	}
 
 	// ************************ Save ************************
+	public <C extends HasID> C saveData(C object){
+		 return saveData(object,null);
+	}
+
+	public <C extends HasID> C saveData(C object, String resourcesKey, Object... resourcesKeyInsert) {
+		try {
+			if (resourcesKey != null)
+				save(object, resourceBundle.get(resourcesKey, resourcesKeyInsert));
+			else {
+				Session session = getSession();
+				// TODO MOVE to generic dao
+				session.saveOrUpdate(object);
+			}
+			getSession().flush();
+		} catch (javax.persistence.OptimisticLockException e) {
+			logger.debug("----------- Rollback!");
+			getSession().getTransaction().rollback();
+			getSession().beginTransaction();
+			Class<? extends HasID> klass = (Class<? extends HasID>) object.getClass();
+			return (C) getSession().get(klass, object.getId());
+		}
+		return object;
+	}
 
 	@Deprecated
 	public void saveDataChange(Object toSave, String resourcesKey, Object... arr) {

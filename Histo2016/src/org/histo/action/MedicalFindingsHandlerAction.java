@@ -65,6 +65,8 @@ public class MedicalFindingsHandlerAction {
 	@Autowired
 	private UtilDAO utilDAO;
 
+	@Autowired
+	private TaskDAO taskDAO;
 	/********************************************************
 	 * General
 	 ********************************************************/
@@ -158,9 +160,7 @@ public class MedicalFindingsHandlerAction {
 	}
 
 	public void initBean(Task task) {
-		setTemporaryTask(task);
-
-		utilDAO.initializeDataList(task);
+		setTemporaryTask(taskDAO.initializeTaskDate(task));
 
 		setActiveTabIndex(0);
 

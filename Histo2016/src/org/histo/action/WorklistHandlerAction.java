@@ -311,7 +311,7 @@ public class WorklistHandlerAction implements Serializable {
 			return View.WORKLIST_TASKS.getPath();
 		}
 		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
-			utilDAO.initializeDataList(getSelectedPatient());
+			patientDao.initializePatientDate(getSelectedPatient());
 			return View.WORKLIST_PATIENT.getPath();
 		} else if (currentView == View.WORKLIST_DIAGNOSIS) {
 			setLastSubView(View.WORKLIST_DIAGNOSIS);

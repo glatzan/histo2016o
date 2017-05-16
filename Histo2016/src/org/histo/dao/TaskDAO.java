@@ -28,9 +28,20 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	private PatientDao patientDao;
 
 	public Task initializeTaskDate(Task task) {
-		Task result = (Task)patientDao.savePatientAssociatedData(task);
-		Hibernate.initialize(result.getAttachedPdfs());
-		return result;
+		task = (Task) patientDao.savePatientAssociatedData(task);
+		Hibernate.initialize(task.getAttachedPdfs());
+		return task;
+	}
+
+	/**
+	 * Initializes lazy fetch for council data
+	 * 
+	 * @param task
+	 */
+	public Task initializeCouncilData(Task task) {
+		task = (Task) patientDao.savePatientAssociatedData(task);
+		Hibernate.initialize(task.getCouncils());
+		return task;
 	}
 
 	/**
@@ -89,12 +100,13 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	 * 
 	 * @param task
 	 */
-	public void initializeDiagnosisData(Task task) {
-		getSession().saveOrUpdate(task);
+	public Task initializeDiagnosisData(Task task) {
+		task = (Task) patientDao.savePatientAssociatedData(task);
 		Hibernate.initialize(task.getDiagnosisContainer());
-		getSession().saveOrUpdate(task.getDiagnosisContainer());
+		task = (Task) patientDao.savePatientAssociatedData(task.getDiagnosisContainer(),task);
 		Hibernate.initialize(task.getDiagnosisContainer().getSignatureOne());
 		Hibernate.initialize(task.getDiagnosisContainer().getSignatureTwo());
+		return task;
 	}
 
 }

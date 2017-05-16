@@ -12,7 +12,7 @@ import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.transitory.json.LdapHandler;
+import org.histo.model.transitory.json.settings.LdapHandler;
 import org.histo.model.transitory.json.settings.ProgramSettings;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;

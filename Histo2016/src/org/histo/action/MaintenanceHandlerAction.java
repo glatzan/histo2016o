@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.model.transitory.json.ProgramVersion;
+import org.histo.model.transitory.json.settings.Version;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +24,7 @@ public class MaintenanceHandlerAction {
 	@Autowired
 	private UserHandlerAction userHandlerAction;
 
-	private ProgramVersion[] versionInfo;
+	private Version[] versionInfo;
 
 	private String errorMessage;
 
@@ -32,7 +32,7 @@ public class MaintenanceHandlerAction {
 
 	public void prepareInfoDialog() {
 		logger.trace("Preparing Info Dialog");
-		setVersionInfo(ProgramVersion.factroy(HistoSettings.VERSION_JSON));
+		setVersionInfo(Version.factroy(HistoSettings.VERSION_JSON));
 		setErrorDate(new Date(System.currentTimeMillis()));
 		setErrorMessage("");
 
@@ -67,11 +67,11 @@ public class MaintenanceHandlerAction {
 	 * Getter/Setter
 	 ********************************************************/
 
-	public ProgramVersion[] getVersionInfo() {
+	public Version[] getVersionInfo() {
 		return versionInfo;
 	}
 
-	public void setVersionInfo(ProgramVersion[] versionInfo) {
+	public void setVersionInfo(Version[] versionInfo) {
 		this.versionInfo = versionInfo;
 	}
 

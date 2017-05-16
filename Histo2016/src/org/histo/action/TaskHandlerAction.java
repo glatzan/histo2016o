@@ -220,7 +220,7 @@ public class TaskHandlerAction implements Serializable {
 		genericDAO.refresh(task);
 		
 		if (!task.isInitialized()) {
-			utilDAO.initializeCouncilData(task);
+			taskDAO.initializeCouncilData(task);
 			taskDAO.initializeDiagnosisData(task);
 			task.setInitialized(true);
 		}

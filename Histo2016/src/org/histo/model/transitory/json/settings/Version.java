@@ -1,4 +1,4 @@
-package org.histo.model.transitory.json;
+package org.histo.model.transitory.json.settings;
 
 import java.lang.reflect.Type;
 
@@ -10,7 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
-public class ProgramVersion implements GsonAble {
+public class Version implements GsonAble {
 
 	@Expose
 	private String version;
@@ -35,18 +35,18 @@ public class ProgramVersion implements GsonAble {
 	}
 
 	/**
-	 * Factory loads a list of ProgramVersion Objects from a json file
+	 * Factory loads a list of Version Objects from a json file
 	 * 
 	 * @param jsonFile
 	 * @return
 	 */
-	public static final ProgramVersion[] factroy(String jsonFile) {
+	public static final Version[] factroy(String jsonFile) {
 
-		Type type = new TypeToken<ProgramVersion[]>() {
+		Type type = new TypeToken<Version[]>() {
 		}.getType();
 
 		Gson gson = new Gson();
-		ProgramVersion[] result = gson.fromJson(FileHandlerUtil.getContentOfFile(jsonFile), type);
+		Version[] result = gson.fromJson(FileHandlerUtil.getContentOfFile(jsonFile), type);
 		return result;
 	}
 

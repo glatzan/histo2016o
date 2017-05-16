@@ -10,6 +10,7 @@ import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
@@ -17,30 +18,24 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
-@Transactional(noRollbackFor=Exception.class)
+@Transactional(noRollbackFor = Exception.class)
 @Scope(value = "session")
 public class UtilDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = -2446285129518473844L;
 
+	@Autowired
+	private GenericDAO genericDAO;
 
 	/**
 	 * Initializes a datalist for an object
 	 * 
 	 * @param dataList
 	 */
-	public void initializeDataList(HasDataList dataList) {
+	public HasDataList initializeDataList(HasDataList dataList) {
+		dataList = genericDAO.saveData(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
-	}
-
-	/**
-	 * Initializes lazy fetch for council data
-	 * 
-	 * @param task
-	 */
-	public void initializeCouncilData(Task task) {
-		getSession().saveOrUpdate(task);
-		Hibernate.initialize(task.getCouncils());
+		return dataList;
 	}
 
 	/**

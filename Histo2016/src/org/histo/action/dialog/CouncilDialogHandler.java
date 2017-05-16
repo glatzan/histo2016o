@@ -44,6 +44,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 	@Autowired
 	private PrintDialogHandler printDialogHandler;
 	
+	@Autowired
+	private TaskDAO taskDAO;
+	
 	private Council council;
 
 	private List<Council> councilList;
@@ -76,8 +79,8 @@ public class CouncilDialogHandler extends AbstractDialog {
 	public void initBean(Task task) {
 		super.initBean((Task)patientDao.savePatientAssociatedData(task), Dialog.COUNCIL);
 
-		utilDAO.initializeDataList(task);
-		utilDAO.initializeCouncilData(task);
+		taskDAO.initializeTaskDate(task);
+		taskDAO.initializeCouncilData(task);
 
 		setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
 

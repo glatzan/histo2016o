@@ -46,7 +46,12 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	private WorklistHandlerAction worklistHandlerAction;
 
 	public <C extends HasID & PatientRollbackAble> PatientRollbackAble savePatientAssociatedData(C object) {
-		return savePatientAssociatedData(object, null);
+		return savePatientAssociatedData(object, object, null);
+	}
+
+	public <C extends HasID & PatientRollbackAble> PatientRollbackAble savePatientAssociatedData(C object,
+			PatientRollbackAble hasPatient) {
+		return savePatientAssociatedData(object, hasPatient, null);
 	}
 
 	public <C extends HasID & PatientRollbackAble> PatientRollbackAble savePatientAssociatedData(C object,
@@ -83,7 +88,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	public void initializePatientDate(Patient patient) {
-		Hibernate.initialize(((Patient)savePatientAssociatedData(patient)).getAttachedPdfs());
+		Hibernate.initialize(((Patient) savePatientAssociatedData(patient)).getAttachedPdfs());
 	}
 
 	/**

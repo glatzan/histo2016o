@@ -9,9 +9,10 @@ import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.HistoSettings;
-import org.histo.model.transitory.json.LdapHandler;
+import org.histo.model.transitory.json.settings.LdapHandler;
 import org.histo.model.transitory.json.settings.PrinterSettings;
 import org.histo.model.transitory.json.settings.ProgramSettings;
+import org.histo.model.transitory.json.settings.VersionContainer;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.histo.util.printer.ClinicPrinter;
@@ -34,6 +35,7 @@ public class SettingsHandler {
 	public static final String PRINTER_SETTINGS = "classpath:settings/cupsServer.json";
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";
 	public static final String LDAP_SETTINGS = "classpath:settings/ldap.json";
+	public static final String VERSION_SETTINGS = "classpath:settings/version.json";
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
@@ -75,6 +77,11 @@ public class SettingsHandler {
 	 * Object for handeling ldap connections
 	 */
 	private LdapHandler ldapHandler;
+
+	/**
+	 * Container for providing version information
+	 */
+	private VersionContainer versionContainer;
 
 	public void initBean() {
 		Gson gson = new Gson();
@@ -235,6 +242,14 @@ public class SettingsHandler {
 
 	public void setLdapHandler(LdapHandler ldapHandler) {
 		this.ldapHandler = ldapHandler;
+	}
+
+	public VersionContainer getVersionContainer() {
+		return versionContainer;
+	}
+
+	public void setVersionContainer(VersionContainer versionContainer) {
+		this.versionContainer = versionContainer;
 	}
 
 }

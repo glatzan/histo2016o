@@ -3,6 +3,7 @@ package org.histo.action.dialog;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.BioBankDAO;
 import org.histo.dao.PatientDao;
+import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.BioBank;
 import org.histo.model.patient.Patient;
@@ -17,7 +18,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private BioBankDAO bioBankDAO;
-	
+
 	@Autowired
 	private PatientDao patientDao;
 
@@ -35,15 +36,17 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 	/**
 	 * Initializes all field of the biobank object
+	 * 
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean((Task)patientDao.savePatientAssociatedData(task), Dialog.BIO_BANK);
+		super.initBean((Task) patientDao.savePatientAssociatedData(task), Dialog.BIO_BANK);
+
 		// setting associatedBioBank
 		setBioBank(bioBankDAO.getAssociatedBioBankObject(task));
 
 		if (getBioBank() != null) {
-			bioBankDAO.initializeBioBank(getBioBank());
+			setBioBank(bioBankDAO.initializeBioBank(getBioBank()));
 		}
 	}
 
@@ -51,7 +54,9 @@ public class BioBankDialogHandler extends AbstractDialog {
 	 * Saves the biobank to the database
 	 */
 	public void saveBioBank() {
-		genericDAO.saveDataChange(getBioBank(), "log.patient.bioBank.save");
+		// saving biobank
+		BioBank bioBank = genericDAO.saveData(getBioBank(), "log.patient.bioBank.save");
+		setBioBank(bioBank);
 	}
 
 	// ************************ Getter/Setter ************************

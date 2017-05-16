@@ -30,7 +30,7 @@ import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
-import org.histo.model.transitory.json.LdapHandler;
+import org.histo.model.transitory.json.settings.LdapHandler;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.histo.ui.transformer.DefaultTransformer;

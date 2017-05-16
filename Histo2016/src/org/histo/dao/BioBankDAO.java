@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.model.BioBank;
 import org.histo.model.MaterialPreset;
 import org.histo.model.patient.Task;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Scope(value = "session")
 public class BioBankDAO extends AbstractDAO implements Serializable {
+
+	@Autowired
+	private GenericDAO genericDAO;
 
 	private static final long serialVersionUID = 1663852599257860298L;
 
@@ -45,8 +49,10 @@ public class BioBankDAO extends AbstractDAO implements Serializable {
 	 * 
 	 * @param bioBank
 	 */
-	public void initializeBioBank(BioBank bioBank) {
+	public BioBank initializeBioBank(BioBank bioBank) {
+		bioBank = genericDAO.saveData(bioBank);
 		Hibernate.initialize(bioBank.getAttachedPdfs());
 		Hibernate.initialize(bioBank.getTask());
+		return bioBank;
 	}
 }
