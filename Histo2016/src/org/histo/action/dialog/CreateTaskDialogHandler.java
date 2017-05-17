@@ -237,7 +237,7 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 		}
 		
 		// printing u report
-		PDFContainer newPdf = pDFGeneratorHandler.generatePDFForReport(task.getPatient(), task, subSelect[0]);
+		PDFContainer newPdf = pDFGeneratorHandler.generateUReport(subSelect[0], task.getPatient(), task);
 		settingsHandler.getSelectedPrinter().print(newPdf);
 	}
 		
