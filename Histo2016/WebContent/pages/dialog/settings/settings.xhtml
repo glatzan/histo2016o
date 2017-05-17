@@ -143,9 +143,13 @@
 				</p:tab>
 				<!-- ************************************************************** Static Lists ************************************************************** -->
 
-				<p:tab title="#{msg['dialog.settings.miscellaneous']}">
+				<p:tab title="#{msg['dialog.settings.system']}">
 				</p:tab>
 
+				<p:tab title="#{msg['dialog.settings.log']}"
+					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}"">
+
+				</p:tab>
 				<!-- ************************************************************** Log ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.log']}">
 					<!-- 

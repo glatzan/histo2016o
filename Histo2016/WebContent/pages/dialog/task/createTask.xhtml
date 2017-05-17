@@ -210,13 +210,15 @@
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
 						icon="fa fa-print"
-						styleClass="smallButton buttonRighMarginInListExtended">
+						styleClass="smallButton buttonRighMarginInListExtended"
+						onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()">
 						<f:actionListener
 							binding="#{createTaskDialogHandler.createTaskAndPrintUReport()}"></f:actionListener>
 						<f:actionListener
 							binding="#{createTaskDialogHandler.hideDialog()}"></f:actionListener>
 					</p:commandButton>
-					
+
 					<!-- select printer -->
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						panelStyleClass="customSerachSelectMenuPanel"
@@ -238,6 +240,7 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
+		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>
 </html>
