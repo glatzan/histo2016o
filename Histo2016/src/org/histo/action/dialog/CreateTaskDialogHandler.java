@@ -3,7 +3,6 @@ package org.histo.action.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;

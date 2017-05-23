@@ -7,7 +7,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import org.histo.config.enums.ContactRole;
-import org.histo.model.MaterialPreset;
 
 public class AssociatedRoleTransformer implements Converter {
 

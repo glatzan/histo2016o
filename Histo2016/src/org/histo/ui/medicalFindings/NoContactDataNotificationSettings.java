@@ -3,7 +3,6 @@ package org.histo.ui.medicalFindings;
 import java.util.List;
 
 import org.histo.config.enums.ContactMethod;
-import org.histo.config.enums.NotificationOption;
 import org.histo.model.patient.Task;
 
 public class NoContactDataNotificationSettings {

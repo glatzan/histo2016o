@@ -7,7 +7,6 @@ import java.util.List;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.interfaces.HasID;
-import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;

@@ -7,24 +7,18 @@ import javax.faces.event.PhaseId;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
-import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
-import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
-import org.histo.model.patient.Patient;
-import org.histo.model.patient.Task;
-import org.histo.util.printer.PrintTemplate;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

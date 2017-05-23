@@ -3,7 +3,6 @@ package org.histo.model.transitory.json.settings;
 import java.lang.reflect.Type;
 
 import org.histo.model.interfaces.GsonAble;
-import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;

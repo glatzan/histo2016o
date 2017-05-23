@@ -8,7 +8,6 @@ import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.BioBank;
-import org.histo.model.MaterialPreset;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

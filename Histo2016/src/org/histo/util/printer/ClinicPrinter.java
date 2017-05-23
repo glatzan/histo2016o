@@ -4,22 +4,15 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URL;
 
-import org.apache.jasper.tagplugins.jstl.core.Url;
-import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.HasID;
 import org.histo.model.transitory.json.settings.PrinterSettings;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
-
-import com.google.gson.annotations.Expose;
-import com.sun.jndi.toolkit.url.Uri;
 
 public class ClinicPrinter extends AbstractPrinter {
 

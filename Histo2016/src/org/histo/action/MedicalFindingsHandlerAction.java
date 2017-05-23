@@ -15,7 +15,6 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.MailType;
 import org.histo.config.enums.NotificationOption;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
@@ -26,12 +25,10 @@ import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.MedicalFindingsChooser;
 import org.histo.ui.medicalFindings.NoContactDataNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
-import org.histo.util.HistoUtil;
 import org.histo.util.printer.PrintTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Component

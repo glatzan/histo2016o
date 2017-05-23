@@ -36,6 +36,7 @@ import org.histo.config.enums.TaskPriority;
 import org.histo.model.Accounting;
 import org.histo.model.Contact;
 import org.histo.model.Council;
+import org.histo.model.FavouriteList;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.DiagnosisInfo;
@@ -128,7 +129,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	/**
 	 * Ey of the samples right/left/both
 	 */
-	private Eye eye = Eye.RIGHT;
+	private Eye eye = Eye.UNKNOWN;
 
 	/**
 	 * date of staining completion
@@ -190,6 +191,11 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 */
 	private List<Council> councils;
 
+	/**
+	 * List of all favorite Lists in which the task is listed
+	 */
+	private List<FavouriteList> favouriteLists;
+	
 	private Accounting accounting;
 
 	/********************************************************
@@ -522,6 +528,17 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 
 	public void setCouncils(List<Council> councils) {
 		this.councils = councils;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@NotAudited
+	public List<FavouriteList> getFavouriteLists() {
+		return favouriteLists;
+	}
+
+	public void setFavouriteLists(List<FavouriteList> favouriteLists) {
+		this.favouriteLists = favouriteLists;
 	}
 
 	@OneToOne(fetch = FetchType.LAZY)

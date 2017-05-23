@@ -1,17 +1,11 @@
 package org.histo.model.transitory.json.mail;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.histo.config.HistoSettings;
-import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.MailType;
-import org.histo.model.interfaces.GsonAble;
 import org.histo.model.interfaces.HasID;
-import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
-import org.histo.util.printer.PrintTemplate;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

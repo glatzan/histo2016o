@@ -4,16 +4,11 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Hibernate;
-import org.hibernate.dialect.lock.OptimisticEntityLockException;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.HasDataList;
-import org.histo.model.patient.Patient;
-import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.dao.ConcurrencyFailureException;
-import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

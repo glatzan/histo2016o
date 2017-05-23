@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.histo.action.UserHandlerAction;
-import org.histo.config.HistoSettings;
 import org.histo.model.transitory.json.settings.LdapHandler;
 import org.histo.model.transitory.json.settings.PrinterSettings;
 import org.histo.model.transitory.json.settings.ProgramSettings;

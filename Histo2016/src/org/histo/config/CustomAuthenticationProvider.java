@@ -7,6 +7,7 @@ import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.SettingsHandler;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Role;
 import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
@@ -87,6 +88,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 
+				// checking if histouser exsists
 				HistoUser histoUser = userDAO.loadUserByName(userName);
 
 				if (histoUser == null) {
@@ -104,6 +106,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 						histoUser.setPhysician(new Physician(new Person()));
 						histoUser.getPhysician().setUid(userName);
 						histoUser.getPhysician().setClinicEmployee(true);
+						// Default role for that physician
+						histoUser.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 					}
 				}
 

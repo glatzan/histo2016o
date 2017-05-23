@@ -1,15 +1,7 @@
 package org.histo.action.handler;
 
-import org.apache.log4j.Logger;
-import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.GenericDAO;
-import org.histo.model.FavouriteList;
-import org.histo.model.patient.Task;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.sun.net.httpserver.Authenticator.Success;
 
 @Component
 @Scope(value = "session")

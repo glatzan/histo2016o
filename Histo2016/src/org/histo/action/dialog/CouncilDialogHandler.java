@@ -4,23 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.action.UserHandlerAction;
-import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
-import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
 import org.histo.model.Physician;
-import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
 
 @Component
 @Scope(value = "session")

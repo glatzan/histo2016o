@@ -3,26 +3,18 @@ package org.histo.util.printer;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.log4j.Logger;
 import org.histo.config.enums.DocumentType;
-import org.histo.model.interfaces.GsonAble;
 import org.histo.model.patient.Slide;
 import org.histo.util.HistoUtil;
-import org.histo.util.interfaces.FileHandlerUtil;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * Zebra AbstractPrinter with ftp printing function. Buffer can be filled

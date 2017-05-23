@@ -15,8 +15,30 @@
 
 		<histo:newPersonDataMask
 			person="#{patientHandlerAction.tmpPatient.person}"
-			pannelID="newPatient"
-			disabled="false" />
+			pannelID="newPatient" disabled="false" />
+
+		<!-- Piz -->
+		<h:panelGrid columns="3"
+			columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
+			styleClass="defaultListingTableCss">
+
+			<!-- ****************** Person ****************** -->
+			<h:outputLabel value="" />
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn100px,">
+				<!-- role -->
+				<h:outputLabel value="#{msg['dialog.addPatient.extern.piz']}" />
+				<p:inputText id="piz" name="piz"
+					value="#{patientHandlerAction.tmpPatient.piz}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<h:panelGroup />
+				<h:panelGroup />
+			</h:panelGrid>
+		</h:panelGrid>
 	</div>
 
 	<div class="bottomDiv">
