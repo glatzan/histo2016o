@@ -8,12 +8,12 @@
 	xmlns:p="http://primefaces.org/ui">
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.material']} / #{settingsHandlerAction.originalMaterial eq null ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']} / #{msg['dialog.settings.material.new.stainings.add.headline']}"
+			header="#{msg['dialog.settings.material']} / #{settingsDialogHandler.originalMaterial eq null ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']} / #{msg['dialog.settings.material.new.stainings.add.headline']}"
 			styleClass="contentPannel" />
 		<p:dataTable var="staining"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 			style="width:100%" scrollable="true" scrollHeight="460"
-			value="#{settingsHandlerAction.stainingListChooserForMaterial}">
+			value="#{settingsDialogHandler.stainingListChooserForMaterial}">
 			<p:column
 				headerText="#{msg['dialog.settings.material.new.stainings.add.staining']}">
 				<h:outputLabel value="#{staining.listItem.name}" />
@@ -34,13 +34,13 @@
 					value="#{msg['dialog.settings.material.new.stainings.add.add']}"
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.addStainingToMaterial(settingsHandlerAction.stainingListChooserForMaterial, settingsHandlerAction.editMaterial)}"
+					actionListener="#{settingsDialogHandler.addStainingToMaterial(settingsDialogHandler.stainingListChooserForMaterial, settingsDialogHandler.editMaterial)}"
 					update="@form" />
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.discardAddStainingToMaterial()}"
+					actionListener="#{settingsDialogHandler.discardAddStainingToMaterial()}"
 					update="@form" />
 
 				<!-- close -->

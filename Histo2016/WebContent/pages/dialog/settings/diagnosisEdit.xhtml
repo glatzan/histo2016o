@@ -9,7 +9,7 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{settingsHandlerAction.originalDiagnosisPrototype eq null ? msg['dialog.settings.diagnosis.edit.headline.new'] : msg['dialog.settings.diagnosis.edit.headline.edit']}"
+			header="#{settingsDialogHandler.originalDiagnosisPrototype eq null ? msg['dialog.settings.diagnosis.edit.headline.new'] : msg['dialog.settings.diagnosis.edit.headline.edit']}"
 			styleClass="contentPannel" />
 
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
@@ -18,7 +18,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.category']}" />
 			<p:inputText
-				value="#{settingsHandlerAction.editDiagnosisPrototype.category}"
+				value="#{settingsDialogHandler.editDiagnosisPrototype.category}"
 				id="diagnosisName">
 				<p:watermark for="diagnosisName"
 					value="#{msg['dialog.settings.diagnosis.edit.category.watermark']}" />
@@ -27,14 +27,14 @@
 			<!-- text -->
 			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
 			<p:inputTextarea id="diagnosisText"
-				value="#{settingsHandlerAction.editDiagnosisPrototype.diagnosis}">
+				value="#{settingsDialogHandler.editDiagnosisPrototype.diagnosis}">
 				<p:watermark for="diagnosisText"
 					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
 			</p:inputTextarea>
 
 			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.icd10']}" />
 			<p:inputText
-				value="#{settingsHandlerAction.editDiagnosisPrototype.icd10}"
+				value="#{settingsDialogHandler.editDiagnosisPrototype.icd10}"
 				id="diagnosisICD">
 				<p:watermark for="diagnosisICD"
 					value="#{msg['dialog.settings.diagnosis.edit.icd10.watermark']}" />
@@ -43,12 +43,12 @@
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.malign']}" />
 			<p:selectBooleanCheckbox
-				value="#{settingsHandlerAction.editDiagnosisPrototype.malign}" />
+				value="#{settingsDialogHandler.editDiagnosisPrototype.malign}" />
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.commentary']}" />
 			<p:inputTextarea id="diagnosisCommentary"
-				value="#{settingsHandlerAction.editDiagnosisPrototype.commentary}">
+				value="#{settingsDialogHandler.editDiagnosisPrototype.commentary}">
 				<p:watermark for="diagnosisCommentary"
 					value="#{msg['dialog.settings.diagnosis.edit.commentary.watermark']}" />
 			</p:inputTextarea>
@@ -63,18 +63,18 @@
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o" update="@form"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.saveDiagnosisPrototype(settingsHandlerAction.editDiagnosisPrototype,settingsHandlerAction.originalDiagnosisPrototype)}" />
+					actionListener="#{settingsDialogHandler.saveDiagnosisPrototype(settingsDialogHandler.editDiagnosisPrototype,settingsDialogHandler.originalDiagnosisPrototype)}" />
 
 				<p:commandButton
 					value="#{msg['dialog.settings.diagnosis.edit.button.textPreset']}"
 					icon="fa fa-fw fa-pencil-square-o" update="@form"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototypeTemplate()}" />
+					actionListener="#{settingsDialogHandler.prepareEditDiagnosisPrototypeTemplate()}" />
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle" update="@form"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.discardDiagnosisPrototype()}" />
+					actionListener="#{settingsDialogHandler.discardDiagnosisPrototype()}" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"

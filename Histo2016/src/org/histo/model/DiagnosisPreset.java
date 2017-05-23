@@ -8,6 +8,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.histo.model.interfaces.EditAbleEntity;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;
 
@@ -17,7 +18,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "diagnosisPreset_sequencegenerator", sequenceName = "diagnosisPreset_sequence")
-public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble, ListOrder<DiagnosisPreset> {
+public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble, ListOrder<DiagnosisPreset>, HasID {
 
 	@Expose
 	private long id;

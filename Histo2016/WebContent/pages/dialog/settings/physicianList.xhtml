@@ -12,7 +12,7 @@
 			styleClass="contentPannel" />
 
 		<p:dataTable var="physician" id="physician"
-			value="#{settingsHandlerAction.physicianList}"
+			value="#{settingsDialogHandler.physicianList}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 			<!-- title -->
@@ -63,7 +63,7 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{settingsHandlerAction.prepareEditPhysician(physician)}"
+					actionListener="#{settingsDialogHandler.prepareEditPhysician(physician)}"
 					update="@form">
 					<i class="fa fa-fw fa-cog" />
 				</p:commandLink>
@@ -71,7 +71,7 @@
 				<!-- archive -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{physician.archived ? msg['dialog.settings.person.list.options.archive.undo'] :  msg['dialog.settings.person.list.options.archive']}"
-					actionListener="#{settingsHandlerAction.archivePhysician(physician, !physician.archived)}"
+					actionListener="#{settingsDialogHandler.archivePhysician(physician, !physician.archived)}"
 					update="@form">
 					<i class="fa fa-fw #{physician.archived ? 'fa-user' : 'fa-times' }" />
 				</p:commandLink>
@@ -87,8 +87,8 @@
 				<h:panelGrid columns="4" style="margin-left: 20px;">
 					<!-- archived -->
 					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						value="#{settingsHandlerAction.showArchivedPhysicians}">
-						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+						value="#{settingsDialogHandler.showArchivedPhysicians}">
+						<p:ajax listener="#{settingsDialogHandler.preparePhysicianList()}"
 							update="physician"></p:ajax>
 					</p:selectBooleanCheckbox>
 					<h:outputLabel
@@ -99,14 +99,14 @@
 
 					<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
 						label="#{msg['dialog.settings.person.list.show.roles']}"
-						value="#{settingsHandlerAction.showPhysicianRoles}"
+						value="#{settingsDialogHandler.showPhysicianRoles}"
 						converter="#{commenDataHandlerAction.associatedRolesTransformer}">
 						<f:selectItems var="role"
 							value="#{commenDataHandlerAction.associatedRoles}"
 							itemValue="#{role}"
 							itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
-						<p:ajax listener="#{settingsHandlerAction.preparePhysicianList()}"
+						<p:ajax listener="#{settingsDialogHandler.preparePhysicianList()}"
 							update="physician"></p:ajax>
 					</p:selectCheckboxMenu>
 
@@ -119,7 +119,7 @@
 					value="#{msg['dialog.settings.person.list.button.new']}"
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.prepareNewPhysician()}"
+					actionListener="#{settingsDialogHandler.prepareNewPhysician()}"
 					update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

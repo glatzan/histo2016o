@@ -32,7 +32,7 @@
 			<p:dataTable var="material" scrollHeight="150"
 				selection="#{taskHandlerAction.selectedMaterial}"
 				selectionMode="single" rowKey="#{material.id}"
-				value="#{settingsHandlerAction.allAvailableMaterials}">
+				value="#{settingsDialogHandler.allAvailableMaterials}">
 				<p:column headerText="#{msg['dialog.selectMaterial.name']}" sortBy="#{material.name}"
 					filterBy="#{material.name}" filterMatchMode="contains">
 					<h:outputText value="#{material.name}" />

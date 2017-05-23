@@ -23,7 +23,7 @@
 
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 				<p:selectOneButton
-					value="#{settingsHandlerAction.physicianTabIndex}">
+					value="#{settingsDialogHandler.physicianTabIndex}">
 					<f:selectItem
 						itemLabel="#{msg['dialog.settings.person.new.external']}"
 						itemValue="P_ADD_EXTER" />
@@ -37,21 +37,21 @@
 
 		<!-- Internal Physician (Employee, get data from LDAP)-->
 		<ui:fragment
-			rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}">
+			rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_LDPA'}">
 			<histo:ldapPhysicianDataMask
-				physicianList="#{settingsHandlerAction.ldapPhysicianList}"
-				searchString="#{settingsHandlerAction.ldapPhysicianSearchString}"
+				physicianList="#{settingsDialogHandler.ldapPhysicianList}"
+				searchString="#{settingsDialogHandler.ldapPhysicianSearchString}"
 				performSearch="searchForPhysician"
-				performObject="#{settingsHandlerAction}"
-				selection="#{settingsHandlerAction.tmpLdapPhysician}"></histo:ldapPhysicianDataMask>
+				performObject="#{settingsDialogHandler}"
+				selection="#{settingsDialogHandler.tmpLdapPhysician}"></histo:ldapPhysicianDataMask>
 		</ui:fragment>
 
 
 		<!-- External Physician -->
 		<ui:fragment
-			rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER'}">
+			rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_EXTER'}">
 			<histo:newPersonDataMask
-				person="#{settingsHandlerAction.tmpPhysician.person}"
+				person="#{settingsDialogHandler.tmpPhysician.person}"
 				pannelID="editPhysician" disabled="false" />
 		</ui:fragment>
 
@@ -68,7 +68,7 @@
 				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
 				<p:selectCheckboxMenu updateLabel="true"
 					styleClass="customSelectCheckboxMenu"
-					value="#{settingsHandlerAction.tmpPhysician.associatedRolesAsArray}"
+					value="#{settingsDialogHandler.tmpPhysician.associatedRolesAsArray}"
 					label="Cities" multiple="true"
 					converter="#{commenDataHandlerAction.associatedRolesTransformer}">
 					<f:selectItems var="role"
@@ -96,21 +96,21 @@
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER'}"
-					actionListener="#{settingsHandlerAction.saveNewPrivatePhysician(settingsHandlerAction.tmpPhysician)}"
+					rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_EXTER'}"
+					actionListener="#{settingsDialogHandler.saveNewPrivatePhysician(settingsDialogHandler.tmpPhysician)}"
 					update="@form" />
 
 				<!-- Button for adding a physician from ldap -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}"
-					actionListener="#{settingsHandlerAction.savePhysicianFromLdap(settingsHandlerAction.tmpLdapPhysician, settingsHandlerAction.tmpPhysician.associatedRoles)}"
+					rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_LDPA'}"
+					actionListener="#{settingsDialogHandler.savePhysicianFromLdap(settingsDialogHandler.tmpLdapPhysician, settingsDialogHandler.tmpPhysician.associatedRoles)}"
 					update="@form" />
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
-					actionListener="#{settingsHandlerAction.discardTmpPhysician()}"
+					actionListener="#{settingsDialogHandler.discardTmpPhysician()}"
 					update="@form" styleClass="smallButton buttonRighMarginInList" />
 
 				<p:commandButton value="#{msg['general.close']}"

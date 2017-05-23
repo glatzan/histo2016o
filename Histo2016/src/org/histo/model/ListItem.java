@@ -16,6 +16,7 @@ import org.hibernate.envers.RevisionNumber;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.StaticList;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 
 @Entity
@@ -23,7 +24,7 @@ import org.histo.model.interfaces.ListOrder;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "listItem_sequencegenerator", sequenceName = "listItem_sequence")
-public class ListItem implements ListOrder<ListItem>, ArchivAble {
+public class ListItem implements ListOrder<ListItem>, ArchivAble, HasID {
 
 	private long id;
 

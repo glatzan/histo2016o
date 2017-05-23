@@ -18,14 +18,14 @@
 
 			<p:selectOneMenu style="margin-top:1px;"
 				title="#{msg['body.worklist.header.view']}"
-				value="#{settingsHandlerAction.selectedStaticList}"
+				value="#{settingsDialogHandler.selectedStaticList}"
 				styleClass="smallerInput">
 				<f:selectItems value="#{enumProvider.staticLists}" var="staticList"
 					itemValue="#{staticList}"
 					itemLabel="#{msg['enum.staticList.'.concat(staticList)]}" />
 
 				<p:ajax event="change"
-					listener="#{settingsHandlerAction.prepareStaticLists()}"
+					listener="#{settingsDialogHandler.prepareStaticLists()}"
 					update="@form"></p:ajax>
 			</p:selectOneMenu>
 		</p:panelGrid>
@@ -34,7 +34,7 @@
 		<p:dataTable var="item" style="width:100%;" scrollable="true"
 			scrollHeight="430" draggableRows="true"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-			value="#{settingsHandlerAction.staticListContent}">
+			value="#{settingsDialogHandler.staticListContent}">
 
 			<p:column headerText="#{msg['dialog.settings.material.name']}"
 				sortBy="#{item.value}" style="width:20%">
@@ -46,21 +46,21 @@
 					<i class="fa fa-cog" />
 				</f:facet>
 				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-					actionListener="#{settingsHandlerAction.prepareEditListItem(item)}"
+					actionListener="#{settingsDialogHandler.prepareEditListItem(item)}"
 					styleClass="noUnderlineAtLink" update="@form">
 					<i class="fa fa-fw fa-cog" />
 				</p:commandLink>
 
 				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
 					rendered="#{!item.archived}" styleClass="noUnderlineAtLink"
-					actionListener="#{settingsHandlerAction.archiveListItem(item, true)}"
+					actionListener="#{settingsDialogHandler.archiveListItem(item, true)}"
 					update="@form">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 
 				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
 					rendered="#{item.archived}" styleClass="noUnderlineAtLink"
-					actionListener="#{settingsHandlerAction.archiveListItem(item, false)}"
+					actionListener="#{settingsDialogHandler.archiveListItem(item, false)}"
 					update="@form">
 					<i class="fa fa-fw fa-check" />
 				</p:commandLink>
@@ -68,7 +68,7 @@
 			</p:column>
 
 			<p:ajax event="rowReorder"
-				listener="#{settingsHandlerAction.onReorderStaticLists}" />
+				listener="#{settingsDialogHandler.onReorderStaticLists}" />
 
 		</p:dataTable>
 	</div>
@@ -80,9 +80,9 @@
 			<h:panelGrid columns="1">
 				<h:panelGrid columns="2" style="margin-left: 20px;">
 					<p:selectBooleanCheckbox styleClass="smallCheckbox"
-						value="#{settingsHandlerAction.showArchivedListItems}">
+						value="#{settingsDialogHandler.showArchivedListItems}">
 						<p:ajax event="change" update="@form"
-							listener="#{settingsHandlerAction.prepareStaticLists()}" />
+							listener="#{settingsDialogHandler.prepareStaticLists()}" />
 					</p:selectBooleanCheckbox>
 
 					<h:outputLabel value="#{msg['dialog.settings.list.archived']}"
@@ -93,7 +93,7 @@
 			<h:panelGrid columns="2" style="float:right;">
 				<p:commandButton value="#{msg['dialog.settings.list.new']}"
 					icon="fa fa-fw fa-plus-circle" styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.prepareNewListItem()}"
+					actionListener="#{settingsDialogHandler.prepareNewListItem()}"
 					update="@form" />
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

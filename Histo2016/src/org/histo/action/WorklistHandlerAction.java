@@ -10,6 +10,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.SettingsDialogHandler;
 import org.histo.config.enums.QuickSearchOptions;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.StainingListAction;
@@ -49,7 +50,7 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	@Lazy
-	private SettingsHandlerAction settingsHandlerAction;
+	private SettingsDialogHandler settingsDialogHandler;
 
 	@Autowired
 	@Lazy
@@ -261,7 +262,7 @@ public class WorklistHandlerAction implements Serializable {
 		slideHandlerAction.setActionOnMany(StainingListAction.NONE);
 
 		// init all available diagnoses
-		settingsHandlerAction.updateAllDiagnosisPrototypes();
+		settingsDialogHandler.updateAllDiagnosisPrototypes();
 
 		// init all available materials
 		taskHandlerAction.prepareTask(task);

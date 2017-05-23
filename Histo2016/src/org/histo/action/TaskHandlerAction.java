@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.MediaDialogHandler;
+import org.histo.action.dialog.SettingsDialogHandler;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -84,7 +85,7 @@ public class TaskHandlerAction implements Serializable {
 
 	@Autowired
 	@Lazy
-	private SettingsHandlerAction settingsHandlerAction;
+	private SettingsDialogHandler settingsDialogHandler;
 
 	@Autowired
 	@Lazy
@@ -204,8 +205,8 @@ public class TaskHandlerAction implements Serializable {
 
 	public void initBean() {
 		// init materials in settingshandlerAction
-		settingsHandlerAction.initMaterialPresets();
-		setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
+		settingsDialogHandler.initMaterialPresets();
+		setMaterialListTransformer(new StainingListTransformer(settingsDialogHandler.getAllAvailableMaterials()));
 
 		
 		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
@@ -256,11 +257,11 @@ public class TaskHandlerAction implements Serializable {
 	 */
 	public void prepareNewSampleDialog(Task task) {
 
-		settingsHandlerAction.initMaterialPresets();
+		settingsDialogHandler.initMaterialPresets();
 		// checks if default statingsList is empty
-		if (!settingsHandlerAction.getAllAvailableMaterials().isEmpty()) {
-			// setSelectedMaterial(settingsHandlerAction.getAllAvailableMaterials().get(0));
-			setMaterialListTransformer(new StainingListTransformer(settingsHandlerAction.getAllAvailableMaterials()));
+		if (!settingsDialogHandler.getAllAvailableMaterials().isEmpty()) {
+			// setSelectedMaterial(settingsDialogHandler.getAllAvailableMaterials().get(0));
+			setMaterialListTransformer(new StainingListTransformer(settingsDialogHandler.getAllAvailableMaterials()));
 		}
 		setTemporaryTask(task);
 

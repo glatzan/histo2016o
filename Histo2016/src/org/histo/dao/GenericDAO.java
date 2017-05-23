@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  * The DAO class for generic entities
  *
@@ -79,6 +78,15 @@ public class GenericDAO extends AbstractDAO {
 	}
 
 	// ************************ Save ************************
+
+	public <C extends HasID> boolean saveListRollbackSave(Collection<? extends HasID> objects, String resourcesKey) {
+		for (HasID object : objects) {
+			if (!saveDataRollbackSave(object, resourcesKey, null, null))
+				return false;
+		}
+		return true;
+	}
+
 	// ************************ Save data RollbackSave ************************
 
 	public <C extends HasID> boolean saveDataRollbackSave(C object) {
@@ -246,7 +254,7 @@ public class GenericDAO extends AbstractDAO {
 		}
 		return object;
 	}
-	
+
 	public void reset(Object object) {
 		getSession().refresh(object);
 	}

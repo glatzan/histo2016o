@@ -1,4 +1,4 @@
-package org.histo.action;
+package org.histo.action.dialog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,6 +9,9 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
+import org.histo.action.CommenDataHandlerAction;
+import org.histo.action.MainHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -43,7 +46,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "session")
-public class SettingsHandlerAction {
+public class SettingsDialogHandler extends AbstractDialog {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -300,21 +303,6 @@ public class SettingsHandlerAction {
 		prepareSettingsDialog(getActiveSettingsIndex());
 	}
 
-	public void prepareSettingsDialog(int activeTab) {
-		setActiveSettingsIndex(activeTab);
-
-		// init statings
-		setShowStainingEdit(false);
-
-		onSettingsTabChange();
-
-		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		commenDataHandlerAction.setAssociatedRolesTransformer(
-				new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
-
-		mainHandlerAction.showDialog(Dialog.SETTINGS);
-	}
-
 	public void prepareSettingsDialog(SettingsTab settingsTab) {
 		SettingsTab parentTab = settingsTab.getParent() != null ? settingsTab.getParent() : settingsTab;
 
@@ -329,11 +317,21 @@ public class SettingsHandlerAction {
 		prepareSettingsDialog(settingsTab.getTabNumber());
 	}
 
-	/**
-	 * Hides the adminSettings Dialog
-	 */
-	public void hideSettingsDialog() {
-		mainHandlerAction.hideDialog(Dialog.SETTINGS);
+	public void prepareSettingsDialog(int activeTab) {
+		super.initBean(null, Dialog.SETTINGS);
+
+		setActiveSettingsIndex(activeTab);
+
+		// init statings
+		setShowStainingEdit(false);
+
+		onSettingsTabChange();
+
+		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commenDataHandlerAction.setAssociatedRolesTransformer(
+				new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
+
+		mainHandlerAction.showDialog(Dialog.SETTINGS);
 	}
 
 	/**
@@ -421,8 +419,12 @@ public class SettingsHandlerAction {
 		if (physician.hasNoAssociateRole())
 			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
-		genericDAO.save(physician,
-				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
+		if (!genericDAO.saveDataRollbackSave(physician,
+				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()))) {
+			onDatabaseVersionConflict();
+			return;
+		}
+
 		discardTmpPhysicianFromUserList();
 	}
 
@@ -430,7 +432,7 @@ public class SettingsHandlerAction {
 	 * Shows the userlist aganin
 	 */
 	public void discardTmpPhysicianFromUserList() {
-		genericDAO.refresh(getSelectedUserPhysician());
+		genericDAO.reset(getSelectedUserPhysician());
 
 		setUserListTabIndex(SettingsTab.U_LIST);
 		prepareUserList();
@@ -475,15 +477,29 @@ public class SettingsHandlerAction {
 			logger.debug("Creating new staining " + newStainingPrototype.getName());
 			// case new, save
 			getAllAvailableStainings().add(newStainingPrototype);
-			genericDAO.save(newStainingPrototype,
-					resourceBundle.get("log.settings.staining.new", newStainingPrototype.getName()));
+
+			if (!genericDAO.saveDataRollbackSave(newStainingPrototype,
+					resourceBundle.get("log.settings.staining.new", newStainingPrototype.getName()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
+
 			ListOrder.reOrderList(getAllAvailableStainings());
-			genericDAO.save(getAllAvailableStainings(), resourceBundle.get("log.settings.staining.list.reoder"));
+
+			if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
+					resourceBundle.get("log.settings.staining.list.reoder"))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		} else {
 			// case edit: update an save
 			origStainingPrototype.update(newStainingPrototype);
-			genericDAO.save(origStainingPrototype,
-					resourceBundle.get("log.settings.material.update", origStainingPrototype.getName()));
+
+			if (!genericDAO.saveDataRollbackSave(origStainingPrototype,
+					resourceBundle.get("log.settings.material.update", origStainingPrototype.getName()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 		discardChangesOfStainig();
 	}
@@ -496,7 +512,11 @@ public class SettingsHandlerAction {
 	public void onReorderStainingList(ReorderEvent event) {
 		logger.debug("List order changed, moved staining from " + event.getFromIndex() + " to " + event.getToIndex());
 		ListOrder.reOrderList(getAllAvailableStainings());
-		genericDAO.save(getAllAvailableStainings(), resourceBundle.get("log.settings.staining.list.reoder"));
+		if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
+				resourceBundle.get("log.settings.staining.list.reoder"))) {
+			onDatabaseVersionConflict();
+			return;
+		}
 	}
 
 	/**
@@ -552,15 +572,27 @@ public class SettingsHandlerAction {
 			logger.debug("Creating new Material " + newMaterial.getName());
 			// case new, save
 			getAllAvailableMaterials().add(newMaterial);
-			genericDAO.save(newMaterial, resourceBundle.get("log.settings.material.new", newMaterial.getName()));
+			if (!genericDAO.saveDataRollbackSave(newMaterial,
+					resourceBundle.get("log.settings.material.new", newMaterial.getName()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
+
 			ListOrder.reOrderList(getAllAvailableMaterials());
-			genericDAO.save(getAllAvailableMaterials(), resourceBundle.get("log.settings.material.list.reoder"));
+			if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
+					resourceBundle.get("log.settings.material.list.reoder"))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		} else {
 			logger.debug("Updating Material " + originalMaterial.getName());
 			// case edit: update an save
 			originalMaterial.update(newMaterial);
-			genericDAO.save(originalMaterial,
-					resourceBundle.get("log.settings.material.update", originalMaterial.getName()));
+			if (!genericDAO.saveDataRollbackSave(originalMaterial,
+					resourceBundle.get("log.settings.material.update", originalMaterial.getName()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 		discardChangesOfMaterial();
 	}
@@ -626,7 +658,12 @@ public class SettingsHandlerAction {
 	public void onReorderMaterialList(ReorderEvent event) {
 		logger.debug("List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
 		ListOrder.reOrderList(getAllAvailableMaterials());
-		genericDAO.save(getAllAvailableMaterials(), resourceBundle.get("log.settings.staining.list.reoder"));
+
+		if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
+				resourceBundle.get("log.settings.staining.list.reoder"))) {
+			hideDialog();
+			return;
+		}
 	}
 
 	/********************************************************
@@ -655,17 +692,26 @@ public class SettingsHandlerAction {
 			// case new, save
 			logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getCategory());
 			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
-			genericDAO.save(newDiagnosisPrototype,
-					resourceBundle.get("log.settings.diagnosis.new", newDiagnosisPrototype.getCategory()));
+			if (!genericDAO.saveDataRollbackSave(newDiagnosisPrototype,
+					resourceBundle.get("log.settings.diagnosis.new", newDiagnosisPrototype.getCategory()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 			ListOrder.reOrderList(getAllAvailableDiagnosisPrototypes());
-			genericDAO.save(getAllAvailableDiagnosisPrototypes(),
-					resourceBundle.get("log.settings.diagnosis.list.reoder"));
+			if (!genericDAO.saveListRollbackSave(getAllAvailableDiagnosisPrototypes(),
+					resourceBundle.get("log.settings.diagnosis.list.reoder"))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		} else {
 			// case edit: update an save
 			logger.debug("Updating  diagnosis " + origDiagnosisPrototype.getCategory());
 			origDiagnosisPrototype.update(newDiagnosisPrototype);
-			genericDAO.save(origDiagnosisPrototype,
-					resourceBundle.get("log.settings.diagnosis.update", origDiagnosisPrototype.getCategory()));
+			if (!genericDAO.saveDataRollbackSave(origDiagnosisPrototype,
+					resourceBundle.get("log.settings.diagnosis.update", origDiagnosisPrototype.getCategory()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 		discardDiagnosisPrototype();
 	}
@@ -695,7 +741,12 @@ public class SettingsHandlerAction {
 	public void onReorderDiagnosisList(ReorderEvent event) {
 		logger.debug("List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
 		ListOrder.reOrderList(getAllAvailableMaterials());
-		genericDAO.save(getAllAvailableMaterials(), resourceBundle.get("log.settings.diagnosis.list.reoder"));
+
+		if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
+				resourceBundle.get("log.settings.diagnosis.list.reoder"))) {
+			onDatabaseVersionConflict();
+			return;
+		}
 	}
 
 	/********************************************************
@@ -751,7 +802,7 @@ public class SettingsHandlerAction {
 		if (result != null) {
 			setTmpPhysician(result);
 			setPhysicianTabIndex(SettingsTab.P_EDIT_EXTERN);
-			setActiveSettingsIndex(SettingsHandlerAction.TAB_PERSON);
+			setActiveSettingsIndex(SettingsDialogHandler.TAB_PERSON);
 			prepareSettingsDialog();
 		}
 	}
@@ -800,8 +851,12 @@ public class SettingsHandlerAction {
 		if (physician.hasNoAssociateRole())
 			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
-		genericDAO.save(physician,
-				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
+		if (!genericDAO.saveDataRollbackSave(physician,
+				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()))) {
+			onDatabaseVersionConflict();
+			return;
+		}
+
 		discardTmpPhysician();
 	}
 
@@ -816,8 +871,12 @@ public class SettingsHandlerAction {
 		if (physician.hasNoAssociateRole())
 			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
-		genericDAO.save(physician, resourceBundle.get("log.settings.physician.privatePhysician.save",
-				physician.getPerson().getFullName()));
+		if (!genericDAO.saveDataRollbackSave(physician, resourceBundle
+				.get("log.settings.physician.privatePhysician.save", physician.getPerson().getFullName()))) {
+			onDatabaseVersionConflict();
+			return;
+		}
+
 		discardTmpPhysician();
 	}
 
@@ -854,15 +913,22 @@ public class SettingsHandlerAction {
 			// overwriting roles
 			physicianFromDatabase.setAssociatedRoles(roles);
 
-			genericDAO.save(physicianFromDatabase,
-					resourceBundle.get("log.settings.physician.ldap.update", ldapPhysician.getPerson().getFullName()));
+			if (!genericDAO.saveDataRollbackSave(physicianFromDatabase, resourceBundle
+					.get("log.settings.physician.ldap.update", ldapPhysician.getPerson().getFullName()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
+
 			setTmpPhysician(physicianFromDatabase);
 			discardTmpPhysician();
 			return;
 		}
 
-		genericDAO.save(ldapPhysician,
-				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getPerson().getFullName()));
+		if (!genericDAO.saveDataRollbackSave(ldapPhysician,
+				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getPerson().getFullName()))) {
+			onDatabaseVersionConflict();
+			return;
+		}
 
 		discardTmpPhysician();
 	}
@@ -875,9 +941,12 @@ public class SettingsHandlerAction {
 	 */
 	public void archivePhysician(Physician physician, boolean archive) {
 		physician.setArchived(archive);
-		genericDAO.save(physician,
+		if (!genericDAO.saveDataRollbackSave(physician,
 				resourceBundle.get(archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
-						physician.getPerson().getFullName()));
+						physician.getPerson().getFullName()))) {
+			onDatabaseVersionConflict();
+			return;
+		}
 		preparePhysicianList();
 	}
 
@@ -899,7 +968,7 @@ public class SettingsHandlerAction {
 			preparePhysicianList();
 		} else {
 			// if the edit was called externally close the dialog
-			hideSettingsDialog();
+			hideDialog();
 		}
 
 		setPhysicianTabIndex(SettingsTab.P_LIST);
@@ -936,15 +1005,28 @@ public class SettingsHandlerAction {
 			logger.debug("Creating new ListItem " + item.getValue() + " for " + type.toString());
 			// case new, save
 			getStaticListContent().add(item);
-			genericDAO.save(item, resourceBundle.get("log.settings.staticList.new", item.getValue(), type.toString()));
+			if (!genericDAO.saveDataRollbackSave(item,
+					resourceBundle.get("log.settings.staticList.new", item.getValue(), type.toString()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
+
 			ListOrder.reOrderList(getStaticListContent());
-			genericDAO.save(getStaticListContent(),
-					resourceBundle.get("log.settings.staticList.list.reoder", type.toString()));
+
+			if (!genericDAO.saveListRollbackSave(getStaticListContent(),
+					resourceBundle.get("log.settings.staticList.list.reoder", type.toString()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		} else {
 			logger.debug("Updating ListItem " + item.getValue());
 			// case edit: update an save
-			genericDAO.save(item,
-					resourceBundle.get("log.settings.staticList.update", item.getValue(), type.toString()));
+
+			if (!genericDAO.saveDataRollbackSave(item,
+					resourceBundle.get("log.settings.staticList.update", item.getValue(), type.toString()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 
 		discardChangeOfListItem();
@@ -964,12 +1046,19 @@ public class SettingsHandlerAction {
 
 	public void archiveListItem(ListItem item, boolean archive) {
 		item.setArchived(archive);
-		if (archive)
-			genericDAO.save(item, resourceBundle.get("log.settings.staticList.archive", item.getValue(),
-					getSelectedStaticList().toString()));
-		else
-			genericDAO.save(item, resourceBundle.get("log.settings.staticList.dearchive", item.getValue(),
-					getSelectedStaticList().toString()));
+		if (archive) {
+			if (!genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.archive",
+					item.getValue(), getSelectedStaticList().toString()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
+		} else {
+			if (!genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.dearchive",
+					item.getValue(), getSelectedStaticList().toString()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
+		}
 
 		// removing item from current list
 		getStaticListContent().remove(item);
@@ -979,8 +1068,12 @@ public class SettingsHandlerAction {
 		logger.debug("List order changed, moved static list item from " + event.getFromIndex() + " to "
 				+ event.getToIndex());
 		ListOrder.reOrderList(getStaticListContent());
-		genericDAO.save(getStaticListContent(),
-				resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()));
+		
+		if(!genericDAO.saveListRollbackSave(getStaticListContent(),
+				resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()))){
+			onDatabaseVersionConflict();
+			return;
+		}
 	}
 
 	/********************************************************

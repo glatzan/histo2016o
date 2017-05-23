@@ -14,7 +14,7 @@
 		<p:dataTable var="staining" style="width:100%;" scrollable="true"
 			scrollHeight="460" draggableRows="true"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-			value="#{settingsHandlerAction.allAvailableStainings}">
+			value="#{settingsDialogHandler.allAvailableStainings}">
 
 			<p:column headerText="#{msg['dialog.settings.stainings.staining']}"
 				sortBy="#{staining.name}" style="width:20%">
@@ -34,13 +34,13 @@
 					<i class="fa fa-cog" />
 				</f:facet>
 				<p:commandLink title="#{msg['dialog.settings.stainings.edit']}"
-					actionListener="#{settingsHandlerAction.prepareEditStaining(staining)}"
+					actionListener="#{settingsDialogHandler.prepareEditStaining(staining)}"
 					update="@form" styleClass="noUnderlineAtLink">
 					<i class="fa fa-cog" />
 				</p:commandLink>
 			</p:column>
 			<p:ajax event="rowReorder"
-				listener="#{settingsHandlerAction.onReorderStainingList}" />
+				listener="#{settingsDialogHandler.onReorderStainingList}" />
 		</p:dataTable>
 	</div>
 
@@ -60,7 +60,7 @@
 				<p:commandButton value="#{msg['dialog.settings.stainings.new']}"
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.prepareNewStaining()}"
+					actionListener="#{settingsDialogHandler.prepareNewStaining()}"
 					update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

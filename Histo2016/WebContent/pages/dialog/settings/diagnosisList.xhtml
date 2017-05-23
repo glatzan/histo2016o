@@ -14,7 +14,7 @@
 
 		<p:dataTable var="diagnosisPreset" style="width:100%;"
 			scrollable="true" scrollHeight="460" draggableRows="true"
-			value="#{settingsHandlerAction.allAvailableDiagnosisPrototypes}"
+			value="#{settingsDialogHandler.allAvailableDiagnosisPrototypes}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
 			<p:column sortBy="#{diagnosisPreset.diagnosisText}"
@@ -48,14 +48,14 @@
 				</f:facet>
 				<p:commandLink
 					title="#{msg[dialog.settings.diagnosis.list.options.edit]}"
-					actionListener="#{settingsHandlerAction.prepareEditDiagnosisPrototype(diagnosisPreset)}"
+					actionListener="#{settingsDialogHandler.prepareEditDiagnosisPrototype(diagnosisPreset)}"
 					update="@form">
 					<i class="fa fa-fw fa-cog" />
 				</p:commandLink>
 			</p:column>
 
 			<p:ajax event="rowReorder"
-				listener="#{settingsHandlerAction.onReorderDiagnosisList}" />
+				listener="#{settingsDialogHandler.onReorderDiagnosisList}" />
 		</p:dataTable>
 	</div>
 
@@ -76,7 +76,7 @@
 					value="#{msg['dialog.settings.diagnosis.list.button.new']}"
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.prepareNewDiagnosisPrototype()}"
+					actionListener="#{settingsDialogHandler.prepareNewDiagnosisPrototype()}"
 					update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

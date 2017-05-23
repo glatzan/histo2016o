@@ -8,6 +8,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.histo.model.interfaces.EditAbleEntity;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;
 
@@ -17,7 +18,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "stainingPrototype_sequencegenerator", sequenceName = "stainingPrototype_sequence")
-public class StainingPrototype implements EditAbleEntity<StainingPrototype>, LogAble, ListOrder<StainingPrototype> {
+public class StainingPrototype implements EditAbleEntity<StainingPrototype>, LogAble, ListOrder<StainingPrototype>, HasID {
 
 	public static final int TYPE_NORMAL = 0;
 	public static final int TYPE_IMMUN = 1;

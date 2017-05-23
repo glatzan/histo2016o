@@ -161,7 +161,7 @@
 						</f:facet>
 						<p:commandLink title="#{msg['dialog.contact.table.edit']}"
 							style="float: right"
-							actionListener="#{settingsHandlerAction.prepareEditPhysicianFromExtern(contact.person)}">
+							actionListener="#{settingsDialogHandler.prepareEditPhysicianFromExtern(contact.person)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="@form"
 								listener="#{contactHandlerAction.updateContactList()}" />

@@ -31,24 +31,24 @@
 
 		<p:panel styleClass="settingsPannel">
 			<p:tabView orientation="left"
-				activeIndex="#{settingsHandlerAction.activeSettingsIndex}"
+				activeIndex="#{settingsDialogHandler.activeSettingsIndex}"
 				styleClass="settingsTabView">
 
 				<p:ajax event="tabChange"
-					listener="#{settingsHandlerAction.onSettingsTabChange}"
+					listener="#{settingsDialogHandler.onSettingsTabChange}"
 					update="@form" />
 
 				<!-- ************************************************************** Benutzer ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.user']}">
 					<!-- User List -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.userListTabIndex eq 'U_LIST'}">
+						rendered="#{settingsDialogHandler.userListTabIndex eq 'U_LIST'}">
 						<ui:include src="userList.xhtml" />
 					</ui:fragment>
 
 					<!-- User Edit -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.userListTabIndex eq 'U_EDIT'}">
+						rendered="#{settingsDialogHandler.userListTabIndex eq 'U_EDIT'}">
 						<ui:include src="userListEdit.xhtml" />
 					</ui:fragment>
 				</p:tab>
@@ -57,13 +57,13 @@
 				<!-- ************************************************************** Stainings ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.stainings']}">
 					<!-- Staining List -->
-					<ui:fragment rendered="#{!settingsHandlerAction.showStainingEdit}">
+					<ui:fragment rendered="#{!settingsDialogHandler.showStainingEdit}">
 						<ui:include src="stainingsList.xhtml" />
 					</ui:fragment>
 					<!-- Staining List -->
 
 					<!-- Edit Staining -->
-					<ui:fragment rendered="#{settingsHandlerAction.showStainingEdit}">
+					<ui:fragment rendered="#{settingsDialogHandler.showStainingEdit}">
 						<ui:include src="stainingsEdit.xhtml" />
 					</ui:fragment>
 					<!-- Edit Staining -->
@@ -75,21 +75,21 @@
 
 					<!-- ******************* StainingsList List ******************* -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.materialTabIndex eq 'M_LIST'}">
+						rendered="#{settingsDialogHandler.materialTabIndex eq 'M_LIST'}">
 						<ui:include src="materialList.xhtml" />
 					</ui:fragment>
 					<!-- ******************* StainingsList List ******************* -->
 
 					<!-- ******************* StainingsList Edit/New ******************* -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.materialTabIndex eq 'M_EDIT'}">
+						rendered="#{settingsDialogHandler.materialTabIndex eq 'M_EDIT'}">
 						<ui:include src="materialEdit.xhtml" />
 					</ui:fragment>
 					<!-- ******************* StainingsList Edit/New ******************* -->
 
 					<!-- ******************* StainingsList Add Staining ******************* -->
 					<ui:fragment
-						rendered="#{settingsHandlerAction.materialTabIndex eq 'M_ADD_STAINING'}">
+						rendered="#{settingsDialogHandler.materialTabIndex eq 'M_ADD_STAINING'}">
 						<ui:include src="materialAddStaining.xhtml" />
 					</ui:fragment>
 					<!-- ******************* StainingsList Add Staining ******************* -->
@@ -99,15 +99,15 @@
 				<!-- ************************************************************** Diagnoses ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.diagnosis']}">
 					<ui:fragment
-						rendered="#{settingsHandlerAction.diagnosisIndex eq 0}">
+						rendered="#{settingsDialogHandler.diagnosisIndex eq 0}">
 						<ui:include src="diagnosisList.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.diagnosisIndex eq 1}">
+						rendered="#{settingsDialogHandler.diagnosisIndex eq 1}">
 						<ui:include src="diagnosisEdit.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.diagnosisIndex eq 2}">
+						rendered="#{settingsDialogHandler.diagnosisIndex eq 2}">
 						<ui:include src="diagnosisEditTemplate.xhtml" />
 					</ui:fragment>
 				</p:tab>
@@ -116,15 +116,15 @@
 				<!-- ************************************************************** Persons ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.persons']}">
 					<ui:fragment
-						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_LIST'}">
+						rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_LIST'}">
 						<ui:include src="physicianList.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_EDIT' or settingsHandlerAction.physicianTabIndex eq 'P_EDIT_EXTERN'}">
+						rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_EDIT' or settingsDialogHandler.physicianTabIndex eq 'P_EDIT_EXTERN'}">
 						<ui:include src="physicianEdit.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.physicianTabIndex eq 'P_ADD_EXTER' or settingsHandlerAction.physicianTabIndex eq 'P_ADD_LDPA'}">
+						rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_EXTER' or settingsDialogHandler.physicianTabIndex eq 'P_ADD_LDPA'}">
 						<ui:include src="physicianNew.xhtml" />
 					</ui:fragment>
 				</p:tab>
@@ -133,11 +133,11 @@
 				<!-- ************************************************************** Static Lists ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.staticLists']}">
 					<ui:fragment
-						rendered="#{settingsHandlerAction.staticListTabIndex eq 'S_LIST'}">
+						rendered="#{settingsDialogHandler.staticListTabIndex eq 'S_LIST'}">
 						<ui:include src="staticLists.xhtml" />
 					</ui:fragment>
 					<ui:fragment
-						rendered="#{settingsHandlerAction.staticListTabIndex eq 'S_EDIT'}">
+						rendered="#{settingsDialogHandler.staticListTabIndex eq 'S_EDIT'}">
 						<ui:include src="staticListsEdit.xhtml" />
 					</ui:fragment>
 				</p:tab>
@@ -147,15 +147,14 @@
 				</p:tab>
 
 				<p:tab title="#{msg['dialog.settings.log']}"
-					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}"">
-
+					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}">
 				</p:tab>
 				<!-- ************************************************************** Log ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.log']}">
 					<!-- 
 					<p:dataTable var="history" styleClass="historyDataTable"
 						scrollable="true" scrollHeight="450"
-						value="#{settingsHandlerAction.currentHistory}">
+						value="#{settingsDialogHandler.currentHistory}">
 
 						<p:column headerText="Datum" style="width:12%">
 							<h:outputText

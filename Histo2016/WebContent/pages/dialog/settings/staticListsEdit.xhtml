@@ -9,13 +9,13 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.list.new.headline']} #{msg['enum.staticList.'.concat(settingsHandlerAction.selectedStaticList)]}"
+			header="#{msg['dialog.settings.list.new.headline']} #{msg['enum.staticList.'.concat(settingsDialogHandler.selectedStaticList)]}"
 			styleClass="contentPannel" />
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
 
 			<h:outputLabel value="#{msg['dialog.settings.list.new.name']}"></h:outputLabel>
-			<p:inputText value="#{settingsHandlerAction.tmpListItem.value}"></p:inputText>
+			<p:inputText value="#{settingsDialogHandler.tmpListItem.value}"></p:inputText>
 		</p:panelGrid>
 	</div>
 
@@ -26,13 +26,13 @@
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.saveListItem(settingsHandlerAction.tmpListItem, settingsHandlerAction.selectedStaticList)}"
+					actionListener="#{settingsDialogHandler.saveListItem(settingsDialogHandler.tmpListItem, settingsDialogHandler.selectedStaticList)}"
 					update="@form"></p:commandButton>
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.discardChangesOfMaterial(settingsHandlerAction.tmpListItem)}"
+					actionListener="#{settingsDialogHandler.discardChangesOfMaterial(settingsDialogHandler.tmpListItem)}"
 					update="@form"></p:commandButton>
 					
 				<p:commandButton value="#{msg['general.close']}"

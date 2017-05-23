@@ -36,7 +36,7 @@
 					style="margin-left:30px;"
 					converter="#{taskHandlerAction.materialListTransformer}"
 					value="#{taskHandlerAction.selectedMaterial}">
-					<f:selectItems value="#{settingsHandlerAction.allAvailableMaterials}"
+					<f:selectItems value="#{settingsDialogHandler.allAvailableMaterials}"
 						var="material" itemLabel="#{material.name}"
 						itemValue="#{material}">
 					</f:selectItems>

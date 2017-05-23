@@ -11,7 +11,7 @@
 		<p:panel style="width:100%;" header="#{msg['dialog.settings.user']}"
 			styleClass="contentPannel" />
 
-		<p:dataTable var="user" value="#{settingsHandlerAction.users}"
+		<p:dataTable var="user" value="#{settingsDialogHandler.users}"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 			style="width:100%;" scrollable="true" scrollHeight="440">
 			<p:column filterBy="#{user.username}"
@@ -38,7 +38,7 @@
 					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('MODERATOR')}]">
 
 					<p:ajax event="change" execute="@this"
-						listener="#{settingsHandlerAction.onChangeUserRole(user)}"></p:ajax>
+						listener="#{settingsDialogHandler.onChangeUserRole(user)}"></p:ajax>
 
 					<f:selectItems value="#{enumProvider.roles}" var="role"
 						itemValue="#{role}" itemLabel="#{msg['enum.role.'.concat(role)]}" />
@@ -56,7 +56,7 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{settingsHandlerAction.prepareEditPhysicianFromUserList(user.physician)}"
+					actionListener="#{settingsDialogHandler.prepareEditPhysicianFromUserList(user.physician)}"
 					update="@form">
 					<i class="fa fa-fw fa-cog" />
 				</p:commandLink>

@@ -14,9 +14,9 @@
 			styleClass="contentPannel" />
 
 		<histo:newPersonDataMask
-			person="#{settingsHandlerAction.tmpPhysician.person}"
+			person="#{settingsDialogHandler.tmpPhysician.person}"
 			pannelID="tmpPhysician"
-			disabled="#{settingsHandlerAction.tmpPhysician.clinicEmployee and !userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}" />
+			disabled="#{settingsDialogHandler.tmpPhysician.clinicEmployee and !userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}" />
 
 		<!-- Role -->
 		<h:panelGrid columns="3"
@@ -32,7 +32,7 @@
 				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
 				<p:selectCheckboxMenu updateLabel="true"
 					styleClass="customSelectCheckboxMenu"
-					value="#{settingsHandlerAction.tmpPhysician.associatedRolesAsArray}"
+					value="#{settingsDialogHandler.tmpPhysician.associatedRolesAsArray}"
 					label="Cities" multiple="true"
 					converter="#{commenDataHandlerAction.associatedRolesTransformer}">
 					<f:selectItems var="role"
@@ -57,13 +57,13 @@
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.saveEditPhysician(settingsHandlerAction.tmpPhysician)}"
+					actionListener="#{settingsDialogHandler.saveEditPhysician(settingsDialogHandler.tmpPhysician)}"
 					update="@form" />
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsHandlerAction.discardTmpPhysician()}"
+					actionListener="#{settingsDialogHandler.discardTmpPhysician()}"
 					update="@form" />
 
 				<p:commandButton value="#{msg['general.close']}"

@@ -469,7 +469,7 @@
 
 			<!-- settings button -->
 			<p:commandButton id="settingsDialogBtn" style="display:none"
-				actionListener="#{settingsHandlerAction.prepareSettingsDialog()}">
+				actionListener="#{settingsDialogHandler.prepareSettingsDialog()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
