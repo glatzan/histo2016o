@@ -40,7 +40,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean((Task) patientDao.savePatientAssociatedData(task), Dialog.BIO_BANK);
+		super.initBean((Task) genericDAO.refresh(task), Dialog.BIO_BANK);
 
 		// setting associatedBioBank
 		setBioBank(bioBankDAO.getAssociatedBioBankObject(task));
@@ -55,8 +55,10 @@ public class BioBankDialogHandler extends AbstractDialog {
 	 */
 	public void saveBioBank() {
 		// saving biobank
-		BioBank bioBank = genericDAO.saveData(getBioBank(), "log.patient.bioBank.save");
-		setBioBank(bioBank);
+		if (!patientDao.savePatientAssociatedDataFailSave(getBioBank(), getTask(), "log.patient.bioBank.save")) {
+			onDatabaseVersionConflict();
+			return;
+		}
 	}
 
 	// ************************ Getter/Setter ************************

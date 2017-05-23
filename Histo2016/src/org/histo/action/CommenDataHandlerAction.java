@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Contact;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.springframework.context.annotation.Scope;
@@ -19,6 +20,11 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session")
 public class CommenDataHandlerAction {
 
+	/**
+	 * Currently selectedTask
+	 */
+	private Patient selectedPatient;
+	
 	/**
 	 * Currently selectedTask
 	 */
@@ -73,6 +79,14 @@ public class CommenDataHandlerAction {
 
 	public void setContactList(List<Contact> contactList) {
 		this.contactList = contactList;
+	}
+
+	public Patient getSelectedPatient() {
+		return selectedPatient;
+	}
+
+	public void setSelectedPatient(Patient selectedPatient) {
+		this.selectedPatient = selectedPatient;
 	}
 	/********************************************************
 	 * Getter/Setter

@@ -15,8 +15,8 @@
 		<!-- right column -->
 		<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 			<h:panelGroup id="pdfRender2">
-				<p:media player="pdf" value="#{mediaHandlerAction.pdfContent}"
-					rendered="#{mediaHandlerAction.temporaryPdfContainer ne null}"
+				<p:media player="pdf" value="#{mediaDialogHandler.pdfContent}"
+					rendered="#{mediaDialogHandler.temporaryPdfContainer ne null}"
 					width="100%" height="480px"></p:media>
 			</h:panelGroup>
 		</h:panelGrid>

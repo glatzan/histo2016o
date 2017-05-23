@@ -3,7 +3,6 @@ package org.histo.action.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.action.MediaHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
@@ -48,10 +47,7 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	private TaskDAO taskDAO;
 
 	@Autowired
-	private MediaHandlerAction mediaHandlerAction;
-
-	@Autowired
-	private UserHandlerAction userHandlerAction;
+	private MediaDialogHandler mediaDialogHandler;
 
 	@Autowired
 	private PatientDao patientDao;
@@ -61,7 +57,7 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private PDFGeneratorHandler pDFGeneratorHandler;
-	
+
 	private Patient patient;
 
 	private List<MaterialPreset> materialList;
@@ -92,9 +88,8 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	 * @param patient
 	 */
 	public void initBean(Patient patient) {
-		super.initBean(new Task((Patient) patientDao.savePatientAssociatedData(patient)), Dialog.TASK_CREATE);
-
-		setPatient(patient);
+		setPatient(genericDAO.refresh(patient));
+		super.initBean(new Task(getPatient()), Dialog.TASK_CREATE);
 
 		// setting material list
 		setMaterialList(settingsDAO.getAllMaterialPresets());
@@ -111,7 +106,7 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 		setAutoNomenclatureChangedManually(false);
 
 		// resetting selected pdf container for informed consent upload
-		mediaHandlerAction.setSelectedPdfContainer(null);
+		mediaDialogHandler.setSelectedPdfContainer(null);
 
 		// creates a new sample, is automatically added to the task
 		new Sample(getTask(), !getMaterialList().isEmpty() ? getMaterialList().get(0) : null);
@@ -176,7 +171,11 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 		// sets the new task as the selected task
 		getPatient().setSelectedTask(getTask());
 
-		mainHandlerAction.saveDataChange(getTask(), "log.patient.task.new", task.getTaskID());
+		// saving task
+		if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.new", task.getTaskID())) {
+			onDatabaseVersionConflict();
+			return;
+		}
 
 		getTask().setDiagnosisContainer(new DiagnosisContainer(task));
 		getTask().getDiagnosisContainer().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
@@ -192,21 +191,35 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 
 		getTask().setCouncils(new ArrayList<Council>());
 
-		mainHandlerAction.saveDataChange(task.getDiagnosisContainer(), "log.patient.task.diagnosisContainer.new",
-				task.getTaskID());
+		// saving diagnosis container
+		if (!patientDao.savePatientAssociatedDataFailSave(task.getDiagnosisContainer(),
+				"log.patient.task.diagnosisContainer.new", task.getTaskID())) {
+			onDatabaseVersionConflict();
+			return;
+		}
 
 		for (Sample sample : getTask().getSamples()) {
 			// set name of material for changing it manually
 			sample.setMaterial(sample.getMaterilaPreset().getName());
 
-			// saving sample
-			mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.new", sample.getSampleID());
+			// saving samples
+			if (!patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.new",
+					sample.getSampleID())) {
+				onDatabaseVersionConflict();
+				return;
+			}
 
 			// creating needed blocks
+			// TODO: save for version conflict
 			taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
 
 			// saving the sample
-			mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.update", sample.getSampleID());
+			// saving samples
+			if (!patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.update",
+					sample.getSampleID())) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 
 		// creating standard diagnoses
@@ -217,7 +230,10 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 		task.generateSlideGuiList();
 		// saving patient
 
-		mainHandlerAction.saveDataChange(getPatient(), "log.patient.save");
+		if (!patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.save")) {
+			onDatabaseVersionConflict();
+			return;
+		}
 
 		// creating bioBank for Task
 		createBioBank();
@@ -235,12 +251,11 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 			logger.error("New Task: No TemplateUtil for printing UReport found");
 			return;
 		}
-		
+
 		// printing u report
 		PDFContainer newPdf = pDFGeneratorHandler.generateUReport(subSelect[0], task.getPatient(), task);
 		settingsHandler.getSelectedPrinter().print(newPdf);
 	}
-		
 
 	/**
 	 * Creates a BioBank object, an if in gui selected, the informed consent
@@ -249,24 +264,39 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	public void createBioBank() {
 		bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
 
-		mainHandlerAction.saveDataChange(bioBank, "log.patient.bioBank.save");
+		if (!patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.save")) {
+			onDatabaseVersionConflict();
+			return;
+		}
 
-		PDFContainer selectedPDF = mediaHandlerAction.getSelectedPdfContainer();
+		PDFContainer selectedPDF = mediaDialogHandler.getSelectedPdfContainer();
 		if (selectedPDF != null) {
 			// attaching pdf to biobank
 			bioBank.getAttachedPdfs().add(selectedPDF);
-			mainHandlerAction.saveDataChange(bioBank, "log.patient.bioBank.pdf.attached", selectedPDF.getName());
+
+			if (!patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.bioBank.pdf.attached",
+					selectedPDF.getName())) {
+				onDatabaseVersionConflict();
+				return;
+			}
 
 			// and task
 			getTask().setAttachedPdfs(new ArrayList<PDFContainer>());
 			getTask().getAttachedPdfs().add(selectedPDF);
-			mainHandlerAction.saveDataChange(getTask(), "log.patient.pdf.attached");
 
+			if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.pdf.attached")) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 
 		if (isMoveInformedConsent()) {
 			patient.getAttachedPdfs().remove(selectedPDF);
-			mainHandlerAction.saveDataChange(getPatient(), "log.patient.pdf.removed", selectedPDF.getName());
+			if (!patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.pdf.removed",
+					selectedPDF.getName())) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 	}
 

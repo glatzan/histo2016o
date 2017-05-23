@@ -23,7 +23,7 @@
 				<h:outputLabel value="#{msg['dialog.media.select.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					actionListener="#{mediaHandlerAction.hideMediaDisplayDialog()}">
+					actionListener="#{mediaDialogHandler.hideMediaDisplayDialog()}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -38,14 +38,14 @@
 					styleClass="defaultListingTableContainer navigation">
 					<!-- Nav Table -->
 					<p:dataTable var="pdf" id="patientList"
-						value="#{mediaHandlerAction.temporaryDataList.attachedPdfs}"
+						value="#{mediaDialogHandler.temporaryDataList.attachedPdfs}"
 						selectionMode="single" scrollHeight="600" scrollable="true"
-						selection="#{mediaHandlerAction.temporaryPdfContainer}"
+						selection="#{mediaDialogHandler.temporaryPdfContainer}"
 						rowKey="#{pdf.id}" styleClass="navTable">
 
 
 						<p:ajax event="rowDblselect"
-							listener="#{mediaHandlerAction.selectMedia(mediaHandlerAction.temporaryPdfContainer)}" />
+							listener="#{mediaDialogHandler.selectMedia(mediaDialogHandler.temporaryPdfContainer)}" />
 
 						<p:ajax event="rowSelect" update="@form" />
 
@@ -82,8 +82,8 @@
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 
 					<h:panelGroup id="pdfRender2">
-						<p:media player="pdf" value="#{mediaHandlerAction.pdfContent}"
-							rendered="#{mediaHandlerAction.temporaryPdfContainer ne null}"
+						<p:media player="pdf" value="#{mediaDialogHandler.pdfContent}"
+							rendered="#{mediaDialogHandler.temporaryPdfContainer ne null}"
 							width="100%" height="630px"></p:media>
 					</h:panelGroup>
 				</h:panelGrid>
@@ -96,9 +96,9 @@
 
 				<h:panelGrid columns="1">
 					<p:commandButton value="#{msg['dialog.media.upload']}"
-						rendered="#{mediaHandlerAction.showUpload}" icon="fa fa-print"
+						rendered="#{mediaDialogHandler.showUpload}" icon="fa fa-print"
 						styleClass="smallButton buttonLeftMarginInList"
-						actionListener="#{mediaHandlerAction.prepareUploadDialog(mediaHandlerAction.temporaryDataList)}">
+						actionListener="#{mediaDialogHandler.prepareUploadDialog(mediaDialogHandler.temporaryDataList)}">
 						<p:ajax event="dialogReturn" update="@form" />
 					</p:commandButton>
 				</h:panelGrid>
@@ -106,15 +106,15 @@
 				<h:panelGrid columns="2" style="float:right;">
 					<p:commandButton value="#{msg['dialog.media.select']}"
 						icon="fa fa-download" ajax="false"
-						disabled="#{mediaHandlerAction.temporaryPdfContainer eq null}"
+						disabled="#{mediaDialogHandler.temporaryPdfContainer eq null}"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{mediaHandlerAction.selectMedia(mediaHandlerAction.temporaryPdfContainer)}" />
+						actionListener="#{mediaDialogHandler.selectMedia(mediaDialogHandler.temporaryPdfContainer)}" />
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{mediaHandlerAction.hideMediaDisplaySelectDialog()}" />
+						actionListener="#{mediaDialogHandler.hideMediaDisplaySelectDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

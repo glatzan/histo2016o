@@ -26,14 +26,14 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
-
+	
 	/**
 	 * Initializes a datalist for an object
 	 * 
 	 * @param dataList
 	 */
 	public HasDataList initializeDataList(HasDataList dataList) {
-		dataList = genericDAO.saveData(dataList);
+		dataList = genericDAO.refresh(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
 		return dataList;
 	}

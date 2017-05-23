@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.MediaDialogHandler;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -87,7 +88,7 @@ public class TaskHandlerAction implements Serializable {
 
 	@Autowired
 	@Lazy
-	private MediaHandlerAction mediaHandlerAction;
+	private MediaDialogHandler mediaDialogHandler;
 
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
@@ -217,13 +218,7 @@ public class TaskHandlerAction implements Serializable {
 	public void prepareTask(Task task) {
 		initBean();
 
-		genericDAO.refresh(task);
-		
-		if (!task.isInitialized()) {
-			taskDAO.initializeCouncilData(task);
-			taskDAO.initializeDiagnosisData(task);
-			task.setInitialized(true);
-		}
+		task = genericDAO.refresh(task);
 
 		// setting the report time to the current date
 		if (task.isDiagnosisPhase()) {
@@ -249,7 +244,7 @@ public class TaskHandlerAction implements Serializable {
 	public void manuallyAltered(IdManuallyAltered idManuallyAltered, boolean altered){
 		idManuallyAltered.setIdManuallyAltered(altered);
 		
-		genericDAO.saveDataChange(idManuallyAltered, "log.patient.task.idManuallyAltered");
+		genericDAO.saveDataRollbackSave(idManuallyAltered, "log.patient.task.idManuallyAltered");
 		logger.debug("Manually altered " + altered);
 	}
 	/********************************************************

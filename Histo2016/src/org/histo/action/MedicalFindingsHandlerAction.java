@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.MediaDialogHandler;
 import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SlideManipulationHandler;
@@ -52,7 +53,7 @@ public class MedicalFindingsHandlerAction {
 	private PrintDialogHandler printDialogHandler;
 
 	@Autowired
-	private MediaHandlerAction mediaHandlerAction;
+	private MediaDialogHandler mediaDialogHandler;
 	/**
 	 * class for creating pdfs
 	 */
@@ -160,8 +161,8 @@ public class MedicalFindingsHandlerAction {
 	}
 
 	public void initBean(Task task) {
-		setTemporaryTask(taskDAO.initializeTaskDate(task));
-
+		setTemporaryTask((Task) utilDAO.initializeDataList(task));
+		
 		setActiveTabIndex(0);
 
 		if (getEmailNotificationSettings() == null)
@@ -407,7 +408,7 @@ public class MedicalFindingsHandlerAction {
 
 			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.update");
 
-			mediaHandlerAction.perpareBeanForExternalForSinglView(resultPdf);
+			mediaDialogHandler.perpareBeanForExternalForSinglView(resultPdf);
 
 			notificationRunning.set(false);
 			notificationPerformed.set(true);

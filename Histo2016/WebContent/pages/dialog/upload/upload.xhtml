@@ -29,9 +29,9 @@
 		</div>
 
 		<div class="contentDiv">
-			<histo:fileUpload fileToUpload="#{mediaHandlerAction.uploadedFile}"
-				fileToUploadType="#{mediaHandlerAction.uploadedFileType}"
-				fileToUploadCommentary="#{mediaHandlerAction.uploadedFileCommentary}"></histo:fileUpload>
+			<histo:fileUpload fileToUpload="#{mediaDialogHandler.uploadedFile}"
+				fileToUploadType="#{mediaDialogHandler.uploadedFileType}"
+				fileToUploadCommentary="#{mediaDialogHandler.uploadedFileCommentary}"></histo:fileUpload>
 		</div>
 
 		<div class="buttonContainer">
@@ -42,12 +42,12 @@
 					<p:commandButton value="#{msg['general.upload']}"
 						icon="fa fa-check-circle-o" ajax="false"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{mediaHandlerAction.uploadData(mediaHandlerAction.temporaryDataList)}"></p:commandButton>
+						actionListener="#{mediaDialogHandler.uploadData(mediaDialogHandler.temporaryDataList)}"></p:commandButton>
 
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{mediaHandlerAction.hideDataUploadDialog()}" />
+						actionListener="#{mediaDialogHandler.hideDataUploadDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

@@ -251,14 +251,14 @@
 				<f:facet name="header">
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="upload"
-							actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient)}">
+							actionListener="#{mediaDialogHandler.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient)}">
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							<i class="fa fa-plus"></i>
 						</p:commandLink>
 					</h:panelGrid>
 				</f:facet>
 				<p:commandLink
-					actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient,attachedPdf)}">
+					actionListener="#{mediaDialogHandler.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient,attachedPdf)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					<i class="fa fa-search"></i>
 				</p:commandLink>

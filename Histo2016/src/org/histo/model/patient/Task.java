@@ -212,11 +212,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	private boolean active;
 
 	/**
-	 * True if lazy initialization was successful.
-	 */
-	private boolean initialized;
-
-	/**
 	 * Routines for changing the status of the task
 	 */
 	private TaskStatusHandler status;
@@ -518,8 +513,9 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@OrderBy("dateOfRequest DESC")
+	@Fetch(value = FetchMode.SUBSELECT)
 	public List<Council> getCouncils() {
 		return councils;
 	}
@@ -537,7 +533,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.accounting = accounting;
 	}
 
-	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "parent", fetch = FetchType.EAGER)
 	public DiagnosisContainer getDiagnosisContainer() {
 		return diagnosisContainer;
 	}
@@ -655,15 +651,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 
 	public void setActive(boolean active) {
 		this.active = active;
-	}
-
-	@Transient
-	public boolean isInitialized() {
-		return initialized;
-	}
-
-	public void setInitialized(boolean initialized) {
-		this.initialized = initialized;
 	}
 
 	/**

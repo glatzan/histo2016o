@@ -16,6 +16,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
@@ -50,6 +51,10 @@ public class PrintDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private SettingsHandler settingsHandler;
+	
+	@Autowired
+	private UtilDAO utilDAO;
+	
 	/**
 	 * List of all templates for printing
 	 */
@@ -181,8 +186,8 @@ public class PrintDialogHandler extends AbstractDialog {
 
 	public void initBean(Task task, PrintTemplate[] templates, PrintTemplate selectedTemplate) {
 		// getting task datalist, if was altered a updated task will be returend
-		task = taskDAO.initializeTaskDate(task);
-		super.initBean(task, Dialog.PRINT);
+
+		super.initBean((Task) utilDAO.initializeDataList(task), Dialog.PRINT);
 
 		if (templates != null) {
 			setTemplateList(new ArrayList<PrintTemplate>(Arrays.asList(templates)));
@@ -331,14 +336,14 @@ public class PrintDialogHandler extends AbstractDialog {
 						// settings the old selected contact as selected contact
 						setSelectedContact(tmp);
 					}
-					
+
 					oneContactSelected = true;
 				}
 
 			}
-			
-			// printin if no container was selected, with the default address 
-			if(!oneContactSelected){
+
+			// printin if no container was selected, with the default address
+			if (!oneContactSelected) {
 				settingsHandler.getSelectedPrinter().print(getPdfContainer());
 			}
 		}
@@ -355,12 +360,18 @@ public class PrintDialogHandler extends AbstractDialog {
 			logger.debug("Pdf not saved jet, saving" + pdf.getName());
 
 			// saving new pdf and updating task
-			task = (Task) patientDao.savePatientAssociatedData(pdf, task, "log.patient.task.pdf.created",
-					pdf.getName());
+			if(!patientDao.savePatientAssociatedDataFailSave(pdf, task, "log.patient.task.pdf.created",
+					pdf.getName())){
+				onDatabaseVersionConflict();
+				return;
+			}
 
 			task.getAttachedPdfs().add(pdf);
-			// TODO retry saving
-			patientDao.savePatientAssociatedData(task, "log.patient.pdf.attached", pdf.getName());
+			
+			if(!patientDao.savePatientAssociatedDataFailSave(task, "log.patient.pdf.attached", pdf.getName())){
+				onDatabaseVersionConflict();
+				return;
+			}
 		} else {
 			logger.debug("PDF allready saved, not saving. " + pdf.getName());
 		}

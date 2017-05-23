@@ -17,6 +17,7 @@ import org.histo.config.enums.View;
 import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
+import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.UtilDAO;
 import org.histo.model.patient.Patient;
@@ -73,8 +74,10 @@ public class WorklistHandlerAction implements Serializable {
 	private TaskListHandlerAction taskListHandlerAction;
 
 	@Autowired
+	private GenericDAO genericDAO;
+	
+	@Autowired
 	private UtilDAO utilDAO;
-
 	/*
 	 * ************************** Patient ****************************
 	 */
@@ -221,14 +224,15 @@ public class WorklistHandlerAction implements Serializable {
 	 * @return
 	 */
 	public String onSelectPatient(Patient patient) {
-		setSelectedPatient(patient);
-
-		if (patient == null)
+		if (patient == null){
+			setSelectedPatient(null);
 			return mainHandlerAction.goToNavigation(View.WORKLIST);
+		}
 
-		logger.debug("Select patient " + patient.getPerson().getFullName());
-
-		patientDao.initializePatientDate(patient);
+		setSelectedPatient(genericDAO.refresh(patient));
+		utilDAO.initializeDataList(getSelectedPatient());
+		
+		logger.debug("Select patient " + getSelectedPatient().getPerson().getFullName());
 
 		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
@@ -245,10 +249,9 @@ public class WorklistHandlerAction implements Serializable {
 		logger.debug(
 				"Selecting patient and task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
 
+		task = (Task) utilDAO.initializeDataList(task);
 		
 		setSelectedPatient(task.getPatient());
-		
-		task = (Task)patientDao.savePatientAssociatedData(task);
 		
 		task.getPatient().setSelectedTask(task);
 
@@ -311,7 +314,7 @@ public class WorklistHandlerAction implements Serializable {
 			return View.WORKLIST_TASKS.getPath();
 		}
 		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
-			patientDao.initializePatientDate(getSelectedPatient());
+			utilDAO.initializeDataList(getSelectedPatient());
 			return View.WORKLIST_PATIENT.getPath();
 		} else if (currentView == View.WORKLIST_DIAGNOSIS) {
 			setLastSubView(View.WORKLIST_DIAGNOSIS);

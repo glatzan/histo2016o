@@ -41,9 +41,6 @@ public class SlideHandlerAction implements Serializable {
 	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
-	private UserHandlerAction userHandlerAction;
-
-	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired

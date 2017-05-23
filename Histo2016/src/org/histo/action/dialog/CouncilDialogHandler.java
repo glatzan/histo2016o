@@ -27,13 +27,7 @@ import com.sun.corba.se.impl.javax.rmi.CORBA.Util;
 public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
-	private UtilDAO utilDAO;
-
-	@Autowired
 	private UserHandlerAction userHandlerAction;
-
-	@Autowired
-	private ResourceBundle resourceBundle;
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
@@ -43,9 +37,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private PrintDialogHandler printDialogHandler;
-	
+
 	@Autowired
-	private TaskDAO taskDAO;
+	private UtilDAO utilDAO;
 	
 	private Council council;
 
@@ -77,10 +71,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean((Task)patientDao.savePatientAssociatedData(task), Dialog.COUNCIL);
-
-		taskDAO.initializeTaskDate(task);
-		taskDAO.initializeCouncilData(task);
+		super.initBean((Task) utilDAO.initializeDataList(task), Dialog.COUNCIL);
 
 		setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
 
@@ -133,16 +124,26 @@ public class CouncilDialogHandler extends AbstractDialog {
 			council.setDateOfRequest(System.currentTimeMillis());
 			logger.debug("Council Dialog: Creating new council");
 			// TODO: Better loggin
-			patientDao.savePatientAssociatedData(council, getTask(), "log.patient.task.council.create");
+			if (!patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.create")) {
+				onDatabaseVersionConflict();
+				return;
+			}
 
 			task.getCouncils().add(council);
 
-			genericDAO.saveDataChange(getTask(), "log.patient.task.council.attached", String.valueOf(council.getId()));
+			if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
+					String.valueOf(council.getId()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 
 		} else {
 			logger.debug("Council Dialog: Saving council");
-			patientDao.savePatientAssociatedData(council, getTask(), "log.patient.task.council.update",
-					String.valueOf(council.getId()));
+			if (!patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.update",
+					String.valueOf(council.getId()))) {
+				onDatabaseVersionConflict();
+				return;
+			}
 		}
 
 		// updating council list

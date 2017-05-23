@@ -50,7 +50,7 @@ public class BioBankDAO extends AbstractDAO implements Serializable {
 	 * @param bioBank
 	 */
 	public BioBank initializeBioBank(BioBank bioBank) {
-		bioBank = genericDAO.saveData(bioBank);
+		bioBank = genericDAO.refresh(bioBank);
 		Hibernate.initialize(bioBank.getAttachedPdfs());
 		Hibernate.initialize(bioBank.getTask());
 		return bioBank;

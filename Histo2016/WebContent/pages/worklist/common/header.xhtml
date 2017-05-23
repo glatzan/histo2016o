@@ -288,7 +288,7 @@
 
 			<!-- upload button to patient -->
 			<p:commandButton id="uploadBtnToPatient" style="display:none"
-				actionListener="#{mediaHandlerAction.prepareUploadDialog(worklistHandlerAction.selectedPatient)}">
+				actionListener="#{mediaDialogHandler.prepareUploadDialog(worklistHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>
@@ -418,7 +418,7 @@
 
 			<!-- upload button -->
 			<p:commandButton id="uploadBtn" style="display:none"
-				actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+				actionListener="#{mediaDialogHandler.prepareMediaDisplayDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
 				<p:ajax event="dialogReturn" update="contentForm"
 					listener="#{mainHandlerAction.showQueueDialog()}" />
 			</p:commandButton>

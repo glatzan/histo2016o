@@ -24,26 +24,6 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = 7999598227641226109L;
 
-	@Autowired
-	private PatientDao patientDao;
-
-	public Task initializeTaskDate(Task task) {
-		task = (Task) patientDao.savePatientAssociatedData(task);
-		Hibernate.initialize(task.getAttachedPdfs());
-		return task;
-	}
-
-	/**
-	 * Initializes lazy fetch for council data
-	 * 
-	 * @param task
-	 */
-	public Task initializeCouncilData(Task task) {
-		task = (Task) patientDao.savePatientAssociatedData(task);
-		Hibernate.initialize(task.getCouncils());
-		return task;
-	}
-
 	/**
 	 * Counts all tasks of the current year
 	 * 
@@ -95,18 +75,5 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return list;
 	}
 
-	/**
-	 * Initializes diagnosisContainer with all diagnoses
-	 * 
-	 * @param task
-	 */
-	public Task initializeDiagnosisData(Task task) {
-		task = (Task) patientDao.savePatientAssociatedData(task);
-		Hibernate.initialize(task.getDiagnosisContainer());
-		task = (Task) patientDao.savePatientAssociatedData(task.getDiagnosisContainer(),task);
-		Hibernate.initialize(task.getDiagnosisContainer().getSignatureOne());
-		Hibernate.initialize(task.getDiagnosisContainer().getSignatureTwo());
-		return task;
-	}
 
 }

@@ -54,18 +54,18 @@
 						<h:outputLabel value="#{msg['dialog.biobank.pdf.fromPatient']}"></h:outputLabel>
 						<!-- Get PDF from Patien -->
 						<p:commandLink
-							actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task.patient)}">
+							actionListener="#{mediaDialogHandler.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task.patient)}">
 							<p:ajax event="dialogReturn" update="@form"
-								listener="#{mediaHandlerAction.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
+								listener="#{mediaDialogHandler.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
 							<i class="fa fa-search icon-grey"></i>
 						</p:commandLink>
 
 						<h:outputLabel value="#{msg['dialog.biobank.pdf.fromTask']}"></h:outputLabel>
 						<!-- Get PDF from Task -->
 						<p:commandLink
-							actionListener="#{mediaHandlerAction.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task)}">
+							actionListener="#{mediaDialogHandler.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task)}">
 							<p:ajax event="dialogReturn" update="@form"
-								listener="#{mediaHandlerAction.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
+								listener="#{mediaDialogHandler.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
 							<i class="fa fa-search icon-grey"></i>
 						</p:commandLink>
 
@@ -87,14 +87,14 @@
 						<p:column headerText="" style="width:15%">
 							<p:commandLink styleClass="noUnderlineAtLink"
 								title="#{msg['dialog.biobank.table.preview.hint']}"
-								actionListener="#{mediaHandlerAction.prepareMediaDisplayDialog(bioBankDialogHandler.bioBank,pdf,false)}">
+								actionListener="#{mediaDialogHandler.prepareMediaDisplayDialog(bioBankDialogHandler.bioBank,pdf,false)}">
 								<p:ajax event="dialogReturn" update="@form" />
 								<i class="fa fa-search icon-grey"></i>
 							</p:commandLink>
 							<p:commandLink style="margin-right:5px" update="@form"
 								styleClass="noUnderlineAtLink"
 								title="#{msg['dialog.biobank.table.remove.hint']}"
-								actionListener="#{mediaHandlerAction.removeFileFormDataList(bioBankDialogHandler.bioBank,pdf)}">
+								actionListener="#{mediaDialogHandler.removeFileFormDataList(bioBankDialogHandler.bioBank,pdf)}">
 								<i class="fa fa-close icon-grey"></i>
 							</p:commandLink>
 						</p:column>

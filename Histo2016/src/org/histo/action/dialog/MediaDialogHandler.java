@@ -1,4 +1,4 @@
-package org.histo.action;
+package org.histo.action.dialog;
 
 import java.io.ByteArrayInputStream;
 
@@ -6,6 +6,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.apache.log4j.Logger;
+import org.histo.action.MainHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
@@ -28,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "session")
-public class MediaHandlerAction {
+public class MediaDialogHandler {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -45,8 +47,7 @@ public class MediaHandlerAction {
 	private UtilDAO utilDAO;
 
 	@Autowired
-	private UserHandlerAction userHandlerAction;
-
+	private PatientDao patientDao;
 	/********************************************************
 	 * data upload
 	 ********************************************************/
@@ -110,7 +111,7 @@ public class MediaHandlerAction {
 	public void removeFileFormDataList(HasDataList dataList, PDFContainer container, boolean delete) {
 		if (dataList.getAttachedPdfs().contains(container)) {
 			dataList.getAttachedPdfs().remove(container);
-			genericDAO.saveDataChange(dataList, "log.patient.pdf.removed", container.getName());
+			patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.removed", container.getName());
 
 			if (delete)
 				genericDAO.deleteDate(container, "log.patient.pdft.deleted", container.getName());
@@ -122,8 +123,8 @@ public class MediaHandlerAction {
 		if (getSelectedPdfContainer() != null) {
 			dataList.getAttachedPdfs().add(getSelectedPdfContainer());
 
-			genericDAO.saveDataChange(dataList, "log.patient.pdf.attached", getSelectedPdfContainer().getName());
-			
+			patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.attached", getSelectedPdfContainer().getName());
+
 			setSelectedPdfContainer(null);
 		}
 	}

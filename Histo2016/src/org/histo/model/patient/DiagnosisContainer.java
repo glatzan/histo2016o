@@ -127,12 +127,12 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 		this.diagnosisRevisions = diagnosisRevisions;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Signature getSignatureOne() {
 		return signatureOne;
 	}
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	public Signature getSignatureTwo() {
 		return signatureTwo;
 	}

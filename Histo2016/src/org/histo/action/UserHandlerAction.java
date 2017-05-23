@@ -65,7 +65,7 @@ public class UserHandlerAction implements Serializable {
 	}
 
 	public void hideUserSettingsDialog() {
-		genericDAO.refresh(getCurrentUser());
+		genericDAO.reset(getCurrentUser());
 
 		settingsHandler.updateSelectedPrinters();
 

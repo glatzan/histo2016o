@@ -2,6 +2,7 @@ package org.histo.action.dialog;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.GenericDAO;
 import org.histo.model.patient.Task;
@@ -16,6 +17,9 @@ public  abstract class AbstractDialog {
 	
 	@Autowired
 	protected MainHandlerAction mainHandlerAction;
+	
+	@Autowired
+	protected ResourceBundle resourceBundle;
 	
 	protected Task task;
 	
@@ -45,6 +49,10 @@ public  abstract class AbstractDialog {
 		mainHandlerAction.hideDialog(dilaog);
 	}
 
+	public void onDatabaseVersionConflict(){
+		hideDialog();
+		mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.version.error"), resourceBundle.get("growl.version.error.text"));
+	}
 	// ************************ Getter/Setter ************************
 	public Task getTask() {
 		return task;

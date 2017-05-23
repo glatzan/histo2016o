@@ -956,7 +956,7 @@ public class SettingsHandlerAction {
 
 	public void discardChangesOfMaterial(ListItem item) {
 		if (item != null && item.getId() != 0)
-			genericDAO.refresh(item);
+			genericDAO.reset(item);
 
 		setStaticListTabIndex(SettingsTab.S_LIST);
 		setTmpListItem(null);
