@@ -4,13 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.histo.model.FavouriteList;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.context.annotation.Scope;
+import org.springframework.orm.hibernate3.HibernateInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +56,18 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return result.intValue();
 	}
 
+	public Task getTask(long id, boolean initialized){
+		Task task = getSession().get(Task.class, id);
+		
+		if(initialized){
+			Hibernate.initialize(task.getCouncils());
+			Hibernate.initialize(task.getDiagnosisContainer());
+			Hibernate.initialize(task.getAttachedPdfs());
+		}
+		
+		return task;
+	}
+	
 	/**
 	 * Gets a list of task
 	 * 

@@ -19,12 +19,15 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.MailType;
 import org.histo.config.enums.SettingsTab;
 import org.histo.config.enums.StaticList;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
+import org.histo.model.FavouriteList;
+import org.histo.model.FavouriteListItem;
 import org.histo.model.HistoUser;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
@@ -48,15 +51,6 @@ import org.springframework.stereotype.Component;
 public class SettingsDialogHandler extends AbstractDialog {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-
-	public static final int TAB_USER = 0;
-	public static final int TAB_STAINING = 1;
-	public static final int TAB_MATERIAL = 2;
-	public static final int TAB_DIAGNOSIS = 3;
-	public static final int TAB_PERSON = 4;
-	public static final int TAB_STATIC_LISTS = 5;
-	public static final int TAB_MISELLANEOUS = 6;
-	public static final int TAB_LOG = 7;
 
 	public static final int DIAGNOSIS_LIST = 0;
 	public static final int DIAGNOSIS_EDIT = 1;
@@ -92,6 +86,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 	@Autowired
 	private SettingsHandler settingsHandler;
 
+	@Autowired
+	private FavouriteListDAO favouriteListDAO;
+
 	/**
 	 * Tabindex of settings dialog
 	 */
@@ -116,6 +113,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * Tabindex of the static list tab
 	 */
 	private SettingsTab staticListTabIndex = SettingsTab.S_LIST;
+
+	/**
+	 * Tabindex of the favouriteList
+	 */
+	private SettingsTab favouriteListTabIndex = SettingsTab.F_LIST;
 
 	/********************************************************
 	 * User
@@ -291,6 +293,28 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 ********************************************************/
 
 	/********************************************************
+	 * Favorite Lists
+	 ********************************************************/
+	/**
+	 * Array containing all favourite listis
+	 */
+	private List<FavouriteList> favouriteLists;
+
+	/**
+	 * Temporaray faourite list
+	 */
+	private FavouriteList tmpFavouriteList;
+
+	/**
+	 * True if new favouriteList should be created
+	 */
+	private boolean newFavouriteList;
+
+	/********************************************************
+	 * Favorite Lists
+	 ********************************************************/
+
+	/********************************************************
 	 * General
 	 ********************************************************/
 
@@ -337,18 +361,14 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * Method performed on every tab change of the settings dialog
 	 */
 	public void onSettingsTabChange() {
-		switch (getActiveSettingsIndex()) {
-		case TAB_USER:
+
+		logger.debug("Current Tab index is " + getActiveSettingsIndex());
+		
+		if (getActiveSettingsIndex() == SettingsTab.USER.getTabNumber()) {
 			prepareUserList();
-			break;
-		case TAB_LOG:
-			loadGeneralHistory();
-			break;
-		case TAB_STAINING:
+		} else if (getActiveSettingsIndex() == SettingsTab.STAINING.getTabNumber()) {
 			setAllAvailableStainings(settingsDAO.getAllStainingPrototypes());
-			break;
-		case TAB_MATERIAL:
-			logger.debug("Selecting tag material");
+		} else if (getActiveSettingsIndex() == SettingsTab.MATERIAL.getTabNumber()) {
 			initMaterialPresets();
 			// update stainings if selected
 			if (getMaterialTabIndex() == SettingsTab.M_EDIT) {
@@ -361,19 +381,21 @@ public class SettingsDialogHandler extends AbstractDialog {
 					setOriginalMaterial(null);
 				}
 			}
-			break;
-		case TAB_PERSON:
-			preparePhysicianList();
-			break;
-		case TAB_DIAGNOSIS:
+		} else if (getActiveSettingsIndex() == SettingsTab.DIAGNOSIS.getTabNumber()) {
 			updateAllDiagnosisPrototypes();
-			break;
-		case TAB_STATIC_LISTS:
+		} else if (getActiveSettingsIndex() == SettingsTab.PHYSICIAN.getTabNumber()) {
+			preparePhysicianList();
+		} else if (getActiveSettingsIndex() == SettingsTab.STATIC_LISTS.getTabNumber()) {
 			prepareStaticLists();
-			break;
-		default:
-			break;
+		} else if (getActiveSettingsIndex() == SettingsTab.FAVOURITE_LIST.getTabNumber()) {
+			if (getFavouriteListTabIndex() == SettingsTab.F_EDIT) {
+				if(getTmpFavouriteList() != null && getTmpFavouriteList().getId() != 0)
+					// reload fav list
+					prepareEditFavouriteList(getTmpFavouriteList());
+			} else
+				prepareFavouriteLists();
 		}
+
 	}
 
 	/********************************************************
@@ -801,7 +823,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		if (result != null) {
 			setTmpPhysician(result);
 			setPhysicianTabIndex(SettingsTab.P_EDIT_EXTERN);
-			setActiveSettingsIndex(SettingsDialogHandler.TAB_PERSON);
+			setActiveSettingsIndex(SettingsTab.PHYSICIAN.getTabNumber());
 			prepareSettingsDialog();
 		}
 	}
@@ -1067,9 +1089,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 		logger.debug("List order changed, moved static list item from " + event.getFromIndex() + " to "
 				+ event.getToIndex());
 		ListOrder.reOrderList(getStaticListContent());
-		
-		if(!genericDAO.saveListRollbackSave(getStaticListContent(),
-				resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()))){
+
+		if (!genericDAO.saveListRollbackSave(getStaticListContent(),
+				resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()))) {
 			onDatabaseVersionConflict();
 			return;
 		}
@@ -1077,6 +1099,60 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	/********************************************************
 	 * Static Lists
+	 ********************************************************/
+
+	/********************************************************
+	 * Favorite Lists
+	 ********************************************************/
+	public void prepareFavouriteLists() {
+		setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
+		setFavouriteListTabIndex(SettingsTab.F_LIST);
+	}
+
+	public void prepareNewFavouriteList() {
+		FavouriteList newList = new FavouriteList();
+		newList.setItems(new ArrayList<FavouriteListItem>());
+		newList.setDefaultList(false);
+		newList.setEditAble(true);
+		newList.setGlobal(true);
+		setTmpFavouriteList(newList);
+		setFavouriteListTabIndex(SettingsTab.F_EDIT);
+		setNewFavouriteList(true);
+	}
+
+	public void prepareEditFavouriteList(FavouriteList favouriteList) {
+		setTmpFavouriteList(favouriteListDAO.getFavouriteList(favouriteList.getId(), true));
+		setFavouriteListTabIndex(SettingsTab.F_EDIT);
+		setNewFavouriteList(false);
+	}
+
+	public void saveFavouriteList() {
+		// saving new list
+		if (getTmpFavouriteList().getId() == 0) {
+			if (!genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.new",
+					new Object[] { getTmpFavouriteList().toString() })) {
+				onDatabaseVersionConflict();
+				return;
+			}
+		} else {
+			// updating old list
+			if (!genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.edit",
+					new Object[] { getTmpFavouriteList().toString() })) {
+				onDatabaseVersionConflict();
+				return;
+			}
+		}
+
+		discardEditFavouriteList();
+	}
+
+	public void discardEditFavouriteList() {
+		setTmpFavouriteList(null);
+		prepareFavouriteLists();
+	}
+
+	/********************************************************
+	 * Favorite Lists
 	 ********************************************************/
 
 	/******************************************************** History ********************************************************/
@@ -1375,7 +1451,40 @@ public class SettingsDialogHandler extends AbstractDialog {
 	public void setShowPhysicianRoles(ContactRole[] showPhysicianRoles) {
 		this.showPhysicianRoles = showPhysicianRoles;
 	}
+
+	public SettingsTab getFavouriteListTabIndex() {
+		return favouriteListTabIndex;
+	}
+
+	public void setFavouriteListTabIndex(SettingsTab favouriteListTabIndex) {
+		this.favouriteListTabIndex = favouriteListTabIndex;
+	}
+
+	public List<FavouriteList> getFavouriteLists() {
+		return favouriteLists;
+	}
+
+	public void setFavouriteLists(List<FavouriteList> favouriteLists) {
+		this.favouriteLists = favouriteLists;
+	}
+
+	public FavouriteList getTmpFavouriteList() {
+		return tmpFavouriteList;
+	}
+
+	public void setTmpFavouriteList(FavouriteList tmpFavouriteList) {
+		this.tmpFavouriteList = tmpFavouriteList;
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+
+	public boolean isNewFavouriteList() {
+		return newFavouriteList;
+	}
+
+	public void setNewFavouriteList(boolean newFavouriteList) {
+		this.newFavouriteList = newFavouriteList;
+	}
 }

@@ -288,7 +288,7 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		this.piz = piz;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id DESC")
 	public List<Task> getTasks() {

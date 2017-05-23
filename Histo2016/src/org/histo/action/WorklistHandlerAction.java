@@ -20,6 +20,7 @@ import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
+import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
@@ -79,6 +80,9 @@ public class WorklistHandlerAction implements Serializable {
 	
 	@Autowired
 	private UtilDAO utilDAO;
+	
+	@Autowired
+	private TaskDAO taskDAO;
 	/*
 	 * ************************** Patient ****************************
 	 */
@@ -250,7 +254,7 @@ public class WorklistHandlerAction implements Serializable {
 		logger.debug(
 				"Selecting patient and task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
 
-		task = (Task) utilDAO.initializeDataList(task);
+		task = taskDAO.getTask(task.getId(), true);
 		
 		setSelectedPatient(task.getPatient());
 		

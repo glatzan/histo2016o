@@ -187,7 +187,7 @@ public class PrintDialogHandler extends AbstractDialog {
 	public void initBean(Task task, PrintTemplate[] templates, PrintTemplate selectedTemplate) {
 		// getting task datalist, if was altered a updated task will be returend
 
-		super.initBean((Task) utilDAO.initializeDataList(task), Dialog.PRINT);
+		super.initBean(taskDAO.getTask(task.getId(), true), Dialog.PRINT);
 
 		if (templates != null) {
 			setTemplateList(new ArrayList<PrintTemplate>(Arrays.asList(templates)));

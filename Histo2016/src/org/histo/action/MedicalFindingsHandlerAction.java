@@ -14,9 +14,11 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.MailType;
 import org.histo.config.enums.NotificationOption;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
+import org.histo.model.FavouriteList;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.json.mail.MailTemplate;
@@ -65,6 +67,9 @@ public class MedicalFindingsHandlerAction {
 
 	@Autowired
 	private TaskDAO taskDAO;
+	
+	@Autowired
+	private FavouriteListDAO favouriteListDAO;
 	/********************************************************
 	 * General
 	 ********************************************************/
@@ -192,8 +197,11 @@ public class MedicalFindingsHandlerAction {
 		// ending stating phase
 		if (getTemporaryTask().isStainingPhase()) {
 			slideManipulationHandler.setStainingCompletedForAllSlidesTo(getTemporaryTask(), true);
-			temporaryTask.setStainingPhase(false);
 			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.end");
+			
+//			temporaryTask.setStainingPhase(false);
+			
+			favouriteListDAO.addTaskToList(getTemporaryTask(), FavouriteList.StainingList_ID);
 		}
 
 		// ending diagnosis phase

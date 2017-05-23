@@ -3,6 +3,7 @@ package org.histo.action.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.action.SlideHandlerAction;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -11,11 +12,13 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.TaskPriority;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.BioBank;
 import org.histo.model.Council;
+import org.histo.model.FavouriteList;
 import org.histo.model.MaterialPreset;
 import org.histo.model.PDFContainer;
 import org.histo.model.Signature;
@@ -57,6 +60,12 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	@Autowired
 	private PDFGeneratorHandler pDFGeneratorHandler;
 
+	@Autowired 
+	private FavouriteListDAO favouriteListDAO;
+	
+	@Autowired 
+	private SlideHandlerAction slideHandlerAction;
+	
 	private Patient patient;
 
 	private List<MaterialPreset> materialList;
@@ -186,9 +195,11 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 		getTask().setCaseHistory("");
 		getTask().setWard("");
 
-		getTask().setStainingPhase(true);
+//		getTask().setStainingPhase(true);
 
 		getTask().setCouncils(new ArrayList<Council>());
+		
+		getTask().setFavouriteLists(new ArrayList<FavouriteList>());
 
 		// saving diagnosis container
 		if (!patientDao.savePatientAssociatedDataFailSave(task.getDiagnosisContainer(),
@@ -222,20 +233,30 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 		}
 
 		// creating standard diagnoses
-		taskManipulationHandler.createDiagnosisRevision(task.getDiagnosisContainer(), DiagnosisRevisionType.DIAGNOSIS);
+		taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(), DiagnosisRevisionType.DIAGNOSIS);
 
-		task.getStatus().updateStainingStatus();
+		slideHandlerAction.updateStainingStatus(getTask(), false);
 		// generating gui list
-		task.generateSlideGuiList();
+		getTask().generateSlideGuiList();
 		// saving patient
 
+		// creating bioBank for Task
+		createBioBank();
+		
+		if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.edit", task.getTaskID())) {
+			onDatabaseVersionConflict();
+			return;
+		}
+		
+		if(!favouriteListDAO.addTaskToList(getTask(), FavouriteList.StainingList_ID)){
+			onDatabaseVersionConflict();
+			return;
+		}
+		
 		if (!patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.save")) {
 			onDatabaseVersionConflict();
 			return;
 		}
-
-		// creating bioBank for Task
-		createBioBank();
 	}
 
 	/**

@@ -44,16 +44,10 @@ public class TaskHandlerAction implements Serializable {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	private TaskDAO taskDAO;
-
-	@Autowired
 	private GenericDAO genericDAO;
 
 	@Autowired
 	private SettingsDAO settingsDAO;
-
-	@Autowired
-	private PatientDao patientDao;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
@@ -84,7 +78,8 @@ public class TaskHandlerAction implements Serializable {
 	private TaskManipulationHandler taskManipulationHandler;
 	
 	@Autowired
-	private UtilDAO utilDAO;
+	@Lazy
+	private SlideHandlerAction slideHandlerAction;
 	/********************************************************
 	 * Task creation
 	 ********************************************************/
@@ -281,7 +276,7 @@ public class TaskHandlerAction implements Serializable {
 		// updating names
 		task.updateAllNames();
 		// checking if staining flag of the task object has to be false
-		task.getStatus().updateStainingStatus();
+		slideHandlerAction.updateStainingStatus(task, false);
 		// generating gui list
 		task.generateSlideGuiList();
 		// saving patient
@@ -345,7 +340,7 @@ public class TaskHandlerAction implements Serializable {
 		}
 
 		// checking if staining flag of the task object has to be false
-		sample.getParent().getStatus().updateStainingStatus();
+		slideHandlerAction.updateStainingStatus(sample.getParent(), false);
 		// generating gui list
 		sample.getParent().generateSlideGuiList();
 		// saving patient
@@ -389,7 +384,7 @@ public class TaskHandlerAction implements Serializable {
 					parent.getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.getParent().getParent().getStatus().updateStainingStatus();
+			slideHandlerAction.updateStainingStatus(parent.getParent().getParent(), false);
 			// generating gui list
 			parent.getParent().getParent().generateSlideGuiList();
 
@@ -412,7 +407,7 @@ public class TaskHandlerAction implements Serializable {
 					toDeleteBlock.getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.getParent().getStatus().updateStainingStatus();
+			slideHandlerAction.updateStainingStatus(parent.getParent(), false);
 			// generating gui list
 			parent.getParent().generateSlideGuiList();
 
@@ -436,7 +431,7 @@ public class TaskHandlerAction implements Serializable {
 					toDeleteSample.getParent().getPatient());
 
 			// checking if staining flag of the task object has to be false
-			parent.getStatus().updateStainingStatus();
+			slideHandlerAction.updateStainingStatus(parent, false);
 			// generating gui list
 			parent.generateSlideGuiList();
 		}

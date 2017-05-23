@@ -143,12 +143,23 @@
 				</p:tab>
 				<!-- ************************************************************** Static Lists ************************************************************** -->
 
-				<p:tab title="#{msg['dialog.settings.system']}">
+				<!-- ************************************************************** Favorite List ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.favouriteList']}">
+					<ui:fragment
+						rendered="#{settingsDialogHandler.favouriteListTabIndex eq 'F_LIST'}">
+						<ui:include src="favouriteList.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsDialogHandler.favouriteListTabIndex eq 'F_EDIT'}">
+						<ui:include src="favouriteListEdit.xhtml" />
+					</ui:fragment>
 				</p:tab>
+				<!-- ************************************************************** Favorite List ************************************************************** -->
 
-				<p:tab title="#{msg['dialog.settings.log']}"
+				<p:tab title="#{msg['dialog.settings.system']}"
 					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}">
 				</p:tab>
+
 				<!-- ************************************************************** Log ************************************************************** -->
 				<p:tab title="#{msg['dialog.settings.log']}">
 					<!-- 

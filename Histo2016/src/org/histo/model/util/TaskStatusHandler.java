@@ -13,34 +13,34 @@ public class TaskStatusHandler {
 		this.task = task;
 	}
 
-	public boolean updateStainingStatus() {
-		return updateStainingStatus(false);
-	}
+//	public boolean updateStainingStatus() {
+//		return updateStainingStatus(false);
+//	}
 
-	public boolean updateStainingStatus(boolean stayInPhase) {
-		logger.trace("Method: hasStatingStatusChanged()");
-
-		// staining was performed
-		if (isStainingPerformed() && task.getStainingCompletionDate() == 0) {
-			// setting phase
-			logger.trace("Status has changed: Staining performed and no date set");
-			task.setStainingCompletionDate(System.currentTimeMillis());
-			task.setStainingPhase(stayInPhase);
-			task.setDiagnosisPhase(true);
-		} else if (!isStainingPerformed() && task.getStainingCompletionDate() != 0) {
-			// new stainings created, set completion date to 0
-			logger.trace("Status has changed: Staining was performed, new slides are avalibale");
-			task.setStainingCompletionDate(0);
-			task.setStainingPhase(true);
-		} else {
-			// status has not changed
-			logger.trace("Stainingstatus has not changed (Staining performed: " + isStainingPerformed()
-					+ ") (CompletionDate: " + task.getStainingCompletionDate() + ")");
-			return false;
-		}
-		return true;
-
-	}
+//	public boolean updateStainingStatus(boolean stayInPhase) {
+//		logger.trace("Method: hasStatingStatusChanged()");
+//
+//		// staining was performed
+//		if (isStainingPerformed() && task.getStainingCompletionDate() == 0) {
+//			// setting phase
+//			logger.trace("Status has changed: Staining performed and no date set");
+//			task.setStainingCompletionDate(System.currentTimeMillis());
+//			task.setStainingPhase(stayInPhase);
+//			task.setDiagnosisPhase(true);
+//		} else if (!isStainingPerformed() && task.getStainingCompletionDate() != 0) {
+//			// new stainings created, set completion date to 0
+//			logger.trace("Status has changed: Staining was performed, new slides are avalibale");
+//			task.setStainingCompletionDate(0);
+//			task.setStainingPhase(true);
+//		} else {
+//			// status has not changed
+//			logger.trace("Stainingstatus has not changed (Staining performed: " + isStainingPerformed()
+//					+ ") (CompletionDate: " + task.getStainingCompletionDate() + ")");
+//			return false;
+//		}
+//		return true;
+//
+//	}
 
 	public boolean updateDiagnosisStatus(boolean performed, boolean stayInPhase) {
 		logger.trace("Method: updateDiagnosisStatus(boolean performed, boolean stayInPhase)");

@@ -59,7 +59,7 @@ INSERT INTO materialpreset VALUES (31, '', 31, 'Orbitagewebe');
 INSERT INTO materialpreset VALUES (32, '', 32, 'kein Material');
 INSERT INTO materialpreset VALUES (33, '', 33, 'Paraffinblock');
 INSERT INTO materialpreset VALUES (34, '', 34, 'Schnitte');
-INSERT INTO materialpreset VALUES (35, '', 0, 'Keines Ausgewählt');
+INSERT INTO materialpreset VALUES (35, '', 0, 'Keine Ausgewählt');
 
 SELECT setval('materialPreset_sequence', (SELECT MAX(id) FROM materialpreset));
 
@@ -131,6 +131,8 @@ INSERT INTO materialpreset_stainingprototype VALUES (33, 9);
 INSERT INTO materialpreset_stainingprototype VALUES (33, 11);
 INSERT INTO materialpreset_stainingprototype VALUES (34, 9);
 INSERT INTO materialpreset_stainingprototype VALUES (34, 11);
+INSERT INTO materialpreset_stainingprototype VALUES (35, 9);
+INSERT INTO materialpreset_stainingprototype VALUES (35, 11);
 
 -- history
 INSERT INTO listitem VALUES (1, false, 0, 1, 'V. a. Chalazion');
@@ -235,3 +237,13 @@ INSERT INTO diagnosispreset VALUES (49, '', '', 'Xanthelasma', '', 'D23.1', 48, 
 INSERT INTO diagnosispreset VALUES (47, '', '', 'Epidermiszyste', '', 'D23.1', 46, false);
 
 SELECT setval('diagnosisPreset_sequence', (SELECT MAX(id) FROM diagnosispreset));
+
+INSERT INTO favouritelist VALUES (1, true, false, false, 'Staininglist', NULL);
+INSERT INTO favouritelist VALUES (2, true, false, false, 'Diagnosislist', NULL);
+INSERT INTO favouritelist VALUES (3, true, false, false, 'Notification ist', NULL);
+INSERT INTO favouritelist VALUES (4, true, false, false, 'ReStaininglist', NULL);
+INSERT INTO favouritelist VALUES (5, true, false, false, 'ReDiagnosislist', NULL);
+INSERT INTO favouritelist VALUES (6, true, false, false, 'Stay in Staininglist', NULL);
+INSERT INTO favouritelist VALUES (7, true, false, false, 'Stay in Diagnosislist', NULL);
+
+SELECT setval('favouritelist_sequence', (SELECT MAX(id) FROM favouritelist));

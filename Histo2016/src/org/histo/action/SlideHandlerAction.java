@@ -11,7 +11,9 @@ import org.histo.config.HistoSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.StainingListAction;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.SettingsDAO;
+import org.histo.model.FavouriteList;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
@@ -21,6 +23,7 @@ import org.histo.ui.ListChooser;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.printer.PrintTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
@@ -44,6 +47,12 @@ public class SlideHandlerAction implements Serializable {
 	@Autowired
 	private SettingsHandler settingsHandler;
 
+	@Autowired
+	private FavouriteListDAO favouriteListDAO;
+
+	@Autowired
+	@Lazy
+	private SlideHandlerAction slideHandlerAction;
 	/**
 	 * Temporary task object, for finalizing stainigs
 	 */
@@ -77,6 +86,36 @@ public class SlideHandlerAction implements Serializable {
 	 * used for adding new staings to block
 	 */
 	private boolean slideRestaining;
+
+	public boolean updateStainingStatus(Task task, boolean stayInPhase) {
+		logger.trace("Method: hasStatingStatusChanged()");
+
+		// staining was performed
+		if (task.isStainingPerformed() && task.getStainingCompletionDate() == 0) {
+			// setting phase
+			logger.trace("Status has changed: Staining performed and no date set");
+			task.setStainingCompletionDate(System.currentTimeMillis());
+			task.setDiagnosisPhase(true);
+
+			if (stayInPhase)
+				favouriteListDAO.addTaskToList(task, FavouriteList.StainingList_ID);
+			else
+				favouriteListDAO.removeTaskFromList(task, FavouriteList.StainingList_ID);
+
+		} else if (!task.isStainingPerformed() && task.getStainingCompletionDate() != 0) {
+			// new stainings created, set completion date to 0
+			logger.trace("Status has changed: Staining was performed, new slides are avalibale");
+			task.setStainingCompletionDate(0);
+			favouriteListDAO.addTaskToList(task, FavouriteList.StainingList_ID);
+		} else {
+			// status has not changed
+			logger.trace("Stainingstatus has not changed (Staining performed: " + task.isStainingPerformed()
+					+ ") (CompletionDate: " + task.getStainingCompletionDate() + ")");
+			return false;
+		}
+		return true;
+
+	}
 
 	/********************************************************
 	 * Create new slide
@@ -154,7 +193,7 @@ public class SlideHandlerAction implements Serializable {
 
 		// if staining is needed set the staining flag of the task object to
 		// true
-		getTemporaryBlock().getTask().getStatus().updateStainingStatus();
+		slideHandlerAction.updateStainingStatus(getTemporaryBlock().getTask(), false);
 
 		// updating statining list
 		getTemporaryBlock().getTask().generateSlideGuiList();
@@ -353,7 +392,7 @@ public class SlideHandlerAction implements Serializable {
 		}
 
 		// if task has changed
-		if (task.getStatus().updateStainingStatus()) {
+		if (slideHandlerAction.updateStainingStatus(getTemporaryBlock().getTask(), false)) {
 			logger.trace("Status has changed!");
 			if (task.getStatus().isStainingPerformed()) {
 				// staining is now performed
@@ -386,8 +425,14 @@ public class SlideHandlerAction implements Serializable {
 		logger.trace("Method: hideStainingPhaseLeave(boolean stayInPhase)");
 		if (stayInPhase) {
 			logger.debug("StayInPhase is true");
-			getTemporaryTask().setStainingPhase(true);
-			mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
+			// getTemporaryTask().setStainingPhase(true);
+			// mainHandlerAction.saveDataChange(getTemporaryTask(),
+			// "log.patient.task.change.stainingPhase.forced");
+
+			if (!favouriteListDAO.addTaskToList(getTemporaryTask(), FavouriteList.StainingList_ID)) {
+				// TODO hide dilaog
+				logger.debug("Could not save");
+			}
 		}
 		hideDialog(Dialog.STAINING_PHASE_LEAVE);
 	}
@@ -424,9 +469,12 @@ public class SlideHandlerAction implements Serializable {
 			getTemporaryTask().setDiagnosisPhase(true);
 		}
 
-		temporaryTask.setStainingPhase(false);
-
 		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.end");
+
+		if (!favouriteListDAO.removeTaskFromList(getTemporaryTask(), FavouriteList.StainingList_ID)) {
+			// TODO hide dilaog
+			logger.debug("Could not save");
+		}
 
 		hideDialog(Dialog.STAINING_PHASE_FORCE_LEAVE);
 	}
@@ -435,8 +483,14 @@ public class SlideHandlerAction implements Serializable {
 	 * Adds the task to the stating list, even if all stanings are completed
 	 */
 	public void forceEnterStainingPhaseAndHideDialog() {
-		getTemporaryTask().setStainingPhase(true);
-		mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.change.stainingPhase.forced");
+		// getTemporaryTask().setStainingPhase(true);
+		// mainHandlerAction.saveDataChange(getTemporaryTask(),
+		// "log.patient.task.change.stainingPhase.forced");
+
+		if (!favouriteListDAO.addTaskToList(getTemporaryTask(), FavouriteList.StainingList_ID)) {
+			// TODO hide dilaog
+			logger.debug("Could not save");
+		}
 		hideDialog(Dialog.STAINING_PHASE_FORCE_ENTER);
 	}
 

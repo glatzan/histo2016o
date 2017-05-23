@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -147,11 +148,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	private long notificationCompletionDate = 0;
 
 	/**
-	 * True if staining has to be performed
-	 */
-	private boolean stainingPhase;
-
-	/**
 	 * True if diagnosis has to be done
 	 */
 	private boolean diagnosisPhase;
@@ -195,7 +191,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 * List of all favorite Lists in which the task is listed
 	 */
 	private List<FavouriteList> favouriteLists;
-	
+
 	private Accounting accounting;
 
 	/********************************************************
@@ -365,6 +361,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.id = id;
 	}
 
+	// TODO fetch lazy
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
@@ -519,7 +516,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OrderBy("dateOfRequest DESC")
 	@Fetch(value = FetchMode.SUBSELECT)
 	public List<Council> getCouncils() {
@@ -530,7 +527,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.councils = councils;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@NotAudited
 	public List<FavouriteList> getFavouriteLists() {
@@ -550,7 +547,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.accounting = accounting;
 	}
 
-	@OneToOne(mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY)
 	public DiagnosisContainer getDiagnosisContainer() {
 		return diagnosisContainer;
 	}
@@ -567,20 +564,12 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.useAutoNomenclature = useAutoNomenclature;
 	}
 
-	public boolean isStainingPhase() {
-		return stainingPhase;
-	}
-
 	public boolean isDiagnosisPhase() {
 		return diagnosisPhase;
 	}
 
 	public boolean isNotificationPhase() {
 		return notificationPhase;
-	}
-
-	public void setStainingPhase(boolean stainingPhase) {
-		this.stainingPhase = stainingPhase;
 	}
 
 	public void setDiagnosisPhase(boolean diagnosisPhase) {
@@ -754,6 +743,20 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 
 	public void setStatus(TaskStatusHandler status) {
 		this.status = status;
+	}
+
+	@Transient
+	public boolean isStainingPhase() {
+		return isListedInFavouriteList(FavouriteList.StainingList_ID);
+	}
+	
+	@Transient
+	public boolean isListedInFavouriteList(long id) {
+		for (FavouriteList favouriteList : getFavouriteLists()) {
+			if (favouriteList.getId() == id)
+				return true;
+		}
+		return false;
 	}
 
 	/********************************************************

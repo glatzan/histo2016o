@@ -8,6 +8,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
+import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
 import org.histo.model.Physician;
@@ -34,7 +35,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	private PrintDialogHandler printDialogHandler;
 
 	@Autowired
-	private UtilDAO utilDAO;
+	private TaskDAO taskDAO;
 	
 	private Council council;
 
@@ -66,7 +67,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initBean(Task task) {
-		super.initBean((Task) utilDAO.initializeDataList(task), Dialog.COUNCIL);
+		super.initBean(taskDAO.getTask(task.getId(), true), Dialog.COUNCIL);
 
 		setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
 
