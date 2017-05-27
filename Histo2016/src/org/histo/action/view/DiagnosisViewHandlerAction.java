@@ -22,7 +22,11 @@ import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
+@Controller
+@Scope("session")
 public class DiagnosisViewHandlerAction {
 
 	private static Logger logger = Logger.getLogger("org.histo");

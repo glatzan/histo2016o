@@ -344,7 +344,7 @@
 											id="blockIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered((stainingRow.block,true)}"
+											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered(stainingRow.block,true)}"
 											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
 
@@ -391,7 +391,7 @@
 											id="slideIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered((stainingRow.staining,true)}"
+											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered(stainingRow.staining,true)}"
 											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
 

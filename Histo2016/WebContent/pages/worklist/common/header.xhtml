@@ -24,8 +24,6 @@
 	<c:set var="taskIsNotNull" scope="request"
 		value="#{selectedPatient ne null and selectedTask ne null }" />
 
-	<c:set var="taskStatus" scope="request" value="#{selectedTask.status}" />
-
 	<h:panelGrid columns="2"
 		styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 		style="width:100%">
@@ -184,7 +182,7 @@
 					<!-- Enter phase to unfinalize all diagnoses -->
 					<p:menuitem
 						value="#{msg['header.menu.task.sample.diagnosisPhase.force.enter2']}"
-						disabled="#{taskStatus.finalized}" icon="fa fa-fw fa-eye"
+						disabled="#{selectedTask.finalized}" icon="fa fa-fw fa-eye"
 						onclick="$('#headerForm\\:diagnosisPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{taskIsNotNull and !selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList' , 'StayInDiagnosisList')}" />
 
@@ -208,14 +206,14 @@
 					<!-- medical findings -->
 					<p:menuitem value="#{msg['header.menu.task.sample.notification']}"
 						icon="fa fa-volume-up"
-						disabled="#{commonDataHandlerAction.selectedTask eq null or !taskStatus.notificationPhase}"
+						disabled="#{commonDataHandlerAction.selectedTask eq null}"
 						rendered="#{commonDataHandlerAction.selectedPatient ne null}"
 						onclick="$('#headerForm\\:medicalFindingsContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
 					<!-- un finalize task -->
 					<p:menuitem value="#{msg['header.menu.task.sample.unFinalize']}"
-						disabled="#{!taskStatus.finalized}" icon="fa fa-key"
+						disabled="#{!selectedTask.finalized}" icon="fa fa-key"
 						rendered="#{commonDataHandlerAction.selectedTask ne null}" />
 
 					<!-- ************ Notification ************ -->

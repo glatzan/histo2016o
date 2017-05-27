@@ -251,23 +251,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list of patients deepening on the diagnosis phase.
-	 * 
-	 * @param fromDate
-	 * @param toDate
-	 * @param completed
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientByDiagnosis(boolean inPhase) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-		query.createAlias("patient.tasks", "_tasks");
-		query.add(Restrictions.eq("_tasks.diagnosisPhase", inPhase));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return query.getExecutableCriteria(getSession()).list();
-	}
-
-	/**
 	 * Returns a list of patients for that the notification had been completed
 	 * within the time period. Don't start with zero.
 	 * 
@@ -282,24 +265,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.createAlias("patient.tasks", "_tasks");
 		query.add(Restrictions.ge("_tasks.diagnosisCompletionDate", fromDate))
 				.add(Restrictions.le("_tasks.diagnosisCompletionDate", toDate));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return query.getExecutableCriteria(getSession()).list();
-	}
-
-	/**
-	 * Returns patient deepening on the phase.
-	 * 
-	 * @param fromDate
-	 * @param toDate
-	 * @param completed
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientByNotification(boolean inPhase) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-
-		query.createAlias("patient.tasks", "_tasks");
-		query.add(Restrictions.eq("_tasks.notificationPhase", inPhase));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}

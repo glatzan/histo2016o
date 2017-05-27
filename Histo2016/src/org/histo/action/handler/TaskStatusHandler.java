@@ -77,7 +77,7 @@ public class TaskStatusHandler {
 	 * 
 	 * @return
 	 */
-	public List<Task> getActivTasks(Patient patient) {
+	public List<Task> getActiveTasks(Patient patient) {
 		return patient.getTasks().stream().filter(p -> isActiveOrActionPending(p)).collect(Collectors.toList());
 	}
 

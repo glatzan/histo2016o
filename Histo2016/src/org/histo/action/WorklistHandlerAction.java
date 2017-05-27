@@ -481,23 +481,26 @@ public class WorklistHandlerAction implements Serializable {
 		case DIAGNOSIS_LIST:
 			logger.debug("Diagnosis list selected");
 			// getting diagnoses an re_diagnoses
-			if (searchOptions.isStaining_diagnosis() && searchOptions.isStaining_rediagnosis()) {
-				result.addAll(patientDao.getPatientByDiagnosis(true));
-			} else {
-				List<Patient> paints = patientDao.getPatientByDiagnosis(true);
-				for (Patient patient : paints) {
+			search = new ArrayList<Long>();
 
-					if (searchOptions.isStaining_diagnosis() && patient.isDiagnosisNeeded()) {
-						result.add(patient);
-					} else if (searchOptions.isStaining_rediagnosis() && patient.isReDiagnosisNeeded()) {
-						result.add(patient);
-					}
-				}
-			}
+			if (searchOptions.isStaining_diagnosis())
+				search.add((long) PredefinedFavouriteList.DiagnosisList.getId());
+
+			if (searchOptions.isStaining_rediagnosis())
+				search.add((long) PredefinedFavouriteList.ReDiagnosisList.getId());
+
+			search.add((long) PredefinedFavouriteList.StayInDiagnosisList.getId());
+
+			result.addAll(patientDao.getPatientByTaskList(search));
+
 			break;
 		case NOTIFICATION_LIST:
 			logger.debug("Notification list selected");
-			result.addAll(patientDao.getPatientByNotification(true));
+			search = new ArrayList<Long>();
+			search.add((long) PredefinedFavouriteList.NotificationList.getId());
+			search.add((long) PredefinedFavouriteList.StayInNotificationList.getId());
+
+			result.addAll(patientDao.getPatientByTaskList(search));
 			break;
 		case TODAY:
 			logger.debug("Today selected");
@@ -708,9 +711,9 @@ public class WorklistHandlerAction implements Serializable {
 			@Override
 			public int compare(Patient patientOne, Patient patientTwo) {
 				Task highestPriorityOne = taskStatusHandler.hasActiveTasks(patientOne)
-						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActivTasks(patientOne)) : null;
+						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActiveTasks(patientOne)) : null;
 				Task highestPriorityTwo = taskStatusHandler.hasActiveTasks(patientTwo)
-						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActivTasks(patientTwo)) : null;
+						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActiveTasks(patientTwo)) : null;
 
 				if (highestPriorityOne == null && highestPriorityTwo == null)
 					return 0;
@@ -741,8 +744,10 @@ public class WorklistHandlerAction implements Serializable {
 		Collections.sort(patiens, new Comparator<Patient>() {
 			@Override
 			public int compare(Patient patientOne, Patient patientTwo) {
-				Task lastTaskOne = taskStatusHandler.hasActiveTasks(patientOne) ? taskStatusHandler.getActivTasks(patientOne).get(0) : null;
-				Task lastTaskTwo = taskStatusHandler.hasActiveTasks(patientTwo) ? taskStatusHandler.getActivTasks(patientTwo).get(0) : null;
+				Task lastTaskOne = taskStatusHandler.hasActiveTasks(patientOne)
+						? taskStatusHandler.getActiveTasks(patientOne).get(0) : null;
+				Task lastTaskTwo = taskStatusHandler.hasActiveTasks(patientTwo)
+						? taskStatusHandler.getActiveTasks(patientTwo).get(0) : null;
 
 				if (lastTaskOne == null && lastTaskTwo == null)
 					return 0;

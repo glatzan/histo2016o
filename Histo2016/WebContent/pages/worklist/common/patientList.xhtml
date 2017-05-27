@@ -116,11 +116,11 @@
 					</p:column>
 					<p:column>
 						<!-- no tasks -->
-						<h:outputLabel rendered="#{patient.hasActiveTasks(patient)}"
+						<h:outputLabel rendered="#{taskStatusHandler.hasActiveTasks(patient)}"
 							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
 						<!-- task list -->
-						<p:repeat var="task" value="#{patient.getActiveTasks(patient)}">
+						<p:repeat var="task" value="#{taskStatusHandler.getActiveTasks(patient)}">
 							<p:commandLink
 								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
