@@ -50,6 +50,11 @@ public class MaterialPreset implements EditAbleEntity<MaterialPreset>, ListOrder
 		update(stainingPrototypeList);
 	}
 
+	@Override
+	public String toString() {
+		return "ID: " + getId() + " Name: " + getName();
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

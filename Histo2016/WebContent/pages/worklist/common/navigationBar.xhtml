@@ -10,31 +10,31 @@
 	<!-- Navigation Bar -->
 	<h:panelGrid columns="2" styleClass="navigation">
 		<h:panelGroup
-			rendered="#{worklistHandlerAction.selectedPatient ne null}">
+			rendered="#{commonDataHandlerAction.selectedPatient ne null}">
 
 			<!-- Name -->
 			<h:commandLink update="navigationForm contentForm"
-				actionListener="#{worklistHandlerAction.onDeselectTask(worklistHandlerAction.selectedPatient)}">
+				actionListener="#{worklistHandlerAction.onDeselectTask(commonDataHandlerAction.selectedPatient)}">
 				<h:outputFormat value="#{msg['bodyNavigationOverview']}"
 					styleClass="navigationText">
 					<f:param
-						value="#{worklistHandlerAction.selectedPatient.person.name}" />
+						value="#{commonDataHandlerAction.selectedPatient.person.name}" />
 					<f:param
-						value="#{worklistHandlerAction.selectedPatient.person.surname}" />
-					<f:param value="#{worklistHandlerAction.selectedPatient.piz}" />
+						value="#{commonDataHandlerAction.selectedPatient.person.surname}" />
+					<f:param value="#{commonDataHandlerAction.selectedPatient.piz}" />
 				</h:outputFormat>
 			</h:commandLink>
 
 			<!-- Auftrag -->
 			<h:commandLink
-				rendered="#{worklistHandlerAction.selectedPatient ne null and worklistHandlerAction.selectedPatient.selectedTask ne null}"
-				actionListener="#{worklistHandlerAction.onDeselectTask(worklistHandlerAction.selectedPatient)}">
+				rendered="#{commonDataHandlerAction.selectedPatient ne null and commonDataHandlerAction.selectedTask ne null}"
+				actionListener="#{worklistHandlerAction.onDeselectTask(commonDataHandlerAction.selectedPatient)}">
 				<h:outputFormat value="#{msg['bodyNavigationTask']}"
 					styleClass="navigationText">
 					<f:param
-						value="#{mainHandlerAction.date(worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate)}" />
+						value="#{mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfReceiptAsDate)}" />
 					<f:param
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.taskID}" />
+						value="#{commonDataHandlerAction.selectedTask.taskID}" />
 				</h:outputFormat>
 			</h:commandLink>
 

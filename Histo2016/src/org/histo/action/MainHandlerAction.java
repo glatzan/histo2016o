@@ -48,6 +48,9 @@ public class MainHandlerAction {
 
 	@Autowired
 	private SettingsHandler settingsHandler;
+	
+	@Autowired
+	private WorklistHandlerAction worklistHandlerAction;
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
@@ -80,6 +83,7 @@ public class MainHandlerAction {
 		navigationPages = new ArrayList<View>();
 
 		settingsHandler.initBean();
+		worklistHandlerAction.initBean();
 		
 		// TODO REMOVE
 		setSettings(HistoSettings.factory(this));
@@ -332,17 +336,6 @@ public class MainHandlerAction {
 	 * Save
 	 ********************************************************/
 
-	/**
-	 * Replaces wildcards in resoucesString.
-	 * 
-	 * @param baseStr
-	 * @param arr
-	 * @return
-	 */
-	public String replaceWildcard(String baseStr, Object... arr) {
-		return resourceBundle.get(baseStr, arr);
-	}
-
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -368,7 +361,6 @@ public class MainHandlerAction {
 	}
 
 	public void setQueueDialog(String queueDialog) {
-		System.out.println("----> Setting Quwuw " + queueDialog);
 		this.queueDialog = queueDialog;
 	}
 

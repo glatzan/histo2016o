@@ -38,30 +38,30 @@
 
 					<!-- Task number -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
-					<h:outputLabel value="#{createTaskDialogHandler.task.taskID}"></h:outputLabel>
+					<h:outputLabel value="#{createTaskDialog.task.taskID}"></h:outputLabel>
 
 					<!-- Task Date -->
 
 					<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
 						styleClass="smallInput"
-						value="#{createTaskDialogHandler.task.dateOfReceiptAsDate}">
+						value="#{createTaskDialog.task.dateOfReceiptAsDate}">
 					</p:calendar>
 
 					<!-- Auto nomenclature -->
 					<h:outputLabel value="#{msg['dialog.createTask.autoNomenclature']}" />
 					<p:selectBooleanCheckbox id="autoNomenclature"
 						title="#{msg['dialog.createTask.autoNomenclature.text']}"
-						value="#{createTaskDialogHandler.task.useAutoNomenclature}">
+						value="#{createTaskDialog.task.useAutoNomenclature}">
 						<p:ajax
-							listener="#{taskHandlerAction.manuallyChangeAutoNomenclature()}"></p:ajax>
+							listener="#{createTaskDialog.manuallyChangeAutoNomenclature()}"></p:ajax>
 					</p:selectBooleanCheckbox>
 
 					<!-- priority -->
 					<h:outputLabel value="#{msg['dialog.createTask.priority']}" />
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:selectOneRadio id="console"
-							value="#{createTaskDialogHandler.task.taskPriority}">
+							value="#{createTaskDialog.task.taskPriority}">
 							<f:selectItem itemLabel="#{msg['enum.taskPriority.LOW']}"
 								itemValue="NONE" />
 							<f:selectItem itemLabel="#{msg['enum.taskPriority.HIGHT']}"
@@ -77,8 +77,8 @@
 								value="#{msg['dialog.createTask.priority.dueDate']}" />
 							<p:calendar pattern="dd.MM.yyyy" mask="true"
 								styleClass="smallInput"
-								disabled="#{!createTaskDialogHandler.task.dueDateSelected}"
-								value="#{createTaskDialogHandler.task.dueDateAsDate}">
+								disabled="#{!createTaskDialog.task.dueDateSelected}"
+								value="#{createTaskDialog.task.dueDateAsDate}">
 							</p:calendar>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -93,7 +93,7 @@
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
 							<p:commandLink
-								actionListener="#{mediaDialogHandler.prepareMediaDisplaySelectDialog(createTaskDialogHandler.patient)}">
+								actionListener="#{mediaDialogHandler.prepareMediaDisplaySelectDialog(createTaskDialog.patient)}">
 								<p:ajax event="dialogReturn" update="@form" process="@form" />
 								<i class="fa fa-search icon-grey"></i>
 							</p:commandLink>
@@ -110,7 +110,7 @@
 								value="#{msg['dialog.createTask.moveInformedConsent']}" />
 							<p:selectBooleanCheckbox
 								title="#{msg['dialog.createTask.moveInformedConsent.hint']}"
-								value="#{createTaskDialogHandler.moveInformedConsent}">
+								value="#{createTaskDialog.moveInformedConsent}">
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
 
@@ -128,7 +128,7 @@
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
 							<p:selectOneMenu id="consentType" styleClass="smallInput"
-								value="#{createTaskDialogHandler.bioBank.informedConsentType}"
+								value="#{createTaskDialog.bioBank.informedConsentType}"
 								disabled="#{mediaDialogHandler.selectedPdfContainer == null}">
 								<f:selectItems value="#{enumProvider.informedConsentTypes}"
 									var="type"
@@ -154,18 +154,18 @@
 						<!-- samplecount -->
 						<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
 						<p:spinner id="basic"
-							value="#{createTaskDialogHandler.sampleCount}"
+							value="#{createTaskDialog.sampleCount}"
 							styleClass="taskSpinner" min="1" max="5">
 							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
 								event="change"
-								listener="#{createTaskDialogHandler.updateDialog()}"></p:ajax>
+								listener="#{createTaskDialog.updateDialog()}"></p:ajax>
 						</p:spinner>
 
 
 					</h:panelGrid>
 					<p:dataTable var="sample" id="sampleMaterial"
 						styleClass="smallPaddingAll noBordersAll hide-column-names standardFont"
-						value="#{createTaskDialogHandler.task.samples}">
+						value="#{createTaskDialog.task.samples}">
 						<p:column style="width: 40px;">
 							<ul style="margin: 0px;">
 								<LI style="margin: 0px;" />
@@ -179,9 +179,9 @@
 						<p:column>
 							<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
 								style="margin-left:30px;"
-								converter="#{createTaskDialogHandler.materialListTransformer}"
+								converter="#{createTaskDialog.materialListTransformer}"
 								value="#{sample.materilaPreset}">
-								<f:selectItems value="#{createTaskDialogHandler.materialList}"
+								<f:selectItems value="#{createTaskDialog.materialList}"
 									var="materialSelect" itemLabel="#{materialSelect.name}"
 									itemValue="#{materialSelect}">
 								</f:selectItems>
@@ -202,9 +202,9 @@
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended">
 						<f:actionListener
-							binding="#{createTaskDialogHandler.createTask()}"></f:actionListener>
+							binding="#{createTaskDialog.createTask()}"></f:actionListener>
 						<f:actionListener
-							binding="#{createTaskDialogHandler.hideDialog()}"></f:actionListener>
+							binding="#{createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- print ureport -->
@@ -214,9 +214,9 @@
 						onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()">
 						<f:actionListener
-							binding="#{createTaskDialogHandler.createTaskAndPrintUReport()}"></f:actionListener>
+							binding="#{createTaskDialog.createTaskAndPrintUReport()}"></f:actionListener>
 						<f:actionListener
-							binding="#{createTaskDialogHandler.hideDialog()}"></f:actionListener>
+							binding="#{createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- select printer -->
@@ -235,7 +235,7 @@
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle">
 						<f:actionListener
-							binding="#{createTaskDialogHandler.hideDialog()}"></f:actionListener>
+							binding="#{createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>

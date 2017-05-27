@@ -1,9 +1,11 @@
-package org.histo.action.dialog;
+package org.histo.action.dialog.task;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.action.SlideHandlerAction;
+import org.histo.action.WorklistHandlerAction;
+import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.MediaDialogHandler;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -11,7 +13,9 @@ import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.InformedConsentType;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.SettingsDAO;
@@ -37,7 +41,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "session")
-public class CreateTaskDialogHandler extends AbstractDialog {
+public class CreateTaskDialog extends AbstractDialog {
 
 	@Autowired
 	private SettingsDAO settingsDAO;
@@ -60,12 +64,12 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	@Autowired
 	private PDFGeneratorHandler pDFGeneratorHandler;
 
-	@Autowired 
+	@Autowired
 	private FavouriteListDAO favouriteListDAO;
-	
-	@Autowired 
-	private SlideHandlerAction slideHandlerAction;
-	
+
+	@Autowired
+	private WorklistHandlerAction worklistHandlerAction;
+
 	private Patient patient;
 
 	private List<MaterialPreset> materialList;
@@ -96,7 +100,14 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	 * @param patient
 	 */
 	public void initBean(Patient patient) {
-		setPatient(genericDAO.refresh(patient));
+		try {
+			setPatient(genericDAO.refresh(patient));
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			logger.debug("!! Version inconsistent with Database updating");
+			setPatient(patientDao.getPatient(patient.getId(), true));
+			worklistHandlerAction.updatePatientInCurrentWorklist(getPatient());
+		}
+
 		super.initBean(new Task(getPatient()), Dialog.TASK_CREATE);
 
 		// setting material list
@@ -171,91 +182,89 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 	 * Creates a new Task object and calls createBiobak at the end.
 	 */
 	public void createTask() {
-		if (getPatient().getTasks() == null) {
-			getPatient().setTasks(new ArrayList<>());
-		}
-
-		getPatient().getTasks().add(0, getTask());
-		// sets the new task as the selected task
-		getPatient().setSelectedTask(getTask());
-
-		// saving task
-		if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.new", task.getTaskID())) {
-			onDatabaseVersionConflict();
-			return;
-		}
-
-		getTask().setDiagnosisContainer(new DiagnosisContainer(task));
-		getTask().getDiagnosisContainer().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
-
-		// setting signature
-		getTask().getDiagnosisContainer().setSignatureOne(new Signature());
-		getTask().getDiagnosisContainer().setSignatureTwo(new Signature());
-
-		getTask().setCaseHistory("");
-		getTask().setWard("");
-
-//		getTask().setStainingPhase(true);
-
-		getTask().setCouncils(new ArrayList<Council>());
-		
-		getTask().setFavouriteLists(new ArrayList<FavouriteList>());
-
-		// saving diagnosis container
-		if (!patientDao.savePatientAssociatedDataFailSave(task.getDiagnosisContainer(),
-				"log.patient.task.diagnosisContainer.new", task.getTaskID())) {
-			onDatabaseVersionConflict();
-			return;
-		}
-
-		for (Sample sample : getTask().getSamples()) {
-			// set name of material for changing it manually
-			sample.setMaterial(sample.getMaterilaPreset().getName());
-
-			// saving samples
-			if (!patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.new",
-					sample.getSampleID())) {
-				onDatabaseVersionConflict();
-				return;
+		try {
+			if (getPatient().getTasks() == null) {
+				getPatient().setTasks(new ArrayList<>());
 			}
 
-			// creating needed blocks
-			// TODO: save for version conflict
-			taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
+			getPatient().getTasks().add(0, getTask());
+			// sets the new task as the selected task
 
-			// saving the sample
-			// saving samples
-			if (!patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.update",
-					sample.getSampleID())) {
-				onDatabaseVersionConflict();
-				return;
+			// saving task
+			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.new", task.getTaskID());
+
+			getTask().setDiagnosisContainer(new DiagnosisContainer(task));
+			getTask().getDiagnosisContainer().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
+
+			// setting signature
+			getTask().getDiagnosisContainer().setSignatureOne(new Signature());
+			getTask().getDiagnosisContainer().setSignatureTwo(new Signature());
+
+			getTask().setCaseHistory("");
+			getTask().setWard("");
+
+			getTask().setCouncils(new ArrayList<Council>());
+
+			getTask().setFavouriteLists(new ArrayList<FavouriteList>());
+
+			// saving diagnosis container
+			patientDao.savePatientAssociatedDataFailSave(task.getDiagnosisContainer(),
+					"log.patient.task.diagnosisContainer.new", task.getTaskID());
+
+			for (Sample sample : getTask().getSamples()) {
+				// set name of material for changing it manually
+				sample.setMaterial(sample.getMaterilaPreset().getName());
+
+				// saving samples
+				patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.new",
+						sample.getSampleID());
+				// creating needed blocks
+				// TODO: save for version conflict
+				taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
+
+				// saving the sample
+				// saving samples
+				patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.update",
+						sample.getSampleID());
 			}
-		}
 
-		// creating standard diagnoses
-		taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(), DiagnosisRevisionType.DIAGNOSIS);
+			// creating standard diagnoses
+			taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(),
+					DiagnosisRevisionType.DIAGNOSIS);
 
-		slideHandlerAction.updateStainingStatus(getTask(), false);
-		// generating gui list
-		getTask().generateSlideGuiList();
-		// saving patient
+			// generating gui list
+			getTask().generateSlideGuiList();
 
-		// creating bioBank for Task
-		createBioBank();
-		
-		if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.edit", task.getTaskID())) {
+			// creating bioBank for Task
+			bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
+			patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.save");
+
+			PDFContainer selectedPDF = mediaDialogHandler.getSelectedPdfContainer();
+			if (selectedPDF != null) {
+				// attaching pdf to biobank
+				bioBank.getAttachedPdfs().add(selectedPDF);
+
+				patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.bioBank.pdf.attached",
+						selectedPDF.getName());
+
+				// and task
+				getTask().setAttachedPdfs(new ArrayList<PDFContainer>());
+				getTask().getAttachedPdfs().add(selectedPDF);
+
+				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.pdf.attached");
+
+				patient.getAttachedPdfs().remove(selectedPDF);
+				patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.pdf.removed",
+						selectedPDF.getName());
+			}
+
+			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.edit", task.getTaskID());
+			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StainingList);
+
+			patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.save");
+
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
-		}
-		
-		if(!favouriteListDAO.addTaskToList(getTask(), FavouriteList.StainingList_ID)){
-			onDatabaseVersionConflict();
-			return;
-		}
-		
-		if (!patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.save")) {
-			onDatabaseVersionConflict();
-			return;
 		}
 	}
 
@@ -275,49 +284,6 @@ public class CreateTaskDialogHandler extends AbstractDialog {
 		// printing u report
 		PDFContainer newPdf = pDFGeneratorHandler.generateUReport(subSelect[0], task.getPatient(), task);
 		settingsHandler.getSelectedPrinter().print(newPdf);
-	}
-
-	/**
-	 * Creates a BioBank object, an if in gui selected, the informed consent
-	 * will be copied to the task and the biobank object.
-	 */
-	public void createBioBank() {
-		bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
-
-		if (!patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.save")) {
-			onDatabaseVersionConflict();
-			return;
-		}
-
-		PDFContainer selectedPDF = mediaDialogHandler.getSelectedPdfContainer();
-		if (selectedPDF != null) {
-			// attaching pdf to biobank
-			bioBank.getAttachedPdfs().add(selectedPDF);
-
-			if (!patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.bioBank.pdf.attached",
-					selectedPDF.getName())) {
-				onDatabaseVersionConflict();
-				return;
-			}
-
-			// and task
-			getTask().setAttachedPdfs(new ArrayList<PDFContainer>());
-			getTask().getAttachedPdfs().add(selectedPDF);
-
-			if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.pdf.attached")) {
-				onDatabaseVersionConflict();
-				return;
-			}
-		}
-
-		if (isMoveInformedConsent()) {
-			patient.getAttachedPdfs().remove(selectedPDF);
-			if (!patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.pdf.removed",
-					selectedPDF.getName())) {
-				onDatabaseVersionConflict();
-				return;
-			}
-		}
 	}
 
 	/**

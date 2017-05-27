@@ -25,14 +25,14 @@
 					value="#{msg['dialog.medicalFindings.tab.performed.resend']}"
 					icon="fa fa-fw fa-check-circle-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{medicalFindingsHandlerAction.reSendMedicialFindings()}"
+					actionListener="#{notificationDialog.reSendMedicialFindings()}"
 					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+					actionListener="#{notificationDialog.hideMedicalFindingsDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

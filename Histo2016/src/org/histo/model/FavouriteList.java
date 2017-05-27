@@ -25,17 +25,6 @@ import org.histo.model.interfaces.HasID;
 @SequenceGenerator(name = "favouritelist_sequencegenerator", sequenceName = "favouritelist_sequence")
 public class FavouriteList implements HasID {
 
-	public static final int StainingList_ID = 1;
-	public static final int DiagnosisList_ID = 2;
-	public static final int NotificationList_ID = 3;
-	
-	public static final int ReStainingList_ID = 4;
-	public static final int ReDiagnosisList_ID = 5;
-	
-	public static final int StayInStainingList_ID = 6;
-	public static final int StayInDiagnosisList_ID = 7;
-	
-	
 	private long id;
 	private HistoUser owner;
 	private String name;

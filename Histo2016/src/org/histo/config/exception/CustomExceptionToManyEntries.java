@@ -8,9 +8,6 @@ package org.histo.config.exception;
 */
 public class CustomExceptionToManyEntries extends Exception {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1276141793052183990L;
 
 	public CustomExceptionToManyEntries() {

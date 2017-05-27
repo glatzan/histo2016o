@@ -31,7 +31,7 @@
 			<p:dataTable var="staining"
 				styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll"
 				scrollable="true" scrollHeight="190"
-				value="#{slideHandlerAction.stainingListChooser}">
+				value="#{addSlidesDialogHandler.stainingListChooser}">
 				<p:column headerText="#{msg['dialog.addSlide.staining']}">
 					<h:outputLabel value="#{staining.listItem.name}" />
 				</p:column>
@@ -43,10 +43,11 @@
 
 			<h:panelGrid columns="2" style="width:100%">
 				<h:outputLabel value="#{msg['dialog.addSlide.commentray']}" />
-				<p:inputText value="#{slideHandlerAction.slideCommentary}"
+				<p:inputText value="#{addSlidesDialogHandler.commentary}"
 					styleClass="smallInput" style="width:90%"></p:inputText>
 				<h:outputLabel value="#{msg['dialog.addSlide.restaining']}" />
-				<p:selectBooleanCheckbox value="#{slideHandlerAction.slideRestaining}" />
+				<p:selectBooleanCheckbox
+					value="#{addSlidesDialogHandler.restaining}" />
 
 			</h:panelGrid>
 		</div>
@@ -58,12 +59,14 @@
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{slideHandlerAction.addSlidesFromGui()}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener binding="#{addSlidesDialogHandler.addSlides()}"></f:actionListener>
+						<f:actionListener binding="#{addSlidesDialogHandler.hideDialog()}"></f:actionListener>
+					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						actionListener="#{slideHandlerAction.hideDialog('SLIDE_CREATE')}"
+						actionListener="#{addSlidesDialogHandler.hideDialog()}"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"></p:commandButton>
 				</h:panelGrid>

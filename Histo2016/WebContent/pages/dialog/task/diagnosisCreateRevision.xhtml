@@ -34,22 +34,22 @@
 				<!-- names -->
 				<h:outputLabel value="#{msg['dialog.createDiagnosisRevision.type']}"></h:outputLabel>
 				<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-					value="#{diagnosisHandlerAction.newRevisionType}">
+					value="#{diagnosisRevisionDialog.newRevisionType}">
 
 					<f:selectItems
-						value="#{diagnosisHandlerAction.selectableRevisionTypes}"
+						value="#{diagnosisRevisionDialog.selectableRevisionTypes}"
 						var="type" itemLabel="#{msg['enum.diagnosisType.'.concat(type)]}"
 						itemValue="#{type}" />
 
 					<p:ajax update="@form"
-						listener="#{diagnosisHandlerAction.updateDiagnosisRevisionType()}"></p:ajax>
+						listener="#{diagnosisRevisionDialog.updateDiagnosisRevisionType()}"></p:ajax>
 
 				</p:selectOneMenu>
 				<!-- names -->
 				<h:outputLabel
 					value="#{msg['dialog.createDiagnosisRevision.diagnoses']}"></h:outputLabel>
 				<p:dataTable var="revision" scrollHeight="200" scrollable="true"
-					value="#{diagnosisHandlerAction.newRevisionList}">
+					value="#{diagnosisRevisionDialog.revisionList}">
 					<p:column
 						headerText="#{msg['dialog.createDiagnosisRevision.name.old']}">
 						<h:outputText value="#{revision.revision.name}" />
@@ -62,7 +62,7 @@
 						<p:commandLink
 							title="#{msg['dialog.createDiagnosisRevision.name.copy']}"
 							update="@form" style="margin-left:5px;"
-							actionListener="#{diagnosisHandlerAction.copyOldNameFromDiagnosisRevision(revision.revision)}">
+							actionListener="#{diagnosisRevisionDialog.copyOldNameFromDiagnosisRevision(revision.revision)}">
 							<i class="fa fa-fw fa-arrow-circle-o-right" />
 						</p:commandLink>
 					</p:column>
@@ -82,14 +82,17 @@
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{diagnosisHandlerAction.createDiagnosisRevisionFromGui()}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{diagnosisRevisionDialog.createDiagnosisRevision()}" />
+						<f:actionListener binding="#{diagnosisRevisionDialog.hideDialog()}" />
+					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{diagnosisHandlerAction.hideDiagnosisRevisionDialog()}" />
+						actionListener="#{diagnosisRevisionDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

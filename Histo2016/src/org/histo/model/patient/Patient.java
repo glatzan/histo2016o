@@ -84,11 +84,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	private List<Task> tasks;
 
 	/**
-	 * Currently selected task, transient
-	 */
-	private Task selectedTask;
-
-	/**
 	 * True if insurance is private
 	 */
 	private boolean privateInsurance = false;
@@ -205,34 +200,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		setInsurance(obj.optString("krankenkasse"));
 	}
 
-	/**
-	 * Returns a list with all currently active tasks
-	 * 
-	 * @return
-	 */
-	@Transient
-	public ArrayList<Task> getActivTasks() {
-		ArrayList<Task> result = new ArrayList<Task>();
-		for (Task task : tasks) {
-
-			if (task.isActiveOrActionPending())
-				result.add(task);
-		}
-
-		return result;
-	}
-
-	/**
-	 * Returns a list with tasks which are not active
-	 * 
-	 * @return
-	 */
-	@Transient
-	public ArrayList<Task> getNoneActivTasks() {
-		ArrayList<Task> result = new ArrayList<Task>(getTasks());
-		result.removeAll(getActivTasks());
-		return result.isEmpty() ? null : result;
-	}
 
 	@Override
 	@Transient
@@ -288,7 +255,7 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		this.piz = piz;
 	}
 
-	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id DESC")
 	public List<Task> getTasks() {
@@ -338,15 +305,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 
 	public void setInsurance(String insurance) {
 		this.insurance = insurance;
-	}
-
-	@Transient
-	public Task getSelectedTask() {
-		return selectedTask;
-	}
-
-	public void setSelectedTask(Task selectedTask) {
-		this.selectedTask = selectedTask;
 	}
 
 	public boolean isPrivateInsurance() {

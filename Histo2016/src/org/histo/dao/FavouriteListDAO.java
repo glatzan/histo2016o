@@ -2,13 +2,18 @@ package org.histo.dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
+import org.histo.config.enums.PredefinedFavouriteList;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.FavouriteList;
 import org.histo.model.FavouriteListItem;
 import org.histo.model.patient.Task;
+import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,8 +27,11 @@ public class FavouriteListDAO extends AbstractDAO {
 	@Autowired
 	private GenericDAO genericDAO;
 
+	@Autowired
+	private PatientDao patientDao;
+
 	public FavouriteList getFavouriteList(long id, boolean initialized) {
-		FavouriteList favList = getSession().get(FavouriteList.class, id);
+		FavouriteList favList = genericDAO.get(FavouriteList.class, id);
 
 		if (initialized) {
 			Hibernate.initialize(favList.getOwner());
@@ -41,90 +49,82 @@ public class FavouriteListDAO extends AbstractDAO {
 		return (List<FavouriteList>) query.getExecutableCriteria(getSession()).list();
 	}
 
-	public boolean createFavouriteList(FavouriteList list) {
-		if (!genericDAO.saveDataRollbackSave(list))
-			return false;
-		return true;
+	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList)
+			throws CustomDatabaseInconsistentVersionException {
+		genericDAO.refresh(task);
+		addTaskToList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
 	}
 
-	public boolean addTaskToList(Task task, long id) {
-		FavouriteList favouriteList = getFavouriteList(id, true);
-		return addTaskToList(task, favouriteList);
-	}
+	public void addTaskToList(Task task, FavouriteList favouriteList)
+			throws CustomDatabaseInconsistentVersionException {
 
-	public boolean addTaskToList(Task task, FavouriteList favouriteList) {
-
-		FavouriteListItem contains = getListItemFromList(favouriteList, task.getId());
-
-		if (contains == null) {
+		// list should not contain the task
+		if (favouriteList.getItems().stream().noneMatch(p -> p.getId() == task.getId())) {
 			FavouriteListItem favItem = new FavouriteListItem(task);
-
 			// saving new fav item
-			if (!genericDAO.saveDataRollbackSave(favItem))
-				return false;
-
+			genericDAO.saveDataRollbackSave(favItem);
 			favouriteList.getItems().add(favItem);
-
 			// saving favlist
-			if (!genericDAO.saveDataRollbackSave(favouriteList))
-				return false;
-		} else
+			genericDAO.saveDataRollbackSave(favouriteList);
+		} else {
 			logger.debug("List already contains task");
+		}
 
-		if (!task.getFavouriteLists().contains(favouriteList)) {
+		// adding to task if task is not member of this list
+		if (task.getFavouriteLists().stream().noneMatch(p -> p.getId() == favouriteList.getId())) {
 			task.getFavouriteLists().add(favouriteList);
-			if (!genericDAO.saveDataRollbackSave(task))
-				return false;
-		}else
+			patientDao.savePatientAssociatedDataFailSave(task, "log.patient.task.favouriteList.added",
+					new Object[] { favouriteList.toString() });
+		} else
 			logger.debug("Task alread contains list");
-			
-		return true;
 	}
-
-	public boolean removeTaskFromList(Task task, long id) {
-		FavouriteList favouriteList = getFavouriteList(id, true);
-		return removeTaskFromList(task, favouriteList);
-	}
-
-	public boolean removeTaskFromList(Task task, FavouriteList favouriteList) {
-
-		FavouriteListItem itemToRemove = getListItemFromList(favouriteList, task.getId());
-
-		if (itemToRemove != null) {
-
-			favouriteList.getItems().remove(itemToRemove);
-
-			// saving new fav item
-			if (!genericDAO.saveDataRollbackSave(favouriteList))
-				return false;
-		} else {
-			logger.debug("Can not remove from favourite list, not in list");
-		}
-
-		if (task.getFavouriteLists().contains(favouriteList)) {
-			logger.debug("Removing favourite list from task");
-			task.getFavouriteLists().remove(favouriteList);
-
-			// saving new fav item
-			if (!genericDAO.saveDataRollbackSave(task))
-				return false;
-		} else {
-			logger.debug("Can not remove from task, favourite list not associated.");
-		}
-
-		// TODO Delete FavouriteListItem?
-
-		return true;
-	}
-
-	private FavouriteListItem getListItemFromList(FavouriteList favouriteList, long taskId) {
-		for (FavouriteListItem item : favouriteList.getItems()) {
-			if (item.getTask().getId() == taskId) {
-				return item;
+	
+	public void removeTaskFromList(Task task, PredefinedFavouriteList[] predefinedFavouriteLists) throws CustomDatabaseInconsistentVersionException{
+		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
+			if(task.isListedInFavouriteList(predefinedFavouriteList)){
+				removeTaskFromList(task, predefinedFavouriteList);
 			}
 		}
-		return null;
 	}
+
+	public void removeTaskFromList(Task task, PredefinedFavouriteList predefinedFavouriteList)
+			throws CustomDatabaseInconsistentVersionException {
+		genericDAO.refresh(task);
+		removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
+	}
+
+	public void removeTaskFromList(Task task, FavouriteList favouriteList) throws CustomDatabaseInconsistentVersionException {
+
+		try {
+			// searching for item to remove
+			FavouriteListItem itemToRemove = favouriteList.getItems().stream().filter(p -> p.getId() == task.getId())
+					.collect(StreamUtils.singletonCollector());
+
+			favouriteList.getItems().remove(itemToRemove);
+			// saving new fav item
+			genericDAO.saveDataRollbackSave(favouriteList);
+		} catch (IllegalStateException e) {
+			// no item found
+			logger.debug("Can not remove from favourite list, " + favouriteList.getName() + " not in list");
+		}
+
+		try {
+			FavouriteList listToRemove = task.getFavouriteLists().stream()
+					.filter(p -> p.getId() == favouriteList.getId()).collect(StreamUtils.singletonCollector());
+
+			task.getFavouriteLists().remove(listToRemove);
+			
+			logger.debug("Removing favourite list from task");
+
+			// saving new fav item
+			genericDAO.saveDataRollbackSave(task);
+		} catch (IllegalStateException e) {
+			// no item found
+			logger.debug("Can not remove from favourite list, " + favouriteList.getName() + " not in list");
+		}
+		// TODO Delete FavouriteListItem?
+	}
+
 }
 
 // public List<Patient> getPatientsByTasksInLists(long id) {

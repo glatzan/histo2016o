@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.action.UserHandlerAction;
+import org.histo.action.WorklistHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
@@ -36,7 +38,10 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private TaskDAO taskDAO;
-	
+
+	@Autowired
+	private WorklistHandlerAction worklistHandlerAction;
+
 	private Council council;
 
 	private List<Council> councilList;
@@ -57,8 +62,8 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * @param task
 	 */
 	public void initAndPrepareBean(Task task) {
-		initBean(task);
-		prepareDialog();
+		if (initBean(task))
+			prepareDialog();
 	}
 
 	/**
@@ -66,26 +71,37 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * 
 	 * @param task
 	 */
-	public void initBean(Task task) {
-		super.initBean(taskDAO.getTask(task.getId(), true), Dialog.COUNCIL);
+	public boolean initBean(Task task) {
+		try {
+			taskDAO.initializeTask(task, false);
 
-		setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
+			super.initBean(task, Dialog.COUNCIL);
 
-		// setting council as default
-		if (getCouncilList().size() == 0) {
-			logger.debug("Council Dialog: Creating new council");
-			setCouncil(new Council());
-			getCouncilList().add(getCouncil());
-			getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
-		} else {
-			// selected council is need for selectlist, temporary council is for
-			// editing (new council can't be in task list)
-			setCouncil(getCouncilList().get(0));
+			setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
+
+			// setting council as default
+			if (getCouncilList().size() == 0) {
+				logger.debug("Council Dialog: Creating new council");
+				setCouncil(new Council());
+				getCouncilList().add(getCouncil());
+				getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
+			} else {
+				// selected council is need for selectlist, temporary council is
+				// for
+				// editing (new council can't be in task list)
+				setCouncil(getCouncilList().get(0));
+			}
+
+			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
+
+			updatePhysicianLists();
+			return true;
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			logger.debug("!! Version inconsistent with Database updating");
+			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			return false;
 		}
-
-		setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
-
-		updatePhysicianLists();
 	}
 
 	/**
@@ -115,36 +131,32 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * id!=0 the council will only be saved.
 	 */
 	public void saveCouncilData() {
-		// new
-		if (council.getId() == 0) {
-			council.setDateOfRequest(System.currentTimeMillis());
-			logger.debug("Council Dialog: Creating new council");
-			// TODO: Better loggin
-			if (!patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.create")) {
-				onDatabaseVersionConflict();
-				return;
+		try {
+			// new
+			if (council.getId() == 0) {
+				council.setDateOfRequest(System.currentTimeMillis());
+				logger.debug("Council Dialog: Creating new council");
+				// TODO: Better loggin
+				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.create");
+
+				task.getCouncils().add(council);
+
+				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
+						String.valueOf(council.getId()));
+
+			} else {
+				logger.debug("Council Dialog: Saving council");
+				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.update",
+						String.valueOf(council.getId()));
 			}
 
-			task.getCouncils().add(council);
-
-			if (!patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
-					String.valueOf(council.getId()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
-
-		} else {
-			logger.debug("Council Dialog: Saving council");
-			if (!patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.update",
-					String.valueOf(council.getId()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
+			// updating council list
+			setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
+			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
+		
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
 		}
-
-		// updating council list
-		setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
-		setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
 	}
 
 	/**

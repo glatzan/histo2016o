@@ -23,9 +23,9 @@
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.fax.useFax']}" />
 			<p:selectBooleanCheckbox
-				value="#{medicalFindingsHandlerAction.faxNotificationSettings.useFax}">
+				value="#{notificationDialog.faxNotificationSettings.useFax}">
 				<p:ajax event="change"
-					listener="#{medicalFindingsHandlerAction.faxNotificationSettings.onAttachPdfToFaxChange()}"
+					listener="#{notificationDialog.faxNotificationSettings.onAttachPdfToFaxChange()}"
 					update="@form" />
 			</p:selectBooleanCheckbox>
 
@@ -34,7 +34,7 @@
 				value="#{msg['dialog.medicalFindings.tab.fax.receiver']}" />
 			<p:dataTable var="faxNotification"
 				styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-				value="#{medicalFindingsHandlerAction.faxNotificationSettings.notificationFaxList}">
+				value="#{notificationDialog.faxNotificationSettings.notificationFaxList}">
 
 				<!-- name -->
 				<p:column
@@ -48,11 +48,11 @@
 					headerText="#{msg['dialog.medicalFindings.tab.fax.receiver.type']}"
 					style="width:27%">
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						disabled="#{!medicalFindingsHandlerAction.faxNotificationSettings.useFax}"
+						disabled="#{!notificationDialog.faxNotificationSettings.useFax}"
 						value="#{faxNotification.notificationAttachment}">
 
 						<f:selectItems
-							value="#{medicalFindingsHandlerAction.faxNotificationSettings.getNotificationFaxOptions()}"
+							value="#{notificationDialog.faxNotificationSettings.getNotificationFaxOptions()}"
 							var="option"
 							itemLabel="#{msg['enum.notification.'.concat(option)]}" />
 
@@ -64,12 +64,12 @@
 				<p:column style="width:34%"
 					headerText="#{msg['dialog.medicalFindings.tab.fax.receiver.template']}">
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						converter="#{medicalFindingsHandlerAction.faxNotificationSettings.templateTransformer}"
+						converter="#{notificationDialog.faxNotificationSettings.templateTransformer}"
 						rendered="#{faxNotification.notificationAttachment eq 'FAX'}"
-						disabled="#{!medicalFindingsHandlerAction.faxNotificationSettings.useFax}"
+						disabled="#{!notificationDialog.faxNotificationSettings.useFax}"
 						value="#{faxNotification.printTemplate}">
 						<f:selectItems
-							value="#{medicalFindingsHandlerAction.faxNotificationSettings.printTemplates}"
+							value="#{notificationDialog.faxNotificationSettings.printTemplates}"
 							var="template" itemValue="#{template}"
 							itemLabel="#{template.name}" />
 						<p:ajax event="change" update="@form" />
@@ -94,7 +94,7 @@
 				<p:column style="width:4%">
 					<p:commandLink
 						rendered="#{faxNotification.notificationAttachment eq 'FAX'}"
-						disabled="#{!medicalFindingsHandlerAction.faxNotificationSettings.useFax}"
+						disabled="#{!notificationDialog.faxNotificationSettings.useFax}"
 						title="#{msg['dialog.medicalFindings.tab.fax.receiver.template.show.hint']}"
 						style="float: right"
 						actionListener="#{notificationHandlerAction.showPreviewDialog(faxNotification)}">
@@ -116,9 +116,9 @@
 					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+					actionListener="#{contactHandlerAction.prepareContactsDialog(commonDataHandlerAction.selectedTask)}">
 					<p:ajax event="dialogReturn" update="@form"
-						listener="#{medicalFindingsHandlerAction.updateNotificationLists()}" />
+						listener="#{notificationDialog.updateNotificationLists()}" />
 				</p:commandButton>
 			</h:panelGrid>
 
@@ -128,21 +128,21 @@
 				<p:commandButton value="#{msg['general.back']}"
 					icon="fa fa-fw fa-arrow-left"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{medicalFindingsHandlerAction.previousStep()}"
+					actionListener="#{notificationDialog.previousStep()}"
 					update="@form" />
 
 				<!-- abort -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{medicalFindingsHandlerAction.nextStep()}"
+					actionListener="#{notificationDialog.nextStep()}"
 					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+					actionListener="#{notificationDialog.hideMedicalFindingsDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

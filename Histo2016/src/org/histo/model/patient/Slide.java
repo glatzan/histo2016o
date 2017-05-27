@@ -34,7 +34,8 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+public class Slide
+		implements Parent<Block>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -69,17 +70,23 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 		StringBuilder name = new StringBuilder();
 		name.append(parent.getParent().getSampleID());
 		name.append(parent.getBlockID());
-		if(name.length() > 0)
+		if (name.length() > 0)
 			name.append(" ");
-		
+
 		name.append(slidePrototype.getName());
-		
+
 		int stainingsInBlock = TaskUtil.getNumerOfSameStainings(this);
 
 		if (stainingsInBlock > 1)
 			name.append(String.valueOf(stainingsInBlock));
 
 		setSlideID(name.toString());
+	}
+
+	@Override
+	@Transient
+	public String toString() {
+		return "ID: " + getId() + ", Slide ID: " + getSlideID();
 	}
 
 	@Id
@@ -176,7 +183,7 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	public void setIdManuallyAltered(boolean idManuallyAltered) {
 		this.idManuallyAltered = idManuallyAltered;
 	}
-	
+
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
@@ -255,19 +262,19 @@ public class Slide implements Parent<Block>, StainingInfo, LogAble, DeleteAble, 
 	 * Interface StainingStauts
 	 ********************************************************/
 	@Override
-	@Transient 
+	@Transient
 	public boolean isStainingPerformed() {
 		return isStainingCompleted();
 	}
 
 	@Override
-	@Transient 
+	@Transient
 	public boolean isStainingNeeded() {
 		return !isStainingCompleted() && !isReStaining();
 	}
 
 	@Override
-	@Transient 
+	@Transient
 	public boolean isRestainingNeeded() {
 		return !isStainingCompleted() && isReStaining();
 	}

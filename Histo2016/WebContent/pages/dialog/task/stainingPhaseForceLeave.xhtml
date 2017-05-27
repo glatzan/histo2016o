@@ -18,7 +18,8 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.staingingPhaseEndManual.headline']}" />
+				<h:outputLabel
+					value="#{msg['dialog.staingingPhaseEndManual.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -30,8 +31,7 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel
-					value="#{msg['dialog.staingingPhaseEndManual.text']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.staingingPhaseEndManual.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -40,16 +40,21 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['dialog.staingingPhaseEndManual.button.remove']}"
+					<p:commandButton
+						value="#{msg['dialog.staingingPhaseEndManual.button.remove']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{slideHandlerAction.forceLeaveStainingPhaseAndHideDialog()}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{stainingPhaseForceDialogHandler.leaveStayInStainingPhase()}"></f:actionListener>
+						<f:actionListener
+							binding="#{stainingPhaseForceDialogHandler.hideDialog()}"></f:actionListener>
+					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{slideHandlerAction.hideDialog('STAINING_PHASE_FORCE_LEAVE')}" />
+						actionListener="#{stainingPhaseForceDialogHandler.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

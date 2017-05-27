@@ -85,6 +85,11 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 	public Diagnosis() {
 	}
 
+	@Override
+	public String toString() {
+		return "ID: " + getId() + ", Name: " + getName();
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.MaterialPreset;
 import org.histo.model.interfaces.HasDataList;
@@ -26,8 +27,9 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	 * Initializes a datalist for an object
 	 * 
 	 * @param dataList
+	 * @throws CustomDatabaseInconsistentVersionException 
 	 */
-	public HasDataList initializeDataList(HasDataList dataList) {
+	public HasDataList initializeDataList(HasDataList dataList) throws CustomDatabaseInconsistentVersionException {
 		dataList = genericDAO.refresh(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
 		return dataList;

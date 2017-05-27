@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
@@ -41,7 +42,7 @@ public class ContactHandlerAction implements Serializable {
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	private CommenDataHandlerAction commenDataHandlerAction;
+	private CommonDataHandlerAction commonDataHandlerAction;
 	
 	/**
 	 * True if archived physicians should be display
@@ -86,9 +87,9 @@ public class ContactHandlerAction implements Serializable {
 	 */
 	public void prepareContactsDialog(Task task, ContactRole[] roles, boolean showAddedContactsOnly) {
 
-		commenDataHandlerAction.setSelectedTask(task);
-		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		commenDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
+		commonDataHandlerAction.setSelectedTask(task);
+		commonDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commonDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commonDataHandlerAction.getAssociatedRoles()));
 
 		setShowPhysicianRoles(new ContactRole[]{ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON, ContactRole.OTHER_PHYSICIAN});
 		
@@ -109,7 +110,7 @@ public class ContactHandlerAction implements Serializable {
 	 * @param task
 	 */
 	public void updateContactList() {
-		updateContactList(commenDataHandlerAction.getSelectedTask(), getShowPhysicianRoles(), isShowArchivedPhysicians());
+		updateContactList(commonDataHandlerAction.getSelectedTask(), getShowPhysicianRoles(), isShowArchivedPhysicians());
 	}
 
 	/**
@@ -123,9 +124,14 @@ public class ContactHandlerAction implements Serializable {
 	 */
 	public void updateContactList(Task task, ContactRole[] rolesToDisplay, boolean showAddedContactsOnly) {
 		// refreshing the selected task
-		genericDAO.refresh(task);
+		try {
+			genericDAO.refresh(task);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		commenDataHandlerAction.setContactList(new ArrayList<Contact>());
+		commonDataHandlerAction.setContactList(new ArrayList<Contact>());
 		
 		List<Contact> contacts = task.getContacts();
 
@@ -145,12 +151,12 @@ public class ContactHandlerAction implements Serializable {
 						logger.debug("Found " + contact.getPerson().getFullName() + " in contacts, role "
 								+ contact.getRole());
 						contact.setSelected(true);
-						commenDataHandlerAction.getContactList().add(contact);
+						commonDataHandlerAction.getContactList().add(contact);
 						continue loop;
 					}
 				}
 
-				commenDataHandlerAction.getContactList().add(new Contact(physician.getPerson()));
+				commonDataHandlerAction.getContactList().add(new Contact(physician.getPerson()));
 
 			}
 		} else {
@@ -158,12 +164,12 @@ public class ContactHandlerAction implements Serializable {
 			for (Contact contact : contacts) {
 				contact.setSelected(true);
 			}
-			commenDataHandlerAction.getContactList().addAll(contacts);
+			commonDataHandlerAction.getContactList().addAll(contacts);
 		}
 
 		// setting temp index for selecting via datalist
 		int i = 0;
-		for (Contact contact : commenDataHandlerAction.getContactList()) {
+		for (Contact contact : commonDataHandlerAction.getContactList()) {
 			contact.setTmpId(i++);
 		}
 	}
@@ -372,11 +378,11 @@ public class ContactHandlerAction implements Serializable {
 	 * Quick Contacts
 	 ********************************************************/
 	public void prepareQuickContactsDialog(Task task, ContactRole contactRole) {
-		commenDataHandlerAction.setSelectedTask(task);
+		commonDataHandlerAction.setSelectedTask(task);
 		setSelectedContact(null);
 
-		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		commenDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
+		commonDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commonDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commonDataHandlerAction.getAssociatedRoles()));
 
 		setShowPhysicianRoles(new ContactRole[]{contactRole});
 		
@@ -389,14 +395,14 @@ public class ContactHandlerAction implements Serializable {
 
 	public void selectContactAsRole(Contact contact, ContactRole role) {
 		contact.setRole(role);
-		onContactChangeRole(commenDataHandlerAction.getSelectedTask(), contact);
+		onContactChangeRole(commonDataHandlerAction.getSelectedTask(), contact);
 
 		if (role != ContactRole.NONE)
-			updateContactRolePrimary(commenDataHandlerAction.getSelectedTask(), role, contact);
+			updateContactRolePrimary(commonDataHandlerAction.getSelectedTask(), role, contact);
 	}
 
 	public void hideQuickContactsDialog() {
-		commenDataHandlerAction.setSelectedTask(null);
+		commonDataHandlerAction.setSelectedTask(null);
 		setSelectedContactRole(null);
 		setSelectedContact(null);
 		mainHandlerAction.hideDialog(Dialog.QUICK_CONTACTS);

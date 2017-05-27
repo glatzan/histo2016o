@@ -240,10 +240,11 @@ SELECT setval('diagnosisPreset_sequence', (SELECT MAX(id) FROM diagnosispreset))
 
 INSERT INTO favouritelist VALUES (1, true, false, false, 'Staininglist', NULL);
 INSERT INTO favouritelist VALUES (2, true, false, false, 'Diagnosislist', NULL);
-INSERT INTO favouritelist VALUES (3, true, false, false, 'Notification ist', NULL);
+INSERT INTO favouritelist VALUES (3, true, false, false, 'Notificationist', NULL);
 INSERT INTO favouritelist VALUES (4, true, false, false, 'ReStaininglist', NULL);
 INSERT INTO favouritelist VALUES (5, true, false, false, 'ReDiagnosislist', NULL);
 INSERT INTO favouritelist VALUES (6, true, false, false, 'Stay in Staininglist', NULL);
 INSERT INTO favouritelist VALUES (7, true, false, false, 'Stay in Diagnosislist', NULL);
+INSERT INTO favouritelist VALUES (8, true, false, false, 'Stay in Notificationlist', NULL);
 
 SELECT setval('favouritelist_sequence', (SELECT MAX(id) FROM favouritelist));

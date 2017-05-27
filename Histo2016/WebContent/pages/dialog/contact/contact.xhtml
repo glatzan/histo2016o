@@ -33,7 +33,7 @@
 				<p:dataTable var="contact"
 					styleClass="contactDataTable noBordersAll collapsedBordersAll"
 					scrollable="true" scrollHeight="390"
-					value="#{commenDataHandlerAction.contactList}">
+					value="#{commonDataHandlerAction.contactList}">
 
 					<!-- Name -->
 					<p:column headerText="#{msg['dialog.contact.table.name']}"
@@ -71,9 +71,9 @@
 						<!-- change role of contact and set the new primary contact -->
 						<p:remoteCommand name="onContactChangeRole" update="@form">
 							<f:actionListener
-								binding="#{contactHandlerAction.onContactChangeRole(commenDataHandlerAction.selectedTask, contactHandlerAction.selectedContact)}" />
+								binding="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask, contactHandlerAction.selectedContact)}" />
 							<f:actionListener
-								binding="#{contactHandlerAction.updateContactRolePrimary(commenDataHandlerAction.selectedTask)}" />
+								binding="#{contactHandlerAction.updateContactRolePrimary(commonDataHandlerAction.selectedTask)}" />
 						</p:remoteCommand>
 					</p:column>
 
@@ -89,7 +89,7 @@
 							value="#{contact.primaryContact}"
 							title="#{contact.role eq 'SURGEON' ? msg['dialog.contact.table.primaryContact.surgeon.selected'] :  msg['dialog.contact.table.primaryContact.privatePhysician.selected'] }">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangePrimary(commenDataHandlerAction.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangePrimary(commonDataHandlerAction.selectedTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -105,7 +105,7 @@
 							value="#{contact.useEmail}"
 							title="#{contact.person.email eq '' ?  msg['dialog.contact.table.mail.none'] : msg['dialog.contact.table.mail']}">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangeRole(commenDataHandlerAction.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -121,7 +121,7 @@
 							value="#{contact.usePhone}"
 							title="#{contact.person.phoneNumber eq '' ? msg['dialog.contact.table.phone.none'] : msg['dialog.contact.table.phone']}">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangeRole(commenDataHandlerAction.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -136,7 +136,7 @@
 							value="#{contact.useFax}"
 							title="#{ contact.person.fax eq '' ? msg['dialog.contact.table.fax.none'] : msg['dialog.contact.table.fax']}">
 							<p:ajax event="change"
-								listener="#{contactHandlerAction.onContactChangeRole(commenDataHandlerAction.selectedTask,contact)}"
+								listener="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask,contact)}"
 								update="@form"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
@@ -197,9 +197,9 @@
 						<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
 							label="#{msg['dialog.contact.options.show.roles']}"
 							value="#{contactHandlerAction.showPhysicianRoles}"
-							converter="#{commenDataHandlerAction.associatedRolesTransformer}">
+							converter="#{commonDataHandlerAction.associatedRolesTransformer}">
 							<f:selectItems var="role"
-								value="#{commenDataHandlerAction.associatedRoles}"
+								value="#{commonDataHandlerAction.associatedRoles}"
 								itemValue="#{role}"
 								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 

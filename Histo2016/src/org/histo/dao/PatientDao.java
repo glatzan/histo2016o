@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
@@ -13,6 +14,8 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.WorklistSearchFilter;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.model.FavouriteList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
@@ -37,26 +40,62 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	@Lazy
 	private WorklistHandlerAction worklistHandlerAction;
 
-	public <C extends HasID & PatientRollbackAble> boolean savePatientAssociatedDataFailSave(C object) {
+	public Patient initilaizeTasksofPatient(Patient patient) throws CustomDatabaseInconsistentVersionException {
+		genericDAO.refresh(patient);
+		Hibernate.initialize(patient.getTasks());
+		return patient;
+	}
+
+	public Patient initializePatient(Patient patient, boolean initialize)
+			throws CustomDatabaseInconsistentVersionException {
+		genericDAO.refresh(patient);
+
+		if (initialize) {
+			Hibernate.initialize(patient.getTasks());
+			Hibernate.initialize(patient.getAttachedPdfs());
+		}
+
+		return patient;
+	}
+
+	public Patient getPatient(long id, boolean initialize) {
+		Patient patient = genericDAO.get(Patient.class, id);
+		if (initialize) {
+			Hibernate.initialize(patient.getTasks());
+			Hibernate.initialize(patient.getAttachedPdfs());
+		}
+		return patient;
+	}
+
+	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedDataFailSave(C object)
+			throws CustomDatabaseInconsistentVersionException {
 		return savePatientAssociatedDataFailSave(object, object, null);
 	}
 
-	public <C extends HasID & PatientRollbackAble> boolean savePatientAssociatedDataFailSave(C object,
-			String resourcesKey, Object... resourcesKeyInsert) {
+	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedDataFailSave(C object, String resourcesKey,
+			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
 		return savePatientAssociatedDataFailSave(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
-	public <C extends HasID> boolean savePatientAssociatedDataFailSave(C object, PatientRollbackAble hasPatient,
-			String resourcesKey, Object... resourcesKeyInsert) {
+	public <C extends HasID> C savePatientAssociatedDataFailSave(C object, PatientRollbackAble hasPatient,
+			String resourcesKey, Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
 
 		// if failed false will be returned
-		if (!genericDAO.saveDataRollbackSave(object, resourcesKey,
-				new Object[] { hasPatient.getLogPath(), resourcesKeyInsert }, hasPatient.getPatient())) {
+		return genericDAO.saveDataRollbackSave(object, resourcesKey,
+				new Object[] { hasPatient.getLogPath(), resourcesKeyInsert }, hasPatient.getPatient());
 
-			return false;
-		}
+	}
 
-		return true;
+	public <C extends HasID & PatientRollbackAble> C deletePatientAssociatedDataFailSave(C object, String resourcesKey,
+			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+		return deletePatientAssociatedDataFailSave(object, object, resourcesKey, resourcesKeyInsert);
+	}
+
+	public <C extends HasID> C deletePatientAssociatedDataFailSave(C object, PatientRollbackAble hasPatient,
+			String resourcesKey, Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+		return genericDAO.deleteDataRollbackSave(object, resourcesKey,
+				new Object[] { hasPatient.getLogPath(), resourcesKeyInsert }, hasPatient.getPatient());
+
 	}
 
 	/**
@@ -173,20 +212,20 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list of patients which had the staining procedure completed
-	 * between the two given dates
+	 * Returns an Array of patients which tasks are associted with the list ids.
 	 * 
-	 * @param fromDate
-	 * @param toDate
-	 * @param completed
+	 * @param listIds
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientByStainings(boolean inPhase) {
+	public List<Patient> getPatientByTaskList(List<Long> listIds) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
 		query.createAlias("patient.tasks", "_tasks");
-		query.add(Restrictions.eq("_tasks.stainingPhase", inPhase));
+		query.createAlias("_tasks.favouriteLists", "_flist");
+
+		query.add(Restrictions.in("_flist.id", listIds));
+
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		return query.getExecutableCriteria(getSession()).list();
@@ -384,6 +423,11 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (result.size() == 1)
 			return result.get(0);
 
+		return null;
+	}
+
+	public Patient initilaize(Patient patient) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

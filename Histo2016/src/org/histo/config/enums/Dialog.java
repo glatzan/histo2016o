@@ -39,7 +39,6 @@ public enum Dialog {
 	DELETE_TREE_ENTITY("/pages/dialog/task/deleteTreeEntity", null,  480, 272, false, false, true), //  16:9
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
 	MEDIA_SELECT("/pages/dialog/upload/mediaSelect", null,  1280, 720,  false, false, true), // 16:9
-	ADMINISTRATE_TASK("/pages/dialog/task/administrateTask", null, 480, 272, false, false, true), // 16:9
 	STAINING_PHASE_LEAVE("/pages/dialog/task/stainingPhaseLeave", null, 480, 272, false, false, true), // 16:9
 	STAINING_PHASE_FORCE_ENTER("/pages/dialog/task/stainingPhaseForceEnter", null, 480, 272, false, false, true), // 16:9
 	STAINING_PHASE_FORCE_LEAVE("/pages/dialog/task/stainingPhaseForceLeave", null, 480, 272, false, false, true), // 16:9

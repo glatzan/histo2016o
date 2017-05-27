@@ -36,7 +36,7 @@
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 					scrollable="true" scrollHeight="340" selectionMode="single"
 					selection="#{contactHandlerAction.selectedContact}"
-					value="#{commenDataHandlerAction.contactList}">
+					value="#{commonDataHandlerAction.contactList}">
 
 					<!-- Name -->
 					<p:column headerText="#{msg['dialog.quickContact.table.name']}"
@@ -98,9 +98,9 @@
 							label="#{msg['dialog.contact.options.show.roles']}"
 							panelStyle="width:250px"
 							value="#{contactHandlerAction.showPhysicianRoles}"
-							converter="#{commenDataHandlerAction.associatedRolesTransformer}">
+							converter="#{commonDataHandlerAction.associatedRolesTransformer}">
 							<f:selectItems var="role"
-								value="#{commenDataHandlerAction.associatedRoles}"
+								value="#{commonDataHandlerAction.associatedRoles}"
 								itemValue="#{role}"
 								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 

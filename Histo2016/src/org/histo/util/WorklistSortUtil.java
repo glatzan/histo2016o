@@ -9,37 +9,7 @@ import org.histo.model.patient.Task;
 
 public class WorklistSortUtil {
 
-	/**
-	 * Sorts a List of patients by the task id. The tasknumber will be ascending
-	 * or descending depending on the asc parameter.
-	 * 
-	 * @param patiens
-	 * @return
-	 */
-	public static final List<Patient> orderListByTaskID(List<Patient> patiens, boolean asc) {
 
-		// Sorting
-		Collections.sort(patiens, new Comparator<Patient>() {
-			@Override
-			public int compare(Patient patientOne, Patient patientTwo) {
-				Task lastTaskOne = patientOne.getActivTasks().size() > 0 ? patientOne.getActivTasks().get(0) : null;
-				Task lastTaskTwo = patientTwo.getActivTasks().size() > 0 ? patientTwo.getActivTasks().get(0) : null;
-
-				if (lastTaskOne == null && lastTaskTwo == null)
-					return 0;
-				else if (lastTaskOne == null)
-					return asc ? -1 : 1;
-				else if (lastTaskTwo == null)
-					return asc ? 1 : -1;
-				else {
-					int res = lastTaskOne.getTaskID().compareTo(lastTaskTwo.getTaskID());
-					return asc ? res : res * -1;
-				}
-			}
-		});
-
-		return patiens;
-	}
 
 	/**
 	 * Sorts an array list of patients by the piz.
@@ -97,28 +67,5 @@ public class WorklistSortUtil {
 		return patiens;
 	}
 	
-	public static final List<Patient> orderListByPriority(List<Patient> patiens, boolean asc) {
 
-		// Sorting
-		Collections.sort(patiens, new Comparator<Patient>() {
-			@Override
-			public int compare(Patient patientOne, Patient patientTwo) {
-				Task highestPriorityOne = patientOne.getActivTasks().size() > 0 ? TaskUtil.getTaskByHighestPriority(patientOne.getActivTasks()) : null;
-				Task highestPriorityTwo = patientTwo.getActivTasks().size() > 0 ? TaskUtil.getTaskByHighestPriority(patientTwo.getActivTasks()) : null;
-
-				if (highestPriorityOne == null && highestPriorityTwo == null)
-					return 0;
-				else if (highestPriorityOne == null)
-					return asc ? -1 : 1;
-				else if (highestPriorityTwo == null)
-					return asc ? 1 : -1;
-				else {
-					int res = highestPriorityOne.getTaskPriority().compareTo(highestPriorityTwo.getTaskPriority());
-					return asc ? res : res * -1;
-				}
-			}
-		});
-
-		return patiens;
-	}
 }

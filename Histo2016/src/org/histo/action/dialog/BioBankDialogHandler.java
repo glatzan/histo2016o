@@ -1,6 +1,8 @@
 package org.histo.action.dialog;
 
+import org.histo.action.WorklistHandlerAction;
 import org.histo.config.enums.Dialog;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.BioBankDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
@@ -19,10 +21,13 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private PatientDao patientDao;
-	
+
 	@Autowired
 	private TaskDAO taskDAO;
-	
+
+	@Autowired
+	private WorklistHandlerAction worklistHandlerAction;
+
 	private BioBank bioBank;
 
 	/**
@@ -31,8 +36,8 @@ public class BioBankDialogHandler extends AbstractDialog {
 	 * @param patient
 	 */
 	public void initAndPrepareBean(Task task) {
-		initBean(task);
-		prepareDialog();
+		if (initBean(task))
+			prepareDialog();
 	}
 
 	/**
@@ -40,14 +45,25 @@ public class BioBankDialogHandler extends AbstractDialog {
 	 * 
 	 * @param task
 	 */
-	public void initBean(Task task) {
-		super.initBean(taskDAO.getTask(task.getId(), true), Dialog.BIO_BANK);
+	public boolean initBean(Task task) {
+		try {
+			taskDAO.initializeTask(task, false);
 
-		// setting associatedBioBank
-		setBioBank(bioBankDAO.getAssociatedBioBankObject(task));
+			super.initBean(task, Dialog.BIO_BANK);
 
-		if (getBioBank() != null) {
-			setBioBank(bioBankDAO.initializeBioBank(getBioBank()));
+			// setting associatedBioBank
+			setBioBank(bioBankDAO.getAssociatedBioBankObject(task));
+
+			if (getBioBank() != null) {
+				setBioBank(bioBankDAO.initializeBioBank(getBioBank()));
+			}
+
+			return true;
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			logger.debug("!! Version inconsistent with Database updating");
+			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			return false;
 		}
 	}
 
@@ -55,10 +71,11 @@ public class BioBankDialogHandler extends AbstractDialog {
 	 * Saves the biobank to the database
 	 */
 	public void saveBioBank() {
-		// saving biobank
-		if (!patientDao.savePatientAssociatedDataFailSave(getBioBank(), getTask(), "log.patient.bioBank.save")) {
+		try {
+			// saving biobank
+			patientDao.savePatientAssociatedDataFailSave(getBioBank(), getTask(), "log.patient.bioBank.save");
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
 	}
 

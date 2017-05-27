@@ -28,12 +28,12 @@
 	<!-- Nav Table -->
 	<p:dataTable var="patient" id="patientList"
 		value="#{worklistHandlerAction.workList}" selectionMode="single"
-		selection="#{worklistHandlerAction.selectedPatient}"
+		selection="#{commonDataHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
 
 		<p:ajax event="rowSelect"
 			update=":contentForm :headerForm :navigationForm"
-			listener="#{worklistHandlerAction.onSelectPatient(worklistHandlerAction.selectedPatient)}" />
+			listener="#{worklistHandlerAction.onSelectPatient(commonDataHandlerAction.selectedPatient)}" />
 
 		<p:column>
 			<!-- Header -->
@@ -116,18 +116,18 @@
 					</p:column>
 					<p:column>
 						<!-- no tasks -->
-						<h:outputLabel rendered="#{patient.activTasks.size() eq 0}"
+						<h:outputLabel rendered="#{patient.hasActiveTasks(patient)}"
 							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
 						<!-- task list -->
-						<p:repeat var="task" value="#{patient.activTasks}">
+						<p:repeat var="task" value="#{patient.getActiveTasks(patient)}">
 							<p:commandLink
 								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 
 								<h:outputLabel value="#{task.taskID}"
-									style="#{worklistHandlerAction.selectedPatient.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
+									style="#{commonDataHandlerAction.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 
 								<!-- priority -->
 								<h:panelGroup rendered="#{task.taskPriority ne 'NONE'}">
@@ -143,66 +143,57 @@
 								</h:panelGroup>
 
 								<!-- staining needed -->
-								<h:panelGroup rendered="#{task.status.stainingPhase}">
+								<h:panelGroup>
 									<!-- staining needed = green -->
-									<ui:fragment
-										rendered="#{task.status.stainingNeeded}">
+									<ui:fragment rendered="#{task.isListedInFavouriteList('StainingList')}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.staining']}" />
 									</ui:fragment>
 
 									<!-- re-staining needed = orange -->
-									<ui:fragment
-										rendered="#{task.status.reStainingNeeded}">
+									<ui:fragment rendered="#{task.isListedInFavouriteList('ReStainingList')}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-orange"
 											title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
 									</ui:fragment>
 
 									<!--  no staining needed = purple -->
-									<ui:fragment
-										rendered="#{task.status.stayInStainingPhase}">
+									<ui:fragment rendered="#{task.isListedInFavouriteList('StayInStainingList')}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
 									</ui:fragment>
-								</h:panelGroup>
 
-								<!-- diagnosis needed -->
-								<h:panelGroup rendered="#{task.status.diagnosisPhase}">
+
+									<!-- diagnosis needed -->
 									<!-- diagnosis needed = green -->
-									<ui:fragment
-										rendered="#{task.status.diagnosisNeeded}">
+									<ui:fragment rendered="#{task.isListedInFavouriteList('DiagnosisList')}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
 									</ui:fragment>
 
 									<!-- re-diagnosis needed = orange -->
-									<ui:fragment
-										rendered="#{task.status.reDiagnosisNeeded}">
+									<ui:fragment rendered="#{task.isListedInFavouriteList('ReDiagnosisList')}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 									</ui:fragment>
 
 									<!-- no diagnosis needed = purple -->
-									<ui:fragment
-										rendered="#{task.status.diagnosisStayInPhase}">
+									<ui:fragment rendered="#{task.isListedInFavouriteList('StayInDiagnosisList')}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
 									</ui:fragment>
-								</h:panelGroup>
 
-								<!-- notification needed -->
-								<h:panelGroup rendered="#{task.status.notificationPhase}">
+									<!-- notification needed -->
 									<!-- notification need = green -->
-									<ui:fragment
-										rendered="#{task.status.notificationNeeded}">
-										<i style="margin-left: 5px;" class="fa fa-volume-up icon-green"
+									<ui:fragment rendered="#{task.isListedInFavouriteList('NotificationList')}">
+										<i style="margin-left: 5px;"
+											class="fa fa-volume-up icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
 									</ui:fragment>
 
 									<!-- stay in phase = purple -->
-									<ui:fragment
-										rendered="#{task.status.notificationStayInPhase}">
-										<i style="margin-left: 5px;" class="fa fa-volume-up icon-purple"
+									<ui:fragment rendered="#{task.isListedInFavouriteList('StayInNotificationList')}">
+										<i style="margin-left: 5px;"
+											class="fa fa-volume-up icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 									</ui:fragment>
 								</h:panelGroup>
@@ -223,19 +214,19 @@
 
 				<!-- Non active Tasks -->
 				<p:row
-					rendered="#{patient.noneActivTasks ne null and worklistHandlerAction.sortOptions.showAllTasks}">
+					rendered="#{taskStatusHandler.hasNoneActiveTasks(patient) and worklistHandlerAction.sortOptions.showAllTasks}">
 					<p:column style="vertical-align: top !important;">
 						<h:outputLabel value="#{msg['body.worklist.navigation.tasks']}" />
 					</p:column>
 					<p:column>
 						<!-- task list -->
-						<p:repeat var="task" value="#{patient.noneActivTasks}">
+						<p:repeat var="task" value="#{taskStatusHandler.getNoneActiveTasks(patient)}">
 							<p:commandLink
 								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 								<h:outputLabel value="#{task.taskID}"
-									style="#{worklistHandlerAction.selectedPatient.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
+									style="#{commonDataHandlerAction.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 							</p:commandLink>
 							<br />
 						</p:repeat>
@@ -249,7 +240,7 @@
 
 	<p:contextMenu for="patientList">
 		<p:menuitem value="Entfernen" icon="ui-icon-close"
-			actionListener="#{worklistHandlerAction.removeFromWorklist(worklistHandlerAction.selectedPatient)}"
+			actionListener="#{worklistHandlerAction.removeFromWorklist(commonDataHandlerAction.selectedPatient)}"
 			update="navigationForm contentForm" />
 	</p:contextMenu>
 </ui:composition>

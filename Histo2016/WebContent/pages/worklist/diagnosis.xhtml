@@ -11,10 +11,10 @@
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
 	<c:set var="selectedTask"
-		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
+		value="#{commonDataHandlerAction.selectedTask}" />
 
 	<c:set var="taskEditable" scope="session"
-		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
+		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
 
 	<p:panel style="width: 80%"
 		styleClass="collapsedBorders noPadding noBorders">
@@ -52,7 +52,7 @@
 									title="#{msg['body.receiptlog.notification.hint']}"
 									rendered="#{taskEditable}"
 									style="float: right; margin-right:5px;"
-									actionListener="#{taskHandlerAction.prepareSelectMaterialDialog(sample)}">
+									actionListener="#{changeMaterialDialog.initAndPrepareBean(sample)}">
 									<i class="fa fa-fw fa-cog" />
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -91,7 +91,7 @@
 						editable="true">
 						<f:selectItem itemLabel="Select One"
 							itemValue="#{msg['body.diagnosis.story.watermark']}" />
-						<f:selectItems value="#{taskHandlerAction.caseHistoryList}"
+						<f:selectItems value="#{diagnosisViewHandlerAction.caseHistoryList}"
 							var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 						<p:ajax event="change" execute="@this"
@@ -137,7 +137,7 @@
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
 
 					<p:selectOneButton disabled="#{!taskEditable}"
-						value="#{worklistHandlerAction.selectedPatient.privateInsurance}">
+						value="#{commonDataHandlerAction.selectedPatient.privateInsurance}">
 						<f:selectItem
 							itemLabel="#{msg['body.diagnosis.insurance.private']}"
 							itemValue="#{false}]" />
@@ -145,14 +145,14 @@
 							itemLabel="#{msg['body.diagnosis.insurance.normal']}"
 							itemValue="#{true}" />
 						<p:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.insurance', worklistHandlerAction.selectedPatient.privateInsurance)}" />
+							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.insurance', commonDataHandlerAction.selectedPatient.privateInsurance)}" />
 					</p:selectOneButton>
 
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
 						editable="true" disabled="#{!taskEditable}">
-						<f:selectItems value="#{taskHandlerAction.wardList}"
+						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
 							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
@@ -171,7 +171,7 @@
 						<p:commandLink style="float: right; margin-right:5px;"
 							styleClass="noUnderlineAtLink"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'SURGEON')}"
+							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(commonDataHandlerAction.selectedTask,'SURGEON')}"
 							disabled="#{!taskEditable}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -190,7 +190,7 @@
 						<p:commandLink style="float: right; margin-right:5px;"
 							styleClass="noUnderlineAtLink"
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
-							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'PRIVATE_PHYSICIAN')}"
+							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}"
 							disabled="#{!taskEditable}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -253,7 +253,7 @@
 									itemValue="#{diagnosisPrototype}" />
 
 								<p:ajax event="change" update="contentForm"
-									listener="#{diagnosisHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
+									listener="#{diagnosisViewHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
 
 							</p:selectOneMenu>
 
@@ -262,7 +262,7 @@
 								style="margin-left:20px;" disabled="#{!taskEditable}"
 								title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
 								rendered="#{diagnosis.diagnosisPrototype ne null}"
-								actionListener="#{diagnosisHandlerAction.prepareCopyHistologicalRecordDialog(diagnosis)}"
+								actionListener="#{diagnosisViewHandlerAction.onCopyHistologicalRecord(diagnosis)}"
 								update="contentForm">
 								<i class="fa fa-hand-o-up"></i>
 								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -331,15 +331,15 @@
 					<p:selectOneMenu disabled="#{!taskEditable}"
 						styleClass="customSerachSelectMenu" style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
-						value="#{taskHandlerAction.signatureOne}"
-						converter="#{taskHandlerAction.physiciansToSignListTransformer}"
+						value="#{diagnosisViewHandlerAction.signatureOne}"
+						converter="#{diagnosisViewHandlerAction.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
 
 						<f:selectItem
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician.select']}"
 							itemValue="#{null}" />
 
-						<f:selectItems value="#{taskHandlerAction.physiciansToSignList}"
+						<f:selectItems value="#{diagnosisViewHandlerAction.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 
@@ -351,7 +351,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitPhysicianChange">
 						<f:actionListener
-							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureOne(taskHandlerAction.signatureOne)}" />
+							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureOne(diagnosisViewHandlerAction.signatureOne)}" />
 						<f:actionListener
 							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one',selectedTask.diagnosisContainer.signatureOne.physician.person.fullName)}" />
 					</p:commandButton>
@@ -392,14 +392,14 @@
 					<p:selectOneMenu disabled="#{!taskEditable}"
 						styleClass="customSerachSelectMenu" style="width:80% !important;"
 						panelStyleClass="customSerachSelectMenuPanel"
-						value="#{taskHandlerAction.signatureTwo}"
-						converter="#{taskHandlerAction.physiciansToSignListTransformer}"
+						value="#{diagnosisViewHandlerAction.signatureTwo}"
+						converter="#{diagnosisViewHandlerAction.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
 						<f:selectItem
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant.select']}"
 							itemValue="#{null}" />
 
-						<f:selectItems value="#{taskHandlerAction.physiciansToSignList}"
+						<f:selectItems value="#{diagnosisViewHandlerAction.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 
@@ -412,7 +412,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitConsultantChange">
 						<f:actionListener
-							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureTwo(taskHandlerAction.signatureTwo)}" />
+							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureTwo(diagnosisViewHandlerAction.signatureTwo)}" />
 						<f:actionListener
 							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two',selectedTask.diagnosisContainer.signatureTwo.physician.person.fullName)}" />
 					</p:commandButton>

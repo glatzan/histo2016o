@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope(value = "session")
-public class CommenDataHandlerAction {
+public class CommonDataHandlerAction {
 
 	/**
 	 * Currently selectedTask

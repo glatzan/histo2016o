@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import org.histo.model.interfaces.HasID;
+import org.histo.util.StreamUtils;
 
 public class DefaultTransformer<T extends HasID> implements Converter {
 
@@ -16,7 +17,7 @@ public class DefaultTransformer<T extends HasID> implements Converter {
 	public DefaultTransformer(T[] objects) {
 		this.objects = Arrays.asList(objects);
 	}
-	
+
 	public DefaultTransformer(List<T> objects) {
 		this.objects = objects;
 	}
@@ -25,17 +26,13 @@ public class DefaultTransformer<T extends HasID> implements Converter {
 		if (value != null && value.trim().length() > 0) {
 			try {
 				long id = Long.valueOf(value);
-				for (T diagnosisPrototype : objects) {
-					if (diagnosisPrototype.getId() == id)
-						return diagnosisPrototype;
-				}
+				return objects.stream().filter(p -> p.getId() == id).collect(StreamUtils.firstInListCollector());
+			} catch (NumberFormatException | IllegalStateException e) {
 				return null;
-			} catch (NumberFormatException e) {
 			}
 		} else {
 			return null;
 		}
-		return null;
 	}
 
 	public String getAsString(FacesContext fc, UIComponent uic, Object object) {

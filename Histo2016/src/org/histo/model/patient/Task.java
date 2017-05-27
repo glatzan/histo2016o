@@ -33,6 +33,7 @@ import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.model.Accounting;
 import org.histo.model.Contact;
@@ -47,7 +48,6 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.interfaces.StainingInfo;
-import org.histo.model.util.TaskStatusHandler;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 
@@ -148,16 +148,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	private long notificationCompletionDate = 0;
 
 	/**
-	 * True if diagnosis has to be done
-	 */
-	private boolean diagnosisPhase;
-
-	/**
-	 * True if notification is pending
-	 */
-	private boolean notificationPhase;
-
-	/**
 	 * True if the task can't be edited
 	 */
 	private boolean finalized;
@@ -212,11 +202,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 * hand side, however there are actions to perform or not.
 	 */
 	private boolean active;
-
-	/**
-	 * Routines for changing the status of the task
-	 */
-	private TaskStatusHandler status;
 
 	/********************************************************
 	 * Transient Variables
@@ -280,17 +265,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	}
 
 	/**
-	 * Returns true if either the task is active or a diagnosis or a staining is
-	 * needed.
-	 * 
-	 * @return
-	 */
-	@Transient
-	public boolean isActiveOrActionPending() {
-		return isActive() || getStatus().isActive();
-	}
-
-	/**
 	 * Creates linear list of all slides of the given task. The
 	 * StainingTableChosser is used as holder class in order to offer an option
 	 * to select the slides by clicking on a checkbox. Archived elements will
@@ -341,6 +315,33 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 			}
 			even = !even;
 		}
+	}
+
+	@Transient
+	public boolean isListedInFavouriteList(PredefinedFavouriteList... predefinedFavouriteLists) {
+		long[] arr = new long[predefinedFavouriteLists.length];
+		int i = 0;
+		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
+			arr[i] = predefinedFavouriteList.getId();
+			i++;
+		}
+
+		return isListedInFavouriteList(arr);
+	}
+
+	@Transient
+	public boolean isListedInFavouriteList(long... idArr) {
+		for (long id : idArr) {
+			if (getFavouriteLists().stream().anyMatch(p -> p.getId() == id))
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	@Transient
+	public String toString() {
+		return "ID: " + getId() + ", Task ID: " + getTaskID();
 	}
 
 	/********************************************************
@@ -564,21 +565,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.useAutoNomenclature = useAutoNomenclature;
 	}
 
-	public boolean isDiagnosisPhase() {
-		return diagnosisPhase;
-	}
-
-	public boolean isNotificationPhase() {
-		return notificationPhase;
-	}
-
-	public void setDiagnosisPhase(boolean diagnosisPhase) {
-		this.diagnosisPhase = diagnosisPhase;
-	}
-
-	public void setNotificationPhase(boolean notificationPhase) {
-		this.notificationPhase = notificationPhase;
-	}
 
 	public boolean isFinalized() {
 		return finalized;
@@ -732,31 +718,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 			}
 		}
 		return null;
-	}
-
-	@Transient
-	public TaskStatusHandler getStatus() {
-		if (status == null)
-			status = new TaskStatusHandler(this);
-		return status;
-	}
-
-	public void setStatus(TaskStatusHandler status) {
-		this.status = status;
-	}
-
-	@Transient
-	public boolean isStainingPhase() {
-		return isListedInFavouriteList(FavouriteList.StainingList_ID);
-	}
-	
-	@Transient
-	public boolean isListedInFavouriteList(long id) {
-		for (FavouriteList favouriteList : getFavouriteLists()) {
-			if (favouriteList.getId() == id)
-				return true;
-		}
-		return false;
 	}
 
 	/********************************************************

@@ -31,14 +31,14 @@
 				<p:commandButton value="#{msg['dialog.medicalFindings.tab.finalizeTask.resend']}"
 					icon="fa fa-fw fa-check-circle-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{medicalFindingsHandlerAction.reSendMedicialFindings()}"
+					actionListener="#{notificationDialog.reSendMedicialFindings()}"
 					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['dialog.medicalFindings.tab.finalizeTask.archive']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{medicalFindingsHandlerAction.finalizeTask()}" />
+					actionListener="#{notificationDialog.finalizeTask()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

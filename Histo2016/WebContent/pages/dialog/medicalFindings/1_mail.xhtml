@@ -24,7 +24,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.mail.useMail']}" />
 			<p:selectBooleanCheckbox
-				value="#{medicalFindingsHandlerAction.emailNotificationSettings.useEmail}">
+				value="#{notificationDialog.emailNotificationSettings.useEmail}">
 				<p:ajax event="change" update="@form" />
 			</p:selectBooleanCheckbox>
 
@@ -35,26 +35,26 @@
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.mail.subject']}" />
 			<h:inputText
-				value="#{medicalFindingsHandlerAction.emailNotificationSettings.emailSubject}"
+				value="#{notificationDialog.emailNotificationSettings.emailSubject}"
 				style="width:80%"
-				disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}" />
+				disabled="#{!notificationDialog.emailNotificationSettings.useEmail}" />
 
 			<!-- Text -->
 			<h:outputLabel value="#{msg['dialog.medicalFindings.tab.mail.text']}" />
 			<h:inputTextarea
-				value="#{medicalFindingsHandlerAction.emailNotificationSettings.emailText}"
+				value="#{notificationDialog.emailNotificationSettings.emailText}"
 				style="width:80%"
-				disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}"
+				disabled="#{!notificationDialog.emailNotificationSettings.useEmail}"
 				rows="10" />
 
 			<!-- Attachment -->
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.mail.attachPdf']}" />
 			<p:selectBooleanCheckbox
-				value="#{medicalFindingsHandlerAction.emailNotificationSettings.attachPdfToEmail}"
-				disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}">
+				value="#{notificationDialog.emailNotificationSettings.attachPdfToEmail}"
+				disabled="#{!notificationDialog.emailNotificationSettings.useEmail}">
 				<p:ajax event="change"
-					listener="#{medicalFindingsHandlerAction.emailNotificationSettings.onAttachPdfToEmailChange()}"
+					listener="#{notificationDialog.emailNotificationSettings.onAttachPdfToEmailChange()}"
 					update="@form" />
 			</p:selectBooleanCheckbox>
 
@@ -65,7 +65,7 @@
 			<p:dataTable var="emailNotification" scrollable="true"
 				scrollHeight="150"
 				styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-				value="#{medicalFindingsHandlerAction.emailNotificationSettings.notificationEmailList}">
+				value="#{notificationDialog.emailNotificationSettings.notificationEmailList}">
 
 				<!-- name of receiver -->
 				<p:column
@@ -79,14 +79,14 @@
 					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.type']}"
 					style="width:27%">
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}"
+						disabled="#{!notificationDialog.emailNotificationSettings.useEmail}"
 						value="#{emailNotification.notificationAttachment}">
 						<f:selectItems
-							value="#{medicalFindingsHandlerAction.emailNotificationSettings.getNotificationEmailOptions()}"
+							value="#{notificationDialog.emailNotificationSettings.getNotificationEmailOptions()}"
 							var="option"
 							itemLabel="#{msg['enum.notification.'.concat(option)]}" />
 						<p:ajax event="change" update="@form"
-							listener="#{medicalFindingsHandlerAction.emailNotificationSettings.onAttachTypChanged()}" />
+							listener="#{notificationDialog.emailNotificationSettings.onAttachTypChanged()}" />
 					</p:selectOneMenu>
 				</p:column>
 
@@ -94,12 +94,12 @@
 				<p:column style="width:34%"
 					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.template']}">
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						converter="#{medicalFindingsHandlerAction.emailNotificationSettings.templateTransformer}"
-						rendered="#{emailNotification.notificationAttachment eq 'PDF' and medicalFindingsHandlerAction.emailNotificationSettings.attachPdfToEmail}"
-						disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail or !medicalFindingsHandlerAction.emailNotificationSettings.attachPdfToEmail}"
+						converter="#{notificationDialog.emailNotificationSettings.templateTransformer}"
+						rendered="#{emailNotification.notificationAttachment eq 'PDF' and notificationDialog.emailNotificationSettings.attachPdfToEmail}"
+						disabled="#{!notificationDialog.emailNotificationSettings.useEmail or !notificationDialog.emailNotificationSettings.attachPdfToEmail}"
 						value="#{emailNotification.printTemplate}">
 						<f:selectItems
-							value="#{medicalFindingsHandlerAction.emailNotificationSettings.printTemplates}"
+							value="#{notificationDialog.emailNotificationSettings.printTemplates}"
 							var="template" itemValue="#{template}"
 							itemLabel="#{template.name}" />
 						<p:ajax event="change" update="@form" />
@@ -123,11 +123,11 @@
 				<!-- options -->
 				<p:column style="width:4%">
 					<p:commandLink
-						rendered="#{emailNotification.notificationAttachment eq 'PDF' and medicalFindingsHandlerAction.emailNotificationSettings.attachPdfToEmail}"
-						disabled="#{!medicalFindingsHandlerAction.emailNotificationSettings.useEmail}"
+						rendered="#{emailNotification.notificationAttachment eq 'PDF' and notificationDialog.emailNotificationSettings.attachPdfToEmail}"
+						disabled="#{!notificationDialog.emailNotificationSettings.useEmail}"
 						title="#{msg['dialog.medicalFindings.tab.mail.receiver.template.show.hint']}"
 						style="float: right" update="@form"
-						actionListener="#{medicalFindingsHandlerAction.showPreviewForContact(emailNotification)}">
+						actionListener="#{notificationDialog.showPreviewForContact(emailNotification)}">
 						<i class="fa fa-fw fa-search" />
 					</p:commandLink>
 				</p:column>
@@ -146,9 +146,9 @@
 					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+					actionListener="#{contactHandlerAction.prepareContactsDialog(commonDataHandlerAction.selectedTask)}">
 					<p:ajax event="dialogReturn" update="@form"
-						listener="#{medicalFindingsHandlerAction.updateNotificationLists()}" />
+						listener="#{notificationDialog.updateNotificationLists()}" />
 				</p:commandButton>
 
 			</h:panelGrid>
@@ -159,14 +159,14 @@
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{medicalFindingsHandlerAction.nextStep()}"
+					actionListener="#{notificationDialog.nextStep()}"
 					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+					actionListener="#{notificationDialog.hideMedicalFindingsDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

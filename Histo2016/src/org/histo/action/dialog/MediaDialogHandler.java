@@ -10,6 +10,7 @@ import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.UtilDAO;
@@ -105,7 +106,12 @@ public class MediaDialogHandler {
 	public void removeFileFormDataList(HasDataList dataList, PDFContainer container, boolean delete) {
 		if (dataList.getAttachedPdfs().contains(container)) {
 			dataList.getAttachedPdfs().remove(container);
-			patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.removed", container.getName());
+			try {
+				patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.removed", container.getName());
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			if (delete)
 				genericDAO.deleteDate(container, "log.patient.pdft.deleted", container.getName());
@@ -117,7 +123,12 @@ public class MediaDialogHandler {
 		if (getSelectedPdfContainer() != null) {
 			dataList.getAttachedPdfs().add(getSelectedPdfContainer());
 
-			patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.attached", getSelectedPdfContainer().getName());
+			try {
+				patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.attached", getSelectedPdfContainer().getName());
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 			setSelectedPdfContainer(null);
 		}
@@ -131,7 +142,12 @@ public class MediaDialogHandler {
 	 * Shows a dialog for uploading files to a task
 	 */
 	public void prepareUploadDialog(HasDataList dataList) {
-		utilDAO.initializeDataList(dataList);
+		try {
+			utilDAO.initializeDataList(dataList);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setTemporaryDataList(dataList);
 		setUploadedFileCommentary("");
 		setUploadedFileType(DocumentType.OTHER);
@@ -200,7 +216,12 @@ public class MediaDialogHandler {
 
 	public void prepareMediaDisplayDialog(HasDataList dataList, PDFContainer mediaToDisplay, boolean showUpload) {
 		mainHandlerAction.showDialog(Dialog.MEDIA_PREVIEW);
-		utilDAO.initializeDataList(dataList);
+		try {
+			utilDAO.initializeDataList(dataList);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setTemporaryDataList(dataList);
 		setShowUpload(showUpload);
 
@@ -245,7 +266,12 @@ public class MediaDialogHandler {
 
 	public void prepareMediaDisplaySelectDialog(HasDataList dataList, PDFContainer mediaToDisplay, boolean showUpload) {
 		mainHandlerAction.showDialog(Dialog.MEDIA_SELECT);
-		utilDAO.initializeDataList(dataList);
+		try {
+			utilDAO.initializeDataList(dataList);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		setTemporaryDataList(dataList);
 		setShowUpload(showUpload);
 

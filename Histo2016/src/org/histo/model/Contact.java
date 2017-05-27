@@ -12,7 +12,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
-import org.histo.action.TaskHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.interfaces.LogAble;
 
@@ -20,7 +19,7 @@ import org.histo.model.interfaces.LogAble;
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
 public class Contact implements LogAble {
 
-	private static Logger logger = Logger.getLogger(TaskHandlerAction.class);
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	private long id;
 

@@ -10,13 +10,13 @@
 
 
 	<c:set var="selectedPatient"
-		value="#{worklistHandlerAction.selectedPatient}" />
+		value="#{commonDataHandlerAction.selectedPatient}" />
 
 	<c:set var="selectedTask"
-		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
+		value="#{commonDataHandlerAction.selectedTask}" />
 
 	<c:set var="taskEditable" scope="request"
-		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
+		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
 
 	<c:set var="patientIsNotNull" scope="request"
 		value="#{selectedPatient ne null}" />

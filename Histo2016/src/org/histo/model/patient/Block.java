@@ -101,6 +101,11 @@ public class Block
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "ID: " + getId() + " BlockID: " + getBlockID();
+	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

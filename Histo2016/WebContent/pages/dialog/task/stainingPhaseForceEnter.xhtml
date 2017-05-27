@@ -17,7 +17,8 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.staingingPhaseForced.headline']}" />
+				<h:outputLabel
+					value="#{msg['dialog.staingingPhaseForced.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -29,8 +30,7 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel
-					value="#{msg['dialog.staingingPhaseForced.text']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.staingingPhaseForced.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -39,16 +39,21 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['dialog.staingingPhaseForced.button.add']}"
+					<p:commandButton
+						value="#{msg['dialog.staingingPhaseForced.button.add']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{slideHandlerAction.forceEnterStainingPhaseAndHideDialog()}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{stainingPhaseForceDialogHandler.enterStayInStainingPhase()}" />
+						<f:actionListener
+							binding="#{stainingPhaseForceDialogHandler.hideDialog()}" />
+					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{slideHandlerAction.hideDialog('STAINING_PHASE_FORCE_ENTER')}" />
+						actionListener="#{stainingPhaseForceDialogHandler.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

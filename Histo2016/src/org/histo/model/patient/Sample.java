@@ -145,6 +145,12 @@ public class Sample
 		}
 	}
 
+	@Override
+	@Transient
+	public String toString() {
+		return "ID: " + getId() + ", Sample ID: " + getSampleID();
+	}
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/

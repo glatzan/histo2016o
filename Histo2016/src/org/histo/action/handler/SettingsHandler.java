@@ -142,7 +142,7 @@ public class SettingsHandler {
 		}
 	}
 
-	private final List<ClinicPrinter> loadCupsPrinters(PrinterSettings settings) {
+	private List<ClinicPrinter> loadCupsPrinters(PrinterSettings settings) {
 		ArrayList<ClinicPrinter> result = new ArrayList<>();
 		CupsClient cupsClient;
 
@@ -168,7 +168,7 @@ public class SettingsHandler {
 		return result;
 	}
 
-	private final ClinicPrinter getPrinterByName(String name) {
+	private ClinicPrinter getPrinterByName(String name) {
 		for (ClinicPrinter clinicPrinter : getPrinterList()) {
 			if (clinicPrinter.getName().equals(name))
 				return clinicPrinter;
@@ -176,7 +176,7 @@ public class SettingsHandler {
 		return null;
 	}
 
-	private final LabelPrinter getLabelPrinterByID(String id) {
+	private LabelPrinter getLabelPrinterByID(String id) {
 
 		for (LabelPrinter labelPrinter : getLabelPrinterList()) {
 			if (labelPrinter.getId() == Long.valueOf(id)) {

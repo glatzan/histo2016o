@@ -45,14 +45,14 @@
 					<p:commandButton value="#{msg['general.ok']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-check-circle-o"
-						actionListener="#{slideHandlerAction.hideStainingPhaseLeave(false)}"></p:commandButton>
+						actionListener="#{stainingPhaseLeaveDialogHandler.hideDialog(false)}"></p:commandButton>
 
 					<!-- stay in staining list -->
 					<p:commandButton
 						value="#{msg['dialog.staingingPhaseEndAuto.button.stay']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{slideHandlerAction.hideStainingPhaseLeave(true)}"></p:commandButton>
+						actionListener="#{stainingPhaseLeaveDialogHandler.hideDialog(true)}"></p:commandButton>
 
 
 				</h:panelGrid>

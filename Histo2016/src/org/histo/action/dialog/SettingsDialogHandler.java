@@ -9,7 +9,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.histo.action.CommenDataHandlerAction;
+import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.SettingsHandler;
@@ -19,6 +19,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.MailType;
 import org.histo.config.enums.SettingsTab;
 import org.histo.config.enums.StaticList;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
@@ -81,7 +82,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 	private SettingsDAO settingsDAO;
 
 	@Autowired
-	private CommenDataHandlerAction commenDataHandlerAction;
+	private CommonDataHandlerAction commonDataHandlerAction;
 
 	@Autowired
 	private SettingsHandler settingsHandler;
@@ -350,9 +351,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		onSettingsTabChange();
 
-		commenDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		commenDataHandlerAction.setAssociatedRolesTransformer(
-				new AssociatedRoleTransformer(commenDataHandlerAction.getAssociatedRoles()));
+		commonDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commonDataHandlerAction.setAssociatedRolesTransformer(
+				new AssociatedRoleTransformer(commonDataHandlerAction.getAssociatedRoles()));
 
 		mainHandlerAction.showDialog(Dialog.SETTINGS);
 	}
@@ -363,7 +364,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 	public void onSettingsTabChange() {
 
 		logger.debug("Current Tab index is " + getActiveSettingsIndex());
-		
+
 		if (getActiveSettingsIndex() == SettingsTab.USER.getTabNumber()) {
 			prepareUserList();
 		} else if (getActiveSettingsIndex() == SettingsTab.STAINING.getTabNumber()) {
@@ -389,7 +390,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 			prepareStaticLists();
 		} else if (getActiveSettingsIndex() == SettingsTab.FAVOURITE_LIST.getTabNumber()) {
 			if (getFavouriteListTabIndex() == SettingsTab.F_EDIT) {
-				if(getTmpFavouriteList() != null && getTmpFavouriteList().getId() != 0)
+				if (getTmpFavouriteList() != null && getTmpFavouriteList().getId() != 0)
 					// reload fav list
 					prepareEditFavouriteList(getTmpFavouriteList());
 			} else
@@ -437,16 +438,17 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param physician
 	 */
 	public void saveEditPhysicianFromUserList(Physician physician) {
-		if (physician.hasNoAssociateRole())
-			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+		try {
+			if (physician.hasNoAssociateRole())
+				physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
-		if (!genericDAO.saveDataRollbackSave(physician,
-				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()))) {
+			genericDAO.saveDataRollbackSave(physician,
+					resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
+			discardTmpPhysicianFromUserList();
+
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
-
-		discardTmpPhysicianFromUserList();
 	}
 
 	/**
@@ -494,35 +496,33 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param origStainingPrototype
 	 */
 	public void saveStainig(StainingPrototype newStainingPrototype, StainingPrototype origStainingPrototype) {
-		if (origStainingPrototype == null) {
-			logger.debug("Creating new staining " + newStainingPrototype.getName());
-			// case new, save
-			getAllAvailableStainings().add(newStainingPrototype);
+		try {
+			if (origStainingPrototype == null) {
+				logger.debug("Creating new staining " + newStainingPrototype.getName());
+				// case new, save
+				getAllAvailableStainings().add(newStainingPrototype);
 
-			if (!genericDAO.saveDataRollbackSave(newStainingPrototype,
-					resourceBundle.get("log.settings.staining.new", newStainingPrototype.getName()))) {
-				onDatabaseVersionConflict();
-				return;
+				genericDAO.saveDataRollbackSave(newStainingPrototype,
+						resourceBundle.get("log.settings.staining.new", newStainingPrototype.getName()));
+
+				ListOrder.reOrderList(getAllAvailableStainings());
+
+				if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
+						resourceBundle.get("log.settings.staining.list.reoder"))) {
+					onDatabaseVersionConflict();
+					return;
+				}
+			} else {
+				// case edit: update an save
+				origStainingPrototype.update(newStainingPrototype);
+
+				genericDAO.saveDataRollbackSave(origStainingPrototype,
+						resourceBundle.get("log.settings.material.update", origStainingPrototype.getName()));
 			}
-
-			ListOrder.reOrderList(getAllAvailableStainings());
-
-			if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
-					resourceBundle.get("log.settings.staining.list.reoder"))) {
-				onDatabaseVersionConflict();
-				return;
-			}
-		} else {
-			// case edit: update an save
-			origStainingPrototype.update(newStainingPrototype);
-
-			if (!genericDAO.saveDataRollbackSave(origStainingPrototype,
-					resourceBundle.get("log.settings.material.update", origStainingPrototype.getName()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
+			discardChangesOfStainig();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
 		}
-		discardChangesOfStainig();
 	}
 
 	/**
@@ -531,12 +531,15 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param event
 	 */
 	public void onReorderStainingList(ReorderEvent event) {
-		logger.debug("List order changed, moved staining from " + event.getFromIndex() + " to " + event.getToIndex());
-		ListOrder.reOrderList(getAllAvailableStainings());
-		if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
-				resourceBundle.get("log.settings.staining.list.reoder"))) {
+		try {
+			logger.debug(
+					"List order changed, moved staining from " + event.getFromIndex() + " to " + event.getToIndex());
+			ListOrder.reOrderList(getAllAvailableStainings());
+			genericDAO.saveListRollbackSave(getAllAvailableStainings(),
+					resourceBundle.get("log.settings.staining.list.reoder"));
+
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
 	}
 
@@ -589,33 +592,31 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param origStainingPrototypeList
 	 */
 	public void saveMaterial(MaterialPreset newMaterial, MaterialPreset originalMaterial) {
-		if (originalMaterial == null) {
-			logger.debug("Creating new Material " + newMaterial.getName());
-			// case new, save
-			getAllAvailableMaterials().add(newMaterial);
-			if (!genericDAO.saveDataRollbackSave(newMaterial,
-					resourceBundle.get("log.settings.material.new", newMaterial.getName()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
+		try {
+			if (originalMaterial == null) {
+				logger.debug("Creating new Material " + newMaterial.getName());
+				// case new, save
+				getAllAvailableMaterials().add(newMaterial);
+				genericDAO.saveDataRollbackSave(newMaterial,
+						resourceBundle.get("log.settings.material.new", newMaterial.getName()));
 
-			ListOrder.reOrderList(getAllAvailableMaterials());
-			if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
-					resourceBundle.get("log.settings.material.list.reoder"))) {
-				onDatabaseVersionConflict();
-				return;
+				ListOrder.reOrderList(getAllAvailableMaterials());
+				if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
+						resourceBundle.get("log.settings.material.list.reoder"))) {
+					onDatabaseVersionConflict();
+					return;
+				}
+			} else {
+				logger.debug("Updating Material " + originalMaterial.getName());
+				// case edit: update an save
+				originalMaterial.update(newMaterial);
+				genericDAO.saveDataRollbackSave(originalMaterial,
+						resourceBundle.get("log.settings.material.update", originalMaterial.getName()));
 			}
-		} else {
-			logger.debug("Updating Material " + originalMaterial.getName());
-			// case edit: update an save
-			originalMaterial.update(newMaterial);
-			if (!genericDAO.saveDataRollbackSave(originalMaterial,
-					resourceBundle.get("log.settings.material.update", originalMaterial.getName()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
+			discardChangesOfMaterial();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
 		}
-		discardChangesOfMaterial();
 	}
 
 	public void prepareDeleteStainingList(MaterialPreset stainingPrototypeList) {
@@ -677,13 +678,16 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param event
 	 */
 	public void onReorderMaterialList(ReorderEvent event) {
-		logger.debug("List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
-		ListOrder.reOrderList(getAllAvailableMaterials());
+		try {
+			logger.debug(
+					"List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
+			ListOrder.reOrderList(getAllAvailableMaterials());
 
-		if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
-				resourceBundle.get("log.settings.staining.list.reoder"))) {
-			hideDialog();
-			return;
+			genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
+					resourceBundle.get("log.settings.staining.list.reoder"));
+
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
 		}
 	}
 
@@ -708,33 +712,32 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	public void saveDiagnosisPrototype(DiagnosisPreset newDiagnosisPrototype, DiagnosisPreset origDiagnosisPrototype) {
-		if (origDiagnosisPrototype == null) {
+		try {
+			if (origDiagnosisPrototype == null) {
 
-			// case new, save
-			logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getCategory());
-			getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
-			if (!genericDAO.saveDataRollbackSave(newDiagnosisPrototype,
-					resourceBundle.get("log.settings.diagnosis.new", newDiagnosisPrototype.getCategory()))) {
-				onDatabaseVersionConflict();
-				return;
+				// case new, save
+				logger.debug("Creating new diagnosis " + newDiagnosisPrototype.getCategory());
+				getAllAvailableDiagnosisPrototypes().add(newDiagnosisPrototype);
+				genericDAO.saveDataRollbackSave(newDiagnosisPrototype,
+						resourceBundle.get("log.settings.diagnosis.new", newDiagnosisPrototype.getCategory()));
+
+				ListOrder.reOrderList(getAllAvailableDiagnosisPrototypes());
+				if (!genericDAO.saveListRollbackSave(getAllAvailableDiagnosisPrototypes(),
+						resourceBundle.get("log.settings.diagnosis.list.reoder"))) {
+					onDatabaseVersionConflict();
+					return;
+				}
+			} else {
+				// case edit: update an save
+				logger.debug("Updating  diagnosis " + origDiagnosisPrototype.getCategory());
+				origDiagnosisPrototype.update(newDiagnosisPrototype);
+				genericDAO.saveDataRollbackSave(origDiagnosisPrototype,
+						resourceBundle.get("log.settings.diagnosis.update", origDiagnosisPrototype.getCategory()));
 			}
-			ListOrder.reOrderList(getAllAvailableDiagnosisPrototypes());
-			if (!genericDAO.saveListRollbackSave(getAllAvailableDiagnosisPrototypes(),
-					resourceBundle.get("log.settings.diagnosis.list.reoder"))) {
-				onDatabaseVersionConflict();
-				return;
-			}
-		} else {
-			// case edit: update an save
-			logger.debug("Updating  diagnosis " + origDiagnosisPrototype.getCategory());
-			origDiagnosisPrototype.update(newDiagnosisPrototype);
-			if (!genericDAO.saveDataRollbackSave(origDiagnosisPrototype,
-					resourceBundle.get("log.settings.diagnosis.update", origDiagnosisPrototype.getCategory()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
+			discardDiagnosisPrototype();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
 		}
-		discardDiagnosisPrototype();
 	}
 
 	/**
@@ -760,13 +763,16 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param event
 	 */
 	public void onReorderDiagnosisList(ReorderEvent event) {
-		logger.debug("List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
-		ListOrder.reOrderList(getAllAvailableMaterials());
 
-		if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
-				resourceBundle.get("log.settings.diagnosis.list.reoder"))) {
+		try {
+			logger.debug(
+					"List order changed, moved material from " + event.getFromIndex() + " to " + event.getToIndex());
+			ListOrder.reOrderList(getAllAvailableMaterials());
+
+			genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
+					resourceBundle.get("log.settings.diagnosis.list.reoder"));
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
 	}
 
@@ -869,16 +875,17 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param physician
 	 */
 	public void saveEditPhysician(Physician physician) {
-		if (physician.hasNoAssociateRole())
-			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+		try {
+			if (physician.hasNoAssociateRole())
+				physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
-		if (!genericDAO.saveDataRollbackSave(physician,
-				resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()))) {
+			genericDAO.saveDataRollbackSave(physician,
+					resourceBundle.get("log.settings.physician.physician.edit", physician.getPerson().getFullName()));
+
+			discardTmpPhysician();
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
-
-		discardTmpPhysician();
 	}
 
 	/**
@@ -888,17 +895,18 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param physician
 	 */
 	public void saveNewPrivatePhysician(Physician physician) {
-		// always set role to miscellaneous if no other role was selected
-		if (physician.hasNoAssociateRole())
-			physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+		try {
+			// always set role to miscellaneous if no other role was selected
+			if (physician.hasNoAssociateRole())
+				physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
-		if (!genericDAO.saveDataRollbackSave(physician, resourceBundle
-				.get("log.settings.physician.privatePhysician.save", physician.getPerson().getFullName()))) {
+			genericDAO.saveDataRollbackSave(physician, resourceBundle
+					.get("log.settings.physician.privatePhysician.save", physician.getPerson().getFullName()));
+
+			discardTmpPhysician();
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
-
-		discardTmpPhysician();
 	}
 
 	/**
@@ -907,51 +915,50 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param editPhysician
 	 */
 	public void savePhysicianFromLdap(Physician ldapPhysician, HashSet<ContactRole> roles) {
-		if (ldapPhysician == null) {
-			discardTmpPhysician();
-			return;
-		}
-
-		// removing id from the list
-		ldapPhysician.setId(0);
-
-		if (roles == null || roles.size() == 0)
-			ldapPhysician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
-		else
-			ldapPhysician.setAssociatedRoles(roles);
-
-		// tje internal physician from ldap it might have been added before (if
-		// the the physician is a user of this programm),
-		// search fur unique uid
-		Physician physicianFromDatabase = physicianDAO.loadPhysicianByUID(ldapPhysician.getUid());
-
-		// undating the foud physician
-		if (physicianFromDatabase != null) {
-			physicianFromDatabase.copyIntoObject(ldapPhysician);
-
-			physicianFromDatabase.setArchived(false);
-
-			// overwriting roles
-			physicianFromDatabase.setAssociatedRoles(roles);
-
-			if (!genericDAO.saveDataRollbackSave(physicianFromDatabase, resourceBundle
-					.get("log.settings.physician.ldap.update", ldapPhysician.getPerson().getFullName()))) {
-				onDatabaseVersionConflict();
+		try {
+			if (ldapPhysician == null) {
+				discardTmpPhysician();
 				return;
 			}
 
-			setTmpPhysician(physicianFromDatabase);
+			// removing id from the list
+			ldapPhysician.setId(0);
+
+			if (roles == null || roles.size() == 0)
+				ldapPhysician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+			else
+				ldapPhysician.setAssociatedRoles(roles);
+
+			// tje internal physician from ldap it might have been added before
+			// (if
+			// the the physician is a user of this programm),
+			// search fur unique uid
+			Physician physicianFromDatabase = physicianDAO.loadPhysicianByUID(ldapPhysician.getUid());
+
+			// undating the foud physician
+			if (physicianFromDatabase != null) {
+				physicianFromDatabase.copyIntoObject(ldapPhysician);
+
+				physicianFromDatabase.setArchived(false);
+
+				// overwriting roles
+				physicianFromDatabase.setAssociatedRoles(roles);
+
+				genericDAO.saveDataRollbackSave(physicianFromDatabase, resourceBundle
+						.get("log.settings.physician.ldap.update", ldapPhysician.getPerson().getFullName()));
+
+				setTmpPhysician(physicianFromDatabase);
+				discardTmpPhysician();
+				return;
+			}
+
+			genericDAO.saveDataRollbackSave(ldapPhysician,
+					resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getPerson().getFullName()));
+
 			discardTmpPhysician();
-			return;
-		}
-
-		if (!genericDAO.saveDataRollbackSave(ldapPhysician,
-				resourceBundle.get("log.settings.physician.ldap.save", ldapPhysician.getPerson().getFullName()))) {
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
-
-		discardTmpPhysician();
 	}
 
 	/**
@@ -961,14 +968,16 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * @param archive
 	 */
 	public void archivePhysician(Physician physician, boolean archive) {
-		physician.setArchived(archive);
-		if (!genericDAO.saveDataRollbackSave(physician,
-				resourceBundle.get(archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
-						physician.getPerson().getFullName()))) {
+		try {
+			physician.setArchived(archive);
+			genericDAO.saveDataRollbackSave(physician,
+					resourceBundle.get(
+							archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
+							physician.getPerson().getFullName()));
+			preparePhysicianList();
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
-		preparePhysicianList();
 	}
 
 	/**
@@ -979,7 +988,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		// refresh from database
 		if ((getPhysicianTabIndex() == SettingsTab.P_EDIT || getPhysicianTabIndex() == SettingsTab.P_EDIT_EXTERN)
 				&& getTmpPhysician().getId() != 0)
-			genericDAO.refresh(getTmpPhysician());
+			genericDAO.reset(getTmpPhysician());
 
 		setTmpPhysician(null);
 		setTmpLdapPhysician(null);
@@ -1019,38 +1028,35 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	public void saveListItem(ListItem item, StaticList type) {
+		try {
+			item.setListType(type);
 
-		item.setListType(type);
+			if (item.getId() == 0) {
+				logger.debug("Creating new ListItem " + item.getValue() + " for " + type.toString());
+				// case new, save
+				getStaticListContent().add(item);
+				genericDAO.saveDataRollbackSave(item,
+						resourceBundle.get("log.settings.staticList.new", item.getValue(), type.toString()));
 
-		if (item.getId() == 0) {
-			logger.debug("Creating new ListItem " + item.getValue() + " for " + type.toString());
-			// case new, save
-			getStaticListContent().add(item);
-			if (!genericDAO.saveDataRollbackSave(item,
-					resourceBundle.get("log.settings.staticList.new", item.getValue(), type.toString()))) {
-				onDatabaseVersionConflict();
-				return;
+				ListOrder.reOrderList(getStaticListContent());
+
+				if (!genericDAO.saveListRollbackSave(getStaticListContent(),
+						resourceBundle.get("log.settings.staticList.list.reoder", type.toString()))) {
+					onDatabaseVersionConflict();
+					return;
+				}
+			} else {
+				logger.debug("Updating ListItem " + item.getValue());
+				// case edit: update an save
+
+				genericDAO.saveDataRollbackSave(item,
+						resourceBundle.get("log.settings.staticList.update", item.getValue(), type.toString()));
 			}
 
-			ListOrder.reOrderList(getStaticListContent());
-
-			if (!genericDAO.saveListRollbackSave(getStaticListContent(),
-					resourceBundle.get("log.settings.staticList.list.reoder", type.toString()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
-		} else {
-			logger.debug("Updating ListItem " + item.getValue());
-			// case edit: update an save
-
-			if (!genericDAO.saveDataRollbackSave(item,
-					resourceBundle.get("log.settings.staticList.update", item.getValue(), type.toString()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
+			discardChangeOfListItem();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
 		}
-
-		discardChangeOfListItem();
 	}
 
 	public void discardChangeOfListItem() {
@@ -1066,34 +1072,33 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	public void archiveListItem(ListItem item, boolean archive) {
-		item.setArchived(archive);
-		if (archive) {
-			if (!genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.archive",
-					item.getValue(), getSelectedStaticList().toString()))) {
-				onDatabaseVersionConflict();
-				return;
+		try {
+			item.setArchived(archive);
+			if (archive) {
+				genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.archive",
+						item.getValue(), getSelectedStaticList().toString()));
+			} else {
+				genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.dearchive",
+						item.getValue(), getSelectedStaticList().toString()));
 			}
-		} else {
-			if (!genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.dearchive",
-					item.getValue(), getSelectedStaticList().toString()))) {
-				onDatabaseVersionConflict();
-				return;
-			}
-		}
 
-		// removing item from current list
-		getStaticListContent().remove(item);
+			// removing item from current list
+			getStaticListContent().remove(item);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
 	}
 
 	public void onReorderStaticLists(ReorderEvent event) {
-		logger.debug("List order changed, moved static list item from " + event.getFromIndex() + " to "
-				+ event.getToIndex());
-		ListOrder.reOrderList(getStaticListContent());
+		try {
+			logger.debug("List order changed, moved static list item from " + event.getFromIndex() + " to "
+					+ event.getToIndex());
+			ListOrder.reOrderList(getStaticListContent());
 
-		if (!genericDAO.saveListRollbackSave(getStaticListContent(),
-				resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()))) {
+			genericDAO.saveListRollbackSave(getStaticListContent(),
+					resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()));
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-			return;
 		}
 	}
 
@@ -1127,23 +1132,21 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	public void saveFavouriteList() {
-		// saving new list
-		if (getTmpFavouriteList().getId() == 0) {
-			if (!genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.new",
-					new Object[] { getTmpFavouriteList().toString() })) {
-				onDatabaseVersionConflict();
-				return;
+		try {
+			// saving new list
+			if (getTmpFavouriteList().getId() == 0) {
+				genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.new",
+						new Object[] { getTmpFavouriteList().toString() });
+			} else {
+				// updating old list
+				genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.edit",
+						new Object[] { getTmpFavouriteList().toString() });
 			}
-		} else {
-			// updating old list
-			if (!genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.edit",
-					new Object[] { getTmpFavouriteList().toString() })) {
-				onDatabaseVersionConflict();
-				return;
-			}
-		}
 
-		discardEditFavouriteList();
+			discardEditFavouriteList();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
 	}
 
 	public void discardEditFavouriteList() {

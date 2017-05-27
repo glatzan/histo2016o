@@ -22,13 +22,13 @@
 						value="#{msg['dialog.medicalFindings.tab.notify.email']}: "
 						styleClass="bold-text" />
 					<h:outputText
-						value="#{medicalFindingsHandlerAction.emailNotificationSettings.useEmail ? msg['dialog.medicalFindings.tab.notify.email.enabled'] : msg['dialog.medicalFindings.tab.notify.email.disenabled']}"
-						styleClass="bold-text #{medicalFindingsHandlerAction.emailNotificationSettings.useEmail ? 'icon-green' : 'icon-red'}" />
+						value="#{notificationDialog.emailNotificationSettings.useEmail ? msg['dialog.medicalFindings.tab.notify.email.enabled'] : msg['dialog.medicalFindings.tab.notify.email.disenabled']}"
+						styleClass="bold-text #{notificationDialog.emailNotificationSettings.useEmail ? 'icon-green' : 'icon-red'}" />
 				</h:panelGroup>
 
 				<p:dataTable var="emailNotification"
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-					value="#{medicalFindingsHandlerAction.emailNotificationSettings.notificationEmailList}">
+					value="#{notificationDialog.emailNotificationSettings.notificationEmailList}">
 					<!-- name -->
 					<p:column style="width: auto"
 						headerText="#{msg['dialog.medicalFindings.tab.notify.email.name']}">
@@ -37,7 +37,7 @@
 
 					<!-- notification performed -->
 					<p:column style="width:4%"
-						rendered="#{!medicalFindingsHandlerAction.notificationPerformed}">
+						rendered="#{!notificationDialog.notificationPerformed}">
 						<f:facet name="header">
 							<i class="fa fa-check fa-volume-up"
 								title="#{msg['dialog.medicalFindings.tab.notify.performed']}" />
@@ -55,7 +55,7 @@
 						headerText="#{msg['dialog.medicalFindings.tab.notify.email.status']}">
 						<!-- preview -->
 						<ui:fragment
-							rendered="#{!medicalFindingsHandlerAction.notificationPerformed}">
+							rendered="#{!notificationDialog.notificationPerformed}">
 							<!-- No notification -->
 							<h:outputLabel
 								rendered="#{emailNotification.notificationAttachment eq 'NONE'}"
@@ -72,7 +72,7 @@
 
 						<!-- statusreport after sending -->
 						<ui:fragment
-							rendered="#{medicalFindingsHandlerAction.notificationPerformed}">
+							rendered="#{notificationDialog.notificationPerformed}">
 							<!-- No notification -->
 							<h:outputLabel
 								rendered="#{emailNotification.notificationAttachment eq 'NONE'}"
@@ -100,13 +100,13 @@
 						value="#{msg['dialog.medicalFindings.tab.notify.fax']}: "
 						styleClass="bold-text" />
 					<h:outputText
-						value="#{medicalFindingsHandlerAction.faxNotificationSettings.useFax ? msg['dialog.medicalFindings.tab.notify.fax.enabled'] : msg['dialog.medicalFindings.tab.notify.fax.disenabled']}"
-						styleClass="bold-text #{medicalFindingsHandlerAction.faxNotificationSettings.useFax ? 'icon-green' : 'icon-red'}" />
+						value="#{notificationDialog.faxNotificationSettings.useFax ? msg['dialog.medicalFindings.tab.notify.fax.enabled'] : msg['dialog.medicalFindings.tab.notify.fax.disenabled']}"
+						styleClass="bold-text #{notificationDialog.faxNotificationSettings.useFax ? 'icon-green' : 'icon-red'}" />
 				</h:panelGroup>
 
 				<p:dataTable var="faxNotification"
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-					value="#{medicalFindingsHandlerAction.faxNotificationSettings.notificationFaxList}">
+					value="#{notificationDialog.faxNotificationSettings.notificationFaxList}">
 
 					<!-- name -->
 					<p:column style="width: auto"
@@ -133,7 +133,7 @@
 						headerText="#{msg['dialog.medicalFindings.tab.notify.fax.status']}">
 						<!-- preview -->
 						<ui:fragment
-							rendered="#{!medicalFindingsHandlerAction.notificationPerformed}">
+							rendered="#{!notificationDialog.notificationPerformed}">
 							<!-- No notification -->
 							<h:outputLabel
 								rendered="#{faxNotification.notificationAttachment eq 'NONE'}"
@@ -147,7 +147,7 @@
 
 						<!-- statusreport after sending -->
 						<ui:fragment
-							rendered="#{medicalFindingsHandlerAction.notificationPerformed}">
+							rendered="#{notificationDialog.notificationPerformed}">
 							<!-- No notification -->
 							<h:outputLabel
 								rendered="#{faxNotification.notificationAttachment eq 'NONE'}"
@@ -175,13 +175,13 @@
 						value="#{msg['dialog.medicalFindings.tab.notify.phone']}: "
 						styleClass="bold-text" />
 					<h:outputText
-						value="#{medicalFindingsHandlerAction.phoneNotificationSettings.usePhone ? msg['dialog.medicalFindings.tab.notify.phone.enabled'] : msg['dialog.medicalFindings.tab.notify.phone.disenabled']}"
-						styleClass="bold-text #{medicalFindingsHandlerAction.phoneNotificationSettings.usePhone ? 'icon-green' : 'icon-red'}" />
+						value="#{notificationDialog.phoneNotificationSettings.usePhone ? msg['dialog.medicalFindings.tab.notify.phone.enabled'] : msg['dialog.medicalFindings.tab.notify.phone.disenabled']}"
+						styleClass="bold-text #{notificationDialog.phoneNotificationSettings.usePhone ? 'icon-green' : 'icon-red'}" />
 				</h:panelGroup>
 
 				<p:dataTable var="phoneNotification"
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-					value="#{medicalFindingsHandlerAction.phoneNotificationSettings.notificationPhoneList}">
+					value="#{notificationDialog.phoneNotificationSettings.notificationPhoneList}">
 					<!-- name -->
 					<p:column style="width: auto"
 						headerText="#{msg['dialog.medicalFindings.tab.notify.phone.name']}">
@@ -198,7 +198,7 @@
 				</p:dataTable>
 
 				<ui:fragment
-					rendered="#{medicalFindingsHandlerAction.noContactDataNotificationSettings.noContactData}">
+					rendered="#{notificationDialog.noContactDataNotificationSettings.noContactData}">
 
 					<!-- Blank -->
 					<h:outputLabel value=" " />
@@ -213,7 +213,7 @@
 
 					<p:dataTable var="noContactDataNotification"
 						styleClass="defaultDataTable noBordersAll collapsedBordersAll"
-						value="#{medicalFindingsHandlerAction.noContactDataNotificationSettings.noContactDataList}">
+						value="#{notificationDialog.noContactDataNotificationSettings.noContactDataList}">
 						<!-- name -->
 						<p:column style="width: auto"
 							headerText="#{msg['dialog.medicalFindings.tab.notify.noContactData.name']}">
@@ -235,7 +235,7 @@
 				<p:commandButton value="#{msg['general.back']}"
 					icon="fa fa-fw fa-arrow-left"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{medicalFindingsHandlerAction.previousStep()}"
+					actionListener="#{notificationDialog.previousStep()}"
 					update="@form" />
 
 				<!-- submit -->
@@ -245,14 +245,14 @@
 					styleClass="smallButton buttonRighMarginInList"
 					onstart="PF('blockUIWidget').block()"
 					oncomplete="PF('blockUIWidget').unblock()"
-					actionListener="#{medicalFindingsHandlerAction.performeNotification()}"
+					actionListener="#{notificationDialog.performeNotification()}"
 					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{medicalFindingsHandlerAction.hideMedicalFindingsDialog()}" />
+					actionListener="#{notificationDialog.hideMedicalFindingsDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

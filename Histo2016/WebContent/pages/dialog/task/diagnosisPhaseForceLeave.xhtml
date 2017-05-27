@@ -29,7 +29,8 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseForceLeave.text']}"></h:outputLabel>
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseForceLeave.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -38,16 +39,21 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['dialog.diagnosisPhaseForceLeave.button.remove']}"
+					<p:commandButton
+						value="#{msg['dialog.diagnosisPhaseForceLeave.button.remove']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{diagnosisHandlerAction.forceLeaveDiagnosisPhaseAndHideDialog()}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{diagnosisPhaseForceDialog.leaveStayInStainingPhase()}" />
+								<f:actionListener
+							binding="#{diagnosisPhaseForceDialog.hideDialog()}" />
+					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{diagnosisHandlerAction.hideDialog('DIAGNOSIS_PHASE_FORCE_LEAVE')}" />
+						actionListener="#{diagnosisPhaseForceDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

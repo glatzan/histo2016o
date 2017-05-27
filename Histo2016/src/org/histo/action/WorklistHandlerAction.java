@@ -3,22 +3,25 @@ package org.histo.action;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.SettingsDialogHandler;
+import org.histo.action.handler.TaskStatusHandler;
+import org.histo.action.view.DiagnosisViewHandlerAction;
+import org.histo.action.view.ReceiptlogViewHandlerAction;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.QuickSearchOptions;
 import org.histo.config.enums.Role;
-import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.View;
 import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
-import org.histo.dao.GenericDAO;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
@@ -44,9 +47,11 @@ public class WorklistHandlerAction implements Serializable {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
+	@Lazy
 	private PatientDao patientDao;
 
 	@Autowired
+	@Lazy
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
@@ -55,47 +60,34 @@ public class WorklistHandlerAction implements Serializable {
 
 	@Autowired
 	@Lazy
-	private SlideHandlerAction slideHandlerAction;
-
-	@Autowired
-	@Lazy
-	private DiagnosisHandlerAction diagnosisHandlerAction;
-
-	@Autowired
-	@Lazy
-	private TaskHandlerAction taskHandlerAction;
-
-	@Autowired
-	@Lazy
 	private PatientHandlerAction patientHandlerAction;
 
 	@Autowired
+	@Lazy
 	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
-	private TaskListHandlerAction taskListHandlerAction;
+	@Lazy
+	private DiagnosisViewHandlerAction diagnosisViewHandlerAction;
 
 	@Autowired
-	private GenericDAO genericDAO;
-	
-	@Autowired
+	@Lazy
 	private UtilDAO utilDAO;
-	
+
 	@Autowired
+	@Lazy
 	private TaskDAO taskDAO;
-	/*
-	 * ************************** Patient ****************************
-	 */
 
-	/**
-	 * Currently selected patient
-	 */
-	private Patient selectedPatient;
+	@Autowired
+	@Lazy
+	private CommonDataHandlerAction commonDataHandlerAction;
 
-	/*
-	 * ************************** Patient ****************************
-	 */
+	@Autowired
+	@Lazy
+	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
 
+	@Autowired
+	private TaskStatusHandler taskStatusHandler;
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
@@ -146,8 +138,7 @@ public class WorklistHandlerAction implements Serializable {
 	 * ************************** Worklist ****************************
 	 */
 
-	@PostConstruct
-	public void init() {
+	public void initBean() {
 		logger.debug("Init worklist");
 
 		// init worklist
@@ -184,7 +175,7 @@ public class WorklistHandlerAction implements Serializable {
 	}
 
 	public void replaceInvaliedPatientInCurrentWorklist(Patient patient) {
-		setSelectedPatient(patient);
+		commonDataHandlerAction.setSelectedPatient(patient);
 		logger.debug("Replacing patient due to external changes!");
 		for (Patient pListItem : getWorkList()) {
 			if (pListItem.getId() == patient.getId()) {
@@ -192,28 +183,28 @@ public class WorklistHandlerAction implements Serializable {
 				getWorkList().remove(pListItem);
 				getWorkList().add(index, patient);
 
-				// setting the selected task
-				if (pListItem.getSelectedTask() != null) {
-					Task newSelectedTask = null;
-
-					for (Task task : patient.getTasks()) {
-						if (task.getId() == pListItem.getSelectedTask().getId()) {
-							newSelectedTask = task;
-							break;
-						}
-					}
-					patient.setSelectedTask(newSelectedTask);
-				}
+				// // setting the selected task
+				// if (pListItem.getSelectedTask() != null) {
+				// Task newSelectedTask = null;
+				//
+				// for (Task task : patient.getTasks()) {
+				// if (task.getId() == pListItem.getSelectedTask().getId()) {
+				// newSelectedTask = task;
+				// break;
+				// }
+				// }
+				// patient.setSelectedTask(newSelectedTask);
+				// }
 
 				// setting active tasks
-				for (Task activeTask : pListItem.getActivTasks()) {
-					for (Task task : patient.getTasks()) {
-						if (task.getId() == activeTask.getId()) {
-							task.setActive(true);
-							break;
-						}
-					}
-				}
+				// for (Task activeTask : pListItem.getActivTasks()) {
+				// for (Task task : patient.getTasks()) {
+				// if (task.getId() == activeTask.getId()) {
+				// task.setActive(true);
+				// break;
+				// }
+				// }
+				// }
 				break;
 			}
 		}
@@ -229,15 +220,25 @@ public class WorklistHandlerAction implements Serializable {
 	 * @return
 	 */
 	public String onSelectPatient(Patient patient) {
-		if (patient == null){
-			setSelectedPatient(null);
+		if (patient == null) {
+			logger.debug("Deselecting patient");
+			commonDataHandlerAction.setSelectedPatient(null);
 			return mainHandlerAction.goToNavigation(View.WORKLIST);
 		}
 
-		setSelectedPatient(genericDAO.refresh(patient));
-		utilDAO.initializeDataList(getSelectedPatient());
-		
-		logger.debug("Select patient " + getSelectedPatient().getPerson().getFullName());
+		try {
+			patientDao.initializePatient(patient, true);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// Reloading the Patient, should not be happening
+			logger.debug("!! Version inconsistent with Database updating");
+			patient = patientDao.getPatient(patient.getId(), true);
+			updatePatientInCurrentWorklist(patient);
+		}
+
+		commonDataHandlerAction.setSelectedPatient(patient);
+		commonDataHandlerAction.setSelectedTask(null);
+
+		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
 
 		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
@@ -248,28 +249,30 @@ public class WorklistHandlerAction implements Serializable {
 	 * @param task
 	 */
 	public String onSelectTaskAndPatient(Task task) {
-		if (task == null)
+		if (task == null) {
+			logger.debug("Deselecting task");
 			return mainHandlerAction.goToNavigation(View.WORKLIST);
+		}
 
-		logger.debug(
-				"Selecting patient and task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
+		logger.debug("Selecting task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
 
-		task = taskDAO.getTask(task.getId(), true);
-		
-		setSelectedPatient(task.getPatient());
-		
-		task.getPatient().setSelectedTask(task);
+		try {
+			taskDAO.initializeTaskAndPatient(task);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// Reloading the Task, should not be happening
+			logger.debug("!! Version inconsistent with Database updating");
+			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+			updatePatientInCurrentWorklist(task.getParent());
+		}
 
-		task.generateSlideGuiList();
+		updatePatientInCurrentWorklist(task.getPatient());
 
-		// Setzte action to none
-		slideHandlerAction.setActionOnMany(StainingListAction.NONE);
-
-		// init all available diagnoses
-		settingsDialogHandler.updateAllDiagnosisPrototypes();
+		commonDataHandlerAction.setSelectedPatient(task.getPatient());
+		commonDataHandlerAction.setSelectedTask(task);
 
 		// init all available materials
-		taskHandlerAction.prepareTask(task);
+		receiptlogViewHandlerAction.prepareForTask(task);
+		diagnosisViewHandlerAction.prepareForTask(task);
 
 		if (getLastSubView() == null) {
 			if (userHandlerAction.getCurrentUser().getRole().getRoleValue() >= Role.PHYSICIAN.getRoleValue()) {
@@ -300,8 +303,47 @@ public class WorklistHandlerAction implements Serializable {
 	 * @return
 	 */
 	public String onDeselectTask(Patient patient) {
-		patient.setSelectedTask(null);
+		commonDataHandlerAction.setSelectedTask(null);
 		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
+	}
+
+	public void updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict() {
+		updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict(
+				commonDataHandlerAction.getSelectedTask().getId());
+	}
+
+	public void updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict(long taskID) {
+		Task task = taskDAO.getTaskAndPatientInitialized(taskID);
+		updatePatientInCurrentWorklist(task.getPatient());
+
+		commonDataHandlerAction.setSelectedPatient(task.getPatient());
+		commonDataHandlerAction.setSelectedTask(task);
+	}
+
+	public void updatePatientInCurrentWorklist(long id) {
+		Patient patient = patientDao.getPatient(id, true);
+		updatePatientInCurrentWorklist(patient);
+	}
+
+	public void updatePatientInCurrentWorklist(Patient patient) {
+		logger.debug("Replacing patient due to external changes!");
+		for (Patient pListItem : getWorkList()) {
+			if (pListItem.getId() == patient.getId()) {
+				int index = getWorkList().indexOf(pListItem);
+				getWorkList().remove(pListItem);
+				getWorkList().add(index, patient);
+
+				// for (Task activeTask : pListItem.getActivTasks()) {
+				// for (Task task : patient.getTasks()) {
+				// if (task.getId() == activeTask.getId()) {
+				// task.setActive(true);
+				// break;
+				// }
+				// }
+				// }
+				break;
+			}
+		}
 	}
 
 	/**
@@ -314,12 +356,10 @@ public class WorklistHandlerAction implements Serializable {
 
 		if (currentView == View.WORKLIST_BLANK)
 			return View.WORKLIST_BLANK.getPath();
-		if (getSelectedPatient() == null || currentView == View.WORKLIST_TASKS) {
-			taskListHandlerAction.initBean();
+		if (commonDataHandlerAction.getSelectedPatient() == null || currentView == View.WORKLIST_TASKS) {
 			return View.WORKLIST_TASKS.getPath();
 		}
-		if (getSelectedPatient().getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
-			utilDAO.initializeDataList(getSelectedPatient());
+		if (commonDataHandlerAction.getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
 			return View.WORKLIST_PATIENT.getPath();
 		} else if (currentView == View.WORKLIST_DIAGNOSIS) {
 			setLastSubView(View.WORKLIST_DIAGNOSIS);
@@ -342,11 +382,20 @@ public class WorklistHandlerAction implements Serializable {
 	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
 
 		// checks if patient is already in database
-		if (!getWorkList().contains(patient))
+		if (!getWorkList().contains(patient)) {
+			try {
+				patientDao.initilaizeTasksofPatient(patient);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				logger.debug("!! Version inconsistent with Database updating");
+				patient = patientDao.getPatient(patient.getId(), true);
+				updatePatientInCurrentWorklist(patient);
+				;
+			}
 			getWorkList().add(patient);
+		}
 
 		if (asSelectedPatient)
-			setSelectedPatient(patient);
+			commonDataHandlerAction.setSelectedPatient(patient);
 	}
 
 	/**
@@ -356,8 +405,8 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	public void removeFromWorklist(Patient patient) {
 		getWorkList().remove(patient);
-		if (getSelectedPatient() == patient)
-			setSelectedPatient(null);
+		if (commonDataHandlerAction.getSelectedPatient() == patient)
+			commonDataHandlerAction.setSelectedPatient(null);
 	}
 
 	/**
@@ -369,7 +418,7 @@ public class WorklistHandlerAction implements Serializable {
 	public void sortWordklist(List<Patient> patiens, WorklistSortOrder order, boolean asc) {
 		switch (order) {
 		case TASK_ID:
-			WorklistSortUtil.orderListByTaskID(patiens, asc);
+			orderListByTaskID(patiens, asc);
 			break;
 		case PIZ:
 			WorklistSortUtil.orderListByPIZ(patiens, asc);
@@ -378,7 +427,7 @@ public class WorklistHandlerAction implements Serializable {
 			WorklistSortUtil.orderListByName(patiens, asc);
 			break;
 		case PRIORITY:
-			WorklistSortUtil.orderListByPriority(patiens, asc);
+			orderListByPriority(patiens, asc);
 			break;
 		}
 	}
@@ -415,21 +464,18 @@ public class WorklistHandlerAction implements Serializable {
 						TimeUtil.setDayEnding(cal).getTimeInMillis()));
 			}
 
-			// getting stainigs and restainings
-			if (searchOptions.isStaining_staining() && searchOptions.isStaining_restaining()) {
-				result.addAll(patientDao.getPatientByStainings(true));
-			} else {
+			ArrayList<Long> search = new ArrayList<Long>();
 
-				List<Patient> paints = patientDao.getPatientByStainings(true);
-				for (Patient patient : paints) {
+			if (searchOptions.isStaining_staining())
+				search.add((long) PredefinedFavouriteList.StainingList.getId());
 
-					if (searchOptions.isStaining_staining() && patient.isStainingNeeded()) {
-						result.add(patient);
-					} else if (searchOptions.isStaining_restaining() && patient.isRestainingNeeded()) {
-						result.add(patient);
-					}
-				}
-			}
+			if (searchOptions.isStaining_restaining())
+				search.add((long) PredefinedFavouriteList.ReStainingList.getId());
+
+			// TODO add check options
+			search.add((long) PredefinedFavouriteList.StayInStainingList.getId());
+
+			result.addAll(patientDao.getPatientByTaskList(search));
 
 			break;
 		case DIAGNOSIS_LIST:
@@ -506,9 +552,16 @@ public class WorklistHandlerAction implements Serializable {
 			break;
 		}
 
+		for (Patient patient : result) {
+			try {
+				patientDao.initilaizeTasksofPatient(patient);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				e.printStackTrace();
+			}
+		}
 		getWorklists().put(getActiveWorklistKey(), result);
 
-		setSelectedPatient(null);
+		commonDataHandlerAction.setSelectedPatient(null);
 	}
 
 	/**
@@ -516,20 +569,20 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	public void selectNextTask() {
 		if (getWorkList() != null && !getWorkList().isEmpty()) {
-			if (getSelectedPatient() != null) {
+			if (commonDataHandlerAction.getSelectedPatient() != null) {
 
 				boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
 
-				Task nextTask = TaskUtil.getNextTask(getSelectedPatient().getTasks(),
-						getSelectedPatient().getSelectedTask(), activeOnly);
+				Task nextTask = getNextTask(commonDataHandlerAction.getSelectedPatient().getTasks(),
+						commonDataHandlerAction.getSelectedTask(), activeOnly);
 				if (nextTask != null) {
 					onSelectTaskAndPatient(nextTask);
 					return;
 				}
 
-				int indexOfPatient = getWorkList().indexOf(getSelectedPatient());
+				int indexOfPatient = getWorkList().indexOf(commonDataHandlerAction.getSelectedPatient());
 				if (getWorkList().size() - 1 > indexOfPatient) {
-					getSelectedPatient().setSelectedTask(null);
+					commonDataHandlerAction.setSelectedTask(null);
 					onSelectPatient(getWorkList().get(indexOfPatient + 1));
 				}
 			} else {
@@ -543,24 +596,24 @@ public class WorklistHandlerAction implements Serializable {
 
 			boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
 
-			Task nextTask = TaskUtil.getPrevTask(getSelectedPatient().getTasks(),
-					getSelectedPatient().getSelectedTask(), activeOnly);
+			Task nextTask = getPrevTask(commonDataHandlerAction.getSelectedPatient().getTasks(),
+					commonDataHandlerAction.getSelectedTask(), activeOnly);
 
 			if (nextTask != null) {
 				onSelectTaskAndPatient(nextTask);
 				return;
 			}
 
-			if (getSelectedPatient() != null) {
-				int indexOfPatient = getWorkList().indexOf(getSelectedPatient());
+			if (commonDataHandlerAction.getSelectedPatient() != null) {
+				int indexOfPatient = getWorkList().indexOf(commonDataHandlerAction.getSelectedPatient());
 				if (indexOfPatient > 0) {
-					getSelectedPatient().setSelectedTask(null);
+					commonDataHandlerAction.setSelectedTask(null);
 
 					Patient prevPatient = getWorkList().get(indexOfPatient - 1);
 
-					Task preFirstTask = TaskUtil.getFirstTask(prevPatient.getTasks(), activeOnly);
+					Task preFirstTask = getFirstTask(prevPatient.getTasks(), activeOnly);
 					if (preFirstTask != null)
-						prevPatient.setSelectedTask(preFirstTask);
+						commonDataHandlerAction.setSelectedTask(preFirstTask);
 
 					onSelectPatient(getWorkList().get(indexOfPatient - 1));
 				}
@@ -570,6 +623,142 @@ public class WorklistHandlerAction implements Serializable {
 		}
 	}
 
+	/**
+	 * Returns the task with the highest taskID. (Is always the first task
+	 * because of the descending order)
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+	public Task getLastTask(List<Task> tasks, boolean active) {
+		if (tasks == null || tasks.isEmpty())
+			return null;
+
+		// List is ordere desc by taskID per default so return first (and
+		// latest) task in List
+		if (tasks != null && !tasks.isEmpty()) {
+			if (active == false)
+				return tasks.get(0);
+
+			for (Task task : tasks) {
+				if (taskStatusHandler.isActiveOrActionPending(task))
+					return task;
+			}
+		}
+		return null;
+	}
+
+	public Task getFirstTask(List<Task> tasks, boolean active) {
+		if (tasks == null || tasks.isEmpty())
+			return null;
+
+		// List is ordere desc by taskID per default so return first (and
+		// latest) task in List
+		if (tasks != null && !tasks.isEmpty()) {
+
+			if (active == false)
+				return tasks.get(tasks.size() - 1);
+
+			for (int i = tasks.size() - 1; i >= 0; i--) {
+				if (taskStatusHandler.isActiveOrActionPending(tasks.get(i)))
+					return tasks.get(i);
+				else
+					continue;
+			}
+		}
+		return null;
+	}
+
+	public Task getPrevTask(List<Task> tasks, Task currentTask, boolean activeOnle) {
+
+		int index = tasks.indexOf(currentTask);
+		if (index == -1 || index == 0)
+			return null;
+
+		for (int i = index - 1; i >= 0; i--) {
+			if (activeOnle) {
+				if (taskStatusHandler.isActiveOrActionPending(tasks.get(i)))
+					return tasks.get(i);
+			} else
+				return tasks.get(i);
+		}
+		return null;
+	}
+
+	public Task getNextTask(List<Task> tasks, Task currentTask, boolean activeOnle) {
+
+		int index = tasks.indexOf(currentTask);
+		if (index == -1 || index == tasks.size() - 1)
+			return null;
+
+		for (int i = index + 1; i < tasks.size(); i++) {
+			if (activeOnle) {
+				if (taskStatusHandler.isActiveOrActionPending(tasks.get(i)))
+					return tasks.get(i);
+			} else
+				return tasks.get(i);
+		}
+		return null;
+	}
+
+	public List<Patient> orderListByPriority(List<Patient> patiens, boolean asc) {
+
+		// Sorting
+		Collections.sort(patiens, new Comparator<Patient>() {
+			@Override
+			public int compare(Patient patientOne, Patient patientTwo) {
+				Task highestPriorityOne = taskStatusHandler.hasActiveTasks(patientOne)
+						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActivTasks(patientOne)) : null;
+				Task highestPriorityTwo = taskStatusHandler.hasActiveTasks(patientTwo)
+						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActivTasks(patientTwo)) : null;
+
+				if (highestPriorityOne == null && highestPriorityTwo == null)
+					return 0;
+				else if (highestPriorityOne == null)
+					return asc ? -1 : 1;
+				else if (highestPriorityTwo == null)
+					return asc ? 1 : -1;
+				else {
+					int res = highestPriorityOne.getTaskPriority().compareTo(highestPriorityTwo.getTaskPriority());
+					return asc ? res : res * -1;
+				}
+			}
+		});
+
+		return patiens;
+	}
+
+	/**
+	 * Sorts a List of patients by the task id. The tasknumber will be ascending
+	 * or descending depending on the asc parameter.
+	 * 
+	 * @param patiens
+	 * @return
+	 */
+	public List<Patient> orderListByTaskID(List<Patient> patiens, boolean asc) {
+
+		// Sorting
+		Collections.sort(patiens, new Comparator<Patient>() {
+			@Override
+			public int compare(Patient patientOne, Patient patientTwo) {
+				Task lastTaskOne = taskStatusHandler.hasActiveTasks(patientOne) ? taskStatusHandler.getActivTasks(patientOne).get(0) : null;
+				Task lastTaskTwo = taskStatusHandler.hasActiveTasks(patientTwo) ? taskStatusHandler.getActivTasks(patientTwo).get(0) : null;
+
+				if (lastTaskOne == null && lastTaskTwo == null)
+					return 0;
+				else if (lastTaskOne == null)
+					return asc ? -1 : 1;
+				else if (lastTaskTwo == null)
+					return asc ? 1 : -1;
+				else {
+					int res = lastTaskOne.getTaskID().compareTo(lastTaskTwo.getTaskID());
+					return asc ? res : res * -1;
+				}
+			}
+		});
+
+		return patiens;
+	}
 	/*
 	 * ************************** Worklist ****************************
 	 */
@@ -707,14 +896,6 @@ public class WorklistHandlerAction implements Serializable {
 
 	public ArrayList<Patient> getWorkList() {
 		return worklists.get(getActiveWorklistKey());
-	}
-
-	public Patient getSelectedPatient() {
-		return selectedPatient;
-	}
-
-	public void setSelectedPatient(Patient selectedPatient) {
-		this.selectedPatient = selectedPatient;
 	}
 
 	public SearchOptions getSearchOptions() {

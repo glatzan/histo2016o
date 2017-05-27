@@ -8,12 +8,14 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
+import org.histo.action.WorklistHandlerAction;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
@@ -51,10 +53,10 @@ public class PrintDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private SettingsHandler settingsHandler;
-	
+
 	@Autowired
-	private UtilDAO utilDAO;
-	
+	private WorklistHandlerAction worklistHandlerAction;
+
 	/**
 	 * List of all templates for printing
 	 */
@@ -186,8 +188,15 @@ public class PrintDialogHandler extends AbstractDialog {
 
 	public void initBean(Task task, PrintTemplate[] templates, PrintTemplate selectedTemplate) {
 		// getting task datalist, if was altered a updated task will be returend
+		try {
+			taskDAO.initializeTask(task, false);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			logger.debug("!! Version inconsistent with Database updating");
+			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+		}
 
-		super.initBean(taskDAO.getTask(task.getId(), true), Dialog.PRINT);
+		super.initBean(task, Dialog.PRINT);
 
 		if (templates != null) {
 			setTemplateList(new ArrayList<PrintTemplate>(Arrays.asList(templates)));
@@ -356,24 +365,22 @@ public class PrintDialogHandler extends AbstractDialog {
 	 * @param pdf
 	 */
 	public void savePdf(Task task, PDFContainer pdf) {
-		if (pdf.getId() == 0) {
-			logger.debug("Pdf not saved jet, saving" + pdf.getName());
 
-			// saving new pdf and updating task
-			if(!patientDao.savePatientAssociatedDataFailSave(pdf, task, "log.patient.task.pdf.created",
-					pdf.getName())){
-				onDatabaseVersionConflict();
-				return;
-			}
+		try {
+			if (pdf.getId() == 0) {
+				logger.debug("Pdf not saved jet, saving" + pdf.getName());
 
-			task.getAttachedPdfs().add(pdf);
-			
-			if(!patientDao.savePatientAssociatedDataFailSave(task, "log.patient.pdf.attached", pdf.getName())){
-				onDatabaseVersionConflict();
-				return;
+				// saving new pdf and updating task
+				patientDao.savePatientAssociatedDataFailSave(pdf, task, "log.patient.task.pdf.created", pdf.getName());
+
+				task.getAttachedPdfs().add(pdf);
+
+				patientDao.savePatientAssociatedDataFailSave(task, "log.patient.pdf.attached", pdf.getName());
+			} else {
+				logger.debug("PDF allready saved, not saving. " + pdf.getName());
 			}
-		} else {
-			logger.debug("PDF allready saved, not saving. " + pdf.getName());
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
 		}
 	}
 

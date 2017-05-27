@@ -42,20 +42,24 @@
 						styleClass="smallButton buttonRighMarginInListExtended"
 						value="#{msg['dialog.histologicalRecordOverwrite.button.overwrite']}">
 						<f:actionListener
-							binding="#{diagnosisHandlerAction.copyHistologicalRecord(diagnosisHandlerAction.tmpDiagnosis, true)}"></f:actionListener>
+							binding="#{copyHistologicalRecordDialog.copyHistologicalRecord(true)}" />
+						<f:actionListener
+							binding="#{copyHistologicalRecordDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						value="#{msg['dialog.histologicalRecordOverwrite.button.add']}">
 						<f:actionListener
-							binding="#{diagnosisHandlerAction.copyHistologicalRecord(diagnosisHandlerAction.tmpDiagnosis, false)}"></f:actionListener>
+							binding="#{copyHistologicalRecordDialog.copyHistologicalRecord(false)}" />
+						<f:actionListener
+							binding="#{copyHistologicalRecordDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						value="#{msg['general.abort']}" icon="fa fa-times-circle"
-						actionListener="#{diagnosisHandlerAction.hideCopyHistologicalRecordDialog()}" />
+						actionListener="#{copyHistologicalRecordDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

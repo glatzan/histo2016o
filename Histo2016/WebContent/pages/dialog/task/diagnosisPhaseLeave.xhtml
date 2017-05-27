@@ -17,8 +17,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseLeave.headline']}" />
+				<h:outputLabel value="#{msg['dialog.diagnosisPhaseLeave.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -33,8 +32,7 @@
 				<p:media player="pdf" value="#{printDialogHandler.pdfContent}"
 					width="100%" rendered="#{printDialogHandler.renderPdf}"
 					height="460px"></p:media>
-				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseLeave.text']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.diagnosisPhaseLeave.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -45,13 +43,13 @@
 					<h:panelGrid columns="4" styleClass="buttonLeftMarginInList">
 						<!-- archived -->
 						<p:selectBooleanCheckbox styleClass="smallCheckbox"
-							value="#{diagnosisHandlerAction.stayInDiagnosisPhase}" />
+							value="#{diagnosisPhaseLeaveDialog.stayInDiagnosisPhase}" />
 						<h:outputLabel
 							value="#{msg['dialog.diagnosisPhaseLeave.button.stay']}"
 							style="margin-left:5px;" />
 
 						<h:panelGroup layout="block" style="width:20px;" />
-						
+
 						<p:selectOneMenu value="#{printDialogHandler.selectedTemplate}"
 							converter="#{printDialogHandler.templateTransformer}"
 							styleClass="customSerachSelectMenu">
@@ -71,22 +69,28 @@
 					<p:commandButton
 						value="#{msg['dialog.diagnosisPhaseLeave.button.notify']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInList"
-						actionListener="#{diagnosisHandlerAction.hideDiagnosisPhaseEndDialog(diagnosisHandlerAction.stayInDiagnosisPhase)}"></p:commandButton>
-
+						styleClass="smallButton buttonRighMarginInList">
+						<f:actionListener
+							binding="#{diagnosisPhaseLeaveDialog.endDiagnosisPhase()}" />
+						<f:actionListener
+							binding="#{diagnosisPhaseLeaveDialog.hideDialog()}" />
+					</p:commandButton>
 
 					<p:commandButton
 						value="#{msg['dialog.diagnosisPhaseLeave.button.notify.tmp']}"
 						icon="fa fa-check-circle-o" disabled="true"
-						styleClass="smallButton buttonRighMarginInList"
-						actionListener="#{diagnosisHandlerAction.hideDiagnosisPhaseEndDialog(diagnosisHandlerAction.stayInDiagnosisPhase)}"></p:commandButton>
-
+						styleClass="smallButton buttonRighMarginInList">
+						<f:actionListener
+							binding="#{diagnosisPhaseLeaveDialog.endDiagnosisPhase()}" />
+						<f:actionListener
+							binding="#{diagnosisPhaseLeaveDialog.hideDialog()}" />
+					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{diagnosisHandlerAction.hideDialog('DIAGNOSIS_PHASE_LEAVE')}" />
+						actionListener="#{diagnosisPhaseLeaveDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

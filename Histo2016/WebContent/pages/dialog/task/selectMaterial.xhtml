@@ -29,17 +29,19 @@
 		</div>
 
 		<div class="contentDiv">
-			<p:dataTable var="material" scrollHeight="150"
-				selection="#{taskHandlerAction.selectedMaterial}"
+			<p:dataTable var="material" scrollHeight="220" scrollable="true"
+				selection="#{changeMaterialDialog.selectedMaterial}"
 				selectionMode="single" rowKey="#{material.id}"
-				value="#{settingsDialogHandler.allAvailableMaterials}">
-				<p:column headerText="#{msg['dialog.selectMaterial.name']}" sortBy="#{material.name}"
-					filterBy="#{material.name}" filterMatchMode="contains">
+				styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll"
+				value="#{changeMaterialDialog.materials}">
+				<p:column headerText="#{msg['dialog.selectMaterial.name']}"
+					sortBy="#{material.name}" filterBy="#{material.name}"
+					filterMatchMode="contains">
 					<h:outputText value="#{material.name}" />
 				</p:column>
 
 				<p:ajax event="rowDblselect"
-					listener="#{taskHandlerAction.changeSelectedMaterial(taskHandlerAction.temporarySample,taskHandlerAction.selectedMaterial)}" />
+					listener="#{changeMaterialDialog.changeMaterialOfSample()}" />
 
 
 			</p:dataTable>
@@ -52,14 +54,17 @@
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.select']}"
 						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{taskHandlerAction.changeSelectedMaterial(taskHandlerAction.temporarySample,taskHandlerAction.selectedMaterial)}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{changeMaterialDialog.changeMaterialOfSample()}" />
+						<f:actionListener binding="#{changeMaterialDialog.hideDialog()}" />
+					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{taskHandlerAction.hideSelectMaterialDialog()}" />
+						actionListener="#{changeMaterialDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

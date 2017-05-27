@@ -132,6 +132,11 @@ public class DiagnosisRevision
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "ID: " + getId() + " Name: " + getName();
+	}
+
 	/******************************************************** Transient ********************************************************/
 
 	@Id

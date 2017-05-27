@@ -11,16 +11,16 @@
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
 	<c:set var="selectedTask"
-		value="#{worklistHandlerAction.selectedPatient.selectedTask}" />
+		value="#{commonDataHandlerAction.selectedTask}" />
 
 	<c:set var="taskEditable" scope="session"
-		value="#{taskHandlerAction.isTaskEditable(selectedTask)}" />
+		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
 
 	<p:panel style="width: 60%"
 		styleClass="collapsedBorders noPadding noBorders">
 
 		<h:outputLabel
-			value="#{msg['body.receiptlog.taskId']} #{worklistHandlerAction.selectedPatient.selectedTask.taskID}"
+			value="#{msg['body.receiptlog.taskId']} #{commonDataHandlerAction.selectedTask.taskID}"
 			style="font-size:1.5em;"></h:outputLabel>
 
 		<h:panelGrid columns="5" style="margin-top:10px;"
@@ -32,7 +32,7 @@
 				<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
 				<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
 					styleClass="smallInput" disabled="#{!taskEditable}"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.dateOfReceiptAsDate}">
+					value="#{commonDataHandlerAction.selectedTask.dateOfReceiptAsDate}">
 					<p:ajax event="dateSelect"
 						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}"
 						update="receiptDate" />
@@ -46,7 +46,7 @@
 					<p:selectBooleanCheckbox style="padding-right:5px;"
 						disabled="#{!taskEditable}"
 						title="#{msg['body.receiptlog.taskDueDate.hint']}"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected}">
+						value="#{commonDataHandlerAction.selectedTask.dueDateSelected}">
 						<p:ajax event="change" execute="@this"
 							update="navigationForm contentForm"
 							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate',selectedTask.dueDateSelected)}">
@@ -54,8 +54,8 @@
 					</p:selectBooleanCheckbox>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
 						styleClass="smallInput"
-						value="#{worklistHandlerAction.selectedPatient.selectedTask.dueDateAsDate}"
-						disabled="#{!worklistHandlerAction.selectedPatient.selectedTask.dueDateSelected or !taskEditable}">
+						value="#{commonDataHandlerAction.selectedTask.dueDateAsDate}"
+						disabled="#{!commonDataHandlerAction.selectedTask.dueDateSelected or !taskEditable}">
 						<p:ajax event="dateSelect"
 							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}"
 							update="dueDate" />
@@ -68,7 +68,7 @@
 				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 				<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
 					styleClass="smallInput" editable="true" disabled="#{!taskEditable}">
-					<f:selectItems value="#{taskHandlerAction.wardList}"
+					<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 					<p:ajax event="change" execute="@this"
 						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
@@ -81,8 +81,9 @@
 					disabled="#{!taskEditable}" editable="true">
 					<f:selectItem itemLabel="Select One"
 						itemValue="#{msg['body.diagnosis.story.watermark']}" />
-					<f:selectItems value="#{taskHandlerAction.caseHistoryList}"
-						var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
+					<f:selectItems
+						value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
+						itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 					<p:ajax event="change" execute="@this"
 						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
@@ -91,7 +92,7 @@
 				<!-- EYE -->
 				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
 				<p:selectOneMenu styleClass="smallInput"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.eye}"
+					value="#{commonDataHandlerAction.selectedTask.eye}"
 					disabled="#{!taskEditable}">
 
 					<f:selectItems value="#{enumProvider.eyes}" var="eye"
@@ -134,7 +135,7 @@
 							<p:commandLink
 								title="#{msg['body.receiptlog.notification.hint']}"
 								disabled="#{!taskEditable}"
-								actionListener="#{taskHandlerAction.prepareSelectMaterialDialog(sample)}">
+								actionListener="#{changeMaterialDialog.initAndPrepareBean(sample)}">
 								<i class="fa fa-fw fa-cog" />
 								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							</p:commandLink>
@@ -156,7 +157,7 @@
 						<!-- quickContact surgeon -->
 						<p:commandLink
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'SURGEON')}">
+							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(commonDataHandlerAction.selectedTask,'SURGEON')}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -164,14 +165,14 @@
 						<!-- quickcontact private physician  -->
 						<p:commandLink
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
-							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(worklistHandlerAction.selectedPatient.selectedTask,'PRIVATE_PHYSICIAN')}">
+							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 
 						<!-- edit contacts -->
 						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-							actionListener="#{contactHandlerAction.prepareContactsDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+							actionListener="#{contactHandlerAction.prepareContactsDialog(commonDataHandlerAction.selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -180,7 +181,7 @@
 
 				<p:dataTable var="contact" scrollable="true" scrollHeight="90"
 					styleClass="noBordersAll collapsedBordersAll addedContactDataTable"
-					value="#{worklistHandlerAction.selectedPatient.selectedTask.contacts}">
+					value="#{commonDataHandlerAction.selectedTask.contacts}">
 
 					<p:column headerText="#{msg['body.receiptlog.contact.name']}">
 						<h:outputText value="#{contact.person.fullName}" />
@@ -219,19 +220,19 @@
 					style="font-size:1.2em !important;"></h:outputLabel>
 				<!-- staining completed -->
 				<h:panelGroup
-					rendered="#{worklistHandlerAction.selectedPatient.selectedTask.status.stainingPerformed}">
+					rendered="#{taskStatusHandler.isStainingCompleted(commonDataHandlerAction.selectedTask)}">
 					<div class="fa fa-check-circle icon-green"
 						title="#{msg['body.receiptlog.slide.completed']}" />
 				</h:panelGroup>
 				<!-- staining to perform -->
 				<h:panelGroup
-					rendered="#{worklistHandlerAction.selectedPatient.selectedTask.status.stainingNeeded}">
+					rendered="#{!taskStatusHandler.isStainingCompleted(commonDataHandlerAction.selectedTask) and !taskStatusHandler.isReStainingFlag(commonDataHandlerAction.selectedTask)}">
 					<div class="fa fa-exclamation-circle icon-orange"
 						title="#{msg['body.receiptlog.slide.staining']}" />
 				</h:panelGroup>
 				<!-- restaining to perform -->
 				<h:panelGroup
-					rendered="#{worklistHandlerAction.selectedPatient.selectedTask.status.reStainingNeeded}">
+					rendered="#{!taskStatusHandler.isStainingCompleted(commonDataHandlerAction.selectedTask) and taskStatusHandler.isReStainingFlag(commonDataHandlerAction.selectedTask)}">
 					<div class="fa fa-exclamation-circle ic-custom icon-orange"
 						title="#{msg['body.receiptlog.slide.restaining']}" />
 				</h:panelGroup>
@@ -292,7 +293,7 @@
 				</f:facet>
 
 				<c:forEach varStatus="inner"
-					items="#{worklistHandlerAction.selectedPatient.selectedTask.stainingTableRows}"
+					items="#{commonDataHandlerAction.selectedTask.stainingTableRows}"
 					var="stainingRow">
 					<p:row>
 
@@ -313,7 +314,7 @@
 											id="sampleIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.sample,true)}"
+											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,true)}"
 											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
 
@@ -343,7 +344,7 @@
 											id="blockIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.block,true)}"
+											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered((stainingRow.block,true)}"
 											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
 
@@ -363,7 +364,7 @@
 							<h:panelGroup
 								rendered="#{stainingRow.sampleType or stainingRow.blockType}">
 								<p:commandLink
-									actionListener="#{slideHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
+									actionListener="#{receiptlogViewHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
 									update="contentForm"
 									title="#{stainingRow.sampleType ? msg['body.statiningView.chooseSample'] : msg['body.statiningView.chooseBlock']}">
 									<i class="fa fa-fw fa-check-circle" />
@@ -390,7 +391,7 @@
 											id="slideIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{taskHandlerAction.manuallyAltered(stainingRow.staining,true)}"
+											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered((stainingRow.staining,true)}"
 											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
 
@@ -467,14 +468,14 @@
 								<p:commandLink title="#{msg['body.statiningView.newBlock']}"
 									styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
 									update="navigationForm contentForm"
-									actionListener="#{taskHandlerAction.createNewBlockFromGui(stainingRow.sample)}">
+									actionListener="#{diagnosisViewHandlerAction.createNewBlock(stainingRow.sample)}">
 									<i class="fa fa-fw fa-th-large"></i>
 								</p:commandLink>
 								<!-- ********** Delete Button ********** -->
 								<p:commandLink styleClass="noUnderlineAtLink"
 									title="#{msg['body.statiningView.archiveSample']}"
 									disabled="#{!taskEditable}"
-									actionListener="#{taskHandlerAction.prepareDeleteTaskTreeEntityDialog(stainingRow.sample)}">
+									actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.sample.task,stainingRow.sample)}">
 									<i class="fa fa-fw fa-times-circle"></i>
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -487,7 +488,7 @@
 								<!-- ********** New Staining Button ********** -->
 								<p:commandLink title="#{msg['body.statiningView.newStaining']}"
 									styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
-									actionListener="#{slideHandlerAction.prepareAddSlideDialog(stainingRow.block)}">
+									actionListener="#{addSlidesDialogHandler.initAndPrepareBean(stainingRow.block)}">
 									<i class="fa fa-fw fa-paint-brush"></i>
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -496,7 +497,7 @@
 								<p:commandLink styleClass="noUnderlineAtLink"
 									disabled="#{!taskEditable}"
 									title="#{msg['body.statiningView.archiveBlock']}"
-									actionListener="#{taskHandlerAction.prepareDeleteTaskTreeEntityDialog(stainingRow.block)}">
+									actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.block.task,stainingRow.block)}">
 									<i class="fa fa-fw fa-times-circle"></i>
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -508,7 +509,7 @@
 								style="float: right">
 								<!-- ********** Print Button ********** -->
 								<p:commandLink styleClass="noUnderlineAtLink"
-									actionListener="#{slideHandlerAction.printLableForSlide(stainingRow.staining)}"
+									actionListener="#{receiptlogViewHandlerAction.printLableForSlide(stainingRow.staining)}"
 									title="#{msg['body.statiningView.printStaining']}">
 									<i class="fa fa-fw fa-print" />
 									<p:ajax event="dialogReturn"
@@ -525,7 +526,7 @@
 								<p:commandLink styleClass="noUnderlineAtLink"
 									disabled="#{!taskEditable}"
 									title="#{msg['body.statiningView.archiveStaining']}"
-									actionListener="#{taskHandlerAction.prepareDeleteTaskTreeEntityDialog(stainingRow.staining)}">
+									actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.staining.task,stainingRow.staining)}">
 									<i class="fa fa-fw fa-times-circle" />
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -542,19 +543,20 @@
 				<p:commandButton icon="fa fa-fw fa-plus-circle"
 					styleClass="taskButton" disabled="#{!taskEditable}"
 					value="#{msg['body.statiningView.newSample']}"
-					actionListener="#{taskHandlerAction.prepareNewSampleDialog(worklistHandlerAction.selectedPatient.selectedTask)}">
+					actionListener="#{createSampleDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 				</p:commandButton>
 
 				<p:commandButton icon="fa fa-fw fa-check-circle"
 					disabled="#{!taskEditable}" update="contentForm"
 					value="#{msg['body.statiningView.chooseAll']}"
-					actionListener="#{slideHandlerAction.setListAsChoosen(worklistHandlerAction.selectedPatient.selectedTask.stainingTableRows,true)}" />
+					actionListener="#{receiptlogViewHandlerAction.setListAsChoosen(commonDataHandlerAction.selectedTask.stainingTableRows,true)}" />
 
 				<h:outputLabel value="#{msg['body.statiningView.choosenElements']}"
 					style="margin-left:20px;"></h:outputLabel>
 				<h:panelGroup>
-					<p:selectOneMenu value="#{slideHandlerAction.actionOnMany}"
+					<p:selectOneMenu
+						value="#{receiptlogViewHandlerAction.actionOnMany}"
 						disabled="#{!taskEditable}"
 						onchange="PF('performOnMay').jq.click();">
 
@@ -567,7 +569,7 @@
 					<p:commandButton id="changeZone" widgetVar="performOnMay"
 						style="display:none;"
 						update="navigationForm contentForm headerForm"
-						actionListener="#{slideHandlerAction.performActionOnMany(worklistHandlerAction.selectedPatient.selectedTask)}">
+						actionListener="#{receiptlogViewHandlerAction.performActionOnMany(commonDataHandlerAction.selectedTask)}">
 						<p:ajax event="dialogReturn"
 							update="navigationForm contentForm headerForm" />
 					</p:commandButton>

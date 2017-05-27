@@ -33,6 +33,7 @@ public abstract class AbstractDAO implements Serializable {
 			hibernateException.printStackTrace();
 			if (session == null || !session.isOpen()) {
 				session = sessionFactory.openSession();
+				logger.trace("Open Hibernate Session");
 			}
 		}
 		return session;

@@ -7,6 +7,8 @@ import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.PatientDao;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
@@ -18,6 +20,7 @@ import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -28,10 +31,14 @@ public class TaskManipulationHandler {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
+	@Lazy
 	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
 	private ResourceBundle resourceBundle;
+
+	@Autowired
+	private PatientDao patientDao;
 
 	/********************************************************
 	 * Diagnosis Info
@@ -56,13 +63,15 @@ public class TaskManipulationHandler {
 	 * 
 	 * @param revisions
 	 * @param finalize
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public void finalizeAllDiangosisRevisions(List<DiagnosisRevision> revisions, boolean finalize) {
+	public void finalizeAllDiangosisRevisions(List<DiagnosisRevision> revisions, boolean finalize)
+			throws CustomDatabaseInconsistentVersionException {
 		for (DiagnosisRevision revision : revisions) {
 			revision.setDiagnosisCompleted(finalize);
 			revision.setCompleationDate(finalize ? System.currentTimeMillis() : 0);
-			mainHandlerAction
-					.saveDataChange(revision,
+			patientDao
+					.savePatientAssociatedDataFailSave(revision,
 							finalize ? "log.patient.task.diagnosisContainer.diagnosisRevision.lock"
 									: "log.patient.task.diagnosisContainer.diagnosisRevision.unlock",
 							revision.getName());
@@ -234,6 +243,18 @@ public class TaskManipulationHandler {
 
 		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
 				diagnosisRevision.getName());
+	}
+
+	public void copyHistologicalRecord(Diagnosis tmpDiagnosis, boolean overwrite)
+			throws CustomDatabaseInconsistentVersionException {
+		logger.debug("Setting extended diagnosistext text");
+		tmpDiagnosis.getParent()
+				.setText(overwrite ? tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText()
+						: tmpDiagnosis.getParent().getText() + "\r\n"
+								+ tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
+
+		patientDao.savePatientAssociatedDataFailSave(tmpDiagnosis.getParent(),
+				"log.patient.task.diagnosisContainer.diagnosisRevision.update", tmpDiagnosis.getParent().toString());
 	}
 
 	/********************************************************

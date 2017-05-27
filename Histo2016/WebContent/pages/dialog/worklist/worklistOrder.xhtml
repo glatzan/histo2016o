@@ -44,12 +44,12 @@
 				<f:actionListener
 					binding="#{worklistHandlerAction.sortWordklist(worklistHandlerAction.workList, worklistHandlerAction.sortOptions.worklistSortOrder,worklistHandlerAction.sortOptions.worklistSortOrderAcs)}" />
 				<f:actionListener
-					binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_ORDER'))}" />
+					binding="#{mainHandlerAction.hideDialog(WORKLIST_ORDER)}" />
 			</p:commandButton>
 			<p:commandButton value="#{msg['general.abort']}"
 				styleClass="smallButton buttonLeftMarginInList"
 				icon="fa fa-times-circle"
-				actionListener="#{taskHandlerAction.hideNewSampleDialog()}"></p:commandButton>
+				actionListener="#{mainHandlerAction.hideDialog(WORKLIST_ORDER)}"></p:commandButton>
 		</div>
 	</h:form>
 </h:body>
