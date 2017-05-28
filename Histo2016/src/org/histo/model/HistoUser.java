@@ -23,6 +23,8 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
+import org.histo.config.enums.WorklistDefaultLoaded;
+import org.histo.config.enums.WorklistView;
 import org.histo.model.interfaces.LogAble;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -45,25 +47,31 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	private Role role;
 
-	private View defaultView;
-
-	/**
-	 * Name of the preferred cups printer
-	 */
-	private String preferedPrinter;
-
-	/**
-	 * The uuid of the preferred labelprinter
-	 */
-	private String preferedLabelPritner;
-
-	private Physician physician;
-
 	private boolean accountNonExpired = true;
 	private boolean accountNonLocked = true;
 	private boolean credentialsNonExpired = true;
 	private boolean enabled = true;
 
+	private Physician physician;
+
+	private View defaultView;
+	
+	private boolean autoSelectedPreferedPrinter;
+	/**
+	 * Name of the preferred cups printer
+	 */
+	private String preferedPrinter;
+
+	private boolean autoSelectedPreferedLabelPrinter;
+	/**
+	 * The uuid of the preferred labelprinter
+	 */
+	private String preferedLabelPritner;
+
+	private WorklistView defaultWorklistView;
+
+	private WorklistDefaultLoaded defaultWorklistToLoad;
+	
 	/**
 	 * Constructor for Hibernate
 	 */
@@ -220,6 +228,40 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	public void setPreferedLabelPritner(String preferedLabelPritner) {
 		this.preferedLabelPritner = preferedLabelPritner;
+	}
+
+	public boolean isAutoSelectedPreferedPrinter() {
+		return autoSelectedPreferedPrinter;
+	}
+
+	public void setAutoSelectedPreferedPrinter(boolean autoSelectedPreferedPrinter) {
+		this.autoSelectedPreferedPrinter = autoSelectedPreferedPrinter;
+	}
+
+	public boolean isAutoSelectedPreferedLabelPrinter() {
+		return autoSelectedPreferedLabelPrinter;
+	}
+
+	public void setAutoSelectedPreferedLabelPrinter(boolean autoSelectedPreferedLabelPrinter) {
+		this.autoSelectedPreferedLabelPrinter = autoSelectedPreferedLabelPrinter;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public WorklistView getDefaultWorklistView() {
+		return defaultWorklistView;
+	}
+
+	public void setDefaultWorklistView(WorklistView defaultWorklistView) {
+		this.defaultWorklistView = defaultWorklistView;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public WorklistDefaultLoaded getDefaultWorklistToLoad() {
+		return defaultWorklistToLoad;
+	}
+
+	public void setDefaultWorklistToLoad(WorklistDefaultLoaded defaultWorklistToLoad) {
+		this.defaultWorklistToLoad = defaultWorklistToLoad;
 	}
 
 }

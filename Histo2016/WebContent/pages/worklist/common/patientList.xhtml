@@ -12,7 +12,7 @@
 	<h:panelGroup styleClass="searchContainer" layout="block">
 		<p:focus for="searchField" />
 		<p:inputText placeholder="#{msg.headSearch}" id="searchField"
-			styleClass="seachFiled"
+			styleClass="seachFiled" disabled="true"
 			value="#{worklistHandlerAction.worklistFilter}"
 			onkeypress="if (event.keyCode == 13) {$('#navigationForm\\:idSubmitQuickSearch').click();} ">
 		</p:inputText>
