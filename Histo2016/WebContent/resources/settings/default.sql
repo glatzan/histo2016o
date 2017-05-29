@@ -248,3 +248,12 @@ INSERT INTO favouritelist VALUES (7, true, false, false, 'Stay in Diagnosislist'
 INSERT INTO favouritelist VALUES (8, true, false, false, 'Stay in Notificationlist', NULL);
 
 SELECT setval('favouritelist_sequence', (SELECT MAX(id) FROM favouritelist));
+
+INSERT INTO histouser VALUES (1, true, false, NULL, NULL, NULL, false, 1496037707291, NULL, NULL, 'ADMIN', 'glatza', 7, NULL);
+INSERT INTO histouser VALUES (2, true, false, NULL, NULL, NULL, false, 1496037707291, NULL, NULL, 'MTA', 'joosb', 7, NULL);
+INSERT INTO histouser VALUES (3, true, false, NULL, NULL, NULL, false, 1496037707291, NULL, NULL, 'MTA', 'zeitler', 7, NULL);
+INSERT INTO histouser VALUES (4, true, false, NULL, NULL, NULL, false, 1496037707291, NULL, NULL, 'PHYSICIAN', 'zimmeli', 7, NULL);
+INSERT INTO histouser VALUES (5, true, false, NULL, NULL, NULL, false, 1496037707291, NULL, NULL, 'PHYSICIAN', 'jedynak', 7, NULL);
+INSERT INTO histouser VALUES (6, true, false, NULL, NULL, NULL, false, 1496037707291, NULL, NULL, 'MODERATOR', 'auw', 7, NULL);
+
+SELECT setval('user_sequence', (SELECT MAX(id) FROM histouser));

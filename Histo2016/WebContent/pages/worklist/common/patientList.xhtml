@@ -12,16 +12,41 @@
 	<h:panelGroup styleClass="searchContainer" layout="block">
 		<p:focus for="searchField" />
 		<p:inputText placeholder="#{msg.headSearch}" id="searchField"
-			styleClass="seachFiled" disabled="true"
-			value="#{worklistHandlerAction.worklistFilter}"
-			onkeypress="if (event.keyCode == 13) {$('#navigationForm\\:idSubmitQuickSearch').click();} ">
+			styleClass="seachFiled" value="#{searchHandler.searchString}"
+			onkeypress="if(event.keyCode == 13 || event.keyCode == 10){submitQuickSearch(event); return false;}">
 		</p:inputText>
 
-		<p:commandButton id="idSubmitQuickSearch"
-			actionListener="#{worklistHandlerAction.quickSearch()}"
-			style="display:none">
+		<script type="text/javascript">
+			function submitQuickSearch(event) {
+				if (event.shiftKey) {
+					$('#navigationForm\\:submitQuickSearchBtnShift').click();
+				} else if (event.keyCode == 10 || event.ctrlKey) {
+					$('#navigationForm\\:submitQuickSearchBtnStrg').click();
+				} else {
+					$('#navigationForm\\:submitQuickSearchBtn').click();
+				}
+			}
+		</script>
+
+		<p:commandButton id="submitQuickSearchBtn"
+			actionListener="#{searchHandler.quickSearch(false, false)}"
+			style="display:none" update="navigationForm contentForm headerForm">
 			<p:ajax event="dialogReturn"
 				update="navigationForm contentForm :headerForm" />
+		</p:commandButton>
+
+		<p:commandButton id="submitQuickSearchBtnStrg"
+			actionListener="#{searchHandler.quickSearch(true,false)}"
+			style="display:none" update="navigationForm contentForm headerForm">
+			<p:ajax event="dialogReturn"
+				update="navigationForm contentForm headerForm" />
+		</p:commandButton>
+
+		<p:commandButton id="submitQuickSearchBtnShift"
+			actionListener="#{searchHandler.quickSearch(false,true)}"
+			style="display:none" update="navigationForm contentForm headerForm">
+			<p:ajax event="dialogReturn"
+				update="navigationForm contentForm headerForm" />
 		</p:commandButton>
 	</h:panelGroup>
 
@@ -116,11 +141,13 @@
 					</p:column>
 					<p:column>
 						<!-- no tasks -->
-						<h:outputLabel rendered="#{taskStatusHandler.hasActiveTasks(patient)}"
+						<h:outputLabel
+							rendered="#{!taskStatusHandler.hasActiveTasks(patient)}"
 							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
 						<!-- task list -->
-						<p:repeat var="task" value="#{taskStatusHandler.getActiveTasks(patient)}">
+						<p:repeat var="task"
+							value="#{taskStatusHandler.getActiveTasks(patient)}">
 							<p:commandLink
 								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
@@ -145,19 +172,22 @@
 								<!-- staining needed -->
 								<h:panelGroup>
 									<!-- staining needed = green -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('StainingList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('StainingList')}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.staining']}" />
 									</ui:fragment>
 
 									<!-- re-staining needed = orange -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('ReStainingList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('ReStainingList')}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-orange"
 											title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
 									</ui:fragment>
 
 									<!--  no staining needed = purple -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('StayInStainingList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('StayInStainingList')}">
 										<i style="margin-left: 5px;" class="fa fa-image icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
 									</ui:fragment>
@@ -165,33 +195,38 @@
 
 									<!-- diagnosis needed -->
 									<!-- diagnosis needed = green -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('DiagnosisList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('DiagnosisList')}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
 									</ui:fragment>
 
 									<!-- re-diagnosis needed = orange -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('ReDiagnosisList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('ReDiagnosisList')}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 									</ui:fragment>
 
 									<!-- no diagnosis needed = purple -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('StayInDiagnosisList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('StayInDiagnosisList')}">
 										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
 									</ui:fragment>
 
 									<!-- notification needed -->
 									<!-- notification need = green -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('NotificationList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('NotificationList')}">
 										<i style="margin-left: 5px;"
 											class="fa fa-volume-up icon-green"
 											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
 									</ui:fragment>
 
 									<!-- stay in phase = purple -->
-									<ui:fragment rendered="#{task.isListedInFavouriteList('StayInNotificationList')}">
+									<ui:fragment
+										rendered="#{task.isListedInFavouriteList('StayInNotificationList')}">
 										<i style="margin-left: 5px;"
 											class="fa fa-volume-up icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
@@ -220,7 +255,8 @@
 					</p:column>
 					<p:column>
 						<!-- task list -->
-						<p:repeat var="task" value="#{taskStatusHandler.getNoneActiveTasks(patient)}">
+						<p:repeat var="task"
+							value="#{taskStatusHandler.getNoneActiveTasks(patient)}">
 							<p:commandLink
 								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"

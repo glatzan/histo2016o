@@ -68,7 +68,7 @@ public class UserDAO extends AbstractDAO implements Serializable {
 	 * @param logMessage
 	 * @return
 	 */
-	public HistoUser saveUser(HistoUser histoUser, String logMessage) {
+	public Object saveUser(Object histoUser, String logMessage) {
 		Session session = getSession();
 		try {
 			// setting log info

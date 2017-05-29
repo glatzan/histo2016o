@@ -377,36 +377,6 @@ public class ContactHandlerAction implements Serializable {
 	/********************************************************
 	 * Quick Contacts
 	 ********************************************************/
-	public void prepareQuickContactsDialog(Task task, ContactRole contactRole) {
-		commonDataHandlerAction.setSelectedTask(task);
-		setSelectedContact(null);
-
-		commonDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
-		commonDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commonDataHandlerAction.getAssociatedRoles()));
-
-		setShowPhysicianRoles(new ContactRole[]{contactRole});
-		
-		updateContactList(task, getShowPhysicianRoles(), false);
-
-		setSelectedContactRole(contactRole);
-
-		mainHandlerAction.showDialog(Dialog.QUICK_CONTACTS);
-	}
-
-	public void selectContactAsRole(Contact contact, ContactRole role) {
-		contact.setRole(role);
-		onContactChangeRole(commonDataHandlerAction.getSelectedTask(), contact);
-
-		if (role != ContactRole.NONE)
-			updateContactRolePrimary(commonDataHandlerAction.getSelectedTask(), role, contact);
-	}
-
-	public void hideQuickContactsDialog() {
-		commonDataHandlerAction.setSelectedTask(null);
-		setSelectedContactRole(null);
-		setSelectedContact(null);
-		mainHandlerAction.hideDialog(Dialog.QUICK_CONTACTS);
-	}
 
 	/********************************************************
 	 * Quick Contacts

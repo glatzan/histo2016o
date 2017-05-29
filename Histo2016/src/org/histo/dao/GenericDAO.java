@@ -257,7 +257,7 @@ public class GenericDAO extends AbstractDAO {
 			getSession().flush();
 		} catch (javax.persistence.OptimisticLockException e) {
 			getSession().getTransaction().rollback();
-			// getSession().beginTransaction();
+			getSession().beginTransaction();
 			// Class<? extends HasID> klass = (Class<? extends HasID>)
 			// object.getClass();
 			throw new CustomDatabaseInconsistentVersionException();

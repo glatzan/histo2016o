@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.Role;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.DiagnosisContainer;
@@ -66,7 +67,10 @@ public class TaskStatusHandler {
 		if (task.isActive())
 			return true;
 
-		if (!isStainingCompleted(task) || isDiagnosisCompleted(task))
+		if (task.isListedInFavouriteList(PredefinedFavouriteList.StainingList, PredefinedFavouriteList.ReStainingList,
+				PredefinedFavouriteList.StayInStainingList, PredefinedFavouriteList.DiagnosisList,
+				PredefinedFavouriteList.ReDiagnosisList, PredefinedFavouriteList.StayInDiagnosisList,
+				PredefinedFavouriteList.NotificationList, PredefinedFavouriteList.StayInNotificationList))
 			return true;
 
 		return false;

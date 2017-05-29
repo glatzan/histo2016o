@@ -16,8 +16,9 @@ public enum QuickSearchOptions {
 		if (search == null || search.isEmpty())
 			return NONE;
 
+		// name + given name
 		String pattern = "(.+)[, ](.+)";
-
+		
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(search);
 
@@ -27,6 +28,7 @@ public enum QuickSearchOptions {
 			return NAME_AND_SURNAME;
 		}
 
+		// name
 		pattern = "[\\p{Alpha}\\-]+";
 
 		r = Pattern.compile(pattern);
@@ -37,6 +39,7 @@ public enum QuickSearchOptions {
 			return NAME;
 		}
 		
+		// piz
 		pattern = "(\\d{8})";
 
 		r = Pattern.compile(pattern);
@@ -47,6 +50,7 @@ public enum QuickSearchOptions {
 			return PIZ;
 		}
 
+		// task
 		pattern = "(\\d{6})";
 
 		r = Pattern.compile(pattern);
@@ -57,6 +61,7 @@ public enum QuickSearchOptions {
 			return TASK_ID;
 		}
 
+		// slide
 		pattern = "(\\d{10})";
 
 		r = Pattern.compile(pattern);

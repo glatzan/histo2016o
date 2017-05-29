@@ -7,7 +7,7 @@
 
 <h:head>
 	<title><h:outputLabel
-			value="#{msg['dialog.quickContact.headline.'.concat(contactHandlerAction.selectedContactRole)]}" />
+			value="#{msg['dialog.quickContact.headline.'.concat(quickContactDialog.selectedContactRole)]}" />
 	</title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
@@ -20,7 +20,7 @@
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
 				<h:outputLabel
-					value="#{msg['dialog.quickContact.headline.'.concat(contactHandlerAction.selectedContactRole)]}" />
+					value="#{msg['dialog.quickContact.headline.'.concat(quickContactDialog.selectedContactRole)]}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -32,11 +32,12 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 
-				<p:dataTable var="contact" rowKey="#{contact.tmpId}" id="contentTable"
+				<p:dataTable var="contact" rowKey="#{contact.tmpId}"
+					id="contentTable"
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 					scrollable="true" scrollHeight="340" selectionMode="single"
-					selection="#{contactHandlerAction.selectedContact}"
-					value="#{commonDataHandlerAction.contactList}">
+					selection="#{quickContactDialog.selectedContact}"
+					value="#{quickContactDialog.contactList}">
 
 					<!-- Name -->
 					<p:column headerText="#{msg['dialog.quickContact.table.name']}"
@@ -51,11 +52,11 @@
 						headerText="#{msg['dialog.contact.table.defaultFunction']}"
 						style="width:30% !important">
 						<p:repeat
-							value="#{contactHandlerAction.getDefaultAssociatedRoleForPhysician(contact.person)}"
+							value="#{quickContactDialog.getDefaultAssociatedRoleForPhysician(contact.person)}"
 							var="associatedRoles">
 							<h:outputLabel
 								value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
-							<br/>
+							<br />
 						</p:repeat>
 					</p:column>
 
@@ -67,7 +68,7 @@
 						</f:facet>
 						<ui:fragment rendered="#{contact.selected}">
 							<p:commandLink
-								actionListener="#{contactHandlerAction.selectContactAsRole(contact, 'NONE')}"
+								actionListener="#{quickContactDialog.selectContactAsRole(contact, 'NONE')}"
 								update="@form" styleClass="noUnderlineAtLink"
 								title="#{msg['dialog.quickContact.table.selected.info1']}">
 								<i class="fa fa-check icon-green" />
@@ -80,9 +81,8 @@
 
 				<p:remoteCommand name="submitDoubleclick">
 					<f:actionListener
-						binding="#{contactHandlerAction.selectContactAsRole(contactHandlerAction.selectedContact, contactHandlerAction.selectedContactRole)}" />
-					<f:actionListener
-						binding="#{contactHandlerAction.hideQuickContactsDialog()}" />
+						binding="#{quickContactDialog.selectContactAsRole()}" />
+					<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
 				</p:remoteCommand>
 			</h:panelGrid>
 		</div>
@@ -97,15 +97,14 @@
 							panelStyleClass="customSelectCheckboxMenuContactDialogPannel"
 							label="#{msg['dialog.contact.options.show.roles']}"
 							panelStyle="width:250px"
-							value="#{contactHandlerAction.showPhysicianRoles}"
-							converter="#{commonDataHandlerAction.associatedRolesTransformer}">
+							value="#{quickContactDialog.showPhysicianRoles}"
+							converter="#{quickContactDialog.associatedRolesTransformer}">
 							<f:selectItems var="role"
-								value="#{commonDataHandlerAction.associatedRoles}"
+								value="#{quickContactDialog.associatedRoles}"
 								itemValue="#{role}"
 								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
-							<p:ajax
-								listener="#{contactHandlerAction.updateContactList()}"
+							<p:ajax listener="#{quickContactDialog.updateContactList()}"
 								update=":dialogContent:contentTable"></p:ajax>
 						</p:selectCheckboxMenu>
 					</h:panelGrid>
@@ -116,15 +115,14 @@
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-fw fa-check-circle-o">
 						<f:actionListener
-							binding="#{contactHandlerAction.selectContactAsRole(contactHandlerAction.selectedContact, contactHandlerAction.selectedContactRole)}" />
-						<f:actionListener
-							binding="#{contactHandlerAction.hideQuickContactsDialog()}" />
+							binding="#{quickContactDialog.selectContactAsRole()}" />
+						<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.close']}"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-fw fa-times-circle" id="closeBtn"
-						actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('CONTACTS'))}"></p:commandButton>
+						actionListener="#{quickContactDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
 
 			</h:panelGrid>

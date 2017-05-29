@@ -13,11 +13,12 @@ import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.histo.config.enums.ContactRole;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 
 @Entity
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
-public class Contact implements LogAble {
+public class Contact implements LogAble, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 

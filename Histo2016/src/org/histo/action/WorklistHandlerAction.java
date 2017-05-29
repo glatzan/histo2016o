@@ -243,6 +243,12 @@ public class WorklistHandlerAction implements Serializable {
 		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
 
+	public String onDeselectPatient() {
+		commonDataHandlerAction.setSelectedPatient(null);
+		commonDataHandlerAction.setSelectedTask(null);
+		return mainHandlerAction.goToNavigation(View.WORKLIST_TASKS);
+	}
+
 	/**
 	 * Selects a task and sets the patient of this task as selectedPatient
 	 * 
@@ -302,7 +308,7 @@ public class WorklistHandlerAction implements Serializable {
 	 * @param patient
 	 * @return
 	 */
-	public String onDeselectTask(Patient patient) {
+	public String onDeselectTask() {
 		commonDataHandlerAction.setSelectedTask(null);
 		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
 	}
@@ -395,7 +401,7 @@ public class WorklistHandlerAction implements Serializable {
 		}
 
 		if (asSelectedPatient)
-			commonDataHandlerAction.setSelectedPatient(patient);
+			onSelectPatient(patient);
 	}
 
 	/**
@@ -405,8 +411,9 @@ public class WorklistHandlerAction implements Serializable {
 	 */
 	public void removeFromWorklist(Patient patient) {
 		getWorkList().remove(patient);
-		if (commonDataHandlerAction.getSelectedPatient() == patient)
-			commonDataHandlerAction.setSelectedPatient(null);
+		if (commonDataHandlerAction.getSelectedPatient() == patient){
+			onDeselectPatient();
+		}
 	}
 
 	/**

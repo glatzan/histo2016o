@@ -91,8 +91,9 @@
 						editable="true">
 						<f:selectItem itemLabel="Select One"
 							itemValue="#{msg['body.diagnosis.story.watermark']}" />
-						<f:selectItems value="#{diagnosisViewHandlerAction.caseHistoryList}"
-							var="item" itemLabel="#{item.value}" itemValue="#{item.value}" />
+						<f:selectItems
+							value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
+							itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 						<p:ajax event="change" execute="@this"
 							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
@@ -171,7 +172,7 @@
 						<p:commandLink style="float: right; margin-right:5px;"
 							styleClass="noUnderlineAtLink"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(commonDataHandlerAction.selectedTask,'SURGEON')}"
+							actionListener="#{quickContactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'SURGEON')}"
 							disabled="#{!taskEditable}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -190,7 +191,7 @@
 						<p:commandLink style="float: right; margin-right:5px;"
 							styleClass="noUnderlineAtLink"
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
-							actionListener="#{contactHandlerAction.prepareQuickContactsDialog(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}"
+							actionListener="#{quickContactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}"
 							disabled="#{!taskEditable}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -339,7 +340,8 @@
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician.select']}"
 							itemValue="#{null}" />
 
-						<f:selectItems value="#{diagnosisViewHandlerAction.physiciansToSignList}"
+						<f:selectItems
+							value="#{diagnosisViewHandlerAction.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 
@@ -399,7 +401,8 @@
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant.select']}"
 							itemValue="#{null}" />
 
-						<f:selectItems value="#{diagnosisViewHandlerAction.physiciansToSignList}"
+						<f:selectItems
+							value="#{diagnosisViewHandlerAction.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 
@@ -424,8 +427,7 @@
 
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="consultantToSignRole" editable="true"
-						style="width:80% !important"
-						disabled="#{selectedTask.diagnosisContainer.signatureTwo.physician eq null}"
+						style="width:80% !important" disabled="#{!taskEditable}"
 						value="#{selectedTask.diagnosisContainer.signatureTwo.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"

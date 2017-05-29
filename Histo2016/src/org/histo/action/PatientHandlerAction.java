@@ -183,6 +183,7 @@ public class PatientHandlerAction implements Serializable {
 	 * 
 	 * @param piz
 	 */
+	// TODO move to dao or handler
 	public List<PatientList> searchForPatientList(String piz, String name, String surname, Date birthday) {
 		ArrayList<PatientList> result = new ArrayList<>();
 

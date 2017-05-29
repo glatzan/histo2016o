@@ -47,13 +47,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 		try {
 			Gson gson = new Gson();
-			
+
 			LdapHandler connection = gson.fromJson(FileHandlerUtil.getContentOfFile(SettingsHandler.LDAP_SETTINGS),
 					LdapHandler.class);
-			
+
 			ProgramSettings settings = gson.fromJson(FileHandlerUtil.getContentOfFile(SettingsHandler.PROGRAM_SETTINGS),
 					ProgramSettings.class);
-			
+
 			if (settings.isOffline()) {
 				logger.info("LDAP login disabled");
 
@@ -111,12 +111,25 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 					}
 				}
 
+				if (histoUser.getPhysician() == null) {
+					logger.info("No Physsican found");
+					histoUser.setPhysician(new Physician(new Person()));
+					histoUser.getPhysician().setUid(userName);
+					histoUser.getPhysician().setClinicEmployee(true);
+					// Default role for that physician
+					histoUser.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+				}
+
 				histoUser.getPhysician().copyIntoObject(physician);
 
 				connection.closeConnection();
 
 				histoUser.setLastLogin(System.currentTimeMillis());
-
+//
+//				userDAO.saveUser(histoUser.getPhysician().getPerson(), "Benutzerdaten geupdated");
+//
+//				userDAO.saveUser(histoUser.getPhysician(), "Benutzerdaten geupdated");
+//				
 				userDAO.saveUser(histoUser, "Benutzerdaten geupdated");
 
 				Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
