@@ -72,7 +72,7 @@ public class SearchHandlerAction {
 			// TODO: implement
 		} else {
 
-			if (searchString.matches("^\\d{6}$")) {
+			if (searchString.matches("^\\d{6}$")) { // task
 				// serach for task (6 digits)
 				Patient patientOfTask = patientDao.getPatientByTaskID(searchString);
 
@@ -95,7 +95,7 @@ public class SearchHandlerAction {
 							FacesMessage.SEVERITY_ERROR);
 				}
 
-			} else if (searchString.matches("^\\d{8}$")) {
+			} else if (searchString.matches("^\\d{8}$")) { // piz
 				// searching for piz (8 digits)
 				logger.debug("Search for piz: " + searchString);
 
@@ -122,7 +122,7 @@ public class SearchHandlerAction {
 
 					logger.debug("No Patient found with piz " + searchString);
 				}
-			} else if (searchString.matches("^\\d{9}$")) {
+			} else if (searchString.matches("^\\d{9}$")) { // slide id
 				// searching for slide (8 digits)
 				logger.debug("Search for SlideID: " + searchString);
 
@@ -143,7 +143,27 @@ public class SearchHandlerAction {
 				}
 			} else if (searchString.matches("^(.+)[, ](.+)$")) {
 				// name, surename; name surename
+				String arr = searchString.split("[, ]");
+				List<PatientList> listItem = searchHandler.searhcForPatientNameAndBirthday(arr[0], arr[1], null);
 
+				if(listItem.size() == 1){ // one found, adding to worklist
+					 logger.debug("Found one matching patient " + listItem.get(0).getPatient() + ", adding to worklist");
+				}else if(listItem.size() > 1){ // more then one found
+					
+					 patientHandlerAction.initAddPatientDialog();
+					
+					 patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
+					 patientHandlerAction.setActivePatientDialogIndex(0);
+					 patientHandlerAction.setSearchForPatientName(resultArr[0]);
+					 patientHandlerAction.setSearchForPatientSurname(resultArr[1]);
+					
+					 patientHandlerAction.setSearchForPatientList(result);
+					
+					 patientHandlerAction.showAddPatientDialog();
+				}else{ // none found
+					
+				}
+				
 			} else if (searchString.matches("^[\\p{Alpha}\\-]+")) {
 				// name
 
@@ -151,69 +171,69 @@ public class SearchHandlerAction {
 
 			}
 
-			//
-			// switch (search) {
-			// case NAME_AND_SURNAME:
-			// logger.debug("Searching for name (" + resultArr[0] + ") and
-			// suranme (" + resultArr[1] + ")");
-			//
-			// // overwrites the toManyPatiensInClinicDatabse flag, so perform
-			// // method before search
-			//
-			// result = patientHandlerAction.searchForPatientList("",
-			// resultArr[0], resultArr[1], null);
-			//
-			// if (result.size() == 1) {
-			// logger.debug("Found patient " + result.get(0).getPatient() + "
-			// and adding to current worklist");
-			// patientHandlerAction.addNewInternalPatient(result.get(0).getPatient());
-			// worklistHandlerAction.addPatientToWorkList(result.get(0).getPatient(),
-			// true);
-			//
-			// } else {
-			// logger.debug("To many results found in clinic database, open
-			// addPatient dialog (" + resultArr[0]
-			// + "," + resultArr[1] + ")");
-			//
-			// boolean toMany = false;
-			//
-			// if (patientHandlerAction.isToManyMatchesInClinicDatabase())
-			// toMany = true;
-			//
-			// patientHandlerAction.initAddPatientDialog();
-			//
-			// patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
-			// patientHandlerAction.setActivePatientDialogIndex(0);
-			// patientHandlerAction.setSearchForPatientName(resultArr[0]);
-			// patientHandlerAction.setSearchForPatientSurname(resultArr[1]);
-			//
-			// patientHandlerAction.setSearchForPatientList(result);
-			//
-			// patientHandlerAction.showAddPatientDialog();
-			//
-			// }
-			// break;
-			// case NAME:
-			// logger.debug("Searching for name, open addPatient dialog");
-			//
-			// result = patientHandlerAction.searchForPatientList("",
-			// resultArr[0], null, null);
-			//
-			// boolean toMany = false;
-			// if (patientHandlerAction.isToManyMatchesInClinicDatabase())
-			// toMany = true;
-			//
-			// patientHandlerAction.initAddPatientDialog();
-			//
-			// patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
-			// patientHandlerAction.setActivePatientDialogIndex(0);
-			// patientHandlerAction.setSearchForPatientName(resultArr[0]);
-			// patientHandlerAction.setSearchForPatientList(result);
-			// patientHandlerAction.showAddPatientDialog();
-			//
-			// break;
+			
+			 switch (search) {
+			 case NAME_AND_SURNAME:
+			 logger.debug("Searching for name (" + resultArr[0] + ") and
+			 suranme (" + resultArr[1] + ")");
+			
+			 // overwrites the toManyPatiensInClinicDatabse flag, so perform
+			 // method before search
+			
+			 result = patientHandlerAction.searchForPatientList("",
+			 resultArr[0], resultArr[1], null);
+			
+			 if (result.size() == 1) {
+			
+			 patientHandlerAction.addNewInternalPatient(result.get(0).getPatient());
+			 worklistHandlerAction.addPatientToWorkList(result.get(0).getPatient(),
+			 true);
+			
+			 } else {
+			 logger.debug("To many results found in clinic database, open
 
-		}
+	addPatient dialog (" + resultArr[0]
+			 + "," + resultArr[1] + ")");
+			
+			 boolean toMany = false;
+			
+			 if (patientHandlerAction.isToManyMatchesInClinicDatabase())
+			 toMany = true;
+			
+			 patientHandlerAction.initAddPatientDialog();
+			
+			 patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
+			 patientHandlerAction.setActivePatientDialogIndex(0);
+			 patientHandlerAction.setSearchForPatientName(resultArr[0]);
+			 patientHandlerAction.setSearchForPatientSurname(resultArr[1]);
+			
+			 patientHandlerAction.setSearchForPatientList(result);
+			
+			 patientHandlerAction.showAddPatientDialog();
+			
+			 }
+	// break;
+	// case NAME:
+	// logger.debug("Searching for name, open addPatient dialog");
+	//
+	// result = patientHandlerAction.searchForPatientList("",
+	// resultArr[0], null, null);
+	//
+	// boolean toMany = false;
+	// if (patientHandlerAction.isToManyMatchesInClinicDatabase())
+	// toMany = true;
+	//
+	// patientHandlerAction.initAddPatientDialog();
+	//
+	// patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
+	// patientHandlerAction.setActivePatientDialogIndex(0);
+	// patientHandlerAction.setSearchForPatientName(resultArr[0]);
+	// patientHandlerAction.setSearchForPatientList(result);
+	// patientHandlerAction.showAddPatientDialog();
+	//
+	// break;
+
+	}
 
 	}
 

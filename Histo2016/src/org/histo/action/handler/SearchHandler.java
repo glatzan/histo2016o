@@ -1,6 +1,7 @@
 package org.histo.action.handler;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.ui.PatientList;
+import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -49,5 +51,70 @@ public class SearchHandler {
 			}
 		}
 		return null;
+	}
+
+	public List<PatientList> searhcForPatientNameAndBirthday(String name, String surname, Date birthday) throws CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+
+		ArrayList<PatientList> result = new ArrayList<>();
+
+		// list for excluding results for the histo database search
+		ArrayList<String> foundPiz = new ArrayList<String>();
+
+		List<Patient> clinicPatients = settingsHandler.getClinicJsonHandler()
+				.getPatientsFromClinicJson("?name=" + name + (surname != null ? ("&vorname=" + surname) : "")
+						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+
+		// list of pizes to serach in the histo database
+		ArrayList<String> toSearchPizes = new ArrayList<String>(clinicPatients.size());
+
+		int id = 0;
+
+		if (!clinicPatients.isEmpty()) {
+
+			logger.trace("Patients in clinic backend found");
+
+			// getting all pizes in one Array
+			clinicPatients.forEach(p -> toSearchPizes.add(p.getPiz()));
+
+			List<Patient> histoMatchList = new ArrayList<Patient>(0);
+
+			// creating a list of patient from the histo backend pizes
+			// which where obtained from the clinic backend
+			histoMatchList = patientDao.searchForPatientPizList(toSearchPizes);
+
+			for (Patient cPatient : clinicPatients) {
+
+				PatientList patientList = null;
+
+				// search if already added to the histo backend
+				for (Patient hPatient : histoMatchList) {
+					if (cPatient.getPiz().equals(hPatient.getPatient().getPiz())) {
+						patientList = new PatientList(id++, hPatient);
+						histoMatchList.remove(hPatient);
+						foundPiz.add(hPatient.getPiz());
+						// TODO update the patient in histo database
+						break;
+					}
+				}
+
+				// was not added add to normal list
+				if (patientList == null) {
+					patientList = new PatientList(id++, cPatient);
+					patientList.setNotHistoDatabase(true);
+				}
+				result.add(patientList);
+			}
+		}
+
+		// search for external patient in histo database, excluding the
+		// already found patients via piz
+		List<Patient> histoPatients = patientDao.getPatientsByNameSurnameDateExcludePiz(name, surname, birthday,
+				foundPiz);
+
+		for (Patient patient : histoPatients) {
+			result.add(new PatientList(id++, patient));
+		}
+
+		return result;
 	}
 }

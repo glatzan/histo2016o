@@ -61,6 +61,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
 					histoUser = new HistoUser(userName, Role.USER);
+				}else if(histoUser.getPhysician() == null){
+					histoUser.setPhysician(new Physician());
+					histoUser.getPhysician().setPerson(new Person());
+
+					// set role clinicalDoctor or clical personnel
+					histoUser.getPhysician().setClinicEmployee(true);
 				}
 
 				histoUser.setLastLogin(System.currentTimeMillis());
