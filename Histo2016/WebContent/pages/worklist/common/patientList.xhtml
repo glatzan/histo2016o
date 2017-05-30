@@ -12,42 +12,56 @@
 	<h:panelGroup styleClass="searchContainer" layout="block">
 		<p:focus for="searchField" />
 		<p:inputText placeholder="#{msg.headSearch}" id="searchField"
-			styleClass="seachFiled" value="#{searchHandler.searchString}"
-			onkeypress="if(event.keyCode == 13 || event.keyCode == 10){submitQuickSearch(event); return false;}">
+			styleClass="seachFiled" value="#{searchHandlerAction.searchString}"
+			onkeyup="autoSumbitQuickSeach(event);"
+			onkeypress="if(submitQuickSearch(event)){ return false;}">
 		</p:inputText>
 
 		<script type="text/javascript">
 			function submitQuickSearch(event) {
-				if (event.shiftKey) {
-					$('#navigationForm\\:submitQuickSearchBtnShift').click();
-				} else if (event.keyCode == 10 || event.ctrlKey) {
-					$('#navigationForm\\:submitQuickSearchBtnStrg').click();
-				} else {
-					$('#navigationForm\\:submitQuickSearchBtn').click();
+				
+				if (event.keyCode == 13 || event.keyCode == 10) {
+					if (event.keyCode == 10 || event.ctrlKey) {
+						$('#navigationForm\\:submitQuickSearchBtnAlternate').click();
+					} else {
+						$('#navigationForm\\:submitQuickSearchBtn').click();
+
+					}
+					return true;
+				}
+
+				return false;
+			}
+
+			function autoSumbitQuickSeach(event) {
+				if (event.keyCode != 13 &amp;&amp; event.keyCode != 10) {
+					
+					var strg = $('#navigationForm\\:searchField').val();
+		
+					var found = strg.match(/^\d{8}$/g);
+					if(found != null){
+						//TODO
+						
+					}
+						
 				}
 			}
 		</script>
 
 		<p:commandButton id="submitQuickSearchBtn"
-			actionListener="#{searchHandler.quickSearch(false, false)}"
+			actionListener="#{searchHandlerAction.quickSearch(false)}"
 			style="display:none" update="navigationForm contentForm headerForm">
 			<p:ajax event="dialogReturn"
 				update="navigationForm contentForm :headerForm" />
 		</p:commandButton>
 
-		<p:commandButton id="submitQuickSearchBtnStrg"
-			actionListener="#{searchHandler.quickSearch(true,false)}"
+		<p:commandButton id="submitQuickSearchBtnAlternate"
+			actionListener="#{searchHandlerAction.quickSearch(true)}"
 			style="display:none" update="navigationForm contentForm headerForm">
 			<p:ajax event="dialogReturn"
 				update="navigationForm contentForm headerForm" />
 		</p:commandButton>
 
-		<p:commandButton id="submitQuickSearchBtnShift"
-			actionListener="#{searchHandler.quickSearch(false,true)}"
-			style="display:none" update="navigationForm contentForm headerForm">
-			<p:ajax event="dialogReturn"
-				update="navigationForm contentForm headerForm" />
-		</p:commandButton>
 	</h:panelGroup>
 
 	<!-- Nav Table -->

@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.config.exception.CustomExceptionToManyEntries;
+import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.Person;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.model.patient.Patient;
@@ -83,8 +84,10 @@ public class ClinicJsonHandler implements GsonAble {
 	 * @param url
 	 * @return
 	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion 
+	 * @throws JSONException 
 	 */
-	public List<Patient> getPatientsFromClinicJson(String url) throws CustomExceptionToManyEntries {
+	public List<Patient> getPatientsFromClinicJson(String url) throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
 		String result = requestJsonData(baseUrl + url);
 		return createPatientsFromClinicJson(result);
 	}
@@ -94,8 +97,11 @@ public class ClinicJsonHandler implements GsonAble {
 	 * 
 	 * @param url
 	 * @return
+	 * @throws CustomNullPatientExcepetion 
+	 * @throws CustomExceptionToManyEntries 
+	 * @throws JSONException 
 	 */
-	public Patient getPatientFromClinicJson(String url) {
+	public Patient getPatientFromClinicJson(String url) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		String result = requestJsonData(baseUrl + url);
 		return createPatientFromClinicJson(result);
 	}
@@ -108,9 +114,10 @@ public class ClinicJsonHandler implements GsonAble {
 	 *            [{},{}]
 	 * @return
 	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion 
 	 * @throws JSONException
 	 */
-	public List<Patient> createPatientsFromClinicJson(String json) throws CustomExceptionToManyEntries {
+	public List<Patient> createPatientsFromClinicJson(String json) throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
 		JSONArray arr = new JSONArray(json);
 		ArrayList<Patient> patients = new ArrayList<>();
 		for (int i = 0; i < arr.length(); i++) {
@@ -125,16 +132,12 @@ public class ClinicJsonHandler implements GsonAble {
 	 * 
 	 * @param json
 	 * @return
+	 * @throws CustomNullPatientExcepetion 
 	 * @throws CustomExceptionToManyEntries
 	 * @throws JSONException
 	 */
-	public Patient createPatientFromClinicJson(String json) {
-		try {
+	public Patient createPatientFromClinicJson(String json) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 			return createPatientFromClinicJson(new JSONObject(json));
-		} catch (JSONException | CustomExceptionToManyEntries e) {
-			logger.error("To many search results found", e);
-			return new Patient(new Person());
-		}
 	}
 
 	/**
@@ -145,8 +148,9 @@ public class ClinicJsonHandler implements GsonAble {
 	 * @param json
 	 * @return
 	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion 
 	 */
-	public Patient createPatientFromClinicJson(JSONObject json) throws CustomExceptionToManyEntries {
+	public Patient createPatientFromClinicJson(JSONObject json) throws CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		Patient patient = new Patient();
 		patient.setPerson(new Person());
 

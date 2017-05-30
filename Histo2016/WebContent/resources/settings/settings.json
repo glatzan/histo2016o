@@ -37,11 +37,6 @@
       "andreas.glatz@uniklinik-freiburg.de"
    ],
    
-   "clinicJsonHandler":{  
-      "baseUrl":"http://auginfo/piz",
-      "userAgent":"Mozilla/5.0"
-   },
-   
    "workingDirectory" : "classpath:templates/print",
    
    "offlineMode": false

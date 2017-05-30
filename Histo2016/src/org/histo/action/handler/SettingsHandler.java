@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.histo.action.UserHandlerAction;
+import org.histo.model.transitory.json.ClinicJsonHandler;
 import org.histo.model.transitory.json.settings.LdapHandler;
 import org.histo.model.transitory.json.settings.PrinterSettings;
 import org.histo.model.transitory.json.settings.ProgramSettings;
@@ -35,13 +36,14 @@ public class SettingsHandler {
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";
 	public static final String LDAP_SETTINGS = "classpath:settings/ldap.json";
 	public static final String VERSION_SETTINGS = "classpath:settings/version.json";
-
+	public static final String CLINIC_BACKEND_SETTINGS = "classpath:settings/clinicBackend.json";
+	
 	@Autowired
 	private UserHandlerAction userHandlerAction;
 
 	private ProgramSettings programSettings;
 	private PrinterSettings printerSettings;
-
+	
 	/**
 	 * Selected ClinicPrinter to print the document
 	 */
@@ -81,6 +83,8 @@ public class SettingsHandler {
 	 * Container for providing version information
 	 */
 	private VersionContainer versionContainer;
+	
+	private ClinicJsonHandler clinicJsonHandler;
 
 	public void initBean() {
 		Gson gson = new Gson();
@@ -104,6 +108,9 @@ public class SettingsHandler {
 
 		logger.debug("Loading LDAP Handler");
 		ldapHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(LDAP_SETTINGS), LdapHandler.class);
+		
+		logger.debug("Loading clinic backend handler");
+		clinicJsonHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(CLINIC_BACKEND_SETTINGS), ClinicJsonHandler.class);
 	}
 
 	public void updateSelectedPrinters() {
@@ -251,4 +258,11 @@ public class SettingsHandler {
 		this.versionContainer = versionContainer;
 	}
 
+	public ClinicJsonHandler getClinicJsonHandler() {
+		return clinicJsonHandler;
+	}
+
+	public void setClinicJsonHandler(ClinicJsonHandler clinicJsonHandler) {
+		this.clinicJsonHandler = clinicJsonHandler;
+	}
 }

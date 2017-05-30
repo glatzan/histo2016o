@@ -6,15 +6,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomExceptionToManyEntries;
+import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.ui.PatientList;
 import org.histo.util.TimeUtil;
+import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -41,6 +44,9 @@ public class PatientHandlerAction implements Serializable {
 
 	@Autowired
 	private WorklistHandlerAction worklistHandlerAction;
+
+	@Autowired
+	private SettingsHandler settingsHandler;
 
 	/**
 	 * Tabindex of the addPatient dialog
@@ -88,8 +94,6 @@ public class PatientHandlerAction implements Serializable {
 	 * clinic database did not return any data
 	 */
 	private boolean toManyMatchesInClinicDatabase;
-
-
 
 	public void showAndInitAddPatientDialog() {
 		initAddPatientDialog();
@@ -140,9 +144,16 @@ public class PatientHandlerAction implements Serializable {
 			// add patient from the clinic-backend, get all data of this
 			// patient, piz search is more specific
 			if (!patient.getPiz().isEmpty()) {
-				Patient clinicPatient = mainHandlerAction.getSettings().getClinicJsonHandler()
-						.getPatientFromClinicJson("/" + patient.getPiz());
-				patient.copyIntoObject(clinicPatient);
+				Patient clinicPatient;
+				try {
+					clinicPatient = settingsHandler.getClinicJsonHandler()
+							.getPatientFromClinicJson("/" + patient.getPiz());
+					patient.copyIntoObject(clinicPatient);
+				} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
 
 			// patient not in database, is new patient from database
@@ -197,10 +208,17 @@ public class PatientHandlerAction implements Serializable {
 			// updates all patients from the local database with data from the
 			// clinic backend
 			for (Patient patient : patients) {
-				Patient clinicPatient = mainHandlerAction.getSettings().getClinicJsonHandler()
-						.getPatientFromClinicJson("/" + patient.getPiz());
-				patient.copyIntoObject(clinicPatient);
-				result.add(new PatientList(id++, patient));
+				Patient clinicPatient;
+				try {
+					clinicPatient = settingsHandler.getClinicJsonHandler()
+							.getPatientFromClinicJson("/" + patient.getPiz());
+					patient.copyIntoObject(clinicPatient);
+					result.add(new PatientList(id++, patient));
+				} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
 
 			// saves the results
@@ -209,10 +227,16 @@ public class PatientHandlerAction implements Serializable {
 			// only get patient from clinic backend if piz is completely
 			// provided and was not added to the local database before
 			if (piz.matches("^[0-9]{8}$") && patients.isEmpty()) {
-				Patient clinicPatient = mainHandlerAction.getSettings().getClinicJsonHandler()
-						.getPatientFromClinicJson("/" + piz);
-				PatientList patient = new PatientList(id++, clinicPatient);
-				result.add(patient);
+				Patient clinicPatient;
+				try {
+					clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
+					PatientList patient = new PatientList(id++, clinicPatient);
+					result.add(patient);
+				} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
 			}
 
 			// TODO: remove or write to an other method
@@ -232,9 +256,9 @@ public class PatientHandlerAction implements Serializable {
 			ArrayList<String> foundPiz = new ArrayList<String>();
 
 			try {
-				clinicPatients = mainHandlerAction.getSettings().getClinicJsonHandler().getPatientsFromClinicJson(
-						"?name=" + name + (surname != null ? ("&vorname=" + surname) : "") + (birthday != null
-								? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+				clinicPatients = settingsHandler.getClinicJsonHandler().getPatientsFromClinicJson("?name=" + name
+						+ (surname != null ? ("&vorname=" + surname) : "")
+						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
 
 				// list of pizes to serach in the histo database
 				ArrayList<String> toSearchPizes = new ArrayList<String>(clinicPatients.size());
@@ -284,6 +308,10 @@ public class PatientHandlerAction implements Serializable {
 			} catch (CustomExceptionToManyEntries e) {
 				logger.debug("To many patiens were found in the clinc database");
 				setToManyMatchesInClinicDatabase(true);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (CustomNullPatientExcepetion e) {
+				logger.debug("Null patient was returned");
 			}
 
 			// search for external patient in histo database, excluding the

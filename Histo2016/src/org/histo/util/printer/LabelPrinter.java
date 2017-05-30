@@ -74,7 +74,7 @@ public class LabelPrinter extends AbstractPrinter {
 		String toPrint = printTemplate.getContentOfFile();
 
 		HashMap<String, String> args = new HashMap<String, String>();
-		args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 2, '0'));
+		args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 3, '0'));
 		args.put("%slideName%", taskID + " " + slide.getSlideID());
 		args.put("%slideText%", slide.getCommentary());
 		args.put("%date%", date);

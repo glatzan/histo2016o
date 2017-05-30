@@ -32,6 +32,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Gender;
+import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
@@ -43,6 +44,7 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.interfaces.StainingInfo;
+import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 
 @Entity
@@ -142,8 +144,10 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	 * Updates the patient data with a given json string.
 	 * 
 	 * @param json
+	 * @throws CustomNullPatientExcepetion 
+	 * @throws JSONException 
 	 */
-	public final void copyIntoObject(String json) {
+	public final void copyIntoObject(String json) throws JSONException, CustomNullPatientExcepetion {
 		copyIntoObject(new JSONObject(json));
 	}
 
@@ -162,11 +166,17 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	 * @param patient
 	 * @param json
 	 * @return
+	 * @throws CustomNullPatientExcepetion 
 	 */
-	public final void copyIntoObject(JSONObject obj) {
+	public final void copyIntoObject(JSONObject obj) throws CustomNullPatientExcepetion {
 
+		// check if not an null patient is returned
+		
+		if(obj.optString("name").isEmpty())
+			throw new CustomNullPatientExcepetion();
+			
 		Person person = getPerson();
-
+		
 		// Person data
 		person.setTitle(obj.optString("titel"));
 		person.setName(obj.optString("name"));

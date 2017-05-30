@@ -48,7 +48,7 @@ public class MainHandlerAction {
 
 	@Autowired
 	private SettingsHandler settingsHandler;
-	
+
 	@Autowired
 	private WorklistHandlerAction worklistHandlerAction;
 	/********************************************************
@@ -84,7 +84,7 @@ public class MainHandlerAction {
 
 		settingsHandler.initBean();
 		worklistHandlerAction.initBean();
-		
+
 		// TODO REMOVE
 		setSettings(HistoSettings.factory(this));
 
@@ -237,9 +237,13 @@ public class MainHandlerAction {
 	 ********************************************************/
 
 	public void sendGrowlMessages(String headline, String message) {
+		sendGrowlMessages(headline, message, FacesMessage.SEVERITY_INFO);
+	}
+
+	public void sendGrowlMessages(String headline, String message, FacesMessage.Severity servertiy) {
 		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage("globalgrowl", new FacesMessage(headline, message));
-		logger.debug("Growl Messagen: " + headline + " " + message);
+		context.addMessage("globalgrowl", new FacesMessage(servertiy, headline, message));
+		logger.debug("Growl Messagen (" + servertiy + "): " + headline + " " + message);
 	}
 
 	/********************************************************

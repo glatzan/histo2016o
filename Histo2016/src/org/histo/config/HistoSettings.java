@@ -61,11 +61,6 @@ public class HistoSettings {
 	private MailHandler mail;
 
 	/**
-	 * Object for handeling clinic backend requsts for patient data
-	 */
-	private ClinicJsonHandler clinicJsonHandler;
-
-	/**
 	 * List of mail to whom unlock requests will be send
 	 */
 	private String[] adminMails;
@@ -108,14 +103,6 @@ public class HistoSettings {
 
 	public void setAdminMails(String[] adminMails) {
 		this.adminMails = adminMails;
-	}
-
-	public ClinicJsonHandler getClinicJsonHandler() {
-		return clinicJsonHandler;
-	}
-
-	public void setClinicJsonHandler(ClinicJsonHandler clinicJsonHandler) {
-		this.clinicJsonHandler = clinicJsonHandler;
 	}
 
 	public String[] getErrorMails() {

@@ -391,9 +391,4 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 
-	public Patient initilaize(Patient patient) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
