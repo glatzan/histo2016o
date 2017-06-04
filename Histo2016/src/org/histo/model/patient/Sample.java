@@ -34,7 +34,6 @@ import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
-import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 
 @Entity
@@ -43,8 +42,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample
-		implements Parent<Task>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -150,7 +148,7 @@ public class Sample
 	public String toString() {
 		return "ID: " + getId() + ", Sample ID: " + getSampleID();
 	}
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -247,55 +245,6 @@ public class Sample
 	/******************************************************** Transient ********************************************************/
 
 	/******************************************************** Transient ********************************************************/
-
-	/********************************************************
-	 * Interface StainingInfo
-	 ********************************************************/
-	@Override
-	@Transient
-	public boolean isStainingPerformed() {
-		if (getBlocks().isEmpty())
-			return false;
-
-		for (Block block : getBlocks()) {
-			if (!block.isStainingPerformed())
-				return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isStainingNeeded() {
-		if (getBlocks().isEmpty())
-			return true;
-
-		for (Block block : getBlocks()) {
-			if (block.isStainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	@Transient
-	public boolean isRestainingNeeded() {
-		if (getBlocks().isEmpty())
-			return true;
-
-		for (Block block : getBlocks()) {
-			if (block.isRestainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-
-	/********************************************************
-	 * Interface StainingInfo
-	 ********************************************************/
 
 	/********************************************************
 	 * Interface Parent

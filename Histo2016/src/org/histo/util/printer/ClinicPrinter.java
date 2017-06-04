@@ -10,7 +10,7 @@ import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
 import org.histo.model.PDFContainer;
-import org.histo.model.transitory.json.settings.PrinterSettings;
+import org.histo.settings.PrinterSettings;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 

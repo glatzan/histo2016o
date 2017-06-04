@@ -1,4 +1,4 @@
-package org.histo.action.dialog.task;
+package org.histo.action.dialog.patient;
 
 import java.util.ArrayList;
 import java.util.List;

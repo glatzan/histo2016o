@@ -14,7 +14,7 @@
 			styleClass="contentPannel" />
 
 		<histo:newPersonDataMask
-			person="#{patientHandlerAction.tmpPatient.person}"
+			person="#{addPatientDialogHandler.patient.person}"
 			pannelID="newPatient" disabled="false" />
 
 		<!-- Piz -->
@@ -30,7 +30,7 @@
 				<!-- role -->
 				<h:outputLabel value="#{msg['dialog.addPatient.extern.piz']}" />
 				<p:inputText id="piz" name="piz"
-					value="#{patientHandlerAction.tmpPatient.piz}" />
+					value="#{addPatientDialogHandler.patient.piz}" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
@@ -45,25 +45,20 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="2" style="float:right;">
-				<!-- 1. adds external patient to database 2. adds to worklist 3. clears patientHandlerAction -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
 					process="@form" icon="fa fa-fw fa-user-plus"
 					styleClass="smallButton buttonRighMarginInListExtended">
 					<f:actionListener
-						binding="#{patientHandlerAction.addNewExternalPatient(patientHandlerAction.tmpPatient)}" />
+						binding="#{addPatientDialogHandler.addExternalPatient(true)}" />
 					<f:actionListener
-						binding="#{worklistHandlerAction.addPatientToWorkList(patientHandlerAction.tmpPatient,true)}" />
-					<f:actionListener
-						binding="#{patientHandlerAction.clearTmpPatient()}" />
-					<f:actionListener
-						binding="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
+						binding="#{addPatientDialogHandler.hideDialog()}" />
 				</p:commandButton>
 
 				<!-- Close Button -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
+					actionListener="#{addPatientDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

@@ -25,7 +25,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.model.transitory.json.mail.MailTemplate;
+import org.histo.model.transitory.mail.MailTemplate;
 import org.histo.ui.medicalFindings.EmailNotificationSettings;
 import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.MedicalFindingsChooser;

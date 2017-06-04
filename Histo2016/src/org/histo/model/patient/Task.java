@@ -41,13 +41,11 @@ import org.histo.model.Council;
 import org.histo.model.FavouriteList;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.DeleteAble;
-import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
-import org.histo.model.interfaces.StainingInfo;
 import org.histo.ui.StainingTableChooser;
 import org.histo.util.TimeUtil;
 
@@ -57,8 +55,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, DeleteAble, LogAble, PatientRollbackAble,
-		HasDataList, HasID {
+public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollbackAble, HasDataList, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -232,6 +229,7 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 	 * Transient
 	 ********************************************************/
 
+	@Transient
 	public void updateAllNames() {
 		for (Sample sample : samples) {
 			sample.updateAllNames(useAutoNomenclature);
@@ -565,7 +563,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 		this.useAutoNomenclature = useAutoNomenclature;
 	}
 
-
 	public boolean isFinalized() {
 		return finalized;
 	}
@@ -722,80 +719,6 @@ public class Task implements Parent<Patient>, StainingInfo, DiagnosisInfo, Delet
 
 	/********************************************************
 	 * Transient Getter/Setter
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
-	@Override
-	@Transient
-	public boolean isDiagnosisPerformed() {
-		return getDiagnosisContainer().isDiagnosisPerformed();
-	}
-
-	@Override
-	@Transient
-	public boolean isDiagnosisNeeded() {
-		return getDiagnosisContainer().isDiagnosisNeeded();
-	}
-
-	@Override
-	@Transient
-	public boolean isReDiagnosisNeeded() {
-		return getDiagnosisContainer().isReDiagnosisNeeded();
-	}
-
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface StainingInfo
-	 ********************************************************/
-	@Override
-	@Transient
-	public boolean isStainingPerformed() {
-		if (getSamples().isEmpty())
-			return false;
-
-		for (Sample sample : getSamples()) {
-			if (!sample.isStainingPerformed())
-				return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isStainingNeeded() {
-		if (getSamples().isEmpty())
-			return true;
-
-		for (Sample sample : getSamples()) {
-			if (sample.isStainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	@Transient
-	public boolean isRestainingNeeded() {
-		if (getSamples().isEmpty())
-			return true;
-
-		for (Sample sample : getSamples()) {
-			if (sample.isRestainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-
-	/********************************************************
-	 * Interface StainingInfo
 	 ********************************************************/
 
 	/********************************************************

@@ -25,7 +25,6 @@ import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
-import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 
 @Entity
@@ -35,7 +34,7 @@ import org.histo.util.TaskUtil;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
 public class Slide
-		implements Parent<Block>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+		implements Parent<Block>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -256,29 +255,5 @@ public class Slide
 
 	/********************************************************
 	 * Interface PatientRollbackAble
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface StainingStauts
-	 ********************************************************/
-	@Override
-	@Transient
-	public boolean isStainingPerformed() {
-		return isStainingCompleted();
-	}
-
-	@Override
-	@Transient
-	public boolean isStainingNeeded() {
-		return !isStainingCompleted() && !isReStaining();
-	}
-
-	@Override
-	@Transient
-	public boolean isRestainingNeeded() {
-		return !isStainingCompleted() && isReStaining();
-	}
-	/********************************************************
-	 * Interface StainingStauts
 	 ********************************************************/
 }

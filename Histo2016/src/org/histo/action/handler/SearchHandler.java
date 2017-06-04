@@ -3,18 +3,15 @@ package org.histo.action.handler;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
-import org.histo.action.MainHandlerAction;
-import org.histo.action.PatientHandlerAction;
-import org.histo.action.WorklistHandlerAction;
-import org.histo.action.dialog.task.CreateTaskDialog;
-import org.histo.config.ResourceBundle;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
-import org.histo.ui.PatientList;
+import org.histo.util.StreamUtils;
 import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,41 +30,131 @@ public class SearchHandler {
 	@Autowired
 	private SettingsHandler settingsHandler;
 
-	public Patient serachForPiz(String piz) {
+	/**
+	 * Saves a patient found in the clinic-backend to the hist-backend or if the
+	 * patient is found in the histo-backend the patient data are updated.
+	 */
+	public void addClinicPatient(Patient patient) throws CustomDatabaseInconsistentVersionException, JSONException,
+			CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+		if (patient != null) {
+
+			// add patient from the clinic-backend, get all data of this
+			// patient, piz search is more specific
+			if (!patient.getPiz().isEmpty()) {
+				Patient clinicPatient;
+				clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+				patient.copyIntoObject(clinicPatient);
+			}
+
+			// patient not in database, is new patient from database
+			if (patient.getId() == 0) {
+				// set add date
+				patient.setCreationDate(System.currentTimeMillis());
+				patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.new");
+			} else
+				patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.update");
+
+		}
+	}
+
+	/**
+	 * Adds an external Patient to the database.
+	 * 
+	 * @param patient
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
+	public void addExternalPatient(Patient patient) throws CustomDatabaseInconsistentVersionException {
+		// create new external patient
+		if (patient.getId() == 0) {
+			patient.setExternalPatient(true);
+			patient.setCreationDate(System.currentTimeMillis());
+			patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.extern.new");
+		}else{
+			patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.edit");
+		}
+	}
+
+	/**
+	 * Searches in clinic and histo database, updates the histo database patient
+	 * if found.
+	 * 
+	 * @param piz
+	 * @return
+	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws CustomNullPatientExcepetion
+	 * @throws CustomExceptionToManyEntries
+	 * @throws JSONException
+	 */
+	public Patient serachForPiz(String piz) throws CustomDatabaseInconsistentVersionException, JSONException,
+			CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		// only search if 8 digit are provides
 		if (piz != null && piz.matches("^[0-9]{8}$")) {
 			Patient patient = patientDao.searchForPatientByPiz(piz);
 			Patient clinicPatient;
-			try {
-				clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
-				if (patient != null) {
-					patient.copyIntoObject(clinicPatient);
-					return patient;
-				} else {
-					return clinicPatient;
-				}
-			} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
-				return null;
+			clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
+			if (patient != null) {
+				if (patient.copyIntoObject(clinicPatient))
+					patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.update");
+				return patient;
+			} else {
+				return clinicPatient;
 			}
 		}
 		return null;
 	}
 
-	public List<PatientList> searhcForPatientNameAndBirthday(String name, String surname, Date birthday) throws CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+	/**
+	 * Searches for a range of not completed pizes 6 to 8 digits, searches only
+	 * in histo database, clinic database does not support this. Updates found
+	 * patients from clinic database.
+	 * 
+	 * @param piz
+	 * @return
+	 * @throws CustomNullPatientExcepetion
+	 * @throws CustomExceptionToManyEntries
+	 * @throws JSONException
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
+	public List<Patient> serachForPizRange(String piz) throws JSONException, CustomExceptionToManyEntries,
+			CustomNullPatientExcepetion, CustomDatabaseInconsistentVersionException {
+		List<Patient> patients = patientDao.searchForPatientsByPiz(piz);
 
-		ArrayList<PatientList> result = new ArrayList<>();
+		// updates all patients from the local database with data from the
+		// clinic backend
+		for (Patient patient : patients) {
+			Patient clinicPatient;
 
-		// list for excluding results for the histo database search
-		ArrayList<String> foundPiz = new ArrayList<String>();
+			clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+			if (patient.copyIntoObject(clinicPatient))
+				patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.update");
 
+		}
+		return patients;
+	}
+
+	/**
+	 * 
+	 * @param name
+	 * @param surname
+	 * @param birthday
+	 * @return
+	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
+	public List<Patient> searhcForPatientNameAndBirthday(String name, String surname, Date birthday)
+			throws CustomExceptionToManyEntries, CustomNullPatientExcepetion,
+			CustomDatabaseInconsistentVersionException {
+
+		List<String> foundPiz = new ArrayList<String>();
+
+		// getting all patienties from clinic database
 		List<Patient> clinicPatients = settingsHandler.getClinicJsonHandler()
 				.getPatientsFromClinicJson("?name=" + name + (surname != null ? ("&vorname=" + surname) : "")
 						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
 
 		// list of pizes to serach in the histo database
 		ArrayList<String> toSearchPizes = new ArrayList<String>(clinicPatients.size());
-
-		int id = 0;
 
 		if (!clinicPatients.isEmpty()) {
 
@@ -76,34 +163,30 @@ public class SearchHandler {
 			// getting all pizes in one Array
 			clinicPatients.forEach(p -> toSearchPizes.add(p.getPiz()));
 
-			List<Patient> histoMatchList = new ArrayList<Patient>(0);
-
 			// creating a list of patient from the histo backend pizes
 			// which where obtained from the clinic backend
-			histoMatchList = patientDao.searchForPatientPizList(toSearchPizes);
+			List<Patient> histoMatchList = patientDao.searchForPatientPizList(toSearchPizes);
 
-			for (Patient cPatient : clinicPatients) {
+			// searching for every clinic patien a patientin in the database, if
+			// foud the database patient will be updated
+			foundPiz = clinicPatients.stream().filter(cP -> {
+				Patient res = histoMatchList.stream().filter(hP -> hP.getPiz().equals(cP.getPiz()))
+						.collect(StreamUtils.singletonCollector());
+				if (res != null) {
+					histoMatchList.remove(res);
 
-				PatientList patientList = null;
+					if (cP.copyIntoObject(res))
+						try {
+							patientDao.savePatientAssociatedDataFailSave(cP, "log.patient.search.update");
+						} catch (Exception e) {
+						}
 
-				// search if already added to the histo backend
-				for (Patient hPatient : histoMatchList) {
-					if (cPatient.getPiz().equals(hPatient.getPatient().getPiz())) {
-						patientList = new PatientList(id++, hPatient);
-						histoMatchList.remove(hPatient);
-						foundPiz.add(hPatient.getPiz());
-						// TODO update the patient in histo database
-						break;
-					}
+					return true;
+				} else {
+					cP.setInDatabase(false);
+					return false;
 				}
-
-				// was not added add to normal list
-				if (patientList == null) {
-					patientList = new PatientList(id++, cPatient);
-					patientList.setNotHistoDatabase(true);
-				}
-				result.add(patientList);
-			}
+			}).map(cp -> cp.getPiz()).collect(Collectors.toList());
 		}
 
 		// search for external patient in histo database, excluding the
@@ -111,10 +194,8 @@ public class SearchHandler {
 		List<Patient> histoPatients = patientDao.getPatientsByNameSurnameDateExcludePiz(name, surname, birthday,
 				foundPiz);
 
-		for (Patient patient : histoPatients) {
-			result.add(new PatientList(id++, patient));
-		}
+		histoPatients.addAll(clinicPatients);
 
-		return result;
+		return histoPatients;
 	}
 }

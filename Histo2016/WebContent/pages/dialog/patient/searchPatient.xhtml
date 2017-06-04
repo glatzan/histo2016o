@@ -23,23 +23,22 @@
 					style="float:left;margin-right:20px;">
 					<h:panelGroup>
 						<p:focus for="pizInput" />
-						<p:inputMask value="#{patientHandlerAction.searchForPatientPiz}"
+						<p:inputMask value="#{addPatientDialogHandler.patientPiz}"
 							id="pizInput" tabindex="1" mask="99999999">
-							<p:ajax process="submitGroup" update="patientList buttonTable" delay="200"
-								event="keyup"
-								listener="#{patientHandlerAction.searchPatients()}" />
+							<p:ajax process="submitGroup" update="patientList buttonTable"
+								delay="200" event="keyup"
+								listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 						</p:inputMask>
 					</h:panelGroup>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.piz']}" />
 				</p:panelGrid>
 				<!-- Birthday -->
 				<p:panelGrid columns="1" styleClass="inputTable">
-					<p:calendar
-						value="#{patientHandlerAction.searchForPatientBirthday}"
+					<p:calendar value="#{addPatientDialogHandler.patientBirthday}"
 						tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
-						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
-							event="keyup"
-							listener="#{patientHandlerAction.searchPatients()}" />
+						<p:ajax process="submitGroup" update="patientList buttonTable"
+							delay="300" event="keyup"
+							listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 					</p:calendar>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
 				</p:panelGrid>
@@ -48,21 +47,21 @@
 				<!-- Name -->
 				<p:panelGrid columns="1" styleClass="inputTable"
 					style="float:left;margin-right:20px;">
-					<p:inputText value="#{patientHandlerAction.searchForPatientName}"
+					<p:inputText value="#{addPatientDialogHandler.patientName}"
 						tabindex="2">
-						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
-							event="keyup"
-							listener="#{patientHandlerAction.searchPatients()}" />
+						<p:ajax process="submitGroup" update="patientList buttonTable"
+							delay="300" event="keyup"
+							listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 					</p:inputText>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
 				</p:panelGrid>
 				<!-- Surname -->
 				<p:panelGrid columns="1" styleClass="inputTable">
 					<p:inputText tabindex="3"
-						value="#{patientHandlerAction.searchForPatientSurname}">
-						<p:ajax process="submitGroup" update="patientList buttonTable" delay="300"
-							event="keyup"
-							listener="#{patientHandlerAction.searchPatients()}" />
+						value="#{addPatientDialogHandler.patientSurname}">
+						<p:ajax process="submitGroup" update="patientList buttonTable"
+							delay="300" event="keyup"
+							listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 
 					</p:inputText>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.surname']}" />
@@ -73,8 +72,8 @@
 		<p:dataTable var="patientList" id="patientList" scrollHeight="370"
 			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 			scrollable="true" selectionMode="single" rowKey="#{patientList.id}"
-			selection="#{patientHandlerAction.selectedPatientFromSearchList}"
-			value="#{patientHandlerAction.searchForPatientList}">
+			selection="#{addPatientDialogHandler.selectedPatientListItem}"
+			value="#{addPatientDialogHandler.patientList}">
 
 			<!-- Name -->
 			<p:column headerText="#{msg['dialog.addPatient.search.name']}"
@@ -129,10 +128,10 @@
 			</p:column>
 
 			<p:ajax event="rowDblselect"
-				listener="#{patientHandlerAction.addNewInternalPatientFromGui(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
+				listener="#{addPatientDialogHandler.addClinicPatient()}" />
 
 
-			<!--   listener="#{patientHandlerAction.addNewInterlPatient(patientHandlerAction.selectedPatientFromSearchList.patient)}" />-->
+			<!--   listener="#{patientHandlerAction.addNewInterlPatient(addPatientDialogHandler.selectedPatientListItem.patient)}" />-->
 		</p:dataTable>
 	</div>
 
@@ -140,10 +139,9 @@
 		<h:panelGrid columns="2" style="width:100%" id="buttonTable"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
-			<h:outputLabel
-				value="#{msg['dialog.addPatient.toManyResults']}" id="toManyMatches"
-				style="color:red"
-				rendered="#{patientHandlerAction.toManyMatchesInClinicDatabase}" />
+			<h:outputLabel value="#{msg['dialog.addPatient.toManyResults']}"
+				id="toManyMatches" style="color:red"
+				rendered="#{addPatientDialogHandler.toManyMatchesInClinicDatabase}" />
 
 			<h:panelGrid columns="2" style="float:right;">
 				<!-- Add button -->
@@ -151,14 +149,16 @@
 					id="submitAddButton" icon="fa fa-fw fa-user-plus" process="@form"
 					styleClass="smallButton buttonRighMarginInListExtended">
 					<f:actionListener
-						binding="#{patientHandlerAction.addNewInternalPatientFromGui(patientHandlerAction.selectedPatientFromSearchList.patient)}" />
+						binding="#{addPatientDialogHandler.addClinicPatient()}" />
+					<f:actionListener
+						binding="#{addPatientDialogHandler.hideDialog()}" />
 				</p:commandButton>
 
 				<!-- Close Button -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('WORKLIST_ADD_PATIENT')}" />
+					actionListener="#{addPatientDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

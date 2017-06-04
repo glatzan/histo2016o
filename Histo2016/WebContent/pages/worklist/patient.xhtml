@@ -53,7 +53,7 @@
 						value="#{commonDataHandlerAction.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
 					<p:commandLink
 						rendered="#{commonDataHandlerAction.selectedPatient.externalPatient}"
-						actionListener="#{patientHandlerAction.prepareEditExternalPatientDialog(commonDataHandlerAction.selectedPatient)}">
+						actionListener="#{editPatientDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
 						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						<i class="fa fa-wrench"></i>
 					</p:commandLink>

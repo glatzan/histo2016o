@@ -37,7 +37,7 @@ import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
-import org.histo.model.transitory.json.settings.LdapHandler;
+import org.histo.settings.LdapHandler;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.histo.ui.transformer.DiagnosisPrototypeListTransformer;
@@ -864,8 +864,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setTmpLdapPhysician(null);
 
 		} catch (NamingException | IOException e) {
-			logger.error("NamingException: " + e.getMessage(), e);
 			setLdapPhysicianList(null);
+			// TODO to many results
 		}
 	}
 

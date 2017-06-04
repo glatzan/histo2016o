@@ -1,4 +1,4 @@
-package org.histo.model.transitory.json.mail;
+package org.histo.model.transitory.mail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.histo.model.transitory.json.settings;
+package org.histo.settings;
 
 import java.io.IOException;
 import java.net.SocketException;

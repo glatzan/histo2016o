@@ -37,13 +37,11 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
-import org.histo.model.interfaces.StainingInfo;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 
@@ -53,8 +51,8 @@ import org.primefaces.json.JSONObject;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
-public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, CreationDate, LogAble, ArchivAble,
-		PatientRollbackAble, HasDataList, HasID {
+public class Patient
+		implements Parent<Patient>, CreationDate, LogAble, ArchivAble, PatientRollbackAble, HasDataList, HasID {
 
 	private long id;
 
@@ -106,6 +104,11 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	private boolean archived = false;
 
 	/**
+	 * True if saved in database, false if only in clinic backend
+	 */
+	private boolean inDatabase = true;
+
+	/**
 	 * Standard constructor
 	 */
 	public Patient() {
@@ -120,32 +123,88 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	 ********************************************************/
 
 	/**
-	 * Updates the patient data with a given patient dummy
+	 * Updates the patient data with a given patient dummy. Returns true if data
+	 * are changed. Returns true if data were changed
 	 * 
 	 * @param patient
 	 */
-	public final void copyIntoObject(Patient patient) {
-		setPiz(patient.getPiz());
-		setInsurance(getInsurance());
-		getPerson().setTitle(patient.getPerson().getTitle());
-		getPerson().setName(patient.getPerson().getName());
-		getPerson().setSurname(patient.getPerson().getSurname());
-		getPerson().setBirthday(patient.getPerson().getBirthday());
-		getPerson().setTown(patient.getPerson().getTown());
-		getPerson().setCountry(patient.getPerson().getCountry());
-		getPerson().setPostcode(patient.getPerson().getPostcode());
-		getPerson().setStreet(patient.getPerson().getStreet());
-		getPerson().setPhoneNumber(patient.getPerson().getPhoneNumber());
-		getPerson().setGender(patient.getPerson().getGender());
-		getPerson().setEmail(patient.getPerson().getEmail());
+	public final boolean copyIntoObject(Patient patient) {
+		boolean change = false;
+
+		if (isStringDifferent(getPiz(), patient.getPiz())) {
+			change = true;
+			setPiz(patient.getPiz());
+		}
+
+		if (isStringDifferent(getInsurance(), patient.getInsurance())) {
+			change = true;
+			setInsurance(getInsurance());
+		}
+
+		if (isStringDifferent(getPerson().getTitle(), patient.getPerson().getTitle())) {
+			change = true;
+			getPerson().setTitle(patient.getPerson().getTitle());
+		}
+
+		if (isStringDifferent(getPerson().getName(), patient.getPerson().getName())) {
+			change = true;
+			getPerson().setName(patient.getPerson().getName());
+		}
+
+		if (isStringDifferent(getPerson().getSurname(), patient.getPerson().getSurname())) {
+			change = true;
+			getPerson().setSurname(patient.getPerson().getSurname());
+		}
+
+		if (isStringDifferent(getPerson().getBirthday(), patient.getPerson().getBirthday())) {
+			change = true;
+			getPerson().setBirthday(patient.getPerson().getBirthday());
+		}
+
+		if (isStringDifferent(getPerson().getTown(), patient.getPerson().getTown())) {
+			change = true;
+			getPerson().setTown(patient.getPerson().getTown());
+		}
+
+		if (isStringDifferent(getPerson().getCountry(), patient.getPerson().getCountry())) {
+			change = true;
+			getPerson().setCountry(patient.getPerson().getCountry());
+		}
+
+		if (isStringDifferent(getPerson().getPostcode(), patient.getPerson().getPostcode())) {
+			change = true;
+			getPerson().setPostcode(patient.getPerson().getPostcode());
+		}
+
+		if (isStringDifferent(getPerson().getStreet(), patient.getPerson().getStreet())) {
+			change = true;
+			getPerson().setStreet(patient.getPerson().getStreet());
+		}
+
+		if (isStringDifferent(getPerson().getPhoneNumber(), patient.getPerson().getPhoneNumber())) {
+			change = true;
+			getPerson().setPhoneNumber(patient.getPerson().getPhoneNumber());
+		}
+
+		if (isStringDifferent(getPerson().getGender(), patient.getPerson().getGender())) {
+			change = true;
+			getPerson().setGender(patient.getPerson().getGender());
+		}
+
+		if (isStringDifferent(getPerson().getEmail(), patient.getPerson().getEmail())) {
+			change = true;
+			getPerson().setEmail(patient.getPerson().getEmail());
+		}
+
+		return change;
 	}
 
 	/**
 	 * Updates the patient data with a given json string.
 	 * 
 	 * @param json
-	 * @throws CustomNullPatientExcepetion 
-	 * @throws JSONException 
+	 * @throws CustomNullPatientExcepetion
+	 * @throws JSONException
 	 */
 	public final void copyIntoObject(String json) throws JSONException, CustomNullPatientExcepetion {
 		copyIntoObject(new JSONObject(json));
@@ -166,17 +225,17 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	 * @param patient
 	 * @param json
 	 * @return
-	 * @throws CustomNullPatientExcepetion 
+	 * @throws CustomNullPatientExcepetion
 	 */
 	public final void copyIntoObject(JSONObject obj) throws CustomNullPatientExcepetion {
 
 		// check if not an null patient is returned
-		
-		if(obj.optString("name").isEmpty())
+
+		if (obj.optString("name").isEmpty())
 			throw new CustomNullPatientExcepetion();
-			
+
 		Person person = getPerson();
-		
+
 		// Person data
 		person.setTitle(obj.optString("titel"));
 		person.setName(obj.optString("name"));
@@ -210,7 +269,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		setInsurance(obj.optString("krankenkasse"));
 	}
 
-
 	@Override
 	@Transient
 	public String toString() {
@@ -218,17 +276,35 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 				+ (getPiz() == null ? "extern" : getPiz());
 	}
 
-
 	@Override
 	public boolean equals(Object obj) {
-		
-		if(obj instanceof Patient && ((Patient)obj).getId() == getId())
+
+		if (obj instanceof Patient && ((Patient) obj).getId() == getId())
 			return true;
 
 		return super.equals(obj);
 	}
 
-	
+	@Transient
+	public boolean isStringDifferent(Object arg1, Object arg2) {
+		if (arg1 == arg2)
+			return false;
+		if (arg1 == null || arg2 == null)
+			return true;
+		if (arg1.equals(arg2))
+			return false;
+		return true;
+	}
+
+	@Transient
+	public boolean isInDatabase() {
+		return inDatabase;
+	}
+
+	public void setInDatabase(boolean inDatabase) {
+		this.inDatabase = inDatabase;
+	}
+
 	/********************************************************
 	 * Transient Methods
 	 ********************************************************/
@@ -325,120 +401,20 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 		this.privateInsurance = privateInsurance;
 	}
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("creationDate DESC")
+	public List<PDFContainer> getAttachedPdfs() {
+		if (attachedPdfs == null)
+			attachedPdfs = new ArrayList<PDFContainer>();
+		return attachedPdfs;
+	}
+
+	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
+		this.attachedPdfs = attachedPdfs;
+	}
+
 	/********************************************************
 	 * Getter/Setter
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
-	
-	@Override
-	@Transient
-	public boolean isDiagnosisPerformed() {
-		if (getTasks().isEmpty())
-			return false;
-		
-		for (Task task : getTasks()) {
-			if(!task.isDiagnosisPerformed())
-				return false;
-		}
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isDiagnosisNeeded() {
-		if (getTasks().isEmpty())
-			return true;
-		
-		for (Task task : getTasks()) {
-			if(task.isDiagnosisNeeded())
-				return true;
-		}
-		return false;
-	}
-
-	@Override
-	@Transient
-	public boolean isReDiagnosisNeeded() {
-		if (getTasks().isEmpty())
-			return true;
-		
-		for (Task task : getTasks()) {
-			if(task.isReDiagnosisNeeded())
-				return true;
-		}
-		return false;
-	}
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface StainingInfo
-	 ********************************************************/
-	/**
-	 * Overwrites the {@link StainingInfo} interfaces new method. Returns true
-	 * if the creation date was on the same as the current day.
-	 */
-	@Override
-	@Transient
-	public boolean isNew() {
-		if (StainingInfo.super.isNew())
-			return true;
-
-		for (Task task : getTasks()) {
-			if (task.isNew())
-				return true;
-		}
-		return false;
-	}
-
-	@Override
-	@Transient
-	public boolean isStainingPerformed() {
-		if (getTasks().isEmpty())
-			return false;
-
-		for (Task task : getTasks()) {
-			if (!task.isStainingPerformed()){
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isStainingNeeded() {
-		if (getTasks().isEmpty())
-			return true;
-
-		for (Task task : getTasks()) {
-			if (task.isStainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	@Transient
-	public boolean isRestainingNeeded() {
-		if (getTasks().isEmpty())
-			return true;
-
-		for (Task task : getTasks()) {
-			if (task.isRestainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-	/********************************************************
-	 * Interface StainingInfo
 	 ********************************************************/
 
 	/********************************************************
@@ -487,18 +463,6 @@ public class Patient implements Parent<Patient>, DiagnosisInfo, StainingInfo, Cr
 	public Task getTask() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy("creationDate DESC")
-	public List<PDFContainer> getAttachedPdfs() {
-		if (attachedPdfs == null)
-			attachedPdfs = new ArrayList<PDFContainer>();
-		return attachedPdfs;
-	}
-
-	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
-		this.attachedPdfs = attachedPdfs;
 	}
 
 	/********************************************************

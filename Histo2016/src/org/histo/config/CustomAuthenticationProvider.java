@@ -13,8 +13,8 @@ import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.transitory.json.settings.LdapHandler;
-import org.histo.model.transitory.json.settings.ProgramSettings;
+import org.histo.settings.LdapHandler;
+import org.histo.settings.ProgramSettings;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -144,7 +144,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			} else
 				throw new BadCredentialsException("Username not found.");
 		} catch (NamingException | IOException | AuthenticationException e) {
-			logger.error("NamingException: " + e.getMessage() + " " + userName, e);
 			throw new BadCredentialsException("Username not found.");
 		}
 

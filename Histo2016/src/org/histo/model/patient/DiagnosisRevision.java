@@ -28,7 +28,6 @@ import org.hibernate.envers.Audited;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.DeleteAble;
-import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -41,7 +40,7 @@ import org.histo.model.interfaces.PatientRollbackAble;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
 public class DiagnosisRevision
-		implements DiagnosisInfo, Parent<DiagnosisContainer>, DeleteAble, LogAble, PatientRollbackAble, HasID {
+		implements Parent<DiagnosisContainer>, DeleteAble, LogAble, PatientRollbackAble, HasID {
 
 	private long id;
 
@@ -237,39 +236,6 @@ public class DiagnosisRevision
 	public void setReDiagnosis(boolean reDiagnosis) {
 		this.reDiagnosis = reDiagnosis;
 	}
-
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
-	@Override
-	@Transient
-	public boolean isDiagnosisPerformed() {
-		if (getDiagnoses().isEmpty())
-			return false;
-
-		return isDiagnosisCompleted();
-	}
-
-	@Override
-	@Transient
-	public boolean isDiagnosisNeeded() {
-		if (getDiagnoses().isEmpty())
-			return true;
-
-		return !isDiagnosisCompleted() && !isReDiagnosis();
-	}
-
-	@Override
-	@Transient
-	public boolean isReDiagnosisNeeded() {
-		if (getDiagnoses().isEmpty())
-			return true;
-		return !isDiagnosisCompleted() && isReDiagnosis();
-	}
-
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
 
 	/********************************************************
 	 * Interface Parent

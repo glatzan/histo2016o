@@ -15,7 +15,6 @@ import org.histo.action.handler.TaskStatusHandler;
 import org.histo.action.view.DiagnosisViewHandlerAction;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.enums.QuickSearchOptions;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.config.enums.Worklist;
@@ -29,7 +28,6 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.SearchOptions;
 import org.histo.model.transitory.SortOptions;
-import org.histo.ui.PatientList;
 import org.histo.util.TaskUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.WorklistSortUtil;
@@ -57,10 +55,6 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	@Lazy
 	private SettingsDialogHandler settingsDialogHandler;
-
-	@Autowired
-	@Lazy
-	private PatientHandlerAction patientHandlerAction;
 
 	@Autowired
 	@Lazy
@@ -774,117 +768,6 @@ public class WorklistHandlerAction implements Serializable {
 	/*
 	 * ************************** Worklist ****************************
 	 */
-
-	public void quickSearch() {
-		quickSearch(getWorklistFilter(), false);
-	}
-
-	public void quickSearch(String searchString, boolean isFilter) {
-		logger.debug("Search for " + searchString);
-
-		String[] resultArr = new String[2];
-		QuickSearchOptions search = QuickSearchOptions.getQuickSearchOption(searchString, resultArr);
-
-		List<PatientList> result = null;
-
-		if (isFilter) {
-
-		} else {
-			logger.debug("Search in database");
-			switch (search) {
-			case NAME_AND_SURNAME:
-				logger.debug("Searching for name (" + resultArr[0] + ") and suranme (" + resultArr[1] + ")");
-
-				// overwrites the toManyPatiensInClinicDatabse flag, so perform
-				// method before search
-
-				result = patientHandlerAction.searchForPatientList("", resultArr[0], resultArr[1], null);
-
-				if (result.size() == 1) {
-					patientHandlerAction.addNewInternalPatient(result.get(0).getPatient());
-					addPatientToWorkList(result.get(0).getPatient(), true);
-					logger.debug("Found patient " + result.get(0).getPatient() + " and adding to current worklist");
-				} else {
-					logger.debug("To many results found in clinic database, open addPatient dialog (" + resultArr[0]
-							+ "," + resultArr[1] + ")");
-					boolean toMany = false;
-					if (patientHandlerAction.isToManyMatchesInClinicDatabase())
-						toMany = true;
-
-					patientHandlerAction.initAddPatientDialog();
-
-					patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
-					patientHandlerAction.setActivePatientDialogIndex(0);
-					patientHandlerAction.setSearchForPatientName(resultArr[0]);
-					patientHandlerAction.setSearchForPatientSurname(resultArr[1]);
-
-					patientHandlerAction.setSearchForPatientList(result);
-
-					patientHandlerAction.showAddPatientDialog();
-
-				}
-				break;
-			case NAME:
-				logger.debug("Searching for name, open addPatient dialog");
-
-				result = patientHandlerAction.searchForPatientList("", resultArr[0], null, null);
-
-				boolean toMany = false;
-				if (patientHandlerAction.isToManyMatchesInClinicDatabase())
-					toMany = true;
-
-				patientHandlerAction.initAddPatientDialog();
-
-				patientHandlerAction.setToManyMatchesInClinicDatabase(toMany);
-				patientHandlerAction.setActivePatientDialogIndex(0);
-				patientHandlerAction.setSearchForPatientName(resultArr[0]);
-				patientHandlerAction.setSearchForPatientList(result);
-				patientHandlerAction.showAddPatientDialog();
-
-				break;
-			case PIZ:
-
-				logger.debug("Search for piz: " + searchString);
-
-				result = patientHandlerAction.searchForPatientList(String.valueOf(resultArr[0]), null, null, null);
-
-				if (result.size() == 1) {
-					patientHandlerAction.addNewInternalPatient(result.get(0).getPatient());
-					addPatientToWorkList(result.get(0).getPatient(), true);
-					logger.debug("Found patient " + result.get(0).getPatient() + " and adding to current worklist");
-				} else
-					logger.debug("Found non patient");
-
-				break;
-			case SLIDE_ID:
-				logger.debug("Search for SlideID: " + searchString);
-
-				Patient searchResultSlide = patientDao.getPatientBySlidID(resultArr[0]);
-
-				if (searchResultSlide != null) {
-					logger.debug("Slide found");
-					addPatientToWorkList(searchResultSlide.getPatient(), true);
-				} else
-					logger.debug("No slide with the given id found");
-
-				break;
-			case TASK_ID:
-				logger.debug("Search for TaskID: " + searchString);
-
-				Patient searchResultTask = patientDao.getPatientByTaskID(resultArr[0]);
-
-				if (searchResultTask != null) {
-					logger.debug("Task found");
-					addPatientToWorkList(searchResultTask.getPatient(), true);
-				} else
-					logger.debug("No task with the given id found");
-
-				break;
-			default:
-				break;
-			}
-		}
-	}
 
 	/********************************************************
 	 * Getter/Setter

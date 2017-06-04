@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.model.transitory.json.settings.Version;
+import org.histo.settings.Version;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

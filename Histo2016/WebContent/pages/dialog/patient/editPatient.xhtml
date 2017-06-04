@@ -31,10 +31,9 @@
 
 
 		<div class="dialogContent" id="dialogContent">
-			<histo:newPersonDataMask
-				person="#{patientHandlerAction.tmpPatient.person}"
+			<histo:newPersonDataMask person="#{editPatientDialog.patient.person}"
 				pannelID="editPatient" disabled="false" />
-				
+
 			<!-- Piz -->
 			<h:panelGrid columns="3"
 				columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
@@ -48,7 +47,7 @@
 					<!-- role -->
 					<h:outputLabel value="#{msg['dialog.addPatient.extern.piz']}" />
 					<p:inputText id="piz" name="piz"
-						value="#{patientHandlerAction.tmpPatient.piz}" />
+						value="#{editPatientDialog.patient.piz}" />
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
@@ -65,13 +64,16 @@
 				<h:panelGrid columns="2" style="float:right;">
 					<p:commandButton value="#{msg['dialog.editPatient.edit']}"
 						process="@form" icon="fa fa-fw fa-user-plus"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{patientHandlerAction.saveEditedExternalPatient(patientHandlerAction.tmpPatient)}" />
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{searchHandler.addExternalPatient(editPatientDialog.patient)}" />
+						<f:actionListener binding="#{editPatientDialog.hideDialog()}" />
+					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.abort']}"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{mainHandlerAction.hideDialog('PATIENT_EDIT')}">
+						actionListener="#{editPatientDialog.hideDialog()}">
 						<p:ajax update="@form" resetValues="true"
 							icon="fa fa-fw fa-user-plus" />
 					</p:commandButton>

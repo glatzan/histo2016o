@@ -30,7 +30,6 @@ import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
-import org.histo.model.interfaces.StainingInfo;
 import org.histo.util.TaskUtil;
 
 @Entity
@@ -40,7 +39,7 @@ import org.histo.util.TaskUtil;
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
 public class Block
-		implements Parent<Sample>, StainingInfo, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+		implements Parent<Sample>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -176,54 +175,6 @@ public class Block
 
 	/********************************************************
 	 * Getter/Setter
-	 ********************************************************/
-	/********************************************************
-	 * Interface StainingStauts
-	 ********************************************************/
-	@Override
-	@Transient
-	public boolean isStainingPerformed() {
-		if (getSlides().isEmpty())
-			return false;
-
-		for (Slide slide : getSlides()) {
-			if (!slide.isStainingPerformed())
-				return false;
-		}
-
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isStainingNeeded() {
-		if (getSlides().isEmpty())
-			return true;
-
-		for (Slide slide : getSlides()) {
-			if (slide.isStainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-
-	@Override
-	@Transient
-	public boolean isRestainingNeeded() {
-		if (getSlides().isEmpty())
-			return true;
-
-		for (Slide slide : getSlides()) {
-			if (slide.isRestainingNeeded())
-				return true;
-		}
-
-		return false;
-	}
-
-	/********************************************************
-	 * Interface StainingStauts
 	 ********************************************************/
 
 	/********************************************************

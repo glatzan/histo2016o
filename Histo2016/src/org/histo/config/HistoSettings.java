@@ -5,8 +5,8 @@ import java.net.URI;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
-import org.histo.model.transitory.json.ClinicJsonHandler;
-import org.histo.model.transitory.json.mail.MailHandler;
+import org.histo.model.transitory.mail.MailHandler;
+import org.histo.settings.ClinicJsonHandler;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;

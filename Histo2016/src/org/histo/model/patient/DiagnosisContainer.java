@@ -25,7 +25,6 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
-import org.histo.model.interfaces.DiagnosisInfo;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -37,7 +36,7 @@ import org.histo.model.interfaces.PatientRollbackAble;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisContainer_sequencegenerator", sequenceName = "diagnosisContainer_sequence")
-public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbackAble, DiagnosisInfo, HasID {
+public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbackAble, HasID {
 
 	private long id;
 
@@ -199,48 +198,4 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 	 * Interface PatientRollbackAble
 	 ********************************************************/
 
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
-	@Override
-	@Transient
-	public boolean isDiagnosisPerformed() {
-		if (getDiagnosisRevisions().isEmpty())
-			return false;
-
-		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if (!revision.isDiagnosisPerformed())
-				return false;
-		}
-		return true;
-	}
-
-	@Override
-	@Transient
-	public boolean isDiagnosisNeeded() {
-		if (getDiagnosisRevisions().isEmpty())
-			return true;
-
-		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if (revision.isDiagnosisNeeded())
-				return true;
-		}
-		return false;
-	}
-
-	@Override
-	@Transient
-	public boolean isReDiagnosisNeeded() {
-		if (getDiagnosisRevisions().isEmpty())
-			return true;
-
-		for (DiagnosisRevision revision : getDiagnosisRevisions()) {
-			if (revision.isReDiagnosisNeeded())
-				return true;
-		}
-		return false;
-	}
-	/********************************************************
-	 * Interface DiagnosisStatus
-	 ********************************************************/
 }
