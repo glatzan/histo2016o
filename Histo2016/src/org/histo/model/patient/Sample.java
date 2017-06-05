@@ -114,7 +114,7 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 		setMaterial(material == null ? "" : material.getName());
 		task.getSamples().add(this);
 
-		updateNameOfSample(task.isUseAutoNomenclature());
+		updateNameOfSample(task.isUseAutoNomenclature(), false);
 	}
 
 	/**
@@ -124,11 +124,21 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	 * @param useAutoNomenclature
 	 */
 	@Transient
-	public void updateNameOfSample(boolean useAutoNomenclature) {
-		if (useAutoNomenclature && getParent().getSamples().size() > 1)
-			setSampleID(TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1));
-		else
-			setSampleID("");
+	public boolean updateNameOfSample(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		if (!isIdManuallyAltered() || (ignoreManuallyNamedItems && isIdManuallyAltered())) {
+
+			if (useAutoNomenclature && getParent().getSamples().size() > 1) {
+				String name = TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1);
+
+				if (getSampleID() == null || !getSampleID().equals(name)) {
+					setSampleID(name);
+					setIdManuallyAltered(false);
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -136,11 +146,10 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	 * 
 	 * @param useAutoNomenclature
 	 */
-	public void updateAllNames(boolean useAutoNomenclature) {
-		updateNameOfSample(useAutoNomenclature);
-		for (Block block : blocks) {
-			block.updateAllNames(useAutoNomenclature);
-		}
+	@Transient
+	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		updateNameOfSample(useAutoNomenclature, ignoreManuallyNamedItems);
+		getBlocks().stream().forEach(p -> p.updateNameOfBlock(useAutoNomenclature, ignoreManuallyNamedItems));
 	}
 
 	@Override

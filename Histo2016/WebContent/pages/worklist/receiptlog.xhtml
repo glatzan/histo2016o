@@ -268,25 +268,10 @@
 							<h:outputLabel
 								value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
 							<p:commandLink styleClass="noUnderlineAtLink"
-								id="quickTaskSettings" disabled="true">
+								id="quickTaskSettings" actionListener="#{slideNamingDialog.initAndPrepareBean(selectedTask)}">
 								<i class="fa fa-wrench" />
+								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							</p:commandLink>
-
-							<p:overlayPanel for="quickTaskSettings"
-								id="quickTaskSettingsOverlay" showEffect="fade"
-								widgetVar="quickTaskSettingsOverlay" hideEffect="fade"
-								showEvent="click" hideEvent="click"
-								onHide="quickTaskSettingsOverlayReset()">
-								<h:panelGrid columns="2">
-									<p:outputLabel value="dfs"></p:outputLabel>
-								</h:panelGrid>
-
-								<!-- reset on hide -->
-								<p:remoteCommand name="quickTaskSettingsOverlayReset"
-									process="@this" update="quickTaskSettingsOverlay">
-									<p:resetInput target="quickTaskSettingsOverlay" />
-								</p:remoteCommand>
-							</p:overlayPanel>
 
 						</p:column>
 					</p:row>
@@ -420,7 +405,8 @@
 							<!-- Sample status -->
 							<h:panelGroup rendered="#{stainingRow.sampleType}">
 								<!-- ********** Staining performed ********** -->
-								<h:panelGroup rendered="#{stainingRow.sample.stainingPerformed}">
+								<h:panelGroup
+									rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.sample)}">
 									<i class="fa fa-fw fa-check-circle icon-green"
 										title="#{msg['body.statiningView.status.performed']}" />
 								</h:panelGroup>
@@ -428,7 +414,8 @@
 							<!-- Block status -->
 							<h:panelGroup rendered="#{stainingRow.blockType}">
 								<!-- ********** Staining performed ********** -->
-								<h:panelGroup rendered="#{stainingRow.block.stainingPerformed}">
+								<h:panelGroup
+									rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.block)}">
 									<i class="fa fa-fw fa-check-circle icon-green"
 										title="#{msg['body.statiningView.status.performed']}" />
 								</h:panelGroup>

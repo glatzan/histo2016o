@@ -72,7 +72,7 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 
 				parent.getSlides().remove(toDeleteSlide);
 
-				parent.updateAllNames(parent.getParent().getParent().isUseAutoNomenclature());
+				parent.updateAllNames(parent.getParent().getParent().isUseAutoNomenclature(), false);
 
 				patientDao.savePatientAssociatedDataFailSave(parent, "log.patient.task.sample.block.update",
 						parent.toString());
@@ -93,7 +93,7 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 
 				parent.getBlocks().remove(toDeleteBlock);
 
-				parent.updateAllNames(parent.getParent().isUseAutoNomenclature());
+				parent.updateAllNames(parent.getParent().isUseAutoNomenclature(), false);
 
 				patientDao.savePatientAssociatedDataFailSave(parent, "log.patient.task.sample.update",
 						parent.toString());

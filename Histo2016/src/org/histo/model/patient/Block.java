@@ -38,8 +38,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block
-		implements Parent<Sample>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -85,19 +84,27 @@ public class Block
 	}
 
 	@Transient
-	public void updateNameOfBlock(boolean useAutoNomenclature) {
-		if (useAutoNomenclature && parent.getBlocks().size() > 1) {
-			setBlockID(TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this)));
-		} else
-			setBlockID("");
+	public boolean updateNameOfBlock(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		if (!isIdManuallyAltered() || (ignoreManuallyNamedItems && isIdManuallyAltered())) {
+
+			if (useAutoNomenclature && parent.getBlocks().size() > 1) {
+				String name = TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this));
+
+				if (getBlockID() == null || !getBlockID().equals(name)) {
+					setBlockID(name);
+					setIdManuallyAltered(false);
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	@Transient
-	public void updateAllNames(boolean useAutoNomenclature) {
-		updateNameOfBlock(useAutoNomenclature);
-		for (Slide slide : slides) {
-			slide.updateNameOfSlide();
-		}
+	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		updateNameOfBlock(useAutoNomenclature, useAutoNomenclature);
+		getSlides().stream().forEach(p -> p.updateNameOfSlide(useAutoNomenclature, ignoreManuallyNamedItems));
 	}
 
 	@Override

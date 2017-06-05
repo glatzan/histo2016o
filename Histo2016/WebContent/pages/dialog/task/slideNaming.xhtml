@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.slideNaming.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.slideNaming.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+				columnClasses="defaultListingTableColumnTop,">
+				<!-- auto naming -->
+				<h:outputLabel value="#{msg['dialog.slideNaming.autoNomeclature']}"></h:outputLabel>
+				<p:selectBooleanCheckbox
+					value="#{slideNamingDialog.useAutoNomeclature}" />
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="3" style="float:right;">
+					<h:panelGroup>
+						<p:splitButton
+							value="#{msg['dialog.slideNaming.button.performeAutoNomeclature']}"
+							actionListener="#{buttonView.save}"
+							menuStyleClass="customSplitButton"
+							styleClass="smallButton buttonRighMarginInList"
+							icon="ui-icon-disk"
+							onclick="$('#dialogContent\\:renamingBtn').click();return false;"
+							title="#{msg['dialog.slideNaming.button.performeAutoNomeclature.info']}">
+
+							<p:menuitem
+								value="#{msg['dialog.slideNaming.button.performeAutoNomeclatureManual']}"
+								title="#{msg['dialog.slideNaming.button.performeAutoNomeclatureManual.info']}"
+								icon="ui-icon-arrowrefresh-1-w" styleClass="smallButton"
+								onclick="$('#dialogContent\\:renamingAllBtn').click();return false;"
+								style="width:250px" />
+						</p:splitButton>
+
+						<!-- renaming -->
+						<p:commandButton id="renamingBtn" style="display:none">
+							<f:actionListener
+								binding="#{slideNamingDialog.renameTaskEntities(false)}" />
+							<f:actionListener binding="#{slideNamingDialog.hideDialog()}" />
+						</p:commandButton>
+
+						<!-- renaming all -->
+						<p:commandButton id="renamingAllBtn" style="display:none">
+							<f:actionListener
+								binding="#{slideNamingDialog.renameTaskEntities(true)}" />
+							<f:actionListener binding="#{slideNamingDialog.hideDialog()}" />
+						</p:commandButton>
+					</h:panelGroup>
+
+					<!-- confirm -->
+					<p:commandButton value="#{msg['general.save']}"
+						icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{slideNamingDialog.saveAutoNomeclature()}" />
+						<f:actionListener binding="#{slideNamingDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{slideNamingDialog.hideDialog()}" />
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+
+	</h:form>
+</h:body>
+</html>

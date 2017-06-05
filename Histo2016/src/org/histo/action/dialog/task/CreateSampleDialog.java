@@ -72,7 +72,7 @@ public class CreateSampleDialog extends AbstractDialog {
 		}
 
 		// more the one task = use autonomeclature
-		if (task.getSamples().size() > 0)
+		if (task.getSamples().size() > 1)
 			task.setUseAutoNomenclature(true);
 
 		return true;

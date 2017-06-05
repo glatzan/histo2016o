@@ -53,7 +53,6 @@ public class TaskStatusHandler {
 		// Blocked
 		// TODO: Blocking
 
-		logger.debug("Task is editable");
 		return true;
 	}
 

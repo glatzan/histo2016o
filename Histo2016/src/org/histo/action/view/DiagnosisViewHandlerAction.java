@@ -114,6 +114,7 @@ public class DiagnosisViewHandlerAction {
 	public void entityIDmanuallyAltered(IdManuallyAltered idManuallyAltered, boolean altered) {
 		try {
 			idManuallyAltered.setIdManuallyAltered(altered);
+			//TODO update childrens names
 			patientDao.savePatientAssociatedDataFailSave(idManuallyAltered, "log.patient.task.idManuallyAltered",
 					idManuallyAltered.toString());
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -134,7 +135,7 @@ public class DiagnosisViewHandlerAction {
 
 			// updates the name of all other samples
 			for (Block block : sample.getBlocks()) {
-				block.updateNameOfBlock(sample.getParent().isUseAutoNomenclature());
+				block.updateNameOfBlock(sample.getParent().isUseAutoNomenclature(), false);
 			}
 
 			// checking if staining flag of the task object has to be false

@@ -33,8 +33,7 @@ import org.histo.util.TaskUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide
-		implements Parent<Block>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
 
 	private long id;
 
@@ -64,22 +63,44 @@ public class Slide
 	private Block parent;
 
 	@Transient
-	public void updateNameOfSlide() {
-		// generating block id
-		StringBuilder name = new StringBuilder();
-		name.append(parent.getParent().getSampleID());
-		name.append(parent.getBlockID());
-		if (name.length() > 0)
-			name.append(" ");
+	public boolean updateNameOfSlide(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		if (!isIdManuallyAltered() || (isIdManuallyAltered() && ignoreManuallyNamedItems)) {
+			StringBuilder name = new StringBuilder();
 
-		name.append(slidePrototype.getName());
+			if (useAutoNomenclature) {
+				// generating block id
+				name.append(parent.getParent().getSampleID());
+				name.append(parent.getBlockID());
+				if (name.length() > 0)
+					name.append(" ");
 
-		int stainingsInBlock = TaskUtil.getNumerOfSameStainings(this);
+				name.append(slidePrototype.getName());
 
-		if (stainingsInBlock > 1)
-			name.append(String.valueOf(stainingsInBlock));
+				int stainingsInBlock = TaskUtil.getNumerOfSameStainings(this);
 
-		setSlideID(name.toString());
+				if (stainingsInBlock > 1)
+					name.append(String.valueOf(stainingsInBlock));
+
+				if (getSlideID() == null || !getSlideID().equals(name)) {
+					setSlideID(name.toString());
+					setIdManuallyAltered(false);
+					return true;
+				}
+			} else if (getSlideID() == null || getSlideID().isEmpty()) {
+				name.append(slidePrototype.getName());
+
+				int stainingsInBlock = TaskUtil.getNumerOfSameStainings(this);
+
+				if (stainingsInBlock > 1)
+					name.append(String.valueOf(stainingsInBlock));
+
+				setSlideID(name.toString());
+				setIdManuallyAltered(false);
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Override

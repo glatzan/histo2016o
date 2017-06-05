@@ -174,7 +174,7 @@ public class CreateTaskDialog extends AbstractDialog {
 
 		// updates the name of all other samples
 		for (Sample sample : task.getSamples()) {
-			sample.updateNameOfSample(getTask().isUseAutoNomenclature());
+			sample.updateNameOfSample(getTask().isUseAutoNomenclature(), true);
 		}
 	}
 

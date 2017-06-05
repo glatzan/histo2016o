@@ -301,7 +301,6 @@ public class TaskManipulationHandler {
 	 */
 	public Block createNewBlock(Sample sample, boolean useAutoNomenclature) {
 		Block block = new Block();
-		block.setBlockID(useAutoNomenclature ? TaskUtil.getCharNumber(sample.getBlocks().size()) : "");
 		block.setParent(sample);
 		sample.getBlocks().add(block);
 
@@ -312,6 +311,8 @@ public class TaskManipulationHandler {
 		for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
 			createSlide(proto, block);
 		}
+		
+		block.updateAllNames(useAutoNomenclature, false);
 
 		mainHandlerAction.saveDataChange(block, "log.patient.task.sample.block.update", block.getBlockID());
 
@@ -360,7 +361,7 @@ public class TaskManipulationHandler {
 
 		block.getSlides().add(slide);
 
-		slide.updateNameOfSlide();
+		slide.updateNameOfSlide(block.getTask().isUseAutoNomenclature(), false);
 
 		if (commentary != null && !commentary.isEmpty())
 			slide.setCommentary(commentary);

@@ -231,9 +231,12 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 
 	@Transient
 	public void updateAllNames() {
-		for (Sample sample : samples) {
-			sample.updateAllNames(useAutoNomenclature);
-		}
+		updateAllNames(useAutoNomenclature, false);
+	}
+
+	@Transient
+	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		getSamples().stream().forEach(p -> p.updateAllNames(useAutoNomenclature, ignoreManuallyNamedItems));
 	}
 
 	@Transient

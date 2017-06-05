@@ -346,6 +346,12 @@ ul.ui-menu-child {
 	bottom: 35px !important;
 	top: auto !important;
 }
+
+/* width of splitButtons*/
+.customSplitButton {
+	width: 300px !important;
+}
+
 /*
 	######################################## Header ########################################
 */
@@ -598,13 +604,13 @@ ul.ui-menu-child {
 	display: block;
 }
 
-.ui-growl {   
-    z-index:9999 !important; 
+.ui-growl {
+	z-index: 9999 !important;
 }
 
 .content .body   .inplaceInput .ui-inputfield.ui-state-focus {
 	box-shadow: none !important;
-	 border-radius: 0px !important;
+	border-radius: 0px !important;
 }
 
 /* Alle Unterstriche bei links interhalb der Färbungstabelle entfernen*/
