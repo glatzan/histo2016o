@@ -27,12 +27,11 @@
 		</div>
 
 		<p:panel styleClass="settingsPannel">
-			<p:tabView orientation="left" styleClass="settingsTabView">
-
+			<p:tabView orientation="left" styleClass="settingsTabView"
+				id="tabView">
 				<p:tab title="#{msg['dialog.addPatient.search']}">
 					<ui:include src="searchPatient.xhtml" />
 				</p:tab>
-
 				<p:tab title="#{msg['dialog.addPatient.add']}">
 					<ui:include src="externalPatient.xhtml" />
 				</p:tab>

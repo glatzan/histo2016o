@@ -7,8 +7,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-
+	<div class="contentDiv" id="searchPatientContainer">
 		<p:panel style="width:100%;"
 			header="#{msg['dialog.addPatient.search']}"
 			styleClass="contentPannel" />
@@ -26,7 +25,7 @@
 						<p:inputMask value="#{addPatientDialogHandler.patientPiz}"
 							id="pizInput" tabindex="1" mask="99999999">
 							<p:ajax process="submitGroup" update="patientList buttonTable"
-								delay="200" event="keyup"
+								delay="500" event="keyup"
 								listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 						</p:inputMask>
 					</h:panelGroup>
@@ -37,7 +36,7 @@
 					<p:calendar value="#{addPatientDialogHandler.patientBirthday}"
 						tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
 						<p:ajax process="submitGroup" update="patientList buttonTable"
-							delay="300" event="keyup"
+							delay="500" event="keyup"
 							listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 					</p:calendar>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
@@ -50,7 +49,7 @@
 					<p:inputText value="#{addPatientDialogHandler.patientName}"
 						tabindex="2">
 						<p:ajax process="submitGroup" update="patientList buttonTable"
-							delay="300" event="keyup"
+							delay="500" event="keyup"
 							listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 					</p:inputText>
 					<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
@@ -60,7 +59,7 @@
 					<p:inputText tabindex="3"
 						value="#{addPatientDialogHandler.patientSurname}">
 						<p:ajax process="submitGroup" update="patientList buttonTable"
-							delay="300" event="keyup"
+							delay="500" event="keyup"
 							listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 
 					</p:inputText>
@@ -77,62 +76,66 @@
 
 			<!-- Name -->
 			<p:column headerText="#{msg['dialog.addPatient.search.name']}"
-				sortBy="#{patientList.patient.person.name}">
-				<h:outputText value="#{patientList.patient.person.name}" />
+				sortBy="#{patientList.listItem.person.name}">
+				<h:outputText value="#{patientList.listItem.person.name}" />
 			</p:column>
 			<!-- Surname -->
 			<p:column headerText="#{msg['dialog.addPatient.search.surname']}"
-				sortBy="#{patientList.patient.person.surname}">
-				<h:outputText value="#{patientList.patient.person.surname}" />
+				sortBy="#{patientList.listItem.person.surname}">
+				<h:outputText value="#{patientList.listItem.person.surname}" />
 			</p:column>
 			<!-- Birthday -->
 			<p:column
 				headerText="#{msg['dialog.addPatient.search.birthday.short']}"
-				sortBy="#{patientList.patient.person.birthday}">
+				sortBy="#{patientList.listItem.person.birthday}">
 				<h:outputText
-					rendered="#{patientList.patient.person.birthday ne null}"
-					value="#{mainHandlerAction.date(patientList.patient.person.birthday,'dd.MM.yyyy')}" />
+					rendered="#{patientList.listItem.person.birthday ne null}"
+					value="#{mainHandlerAction.date(patientList.listItem.person.birthday,'dd.MM.yyyy')}" />
 			</p:column>
 			<!-- gender -->
-			<p:column sortBy="#{patientList.patient.person.gender}">
+			<p:column sortBy="#{patientList.listItem.person.gender}">
 				<f:facet name="header">
 					<h:outputText value="#{msg['dialog.addPatient.search.gender']}"
 						title="#{msg['dialog.addPatient.search.gender.info']}" />
 				</f:facet>
 				<h:outputText
-					value="#{patientList.patient.person.gender eq 'FEMALE' ? msg['dialog.addPatient.search.gender.female'] : msg['dialog.addPatient.search.gender.male']}" />
+					value="#{patientList.listItem.person.gender eq 'FEMALE' ? msg['dialog.addPatient.search.gender.female'] : msg['dialog.addPatient.search.gender.male']}" />
 			</p:column>
 
 			<!-- databse -->
-			<p:column sortBy="#{patientList.notHistoDatabase}">
+			<p:column sortBy="#{patientList.listItem.inDatabase}">
 				<f:facet name="header">
 					<h:outputText value="#{msg['dialog.addPatient.search.database']}"
 						title="#{msg['dialog.addPatient.search.database.info']}" />
 				</f:facet>
 
-				<ui:fragment rendered="#{!patientList.notHistoDatabase}">
+				<ui:fragment rendered="#{patientList.listItem.inDatabase}">
 					<i class="fa fa-fw fa-check-circle icon-green"
-						title="#{msg['dialog.addPatient.search.database.histo']}" />
+						title="#{msg['dialog.addPatient.search.database.clinic']}" />
 				</ui:fragment>
 
-				<ui:fragment rendered="#{patientList.notHistoDatabase}">
+				<ui:fragment rendered="#{!patientList.listItem.inDatabase}">
 					<i class="fa fa-fw fa-times-circle icon-red"
-						title="#{msg['dialog.addPatient.search.database.clinic']}" />
+						title="#{msg['dialog.addPatient.search.database.histo']}" />
 				</ui:fragment>
 			</p:column>
 
 			<!-- piz -->
 			<p:column headerText="#{msg['dialog.addPatient.search.piz']}"
-				sortBy="#{patientList.patient.piz}">
-				<h:outputText value="#{patientList.patient.piz}" />
+				sortBy="#{patientList.listItem.piz}">
+				<h:outputText value="#{patientList.listItem.piz}" />
 			</p:column>
 
 			<p:ajax event="rowDblselect"
-				listener="#{addPatientDialogHandler.addClinicPatient()}" />
-
+				oncomplete="sumbitOnDblSelect();return false;" />
 
 			<!--   listener="#{patientHandlerAction.addNewInterlPatient(addPatientDialogHandler.selectedPatientListItem.patient)}" />-->
 		</p:dataTable>
+		<p:remoteCommand name="sumbitOnDblSelect">
+			<f:actionListener
+				binding="#{addPatientDialogHandler.addClinicPatient(true)}" />
+			<f:actionListener binding="#{addPatientDialogHandler.hideDialog()}" />
+		</p:remoteCommand>
 	</div>
 
 	<div class="bottomDiv">
@@ -146,12 +149,12 @@
 			<h:panelGrid columns="2" style="float:right;">
 				<!-- Add button -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
-					id="submitAddButton" icon="fa fa-fw fa-user-plus" process="@form"
+					id="submitAddButton" icon="fa fa-fw fa-user-plus"
+					partialSubmit="true" process="@form"
 					styleClass="smallButton buttonRighMarginInListExtended">
 					<f:actionListener
-						binding="#{addPatientDialogHandler.addClinicPatient()}" />
-					<f:actionListener
-						binding="#{addPatientDialogHandler.hideDialog()}" />
+						binding="#{addPatientDialogHandler.addClinicPatient(true)}" />
+					<f:actionListener binding="#{addPatientDialogHandler.hideDialog()}" />
 				</p:commandButton>
 
 				<!-- Close Button -->

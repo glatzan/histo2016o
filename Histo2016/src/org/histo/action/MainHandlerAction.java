@@ -49,8 +49,6 @@ public class MainHandlerAction {
 	@Autowired
 	private SettingsHandler settingsHandler;
 
-	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
@@ -79,11 +77,11 @@ public class MainHandlerAction {
 	 */
 	@PostConstruct
 	public void init() {
-
+		logger.debug("PostConstruct Init program");
+		
 		navigationPages = new ArrayList<View>();
 
 		settingsHandler.initBean();
-		worklistHandlerAction.initBean();
 
 		// TODO REMOVE
 		setSettings(HistoSettings.factory(this));

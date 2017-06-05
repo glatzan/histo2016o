@@ -118,12 +118,6 @@
 				<h:outputText
 					value="#{task.taskID} - #{mainHandlerAction.date(task.dateOfReceiptAsDate)}" />
 
-				<h:panelGroup rendered="#{task.isNew()}">
-					<h:outputText value=" ("></h:outputText>
-					<h:outputText value="Neu" style="color:green;" />
-					<h:outputText value=") "></h:outputText>
-				</h:panelGroup>
-
 				<!-- staining needed -->
 				<h:panelGroup>
 					<!-- staining needed = green -->

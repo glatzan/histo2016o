@@ -23,7 +23,7 @@
 				<h:outputLabel value="#{msg['dialog.editPatient.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					actionListener="#{mainHandlerAction.hideDialog('PATIENT_EDIT')}">
+					actionListener="#{editPatientDialog.hideDialog()}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>

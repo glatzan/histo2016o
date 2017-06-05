@@ -72,7 +72,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 	private ListChooser<Patient> selectedPatientListItem;
 
 	public void initAndPrepareBean() {
-		initBean("","","", null);
+		initBean("", "", "", null);
 		prepareDialog();
 	}
 
@@ -81,7 +81,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 		searchForClinicPatienes();
 		prepareDialog();
 	}
-	
+
 	public void initBean(String name, String surename, String piz, Date date) {
 		super.initBean(null, Dialog.WORKLIST_ADD_PATIENT);
 
@@ -90,31 +90,33 @@ public class AddPatientDialogHandler extends AbstractDialog {
 		setPatientPiz(surename);
 		setPatientSurname(piz);
 
+		setSelectedPatientListItem(null);
+		setPatientList(null);
+
 		setPatient(new Patient(new Person()));
 
 		setToManyMatchesInClinicDatabase(false);
 	}
-	
-
 
 	public void addExternalPatient(boolean addToWorklist) {
-
 		try {
-			if (getPatient() != null)
+			if (getPatient() != null) {
 				searchHandler.addExternalPatient(getPatient());
-
-			if (addToWorklist)
-				worklistHandlerAction.addPatientToWorkList(patient, true);
-
+				if (addToWorklist)
+					worklistHandlerAction.addPatientToWorkList(getPatient(), true);
+			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
 
-	public void addClinicPatient() {
+	public void addClinicPatient(boolean addToWorklist) {
 		try {
-			if (getSelectedPatientListItem() != null)
+			if (getSelectedPatientListItem() != null) {
 				searchHandler.addClinicPatient(getSelectedPatientListItem().getListItem());
+				if (addToWorklist)
+					worklistHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true);
+			}
 		} catch (JSONException | CustomDatabaseInconsistentVersionException | CustomExceptionToManyEntries
 				| CustomNullPatientExcepetion e) {
 			onDatabaseVersionConflict();
@@ -122,11 +124,12 @@ public class AddPatientDialogHandler extends AbstractDialog {
 	}
 
 	public void searchForClinicPatienes() {
+		logger.debug("Searching for patients");
 		try {
 			setToManyMatchesInClinicDatabase(false);
 			List<Patient> resultArr = new ArrayList<Patient>();
-			
-			if (getPatientPiz() != null) {
+
+			if (getPatientPiz() != null && !getPatientPiz().isEmpty()) {
 				if (getPatientPiz().matches("^[0-9]{8}$")) { // if full piz
 					resultArr.add(searchHandler.serachForPiz(getPatientPiz()));
 				} else if (getPatientPiz().matches("^[0-9]{6,8}$")) {
@@ -143,7 +146,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 
 			setPatientList(ListChooser.getListAsIDList(resultArr));
 			setSelectedPatientListItem(null);
-			
+
 		} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
 			setToManyMatchesInClinicDatabase(true);
 			setPatientList(null);

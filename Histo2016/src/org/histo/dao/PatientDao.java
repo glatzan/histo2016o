@@ -135,8 +135,11 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
 		query.add(Restrictions.eq("piz", piz));
-
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		
 		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+
+		System.out.println(result.size());		
 
 		if (result != null && result.size() == 1)
 			return result.get(0);
@@ -154,6 +157,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	public List<Patient> searchForPatientPizList(List<String> piz) {
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 		query.add(Restrictions.in("piz", piz));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}
 
