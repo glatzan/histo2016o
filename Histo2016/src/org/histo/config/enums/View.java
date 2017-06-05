@@ -1,5 +1,10 @@
 package org.histo.config.enums;
 
+/**
+ * View 
+ * @author andi
+ *
+ */
 public enum View {
 
 	LOGIN("/pages/login.xhtml"), 

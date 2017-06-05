@@ -54,22 +54,37 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 	private Physician physician;
 
-	private View defaultView;
-	
+	/**
+	 * True if the printer should be autoselected
+	 */
 	private boolean autoSelectedPreferedPrinter;
 	/**
 	 * Name of the preferred cups printer
 	 */
 	private String preferedPrinter;
 
+	/**
+	 * True if the label printer should be autoselected
+	 */
 	private boolean autoSelectedPreferedLabelPrinter;
 	/**
 	 * The uuid of the preferred labelprinter
 	 */
 	private String preferedLabelPritner;
 
+	/**
+	 * Page which should be shown as default page
+	 */
+	private View defaultView;
+	
+	/**
+	 * TODO implement, task oder patient orientated worklist
+	 */
 	private WorklistView defaultWorklistView;
-
+	
+	/**
+	 * Default worklist to load, staining, diagnosis, notification, none
+	 */
 	private WorklistDefaultLoaded defaultWorklistToLoad;
 	
 	/**

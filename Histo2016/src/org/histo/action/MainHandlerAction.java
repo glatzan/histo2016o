@@ -30,12 +30,16 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
+
 @Component
 @Scope(value = "session")
 public class MainHandlerAction {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-
+	@Autowired
+	private CommonDataHandlerAction commonDataHandlerAction;
+	
 	@Autowired
 	@Lazy
 	private UserHandlerAction userHandlerAction;
@@ -52,15 +56,6 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
-	/**
-	 * View options, dynamically generated depending on the users role
-	 */
-	private List<View> navigationPages;
-
-	/**
-	 * The current view of the user
-	 */
-	private View currentView;
 
 	/**
 	 * 
@@ -79,7 +74,7 @@ public class MainHandlerAction {
 	public void init() {
 		logger.debug("PostConstruct Init program");
 		
-		navigationPages = new ArrayList<View>();
+		commonDataHandlerAction.setNavigationPages(new ArrayList<View>());
 
 		settingsHandler.initBean();
 
@@ -87,32 +82,32 @@ public class MainHandlerAction {
 		setSettings(HistoSettings.factory(this));
 
 		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
-			navigationPages.add(View.WORKLIST_TASKS);
-			navigationPages.add(View.WORKLIST_PATIENT);
-			navigationPages.add(View.WORKLIST_RECEIPTLOG);
-			navigationPages.add(View.WORKLIST_DIAGNOSIS);
+			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_TASKS);
+			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_PATIENT);
+			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_RECEIPTLOG);
+			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_DIAGNOSIS);
 		} else {
-			navigationPages.add(View.USERLIST);
+			commonDataHandlerAction.getNavigationPages().add(View.USERLIST);
 		}
 
 		// setting the current view depending on the users role
 		if (userHandlerAction.currentUserHasRole(Role.GUEST))
 			// guest need to be unlocked first
-			setCurrentView(View.GUEST);
+			commonDataHandlerAction.setCurrentView(View.GUEST);
 		else if (userHandlerAction.currentUserHasRole(Role.SCIENTIST))
 			// no names are displayed
-			setCurrentView(View.SCIENTIST);
+			commonDataHandlerAction.setCurrentView(View.SCIENTIST);
 		else if (userHandlerAction.currentUserHasRole(Role.USER)) {
-			setCurrentView(View.USERLIST);
+			commonDataHandlerAction.setCurrentView(View.USERLIST);
 		} else if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
 			// if a default view is selected for the user
 			if (userHandlerAction.getCurrentUser().getDefaultView() != null)
-				setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
+				commonDataHandlerAction.setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
 
 			// normal work environment
-			setCurrentView(View.WORKLIST_TASKS);
+			commonDataHandlerAction.setCurrentView(View.WORKLIST_TASKS);
 		} else
-			setCurrentView(View.GUEST);
+			commonDataHandlerAction.setCurrentView(View.GUEST);
 
 	}
 
@@ -149,7 +144,7 @@ public class MainHandlerAction {
 	 * Navigation
 	 ********************************************************/
 	public String goToNavigation() {
-		return goToNavigation(getCurrentView());
+		return goToNavigation(commonDataHandlerAction.getCurrentView());
 	}
 
 	/**
@@ -161,7 +156,7 @@ public class MainHandlerAction {
 	 * @return
 	 */
 	public String goToNavigation(View view) {
-		setCurrentView(view);
+		commonDataHandlerAction.setCurrentView(view);
 		if (view.getParentView() != null) {
 			return view.getParentView().getPath();
 		} else
@@ -341,22 +336,6 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-
-	public List<View> getNavigationPages() {
-		return navigationPages;
-	}
-
-	public void setNavigationPages(List<View> navigationPages) {
-		this.navigationPages = navigationPages;
-	}
-
-	public View getCurrentView() {
-		return currentView;
-	}
-
-	public void setCurrentView(View currentView) {
-		this.currentView = currentView;
-	}
 
 	public String getQueueDialog() {
 		return queueDialog;

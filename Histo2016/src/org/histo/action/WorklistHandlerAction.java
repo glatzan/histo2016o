@@ -353,7 +353,7 @@ public class WorklistHandlerAction implements Serializable {
 	 * @return
 	 */
 	public String getCenterView() {
-		View currentView = mainHandlerAction.getCurrentView();
+		View currentView = commonDataHandlerAction.getCurrentView();
 
 		if (currentView == View.WORKLIST_BLANK)
 			return View.WORKLIST_BLANK.getPath();

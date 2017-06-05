@@ -42,9 +42,9 @@
 
 			<p:selectOneMenu style="margin-top:1px;"
 				title="#{msg['body.worklist.header.view']}"
-				value="#{mainHandlerAction.currentView}">
+				value="#{commonDataHandlerAction.currentView}">
 
-				<f:selectItems value="#{mainHandlerAction.navigationPages}"
+				<f:selectItems value="#{commonDataHandlerAction.navigationPages}"
 					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 
 				<p:ajax event="change"
@@ -53,7 +53,7 @@
 			</p:selectOneMenu>
 
 			<p:commandButton id="changeView" ajax="false"
-				action="#{mainHandlerAction.goToNavigation(mainHandlerAction.currentView)}"
+				action="#{mainHandlerAction.goToNavigation(commonDataHandlerAction.currentView)}"
 				style="display:none" />
 		</h:panelGrid>
 
@@ -447,7 +447,7 @@
 
 			<!-- userSettings button -->
 			<p:commandButton id="userSettingsDialogBtn" style="display:none"
-				actionListener="#{userHandlerAction.prepareUserSettingsDialog()}">
+				actionListener="#{userSettingsDialog.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 

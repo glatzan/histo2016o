@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;" header="#{msg['dialog.userSettings.general']}"
+			styleClass="contentPannel" />
+
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+			<!-- standard view -->
+			<h:outputLabel value="#{msg['dialog.userSettings.general.defaultView']}" />
+			<p:selectOneMenu style="margin-top:1px;"
+				title="#{msg['body.worklist.header.view']}"
+				value="#{commonDataHandlerAction.currentView}">
+
+				<f:selectItems value="#{commonDataHandlerAction.navigationPages}"
+					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
+
+				<p:ajax event="change"
+					oncomplete="$('#headerForm\\:changeView').click();"></p:ajax>
+			</p:selectOneMenu>
+			
+			<!-- standard wordklist -->
+			<h:outputLabel value="#{msg['dialog.userSettings.general.defaultWorklist']}" />
+			
+			
+		</p:panelGrid>
+	</div>
+
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+</ui:composition>

@@ -2,9 +2,8 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-
+TODO: 1: benutzer settings
 TODO: 2: erweiterte Suche
-TODO: 3: Blöcke nomeklatur überprüfen
 TODO: 5: rechte durchsetzten
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
 TODO: 7: Sort Optionen für worklist arbeitet nicht richtig / anzeige selected task verbessern
@@ -18,7 +17,7 @@ TODO: Geschlecht von ldap rausfinden
 TODO: Ansicht abhängige Knöpfe
 TODO: Schnelle Nachfärbug Dialog
 TODO: Freischaltungs link
-TODO: favouriten
+TODO: favouriten für benutzer zugänlich machen
 TODO: log in settings rework
 TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
@@ -26,6 +25,8 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin überarbeiten, methoden in generica dat shiften
 TODO: Konsile dürfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: favouriten
+++++: Blöcke nomeklatur überprüfen
 ++++: einspeisen von operateueren abgleichen, geht zumteil nicht richtig
 ++++: Drucker werde gerade nicht richtig eigelsen
 ++++: PDF generation, wenn keien Untersucher ausgewählt sind geht nicht

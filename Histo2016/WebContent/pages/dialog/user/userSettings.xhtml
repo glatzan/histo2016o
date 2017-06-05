@@ -13,8 +13,8 @@
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout infoDialog">
-	<h:form id="dialogContent">
+<h:body styleClass="settingsDialogLayout">
+	<h:form id="adminForm">
 
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
@@ -22,88 +22,25 @@
 				<h:outputLabel value="#{msg['dialog.userSettings.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					actionListener="#{userSettingsDialog.hideDialog()}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
 
-		<div class="contentDiv">
-			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
-
+		<p:panel styleClass="settingsPannel">
+			<p:tabView orientation="left" styleClass="settingsTabView">
+				<!-- General -->
+				<p:tab title="#{msg['dialog.userSettings.general']}">
+					<ui:include src="include/general.xhtml" />
+				</p:tab>
+				
 				<!-- printer -->
-				<h:outputLabel value="#{msg['dialog.userSettings.printer']}"></h:outputLabel>
-
-				<h:panelGrid columns="2">
-					<!-- select printer -->
-					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						style="width:80% !important;"
-						panelStyleClass="customSerachSelectMenuPanel"
-						value="#{userHandlerAction.currentUser.preferedPrinter}"
-						filter="true" filterMatchMode="contains">
-
-						<f:selectItems value="#{settingsHandler.printerList}"
-							var="printer" itemLabel="#{printer.name}"
-							itemValue="#{printer.name}" />
-
-						<p:ajax event="change" process="@this" listener="#{settingsHandler.updateSelectedPrinters()}" />
-					</p:selectOneMenu>
-
-					<!-- testprint -->
-					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-						style="float: right; margin-right:5px;"
-						actionListener="#{settingsHandler.selectedPrinter.printTestPage()}">
-						<i class="fa fa-fw fa-print" />
-					</p:commandLink>
-				</h:panelGrid>
-
-				<!-- label printer -->
-				<h:outputLabel value="#{msg['dialog.userSettings.labelPrinter']}"></h:outputLabel>
-
-				<h:panelGrid columns="2">
-					<!-- select printer -->
-					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						style="width:80% !important;"
-						panelStyleClass="customSerachSelectMenuPanel"
-						value="#{userHandlerAction.currentUser.preferedLabelPritner}"
-						filter="true" filterMatchMode="contains">
-
-						<f:selectItems value="#{settingsHandler.labelPrinterList}"
-							var="printer" itemLabel="#{printer.name}"
-							itemValue="#{printer.id}" />
-
-						<p:ajax event="change" process="@this" listener="#{settingsHandler.updateSelectedPrinters()}" />
-					</p:selectOneMenu>
-
-					<!-- testprint -->
-					<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
-						style="float: right; margin-right:5px;"
-						actionListener="#{settingsHandler.selectedLabelPrinter.printTestPage()}">
-						<i class="fa fa-fw fa-print" />
-					</p:commandLink>
-				</h:panelGrid>
-			</h:panelGrid>
-		</div>
-
-		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="2" style="float:right;">
-					<!-- confirm -->
-					<p:commandButton value="#{msg['general.save']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{userHandlerAction.saveUserSettings()}"></p:commandButton>
-
-					<!-- Abort button -->
-					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-times-circle"
-						actionListener="#{userHandlerAction.hideUserSettingsDialog()}" />
-				</h:panelGrid>
-			</h:panelGrid>
-		</div>
-
+				<p:tab title="#{msg['dialog.userSettings.printer']}">
+					<ui:include src="include/printer.xhtml" />
+				</p:tab>
+			</p:tabView>
+		</p:panel>
 	</h:form>
 </h:body>
 </html>

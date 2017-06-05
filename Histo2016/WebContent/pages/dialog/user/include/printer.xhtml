@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.userSettings.printer']}"
+			styleClass="contentPannel" />
+
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+
+			<!-- pritner select auto view -->
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.printer.autoPrinte']}" />
+			<p:selectBooleanCheckbox />
+
+			<!-- selected printer -->
+			<h:outputLabel value="#{msg['dialog.userSettings.printer.name']}" />
+			<h:panelGrid columns="2">
+				<!-- select printer -->
+				<p:selectOneMenu styleClass="customSerachSelectMenu"
+					style="width:80% !important;"
+					panelStyleClass="customSerachSelectMenuPanel"
+					value="#{userHandlerAction.currentUser.preferedPrinter}"
+					filter="true" filterMatchMode="contains">
+
+					<f:selectItems value="#{settingsHandler.printerList}" var="printer"
+						itemLabel="#{printer.name}" itemValue="#{printer.name}" />
+
+					<p:ajax event="change" process="@this"
+						listener="#{settingsHandler.updateSelectedPrinters()}" />
+				</p:selectOneMenu>
+
+				<!-- testprint -->
+				<p:commandLink
+					title="#{msg['dialog.userSettings.printer.testPage.hint']}"
+					style="float: right; margin-right:5px;"
+					actionListener="#{settingsHandler.selectedPrinter.printTestPage()}">
+					<i class="fa fa-fw fa-print" />
+				</p:commandLink>
+			</h:panelGrid>
+
+			<!-- label printer -->
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.labelPrinter.autoPrinte']}" />
+			<p:selectBooleanCheckbox />
+
+			<!-- selected labelprinter -->
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.labelPrinter.name']}" />
+			<h:panelGrid columns="2">
+				<!-- select printer -->
+				<p:selectOneMenu styleClass="customSerachSelectMenu"
+					style="width:80% !important;"
+					panelStyleClass="customSerachSelectMenuPanel"
+					value="#{userHandlerAction.currentUser.preferedLabelPritner}"
+					filter="true" filterMatchMode="contains">
+
+					<f:selectItems value="#{settingsHandler.labelPrinterList}"
+						var="printer" itemLabel="#{printer.name}"
+						itemValue="#{printer.id}" />
+
+					<p:ajax event="change" process="@this"
+						listener="#{settingsHandler.updateSelectedPrinters()}" />
+				</p:selectOneMenu>
+
+				<!-- testprint -->
+				<p:commandLink title="#{msg['dialog.userSettings.labelPrinter.testPage.hint']}"
+					style="float: right; margin-right:5px;"
+					actionListener="#{settingsHandler.selectedLabelPrinter.printTestPage()}">
+					<i class="fa fa-fw fa-print" />
+				</p:commandLink>
+			</h:panelGrid>
+
+		</p:panelGrid>
+	</div>
+
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+</ui:composition>

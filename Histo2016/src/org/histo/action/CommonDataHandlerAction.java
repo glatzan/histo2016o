@@ -3,6 +3,7 @@ package org.histo.action;
 import java.util.List;
 
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.View;
 import org.histo.model.Contact;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
@@ -20,11 +21,23 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session")
 public class CommonDataHandlerAction {
 
+	// ************************ Navigation ************************
+	/**
+	 * View options, dynamically generated depending on the users role
+	 */
+	private List<View> navigationPages;
+
+	/**
+	 * The current view of the user
+	 */
+	private View currentView;
+
+	// ************************ Patient ************************
 	/**
 	 * Currently selectedTask
 	 */
 	private Patient selectedPatient;
-	
+
 	/**
 	 * Currently selectedTask
 	 */
@@ -87,6 +100,22 @@ public class CommonDataHandlerAction {
 
 	public void setSelectedPatient(Patient selectedPatient) {
 		this.selectedPatient = selectedPatient;
+	}
+
+	public List<View> getNavigationPages() {
+		return navigationPages;
+	}
+
+	public void setNavigationPages(List<View> navigationPages) {
+		this.navigationPages = navigationPages;
+	}
+
+	public View getCurrentView() {
+		return currentView;
+	}
+
+	public void setCurrentView(View currentView) {
+		this.currentView = currentView;
 	}
 	/********************************************************
 	 * Getter/Setter
