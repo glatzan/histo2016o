@@ -411,7 +411,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	public void onChangeUserRole(HistoUser histoUser) {
-		userHandlerAction.roleOfuserHasChanged(histoUser);
+		try {
+			userHandlerAction.roleOfuserHasChanged(histoUser);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			e.printStackTrace();
+		}
 		mainHandlerAction.showDialog(Dialog.SETTINGS_USER_ROLE_CHANGE);
 		setSelectedUser(histoUser);
 	}

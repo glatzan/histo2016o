@@ -19,7 +19,7 @@
 				<h:outputLabel value="#{msg['dialog.info.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('INFO'))}">
+					actionListener="#{programmVersionDialog.hideDialog()}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -38,7 +38,7 @@
 							styleClass="contentPannel" />
 
 						<ui:repeat var="info"
-							value="#{maintenanceHandlerAction.versionInfo}">
+							value="#{programmVersionDialog.versionInfo}">
 							<h:outputLabel style="margin-left:5px;"
 								value="#{msg['dialog.info.version']} #{info.version}" />
 
@@ -58,7 +58,7 @@
 								<p:commandButton value="#{msg['general.close']}"
 									styleClass="smallButton buttonRighMarginInList"
 									icon="fa fa-times-circle"
-									actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+									actionListener="#{programmVersionDialog.hideDialog()}" />
 							</h:panelGrid>
 						</h:panelGrid>
 					</div>
@@ -77,7 +77,7 @@
 							styleClass="noBordersAll collapsedBordersAll" style="width:100%">
 							<h:outputLabel value="#{msg['dialog.info.error.time']}" />
 							<p:calendar pattern="HH:mm:ss dd.MM.yyyy" mask="true"
-								value="#{maintenanceHandlerAction.errorDate}">
+								value="#{programmVersionDialog.errorDate}">
 							</p:calendar>
 							<h:outputLabel value="#{msg['dialog.info.error.text']}" />
 							<h:panelGroup />
@@ -85,7 +85,7 @@
 						<p:panelGrid columns="1"
 							styleClass="noBordersAll collapsedBordersAll" style="width:100%">
 							<p:inputTextarea style="width:90%" rows="15"
-								value="#{maintenanceHandlerAction.errorMessage}" />
+								value="#{programmVersionDialog.errorMessage}" />
 						</p:panelGrid>
 
 					</div>
@@ -99,13 +99,13 @@
 								<p:commandButton value="#{msg['dialog.info.error.button.send']}"
 									styleClass="smallButton buttonRighMarginInListExtended"
 									icon="fa fa-mail-forward"
-									actionListener="#{maintenanceHandlerAction.sendErrorMessage(maintenanceHandlerAction.errorDate, maintenanceHandlerAction.errorMessage)}" />
+									actionListener="#{programmVersionDialog.sendErrorMessage(programmVersionDialog.errorDate, programmVersionDialog.errorMessage)}" />
 
 								<!-- Close button -->
 								<p:commandButton value="#{msg['general.close']}"
 									styleClass="smallButton buttonRighMarginInList"
 									icon="fa fa-times-circle"
-									actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+									actionListener="#{programmVersionDialog.hideDialog()}" />
 							</h:panelGrid>
 						</h:panelGrid>
 					</div>
@@ -125,7 +125,7 @@
 							<p:commandButton value="#{msg['general.close']}"
 								styleClass="smallButton buttonRighMarginInList"
 								icon="fa fa-times-circle"
-								actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+								actionListener="#{programmVersionDialog.hideDialog()}" />
 						</h:panelGrid>
 					</div>
 				</p:tab>
@@ -152,7 +152,7 @@
 								<p:commandButton value="#{msg['general.close']}"
 									styleClass="smallButton buttonRighMarginInList"
 									icon="fa fa-times-circle"
-									actionListener="#{mainHandlerAction.hideDialog(INFO)}" />
+									actionListener="#{programmVersionDialog.hideDialog()}" />
 							</h:panelGrid>
 						</h:panelGrid>
 					</div>

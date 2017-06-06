@@ -81,7 +81,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			connection.openConnection();
 
 			Physician physician = connection.getPhyscican(userName);
-
+			
 			if (physician != null) {
 				String dn = physician.getDnObjectName() + "," + base + "," + suffix;
 

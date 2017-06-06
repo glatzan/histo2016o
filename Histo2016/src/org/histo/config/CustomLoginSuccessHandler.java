@@ -73,10 +73,6 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 				// no names are displayed
 				return View.SCIENTIST.getPath();
 			else if (userRole.getRoleValue() >= Role.MTA.getRoleValue()) {
-				// if a default view is selected for the user
-				if (user.getDefaultView() != null)
-					return user.getDefaultView().getPath();
-
 				// normal work environment
 				return View.WORKLIST.getPath();
 			} else

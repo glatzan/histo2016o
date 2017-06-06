@@ -23,9 +23,11 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
-import org.histo.config.enums.WorklistDefaultLoaded;
+import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistView;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
+import org.histo.model.transitory.PredefinedRoleSettings;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
@@ -33,7 +35,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "user_sequencegenerator", sequenceName = "user_sequence")
-public class HistoUser implements UserDetails, Serializable, LogAble {
+public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 
 	private static final long serialVersionUID = 8292898827966568346L;
 
@@ -76,17 +78,17 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	 * Page which should be shown as default page
 	 */
 	private View defaultView;
-	
+
 	/**
 	 * TODO implement, task oder patient orientated worklist
 	 */
 	private WorklistView defaultWorklistView;
-	
+
 	/**
 	 * Default worklist to load, staining, diagnosis, notification, none
 	 */
-	private WorklistDefaultLoaded defaultWorklistToLoad;
-	
+	private WorklistSearchOption defaultWorklistToLoad;
+
 	/**
 	 * Constructor for Hibernate
 	 */
@@ -99,10 +101,10 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	 * @param name
 	 */
 	public HistoUser(String name) {
-		this(name,Role.GUEST);
+		this(name, Role.GUEST);
 	}
-	
-	public HistoUser(String name, Role role){
+
+	public HistoUser(String name, Role role) {
 		setUsername(name);
 		setRole(role);
 		setPhysician(new Physician());
@@ -110,6 +112,18 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 
 		// set role clinicalDoctor or clical personnel
 		getPhysician().setClinicEmployee(true);
+	}
+
+	/**
+	 * Updates the user settings with predefined settings on role change
+	 * @param predefinedRoleSettings
+	 */
+	public void updateUserSettings(PredefinedRoleSettings predefinedRoleSettings) {
+		setDefaultView(predefinedRoleSettings.getDefaultView());
+		setAutoSelectedPreferedLabelPrinter(predefinedRoleSettings.isAutoSelectedPreferedLabelPrinter());
+		setAutoSelectedPreferedPrinter(predefinedRoleSettings.isAutoSelectedPreferedPrinter());
+		setDefaultWorklistToLoad(predefinedRoleSettings.getDefaultWorklistToLoad());
+		setDefaultWorklistView(predefinedRoleSettings.getDefaultWorklistView());
 	}
 
 	@Id
@@ -232,7 +246,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	public String getPreferedPrinter() {
 		return preferedPrinter;
 	}
-	
+
 	public void setPreferedPrinter(String preferedPrinter) {
 		this.preferedPrinter = preferedPrinter;
 	}
@@ -271,12 +285,15 @@ public class HistoUser implements UserDetails, Serializable, LogAble {
 	}
 
 	@Enumerated(EnumType.STRING)
-	public WorklistDefaultLoaded getDefaultWorklistToLoad() {
+	public WorklistSearchOption getDefaultWorklistToLoad() {
 		return defaultWorklistToLoad;
 	}
 
-	public void setDefaultWorklistToLoad(WorklistDefaultLoaded defaultWorklistToLoad) {
+	public void setDefaultWorklistToLoad(WorklistSearchOption defaultWorklistToLoad) {
 		this.defaultWorklistToLoad = defaultWorklistToLoad;
 	}
 
+
+
+	
 }

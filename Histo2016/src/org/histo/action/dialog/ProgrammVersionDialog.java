@@ -1,11 +1,13 @@
-package org.histo.action;
+package org.histo.action.dialog;
 
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.histo.action.UserHandlerAction;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.HistoSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
+import org.histo.model.patient.Task;
 import org.histo.settings.Version;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,38 +16,33 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "session")
-public class MaintenanceHandlerAction {
-
-	private static Logger logger = Logger.getLogger("org.histo");
-
-	@Autowired
-	private MainHandlerAction mainHandlerAction;
+public class ProgrammVersionDialog extends AbstractDialog {
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
-
+	
 	private Version[] versionInfo;
 
 	private String errorMessage;
 
 	private Date errorDate;
 
-	public void prepareInfoDialog() {
-		logger.trace("Preparing Info Dialog");
-		setVersionInfo(Version.factroy(HistoSettings.VERSION_JSON));
-		setErrorDate(new Date(System.currentTimeMillis()));
-		setErrorMessage("");
-
-		mainHandlerAction.showDialog(Dialog.INFO);
+	public void initAndPrepareBean() {
+		if (initBean())
+			prepareDialog();
 	}
 
-	/**
-	 * Sends error mail to admins
-	 * 
-	 * @param dateOfError
-	 * @param errorMessage
-	 */
+	public boolean initBean() {
+		super.initBean(null, Dialog.INFO);
+		logger.trace("Preparing Info Dialog");
+		setVersionInfo(Version.factroy(SettingsHandler.VERSIONS_INFO));
+		setErrorDate(new Date(System.currentTimeMillis()));
+		setErrorMessage("");
+		return true;
+	}
+
 	public void sendErrorMessage(Date dateOfError, String errorMessage) {
+		// TODO rewrite if email system is updated
 		logger.debug("Sending Error DiagnosisRevision Date + "
 				+ TimeUtil.formatDate(dateOfError, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " Message: "
 				+ errorMessage);
@@ -54,19 +51,15 @@ public class MaintenanceHandlerAction {
 			errorMessage = errorMessage + "\r\n\r\nAbsender: "
 					+ userHandlerAction.getCurrentUser().getPhysician().getPerson().getFullName();
 
-			mainHandlerAction.getSettings().getMail().sendMailFromSystem(mainHandlerAction.getSettings().getErrorMails(),
+			mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+					mainHandlerAction.getSettings().getErrorMails(),
 					"Fehlermeldung vom "
 							+ TimeUtil.formatDate(dateOfError, DateFormat.GERMAN_DATE_TIME.getDateFormat()),
 					errorMessage);
 		}
-		
-		mainHandlerAction.hideDialog(Dialog.INFO);
 	}
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
+	// ************************ Getter/Setter ************************
 	public Version[] getVersionInfo() {
 		return versionInfo;
 	}
@@ -90,9 +83,5 @@ public class MaintenanceHandlerAction {
 	public void setErrorDate(Date errorDate) {
 		this.errorDate = errorDate;
 	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
 
 }

@@ -10,12 +10,14 @@ import java.util.TreeMap;
 import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Gender;
 import org.histo.config.enums.Month;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
+import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,8 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	private WorklistSearchOption searchIndex;
 
+	private boolean initialized;
+	
 	private boolean newPatients;
 	private boolean stainingList;
 	private boolean stainingReList;
@@ -63,7 +67,21 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	private Map<String, Integer> years;
 
-	private boolean initialized;
+	private String extendedPatientName;
+	private String extendedPatientSurename;
+	private Date extendedPatientBirthday;
+	private Gender extendedPatientGener;
+	
+	private String extendedMaterialName;
+	private String extendedHistory;
+	private Physician extendedSurgeon;
+	private Physician extendedPrivatePhysician;
+	
+	private Date extendedEntryDate;
+	
+	private String extendedDiagnosis;
+	private String extendedCategory;
+	
 
 	public void initAndPrepareBean() {
 		initBean();

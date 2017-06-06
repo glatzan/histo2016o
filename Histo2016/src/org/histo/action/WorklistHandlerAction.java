@@ -149,24 +149,15 @@ public class WorklistHandlerAction implements Serializable {
 		// preparing worklistSearchDialog for creating a worklist
 		worklistSearchDialogHandler.initBean();
 
-		// getting default worklist depending on role
-		Role userRole = userHandlerAction.getCurrentUser().getRole();
+		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getDefaultWorklistToLoad();
 
-		switch (userRole) {
-		case MTA:
-			worklistSearchDialogHandler.setSearchIndex(WorklistSearchOption.STAINING_LIST);
+		if (defaultWorklistToLoad != null) {
+			worklistSearchDialogHandler.setSearchIndex(defaultWorklistToLoad);
 			getWorklists().put(getActiveWorklistKey(), worklistSearchDialogHandler.createWorklist());
-			break;
-		case USER:
-			break;
-		case PHYSICIAN:
-		case MODERATOR:
-		case ADMIN:
-			worklistSearchDialogHandler.setSearchIndex(WorklistSearchOption.DIAGNOSIS_LIST);
-			getWorklists().put(getActiveWorklistKey(), worklistSearchDialogHandler.createWorklist());
-		default:
-			break;
+		} else {
+			getWorklists().put(getActiveWorklistKey(), new ArrayList<Patient>());
 		}
+
 	}
 
 	public void replaceInvaliedPatientInCurrentWorklist(Patient patient) {
@@ -275,23 +266,9 @@ public class WorklistHandlerAction implements Serializable {
 		receiptlogViewHandlerAction.prepareForTask(task);
 		diagnosisViewHandlerAction.prepareForTask(task);
 
-		if (getLastSubView() == null) {
-			if (userHandlerAction.getCurrentUser().getRole().getRoleValue() >= Role.PHYSICIAN.getRoleValue()) {
-				// all roles > mta
-				logger.debug("User is physician, show diagnoses screen");
-				setLastSubView(View.WORKLIST_DIAGNOSIS);
-				return mainHandlerAction.goToNavigation(View.WORKLIST_DIAGNOSIS);
-			} else if (userHandlerAction.getCurrentUser().getRole() == Role.MTA) {
-				// mta
-				logger.debug("User is mta, show receiptlog screen");
-				setLastSubView(View.WORKLIST_RECEIPTLOG);
-				return mainHandlerAction.goToNavigation(View.WORKLIST_RECEIPTLOG);
-			} else {
-				// normal users
-				logger.debug("User is normal user, show simple list");
-				setLastSubView(View.WORKLIST_TASKS);
-				return mainHandlerAction.goToNavigation(View.WORKLIST_TASKS);
-			}
+		if (getLastSubView() == null && userHandlerAction.getCurrentUser().getDefaultView() != null) {
+			setLastSubView(userHandlerAction.getCurrentUser().getDefaultView());
+			return userHandlerAction.getCurrentUser().getDefaultView().getPath();
 		} else {
 			return mainHandlerAction.goToNavigation(getLastSubView());
 		}
@@ -357,9 +334,11 @@ public class WorklistHandlerAction implements Serializable {
 
 		if (currentView == View.WORKLIST_BLANK)
 			return View.WORKLIST_BLANK.getPath();
+
 		if (commonDataHandlerAction.getSelectedPatient() == null || currentView == View.WORKLIST_TASKS) {
 			return View.WORKLIST_TASKS.getPath();
 		}
+
 		if (commonDataHandlerAction.getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
 			return View.WORKLIST_PATIENT.getPath();
 		} else if (currentView == View.WORKLIST_DIAGNOSIS) {

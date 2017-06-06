@@ -11,7 +11,7 @@
 			value="#{msg['dialog.worklistsearch.headline']}">
 		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
-	
+
 </h:head>
 
 <h:body styleClass="settingsDialogLayout">
@@ -33,14 +33,16 @@
 			<p:tabView orientation="left" styleClass="settingsTabView">
 
 				<!-- ************************************************************** Simple ************************************************************** -->
-				<p:tab title="#{msg['dialog.worklistsearch.simple']}">
-					<ui:include src="worklistSearchSimple.xhtml" />
+				<p:tab title="#{msg['dialog.worklistsearch.simple']}"
+					id="simpleWorklistSearch">
+					<ui:include src="createWorklist.xhtml" />
 				</p:tab>
 				<!-- ************************************************************** Simple ************************************************************** -->
 
 				<!-- ************************************************************** Advanced ************************************************************** -->
-				<p:tab title="#{msg['dialog.worklistsearch.extended']}" disabled="true">
-					<ui:include src="worklistSearchExtended.xhtml" />
+				<p:tab title="#{msg['dialog.worklistsearch.extended']}"
+					id="extendendWorklistSearch">
+					<ui:include src="extendedSearch.xhtml" />
 				</p:tab>
 				<!-- ************************************************************** Advanced ************************************************************** -->
 

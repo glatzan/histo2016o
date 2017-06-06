@@ -23,6 +23,7 @@ import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
 import org.histo.model.interfaces.PatientRollbackAble;
+import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class MainHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 	@Autowired
 	private CommonDataHandlerAction commonDataHandlerAction;
-	
+
 	@Autowired
 	@Lazy
 	private UserHandlerAction userHandlerAction;
@@ -73,7 +74,7 @@ public class MainHandlerAction {
 	@PostConstruct
 	public void init() {
 		logger.debug("PostConstruct Init program");
-		
+
 		commonDataHandlerAction.setNavigationPages(new ArrayList<View>());
 
 		settingsHandler.initBean();
@@ -81,14 +82,10 @@ public class MainHandlerAction {
 		// TODO REMOVE
 		setSettings(HistoSettings.factory(this));
 
-		if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
-			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_TASKS);
-			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_PATIENT);
-			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_RECEIPTLOG);
-			commonDataHandlerAction.getNavigationPages().add(View.WORKLIST_DIAGNOSIS);
-		} else {
-			commonDataHandlerAction.getNavigationPages().add(View.USERLIST);
-		}
+		PredefinedRoleSettings roleSetting = settingsHandler
+				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
+
+		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
 
 		// setting the current view depending on the users role
 		if (userHandlerAction.currentUserHasRole(Role.GUEST))
@@ -100,15 +97,10 @@ public class MainHandlerAction {
 		else if (userHandlerAction.currentUserHasRole(Role.USER)) {
 			commonDataHandlerAction.setCurrentView(View.USERLIST);
 		} else if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
-			// if a default view is selected for the user
-			if (userHandlerAction.getCurrentUser().getDefaultView() != null)
-				commonDataHandlerAction.setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
-
 			// normal work environment
 			commonDataHandlerAction.setCurrentView(View.WORKLIST_TASKS);
 		} else
 			commonDataHandlerAction.setCurrentView(View.GUEST);
-
 	}
 
 	/********************************************************

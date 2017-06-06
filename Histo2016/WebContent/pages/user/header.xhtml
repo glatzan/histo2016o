@@ -65,9 +65,9 @@
 
 			<!-- Current Version -->
 			<p:commandLink
-				value="Version : #{mainHandlerAction.settings.currentVersion}"
+				value="Version : #{settingsHandler.currentVersion}"
 				styleClass="noUnderlineAtLink buttonRighMarginInListExtended icon-grey"
-				actionListener="#{maintenanceHandlerAction.prepareInfoDialog()}"></p:commandLink>
+				actionListener="#{programmVersionDialog.initAndPrepareBean()}"></p:commandLink>
 
 			<!-- Menu Button -->
 			<p:commandButton id="menuBtn" value="Menu" type="button"
@@ -99,7 +99,7 @@
 
 			<!-- Info button -->
 			<p:commandButton id="infoDialogBtn" style="display:none"
-				actionListener="#{maintenanceHandlerAction.prepareInfoDialog()}">
+				actionListener="#{programmVersionDialog.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" update=" contentForm" />
 			</p:commandButton>
 

@@ -8,12 +8,16 @@ import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.histo.action.UserHandlerAction;
+import org.histo.config.enums.Role;
+import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.settings.ClinicJsonHandler;
 import org.histo.settings.LdapHandler;
 import org.histo.settings.PrinterSettings;
 import org.histo.settings.ProgramSettings;
+import org.histo.settings.Version;
 import org.histo.settings.VersionContainer;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.histo.util.printer.ClinicPrinter;
 import org.histo.util.printer.ClinicPrinterDummy;
@@ -37,13 +41,20 @@ public class SettingsHandler {
 	public static final String LDAP_SETTINGS = "classpath:settings/ldap.json";
 	public static final String VERSION_SETTINGS = "classpath:settings/version.json";
 	public static final String CLINIC_BACKEND_SETTINGS = "classpath:settings/clinicBackend.json";
-	
+	public static final String PREDEFINED_ROLE_SETTINGS = "classpath:settings/predefinedRoleSettings.json";
+	public static final String VERSIONS_INFO = "classpath:settings/version.json";
+
 	@Autowired
 	private UserHandlerAction userHandlerAction;
 
 	private ProgramSettings programSettings;
 	private PrinterSettings printerSettings;
-	
+
+	/**
+	 * The current version of the program
+	 */
+	private String currentVersion;
+
 	/**
 	 * Selected ClinicPrinter to print the document
 	 */
@@ -83,14 +94,29 @@ public class SettingsHandler {
 	 * Container for providing version information
 	 */
 	private VersionContainer versionContainer;
-	
+
+	/**
+	 * Handler for json request to daniel's clinic backend
+	 */
 	private ClinicJsonHandler clinicJsonHandler;
+
+	/**
+	 * List of predefined role settings
+	 */
+	private List<PredefinedRoleSettings> predefinedRoleSettings;
 
 	public void initBean() {
 		Gson gson = new Gson();
 
 		logger.debug("Loading general settings");
 		programSettings = gson.fromJson(FileHandlerUtil.getContentOfFile(PROGRAM_SETTINGS), ProgramSettings.class);
+
+		logger.debug("Current Version");
+		Version[] versions = Version.factroy(SettingsHandler.VERSIONS_INFO);
+		// setting current version
+		if (versions != null && versions.length > 0) {
+			setCurrentVersion(versions[0].getVersion());
+		}
 
 		logger.debug("Loading CUPS Printers");
 		printerSettings = gson.fromJson(FileHandlerUtil.getContentOfFile(PRINTER_SETTINGS), PrinterSettings.class);
@@ -108,9 +134,15 @@ public class SettingsHandler {
 
 		logger.debug("Loading LDAP Handler");
 		ldapHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(LDAP_SETTINGS), LdapHandler.class);
-		
+
 		logger.debug("Loading clinic backend handler");
-		clinicJsonHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(CLINIC_BACKEND_SETTINGS), ClinicJsonHandler.class);
+		clinicJsonHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(CLINIC_BACKEND_SETTINGS),
+				ClinicJsonHandler.class);
+
+		logger.debug("Loading predefinde role settings");
+		listType = new TypeToken<ArrayList<PredefinedRoleSettings>>() {
+		}.getType();
+		setPredefinedRoleSettings(gson.fromJson(FileHandlerUtil.getContentOfFile(PREDEFINED_ROLE_SETTINGS), listType));
 	}
 
 	public void updateSelectedPrinters() {
@@ -193,6 +225,16 @@ public class SettingsHandler {
 		return null;
 	}
 
+	public PredefinedRoleSettings getRoleSettingsForRole(Role role) {
+		try {
+			return getPredefinedRoleSettings().stream().filter(p -> p.getRole() == role)
+					.collect(StreamUtils.singletonCollector());
+		} catch (IllegalStateException e) {
+			// settings not found returning empty one
+			return new PredefinedRoleSettings();
+		}
+	}
+
 	// ************************ Getter/Setter ************************
 	public ClinicPrinter getSelectedPrinter() {
 		return selectedPrinter;
@@ -265,4 +307,29 @@ public class SettingsHandler {
 	public void setClinicJsonHandler(ClinicJsonHandler clinicJsonHandler) {
 		this.clinicJsonHandler = clinicJsonHandler;
 	}
+
+	public List<PredefinedRoleSettings> getPredefinedRoleSettings() {
+		return predefinedRoleSettings;
+	}
+
+	public void setPredefinedRoleSettings(List<PredefinedRoleSettings> predefinedRoleSettings) {
+		this.predefinedRoleSettings = predefinedRoleSettings;
+	}
+
+	public String getCurrentVersion() {
+		return currentVersion;
+	}
+
+	public void setCurrentVersion(String currentVersion) {
+		this.currentVersion = currentVersion;
+	}
+
+	public ProgramSettings getProgramSettings() {
+		return programSettings;
+	}
+
+	public void setProgramSettings(ProgramSettings programSettings) {
+		this.programSettings = programSettings;
+	}
+	
 }

@@ -31,6 +31,7 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Gender;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
 
@@ -144,9 +145,9 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		setUid(dataToUpdate.getUid());
 		setPager(dataToUpdate.getPager());
 		setClinicRole(dataToUpdate.getClinicRole());
-		
+
 		// TODO is this necessary ?
-//		setAssociatedRoles(dataToUpdate.getAssociatedRoles());
+		// setAssociatedRoles(dataToUpdate.getAssociatedRoles());
 	}
 
 	/**
@@ -217,6 +218,24 @@ public class Physician implements Serializable, ArchivAble, HasID {
 			if (attr != null && attr.size() == 1) {
 				getPerson().setDepartment(attr.get().toString());
 			}
+
+			// sex
+			attr = attrs.get("uklfrPersonType");
+			if (attr != null && attr.size() == 1) {
+				try {
+					int intSEX = Integer.parseInt(attr.get().toString());
+
+					if (intSEX == 1) // male
+						getPerson().setGender(Gender.MALE);
+					else if (intSEX > 1) // female
+						getPerson().setGender(Gender.FEMALE);
+					else // unknow
+						getPerson().setGender(Gender.UNKNOWN);
+				} catch (NumberFormatException e) {
+					getPerson().setGender(Gender.UNKNOWN);
+				}
+			}
+
 		} catch (NamingException e) {
 			logger.error("Error while updating physician data for " + getUid() + " from ldap", e);
 		}
@@ -294,7 +313,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@Enumerated(EnumType.STRING)
 	@Fetch(value = FetchMode.SUBSELECT)
-	@Cascade(value={org.hibernate.annotations.CascadeType.ALL})
+	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
 	public Set<ContactRole> getAssociatedRoles() {
 		if (associatedRoles == null)
 			associatedRoles = new HashSet<ContactRole>();

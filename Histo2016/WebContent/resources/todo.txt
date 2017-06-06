@@ -2,7 +2,6 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-TODO: 1: benutzer settings
 TODO: 2: erweiterte Suche
 TODO: 5: rechte durchsetzten
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
@@ -13,7 +12,6 @@ TODO: wenn Task entity gelöscht wird kann es sein das der beende staining phase 
 
 TODO: Benachrichtigugen: Liste von fax/email/phone müsse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man über den contakt dialog sachen ädnert
 
-TODO: Geschlecht von ldap rausfinden
 TODO: Ansicht abhängige Knöpfe
 TODO: Schnelle Nachfärbug Dialog
 TODO: Freischaltungs link
@@ -25,6 +23,8 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin überarbeiten, methoden in generica dat shiften
 TODO: Konsile dürfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: benutzer settings
+++++: Geschlecht von ldap rausfinden
 ++++: favouriten
 ++++: Blöcke nomeklatur überprüfen
 ++++: einspeisen von operateueren abgleichen, geht zumteil nicht richtig

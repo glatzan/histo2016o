@@ -21,7 +21,6 @@ public class HistoSettings {
 	public static final String TEX_TEMPLATE_JSON = "classpath:settings/printTempaltes.json";
 	public static final String MAIL_TEMPLATE_JSON = "classpath:settings/mailTemplates.json";
 	public static final String LABEL_PRINTER_JSON = "classpath:settings/labelPrinter.json";
-	public static final String VERSION_JSON = "classpath:settings/version.json";
 
 	public static final String PDF_TEMPLATE_JSON = "classpath:templates/template.json";
 
@@ -44,16 +43,6 @@ public class HistoSettings {
 
 		return result;
 	}
-
-	/**
-	 * Directory for creating pdfs
-	 */
-	private String workingDirectory;
-
-	/**
-	 * The current version of the program
-	 */
-	private String currentVersion;
 
 	/**
 	 * Object for sending mails via clini backend
@@ -111,14 +100,6 @@ public class HistoSettings {
 
 	public void setErrorMails(String[] errorMails) {
 		this.errorMails = errorMails;
-	}
-
-	public String getWorkingDirectory() {
-		return workingDirectory;
-	}
-
-	public String getCurrentVersion() {
-		return currentVersion;
 	}
 
 	/********************************************************

@@ -1,5 +1,4 @@
 {  
-   "currentVersion":"0.99",
    "mail":{  
       "server":"smtp.ukl.uni-freiburg.de",
       "port":465,

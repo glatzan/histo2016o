@@ -24,9 +24,6 @@
 				<h:panelGrid columns="2" style="width:100%" styleClass="noBorders">
 					<h:outputLabel value="#{msg['page.guest.unlock']}"></h:outputLabel>
 					<h:panelGroup style="float:right;">
-						<!-- <p:commandButton 
-							actionListener="#{userHandlerAction.changeRoleForCurrentUser('ROLE_MODERATOR')}"
-							action="/pages/worklist_patient" value="Freischalten"></p:commandButton>-->
 						<p:commandButton styleClass="buttonRighMarginInList"
 							actionListener="#{userHandlerAction.requestUnlock()}" disabled="#{userHandlerAction.unlockRequestSend}"
 							value="#{msg['page.guest.button.requestUnlock']}"></p:commandButton>

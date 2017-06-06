@@ -9,8 +9,10 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.MailType;
 import org.histo.config.enums.Role;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
+import org.histo.model.transitory.PredefinedRoleSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -51,30 +53,6 @@ public class UserHandlerAction implements Serializable {
 	 * login
 	 ********************************************************/
 
-	/********************************************************
-	 * user settings dialog
-	 ********************************************************/
-	public void prepareUserSettingsDialog() {
-		mainHandlerAction.showDialog(Dialog.USER_SETTINGS);
-	}
-
-	public void saveUserSettings() {
-		genericDAO.save(getCurrentUser(),
-				resourceBundle.get("log.userSettings.update", getCurrentUser().getUsername()));
-		hideUserSettingsDialog();
-	}
-
-	public void hideUserSettingsDialog() {
-		genericDAO.reset(getCurrentUser());
-
-		settingsHandler.updateSelectedPrinters();
-
-		mainHandlerAction.hideDialog(Dialog.USER_SETTINGS);
-	}
-
-	/********************************************************
-	 * user settings dialog
-	 ********************************************************/
 
 	/**
 	 * Checks if the session is associated with a user.
@@ -144,8 +122,9 @@ public class UserHandlerAction implements Serializable {
 	 * Changes the role for the current user.
 	 * 
 	 * @param role
+	 * @throws CustomDatabaseInconsistentVersionException 
 	 */
-	public void changeRoleForCurrentUser(String role) {
+	public void changeRoleForCurrentUser(String role) throws CustomDatabaseInconsistentVersionException {
 		changeRoleForUser(getCurrentUser(), Role.getRoleByToken(role));
 	}
 
@@ -153,8 +132,9 @@ public class UserHandlerAction implements Serializable {
 	 * Changes the role of the current user.
 	 * 
 	 * @param role
+	 * @throws CustomDatabaseInconsistentVersionException 
 	 */
-	public void changeRoleForCurrentUser(Role role) {
+	public void changeRoleForCurrentUser(Role role) throws CustomDatabaseInconsistentVersionException {
 		changeRoleForUser(getCurrentUser(), role);
 	}
 
@@ -163,8 +143,9 @@ public class UserHandlerAction implements Serializable {
 	 * 
 	 * @param user
 	 * @param role
+	 * @throws CustomDatabaseInconsistentVersionException 
 	 */
-	public void changeRoleForUser(HistoUser user, Role role) {
+	public void changeRoleForUser(HistoUser user, Role role) throws CustomDatabaseInconsistentVersionException {
 		user.setRole(role);
 		roleOfuserHasChanged(user);
 	}
@@ -173,10 +154,13 @@ public class UserHandlerAction implements Serializable {
 	 * Saves a role change for a given user.
 	 * 
 	 * @param histoUser
+	 * @throws CustomDatabaseInconsistentVersionException 
 	 */
-	public void roleOfuserHasChanged(HistoUser histoUser) {
+	public void roleOfuserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
+		PredefinedRoleSettings roleSetting = settingsHandler.getRoleSettingsForRole(histoUser.getRole());
+		histoUser.updateUserSettings(roleSetting);
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getRole().toString());
-		genericDAO.save(histoUser, resourceBundle.get("log.user.role.changed", histoUser.getRole()));
+		genericDAO.saveDataRollbackSave(histoUser, "log.user.role.changed", new Object[]{histoUser.getRole()});
 	}
 
 	/**

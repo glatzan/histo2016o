@@ -62,9 +62,9 @@
 
 			<!-- Current Version -->
 			<p:commandLink
-				value="Version : #{mainHandlerAction.settings.currentVersion}"
+				value="Version : #{settingsHandler.currentVersion}"
 				styleClass="noUnderlineAtLink buttonRighMarginInListExtended icon-grey"
-				actionListener="#{maintenanceHandlerAction.prepareInfoDialog()}"></p:commandLink>
+				actionListener="#{programmVersionDialog.initAndPrepareBean()}"></p:commandLink>
 
 			<!-- button edit -->
 			<p:commandButton id="dynaButton" value="#{msg['header.menu.edit']}"
@@ -453,7 +453,7 @@
 
 			<!-- Info button -->
 			<p:commandButton id="infoDialogBtn" style="display:none"
-				actionListener="#{maintenanceHandlerAction.prepareInfoDialog()}">
+				actionListener="#{programmVersionDialog.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 

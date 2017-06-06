@@ -64,6 +64,9 @@ public class PDFGeneratorHandler {
 	@Lazy
 	private MainHandlerAction mainHandlerAction;
 
+	@Autowired
+	private SettingsHandler settingsHandler;
+	
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate) {
 		return generatePDFForReport(patient, task, printTemplate, null);
 	}
@@ -102,7 +105,7 @@ public class PDFGeneratorHandler {
 			Person toSendAddress) {
 
 		File workingDirectory = new File(
-				HistoSettings.getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
+				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
@@ -252,7 +255,7 @@ public class PDFGeneratorHandler {
 			HashMap<String, String> replacements) {
 		mainHandlerAction.getSettings();
 		File workingDirectory = new File(
-				HistoSettings.getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
+				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
@@ -669,7 +672,7 @@ public class PDFGeneratorHandler {
 		public JLRConverter openNewPDf(PrintTemplate printTemplate) {
 			this.printTemplate = printTemplate;
 			workingDirectory = new File(
-					HistoSettings.getAbsolutePath(mainHandlerAction.getSettings().getWorkingDirectory()));
+					HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 
 			output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 

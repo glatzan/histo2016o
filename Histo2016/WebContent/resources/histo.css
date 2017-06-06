@@ -759,7 +759,7 @@ ul.ui-menu-child {
 /* Settings tab view hight + width*/
 .settingsDialogLayout .settingsPannel .settingsTabView {
 	width: 100%;
-	height: 565px;
+	height: 564px;
 }
 
 /* Layout in the tabview center tab, center div*/
@@ -817,6 +817,7 @@ ul.ui-menu-child {
 	width: 100%;
 	font-size: 0.8em !important;
 }
+
 /*	################# Settings ################# */
 
 /*	################# Contact ################# */

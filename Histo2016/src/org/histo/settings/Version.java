@@ -9,6 +9,17 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * <b>Change:</b>
+ * <b>Fix:</b>
+ * <b>Added:</b>
+ * Version 1.2.3
+ * 1 = Significant change
+ * 2 = feature added
+ * 3 = bugfix
+ * @author glatza
+ *
+ */
 public class Version implements GsonAble {
 
 	@Expose

@@ -8,28 +8,36 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<div class="contentDiv">
-		<p:panel style="width:100%;" header="#{msg['dialog.userSettings.general']}"
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.userSettings.general']}"
 			styleClass="contentPannel" />
 
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
 			<!-- standard view -->
-			<h:outputLabel value="#{msg['dialog.userSettings.general.defaultView']}" />
-			<p:selectOneMenu style="margin-top:1px;"
-				title="#{msg['body.worklist.header.view']}"
-				value="#{commonDataHandlerAction.currentView}">
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.general.defaultView']}" />
 
-				<f:selectItems value="#{commonDataHandlerAction.navigationPages}"
+			<p:selectOneMenu title="#{msg['body.worklist.header.view']}"
+				value="#{userSettingsDialog.user.defaultView}">
+
+				<f:selectItems value="#{userSettingsDialog.availableViews}"
 					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 
-				<p:ajax event="change"
-					oncomplete="$('#headerForm\\:changeView').click();"></p:ajax>
 			</p:selectOneMenu>
-			
-			<!-- standard wordklist -->
-			<h:outputLabel value="#{msg['dialog.userSettings.general.defaultWorklist']}" />
-			
-			
+
+			<!-- standard work list -->
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.general.defaultWorklist']}" />
+			<p:selectOneMenu style="margin-top:1px;"
+				title="#{msg['body.worklist.header.view']}"
+				value="#{userSettingsDialog.user.defaultWorklistToLoad}">
+
+				<f:selectItems
+					value="#{userSettingsDialog.availableWorklistsToLoad}" var="page"
+					itemLabel="#{msg['enum.worklistSearchOption.'.concat(page)]}" />
+
+			</p:selectOneMenu>
 		</p:panelGrid>
 	</div>
 
@@ -38,10 +46,21 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton value="#{msg['general.save']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-check-circle-o" partialSubmit="true" process="printerTab generalTab">
+					<f:actionListener
+						binding="#{userSettingsDialog.saveUserSettings()}" />
+					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
+				</p:commandButton>
+
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle">
+					<f:actionListener
+						binding="#{userSettingsDialog.resetUserSettings()}" />
+					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
+				</p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

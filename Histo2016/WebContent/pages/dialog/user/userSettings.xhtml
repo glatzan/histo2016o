@@ -21,8 +21,10 @@
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
 				<h:outputLabel value="#{msg['dialog.userSettings.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
-					styleClass="noUnderlineAtLink"
-					actionListener="#{userSettingsDialog.hideDialog()}">
+					styleClass="noUnderlineAtLink">
+					<f:actionListener
+						binding="#{userSettingsDialog.resetUserSettings()}" />
+					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -31,12 +33,12 @@
 		<p:panel styleClass="settingsPannel">
 			<p:tabView orientation="left" styleClass="settingsTabView">
 				<!-- General -->
-				<p:tab title="#{msg['dialog.userSettings.general']}">
+				<p:tab title="#{msg['dialog.userSettings.general']}" id="generalTab">
 					<ui:include src="include/general.xhtml" />
 				</p:tab>
-				
+
 				<!-- printer -->
-				<p:tab title="#{msg['dialog.userSettings.printer']}">
+				<p:tab title="#{msg['dialog.userSettings.printer']}" id="printerTab">
 					<ui:include src="include/printer.xhtml" />
 				</p:tab>
 			</p:tabView>

@@ -1,74 +1,7 @@
 [  {  
-      "version":"0.99",
+      "version":"1.0.0",
       "changes":[  
-         "<b>Change:</b> Viele Überarbeitungen und Verbesserungen",      
+         "Erste Veröffentlichung"    
        ]
-   }, 
-	{  
-      "version":"0.96",
-      "changes":[  
-         "<b>Fix:</b> Patienten erscheinen nach dem Hinzufügen über die Schnellsuch-Funktion in der Arbeitsliste",   
-         "<b>Fix:</b> Rechstschreibfehler gefixt",    
-         "<b>Fix:</b> Autonomeklatur für Proben repariert",
-         "<b>Change:</b> Autrag-Dialog überarbeitet",      
-         
-       ]
-   }, 
-	{  
-   
-      "version":"0.95c",
-      "changes":[  
-         "<b>Fix:</b> Bug im Add Slide-Dialog behoben",
-          "<b>Fix:</b> PIZ-Suche funktioniert wieder",
-          "<b>Fix:</b> Bearbeitung von Diagnosen wieder möglich"
-       ]
-   },  
-   {  
-   
-      "version":"0.95b",
-      "changes":[  
-         "<b>Change:</b> Email-Text nun über Datei konfigurierbar",     
-         "<b>Added:</b> Färbungen können nun mittels drag and drop sortiert werden",
-         "<b>Added:</b> Materialien können nun mittels drag and drop sortiert werden",
-         "<b>Added:</b> Diagnose können nun mittels drag and drop sortiert werden",
-         "<b>Added:</b> Listen für Stationen und Vorgeschichte können selbst erstellt und geändert werden.",
-       ]
-   },  
-   {  
-      "version":"0.95a",
-      "changes":[  
-         "<b>Added:</b> Suche aus der Menuleiste jetzt mölgich",
-         "<b>Added:</b> Umschaltknopf für Menuleiste zum filtern der Arbeitesliste",
-         "<b>Fix:</b> Verschiedene Scrollbalken entfernt",
-         "<b>Fix:</b> Fehler beim der Benachrichtigung von Ärzten behoben",
-         "<b>Change:</b> Nach Absenden einer Fehlermeldung wird der Info-Dialog geschlossen"
-       ]
-   },    
-   {  
-      "version":"0.95",
-      "changes":[  
-         "<b>Added:</b> Info Dilaog",
-         "<b>Fix:</b> Dialog zum Patienten hinzufügen funktioniert richtig",
-         "<b>Fix:</b> Dialog zum Patienten hinzufügen: automatisches auswählen des PIZ feldes geht",
-         "<b>Change:</b> Dialog zum Erstellen von neuen Aufgaben: Aufgaben-Nummer wird angezeigt, Eingangsdatum kann ausgewählt werden, Priorität kann auf keine; hoch; und auf ein Datum gesetzt werden",
-         "<b>Added:</b> Dialog zum Erstellen von neuen Aufgaben: Print-Buttons zum Bedrucken des Eingangsbogen wurden hinzugefügt.",
-         "<b>Change:</b> Auftragsnummer wird im Eingangsbuch angezeigt",
-         "<b>Change:</b> Es werden keine Proben und Blocknummern mehr automatisch generiert",
-         "<b>Added:</b> Upload Dialog: Es ist möglich belibige Datein einer Aufgabe anzuhängen",
-         "<b>Fix:</b> Patient wird nach Abschluss der Färbung korrekt in der Befundungsliste gezeigt",
-         "<b>Change:</b> Färbung beendet Dialog: Design angepasst",
-         "<b>Fix:</b> Patient wird nach revidieren des Abschluss der Färbung korrekt in der Färbungsliste gezeigt",
-         "<b>Fix:</b> Eingangsbuch: Fehler sobald der Patient kein Geburtsdatum hat behoben",
-         "<b>Fix:</b> Befundung: Arzt und Oberarzt kann wieder richtig ausgewählt werden",
-         "<b>Added:</b> Emailbenachrichtigung bei Neuanmeldung",
-         "<b>Change:</b> Geschlecht wird intern als Enum abgebildet",
-         "<b>Fix:</b> Patienten hinzufügen, es wird angezeigt, wenn zu viele Datensätze in der Klinik-Datenbank gefunden wurden",
-         "<b>Fix:</b> Dialog Arbeistliste erstellen, Suche nach Daten funktioniert wieder",
-         "<b>Added:</b> Dialog Arbeistliste erstellen, Suche nach ausstehenden Benachrichtigungen hinzugefügt",
-         "<b>Added:</b> Freischalt Knopf, beim ersten einloggen",
-         "<b>Added:</b> Aktuelle Version wird in der oberen Leiste angezeigt",
-         "<b>Added:</b> Fehlermeldungen können über das Infomenu gesendet werden",
-         "<b>Added:</b> \"Über\" Tab im Info-Dialog"
-      ]
    }
 ]
