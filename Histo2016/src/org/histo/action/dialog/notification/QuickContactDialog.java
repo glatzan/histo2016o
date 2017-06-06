@@ -75,6 +75,8 @@ public class QuickContactDialog extends AbstractDialog {
 	}
 
 	public boolean initBean(Task task, ContactRole contactRole) {
+		long start = System.currentTimeMillis();
+		System.out.println("start: 0");
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -85,6 +87,8 @@ public class QuickContactDialog extends AbstractDialog {
 
 		super.initBean(task, Dialog.QUICK_CONTACTS);
 
+		System.out.println("udate done: " + Long.toString(System.currentTimeMillis() - start));
+		
 		setAssociatedRoles(Arrays.asList(ContactRole.values()));
 		setAssociatedRolesTransformer(new AssociatedRoleTransformer(getAssociatedRoles()));
 
@@ -92,6 +96,8 @@ public class QuickContactDialog extends AbstractDialog {
 
 		setContactList(contactDAO.getContactList(task, getShowPhysicianRoles(), false));
 
+		System.out.println("contact done done: " + Long.toString(System.currentTimeMillis() - start));
+		
 		setSelectedContactRole(contactRole);
 
 		return true;
@@ -108,6 +114,8 @@ public class QuickContactDialog extends AbstractDialog {
 	 * @param role
 	 */
 	public void selectContactAsRole(Contact contact, ContactRole role) {
+		long start = System.currentTimeMillis();
+		System.out.println("start: " + Long.toString(System.currentTimeMillis() - start));
 		try {
 			contact.setRole(role);
 
@@ -119,6 +127,7 @@ public class QuickContactDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
+		System.out.println("close: " + Long.toString(System.currentTimeMillis() - start));
 	}
 
 	/**
@@ -173,10 +182,12 @@ public class QuickContactDialog extends AbstractDialog {
 	}
 
 	public List<Contact> getContactList() {
+		System.out.println("hallo---");
 		return contactList;
 	}
 
 	public void setContactList(List<Contact> contactList) {
+		System.out.println("hallo---!!!!");
 		this.contactList = contactList;
 	}
 
@@ -189,10 +200,12 @@ public class QuickContactDialog extends AbstractDialog {
 	}
 
 	public Contact getSelectedContact() {
+		System.out.println("hallo!!!...");
 		return selectedContact;
 	}
 
 	public void setSelectedContact(Contact selectedContact) {
+		System.out.println("hallo");
 		this.selectedContact = selectedContact;
 	}
 

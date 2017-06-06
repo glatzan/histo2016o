@@ -33,7 +33,7 @@
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 
 				<p:dataTable var="contact" rowKey="#{contact.tmpId}"
-					id="contentTable"
+					id="contentTable" rowIndexVar="rowIdx"
 					styleClass="defaultDataTable noBordersAll collapsedBordersAll"
 					scrollable="true" scrollHeight="340" selectionMode="single"
 					selection="#{quickContactDialog.selectedContact}"
@@ -51,6 +51,7 @@
 					<p:column
 						headerText="#{msg['dialog.contact.table.defaultFunction']}"
 						style="width:30% !important">
+						<!-- 
 						<p:repeat
 							value="#{quickContactDialog.getDefaultAssociatedRoleForPhysician(contact.person)}"
 							var="associatedRoles">
@@ -58,6 +59,7 @@
 								value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
 							<br />
 						</p:repeat>
+						 -->
 					</p:column>
 
 					<!-- already selected -->
@@ -70,6 +72,7 @@
 							<p:commandLink
 								actionListener="#{quickContactDialog.selectContactAsRole(contact, 'NONE')}"
 								update="@form" styleClass="noUnderlineAtLink"
+								partialSubmit="true" process="@this"
 								title="#{msg['dialog.quickContact.table.selected.info1']}">
 								<i class="fa fa-check icon-green" />
 							</p:commandLink>
@@ -77,9 +80,11 @@
 					</p:column>
 
 					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()" />
+
 				</p:dataTable>
 
-				<p:remoteCommand name="submitDoubleclick">
+				<p:remoteCommand name="submitDoubleclick" partialSubmit="true"
+					process="@this">
 					<f:actionListener
 						binding="#{quickContactDialog.selectContactAsRole()}" />
 					<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
@@ -105,6 +110,7 @@
 								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
 							<p:ajax listener="#{quickContactDialog.updateContactList()}"
+								partialSubmit="true" process="@this"
 								update=":dialogContent:contentTable"></p:ajax>
 						</p:selectCheckboxMenu>
 					</h:panelGrid>
@@ -121,7 +127,8 @@
 
 					<p:commandButton value="#{msg['general.close']}"
 						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-fw fa-times-circle" id="closeBtn"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
 						actionListener="#{quickContactDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
 
