@@ -32,6 +32,7 @@ public class TaskStatusHandler {
 
 	public boolean isTaskEditable(Task task) {
 
+		System.out.println("Task ist editable");
 		if (task == null)
 			return false;
 
@@ -81,6 +82,7 @@ public class TaskStatusHandler {
 	 * @return
 	 */
 	public List<Task> getActiveTasks(Patient patient) {
+		System.out.println("task " + patient.getPerson().getFullName());
 		return patient.getTasks().stream().filter(p -> isActiveOrActionPending(p)).collect(Collectors.toList());
 	}
 

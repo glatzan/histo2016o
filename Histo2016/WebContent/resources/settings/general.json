@@ -1,4 +1,4 @@
 {  
-   "offline": false,
+   "offline": true,
    "workingDirectory" : "classpath:templates/print"
 }

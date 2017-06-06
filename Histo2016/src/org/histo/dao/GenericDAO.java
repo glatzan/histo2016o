@@ -8,17 +8,21 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogInfo;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
+import org.histo.model.view.ContactPhysicanRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -37,6 +41,21 @@ public class GenericDAO extends AbstractDAO {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	public List<ContactPhysicanRole> getTest(){
+		DetachedCriteria query = DetachedCriteria.forClass(ContactPhysicanRole.class);
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		List<ContactPhysicanRole> result = query.getExecutableCriteria(getSession()).list();
+		
+		for (ContactPhysicanRole contactPhysicanRole : result) {
+			System.out.println(contactPhysicanRole.getPersonID() + " " +contactPhysicanRole.getName() + " " + contactPhysicanRole.getSurname() + " " );
+			for (ContactRole role : contactPhysicanRole.getAssociatedRoles()) {
+				System.out.println(role);
+			}
+		}
+		
+		return result;
+	}
+	
 	@Autowired
 	private ResourceBundle resourceBundle;
 

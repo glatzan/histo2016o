@@ -101,6 +101,8 @@ public class MainHandlerAction {
 			commonDataHandlerAction.setCurrentView(View.WORKLIST_TASKS);
 		} else
 			commonDataHandlerAction.setCurrentView(View.GUEST);
+		
+		genericDAO.getTest();
 	}
 
 	/********************************************************
