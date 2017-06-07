@@ -18,7 +18,7 @@
 
 		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol"
 			style="margin-top:10px;">
-			<p:dataTable var="task" value="#{taskListHandlerAction.taskList}"
+			<p:dataTable var="task" value="#{taskViewHandlerAction.taskList}"
 				scrollHeight="600" draggableRows="true"
 				styleClass="defaultDataTable noBordersAll collapsedBordersAll">
 
@@ -95,7 +95,7 @@
 			<h:panelGrid columns="4" style="float:right">
 
 				<h:outputLabel value="#{msg['body.taskList.perPage']}" />
-				<p:selectOneMenu value="#{taskListHandlerAction.taskPerPull}"
+				<p:selectOneMenu value="#{taskViewHandlerAction.taskPerPull}"
 					styleClass="smallInput">
 					<f:selectItem itemLabel="5" itemValue="5" />
 					<f:selectItem itemLabel="20" itemValue="20" />
@@ -103,15 +103,15 @@
 					<f:selectItem itemLabel="100" itemValue="100" />
 
 					<p:ajax event="change" process="@this" update="@form"
-						listener="#{taskListHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
+						listener="#{taskViewHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
 				</p:selectOneMenu>
 
 				<h:outputLabel value="#{msg['body.taskList.page']}" />
-				<p:selectOneMenu id="page" value="#{taskListHandlerAction.page}"
+				<p:selectOneMenu id="page" value="#{taskViewHandlerAction.page}"
 					styleClass="smallInput">
-					<f:selectItems value="#{taskListHandlerAction.pages}" />
+					<f:selectItems value="#{taskViewHandlerAction.pages}" />
 					<p:ajax event="change" process="@this" update="@form"
-						listener="#{taskListHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
+						listener="#{taskViewHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
 				</p:selectOneMenu>
 			</h:panelGrid>
 		</h:panelGrid>

@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -29,6 +30,8 @@ public class FavouriteListItem implements HasID {
 
 	private long id;
 
+	private FavouriteList favouriteList;
+
 	private Task task;
 
 	private String commentary;
@@ -36,13 +39,14 @@ public class FavouriteListItem implements HasID {
 	private List<Slide> slides;
 
 	public FavouriteListItem() {
-
 	}
 
-	public FavouriteListItem(Task task) {
+	public FavouriteListItem(FavouriteList favouriteList, Task task) {
 		this.task = task;
+		this.favouriteList = favouriteList;
 	}
 
+	// ************************ Getter/Setter ************************
 	@Id
 	@GeneratedValue(generator = "favouritelistitem_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -81,6 +85,13 @@ public class FavouriteListItem implements HasID {
 		this.slides = slides;
 	}
 
-	// ************************ Getter/Setter ************************
+	@ManyToOne
+	public FavouriteList getFavouriteList() {
+		return favouriteList;
+	}
+
+	public void setFavouriteList(FavouriteList favouriteList) {
+		this.favouriteList = favouriteList;
+	}
 
 }

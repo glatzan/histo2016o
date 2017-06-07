@@ -42,22 +42,6 @@
 				<p:ajax event="dialogReturn" update=" contentForm" />
 			</p:commandButton>
 
-			<p:selectOneMenu style="margin-top:1px;"
-				title="#{msg['body.worklist.header.view']}"
-				value="#{commonDataHandlerAction.currentView}">
-
-				<f:selectItems value="#{commonDataHandlerAction.navigationPages}"
-					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
-
-				<p:ajax event="change"
-					oncomplete="$('#headerForm\\:changeView').click();"></p:ajax>
-
-			</p:selectOneMenu>
-
-			<p:commandButton id="changeView" ajax="false"
-				action="#{mainHandlerAction.goToNavigation(commonDataHandlerAction.currentView)}"
-				style="display:none" />
-				
 		</h:panelGrid>
 
 		<!-- Buttons on the right -->

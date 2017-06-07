@@ -82,7 +82,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			// setting council as default
 			if (getCouncilList().size() == 0) {
 				logger.debug("Council Dialog: Creating new council");
-				setCouncil(new Council());
+				setCouncil(new Council(task));
 				getCouncilList().add(getCouncil());
 				getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
 			} else {
@@ -121,7 +121,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * Creates a new council and saves it
 	 */
 	public void addNewCouncil() {
-		Council newCouncil = new Council();
+		Council newCouncil = new Council(getTask());
 		setCouncil(newCouncil);
 		saveCouncilData();
 	}

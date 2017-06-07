@@ -95,7 +95,7 @@ public class FavouriteList implements HasID {
 		this.defaultList = defaultList;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList")
 	@Fetch(value = FetchMode.SUBSELECT)
 	public List<FavouriteListItem> getItems() {
 		return items;

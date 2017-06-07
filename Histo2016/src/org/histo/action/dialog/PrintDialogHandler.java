@@ -118,7 +118,7 @@ public class PrintDialogHandler extends AbstractDialog {
 		setContactList(new ArrayList<ContactChooser>());
 
 		// setting patient
-		getContactList().add(new ContactChooser(task.getPatient().getPerson(), ContactRole.PATIENT));
+		getContactList().add(new ContactChooser(task, task.getPatient().getPerson(), ContactRole.PATIENT));
 
 		// setting other contacts (physicians)
 		for (Contact contact : task.getContacts()) {
@@ -149,15 +149,15 @@ public class PrintDialogHandler extends AbstractDialog {
 
 		// only one adress so set as chosen
 		if (getSelectedCouncil().getCouncilPhysician() != null) {
-			ContactChooser chosser = new ContactChooser(getSelectedCouncil().getCouncilPhysician().getPerson(),
+			ContactChooser chosser = new ContactChooser(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
 					ContactRole.CASE_CONFERENCE);
 			chosser.setSelected(true);
 			// setting patient
 			getContactList().add(chosser);
 
 			// setting council physicians data as rendere contact data
-			setSelectedContact(
-					new Contact(getSelectedCouncil().getCouncilPhysician().getPerson(), ContactRole.CASE_CONFERENCE));
+			setSelectedContact(new Contact(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
+					ContactRole.CASE_CONFERENCE));
 		}
 
 		onChangePrintTemplate();

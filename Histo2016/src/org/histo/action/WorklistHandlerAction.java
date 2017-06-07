@@ -86,17 +86,6 @@ public class WorklistHandlerAction implements Serializable {
 	@Autowired
 	private WorklistSearchDialogHandler worklistSearchDialogHandler;
 
-	/********************************************************
-	 * Navigation
-	 ********************************************************/
-	/**
-	 * Subview is saved
-	 */
-	private View lastSubView;
-
-	/********************************************************
-	 * Navigation
-	 ********************************************************/
 	/*
 	 * ************************** Worklist ****************************
 	 */
@@ -197,93 +186,11 @@ public class WorklistHandlerAction implements Serializable {
 
 	}
 
-	/**
-	 * Action is performed on selecting a patient in the patient list on the
-	 * left hand side. If the receiptlog or the diagnosis view should be used it
-	 * is checked if a task is selected. If not the program will select the
-	 * first (active oder not depending on skipNotActiveTasks) task.
-	 * 
-	 * @return
-	 */
-	public String onSelectPatient(Patient patient) {
-		if (patient == null) {
-			logger.debug("Deselecting patient");
-			commonDataHandlerAction.setSelectedPatient(null);
-			return mainHandlerAction.goToNavigation(View.WORKLIST);
-		}
 
-		try {
-			patientDao.initializePatient(patient, true);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// Reloading the Patient, should not be happening
-			logger.debug("!! Version inconsistent with Database updating");
-			patient = patientDao.getPatient(patient.getId(), true);
-			updatePatientInCurrentWorklist(patient);
-		}
 
-		commonDataHandlerAction.setSelectedPatient(patient);
-		commonDataHandlerAction.setSelectedTask(null);
+	
 
-		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
 
-		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
-	}
-
-	public String onDeselectPatient() {
-		commonDataHandlerAction.setSelectedPatient(null);
-		commonDataHandlerAction.setSelectedTask(null);
-		return mainHandlerAction.goToNavigation(View.WORKLIST_TASKS);
-	}
-
-	/**
-	 * Selects a task and sets the patient of this task as selectedPatient
-	 * 
-	 * @param task
-	 */
-	public String onSelectTaskAndPatient(Task task) {
-		if (task == null) {
-			logger.debug("Deselecting task");
-			return mainHandlerAction.goToNavigation(View.WORKLIST);
-		}
-
-		logger.debug("Selecting task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
-
-		try {
-			taskDAO.initializeTaskAndPatient(task);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// Reloading the Task, should not be happening
-			logger.debug("!! Version inconsistent with Database updating");
-			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			updatePatientInCurrentWorklist(task.getParent());
-		}
-
-		updatePatientInCurrentWorklist(task.getPatient());
-
-		commonDataHandlerAction.setSelectedPatient(task.getPatient());
-		commonDataHandlerAction.setSelectedTask(task);
-
-		// init all available materials
-		receiptlogViewHandlerAction.prepareForTask(task);
-		diagnosisViewHandlerAction.prepareForTask(task);
-
-		if (getLastSubView() == null && userHandlerAction.getCurrentUser().getDefaultView() != null) {
-			setLastSubView(userHandlerAction.getCurrentUser().getDefaultView());
-			return userHandlerAction.getCurrentUser().getDefaultView().getPath();
-		} else {
-			return mainHandlerAction.goToNavigation(getLastSubView());
-		}
-	}
-
-	/**
-	 * Deselects a task an show the worklist patient view.
-	 * 
-	 * @param patient
-	 * @return
-	 */
-	public String onDeselectTask() {
-		commonDataHandlerAction.setSelectedTask(null);
-		return mainHandlerAction.goToNavigation(View.WORKLIST_PATIENT);
-	}
 
 	public void updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict() {
 		updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict(
@@ -329,65 +236,8 @@ public class WorklistHandlerAction implements Serializable {
 	 * 
 	 * @return
 	 */
-	public String getCenterView() {
-		View currentView = commonDataHandlerAction.getCurrentView();
 
-		if (currentView == View.WORKLIST_BLANK)
-			return View.WORKLIST_BLANK.getPath();
 
-		if (commonDataHandlerAction.getSelectedPatient() == null || currentView == View.WORKLIST_TASKS) {
-			return View.WORKLIST_TASKS.getPath();
-		}
-
-		if (commonDataHandlerAction.getSelectedTask() == null || currentView == View.WORKLIST_PATIENT) {
-			return View.WORKLIST_PATIENT.getPath();
-		} else if (currentView == View.WORKLIST_DIAGNOSIS) {
-			setLastSubView(View.WORKLIST_DIAGNOSIS);
-			return View.WORKLIST_DIAGNOSIS.getPath();
-		} else if (currentView == View.WORKLIST_RECEIPTLOG) {
-			setLastSubView(View.WORKLIST_RECEIPTLOG);
-			return View.WORKLIST_RECEIPTLOG.getPath();
-		} else
-			return View.WORKLIST_BLANK.getPath();
-	}
-
-	/**
-	 * Adds a patient to the worklist. If already added it is check if the
-	 * patient should be selected. If so the patient will be selected. The
-	 * patient isn't added twice.
-	 * 
-	 * @param patient
-	 * @param asSelectedPatient
-	 */
-	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
-
-		// checks if patient is already in database
-		if (!getWorkList().contains(patient)) {
-			try {
-				patientDao.initilaizeTasksofPatient(patient);
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				logger.debug("!! Version inconsistent with Database updating");
-				patient = patientDao.getPatient(patient.getId(), true);
-				updatePatientInCurrentWorklist(patient);
-			}
-			getWorkList().add(patient);
-		}
-
-		if (asSelectedPatient)
-			onSelectPatient(patient);
-	}
-
-	/**
-	 * Removes a patient from the worklist.
-	 * 
-	 * @param patient
-	 */
-	public void removeFromWorklist(Patient patient) {
-		getWorkList().remove(patient);
-		if (commonDataHandlerAction.getSelectedPatient() == patient) {
-			onDeselectPatient();
-		}
-	}
 
 	/**
 	 * Sorts a list with patients either by task id or name of the patient
@@ -659,14 +509,6 @@ public class WorklistHandlerAction implements Serializable {
 
 	public void setFilterWorklist(boolean filterWorklist) {
 		this.filterWorklist = filterWorklist;
-	}
-
-	public View getLastSubView() {
-		return lastSubView;
-	}
-
-	public void setLastSubView(View lastSubView) {
-		this.lastSubView = lastSubView;
 	}
 
 	/********************************************************

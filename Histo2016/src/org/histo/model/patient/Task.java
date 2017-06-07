@@ -364,7 +364,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	}
 
 	// TODO fetch lazy
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="task")
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	@NotAudited
@@ -518,7 +518,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="task")
 	@OrderBy("dateOfRequest DESC")
 	@Fetch(value = FetchMode.SUBSELECT)
 	public List<Council> getCouncils() {

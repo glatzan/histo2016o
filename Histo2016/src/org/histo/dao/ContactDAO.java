@@ -56,7 +56,7 @@ public class ContactDAO extends AbstractDAO {
 					}
 				}
 
-				result.add(new Contact(physician.getPerson()));
+				result.add(new Contact(task,physician.getPerson()));
 
 			}
 		} else {

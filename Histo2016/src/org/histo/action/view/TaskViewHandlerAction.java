@@ -1,20 +1,16 @@
-package org.histo.action;
+package org.histo.action.view;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.WorklistHandlerAction;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-@Component
-@Scope(value = "session")
-public class TaskListHandlerAction {
-
+public class TaskViewHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
@@ -54,7 +50,7 @@ public class TaskListHandlerAction {
 	 */
 	public void initBean() {
 		logger.debug("Init Task list");
-		
+
 		if (taskPerPull == 0) {
 			setTaskPerPull(20);
 			setPage(1);
@@ -95,9 +91,9 @@ public class TaskListHandlerAction {
 	 * Getter/Setter
 	 ********************************************************/
 	public List<Task> getTaskList() {
-		if(taskList == null)
+		if (taskList == null)
 			initBean();
-		
+
 		return taskList;
 	}
 
