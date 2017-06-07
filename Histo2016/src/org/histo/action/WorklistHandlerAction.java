@@ -73,7 +73,6 @@ public class WorklistHandlerAction implements Serializable {
 	private TaskDAO taskDAO;
 
 	@Autowired
-	@Lazy
 	private CommonDataHandlerAction commonDataHandlerAction;
 
 	@Autowired
@@ -90,15 +89,7 @@ public class WorklistHandlerAction implements Serializable {
 	 * ************************** Worklist ****************************
 	 */
 
-	/**
-	 * The key of the current active worklist.
-	 */
-	private String activeWorklistKey;
 
-	/**
-	 * Hashmap containing all worklists for the current user.
-	 */
-	private HashMap<String, ArrayList<Patient>> worklists;
 
 	/**
 	 * Options for sorting the worklist
@@ -124,67 +115,14 @@ public class WorklistHandlerAction implements Serializable {
 	public void initBean() {
 		logger.debug("PostConstruct Init worklist");
 
-		// init worklist
-		worklists = new HashMap<String, ArrayList<Patient>>();
-
-		worklists.put(Worklist.DEFAULT.getName(), new ArrayList<Patient>());
-
-		setActiveWorklistKey(Worklist.DEFAULT.getName());
 
 		setSortOptions(new SortOptions());
 
 		setFilterWorklist(false);
 
-		// preparing worklistSearchDialog for creating a worklist
-		worklistSearchDialogHandler.initBean();
-
-		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getDefaultWorklistToLoad();
-
-		if (defaultWorklistToLoad != null) {
-			worklistSearchDialogHandler.setSearchIndex(defaultWorklistToLoad);
-			getWorklists().put(getActiveWorklistKey(), worklistSearchDialogHandler.createWorklist());
-		} else {
-			getWorklists().put(getActiveWorklistKey(), new ArrayList<Patient>());
-		}
-
 	}
 
-	public void replaceInvaliedPatientInCurrentWorklist(Patient patient) {
-		commonDataHandlerAction.setSelectedPatient(patient);
-		logger.debug("Replacing patient due to external changes!");
-		for (Patient pListItem : getWorkList()) {
-			if (pListItem.getId() == patient.getId()) {
-				int index = getWorkList().indexOf(pListItem);
-				getWorkList().remove(pListItem);
-				getWorkList().add(index, patient);
 
-				// // setting the selected task
-				// if (pListItem.getSelectedTask() != null) {
-				// Task newSelectedTask = null;
-				//
-				// for (Task task : patient.getTasks()) {
-				// if (task.getId() == pListItem.getSelectedTask().getId()) {
-				// newSelectedTask = task;
-				// break;
-				// }
-				// }
-				// patient.setSelectedTask(newSelectedTask);
-				// }
-
-				// setting active tasks
-				// for (Task activeTask : pListItem.getActivTasks()) {
-				// for (Task task : patient.getTasks()) {
-				// if (task.getId() == activeTask.getId()) {
-				// task.setActive(true);
-				// break;
-				// }
-				// }
-				// }
-				break;
-			}
-		}
-
-	}
 
 
 
@@ -192,44 +130,6 @@ public class WorklistHandlerAction implements Serializable {
 
 
 
-	public void updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict() {
-		updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict(
-				commonDataHandlerAction.getSelectedTask().getId());
-	}
-
-	public void updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict(long taskID) {
-		Task task = taskDAO.getTaskAndPatientInitialized(taskID);
-		updatePatientInCurrentWorklist(task.getPatient());
-
-		commonDataHandlerAction.setSelectedPatient(task.getPatient());
-		commonDataHandlerAction.setSelectedTask(task);
-	}
-
-	public void updatePatientInCurrentWorklist(long id) {
-		Patient patient = patientDao.getPatient(id, true);
-		updatePatientInCurrentWorklist(patient);
-	}
-
-	public void updatePatientInCurrentWorklist(Patient patient) {
-		logger.debug("Replacing patient due to external changes!");
-		for (Patient pListItem : getWorkList()) {
-			if (pListItem.getId() == patient.getId()) {
-				int index = getWorkList().indexOf(pListItem);
-				getWorkList().remove(pListItem);
-				getWorkList().add(index, patient);
-
-				// for (Task activeTask : pListItem.getActivTasks()) {
-				// for (Task task : patient.getTasks()) {
-				// if (task.getId() == activeTask.getId()) {
-				// task.setActive(true);
-				// break;
-				// }
-				// }
-				// }
-				break;
-			}
-		}
-	}
 
 	/**
 	 * If the view Worklist is displayed this method will return the subviews.
@@ -466,26 +366,6 @@ public class WorklistHandlerAction implements Serializable {
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
-
-	public String getActiveWorklistKey() {
-		return activeWorklistKey;
-	}
-
-	public void setActiveWorklistKey(String activeWorklistKey) {
-		this.activeWorklistKey = activeWorklistKey;
-	}
-
-	public HashMap<String, ArrayList<Patient>> getWorklists() {
-		return worklists;
-	}
-
-	public void setWorklists(HashMap<String, ArrayList<Patient>> worklists) {
-		this.worklists = worklists;
-	}
-
-	public ArrayList<Patient> getWorkList() {
-		return worklists.get(getActiveWorklistKey());
-	}
 
 	public SortOptions getSortOptions() {
 		return sortOptions;

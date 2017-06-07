@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
@@ -17,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class EditPatientDialog extends AbstractDialog {
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 	
 	@Autowired
 	private PatientDao patientDao;
@@ -33,9 +34,9 @@ public class EditPatientDialog extends AbstractDialog {
 		try {
 			setPatient(genericDAO.refresh(patient));
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			setPatient(patientDao.getPatient(patient.getId(), true));
-			worklistHandlerAction.updatePatientInCurrentWorklist(getPatient());
+			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient());
 		}
 		super.initBean(null, Dialog.PATIENT_EDIT);
 		

@@ -1,6 +1,7 @@
 package org.histo.action.dialog;
 
 import org.histo.action.WorklistHandlerAction;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.BioBankDAO;
@@ -26,7 +27,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 	private TaskDAO taskDAO;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	private BioBank bioBank;
 
@@ -60,9 +61,9 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 			return true;
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 			return false;
 		}
 	}

@@ -11,6 +11,7 @@ import javax.faces.event.PhaseId;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -54,7 +55,7 @@ public class PrintDialogHandler extends AbstractDialog {
 	private SettingsHandler settingsHandler;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
 	 * List of all templates for printing
@@ -190,9 +191,9 @@ public class PrintDialogHandler extends AbstractDialog {
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 		}
 
 		super.initBean(task, Dialog.PRINT);

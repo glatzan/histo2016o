@@ -1,9 +1,17 @@
 package org.histo.action.view;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.UserHandlerAction;
+import org.histo.action.dialog.WorklistSearchDialogHandler;
 import org.histo.config.enums.View;
+import org.histo.config.enums.Worklist;
+import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
@@ -11,7 +19,11 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
+@Controller
+@Scope("session")
 public class WorklistViewHandlerAction {
 
 	private static Logger logger = Logger.getLogger("org.histo");
@@ -28,10 +40,59 @@ public class WorklistViewHandlerAction {
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	private WorklistSearchDialogHandler worklistSearchDialogHandler;
+
+	@Autowired
+	@Lazy
+	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
+
+	@Autowired
+	@Lazy
+	private DiagnosisViewHandlerAction diagnosisViewHandlerAction;
+
 	/**
-	 * Subview is saved
+	 * View
 	 */
 	private View currentView;
+
+	/**
+	 * The key of the current active worklist.
+	 */
+	private String activeWorklistKey;
+
+	/**
+	 * Hashmap containing all worklists for the current user.
+	 */
+	private HashMap<String, ArrayList<Patient>> worklists;
+
+	@PostConstruct
+	public void initBean() {
+		logger.debug("PostConstruct Init worklist");
+
+		// init worklist
+		worklists = new HashMap<String, ArrayList<Patient>>();
+
+		worklists.put(Worklist.DEFAULT.getName(), new ArrayList<Patient>());
+
+		setActiveWorklistKey(Worklist.DEFAULT.getName());
+
+		// preparing worklistSearchDialog for creating a worklist
+		worklistSearchDialogHandler.initBean();
+
+		setCurrentView(View.WORKLIST_TASKS);
+		
+		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getDefaultWorklistToLoad();
+
+		if (defaultWorklistToLoad != null) {
+			worklistSearchDialogHandler.setSearchIndex(defaultWorklistToLoad);
+			getWorklists().put(getActiveWorklistKey(), worklistSearchDialogHandler.createWorklist());
+		} else {
+			getWorklists().put(getActiveWorklistKey(), new ArrayList<Patient>());
+		}
+
+	}
 
 	public void goToNavigation() {
 		goToNavigation(getCurrentView());
@@ -81,9 +142,9 @@ public class WorklistViewHandlerAction {
 			patientDao.initializePatient(patient, true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// Reloading the Patient, should not be happening
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			patient = patientDao.getPatient(patient.getId(), true);
-			updatePatientInCurrentWorklist(patient);
+			replacePatientInCurrentWorklist(patient);
 		}
 
 		commonDataHandlerAction.setSelectedPatient(patient);
@@ -118,12 +179,12 @@ public class WorklistViewHandlerAction {
 			taskDAO.initializeTaskAndPatient(task);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// Reloading the Task, should not be happening
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			updatePatientInCurrentWorklist(task.getParent());
+			replacePatientInCurrentWorklist(task.getParent());
 		}
 
-		updatePatientInCurrentWorklist(task.getPatient());
+		replacePatientInCurrentWorklist(task.getPatient());
 
 		commonDataHandlerAction.setSelectedPatient(task.getPatient());
 		commonDataHandlerAction.setSelectedTask(task);
@@ -132,9 +193,9 @@ public class WorklistViewHandlerAction {
 		receiptlogViewHandlerAction.prepareForTask(task);
 		diagnosisViewHandlerAction.prepareForTask(task);
 
-		if (getCurrentView() != View.WORKLIST_RECEIPTLOG || getCurrentView() != View.WORKLIST_DIAGNOSIS)) {
+		if (getCurrentView() != View.WORKLIST_RECEIPTLOG || getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
-		} 
+		}
 	}
 
 	/**
@@ -163,9 +224,9 @@ public class WorklistViewHandlerAction {
 			try {
 				patientDao.initilaizeTasksofPatient(patient);
 			} catch (CustomDatabaseInconsistentVersionException e) {
-				logger.debug("!! Version inconsistent with Database updating");
+				logger.debug("Version conflict, updating entity");
 				patient = patientDao.getPatient(patient.getId(), true);
-				updatePatientInCurrentWorklist(patient);
+				replacePatientInCurrentWorklist(patient);
 			}
 			getWorkList().add(patient);
 		}
@@ -186,6 +247,44 @@ public class WorklistViewHandlerAction {
 		}
 	}
 
+	public void replacePatientTaskInCurrentWorklistAndSetSelected() {
+		replacePatientTaskInCurrentWorklistAndSetSelected(commonDataHandlerAction.getSelectedTask().getId());
+	}
+
+	public void replacePatientTaskInCurrentWorklistAndSetSelected(long taskID) {
+		Task task = taskDAO.getTaskAndPatientInitialized(taskID);
+		replacePatientTaskInCurrentWorklistAndSetSelected(task);
+	}
+
+	public void replacePatientTaskInCurrentWorklistAndSetSelected(Task task) {
+		replacePatientInCurrentWorklist(task.getPatient());
+
+		commonDataHandlerAction.setSelectedPatient(task.getPatient());
+		commonDataHandlerAction.setSelectedTask(task);
+	}
+
+	public void replacePatientInCurrentWorklist(long id) {
+		Patient patient = patientDao.getPatient(id, true);
+		replacePatientInCurrentWorklist(patient);
+	}
+
+	public void replacePatientInCurrentWorklist(Patient patient) {
+		if (commonDataHandlerAction.getSelectedPatient() != null
+				&& commonDataHandlerAction.getSelectedPatient().getId() == patient.getId())
+			commonDataHandlerAction.setSelectedPatient(patient);
+
+		logger.debug("Replacing patient due to external changes!");
+		for (Patient pListItem : getWorkList()) {
+			if (pListItem.getId() == patient.getId()) {
+				int index = getWorkList().indexOf(pListItem);
+				getWorkList().remove(pListItem);
+				getWorkList().add(index, patient);
+				break;
+			}
+		}
+
+	}
+
 	// ************************ Getter/Setter ************************
 	public View getCurrentView() {
 		return currentView;
@@ -193,5 +292,25 @@ public class WorklistViewHandlerAction {
 
 	public void setCurrentView(View currentView) {
 		this.currentView = currentView;
+	}
+
+	public String getActiveWorklistKey() {
+		return activeWorklistKey;
+	}
+
+	public void setActiveWorklistKey(String activeWorklistKey) {
+		this.activeWorklistKey = activeWorklistKey;
+	}
+
+	public HashMap<String, ArrayList<Patient>> getWorklists() {
+		return worklists;
+	}
+
+	public void setWorklists(HashMap<String, ArrayList<Patient>> worklists) {
+		this.worklists = worklists;
+	}
+
+	public ArrayList<Patient> getWorkList() {
+		return worklists.get(getActiveWorklistKey());
 	}
 }

@@ -41,7 +41,7 @@ public class DiagnosisViewHandlerAction {
 	private PatientDao patientDao;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
@@ -119,7 +119,7 @@ public class DiagnosisViewHandlerAction {
 					idManuallyAltered.toString());
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistHandlerAction.updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict();
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
 		}
 	}
 
@@ -149,7 +149,7 @@ public class DiagnosisViewHandlerAction {
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistHandlerAction.updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict();
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
 		}
 	}
 
@@ -167,7 +167,7 @@ public class DiagnosisViewHandlerAction {
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistHandlerAction.updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict();
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
 		}
 	}
 
@@ -192,7 +192,7 @@ public class DiagnosisViewHandlerAction {
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistHandlerAction.updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict();
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
 		}
 
 	}

@@ -9,7 +9,11 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
 
+@Controller
+@Scope("session")
 public class TaskViewHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -18,7 +22,7 @@ public class TaskViewHandlerAction {
 
 	@Autowired
 	@Lazy
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
 	 * Lists of task to display
@@ -72,13 +76,13 @@ public class TaskViewHandlerAction {
 
 	public void onAddTask(Task task) {
 
-		if (worklistHandlerAction.getWorkList().contains(task.getPatient())) {
+		if (worklistViewHandlerAction.getWorkList().contains(task.getPatient())) {
 			logger.debug("Showning task " + task.getTaskID());
-			worklistHandlerAction.onSelectTaskAndPatient(task);
+			worklistViewHandlerAction.onSelectTaskAndPatient(task);
 		} else {
 			logger.debug("Adding task " + task.getTaskID() + " to worklist");
 			task.setActive(true);
-			worklistHandlerAction.addPatientToWorkList(task.getPatient(), false);
+			worklistViewHandlerAction.addPatientToWorkList(task.getPatient(), false);
 		}
 
 	}

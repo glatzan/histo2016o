@@ -8,6 +8,7 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
@@ -43,7 +44,7 @@ public class AddSlidesDialogHandler extends AbstractDialog {
 	private TaskDAO taskDAO;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	private Block block;
 
@@ -73,9 +74,9 @@ public class AddSlidesDialogHandler extends AbstractDialog {
 		try {
 			setBlock(genericDAO.refresh(block));
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(block.getTask().getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 			return false;
 		}
 

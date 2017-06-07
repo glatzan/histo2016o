@@ -3,6 +3,7 @@ package org.histo.action.dialog.diagnosis;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
@@ -22,7 +23,7 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 	private TaskDAO taskDAO;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -44,9 +45,9 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 		try {
 			setDiagnosis(genericDAO.refresh(diagnosis));
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(diagnosis.getTask().getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 			return false;
 		}
 		super.initBean(task, Dialog.DIAGNOSIS_PHASE_LEAVE);

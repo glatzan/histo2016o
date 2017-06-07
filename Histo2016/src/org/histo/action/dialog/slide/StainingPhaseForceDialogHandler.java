@@ -2,6 +2,7 @@ package org.histo.action.dialog.slide;
 
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -24,7 +25,7 @@ public class StainingPhaseForceDialogHandler extends AbstractDialog {
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	public void initAndPrepareBeanForEnter(Task task) {
 		initBean(task, Dialog.STAINING_PHASE_FORCE_ENTER);
@@ -40,9 +41,9 @@ public class StainingPhaseForceDialogHandler extends AbstractDialog {
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 		}
 
 		super.initBean(task, dialog);

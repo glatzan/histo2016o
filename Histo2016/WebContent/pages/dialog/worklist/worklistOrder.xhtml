@@ -42,7 +42,7 @@
 			<p:commandButton value="#{msg['dialog.worklistorder.button.sort']}"
 				icon="fa fa-align-left" styleClass="smallButton">
 				<f:actionListener
-					binding="#{worklistHandlerAction.sortWordklist(worklistHandlerAction.workList, worklistHandlerAction.sortOptions.worklistSortOrder,worklistHandlerAction.sortOptions.worklistSortOrderAcs)}" />
+					binding="#{worklistHandlerAction.sortWordklist(worklistViewHandlerAction.workList, worklistHandlerAction.sortOptions.worklistSortOrder,worklistHandlerAction.sortOptions.worklistSortOrderAcs)}" />
 				<f:actionListener
 					binding="#{mainHandlerAction.hideDialog(WORKLIST_ORDER)}" />
 			</p:commandButton>
