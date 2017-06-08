@@ -355,8 +355,8 @@ public class Patient
 	 * @return
 	 */
 	@Transient
-	public boolean hasNoneActiveTasks(Patient patient) {
-		return patient.getTasks().stream().anyMatch(p -> !p.isActiveOrActionPending());
+	public boolean hasNoneActiveTasks() {
+		return getTasks().stream().anyMatch(p -> !p.isActiveOrActionPending());
 	}
 	
 	/********************************************************

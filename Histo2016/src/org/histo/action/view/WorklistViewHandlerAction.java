@@ -1,7 +1,6 @@
 package org.histo.action.view;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -12,13 +11,13 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.WorklistSearchDialogHandler;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSearchOption;
-import org.histo.config.enums.WorklistSortOrder;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.Worklist;
+import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -85,7 +84,9 @@ public class WorklistViewHandlerAction {
 
 		if (defaultWorklistToLoad != null) {
 			worklistSearchDialogHandler.setSearchIndex(defaultWorklistToLoad);
-			addWorklist(new Worklist("Default", worklistSearchDialogHandler.createWorklist()), true);
+			addWorklist(new Worklist("Default", worklistSearchDialogHandler.createWorklist(),
+					userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
+					userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder()), true);
 		} else {
 			addWorklist(new Worklist("Default", new ArrayList<Patient>()), true);
 		}
@@ -207,14 +208,36 @@ public class WorklistViewHandlerAction {
 		setCurrentView(View.WORKLIST_PATIENT);
 	}
 
+	public void addWorklist(ArrayList<Patient> items, String name, boolean selected) {
+		addWorklist(new Worklist(name, items,
+				userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
+				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder()), selected);
+	}
+
 	public void addWorklist(Worklist worklist, boolean selected) {
+		// removing worklist if worklist with the same name is present
+		try {
+			Worklist cWorklist = getWorklists().stream().filter(p -> p.getName().equals(worklist.getName()))
+					.collect(StreamUtils.singletonCollector());
+
+			removeWorklist(cWorklist);
+		} catch (IllegalStateException e) {
+			// do nothing
+		}
+
 		getWorklists().add(worklist);
 
-		if (selected){
+		if (selected) {
 			setWorklist(worklist);
 			// deselecting patient
 			onDeselectPatient();
 		}
+	}
+
+	public void removeWorklist(Worklist worklist) {
+		getWorklists().remove(worklist);
+		if (getWorklist() == worklist)
+			setWorklist(new Worklist("", new ArrayList<Patient>()));
 	}
 
 	/**
@@ -237,6 +260,8 @@ public class WorklistViewHandlerAction {
 				replacePatientInCurrentWorklist(patient);
 			}
 			getWorklist().addPatient(patient);
+
+			getWorklist().sortWordklist();
 		}
 
 		if (asSelectedPatient)
@@ -287,6 +312,32 @@ public class WorklistViewHandlerAction {
 
 	}
 
+	/**
+	 * Selects the next task in List
+	 */
+	public void selectNextTask() {
+		if (!getWorklist().isEmpty()) {
+			if (commonDataHandlerAction.getSelectedPatient() != null) {
+
+				boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
+
+				Task nextTask = getNextTask(commonDataHandlerAction.getSelectedPatient().getTasks(),
+						commonDataHandlerAction.getSelectedTask(), activeOnly);
+				if (nextTask != null) {
+					onSelectTaskAndPatient(nextTask);
+					return;
+				}
+
+				int indexOfPatient = getWorkList().indexOf(commonDataHandlerAction.getSelectedPatient());
+				if (getWorkList().size() - 1 > indexOfPatient) {
+					commonDataHandlerAction.setSelectedTask(null);
+					onSelectPatient(getWorkList().get(indexOfPatient + 1));
+				}
+			} else {
+				onSelectPatient(getWorkList().get(0));
+			}
+		}
+	}
 	// ************************ Getter/Setter ************************
 	public View getCurrentView() {
 		return currentView;
@@ -301,8 +352,8 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void setWorklist(Worklist worklist) {
+		worklist.sortWordklist();
 		this.worklist = worklist;
-		// todo setting replacing, and ordering
 	}
 
 	public List<Worklist> getWorklists() {

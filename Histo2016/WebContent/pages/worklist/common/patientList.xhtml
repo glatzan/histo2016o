@@ -157,7 +157,7 @@
 					<p:column>
 						<!-- no tasks -->
 						<h:outputLabel
-							rendered="#{!taskStatusHandler.hasActiveTasks(patient)}"
+							rendered="#{!patient.hasActiveTasks()}"
 							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
 						<!-- task list -->
@@ -258,14 +258,14 @@
 
 				<!-- Non active Tasks -->
 				<p:row
-					rendered="#{taskStatusHandler.hasNoneActiveTasks(patient) and worklistHandlerAction.sortOptions.showAllTasks}">
+					rendered="#{patient.hasNoneActiveTasks() and worklistViewHandlerAction.worklist.showNoneActiveTasks}">
 					<p:column style="vertical-align: top !important;">
 						<h:outputLabel value="#{msg['body.worklist.navigation.tasks']}" />
 					</p:column>
 					<p:column>
 						<!-- task list -->
 						<p:repeat var="task"
-							value="#{taskStatusHandler.getNoneActiveTasks(patient)}">
+							value="#{patient.getNoneActiveTasks()}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"

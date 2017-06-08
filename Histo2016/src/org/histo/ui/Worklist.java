@@ -20,6 +20,11 @@ public class Worklist {
 	private WorklistSortOrder worklistSortOrder;
 
 	/**
+	 * True if sort should be ascending, if falseF sort will be descending
+	 */
+	private boolean sortAscending;
+
+	/**
 	 * If true, only tasks which are explicitly marked as active are shown.
 	 */
 	private boolean showActiveTasksExplicit;
@@ -35,12 +40,17 @@ public class Worklist {
 	private String name;
 
 	public Worklist(String name, ArrayList<Patient> items) {
+		this(name, items, true, WorklistSortOrder.TASK_ID);
+	}
+
+	public Worklist(String name, ArrayList<Patient> items, boolean showNoneActiveTasks,
+			WorklistSortOrder worklistSortOrder) {
 		this.name = name;
 		this.items = items;
 
 		this.showActiveTasksExplicit = false;
-		this.showNoneActiveTasks = true;
-		this.worklistSortOrder = WorklistSortOrder.TASK_ID;
+		this.showNoneActiveTasks = showNoneActiveTasks;
+		this.worklistSortOrder = worklistSortOrder;
 	}
 
 	public void removePatient(Patient toRemovePatient) {
@@ -74,6 +84,10 @@ public class Worklist {
 
 	public boolean containsPatient(Patient patient) {
 		return getItems().stream().anyMatch(p -> p.getId() == patient.getId());
+	}
+
+	public void sortWordklist() {
+		sortWordklist(getWorklistSortOrder(), isSortAscending());
 	}
 
 	/**
@@ -169,6 +183,7 @@ public class Worklist {
 		}
 	}
 
+	
 	// ************************ Getter/Setter ************************
 	public ArrayList<Patient> getItems() {
 		return items;
@@ -210,4 +225,15 @@ public class Worklist {
 		this.name = name;
 	}
 
+	public boolean isSortAscending() {
+		return sortAscending;
+	}
+
+	public void setSortAscending(boolean sortAscending) {
+		this.sortAscending = sortAscending;
+	}
+	
+	public boolean isEmpty(){
+		return getItems().isEmpty();
+	}
 }

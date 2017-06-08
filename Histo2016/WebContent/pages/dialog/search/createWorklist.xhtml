@@ -305,7 +305,7 @@
 				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
 					process="@form">
 					<f:actionListener
-						binding="#{worklistViewHandlerAction.addWorklist(worklistSearchDialogHandler.createWorklist(),true)}" />
+						binding="#{worklistViewHandlerAction.addWorklist(worklistSearchDialogHandler.createWorklist(),'Default',true)}" />
 					<f:actionListener
 						binding="#{worklistSearchDialogHandler.hideDialog()}" />
 				</p:commandButton>

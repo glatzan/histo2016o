@@ -19,7 +19,6 @@ import org.histo.action.view.DiagnosisViewHandlerAction;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
-import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -30,7 +29,6 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.SortOptions;
 import org.histo.util.TaskUtil;
-import org.histo.util.WorklistSortUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -140,32 +138,7 @@ public class WorklistHandlerAction implements Serializable {
 
 
 
-	/**
-	 * Selects the next task in List
-	 */
-	public void selectNextTask() {
-		if (getWorkList() != null && !getWorkList().isEmpty()) {
-			if (commonDataHandlerAction.getSelectedPatient() != null) {
 
-				boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
-
-				Task nextTask = getNextTask(commonDataHandlerAction.getSelectedPatient().getTasks(),
-						commonDataHandlerAction.getSelectedTask(), activeOnly);
-				if (nextTask != null) {
-					onSelectTaskAndPatient(nextTask);
-					return;
-				}
-
-				int indexOfPatient = getWorkList().indexOf(commonDataHandlerAction.getSelectedPatient());
-				if (getWorkList().size() - 1 > indexOfPatient) {
-					commonDataHandlerAction.setSelectedTask(null);
-					onSelectPatient(getWorkList().get(indexOfPatient + 1));
-				}
-			} else {
-				onSelectPatient(getWorkList().get(0));
-			}
-		}
-	}
 
 	public void selectPreviouseTask() {
 		if (getWorkList() != null && !getWorkList().isEmpty()) {
