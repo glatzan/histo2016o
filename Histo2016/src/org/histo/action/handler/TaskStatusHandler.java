@@ -57,64 +57,6 @@ public class TaskStatusHandler {
 		return true;
 	}
 
-	/**
-	 * Returns true if the task is marked as active or an action is pending
-	 * 
-	 * @param task
-	 * @return
-	 */
-	public boolean isActiveOrActionPending(Task task) {
-		if (task.isActive())
-			return true;
-
-		if (task.isListedInFavouriteList(PredefinedFavouriteList.StainingList, PredefinedFavouriteList.ReStainingList,
-				PredefinedFavouriteList.StayInStainingList, PredefinedFavouriteList.DiagnosisList,
-				PredefinedFavouriteList.ReDiagnosisList, PredefinedFavouriteList.StayInDiagnosisList,
-				PredefinedFavouriteList.NotificationList, PredefinedFavouriteList.StayInNotificationList))
-			return true;
-
-		return false;
-	}
-
-	/**
-	 * Returns a list with all currently active tasks of a Patient
-	 * 
-	 * @return
-	 */
-	public List<Task> getActiveTasks(Patient patient) {
-		System.out.println("task " + patient.getPerson().getFullName());
-		return patient.getTasks().stream().filter(p -> isActiveOrActionPending(p)).collect(Collectors.toList());
-	}
-
-	/**
-	 * Returns true if at least one task is marked as active
-	 * 
-	 * @param patient
-	 * @return
-	 */
-	public boolean hasActiveTasks(Patient patient) {
-		return patient.getTasks().stream().anyMatch(p -> isActiveOrActionPending(p));
-	}
-
-	/**
-	 * Returns a list with tasks which are not active
-	 * 
-	 * @return
-	 */
-	public List<Task> getNoneActiveTasks(Patient patient) {
-		return patient.getTasks().stream().filter(p -> !isActiveOrActionPending(p)).collect(Collectors.toList());
-	}
-
-	/**
-	 * Returns true if at least one task is not marked as active
-	 * 
-	 * @param patient
-	 * @return
-	 */
-	public boolean hasNoneActiveTasks(Patient patient) {
-		return patient.getTasks().stream().anyMatch(p -> !isActiveOrActionPending(p));
-	}
-
 	public boolean isStainingCompleted(Patient patient) {
 		return patient.getTasks().stream().allMatch(p -> isStainingCompleted(p));
 	}

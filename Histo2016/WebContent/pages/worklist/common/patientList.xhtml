@@ -66,7 +66,7 @@
 
 	<!-- Nav Table -->
 	<p:dataTable var="patient" id="patientList"
-		value="#{worklistViewHandlerAction.workList}" selectionMode="single"
+		value="#{worklistViewHandlerAction.worklist.items}" selectionMode="single"
 		selection="#{commonDataHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
 
@@ -157,12 +157,12 @@
 					<p:column>
 						<!-- no tasks -->
 						<h:outputLabel
-							rendered="#{!taskStatusHandler.hasActiveTasks(patient)}"
+							rendered="#{!patient.hasActiveTasks()}"
 							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
 						<!-- task list -->
 						<p:repeat var="task"
-							value="#{taskStatusHandler.getActiveTasks(patient)}">
+							value="#{patient.getActiveTasks()}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
@@ -258,14 +258,14 @@
 
 				<!-- Non active Tasks -->
 				<p:row
-					rendered="#{taskStatusHandler.hasNoneActiveTasks(patient) and worklistHandlerAction.sortOptions.showAllTasks}">
+					rendered="#{patient.hasNoneActiveTasks() and worklistViewHandlerAction.worklist.showNoneActiveTasks}">
 					<p:column style="vertical-align: top !important;">
 						<h:outputLabel value="#{msg['body.worklist.navigation.tasks']}" />
 					</p:column>
 					<p:column>
 						<!-- task list -->
 						<p:repeat var="task"
-							value="#{taskStatusHandler.getNoneActiveTasks(patient)}">
+							value="#{patient.getNoneActiveTasks()}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"

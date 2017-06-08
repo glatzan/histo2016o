@@ -31,14 +31,7 @@ import org.springframework.stereotype.Component;
 public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	@Autowired
-	@Lazy
-	private WorklistViewHandlerAction worklistViewHandlerAction;
-
-	@Autowired
 	private PatientDao patientDao;
-
-	@Autowired
-	private CommonDataHandlerAction commonDataHandlerAction;
 
 	private WorklistSearchOption searchIndex;
 
@@ -135,18 +128,6 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Searches for a worklist an sets it as active worklist
-	 */
-	public void createWorklistAndSetAsActive() {
-
-		ArrayList<Patient> result = createWorklist();
-
-		worklistViewHandlerAction.getWorklists().put(worklistViewHandlerAction.getActiveWorklistKey(), result);
-
-		commonDataHandlerAction.setSelectedPatient(null);
 	}
 
 	/**
@@ -432,4 +413,93 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		this.years = years;
 	}
 
+	public String getExtendedPatientName() {
+		return extendedPatientName;
+	}
+
+	public void setExtendedPatientName(String extendedPatientName) {
+		this.extendedPatientName = extendedPatientName;
+	}
+
+	public String getExtendedPatientSurename() {
+		return extendedPatientSurename;
+	}
+
+	public void setExtendedPatientSurename(String extendedPatientSurename) {
+		this.extendedPatientSurename = extendedPatientSurename;
+	}
+
+	public Date getExtendedPatientBirthday() {
+		return extendedPatientBirthday;
+	}
+
+	public void setExtendedPatientBirthday(Date extendedPatientBirthday) {
+		this.extendedPatientBirthday = extendedPatientBirthday;
+	}
+
+	public Gender getExtendedPatientGener() {
+		return extendedPatientGener;
+	}
+
+	public void setExtendedPatientGener(Gender extendedPatientGener) {
+		this.extendedPatientGener = extendedPatientGener;
+	}
+
+	public String getExtendedMaterialName() {
+		return extendedMaterialName;
+	}
+
+	public void setExtendedMaterialName(String extendedMaterialName) {
+		this.extendedMaterialName = extendedMaterialName;
+	}
+
+	public String getExtendedHistory() {
+		return extendedHistory;
+	}
+
+	public void setExtendedHistory(String extendedHistory) {
+		this.extendedHistory = extendedHistory;
+	}
+
+	public Physician getExtendedSurgeon() {
+		return extendedSurgeon;
+	}
+
+	public void setExtendedSurgeon(Physician extendedSurgeon) {
+		this.extendedSurgeon = extendedSurgeon;
+	}
+
+	public Physician getExtendedPrivatePhysician() {
+		return extendedPrivatePhysician;
+	}
+
+	public void setExtendedPrivatePhysician(Physician extendedPrivatePhysician) {
+		this.extendedPrivatePhysician = extendedPrivatePhysician;
+	}
+
+	public Date getExtendedEntryDate() {
+		return extendedEntryDate;
+	}
+
+	public void setExtendedEntryDate(Date extendedEntryDate) {
+		this.extendedEntryDate = extendedEntryDate;
+	}
+
+	public String getExtendedDiagnosis() {
+		return extendedDiagnosis;
+	}
+
+	public void setExtendedDiagnosis(String extendedDiagnosis) {
+		this.extendedDiagnosis = extendedDiagnosis;
+	}
+
+	public String getExtendedCategory() {
+		return extendedCategory;
+	}
+
+	public void setExtendedCategory(String extendedCategory) {
+		this.extendedCategory = extendedCategory;
+	}
+
+	
 }

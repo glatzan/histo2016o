@@ -135,7 +135,7 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		this.title = title;
 	}
 
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	public Gender getGender() {
 		return gender;
 	}

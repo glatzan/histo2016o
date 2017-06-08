@@ -24,6 +24,7 @@ import org.hibernate.envers.Audited;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSearchOption;
+import org.histo.config.enums.WorklistSortOrder;
 import org.histo.config.enums.WorklistView;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
@@ -90,6 +91,21 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	private WorklistSearchOption defaultWorklistToLoad;
 
 	/**
+	 * Default sortorder of worklist
+	 */
+	private WorklistSortOrder defaultWorklistSortOrder;
+	
+	/**
+	 * True the sort order is ascending, false the sortorder is descending
+	 */
+	private boolean defaultWorklistSortAsc;
+	
+	/**
+	 * If true none active tasks in worklist will be hidden per default
+	 */
+	private boolean defaultHideNonActiveTasksInWorklist;
+	
+	/**
 	 * Constructor for Hibernate
 	 */
 	public HistoUser() {
@@ -137,15 +153,6 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		this.id = id;
 	}
 
-	@Basic
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
 	@Version
 	public long getVersion() {
 		return version;
@@ -153,6 +160,15 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 
 	public void setVersion(long version) {
 		this.version = version;
+	}
+	
+	@Column
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -164,7 +180,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		this.physician = physician;
 	}
 
-	@Basic
+	@Column
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -173,13 +189,40 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		this.enabled = enabled;
 	}
 
-	@Basic
+	@Column
 	public long getLastLogin() {
 		return lastLogin;
 	}
 
 	public void setLastLogin(long lastLogin) {
 		this.lastLogin = lastLogin;
+	}
+
+	@Enumerated(EnumType.ORDINAL)
+	public WorklistSortOrder getDefaultWorklistSortOrder() {
+		return defaultWorklistSortOrder;
+	}
+
+	public void setDefaultWorklistSortOrder(WorklistSortOrder defaultWorklistSortOrder) {
+		this.defaultWorklistSortOrder = defaultWorklistSortOrder;
+	}
+
+	@Column
+	public boolean isDefaultWorklistSortAsc() {
+		return defaultWorklistSortAsc;
+	}
+
+	public void setDefaultWorklistSortAsc(boolean defaultWorklistSortAsc) {
+		this.defaultWorklistSortAsc = defaultWorklistSortAsc;
+	}
+
+	@Column
+	public boolean isDefaultHideNonActiveTasksInWorklist() {
+		return defaultHideNonActiveTasksInWorklist;
+	}
+
+	public void setDefaultHideNonActiveTasksInWorklist(boolean defaultHideNonActiveTasksInWorklist) {
+		this.defaultHideNonActiveTasksInWorklist = defaultHideNonActiveTasksInWorklist;
 	}
 
 	@Enumerated(EnumType.STRING)
@@ -200,13 +243,67 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		this.defaultView = defaultView;
 	}
 
+	@Column
+	public String getPreferedPrinter() {
+		return preferedPrinter;
+	}
+
+	public void setPreferedPrinter(String preferedPrinter) {
+		this.preferedPrinter = preferedPrinter;
+	}
+
+	@Column
+	public String getPreferedLabelPritner() {
+		return preferedLabelPritner;
+	}
+
+	public void setPreferedLabelPritner(String preferedLabelPritner) {
+		this.preferedLabelPritner = preferedLabelPritner;
+	}
+
+	@Column
+	public boolean isAutoSelectedPreferedPrinter() {
+		return autoSelectedPreferedPrinter;
+	}
+
+	public void setAutoSelectedPreferedPrinter(boolean autoSelectedPreferedPrinter) {
+		this.autoSelectedPreferedPrinter = autoSelectedPreferedPrinter;
+	}
+
+	@Column
+	public boolean isAutoSelectedPreferedLabelPrinter() {
+		return autoSelectedPreferedLabelPrinter;
+	}
+
+	public void setAutoSelectedPreferedLabelPrinter(boolean autoSelectedPreferedLabelPrinter) {
+		this.autoSelectedPreferedLabelPrinter = autoSelectedPreferedLabelPrinter;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public WorklistView getDefaultWorklistView() {
+		return defaultWorklistView;
+	}
+
+	public void setDefaultWorklistView(WorklistView defaultWorklistView) {
+		this.defaultWorklistView = defaultWorklistView;
+	}
+
+	@Enumerated(EnumType.STRING)
+	public WorklistSearchOption getDefaultWorklistToLoad() {
+		return defaultWorklistToLoad;
+	}
+
+	public void setDefaultWorklistToLoad(WorklistSearchOption defaultWorklistToLoad) {
+		this.defaultWorklistToLoad = defaultWorklistToLoad;
+	}
+
 	@Transient
 	public List<Role> getAuthorities() {
 		List<Role> result = new ArrayList<Role>();
 		result.add(role);
 		return result;
 	}
-
+	
 	/**
 	 * Not used, LDAP Auth
 	 */
@@ -242,58 +339,4 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
-
-	public String getPreferedPrinter() {
-		return preferedPrinter;
-	}
-
-	public void setPreferedPrinter(String preferedPrinter) {
-		this.preferedPrinter = preferedPrinter;
-	}
-
-	public String getPreferedLabelPritner() {
-		return preferedLabelPritner;
-	}
-
-	public void setPreferedLabelPritner(String preferedLabelPritner) {
-		this.preferedLabelPritner = preferedLabelPritner;
-	}
-
-	public boolean isAutoSelectedPreferedPrinter() {
-		return autoSelectedPreferedPrinter;
-	}
-
-	public void setAutoSelectedPreferedPrinter(boolean autoSelectedPreferedPrinter) {
-		this.autoSelectedPreferedPrinter = autoSelectedPreferedPrinter;
-	}
-
-	public boolean isAutoSelectedPreferedLabelPrinter() {
-		return autoSelectedPreferedLabelPrinter;
-	}
-
-	public void setAutoSelectedPreferedLabelPrinter(boolean autoSelectedPreferedLabelPrinter) {
-		this.autoSelectedPreferedLabelPrinter = autoSelectedPreferedLabelPrinter;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public WorklistView getDefaultWorklistView() {
-		return defaultWorklistView;
-	}
-
-	public void setDefaultWorklistView(WorklistView defaultWorklistView) {
-		this.defaultWorklistView = defaultWorklistView;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public WorklistSearchOption getDefaultWorklistToLoad() {
-		return defaultWorklistToLoad;
-	}
-
-	public void setDefaultWorklistToLoad(WorklistSearchOption defaultWorklistToLoad) {
-		this.defaultWorklistToLoad = defaultWorklistToLoad;
-	}
-
-
-
-	
 }

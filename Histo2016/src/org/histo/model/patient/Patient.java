@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
@@ -32,6 +33,7 @@ import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Gender;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
@@ -305,6 +307,58 @@ public class Patient
 		this.inDatabase = inDatabase;
 	}
 
+	@Transient
+	public List<Task> getActiveTasks() {
+		return getActiveTasks(false);
+	}
+
+	/**
+	 * Returns a list with all currently active tasks of a Patient
+	 * 
+	 * @return
+	 */
+	@Transient
+	public List<Task> getActiveTasks(boolean activeOnly) {
+		return getTasks().stream().filter(p -> p.isActiveOrActionPending(activeOnly)).collect(Collectors.toList());
+	}
+
+	@Transient
+	public boolean hasActiveTasks() {
+		return hasActiveTasks(false);
+	}
+
+	/**
+	 * Returns true if at least one task is marked as active
+	 * 
+	 * @param patient
+	 * @return
+	 */
+	@Transient
+	public boolean hasActiveTasks(boolean activeOnly) {
+		return getTasks().stream().anyMatch(p -> p.isActiveOrActionPending(activeOnly));
+	}
+
+	/**
+	 * Returns a list with tasks which are not active
+	 * 
+	 * @return
+	 */
+	@Transient
+	public List<Task> getNoneActiveTasks() {
+		return getTasks().stream().filter(p -> !p.isActiveOrActionPending()).collect(Collectors.toList());
+	}
+
+	/**
+	 * Returns true if at least one task is not marked as active
+	 * 
+	 * @param patient
+	 * @return
+	 */
+	@Transient
+	public boolean hasNoneActiveTasks() {
+		return getTasks().stream().anyMatch(p -> !p.isActiveOrActionPending());
+	}
+	
 	/********************************************************
 	 * Transient Methods
 	 ********************************************************/

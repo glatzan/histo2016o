@@ -19,7 +19,6 @@ import org.histo.action.view.DiagnosisViewHandlerAction;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
-import org.histo.config.enums.Worklist;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -30,7 +29,6 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.SortOptions;
 import org.histo.util.TaskUtil;
-import org.histo.util.WorklistSortUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -115,7 +113,6 @@ public class WorklistHandlerAction implements Serializable {
 	public void initBean() {
 		logger.debug("PostConstruct Init worklist");
 
-
 		setSortOptions(new SortOptions());
 
 		setFilterWorklist(false);
@@ -139,55 +136,9 @@ public class WorklistHandlerAction implements Serializable {
 
 
 
-	/**
-	 * Sorts a list with patients either by task id or name of the patient
-	 * 
-	 * @param patiens
-	 * @param order
-	 */
-	public void sortWordklist(List<Patient> patiens, WorklistSortOrder order, boolean asc) {
-		switch (order) {
-		case TASK_ID:
-			orderListByTaskID(patiens, asc);
-			break;
-		case PIZ:
-			WorklistSortUtil.orderListByPIZ(patiens, asc);
-			break;
-		case NAME:
-			WorklistSortUtil.orderListByName(patiens, asc);
-			break;
-		case PRIORITY:
-			orderListByPriority(patiens, asc);
-			break;
-		}
-	}
 
-	/**
-	 * Selects the next task in List
-	 */
-	public void selectNextTask() {
-		if (getWorkList() != null && !getWorkList().isEmpty()) {
-			if (commonDataHandlerAction.getSelectedPatient() != null) {
 
-				boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
 
-				Task nextTask = getNextTask(commonDataHandlerAction.getSelectedPatient().getTasks(),
-						commonDataHandlerAction.getSelectedTask(), activeOnly);
-				if (nextTask != null) {
-					onSelectTaskAndPatient(nextTask);
-					return;
-				}
-
-				int indexOfPatient = getWorkList().indexOf(commonDataHandlerAction.getSelectedPatient());
-				if (getWorkList().size() - 1 > indexOfPatient) {
-					commonDataHandlerAction.setSelectedTask(null);
-					onSelectPatient(getWorkList().get(indexOfPatient + 1));
-				}
-			} else {
-				onSelectPatient(getWorkList().get(0));
-			}
-		}
-	}
 
 	public void selectPreviouseTask() {
 		if (getWorkList() != null && !getWorkList().isEmpty()) {
@@ -299,66 +250,7 @@ public class WorklistHandlerAction implements Serializable {
 		return null;
 	}
 
-	public List<Patient> orderListByPriority(List<Patient> patiens, boolean asc) {
 
-		// Sorting
-		Collections.sort(patiens, new Comparator<Patient>() {
-			@Override
-			public int compare(Patient patientOne, Patient patientTwo) {
-				Task highestPriorityOne = taskStatusHandler.hasActiveTasks(patientOne)
-						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActiveTasks(patientOne)) : null;
-				Task highestPriorityTwo = taskStatusHandler.hasActiveTasks(patientTwo)
-						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActiveTasks(patientTwo)) : null;
-
-				if (highestPriorityOne == null && highestPriorityTwo == null)
-					return 0;
-				else if (highestPriorityOne == null)
-					return asc ? -1 : 1;
-				else if (highestPriorityTwo == null)
-					return asc ? 1 : -1;
-				else {
-					int res = highestPriorityOne.getTaskPriority().compareTo(highestPriorityTwo.getTaskPriority());
-					return asc ? res : res * -1;
-				}
-			}
-		});
-
-		return patiens;
-	}
-
-	/**
-	 * Sorts a List of patients by the task id. The tasknumber will be ascending
-	 * or descending depending on the asc parameter.
-	 * 
-	 * @param patiens
-	 * @return
-	 */
-	public List<Patient> orderListByTaskID(List<Patient> patiens, boolean asc) {
-
-		// Sorting
-		Collections.sort(patiens, new Comparator<Patient>() {
-			@Override
-			public int compare(Patient patientOne, Patient patientTwo) {
-				Task lastTaskOne = taskStatusHandler.hasActiveTasks(patientOne)
-						? taskStatusHandler.getActiveTasks(patientOne).get(0) : null;
-				Task lastTaskTwo = taskStatusHandler.hasActiveTasks(patientTwo)
-						? taskStatusHandler.getActiveTasks(patientTwo).get(0) : null;
-
-				if (lastTaskOne == null && lastTaskTwo == null)
-					return 0;
-				else if (lastTaskOne == null)
-					return asc ? -1 : 1;
-				else if (lastTaskTwo == null)
-					return asc ? 1 : -1;
-				else {
-					int res = lastTaskOne.getTaskID().compareTo(lastTaskTwo.getTaskID());
-					return asc ? res : res * -1;
-				}
-			}
-		});
-
-		return patiens;
-	}
 	/*
 	 * ************************** Worklist ****************************
 	 */
