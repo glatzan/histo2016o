@@ -24,15 +24,36 @@
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
 				<p:outputLabel value="Name" />
-				<p:inputText />
+				<p:inputText styleClass="smallInput"
+					value="#{worklistSearchDialogHandler.extendedPatientName}" />
+
 				<p:outputLabel value="G. Datum" />
-				<p:inputText />
+				<p:calendar
+					value="#{worklistSearchDialogHandler.extendedPatientBirthday}"
+					locale="de" styleClass="smallFont smallInput smallCalendarInput"
+					navigator="true" pattern="dd.MM.yyyy" mask="true" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
-				<p:outputLabel value="Nachhame" />
-				<p:inputText />
+				<p:outputLabel value="Vorname" />
+				<p:inputText styleClass="smallInput"
+					value="#{worklistSearchDialogHandler.extendedPatientSurename}" />
+
+				<p:outputLabel value="Geschlecht" />
+				<p:selectOneMenu style="width:100px" name="sex" autocomplete="sex"
+					styleClass="smallInput"
+					value="#{worklistSearchDialogHandler.extendedPatientGener}">
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.select']}"
+						itemValue="UNKNOWN" />
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.male']}"
+						itemValue="MALE" />
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.female']}"
+						itemValue="FEMALE" />
+				</p:selectOneMenu>
 			</h:panelGrid>
 
 			<!-- ****************** Person ****************** -->
@@ -41,17 +62,20 @@
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
 				<p:outputLabel value="Präparat" />
-				<p:inputText />
+
+				<p:inputText styleClass="smallInput"
+					value="#{worklistSearchDialogHandler.extendedMaterialName}" />
 				<p:outputLabel value="Operateur" />
-				<p:inputText />
+				<p:inputText styleClass="smallInput" disabled="true" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
 				<p:outputLabel value="Vorgeschichte" />
-				<p:inputText />
+				<p:inputText styleClass="smallInput"
+					value="#{worklistSearchDialogHandler.extendedHistory}" />
 				<p:outputLabel value="Unterschrift" />
-				<p:inputText />
+				<p:inputText disabled="true" />
 			</h:panelGrid>
 
 			<!-- ****************** Person ****************** -->
@@ -60,14 +84,29 @@
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
 				<p:outputLabel value="Eingangsdatum" />
-				<p:inputText />
+				<p:calendar
+					value="#{worklistSearchDialogHandler.extendedPatientBirthday}"
+					locale="de" styleClass="smallFont smallInput smallCalendarInput"
+					navigator="true" pattern="dd.MM.yyyy" mask="true" />
 				<p:outputLabel value="Entnahmedatum" />
-				<p:inputText />
+				<p:calendar
+					value="#{worklistSearchDialogHandler.extendedPatientBirthday}"
+					locale="de" styleClass="smallFont smallInput smallCalendarInput"
+					navigator="true" pattern="dd.MM.yyyy" mask="true" />
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-				<p:inputText />
-				<p:inputText />
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
+				<h:outputLabel value="bis" />
+				<p:calendar
+					value="#{worklistSearchDialogHandler.extendedPatientBirthday}"
+					locale="de" styleClass="smallFont smallInput smallCalendarInput"
+					navigator="true" pattern="dd.MM.yyyy" mask="true" />
+				<h:outputLabel value="bis" />
+				<p:calendar
+					value="#{worklistSearchDialogHandler.extendedPatientBirthday}"
+					locale="de" styleClass="smallFont smallInput smallCalendarInput"
+					navigator="true" pattern="dd.MM.yyyy" mask="true" />
+
 			</h:panelGrid>
 
 			<!-- ****************** Person ****************** -->
@@ -76,13 +115,15 @@
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
 				<p:outputLabel value="Diangose" />
-				<p:inputText />
+				<p:inputText styleClass="smallInput"
+					value="#{worklistSearchDialogHandler.extendedDiagnosis}" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
 				<p:outputLabel value="Kategorie" />
-				<p:inputText />
+				<p:inputText styleClass="smallInput"
+					value="#{worklistSearchDialogHandler.extendedCategory}" />
 			</h:panelGrid>
 		</h:panelGrid>
 

@@ -3,11 +3,12 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 Merke: keine kurzbefunde
 
 TODO: 2: erweiterte Suche
-TODO: 5: rechte durchsetzten
 TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
+TODO: 6: Contact Dialog mit neuem view überarbeiten
 TODO: 7: Sort Optionen für worklist arbeitet nicht richtig / anzeige selected task verbessern
 TODO: 8: Liste für normale benutzer überarbeiten
 TODO: 9: Latex Datein
+TODO: 10: rechte durchsetzten
 TODO: wenn Task entity gelöscht wird kann es sein das der beende staining phase dialog angezgit wird, geht noch nicht richitg
 
 TODO: Benachrichtigugen: Liste von fax/email/phone müsse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man über den contakt dialog sachen ädnert

@@ -1,4 +1,17 @@
-[  {  
+[  
+	{  
+      "version":"1.0.2",
+      "changes":[  
+         "<b>Added:</b> Erweiterte Suche funktionsfähig"    
+       ]
+   },
+   {  
+      "version":"1.0.1",
+      "changes":[  
+         "<b>Change:</b> Session-Timeout hochgesetzt"    
+       ]
+   },
+   {  
       "version":"1.0.0",
       "changes":[  
          "Erste Veröffentlichung"    
