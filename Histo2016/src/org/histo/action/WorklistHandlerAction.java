@@ -115,7 +115,6 @@ public class WorklistHandlerAction implements Serializable {
 	public void initBean() {
 		logger.debug("PostConstruct Init worklist");
 
-
 		setSortOptions(new SortOptions());
 
 		setFilterWorklist(false);
@@ -139,28 +138,7 @@ public class WorklistHandlerAction implements Serializable {
 
 
 
-	/**
-	 * Sorts a list with patients either by task id or name of the patient
-	 * 
-	 * @param patiens
-	 * @param order
-	 */
-	public void sortWordklist(List<Patient> patiens, WorklistSortOrder order, boolean asc) {
-		switch (order) {
-		case TASK_ID:
-			orderListByTaskID(patiens, asc);
-			break;
-		case PIZ:
-			WorklistSortUtil.orderListByPIZ(patiens, asc);
-			break;
-		case NAME:
-			WorklistSortUtil.orderListByName(patiens, asc);
-			break;
-		case PRIORITY:
-			orderListByPriority(patiens, asc);
-			break;
-		}
-	}
+
 
 	/**
 	 * Selects the next task in List
@@ -299,66 +277,7 @@ public class WorklistHandlerAction implements Serializable {
 		return null;
 	}
 
-	public List<Patient> orderListByPriority(List<Patient> patiens, boolean asc) {
 
-		// Sorting
-		Collections.sort(patiens, new Comparator<Patient>() {
-			@Override
-			public int compare(Patient patientOne, Patient patientTwo) {
-				Task highestPriorityOne = taskStatusHandler.hasActiveTasks(patientOne)
-						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActiveTasks(patientOne)) : null;
-				Task highestPriorityTwo = taskStatusHandler.hasActiveTasks(patientTwo)
-						? TaskUtil.getTaskByHighestPriority(taskStatusHandler.getActiveTasks(patientTwo)) : null;
-
-				if (highestPriorityOne == null && highestPriorityTwo == null)
-					return 0;
-				else if (highestPriorityOne == null)
-					return asc ? -1 : 1;
-				else if (highestPriorityTwo == null)
-					return asc ? 1 : -1;
-				else {
-					int res = highestPriorityOne.getTaskPriority().compareTo(highestPriorityTwo.getTaskPriority());
-					return asc ? res : res * -1;
-				}
-			}
-		});
-
-		return patiens;
-	}
-
-	/**
-	 * Sorts a List of patients by the task id. The tasknumber will be ascending
-	 * or descending depending on the asc parameter.
-	 * 
-	 * @param patiens
-	 * @return
-	 */
-	public List<Patient> orderListByTaskID(List<Patient> patiens, boolean asc) {
-
-		// Sorting
-		Collections.sort(patiens, new Comparator<Patient>() {
-			@Override
-			public int compare(Patient patientOne, Patient patientTwo) {
-				Task lastTaskOne = taskStatusHandler.hasActiveTasks(patientOne)
-						? taskStatusHandler.getActiveTasks(patientOne).get(0) : null;
-				Task lastTaskTwo = taskStatusHandler.hasActiveTasks(patientTwo)
-						? taskStatusHandler.getActiveTasks(patientTwo).get(0) : null;
-
-				if (lastTaskOne == null && lastTaskTwo == null)
-					return 0;
-				else if (lastTaskOne == null)
-					return asc ? -1 : 1;
-				else if (lastTaskTwo == null)
-					return asc ? 1 : -1;
-				else {
-					int res = lastTaskOne.getTaskID().compareTo(lastTaskTwo.getTaskID());
-					return asc ? res : res * -1;
-				}
-			}
-		});
-
-		return patiens;
-	}
 	/*
 	 * ************************** Worklist ****************************
 	 */

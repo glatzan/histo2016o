@@ -76,7 +76,7 @@ public class TaskViewHandlerAction {
 
 	public void onAddTask(Task task) {
 
-		if (worklistViewHandlerAction.getWorkList().contains(task.getPatient())) {
+		if (worklistViewHandlerAction.getWorklist().containsPatient(task.getPatient())) {
 			logger.debug("Showning task " + task.getTaskID());
 			worklistViewHandlerAction.onSelectTaskAndPatient(task);
 		} else {

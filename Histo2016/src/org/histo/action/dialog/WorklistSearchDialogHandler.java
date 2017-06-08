@@ -31,14 +31,7 @@ import org.springframework.stereotype.Component;
 public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	@Autowired
-	@Lazy
-	private WorklistViewHandlerAction worklistViewHandlerAction;
-
-	@Autowired
 	private PatientDao patientDao;
-
-	@Autowired
-	private CommonDataHandlerAction commonDataHandlerAction;
 
 	private WorklistSearchOption searchIndex;
 
@@ -135,18 +128,6 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Searches for a worklist an sets it as active worklist
-	 */
-	public void createWorklistAndSetAsActive() {
-
-		ArrayList<Patient> result = createWorklist();
-
-		worklistViewHandlerAction.getWorklists().put(worklistViewHandlerAction.getActiveWorklistKey(), result);
-
-		commonDataHandlerAction.setSelectedPatient(null);
 	}
 
 	/**

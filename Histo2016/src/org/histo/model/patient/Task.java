@@ -28,6 +28,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
@@ -145,7 +146,17 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	private long notificationCompletionDate = 0;
 
 	/**
-	 * True if the task can't be edited
+	 * The date of the finalization.
+	 */
+	private long finalizationDate = 0;
+
+	/**
+	 * False if the task can't be edited
+	 */
+	private boolean editable = true;
+
+	/**
+	 * True if the task can't is completed
 	 */
 	private boolean finalized;
 
@@ -345,6 +356,36 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		return "ID: " + getId() + ", Task ID: " + getTaskID();
 	}
 
+	@Transient
+	public boolean isActiveOrActionPending() {
+		return isActiveOrActionPending(false);
+	}
+
+	/**
+	 * Returns true if the task is marked as active or an action is pending. If
+	 * activeOnly is true only the active attribute of the task will be
+	 * evaluated.
+	 * 
+	 * @param task
+	 * @return
+	 */
+	@Transient
+	public boolean isActiveOrActionPending(boolean activeOnly) {
+		if (activeOnly)
+			return isActive();
+
+		if (isActive())
+			return true;
+
+		if (isListedInFavouriteList(PredefinedFavouriteList.StainingList, PredefinedFavouriteList.ReStainingList,
+				PredefinedFavouriteList.StayInStainingList, PredefinedFavouriteList.DiagnosisList,
+				PredefinedFavouriteList.ReDiagnosisList, PredefinedFavouriteList.StayInDiagnosisList,
+				PredefinedFavouriteList.NotificationList, PredefinedFavouriteList.StayInNotificationList))
+			return true;
+
+		return false;
+	}
+
 	/********************************************************
 	 * Transient
 	 ********************************************************/
@@ -364,7 +405,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	}
 
 	// TODO fetch lazy
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy="task")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "task")
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	@NotAudited
@@ -412,6 +453,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.version = version;
 	}
 
+	@Column
 	public String getTaskID() {
 		return taskID;
 	}
@@ -420,6 +462,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.taskID = taskID;
 	}
 
+	@Column
 	public long getDateOfReceipt() {
 		return dateOfReceipt;
 	}
@@ -428,6 +471,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.dateOfReceipt = dateOfReceipt;
 	}
 
+	@Column
 	public long getDueDate() {
 		return dueDate;
 	}
@@ -436,6 +480,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.dueDate = dueDate;
 	}
 
+	@Column
 	public long getCreationDate() {
 		return creationDate;
 	}
@@ -444,6 +489,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.creationDate = creationDate;
 	}
 
+	@Column
 	public long getDateOfSugery() {
 		return dateOfSugery;
 	}
@@ -452,6 +498,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.dateOfSugery = dateOfSugery;
 	}
 
+	@Column
 	public byte getTypeOfOperation() {
 		return typeOfOperation;
 	}
@@ -460,6 +507,8 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.typeOfOperation = typeOfOperation;
 	}
 
+	@Column
+	@Type(type = "text")
 	public String getCaseHistory() {
 		return caseHistory;
 	}
@@ -477,6 +526,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.eye = eye;
 	}
 
+	@Column
 	public long getStainingCompletionDate() {
 		return stainingCompletionDate;
 	}
@@ -485,6 +535,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.stainingCompletionDate = stainingCompletionDate;
 	}
 
+	@Column
 	public long getDiagnosisCompletionDate() {
 		return diagnosisCompletionDate;
 	}
@@ -493,6 +544,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.diagnosisCompletionDate = diagnosisCompletionDate;
 	}
 
+	@Column
 	public String getWard() {
 		return ward;
 	}
@@ -510,6 +562,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.taskPriority = taskPriority;
 	}
 
+	@Column
 	public long getNotificationCompletionDate() {
 		return notificationCompletionDate;
 	}
@@ -518,7 +571,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.notificationCompletionDate = notificationCompletionDate;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="task")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "task")
 	@OrderBy("dateOfRequest DESC")
 	@Fetch(value = FetchMode.SUBSELECT)
 	public List<Council> getCouncils() {
@@ -558,6 +611,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.diagnosisContainer = diagnosisContainer;
 	}
 
+	@Column
 	public boolean isUseAutoNomenclature() {
 		return useAutoNomenclature;
 	}
@@ -566,12 +620,32 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 		this.useAutoNomenclature = useAutoNomenclature;
 	}
 
+	@Column
 	public boolean isFinalized() {
 		return finalized;
 	}
 
 	public void setFinalized(boolean finalized) {
 		this.finalized = finalized;
+	}
+
+	@Column
+
+	public long getFinalizationDate() {
+		return finalizationDate;
+	}
+
+	public void setFinalizationDate(long finalizationDate) {
+		this.finalizationDate = finalizationDate;
+	}
+
+	@Column
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 	/********************************************************

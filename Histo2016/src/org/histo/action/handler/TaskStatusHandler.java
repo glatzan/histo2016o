@@ -58,25 +58,6 @@ public class TaskStatusHandler {
 	}
 
 	/**
-	 * Returns true if the task is marked as active or an action is pending
-	 * 
-	 * @param task
-	 * @return
-	 */
-	public boolean isActiveOrActionPending(Task task) {
-		if (task.isActive())
-			return true;
-
-		if (task.isListedInFavouriteList(PredefinedFavouriteList.StainingList, PredefinedFavouriteList.ReStainingList,
-				PredefinedFavouriteList.StayInStainingList, PredefinedFavouriteList.DiagnosisList,
-				PredefinedFavouriteList.ReDiagnosisList, PredefinedFavouriteList.StayInDiagnosisList,
-				PredefinedFavouriteList.NotificationList, PredefinedFavouriteList.StayInNotificationList))
-			return true;
-
-		return false;
-	}
-
-	/**
 	 * Returns a list with all currently active tasks of a Patient
 	 * 
 	 * @return
