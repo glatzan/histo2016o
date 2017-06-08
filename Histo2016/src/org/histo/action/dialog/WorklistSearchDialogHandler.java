@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.WorklistHandlerAction;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Gender;
 import org.histo.config.enums.Month;
@@ -31,7 +32,7 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	@Autowired
 	@Lazy
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
 	private PatientDao patientDao;
@@ -143,7 +144,7 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 		ArrayList<Patient> result = createWorklist();
 
-		worklistHandlerAction.getWorklists().put(worklistHandlerAction.getActiveWorklistKey(), result);
+		worklistViewHandlerAction.getWorklists().put(worklistViewHandlerAction.getActiveWorklistKey(), result);
 
 		commonDataHandlerAction.setSelectedPatient(null);
 	}
