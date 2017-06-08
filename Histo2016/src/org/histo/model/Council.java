@@ -4,8 +4,10 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
@@ -17,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.model.interfaces.HasID;
+import org.histo.model.patient.Task;
 
 @Entity
 @Audited
@@ -29,19 +32,25 @@ public class Council implements HasID {
 
 	private long version;
 
+	private Task task;
+
 	private Physician councilPhysician;
-	
+
 	private Physician physicianRequestingCouncil;
-	
+
 	private String councilText;
-	
+
 	private String attachment;
-	
+
 	private long dateOfRequest;
-	
+
 	public Council() {
 	}
-	
+
+	public Council(Task task) {
+		this.task = task;
+	}
+
 	@Id
 	@GeneratedValue(generator = "council_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -106,6 +115,15 @@ public class Council implements HasID {
 		this.dateOfRequest = dateOfRequest;
 	}
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
+	}
+
 	@Transient
 	public Date getDateOfRequestAsDate() {
 		return new Date(dateOfRequest);
@@ -115,6 +133,4 @@ public class Council implements HasID {
 		this.dateOfRequest = dateOfRequestAsDate.getTime();
 	}
 
-	
-	
 }

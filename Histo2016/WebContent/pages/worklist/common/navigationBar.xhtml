@@ -14,7 +14,7 @@
 
 			<!-- Name -->
 			<h:commandLink update="navigationForm contentForm"
-				actionListener="#{worklistHandlerAction.onDeselectTask()}">
+				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
 				<h:outputFormat value="#{msg['bodyNavigationOverview']}"
 					styleClass="navigationText">
 					<f:param
@@ -28,7 +28,7 @@
 			<!-- Auftrag -->
 			<h:commandLink
 				rendered="#{commonDataHandlerAction.selectedPatient ne null and commonDataHandlerAction.selectedTask ne null}"
-				actionListener="#{worklistHandlerAction.onDeselectTask()}">
+				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
 				<h:outputFormat value="#{msg['bodyNavigationTask']}"
 					styleClass="navigationText">
 					<f:param

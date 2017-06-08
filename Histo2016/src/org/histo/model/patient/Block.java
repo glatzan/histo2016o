@@ -135,7 +135,7 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 		this.version = version;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "parent")
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("creationDate ASC, id ASC")
 	public List<Slide> getSlides() {

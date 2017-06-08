@@ -11,6 +11,7 @@ import javax.faces.event.PhaseId;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -54,7 +55,7 @@ public class PrintDialogHandler extends AbstractDialog {
 	private SettingsHandler settingsHandler;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
 	 * List of all templates for printing
@@ -118,7 +119,7 @@ public class PrintDialogHandler extends AbstractDialog {
 		setContactList(new ArrayList<ContactChooser>());
 
 		// setting patient
-		getContactList().add(new ContactChooser(task.getPatient().getPerson(), ContactRole.PATIENT));
+		getContactList().add(new ContactChooser(task, task.getPatient().getPerson(), ContactRole.PATIENT));
 
 		// setting other contacts (physicians)
 		for (Contact contact : task.getContacts()) {
@@ -149,15 +150,15 @@ public class PrintDialogHandler extends AbstractDialog {
 
 		// only one adress so set as chosen
 		if (getSelectedCouncil().getCouncilPhysician() != null) {
-			ContactChooser chosser = new ContactChooser(getSelectedCouncil().getCouncilPhysician().getPerson(),
+			ContactChooser chosser = new ContactChooser(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
 					ContactRole.CASE_CONFERENCE);
 			chosser.setSelected(true);
 			// setting patient
 			getContactList().add(chosser);
 
 			// setting council physicians data as rendere contact data
-			setSelectedContact(
-					new Contact(getSelectedCouncil().getCouncilPhysician().getPerson(), ContactRole.CASE_CONFERENCE));
+			setSelectedContact(new Contact(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
+					ContactRole.CASE_CONFERENCE));
 		}
 
 		onChangePrintTemplate();
@@ -190,9 +191,9 @@ public class PrintDialogHandler extends AbstractDialog {
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 		}
 
 		super.initBean(task, Dialog.PRINT);

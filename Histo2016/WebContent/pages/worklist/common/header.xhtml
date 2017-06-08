@@ -42,18 +42,18 @@
 
 			<p:selectOneMenu style="margin-top:1px;"
 				title="#{msg['body.worklist.header.view']}"
-				value="#{commonDataHandlerAction.currentView}">
+				value="#{worklistViewHandlerAction.currentView}">
 
 				<f:selectItems value="#{commonDataHandlerAction.navigationPages}"
 					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 
-				<p:ajax event="change"
+				<p:ajax event="change" process="@this"
 					oncomplete="$('#headerForm\\:changeView').click();"></p:ajax>
 
 			</p:selectOneMenu>
 
-			<p:commandButton id="changeView" ajax="false"
-				action="#{mainHandlerAction.goToNavigation(commonDataHandlerAction.currentView)}"
+			<p:commandButton id="changeView" update="navigationForm contentForm navigationForm"
+				actionListener="#{worklistViewHandlerAction.goToNavigation()}"
 				style="display:none" />
 		</h:panelGrid>
 
@@ -61,8 +61,7 @@
 		<h:panelGroup styleClass="headerRight" layout="block">
 
 			<!-- Current Version -->
-			<p:commandLink
-				value="Version : #{settingsHandler.currentVersion}"
+			<p:commandLink value="Version : #{settingsHandler.currentVersion}"
 				styleClass="noUnderlineAtLink buttonRighMarginInListExtended icon-grey"
 				actionListener="#{programmVersionDialog.initAndPrepareBean()}"></p:commandLink>
 
@@ -263,7 +262,7 @@
 			</p:commandButton>
 			<!-- Show Overview -->
 			<p:commandButton id="showPatientOverview" style="display:none"
-				actionListener="#{worklistHandlerAction.onDeselectTask()}">
+				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 

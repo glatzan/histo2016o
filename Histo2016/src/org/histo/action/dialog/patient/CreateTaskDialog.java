@@ -9,6 +9,7 @@ import org.histo.action.dialog.MediaDialogHandler;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
@@ -68,7 +69,7 @@ public class CreateTaskDialog extends AbstractDialog {
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	private Patient patient;
 
@@ -103,9 +104,9 @@ public class CreateTaskDialog extends AbstractDialog {
 		try {
 			setPatient(genericDAO.refresh(patient));
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			setPatient(patientDao.getPatient(patient.getId(), true));
-			worklistHandlerAction.updatePatientInCurrentWorklist(getPatient());
+			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient());
 		}
 
 		super.initBean(new Task(getPatient()), Dialog.TASK_CREATE);

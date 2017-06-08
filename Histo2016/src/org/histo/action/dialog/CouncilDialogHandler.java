@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.WorklistHandlerAction;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -40,7 +41,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	private TaskDAO taskDAO;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	private Council council;
 
@@ -82,7 +83,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			// setting council as default
 			if (getCouncilList().size() == 0) {
 				logger.debug("Council Dialog: Creating new council");
-				setCouncil(new Council());
+				setCouncil(new Council(task));
 				getCouncilList().add(getCouncil());
 				getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
 			} else {
@@ -97,9 +98,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 			updatePhysicianLists();
 			return true;
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 			return false;
 		}
 	}
@@ -121,7 +122,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * Creates a new council and saves it
 	 */
 	public void addNewCouncil() {
-		Council newCouncil = new Council();
+		Council newCouncil = new Council(getTask());
 		setCouncil(newCouncil);
 		saveCouncilData();
 	}

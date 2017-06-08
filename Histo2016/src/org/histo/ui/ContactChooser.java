@@ -6,6 +6,7 @@ import java.util.List;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Contact;
 import org.histo.model.Person;
+import org.histo.model.patient.Task;
 
 public class ContactChooser {
 
@@ -15,8 +16,8 @@ public class ContactChooser {
 
 	public boolean selected;
 
-	public ContactChooser(Person person, ContactRole role) {
-		this(new Contact(person, role));
+	public ContactChooser(Task task,Person person, ContactRole role) {
+		this(new Contact(task,person, role));
 	}
 	
 	public ContactChooser(Contact contact){

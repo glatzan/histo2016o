@@ -1,20 +1,20 @@
-package org.histo.action;
+package org.histo.action.view;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.WorklistHandlerAction;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
-@Component
-@Scope(value = "session")
-public class TaskListHandlerAction {
-
+@Controller
+@Scope("session")
+public class TaskViewHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
@@ -22,7 +22,7 @@ public class TaskListHandlerAction {
 
 	@Autowired
 	@Lazy
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
 	 * Lists of task to display
@@ -54,7 +54,7 @@ public class TaskListHandlerAction {
 	 */
 	public void initBean() {
 		logger.debug("Init Task list");
-		
+
 		if (taskPerPull == 0) {
 			setTaskPerPull(20);
 			setPage(1);
@@ -76,13 +76,13 @@ public class TaskListHandlerAction {
 
 	public void onAddTask(Task task) {
 
-		if (worklistHandlerAction.getWorkList().contains(task.getPatient())) {
+		if (worklistViewHandlerAction.getWorkList().contains(task.getPatient())) {
 			logger.debug("Showning task " + task.getTaskID());
-			worklistHandlerAction.onSelectTaskAndPatient(task);
+			worklistViewHandlerAction.onSelectTaskAndPatient(task);
 		} else {
 			logger.debug("Adding task " + task.getTaskID() + " to worklist");
 			task.setActive(true);
-			worklistHandlerAction.addPatientToWorkList(task.getPatient(), false);
+			worklistViewHandlerAction.addPatientToWorkList(task.getPatient(), false);
 		}
 
 	}
@@ -95,9 +95,9 @@ public class TaskListHandlerAction {
 	 * Getter/Setter
 	 ********************************************************/
 	public List<Task> getTaskList() {
-		if(taskList == null)
+		if (taskList == null)
 			initBean();
-		
+
 		return taskList;
 	}
 

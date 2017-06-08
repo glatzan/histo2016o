@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.4.4
 -- Dumped by pg_dump version 9.4.4
--- Started on 2017-06-06 20:22:31
+-- Started on 2017-06-07 19:48:29
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -14,19 +14,7 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- TOC entry 2473 (class 1262 OID 175110)
--- Name: histo; Type: DATABASE; Schema: -; Owner: postgres
---
-
-SET statement_timeout = 0;
-SET lock_timeout = 0;
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-SET check_function_bodies = false;
-SET client_min_messages = warning;
-
---
--- TOC entry 254 (class 3079 OID 11855)
+-- TOC entry 248 (class 3079 OID 11855)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
 
@@ -34,8 +22,8 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2476 (class 0 OID 0)
--- Dependencies: 254
+-- TOC entry 2509 (class 0 OID 0)
+-- Dependencies: 248
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
 --
 
@@ -49,7 +37,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 172 (class 1259 OID 175111)
+-- TOC entry 172 (class 1259 OID 178101)
 -- Name: accounting; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -62,7 +50,7 @@ CREATE TABLE accounting (
 ALTER TABLE accounting OWNER TO postgres;
 
 --
--- TOC entry 173 (class 1259 OID 175116)
+-- TOC entry 173 (class 1259 OID 178106)
 -- Name: accounting_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -76,7 +64,7 @@ CREATE TABLE accounting_aud (
 ALTER TABLE accounting_aud OWNER TO postgres;
 
 --
--- TOC entry 230 (class 1259 OID 175470)
+-- TOC entry 224 (class 1259 OID 178430)
 -- Name: accounting_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -91,7 +79,7 @@ CREATE SEQUENCE accounting_sequence
 ALTER TABLE accounting_sequence OWNER TO postgres;
 
 --
--- TOC entry 174 (class 1259 OID 175121)
+-- TOC entry 174 (class 1259 OID 178111)
 -- Name: biobank; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -106,7 +94,7 @@ CREATE TABLE biobank (
 ALTER TABLE biobank OWNER TO postgres;
 
 --
--- TOC entry 175 (class 1259 OID 175126)
+-- TOC entry 175 (class 1259 OID 178116)
 -- Name: biobank_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -122,7 +110,7 @@ CREATE TABLE biobank_aud (
 ALTER TABLE biobank_aud OWNER TO postgres;
 
 --
--- TOC entry 176 (class 1259 OID 175131)
+-- TOC entry 176 (class 1259 OID 178121)
 -- Name: biobank_pdfcontainer; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -135,7 +123,7 @@ CREATE TABLE biobank_pdfcontainer (
 ALTER TABLE biobank_pdfcontainer OWNER TO postgres;
 
 --
--- TOC entry 177 (class 1259 OID 175134)
+-- TOC entry 177 (class 1259 OID 178124)
 -- Name: biobank_pdfcontainer_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -150,7 +138,7 @@ CREATE TABLE biobank_pdfcontainer_aud (
 ALTER TABLE biobank_pdfcontainer_aud OWNER TO postgres;
 
 --
--- TOC entry 231 (class 1259 OID 175472)
+-- TOC entry 225 (class 1259 OID 178432)
 -- Name: biobank_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -165,7 +153,7 @@ CREATE SEQUENCE biobank_sequence
 ALTER TABLE biobank_sequence OWNER TO postgres;
 
 --
--- TOC entry 178 (class 1259 OID 175139)
+-- TOC entry 178 (class 1259 OID 178129)
 -- Name: block; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -183,7 +171,7 @@ CREATE TABLE block (
 ALTER TABLE block OWNER TO postgres;
 
 --
--- TOC entry 179 (class 1259 OID 175144)
+-- TOC entry 179 (class 1259 OID 178134)
 -- Name: block_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -202,7 +190,7 @@ CREATE TABLE block_aud (
 ALTER TABLE block_aud OWNER TO postgres;
 
 --
--- TOC entry 232 (class 1259 OID 175474)
+-- TOC entry 226 (class 1259 OID 178434)
 -- Name: block_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -217,35 +205,7 @@ CREATE SEQUENCE block_sequence
 ALTER TABLE block_sequence OWNER TO postgres;
 
 --
--- TOC entry 180 (class 1259 OID 175149)
--- Name: block_slide; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE block_slide (
-    block_id bigint NOT NULL,
-    slides_id bigint NOT NULL
-);
-
-
-ALTER TABLE block_slide OWNER TO postgres;
-
---
--- TOC entry 181 (class 1259 OID 175152)
--- Name: block_slide_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE block_slide_aud (
-    rev integer NOT NULL,
-    block_id bigint NOT NULL,
-    slides_id bigint NOT NULL,
-    revtype smallint
-);
-
-
-ALTER TABLE block_slide_aud OWNER TO postgres;
-
---
--- TOC entry 182 (class 1259 OID 175157)
+-- TOC entry 180 (class 1259 OID 178139)
 -- Name: contact; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -259,14 +219,15 @@ CREATE TABLE contact (
     useemail boolean NOT NULL,
     usefax boolean NOT NULL,
     usephone boolean NOT NULL,
-    person_id bigint
+    person_id bigint,
+    task_id bigint
 );
 
 
 ALTER TABLE contact OWNER TO postgres;
 
 --
--- TOC entry 233 (class 1259 OID 175476)
+-- TOC entry 227 (class 1259 OID 178436)
 -- Name: contact_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -281,7 +242,7 @@ CREATE SEQUENCE contact_sequence
 ALTER TABLE contact_sequence OWNER TO postgres;
 
 --
--- TOC entry 183 (class 1259 OID 175162)
+-- TOC entry 181 (class 1259 OID 178144)
 -- Name: council; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -292,14 +253,15 @@ CREATE TABLE council (
     dateofrequest bigint NOT NULL,
     version bigint NOT NULL,
     councilphysician_id bigint,
-    physicianrequestingcouncil_id bigint
+    physicianrequestingcouncil_id bigint,
+    task_id bigint
 );
 
 
 ALTER TABLE council OWNER TO postgres;
 
 --
--- TOC entry 184 (class 1259 OID 175170)
+-- TOC entry 182 (class 1259 OID 178152)
 -- Name: council_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -311,14 +273,15 @@ CREATE TABLE council_aud (
     counciltext text,
     dateofrequest bigint,
     councilphysician_id bigint,
-    physicianrequestingcouncil_id bigint
+    physicianrequestingcouncil_id bigint,
+    task_id bigint
 );
 
 
 ALTER TABLE council_aud OWNER TO postgres;
 
 --
--- TOC entry 234 (class 1259 OID 175478)
+-- TOC entry 228 (class 1259 OID 178438)
 -- Name: council_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -333,7 +296,7 @@ CREATE SEQUENCE council_sequence
 ALTER TABLE council_sequence OWNER TO postgres;
 
 --
--- TOC entry 185 (class 1259 OID 175178)
+-- TOC entry 183 (class 1259 OID 178160)
 -- Name: diagnosis; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -353,7 +316,7 @@ CREATE TABLE diagnosis (
 ALTER TABLE diagnosis OWNER TO postgres;
 
 --
--- TOC entry 186 (class 1259 OID 175186)
+-- TOC entry 184 (class 1259 OID 178168)
 -- Name: diagnosis_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -373,7 +336,7 @@ CREATE TABLE diagnosis_aud (
 ALTER TABLE diagnosis_aud OWNER TO postgres;
 
 --
--- TOC entry 235 (class 1259 OID 175480)
+-- TOC entry 229 (class 1259 OID 178440)
 -- Name: diagnosis_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -388,7 +351,7 @@ CREATE SEQUENCE diagnosis_sequence
 ALTER TABLE diagnosis_sequence OWNER TO postgres;
 
 --
--- TOC entry 187 (class 1259 OID 175194)
+-- TOC entry 185 (class 1259 OID 178176)
 -- Name: diagnosiscontainer; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -404,7 +367,7 @@ CREATE TABLE diagnosiscontainer (
 ALTER TABLE diagnosiscontainer OWNER TO postgres;
 
 --
--- TOC entry 188 (class 1259 OID 175199)
+-- TOC entry 186 (class 1259 OID 178181)
 -- Name: diagnosiscontainer_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -422,7 +385,7 @@ CREATE TABLE diagnosiscontainer_aud (
 ALTER TABLE diagnosiscontainer_aud OWNER TO postgres;
 
 --
--- TOC entry 236 (class 1259 OID 175482)
+-- TOC entry 230 (class 1259 OID 178442)
 -- Name: diagnosiscontainer_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -437,7 +400,7 @@ CREATE SEQUENCE diagnosiscontainer_sequence
 ALTER TABLE diagnosiscontainer_sequence OWNER TO postgres;
 
 --
--- TOC entry 189 (class 1259 OID 175204)
+-- TOC entry 187 (class 1259 OID 178186)
 -- Name: diagnosispreset; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -456,7 +419,7 @@ CREATE TABLE diagnosispreset (
 ALTER TABLE diagnosispreset OWNER TO postgres;
 
 --
--- TOC entry 237 (class 1259 OID 175484)
+-- TOC entry 231 (class 1259 OID 178444)
 -- Name: diagnosispreset_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -471,7 +434,7 @@ CREATE SEQUENCE diagnosispreset_sequence
 ALTER TABLE diagnosispreset_sequence OWNER TO postgres;
 
 --
--- TOC entry 190 (class 1259 OID 175212)
+-- TOC entry 188 (class 1259 OID 178194)
 -- Name: diagnosisrevision; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -493,7 +456,7 @@ CREATE TABLE diagnosisrevision (
 ALTER TABLE diagnosisrevision OWNER TO postgres;
 
 --
--- TOC entry 191 (class 1259 OID 175220)
+-- TOC entry 189 (class 1259 OID 178202)
 -- Name: diagnosisrevision_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -516,7 +479,7 @@ CREATE TABLE diagnosisrevision_aud (
 ALTER TABLE diagnosisrevision_aud OWNER TO postgres;
 
 --
--- TOC entry 238 (class 1259 OID 175486)
+-- TOC entry 232 (class 1259 OID 178446)
 -- Name: diagnosisrevision_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -531,7 +494,7 @@ CREATE SEQUENCE diagnosisrevision_sequence
 ALTER TABLE diagnosisrevision_sequence OWNER TO postgres;
 
 --
--- TOC entry 192 (class 1259 OID 175228)
+-- TOC entry 190 (class 1259 OID 178210)
 -- Name: favouritelist; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -548,20 +511,7 @@ CREATE TABLE favouritelist (
 ALTER TABLE favouritelist OWNER TO postgres;
 
 --
--- TOC entry 193 (class 1259 OID 175233)
--- Name: favouritelist_favouritelistitem; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE favouritelist_favouritelistitem (
-    favouritelist_id bigint NOT NULL,
-    items_id bigint NOT NULL
-);
-
-
-ALTER TABLE favouritelist_favouritelistitem OWNER TO postgres;
-
---
--- TOC entry 239 (class 1259 OID 175488)
+-- TOC entry 233 (class 1259 OID 178448)
 -- Name: favouritelist_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -576,13 +526,14 @@ CREATE SEQUENCE favouritelist_sequence
 ALTER TABLE favouritelist_sequence OWNER TO postgres;
 
 --
--- TOC entry 194 (class 1259 OID 175236)
+-- TOC entry 191 (class 1259 OID 178215)
 -- Name: favouritelistitem; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE favouritelistitem (
     id bigint NOT NULL,
     commentary character varying(255),
+    favouritelist_id bigint,
     task_id bigint
 );
 
@@ -590,7 +541,7 @@ CREATE TABLE favouritelistitem (
 ALTER TABLE favouritelistitem OWNER TO postgres;
 
 --
--- TOC entry 240 (class 1259 OID 175490)
+-- TOC entry 234 (class 1259 OID 178450)
 -- Name: favouritelistitem_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -605,7 +556,7 @@ CREATE SEQUENCE favouritelistitem_sequence
 ALTER TABLE favouritelistitem_sequence OWNER TO postgres;
 
 --
--- TOC entry 195 (class 1259 OID 175241)
+-- TOC entry 192 (class 1259 OID 178220)
 -- Name: favouritelistitem_slide; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -618,7 +569,7 @@ CREATE TABLE favouritelistitem_slide (
 ALTER TABLE favouritelistitem_slide OWNER TO postgres;
 
 --
--- TOC entry 196 (class 1259 OID 175244)
+-- TOC entry 193 (class 1259 OID 178223)
 -- Name: histouser; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -643,7 +594,7 @@ CREATE TABLE histouser (
 ALTER TABLE histouser OWNER TO postgres;
 
 --
--- TOC entry 197 (class 1259 OID 175252)
+-- TOC entry 194 (class 1259 OID 178231)
 -- Name: histouser_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -669,7 +620,7 @@ CREATE TABLE histouser_aud (
 ALTER TABLE histouser_aud OWNER TO postgres;
 
 --
--- TOC entry 198 (class 1259 OID 175260)
+-- TOC entry 195 (class 1259 OID 178239)
 -- Name: listitem; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -685,7 +636,7 @@ CREATE TABLE listitem (
 ALTER TABLE listitem OWNER TO postgres;
 
 --
--- TOC entry 199 (class 1259 OID 175265)
+-- TOC entry 196 (class 1259 OID 178244)
 -- Name: listitem_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -703,7 +654,7 @@ CREATE TABLE listitem_aud (
 ALTER TABLE listitem_aud OWNER TO postgres;
 
 --
--- TOC entry 241 (class 1259 OID 175492)
+-- TOC entry 235 (class 1259 OID 178452)
 -- Name: listitem_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -718,7 +669,7 @@ CREATE SEQUENCE listitem_sequence
 ALTER TABLE listitem_sequence OWNER TO postgres;
 
 --
--- TOC entry 200 (class 1259 OID 175270)
+-- TOC entry 197 (class 1259 OID 178249)
 -- Name: log; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -734,7 +685,7 @@ CREATE TABLE log (
 ALTER TABLE log OWNER TO postgres;
 
 --
--- TOC entry 242 (class 1259 OID 175494)
+-- TOC entry 236 (class 1259 OID 178454)
 -- Name: log_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -749,7 +700,7 @@ CREATE SEQUENCE log_sequence
 ALTER TABLE log_sequence OWNER TO postgres;
 
 --
--- TOC entry 201 (class 1259 OID 175275)
+-- TOC entry 198 (class 1259 OID 178254)
 -- Name: materialpreset; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -764,7 +715,7 @@ CREATE TABLE materialpreset (
 ALTER TABLE materialpreset OWNER TO postgres;
 
 --
--- TOC entry 243 (class 1259 OID 175496)
+-- TOC entry 237 (class 1259 OID 178456)
 -- Name: materialpreset_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -779,7 +730,7 @@ CREATE SEQUENCE materialpreset_sequence
 ALTER TABLE materialpreset_sequence OWNER TO postgres;
 
 --
--- TOC entry 202 (class 1259 OID 175283)
+-- TOC entry 199 (class 1259 OID 178262)
 -- Name: materialpreset_stainingprototype; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -792,7 +743,7 @@ CREATE TABLE materialpreset_stainingprototype (
 ALTER TABLE materialpreset_stainingprototype OWNER TO postgres;
 
 --
--- TOC entry 203 (class 1259 OID 175286)
+-- TOC entry 200 (class 1259 OID 178265)
 -- Name: patient; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -812,7 +763,7 @@ CREATE TABLE patient (
 ALTER TABLE patient OWNER TO postgres;
 
 --
--- TOC entry 204 (class 1259 OID 175294)
+-- TOC entry 201 (class 1259 OID 178273)
 -- Name: patient_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -832,7 +783,7 @@ CREATE TABLE patient_aud (
 ALTER TABLE patient_aud OWNER TO postgres;
 
 --
--- TOC entry 205 (class 1259 OID 175302)
+-- TOC entry 202 (class 1259 OID 178281)
 -- Name: patient_pdfcontainer; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -845,7 +796,7 @@ CREATE TABLE patient_pdfcontainer (
 ALTER TABLE patient_pdfcontainer OWNER TO postgres;
 
 --
--- TOC entry 206 (class 1259 OID 175305)
+-- TOC entry 203 (class 1259 OID 178284)
 -- Name: patient_pdfcontainer_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -860,7 +811,7 @@ CREATE TABLE patient_pdfcontainer_aud (
 ALTER TABLE patient_pdfcontainer_aud OWNER TO postgres;
 
 --
--- TOC entry 244 (class 1259 OID 175498)
+-- TOC entry 238 (class 1259 OID 178458)
 -- Name: patient_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -875,7 +826,7 @@ CREATE SEQUENCE patient_sequence
 ALTER TABLE patient_sequence OWNER TO postgres;
 
 --
--- TOC entry 207 (class 1259 OID 175310)
+-- TOC entry 204 (class 1259 OID 178289)
 -- Name: pdfcontainer; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -893,7 +844,7 @@ CREATE TABLE pdfcontainer (
 ALTER TABLE pdfcontainer OWNER TO postgres;
 
 --
--- TOC entry 208 (class 1259 OID 175318)
+-- TOC entry 205 (class 1259 OID 178297)
 -- Name: pdfcontainer_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -913,7 +864,7 @@ CREATE TABLE pdfcontainer_aud (
 ALTER TABLE pdfcontainer_aud OWNER TO postgres;
 
 --
--- TOC entry 245 (class 1259 OID 175500)
+-- TOC entry 239 (class 1259 OID 178460)
 -- Name: pdfs_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -928,7 +879,7 @@ CREATE SEQUENCE pdfs_sequence
 ALTER TABLE pdfs_sequence OWNER TO postgres;
 
 --
--- TOC entry 209 (class 1259 OID 175326)
+-- TOC entry 206 (class 1259 OID 178305)
 -- Name: person; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -956,7 +907,7 @@ CREATE TABLE person (
 ALTER TABLE person OWNER TO postgres;
 
 --
--- TOC entry 210 (class 1259 OID 175334)
+-- TOC entry 207 (class 1259 OID 178313)
 -- Name: person_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -985,7 +936,7 @@ CREATE TABLE person_aud (
 ALTER TABLE person_aud OWNER TO postgres;
 
 --
--- TOC entry 246 (class 1259 OID 175502)
+-- TOC entry 240 (class 1259 OID 178462)
 -- Name: person_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1000,7 +951,7 @@ CREATE SEQUENCE person_sequence
 ALTER TABLE person_sequence OWNER TO postgres;
 
 --
--- TOC entry 211 (class 1259 OID 175342)
+-- TOC entry 208 (class 1259 OID 178321)
 -- Name: physician; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1020,7 +971,7 @@ CREATE TABLE physician (
 ALTER TABLE physician OWNER TO postgres;
 
 --
--- TOC entry 212 (class 1259 OID 175350)
+-- TOC entry 209 (class 1259 OID 178329)
 -- Name: physician_associatedroles; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1033,7 +984,7 @@ CREATE TABLE physician_associatedroles (
 ALTER TABLE physician_associatedroles OWNER TO postgres;
 
 --
--- TOC entry 213 (class 1259 OID 175353)
+-- TOC entry 210 (class 1259 OID 178332)
 -- Name: physician_associatedroles_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1048,7 +999,7 @@ CREATE TABLE physician_associatedroles_aud (
 ALTER TABLE physician_associatedroles_aud OWNER TO postgres;
 
 --
--- TOC entry 214 (class 1259 OID 175358)
+-- TOC entry 211 (class 1259 OID 178337)
 -- Name: physician_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1069,7 +1020,7 @@ CREATE TABLE physician_aud (
 ALTER TABLE physician_aud OWNER TO postgres;
 
 --
--- TOC entry 247 (class 1259 OID 175504)
+-- TOC entry 241 (class 1259 OID 178464)
 -- Name: physician_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1084,7 +1035,7 @@ CREATE SEQUENCE physician_sequence
 ALTER TABLE physician_sequence OWNER TO postgres;
 
 --
--- TOC entry 215 (class 1259 OID 175366)
+-- TOC entry 212 (class 1259 OID 178345)
 -- Name: sample; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1104,7 +1055,7 @@ CREATE TABLE sample (
 ALTER TABLE sample OWNER TO postgres;
 
 --
--- TOC entry 216 (class 1259 OID 175374)
+-- TOC entry 213 (class 1259 OID 178353)
 -- Name: sample_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1124,7 +1075,7 @@ CREATE TABLE sample_aud (
 ALTER TABLE sample_aud OWNER TO postgres;
 
 --
--- TOC entry 248 (class 1259 OID 175506)
+-- TOC entry 242 (class 1259 OID 178466)
 -- Name: sample_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1139,7 +1090,7 @@ CREATE SEQUENCE sample_sequence
 ALTER TABLE sample_sequence OWNER TO postgres;
 
 --
--- TOC entry 217 (class 1259 OID 175382)
+-- TOC entry 214 (class 1259 OID 178361)
 -- Name: signature; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1154,7 +1105,7 @@ CREATE TABLE signature (
 ALTER TABLE signature OWNER TO postgres;
 
 --
--- TOC entry 218 (class 1259 OID 175387)
+-- TOC entry 215 (class 1259 OID 178366)
 -- Name: signature_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1170,7 +1121,7 @@ CREATE TABLE signature_aud (
 ALTER TABLE signature_aud OWNER TO postgres;
 
 --
--- TOC entry 249 (class 1259 OID 175508)
+-- TOC entry 243 (class 1259 OID 178468)
 -- Name: signature_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1185,7 +1136,7 @@ CREATE SEQUENCE signature_sequence
 ALTER TABLE signature_sequence OWNER TO postgres;
 
 --
--- TOC entry 219 (class 1259 OID 175392)
+-- TOC entry 216 (class 1259 OID 178371)
 -- Name: slide; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1208,7 +1159,7 @@ CREATE TABLE slide (
 ALTER TABLE slide OWNER TO postgres;
 
 --
--- TOC entry 220 (class 1259 OID 175400)
+-- TOC entry 217 (class 1259 OID 178379)
 -- Name: slide_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1231,7 +1182,7 @@ CREATE TABLE slide_aud (
 ALTER TABLE slide_aud OWNER TO postgres;
 
 --
--- TOC entry 250 (class 1259 OID 175510)
+-- TOC entry 244 (class 1259 OID 178470)
 -- Name: slide_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1246,7 +1197,7 @@ CREATE SEQUENCE slide_sequence
 ALTER TABLE slide_sequence OWNER TO postgres;
 
 --
--- TOC entry 221 (class 1259 OID 175408)
+-- TOC entry 218 (class 1259 OID 178387)
 -- Name: stainingprototype; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1263,7 +1214,7 @@ CREATE TABLE stainingprototype (
 ALTER TABLE stainingprototype OWNER TO postgres;
 
 --
--- TOC entry 251 (class 1259 OID 175512)
+-- TOC entry 245 (class 1259 OID 178472)
 -- Name: stainingprototype_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1278,7 +1229,7 @@ CREATE SEQUENCE stainingprototype_sequence
 ALTER TABLE stainingprototype_sequence OWNER TO postgres;
 
 --
--- TOC entry 222 (class 1259 OID 175416)
+-- TOC entry 219 (class 1259 OID 178395)
 -- Name: task; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1308,7 +1259,7 @@ CREATE TABLE task (
 ALTER TABLE task OWNER TO postgres;
 
 --
--- TOC entry 223 (class 1259 OID 175424)
+-- TOC entry 220 (class 1259 OID 178403)
 -- Name: task_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1339,48 +1290,7 @@ CREATE TABLE task_aud (
 ALTER TABLE task_aud OWNER TO postgres;
 
 --
--- TOC entry 224 (class 1259 OID 175432)
--- Name: task_contact; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE task_contact (
-    task_id bigint NOT NULL,
-    contacts_id bigint NOT NULL
-);
-
-
-ALTER TABLE task_contact OWNER TO postgres;
-
---
--- TOC entry 225 (class 1259 OID 175435)
--- Name: task_council; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE task_council (
-    task_id bigint NOT NULL,
-    councils_id bigint NOT NULL
-);
-
-
-ALTER TABLE task_council OWNER TO postgres;
-
---
--- TOC entry 226 (class 1259 OID 175438)
--- Name: task_council_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE task_council_aud (
-    rev integer NOT NULL,
-    task_id bigint NOT NULL,
-    councils_id bigint NOT NULL,
-    revtype smallint
-);
-
-
-ALTER TABLE task_council_aud OWNER TO postgres;
-
---
--- TOC entry 227 (class 1259 OID 175443)
+-- TOC entry 221 (class 1259 OID 178411)
 -- Name: task_favouritelist; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1393,7 +1303,7 @@ CREATE TABLE task_favouritelist (
 ALTER TABLE task_favouritelist OWNER TO postgres;
 
 --
--- TOC entry 228 (class 1259 OID 175446)
+-- TOC entry 222 (class 1259 OID 178414)
 -- Name: task_pdfcontainer; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1406,7 +1316,7 @@ CREATE TABLE task_pdfcontainer (
 ALTER TABLE task_pdfcontainer OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1259 OID 175449)
+-- TOC entry 223 (class 1259 OID 178417)
 -- Name: task_pdfcontainer_aud; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1421,7 +1331,7 @@ CREATE TABLE task_pdfcontainer_aud (
 ALTER TABLE task_pdfcontainer_aud OWNER TO postgres;
 
 --
--- TOC entry 252 (class 1259 OID 175514)
+-- TOC entry 246 (class 1259 OID 178474)
 -- Name: task_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1436,7 +1346,7 @@ CREATE SEQUENCE task_sequence
 ALTER TABLE task_sequence OWNER TO postgres;
 
 --
--- TOC entry 253 (class 1259 OID 175516)
+-- TOC entry 247 (class 1259 OID 178476)
 -- Name: user_sequence; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
@@ -1451,7 +1361,743 @@ CREATE SEQUENCE user_sequence
 ALTER TABLE user_sequence OWNER TO postgres;
 
 --
--- TOC entry 2183 (class 2606 OID 175120)
+-- TOC entry 2426 (class 0 OID 178101)
+-- Dependencies: 172
+-- Data for Name: accounting; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY accounting (id, version) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2427 (class 0 OID 178106)
+-- Dependencies: 173
+-- Data for Name: accounting_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY accounting_aud (id, rev, revtype) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2510 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: accounting_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('accounting_sequence', 1, false);
+
+
+--
+-- TOC entry 2428 (class 0 OID 178111)
+-- Dependencies: 174
+-- Data for Name: biobank; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY biobank (id, informedconsenttype, version, task_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2429 (class 0 OID 178116)
+-- Dependencies: 175
+-- Data for Name: biobank_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY biobank_aud (id, rev, revtype, informedconsenttype, task_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2430 (class 0 OID 178121)
+-- Dependencies: 176
+-- Data for Name: biobank_pdfcontainer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY biobank_pdfcontainer (biobank_id, attachedpdfs_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2431 (class 0 OID 178124)
+-- Dependencies: 177
+-- Data for Name: biobank_pdfcontainer_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY biobank_pdfcontainer_aud (rev, biobank_id, attachedpdfs_id, revtype) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2511 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: biobank_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('biobank_sequence', 1, false);
+
+
+--
+-- TOC entry 2432 (class 0 OID 178129)
+-- Dependencies: 178
+-- Data for Name: block; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY block (id, blockid, creationdate, idmanuallyaltered, uniqueslidecounter, version, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2433 (class 0 OID 178134)
+-- Dependencies: 179
+-- Data for Name: block_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY block_aud (id, rev, revtype, blockid, creationdate, idmanuallyaltered, uniqueslidecounter, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2512 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: block_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('block_sequence', 1, false);
+
+
+--
+-- TOC entry 2434 (class 0 OID 178139)
+-- Dependencies: 180
+-- Data for Name: contact; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY contact (id, emailnotificationdate, faxnotificationdate, phonenotificationdate, primarycontact, role, useemail, usefax, usephone, person_id, task_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2513 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: contact_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('contact_sequence', 1, false);
+
+
+--
+-- TOC entry 2435 (class 0 OID 178144)
+-- Dependencies: 181
+-- Data for Name: council; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY council (id, attachment, counciltext, dateofrequest, version, councilphysician_id, physicianrequestingcouncil_id, task_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2436 (class 0 OID 178152)
+-- Dependencies: 182
+-- Data for Name: council_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY council_aud (id, rev, revtype, attachment, counciltext, dateofrequest, councilphysician_id, physicianrequestingcouncil_id, task_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2514 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: council_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('council_sequence', 1, false);
+
+
+--
+-- TOC entry 2437 (class 0 OID 178160)
+-- Dependencies: 183
+-- Data for Name: diagnosis; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY diagnosis (id, diagnosis, icd10, malign, name, version, diagnosisprototype_id, parent_id, sample_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2438 (class 0 OID 178168)
+-- Dependencies: 184
+-- Data for Name: diagnosis_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY diagnosis_aud (id, rev, revtype, diagnosis, icd10, malign, name, parent_id, sample_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2515 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: diagnosis_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('diagnosis_sequence', 1, false);
+
+
+--
+-- TOC entry 2439 (class 0 OID 178176)
+-- Dependencies: 185
+-- Data for Name: diagnosiscontainer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY diagnosiscontainer (id, signaturedate, parent_id, signatureone_id, signaturetwo_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2440 (class 0 OID 178181)
+-- Dependencies: 186
+-- Data for Name: diagnosiscontainer_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY diagnosiscontainer_aud (id, rev, revtype, signaturedate, parent_id, signatureone_id, signaturetwo_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2516 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: diagnosiscontainer_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('diagnosiscontainer_sequence', 1, false);
+
+
+--
+-- TOC entry 2441 (class 0 OID 178186)
+-- Dependencies: 187
+-- Data for Name: diagnosispreset; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY diagnosispreset (id, category, commentary, diagnosis, extendeddiagnosistext, icd10, indexinlist, malign) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2517 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: diagnosispreset_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('diagnosispreset_sequence', 1, false);
+
+
+--
+-- TOC entry 2442 (class 0 OID 178194)
+-- Dependencies: 188
+-- Data for Name: diagnosisrevision; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY diagnosisrevision (id, compleationdate, creationdate, diagnosiscompleted, name, rediagnosis, sequencenumber, text, type, version, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2443 (class 0 OID 178202)
+-- Dependencies: 189
+-- Data for Name: diagnosisrevision_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY diagnosisrevision_aud (id, rev, revtype, compleationdate, creationdate, diagnosiscompleted, name, rediagnosis, sequencenumber, text, type, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2518 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: diagnosisrevision_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('diagnosisrevision_sequence', 1, false);
+
+
+--
+-- TOC entry 2444 (class 0 OID 178210)
+-- Dependencies: 190
+-- Data for Name: favouritelist; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY favouritelist (id, defaultlist, editable, global, name, owner_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2519 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: favouritelist_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('favouritelist_sequence', 1, false);
+
+
+--
+-- TOC entry 2445 (class 0 OID 178215)
+-- Dependencies: 191
+-- Data for Name: favouritelistitem; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY favouritelistitem (id, commentary, favouritelist_id, task_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2520 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: favouritelistitem_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('favouritelistitem_sequence', 1, false);
+
+
+--
+-- TOC entry 2446 (class 0 OID 178220)
+-- Dependencies: 192
+-- Data for Name: favouritelistitem_slide; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY favouritelistitem_slide (favouritelistitem_id, slides_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2447 (class 0 OID 178223)
+-- Dependencies: 193
+-- Data for Name: histouser; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY histouser (id, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, defaultworklisttoload, defaultworklistview, enabled, lastlogin, preferedlabelpritner, preferedprinter, role, username, version, physician_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2448 (class 0 OID 178231)
+-- Dependencies: 194
+-- Data for Name: histouser_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY histouser_aud (id, rev, revtype, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, defaultworklisttoload, defaultworklistview, enabled, lastlogin, preferedlabelpritner, preferedprinter, role, username, physician_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2449 (class 0 OID 178239)
+-- Dependencies: 195
+-- Data for Name: listitem; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY listitem (id, archived, indexinlist, listtype, value) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2450 (class 0 OID 178244)
+-- Dependencies: 196
+-- Data for Name: listitem_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY listitem_aud (id, rev, revtype, archived, indexinlist, listtype, value) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2521 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: listitem_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('listitem_sequence', 1, false);
+
+
+--
+-- TOC entry 2451 (class 0 OID 178249)
+-- Dependencies: 197
+-- Data for Name: log; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY log (id, logstring, "timestamp", patient_id, useracc_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2522 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: log_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('log_sequence', 1, false);
+
+
+--
+-- TOC entry 2452 (class 0 OID 178254)
+-- Dependencies: 198
+-- Data for Name: materialpreset; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY materialpreset (id, commentary, indexinlist, name) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2523 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: materialpreset_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('materialpreset_sequence', 1, false);
+
+
+--
+-- TOC entry 2453 (class 0 OID 178262)
+-- Dependencies: 199
+-- Data for Name: materialpreset_stainingprototype; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY materialpreset_stainingprototype (materialpreset_id, stainingprototypes_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2454 (class 0 OID 178265)
+-- Dependencies: 200
+-- Data for Name: patient; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY patient (id, archived, creationdate, externalpatient, insurance, piz, privateinsurance, version, person_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2455 (class 0 OID 178273)
+-- Dependencies: 201
+-- Data for Name: patient_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY patient_aud (id, rev, revtype, archived, creationdate, externalpatient, insurance, piz, privateinsurance) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2456 (class 0 OID 178281)
+-- Dependencies: 202
+-- Data for Name: patient_pdfcontainer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY patient_pdfcontainer (patient_id, attachedpdfs_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2457 (class 0 OID 178284)
+-- Dependencies: 203
+-- Data for Name: patient_pdfcontainer_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY patient_pdfcontainer_aud (rev, patient_id, attachedpdfs_id, revtype) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2524 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: patient_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('patient_sequence', 1, false);
+
+
+--
+-- TOC entry 2458 (class 0 OID 178289)
+-- Dependencies: 204
+-- Data for Name: pdfcontainer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY pdfcontainer (id, commentary, creationdate, data, finaldocument, name, type) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2459 (class 0 OID 178297)
+-- Dependencies: 205
+-- Data for Name: pdfcontainer_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY pdfcontainer_aud (id, rev, revtype, commentary, creationdate, data, finaldocument, name, type) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2525 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: pdfs_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('pdfs_sequence', 1, false);
+
+
+--
+-- TOC entry 2460 (class 0 OID 178305)
+-- Dependencies: 206
+-- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY person (id, archived, birthday, country, department, email, fax, gender, mobilenumber, name, phonenumber, postcode, street, surname, title, town, version) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2461 (class 0 OID 178313)
+-- Dependencies: 207
+-- Data for Name: person_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY person_aud (id, rev, revtype, archived, birthday, country, department, email, fax, gender, mobilenumber, name, phonenumber, postcode, street, surname, title, town) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2526 (class 0 OID 0)
+-- Dependencies: 240
+-- Name: person_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('person_sequence', 1, false);
+
+
+--
+-- TOC entry 2462 (class 0 OID 178321)
+-- Dependencies: 208
+-- Data for Name: physician; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY physician (id, archived, clinicemployee, clinicrole, employeenumber, pager, uid, version, person_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2463 (class 0 OID 178329)
+-- Dependencies: 209
+-- Data for Name: physician_associatedroles; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY physician_associatedroles (physician_id, associatedroles) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2464 (class 0 OID 178332)
+-- Dependencies: 210
+-- Data for Name: physician_associatedroles_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY physician_associatedroles_aud (rev, physician_id, associatedroles, revtype) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2465 (class 0 OID 178337)
+-- Dependencies: 211
+-- Data for Name: physician_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY physician_aud (id, rev, revtype, archived, clinicemployee, clinicrole, employeenumber, pager, uid, person_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2527 (class 0 OID 0)
+-- Dependencies: 241
+-- Name: physician_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('physician_sequence', 1, false);
+
+
+--
+-- TOC entry 2466 (class 0 OID 178345)
+-- Dependencies: 212
+-- Data for Name: sample; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY sample (id, creationdate, idmanuallyaltered, material, restainingphase, sampleid, version, materilapreset_id, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2467 (class 0 OID 178353)
+-- Dependencies: 213
+-- Data for Name: sample_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY sample_aud (id, rev, revtype, creationdate, idmanuallyaltered, material, restainingphase, sampleid, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2528 (class 0 OID 0)
+-- Dependencies: 242
+-- Name: sample_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('sample_sequence', 1, false);
+
+
+--
+-- TOC entry 2468 (class 0 OID 178361)
+-- Dependencies: 214
+-- Data for Name: signature; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY signature (id, role, version, physician_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2469 (class 0 OID 178366)
+-- Dependencies: 215
+-- Data for Name: signature_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY signature_aud (id, rev, revtype, role, physician_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2529 (class 0 OID 0)
+-- Dependencies: 243
+-- Name: signature_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('signature_sequence', 1, false);
+
+
+--
+-- TOC entry 2470 (class 0 OID 178371)
+-- Dependencies: 216
+-- Data for Name: slide; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY slide (id, commentary, completiondate, creationdate, idmanuallyaltered, restaining, slideid, stainingcompleted, uniqueidinblock, version, parent_id, slideprototype_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2471 (class 0 OID 178379)
+-- Dependencies: 217
+-- Data for Name: slide_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY slide_aud (id, rev, revtype, commentary, completiondate, creationdate, idmanuallyaltered, restaining, slideid, stainingcompleted, uniqueidinblock, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2530 (class 0 OID 0)
+-- Dependencies: 244
+-- Name: slide_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('slide_sequence', 1, false);
+
+
+--
+-- TOC entry 2472 (class 0 OID 178387)
+-- Dependencies: 218
+-- Data for Name: stainingprototype; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY stainingprototype (id, archived, commentary, indexinlist, name, type) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2531 (class 0 OID 0)
+-- Dependencies: 245
+-- Name: stainingprototype_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('stainingprototype_sequence', 1, false);
+
+
+--
+-- TOC entry 2473 (class 0 OID 178395)
+-- Dependencies: 219
+-- Data for Name: task; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY task (id, casehistory, creationdate, dateofreceipt, dateofsugery, diagnosiscompletiondate, duedate, eye, finalized, notificationcompletiondate, stainingcompletiondate, taskid, taskpriority, typeofoperation, useautonomenclature, version, ward, accounting_id, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2474 (class 0 OID 178403)
+-- Dependencies: 220
+-- Data for Name: task_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY task_aud (id, rev, revtype, casehistory, creationdate, dateofreceipt, dateofsugery, diagnosiscompletiondate, duedate, eye, finalized, notificationcompletiondate, stainingcompletiondate, taskid, taskpriority, typeofoperation, useautonomenclature, ward, accounting_id, parent_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2475 (class 0 OID 178411)
+-- Dependencies: 221
+-- Data for Name: task_favouritelist; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY task_favouritelist (task_id, favouritelists_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2476 (class 0 OID 178414)
+-- Dependencies: 222
+-- Data for Name: task_pdfcontainer; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY task_pdfcontainer (task_id, attachedpdfs_id) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2477 (class 0 OID 178417)
+-- Dependencies: 223
+-- Data for Name: task_pdfcontainer_aud; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY task_pdfcontainer_aud (rev, task_id, attachedpdfs_id, revtype) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2532 (class 0 OID 0)
+-- Dependencies: 246
+-- Name: task_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('task_sequence', 1, false);
+
+
+--
+-- TOC entry 2533 (class 0 OID 0)
+-- Dependencies: 247
+-- Name: user_sequence; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('user_sequence', 1, false);
+
+
+--
+-- TOC entry 2159 (class 2606 OID 178110)
 -- Name: accounting_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1460,7 +2106,7 @@ ALTER TABLE ONLY accounting_aud
 
 
 --
--- TOC entry 2181 (class 2606 OID 175115)
+-- TOC entry 2157 (class 2606 OID 178105)
 -- Name: accounting_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1469,7 +2115,7 @@ ALTER TABLE ONLY accounting
 
 
 --
--- TOC entry 2187 (class 2606 OID 175130)
+-- TOC entry 2163 (class 2606 OID 178120)
 -- Name: biobank_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1478,7 +2124,7 @@ ALTER TABLE ONLY biobank_aud
 
 
 --
--- TOC entry 2191 (class 2606 OID 175138)
+-- TOC entry 2167 (class 2606 OID 178128)
 -- Name: biobank_pdfcontainer_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1487,7 +2133,7 @@ ALTER TABLE ONLY biobank_pdfcontainer_aud
 
 
 --
--- TOC entry 2185 (class 2606 OID 175125)
+-- TOC entry 2161 (class 2606 OID 178115)
 -- Name: biobank_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1496,7 +2142,7 @@ ALTER TABLE ONLY biobank
 
 
 --
--- TOC entry 2195 (class 2606 OID 175148)
+-- TOC entry 2171 (class 2606 OID 178138)
 -- Name: block_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1505,7 +2151,7 @@ ALTER TABLE ONLY block_aud
 
 
 --
--- TOC entry 2193 (class 2606 OID 175143)
+-- TOC entry 2169 (class 2606 OID 178133)
 -- Name: block_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1514,16 +2160,7 @@ ALTER TABLE ONLY block
 
 
 --
--- TOC entry 2199 (class 2606 OID 175156)
--- Name: block_slide_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY block_slide_aud
-    ADD CONSTRAINT block_slide_aud_pkey PRIMARY KEY (rev, block_id, slides_id);
-
-
---
--- TOC entry 2201 (class 2606 OID 175161)
+-- TOC entry 2173 (class 2606 OID 178143)
 -- Name: contact_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1532,7 +2169,7 @@ ALTER TABLE ONLY contact
 
 
 --
--- TOC entry 2205 (class 2606 OID 175177)
+-- TOC entry 2177 (class 2606 OID 178159)
 -- Name: council_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1541,7 +2178,7 @@ ALTER TABLE ONLY council_aud
 
 
 --
--- TOC entry 2203 (class 2606 OID 175169)
+-- TOC entry 2175 (class 2606 OID 178151)
 -- Name: council_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1550,7 +2187,7 @@ ALTER TABLE ONLY council
 
 
 --
--- TOC entry 2209 (class 2606 OID 175193)
+-- TOC entry 2181 (class 2606 OID 178175)
 -- Name: diagnosis_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1559,7 +2196,7 @@ ALTER TABLE ONLY diagnosis_aud
 
 
 --
--- TOC entry 2207 (class 2606 OID 175185)
+-- TOC entry 2179 (class 2606 OID 178167)
 -- Name: diagnosis_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1568,7 +2205,7 @@ ALTER TABLE ONLY diagnosis
 
 
 --
--- TOC entry 2213 (class 2606 OID 175203)
+-- TOC entry 2185 (class 2606 OID 178185)
 -- Name: diagnosiscontainer_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1577,7 +2214,7 @@ ALTER TABLE ONLY diagnosiscontainer_aud
 
 
 --
--- TOC entry 2211 (class 2606 OID 175198)
+-- TOC entry 2183 (class 2606 OID 178180)
 -- Name: diagnosiscontainer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1586,7 +2223,7 @@ ALTER TABLE ONLY diagnosiscontainer
 
 
 --
--- TOC entry 2215 (class 2606 OID 175211)
+-- TOC entry 2187 (class 2606 OID 178193)
 -- Name: diagnosispreset_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1595,7 +2232,7 @@ ALTER TABLE ONLY diagnosispreset
 
 
 --
--- TOC entry 2219 (class 2606 OID 175227)
+-- TOC entry 2191 (class 2606 OID 178209)
 -- Name: diagnosisrevision_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1604,7 +2241,7 @@ ALTER TABLE ONLY diagnosisrevision_aud
 
 
 --
--- TOC entry 2217 (class 2606 OID 175219)
+-- TOC entry 2189 (class 2606 OID 178201)
 -- Name: diagnosisrevision_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1613,7 +2250,7 @@ ALTER TABLE ONLY diagnosisrevision
 
 
 --
--- TOC entry 2221 (class 2606 OID 175232)
+-- TOC entry 2193 (class 2606 OID 178214)
 -- Name: favouritelist_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1622,7 +2259,7 @@ ALTER TABLE ONLY favouritelist
 
 
 --
--- TOC entry 2225 (class 2606 OID 175240)
+-- TOC entry 2195 (class 2606 OID 178219)
 -- Name: favouritelistitem_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1631,7 +2268,7 @@ ALTER TABLE ONLY favouritelistitem
 
 
 --
--- TOC entry 2231 (class 2606 OID 175259)
+-- TOC entry 2201 (class 2606 OID 178238)
 -- Name: histouser_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1640,7 +2277,7 @@ ALTER TABLE ONLY histouser_aud
 
 
 --
--- TOC entry 2229 (class 2606 OID 175251)
+-- TOC entry 2199 (class 2606 OID 178230)
 -- Name: histouser_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1649,7 +2286,7 @@ ALTER TABLE ONLY histouser
 
 
 --
--- TOC entry 2235 (class 2606 OID 175269)
+-- TOC entry 2205 (class 2606 OID 178248)
 -- Name: listitem_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1658,7 +2295,7 @@ ALTER TABLE ONLY listitem_aud
 
 
 --
--- TOC entry 2233 (class 2606 OID 175264)
+-- TOC entry 2203 (class 2606 OID 178243)
 -- Name: listitem_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1667,7 +2304,7 @@ ALTER TABLE ONLY listitem
 
 
 --
--- TOC entry 2237 (class 2606 OID 175274)
+-- TOC entry 2207 (class 2606 OID 178253)
 -- Name: log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1676,7 +2313,7 @@ ALTER TABLE ONLY log
 
 
 --
--- TOC entry 2239 (class 2606 OID 175282)
+-- TOC entry 2209 (class 2606 OID 178261)
 -- Name: materialpreset_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1685,7 +2322,7 @@ ALTER TABLE ONLY materialpreset
 
 
 --
--- TOC entry 2243 (class 2606 OID 175301)
+-- TOC entry 2213 (class 2606 OID 178280)
 -- Name: patient_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1694,7 +2331,7 @@ ALTER TABLE ONLY patient_aud
 
 
 --
--- TOC entry 2247 (class 2606 OID 175309)
+-- TOC entry 2217 (class 2606 OID 178288)
 -- Name: patient_pdfcontainer_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1703,7 +2340,7 @@ ALTER TABLE ONLY patient_pdfcontainer_aud
 
 
 --
--- TOC entry 2241 (class 2606 OID 175293)
+-- TOC entry 2211 (class 2606 OID 178272)
 -- Name: patient_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1712,7 +2349,7 @@ ALTER TABLE ONLY patient
 
 
 --
--- TOC entry 2251 (class 2606 OID 175325)
+-- TOC entry 2221 (class 2606 OID 178304)
 -- Name: pdfcontainer_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1721,7 +2358,7 @@ ALTER TABLE ONLY pdfcontainer_aud
 
 
 --
--- TOC entry 2249 (class 2606 OID 175317)
+-- TOC entry 2219 (class 2606 OID 178296)
 -- Name: pdfcontainer_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1730,7 +2367,7 @@ ALTER TABLE ONLY pdfcontainer
 
 
 --
--- TOC entry 2255 (class 2606 OID 175341)
+-- TOC entry 2225 (class 2606 OID 178320)
 -- Name: person_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1739,7 +2376,7 @@ ALTER TABLE ONLY person_aud
 
 
 --
--- TOC entry 2253 (class 2606 OID 175333)
+-- TOC entry 2223 (class 2606 OID 178312)
 -- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1748,7 +2385,7 @@ ALTER TABLE ONLY person
 
 
 --
--- TOC entry 2259 (class 2606 OID 175357)
+-- TOC entry 2229 (class 2606 OID 178336)
 -- Name: physician_associatedroles_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1757,7 +2394,7 @@ ALTER TABLE ONLY physician_associatedroles_aud
 
 
 --
--- TOC entry 2261 (class 2606 OID 175365)
+-- TOC entry 2231 (class 2606 OID 178344)
 -- Name: physician_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1766,7 +2403,7 @@ ALTER TABLE ONLY physician_aud
 
 
 --
--- TOC entry 2257 (class 2606 OID 175349)
+-- TOC entry 2227 (class 2606 OID 178328)
 -- Name: physician_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1775,7 +2412,7 @@ ALTER TABLE ONLY physician
 
 
 --
--- TOC entry 2265 (class 2606 OID 175381)
+-- TOC entry 2235 (class 2606 OID 178360)
 -- Name: sample_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1784,7 +2421,7 @@ ALTER TABLE ONLY sample_aud
 
 
 --
--- TOC entry 2263 (class 2606 OID 175373)
+-- TOC entry 2233 (class 2606 OID 178352)
 -- Name: sample_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1793,7 +2430,7 @@ ALTER TABLE ONLY sample
 
 
 --
--- TOC entry 2269 (class 2606 OID 175391)
+-- TOC entry 2239 (class 2606 OID 178370)
 -- Name: signature_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1802,7 +2439,7 @@ ALTER TABLE ONLY signature_aud
 
 
 --
--- TOC entry 2267 (class 2606 OID 175386)
+-- TOC entry 2237 (class 2606 OID 178365)
 -- Name: signature_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1811,7 +2448,7 @@ ALTER TABLE ONLY signature
 
 
 --
--- TOC entry 2273 (class 2606 OID 175407)
+-- TOC entry 2243 (class 2606 OID 178386)
 -- Name: slide_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1820,7 +2457,7 @@ ALTER TABLE ONLY slide_aud
 
 
 --
--- TOC entry 2271 (class 2606 OID 175399)
+-- TOC entry 2241 (class 2606 OID 178378)
 -- Name: slide_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1829,7 +2466,7 @@ ALTER TABLE ONLY slide
 
 
 --
--- TOC entry 2275 (class 2606 OID 175415)
+-- TOC entry 2245 (class 2606 OID 178394)
 -- Name: stainingprototype_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1838,7 +2475,7 @@ ALTER TABLE ONLY stainingprototype
 
 
 --
--- TOC entry 2279 (class 2606 OID 175431)
+-- TOC entry 2249 (class 2606 OID 178410)
 -- Name: task_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1847,16 +2484,7 @@ ALTER TABLE ONLY task_aud
 
 
 --
--- TOC entry 2285 (class 2606 OID 175442)
--- Name: task_council_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY task_council_aud
-    ADD CONSTRAINT task_council_aud_pkey PRIMARY KEY (rev, task_id, councils_id);
-
-
---
--- TOC entry 2289 (class 2606 OID 175453)
+-- TOC entry 2253 (class 2606 OID 178421)
 -- Name: task_pdfcontainer_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1865,7 +2493,7 @@ ALTER TABLE ONLY task_pdfcontainer_aud
 
 
 --
--- TOC entry 2277 (class 2606 OID 175423)
+-- TOC entry 2247 (class 2606 OID 178402)
 -- Name: task_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1874,16 +2502,7 @@ ALTER TABLE ONLY task
 
 
 --
--- TOC entry 2223 (class 2606 OID 175459)
--- Name: uk_3y49rj805dux4pu3r4l6bc5dy; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY favouritelist_favouritelistitem
-    ADD CONSTRAINT uk_3y49rj805dux4pu3r4l6bc5dy UNIQUE (items_id);
-
-
---
--- TOC entry 2189 (class 2606 OID 175455)
+-- TOC entry 2165 (class 2606 OID 178423)
 -- Name: uk_8gmung1gnute185q5scwax2kk; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1892,7 +2511,7 @@ ALTER TABLE ONLY biobank_pdfcontainer
 
 
 --
--- TOC entry 2245 (class 2606 OID 175463)
+-- TOC entry 2215 (class 2606 OID 178427)
 -- Name: uk_c7n1md70xsclk1c5w9yiaucl9; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1901,25 +2520,7 @@ ALTER TABLE ONLY patient_pdfcontainer
 
 
 --
--- TOC entry 2283 (class 2606 OID 175467)
--- Name: uk_em2io2eauekvornvqvvwsbc02; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY task_council
-    ADD CONSTRAINT uk_em2io2eauekvornvqvvwsbc02 UNIQUE (councils_id);
-
-
---
--- TOC entry 2197 (class 2606 OID 175457)
--- Name: uk_jvtxw3tob8i03lai1wqjpmxpg; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY block_slide
-    ADD CONSTRAINT uk_jvtxw3tob8i03lai1wqjpmxpg UNIQUE (slides_id);
-
-
---
--- TOC entry 2227 (class 2606 OID 175461)
+-- TOC entry 2197 (class 2606 OID 178425)
 -- Name: uk_o0yirweonp3km3pwmygn25m6l; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1928,16 +2529,7 @@ ALTER TABLE ONLY favouritelistitem_slide
 
 
 --
--- TOC entry 2281 (class 2606 OID 175465)
--- Name: uk_rd71ply3a4y21xx6ty30kjysn; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY task_contact
-    ADD CONSTRAINT uk_rd71ply3a4y21xx6ty30kjysn UNIQUE (contacts_id);
-
-
---
--- TOC entry 2287 (class 2606 OID 175469)
+-- TOC entry 2251 (class 2606 OID 178429)
 -- Name: uk_rp12j1tw0yxecu9bt0b0ym72t; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -1946,7 +2538,7 @@ ALTER TABLE ONLY task_pdfcontainer
 
 
 --
--- TOC entry 2326 (class 2606 OID 175698)
+-- TOC entry 2288 (class 2606 OID 178648)
 -- Name: fk1bst8b00qmn0oj23k8prayqxj; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1955,7 +2547,7 @@ ALTER TABLE ONLY materialpreset_stainingprototype
 
 
 --
--- TOC entry 2357 (class 2606 OID 175853)
+-- TOC entry 2314 (class 2606 OID 178778)
 -- Name: fk1nlxc2eyqhwgppy78awmrp7ll; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1964,16 +2556,7 @@ ALTER TABLE ONLY task_pdfcontainer
 
 
 --
--- TOC entry 2298 (class 2606 OID 175558)
--- Name: fk2ad5d9px3o5xcjlmoi36wkwhd; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY block_slide
-    ADD CONSTRAINT fk2ad5d9px3o5xcjlmoi36wkwhd FOREIGN KEY (slides_id) REFERENCES slide(id);
-
-
---
--- TOC entry 2319 (class 2606 OID 175663)
+-- TOC entry 2281 (class 2606 OID 178613)
 -- Name: fk2dywsxil46cav4blg6y97w212; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1982,7 +2565,7 @@ ALTER TABLE ONLY favouritelistitem_slide
 
 
 --
--- TOC entry 2324 (class 2606 OID 175688)
+-- TOC entry 2286 (class 2606 OID 178638)
 -- Name: fk2geclw1xdg95arxhgld55ua4d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1991,7 +2574,7 @@ ALTER TABLE ONLY log
 
 
 --
--- TOC entry 2335 (class 2606 OID 175743)
+-- TOC entry 2297 (class 2606 OID 178693)
 -- Name: fk2smdyaolrfpjcbado9x2g41uk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2000,7 +2583,7 @@ ALTER TABLE ONLY physician
 
 
 --
--- TOC entry 2306 (class 2606 OID 175598)
+-- TOC entry 2269 (class 2606 OID 178553)
 -- Name: fk32uoy19bfoa2vftn76usitsfw; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2009,7 +2592,7 @@ ALTER TABLE ONLY diagnosis
 
 
 --
--- TOC entry 2341 (class 2606 OID 175773)
+-- TOC entry 2303 (class 2606 OID 178723)
 -- Name: fk3odrq5c7mto2e475q8mujnnk9; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2018,7 +2601,7 @@ ALTER TABLE ONLY sample_aud
 
 
 --
--- TOC entry 2310 (class 2606 OID 175618)
+-- TOC entry 2273 (class 2606 OID 178573)
 -- Name: fk3rr8duo0rmx64pyo05dmh409; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2027,7 +2610,7 @@ ALTER TABLE ONLY diagnosiscontainer
 
 
 --
--- TOC entry 2295 (class 2606 OID 175543)
+-- TOC entry 2259 (class 2606 OID 178503)
 -- Name: fk4e0sfxjfwdivmkhb6dyr5o5yv; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2036,7 +2619,7 @@ ALTER TABLE ONLY biobank_pdfcontainer_aud
 
 
 --
--- TOC entry 2313 (class 2606 OID 175633)
+-- TOC entry 2276 (class 2606 OID 178588)
 -- Name: fk4lv3sjkvkxbr3hylgbo3hciej; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2045,7 +2628,7 @@ ALTER TABLE ONLY diagnosisrevision
 
 
 --
--- TOC entry 2339 (class 2606 OID 175763)
+-- TOC entry 2301 (class 2606 OID 178713)
 -- Name: fk5mbf4j0w3sglwx0juecjddk1b; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2054,7 +2637,7 @@ ALTER TABLE ONLY sample
 
 
 --
--- TOC entry 2347 (class 2606 OID 175803)
+-- TOC entry 2309 (class 2606 OID 178753)
 -- Name: fk668fdat9n9qrjbohxo1kj1ujs; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2063,7 +2646,7 @@ ALTER TABLE ONLY task
 
 
 --
--- TOC entry 2308 (class 2606 OID 175608)
+-- TOC entry 2271 (class 2606 OID 178563)
 -- Name: fk6bbtlo76a9hk6ytjidbt9fxg; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2072,7 +2655,7 @@ ALTER TABLE ONLY diagnosis_aud
 
 
 --
--- TOC entry 2331 (class 2606 OID 175723)
+-- TOC entry 2293 (class 2606 OID 178673)
 -- Name: fk7aj1kgit6wmfm6yuey492ijnt; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2081,7 +2664,7 @@ ALTER TABLE ONLY patient_pdfcontainer
 
 
 --
--- TOC entry 2344 (class 2606 OID 175788)
+-- TOC entry 2306 (class 2606 OID 178738)
 -- Name: fk8bisjpgy4gynmls8o299uje7e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2090,7 +2673,7 @@ ALTER TABLE ONLY slide
 
 
 --
--- TOC entry 2329 (class 2606 OID 175713)
+-- TOC entry 2291 (class 2606 OID 178663)
 -- Name: fk9wveqkna7om7o002mk7vme5mo; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2099,16 +2682,7 @@ ALTER TABLE ONLY patient_aud
 
 
 --
--- TOC entry 2299 (class 2606 OID 175563)
--- Name: fka43d3nal2v4a3oyd7lihk4jy8; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY block_slide
-    ADD CONSTRAINT fka43d3nal2v4a3oyd7lihk4jy8 FOREIGN KEY (block_id) REFERENCES block(id);
-
-
---
--- TOC entry 2315 (class 2606 OID 175643)
+-- TOC entry 2278 (class 2606 OID 178598)
 -- Name: fkagos9iqsfep7vhrkattmw6rxs; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2117,7 +2691,7 @@ ALTER TABLE ONLY favouritelist
 
 
 --
--- TOC entry 2345 (class 2606 OID 175793)
+-- TOC entry 2307 (class 2606 OID 178743)
 -- Name: fkajlvo5ivb7hno7rule6t7pl9f; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2126,7 +2700,7 @@ ALTER TABLE ONLY slide
 
 
 --
--- TOC entry 2340 (class 2606 OID 175768)
+-- TOC entry 2302 (class 2606 OID 178718)
 -- Name: fkb4cvw8cc73wv0aqm9obeav6i2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2135,7 +2709,7 @@ ALTER TABLE ONLY sample
 
 
 --
--- TOC entry 2320 (class 2606 OID 175668)
+-- TOC entry 2282 (class 2606 OID 178618)
 -- Name: fkb6l6i6059434tyvq55malm5fm; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2144,7 +2718,16 @@ ALTER TABLE ONLY favouritelistitem_slide
 
 
 --
--- TOC entry 2309 (class 2606 OID 175613)
+-- TOC entry 2279 (class 2606 OID 178603)
+-- Name: fkblkbd6uy7xhonhwl7olx3dkjf; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY favouritelistitem
+    ADD CONSTRAINT fkblkbd6uy7xhonhwl7olx3dkjf FOREIGN KEY (favouritelist_id) REFERENCES favouritelist(id);
+
+
+--
+-- TOC entry 2272 (class 2606 OID 178568)
 -- Name: fkc4cxxfrbmahc0vmptl3p26q4l; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2153,7 +2736,7 @@ ALTER TABLE ONLY diagnosiscontainer
 
 
 --
--- TOC entry 2359 (class 2606 OID 175863)
+-- TOC entry 2316 (class 2606 OID 178788)
 -- Name: fkc9rehqelphi08i4fpdmeqmgf8; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2162,7 +2745,7 @@ ALTER TABLE ONLY task_pdfcontainer_aud
 
 
 --
--- TOC entry 2322 (class 2606 OID 175678)
+-- TOC entry 2284 (class 2606 OID 178628)
 -- Name: fkccrvl08714semjnjjlhiys095; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2171,7 +2754,7 @@ ALTER TABLE ONLY histouser_aud
 
 
 --
--- TOC entry 2325 (class 2606 OID 175693)
+-- TOC entry 2287 (class 2606 OID 178643)
 -- Name: fkcfkdnt9q8jyrhtf0k608p4r5u; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2180,16 +2763,7 @@ ALTER TABLE ONLY log
 
 
 --
--- TOC entry 2352 (class 2606 OID 175828)
--- Name: fkcg7i6iwt50stdvvyilfgpfw2l; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY task_council
-    ADD CONSTRAINT fkcg7i6iwt50stdvvyilfgpfw2l FOREIGN KEY (councils_id) REFERENCES council(id);
-
-
---
--- TOC entry 2318 (class 2606 OID 175658)
+-- TOC entry 2280 (class 2606 OID 178608)
 -- Name: fkeb04jt4ss6i0ancf6ntvm67sy; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2198,7 +2772,7 @@ ALTER TABLE ONLY favouritelistitem
 
 
 --
--- TOC entry 2334 (class 2606 OID 175738)
+-- TOC entry 2296 (class 2606 OID 178688)
 -- Name: fkeg2mwijn6o6kygiq6c8tniui2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2207,7 +2781,7 @@ ALTER TABLE ONLY person_aud
 
 
 --
--- TOC entry 2303 (class 2606 OID 175583)
+-- TOC entry 2265 (class 2606 OID 178533)
 -- Name: fkevqokctda9dg1goc445v6rphg; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2216,7 +2790,7 @@ ALTER TABLE ONLY council
 
 
 --
--- TOC entry 2291 (class 2606 OID 175523)
+-- TOC entry 2255 (class 2606 OID 178483)
 -- Name: fkfg5koer6t3khc2gipb6p2ppcs; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2225,7 +2799,16 @@ ALTER TABLE ONLY biobank
 
 
 --
--- TOC entry 2355 (class 2606 OID 175843)
+-- TOC entry 2266 (class 2606 OID 178538)
+-- Name: fkfyqwvjmwx1q21w8gyykbiocn5; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY council
+    ADD CONSTRAINT fkfyqwvjmwx1q21w8gyykbiocn5 FOREIGN KEY (task_id) REFERENCES task(id);
+
+
+--
+-- TOC entry 2312 (class 2606 OID 178768)
 -- Name: fkgct8u028tim6qqddmg5lowt38; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2234,7 +2817,7 @@ ALTER TABLE ONLY task_favouritelist
 
 
 --
--- TOC entry 2349 (class 2606 OID 175813)
+-- TOC entry 2311 (class 2606 OID 178763)
 -- Name: fkgikt3dggettub25r90wj7wgyn; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2243,7 +2826,7 @@ ALTER TABLE ONLY task_aud
 
 
 --
--- TOC entry 2305 (class 2606 OID 175593)
+-- TOC entry 2268 (class 2606 OID 178548)
 -- Name: fkgxu9h14yhbasujop4ic2y8x7c; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2252,16 +2835,7 @@ ALTER TABLE ONLY diagnosis
 
 
 --
--- TOC entry 2300 (class 2606 OID 175568)
--- Name: fkh19grl8wjfjdxp46gw3y5reb2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY block_slide_aud
-    ADD CONSTRAINT fkh19grl8wjfjdxp46gw3y5reb2 FOREIGN KEY (rev) REFERENCES log(id);
-
-
---
--- TOC entry 2328 (class 2606 OID 175708)
+-- TOC entry 2290 (class 2606 OID 178658)
 -- Name: fkh7t53790pi8m7o71uvl5tdb8b; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2270,7 +2844,7 @@ ALTER TABLE ONLY patient
 
 
 --
--- TOC entry 2342 (class 2606 OID 175778)
+-- TOC entry 2304 (class 2606 OID 178728)
 -- Name: fkhqf839wmyl1s8j68tnlfpa5b3; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2279,16 +2853,7 @@ ALTER TABLE ONLY signature
 
 
 --
--- TOC entry 2350 (class 2606 OID 175818)
--- Name: fkhsagy493b4wcwr9hixw6ta8xo; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY task_contact
-    ADD CONSTRAINT fkhsagy493b4wcwr9hixw6ta8xo FOREIGN KEY (contacts_id) REFERENCES contact(id);
-
-
---
--- TOC entry 2348 (class 2606 OID 175808)
+-- TOC entry 2310 (class 2606 OID 178758)
 -- Name: fkikwevoftf7bem1blamb42rs8g; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2297,7 +2862,7 @@ ALTER TABLE ONLY task
 
 
 --
--- TOC entry 2338 (class 2606 OID 175758)
+-- TOC entry 2300 (class 2606 OID 178708)
 -- Name: fkinqd1ki7q7stvp0k7jm8vw9m5; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2306,7 +2871,7 @@ ALTER TABLE ONLY physician_aud
 
 
 --
--- TOC entry 2301 (class 2606 OID 175573)
+-- TOC entry 2262 (class 2606 OID 178518)
 -- Name: fkiulfc3lywuhr4kd29ebb2k1w8; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2315,7 +2880,7 @@ ALTER TABLE ONLY contact
 
 
 --
--- TOC entry 2321 (class 2606 OID 175673)
+-- TOC entry 2283 (class 2606 OID 178623)
 -- Name: fkj3gycrvwuc4ieymxa5e4o5nnq; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2324,7 +2889,7 @@ ALTER TABLE ONLY histouser
 
 
 --
--- TOC entry 2323 (class 2606 OID 175683)
+-- TOC entry 2285 (class 2606 OID 178633)
 -- Name: fkk7nlbhsat4yw82npj3e02gwmc; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2333,7 +2898,7 @@ ALTER TABLE ONLY listitem_aud
 
 
 --
--- TOC entry 2297 (class 2606 OID 175553)
+-- TOC entry 2261 (class 2606 OID 178513)
 -- Name: fkkdlso10u8w4vr3k89pa29uxw4; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2342,7 +2907,7 @@ ALTER TABLE ONLY block_aud
 
 
 --
--- TOC entry 2330 (class 2606 OID 175718)
+-- TOC entry 2292 (class 2606 OID 178668)
 -- Name: fkkhhdxyw988up7uwkpxuw5flig; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2351,16 +2916,7 @@ ALTER TABLE ONLY patient_pdfcontainer
 
 
 --
--- TOC entry 2353 (class 2606 OID 175833)
--- Name: fkkwr2q4l3s1f0f0ydhk3pk1it4; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY task_council
-    ADD CONSTRAINT fkkwr2q4l3s1f0f0ydhk3pk1it4 FOREIGN KEY (task_id) REFERENCES task(id);
-
-
---
--- TOC entry 2358 (class 2606 OID 175858)
+-- TOC entry 2315 (class 2606 OID 178783)
 -- Name: fkllq1uynbi2jd1t9b7ous0skby; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2369,7 +2925,7 @@ ALTER TABLE ONLY task_pdfcontainer
 
 
 --
--- TOC entry 2332 (class 2606 OID 175728)
+-- TOC entry 2294 (class 2606 OID 178678)
 -- Name: fkmew2grnjbayf2cnuvhgr3dg7g; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2378,7 +2934,7 @@ ALTER TABLE ONLY patient_pdfcontainer_aud
 
 
 --
--- TOC entry 2290 (class 2606 OID 175518)
+-- TOC entry 2254 (class 2606 OID 178478)
 -- Name: fknhst3idad75y9rnanr24imgt8; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2387,7 +2943,7 @@ ALTER TABLE ONLY accounting_aud
 
 
 --
--- TOC entry 2296 (class 2606 OID 175548)
+-- TOC entry 2260 (class 2606 OID 178508)
 -- Name: fknrl08qiwf5wc6km7t9ya81ksv; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2396,16 +2952,7 @@ ALTER TABLE ONLY block
 
 
 --
--- TOC entry 2316 (class 2606 OID 175648)
--- Name: fknutdfb70048kqkfgcy9kvpwy6; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY favouritelist_favouritelistitem
-    ADD CONSTRAINT fknutdfb70048kqkfgcy9kvpwy6 FOREIGN KEY (items_id) REFERENCES favouritelistitem(id);
-
-
---
--- TOC entry 2302 (class 2606 OID 175578)
+-- TOC entry 2264 (class 2606 OID 178528)
 -- Name: fko0050v5ngk1r2chk30gp9q8b0; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2414,7 +2961,7 @@ ALTER TABLE ONLY council
 
 
 --
--- TOC entry 2314 (class 2606 OID 175638)
+-- TOC entry 2277 (class 2606 OID 178593)
 -- Name: fkohlos78oh31yxuafnyyf9rp5g; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2423,7 +2970,7 @@ ALTER TABLE ONLY diagnosisrevision_aud
 
 
 --
--- TOC entry 2312 (class 2606 OID 175628)
+-- TOC entry 2275 (class 2606 OID 178583)
 -- Name: fkojt7yjfjh07xlueyqpewfqt41; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2432,25 +2979,7 @@ ALTER TABLE ONLY diagnosiscontainer_aud
 
 
 --
--- TOC entry 2354 (class 2606 OID 175838)
--- Name: fkp6ac5uwps5goik0isqt7lpv3w; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY task_council_aud
-    ADD CONSTRAINT fkp6ac5uwps5goik0isqt7lpv3w FOREIGN KEY (rev) REFERENCES log(id);
-
-
---
--- TOC entry 2317 (class 2606 OID 175653)
--- Name: fkp9dpyleesge43c7190yfrye5e; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY favouritelist_favouritelistitem
-    ADD CONSTRAINT fkp9dpyleesge43c7190yfrye5e FOREIGN KEY (favouritelist_id) REFERENCES favouritelist(id);
-
-
---
--- TOC entry 2294 (class 2606 OID 175538)
+-- TOC entry 2258 (class 2606 OID 178498)
 -- Name: fkpg9m8po8paj70l8jfag15nhna; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2459,7 +2988,7 @@ ALTER TABLE ONLY biobank_pdfcontainer
 
 
 --
--- TOC entry 2336 (class 2606 OID 175748)
+-- TOC entry 2298 (class 2606 OID 178698)
 -- Name: fkq9nodc92fl7fe2xlido9wmqif; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2468,7 +2997,7 @@ ALTER TABLE ONLY physician_associatedroles
 
 
 --
--- TOC entry 2307 (class 2606 OID 175603)
+-- TOC entry 2270 (class 2606 OID 178558)
 -- Name: fkqvhs4cfwunny8954cdkkt4o9w; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2477,7 +3006,7 @@ ALTER TABLE ONLY diagnosis
 
 
 --
--- TOC entry 2293 (class 2606 OID 175533)
+-- TOC entry 2257 (class 2606 OID 178493)
 -- Name: fkqy57gc0ds0waqtrumh8n4dv7t; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2486,7 +3015,7 @@ ALTER TABLE ONLY biobank_pdfcontainer
 
 
 --
--- TOC entry 2304 (class 2606 OID 175588)
+-- TOC entry 2267 (class 2606 OID 178543)
 -- Name: fkr8lcesu3i1c3g6v0b2jva1p8g; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2495,7 +3024,7 @@ ALTER TABLE ONLY council_aud
 
 
 --
--- TOC entry 2337 (class 2606 OID 175753)
+-- TOC entry 2299 (class 2606 OID 178703)
 -- Name: fkrgp3ahij4vt4y5bf2l4k4gn0u; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2504,7 +3033,7 @@ ALTER TABLE ONLY physician_associatedroles_aud
 
 
 --
--- TOC entry 2343 (class 2606 OID 175783)
+-- TOC entry 2305 (class 2606 OID 178733)
 -- Name: fkrogv0lw5b8og1sorgq6b68qoh; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2513,7 +3042,7 @@ ALTER TABLE ONLY signature_aud
 
 
 --
--- TOC entry 2327 (class 2606 OID 175703)
+-- TOC entry 2289 (class 2606 OID 178653)
 -- Name: fks3k5362frhl4tdjye8iqr6mdf; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2522,7 +3051,16 @@ ALTER TABLE ONLY materialpreset_stainingprototype
 
 
 --
--- TOC entry 2356 (class 2606 OID 175848)
+-- TOC entry 2263 (class 2606 OID 178523)
+-- Name: fks5sup00i0jjku9gxs9lxr4gj4; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY contact
+    ADD CONSTRAINT fks5sup00i0jjku9gxs9lxr4gj4 FOREIGN KEY (task_id) REFERENCES task(id);
+
+
+--
+-- TOC entry 2313 (class 2606 OID 178773)
 -- Name: fks7r4aldudghru1kbkbhorll5s; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2531,7 +3069,7 @@ ALTER TABLE ONLY task_favouritelist
 
 
 --
--- TOC entry 2346 (class 2606 OID 175798)
+-- TOC entry 2308 (class 2606 OID 178748)
 -- Name: fksf8pin0d3udyq951nmf082nlm; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2540,7 +3078,7 @@ ALTER TABLE ONLY slide_aud
 
 
 --
--- TOC entry 2333 (class 2606 OID 175733)
+-- TOC entry 2295 (class 2606 OID 178683)
 -- Name: fkssb8q81x1e0r0gx67ba58h4wr; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2549,7 +3087,7 @@ ALTER TABLE ONLY pdfcontainer_aud
 
 
 --
--- TOC entry 2292 (class 2606 OID 175528)
+-- TOC entry 2256 (class 2606 OID 178488)
 -- Name: fksxc61emsrix3w6539dsiwk9nr; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2558,7 +3096,7 @@ ALTER TABLE ONLY biobank_aud
 
 
 --
--- TOC entry 2311 (class 2606 OID 175623)
+-- TOC entry 2274 (class 2606 OID 178578)
 -- Name: fkt0fra4hs5ivuwqmmv7kg8cxgn; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -2567,16 +3105,7 @@ ALTER TABLE ONLY diagnosiscontainer
 
 
 --
--- TOC entry 2351 (class 2606 OID 175823)
--- Name: fkt9n0usjyxgp7k6fe3chqwkx4q; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY task_contact
-    ADD CONSTRAINT fkt9n0usjyxgp7k6fe3chqwkx4q FOREIGN KEY (task_id) REFERENCES task(id);
-
-
---
--- TOC entry 2475 (class 0 OID 0)
+-- TOC entry 2508 (class 0 OID 0)
 -- Dependencies: 5
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
@@ -2587,14 +3116,16 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2017-06-06 20:22:32
+-- Completed on 2017-06-07 19:48:29
 
 --
 -- PostgreSQL database dump complete
 --
 
 
-
 CREATE VIEW ContactPhysicanRole AS
 SELECT physician.id AS id ,person.id As personID, person.title,  person.name, person.surname from person 
 INNER JOIN physician ON physician.person_id = person.id
+
+CREATE VIEW FavouriteListTask AS
+select row_number() over (order by favouritelist.id) as aid ,favouritelist.id AS favouritelist_id, name, task_id from favouritelist inner join favouritelistitem on favouritelist.id = favouritelistitem.favouritelist_id

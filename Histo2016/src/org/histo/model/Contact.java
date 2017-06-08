@@ -5,8 +5,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
@@ -15,12 +17,15 @@ import org.apache.log4j.Logger;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
+import org.histo.model.patient.Task;
 
 @Entity
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
 public class Contact implements LogAble, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
+
+	private Task task;
 
 	private long id;
 
@@ -63,14 +68,15 @@ public class Contact implements LogAble, HasID {
 	public Contact() {
 	}
 
-	public Contact(Person person) {
-		this(person, ContactRole.NONE);
+	public Contact(Task task,Person person) {
+		this( task,person, ContactRole.NONE);
 	}
 
-	public Contact(Person person, ContactRole role) {
+	public Contact(Task task,Person person, ContactRole role) {
 		logger.debug("Creating contact for " + person.getFullName());
 		this.person = person;
 		this.role = role;
+		this.task = task;
 	}
 
 	/********************************************************
@@ -164,6 +170,15 @@ public class Contact implements LogAble, HasID {
 
 	public void setPhoneNotificationDate(long phoneNotificationDate) {
 		this.phoneNotificationDate = phoneNotificationDate;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	public Task getTask() {
+		return task;
+	}
+
+	public void setTask(Task task) {
+		this.task = task;
 	}
 
 	/********************************************************

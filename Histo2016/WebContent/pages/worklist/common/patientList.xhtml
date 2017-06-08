@@ -66,13 +66,13 @@
 
 	<!-- Nav Table -->
 	<p:dataTable var="patient" id="patientList"
-		value="#{worklistHandlerAction.workList}" selectionMode="single"
+		value="#{worklistViewHandlerAction.workList}" selectionMode="single"
 		selection="#{commonDataHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
 
 		<p:ajax event="rowSelect"
 			update=":contentForm :headerForm :navigationForm"
-			listener="#{worklistHandlerAction.onSelectPatient(commonDataHandlerAction.selectedPatient)}" />
+			listener="#{worklistViewHandlerAction.onSelectPatient(commonDataHandlerAction.selectedPatient)}" />
 
 		<p:column>
 			<!-- Header -->
@@ -82,7 +82,7 @@
 						style="float:left;"></h:outputLabel>
 					<h:panelGroup style="float: right">
 						<!-- Button UP -->
-						<p:commandLink
+						<p:commandLink disabled="true"
 							title="#{msg['body.worklist.navigation.button.up']}"
 							actionListener="#{worklistHandlerAction.selectPreviouseTask()}"
 							update="navigationForm contentForm">
@@ -92,13 +92,14 @@
 						<!-- Button Down -->
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.down']}"
+							disabled="true"
 							actionListener="#{worklistHandlerAction.selectNextTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-down"></i>
 						</p:commandLink>
 
 						<!-- Button Sort -->
-						<p:commandLink
+						<p:commandLink disabled="true"
 							title="#{msg['body.worklist.navigation.button.sort']}"
 							actionListener="#{mainHandlerAction.showDialog('WORKLIST_ORDER')}">
 							<i class="fa fa-th-list"></i>
@@ -106,7 +107,7 @@
 						</p:commandLink>
 
 						<!-- Worklist settings -->
-						<p:commandLink
+						<p:commandLink disabled="true"
 							title="#{msg['body.worklist.navigation.button.sort']}"
 							actionListener="#{mainHandlerAction.showDialog('WORKLIST_SETTINGS')}">
 							<i class="fa fa-wrench"></i>
@@ -163,7 +164,7 @@
 						<p:repeat var="task"
 							value="#{taskStatusHandler.getActiveTasks(patient)}">
 							<p:commandLink
-								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
+								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 
@@ -266,7 +267,7 @@
 						<p:repeat var="task"
 							value="#{taskStatusHandler.getNoneActiveTasks(patient)}">
 							<p:commandLink
-								actionListener="#{worklistHandlerAction.onSelectTaskAndPatient(task)}"
+								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 								<h:outputLabel value="#{task.taskID}"
@@ -284,7 +285,7 @@
 
 	<p:contextMenu for="patientList">
 		<p:menuitem value="Entfernen" icon="ui-icon-close"
-			actionListener="#{worklistHandlerAction.removeFromWorklist(commonDataHandlerAction.selectedPatient)}"
+			actionListener="#{worklistViewHandlerAction.removeFromWorklist(commonDataHandlerAction.selectedPatient)}"
 			update="navigationForm contentForm" />
 	</p:contextMenu>
 </ui:composition>

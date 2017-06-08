@@ -156,7 +156,7 @@ public class ContactHandlerAction implements Serializable {
 					}
 				}
 
-				commonDataHandlerAction.getContactList().add(new Contact(physician.getPerson()));
+				commonDataHandlerAction.getContactList().add(new Contact(task,physician.getPerson()));
 
 			}
 		} else {

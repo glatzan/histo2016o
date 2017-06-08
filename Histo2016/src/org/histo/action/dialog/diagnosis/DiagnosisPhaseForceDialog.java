@@ -3,6 +3,7 @@ package org.histo.action.dialog.diagnosis;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -25,7 +26,7 @@ public class DiagnosisPhaseForceDialog extends AbstractDialog {
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
@@ -47,9 +48,9 @@ public class DiagnosisPhaseForceDialog extends AbstractDialog {
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			logger.debug("!! Version inconsistent with Database updating");
+			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistHandlerAction.updatePatientInCurrentWorklist(task.getPatient());
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 		}
 
 		super.initBean(task, dialog);

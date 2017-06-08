@@ -7,6 +7,7 @@ import java.util.List;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.SearchHandler;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
@@ -27,7 +28,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 	private SearchHandler searchHandler;
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
 	 * Patient for creating external Patient
@@ -103,7 +104,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 			if (getPatient() != null) {
 				searchHandler.addExternalPatient(getPatient());
 				if (addToWorklist)
-					worklistHandlerAction.addPatientToWorkList(getPatient(), true);
+					worklistViewHandlerAction.addPatientToWorkList(getPatient(), true);
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
@@ -115,7 +116,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 			if (getSelectedPatientListItem() != null) {
 				searchHandler.addClinicPatient(getSelectedPatientListItem().getListItem());
 				if (addToWorklist)
-					worklistHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true);
+					worklistViewHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true);
 			}
 		} catch (JSONException | CustomDatabaseInconsistentVersionException | CustomExceptionToManyEntries
 				| CustomNullPatientExcepetion e) {

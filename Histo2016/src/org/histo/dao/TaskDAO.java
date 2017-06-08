@@ -61,18 +61,6 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return result.intValue();
 	}
 
-	// public Task getTask(long id, boolean initialized) {
-	// Task task = genericDAO.get(Task.class, id);
-	//
-	// if (initialized) {
-	// Hibernate.initialize(task.getCouncils());
-	// Hibernate.initialize(task.getDiagnosisContainer());
-	// Hibernate.initialize(task.getAttachedPdfs());
-	// }
-	//
-	// return task;
-	// }
-
 	public Task initializeTask(Task task, boolean initialized) throws CustomDatabaseInconsistentVersionException {
 		task = genericDAO.refresh(task);
 

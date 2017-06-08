@@ -100,7 +100,7 @@
 			rowKey="#{task.id}">
 
 			<p:ajax event="rowSelect" update=":contentForm, :headerForm"
-				listener="#{worklistHandlerAction.onSelectTaskAndPatient(commonDataHandlerAction.selectedTask)}" />
+				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(commonDataHandlerAction.selectedTask)}" />
 
 			<p:column>
 				<f:facet name="header">

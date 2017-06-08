@@ -87,21 +87,6 @@ public class MainHandlerAction {
 
 		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
 
-		// setting the current view depending on the users role
-		if (userHandlerAction.currentUserHasRole(Role.GUEST))
-			// guest need to be unlocked first
-			commonDataHandlerAction.setCurrentView(View.GUEST);
-		else if (userHandlerAction.currentUserHasRole(Role.SCIENTIST))
-			// no names are displayed
-			commonDataHandlerAction.setCurrentView(View.SCIENTIST);
-		else if (userHandlerAction.currentUserHasRole(Role.USER)) {
-			commonDataHandlerAction.setCurrentView(View.USERLIST);
-		} else if (userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
-			// normal work environment
-			commonDataHandlerAction.setCurrentView(View.WORKLIST_TASKS);
-		} else
-			commonDataHandlerAction.setCurrentView(View.GUEST);
-		
 		genericDAO.getTest();
 	}
 
@@ -132,33 +117,6 @@ public class MainHandlerAction {
 
 	/********************************************************
 	 * Session
-	 ********************************************************/
-
-	/********************************************************
-	 * Navigation
-	 ********************************************************/
-	public String goToNavigation() {
-		return goToNavigation(commonDataHandlerAction.getCurrentView());
-	}
-
-	/**
-	 * Method is called for chaning the current view with an p:selectOneMenu
-	 * (e.g. worklist/header.xthml). If the view is a subview of a parent,
-	 * return the parent url.
-	 * 
-	 * @param view
-	 * @return
-	 */
-	public String goToNavigation(View view) {
-		commonDataHandlerAction.setCurrentView(view);
-		if (view.getParentView() != null) {
-			return view.getParentView().getPath();
-		} else
-			return view.getPath();
-	}
-
-	/********************************************************
-	 * Navigation
 	 ********************************************************/
 
 	/********************************************************

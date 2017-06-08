@@ -27,11 +27,6 @@ public class CommonDataHandlerAction {
 	 */
 	private List<View> navigationPages;
 
-	/**
-	 * The current view of the user
-	 */
-	private View currentView;
-
 	// ************************ Patient ************************
 	/**
 	 * Currently selectedTask
@@ -108,14 +103,6 @@ public class CommonDataHandlerAction {
 
 	public void setNavigationPages(List<View> navigationPages) {
 		this.navigationPages = navigationPages;
-	}
-
-	public View getCurrentView() {
-		return currentView;
-	}
-
-	public void setCurrentView(View currentView) {
-		this.currentView = currentView;
 	}
 	/********************************************************
 	 * Getter/Setter

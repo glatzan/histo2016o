@@ -60,7 +60,7 @@ public class FavouriteListDAO extends AbstractDAO {
 
 		// list should not contain the task
 		if (favouriteList.getItems().stream().noneMatch(p -> p.getId() == task.getId())) {
-			FavouriteListItem favItem = new FavouriteListItem(task);
+			FavouriteListItem favItem = new FavouriteListItem(favouriteList,task);
 			// saving new fav item
 			genericDAO.saveDataRollbackSave(favItem);
 			favouriteList.getItems().add(favItem);

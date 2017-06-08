@@ -12,6 +12,7 @@ import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.handler.SearchHandler;
 import org.histo.action.handler.SettingsHandler;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.QuickSearchOptions;
 import org.histo.config.exception.CustomExceptionToManyEntries;
@@ -32,7 +33,7 @@ public class SearchHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
 	private CreateTaskDialog createTaskDialog;
@@ -83,12 +84,12 @@ public class SearchHandlerAction {
 
 					if (patientOfTask != null) {
 						logger.debug("Task found, adding to worklist");
-						worklistHandlerAction.addPatientToWorkList(patientOfTask.getPatient(), true);
+						worklistViewHandlerAction.addPatientToWorkList(patientOfTask.getPatient(), true);
 
 						Task task = patientOfTask.getTasks().stream().filter(p -> p.getTaskID().equals(searchString))
 								.collect(StreamUtils.singletonCollector());
 
-						worklistHandlerAction.onSelectTaskAndPatient(task);
+						worklistViewHandlerAction.onSelectTaskAndPatient(task);
 
 						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.task"),
 								resourceBundle.get("growl.search.patient.task.text"));
@@ -109,7 +110,7 @@ public class SearchHandlerAction {
 					if (patient != null) {
 						logger.debug("Found patient " + patient + " and adding to current worklist");
 						searchHandler.addClinicPatient(patient);
-						worklistHandlerAction.addPatientToWorkList(patient, true);
+						worklistViewHandlerAction.addPatientToWorkList(patient, true);
 
 						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.piz"),
 								resourceBundle.get("growl.search.patient.piz.text"));
@@ -140,7 +141,7 @@ public class SearchHandlerAction {
 						logger.debug("Slide found");
 						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.slide"),
 								resourceBundle.get("growl.search.patient.slide"));
-						worklistHandlerAction.addPatientToWorkList(searchResultSlide.getPatient(), true);
+						worklistViewHandlerAction.addPatientToWorkList(searchResultSlide.getPatient(), true);
 					} else {
 						// no slide was found
 						logger.debug("No slide with the given id found");

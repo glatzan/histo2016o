@@ -71,7 +71,7 @@ public class ReceiptlogViewHandlerAction {
 
 	@Autowired
 	@Lazy
-	private WorklistHandlerAction worklistHandlerAction;
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
 	 * This variable is used to save the selected action, which should be
@@ -173,7 +173,7 @@ public class ReceiptlogViewHandlerAction {
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistHandlerAction.updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict();
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
 		}
 
 		setActionOnMany(StainingListAction.NONE);
@@ -191,7 +191,7 @@ public class ReceiptlogViewHandlerAction {
 			checkStainingPhase(task, changed);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistHandlerAction.updateSelectedTaskAndPatientInCurrentWorklistOnVersionConflict();
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
 		}
 	}
 
