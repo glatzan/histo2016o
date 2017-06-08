@@ -140,6 +140,9 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		setAutoSelectedPreferedPrinter(predefinedRoleSettings.isAutoSelectedPreferedPrinter());
 		setDefaultWorklistToLoad(predefinedRoleSettings.getDefaultWorklistToLoad());
 		setDefaultWorklistView(predefinedRoleSettings.getDefaultWorklistView());
+		setDefaultWorklistSortOrder(predefinedRoleSettings.getWorklistSortOrder());
+		setDefaultWorklistSortAsc(predefinedRoleSettings.isWorklistSortOrderAscending());
+		setDefaultHideNonActiveTasksInWorklist(predefinedRoleSettings.isHideNoneActiveTasks());
 	}
 
 	@Id
@@ -234,7 +237,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		this.role = role;
 	}
 
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	public View getDefaultView() {
 		return defaultView;
 	}
@@ -279,7 +282,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		this.autoSelectedPreferedLabelPrinter = autoSelectedPreferedLabelPrinter;
 	}
 
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	public WorklistView getDefaultWorklistView() {
 		return defaultWorklistView;
 	}
@@ -288,7 +291,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		this.defaultWorklistView = defaultWorklistView;
 	}
 
-	@Enumerated(EnumType.STRING)
+	@Enumerated(EnumType.ORDINAL)
 	public WorklistSearchOption getDefaultWorklistToLoad() {
 		return defaultWorklistToLoad;
 	}

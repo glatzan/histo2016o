@@ -43,7 +43,7 @@ public class UserSettingsDialog extends AbstractDialog {
 		PredefinedRoleSettings roleSetting = settingsHandler
 				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
 
-		setAvailableViews(roleSetting.getAvailableViews());
+		setAvailableViews(roleSetting.getSelectableViews());
 		
 		setAvailableWorklistsToLoad(new ArrayList<WorklistSearchOption>());
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.DIAGNOSIS_LIST);

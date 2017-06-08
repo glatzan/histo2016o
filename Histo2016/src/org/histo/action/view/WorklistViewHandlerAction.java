@@ -209,9 +209,10 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void addWorklist(ArrayList<Patient> items, String name, boolean selected) {
-		addWorklist(new Worklist(name, items,
-				userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
-				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder()), selected);
+		addWorklist(
+				new Worklist(name, items, userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
+						userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder()),
+				selected);
 	}
 
 	public void addWorklist(Worklist worklist, boolean selected) {
@@ -319,25 +320,82 @@ public class WorklistViewHandlerAction {
 		if (!getWorklist().isEmpty()) {
 			if (commonDataHandlerAction.getSelectedPatient() != null) {
 
-				boolean activeOnly = !getSortOptions().isShowAllTasks() || getSortOptions().isSkipNotActiveTasks();
+				int indexOfTask = commonDataHandlerAction.getSelectedPatient().getActiveTasks()
+						.indexOf(commonDataHandlerAction.getSelectedTask());
 
-				Task nextTask = getNextTask(commonDataHandlerAction.getSelectedPatient().getTasks(),
-						commonDataHandlerAction.getSelectedTask(), activeOnly);
-				if (nextTask != null) {
-					onSelectTaskAndPatient(nextTask);
+				// next task is within the same patient
+				if (indexOfTask - 1 >= 0) {
+					onSelectTaskAndPatient(
+							commonDataHandlerAction.getSelectedPatient().getActiveTasks().get(indexOfTask - 1));
 					return;
 				}
 
-				int indexOfPatient = getWorkList().indexOf(commonDataHandlerAction.getSelectedPatient());
-				if (getWorkList().size() - 1 > indexOfPatient) {
-					commonDataHandlerAction.setSelectedTask(null);
-					onSelectPatient(getWorkList().get(indexOfPatient + 1));
+				int indexOfPatient = getWorklist().getItems().indexOf(commonDataHandlerAction.getSelectedPatient());
+
+				if (indexOfPatient == -1)
+					return;
+
+				if (indexOfPatient - 1 >= 0) {
+					Patient newPatient = getWorklist().getItems().get(indexOfPatient - 1);
+
+					if (newPatient.hasActiveTasks()) {
+						onSelectTaskAndPatient(newPatient.getActiveTasks().get(newPatient.getActiveTasks().size() - 1));
+					} else {
+						onSelectPatient(newPatient);
+					}
 				}
 			} else {
-				onSelectPatient(getWorkList().get(0));
+				Patient newPatient = getWorklist().getItems().get(getWorklist().getItems().size() - 1);
+
+				if (newPatient.hasActiveTasks()) {
+					onSelectTaskAndPatient(newPatient.getActiveTasks().get(newPatient.getActiveTasks().size() - 1));
+				} else {
+					onSelectPatient(newPatient);
+				}
 			}
 		}
 	}
+
+	public void selectPreviouseTask() {
+		if (!getWorklist().isEmpty()) {
+			if (commonDataHandlerAction.getSelectedPatient() != null) {
+
+				int indexOfTask = commonDataHandlerAction.getSelectedPatient().getActiveTasks()
+						.indexOf(commonDataHandlerAction.getSelectedTask());
+
+				// next task is within the same patient
+				if (indexOfTask + 1 < commonDataHandlerAction.getSelectedPatient().getActiveTasks().size()) {
+					onSelectTaskAndPatient(
+							commonDataHandlerAction.getSelectedPatient().getActiveTasks().get(indexOfTask + 1));
+					return;
+				}
+
+				int indexOfPatient = getWorklist().getItems().indexOf(commonDataHandlerAction.getSelectedPatient());
+
+				if (indexOfPatient == -1)
+					return;
+
+				if (indexOfPatient + 1 < getWorklist().getItems().size()) {
+					Patient newPatient = getWorklist().getItems().get(indexOfPatient + 1);
+
+					if (newPatient.hasActiveTasks()) {
+						onSelectTaskAndPatient(newPatient.getActiveTasks().get(0));
+					} else {
+						onSelectPatient(newPatient);
+					}
+				}
+			} else {
+				Patient newPatient = getWorklist().getItems().get(0);
+
+				if (newPatient.hasActiveTasks()) {
+					onSelectTaskAndPatient(newPatient.getActiveTasks().get(0));
+				} else {
+					onSelectPatient(newPatient);
+				}
+			}
+		}
+	}
+
 	// ************************ Getter/Setter ************************
 	public View getCurrentView() {
 		return currentView;
