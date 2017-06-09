@@ -32,7 +32,6 @@ public class TaskStatusHandler {
 
 	public boolean isTaskEditable(Task task) {
 
-		System.out.println("Task ist editable");
 		if (task == null)
 			return false;
 

@@ -9,9 +9,9 @@ public enum Dialog {
 	
 	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1024, 600, false, false, true), // 16:9
 	WORKLIST_ADD_PATIENT("/pages/dialog/patient/addPatient", null, 1024, 600, false, false, true), // 16:9
-	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,430, 270, false, false, true), 
-	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,290, 230, false, false, true), 
-	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null, 290, 120, false, false, true), 
+	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,480, 272, false, false, true), 
+	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,480, 272, false, false, true),  // 16:9
+	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null,480, 272, false, false, true), 
 	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_LOG("/pages/dialog/history/patientLog", null,  1024, 600, false, false, true),// 16:9
 	TASK_CREATE("/pages/dialog/task/createTask", null, 858, 484, false, false, true), // 16:9

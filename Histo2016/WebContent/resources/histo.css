@@ -122,7 +122,7 @@ body {
 /* Colunm orientation for all */
 .defaultListingTableColumnTop {
 	vertical-align: top;
-	padding-top: 8px !important;
+	padding-top: 10px !important;
 }
 
 .defaultListingTableColumn10 {

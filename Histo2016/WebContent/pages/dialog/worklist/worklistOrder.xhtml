@@ -10,46 +10,75 @@
 			value="#{msg['dialog.worklistorder.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
+<h:body styleClass="defaultDialogLayout infoDialog">
+	<h:form id="dialogContent">
 
-<h:body styleClass="defaultDialogLayout">
-	<h:form>
-		<div class="dialogContent">
-			<h:panelGrid columns="1" styleClass="dialogTable ">
-				<p:selectOneRadio
-					value="#{worklistHandlerAction.sortOptions.worklistSortOrder}"
-					layout="grid" columns="1" styleClass="smallFont smallPaddingAll">
-					<f:selectItem itemLabel="#{msg['dialog.worklistorder.tasknumber']}"
-						itemValue="TASK_ID" />
-					<f:selectItem itemLabel="#{msg['dialog.worklistorder.piz']}"
-						itemValue="PIZ" />
-					<f:selectItem itemLabel="#{msg['dialog.worklistorder.name']}"
-						itemValue="NAME" />
-					<f:selectItem itemLabel="#{msg['dialog.worklistorder.priority']}"
-						itemValue="PRIORITY" />
-				</p:selectOneRadio>
-				<h:panelGrid columns="2" style="margin-left:5px;">
-					<h:outputLabel value="#{msg['dialog.worklistorder.order']}"></h:outputLabel>
-					<p:selectBooleanButton
-						styleClass="smallInput smallFont smallButton"
-						value="#{worklistHandlerAction.sortOptions.worklistSortOrderAcs}"
-						style="margin-left:15px;"
-						onLabel="#{msg['dialog.worklistorder.order.asc']}"
-						offLabel="#{msg['dialog.worklistorder.order.dec']}" />
-				</h:panelGrid>
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.worklistorder.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
 			</h:panelGrid>
 		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+				columnClasses="defaultListingTableColumnTop, ">
+				<!-- sorting -->
+				<h:outputLabel value="#{msg['dialog.worklistorder.sorting']}" />
+
+				<p:selectOneRadio
+					value="#{worklistViewHandlerAction.worklist.worklistSortOrder}"
+					layout="grid" columns="1" styleClass="smallInput">
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.tasknumber']}"
+						itemValue="TASK_ID" />
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.piz']}"
+						itemValue="PIZ" />
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.name']}"
+						itemValue="NAME" />
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.priority']}"
+						itemValue="PRIORITY" />
+				</p:selectOneRadio>
+
+				<!-- ascending -->
+				<h:outputLabel value="#{msg['dialog.worklistorder.order']}"></h:outputLabel>
+				<p:selectBooleanButton styleClass="smallInput smallButton"
+					value="#{worklistViewHandlerAction.worklist.sortAscending}"
+					onLabel="#{msg['dialog.worklistorder.order.asc']}"
+					offLabel="#{msg['dialog.worklistorder.order.dec']}" />
+			</h:panelGrid>
+		</div>
+
 		<div class="buttonContainer">
-			<p:commandButton value="#{msg['dialog.worklistorder.button.sort']}"
-				icon="fa fa-align-left" styleClass="smallButton">
-				<f:actionListener
-					binding="#{worklistHandlerAction.sortWordklist(worklistViewHandlerAction.workList, worklistHandlerAction.sortOptions.worklistSortOrder,worklistHandlerAction.sortOptions.worklistSortOrderAcs)}" />
-				<f:actionListener
-					binding="#{mainHandlerAction.hideDialog(WORKLIST_ORDER)}" />
-			</p:commandButton>
-			<p:commandButton value="#{msg['general.abort']}"
-				styleClass="smallButton buttonLeftMarginInList"
-				icon="fa fa-times-circle"
-				actionListener="#{mainHandlerAction.hideDialog(WORKLIST_ORDER)}"></p:commandButton>
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+					<!-- confirm -->
+					<p:commandButton value="#{msg['dialog.worklistorder.button.sort']}"
+						icon="fa fa-check-circle-o"
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener
+							binding="#{worklistViewHandlerAction.worklist.sortWordklist()}" />
+						<f:actionListener binding="#{worklistSettingsDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle">
+						<p:ajax update="@form" resetValues="true" />
+						<f:actionListener binding="#{worklistSettingsDialog.hideDialog()}" />
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
 		</div>
 	</h:form>
 </h:body>

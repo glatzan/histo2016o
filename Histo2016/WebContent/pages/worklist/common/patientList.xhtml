@@ -66,7 +66,8 @@
 
 	<!-- Nav Table -->
 	<p:dataTable var="patient" id="patientList"
-		value="#{worklistViewHandlerAction.worklist.items}" selectionMode="single"
+		value="#{worklistViewHandlerAction.worklist.items}"
+		selectionMode="single"
 		selection="#{commonDataHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navTable">
 
@@ -82,9 +83,9 @@
 						style="float:left;"></h:outputLabel>
 					<h:panelGroup style="float: right">
 						<!-- Button UP -->
-						<p:commandLink disabled="true"
+						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.up']}"
-							actionListener="#{worklistHandlerAction.selectPreviouseTask()}"
+							actionListener="#{worklistViewHandlerAction.selectNextTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-up"></i>
 						</p:commandLink>
@@ -92,24 +93,23 @@
 						<!-- Button Down -->
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.down']}"
-							disabled="true"
-							actionListener="#{worklistHandlerAction.selectNextTask()}"
+							actionListener="#{worklistViewHandlerAction.selectPreviouseTask()}"
 							update="navigationForm contentForm">
 							<i class="fa fa-arrow-circle-down"></i>
 						</p:commandLink>
 
 						<!-- Button Sort -->
-						<p:commandLink disabled="true"
+						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.sort']}"
-							actionListener="#{mainHandlerAction.showDialog('WORKLIST_ORDER')}">
+							actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSorting()}">
 							<i class="fa fa-th-list"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
 
 						<!-- Worklist settings -->
-						<p:commandLink disabled="true"
+						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.sort']}"
-							actionListener="#{mainHandlerAction.showDialog('WORKLIST_SETTINGS')}">
+							actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSettings()}">
 							<i class="fa fa-wrench"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -156,13 +156,11 @@
 					</p:column>
 					<p:column>
 						<!-- no tasks -->
-						<h:outputLabel
-							rendered="#{!patient.hasActiveTasks()}"
+						<h:outputLabel rendered="#{!patient.hasActiveTasks()}"
 							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
 						<!-- task list -->
-						<p:repeat var="task"
-							value="#{patient.getActiveTasks()}">
+						<p:repeat var="task" value="#{patient.getActiveTasks()}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
@@ -264,8 +262,7 @@
 					</p:column>
 					<p:column>
 						<!-- task list -->
-						<p:repeat var="task"
-							value="#{patient.getNoneActiveTasks()}">
+						<p:repeat var="task" value="#{patient.getNoneActiveTasks()}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"

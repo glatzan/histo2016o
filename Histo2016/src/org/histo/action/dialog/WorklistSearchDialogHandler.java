@@ -1,15 +1,11 @@
 package org.histo.action.dialog;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.histo.action.CommonDataHandlerAction;
-import org.histo.action.WorklistHandlerAction;
-import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Gender;
 import org.histo.config.enums.Month;
@@ -22,7 +18,6 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

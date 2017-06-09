@@ -59,6 +59,11 @@ public class WorklistViewHandlerAction {
 	private View currentView;
 
 	/**
+	 * Saves the last task view diagnosis view or receiptlog view
+	 */
+	private View lastTaskView;
+	
+	/**
 	 * Containing all worklists
 	 */
 	private List<Worklist> worklists;
@@ -90,6 +95,8 @@ public class WorklistViewHandlerAction {
 		} else {
 			addWorklist(new Worklist("Default", new ArrayList<Patient>()), true);
 		}
+		
+		setLastTaskView(userHandlerAction.getCurrentUser().getDefaultView());
 
 	}
 
@@ -110,6 +117,7 @@ public class WorklistViewHandlerAction {
 			break;
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
+			setLastTaskView(view);
 			if (commonDataHandlerAction.getSelectedPatient() != null
 					&& commonDataHandlerAction.getSelectedTask() != null)
 				setCurrentView(view);
@@ -192,8 +200,8 @@ public class WorklistViewHandlerAction {
 		receiptlogViewHandlerAction.prepareForTask(task);
 		diagnosisViewHandlerAction.prepareForTask(task);
 
-		if (getCurrentView() != View.WORKLIST_RECEIPTLOG || getCurrentView() != View.WORKLIST_DIAGNOSIS) {
-			setCurrentView(userHandlerAction.getCurrentUser().getDefaultView());
+		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
+			setCurrentView(getLastTaskView());
 		}
 	}
 
@@ -422,4 +430,13 @@ public class WorklistViewHandlerAction {
 		this.worklists = worklists;
 	}
 
+	public View getLastTaskView() {
+		return lastTaskView;
+	}
+
+	public void setLastTaskView(View lastTaskView) {
+		this.lastTaskView = lastTaskView;
+	}
+
+	
 }
