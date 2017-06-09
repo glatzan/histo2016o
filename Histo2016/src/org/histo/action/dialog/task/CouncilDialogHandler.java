@@ -1,10 +1,12 @@
-package org.histo.action.dialog;
+package org.histo.action.dialog.task;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.WorklistHandlerAction;
+import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -43,9 +45,20 @@ public class CouncilDialogHandler extends AbstractDialog {
 	@Autowired
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
-	private Council council;
+	/**
+	 * Selected council from councilList
+	 */
+	private Council selectedCouncil;
 
+	/**
+	 * List of all councils of this tasks
+	 */
 	private List<Council> councilList;
+
+	/**
+	 * council which should be edited
+	 */
+	private Council editCouncil;
 
 	private DefaultTransformer<Council> councilListTransformer;
 
@@ -80,18 +93,18 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 			setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
 
-			// setting council as default
-			if (getCouncilList().size() == 0) {
-				logger.debug("Council Dialog: Creating new council");
-				setCouncil(new Council(task));
-				getCouncilList().add(getCouncil());
-				getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
-			} else {
-				// selected council is need for selectlist, temporary council is
-				// for
-				// editing (new council can't be in task list)
-				setCouncil(getCouncilList().get(0));
-			}
+//			// setting council as default
+//			if (getCouncilList().size() == 0) {
+//				logger.debug("Council Dialog: Creating new council");
+//				setCouncil(new Council(task));
+//				getCouncilList().add(getCouncil());
+//				getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
+//			} else {
+//				// selected council is need for selectlist, temporary council is
+//				// for
+//				// editing (new council can't be in task list)
+//				setCouncil(getCouncilList().get(0));
+//			}
 
 			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
 
@@ -122,9 +135,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * Creates a new council and saves it
 	 */
 	public void addNewCouncil() {
-		Council newCouncil = new Council(getTask());
-		setCouncil(newCouncil);
-		saveCouncilData();
+//		Council newCouncil = new Council(getTask());
+//		setCouncil(newCouncil);
+//		saveCouncilData();
 	}
 
 	/**
@@ -132,32 +145,32 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * id!=0 the council will only be saved.
 	 */
 	public void saveCouncilData() {
-		try {
-			// new
-			if (council.getId() == 0) {
-				council.setDateOfRequest(System.currentTimeMillis());
-				logger.debug("Council Dialog: Creating new council");
-				// TODO: Better loggin
-				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.create");
-
-				task.getCouncils().add(council);
-
-				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
-						String.valueOf(council.getId()));
-
-			} else {
-				logger.debug("Council Dialog: Saving council");
-				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.update",
-						String.valueOf(council.getId()));
-			}
-
-			// updating council list
-			setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
-			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
-		
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			onDatabaseVersionConflict();
-		}
+//		try {
+//			// new
+//			if (council.getId() == 0) {
+//				council.setDateOfRequest(System.currentTimeMillis());
+//				logger.debug("Council Dialog: Creating new council");
+//				// TODO: Better loggin
+//				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.create");
+//
+//				task.getCouncils().add(council);
+//
+//				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
+//						String.valueOf(council.getId()));
+//
+//			} else {
+//				logger.debug("Council Dialog: Saving council");
+//				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.update",
+//						String.valueOf(council.getId()));
+//			}
+//
+//			// updating council list
+//			setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
+//			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
+//
+//		} catch (CustomDatabaseInconsistentVersionException e) {
+//			onDatabaseVersionConflict();
+//		}
 	}
 
 	/**
@@ -166,22 +179,14 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * for opening other dialogs after closing the current dialog.
 	 */
 	public void printCouncilReport() {
-		saveCouncilData();
-		printDialogHandler.initBeanForCouncil(task, council);
-		// workaround for showing and hiding two dialogues
-		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
+//		saveCouncilData();
+//		printDialogHandler.initBeanForCouncil(task, council);
+//		// workaround for showing and hiding two dialogues
+//		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
 
 	}
 
 	// ************************ Getter/Setter ************************
-	public Council getCouncil() {
-		return council;
-	}
-
-	public void setCouncil(Council council) {
-		this.council = council;
-	}
-
 	public DefaultTransformer<Council> getCouncilListTransformer() {
 		return councilListTransformer;
 	}
@@ -228,5 +233,21 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	public void setCouncilList(List<Council> councilList) {
 		this.councilList = councilList;
+	}
+
+	public Council getSelectedCouncil() {
+		return selectedCouncil;
+	}
+
+	public void setSelectedCouncil(Council selectedCouncil) {
+		this.selectedCouncil = selectedCouncil;
+	}
+
+	public Council getEditCouncil() {
+		return editCouncil;
+	}
+
+	public void setEditCouncil(Council editCouncil) {
+		this.editCouncil = editCouncil;
 	}
 }

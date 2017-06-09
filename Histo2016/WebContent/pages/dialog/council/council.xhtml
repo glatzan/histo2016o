@@ -34,12 +34,12 @@
 				columnClasses="defaultListingTableColumnTop,">
 
 				<!-- council -->
-				<h:outputLabel value="#{msg['dialog.council.council']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.council.council.available']}"></h:outputLabel>
 				<h:panelGroup>
 					<!-- council list -->
 					<p:selectOneMenu styleClass="smallInput"
 						converter="#{councilDialogHandler.councilListTransformer}"
-						value="#{councilDialogHandler.council}"
+						value="#{councilDialogHandler.editCouncil}"
 						rendered="#{((councilDialogHandler.task.councils ne null) and !councilDialogHandler.task.councils.isEmpty())}">
 
 						<f:selectItems value="#{councilDialogHandler.task.councils}"
@@ -52,6 +52,27 @@
 
 					</p:selectOneMenu>
 				</h:panelGroup>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<h:outputLabel value="#{msg['dialog.council']}"
+					style="font-weight:bold !important;"></h:outputLabel>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+				columnClasses="defaultListingTableColumnTop,">
+
+				<!-- requesting text -->
+				<h:outputLabel value="#{msg['dialog.council.requestText']}"></h:outputLabel>
+				<h:inputTextarea style="width: 500px;" rows="10"
+					value="#{councilDialogHandler.editCouncil.councilText}">
+				</h:inputTextarea>
+
+				<!-- attachment -->
+				<h:outputLabel value="#{msg['dialog.council.attachment']}"></h:outputLabel>
+				<h:inputTextarea style="width: 500px;" rows="2"
+					value="#{councilDialogHandler.editCouncil.attachment}">
+				</h:inputTextarea>
 
 				<!-- Consultant -->
 				<h:outputLabel value="#{msg['dialog.council.consultant']}"></h:outputLabel>
@@ -60,7 +81,7 @@
 
 					<!-- council physician -->
 					<p:selectOneMenu styleClass="customSerachSelectMenu, smallInput"
-						value="#{councilDialogHandler.council.councilPhysician}"
+						value="#{councilDialogHandler.editCouncil.councilPhysician}"
 						panelStyleClass="customSerachSelectMenuPanel"
 						converter="#{councilDialogHandler.physicianCouncilTransformer}"
 						filter="true" filterMatchMode="contains">
@@ -83,18 +104,6 @@
 					</p:commandLink>
 				</h:panelGrid>
 
-				<!-- requesting text -->
-				<h:outputLabel value="#{msg['dialog.council.requestText']}"></h:outputLabel>
-				<h:inputTextarea style="width: 500px;" rows="10"
-					value="#{councilDialogHandler.council.councilText}">
-				</h:inputTextarea>
-
-				<!-- attachment -->
-				<h:outputLabel value="#{msg['dialog.council.attachment']}"></h:outputLabel>
-				<h:inputTextarea style="width: 500px;" rows="2"
-					value="#{councilDialogHandler.council.attachment}">
-				</h:inputTextarea>
-
 				<!-- council requesting physician -->
 				<h:outputLabel value="#{msg['dialog.council.requestingPhysician']}"></h:outputLabel>
 				<h:panelGrid columns="2"
@@ -102,7 +111,7 @@
 					<!-- physician requesting council -->
 					<p:selectOneMenu styleClass="customSerachSelectMenu, smallInput"
 						panelStyleClass="customSerachSelectMenuPanel"
-						value="#{councilDialogHandler.council.physicianRequestingCouncil}"
+						value="#{councilDialogHandler.editCouncil.physicianRequestingCouncil}"
 						converter="#{councilDialogHandler.physicianSigantureListTransformer}"
 						filter="true" filterMatchMode="contains">
 
