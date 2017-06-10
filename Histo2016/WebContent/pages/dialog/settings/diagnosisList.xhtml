@@ -15,7 +15,7 @@
 		<p:dataTable var="diagnosisPreset" style="width:100%;"
 			scrollable="true" scrollHeight="460" draggableRows="true"
 			value="#{settingsDialogHandler.allAvailableDiagnosisPrototypes}"
-			styleClass="defaultDataTable noBordersAll collapsedBordersAll">
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
 
 			<p:column sortBy="#{diagnosisPreset.diagnosisText}"
 				headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"

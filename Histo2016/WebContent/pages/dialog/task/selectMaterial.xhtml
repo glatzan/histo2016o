@@ -32,7 +32,7 @@
 			<p:dataTable var="material" scrollHeight="220" scrollable="true"
 				selection="#{changeMaterialDialog.selectedMaterial}"
 				selectionMode="single" rowKey="#{material.id}"
-				styleClass="defaultDataTable noBordersAll collapsedBordersAll smallPaddingAll"
+				styleClass="highlightedDataTable noBordersAll collapsedBordersAll smallPaddingAll"
 				value="#{changeMaterialDialog.materials}">
 				<p:column headerText="#{msg['dialog.selectMaterial.name']}"
 					sortBy="#{material.name}" filterBy="#{material.name}"

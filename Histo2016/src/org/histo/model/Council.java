@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,6 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
+import org.histo.config.enums.CouncilState;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
 
@@ -34,6 +37,8 @@ public class Council implements HasID {
 
 	private Task task;
 
+	private String name;
+
 	private Physician councilPhysician;
 
 	private Physician physicianRequestingCouncil;
@@ -43,6 +48,8 @@ public class Council implements HasID {
 	private String attachment;
 
 	private long dateOfRequest;
+
+	private CouncilState councilState;
 
 	public Council() {
 	}
@@ -107,6 +114,7 @@ public class Council implements HasID {
 		this.attachment = attachment;
 	}
 
+	@Column
 	public long getDateOfRequest() {
 		return dateOfRequest;
 	}
@@ -124,6 +132,24 @@ public class Council implements HasID {
 		this.task = task;
 	}
 
+	@Column
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Enumerated(EnumType.ORDINAL)
+	public CouncilState getCouncilState() {
+		return councilState;
+	}
+
+	public void setCouncilState(CouncilState councilState) {
+		this.councilState = councilState;
+	}
+
 	@Transient
 	public Date getDateOfRequestAsDate() {
 		return new Date(dateOfRequest);
@@ -131,6 +157,11 @@ public class Council implements HasID {
 
 	public void setDateOfRequestAsDate(Date dateOfRequestAsDate) {
 		this.dateOfRequest = dateOfRequestAsDate.getTime();
+	}
+
+	@Transient
+	public boolean isCouncilState(CouncilState councilState) {
+		return getCouncilState() == councilState ? true : false;
 	}
 
 }

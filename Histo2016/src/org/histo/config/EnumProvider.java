@@ -1,6 +1,7 @@
 package org.histo.config;
 
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.CouncilState;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Display;
@@ -109,16 +110,6 @@ public class EnumProvider {
 	}
 
 	/**
-	 * Returns the path an an dialog
-	 * 
-	 * @param dialog
-	 * @return
-	 */
-	public Dialog getDialog(Dialog dialog) {
-		return dialog;
-	}
-
-	/**
 	 * Returns a dateformat, is used, because in mainHandlerAction the date
 	 * method can take a string, an primefaces prefers the string method other
 	 * the DateFormat method.
@@ -129,13 +120,23 @@ public class EnumProvider {
 	public DateFormat getDateFormat(DateFormat dateFormat) {
 		return dateFormat;
 	}
-	
+
 	/**
 	 * Returns an array with all values of the InformedConsentInterface
+	 * 
 	 * @return
 	 */
-	public InformedConsentType[] getInformedConsentTypes(){
+	public InformedConsentType[] getInformedConsentTypes() {
 		return InformedConsentType.values();
+	}
+
+	/**
+	 * Returns an array with all values of the {@link CouncilState} enum
+	 * 
+	 * @return
+	 */
+	public CouncilState[] getCouncilStates() {
+		return CouncilState.values();
 	}
 
 }

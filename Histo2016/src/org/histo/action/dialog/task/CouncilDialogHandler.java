@@ -1,16 +1,24 @@
 package org.histo.action.dialog.task;
 
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.CouncilState;
+import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
@@ -28,9 +36,6 @@ import org.springframework.stereotype.Component;
 public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
-	private UserHandlerAction userHandlerAction;
-
-	@Autowired
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
@@ -45,6 +50,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 	@Autowired
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
+	@Autowired
+	private FavouriteListDAO favouriteListDAO;
+
 	/**
 	 * Selected council from councilList
 	 */
@@ -54,11 +62,6 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * List of all councils of this tasks
 	 */
 	private List<Council> councilList;
-
-	/**
-	 * council which should be edited
-	 */
-	private Council editCouncil;
 
 	private DefaultTransformer<Council> councilListTransformer;
 
@@ -93,18 +96,10 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 			setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
 
-//			// setting council as default
-//			if (getCouncilList().size() == 0) {
-//				logger.debug("Council Dialog: Creating new council");
-//				setCouncil(new Council(task));
-//				getCouncilList().add(getCouncil());
-//				getCouncil().setPhysicianRequestingCouncil(userHandlerAction.getCurrentUser().getPhysician());
-//			} else {
-//				// selected council is need for selectlist, temporary council is
-//				// for
-//				// editing (new council can't be in task list)
-//				setCouncil(getCouncilList().get(0));
-//			}
+			// setting council as default
+			if (getCouncilList().size() != 0) {
+				setSelectedCouncil(getCouncilList().get(0));
+			}
 
 			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
 
@@ -135,42 +130,145 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * Creates a new council and saves it
 	 */
 	public void addNewCouncil() {
-//		Council newCouncil = new Council(getTask());
-//		setCouncil(newCouncil);
-//		saveCouncilData();
+		logger.info("Adding new council");
+		setSelectedCouncil(new Council(getTask()));
+		getSelectedCouncil().setDateOfRequest(System.currentTimeMillis());
+		getSelectedCouncil().setName(generateName());
+		getSelectedCouncil().setCouncilState(CouncilState.EditState);
+
+		saveCouncilData();
+	}
+
+	public void onCouncilStateChange() {
+		try {
+
+			save();
+
+			switch (getSelectedCouncil().getCouncilState()) {
+			case EditState:
+			case ValidetedState:
+				logger.debug("EditState selected");
+				// removing all fav lists
+				removeListFromTask(PredefinedFavouriteList.CouncilLending, PredefinedFavouriteList.CouncilPending,
+						PredefinedFavouriteList.CouncilCompleted);
+				break;
+			case LendingState:
+				logger.debug("LendingState selected");
+				// removing pending and completed state
+				removeListFromTask(PredefinedFavouriteList.CouncilPending, PredefinedFavouriteList.CouncilCompleted);
+				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.CouncilLending);
+				break;
+			case PendingState:
+				logger.debug("PendingState selected");
+				// removing pending and completed state
+				removeListFromTask(PredefinedFavouriteList.CouncilLending, PredefinedFavouriteList.CouncilCompleted);
+				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.CouncilPending);
+				break;
+			case CompletedState:
+				logger.debug("CompletedState selected");
+				// removing pending and completed state
+				removeListFromTask(PredefinedFavouriteList.CouncilLending, PredefinedFavouriteList.CouncilPending);
+				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.CouncilCompleted);
+				break;
+			default:
+				break;
+			}
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onCouncilStateChange();
+		}
+
+	}
+
+	public void removeListFromTask(PredefinedFavouriteList... predefinedFavouriteLists)
+			throws CustomDatabaseInconsistentVersionException {
+
+		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
+			switch (predefinedFavouriteList) {
+			case CouncilCompleted:
+				if (!getTask().getCouncils().stream().anyMatch(p -> p.getCouncilState() == CouncilState.CompletedState))
+					favouriteListDAO.removeTaskFromList(getTask(), predefinedFavouriteList);
+				else
+					logger.debug("Not removing from CouncilCompleted list, other councils are in this state");
+				break;
+			case CouncilPending:
+				if (!getTask().getCouncils().stream().anyMatch(p -> p.getCouncilState() == CouncilState.PendingState))
+					favouriteListDAO.removeTaskFromList(getTask(), predefinedFavouriteList);
+				else
+					logger.debug("Not removing from CouncilPending list, other councils are in this state");
+				break;
+			case CouncilLending:
+				if (!getTask().getCouncils().stream().anyMatch(p -> p.getCouncilState() == CouncilState.LendingState))
+					favouriteListDAO.removeTaskFromList(getTask(), predefinedFavouriteList);
+				else
+					logger.debug("Not removing from CouncilLending list, other councils are in this state");
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	public void onNameChange() {
+		getSelectedCouncil().setName(generateName());
+		saveCouncilData();
+	}
+
+	public String generateName() {
+		StringBuffer str = new StringBuffer();
+
+		// name
+		if (getSelectedCouncil().getCouncilPhysician() != null)
+			str.append(getSelectedCouncil().getCouncilPhysician().getPerson().getFullName());
+		else
+			str.append(resourceBundle.get("dialog.council.data.newCouncil"));
+
+		str.append(" ");
+
+		// adding date
+		str.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormat.GERMAN_DATE.getDateFormat())));
+
+		return str.toString();
+	}
+
+	public void saveCouncilData() {
+		try {
+			if (getSelectedCouncil() != null)
+				save();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
 	}
 
 	/**
 	 * Saves a council. If id=0, the council is new and is added to the task, if
 	 * id!=0 the council will only be saved.
+	 * 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public void saveCouncilData() {
-//		try {
-//			// new
-//			if (council.getId() == 0) {
-//				council.setDateOfRequest(System.currentTimeMillis());
-//				logger.debug("Council Dialog: Creating new council");
-//				// TODO: Better loggin
-//				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.create");
-//
-//				task.getCouncils().add(council);
-//
-//				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
-//						String.valueOf(council.getId()));
-//
-//			} else {
-//				logger.debug("Council Dialog: Saving council");
-//				patientDao.savePatientAssociatedDataFailSave(council, getTask(), "log.patient.task.council.update",
-//						String.valueOf(council.getId()));
-//			}
-//
-//			// updating council list
-//			setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
-//			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
-//
-//		} catch (CustomDatabaseInconsistentVersionException e) {
-//			onDatabaseVersionConflict();
-//		}
+	private boolean save() throws CustomDatabaseInconsistentVersionException {
+		// new
+		if (getSelectedCouncil().getId() == 0) {
+			logger.debug("Council Dialog: Creating new council");
+			// TODO: Better loggin
+			patientDao.savePatientAssociatedDataFailSave(getSelectedCouncil(), getTask(),
+					"log.patient.task.council.create");
+
+			task.getCouncils().add(getSelectedCouncil());
+
+			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
+					String.valueOf(getSelectedCouncil().getId()));
+
+		} else {
+			logger.debug("Council Dialog: Saving council");
+			patientDao.savePatientAssociatedDataFailSave(getSelectedCouncil(), getTask(),
+					"log.patient.task.council.update", String.valueOf(getSelectedCouncil().getId()));
+		}
+
+		// updating council list
+		setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
+		setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
+
+		return true;
 	}
 
 	/**
@@ -179,11 +277,15 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * for opening other dialogs after closing the current dialog.
 	 */
 	public void printCouncilReport() {
-//		saveCouncilData();
-//		printDialogHandler.initBeanForCouncil(task, council);
-//		// workaround for showing and hiding two dialogues
-//		mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
+		try {
+			save();
+			printDialogHandler.initBeanForCouncil(task, getSelectedCouncil());
+			// workaround for showing and hiding two dialogues
+			mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
 
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
 	}
 
 	// ************************ Getter/Setter ************************
@@ -241,13 +343,5 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	public void setSelectedCouncil(Council selectedCouncil) {
 		this.selectedCouncil = selectedCouncil;
-	}
-
-	public Council getEditCouncil() {
-		return editCouncil;
-	}
-
-	public void setEditCouncil(Council editCouncil) {
-		this.editCouncil = editCouncil;
 	}
 }

@@ -138,10 +138,10 @@
 					<f:actionListener
 						binding="#{worklistHandlerAction.createWorklist()}" />
 					<f:actionListener
-						binding="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}" />
+						binding="#{mainHandlerAction.hideDialog('WORKLIST_SEARCH')}" />
 				</p:commandButton>
 				<p:commandButton value="#{msg['general.abort']}"
-					actionListener="#{mainHandlerAction.hideDialog(enumProvider.getDialog('WORKLIST_SEARCH'))}"
+					actionListener="#{mainHandlerAction.hideDialog('WORKLIST_SEARCH')}"
 					style="margin-left:20px;"></p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>

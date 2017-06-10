@@ -49,7 +49,7 @@
 			<p:dataTable var="physician" value="#{cc.attrs.physicianList}"
 				id="ldapPhysicianList" selectionMode="single" scrollable="true"
 				scrollHeight="300" rowKey="#{physician.id}" selection="#{cc.attrs.selection}"
-				styleClass="defaultDataTable noBordersAll collapsedBordersAll">
+				styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
 
 				<!-- title -->
 				<p:column sortBy="#{physician.person.name}"

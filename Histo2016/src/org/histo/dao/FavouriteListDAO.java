@@ -59,122 +59,87 @@ public class FavouriteListDAO extends AbstractDAO {
 			throws CustomDatabaseInconsistentVersionException {
 
 		// list should not contain the task
-		if (favouriteList.getItems().stream().noneMatch(p -> p.getId() == task.getId())) {
-			FavouriteListItem favItem = new FavouriteListItem(favouriteList,task);
+		if (favouriteList.getItems().stream().noneMatch(p -> p.getTask().getId() == task.getId())) {
+			logger.debug(
+					"Adding task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
+			FavouriteListItem favItem = new FavouriteListItem(favouriteList, task);
 			// saving new fav item
 			genericDAO.saveDataRollbackSave(favItem);
 			favouriteList.getItems().add(favItem);
 			// saving favlist
 			genericDAO.saveDataRollbackSave(favouriteList);
 		} else {
-			logger.debug("List already contains task");
+			logger.debug("List (" + favouriteList.getName() + ") already contains task (" + task.getTaskID() + ")");
 		}
 
 		// adding to task if task is not member of this list
 		if (task.getFavouriteLists().stream().noneMatch(p -> p.getId() == favouriteList.getId())) {
+
+			logger.debug("Adding favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID() + ")");
+
 			task.getFavouriteLists().add(favouriteList);
 			patientDao.savePatientAssociatedDataFailSave(task, "log.patient.task.favouriteList.added",
-					new Object[] { favouriteList.toString() });
+					new Object[] { task.getTaskID().toString(), favouriteList.toString() });
 		} else
-			logger.debug("Task alread contains list");
+			logger.debug("Task (" + task.getTaskID() + ") alread contains list (" + favouriteList.getName() + ")");
 	}
-	
-	public void removeTaskFromList(Task task, PredefinedFavouriteList[] predefinedFavouriteLists) throws CustomDatabaseInconsistentVersionException{
+
+	public void removeTaskFromList(Task task, PredefinedFavouriteList[] predefinedFavouriteLists)
+			throws CustomDatabaseInconsistentVersionException {
 		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
-			if(task.isListedInFavouriteList(predefinedFavouriteList)){
-				removeTaskFromList(task, predefinedFavouriteList);
-			}
+			removeTaskFromList(task, predefinedFavouriteList);
 		}
+
 	}
 
 	public void removeTaskFromList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-		genericDAO.refresh(task);
-		removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
+		if (task.isListedInFavouriteList(predefinedFavouriteList)) {
+			genericDAO.refresh(task);
+			removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
+		}
 	}
 
-	public void removeTaskFromList(Task task, FavouriteList favouriteList) throws CustomDatabaseInconsistentVersionException {
+	public void removeTaskFromList(Task task, FavouriteList favouriteList)
+			throws CustomDatabaseInconsistentVersionException {
 
 		try {
+			logger.debug(
+					"Removing task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
+
 			// searching for item to remove
-			FavouriteListItem itemToRemove = favouriteList.getItems().stream().filter(p -> p.getId() == task.getId())
-					.collect(StreamUtils.singletonCollector());
+			FavouriteListItem itemToRemove = favouriteList.getItems().stream()
+					.filter(p -> p.getTask().getId() == task.getId()).collect(StreamUtils.singletonCollector());
 
 			favouriteList.getItems().remove(itemToRemove);
 			// saving new fav item
 			genericDAO.saveDataRollbackSave(favouriteList);
+			patientDao.deletePatientAssociatedDataFailSave(itemToRemove, task.getPatient(),
+					"log.patient.task.favouriteList.removed",
+					new Object[] { task.getTaskID().toString(), favouriteList.toString() });
 		} catch (IllegalStateException e) {
 			// no item found
-			logger.debug("Can not remove from favourite list, " + favouriteList.getName() + " not in list");
+			logger.debug("Can not remove task (" + task.getTaskID() + ") from favourite list ("
+					+ favouriteList.getName() + "), not in list");
 		}
 
 		try {
+			logger.debug(
+					"Removing favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID() + ")");
+
 			FavouriteList listToRemove = task.getFavouriteLists().stream()
 					.filter(p -> p.getId() == favouriteList.getId()).collect(StreamUtils.singletonCollector());
 
 			task.getFavouriteLists().remove(listToRemove);
-			
-			logger.debug("Removing favourite list from task");
 
 			// saving new fav item
 			genericDAO.saveDataRollbackSave(task);
 		} catch (IllegalStateException e) {
 			// no item found
-			logger.debug("Can not remove from favourite list, " + favouriteList.getName() + " not in list");
+			logger.debug("Can not remove favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID()
+					+ "), not listed ");
 		}
 		// TODO Delete FavouriteListItem?
 	}
 
 }
-
-// public List<Patient> getPatientsByTasksInLists(long id) {
-// FavouriteList favList = getFavouriteListById(id);
-//
-// DetachedCriteria query = DetachedCriteria.forClass(Patient.class,
-// "patient");
-// query.add(Restrictions.in("patient.task", favList.getTasks()));
-// query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-//
-// return (List<Patient>) query.getExecutableCriteria(getSession()).list();
-// }
-//
-// /**
-// * Saves a favourtie List within a new Session
-// *
-// * @param favouriteList
-// * @param resourcesKey
-// * @param resourcesKeyInsert
-// * @return
-// */
-// public boolean saveFavouriteList(FavouriteList favouriteList, String
-// resourcesKey, Object[] resourcesKeyInsert) {
-// if (getSession().getTransaction().isActive()) {
-// getSession().getTransaction().commit();
-// }
-//
-// getSession().beginTransaction();
-//
-// if (genericDAO.saveDataRollbackSave(favouriteList, resourcesKey,
-// resourcesKeyInsert)) {
-// getSession().getTransaction().commit();
-// return true;
-// }
-//
-// return false;
-//
-// }
-//
-// public List<FavouriteList> getAssociatedLists(Task task) {
-//
-// DetachedCriteria query = DetachedCriteria.forClass(FavouriteList.class,
-// "lists");
-// query.add(Restrictions.eq("lists.task", task));
-// query.createAlias("lists.tasks", "_tasks");
-// query.add(Restrictions.ge("_tasks.id", task.getId()));
-// query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-//
-// List<FavouriteList> result =
-// query.getExecutableCriteria(getSession()).list();
-//
-// return result;
-// }

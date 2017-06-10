@@ -273,18 +273,21 @@ ul.ui-menu-child {
 	color: red;
 }
 
-/* Background for even column should be different */
-.defaultDataTable {
-	
-}
-
-.defaultDataTable tr:nth-child(even) td {
+/* Highlighted datatable, even rows background is different, hover and selected is different*/
+.highlightedDataTable  tr.ui-datatable-even>td {
 	background-color: #f9f9f9;
 }
 
-.defaultDataTable .ui-state-highlight td {
-	background-color: inherit;
-	font-weight: bold;
+.highlightedDataTable tr.ui-state-highlight>td {
+	background-color: #fbf9ee;
+}
+
+.highlightedDataTable tr.ui-state-highlight>td label {
+	font-weight: bold !important;
+}
+
+.highlightedDataTable tr.ui-state-hover>td {
+	background-color: #fbf9ee;
 }
 
 .noUnderlineAtLink {
@@ -387,35 +390,40 @@ ul.ui-menu-child {
 /*
 	navigation Table
 */
-.navigation .navTable .contentTable td {
+.navigationDataTable .contentTable td {
 	border: 0px !important;
 	padding: 2px 0px !important;
 }
 
-.navigation .navTable .contentTable tr {
+.navigationDataTable .contentTable tr {
 	background: none;
 }
 
 /*
 	navigation Table
 */
-.navigation .navTable th, .navigation .navTable  td {
+.navigationDataTable th, .navigationDataTable  td {
 	padding: 4px 14px !important;
 }
 
 /*
 	navigation Table hover
 */
-.navigation .navTable .ui-state-hover {
+.navigationDataTable .ui-state-hover {
 	background: #e6e6e6 !important;
 }
 
-.navigation .navTable .contentTable .info {
+.navigationDataTable .contentTable .info {
 	font-size: 0.7em;
 }
 
-.navigation .navTable .ui-datatable-scrollable-theadclone {
+.navigationDataTable .ui-datatable-scrollable-theadclone {
 	display: none;
+}
+
+/* hiding unnecessary header background*/
+.navigationDataTable .ui-datatable-scrollable-header{
+	background: none !important;
 }
 
 /*
@@ -917,5 +925,17 @@ ul.ui-menu-child {
 }
 
 /*	################# create Task dialog ################# */
+
+/*	################# council dialog ################# */
+.councilDialog .ui-g-3 {
+	padding: 0px;
+}
+
+.councilDialog .customCouncilTable td{
+	padding: 2px 0px 2px 0px !important;	
+	background-color: inherit !important;
+}
+
+/*	################# council dialog ################# */
 
 /*	######################################## Dialog ######################################## */

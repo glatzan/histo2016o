@@ -94,7 +94,7 @@
 		<p:dataTable var="task" style="margin-top:20px;" id="taskList"
 			value="#{commonDataHandlerAction.selectedPatient.tasks}"
 			selectionMode="single"
-			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 			rendered="#{commonDataHandlerAction.selectedPatient != null}"
 			selection="#{commonDataHandlerAction.selectedTask}"
 			rowKey="#{task.id}">
@@ -210,7 +210,7 @@
 		<p:dataTable var="attachedPdf" style="margin-top:50px;"
 			id="attachedPdfList"
 			value="#{commonDataHandlerAction.selectedPatient.attachedPdfs}"
-			styleClass="defaultDataTable noBordersAll collapsedBordersAll"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 			rendered="#{commonDataHandlerAction.selectedPatient != null}">
 
 
