@@ -23,7 +23,7 @@
 				<h:outputLabel value="#{msg['dialog.media.select.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					actionListener="#{mediaDialogHandler.hideMediaDisplayDialog()}">
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -38,14 +38,14 @@
 					styleClass="defaultListingTableContainer navigation">
 					<!-- Nav Table -->
 					<p:dataTable var="pdf" id="patientList"
-						value="#{mediaDialogHandler.temporaryDataList.attachedPdfs}"
+						value="#{mediaDialog.selectedDatalist.attachedPdfs}"
 						selectionMode="single" scrollHeight="600" scrollable="true"
-						selection="#{mediaDialogHandler.temporaryPdfContainer}"
+						selection="#{mediaDialog.temporaryPdfContainer}"
 						rowKey="#{pdf.id}" styleClass="navigationDataTable">
 
 
 						<p:ajax event="rowDblselect"
-							listener="#{mediaDialogHandler.selectMedia(mediaDialogHandler.temporaryPdfContainer)}" />
+							listener="#{mediaDialog.onMediaSelection()}" />
 
 						<p:ajax event="rowSelect" update="@form" />
 
@@ -63,9 +63,10 @@
 								<h:outputText value="#{pdf.name}" style="font-weight: bold" />
 
 								<h:outputText value="#{msg['dialog.media.files.date']}" />
-								<h:outputText
-									value="#{mainHandlerAction.date(pdf.creationDate, enumProvider.getDateFormat('GERMAN_DATE_TIME'))}"
-									style="font-weight: bold" />
+								<h:outputText value="#{pdf.creationDate}"
+									style="font-weight: bold">
+									<f:convertDateTime type="date" dateType="short" />
+								</h:outputText>
 
 								<h:outputText value="#{msg['dialog.media.files.type']}" />
 								<h:outputText
@@ -80,10 +81,9 @@
 
 				<!-- right column -->
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-
 					<h:panelGroup id="pdfRender2">
-						<p:media player="pdf" value="#{mediaDialogHandler.pdfContent}"
-							rendered="#{mediaDialogHandler.temporaryPdfContainer ne null}"
+						<p:media player="pdf" value="#{mediaDialog.pdfContent}"
+							rendered="#{mediaDialog.temporaryPdfContainer ne null}"
 							width="100%" height="630px"></p:media>
 					</h:panelGroup>
 				</h:panelGrid>
@@ -95,26 +95,69 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
-					<p:commandButton value="#{msg['dialog.media.upload']}"
-						rendered="#{mediaDialogHandler.showUpload}" icon="fa fa-print"
-						styleClass="smallButton buttonLeftMarginInList"
-						actionListener="#{mediaDialogHandler.prepareUploadDialog(mediaDialogHandler.temporaryDataList)}">
-						<p:ajax event="dialogReturn" update="@form" />
-					</p:commandButton>
+					<h:panelGrid columns="2">
+						<p:selectOneMenu title="#{msg['body.worklist.header.view']}"
+							value="#{mediaDialog.selectedDatalist}" id="dataListSelector"
+							converter="#{mediaDialog.dataListsTransformer}"
+							styleClass="smallInput buttonLeftMarginInList"
+							rendered="#{mediaDialog.hasMoreDatalists()}">
+							<f:selectItems value="#{mediaDialog.dataLists}" var="dataList"
+								itemLabel="#{msg[dataList.getDatalistIdentifier()]}" itemValue="#{dataList}" />
+							<p:ajax event="change" process="dataListSelector" update="@form"></p:ajax>
+						</p:selectOneMenu>
+
+						<p:commandButton value="#{msg['dialog.media.upload']}"
+							rendered="#{mediaDialog.uploadEndabled}" icon="fa fa-print"
+							styleClass="smallButton buttonLeftMarginInList"
+							actionListener="#{mediaDialog.showUploadDialog()}">
+							<p:ajax event="dialogReturn" update="@form" />
+						</p:commandButton>
+					</h:panelGrid>
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="float:right;">
+					<!-- selection -->
 					<p:commandButton value="#{msg['dialog.media.select']}"
-						icon="fa fa-download" ajax="false"
-						disabled="#{mediaDialogHandler.temporaryPdfContainer eq null}"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{mediaDialogHandler.selectMedia(mediaDialogHandler.temporaryPdfContainer)}" />
+						rendered="#{mediaDialog.selectMode}" icon="fa fa-download"
+						ajax="false"
+						disabled="#{mediaDialog.temporaryPdfContainer eq null}"
+						styleClass="smallButton buttonRighMarginInListExtended" >
+						
+						
+					</p:commandButton>
+
+					<!-- preview -> download and print -->
+					<h:panelGrid columns="3" rendered="#{!mediaDialog.selectMode}">
+						<!-- print -->
+						<p:commandButton value="#{msg['dialog.media.print']}"
+							icon="fa fa-print"
+							styleClass="smallButton buttonRighMarginInListExtended"
+							actionListener="#{settingsHandler.selectedPrinter.print(mediaDialog.temporaryPdfContainer)}"></p:commandButton>
+
+						<!-- select printer -->
+						<p:selectOneMenu styleClass="customSerachSelectMenu"
+							panelStyleClass="customSerachSelectMenuPanel"
+							converter="#{settingsHandler.printerListTransformer}"
+							value="#{settingsHandler.selectedPrinter}" filter="true"
+							filterMatchMode="contains" style="margin-right:10px">
+
+							<f:selectItems value="#{settingsHandler.printerList}"
+								var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
+						</p:selectOneMenu>
+
+						<p:commandButton value="#{msg['dialog.media.open']}"
+							icon="fa fa-download" ajax="false"
+							disabled="#{mediaDialog.temporaryPdfContainer eq null}"
+							styleClass="smallButton buttonRighMarginInListExtended">
+							<p:fileDownload value="#{mediaDialog.pdfContent}" />
+						</p:commandButton>
+					</h:panelGrid>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{mediaDialogHandler.hideMediaDisplaySelectDialog()}" />
+						actionListener="#{mediaDialog.abortDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

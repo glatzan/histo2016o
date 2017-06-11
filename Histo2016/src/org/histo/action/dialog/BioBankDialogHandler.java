@@ -1,13 +1,19 @@
 package org.histo.action.dialog;
 
+import java.util.List;
+
 import org.histo.action.WorklistHandlerAction;
+import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.BioBankDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.BioBank;
+import org.histo.model.PDFContainer;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -28,6 +34,9 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private WorklistViewHandlerAction worklistViewHandlerAction;
+
+	@Autowired
+	private MediaDialog mediaDialog;
 
 	private BioBank bioBank;
 
@@ -77,6 +86,28 @@ public class BioBankDialogHandler extends AbstractDialog {
 			patientDao.savePatientAssociatedDataFailSave(getBioBank(), getTask(), "log.patient.bioBank.save");
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
+		}
+	}
+
+	public void showMediaDialog() {
+		try {
+			// init dialog for patient and task
+			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() },
+					true);
+
+			// setting advance copy mode with move as true and target to task
+			// and biobank
+			mediaDialog.enableAutoCopyMode(new HasDataList[] { getTask(), getBioBank() }, true, true);
+
+			// enabeling upload to task
+			mediaDialog.enableUpload(new HasDataList[] { getTask() },
+					new DocumentType[] { DocumentType.BIOBANK_INFORMED_CONSENT });
+
+			// show dialog
+			mediaDialog.prepareDialog();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// do nothing
+			// TODO: infom user
 		}
 	}
 

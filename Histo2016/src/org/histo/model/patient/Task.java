@@ -871,4 +871,9 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	 * Interface PatientRollbackAble
 	 ********************************************************/
 
+	@Override
+	@Transient
+	public String getDatalistIdentifier() {
+		return "interface.hasDataList.task";
+	}
 }

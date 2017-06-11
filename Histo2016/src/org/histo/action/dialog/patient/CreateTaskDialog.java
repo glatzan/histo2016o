@@ -254,9 +254,11 @@ public class CreateTaskDialog extends AbstractDialog {
 
 				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.pdf.attached");
 
-				patient.getAttachedPdfs().remove(selectedPDF);
-				patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.pdf.removed",
-						selectedPDF.getName());
+				if (isMoveInformedConsent()) {
+					patient.getAttachedPdfs().remove(selectedPDF);
+					patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.pdf.removed",
+							selectedPDF.getName());
+				}
 			}
 
 			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.edit", task.getTaskID());

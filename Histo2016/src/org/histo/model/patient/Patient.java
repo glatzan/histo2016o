@@ -362,6 +362,7 @@ public class Patient
 	/********************************************************
 	 * Transient Methods
 	 ********************************************************/
+	
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -534,4 +535,12 @@ public class Patient
 	/********************************************************
 	 * Interface PatientRollbackAble
 	 ********************************************************/
+
+	@Override
+	@Transient
+	public String getDatalistIdentifier() {
+		return "interface.hasDataList.patient";
+	}
+	
+	
 }

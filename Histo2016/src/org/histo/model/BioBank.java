@@ -108,13 +108,13 @@ public class BioBank implements HasDataList{
 		
 	}
 
-	@Override
-	@Transient
-	public Patient getPatient() {
-		return getTask().getPatient();
-	}
 	/********************************************************
 	 * Interface HasDataList
 	 ********************************************************/
 
+	@Override
+	@Transient
+	public String getDatalistIdentifier() {
+		return "interface.hasDataList.biobank";
+	}
 }

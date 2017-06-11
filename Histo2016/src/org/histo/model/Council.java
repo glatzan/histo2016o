@@ -1,7 +1,10 @@
 package org.histo.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,7 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -21,7 +26,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.CouncilState;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 
 @Entity
@@ -30,26 +37,52 @@ import org.histo.model.patient.Task;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "council_sequencegenerator", sequenceName = "council_sequence")
-public class Council implements HasID {
+public class Council implements HasID, HasDataList {
 	private long id;
 
 	private long version;
 
 	private Task task;
 
+	/**
+	 * Name of the council
+	 */
 	private String name;
 
+	/**
+	 * Council physician
+	 */
 	private Physician councilPhysician;
 
+	/**
+	 * Physician to sign the council
+	 */
 	private Physician physicianRequestingCouncil;
 
+	/**
+	 * Text of council
+	 */
 	private String councilText;
 
+	/**
+	 * Attached slides of the council
+	 */
 	private String attachment;
 
+	/**
+	 * Date of request
+	 */
 	private long dateOfRequest;
 
+	/**
+	 * State of the council
+	 */
 	private CouncilState councilState;
+
+	/**
+	 * Pdf attached to this council
+	 */
+	private List<PDFContainer> attachedPdfs;
 
 	public Council() {
 	}
@@ -150,6 +183,19 @@ public class Council implements HasID {
 		this.councilState = councilState;
 	}
 
+	@OneToMany(fetch = FetchType.LAZY)
+	@OrderBy("creationDate DESC")
+	public List<PDFContainer> getAttachedPdfs() {
+		if (attachedPdfs == null)
+			attachedPdfs = new ArrayList<PDFContainer>();
+		return attachedPdfs;
+	}
+
+	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
+		this.attachedPdfs = attachedPdfs;
+	}
+	
+
 	@Transient
 	public Date getDateOfRequestAsDate() {
 		return new Date(dateOfRequest);
@@ -162,6 +208,13 @@ public class Council implements HasID {
 	@Transient
 	public boolean isCouncilState(CouncilState councilState) {
 		return getCouncilState() == councilState ? true : false;
+	}
+
+
+	@Override
+	@Transient
+	public String getDatalistIdentifier() {
+		return "interface.hasDataList.council";
 	}
 
 }

@@ -106,12 +106,12 @@ public class MediaDialogHandler {
 	public void removeFileFormDataList(HasDataList dataList, PDFContainer container, boolean delete) {
 		if (dataList.getAttachedPdfs().contains(container)) {
 			dataList.getAttachedPdfs().remove(container);
-			try {
-				patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.removed", container.getName());
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+////				patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.removed", container.getName());
+//			} catch (CustomDatabaseInconsistentVersionException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 
 			if (delete)
 				genericDAO.deleteDate(container, "log.patient.pdft.deleted", container.getName());
@@ -122,13 +122,13 @@ public class MediaDialogHandler {
 	public void copySelectedFileToDataList(HasDataList dataList) {
 		if (getSelectedPdfContainer() != null) {
 			dataList.getAttachedPdfs().add(getSelectedPdfContainer());
-
-			try {
-				patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.attached", getSelectedPdfContainer().getName());
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//
+//			try {
+////				patientDao.savePatientAssociatedDataFailSave(dataList, "log.patient.pdf.attached", getSelectedPdfContainer().getName());
+//			} catch (CustomDatabaseInconsistentVersionException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 
 			setSelectedPdfContainer(null);
 		}
@@ -167,13 +167,13 @@ public class MediaDialogHandler {
 			upload.setCommentary(getUploadedFileCommentary());
 
 			// saving pdf
-			genericDAO.save(upload, resourceBundle.get("log.patient.pdf.created", upload.getName()),
-					dataList.getPatient());
+//			genericDAO.save(upload, resourceBundle.get("log.patient.pdf.created", upload.getName()),
+//					dataList.getPatient());
 
 			dataList.getAttachedPdfs().add(upload);
 
 			// saving list
-			mainHandlerAction.saveDataChange(dataList, "log.patient.pdf.attached", upload.getName());
+//			mainHandlerAction.saveDataChange(dataList, "log.patient.pdf.attached", upload.getName());
 		}
 		hideDataUploadDialog();
 	}

@@ -52,23 +52,12 @@
 					<h:panelGrid columns="2" styleClass="defaultListingTableCss"
 						columnClasses="defaultListingTableColumnTop,">
 						<h:outputLabel value="#{msg['dialog.biobank.pdf.fromPatient']}"></h:outputLabel>
-						<!-- Get PDF from Patien -->
+						<!-- Get PDF-->
 						<p:commandLink
-							actionListener="#{mediaDialogHandler.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task.patient)}">
-							<p:ajax event="dialogReturn" update="@form"
-								listener="#{mediaDialogHandler.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
+							actionListener="#{bioBankDialogHandler.showMediaDialog()}">
+							<p:ajax event="dialogReturn" update="@form"/>
 							<i class="fa fa-search icon-grey"></i>
 						</p:commandLink>
-
-						<h:outputLabel value="#{msg['dialog.biobank.pdf.fromTask']}"></h:outputLabel>
-						<!-- Get PDF from Task -->
-						<p:commandLink
-							actionListener="#{mediaDialogHandler.prepareMediaDisplaySelectDialog(bioBankDialogHandler.task)}">
-							<p:ajax event="dialogReturn" update="@form"
-								listener="#{mediaDialogHandler.copySelectedFileToDataList(bioBankDialogHandler.bioBank)}" />
-							<i class="fa fa-search icon-grey"></i>
-						</p:commandLink>
-
 					</h:panelGrid>
 				</h:panelGrid>
 				<!-- spacer -->
@@ -87,7 +76,7 @@
 						<p:column headerText="" style="width:15%">
 							<p:commandLink styleClass="noUnderlineAtLink"
 								title="#{msg['dialog.biobank.table.preview.hint']}"
-								actionListener="#{mediaDialogHandler.prepareMediaDisplayDialog(bioBankDialogHandler.bioBank,pdf,false)}">
+								actionListener="#{bioBankDialogHandler.showMediaDialog()}">
 								<p:ajax event="dialogReturn" update="@form" />
 								<i class="fa fa-search icon-grey"></i>
 							</p:commandLink>
