@@ -51,11 +51,11 @@
 
 					<h:panelGrid columns="2" styleClass="defaultListingTableCss"
 						columnClasses="defaultListingTableColumnTop,">
-						<h:outputLabel value="#{msg['dialog.biobank.pdf.fromPatient']}"></h:outputLabel>
+						<h:outputLabel value="#{msg['dialog.biobank.pdf']}"></h:outputLabel>
 						<!-- Get PDF-->
 						<p:commandLink
-							actionListener="#{bioBankDialogHandler.showMediaDialog()}">
-							<p:ajax event="dialogReturn" update="@form"/>
+							actionListener="#{bioBankDialogHandler.showMediaSelectDialog()}">
+							<p:ajax event="dialogReturn" update="@form" />
 							<i class="fa fa-search icon-grey"></i>
 						</p:commandLink>
 					</h:panelGrid>
@@ -69,21 +69,26 @@
 					<p:dataTable var="pdf"
 						value="#{bioBankDialogHandler.bioBank.attachedPdfs}"
 						styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-						style="width:100%;" scrollable="true" scrollHeight="400">
+						style="width:100%;" scrollable="true" scrollHeight="350">
 						<p:column headerText="#{msg['dialog.biobank.table.name']}">
-							<h:outputText value="#{pdf.name}" />
+							<h:outputText value="#{pdf.name}">
+								<f:converter converterId="customTruncateConverter"
+									truncateAt="40" />
+								<f:attribute name="truncateAt" value="40" />
+								<f:attribute name="continuationMark" value="..." />
+							</h:outputText>
 						</p:column>
 						<p:column headerText="" style="width:15%">
 							<p:commandLink styleClass="noUnderlineAtLink"
 								title="#{msg['dialog.biobank.table.preview.hint']}"
-								actionListener="#{bioBankDialogHandler.showMediaDialog()}">
+								actionListener="#{bioBankDialogHandler.showMediaViewDialog(pdf)}">
 								<p:ajax event="dialogReturn" update="@form" />
 								<i class="fa fa-search icon-grey"></i>
 							</p:commandLink>
 							<p:commandLink style="margin-right:5px" update="@form"
 								styleClass="noUnderlineAtLink"
 								title="#{msg['dialog.biobank.table.remove.hint']}"
-								actionListener="#{mediaDialogHandler.removeFileFormDataList(bioBankDialogHandler.bioBank,pdf)}">
+								actionListener="#{mediaDialog.removeFromDataList(bioBankDialogHandler.bioBank,pdf)}">
 								<i class="fa fa-close icon-grey"></i>
 							</p:commandLink>
 						</p:column>
@@ -95,19 +100,13 @@
 		<div class="buttonContainer">
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="2" style="float:right;">
-					<!-- Saev Button -->
-					<p:commandButton value="#{msg['general.save']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended">
-						<f:actionListener binding="#{bioBankDialogHandler.saveBioBank()}"></f:actionListener>
-						<f:actionListener binding="#{bioBankDialogHandler.hideDialog()}"></f:actionListener>
-					</p:commandButton>
+				<h:panelGrid columns="1" style="float:right;">
 
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-times-circle">
+						icon="fa fa-check-circle-o">
+						<f:actionListener binding="#{bioBankDialogHandler.saveBioBank()}"></f:actionListener>
 						<f:actionListener binding="#{bioBankDialogHandler.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 				</h:panelGrid>

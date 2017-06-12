@@ -1,10 +1,16 @@
 package org.histo.config;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.CouncilState;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Display;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.Month;
@@ -13,6 +19,7 @@ import org.histo.config.enums.SignatureRole;
 import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
+import org.histo.config.enums.View;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

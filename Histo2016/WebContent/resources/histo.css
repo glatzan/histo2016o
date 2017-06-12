@@ -163,7 +163,7 @@ body {
 	font-weight: bold;
 }
 
-.standardFont label, .standardFont input {
+.standardFont, .standardFont label, .standardFont input {
 	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-size: 15px !important;
 	font-style: normal;

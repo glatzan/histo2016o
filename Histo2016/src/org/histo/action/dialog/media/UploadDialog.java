@@ -1,13 +1,5 @@
 package org.histo.action.dialog.media;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
-
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
@@ -21,12 +13,12 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import javax.faces.convert.EnumConverter;
 
 @Component
 @Scope(value = "session")
@@ -89,14 +81,14 @@ public class UploadDialog extends AbstractDialog {
 			prepareDialog();
 	}
 
-	public void initAndPrepareBean(HasDataList[]  dataList, Patient patient, DocumentType[] availableFileTypes,
+	public void initAndPrepareBean(HasDataList[] dataList, Patient patient, DocumentType[] availableFileTypes,
 			DocumentType selectedFileType) {
 		if (initBean(dataList, patient, availableFileTypes, selectedFileType))
 			prepareDialog();
 	}
 
 	public boolean initBean(HasDataList dataList, Patient patient, DocumentType[] availableFileTypes) {
-		return initBean(new HasDataList[]{dataList}, patient, availableFileTypes);
+		return initBean(new HasDataList[] { dataList }, patient, availableFileTypes);
 	}
 
 	public boolean initBean(HasDataList[] dataList, Patient patient, DocumentType[] availableFileTypes) {
@@ -114,7 +106,8 @@ public class UploadDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 			return false;
 		}
-
+		
+		setPatient(patient);
 		setDataLists(dataList);
 		setUploadedFileCommentary("");
 		setAvailableFileTypes(availableFileTypes);
@@ -207,7 +200,4 @@ public class UploadDialog extends AbstractDialog {
 	public void setAvailableFileTypes(DocumentType[] availableFileTypes) {
 		this.availableFileTypes = availableFileTypes;
 	}
-	
-	
-
 }

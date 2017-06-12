@@ -6,6 +6,7 @@ import java.util.List;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.MediaDialogHandler;
+import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -27,6 +28,7 @@ import org.histo.model.FavouriteList;
 import org.histo.model.MaterialPreset;
 import org.histo.model.PDFContainer;
 import org.histo.model.Signature;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
@@ -70,6 +72,9 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	@Autowired
 	private WorklistViewHandlerAction worklistViewHandlerAction;
+
+	@Autowired
+	private MediaDialog mediaDialog;
 
 	private Patient patient;
 
@@ -307,6 +312,22 @@ public class CreateTaskDialog extends AbstractDialog {
 	public String getNewTaskID() {
 		return Integer.toString(TimeUtil.getCurrentYear() - 2000)
 				+ HistoUtil.fitString(taskDAO.countTasksOfCurrentYear(), 4, '0');
+	}
+
+	public void showMediaSelectDialog(PDFContainer pdfContainer) {
+		// init dialog for patient and task
+		mediaDialog.initBean(getPatient(), new HasDataList[] { getPatient() }, pdfContainer, true);
+
+		// enabeling upload to task
+		mediaDialog.enableUpload(new HasDataList[] { getPatient() },
+				new DocumentType[] { DocumentType.BIOBANK_INFORMED_CONSENT });
+
+		// setting info text
+		mediaDialog
+				.setActionDescription(resourceBundle.get("dialog.media.headline.info.biobank", getTask().getTaskID()));
+
+		// show dialog
+		mediaDialog.prepareDialog();
 	}
 
 	// ************************ Getter/Setter ************************

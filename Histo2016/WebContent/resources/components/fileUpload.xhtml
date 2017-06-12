@@ -33,12 +33,12 @@
 			skinSimple="true" />
 
 		<h:outputLabel value="#{msg['dialog.upload.type']}" />
-		<h:selectOneMenu styleClass="taskSelectOnMenu" 
-			value="#{cc.attrs.uploadFileType}">
-			<f:selectItem value="#{cc.attrs.uploadFileTypeList}" var="fileType"
-				itemLabel="#{msg['enum.documentType.' += fileType]}" 
+		<p:selectOneMenu styleClass="taskSelectOnMenu"
+			converter="#{cc.attrs.converter}" value="#{cc.attrs.uploadFileType}">
+			<f:selectItems value="#{cc.attrs.uploadFileTypeList}" var="fileType"
+				itemLabel="#{msg['enum.documentType.' += fileType]}"
 				itemValue="#{fileType}" />
-		</h:selectOneMenu>
+		</p:selectOneMenu>
 
 		<h:outputLabel value="#{msg['dialog.upload.commentary']}" />
 		<p:inputTextarea rows="4" value="#{cc.attrs.fileToUploadCommentary}" />

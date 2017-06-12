@@ -20,7 +20,8 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.media.select.headline']}" />
+				<h:outputLabel
+					value="#{(mediaDialog.selectMode ? msg['dialog.media.headline.select'] : msg['dialog.media.headline'])}: #{mediaDialog.actionDescription}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -102,7 +103,8 @@
 							styleClass="smallInput buttonLeftMarginInList"
 							rendered="#{mediaDialog.hasMoreDatalists()}">
 							<f:selectItems value="#{mediaDialog.dataLists}" var="dataList"
-								itemLabel="#{msg[dataList.getDatalistIdentifier()]}" itemValue="#{dataList}" />
+								itemLabel="#{msg[dataList.getDatalistIdentifier()]}"
+								itemValue="#{dataList}" />
 							<p:ajax event="change" process="dataListSelector" update="@form"></p:ajax>
 						</p:selectOneMenu>
 
@@ -110,21 +112,34 @@
 							rendered="#{mediaDialog.uploadEndabled}" icon="fa fa-print"
 							styleClass="smallButton buttonLeftMarginInList"
 							actionListener="#{mediaDialog.showUploadDialog()}">
-							<p:ajax event="dialogReturn" update="@form" />
+							<p:ajax event="dialogReturn" update="@form" listener="#{mediaDialog.onUploadReturn()}" />
 						</p:commandButton>
 					</h:panelGrid>
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- selection -->
-					<p:commandButton value="#{msg['dialog.media.select']}"
-						rendered="#{mediaDialog.selectMode}" icon="fa fa-download"
-						ajax="false"
-						disabled="#{mediaDialog.temporaryPdfContainer eq null}"
-						styleClass="smallButton buttonRighMarginInListExtended" >
-						
-						
-					</p:commandButton>
+					<h:panelGrid columns="2" rendered="#{mediaDialog.selectMode}">
+
+						<h:panelGrid columns="2"
+							rendered="#{mediaDialog.showAutoMoveOption}">
+							<p:selectBooleanCheckbox value="#{mediaDialog.deleteOnRemove}"
+								styleClass="buttonRighMarginInList" />
+							<h:outputLabel value="#{msg['dialog.media.moveSelectedFile']}"
+								styleClass="buttonRighMarginInList standardFont" />
+						</h:panelGrid>
+
+						<p:commandButton value="#{msg['dialog.media.select']}"
+							rendered="#{mediaDialog.selectMode}" icon="fa fa-download"
+							ajax="false"
+							disabled="#{mediaDialog.temporaryPdfContainer eq null}"
+							styleClass="smallButton buttonRighMarginInListExtended">
+
+							<f:actionListener binding="#{mediaDialog.onSelectData()}" />
+							<f:actionListener binding="#{mediaDialog.hideDialog()}" />
+						</p:commandButton>
+
+					</h:panelGrid>
 
 					<!-- preview -> download and print -->
 					<h:panelGrid columns="3" rendered="#{!mediaDialog.selectMode}">

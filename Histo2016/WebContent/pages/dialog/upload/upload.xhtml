@@ -30,7 +30,7 @@
 
 		<div class="contentDiv">
 			<histo:fileUpload fileToUpload="#{uploadDialog.uploadedFile}"
-				uploadFileType="#{uploadDialog.fileType}" 
+				uploadFileType="#{uploadDialog.fileType}"
 				uploadFileTypeList="#{uploadDialog.availableFileTypes}"
 				fileToUploadCommentary="#{uploadDialog.uploadedFileCommentary}"></histo:fileUpload>
 		</div>
@@ -42,8 +42,10 @@
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.upload']}"
 						icon="fa fa-check-circle-o" ajax="false"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						actionListener="#{uploadDialog.uploadData()}"></p:commandButton>
+						styleClass="smallButton buttonRighMarginInListExtended">
+						<f:actionListener binding="#{uploadDialog.uploadData()}" />
+						<f:actionListener binding="#{uploadDialog.hideDialog()}"/>
+					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"

@@ -89,11 +89,10 @@ public class BioBankDialogHandler extends AbstractDialog {
 		}
 	}
 
-	public void showMediaDialog() {
+	public void showMediaSelectDialog() {
 		try {
 			// init dialog for patient and task
-			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() },
-					true);
+			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() }, true);
 
 			// setting advance copy mode with move as true and target to task
 			// and biobank
@@ -103,12 +102,28 @@ public class BioBankDialogHandler extends AbstractDialog {
 			mediaDialog.enableUpload(new HasDataList[] { getTask() },
 					new DocumentType[] { DocumentType.BIOBANK_INFORMED_CONSENT });
 
+			// setting info text
+			mediaDialog.setActionDescription(
+					resourceBundle.get("dialog.media.headline.info.biobank", getTask().getTaskID()));
+
 			// show dialog
 			mediaDialog.prepareDialog();
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// do nothing
 			// TODO: infom user
 		}
+	}
+
+	public void showMediaViewDialog(PDFContainer pdfContainer) {
+		// init dialog for patient and task
+		mediaDialog.initBean(getTask().getPatient(), getBioBank(), pdfContainer, false);
+
+		// setting info text
+		mediaDialog
+				.setActionDescription(resourceBundle.get("dialog.media.headline.info.biobank", getTask().getTaskID()));
+
+		// show dialog
+		mediaDialog.prepareDialog();
 	}
 
 	// ************************ Getter/Setter ************************

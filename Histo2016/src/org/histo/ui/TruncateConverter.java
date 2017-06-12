@@ -6,7 +6,10 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
-@FacesConverter(value = "org.histo.ui.TruncateConverter")
+import org.springframework.stereotype.Service;
+
+@FacesConverter(value = "customTruncateConverter")
+@Service("customTruncateConverter")
 public class TruncateConverter implements Converter {
 	private int truncateAt = 0;
 	private String continuationMark;
@@ -47,7 +50,6 @@ public class TruncateConverter implements Converter {
 	 *            The continuationMark to set.
 	 */
 	public void setContinuationMark(String continuationMark) {
-		System.out.println("setting " + continuationMark);
 		this.continuationMark = continuationMark;
 	}
 
@@ -63,7 +65,6 @@ public class TruncateConverter implements Converter {
 	 *            The truncateAt to set.
 	 */
 	public void setTruncateAt(int truncateAt) {
-		System.out.println("setttings " + truncateAt);
 		this.truncateAt = truncateAt;
 	}
 }

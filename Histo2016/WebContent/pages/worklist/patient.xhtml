@@ -183,7 +183,8 @@
 
 					<!-- notification needed -->
 					<!-- notification need = green -->
-					<ui:fragment rendered="#{task.isListedInFavouriteList('NotificationList')}">
+					<ui:fragment
+						rendered="#{task.isListedInFavouriteList('NotificationList')}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.notificationPhase.notificationNeeded']}"
@@ -247,14 +248,14 @@
 				<f:facet name="header">
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="upload"
-							actionListener="#{mediaDialogHandler.prepareMediaDisplayDialog(commonDataHandlerAction.selectedPatient)}">
+							actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							<i class="fa fa-plus"></i>
 						</p:commandLink>
 					</h:panelGrid>
 				</f:facet>
 				<p:commandLink
-					actionListener="#{mediaDialogHandler.prepareMediaDisplayDialog(commonDataHandlerAction.selectedPatient,attachedPdf)}">
+					actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					<i class="fa fa-search"></i>
 				</p:commandLink>

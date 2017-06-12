@@ -145,8 +145,20 @@ public class MediaDialog extends AbstractDialog {
 		initBean(patient, toSelectFrom, selectedDataList, mediaToDisplay, false);
 	}
 
+	public boolean initBean(Patient patient, HasDataList dataList, boolean selectMode) {
+		return initBean(patient, new HasDataList[] { dataList }, dataList, null, selectMode);
+	}
+
+	public boolean initBean(Patient patient, HasDataList dataList, PDFContainer mediaToDisplay,boolean selectMode) {
+		return initBean(patient, new HasDataList[] { dataList }, dataList, mediaToDisplay, selectMode);
+	}
+
 	public boolean initBean(Patient patient, HasDataList[] dataLists, boolean selectMode) {
 		return initBean(patient, dataLists, dataLists[0], null, selectMode);
+	}
+
+	public boolean initBean(Patient patient, HasDataList[] dataLists, PDFContainer mediaToDisplay, boolean selectMode) {
+		return initBean(patient, dataLists, dataLists[0], mediaToDisplay, selectMode);
 	}
 
 	public boolean initBean(Patient patient, HasDataList[] dataLists, HasDataList selectedDataList,
@@ -202,7 +214,7 @@ public class MediaDialog extends AbstractDialog {
 
 	public void showUploadDialog() {
 		if (isUploadEndabled()) {
-			uploadDialog.initAndPrepareBean(getUploadDataLists(), patient, getUploadAvailableFileType(),
+			uploadDialog.initAndPrepareBean(getUploadDataLists(), getPatient(), getUploadAvailableFileType(),
 					getUploadFileType());
 		}
 	}
@@ -250,6 +262,7 @@ public class MediaDialog extends AbstractDialog {
 		try {
 			if (isAutoCopy() && getAutoCopyModeTargetLists() != null && getAutoCopyModeTargetLists().length > 0) {
 
+				logger.debug("Auto copy is enabled");
 				// true if the to copy pdf was found in a target copy list, if
 				// move
 				// pdf (if enabled) will no be performed
@@ -259,11 +272,13 @@ public class MediaDialog extends AbstractDialog {
 					if (copyToList.getAttachedPdfs().stream()
 							.anyMatch(p -> p.getId() == getSelectedPdfContainer().getId())) {
 						foundInToCopyLists = true;
+						logger.debug("Found file in target list, do not remove");
 						continue;
 					}
 
 					copyToList.getAttachedPdfs().add(getSelectedPdfContainer());
 
+					logger.debug("Adding file to targetlist " + copyToList.getDatalistIdentifier());
 					patientDao.savePatientAssociatedDataFailSave(copyToList, getPatient(), "log.patient.pdf.attached",
 							getSelectedPdfContainer().getName());
 
@@ -272,6 +287,7 @@ public class MediaDialog extends AbstractDialog {
 				// removing pdf form selected datalist if autoMove is enabled
 				// and the pdf was not found in the target copy list
 				if (isAutoMove() && !foundInToCopyLists) {
+					logger.debug("Removing file from " + getSelectedDatalist().getDatalistIdentifier());
 					removeFromDataList(getSelectedDatalist(), getSelectedPdfContainer());
 				}
 			}
@@ -283,9 +299,16 @@ public class MediaDialog extends AbstractDialog {
 		}
 	}
 
+	public void onUploadReturn(){
+		if(getSelectedPdfContainer() == null && getSelectedDatalist().getAttachedPdfs().size() > 0){
+			setSelectedPdfContainer(getSelectedDatalist().getAttachedPdfs().get(0));
+		}
+	}
+	
 	public void abortDialog() {
 		super.hideDialog();
-		setSelectedPdfContainer(null);
+		if(isAutoCopy() && isSelectMode())
+			setSelectedPdfContainer(null);
 	}
 
 	public void removeFromDataList(HasDataList dataList, PDFContainer container)

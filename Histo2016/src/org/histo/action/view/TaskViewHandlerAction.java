@@ -5,7 +5,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.action.WorklistHandlerAction;
+import org.histo.action.dialog.media.MediaDialog;
+import org.histo.config.enums.DocumentType;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -90,6 +94,9 @@ public class TaskViewHandlerAction {
 	public void onChangeSelectionCriteria() {
 		setTaskList(taskDAO.getTasks(getTaskPerPull(), getPage() - 1));
 	}
+	
+
+	
 
 	/********************************************************
 	 * Getter/Setter
