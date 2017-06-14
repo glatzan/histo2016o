@@ -149,7 +149,7 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	@Transient
 	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
 		updateNameOfSample(useAutoNomenclature, ignoreManuallyNamedItems);
-		getBlocks().stream().forEach(p -> p.updateNameOfBlock(useAutoNomenclature, ignoreManuallyNamedItems));
+		getBlocks().stream().forEach(p -> p.updateAllNames(useAutoNomenclature, ignoreManuallyNamedItems));
 	}
 
 	@Override

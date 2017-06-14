@@ -135,7 +135,7 @@ public class DiagnosisViewHandlerAction {
 
 			// updates the name of all other samples
 			for (Block block : sample.getBlocks()) {
-				block.updateNameOfBlock(sample.getParent().isUseAutoNomenclature(), false);
+				block.updateAllNames(sample.getParent().isUseAutoNomenclature(), false);
 			}
 
 			// checking if staining flag of the task object has to be false

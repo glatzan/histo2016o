@@ -233,7 +233,7 @@ public class CreateTaskDialog extends AbstractDialog {
 				patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.update",
 						sample.getSampleID());
 			}
-
+			
 			// creating standard diagnoses
 			taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(),
 					DiagnosisRevisionType.DIAGNOSIS);
@@ -266,7 +266,7 @@ public class CreateTaskDialog extends AbstractDialog {
 				}
 			}
 
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.edit", task.getTaskID());
+			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.update", task.getTaskID());
 			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StainingList);
 
 			patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.save");

@@ -4,7 +4,8 @@
       "changes":[  
      	 "<b>Change:</b> Konsile Dialog überarbeitet, Konsile werden jetzt je nach Status in Favoritenlisten eingeteilt",
          "<b>Fix:</b> Sortierung der Arbeitsliste überarbeitet",
-         "<b>Fix:</b> Navigationsknöpfe der Arbeitsliste überarbeitet"
+         "<b>Fix:</b> Navigationsknöpfe der Arbeitsliste überarbeitet",
+         "<b>Fix:</b> Bennunung von Blöcken funktioniert wieder richtig"
        ]
    },
  	{  

@@ -68,6 +68,9 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 			StringBuilder name = new StringBuilder();
 
 			if (useAutoNomenclature) {
+				
+				System.out.println(parent.getParent().getSampleID() + " ");
+				
 				// generating block id
 				name.append(parent.getParent().getSampleID());
 				name.append(parent.getBlockID());
