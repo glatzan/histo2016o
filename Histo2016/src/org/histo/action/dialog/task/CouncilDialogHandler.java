@@ -11,11 +11,13 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.PrintDialogHandler;
+import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.CouncilState;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
@@ -25,6 +27,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
 import org.histo.model.Physician;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +55,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private FavouriteListDAO favouriteListDAO;
+
+	@Autowired
+	private MediaDialog mediaDialog;
 
 	/**
 	 * Selected council from councilList
@@ -294,6 +300,31 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
+		}
+	}
+
+	public void showMediaSelectDialog() {
+		try {
+			// init dialog for patient and task
+			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() }, true);
+
+			// setting advance copy mode with move as true and target to task
+			// and biobank
+			mediaDialog.enableAutoCopyMode(new HasDataList[] { getTask(), getSelectedCouncil() }, true, true);
+
+			// enabeling upload to task
+			mediaDialog.enableUpload(new HasDataList[] {getTask() },
+					new DocumentType[] { DocumentType.COUNCIL_REPLY });
+
+			// setting info text
+			mediaDialog.setActionDescription(
+					resourceBundle.get("dialog.media.headline.info.council", getTask().getTaskID()));
+
+			// show dialog
+			mediaDialog.prepareDialog();
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// do nothing
+			// TODO: infom user
 		}
 	}
 

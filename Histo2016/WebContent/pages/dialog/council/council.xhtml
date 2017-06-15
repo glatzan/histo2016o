@@ -52,9 +52,15 @@
 								<h:outputLabel value="#{msg['enum.concilStates.EditState']}"
 									rendered="#{council.isCouncilState('EditState')}" />
 
-								<h:outputLabel value="#{msg['enum.concilStates.LendingState']}"
+								<h:outputLabel
+									value="#{msg['enum.concilStates.LendingStateMTA']}"
 									styleClass="icon-orange"
-									rendered="#{council.isCouncilState('LendingState')}" />
+									rendered="#{council.isCouncilState('LendingStateMTA')}" />
+
+								<h:outputLabel
+									value="#{msg['enum.concilStates.LendigStateSecretary']}"
+									styleClass="icon-orange"
+									rendered="#{council.isCouncilState('LendigStateSecretary')}" />
 
 								<h:outputLabel value="#{msg['enum.concilStates.PendingState']}"
 									styleClass="icon-red"
@@ -219,6 +225,16 @@
 
 
 				<h:panelGrid columns="3" style="float:right;">
+
+					<!-- media select for coincil reply -->
+					<p:commandButton styleClass="noUnderlineAtLink"
+						icon="fa-upload fa "
+						rendered="#{councilDialogHandler.selectedCouncil.isCouncilState('CompletedState')}"
+						title="#{msg['dialog.biobank.table.preview.hint']}"
+						actionListener="#{councilDialogHandler.showMediaSelectDialog()}">
+						<p:ajax event="dialogReturn" update="@form" />
+					</p:commandButton>
+
 					<!-- create and print -->
 					<p:commandButton value="#{msg['general.print']}"
 						icon="fa fa-check-circle-o" onstart="PF('blockUIWidget').block()"
@@ -246,3 +262,4 @@
 	</h:form>
 </h:body>
 </html>
+<!-- showMediaSelectDialog -->

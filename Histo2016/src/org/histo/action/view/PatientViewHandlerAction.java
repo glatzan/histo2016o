@@ -34,7 +34,7 @@ public class PatientViewHandlerAction {
 
 		// enabeling upload to task
 		mediaDialog.enableUpload(new HasDataList[] { commonDataHandlerAction.getSelectedPatient() },
-				new DocumentType[] { DocumentType.U_REPORT, DocumentType.CASE_CONFERENCE,
+				new DocumentType[] { DocumentType.U_REPORT, DocumentType.COUNCIL_REPLY,
 						DocumentType.BIOBANK_INFORMED_CONSENT, DocumentType.OTHER });
 
 		// setting info text
@@ -52,7 +52,7 @@ public class PatientViewHandlerAction {
 
 		// enabeling upload to task
 		mediaDialog.enableUpload(new HasDataList[] { commonDataHandlerAction.getSelectedTask() },
-				new DocumentType[] { DocumentType.U_REPORT, DocumentType.CASE_CONFERENCE,
+				new DocumentType[] { DocumentType.U_REPORT, DocumentType.COUNCIL_REPLY,
 						DocumentType.BIOBANK_INFORMED_CONSENT, DocumentType.OTHER });
 
 		// setting info text

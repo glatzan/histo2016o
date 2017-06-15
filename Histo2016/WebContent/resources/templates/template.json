@@ -20,7 +20,7 @@
 	"nameAsResources": true,
 	"fileWithLogo": "templates/council/council_v27.pdf",
 	"fileWithOutLogo": "templates/council/council_v27.pdf",
-	"type": "COUNCIL",
+	"type": "COUNCIL_REQUEST",
 	"defaultTemplate": true,
 	"externalDocument": false,
 	"pizCode": [{

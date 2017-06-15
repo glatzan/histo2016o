@@ -139,7 +139,7 @@ public class PrintDialogHandler extends AbstractDialog {
 
 	public void initBeanForCouncil(Task task, Council council) {
 		PrintTemplate[] subSelect = PrintTemplate
-				.getTemplatesByTypes(new DocumentType[] { DocumentType.CASE_CONFERENCE });
+				.getTemplatesByTypes(new DocumentType[] { DocumentType.COUNCIL_REQUEST });
 
 		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect));
 
