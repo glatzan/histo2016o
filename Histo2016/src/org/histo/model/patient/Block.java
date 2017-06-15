@@ -86,10 +86,8 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 	@Transient
 	public boolean updateNameOfBlock(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
 		if (!isIdManuallyAltered() || (ignoreManuallyNamedItems && isIdManuallyAltered())) {
-
 			if (useAutoNomenclature && parent.getBlocks().size() > 1) {
 				String name = TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this));
-
 				if (getBlockID() == null || !getBlockID().equals(name)) {
 					setBlockID(name);
 					setIdManuallyAltered(false);
@@ -103,7 +101,7 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 
 	@Transient
 	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
-		updateNameOfBlock(useAutoNomenclature, useAutoNomenclature);
+		updateNameOfBlock(useAutoNomenclature, ignoreManuallyNamedItems);
 		getSlides().stream().forEach(p -> p.updateNameOfSlide(useAutoNomenclature, ignoreManuallyNamedItems));
 	}
 

@@ -3,6 +3,7 @@ package org.histo.action.view;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -102,25 +103,6 @@ public class DiagnosisViewHandlerAction {
 
 		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
 		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());
-	}
-
-	/**
-	 * Saves the manually altered flag, if the sample/block/ or slide id was
-	 * manually altered.
-	 * 
-	 * @param idManuallyAltered
-	 * @param altered
-	 */
-	public void entityIDmanuallyAltered(IdManuallyAltered idManuallyAltered, boolean altered) {
-		try {
-			idManuallyAltered.setIdManuallyAltered(altered);
-			//TODO update childrens names
-			patientDao.savePatientAssociatedDataFailSave(idManuallyAltered, "log.patient.task.idManuallyAltered",
-					idManuallyAltered.toString());
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// catching database version inconsistencies
-			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
-		}
 	}
 
 	/**

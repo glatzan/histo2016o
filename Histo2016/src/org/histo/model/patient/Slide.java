@@ -63,6 +63,11 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 	private Block parent;
 
 	@Transient
+	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		updateNameOfSlide(useAutoNomenclature,ignoreManuallyNamedItems);
+	}
+	
+	@Transient
 	public boolean updateNameOfSlide(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
 		if (!isIdManuallyAltered() || (isIdManuallyAltered() && ignoreManuallyNamedItems)) {
 			StringBuilder name = new StringBuilder();

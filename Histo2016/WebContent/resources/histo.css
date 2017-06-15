@@ -939,3 +939,19 @@ ul.ui-menu-child {
 /*	################# council dialog ################# */
 
 /*	######################################## Dialog ######################################## */
+
+.truncate {
+    max-width: 160px;
+    width: 160 px\9;
+}
+
+.truncate > div {
+    width: 160 px\9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    display: block;
+    position: absolute;
+}

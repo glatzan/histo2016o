@@ -268,7 +268,8 @@
 							<h:outputLabel
 								value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
 							<p:commandLink styleClass="noUnderlineAtLink"
-								id="quickTaskSettings" actionListener="#{slideNamingDialog.initAndPrepareBean(selectedTask)}">
+								id="quickTaskSettings"
+								actionListener="#{slideNamingDialog.initAndPrepareBean(selectedTask)}">
 								<i class="fa fa-wrench" />
 								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							</p:commandLink>
@@ -290,17 +291,30 @@
 								<h:outputLabel id="sampleIDInput#{inner.index}"
 									value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.sample.sampleID}" />
 
+								<h:panelGroup rendered="#{stainingRow.sample.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
+								</h:panelGroup>
+
 								<p:overlayPanel for="sampleIDInput#{inner.index}"
 									showEffect="fade" widgetVar="sampleIDInputPannel#{inner.index}"
 									hideEffect="fade" showEvent="click" hideEvent="click"
 									onHide="sampleIDChangeTableReset#{inner.index}()">
-									<h:panelGrid columns="2">
+									<h:panelGrid columns="3">
 										<p:inputText value="#{stainingRow.sample.sampleID}"
 											id="sampleIDChangeTable#{inner.index}" />
+										
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,true)}"
-											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()"></p:commandButton>
+											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,true)}"
+											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()" />
+										
+										<p:commandButton
+											value="#{msg['body.statiningView.idManuallyAltered.reset']}"
+											update="contentForm"
+											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,false)}"
+											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()" />
+											
 									</h:panelGrid>
 
 									<!-- reset on hide -->
@@ -319,17 +333,27 @@
 
 								<h:outputLabel id="blockIDInput#{inner.index}"
 									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.block.blockID}" />
+								<h:panelGroup rendered="#{stainingRow.block.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
+								</h:panelGroup>
 
 								<p:overlayPanel for="blockIDInput#{inner.index}"
 									onHide="blockIDChangeTableReset#{inner.index}()"
 									showEffect="fade" widgetVar="blockIDInputPannel#{inner.index}"
 									hideEffect="fade" showEvent="click" hideEvent="click">
-									<h:panelGrid columns="2">
+									<h:panelGrid columns="3">
 										<p:inputText value="#{stainingRow.block.blockID}"
 											id="blockIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered(stainingRow.block,true)}"
+											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.block,true)}"
+											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()" />
+
+										<p:commandButton
+											value="#{msg['body.statiningView.idManuallyAltered.reset']}"
+											update="contentForm"
+											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.block,false)}"
 											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()"></p:commandButton>
 									</h:panelGrid>
 
@@ -339,7 +363,6 @@
 										<p:resetInput target="blockIDChangeTable#{inner.index}" />
 									</p:remoteCommand>
 								</p:overlayPanel>
-
 							</h:panelGroup>
 						</p:column>
 
@@ -364,20 +387,34 @@
 						<p:column
 							styleClass="columnStainingID #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
+
 								<h:outputLabel id="slideIDInput#{inner.index}"
 									value="#{stainingRow.staining.slideID}" />
+
+
+								<h:panelGroup
+									rendered="#{stainingRow.staining.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
+								</h:panelGroup>
 
 								<p:overlayPanel for="slideIDInput#{inner.index}"
 									showEffect="fade" widgetVar="slideIDInputPannel#{inner.index}"
 									hideEffect="fade" showEvent="click" hideEvent="click"
 									onHide="slideIDChangeTableReset#{inner.index}()">
-									<h:panelGrid columns="2">
+									<h:panelGrid columns="3">
 										<p:inputText value="#{stainingRow.staining.slideID}"
 											id="slideIDChangeTable#{inner.index}" />
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
-											actionListener="#{diagnosisViewHandlerAction.entityIDmanuallyAltered(stainingRow.staining,true)}"
+											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.staining,true)}"
 											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()"></p:commandButton>
+
+										<p:commandButton
+											value="#{msg['body.statiningView.idManuallyAltered.reset']}"
+											update="contentForm"
+											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.staining,false)}"
+											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()" />
 									</h:panelGrid>
 
 									<!-- reset on hide -->

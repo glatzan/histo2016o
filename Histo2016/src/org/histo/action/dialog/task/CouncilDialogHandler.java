@@ -149,25 +149,32 @@ public class CouncilDialogHandler extends AbstractDialog {
 			case ValidetedState:
 				logger.debug("EditState selected");
 				// removing all fav lists
-				removeListFromTask(PredefinedFavouriteList.CouncilLending, PredefinedFavouriteList.CouncilPending,
+				removeListFromTask(PredefinedFavouriteList.CouncilLendingMTA,
+						PredefinedFavouriteList.CouncilLendingSecretary, PredefinedFavouriteList.CouncilPending,
 						PredefinedFavouriteList.CouncilCompleted);
 				break;
-			case LendingState:
+			case LendingStateMTA:
+			case LendigStateSecretary:
 				logger.debug("LendingState selected");
 				// removing pending and completed state
 				removeListFromTask(PredefinedFavouriteList.CouncilPending, PredefinedFavouriteList.CouncilCompleted);
-				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.CouncilLending);
+				favouriteListDAO.addTaskToList(getTask(),
+						getSelectedCouncil().getCouncilState() == CouncilState.LendingStateMTA
+								? PredefinedFavouriteList.CouncilLendingMTA
+								: PredefinedFavouriteList.CouncilLendingSecretary);
 				break;
 			case PendingState:
 				logger.debug("PendingState selected");
 				// removing pending and completed state
-				removeListFromTask(PredefinedFavouriteList.CouncilLending, PredefinedFavouriteList.CouncilCompleted);
+				removeListFromTask(PredefinedFavouriteList.CouncilLendingMTA,
+						PredefinedFavouriteList.CouncilLendingSecretary, PredefinedFavouriteList.CouncilCompleted);
 				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.CouncilPending);
 				break;
 			case CompletedState:
 				logger.debug("CompletedState selected");
 				// removing pending and completed state
-				removeListFromTask(PredefinedFavouriteList.CouncilLending, PredefinedFavouriteList.CouncilPending);
+				removeListFromTask(PredefinedFavouriteList.CouncilLendingMTA,
+						PredefinedFavouriteList.CouncilLendingSecretary, PredefinedFavouriteList.CouncilPending);
 				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.CouncilCompleted);
 				break;
 			default:
@@ -196,11 +203,13 @@ public class CouncilDialogHandler extends AbstractDialog {
 				else
 					logger.debug("Not removing from CouncilPending list, other councils are in this state");
 				break;
-			case CouncilLending:
-				if (!getTask().getCouncils().stream().anyMatch(p -> p.getCouncilState() == CouncilState.LendingState))
+			case CouncilLendingMTA:
+			case CouncilLendingSecretary:
+				if (!getTask().getCouncils().stream().anyMatch(p -> p.getCouncilState() == CouncilState.LendingStateMTA
+						|| p.getCouncilState() == CouncilState.LendigStateSecretary))
 					favouriteListDAO.removeTaskFromList(getTask(), predefinedFavouriteList);
 				else
-					logger.debug("Not removing from CouncilLending list, other councils are in this state");
+					logger.debug("Not removing from CouncilLendingMTA list, other councils are in this state");
 				break;
 			default:
 				break;

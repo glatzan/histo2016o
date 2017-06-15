@@ -18,6 +18,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
+import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.ui.StainingTableChooser;
@@ -301,6 +302,32 @@ public class ReceiptlogViewHandlerAction {
 
 	}
 
+
+	/**
+	 * Saves the manually altered flag, if the sample/block/ or slide id was
+	 * manually altered.
+	 * 
+	 * @param idManuallyAltered
+	 * @param altered
+	 */
+	public void entityIDmanuallyAltered(IdManuallyAltered idManuallyAltered, boolean altered) {
+		try {
+			
+			idManuallyAltered.setIdManuallyAltered(altered);
+			
+			idManuallyAltered.updateAllNames(idManuallyAltered.getTask().isUseAutoNomenclature(), false);
+			
+			//TODO update childrens names
+			patientDao.savePatientAssociatedDataFailSave(idManuallyAltered, "log.patient.task.idManuallyAltered",
+					idManuallyAltered.toString());
+			
+			
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// catching database version inconsistencies
+			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
+		}
+	}
+	
 	// ************************ Getter/Setter ************************
 	public StainingListAction getActionOnMany() {
 		return actionOnMany;
