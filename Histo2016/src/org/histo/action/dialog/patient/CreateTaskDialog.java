@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.histo.action.WorklistHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.MediaDialogHandler;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
@@ -54,9 +53,6 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	@Autowired
 	private TaskDAO taskDAO;
-
-	@Autowired
-	private MediaDialogHandler mediaDialogHandler;
 
 	@Autowired
 	private PatientDao patientDao;
@@ -129,9 +125,6 @@ public class CreateTaskDialog extends AbstractDialog {
 		setSampleCount(1);
 
 		setAutoNomenclatureChangedManually(false);
-
-		// resetting selected pdf container for informed consent upload
-		mediaDialogHandler.setSelectedPdfContainer(null);
 
 		// creates a new sample, is automatically added to the task
 		new Sample(getTask(), !getMaterialList().isEmpty() ? getMaterialList().get(0) : null);
@@ -245,7 +238,8 @@ public class CreateTaskDialog extends AbstractDialog {
 			bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
 			patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.save");
 
-			PDFContainer selectedPDF = mediaDialogHandler.getSelectedPdfContainer();
+			PDFContainer selectedPDF = mediaDialog.getSelectedPdfContainer();
+			
 			if (selectedPDF != null) {
 				// attaching pdf to biobank
 				bioBank.getAttachedPdfs().add(selectedPDF);

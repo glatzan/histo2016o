@@ -71,12 +71,11 @@
 						styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 						style="width:100%;" scrollable="true" scrollHeight="350">
 						<p:column headerText="#{msg['dialog.biobank.table.name']}">
-							<h:outputText value="#{pdf.name}">
-								<f:converter converterId="customTruncateConverter"
-									truncateAt="40" />
-								<f:attribute name="truncateAt" value="40" />
+							<h:outputLabel value="#{pdf.name}">
+								<f:converter converterId="org.histo.ui.TruncateConverter"  />
+								<f:attribute name="truncateAt" value="50" />
 								<f:attribute name="continuationMark" value="..." />
-							</h:outputText>
+							</h:outputLabel>
 						</p:column>
 						<p:column headerText="" style="width:15%">
 							<p:commandLink styleClass="noUnderlineAtLink"

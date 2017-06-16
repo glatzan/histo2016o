@@ -123,10 +123,9 @@
 								value="#{msg['dialog.createTask.bioBank.informedConsent.file']}:" />
 
 							<h:outputLabel value="#{mediaDialog.selectedPdfContainer.name}">
-							<!-- 	<f:converter converterId="org.histo.ui.TruncateConverter"
-									truncateAt="40" />
-								<f:attribute name="truncateAt" value="40" />
-								<f:attribute name="continuationMark" value="..." /> -->
+								<f:converter converterId="org.histo.ui.TruncateConverter" />
+								<f:attribute name="truncateAt" value="35" />
+								<f:attribute name="continuationMark" value="..." />
 							</h:outputLabel>
 
 
@@ -135,7 +134,7 @@
 								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
 							<p:selectOneMenu id="consentType" styleClass="smallInput"
 								value="#{createTaskDialog.bioBank.informedConsentType}"
-								disabled="#{mediaDialogHandler.selectedPdfContainer == null}">
+								disabled="#{mediaDialog.selectedPdfContainer == null}">
 								<f:selectItems value="#{enumProvider.informedConsentTypes}"
 									var="type"
 									itemLabel="#{msg['enum.informedConsentType.'.concat(type)]}"

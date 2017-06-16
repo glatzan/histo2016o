@@ -1,5 +1,6 @@
 package org.histo.config.enums;
 
 public enum StaticList {
-	WARDS, CASE_HISTORY;
+	WARDS, CASE_HISTORY, COUNCIL_ATTACHMENT;
+	
 }

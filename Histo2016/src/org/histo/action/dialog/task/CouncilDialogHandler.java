@@ -19,13 +19,17 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
+import org.histo.config.enums.StaticList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
+import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
+import org.histo.model.ListItem;
+import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
@@ -59,6 +63,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 	@Autowired
 	private MediaDialog mediaDialog;
 
+	@Autowired
+	private SettingsDAO settingsDAO;
+
 	/**
 	 * Selected council from councilList
 	 */
@@ -69,15 +76,30 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 */
 	private List<Council> councilList;
 
-	private DefaultTransformer<Council> councilListTransformer;
-
+	/**
+	 * List of physician to address a council
+	 */
 	private List<Physician> physicianCouncilList;
 
+	/**
+	 * Transformer for phyisicianCouncilList
+	 */
 	private DefaultTransformer<Physician> physicianCouncilTransformer;
 
+	/**
+	 * List of physicians to sign the request
+	 */
 	private List<Physician> physicianSigantureList;
 
+	/**
+	 * Transformer for physicianSiangotureList
+	 */
 	private DefaultTransformer<Physician> physicianSigantureListTransformer;
+
+	/**
+	 * Contains all available attachments
+	 */
+	private List<ListItem> attachmentList;
 
 	/**
 	 * Initializes the bean and shows the council dialog
@@ -97,6 +119,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	public boolean initBean(Task task) {
 		try {
 			taskDAO.initializeTask(task, false);
+			taskDAO.initializeCouncils(task);
 
 			super.initBean(task, Dialog.COUNCIL);
 
@@ -107,9 +130,10 @@ public class CouncilDialogHandler extends AbstractDialog {
 				setSelectedCouncil(getCouncilList().get(0));
 			}
 
-			setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
-
 			updatePhysicianLists();
+
+			setAttachmentList(settingsDAO.getAllStaticListItems(StaticList.COUNCIL_ATTACHMENT));
+
 			return true;
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
@@ -160,7 +184,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 						PredefinedFavouriteList.CouncilCompleted);
 				break;
 			case LendingStateMTA:
-			case LendigStateSecretary:
+			case LendingStateSecretary:
 				logger.debug("LendingState selected");
 				// removing pending and completed state
 				removeListFromTask(PredefinedFavouriteList.CouncilPending, PredefinedFavouriteList.CouncilCompleted);
@@ -212,7 +236,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			case CouncilLendingMTA:
 			case CouncilLendingSecretary:
 				if (!getTask().getCouncils().stream().anyMatch(p -> p.getCouncilState() == CouncilState.LendingStateMTA
-						|| p.getCouncilState() == CouncilState.LendigStateSecretary))
+						|| p.getCouncilState() == CouncilState.LendingStateSecretary))
 					favouriteListDAO.removeTaskFromList(getTask(), predefinedFavouriteList);
 				else
 					logger.debug("Not removing from CouncilLendingMTA list, other councils are in this state");
@@ -281,8 +305,6 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 		// updating council list
 		setCouncilList(new ArrayList<Council>(getTask().getCouncils()));
-		setCouncilListTransformer(new DefaultTransformer<Council>(getCouncilList()));
-
 		return true;
 	}
 
@@ -304,16 +326,21 @@ public class CouncilDialogHandler extends AbstractDialog {
 	}
 
 	public void showMediaSelectDialog() {
+		showMediaSelectDialog(null);
+	}
+
+	public void showMediaSelectDialog(PDFContainer pdf) {
 		try {
 			// init dialog for patient and task
-			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() }, true);
+			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() }, pdf,
+					true);
 
 			// setting advance copy mode with move as true and target to task
 			// and biobank
 			mediaDialog.enableAutoCopyMode(new HasDataList[] { getTask(), getSelectedCouncil() }, true, true);
 
 			// enabeling upload to task
-			mediaDialog.enableUpload(new HasDataList[] {getTask() },
+			mediaDialog.enableUpload(new HasDataList[] { getTask() },
 					new DocumentType[] { DocumentType.COUNCIL_REPLY });
 
 			// setting info text
@@ -328,14 +355,19 @@ public class CouncilDialogHandler extends AbstractDialog {
 		}
 	}
 
-	// ************************ Getter/Setter ************************
-	public DefaultTransformer<Council> getCouncilListTransformer() {
-		return councilListTransformer;
+	public void showMediaViewDialog(PDFContainer pdfContainer) {
+		// init dialog for patient and task
+		mediaDialog.initBean(getTask().getPatient(), getSelectedCouncil(), pdfContainer, false);
+
+		// setting info text
+		mediaDialog
+				.setActionDescription(resourceBundle.get("dialog.media.headline.info.council", getTask().getTaskID()));
+
+		// show dialog
+		mediaDialog.prepareDialog();
 	}
 
-	public void setCouncilListTransformer(DefaultTransformer<Council> councilListTransformer) {
-		this.councilListTransformer = councilListTransformer;
-	}
+	// ************************ Getter/Setter ************************
 
 	public List<Physician> getPhysicianCouncilList() {
 		return physicianCouncilList;
@@ -383,5 +415,13 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	public void setSelectedCouncil(Council selectedCouncil) {
 		this.selectedCouncil = selectedCouncil;
+	}
+
+	public List<ListItem> getAttachmentList() {
+		return attachmentList;
+	}
+
+	public void setAttachmentList(List<ListItem> attachmentList) {
+		this.attachmentList = attachmentList;
 	}
 }

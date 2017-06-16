@@ -8,10 +8,11 @@ import javax.faces.convert.FacesConverter;
 
 import org.springframework.stereotype.Service;
 
-@FacesConverter(value = "customTruncateConverter")
-@Service("customTruncateConverter")
+@FacesConverter("org.histo.ui.TruncateConverter")
 public class TruncateConverter implements Converter {
+
 	private int truncateAt = 0;
+
 	private String continuationMark;
 
 	public Object getAsObject(FacesContext context, UIComponent component, String value) throws ConverterException {
@@ -25,6 +26,14 @@ public class TruncateConverter implements Converter {
 			return null;
 		}
 
+		try{
+			setTruncateAt(Integer.valueOf((String)component.getAttributes().get("truncateAt")));
+		}catch(NumberFormatException e){
+			return "truncateAT no Int";
+		}
+		
+		setContinuationMark((String)component.getAttributes().get("continuationMark"));
+		
 		StringBuffer buff = new StringBuffer();
 		buff.append(value);
 

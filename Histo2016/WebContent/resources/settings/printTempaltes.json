@@ -38,7 +38,7 @@
 	"name" : "Konsil",
 	"file" : "classpath:templates/print/Report_Intern.tex",
 	"file2" : "",
-	"documentType"	: "CASE_CONFERENCE",
+	"documentType"	: "COUNCIL_REQUEST",
 	"defaultDocument" : true,
 	"doNotSave" : false
 },{

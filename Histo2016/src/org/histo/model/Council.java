@@ -194,7 +194,6 @@ public class Council implements HasID, HasDataList {
 	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
 		this.attachedPdfs = attachedPdfs;
 	}
-	
 
 	@Transient
 	public Date getDateOfRequestAsDate() {
@@ -206,10 +205,14 @@ public class Council implements HasID, HasDataList {
 	}
 
 	@Transient
-	public boolean isCouncilState(CouncilState councilState) {
-		return getCouncilState() == councilState ? true : false;
-	}
+	public boolean isCouncilState(CouncilState... councilStates) {
+		for (CouncilState councilState : councilStates) {
+			if (getCouncilState() == councilState)
+				return true;
+		}
 
+		return false;
+	}
 
 	@Override
 	@Transient

@@ -10,6 +10,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.model.Council;
 import org.histo.model.FavouriteList;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
@@ -88,6 +89,13 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return task;
 	}
 
+	public void initializeCouncils(Task task) throws CustomDatabaseInconsistentVersionException{
+		for (Council council: task.getCouncils()) {
+			genericDAO.refresh(council);
+			Hibernate.initialize(council.getAttachedPdfs());
+		}
+	}
+	
 	public Task getTaskAndPatientInitialized(long id) {
 		Task task = genericDAO.get(Task.class, id);
 

@@ -6,8 +6,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
-import org.histo.action.dialog.MediaDialogHandler;
 import org.histo.action.dialog.PrintDialogHandler;
+import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -56,7 +56,7 @@ public class NotificationDialog {
 	private PrintDialogHandler printDialogHandler;
 
 	@Autowired
-	private MediaDialogHandler mediaDialogHandler;
+	private MediaDialog mediaDialog;
 	/**
 	 * class for creating pdfs
 	 */
@@ -447,7 +447,7 @@ public class NotificationDialog {
 
 				mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.update");
 
-				mediaDialogHandler.perpareBeanForExternalForSinglView(resultPdf);
+				mediaDialog.setTemporaryPdfContainer(resultPdf);
 
 				notificationRunning.set(false);
 				notificationPerformed.set(true);
