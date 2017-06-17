@@ -3,23 +3,39 @@ package org.histo.action.dialog;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.Eye;
 import org.histo.config.enums.Gender;
 import org.histo.config.enums.Month;
 import org.histo.config.enums.PredefinedFavouriteList;
+import org.histo.config.enums.StaticList;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
+import org.histo.dao.PhysicianDAO;
+import org.histo.dao.SettingsDAO;
+import org.histo.dao.UtilDAO;
+import org.histo.model.DiagnosisPreset;
+import org.histo.model.ListItem;
+import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.sun.javafx.tk.Toolkit.Task;
 
 @Component
 @Scope(value = "session")
@@ -28,10 +44,19 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 	@Autowired
 	private PatientDao patientDao;
 
+	@Autowired
+	private SettingsDAO settingsDAO;
+
+	@Autowired
+	private PhysicianDAO physicianDAO;
+
+	@Autowired
+	private UtilDAO utilDAO;
+	
 	private WorklistSearchOption searchIndex;
 
 	private boolean initialized;
-	
+
 	private boolean newPatients;
 	private boolean stainingList;
 	private boolean stainingReList;
@@ -56,22 +81,20 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	private Map<String, Integer> years;
 
-	private String extendedPatientName;
-	private String extendedPatientSurename;
-	private Date extendedPatientBirthday;
-	private Gender extendedPatientGener;
-	
-	private String extendedMaterialName;
-	private String extendedHistory;
-	private Physician extendedSurgeon;
-	private Physician extendedPrivatePhysician;
-	
-	private Date extendedEntryDate;
-	
-	private String extendedDiagnosis;
-	private String extendedCategory;
-	
+	private ExtendedSearchData extendedSearchData;
 
+	private List<MaterialPreset> materials;
+
+	private List<Physician> surgeons;
+
+	private List<Physician> privatePhysicians;
+
+	private List<Physician> sigantures;
+
+	private List<ListItem> caseHistoryList;
+	
+	private List<DiagnosisPreset> diagnoses;
+	
 	public void initAndPrepareBean() {
 		initBean();
 		prepareDialog();
@@ -119,9 +142,23 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 			setSearchFrom(cal.getTime());
 
 			setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
+
+			setMaterials(settingsDAO.getAllMaterialPresets());
+
+			setSurgeons(physicianDAO.getPhysicians(ContactRole.SURGEON, false));
+
+			setPrivatePhysicians(physicianDAO.getPhysicians(ContactRole.PRIVATE_PHYSICIAN, false));
+
+			setSigantures(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
+			
+			setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
+			
+			setDiagnoses(utilDAO.getAllDiagnosisPrototypes());
+			
 			initialized = true;
 		}
 
+		setExtendedSearchData(new ExtendedSearchData());
 		return true;
 	}
 
@@ -271,6 +308,27 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		}
 	}
 
+	public void extendedSearch() {
+
+		DetachedCriteria query = DetachedCriteria.forClass(Task.class, "task");
+
+		if (getExtendedSearchData().getName() != null && !getExtendedSearchData().getName().isEmpty())
+			query.add(Restrictions.ilike("task.parent.person.name", getExtendedSearchData().getName(),
+					MatchMode.ANYWHERE));
+
+		if (getExtendedSearchData().getSurename() != null && !getExtendedSearchData().getSurename().isEmpty())
+			query.add(Restrictions.ilike("task.parent.person.surename", getExtendedSearchData().getSurename(),
+					MatchMode.ANYWHERE));
+
+		if (getExtendedSearchData().getBirthday() != null)
+			query.add(Restrictions.eq("task.parent.person.birthday", getExtendedSearchData().getBirthday()));
+
+		if (getExtendedSearchData().getGender() != null && getExtendedSearchData().getGender() != Gender.UNKNOWN)
+			query.add(Restrictions.eq("task.parent.person.gender", getExtendedSearchData().getGender()));
+		
+		
+	}
+
 	// ************************ Getter/Setter ************************
 	public WorklistSearchOption getSearchIndex() {
 		return searchIndex;
@@ -408,93 +466,296 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		this.years = years;
 	}
 
-	public String getExtendedPatientName() {
-		return extendedPatientName;
+	public ExtendedSearchData getExtendedSearchData() {
+		return extendedSearchData;
 	}
 
-	public void setExtendedPatientName(String extendedPatientName) {
-		this.extendedPatientName = extendedPatientName;
+	public void setExtendedSearchData(ExtendedSearchData extendedSearchData) {
+		this.extendedSearchData = extendedSearchData;
 	}
 
-	public String getExtendedPatientSurename() {
-		return extendedPatientSurename;
+	public List<MaterialPreset> getMaterials() {
+		return materials;
 	}
 
-	public void setExtendedPatientSurename(String extendedPatientSurename) {
-		this.extendedPatientSurename = extendedPatientSurename;
+	public void setMaterials(List<MaterialPreset> materials) {
+		this.materials = materials;
 	}
 
-	public Date getExtendedPatientBirthday() {
-		return extendedPatientBirthday;
+	public List<Physician> getSigantures() {
+		return sigantures;
 	}
 
-	public void setExtendedPatientBirthday(Date extendedPatientBirthday) {
-		this.extendedPatientBirthday = extendedPatientBirthday;
+	public void setSigantures(List<Physician> sigantures) {
+		this.sigantures = sigantures;
 	}
 
-	public Gender getExtendedPatientGener() {
-		return extendedPatientGener;
+	public List<Physician> getSurgeons() {
+		return surgeons;
 	}
 
-	public void setExtendedPatientGener(Gender extendedPatientGener) {
-		this.extendedPatientGener = extendedPatientGener;
+	public void setSurgeons(List<Physician> surgeons) {
+		this.surgeons = surgeons;
 	}
 
-	public String getExtendedMaterialName() {
-		return extendedMaterialName;
+	public List<Physician> getPrivatePhysicians() {
+		return privatePhysicians;
 	}
 
-	public void setExtendedMaterialName(String extendedMaterialName) {
-		this.extendedMaterialName = extendedMaterialName;
+	public void setPrivatePhysicians(List<Physician> privatePhysicians) {
+		this.privatePhysicians = privatePhysicians;
 	}
 
-	public String getExtendedHistory() {
-		return extendedHistory;
+	public List<ListItem> getCaseHistoryList() {
+		return caseHistoryList;
 	}
 
-	public void setExtendedHistory(String extendedHistory) {
-		this.extendedHistory = extendedHistory;
+	public void setCaseHistoryList(List<ListItem> caseHistoryList) {
+		this.caseHistoryList = caseHistoryList;
 	}
 
-	public Physician getExtendedSurgeon() {
-		return extendedSurgeon;
+	public List<DiagnosisPreset> getDiagnoses() {
+		return diagnoses;
 	}
 
-	public void setExtendedSurgeon(Physician extendedSurgeon) {
-		this.extendedSurgeon = extendedSurgeon;
+	public void setDiagnoses(List<DiagnosisPreset> diagnoses) {
+		this.diagnoses = diagnoses;
 	}
 
-	public Physician getExtendedPrivatePhysician() {
-		return extendedPrivatePhysician;
-	}
+	public class ExtendedSearchData {
+		private String name;
+		private String surename;
+		private Date birthday;
+		private Gender gender;
 
-	public void setExtendedPrivatePhysician(Physician extendedPrivatePhysician) {
-		this.extendedPrivatePhysician = extendedPrivatePhysician;
-	}
+		private String material;
+		private String caseHistory;
+		private String surgeon;
+		private String privatePhysician;
+		private String siganture;
+		private Eye eye;
 
-	public Date getExtendedEntryDate() {
-		return extendedEntryDate;
-	}
+		private Date patientAdded;
+		private Date patientAddedTo;
+		
+		private Date taskCreated;
+		private Date taskCreatedTo;
+		
+		private Date stainingCompleted;
+		private Date stainingCompletedTo;
+		
+		private Date diagnosisCompleted;
+		private Date diagnosisCompletedTo;
 
-	public void setExtendedEntryDate(Date extendedEntryDate) {
-		this.extendedEntryDate = extendedEntryDate;
-	}
+		private Date dateOfReceipt;
+		private Date dateOfReceiptTo;
+		
+		private Date dateOfSurgery;
+		private Date dateOfSurgeryTo;
+		
+		private String diagnosis;
+		private String category;
+		private String malign;
+		
+		public String getDiagnosis() {
+			return diagnosis;
+		}
 
-	public String getExtendedDiagnosis() {
-		return extendedDiagnosis;
-	}
+		public void setDiagnosis(String diagnosis) {
+			this.diagnosis = diagnosis;
+		}
 
-	public void setExtendedDiagnosis(String extendedDiagnosis) {
-		this.extendedDiagnosis = extendedDiagnosis;
-	}
+		public String getCategory() {
+			return category;
+		}
 
-	public String getExtendedCategory() {
-		return extendedCategory;
-	}
+		public void setCategory(String category) {
+			this.category = category;
+		}
 
-	public void setExtendedCategory(String extendedCategory) {
-		this.extendedCategory = extendedCategory;
-	}
+		public String getMalign() {
+			return malign;
+		}
 
-	
+		public void setMalign(String malign) {
+			this.malign = malign;
+		}
+
+		public Date getPatientAdded() {
+			return patientAdded;
+		}
+
+		public void setPatientAdded(Date patientAdded) {
+			this.patientAdded = patientAdded;
+		}
+
+		public Date getPatientAddedTo() {
+			return patientAddedTo;
+		}
+
+		public void setPatientAddedTo(Date patientAddedTo) {
+			this.patientAddedTo = patientAddedTo;
+		}
+
+		public Date getTaskCreated() {
+			return taskCreated;
+		}
+
+		public void setTaskCreated(Date taskCreated) {
+			this.taskCreated = taskCreated;
+		}
+
+		public Date getTaskCreatedTo() {
+			return taskCreatedTo;
+		}
+
+		public void setTaskCreatedTo(Date taskCreatedTo) {
+			this.taskCreatedTo = taskCreatedTo;
+		}
+
+		public Date getStainingCompleted() {
+			return stainingCompleted;
+		}
+
+		public void setStainingCompleted(Date stainingCompleted) {
+			this.stainingCompleted = stainingCompleted;
+		}
+
+		public Date getStainingCompletedTo() {
+			return stainingCompletedTo;
+		}
+
+		public void setStainingCompletedTo(Date stainingCompletedTo) {
+			this.stainingCompletedTo = stainingCompletedTo;
+		}
+
+		public Date getDiagnosisCompleted() {
+			return diagnosisCompleted;
+		}
+
+		public void setDiagnosisCompleted(Date diagnosisCompleted) {
+			this.diagnosisCompleted = diagnosisCompleted;
+		}
+
+		public Date getDiagnosisCompletedTo() {
+			return diagnosisCompletedTo;
+		}
+
+		public void setDiagnosisCompletedTo(Date diagnosisCompletedTo) {
+			this.diagnosisCompletedTo = diagnosisCompletedTo;
+		}
+
+		public Date getDateOfReceipt() {
+			return dateOfReceipt;
+		}
+
+		public void setDateOfReceipt(Date dateOfReceipt) {
+			this.dateOfReceipt = dateOfReceipt;
+		}
+
+		public Date getDateOfReceiptTo() {
+			return dateOfReceiptTo;
+		}
+
+		public void setDateOfReceiptTo(Date dateOfReceiptTo) {
+			this.dateOfReceiptTo = dateOfReceiptTo;
+		}
+
+		public Date getDateOfSurgery() {
+			return dateOfSurgery;
+		}
+
+		public void setDateOfSurgery(Date dateOfSurgery) {
+			this.dateOfSurgery = dateOfSurgery;
+		}
+
+		public Date getDateOfSurgeryTo() {
+			return dateOfSurgeryTo;
+		}
+
+		public void setDateOfSurgeryTo(Date dateOfSurgeryTo) {
+			this.dateOfSurgeryTo = dateOfSurgeryTo;
+		}
+
+		public String getMaterial() {
+			return material;
+		}
+
+		public void setMaterial(String material) {
+			this.material = material;
+		}
+
+		public String getCaseHistory() {
+			return caseHistory;
+		}
+
+		public void setCaseHistory(String caseHistory) {
+			this.caseHistory = caseHistory;
+		}
+
+		public String getSurgeon() {
+			return surgeon;
+		}
+
+		public void setSurgeon(String surgeon) {
+			this.surgeon = surgeon;
+		}
+
+		public String getPrivatePhysician() {
+			return privatePhysician;
+		}
+
+		public void setPrivatePhysician(String privatePhysician) {
+			this.privatePhysician = privatePhysician;
+		}
+
+		public String getSiganture() {
+			return siganture;
+		}
+
+		public void setSiganture(String siganture) {
+			this.siganture = siganture;
+		}
+
+		public Eye getEye() {
+			return eye;
+		}
+
+		public void setEye(Eye eye) {
+			this.eye = eye;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getSurename() {
+			return surename;
+		}
+
+		public void setSurename(String surename) {
+			this.surename = surename;
+		}
+
+		public Date getBirthday() {
+			return birthday;
+		}
+
+		public void setBirthday(Date birthday) {
+			this.birthday = birthday;
+		}
+
+		public Gender getGender() {
+			return gender;
+		}
+
+		public void setGender(Gender gender) {
+			this.gender = gender;
+		}
+
+	}
 }

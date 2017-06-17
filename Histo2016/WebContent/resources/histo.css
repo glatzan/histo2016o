@@ -245,7 +245,7 @@ ul.ui-menu-child {
 
 /* Kleines InputField */
 .smallInput .ui-inputfield {
-	padding: 2px 7px;
+	padding: 2px 7px !important;
 }
 
 .smallCheckbox {
