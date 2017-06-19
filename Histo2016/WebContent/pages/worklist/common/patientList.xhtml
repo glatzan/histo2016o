@@ -178,6 +178,12 @@
 
 								<!-- staining needed -->
 								<h:panelGroup>
+
+									<ui:fragment rendered="#{task.active}">
+										<i style="margin-left: 5px;" class="fa fa-ship icon-purple" />
+									</ui:fragment>
+
+
 									<!-- staining needed = green -->
 									<ui:fragment
 										rendered="#{task.isListedInFavouriteList('StainingList')}">

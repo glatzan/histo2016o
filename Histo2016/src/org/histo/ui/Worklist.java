@@ -12,7 +12,7 @@ import org.histo.util.TaskUtil;
 
 public class Worklist {
 
-	private ArrayList<Patient> items;
+	private List<Patient> items;
 
 	/**
 	 * Sortorder of worklist
@@ -39,11 +39,11 @@ public class Worklist {
 	 */
 	private String name;
 
-	public Worklist(String name, ArrayList<Patient> items) {
+	public Worklist(String name, List<Patient> items) {
 		this(name, items, true, WorklistSortOrder.TASK_ID);
 	}
 
-	public Worklist(String name, ArrayList<Patient> items, boolean showNoneActiveTasks,
+	public Worklist(String name, List<Patient> items, boolean showNoneActiveTasks,
 			WorklistSortOrder worklistSortOrder) {
 		this.name = name;
 		this.items = items;
@@ -185,11 +185,11 @@ public class Worklist {
 
 	
 	// ************************ Getter/Setter ************************
-	public ArrayList<Patient> getItems() {
+	public List<Patient> getItems() {
 		return items;
 	}
 
-	public void setItems(ArrayList<Patient> items) {
+	public void setItems(List<Patient> items) {
 		this.items = items;
 	}
 

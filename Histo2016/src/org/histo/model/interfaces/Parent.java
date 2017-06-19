@@ -11,12 +11,14 @@ import org.histo.model.patient.Task;
  *
  * @param <T>
  */
-public interface Parent<T>{
-    public Patient getPatient();
+public interface Parent<T> {
+	public Patient getPatient();
 
-    public Task getTask();
-    
-    public T getParent();
+	public default Task getTask() {
+		return null;
+	}
 
-    public void setParent(T parent);
+	public T getParent();
+
+	public void setParent(T parent);
 }

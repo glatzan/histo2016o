@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sun.javafx.tk.Toolkit.Task;
+
 @Component
 @Transactional
 @Scope(value = "session")
@@ -139,10 +141,10 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		query.add(Restrictions.eq("piz", piz));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		
+
 		List<Patient> result = query.getExecutableCriteria(getSession()).list();
 
-		System.out.println(result.size());		
+		System.out.println(result.size());
 
 		if (result != null && result.size() == 1)
 			return result.get(0);
@@ -397,5 +399,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		return null;
 	}
+
 
 }

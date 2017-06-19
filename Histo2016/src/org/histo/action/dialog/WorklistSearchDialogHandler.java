@@ -6,11 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
@@ -24,18 +21,19 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
+import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
+import org.histo.ui.Worklist;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.sun.javafx.tk.Toolkit.Task;
 
 @Component
 @Scope(value = "session")
@@ -52,7 +50,10 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private UtilDAO utilDAO;
-	
+
+	@Autowired
+	private TaskDAO taskDAO;
+
 	private WorklistSearchOption searchIndex;
 
 	private boolean initialized;
@@ -92,9 +93,9 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 	private List<Physician> sigantures;
 
 	private List<ListItem> caseHistoryList;
-	
+
 	private List<DiagnosisPreset> diagnoses;
-	
+
 	public void initAndPrepareBean() {
 		initBean();
 		prepareDialog();
@@ -150,11 +151,11 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 			setPrivatePhysicians(physicianDAO.getPhysicians(ContactRole.PRIVATE_PHYSICIAN, false));
 
 			setSigantures(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
-			
+
 			setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
-			
+
 			setDiagnoses(utilDAO.getAllDiagnosisPrototypes());
-			
+
 			initialized = true;
 		}
 
@@ -308,25 +309,53 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		}
 	}
 
-	public void extendedSearch() {
+	public List<Patient> extendedSearch() {
 
-		DetachedCriteria query = DetachedCriteria.forClass(Task.class, "task");
+		logger.debug("Calling extended search");
 
-		if (getExtendedSearchData().getName() != null && !getExtendedSearchData().getName().isEmpty())
-			query.add(Restrictions.ilike("task.parent.person.name", getExtendedSearchData().getName(),
-					MatchMode.ANYWHERE));
-
-		if (getExtendedSearchData().getSurename() != null && !getExtendedSearchData().getSurename().isEmpty())
-			query.add(Restrictions.ilike("task.parent.person.surename", getExtendedSearchData().getSurename(),
-					MatchMode.ANYWHERE));
-
-		if (getExtendedSearchData().getBirthday() != null)
-			query.add(Restrictions.eq("task.parent.person.birthday", getExtendedSearchData().getBirthday()));
-
-		if (getExtendedSearchData().getGender() != null && getExtendedSearchData().getGender() != Gender.UNKNOWN)
-			query.add(Restrictions.eq("task.parent.person.gender", getExtendedSearchData().getGender()));
+		List<Task> test = taskDAO.getPatientByCriteria(getExtendedSearchData());
 		
+		List<Patient> result = test.stream().map(p -> {p.setActive(true); return p.getParent();}).collect(Collectors.toList());
+
+		for (Patient patient : result) {
+			try {
+				patientDao.initilaizeTasksofPatient(patient);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				e.printStackTrace();
+			}
+		}
 		
+		return result;
+//		Worklist worklist = new Worklist("search", pat);
+//		
+//		System.out.println(test.size());
+
+		// private String surgeon;
+		// private String privatePhysician;
+		// private String siganture;
+		// private Eye eye;
+		//
+		// private Date patientAdded;
+		// private Date patientAddedTo;
+		//
+		// private Date taskCreated;
+		// private Date taskCreatedTo;
+		//
+		// private Date stainingCompleted;
+		// private Date stainingCompletedTo;
+		//
+		// private Date diagnosisCompleted;
+		// private Date diagnosisCompletedTo;
+		//
+		// private Date dateOfReceipt;
+		// private Date dateOfReceiptTo;
+		//
+		// private Date dateOfSurgery;
+		// private Date dateOfSurgeryTo;
+		//
+		// private String diagnosis;
+		// private String category;
+		// private String malign;
 	}
 
 	// ************************ Getter/Setter ************************
@@ -533,30 +562,30 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		private String surgeon;
 		private String privatePhysician;
 		private String siganture;
-		private Eye eye;
+		private Eye eye = Eye.UNKNOWN;
 
 		private Date patientAdded;
 		private Date patientAddedTo;
-		
+
 		private Date taskCreated;
 		private Date taskCreatedTo;
-		
+
 		private Date stainingCompleted;
 		private Date stainingCompletedTo;
-		
+
 		private Date diagnosisCompleted;
 		private Date diagnosisCompletedTo;
 
 		private Date dateOfReceipt;
 		private Date dateOfReceiptTo;
-		
+
 		private Date dateOfSurgery;
 		private Date dateOfSurgeryTo;
-		
+
 		private String diagnosis;
 		private String category;
 		private String malign;
-		
+
 		public String getDiagnosis() {
 			return diagnosis;
 		}

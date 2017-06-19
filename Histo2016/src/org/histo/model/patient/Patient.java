@@ -513,12 +513,6 @@ public class Patient
 	public void setParent(Patient parent) {
 	}
 
-	@Override
-	@Transient
-	public Task getTask() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	/********************************************************
 	 * Interface StainingTreeParent

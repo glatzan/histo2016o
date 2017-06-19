@@ -201,7 +201,7 @@
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="Kategorie" />
-			<p:selectOneMenu editable="true" autoWidth="false"
+			<p:selectOneMenu editable="true" autoWidth="false" disabled="true"
 				value="#{worklistSearchDialogHandler.extendedSearchData.diagnosis}">
 				<f:selectItems value="#{worklistSearchDialogHandler.diagnoses}"
 					var="diagnosis" itemLabel="#{diagnosis.category}"
@@ -224,11 +224,12 @@
 				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
 					process="@form">
 					<f:actionListener
-						binding="#{worklistHandlerAction.extendedSearch()}" />
-					<f:actionListener binding="#{worklistHandlerAction.hideDialog()}" />
+						binding="#{worklistViewHandlerAction.addWorklist(worklistSearchDialogHandler.extendedSearch(),'Serach',true)}" />
+					<f:actionListener
+						binding="#{worklistSearchDialogHandler.hideDialog()}" />
 				</p:commandButton>
 				<p:commandButton value="#{msg['general.abort']}"
-					actionListener="#{worklistHandlerAction.hideDialog()}"
+					actionListener="#{worklistSearchDialogHandler.hideDialog()}"
 					style="margin-left:20px;"></p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>

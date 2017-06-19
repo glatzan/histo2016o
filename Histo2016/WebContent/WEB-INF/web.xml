@@ -12,8 +12,8 @@
 	</context-param>
 
 	<error-page>
-   		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
-    	<location>/WEB-INF/errorpages/expired.xhtml</location>
+		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+		<location>/WEB-INF/errorpages/expired.xhtml</location>
 	</error-page>
 
 	<context-param>
@@ -79,6 +79,7 @@
 		<dispatcher>FORWARD</dispatcher>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
+
 
 	<welcome-file-list>
 		<welcome-file>login.xhtml</welcome-file>
