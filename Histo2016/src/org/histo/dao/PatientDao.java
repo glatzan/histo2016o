@@ -6,14 +6,18 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.histo.action.WorklistHandlerAction;
+import org.histo.action.dialog.WorklistSearchDialogHandler.ExtendedSearchData;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DateFormat;
+import org.histo.config.enums.Eye;
+import org.histo.config.enums.Gender;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -21,6 +25,7 @@ import org.histo.model.FavouriteList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.histo.model.view.ContactPhysicanRole;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +33,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.sun.javafx.tk.Toolkit.Task;
 
 @Component
 @Transactional
@@ -400,5 +403,83 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 
+	public List<Patient> getPatientByCriteria(ExtendedSearchData extendedSearchData) {
+		logger.debug("test");
 
+		DetachedCriteria query = DetachedCriteria.forClass(Task.class, "task");
+
+		query.createAlias("task.parent", "patient");
+		query.createAlias("patient.person", "person");
+		query.createAlias("task.samples", "samples");
+		query.createAlias("task.diagnosisContainer", "diagnosisContainer");
+		query.createAlias("diagnosisContainer.diagnosisRevisions", "diagnosisRevisions");
+		query.createAlias("diagnosisRevisions.diagnoses", "diagnoses");
+
+		if (extendedSearchData.getName() != null && !extendedSearchData.getName().isEmpty()) {
+			query.add(Restrictions.ilike("person.name", extendedSearchData.getName(), MatchMode.ANYWHERE));
+			logger.debug("search for name: " + extendedSearchData.getName());
+		}
+
+		if (extendedSearchData.getSurename() != null && !extendedSearchData.getSurename().isEmpty()) {
+			query.add(Restrictions.ilike("person.surename", extendedSearchData.getSurename(), MatchMode.ANYWHERE));
+			logger.debug("search for surename: " + extendedSearchData.getSurename());
+		}
+
+		if (extendedSearchData.getBirthday() != null) {
+			query.add(Restrictions.eq("person.birthday", extendedSearchData.getBirthday()));
+			logger.debug("search for birthday: " + extendedSearchData.getBirthday());
+		}
+
+		if (extendedSearchData.getGender() != null && extendedSearchData.getGender() != Gender.UNKNOWN) {
+			query.add(Restrictions.eq("person.gender", extendedSearchData.getGender()));
+			logger.debug("search for gender: " + extendedSearchData.getGender());
+		}
+
+		if (extendedSearchData.getMaterial() != null && !extendedSearchData.getMaterial().isEmpty()) {
+			query.add(Restrictions.ilike("samples.material", extendedSearchData.getMaterial(), MatchMode.ANYWHERE));
+
+			logger.debug("search for material: " + extendedSearchData.getMaterial());
+		}
+
+		if (extendedSearchData.getCaseHistory() != null && !extendedSearchData.getCaseHistory().isEmpty()) {
+			query.add(Restrictions.ilike("task.caseHistory", extendedSearchData.getCaseHistory(), MatchMode.ANYWHERE));
+
+			logger.debug("search for case history: " + extendedSearchData.getCaseHistory());
+		}
+
+		if (extendedSearchData.getEye() != null && extendedSearchData.getEye() != Eye.UNKNOWN) {
+			query.add(Restrictions.eq("task.eye", extendedSearchData.getEye()));
+			logger.debug("search for eye: " + extendedSearchData.getEye());
+		}
+
+		if (extendedSearchData.getDiagnosis() != null && !extendedSearchData.getDiagnosis().isEmpty()) {
+			query.add(Restrictions.ilike("diagnoses.diagnosis", extendedSearchData.getDiagnosis(), MatchMode.ANYWHERE));
+			logger.debug("search for diagnosis: " + extendedSearchData.getDiagnosis());
+		}
+
+		if (extendedSearchData.getMalign() != null && !extendedSearchData.getMalign().equals("0"))
+
+		{
+			query.add(Restrictions.eq("diagnoses.malign", extendedSearchData.getMalign().equals("1")));
+			logger.debug("search for malign: " + extendedSearchData.getMalign().equals("1"));
+		}
+
+		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+		List<Task> tasks = query.getExecutableCriteria(getSession()).list();
+
+		List<Patient> result = new ArrayList<Patient>(tasks.size());
+		
+		for (Task task : tasks) {
+			try {
+				task.setActive(true);
+				initilaizeTasksofPatient(task.getPatient());
+				result.add(task.getPatient());
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
 }

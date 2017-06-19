@@ -23,6 +23,7 @@ import org.histo.config.enums.Gender;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
 import org.histo.model.FavouriteList;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
-
+	
 	/**
 	 * Counts all tasks of the current year
 	 * 
@@ -137,74 +138,6 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		List<Task> list = criteria.list();
 
 		return list;
-	}
-
-	public List<Task> getPatientByCriteria(ExtendedSearchData extendedSearchData) {
-		logger.debug("test");
-
-		DetachedCriteria query = DetachedCriteria.forClass(Task.class, "task");
-
-		query.createAlias("task.parent", "patient");
-		query.createAlias("patient.person", "person");
-		query.createAlias("task.samples", "samples");
-		query.createAlias("task.diagnosisContainer", "diagnosisContainer");
-		query.createAlias("diagnosisContainer.diagnosisRevisions", "diagnosisRevisions");
-		query.createAlias("diagnosisRevisions.diagnoses", "diagnoses");
-
-		if (extendedSearchData.getName() != null && !extendedSearchData.getName().isEmpty()) {
-			query.add(Restrictions.ilike("person.name", extendedSearchData.getName(), MatchMode.ANYWHERE));
-			logger.debug("search for name: " + extendedSearchData.getName());
-		}
-
-		if (extendedSearchData.getSurename() != null && !extendedSearchData.getSurename().isEmpty()) {
-			query.add(Restrictions.ilike("person.surename", extendedSearchData.getSurename(), MatchMode.ANYWHERE));
-			logger.debug("search for surename: " + extendedSearchData.getSurename());
-		}
-
-		if (extendedSearchData.getBirthday() != null) {
-			query.add(Restrictions.eq("person.birthday", extendedSearchData.getBirthday()));
-			logger.debug("search for birthday: " + extendedSearchData.getBirthday());
-		}
-
-		if (extendedSearchData.getGender() != null && extendedSearchData.getGender() != Gender.UNKNOWN) {
-			query.add(Restrictions.eq("person.gender", extendedSearchData.getGender()));
-			logger.debug("search for gender: " + extendedSearchData.getGender());
-		}
-
-		if (extendedSearchData.getMaterial() != null && !extendedSearchData.getMaterial().isEmpty()) {
-			query.add(Restrictions.ilike("samples.material", extendedSearchData.getMaterial(), MatchMode.ANYWHERE));
-
-			logger.debug("search for material: " + extendedSearchData.getMaterial());
-		}
-
-		if (extendedSearchData.getCaseHistory() != null && !extendedSearchData.getCaseHistory().isEmpty()) {
-			query.add(Restrictions.ilike("task.caseHistory", extendedSearchData.getCaseHistory(), MatchMode.ANYWHERE));
-
-			logger.debug("search for case history: " + extendedSearchData.getCaseHistory());
-		}
-
-		if (extendedSearchData.getEye() != null && extendedSearchData.getEye() != Eye.UNKNOWN) {
-			query.add(Restrictions.eq("task.eye", extendedSearchData.getEye()));
-			logger.debug("search for eye: " + extendedSearchData.getEye());
-		}
-
-		if (extendedSearchData.getDiagnosis() != null && !extendedSearchData.getDiagnosis().isEmpty()) {
-			query.add(Restrictions.ilike("diagnoses.diagnosis", extendedSearchData.getDiagnosis(), MatchMode.ANYWHERE));
-			logger.debug("search for diagnosis: " + extendedSearchData.getDiagnosis());
-		}
-
-		if (extendedSearchData.getMalign() != null && !extendedSearchData.getMalign().equals("0"))
-
-		{
-			query.add(Restrictions.eq("diagnoses.malign", extendedSearchData.getMalign().equals("1")));
-			logger.debug("search for malign: " + extendedSearchData.getMalign().equals("1"));
-		}
-		
-		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-		List<Task> result = query.getExecutableCriteria(getSession()).list();
-
-		return result;
 	}
 
 }

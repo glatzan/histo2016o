@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
@@ -52,7 +53,7 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 	private UtilDAO utilDAO;
 
 	@Autowired
-	private TaskDAO taskDAO;
+	private UserHandlerAction userHandlerAction;
 
 	private WorklistSearchOption searchIndex;
 
@@ -309,26 +310,21 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		}
 	}
 
-	public List<Patient> extendedSearch() {
+	public Worklist extendedSearch() {
 
 		logger.debug("Calling extended search");
 
-		List<Task> test = taskDAO.getPatientByCriteria(getExtendedSearchData());
-		
-		List<Patient> result = test.stream().map(p -> {p.setActive(true); return p.getParent();}).collect(Collectors.toList());
+		List<Patient> result = patientDao.getPatientByCriteria(getExtendedSearchData());
 
-		for (Patient patient : result) {
-			try {
-				patientDao.initilaizeTasksofPatient(patient);
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				e.printStackTrace();
-			}
-		}
+		Worklist worklist = new Worklist("search", result, false,
+				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder());
 		
-		return result;
-//		Worklist worklist = new Worklist("search", pat);
-//		
-//		System.out.println(test.size());
+		worklist.setShowActiveTasksExplicit(true);
+		
+		return worklist;
+		// Worklist worklist = new Worklist("search", pat);
+		//
+		// System.out.println(test.size());
 
 		// private String surgeon;
 		// private String privatePhysician;

@@ -224,7 +224,7 @@
 				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
 					process="@form">
 					<f:actionListener
-						binding="#{worklistViewHandlerAction.addWorklist(worklistSearchDialogHandler.extendedSearch(),'Serach',true)}" />
+						binding="#{worklistViewHandlerAction.addWorklist(worklistSearchDialogHandler.extendedSearch(),true)}" />
 					<f:actionListener
 						binding="#{worklistSearchDialogHandler.hideDialog()}" />
 				</p:commandButton>
