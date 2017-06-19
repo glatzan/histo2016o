@@ -328,13 +328,13 @@ public class WorklistViewHandlerAction {
 		if (!getWorklist().isEmpty()) {
 			if (commonDataHandlerAction.getSelectedPatient() != null) {
 
-				int indexOfTask = commonDataHandlerAction.getSelectedPatient().getActiveTasks()
+				int indexOfTask = commonDataHandlerAction.getSelectedPatient().getActiveTasks(getWorklist().isShowActiveTasksExplicit())
 						.indexOf(commonDataHandlerAction.getSelectedTask());
 
 				// next task is within the same patient
 				if (indexOfTask - 1 >= 0) {
 					onSelectTaskAndPatient(
-							commonDataHandlerAction.getSelectedPatient().getActiveTasks().get(indexOfTask - 1));
+							commonDataHandlerAction.getSelectedPatient().getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(indexOfTask - 1));
 					return;
 				}
 
@@ -346,8 +346,8 @@ public class WorklistViewHandlerAction {
 				if (indexOfPatient - 1 >= 0) {
 					Patient newPatient = getWorklist().getItems().get(indexOfPatient - 1);
 
-					if (newPatient.hasActiveTasks()) {
-						onSelectTaskAndPatient(newPatient.getActiveTasks().get(newPatient.getActiveTasks().size() - 1));
+					if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
+						onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).size() - 1));
 					} else {
 						onSelectPatient(newPatient);
 					}
@@ -355,8 +355,8 @@ public class WorklistViewHandlerAction {
 			} else {
 				Patient newPatient = getWorklist().getItems().get(getWorklist().getItems().size() - 1);
 
-				if (newPatient.hasActiveTasks()) {
-					onSelectTaskAndPatient(newPatient.getActiveTasks().get(newPatient.getActiveTasks().size() - 1));
+				if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
+					onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).size() - 1));
 				} else {
 					onSelectPatient(newPatient);
 				}
@@ -368,13 +368,13 @@ public class WorklistViewHandlerAction {
 		if (!getWorklist().isEmpty()) {
 			if (commonDataHandlerAction.getSelectedPatient() != null) {
 
-				int indexOfTask = commonDataHandlerAction.getSelectedPatient().getActiveTasks()
+				int indexOfTask = commonDataHandlerAction.getSelectedPatient().getActiveTasks(getWorklist().isShowActiveTasksExplicit())
 						.indexOf(commonDataHandlerAction.getSelectedTask());
 
 				// next task is within the same patient
-				if (indexOfTask + 1 < commonDataHandlerAction.getSelectedPatient().getActiveTasks().size()) {
+				if (indexOfTask + 1 < commonDataHandlerAction.getSelectedPatient().getActiveTasks(getWorklist().isShowActiveTasksExplicit()).size()) {
 					onSelectTaskAndPatient(
-							commonDataHandlerAction.getSelectedPatient().getActiveTasks().get(indexOfTask + 1));
+							commonDataHandlerAction.getSelectedPatient().getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(indexOfTask + 1));
 					return;
 				}
 
@@ -386,8 +386,8 @@ public class WorklistViewHandlerAction {
 				if (indexOfPatient + 1 < getWorklist().getItems().size()) {
 					Patient newPatient = getWorklist().getItems().get(indexOfPatient + 1);
 
-					if (newPatient.hasActiveTasks()) {
-						onSelectTaskAndPatient(newPatient.getActiveTasks().get(0));
+					if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
+						onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(0));
 					} else {
 						onSelectPatient(newPatient);
 					}
@@ -395,8 +395,8 @@ public class WorklistViewHandlerAction {
 			} else {
 				Patient newPatient = getWorklist().getItems().get(0);
 
-				if (newPatient.hasActiveTasks()) {
-					onSelectTaskAndPatient(newPatient.getActiveTasks().get(0));
+				if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
+					onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(0));
 				} else {
 					onSelectPatient(newPatient);
 				}
