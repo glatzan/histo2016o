@@ -21,6 +21,8 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
+import org.histo.config.exception.CustomNotUniqueReqest;
+import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.GenericDAO;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.transitory.PredefinedRoleSettings;
@@ -68,6 +70,11 @@ public class MainHandlerAction {
 	 */
 	private HistoSettings settings;
 
+	public void test() throws CustomNotUniqueReqest {
+		throw new CustomNotUniqueReqest();
+	}
+
+	
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
@@ -174,12 +181,15 @@ public class MainHandlerAction {
 	 */
 	public void hideDialog(Dialog dialog) {
 		logger.debug("Hiding Dialog: " + dialog);
-		RequestContext.getCurrentInstance().closeDialog(dialog.getPath());
+		RequestContext.getCurrentInstance().closeDialog(null);
 	}
 
 	/********************************************************
 	 * Dialog
 	 ********************************************************/
+	public void sendGrowlMessages() {
+		sendGrowlMessages("test", "test");
+	}
 
 	public void sendGrowlMessages(String headline, String message) {
 		sendGrowlMessages(headline, message, FacesMessage.SEVERITY_INFO);

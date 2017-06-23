@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;

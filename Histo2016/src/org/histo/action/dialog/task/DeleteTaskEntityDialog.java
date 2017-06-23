@@ -1,6 +1,6 @@
 package org.histo.action.dialog.task;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;

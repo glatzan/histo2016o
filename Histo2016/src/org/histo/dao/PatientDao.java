@@ -12,7 +12,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.WorklistSearchDialogHandler.ExtendedSearchData;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DateFormat;
@@ -43,10 +43,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
-
-	@Autowired
-	@Lazy
-	private WorklistHandlerAction worklistHandlerAction;
 
 	public Patient initilaizeTasksofPatient(Patient patient) throws CustomDatabaseInconsistentVersionException {
 		genericDAO.refresh(patient);

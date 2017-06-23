@@ -7,10 +7,8 @@
 
 <ui:composition>
 
-	<h:form id="growlForm">
-		<p:growl id="globalgrowl" showDetail="true" autoUpdate="true"
-			for="globalgrowl" />
-	</h:form>
+	<p:growl id="globalgrowl" showDetail="true" autoUpdate="true"  widgetVar="globalgrowl" globalOnly="true"
+		for="globalgrowl" />
 </ui:composition>
 
 </html>

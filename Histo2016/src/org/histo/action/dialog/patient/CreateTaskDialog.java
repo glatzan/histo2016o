@@ -3,7 +3,7 @@ package org.histo.action.dialog.patient;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
@@ -17,6 +17,7 @@ import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.CustomNotUniqueReqest;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.SettingsDAO;
@@ -179,8 +180,10 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	/**
 	 * Creates a new Task object and calls createBiobak at the end.
+	 * @throws CustomNotUniqueReqest 
 	 */
-	public void createTask() {
+	public void createTask(){
+		uniqueRequestID.checkUniqueRequestID(true);
 		try {
 			if (getPatient().getTasks() == null) {
 				getPatient().setTasks(new ArrayList<>());
@@ -272,8 +275,9 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	/**
 	 * Calls createTask and prints the Ureport form
+	 * @throws CustomNotUniqueReqest 
 	 */
-	public void createTaskAndPrintUReport() {
+	public void createTaskAndPrintUReport(){
 		createTask();
 
 		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });

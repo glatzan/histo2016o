@@ -2,7 +2,7 @@ package org.histo.action.dialog.task;
 
 import java.util.List;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.WorklistSearchDialogHandler;
 import org.histo.action.view.WorklistViewHandlerAction;

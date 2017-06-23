@@ -8,7 +8,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;

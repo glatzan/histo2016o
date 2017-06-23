@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.action.CommonDataHandlerAction;
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.enums.ContactRole;

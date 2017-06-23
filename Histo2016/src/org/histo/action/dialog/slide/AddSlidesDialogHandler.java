@@ -3,7 +3,7 @@ package org.histo.action.dialog.slide;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;

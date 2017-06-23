@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.SearchHandler;
 import org.histo.action.view.WorklistViewHandlerAction;

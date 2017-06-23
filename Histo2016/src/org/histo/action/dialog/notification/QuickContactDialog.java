@@ -3,7 +3,7 @@ package org.histo.action.dialog.notification;
 import java.util.Arrays;
 import java.util.List;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;

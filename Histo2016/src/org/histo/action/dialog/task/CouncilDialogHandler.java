@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.dialog.media.MediaDialog;

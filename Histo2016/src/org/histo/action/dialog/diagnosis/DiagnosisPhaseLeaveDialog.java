@@ -1,6 +1,6 @@
 package org.histo.action.dialog.diagnosis;
 
-import org.histo.action.WorklistHandlerAction;
+
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.handler.TaskManipulationHandler;
