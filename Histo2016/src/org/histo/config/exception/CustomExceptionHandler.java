@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.faces.FacesException;
+import javax.faces.application.FacesMessage;
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.ExceptionHandler;
 import javax.faces.context.ExceptionHandlerWrapper;
@@ -15,30 +16,23 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
- * 	<!--  
-		<factory>
-			<exception-handler-factory>
-				org.histo.config.exception.CustomExceptionHandlerFactory
-			</exception-handler-factory>
-		</factory>-->
-		can be actived in faces config again if needed
-		
-		<mvc:interceptors>
-		<bean id="webContentInterceptor"
-			class="org.springframework.web.servlet.mvc.WebContentInterceptor">
-			<property name="cacheSeconds" value="0" />
-			<property name="useExpiresHeader" value="true" />
-			<property name="useCacheControlHeader" value="true" />
-			<property name="useCacheControlNoStore" value="true" />
-		</bean>
-	</mvc:interceptors>
-	
-	this is used instead in spring config
+ * <!-- <factory> <exception-handler-factory> org.histo.config.exception.
+ * CustomExceptionHandlerFactory </exception-handler-factory> </factory>--> can
+ * be actived in faces config again if needed
+ * 
+ * <mvc:interceptors> <bean id="webContentInterceptor" class=
+ * "org.springframework.web.servlet.mvc.WebContentInterceptor"> <property name=
+ * "cacheSeconds" value="0" /> <property name="useExpiresHeader" value="true" />
+ * <property name="useCacheControlHeader" value="true" /> <property name=
+ * "useCacheControlNoStore" value="true" /> </bean> </mvc:interceptors>
+ * 
+ * this is used instead in spring config
+ * 
  * @author andi
  *
  */
 public class CustomExceptionHandler extends ExceptionHandlerWrapper {
-	private static final Logger log = Logger.getLogger(CustomExceptionHandler.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger("org.histo");
 	private ExceptionHandler wrapped;
 
 	CustomExceptionHandler(ExceptionHandler exception) {
@@ -60,7 +54,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 			// get the exception from context
 			Throwable t = context.getException();
-
+			FacesContext context1 = FacesContext.getCurrentInstance();
+			
 			final FacesContext fc = FacesContext.getCurrentInstance();
 			final Map<String, Object> requestMap = fc.getExternalContext().getRequestMap();
 			final NavigationHandler nav = fc.getApplication().getNavigationHandler();
@@ -69,12 +64,14 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 			try {
 
 				// log error ?
-				log.log(Level.ERROR, "Critical Exception!", t);
+				logger.info("Critical Exception! !", t);
 
+				context1.addMessage("globalgrowl", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", t.toString()));
+				
 				// redirect error page
-				requestMap.put("exceptionMessage", t.getMessage());
-				nav.handleNavigation(fc, null, "/error");
-				fc.renderResponse();
+//				requestMap.put("exceptionMessage", t.getMessage());
+//				nav.handleNavigation(fc, null, "/error");
+//				fc.renderResponse();
 
 				// remove the comment below if you want to report the error in a
 				// jsf error message

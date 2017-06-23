@@ -22,6 +22,7 @@ import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
@@ -87,7 +88,9 @@ public class WorklistHandlerAction implements Serializable {
 	 * ************************** Worklist ****************************
 	 */
 
-
+	public void test() throws CustomNullPatientExcepetion {
+		throw new CustomNullPatientExcepetion();
+	}
 
 	/**
 	 * Options for sorting the worklist
@@ -118,7 +121,6 @@ public class WorklistHandlerAction implements Serializable {
 		setFilterWorklist(false);
 
 	}
-
 
 	/*
 	 * ************************** Worklist ****************************

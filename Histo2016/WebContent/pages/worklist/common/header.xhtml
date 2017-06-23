@@ -29,6 +29,11 @@
 		style="width:100%">
 		<h:panelGrid columns="4">
 
+			<!-- button edit -->
+			<p:commandButton value="test"
+				actionListener="#{worklistHandlerAction.test()}"
+				styleClass="buttonRighMarginInList" />
+
 			<p:selectBooleanCheckbox
 				value="#{worklistHandlerAction.filterWorklist}" disabled="true" />
 			<h:outputLabel value="#{msg['body.worklist.header.filter']}" />
@@ -52,7 +57,8 @@
 
 			</p:selectOneMenu>
 
-			<p:commandButton id="changeView" update="navigationForm contentForm navigationForm"
+			<p:commandButton id="changeView"
+				update="navigationForm contentForm navigationForm"
 				actionListener="#{worklistViewHandlerAction.goToNavigation()}"
 				style="display:none" />
 		</h:panelGrid>
