@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
 
@@ -60,10 +61,9 @@ public class MainHandlerAction {
 	 * Navigation
 	 ********************************************************/
 
-	/**
-	 * 
-	 */
 	private String queueDialog;
+
+	private FacesMessage queueGrowlMessage;
 
 	/**
 	 * Dynamic Texts which are used rarely are stroed here.
@@ -71,10 +71,12 @@ public class MainHandlerAction {
 	private HistoSettings settings;
 
 	public void test() throws CustomNotUniqueReqest {
-		throw new CustomNotUniqueReqest();
+		
+		Test test= new Test();
+		test.test();
+		//throw new CustomNotUniqueReqest();
 	}
 
-	
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
@@ -187,10 +189,6 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Dialog
 	 ********************************************************/
-	public void sendGrowlMessages() {
-		sendGrowlMessages("test", "test");
-	}
-
 	public void sendGrowlMessages(String headline, String message) {
 		sendGrowlMessages(headline, message, FacesMessage.SEVERITY_INFO);
 	}
@@ -199,6 +197,22 @@ public class MainHandlerAction {
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage("globalgrowl", new FacesMessage(servertiy, headline, message));
 		logger.debug("Growl Messagen (" + servertiy + "): " + headline + " " + message);
+	}
+
+	public void showQueueGrowlMessage() {
+		if (getQueueGrowlMessage() != null) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage("globalgrowl", getQueueGrowlMessage());
+			setQueueGrowlMessage(null);
+		}
+	}
+
+	public void addQueueGrowlMessage(String headline, String message) {
+		addQueueGrowlMessage(headline, message, FacesMessage.SEVERITY_INFO);
+	}
+
+	public void addQueueGrowlMessage(String headline, String message, FacesMessage.Severity servertiy) {
+		setQueueGrowlMessage(new FacesMessage(servertiy, headline, message));
 	}
 
 	/********************************************************
@@ -314,8 +328,17 @@ public class MainHandlerAction {
 	public void setSettings(HistoSettings settings) {
 		this.settings = settings;
 	}
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
+
+	public FacesMessage getQueueGrowlMessage() {
+		return queueGrowlMessage;
+	}
+
+	public void setQueueGrowlMessage(FacesMessage queueGrowlMessage) {
+		this.queueGrowlMessage = queueGrowlMessage;
+	}
 
 }

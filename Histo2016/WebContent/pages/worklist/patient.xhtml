@@ -109,7 +109,7 @@
 							style="float:left;"></h:outputLabel>
 						<p:commandLink id="taskList"
 							actionListener="#{createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" listener="#{mainHandlerAction.sendGrowlMessages()}"/>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" listener="#{mainHandlerAction.showQueueGrowlMessage()}"/>
 							<i class="fa fa-plus" style="float: right"></i>
 						</p:commandLink>
 					</h:panelGrid>

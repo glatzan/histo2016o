@@ -15,7 +15,13 @@ import javax.faces.event.ExceptionQueuedEventContext;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.histo.action.MainHandlerAction;
 import org.primefaces.context.RequestContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 
 /**
  * <!-- <factory> <exception-handler-factory> org.histo.config.exception.
@@ -35,8 +41,15 @@ import org.primefaces.context.RequestContext;
  * @author andi
  *
  */
+@Configurable
 public class CustomExceptionHandler extends ExceptionHandlerWrapper {
+	
 	private static Logger logger = Logger.getLogger("org.histo");
+
+	@Autowired
+	@Lazy
+	private MainHandlerAction mainHandlerAction;
+	
 	private ExceptionHandler wrapped;
 
 	CustomExceptionHandler(ExceptionHandler exception) {
@@ -55,38 +68,36 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 		while (i.hasNext()) {
 			ExceptionQueuedEvent event = i.next();
 			ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event.getSource();
-
+System.out.println("------------ !!!         " + mainHandlerAction);
 			// get the exception from context
-			Throwable cause = context.getException();
-
-			final FacesContext fc = FacesContext.getCurrentInstance();
-			final Map<String, Object> requestMap = fc.getExternalContext().getRequestMap();
-			final NavigationHandler nav = fc.getApplication().getNavigationHandler();
-
-			logger.debug("Global exeption handler - " + cause);
-
-			while (cause instanceof FacesException || cause instanceof ELException) {
-				if (cause instanceof FacesException)
-					cause = ((FacesException) cause).getCause();
-				else
-					cause = ((ELException) cause).getCause();
-			}
-
-			if (cause != null) {
-
-				System.out.println("nein " + cause);
-
-				if (cause instanceof CustomNotUniqueReqest) {
-					System.out.println("closing");
-					RequestContext.getCurrentInstance().closeDialog(null);
-
-					fc.addMessage("globalgrowl", new FacesMessage(FacesMessage.SEVERITY_ERROR, "Fehler",
-							"Daten wurden bereits übermittelt"));
-					
-				} 
-			}
-
-			i.remove();
+//			Throwable cause = context.getException();
+//
+//			final FacesContext fc = FacesContext.getCurrentInstance();
+//			final Map<String, Object> requestMap = fc.getExternalContext().getRequestMap();
+//			final NavigationHandler nav = fc.getApplication().getNavigationHandler();
+//
+//			logger.debug("Global exeption handler - " + cause);
+//
+//			while (cause instanceof FacesException || cause instanceof ELException) {
+//				if (cause instanceof FacesException)
+//					cause = ((FacesException) cause).getCause();
+//				else
+//					cause = ((ELException) cause).getCause();
+//			}
+//
+//			if (cause != null) {
+//
+//				System.out.println("nein " + cause);
+//
+//				if (cause instanceof CustomNotUniqueReqest) {
+//					System.out.println("closing");
+//					RequestContext.getCurrentInstance().closeDialog(null);
+//
+//					mainHandlerAction.addQueueGrowlMessage("Fehler!", "Doppelte Anfrage", FacesMessage.SEVERITY_ERROR);
+//				} 
+//			}
+//
+//			i.remove();
 
 			// // here you do what ever you want with exception
 			// try {

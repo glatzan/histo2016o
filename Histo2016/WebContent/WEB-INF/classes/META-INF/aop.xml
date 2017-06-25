@@ -1,0 +1,7 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+	<weaver options="-verbose -showWeaveInfo">
+		<include within="org.histo.*" />
+		<include within="org.histo.config.exception.*" />
+	</weaver>
+</aspectj>

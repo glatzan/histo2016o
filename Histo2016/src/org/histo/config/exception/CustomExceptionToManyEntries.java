@@ -6,6 +6,7 @@ package org.histo.config.exception;
  * @author glatza
  *
 */
+
 public class CustomExceptionToManyEntries extends Exception {
 
 	private static final long serialVersionUID = 1276141793052183990L;
