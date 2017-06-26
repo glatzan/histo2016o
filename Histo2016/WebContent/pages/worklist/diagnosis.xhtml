@@ -83,7 +83,7 @@
 							itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 						<p:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.eye',selectedTask.eye)}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.eye',selectedTask.eye)}" />
 					</p:selectOneMenu>
 
 					<p:selectOneMenu id="historyText" style="width: 80%"
@@ -96,7 +96,7 @@
 							itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 						<p:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
 					</p:selectOneMenu>
 				</h:panelGrid>
 				<!-- Eye -->
@@ -114,9 +114,9 @@
 						disabled="#{!taskEditable}"
 						value="#{selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
 					</p:calendar>
 
 					<!-- date of receipt -->
@@ -125,9 +125,9 @@
 						disabled="#{!taskEditable}"
 						value="#{selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 					</p:calendar>
 
 					<!-- Task Number -->
@@ -146,7 +146,7 @@
 							itemLabel="#{msg['body.diagnosis.insurance.normal']}"
 							itemValue="#{true}" />
 						<p:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.insurance', commonDataHandlerAction.selectedPatient.privateInsurance)}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.insurance', commonDataHandlerAction.selectedPatient.privateInsurance)}" />
 					</p:selectOneButton>
 
 					<!-- ward -->
@@ -156,7 +156,7 @@
 						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
 					</p:selectOneMenu>
 
 					<!-- surgeon -->
@@ -219,7 +219,7 @@
 						disabled="#{!taskEditable}" value="#{revision.text}">
 
 						<p:ajax event="change" execute="@this"
-							listener="#{mainHandlerAction.saveDataChange(revision,'log.patient.task.change.histologicalRecord', revision.text)}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.histologicalRecord', revision.text)}" />
 					</p:inputTextarea>
 
 
@@ -279,7 +279,7 @@
 								disabled="#{!taskEditable}" style="margin:3px 0px 0px 3px;">
 
 								<f:ajax event="change"
-									listener="#{mainHandlerAction.saveDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
+									listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
 					</h:panelGrid>
@@ -293,7 +293,7 @@
 							<p:watermark for="diagnosisText"
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
 							<f:ajax event="change" execute="@this"
-								listener="#{mainHandlerAction.saveDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
+								listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
 						</p:inputTextarea>
 					</h:panelGrid>
 					<!-- Diagnosis for sample -->
@@ -314,9 +314,9 @@
 					disabled="#{!taskEditable}"
 					value="#{selectedTask.diagnosisContainer.signatureDateAsDate}">
 					<p:ajax event="dateSelect"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
 					<f:ajax event="change" execute="@this"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
 				</p:calendar>
 			</h:panelGrid>
 
@@ -355,7 +355,7 @@
 						<f:actionListener
 							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureOne(diagnosisViewHandlerAction.signatureOne)}" />
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one',selectedTask.diagnosisContainer.signatureOne.physician.person.fullName)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one',selectedTask.diagnosisContainer.signatureOne.physician.person.fullName)}" />
 					</p:commandButton>
 				</h:panelGroup>
 
@@ -381,7 +381,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitPhysicianRoleChange">
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one.role',selectedTask.diagnosisContainer.signatureOne.role)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one.role',selectedTask.diagnosisContainer.signatureOne.role)}" />
 					</p:commandButton>
 				</h:panelGroup>
 
@@ -417,7 +417,7 @@
 						<f:actionListener
 							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureTwo(diagnosisViewHandlerAction.signatureTwo)}" />
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two',selectedTask.diagnosisContainer.signatureTwo.physician.person.fullName)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two',selectedTask.diagnosisContainer.signatureTwo.physician.person.fullName)}" />
 					</p:commandButton>
 
 				</h:panelGroup>
@@ -443,7 +443,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitConsultantRoleChange">
 						<f:actionListener
-							binding="#{mainHandlerAction.saveDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two.role',selectedTask.diagnosisContainer.signatureTwo.role)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two.role',selectedTask.diagnosisContainer.signatureTwo.role)}" />
 					</p:commandButton>
 
 				</h:panelGroup>

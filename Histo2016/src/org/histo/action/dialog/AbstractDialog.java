@@ -10,6 +10,9 @@ import org.histo.model.patient.Task;
 import org.histo.util.UniqueRequestID;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public abstract class AbstractDialog {
 
 	protected static Logger logger = Logger.getLogger("org.histo");
@@ -23,10 +26,16 @@ public abstract class AbstractDialog {
 	@Autowired
 	protected ResourceBundle resourceBundle;
 
+	@Getter
+	@Setter
 	protected Task task;
 
+	@Getter
+	@Setter
 	protected Dialog dilaog;
 
+	@Getter
+	@Setter
 	protected UniqueRequestID uniqueRequestID = new UniqueRequestID();
 
 	public void initAndPrepareBean(Task task, Dialog dialog) {
@@ -35,9 +44,15 @@ public abstract class AbstractDialog {
 	}
 
 	public void initBean(Task task, Dialog dialog) {
+		initBean(task, dialog, false);
+	}
+
+	public void initBean(Task task, Dialog dialog, boolean uniqueRequestEnabled) {
 		setTask(task);
 		setDilaog(dialog);
-		uniqueRequestID.nextUniqueRequestID();
+		getUniqueRequestID().setEnabled(uniqueRequestEnabled);
+		if (uniqueRequestEnabled)
+			getUniqueRequestID().nextUniqueRequestID();
 	}
 
 	/**
@@ -49,44 +64,19 @@ public abstract class AbstractDialog {
 
 	/**
 	 * Method for hiding the associated dialog.
-	 * @throws CustomNotUniqueReqest 
+	 * 
+	 * @throws CustomNotUniqueReqest
 	 */
-	public void hideDialog(){
-		uniqueRequestID.checkUniqueRequestID(true);uniqueRequestID.checkUniqueRequestID(true);
+	public void hideDialog() {
+		if (getUniqueRequestID().isEnabled()) {
+			getUniqueRequestID().checkUniqueRequestID(true);
+		}
 		mainHandlerAction.hideDialog(dilaog);
 	}
 
-	public void onDatabaseVersionConflict(){
+	public void onDatabaseVersionConflict() {
 		hideDialog();
-		mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.version.error"),
+		mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
 				resourceBundle.get("growl.version.error.text"));
 	}
-
-	// ************************ Getter/Setter ************************
-	public Task getTask() {
-		return task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
-	}
-
-	public Dialog getDilaog() {
-		return dilaog;
-	}
-
-	public void setDilaog(Dialog dilaog) {
-		this.dilaog = dilaog;
-	}
-
-	public UniqueRequestID getUniqueRequestID() {
-		return uniqueRequestID;
-	}
-
-	public void setUniqueRequestID(UniqueRequestID uniqueRequestID) {
-		this.uniqueRequestID = uniqueRequestID;
-	}
-
-	// ************************ Getter/Setter ************************
-
 }

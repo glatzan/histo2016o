@@ -204,6 +204,8 @@
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o" 
 						styleClass="smallButton buttonRighMarginInListExtended">
+							<f:actionListener
+							binding="#{createTaskDialog.createTask()}"></f:actionListener>
 						<f:actionListener binding="#{createTaskDialog.hideDialog()}"></f:actionListener>
 						<f:param name="submittedRequestID" value="#{createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 					</p:commandButton>

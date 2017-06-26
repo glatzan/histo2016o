@@ -34,10 +34,10 @@
 					styleClass="smallInput" disabled="#{!taskEditable}"
 					value="#{commonDataHandlerAction.selectedTask.dateOfReceiptAsDate}">
 					<p:ajax event="dateSelect"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}"
+						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}"
 						update="receiptDate" />
 					<f:ajax event="change" execute="@this" render="receiptDate"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
 				</p:calendar>
 
 				<!-- Termin Date -->
@@ -49,7 +49,7 @@
 						value="#{commonDataHandlerAction.selectedTask.dueDateSelected}">
 						<p:ajax event="change" execute="@this"
 							update="navigationForm contentForm"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate',selectedTask.dueDateSelected)}">
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dueDate',selectedTask.dueDateSelected)}">
 						</p:ajax>
 					</p:selectBooleanCheckbox>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
@@ -57,10 +57,10 @@
 						value="#{commonDataHandlerAction.selectedTask.dueDateAsDate}"
 						disabled="#{!commonDataHandlerAction.selectedTask.dueDateSelected or !taskEditable}">
 						<p:ajax event="dateSelect"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}"
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}"
 							update="dueDate" />
 						<f:ajax event="change" execute="@this" render="dueDate"
-							listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}" />
 					</p:calendar>
 				</h:panelGrid>
 
@@ -71,7 +71,7 @@
 					<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 					<p:ajax event="change" execute="@this"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
 				</p:selectOneMenu>
 
 				<!-- History -->
@@ -86,7 +86,7 @@
 						itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 					<p:ajax event="change" execute="@this"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
 				</p:selectOneMenu>
 
 				<!-- EYE -->
@@ -99,7 +99,7 @@
 						itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 					<p:ajax event="change" execute="@this"
-						listener="#{mainHandlerAction.saveDataChange(selectedTask,'log.patient.task.change.eye')}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.eye')}" />
 				</p:selectOneMenu>
 
 				<!-- other -->

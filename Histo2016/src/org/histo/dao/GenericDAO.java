@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.OptimisticLockException;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.StaleStateException;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -25,8 +28,11 @@ import org.histo.model.util.LogListener;
 import org.histo.model.view.ContactPhysicanRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 /**
  * The DAO class for generic entities
@@ -131,9 +137,12 @@ public class GenericDAO extends AbstractDAO {
 			else {
 				return save(object);
 			}
-		} catch (javax.persistence.OptimisticLockException e) {
+		} catch (OptimisticLockException | HibernateOptimisticLockingFailureException | StaleStateException e) {
 			getSession().getTransaction().rollback();
-			throw new CustomDatabaseInconsistentVersionException();
+			throw new CustomDatabaseInconsistentVersionException(object);
+		} catch (Exception e) {
+			getSession().getTransaction().rollback();
+			throw new CustomDatabaseInconsistentVersionException(object);
 		}
 	}
 
@@ -180,10 +189,12 @@ public class GenericDAO extends AbstractDAO {
 
 		try {
 			session.saveOrUpdate(object);
+			session.flush();
 		} catch (HibernateException hibernateException) {
 			object = (C) session.merge(object);
 			hibernateException.printStackTrace();
 		}
+		
 
 		return object;
 	}
@@ -220,7 +231,7 @@ public class GenericDAO extends AbstractDAO {
 			}
 		} catch (javax.persistence.OptimisticLockException e) {
 			getSession().getTransaction().rollback();
-			throw new CustomDatabaseInconsistentVersionException();
+			throw new CustomDatabaseInconsistentVersionException(object);
 		}
 	}
 
@@ -251,6 +262,7 @@ public class GenericDAO extends AbstractDAO {
 		Session session = getSession();
 		try {
 			session.delete(object);
+			session.flush();
 		} catch (HibernateException hibernateException) {
 			session.delete(session.merge(object));
 		}
@@ -281,7 +293,7 @@ public class GenericDAO extends AbstractDAO {
 //			Class<? extends HasID> klass = (Class<? extends HasID>)
 //			object.getClass();
 			
-			throw new CustomDatabaseInconsistentVersionException();
+			throw new CustomDatabaseInconsistentVersionException(object);
 		} catch (HibernateException hibernateException) {
 			object = (C) getSession().merge(object);
 			logger.debug("Error: Merging objects");

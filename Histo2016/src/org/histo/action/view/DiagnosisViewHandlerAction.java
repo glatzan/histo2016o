@@ -7,15 +7,18 @@ import org.histo.action.CommonDataHandlerAction;
 
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.StaticList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.model.ListItem;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.IdManuallyAltered;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
@@ -53,6 +56,12 @@ public class DiagnosisViewHandlerAction {
 	@Autowired
 	private CopyHistologicalRecordDialog copyHistologicalRecordDialog;
 
+	@Autowired
+	private GenericDAO genericDAO;
+	
+	@Autowired
+	private ResourceBundle resourceBundle;
+	
 	/**
 	 * List of physicians which have the role signature
 	 */
@@ -179,6 +188,10 @@ public class DiagnosisViewHandlerAction {
 
 	}
 
+	public void onDataChange(PatientRollbackAble toSave, String resourcesKey, Object... arr) {
+		patientDao.savePatientAssociatedDataFailSave(toSave, toSave, resourcesKey, arr);
+	}
+	
 	// ************************ Getter/Setter ************************
 	public List<Physician> getPhysiciansToSignList() {
 		return physiciansToSignList;

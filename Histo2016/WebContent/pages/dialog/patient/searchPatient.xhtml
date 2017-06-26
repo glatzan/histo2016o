@@ -136,6 +136,13 @@
 				binding="#{addPatientDialogHandler.addClinicPatient(true)}" />
 			<f:actionListener binding="#{addPatientDialogHandler.hideDialog()}" />
 		</p:remoteCommand>
+
+		<p:commandButton name="submitOnUniqueItem" id="submitOnUniqueItem">
+			<f:actionListener
+				binding="#{addPatientDialogHandler.searchAndAddUniqueItem(true)}" />
+		</p:commandButton>
+
+		<p:defaultCommand target="submitOnUniqueItem"></p:defaultCommand>
 	</div>
 
 	<div class="bottomDiv">

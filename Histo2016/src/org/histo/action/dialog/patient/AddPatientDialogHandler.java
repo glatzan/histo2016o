@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.SearchHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -20,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
 @Scope(value = "session")
 public class AddPatientDialogHandler extends AbstractDialog {
@@ -33,43 +35,59 @@ public class AddPatientDialogHandler extends AbstractDialog {
 	/**
 	 * Patient for creating external Patient
 	 */
+	@Getter
+	@Setter
 	private Patient patient;
 
 	/**
 	 * Patient to search for, piz
 	 */
+	@Getter
+	@Setter
 	private String patientPiz;
 
 	/**
 	 * Patient to search for, name
 	 */
+	@Getter
+	@Setter
 	private String patientName;
 
 	/**
 	 * Patient to search for, surname
 	 */
+	@Getter
+	@Setter
 	private String patientSurname;
 
 	/**
 	 * Patient to search for, birthday
 	 */
+	@Getter
+	@Setter
 	private Date patientBirthday;
 
 	/**
 	 * True if to many matches have been found in the clinic database, an so the
 	 * clinic database did not return any data
 	 */
+	@Getter
+	@Setter
 	private boolean toManyMatchesInClinicDatabase;
 
 	/**
 	 * List of all found Patients of the patientSearchRequest, PatientList is
 	 * used instead of Patient because primefaces needs a unique row collum.
 	 */
+	@Getter
+	@Setter
 	private List<ListChooser<Patient>> patientList;
 
 	/**
 	 * Selectes PatientList item
 	 */
+	@Getter
+	@Setter
 	private ListChooser<Patient> selectedPatientListItem;
 
 	public void initAndPrepareBean() {
@@ -157,69 +175,26 @@ public class AddPatientDialogHandler extends AbstractDialog {
 		}
 	}
 
-	// ************************ Getter/Setter ************************
-	public String getPatientPiz() {
-		return patientPiz;
-	}
+	/**
+	 * Searches for the given strings and adds the patient to the worklist if
+	 * one patient was found. (this method reacts to return clicks)
+	 * 
+	 * @param addToWorklist
+	 */
+	public void searchAndAddUniqueItem(boolean addToWorklist) {
+		logger.debug("Searching and adding if unique result");
+		searchForClinicPatienes();
 
-	public void setPatientPiz(String patientPiz) {
-		this.patientPiz = patientPiz;
-	}
+		// only adding if exactly one result was found
+		if (getPatientList() != null && getPatientList().size() == 1) {
+			logger.debug("One result found, adding to database");
+			setSelectedPatientListItem(getPatientList().get(0));
+			addClinicPatient(addToWorklist);
 
-	public String getPatientName() {
-		return patientName;
-	}
-
-	public void setPatientName(String patientName) {
-		this.patientName = patientName;
-	}
-
-	public String getPatientSurname() {
-		return patientSurname;
-	}
-
-	public void setPatientSurname(String patientSurname) {
-		this.patientSurname = patientSurname;
-	}
-
-	public Date getPatientBirthday() {
-		return patientBirthday;
-	}
-
-	public void setPatientBirthday(Date patientBirthday) {
-		this.patientBirthday = patientBirthday;
-	}
-
-	public boolean isToManyMatchesInClinicDatabase() {
-		return toManyMatchesInClinicDatabase;
-	}
-
-	public void setToManyMatchesInClinicDatabase(boolean toManyMatchesInClinicDatabase) {
-		this.toManyMatchesInClinicDatabase = toManyMatchesInClinicDatabase;
-	}
-
-	public List<ListChooser<Patient>> getPatientList() {
-		return patientList;
-	}
-
-	public void setPatientList(List<ListChooser<Patient>> patientList) {
-		this.patientList = patientList;
-	}
-
-	public ListChooser<Patient> getSelectedPatientListItem() {
-		return selectedPatientListItem;
-	}
-
-	public void setSelectedPatientListItem(ListChooser<Patient> selectedPatientListItem) {
-		this.selectedPatientListItem = selectedPatientListItem;
-	}
-
-	public Patient getPatient() {
-		return patient;
-	}
-
-	public void setPatient(Patient patient) {
-		this.patient = patient;
+			hideDialog();
+		} else {
+			logger.debug("No result found, or result not unique");
+		}
 	}
 
 }

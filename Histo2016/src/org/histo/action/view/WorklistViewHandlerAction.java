@@ -302,6 +302,7 @@ public class WorklistViewHandlerAction {
 	public void replacePatientTaskInCurrentWorklistAndSetSelected(Task task) {
 		replacePatientInCurrentWorklist(task.getPatient());
 
+		logger.debug("Setting as active task and patient");
 		commonDataHandlerAction.setSelectedPatient(task.getPatient());
 		commonDataHandlerAction.setSelectedTask(task);
 	}

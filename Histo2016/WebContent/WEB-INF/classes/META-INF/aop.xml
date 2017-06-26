@@ -3,5 +3,8 @@
 	<weaver options="-verbose -showWeaveInfo">
 		<include within="org.histo.*" />
 		<include within="org.histo.config.exception.*" />
+
+		<exclude within="*..*CGLIB*" />
+		<exclude within="*..*javassist*" />
 	</weaver>
 </aspectj>

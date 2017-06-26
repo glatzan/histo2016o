@@ -29,11 +29,6 @@
 		style="width:100%">
 		<h:panelGrid columns="4">
 
-			<!-- button edit -->
-			<p:commandButton value="test"
-				actionListener="#{mainHandlerAction.test()}"
-				styleClass="buttonRighMarginInList" />
-
 			<p:selectBooleanCheckbox
 				value="" disabled="true" />
 			<h:outputLabel value="#{msg['body.worklist.header.filter']}" />
@@ -276,7 +271,7 @@
 			<p:commandButton id="uploadBtnToPatient" style="display:none"
 				actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
 				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- Edit Patient data -->
@@ -358,7 +353,7 @@
 				actionListener="#{councilDialogHandler.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- Contacts button -->
@@ -373,7 +368,7 @@
 				actionListener="#{notificationHandlerAction.showinfoDialog(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- MedicalFindings button -->
@@ -381,7 +376,7 @@
 				actionListener="#{notificationDialog.prepareMedicalFindingsDialog(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- Biobank button -->
@@ -389,7 +384,7 @@
 				actionListener="#{bioBankDialogHandler.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- Print button -->
@@ -399,14 +394,14 @@
 				actionListener="#{printDialogHandler.initAndPrepareBeanForPrinting(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- upload button -->
 			<p:commandButton id="uploadBtn" style="display:none"
 				actionListener="#{patientViewHandlerAction.showTaskMediaDialog()}">
 				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 			<!-- *************** Task Menu *************** -->
 
@@ -466,21 +461,21 @@
 			<p:commandButton id="printBtnShowOnly" style="display:none"
 				actionListener="#{mainHandlerAction.showDialog('PRINT')}">
 				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- show only button for council dialog, workaround for closing and showing dialogs -->
 			<p:commandButton id="councilBtnShowOnly" style="display:none"
 				actionListener="#{mainHandlerAction.showDialog('COUNCIL')}">
 				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- show only button for notification dialog, workaround for closing and showing dialogs -->
 			<p:commandButton id="notificationBtnShowOnly" style="display:none"
 				actionListener="#{notificationHandlerAction.showinfoDialog(notificationHandlerAction.tmpTask, true)}">
 				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.showQueueDialog()}" />
+					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
 			<!-- Function for clicking on the dialogs -->

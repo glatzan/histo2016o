@@ -3,7 +3,6 @@ package org.histo.action.dialog.patient;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
@@ -111,7 +110,7 @@ public class CreateTaskDialog extends AbstractDialog {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient());
 		}
 
-		super.initBean(new Task(getPatient()), Dialog.TASK_CREATE);
+		super.initBean(new Task(getPatient()), Dialog.TASK_CREATE, true);
 
 		// setting material list
 		setMaterialList(settingsDAO.getAllMaterialPresets());
@@ -180,9 +179,10 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	/**
 	 * Creates a new Task object and calls createBiobak at the end.
-	 * @throws CustomNotUniqueReqest 
+	 * 
+	 * @throws CustomNotUniqueReqest
 	 */
-	public void createTask(){
+	public void createTask() {
 		uniqueRequestID.checkUniqueRequestID(true);
 		try {
 			if (getPatient().getTasks() == null) {
@@ -229,7 +229,7 @@ public class CreateTaskDialog extends AbstractDialog {
 				patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.update",
 						sample.getSampleID());
 			}
-			
+
 			// creating standard diagnoses
 			taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(),
 					DiagnosisRevisionType.DIAGNOSIS);
@@ -242,7 +242,7 @@ public class CreateTaskDialog extends AbstractDialog {
 			patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.save");
 
 			PDFContainer selectedPDF = mediaDialog.getSelectedPdfContainer();
-			
+
 			if (selectedPDF != null) {
 				// attaching pdf to biobank
 				bioBank.getAttachedPdfs().add(selectedPDF);
@@ -275,9 +275,10 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	/**
 	 * Calls createTask and prints the Ureport form
-	 * @throws CustomNotUniqueReqest 
+	 * 
+	 * @throws CustomNotUniqueReqest
 	 */
-	public void createTaskAndPrintUReport(){
+	public void createTaskAndPrintUReport() {
 		createTask();
 
 		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });

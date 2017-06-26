@@ -9,16 +9,27 @@ import javax.faces.context.FacesContext;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomNotUniqueReqest;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class UniqueRequestID {
 
 	private final static String SUBMITTEDID = "submittedRequestID";
 
 	private SecureRandom random = new SecureRandom();
 
+	@Getter
+	@Setter
 	private String uniqueRequestID;
 
+	@Getter
+	@Setter
 	private String submittedRequestID;
 
+	@Getter
+	@Setter
+	private boolean enabled;
+	
 	public UniqueRequestID() {
 		setUniqueRequestID("");
 	}
@@ -40,21 +51,5 @@ public class UniqueRequestID {
 			throw new CustomNotUniqueReqest(toClose);
 
 		setUniqueRequestID("");
-	}
-
-	public String getUniqueRequestID() {
-		return uniqueRequestID;
-	}
-
-	public void setUniqueRequestID(String uniqueRequestID) {
-		this.uniqueRequestID = uniqueRequestID;
-	}
-
-	public String getSubmittedRequestID() {
-		return submittedRequestID;
-	}
-
-	public void setSubmittedRequestID(String submittedRequestID) {
-		this.submittedRequestID = submittedRequestID;
 	}
 }

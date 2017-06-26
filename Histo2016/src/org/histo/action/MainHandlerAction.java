@@ -70,13 +70,6 @@ public class MainHandlerAction {
 	 */
 	private HistoSettings settings;
 
-	public void test() throws CustomNotUniqueReqest {
-		
-		Test test= new Test();
-		test.test();
-		//throw new CustomNotUniqueReqest();
-	}
-
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
@@ -131,6 +124,13 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Dialog
 	 ********************************************************/
+	
+	public void processQueues(){
+		showQueueGrowlMessage();
+		showQueueDialog();
+	}
+	
+	
 	public void showQueueDialog() {
 		logger.trace("Showing Dialog from queue called");
 		if (getQueueDialog() != null) {
