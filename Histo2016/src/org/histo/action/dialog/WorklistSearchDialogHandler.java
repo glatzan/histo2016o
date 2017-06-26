@@ -317,10 +317,11 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		List<Patient> result = patientDao.getPatientByCriteria(getExtendedSearchData());
 
 		Worklist worklist = new Worklist("search", result, false,
-				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder());
-		
+				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
+				userHandlerAction.getCurrentUser().isWorklistAutoUpdate());
+
 		worklist.setShowActiveTasksExplicit(true);
-		
+
 		return worklist;
 		// Worklist worklist = new Worklist("search", pat);
 		//

@@ -31,6 +31,9 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
@@ -104,6 +107,13 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	 * If true none active tasks in worklist will be hidden per default
 	 */
 	private boolean defaultHideNonActiveTasksInWorklist;
+	
+	/**
+	 * True if autoupdate of the current worklist should be happening
+	 */
+	@Getter
+	@Setter
+	private boolean worklistAutoUpdate;
 	
 	/**
 	 * Constructor for Hibernate

@@ -8,6 +8,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+
+	<p:poll interval="3" rendered="#{worklistViewHandlerAction.worklist.autoUpdate}" update=":navigationForm"
+		listener="#{worklistViewHandlerAction.updateCurrentWorklist()}" />
+
 	<!-- Search -->
 	<h:panelGroup styleClass="searchContainer" layout="block">
 		<p:focus for="searchField" />
@@ -16,7 +20,7 @@
 			onkeyup="autoSumbitQuickSeach(event);"
 			onkeypress="if(submitQuickSearch(event)){ return false;}">
 		</p:inputText>
-		
+
 		<script type="text/javascript">
 			function submitQuickSearch(event) {
 				
@@ -108,7 +112,7 @@
 
 						<!-- Worklist settings -->
 						<p:commandLink
-							title="#{msg['body.worklist.navigation.button.sort']}"
+							title="#{msg['body.worklist.navigation.button.settings']}"
 							actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSettings()}">
 							<i class="fa fa-wrench"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -156,11 +160,13 @@
 					</p:column>
 					<p:column>
 						<!-- no tasks -->
-						<h:outputLabel rendered="#{!patient.hasActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}"
+						<h:outputLabel
+							rendered="#{!patient.hasActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}"
 							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
 
 						<!-- task list -->
-						<p:repeat var="task" value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
+						<p:repeat var="task"
+							value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"

@@ -202,12 +202,12 @@
 				<h:panelGrid columns="4" style="float:right;">
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.create']}"
-						icon="fa fa-check-circle-o" 
+						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended">
-							<f:actionListener
-							binding="#{createTaskDialog.createTask()}"></f:actionListener>
+						<f:param name="submittedRequestID"
+							value="#{createTaskDialog.uniqueRequestID.uniqueRequestID}" />
+						<f:actionListener binding="#{createTaskDialog.createTask()}"></f:actionListener>
 						<f:actionListener binding="#{createTaskDialog.hideDialog()}"></f:actionListener>
-						<f:param name="submittedRequestID" value="#{createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 					</p:commandButton>
 
 					<!-- print ureport -->
@@ -216,10 +216,11 @@
 						styleClass="smallButton buttonRighMarginInListExtended"
 						onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()">
+						<f:param name="submittedRequestID"
+							value="#{createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener
 							binding="#{createTaskDialog.createTaskAndPrintUReport()}"></f:actionListener>
 						<f:actionListener binding="#{createTaskDialog.hideDialog()}"></f:actionListener>
-						<f:param name="submittedRequestID" value="#{createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 					</p:commandButton>
 
 					<!-- select printer -->
@@ -237,12 +238,14 @@
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle">
+						<f:param name="submittedRequestID"
+							value="#{createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener binding="#{createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
 		<ui:include src="../../template/blockUi.xhtml"></ui:include>
-	</h:form>	
+	</h:form>
 </h:body>
 </html>

@@ -29,12 +29,21 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
 				columnClasses="defaultListingTableColumnTop, ">
+				
 				<!-- hide non active tasks -->
 				<h:outputLabel
 					value="#{msg['dialog.worklistsettings.showNonActiveTasks']}"></h:outputLabel>
 				<p:selectBooleanCheckbox
 					value="#{worklistViewHandlerAction.worklist.showNoneActiveTasks}">
 				</p:selectBooleanCheckbox>
+		
+				<!-- auto update -->
+				<h:outputLabel
+					value="#{msg['dialog.worklistsettings.worklistAutoUpdate']}"></h:outputLabel>
+				<p:selectBooleanCheckbox
+					value="#{worklistViewHandlerAction.worklist.autoUpdate}">
+				</p:selectBooleanCheckbox>
+		
 			</h:panelGrid>
 		</div>
 

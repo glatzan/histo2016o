@@ -10,47 +10,70 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TaskUtil;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class Worklist {
 
+	@Getter
+	@Setter
 	private List<Patient> items;
 
 	/**
 	 * Sortorder of worklist
 	 */
+	@Getter
+	@Setter
 	private WorklistSortOrder worklistSortOrder;
 
 	/**
 	 * True if sort should be ascending, if falseF sort will be descending
 	 */
+	@Getter
+	@Setter
 	private boolean sortAscending;
 
 	/**
 	 * If true, only tasks which are explicitly marked as active are shown.
 	 */
+	@Getter
+	@Setter
 	private boolean showActiveTasksExplicit;
 
 	/**
 	 * If true none active tasks will be shown
 	 */
+	@Getter
+	@Setter
 	private boolean showNoneActiveTasks;
 
 	/**
+	 * True if auto update of worklist shoul take place 
+	 */
+	@Getter
+	@Setter
+	private boolean autoUpdate;
+	
+	/**
 	 * Name of the worklist
 	 */
+	@Getter
+	@Setter
 	private String name;
 
 	public Worklist(String name, List<Patient> items) {
-		this(name, items, true, WorklistSortOrder.TASK_ID);
+		this(name, items, true, WorklistSortOrder.TASK_ID, false);
 	}
 
 	public Worklist(String name, List<Patient> items, boolean showNoneActiveTasks,
-			WorklistSortOrder worklistSortOrder) {
+			WorklistSortOrder worklistSortOrder, boolean autoUpdate) {
 		this.name = name;
 		this.items = items;
 
 		this.showActiveTasksExplicit = false;
 		this.showNoneActiveTasks = showNoneActiveTasks;
 		this.worklistSortOrder = worklistSortOrder;
+		this.autoUpdate = autoUpdate;
 	}
 
 	public void removePatient(Patient toRemovePatient) {
@@ -183,56 +206,6 @@ public class Worklist {
 		}
 	}
 
-	
-	// ************************ Getter/Setter ************************
-	public List<Patient> getItems() {
-		return items;
-	}
-
-	public void setItems(List<Patient> items) {
-		this.items = items;
-	}
-
-	public WorklistSortOrder getWorklistSortOrder() {
-		return worklistSortOrder;
-	}
-
-	public void setWorklistSortOrder(WorklistSortOrder worklistSortOrder) {
-		this.worklistSortOrder = worklistSortOrder;
-	}
-
-	public boolean isShowActiveTasksExplicit() {
-		return showActiveTasksExplicit;
-	}
-
-	public void setShowActiveTasksExplicit(boolean showActiveTasksExplicit) {
-		this.showActiveTasksExplicit = showActiveTasksExplicit;
-	}
-
-	public boolean isShowNoneActiveTasks() {
-		return showNoneActiveTasks;
-	}
-
-	public void setShowNoneActiveTasks(boolean showNoneActiveTasks) {
-		this.showNoneActiveTasks = showNoneActiveTasks;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public boolean isSortAscending() {
-		return sortAscending;
-	}
-
-	public void setSortAscending(boolean sortAscending) {
-		this.sortAscending = sortAscending;
-	}
-	
 	public boolean isEmpty(){
 		return getItems().isEmpty();
 	}
