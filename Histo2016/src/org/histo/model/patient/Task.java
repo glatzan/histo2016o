@@ -111,7 +111,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	private long dueDate = 0;
 
 	/**
-	 * Stationär/ambulant/Extern
+	 * Stationï¿½r/ambulant/Extern
 	 */
 	private byte typeOfOperation;
 
@@ -161,7 +161,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	private boolean finalized;
 
 	/**
-	 * Liste aller Personen die über die Diangose informiert werden sollen.
+	 * Liste aller Personen die ï¿½ber die Diangose informiert werden sollen.
 	 */
 	private List<Contact> contacts;
 
@@ -196,7 +196,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	 * Transient Variables
 	 ********************************************************/
 	/**
-	 * Die Ausgewählte Probe
+	 * Die Ausgewï¿½hlte Probe
 	 */
 	private Sample selectedSample;
 
@@ -384,6 +384,16 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 			return true;
 
 		return false;
+	}
+
+	@Transient
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj instanceof Task && ((Task) obj).getId() == getId())
+			return true;
+
+		return super.equals(obj);
 	}
 
 	/********************************************************
@@ -811,7 +821,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingTreeParent
+	 * ï¿½berschreibt Methode aus dem Interface StainingTreeParent
 	 */
 	@Transient
 	@Override
@@ -836,8 +846,8 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	 * Interface Delete Able
 	 ********************************************************/
 	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt die TaskID als
-	 * identifier zurück
+	 * ï¿½berschreibt Methode aus dem Interface ArchiveAble Gibt die TaskID als
+	 * identifier zurï¿½ck
 	 */
 	@Transient
 	@Override
@@ -846,8 +856,8 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt den Dialog zum
-	 * archivieren zurück
+	 * ï¿½berschreibt Methode aus dem Interface ArchiveAble Gibt den Dialog zum
+	 * archivieren zurï¿½ck
 	 */
 	@Transient
 	@Override

@@ -1,9 +1,9 @@
 <!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
 <aspectj>
 	<weaver options="-verbose -showWeaveInfo">
-		<include within="org.histo.*" />
-		<include within="org.histo.config.exception.*" />
-
+		<include within="org.histo..*" />
+		<exclude within="org.histo.dao.*" />
+		<exclude within="org.histo.model..*" />
 		<exclude within="*..*CGLIB*" />
 		<exclude within="*..*javassist*" />
 	</weaver>

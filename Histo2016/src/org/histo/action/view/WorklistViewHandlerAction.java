@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.CommonDataHandlerAction;
@@ -16,12 +17,18 @@ import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.ui.Worklist;
 import org.histo.util.StreamUtils;
+import org.histo.worklist.Worklist;
+import org.histo.worklist.search.WorklistSearch;
+import org.primefaces.context.RequestContext;
+import org.primefaces.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Controller
 @Scope("session")
@@ -56,21 +63,28 @@ public class WorklistViewHandlerAction {
 	/**
 	 * View
 	 */
+	@Getter
+	@Setter
 	private View currentView;
 
 	/**
 	 * Saves the last task view diagnosis view or receiptlog view
 	 */
+	@Getter
+	@Setter
 	private View lastTaskView;
 
 	/**
 	 * Containing all worklists
 	 */
+	@Getter
+	@Setter
 	private List<Worklist> worklists;
 
 	/**
 	 * Current worklist
 	 */
+	@Getter
 	private Worklist worklist;
 
 	@PostConstruct
@@ -88,13 +102,15 @@ public class WorklistViewHandlerAction {
 		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getDefaultWorklistToLoad();
 
 		if (defaultWorklistToLoad != null) {
-			worklistSearchDialogHandler.setSearchIndex(defaultWorklistToLoad);
-			addWorklist(new Worklist("Default", worklistSearchDialogHandler.createWorklist(),
+			worklistSearchDialogHandler.getWorklistSearchBasic().setSearchIndex(defaultWorklistToLoad);
+			worklistSearchDialogHandler.getWorklistSearchBasic().updateSearchIndex();
+
+			addWorklist(new Worklist("Default", worklistSearchDialogHandler.getWorklistSearchBasic(),
 					userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
 					userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
 					userHandlerAction.getCurrentUser().isWorklistAutoUpdate()), true);
 		} else {
-			addWorklist(new Worklist("Default", new ArrayList<Patient>()), true);
+			addWorklist(new Worklist("Default", new WorklistSearch()), true);
 		}
 
 		setLastTaskView(userHandlerAction.getCurrentUser().getDefaultView());
@@ -217,12 +233,11 @@ public class WorklistViewHandlerAction {
 		setCurrentView(View.WORKLIST_PATIENT);
 	}
 
-	public void addWorklist(ArrayList<Patient> items, String name, boolean selected) {
-		addWorklist(
-				new Worklist(name, items, userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
-						userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
-						userHandlerAction.getCurrentUser().isWorklistAutoUpdate()),
-				selected);
+	public void addWorklist(WorklistSearch worklistSearch, String name, boolean selected) {
+		addWorklist(new Worklist(name, worklistSearch,
+				userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
+				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
+				userHandlerAction.getCurrentUser().isWorklistAutoUpdate()), selected);
 	}
 
 	public void addWorklist(Worklist worklist, boolean selected) {
@@ -242,13 +257,15 @@ public class WorklistViewHandlerAction {
 			setWorklist(worklist);
 			// deselecting patient
 			onDeselectPatient();
+
+			worklist.updateWorklist();
 		}
 	}
 
 	public void removeWorklist(Worklist worklist) {
 		getWorklists().remove(worklist);
 		if (getWorklist() == worklist)
-			setWorklist(new Worklist("", new ArrayList<Patient>()));
+			setWorklist(new Worklist("", new WorklistSearch()));
 	}
 
 	/**
@@ -325,22 +342,22 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void updateCurrentWorklist() {
-		long selectedPatientID = commonDataHandlerAction.getSelectedPatient() != null
-				? commonDataHandlerAction.getSelectedPatient().getId() : -1;
-
-		long selectedTaskID = commonDataHandlerAction.getSelectedTask() != null
-				? commonDataHandlerAction.getSelectedTask().getId() : -1;
-
-		addWorklist(worklistSearchDialogHandler.createWorklist(), "Default", true);
-		
-		if(selectedTaskID != -1){
-			replacePatientTaskInCurrentWorklistAndSetSelected(selectedTaskID);
-		}
-		
 		logger.debug("Tasklist updated");
-		
+
+		if (!isDialogContext()) {
+			getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
+		}else{
+			logger.debug("Do not update, Dialog is opend");
+		}
+			
 		// TODO check if taks is used in dilaog
 
+	}
+
+	public static boolean isDialogContext() {
+		
+		return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
+				.containsKey(Constants.DIALOG_FRAMEWORK.CONVERSATION_PARAM);
 	}
 
 	/**
@@ -432,38 +449,9 @@ public class WorklistViewHandlerAction {
 		}
 	}
 
-	// ************************ Getter/Setter ************************
-	public View getCurrentView() {
-		return currentView;
-	}
-
-	public void setCurrentView(View currentView) {
-		this.currentView = currentView;
-	}
-
-	public Worklist getWorklist() {
-		return worklist;
-	}
-
 	public void setWorklist(Worklist worklist) {
 		worklist.sortWordklist();
 		this.worklist = worklist;
-	}
-
-	public List<Worklist> getWorklists() {
-		return worklists;
-	}
-
-	public void setWorklists(List<Worklist> worklists) {
-		this.worklists = worklists;
-	}
-
-	public View getLastTaskView() {
-		return lastTaskView;
-	}
-
-	public void setLastTaskView(View lastTaskView) {
-		this.lastTaskView = lastTaskView;
 	}
 
 }

@@ -1,19 +1,32 @@
-package org.histo.ui;
+package org.histo.worklist;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.histo.config.enums.WorklistSortOrder;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TaskUtil;
+import org.histo.worklist.search.WorklistSearch;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.Getter;
 import lombok.Setter;
+import sun.net.www.content.text.plain;
 
+@Configurable
 public class Worklist {
+
+	private static Logger logger = Logger.getLogger("org.histo");
+	
+	@Autowired
+	private PatientDao patientDao;
 
 	@Getter
 	@Setter
@@ -48,12 +61,12 @@ public class Worklist {
 	private boolean showNoneActiveTasks;
 
 	/**
-	 * True if auto update of worklist shoul take place 
+	 * True if auto update of worklist shoul take place
 	 */
 	@Getter
 	@Setter
 	private boolean autoUpdate;
-	
+
 	/**
 	 * Name of the worklist
 	 */
@@ -61,24 +74,30 @@ public class Worklist {
 	@Setter
 	private String name;
 
-	public Worklist(String name, List<Patient> items) {
-		this(name, items, true, WorklistSortOrder.TASK_ID, false);
+	@Setter
+	@Getter
+	private WorklistSearch worklistSearch;
+
+	public Worklist(String name, WorklistSearch worklistSearch) {
+		this(name, worklistSearch, true, WorklistSortOrder.TASK_ID, false);
 	}
 
-	public Worklist(String name, List<Patient> items, boolean showNoneActiveTasks,
+	public Worklist(String name, WorklistSearch worklistSearch, boolean showNoneActiveTasks,
 			WorklistSortOrder worklistSortOrder, boolean autoUpdate) {
 		this.name = name;
-		this.items = items;
+		this.worklistSearch = worklistSearch;
 
 		this.showActiveTasksExplicit = false;
 		this.showNoneActiveTasks = showNoneActiveTasks;
 		this.worklistSortOrder = worklistSortOrder;
 		this.autoUpdate = autoUpdate;
+
+		this.items = new ArrayList<Patient>();
 	}
 
 	public void removePatient(Patient toRemovePatient) {
 		for (Patient patient : items) {
-			if (patient.getId() == toRemovePatient.getId()) {
+			if (patient.equals(toRemovePatient.getId())) {
 				items.remove(patient);
 				return;
 			}
@@ -93,20 +112,33 @@ public class Worklist {
 			getItems().add(patient);
 	}
 
-	public void replacePatient(Patient patient) {
+	public boolean replacePatient(Patient patient) {
 		for (Patient pListItem : getItems()) {
-			if (pListItem.getId() == patient.getId()) {
+			if (pListItem.equals(patient)) {
 				int index = getItems().indexOf(pListItem);
+				updateTaksActiveStatus(pListItem, patient);
+
 				getItems().remove(pListItem);
 				getItems().add(index, patient);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void updateTaksActiveStatus(Patient old, Patient newPat) {
+		for (Task newTask : newPat.getTasks()) {
+			for (Task oldTask : old.getTasks()) {
+				if (newTask.equals(oldTask)) {
+					newTask.setActive(oldTask.isActive());
+				}
 				break;
 			}
 		}
-
 	}
 
 	public boolean containsPatient(Patient patient) {
-		return getItems().stream().anyMatch(p -> p.getId() == patient.getId());
+		return getItems().stream().anyMatch(p -> p.equals(patient));
 	}
 
 	public void sortWordklist() {
@@ -206,7 +238,61 @@ public class Worklist {
 		}
 	}
 
-	public boolean isEmpty(){
+	public boolean isEmpty() {
 		return getItems().isEmpty();
 	}
+
+	public void updateWorklist() {
+		updateWorklist(new Patient());
+
+	}
+
+	public void updateWorklist(Patient activePatient) {
+
+		try {
+			// executing worklistsearch
+			List<Patient> update = getWorklistSearch().getWorklist();
+
+			for (Patient patient : update) {
+				// Skipping if patient is active patient
+				if (!patient.equals(activePatient)) {
+					logger.trace("Updatin or adding: " + patient.toString());
+					patientDao.initilaizeTasksofPatient(patient);
+					addPatient(patient);
+				}else
+					logger.trace("Skippting " + activePatient.toString() + " (is selected patient)");
+			}
+
+			// fining patients which were not updated
+			List<Long> manuallyUdatePizes = new ArrayList<Long>();
+
+			loop: for (Patient inList : getItems()) {
+				for (Patient patient : update) {
+					if (inList.equals(patient))
+						continue loop;
+				}
+
+				// Skipping if patient is active patient
+				if (!inList.equals(activePatient))
+					manuallyUdatePizes.add(inList.getId());
+			}
+
+			if (!manuallyUdatePizes.isEmpty()) {
+				// updating patients in worklist which were not found by generic
+				// search
+				List<Patient> histoMatchList = patientDao.searchForPatientIDsList(manuallyUdatePizes);
+
+				for (Patient patient : histoMatchList) {
+					logger.trace("Upadtin Patient not in search query: " + patient.toString());
+					patientDao.initilaizeTasksofPatient(patient);
+					addPatient(patient);
+				}
+			}
+
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// TODO handle
+			e.printStackTrace();
+		}
+	}
+
 }

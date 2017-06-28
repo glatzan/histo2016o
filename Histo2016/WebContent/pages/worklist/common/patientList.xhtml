@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 
-	<p:poll interval="3" rendered="#{worklistViewHandlerAction.worklist.autoUpdate}" update=":navigationForm"
+	<p:poll interval="10" update=":navigationForm" stop="#{!worklistViewHandlerAction.worklist.autoUpdate}"
 		listener="#{worklistViewHandlerAction.updateCurrentWorklist()}" />
 
 	<!-- Search -->

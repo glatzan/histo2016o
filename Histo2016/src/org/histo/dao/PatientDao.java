@@ -166,6 +166,20 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
+	 * Returns a list of patients with matching ides.
+	 * 
+	 * @param piz
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Patient> searchForPatientIDsList(List<Long> ids) {
+		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		query.add(Restrictions.in("id", ids));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
+	}
+	
+	/**
 	 * Returns a list without of patients without tasks between the two given
 	 * dates.
 	 * 

@@ -1,5 +1,6 @@
 package org.histo.ui.transformer;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -14,6 +15,10 @@ public class AssociatedRoleTransformer implements Converter {
 
 	public AssociatedRoleTransformer(List<ContactRole> roles) {
 		this.roles = roles;
+	}
+	
+	public AssociatedRoleTransformer(ContactRole[] roles) {
+		this.roles = Arrays.asList(roles);
 	}
 
 	public Object getAsObject(FacesContext fc, UIComponent uic, String value) {

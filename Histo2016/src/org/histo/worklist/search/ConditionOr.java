@@ -1,4 +1,4 @@
-package org.histo.search;
+package org.histo.worklist.search;
 
 public class ConditionOr extends SearchCondition {
 

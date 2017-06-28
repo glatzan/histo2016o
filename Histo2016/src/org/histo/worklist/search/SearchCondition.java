@@ -1,4 +1,4 @@
-package org.histo.search;
+package org.histo.worklist.search;
 
 import java.util.ArrayList;
 import java.util.List;
