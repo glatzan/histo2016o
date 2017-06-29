@@ -37,7 +37,7 @@ import org.histo.config.enums.Eye;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.model.Accounting;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.FavouriteList;
 import org.histo.model.PDFContainer;
@@ -163,7 +163,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	/**
 	 * Liste aller Personen die �ber die Diangose informiert werden sollen.
 	 */
-	private List<Contact> contacts;
+	private List<AssociatedContact> associatedContacts;
 
 	/**
 	 * List with all samples
@@ -251,26 +251,26 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	}
 
 	@Transient
-	public Contact getPrimarySurgeon() {
+	public AssociatedContact getPrimarySurgeon() {
 		return getPrimaryContact(ContactRole.SURGEON);
 	}
 
 	@Transient
-	public Contact getPrimaryPrivatePhysician() {
+	public AssociatedContact getPrimaryPrivatePhysician() {
 		return getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
 	}
 
 	/**
-	 * Returns a contact marked als primary with the given role.
+	 * Returns a associatedContact marked als primary with the given role.
 	 * 
 	 * @param contactRole
 	 * @return
 	 */
 	@Transient
-	public Contact getPrimaryContact(ContactRole contactRole) {
-		for (Contact contact : contacts) {
-			if (contact.getRole() == contactRole && contact.isPrimaryContact())
-				return contact;
+	public AssociatedContact getPrimaryContact(ContactRole contactRole) {
+		for (AssociatedContact associatedContact : associatedContacts) {
+			if (associatedContact.getRole() == contactRole && associatedContact.isPrimaryContact())
+				return associatedContact;
 		}
 
 		return null;
@@ -419,14 +419,14 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	@NotAudited
-	public List<Contact> getContacts() {
-		if (contacts == null)
-			contacts = new ArrayList<Contact>();
-		return contacts;
+	public List<AssociatedContact> getContacts() {
+		if (associatedContacts == null)
+			associatedContacts = new ArrayList<AssociatedContact>();
+		return associatedContacts;
 	}
 
-	public void setContacts(List<Contact> contacts) {
-		this.contacts = contacts;
+	public void setContacts(List<AssociatedContact> associatedContacts) {
+		this.associatedContacts = associatedContacts;
 	}
 
 	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

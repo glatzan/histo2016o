@@ -826,7 +826,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * Opens the passed physician in the settingsDialog in order to edit the
 	 * phone number, email or faxnumber.
 	 * 
-	 * @param contact
+	 * @param associatedContact
 	 */
 	public void prepareEditPhysicianFromExtern(Person person) {
 		Physician result = physicianDAO.getPhysicianByPerson(person);

@@ -20,7 +20,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
@@ -83,10 +83,10 @@ public class PrintDialogHandler extends AbstractDialog {
 	private List<ContactChooser> contactList;
 
 	/**
-	 * The contact rendered, the first one will always be rendered, if not
+	 * The associatedContact rendered, the first one will always be rendered, if not
 	 * changed, no rendering necessary
 	 */
-	private Contact selectedContact;
+	private AssociatedContact selectedContact;
 
 	/**
 	 * True if the pdf should be rendered
@@ -122,8 +122,8 @@ public class PrintDialogHandler extends AbstractDialog {
 		getContactList().add(new ContactChooser(task, task.getPatient().getPerson(), ContactRole.PATIENT));
 
 		// setting other contacts (physicians)
-		for (Contact contact : task.getContacts()) {
-			getContactList().add(new ContactChooser(contact));
+		for (AssociatedContact associatedContact : task.getContacts()) {
+			getContactList().add(new ContactChooser(associatedContact));
 		}
 
 		setSelectedContact(null);
@@ -156,8 +156,8 @@ public class PrintDialogHandler extends AbstractDialog {
 			// setting patient
 			getContactList().add(chosser);
 
-			// setting council physicians data as rendere contact data
-			setSelectedContact(new Contact(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
+			// setting council physicians data as rendere associatedContact data
+			setSelectedContact(new AssociatedContact(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
 					ContactRole.CASE_CONFERENCE));
 		}
 
@@ -168,13 +168,13 @@ public class PrintDialogHandler extends AbstractDialog {
 		initBeanForExternalDisplay(task, types, defaultType, null);
 	}
 
-	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType, Contact sendTo) {
+	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType, AssociatedContact sendTo) {
 		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(types);
 		initBeanForExternalDisplay(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect, defaultType), sendTo);
 	}
 
 	public void initBeanForExternalDisplay(Task task, PrintTemplate[] types, PrintTemplate defaultType,
-			Contact sendTo) {
+			AssociatedContact sendTo) {
 
 		initBean(task, types, defaultType);
 
@@ -212,7 +212,7 @@ public class PrintDialogHandler extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the pdf content if a contact was chosen for the first time
+	 * Updates the pdf content if a associatedContact was chosen for the first time
 	 */
 	public void onChooseContact() {
 		List<ContactChooser> selectedContacts = getSelectedContactFromList();
@@ -259,7 +259,7 @@ public class PrintDialogHandler extends AbstractDialog {
 							: getSelectedContact().getPerson());
 			break;
 		default:
-			// always render the pdf with the fist contact chosen
+			// always render the pdf with the fist associatedContact chosen
 			result = pDFGeneratorHandler.generatePDFForReport(getTask().getPatient(), getTask(), getSelectedTemplate(),
 					getSelectedContact() == null ? null : getSelectedContact().getPerson());
 			break;
@@ -334,15 +334,15 @@ public class PrintDialogHandler extends AbstractDialog {
 							settingsHandler.getSelectedPrinter().print(getPdfContainer());
 						}
 					} else {
-						// setting other contact then selected
-						Contact tmp = getSelectedContact();
+						// setting other associatedContact then selected
+						AssociatedContact tmp = getSelectedContact();
 						setSelectedContact(contactChooser.getContact());
 						// render all other pdfs
 						PDFContainer otherAddress = generatePDFFromTemplate();
 						for (int i = 0; i < contactChooser.getCopies(); i++) {
 							settingsHandler.getSelectedPrinter().print(otherAddress);
 						}
-						// settings the old selected contact as selected contact
+						// settings the old selected associatedContact as selected associatedContact
 						setSelectedContact(tmp);
 					}
 
@@ -402,11 +402,11 @@ public class PrintDialogHandler extends AbstractDialog {
 		this.pdfContainer = pdfContainer;
 	}
 
-	public Contact getSelectedContact() {
+	public AssociatedContact getSelectedContact() {
 		return selectedContact;
 	}
 
-	public void setSelectedContact(Contact selectedContact) {
+	public void setSelectedContact(AssociatedContact selectedContact) {
 		this.selectedContact = selectedContact;
 	}
 

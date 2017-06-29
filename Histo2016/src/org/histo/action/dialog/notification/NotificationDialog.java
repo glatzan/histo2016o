@@ -114,7 +114,7 @@ public class NotificationDialog {
 	private PhoneNotificationSettings phoneNotificationSettings;
 
 	/**
-	 * Contains all contacts with no contact data available
+	 * Contains all contacts with no associatedContact data available
 	 */
 	private NoContactDataNotificationSettings noContactDataNotificationSettings;
 	/********************************************************
@@ -247,7 +247,7 @@ public class NotificationDialog {
 
 	/**
 	 * Updates all notification lists. Is used if the contacts were changed
-	 * using the contact dialog!
+	 * using the associatedContact dialog!
 	 */
 	public void updateNotificationLists() {
 		getEmailNotificationSettings().updateNotificationEmailList();
@@ -325,7 +325,7 @@ public class NotificationDialog {
 						// check if mail was send
 						if (emailSuccessful) {
 
-							// setting the contact to perfomed
+							// setting the associatedContact to perfomed
 							notificationChooser.getContact().setEmailNotificationPerformed(true);
 							notificationChooser.setPerformed(true);
 

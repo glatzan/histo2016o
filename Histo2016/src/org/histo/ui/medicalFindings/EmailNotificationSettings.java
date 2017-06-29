@@ -64,7 +64,7 @@ public class EmailNotificationSettings {
 
 	/**
 	 * Checks if pdf should be attached or not, if so a default pdf will be set
-	 * for every contact
+	 * for every associatedContact
 	 */
 	public void onAttachPdfToEmailChange() {
 
@@ -117,7 +117,7 @@ public class EmailNotificationSettings {
 
 	
 	/**
-	 * Updates the email list, if the contact page was used to edit contacts.
+	 * Updates the email list, if the associatedContact page was used to edit contacts.
 	 */
 	public void updateNotificationEmailList(){
 		// TODO don't overwrite old list!

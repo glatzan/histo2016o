@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.View;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.AssociatedRoleTransformer;
@@ -52,7 +52,7 @@ public class CommonDataHandlerAction {
 	/**
 	 * List contain contacts to select from, used by contacts
 	 */
-	private List<Contact> contactList;
+	private List<AssociatedContact> contactList;
 
 	/********************************************************
 	 * Getter/Setter
@@ -81,11 +81,11 @@ public class CommonDataHandlerAction {
 		this.selectedTask = selectedTask;
 	}
 
-	public List<Contact> getContactList() {
+	public List<AssociatedContact> getContactList() {
 		return contactList;
 	}
 
-	public void setContactList(List<Contact> contactList) {
+	public void setContactList(List<AssociatedContact> contactList) {
 		this.contactList = contactList;
 	}
 

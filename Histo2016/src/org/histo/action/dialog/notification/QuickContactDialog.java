@@ -11,7 +11,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.Person;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Task;
@@ -36,7 +36,7 @@ public class QuickContactDialog extends AbstractDialog {
 	private AssociatedRoleTransformer associatedRolesTransformer;
 
 	/**
-	 * Role of the quick contact select dialog, either SURGEON or
+	 * Role of the quick associatedContact select dialog, either SURGEON or
 	 * PRIVATE_PHYSICIAN
 	 */
 	private ContactRole selectedContactRole;
@@ -49,12 +49,12 @@ public class QuickContactDialog extends AbstractDialog {
 	/**
 	 * List contain contacts to select from, used by contacts
 	 */
-	private List<Contact> contactList;
+	private List<AssociatedContact> contactList;
 
 	/**
 	 * For quickContact selection
 	 */
-	private Contact selectedContact;
+	private AssociatedContact selectedContact;
 
 	/**
 	 * True if archived physicians should be display
@@ -103,19 +103,19 @@ public class QuickContactDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Sets the given contact to the given role
+	 * Sets the given associatedContact to the given role
 	 * 
-	 * @param contact
+	 * @param associatedContact
 	 * @param role
 	 */
-	public void selectContactAsRole(Contact contact, ContactRole role) {
+	public void selectContactAsRole(AssociatedContact associatedContact, ContactRole role) {
 		try {
-			contact.setRole(role);
+			associatedContact.setRole(role);
 
-			contactDAO.contactChangeRole(getTask(), contact);
+			contactDAO.contactChangeRole(getTask(), associatedContact);
 
 			if (role != ContactRole.NONE)
-				contactDAO.updateContactRolePrimary(task, role, contact);
+				contactDAO.updateContactRolePrimary(task, role, associatedContact);
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
@@ -133,7 +133,7 @@ public class QuickContactDialog extends AbstractDialog {
 	}
 
 	/**
-	 * updates the contact list if selection of contacts was changed (more or
+	 * updates the associatedContact list if selection of contacts was changed (more or
 	 * other roles should be displayed)
 	 */
 	public void updateContactList() {
@@ -173,11 +173,11 @@ public class QuickContactDialog extends AbstractDialog {
 		this.showPhysicianRoles = showPhysicianRoles;
 	}
 
-	public List<Contact> getContactList() {
+	public List<AssociatedContact> getContactList() {
 		return contactList;
 	}
 
-	public void setContactList(List<Contact> contactList) {
+	public void setContactList(List<AssociatedContact> contactList) {
 		this.contactList = contactList;
 	}
 
@@ -189,11 +189,11 @@ public class QuickContactDialog extends AbstractDialog {
 		this.showArchivedPhysicians = showArchivedPhysicians;
 	}
 
-	public Contact getSelectedContact() {
+	public AssociatedContact getSelectedContact() {
 		return selectedContact;
 	}
 
-	public void setSelectedContact(Contact selectedContact) {
+	public void setSelectedContact(AssociatedContact selectedContact) {
 		System.out.println("hallo");
 		this.selectedContact = selectedContact;
 	}

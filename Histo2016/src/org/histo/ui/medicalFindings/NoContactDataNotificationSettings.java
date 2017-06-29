@@ -23,7 +23,7 @@ public class NoContactDataNotificationSettings {
 	}
 
 	/**
-	 * Updates the phone list, if the contact page was used to edit contacts.
+	 * Updates the phone list, if the associatedContact page was used to edit contacts.
 	 */
 	public void updateNoContactDataList(){
 		setNoContactDataList(MedicalFindingsChooser.getSublist(task.getContacts(), ContactMethod.NO_CONTACT_DATA));

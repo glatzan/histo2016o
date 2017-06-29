@@ -12,7 +12,6 @@ import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
-import org.histo.config.enums.Gender;
 import org.histo.config.enums.Month;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StaticList;
@@ -27,6 +26,7 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
@@ -232,7 +232,7 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 		private String name;
 		private String surename;
 		private Date birthday;
-		private Gender gender;
+		private Person.Gender gender;
 
 		private String material;
 		private String caseHistory;
@@ -455,11 +455,11 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 			this.birthday = birthday;
 		}
 
-		public Gender getGender() {
+		public Person.Gender getGender() {
 			return gender;
 		}
 
-		public void setGender(Gender gender) {
+		public void setGender(Person.Gender gender) {
 			this.gender = gender;
 		}
 

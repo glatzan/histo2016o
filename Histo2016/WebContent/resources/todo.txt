@@ -2,57 +2,58 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-TODO: 2: erweiterte Suche
-TODO: 6: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
-TODO: 6: Contact Dialog mit neuem view überarbeiten
-TODO: 7: Sort Optionen für worklist arbeitet nicht richtig / anzeige selected task verbessern
-TODO: 8: Liste für normale benutzer überarbeiten
+TODO: 2: erweiterte Suche / 
+TODO: 3:versionsfehler besser handlen, refresh der seite
+TODO: 6: Contact Dialog mit neuem view ï¿½berarbeiten
+TODO: 8: Liste fï¿½r normale benutzer ï¿½berarbeiten
 TODO: 9: Latex Datein
 TODO: 10: rechte durchsetzten
-TODO: wenn Task entity gelöscht wird kann es sein das der beende staining phase dialog angezgit wird, geht noch nicht richitg
+TODO: wenn Task entity gelï¿½scht wird kann es sein das der beende staining phase dialog angezgit wird, geht noch nicht richitg
 
-TODO: Benachrichtigugen: Liste von fax/email/phone müsse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man über den contakt dialog sachen ädnert
+TODO: Benachrichtigugen: Liste von fax/email/phone mï¿½sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man ï¿½ber den contakt dialog sachen ï¿½dnert
 
-TODO: Ansicht abhängige Knöpfe
-TODO: Schnelle Nachfärbug Dialog
+TODO: Ansicht abhï¿½ngige Knï¿½pfe
+TODO: Schnelle Nachfï¿½rbug Dialog
 TODO: Freischaltungs link
-TODO: favouriten für benutzer zugänlich machen
+TODO: favouriten fï¿½r benutzer zugï¿½nlich machen
 TODO: log in settings rework
 TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
 TODO: Archivieren + Dearchivieren
-TODO: loggin überarbeiten, methoden in generica dat shiften
-TODO: Konsile dürfen nicht mehr bearbeitbar sein, wenn task finalisiert
+TODO: loggin ï¿½berarbeiten, methoden in generica dat shiften
+TODO: Konsile dï¿½rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: Sort Optionen fï¿½r worklist arbeitet nicht richtig / anzeige selected task verbessern
+++++: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
 ++++: benutzer settings
 ++++: Geschlecht von ldap rausfinden
 ++++: favouriten
-++++: Blöcke nomeklatur überprüfen
+++++: Blï¿½cke nomeklatur ï¿½berprï¿½fen
 ++++: einspeisen von operateueren abgleichen, geht zumteil nicht richtig
 ++++: Drucker werde gerade nicht richtig eigelsen
-++++: PDF generation, wenn keien Untersucher ausgewählt sind geht nicht
-++++: Autonomekature für Blöcke arbeitet nicht + nicht überschreiben von manuell umbenannte diagnosen
+++++: PDF generation, wenn keien Untersucher ausgewï¿½hlt sind geht nicht
+++++: Autonomekature fï¿½r Blï¿½cke arbeitet nicht + nicht ï¿½berschreiben von manuell umbenannte diagnosen
 ++++: Diangose text speichern, geht zurzeit nicht
 ++++: Konsile gehen nicht
 ++++: Biobank
-++++: Settings Personen: Es müssen Hausärzte angezeigt werden können (werden bisher nur operateure, augenärtze/ andere
-++++: Arzt muss als untersucher markiert werden für unterschriften
+++++: Settings Personen: Es mï¿½ssen Hausï¿½rzte angezeigt werden kï¿½nnen (werden bisher nur operateure, augenï¿½rtze/ andere
+++++: Arzt muss als untersucher markiert werden fï¿½r unterschriften
 ++++: notification search
 ++++: Kontakte, testen ob primarycontact aktuallisiert wird
 ++++: Sendefunktion testen!
 ++++: anzeige des status
 ++++: Diangose beenden, auswahl der templates
 ++++: Auswahl der Operatuere/Einsender im diagnsoe bildschirm vereinfachen
-++++: Benachrichtigung überarbeiten
+++++: Benachrichtigung ï¿½berarbeiten
 ++++: DiagnosenPrest Namen feld in category umbenennen
 ++++: Diagnosen Kategory, im erstellungs dialog
-++++: Manuellen Phasenwechsel zugänglich machen 
-++++: boolean felder von task überarbeiten
-++++: Kopf für mehrer Diangose einabuen, Histologischer Befund als normalbefund, Ändern zu vorläufiger befund, Konsilbefund, nachbefund
+++++: Manuellen Phasenwechsel zugï¿½nglich machen 
+++++: boolean felder von task ï¿½berarbeiten
+++++: Kopf fï¿½r mehrer Diangose einabuen, Histologischer Befund als normalbefund, ï¿½ndern zu vorlï¿½ufiger befund, Konsilbefund, nachbefund
 ++++: urgent: status und info dialog
 ++++: check patient fetch from jason form clinik -> zu viele patienten
-++++: wenn kein patient gefunden, darf dieser nicht ausgewählt werden können
-++++: print dialog auswahl der ärtze geht nicht
+++++: wenn kein patient gefunden, darf dieser nicht ausgewï¿½hlt werden kï¿½nnen
+++++: print dialog auswahl der ï¿½rtze geht nicht
 ++++: UREPORT Printing from create dialog
 ++++: Multible councils
 ++++: Diagnose page

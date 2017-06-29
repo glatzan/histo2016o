@@ -22,8 +22,8 @@ public enum Dialog {
 	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/task/diagnosisRecordOverwrite", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisCreateRevision", null, 640, 360, false, false, true), // 16:9
-	CONTACTS("/pages/dialog/contact/contact", null, 1024, 600, false, false, true), // 16:9
-	QUICK_CONTACTS("/pages/dialog/contact/quickContact", null, 858, 484, false, false, true), // 16:9
+	CONTACTS("/pages/dialog/associatedContact/associatedContact", null, 1024, 600, false, false, true), // 16:9
+	QUICK_CONTACTS("/pages/dialog/associatedContact/quickContact", null, 858, 484, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
 	COUNCIL("/pages/dialog/council/council", null,  1024, 600, false, false, true), // 16:9

@@ -12,7 +12,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
@@ -57,16 +57,16 @@ public class ContactHandlerAction implements Serializable {
 	/**
 	 * For quickContact selection
 	 */
-	private Contact selectedContact;
+	private AssociatedContact selectedContact;
 
 	/**
-	 * Role of the quick contact select dialog, either SURGEON or
+	 * Role of the quick associatedContact select dialog, either SURGEON or
 	 * PRIVATE_PHYSICIAN
 	 */
 	private ContactRole selectedContactRole;
 
 	/**
-	 * Show the contact dialog using the display settings from the
+	 * Show the associatedContact dialog using the display settings from the
 	 * {@link PhysicianRoleOptions} object
 	 * 
 	 * @param task
@@ -76,7 +76,7 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Gets a list with all available contact for a specific task. Filters all
+	 * Gets a list with all available associatedContact for a specific task. Filters all
 	 * duplicated entries.
 	 * 
 	 * @param task
@@ -105,7 +105,7 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Updates the contact list using bean values.
+	 * Updates the associatedContact list using bean values.
 	 * 
 	 * @param task
 	 */
@@ -114,7 +114,7 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Refreshes the contact list.
+	 * Refreshes the associatedContact list.
 	 * 
 	 * @param task
 	 * @param surgeon
@@ -131,11 +131,11 @@ public class ContactHandlerAction implements Serializable {
 			e.printStackTrace();
 		}
 
-		commonDataHandlerAction.setContactList(new ArrayList<Contact>());
+		commonDataHandlerAction.setContactList(new ArrayList<AssociatedContact>());
 		
-		List<Contact> contacts = task.getContacts();
+		List<AssociatedContact> associatedContacts = task.getContacts();
 
-		// getting all contact options
+		// getting all associatedContact options
 		List<Physician> databaseContacts = physicianDAO.getPhysicians(rolesToDisplay, false);
 
 		if (!showAddedContactsOnly) {
@@ -143,87 +143,87 @@ public class ContactHandlerAction implements Serializable {
 			// shows all contacts but marks the already selected contacts with
 			// the selected flag.
 			loop: for (Physician physician : databaseContacts) {
-				for (Contact contact : contacts) {
+				for (AssociatedContact associatedContact : associatedContacts) {
 					logger.debug("Physician id " + physician.getPerson().getId() + ", name: "
-							+ physician.getPerson().getFullName() + ", contact person id "
-							+ contact.getPerson().getId());
-					if (contact.getPerson().getId() == physician.getPerson().getId()) {
-						logger.debug("Found " + contact.getPerson().getFullName() + " in contacts, role "
-								+ contact.getRole());
-						contact.setSelected(true);
-						commonDataHandlerAction.getContactList().add(contact);
+							+ physician.getPerson().getFullName() + ", associatedContact person id "
+							+ associatedContact.getPerson().getId());
+					if (associatedContact.getPerson().getId() == physician.getPerson().getId()) {
+						logger.debug("Found " + associatedContact.getPerson().getFullName() + " in contacts, role "
+								+ associatedContact.getRole());
+						associatedContact.setSelected(true);
+						commonDataHandlerAction.getContactList().add(associatedContact);
 						continue loop;
 					}
 				}
 
-				commonDataHandlerAction.getContactList().add(new Contact(task,physician.getPerson()));
+				commonDataHandlerAction.getContactList().add(new AssociatedContact(task,physician.getPerson()));
 
 			}
 		} else {
 			// show only selected contacts, mark them as selected
-			for (Contact contact : contacts) {
-				contact.setSelected(true);
+			for (AssociatedContact associatedContact : associatedContacts) {
+				associatedContact.setSelected(true);
 			}
-			commonDataHandlerAction.getContactList().addAll(contacts);
+			commonDataHandlerAction.getContactList().addAll(associatedContacts);
 		}
 
 		// setting temp index for selecting via datalist
 		int i = 0;
-		for (Contact contact : commonDataHandlerAction.getContactList()) {
-			contact.setTmpId(i++);
+		for (AssociatedContact associatedContact : commonDataHandlerAction.getContactList()) {
+			associatedContact.setTmpId(i++);
 		}
 	}
 
 	/**
-	 * Sobald im Kontaktdialog ein neuer Kontakt ausgewählt wird, wird je nach
-	 * Art eine Benachrichtigung vorausgewählt.
+	 * Sobald im Kontaktdialog ein neuer Kontakt ausgewï¿½hlt wird, wird je nach
+	 * Art eine Benachrichtigung vorausgewï¿½hlt.
 	 * 
-	 * @param contact
+	 * @param associatedContact
 	 */
-	public void onContactChangeRole(Task task, Contact contact) {
-		logger.trace("Called onContactChangeRole(Task task, Contact contact)");
+	public void onContactChangeRole(Task task, AssociatedContact associatedContact) {
+		logger.trace("Called onContactChangeRole(Task task, AssociatedContact associatedContact)");
 		// role was set to none so deselect every marker
-		if (contact.getRole() == ContactRole.NONE) {
-			logger.debug("Removing contact");
-			task.getContacts().remove(contact);
-			contact.setUseEmail(false);
-			contact.setUseFax(false);
-			contact.setUsePhone(false);
-			contact.setSelected(false);
+		if (associatedContact.getRole() == ContactRole.NONE) {
+			logger.debug("Removing associatedContact");
+			task.getContacts().remove(associatedContact);
+			associatedContact.setUseEmail(false);
+			associatedContact.setUseFax(false);
+			associatedContact.setUsePhone(false);
+			associatedContact.setSelected(false);
 
 			genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 
-			genericDAO.delete(contact, resourceBundle.get("log.patient.task.contact.remove", task.getTaskID(),
-					contact.getPerson().getName()), task.getPatient());
+			genericDAO.delete(associatedContact, resourceBundle.get("log.patient.task.contact.remove", task.getTaskID(),
+					associatedContact.getPerson().getName()), task.getPatient());
 
-			// remove id, if someone wants to readd the contact in the same
+			// remove id, if someone wants to readd the associatedContact in the same
 			// dialog session
-			contact.setId(0);
+			associatedContact.setId(0);
 		} else {
-			logger.debug("Changing or adding contact");
+			logger.debug("Changing or adding associatedContact");
 
-			if (contact.isUseEmail() || contact.isUsePhone() || contact.isUseFax()) {
+			if (associatedContact.isUseEmail() || associatedContact.isUsePhone() || associatedContact.isUseFax()) {
 				// something was already select, do nothing
-			} else if (contact.getRole() == ContactRole.SURGEON) {
+			} else if (associatedContact.getRole() == ContactRole.SURGEON) {
 				// surgeon use email per default
-				contact.setUseEmail(!contact.getPerson().getEmail().isEmpty() ? true : false);
-			} else if ((contact.getRole() == ContactRole.PRIVATE_PHYSICIAN
-					|| contact.getRole() == ContactRole.FAMILY_PHYSICIAN) && contact.getPerson().getFax() != null
-					&& !contact.getPerson().getFax().isEmpty()) {
+				associatedContact.setUseEmail(!associatedContact.getPerson().getEmail().isEmpty() ? true : false);
+			} else if ((associatedContact.getRole() == ContactRole.PRIVATE_PHYSICIAN
+					|| associatedContact.getRole() == ContactRole.FAMILY_PHYSICIAN) && associatedContact.getPerson().getFax() != null
+					&& !associatedContact.getPerson().getFax().isEmpty()) {
 				// private physician use fax per default
-				contact.setUseFax(true);
-			} else if (contact.getPerson().getEmail() != null && !contact.getPerson().getEmail().isEmpty()) {
+				associatedContact.setUseFax(true);
+			} else if (associatedContact.getPerson().getEmail() != null && !associatedContact.getPerson().getEmail().isEmpty()) {
 				// other contacts use email per default
-				contact.setUseEmail(!contact.getPerson().getEmail().isEmpty() ? true : false);
+				associatedContact.setUseEmail(!associatedContact.getPerson().getEmail().isEmpty() ? true : false);
 			}
 
-			genericDAO.save(contact,
-					resourceBundle.get("log.patient.task.contact.add", task.getTaskID(), contact.getPerson().getName()),
+			genericDAO.save(associatedContact,
+					resourceBundle.get("log.patient.task.contact.add", task.getTaskID(), associatedContact.getPerson().getName()),
 					task.getPatient());
 
-			// adds contact if not added jet
-			if (!task.getContacts().contains(contact)) {
-				task.getContacts().add(contact);
+			// adds associatedContact if not added jet
+			if (!task.getContacts().contains(associatedContact)) {
+				task.getContacts().add(associatedContact);
 				genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 			}
 
@@ -232,9 +232,9 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Updates the contact list an checks if there are primary contacts for the
-	 * surgeon role and the private physician role. If no primary contact is
-	 * found the first contact possessing this role will be selected.
+	 * Updates the associatedContact list an checks if there are primary contacts for the
+	 * surgeon role and the private physician role. If no primary associatedContact is
+	 * found the first associatedContact possessing this role will be selected.
 	 * 
 	 * @param task
 	 */
@@ -249,24 +249,24 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Checks if the contact list contains a primary contact for the given role.
-	 * If there are multiple contact marked as primary the only the first one
-	 * will remain the primary one. If on contact is marked, the first contact
+	 * Checks if the associatedContact list contains a primary associatedContact for the given role.
+	 * If there are multiple associatedContact marked as primary the only the first one
+	 * will remain the primary one. If on associatedContact is marked, the first associatedContact
 	 * possessing this role will be selected.
 	 * 
 	 * @param task
 	 * @param role
 	 */
-	public void updateContactRolePrimary(Task task, ContactRole role, Contact primaryContact) {
+	public void updateContactRolePrimary(Task task, ContactRole role, AssociatedContact primaryContact) {
 		logger.trace("updateContactRolePrimary(Task  " + task.getId() + ", ContactRole " + role.toString()
-				+ ", Contact " + primaryContact + ")");
+				+ ", AssociatedContact " + primaryContact + ")");
 		// setting all contacts to non primary except the given one
 		if (primaryContact != null) {
-			for (Contact contactListItem : task.getContacts()) {
+			for (AssociatedContact contactListItem : task.getContacts()) {
 
 				if (contactListItem.getRole() == role) {
 
-					// set selected contact to primary
+					// set selected associatedContact to primary
 					if (contactListItem.getId() == primaryContact.getId()) {
 						if (primaryContact.isPrimaryContact() == false) {
 							primaryContact.setPrimaryContact(true);
@@ -289,18 +289,18 @@ public class ContactHandlerAction implements Serializable {
 				}
 			}
 		} else {
-			// setting oldest selected primary contact as primary (determined
+			// setting oldest selected primary associatedContact as primary (determined
 			// via id)
 
-			Contact oldest = null;
+			AssociatedContact oldest = null;
 
-			for (Contact contactListItem : task.getContacts()) {
+			for (AssociatedContact contactListItem : task.getContacts()) {
 				if (contactListItem.getRole() == role) {
 					if (oldest == null)
 						oldest = contactListItem;
 
 					if (contactListItem.isPrimaryContact()) {
-						// setting the first selected primary contact (via id)
+						// setting the first selected primary associatedContact (via id)
 						if (oldest.getId() > contactListItem.getId()) {
 							oldest = contactListItem;
 						}
@@ -309,8 +309,8 @@ public class ContactHandlerAction implements Serializable {
 				}
 			}
 
-			// if at least one contact with the given role was found, or it is
-			// the oldest contact with this role which is primary, set it
+			// if at least one associatedContact with the given role was found, or it is
+			// the oldest associatedContact with this role which is primary, set it
 			if (oldest != null) {
 				updateContactRolePrimary(task, role, oldest);
 			}
@@ -318,18 +318,18 @@ public class ContactHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Is fired on primaryContact change an checks if any other contact is the
-	 * primary contact. If so the status of the other contact will be set to
+	 * Is fired on primaryContact change an checks if any other associatedContact is the
+	 * primary associatedContact. If so the status of the other associatedContact will be set to
 	 * false.
 	 * 
 	 * @param task
-	 * @param contact
+	 * @param associatedContact
 	 */
-	public void onContactChangePrimary(Task task, Contact contact) {
-		for (Contact contactListItem : task.getContacts()) {
-			if (contactListItem.getRole() == contact.getRole() && contactListItem.isPrimaryContact()) {
-				// is the same contact return
-				if (contactListItem.getId() == contact.getId())
+	public void onContactChangePrimary(Task task, AssociatedContact associatedContact) {
+		for (AssociatedContact contactListItem : task.getContacts()) {
+			if (contactListItem.getRole() == associatedContact.getRole() && contactListItem.isPrimaryContact()) {
+				// is the same associatedContact return
+				if (contactListItem.getId() == associatedContact.getId())
 					continue;
 				else {
 					// otherwise set to false
@@ -340,10 +340,10 @@ public class ContactHandlerAction implements Serializable {
 			}
 		}
 
-		if (!contact.isPrimaryContact()) {
-			contact.setPrimaryContact(true);
-			genericDAO.save(contact, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
-					contact.getPerson().getName()), task.getPatient());
+		if (!associatedContact.isPrimaryContact()) {
+			associatedContact.setPrimaryContact(true);
+			genericDAO.save(associatedContact, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
+					associatedContact.getPerson().getName()), task.getPatient());
 		}
 	}
 
@@ -393,11 +393,11 @@ public class ContactHandlerAction implements Serializable {
 		this.selectedContactRole = selectedContactRole;
 	}
 
-	public Contact getSelectedContact() {
+	public AssociatedContact getSelectedContact() {
 		return selectedContact;
 	}
 
-	public void setSelectedContact(Contact selectedContact) {
+	public void setSelectedContact(AssociatedContact selectedContact) {
 		this.selectedContact = selectedContact;
 	}
 

@@ -6,12 +6,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.NotificationOption;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
 
 public class NotificationChooser {
 
-	private Contact contact;
+	private AssociatedContact associatedContact;
 
 	private NotificationOption notificationAttachment;
 
@@ -26,27 +26,27 @@ public class NotificationChooser {
 		error = new AtomicBoolean(false);
 	}
 
-	public NotificationChooser(Contact contact) {
+	public NotificationChooser(AssociatedContact associatedContact) {
 		this();
-		this.contact = contact;
+		this.associatedContact = associatedContact;
 		this.performed = new AtomicBoolean(false);
 	}
 
-	public static final List<NotificationChooser> getSublist(List<Contact> contacts, ContactMethod contactMethod) {
-		ArrayList<NotificationChooser> result = new ArrayList<NotificationChooser>(contacts.size());
+	public static final List<NotificationChooser> getSublist(List<AssociatedContact> associatedContacts, ContactMethod contactMethod) {
+		ArrayList<NotificationChooser> result = new ArrayList<NotificationChooser>(associatedContacts.size());
 
-		for (Contact contact : contacts) {
-			NotificationChooser chooser = new NotificationChooser(contact);
+		for (AssociatedContact associatedContact : associatedContacts) {
+			NotificationChooser chooser = new NotificationChooser(associatedContact);
 			if (contactMethod == ContactMethod.ALL) {
 				result.add(chooser);
 				chooser.setNotificationAttachment(NotificationOption.NONE);
-			} else if (contactMethod == ContactMethod.EMAIL && contact.isUseEmail()) {
+			} else if (contactMethod == ContactMethod.EMAIL && associatedContact.isUseEmail()) {
 				result.add(chooser);
 				chooser.setNotificationAttachment(NotificationOption.TEXT);
-			} else if (contactMethod == ContactMethod.FAX && contact.isUseFax()) {
+			} else if (contactMethod == ContactMethod.FAX && associatedContact.isUseFax()) {
 				result.add(chooser);
 				chooser.setNotificationAttachment(NotificationOption.PDF);
-			} else if (contactMethod == ContactMethod.PHONE && contact.isUsePhone()) {
+			} else if (contactMethod == ContactMethod.PHONE && associatedContact.isUsePhone()) {
 				result.add(chooser);
 				chooser.setNotificationAttachment(NotificationOption.NONE);
 			}
@@ -54,12 +54,12 @@ public class NotificationChooser {
 		return result;
 	}
 
-	public Contact getContact() {
-		return contact;
+	public AssociatedContact getContact() {
+		return associatedContact;
 	}
 
-	public void setContact(Contact contact) {
-		this.contact = contact;
+	public void setContact(AssociatedContact associatedContact) {
+		this.associatedContact = associatedContact;
 	}
 
 	public PDFContainer getPdf() {

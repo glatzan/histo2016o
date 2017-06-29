@@ -4,38 +4,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.config.enums.ContactRole;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 
 public class ContactChooser {
 
-	public Contact contact;
+	public AssociatedContact associatedContact;
 
 	public int copies;
 
 	public boolean selected;
 
 	public ContactChooser(Task task,Person person, ContactRole role) {
-		this(new Contact(task,person, role));
+		this(new AssociatedContact(task,person, role));
 	}
 	
-	public ContactChooser(Contact contact){
-		this.contact = contact;
+	public ContactChooser(AssociatedContact associatedContact){
+		this.associatedContact = associatedContact;
 		this.copies = 1;
 		this.selected = false;
 	}
 	
-	public static List<ContactChooser> getContactChooserList(List<Contact> contacts){
+	public static List<ContactChooser> getContactChooserList(List<AssociatedContact> associatedContacts){
 		ArrayList<ContactChooser> result = new ArrayList<ContactChooser>();
-		for (Contact contact : contacts) {
-			result.add(new ContactChooser(contact));
+		for (AssociatedContact associatedContact : associatedContacts) {
+			result.add(new ContactChooser(associatedContact));
 		}
 		return result;
 	}
 	
-	public Contact getContact() {
-		return contact;
+	public AssociatedContact getContact() {
+		return associatedContact;
 	}
 
 	public int getCopies() {
@@ -46,8 +46,8 @@ public class ContactChooser {
 		return selected;
 	}
 
-	public void setContact(Contact contact) {
-		this.contact = contact;
+	public void setContact(AssociatedContact associatedContact) {
+		this.associatedContact = associatedContact;
 	}
 
 	public void setCopies(int copies) {

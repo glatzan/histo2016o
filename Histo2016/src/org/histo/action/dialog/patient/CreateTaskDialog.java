@@ -202,6 +202,11 @@ public class CreateTaskDialog extends AbstractDialog {
 			getTask().getDiagnosisContainer().setSignatureOne(new Signature());
 			getTask().getDiagnosisContainer().setSignatureTwo(new Signature());
 
+			// saving diagnosis container
+			patientDao.savePatientAssociatedDataFailSave(task.getDiagnosisContainer(),
+					"log.patient.task.diagnosisContainer.new", task.getTaskID());
+
+			
 			getTask().setCaseHistory("");
 			getTask().setWard("");
 
@@ -209,10 +214,8 @@ public class CreateTaskDialog extends AbstractDialog {
 
 			getTask().setFavouriteLists(new ArrayList<FavouriteList>());
 
-			// saving diagnosis container
-			patientDao.savePatientAssociatedDataFailSave(task.getDiagnosisContainer(),
-					"log.patient.task.diagnosisContainer.new", task.getTaskID());
-
+			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.update", task.getTaskID());
+			
 			for (Sample sample : getTask().getSamples()) {
 				// set name of material for changing it manually
 				sample.setMaterial(sample.getMaterilaPreset().getName());

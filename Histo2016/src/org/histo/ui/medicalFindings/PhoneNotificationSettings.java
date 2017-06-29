@@ -33,7 +33,7 @@ public class PhoneNotificationSettings {
 	}
 
 	/**
-	 * Updates the phone list, if the contact page was used to edit contacts.
+	 * Updates the phone list, if the associatedContact page was used to edit contacts.
 	 */
 	public void updateNotificationPhoneList(){
 		// TODO don't overwrite old list!

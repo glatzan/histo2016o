@@ -49,7 +49,7 @@ public class FaxNotificationSettings {
 
 	/**
 	 * Checks if pdf should be attached or not, if so a default pdf will be set
-	 * for every contact
+	 * for every associatedContact
 	 */
 	public void onAttachPdfToFaxChange() {
 
@@ -80,7 +80,7 @@ public class FaxNotificationSettings {
 	}
 	
 	/**
-	 * Updates the fax list, if the contact page was used to edit contacts.
+	 * Updates the fax list, if the associatedContact page was used to edit contacts.
 	 */
 	public void updateNotificationFaxList(){
 		// TODO don't overwrite old list!

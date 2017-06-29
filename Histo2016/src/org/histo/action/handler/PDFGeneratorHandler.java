@@ -17,7 +17,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Gender;
-import org.histo.model.Contact;
+import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.Physician;
@@ -206,7 +206,7 @@ public class PDFGeneratorHandler {
 		converter.replace("samples", task.getSamples());
 		converter.replace("diagnosisRevisions", task.getDiagnosisContainer().getDiagnosisRevisions());
 
-		Contact tmpPhysician = task.getPrimaryContact(ContactRole.SURGEON);
+		AssociatedContact tmpPhysician = task.getPrimaryContact(ContactRole.SURGEON);
 		converter.replace("surgeon", tmpPhysician == null ? "" : tmpPhysician.getPerson().getFullNameAndTitle());
 		tmpPhysician = task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
 		converter.replace("privatePhysician",
@@ -323,7 +323,7 @@ public class PDFGeneratorHandler {
 		// Physician addressPhysician = null;
 		// if (addressPhysicianRole == ContactRole.FAMILY_PHYSICIAN
 		// || addressPhysicianRole == ContactRole.PRIVATE_PHYSICIAN) {
-		// Contact tmp = task.getPrimaryContact(addressPhysicianRole);
+		// AssociatedContact tmp = task.getPrimaryContact(addressPhysicianRole);
 		// addressPhysician = (tmp == null ? null : tmp.getPhysician());
 		// } else {
 		// addressPhysician = externalPhysician;
@@ -444,9 +444,9 @@ public class PDFGeneratorHandler {
 		// setStamperField(stamper, "B_WARD", task.getWard());
 		// setStamperField(stamper, "B_MALIGN", task.isMalign() ? "1" : "0");
 		//
-		// Contact privatePhysician =
+		// AssociatedContact privatePhysician =
 		// task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
-		// Contact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
+		// AssociatedContact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
 		//
 		// setStamperField(stamper, "B_PRIVATE_PHYSICIAN",
 		// privatePhysician == null ? "" :
