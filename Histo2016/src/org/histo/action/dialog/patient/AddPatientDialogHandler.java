@@ -11,6 +11,7 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
+import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.ui.ListChooser;
@@ -112,7 +113,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 		setSelectedPatientListItem(null);
 		setPatientList(null);
 
-		setPatient(new Patient(new Person()));
+		setPatient(new Patient(new Person(new Contact())));
 
 		setToManyMatchesInClinicDatabase(false);
 	}

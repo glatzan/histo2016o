@@ -40,6 +40,8 @@ import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
 @Scope(value = "session")
 public class MainHandlerAction {
 
+	public static FacesContext test;
+	
 	private static Logger logger = Logger.getLogger("org.histo");
 	@Autowired
 	private CommonDataHandlerAction commonDataHandlerAction;
@@ -88,8 +90,9 @@ public class MainHandlerAction {
 				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
 
 		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
+		
+		test = FacesContext.getCurrentInstance();
 
-		genericDAO.getTest();
 	}
 
 	/********************************************************

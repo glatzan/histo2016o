@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.histo.config.enums.Eye;
-import org.histo.config.enums.Gender;
+import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -28,7 +28,7 @@ public class WorklistSearchExtended extends WorklistSearch {
 	
 	@Getter
 	@Setter
-	private Gender gender;
+	private Person.Gender gender;
 
 	@Getter
 	@Setter

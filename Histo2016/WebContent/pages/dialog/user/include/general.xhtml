@@ -42,7 +42,7 @@
 				value="#{msg['dialog.userSettings.general.defaultWorklist']}" />
 			<p:selectOneMenu styleClass="smallInput"
 				title="#{msg['dialog.userSettings.general.defaultWorklist.text']}"
-				value="#{userSettingsDialog.user.defaultWorklistToLoad}">
+				value="#{userSettingsDialog.user.worklistToLoad}">
 
 				<f:selectItems
 					value="#{userSettingsDialog.availableWorklistsToLoad}" var="page"
@@ -56,7 +56,7 @@
 				style="width: 300px;">
 				<p:selectOneMenu styleClass="smallInput"
 					title="#{msg['dialog.userSettings.general.sorting.text']}"
-					value="#{userSettingsDialog.user.defaultWorklistSortOrder}">
+					value="#{userSettingsDialog.user.worklistSortOrder}">
 					<f:selectItem
 						itemLabel="#{msg['dialog.worklistorder.sorting.tasknumber']}"
 						itemValue="TASK_ID" />
@@ -72,7 +72,7 @@
 				</p:selectOneMenu>
 
 				<p:selectBooleanButton styleClass="smallInput smallFont smallButton"
-					value="#{userSettingsDialog.user.defaultWorklistSortAsc}"
+					value="#{userSettingsDialog.user.worklistSortOrderAsc}"
 					style="margin-left:15px;"
 					onLabel="#{msg['dialog.userSettings.general.sorting.asc']}"
 					offLabel="#{msg['dialog.userSettings.general.sorting.desc']}" />
@@ -82,7 +82,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.hideNonActiveTasks']}" />
 			<p:selectBooleanCheckbox
-				value="#{userSettingsDialog.user.defaultHideNonActiveTasksInWorklist}"
+				value="#{userSettingsDialog.user.worklistHideNoneActiveTasks}"
 				title="#{msg['dialog.userSettings.general.hideNonActiveTasks.text']}" />
 
 			<!-- auto update worklist -->

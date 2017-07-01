@@ -16,7 +16,6 @@ import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DocumentType;
-import org.histo.config.enums.Gender;
 import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
@@ -160,11 +159,11 @@ public class PDFGeneratorHandler {
 	}
 
 	public final void replacePatientData(JLRConverter converter, Patient patient) {
-		converter.replace("patName", patient.getPerson().getName());
-		converter.replace("patSurName", patient.getPerson().getSurname());
-		converter.replace("patAddress", patient.getPerson().getStreet());
-		converter.replace("patPlz", patient.getPerson().getPostcode());
-		converter.replace("patCity", patient.getPerson().getTown());
+		converter.replace("patName", patient.getPerson().getLastName());
+		converter.replace("patSurName", patient.getPerson().getFirstName());
+		converter.replace("patAddress", patient.getPerson().getContact().getStreet());
+		converter.replace("patPlz", patient.getPerson().getContact().getPostcode());
+		converter.replace("patCity", patient.getPerson().getContact().getTown());
 		converter.replace("piz", patient.getPiz());
 	}
 
@@ -173,13 +172,13 @@ public class PDFGeneratorHandler {
 			logger.debug("Replacing address for " + person.getFullName());
 			// name +
 			converter.replace("addName",
-					(person.getGender() == Gender.FEMALE ? resourceBundle.get("pdf.address.female")
+					(person.getGender() == Person.Gender.FEMALE ? resourceBundle.get("pdf.address.female")
 							: resourceBundle.get("pdf.address.male")) + " "
-							+ (!person.getTitle().isEmpty() ? (person.getTitle() + " ") : "") + person.getName());
-			converter.replace("addSurName", person.getSurname());
-			converter.replace("addAddress", person.getStreet());
-			converter.replace("addPlz", person.getPostcode());
-			converter.replace("addCity", person.getTown());
+							+ (!person.getTitle().isEmpty() ? (person.getTitle() + " ") : "") + person.getLastName());
+			converter.replace("addSurName", person.getFirstName());
+			converter.replace("addAddress", person.getContact().getStreet());
+			converter.replace("addPlz", person.getContact().getPostcode());
+			converter.replace("addCity", person.getContact().getTown());
 			converter.replace("addSubject", "");
 		} else {
 			logger.debug("No Address provided");

@@ -267,7 +267,7 @@ public class AssociatedContact implements LogAble, HasID {
 		if (getPerson().getFullName() != null && !getPerson().getFullName().isEmpty())
 			return getPerson().getFullName();
 		else
-			return getPerson().getTitle() + " " + getPerson().getSurname() + " " + getPerson().getName();
+			return getPerson().getTitle() + " " + getPerson().getFirstName() + " " + getPerson().getLastName();
 	}
 
 }

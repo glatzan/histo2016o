@@ -3217,9 +3217,11 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 
+
 CREATE VIEW ContactPhysicanRole AS
-SELECT physician.id AS id ,person.id As personID, person.title,  person.name, person.surname from person 
+SELECT physician.id AS id ,person.id As personID, person.title,  person.lastname, person.firstname from person 
 INNER JOIN physician ON physician.person_id = person.id
+
 
 CREATE VIEW FavouriteListTask AS
 select row_number() over (order by favouritelist.id) as aid ,favouritelist.id AS favouritelist_id, name, task_id from favouritelist inner join favouritelistitem on favouritelist.id = favouritelistitem.favouritelist_id

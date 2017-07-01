@@ -6,6 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.envers.Audited;
+
+import com.google.gson.annotations.Expose;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +17,7 @@ import lombok.Setter;
 @SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence", allocationSize = 1)
 @Getter
 @Setter
+@Audited
 public class Contact {
 
 	@Id
@@ -24,9 +29,11 @@ public class Contact {
 	@Column(columnDefinition = "VARCHAR")
 	private String street;
 	@Column(columnDefinition = "VARCHAR")
-	private String place;
+	private String town;
 	@Column(columnDefinition = "VARCHAR")
 	private String postcode;
+	@Column(columnDefinition = "VARCHAR")
+	private String country;
 	@Column(columnDefinition = "VARCHAR")
 	private String phone;
 	@Column(columnDefinition = "VARCHAR")
@@ -37,4 +44,6 @@ public class Contact {
 	private String homepage;
 	@Column(columnDefinition = "VARCHAR")
 	private String fax;
+	@Column(columnDefinition = "VARCHAR")
+	private String pager;
 }

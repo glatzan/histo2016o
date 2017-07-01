@@ -47,6 +47,7 @@ public class GenericDAO extends AbstractDAO {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	//TODO rename use and move
 	public List<ContactPhysicanRole> getTest(){
 		DetachedCriteria query = DetachedCriteria.forClass(ContactPhysicanRole.class);
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
@@ -59,12 +60,10 @@ public class GenericDAO extends AbstractDAO {
 			}
 		}
 		
+	
 		return result;
 	}
 	
-	@Autowired
-	private ResourceBundle resourceBundle;
-
 	@SuppressWarnings("unchecked")
 	public <C> C get(Class<C> clazz, Serializable serializable) {
 		return (C) getSession().get(clazz, serializable);

@@ -194,7 +194,7 @@ public class ContactHandlerAction implements Serializable {
 			genericDAO.save(task, resourceBundle.get("log.patient.task.save", task.getTaskID()), task.getPatient());
 
 			genericDAO.delete(associatedContact, resourceBundle.get("log.patient.task.contact.remove", task.getTaskID(),
-					associatedContact.getPerson().getName()), task.getPatient());
+					associatedContact.getPerson().getLastName()), task.getPatient());
 
 			// remove id, if someone wants to readd the associatedContact in the same
 			// dialog session
@@ -206,19 +206,19 @@ public class ContactHandlerAction implements Serializable {
 				// something was already select, do nothing
 			} else if (associatedContact.getRole() == ContactRole.SURGEON) {
 				// surgeon use email per default
-				associatedContact.setUseEmail(!associatedContact.getPerson().getEmail().isEmpty() ? true : false);
+				associatedContact.setUseEmail(!associatedContact.getPerson().getContact().getEmail().isEmpty() ? true : false);
 			} else if ((associatedContact.getRole() == ContactRole.PRIVATE_PHYSICIAN
-					|| associatedContact.getRole() == ContactRole.FAMILY_PHYSICIAN) && associatedContact.getPerson().getFax() != null
-					&& !associatedContact.getPerson().getFax().isEmpty()) {
+					|| associatedContact.getRole() == ContactRole.FAMILY_PHYSICIAN) && associatedContact.getPerson().getContact().getFax() != null
+					&& !associatedContact.getPerson().getContact().getFax().isEmpty()) {
 				// private physician use fax per default
 				associatedContact.setUseFax(true);
-			} else if (associatedContact.getPerson().getEmail() != null && !associatedContact.getPerson().getEmail().isEmpty()) {
+			} else if (associatedContact.getPerson().getContact().getEmail() != null && !associatedContact.getPerson().getContact().getEmail().isEmpty()) {
 				// other contacts use email per default
-				associatedContact.setUseEmail(!associatedContact.getPerson().getEmail().isEmpty() ? true : false);
+				associatedContact.setUseEmail(!associatedContact.getPerson().getContact().getEmail().isEmpty() ? true : false);
 			}
 
 			genericDAO.save(associatedContact,
-					resourceBundle.get("log.patient.task.contact.add", task.getTaskID(), associatedContact.getPerson().getName()),
+					resourceBundle.get("log.patient.task.contact.add", task.getTaskID(), associatedContact.getPerson().getLastName()),
 					task.getPatient());
 
 			// adds associatedContact if not added jet
@@ -273,7 +273,7 @@ public class ContactHandlerAction implements Serializable {
 							genericDAO
 									.save(primaryContact,
 											resourceBundle.get("log.patient.task.contact.primaryRole.set",
-													task.getTaskID(), primaryContact.getPerson().getName()),
+													task.getTaskID(), primaryContact.getPerson().getLastName()),
 											task.getPatient());
 						}
 					} else {
@@ -282,7 +282,7 @@ public class ContactHandlerAction implements Serializable {
 							contactListItem.setPrimaryContact(false);
 							genericDAO.save(
 									contactListItem, resourceBundle.get("log.patient.task.contact.primaryRole.removed",
-											task.getTaskID(), contactListItem.getPerson().getName()),
+											task.getTaskID(), contactListItem.getPerson().getLastName()),
 									task.getPatient());
 						}
 					}
@@ -335,7 +335,7 @@ public class ContactHandlerAction implements Serializable {
 					// otherwise set to false
 					contactListItem.setPrimaryContact(false);
 					genericDAO.save(contactListItem, resourceBundle.get("log.patient.task.contact.primaryRole.removed",
-							task.getTaskID(), contactListItem.getPerson().getName()), task.getPatient());
+							task.getTaskID(), contactListItem.getPerson().getLastName()), task.getPatient());
 				}
 			}
 		}
@@ -343,7 +343,7 @@ public class ContactHandlerAction implements Serializable {
 		if (!associatedContact.isPrimaryContact()) {
 			associatedContact.setPrimaryContact(true);
 			genericDAO.save(associatedContact, resourceBundle.get("log.patient.task.contact.primaryRole.set", task.getTaskID(),
-					associatedContact.getPerson().getName()), task.getPatient());
+					associatedContact.getPerson().getLastName()), task.getPatient());
 		}
 	}
 

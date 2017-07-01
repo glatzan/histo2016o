@@ -32,7 +32,6 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.Gender;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.PDFContainer;
@@ -148,14 +147,14 @@ public class Patient
 			getPerson().setTitle(patient.getPerson().getTitle());
 		}
 
-		if (isStringDifferent(getPerson().getName(), patient.getPerson().getName())) {
+		if (isStringDifferent(getPerson().getLastName(), patient.getPerson().getLastName())) {
 			change = true;
-			getPerson().setName(patient.getPerson().getName());
+			getPerson().setLastName(patient.getPerson().getLastName());
 		}
 
-		if (isStringDifferent(getPerson().getSurname(), patient.getPerson().getSurname())) {
+		if (isStringDifferent(getPerson().getFirstName(), patient.getPerson().getFirstName())) {
 			change = true;
-			getPerson().setSurname(patient.getPerson().getSurname());
+			getPerson().setFirstName(patient.getPerson().getFirstName());
 		}
 
 		if (isStringDifferent(getPerson().getBirthday(), patient.getPerson().getBirthday())) {
@@ -163,29 +162,29 @@ public class Patient
 			getPerson().setBirthday(patient.getPerson().getBirthday());
 		}
 
-		if (isStringDifferent(getPerson().getTown(), patient.getPerson().getTown())) {
+		if (isStringDifferent(getPerson().getContact().getTown(), patient.getPerson().getContact().getTown())) {
 			change = true;
-			getPerson().setTown(patient.getPerson().getTown());
+			getPerson().getContact().setTown(patient.getPerson().getContact().getTown());
 		}
 
-		if (isStringDifferent(getPerson().getCountry(), patient.getPerson().getCountry())) {
+		if (isStringDifferent(getPerson().getContact().getCountry(), patient.getPerson().getContact().getCountry())) {
 			change = true;
-			getPerson().setCountry(patient.getPerson().getCountry());
+			getPerson().getContact().setCountry(patient.getPerson().getContact().getCountry());
 		}
 
-		if (isStringDifferent(getPerson().getPostcode(), patient.getPerson().getPostcode())) {
+		if (isStringDifferent(getPerson().getContact().getPostcode(), patient.getPerson().getContact().getPostcode())) {
 			change = true;
-			getPerson().setPostcode(patient.getPerson().getPostcode());
+			getPerson().getContact().setPostcode(patient.getPerson().getContact().getPostcode());
 		}
 
-		if (isStringDifferent(getPerson().getStreet(), patient.getPerson().getStreet())) {
+		if (isStringDifferent(getPerson().getContact().getStreet(), patient.getPerson().getContact().getStreet())) {
 			change = true;
-			getPerson().setStreet(patient.getPerson().getStreet());
+			getPerson().getContact().setStreet(patient.getPerson().getContact().getStreet());
 		}
 
-		if (isStringDifferent(getPerson().getPhoneNumber(), patient.getPerson().getPhoneNumber())) {
+		if (isStringDifferent(getPerson().getContact().getPhone(), patient.getPerson().getContact().getPhone())) {
 			change = true;
-			getPerson().setPhoneNumber(patient.getPerson().getPhoneNumber());
+			getPerson().getContact().setPhone(patient.getPerson().getContact().getPhone());
 		}
 
 		if (isStringDifferent(getPerson().getGender(), patient.getPerson().getGender())) {
@@ -193,9 +192,9 @@ public class Patient
 			getPerson().setGender(patient.getPerson().getGender());
 		}
 
-		if (isStringDifferent(getPerson().getEmail(), patient.getPerson().getEmail())) {
+		if (isStringDifferent(getPerson().getContact().getEmail(), patient.getPerson().getContact().getEmail())) {
 			change = true;
-			getPerson().setEmail(patient.getPerson().getEmail());
+			getPerson().getContact().setEmail(patient.getPerson().getContact().getEmail());
 		}
 
 		return change;
@@ -240,9 +239,9 @@ public class Patient
 
 		// Person data
 		person.setTitle(obj.optString("titel"));
-		person.setName(obj.optString("name"));
+		person.setLastName(obj.optString("name"));
 
-		person.setSurname(obj.optString("vorname"));
+		person.setFirstName(obj.optString("vorname"));
 
 		// parsing date
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.GERMAN);
@@ -254,17 +253,17 @@ public class Patient
 		}
 		person.setBirthday(date);
 
-		person.setTown(obj.optString("ort"));
-		person.setCountry(obj.optString("land"));
-		person.setPostcode(obj.optString("plz"));
-		person.setStreet(obj.optString("anschrift"));
-		person.setPhoneNumber(obj.optString("tel"));
+		person.getContact().setTown(obj.optString("ort"));
+		person.getContact().setCountry(obj.optString("land"));
+		person.getContact().setPostcode(obj.optString("plz"));
+		person.getContact().setStreet(obj.optString("anschrift"));
+		person.getContact().setPhone(obj.optString("tel"));
 
 		// 1 equals female, empty equals male
-		person.setGender(obj.optString("weiblich").equals("1") ? Gender.FEMALE : Gender.MALE);
+		person.setGender(obj.optString("weiblich").equals("1") ? Person.Gender.FEMALE : Person.Gender.MALE);
 
 		// TODO
-		person.setEmail("");
+		person.getContact().setEmail("");
 
 		// patient data
 		setPiz(obj.optString("piz"));
@@ -358,11 +357,11 @@ public class Patient
 	public boolean hasNoneActiveTasks() {
 		return getTasks().stream().anyMatch(p -> !p.isActiveOrActionPending());
 	}
-	
+
 	/********************************************************
 	 * Transient Methods
 	 ********************************************************/
-	
+
 	/********************************************************
 	 * Getter/Setter
 	 ********************************************************/
@@ -513,7 +512,6 @@ public class Patient
 	public void setParent(Patient parent) {
 	}
 
-
 	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
@@ -526,6 +524,7 @@ public class Patient
 	public String getLogPath() {
 		return "Patient-Name: " + getPerson().getFullName() + " (" + getId() + ")";
 	}
+
 	/********************************************************
 	 * Interface PatientRollbackAble
 	 ********************************************************/
@@ -535,6 +534,5 @@ public class Patient
 	public String getDatalistIdentifier() {
 		return "interface.hasDataList.patient";
 	}
-	
-	
+
 }

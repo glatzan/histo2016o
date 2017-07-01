@@ -22,8 +22,8 @@ public enum Dialog {
 	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/task/diagnosisRecordOverwrite", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisCreateRevision", null, 640, 360, false, false, true), // 16:9
-	CONTACTS("/pages/dialog/associatedContact/associatedContact", null, 1024, 600, false, false, true), // 16:9
-	QUICK_CONTACTS("/pages/dialog/associatedContact/quickContact", null, 858, 484, false, false, true), // 16:9
+	CONTACTS("/pages/dialog/contact/associatedContact", null, 1024, 600, false, false, true), // 16:9
+	QUICK_CONTACTS("/pages/dialog/contact/quickContact", null, 858, 484, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
 	COUNCIL("/pages/dialog/council/council", null,  1024, 600, false, false, true), // 16:9
@@ -44,7 +44,9 @@ public enum Dialog {
 	STAINING_PHASE_FORCE_LEAVE("/pages/dialog/task/stainingPhaseForceLeave", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_LEAVE("/pages/dialog/task/diagnosisPhaseLeave", null, 1024, 600, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_FORCE_ENTER("/pages/dialog/task/diagnosisPhaseForceEnter", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_FORCE_LEAVE("/pages/dialog/task/diagnosisPhaseForceLeave", null, 480, 272, false, false, true); // 16:9
+	DIAGNOSIS_PHASE_FORCE_LEAVE("/pages/dialog/task/diagnosisPhaseForceLeave", null, 480, 272, false, false, true), // 16:9
+	ORGANIZATION_EDIT("/pages/dialog/organization/organizationEdit", null, 858, 484, false, false, true), // 16:9
+	ORGANIZATION_LIST("/pages/dialog/organization/organizationList", null, 858, 484, false, false, true); // 16:9
 	
 	
 	

@@ -18,9 +18,9 @@
 				<h:outputFormat value="#{msg['bodyNavigationOverview']}"
 					styleClass="navigationText">
 					<f:param
-						value="#{commonDataHandlerAction.selectedPatient.person.name}" />
+						value="#{commonDataHandlerAction.selectedPatient.person.lastName}" />
 					<f:param
-						value="#{commonDataHandlerAction.selectedPatient.person.surname}" />
+						value="#{commonDataHandlerAction.selectedPatient.person.firstName}" />
 					<f:param value="#{commonDataHandlerAction.selectedPatient.piz}" />
 				</h:outputFormat>
 			</h:commandLink>

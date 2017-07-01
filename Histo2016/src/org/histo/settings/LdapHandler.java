@@ -18,15 +18,24 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.histo.dao.OrganizationDAO;
+import org.histo.model.Contact;
+import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.GsonAble;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.gson.annotations.Expose;
 
+@Configurable
 public class LdapHandler implements GsonAble {
 
 	private static Logger logger = Logger.getLogger("org.histo");
+
+	@Autowired
+	private OrganizationDAO organizationDAO;
 
 	@Expose
 	private String host;
@@ -63,20 +72,19 @@ public class LdapHandler implements GsonAble {
 			SearchResult result = (SearchResult) results.next();
 			Attributes attrs = result.getAttributes();
 
-//			if (logger.isTraceEnabled())
-//				printAllAttributes(attrs);
+			// if (logger.isTraceEnabled())
+			// printAllAttributes(attrs);
 
 			if (attrs != null) {
 				// check if uid is not a number, only people with a name as
 				// uid are active
 				Attribute attr = attrs.get("uid");
-//				printAllAttributes(attrs);
+				// printAllAttributes(attrs);
 				if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
-					Physician newPhysician = new Physician(new Person());
+					Physician newPhysician = new Physician(new Person(new Contact()));
 					newPhysician.setUid(attr.get().toString());
 					newPhysician.setClinicEmployee(true);
 					newPhysician.setDnObjectName(result.getName());
-					newPhysician.copyIntoObject(attrs);
 					newPhysician.setId(i);
 					physicians.add(newPhysician);
 
@@ -87,6 +95,108 @@ public class LdapHandler implements GsonAble {
 		}
 
 		return physicians;
+	}
+
+	/**
+	 * Copies data from ldap into this physician object. cn: Dr. Michael Reich
+	 * ou: Klinik f�r Augenheilkunde givenName: Andreas mail:
+	 * andreas.glatz@uniklinik-freiburg.de sn: Glatz title: Arzt
+	 * telephonenumber: +49 761 270 40010 pager: 12-4027
+	 * 
+	 * @param attrs
+	 */
+	public void initPhysicianFromLdapAttributes(Physician physician, Attributes attrs) {
+
+		logger.debug("Upadting physician data for " + physician.getUid() + " from ldap");
+
+		try {
+			// name surname title
+			Attribute attr = attrs.get("personalTitle");
+
+			if (attr != null && attr.size() == 1) {
+				physician.getPerson().setTitle(attr.get().toString());
+			}
+
+			// uid
+			attr = attrs.get("uid");
+			if (attr != null && attr.size() == 1) {
+				physician.setUid(attr.get().toString());
+			}
+
+			// name
+			attr = attrs.get("sn");
+			if (attr != null && attr.size() == 1) {
+				physician.getPerson().setLastName(attr.get().toString());
+			}
+
+			attr = attrs.get("employeeNumber");
+			if (attr != null && attr.size() == 1) {
+				physician.setEmployeeNumber(attr.get().toString());
+			}
+
+			attr = attrs.get("givenName");
+			if (attr != null && attr.size() == 1) {
+				physician.getPerson().setFirstName(attr.get().toString());
+			}
+
+			attr = attrs.get("mail");
+			if (attr != null && attr.size() == 1) {
+				physician.getPerson().getContact().setEmail(attr.get().toString());
+			}
+
+			attr = attrs.get("telephonenumber");
+			if (attr != null && attr.size() == 1) {
+				physician.getPerson().getContact().setPhone(attr.get().toString());
+			}
+
+			attr = attrs.get("pager");
+			if (attr != null && attr.size() == 1) {
+				physician.getPerson().getContact().setPager(attr.get().toString());
+			}
+
+			// role in clinic
+			attr = attrs.get("title");
+			if (attr != null && attr.size() == 1) {
+				physician.setClinicRole(attr.get().toString());
+			}
+
+			// department
+			attr = attrs.get("ou");
+			if (attr != null && attr.size() == 1) {
+				Organization org = null;
+				try {
+					org = organizationDAO.getOrganizationByName(attr.get().toString());
+
+				} catch (IllegalStateException e) {
+					org = organizationDAO.createOrganization(attr.get().toString(), new Contact());
+				}
+
+				if (physician.getPerson().getOrganizsations() == null)
+					physician.getPerson().setOrganizsations(new ArrayList<Organization>());
+
+				physician.getPerson().getOrganizsations().add(org);
+			}
+
+			// sex
+			attr = attrs.get("uklfrPersonType");
+			if (attr != null && attr.size() == 1) {
+				try {
+					int intSEX = Integer.parseInt(attr.get().toString());
+
+					if (intSEX == 1) // male
+						physician.getPerson().setGender(Person.Gender.MALE);
+					else if (intSEX > 1) // female
+						physician.getPerson().setGender(Person.Gender.FEMALE);
+					else // unknow
+						physician.getPerson().setGender(Person.Gender.UNKNOWN);
+				} catch (NumberFormatException e) {
+					physician.getPerson().setGender(Person.Gender.UNKNOWN);
+				}
+			}
+
+		} catch (NamingException e) {
+			logger.error("Error while updating physician data for " + physician.getUid() + " from ldap", e);
+		}
 	}
 
 	public boolean checkPassword(String userName, String password)

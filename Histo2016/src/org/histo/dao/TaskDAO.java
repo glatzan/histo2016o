@@ -1,34 +1,20 @@
 package org.histo.dao;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.histo.action.dialog.WorklistSearchDialogHandler.ExtendedSearchData;
-import org.histo.config.enums.Eye;
-import org.histo.config.enums.Gender;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
-import org.histo.model.FavouriteList;
-import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.orm.hibernate3.HibernateInterceptor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

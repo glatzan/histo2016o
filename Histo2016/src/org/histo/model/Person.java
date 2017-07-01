@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,7 +36,6 @@ import org.histo.model.interfaces.LogAble;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -59,24 +59,33 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	@GeneratedValue(generator = "person_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	private long id;
+
 	@Enumerated(EnumType.ORDINAL)
 	private Gender gender = Gender.UNKNOWN;
+
 	@Column(columnDefinition = "VARCHAR")
 	private String title = "";
+
 	@Column(columnDefinition = "VARCHAR")
 	private String lastName;
+
 	@Column(columnDefinition = "VARCHAR")
 	private String firstName;
+
 	@Column(columnDefinition = "VARCHAR")
 	private String birthName;
+
 	@Column(columnDefinition = "VARCHAR")
 	@Type(type = "date")
 	private Date birthday;
+
 	@Column(columnDefinition = "VARCHAR")
 	private String language;
+
 	@Column(columnDefinition = "VARCHAR")
 	private String note;
-	@OneToOne
+
+	@OneToOne(cascade = CascadeType.ALL)
 	private Contact contact;
 
 	@ManyToMany
@@ -88,27 +97,19 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	public enum Gender {
 		MALE, FEMALE, UNKNOWN;
 	}
-	//
-	// @ExposeORDINAL
-	// protected String name = "";
-	// @Expose
-	// protected String street = "";
-	// @Expose
-	// protected String postcode = "";
-	// @Expose
-	// protected String town = "";
-	// @Expose
-	// protected String surname = "";
-	// @Expose
-	// protected String phoneNumber = "";
-	// @Expose
+
+	public Person() {
+	}
+
+	public Person(String name) {
+		setLastName(name);
+	}
+
+	public Person(Contact contact) {
+		this.contact = contact;
+	}
+	
 	// protected String mobileNumber = "";
-	// @Expose
-	// protected String fax = "";
-	// @Expose
-	// protected String email = "";
-	// @Expose
-	// protected String country = "";
 	// @Expose
 	// protected String department = "";
 
@@ -134,11 +135,11 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		if (getTitle() != null && !getTitle().isEmpty())
 			result.append(getTitle() + " ");
 
-		if (getName() != null && !getName().isEmpty())
-			result.append(getName() + " ");
+		if (getLastName() != null && !getLastName().isEmpty())
+			result.append(getLastName() + " ");
 
-		if (getSurname() != null && !getSurname().isEmpty())
-			result.append(getSurname() + " ");
+		if (getFirstName() != null && !getFirstName().isEmpty())
+			result.append(getFirstName() + " ");
 
 		// remove the last space from the string
 		if (result.length() > 0)
@@ -171,8 +172,8 @@ public class Person implements Serializable, LogAble, ArchivAble {
 		if (index != -1)
 			result.replace(index, 4, "");
 
-		if (getName() != null && !getName().isEmpty())
-			result.append(getName() + " ");
+		if (getLastName() != null && !getLastName().isEmpty())
+			result.append(getLastName() + " ");
 
 		return result.substring(0, result.length() - 1);
 	}

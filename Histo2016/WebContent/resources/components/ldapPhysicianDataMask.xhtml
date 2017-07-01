@@ -52,7 +52,7 @@
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
 
 				<!-- title -->
-				<p:column sortBy="#{physician.person.name}"
+				<p:column sortBy="#{physician.person.lastName}"
 					headerText="#{msg['include.ladpPhysician.search.name']}"
 					style="width:20%">
 					<h:outputText value="#{physician.person.fullName}" />

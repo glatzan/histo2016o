@@ -198,14 +198,14 @@ public class Worklist {
 			Collections.sort(items, new Comparator<Patient>() {
 				@Override
 				public int compare(Patient patientOne, Patient patientTwo) {
-					if (patientOne.getPerson().getName() == null && patientTwo.getPerson().getName() == null)
+					if (patientOne.getPerson().getLastName() == null && patientTwo.getPerson().getLastName() == null)
 						return 0;
-					else if (patientOne.getPerson().getName() == null)
+					else if (patientOne.getPerson().getLastName() == null)
 						return asc ? -1 : 1;
-					else if (patientTwo.getPerson().getName() == null)
+					else if (patientTwo.getPerson().getLastName() == null)
 						return asc ? 1 : -1;
 					else {
-						int res = patientOne.getPerson().getName().compareTo(patientTwo.getPerson().getName());
+						int res = patientOne.getPerson().getLastName().compareTo(patientTwo.getPerson().getLastName());
 						return asc ? res : res * -1;
 					}
 				}

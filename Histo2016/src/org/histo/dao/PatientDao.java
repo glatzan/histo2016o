@@ -17,11 +17,11 @@ import org.histo.action.dialog.WorklistSearchDialogHandler.ExtendedSearchData;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Eye;
-import org.histo.config.enums.Gender;
 import org.histo.config.enums.Role;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.FavouriteList;
+import org.histo.model.Person;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
@@ -142,8 +142,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		List<Patient> result = query.getExecutableCriteria(getSession()).list();
-
-		System.out.println(result.size());
 
 		if (result != null && result.size() == 1)
 			return result.get(0);
@@ -345,7 +343,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		}
 	}
 
-	public List<Patient> getPatientsByNameSurnameDateExcludePiz(String name, String surname, Date date,
+	public List<Patient> getPatientsByNameSurnameDateExcludePiz(String name, String firstName, Date date,
 			List<String> pizesToExclude) {
 
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
@@ -353,9 +351,9 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.createAlias("patient.person", "_person");
 
 		if (name != null && !name.isEmpty())
-			query.add(Restrictions.ilike("_person.name", name, MatchMode.ANYWHERE));
-		if (surname != null && !surname.isEmpty())
-			query.add(Restrictions.ilike("_person.surname", surname, MatchMode.ANYWHERE));
+			query.add(Restrictions.ilike("_person.lastname", name, MatchMode.ANYWHERE));
+		if (firstName != null && !firstName.isEmpty())
+			query.add(Restrictions.ilike("_person.firstname", firstName, MatchMode.ANYWHERE));
 		if (date != null)
 			query.add(Restrictions.eq("_person.birthday", date));
 		if (pizesToExclude != null && !pizesToExclude.isEmpty())
@@ -426,12 +424,12 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.createAlias("diagnosisRevisions.diagnoses", "diagnoses");
 
 		if (extendedSearchData.getName() != null && !extendedSearchData.getName().isEmpty()) {
-			query.add(Restrictions.ilike("person.name", extendedSearchData.getName(), MatchMode.ANYWHERE));
+			query.add(Restrictions.ilike("person.lastname", extendedSearchData.getName(), MatchMode.ANYWHERE));
 			logger.debug("search for name: " + extendedSearchData.getName());
 		}
 
 		if (extendedSearchData.getSurename() != null && !extendedSearchData.getSurename().isEmpty()) {
-			query.add(Restrictions.ilike("person.surename", extendedSearchData.getSurename(), MatchMode.ANYWHERE));
+			query.add(Restrictions.ilike("person.firstname", extendedSearchData.getSurename(), MatchMode.ANYWHERE));
 			logger.debug("search for surename: " + extendedSearchData.getSurename());
 		}
 
@@ -440,7 +438,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			logger.debug("search for birthday: " + extendedSearchData.getBirthday());
 		}
 
-		if (extendedSearchData.getGender() != null && extendedSearchData.getGender() != Gender.UNKNOWN) {
+		if (extendedSearchData.getGender() != null && extendedSearchData.getGender() != Person.Gender.UNKNOWN) {
 			query.add(Restrictions.eq("person.gender", extendedSearchData.getGender()));
 			logger.debug("search for gender: " + extendedSearchData.getGender());
 		}

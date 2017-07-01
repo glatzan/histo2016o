@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
+import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.model.patient.Patient;
@@ -60,7 +61,7 @@ import org.primefaces.json.JSONObject;
 //ok      "name":"Cazana",
 //ok      "geburtsdatum":"1989-10-09",
 //?     "gueltig_bis":null,
-//ok      "krankenkasse":"AOK Baden-Württemberg",
+//ok      "krankenkasse":"AOK Baden-Wï¿½rttemberg",
 //?     "versnr":"U367703198",
 //ok      "land":"D",
 //ok      "weiblich":"1",
@@ -153,6 +154,7 @@ public class ClinicJsonHandler implements GsonAble {
 	public Patient createPatientFromClinicJson(JSONObject json) throws CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		Patient patient = new Patient();
 		patient.setPerson(new Person());
+		patient.getPerson().setContact(new Contact());
 
 		if (json.has("error"))
 			throw new CustomExceptionToManyEntries();

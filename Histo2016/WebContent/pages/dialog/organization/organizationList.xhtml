@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.quickContact.headline.'.concat(quickContactDialog.selectedContactRole)]}" />
+	</title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel
+					value="#{msg['dialog.quickContact.headline.'.concat(quickContactDialog.selectedContactRole)]}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+				<p:dataTable var="organization" style="width:100%;"
+					scrollable="true" scrollHeight="230" draggableRows="true"
+					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+					value="#{cc.attrs.person.organizsations}">
+
+					<p:column headerText="#{msg['dialog.settings.material.name']}">
+						<h:outputText value="#{organization.name}" />
+					</p:column>
+
+					<p:column style="width:15px">
+						<f:facet name="header">
+							<h:panelGrid columns="1"
+								styleClass="defaultListingTableContainer">
+								<p:commandLink id="upload"
+									actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
+									<p:ajax event="dialogReturn" update="@form" />
+									<i class="fa fa-plus"></i>
+								</p:commandLink>
+							</h:panelGrid>
+						</f:facet>
+						<p:commandLink
+							actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
+							<p:ajax event="dialogReturn" update="@form" />
+							<i class="fa fa-search"></i>
+						</p:commandLink>
+					</p:column>
+
+				</p:dataTable>
+
+				<p:remoteCommand name="submitDoubleclick" partialSubmit="true"
+					process="@this">
+					<f:actionListener
+						binding="#{quickContactDialog.selectContactAsRole()}" />
+					<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
+				</p:remoteCommand>
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float:right;">
+					<p:commandButton value="#{msg['general.select']}"
+						disabled="#{dialogHandlerAction.organizationListDialog.selectedOrganization eq null}"
+						rendered="#{dialogHandlerAction.organizationListDialog.selectMode}"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-fw fa-check-circle-o">
+						<f:actionListener
+							binding="#{quickContactDialog.selectContactAsRole()}" />
+						<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.close']}"
+						styleClass="smallButton buttonRighMarginInList"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
+						actionListener="#{dialogHandlerAction.organizationListDialog.test()}"></p:commandButton>
+				</h:panelGrid>
+
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

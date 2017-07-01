@@ -283,7 +283,7 @@ public class NotificationDialog {
 
 						// name and mail
 						logger.trace("Email to " + notificationChooser.getContact().getPerson().getFullName() + " ("
-								+ notificationChooser.getContact().getPerson().getEmail() + ")");
+								+ notificationChooser.getContact().getPerson().getContact().getEmail() + ")");
 
 						// no notification
 						if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
@@ -298,7 +298,7 @@ public class NotificationDialog {
 									notificationChooser.getContact().getPerson());
 
 							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-									notificationChooser.getContact().getPerson().getEmail(),
+									notificationChooser.getContact().getPerson().getContact().getEmail(),
 									emailNotificationSettings.getEmailSubject(),
 									emailNotificationSettings.getEmailText(), pdfToSend)) {
 								emailSuccessful = true;
@@ -312,7 +312,7 @@ public class NotificationDialog {
 						} else {
 							// plain text mail
 							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-									notificationChooser.getContact().getPerson().getEmail(),
+									notificationChooser.getContact().getPerson().getContact().getEmail(),
 									emailNotificationSettings.getEmailSubject(),
 									emailNotificationSettings.getEmailText())) {
 								emailSuccessful = true;
@@ -352,15 +352,15 @@ public class NotificationDialog {
 
 						// name and number
 						logger.trace("Fax to " + notificationChooser.getContact().getPerson().getFullName() + " ("
-								+ notificationChooser.getContact().getPerson().getEmail() + ")");
+								+ notificationChooser.getContact().getPerson().getContact().getEmail() + ")");
 
 						// no notification
 						if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
 							logger.trace("No notification desired");
 							continue;
 						} else if (notificationChooser.getPrintTemplate() == null
-								|| notificationChooser.getContact().getPerson().getFax() == null
-								|| notificationChooser.getContact().getPerson().getFax().isEmpty()) {
+								|| notificationChooser.getContact().getPerson().getContact().getFax() == null
+								|| notificationChooser.getContact().getPerson().getContact().getFax().isEmpty()) {
 							// error no templat or number
 							logger.trace("Error, no Fax-Number or TemplateUtil");
 						} else {
@@ -404,7 +404,7 @@ public class NotificationDialog {
 
 						// name and number
 						logger.trace("Phone to " + notificationChooser.getContact().getPerson().getFullName() + " ("
-								+ notificationChooser.getContact().getPerson().getPhoneNumber() + ")");
+								+ notificationChooser.getContact().getPerson().getContact().getPhone() + ")");
 
 						if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
 							continue;

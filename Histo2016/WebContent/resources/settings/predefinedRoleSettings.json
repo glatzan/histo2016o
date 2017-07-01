@@ -11,7 +11,7 @@
         "USERLIST"
       ],
       "defaultWorklistView":null,
-      "defaultWorklistToLoad":"EMTY",
+      "worklistToLoad":"EMTY",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false
@@ -32,7 +32,7 @@
          "WORKLIST_DIAGNOSIS"
       ],
       "defaultWorklistView":null,
-      "defaultWorklistToLoad":"STAINING_LIST",
+      "worklistToLoad":"STAINING_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false
@@ -53,7 +53,7 @@
          "WORKLIST_DIAGNOSIS"
       ],
       "defaultWorklistView":null,
-      "defaultWorklistToLoad":"DIAGNOSIS_LIST",
+      "worklistToLoad":"DIAGNOSIS_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false
@@ -74,7 +74,7 @@
          "WORKLIST_DIAGNOSIS"
       ],
       "defaultWorklistView":null,
-      "defaultWorklistToLoad":"DIAGNOSIS_LIST",
+      "worklistToLoad":"DIAGNOSIS_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false
@@ -95,7 +95,7 @@
          "WORKLIST_DIAGNOSIS"
       ],
       "defaultWorklistView":null,
-      "defaultWorklistToLoad":"DIAGNOSIS_LIST",
+      "worklistToLoad":"DIAGNOSIS_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false

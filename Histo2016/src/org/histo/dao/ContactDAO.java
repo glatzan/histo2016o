@@ -111,15 +111,15 @@ public class ContactDAO extends AbstractDAO {
 				// something was already select, do nothing
 			} else if (associatedContact.getRole() == ContactRole.SURGEON) {
 				// surgeon use email per default
-				associatedContact.setUseEmail(!associatedContact.getPerson().getEmail().isEmpty() ? true : false);
+				associatedContact.setUseEmail(!associatedContact.getPerson().getContact().getEmail().isEmpty() ? true : false);
 			} else if ((associatedContact.getRole() == ContactRole.PRIVATE_PHYSICIAN
-					|| associatedContact.getRole() == ContactRole.FAMILY_PHYSICIAN) && associatedContact.getPerson().getFax() != null
-					&& !associatedContact.getPerson().getFax().isEmpty()) {
+					|| associatedContact.getRole() == ContactRole.FAMILY_PHYSICIAN) && associatedContact.getPerson().getContact().getFax() != null
+					&& !associatedContact.getPerson().getContact().getFax().isEmpty()) {
 				// private physician use fax per default
 				associatedContact.setUseFax(true);
-			} else if (associatedContact.getPerson().getEmail() != null && !associatedContact.getPerson().getEmail().isEmpty()) {
+			} else if (associatedContact.getPerson().getContact().getEmail() != null && !associatedContact.getPerson().getContact().getEmail().isEmpty()) {
 				// other contacts use email per default
-				associatedContact.setUseEmail(!associatedContact.getPerson().getEmail().isEmpty() ? true : false);
+				associatedContact.setUseEmail(!associatedContact.getPerson().getContact().getEmail().isEmpty() ? true : false);
 			}
 
 			patientDao.savePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.contact.add",

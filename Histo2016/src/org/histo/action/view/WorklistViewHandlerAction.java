@@ -99,15 +99,15 @@ public class WorklistViewHandlerAction {
 
 		setCurrentView(View.WORKLIST_TASKS);
 
-		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getDefaultWorklistToLoad();
+		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getWorklistToLoad();
 
 		if (defaultWorklistToLoad != null) {
 			worklistSearchDialogHandler.getWorklistSearchBasic().setSearchIndex(defaultWorklistToLoad);
 			worklistSearchDialogHandler.getWorklistSearchBasic().updateSearchIndex();
 
 			addWorklist(new Worklist("Default", worklistSearchDialogHandler.getWorklistSearchBasic(),
-					userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
-					userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
+					userHandlerAction.getCurrentUser().isWorklistHideNoneActiveTasks(),
+					userHandlerAction.getCurrentUser().getWorklistSortOrder(),
 					userHandlerAction.getCurrentUser().isWorklistAutoUpdate()), true);
 		} else {
 			addWorklist(new Worklist("Default", new WorklistSearch()), true);
@@ -235,8 +235,8 @@ public class WorklistViewHandlerAction {
 
 	public void addWorklist(WorklistSearch worklistSearch, String name, boolean selected) {
 		addWorklist(new Worklist(name, worklistSearch,
-				userHandlerAction.getCurrentUser().isDefaultHideNonActiveTasksInWorklist(),
-				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
+				userHandlerAction.getCurrentUser().isWorklistHideNoneActiveTasks(),
+				userHandlerAction.getCurrentUser().getWorklistSortOrder(),
 				userHandlerAction.getCurrentUser().isWorklistAutoUpdate()), selected);
 	}
 

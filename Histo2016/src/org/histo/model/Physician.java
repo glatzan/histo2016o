@@ -31,75 +31,86 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.Gender;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
 
 import com.google.gson.annotations.Expose;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "physician_sequencegenerator", sequenceName = "physician_sequence")
+@Getter
+@Setter
 public class Physician implements Serializable, ArchivAble, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	private static final long serialVersionUID = 7358147861813210904L;
 
+	@Id
+	@GeneratedValue(generator = "physician_sequencegenerator")
+	@Column(unique = true, nullable = false)
+	private long id;
+
+	@Version
 	private long version;
-
-	protected long id;
-
-	/**
-	 * Pager Number
-	 */
-	@Expose
-	private String pager;
 
 	/**
 	 * clinic internal title
 	 */
-	@Expose
+	@Column(columnDefinition = "VARCHAR")
 	private String clinicRole;
 
 	/**
 	 * Number of the employee
 	 */
-	@Expose
+	@Column(columnDefinition = "VARCHAR")
 	private String employeeNumber;
 
 	/**
 	 * Loginname of the physician
 	 */
-	@Expose
+	@Column(columnDefinition = "VARCHAR")
 	private String uid;
 
 	/**
 	 * True if clinic employee
 	 */
+	@Column
 	private boolean clinicEmployee;
 
 	/**
 	 * List of all contactRoles
 	 */
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
 	private Set<ContactRole> associatedRoles;
 
 	/**
 	 * Person data of the physician
 	 */
+	@OneToOne(cascade = CascadeType.ALL)
 	private Person person;
 
 	/**
 	 * Transitory, if fetched from ldap this variable contains the dn objects
 	 * name.
 	 */
+	@Column(columnDefinition = "VARCHAR")
 	private String dnObjectName;
 
 	/**
 	 * If true this object is archived
 	 */
+	@Column
 	private boolean archived;
 
 	/**
@@ -133,196 +144,28 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	 */
 	public void copyIntoObject(Physician dataToUpdate) {
 		// TOTO move to person
-		getPerson().setName(dataToUpdate.getPerson().getName());
-		getPerson().setSurname(dataToUpdate.getPerson().getSurname());
-		getPerson().setEmail(dataToUpdate.getPerson().getEmail());
-		getPerson().setPhoneNumber(dataToUpdate.getPerson().getPhoneNumber());
-		getPerson().setDepartment(dataToUpdate.getPerson().getDepartment());
+		getPerson().setLastName(dataToUpdate.getPerson().getLastName());
+		getPerson().setFirstName(dataToUpdate.getPerson().getFirstName());
+		getPerson().getContact().setEmail(dataToUpdate.getPerson().getContact().getEmail());
+		getPerson().getContact().setPhone(dataToUpdate.getPerson().getContact().getPhone());
+		getPerson().getContact().setPager(dataToUpdate.getPerson().getContact().getPager());
 		getPerson().setTitle(dataToUpdate.getPerson().getTitle());
 
 		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
 		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
 		setUid(dataToUpdate.getUid());
-		setPager(dataToUpdate.getPager());
 		setClinicRole(dataToUpdate.getClinicRole());
 
+		getPerson().setOrganizsations(dataToUpdate.getPerson().getOrganizsations());
 		// TODO is this necessary ?
 		// setAssociatedRoles(dataToUpdate.getAssociatedRoles());
 	}
 
-	/**
-	 * Copies data from ldap into this physician object. cn: Dr. Michael Reich
-	 * ou: Klinik für Augenheilkunde givenName: Andreas mail:
-	 * andreas.glatz@uniklinik-freiburg.de sn: Glatz title: Arzt
-	 * telephonenumber: +49 761 270 40010 pager: 12-4027
-	 * 
-	 * @param attrs
-	 */
-	public void copyIntoObject(Attributes attrs) {
-
-		logger.debug("Upadting physician data for " + getUid() + " from ldap");
-
-		try {
-			// name surname title
-			Attribute attr = attrs.get("personalTitle");
-
-			if (attr != null && attr.size() == 1) {
-				getPerson().setTitle(attr.get().toString());
-			}
-
-			// uid
-			attr = attrs.get("uid");
-			if (attr != null && attr.size() == 1) {
-				setUid(attr.get().toString());
-			}
-
-			// name
-			attr = attrs.get("sn");
-			if (attr != null && attr.size() == 1) {
-				getPerson().setName(attr.get().toString());
-			}
-
-			attr = attrs.get("employeeNumber");
-			if (attr != null && attr.size() == 1) {
-				setEmployeeNumber(attr.get().toString());
-			}
-
-			attr = attrs.get("givenName");
-			if (attr != null && attr.size() == 1) {
-				getPerson().setSurname(attr.get().toString());
-			}
-
-			attr = attrs.get("mail");
-			if (attr != null && attr.size() == 1) {
-				getPerson().setEmail(attr.get().toString());
-			}
-
-			attr = attrs.get("telephonenumber");
-			if (attr != null && attr.size() == 1) {
-				getPerson().setPhoneNumber(attr.get().toString());
-			}
-
-			attr = attrs.get("pager");
-			if (attr != null && attr.size() == 1) {
-				setPager(attr.get().toString());
-			}
-
-			// role in clinic
-			attr = attrs.get("title");
-			if (attr != null && attr.size() == 1) {
-				setClinicRole(attr.get().toString());
-			}
-
-			// department
-			attr = attrs.get("ou");
-			if (attr != null && attr.size() == 1) {
-				getPerson().setDepartment(attr.get().toString());
-			}
-
-			// sex
-			attr = attrs.get("uklfrPersonType");
-			if (attr != null && attr.size() == 1) {
-				try {
-					int intSEX = Integer.parseInt(attr.get().toString());
-
-					if (intSEX == 1) // male
-						getPerson().setGender(Gender.MALE);
-					else if (intSEX > 1) // female
-						getPerson().setGender(Gender.FEMALE);
-					else // unknow
-						getPerson().setGender(Gender.UNKNOWN);
-				} catch (NumberFormatException e) {
-					getPerson().setGender(Gender.UNKNOWN);
-				}
-			}
-
-		} catch (NamingException e) {
-			logger.error("Error while updating physician data for " + getUid() + " from ldap", e);
-		}
-	}
-
-	@Id
-	@GeneratedValue(generator = "physician_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL)
-	public Person getPerson() {
-		return person;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
-
-	public String getPager() {
-		return pager;
-	}
-
-	public void setPager(String pager) {
-		this.pager = pager;
-	}
-
-	public String getClinicRole() {
-		return clinicRole;
-	}
-
-	public void setClinicRole(String clinicRole) {
-		this.clinicRole = clinicRole;
-	}
-
-	public String getEmployeeNumber() {
-		return employeeNumber;
-	}
-
-	public void setEmployeeNumber(String employeeNumber) {
-		this.employeeNumber = employeeNumber;
-	}
-
-	public String getUid() {
-		return uid;
-	}
-
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
-	public boolean isClinicEmployee() {
-		return clinicEmployee;
-	}
-
-	public void setClinicEmployee(boolean clinicEmployee) {
-		this.clinicEmployee = clinicEmployee;
-	}
-
-	@ElementCollection(fetch = FetchType.EAGER)
-	@Enumerated(EnumType.STRING)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
 	public Set<ContactRole> getAssociatedRoles() {
 		if (associatedRoles == null)
 			associatedRoles = new HashSet<ContactRole>();
 
 		return associatedRoles;
-	}
-
-	public void setAssociatedRoles(Set<ContactRole> associatedRoles) {
-		this.associatedRoles = associatedRoles;
 	}
 
 	/********************************************************

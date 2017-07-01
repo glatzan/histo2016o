@@ -63,7 +63,7 @@
 							listener="#{addPatientDialogHandler.searchForClinicPatienes()}" />
 
 					</p:inputText>
-					<p:outputLabel value="#{msg['dialog.addPatient.search.surname']}" />
+					<p:outputLabel value="#{msg['dialog.addPatient.search.firstName']}" />
 				</p:panelGrid>
 			</h:panelGroup>
 		</p:panelGrid>
@@ -76,13 +76,13 @@
 
 			<!-- Name -->
 			<p:column headerText="#{msg['dialog.addPatient.search.name']}"
-				sortBy="#{patientList.listItem.person.name}">
-				<h:outputText value="#{patientList.listItem.person.name}" />
+				sortBy="#{patientList.listItem.person.lastName}">
+				<h:outputText value="#{patientList.listItem.person.lastName}" />
 			</p:column>
 			<!-- Surname -->
-			<p:column headerText="#{msg['dialog.addPatient.search.surname']}"
-				sortBy="#{patientList.listItem.person.surname}">
-				<h:outputText value="#{patientList.listItem.person.surname}" />
+			<p:column headerText="#{msg['dialog.addPatient.search.firstName']}"
+				sortBy="#{patientList.listItem.person.firstName}">
+				<h:outputText value="#{patientList.listItem.person.firstName}" />
 			</p:column>
 			<!-- Birthday -->
 			<p:column
@@ -137,7 +137,7 @@
 			<f:actionListener binding="#{addPatientDialogHandler.hideDialog()}" />
 		</p:remoteCommand>
 
-		<p:commandButton name="submitOnUniqueItem" id="submitOnUniqueItem">
+		<p:commandButton name="submitOnUniqueItem" id="submitOnUniqueItem" style="display:none">
 			<f:actionListener
 				binding="#{addPatientDialogHandler.searchAndAddUniqueItem(true)}" />
 		</p:commandButton>
