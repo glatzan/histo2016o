@@ -1,14 +1,17 @@
 package org.histo.dao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
+import org.histo.model.Person;
 import org.histo.util.StreamUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,13 +43,54 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 	}
 
 	public Organization createOrganization(String name, Contact contact) {
-		Organization newOrganization = new Organization();
+		Organization newOrganization = new Organization(contact);
 		newOrganization.setName(name);
-		newOrganization.setContact(contact);
 
-		saveDataRollbackSave(newOrganization, "log.organization.created", new Object[] { name });
+		save(newOrganization, "log.organization.created", new Object[] { name });
 
 		return newOrganization;
 	}
 
+	public void addOrganization(Person person, Organization organization) {
+		if (person.getOrganizsations() == null)
+			person.setOrganizsations(new ArrayList<Organization>());
+
+		if (!person.getOrganizsations().stream().anyMatch(p -> p.equals(organization))) {
+
+			person.getOrganizsations().add(organization);
+
+			save(person, "log.organization.added", new Object[] { person.getFullName(), organization.getName() });
+			logger.debug("Added Organization to Person");
+		}
+
+		initializeOrganization(organization);
+
+		if (organization.getContact() == null)
+			organization.setPersons((new ArrayList<Person>()));
+
+		if (!organization.getPersons().stream().anyMatch(p -> p.equals(person))) {
+			organization.getPersons().add(person);
+
+			save(organization);
+			logger.debug("Added Person to Organization");
+		}
+	}
+
+	public void removeOrganization(Person person, Organization organization) {
+		if (person.getOrganizsations().remove(organization)) {
+			logger.debug("Removing Organization from Patient");
+			save(person, "log.organization.remove", new Object[] { person.getFullName(), organization.getName() });
+		}
+
+		initializeOrganization(organization);
+		
+		if (organization.getPersons().remove(person)) {
+			save(organization);
+		}
+	}
+
+	public void initializeOrganization(Organization organization) {
+		refresh(organization);
+		Hibernate.initialize(organization.getPersons());
+	}
 }

@@ -22,6 +22,7 @@ import org.histo.config.enums.StaticList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.OrganizationDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
@@ -32,6 +33,7 @@ import org.histo.model.FavouriteListItem;
 import org.histo.model.HistoUser;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
+import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
@@ -89,6 +91,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private FavouriteListDAO favouriteListDAO;
+
+	@Autowired
+	private OrganizationDAO organizationDAO;
 
 	/**
 	 * Tabindex of settings dialog
@@ -464,6 +469,15 @@ public class SettingsDialogHandler extends AbstractDialog {
 		setUserListTabIndex(SettingsTab.U_LIST);
 		prepareUserList();
 		setSelectedUserPhysician(null);
+	}
+
+	public void removeOrganizationFromPerson(Person person, Organization organization) {
+		try {
+			logger.debug("Removing Person from Organization");
+			organizationDAO.removeOrganization(person, organization);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
 	}
 
 	/********************************************************

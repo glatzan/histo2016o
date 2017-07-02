@@ -11,9 +11,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.histo.model.interfaces.HasID;
+import org.histo.model.patient.Patient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +31,8 @@ public class Organization implements HasID {
 	@GeneratedValue(generator = "organization_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	private long id;
+	@Version
+	private long version;
 	@Column(columnDefinition = "VARCHAR", unique = true)
 	private String name;
 	@OneToOne(cascade = CascadeType.ALL)
@@ -39,4 +43,21 @@ public class Organization implements HasID {
 	private List<Person> persons;
 	@Column
 	private boolean intern;
+
+	public Organization() {
+
+	}
+
+	public Organization(Contact contact) {
+		this.contact = contact;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		
+		if (obj instanceof Organization && ((Organization) obj).getId() == getId())
+			return true;
+
+		return super.equals(obj);
+	}
 }

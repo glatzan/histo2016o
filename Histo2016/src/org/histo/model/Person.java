@@ -32,7 +32,9 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.ArchivAble;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
+import org.histo.model.patient.Patient;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,7 +50,7 @@ import lombok.Setter;
 @SequenceGenerator(name = "person_sequencegenerator", sequenceName = "person_sequence")
 @Getter
 @Setter
-public class Person implements Serializable, LogAble, ArchivAble {
+public class Person implements Serializable, LogAble, ArchivAble, HasID {
 
 	private static final long serialVersionUID = 2533238775751991883L;
 
@@ -90,8 +92,7 @@ public class Person implements Serializable, LogAble, ArchivAble {
 
 	@ManyToMany
 	@LazyCollection(FALSE)
-	@JoinTable(uniqueConstraints = @UniqueConstraint(columnNames = { "person_id",
-			"organization_id" }), joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "organization_id"))
+	@JoinTable(joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "organization_id"))
 	private List<Organization> organizsations;
 
 	public enum Gender {
@@ -108,7 +109,7 @@ public class Person implements Serializable, LogAble, ArchivAble {
 	public Person(Contact contact) {
 		this.contact = contact;
 	}
-	
+
 	// protected String mobileNumber = "";
 	// @Expose
 	// protected String department = "";
@@ -176,6 +177,15 @@ public class Person implements Serializable, LogAble, ArchivAble {
 			result.append(getLastName() + " ");
 
 		return result.substring(0, result.length() - 1);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj instanceof Person && ((Person) obj).getId() == getId())
+			return true;
+
+		return super.equals(obj);
 	}
 
 	/********************************************************

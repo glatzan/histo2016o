@@ -162,32 +162,52 @@
 		<h:outputLabel value="#{msg['component.personDataMask.organization']}" />
 		<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 
-			<p:dataTable var="organization" style="width:100%;" scrollable="true"
-				scrollHeight="100" draggableRows="true"
+			<p:dataTable var="organization" style="width:90%;" scrollable="true"
+				scrollHeight="75" draggableRows="true"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 				value="#{cc.attrs.person.organizsations}">
 
-				<p:column headerText="#{msg['dialog.settings.material.name']}">
+				<p:column
+					headerText="#{msg['component.personDataMask.organization.name']}">
 					<h:outputText value="#{organization.name}" />
+				</p:column>
+
+				<p:column
+					headerText="#{msg['component.personDataMask.organization.note']}">
+					<h:outputLabel value="#{organization.note}">
+						<f:converter converterId="org.histo.ui.TruncateConverter" />
+						<f:attribute name="truncateAt" value="50" />
+						<f:attribute name="continuationMark" value="..." />
+					</h:outputLabel>
+				</p:column>
+
+				<p:column style="width:15px">
+					<ui:fragment rendered="#{organization.intern}">
+						<i class="fa fa-fw fa-check-circle icon-green"
+							style="margin-left: 5px"
+							title="#{msg['component.personDataMask.organization.clinicIntern']}" />
+					</ui:fragment>
 				</p:column>
 
 				<p:column style="width:15px">
 					<f:facet name="header">
 						<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 							<p:commandLink id="upload"
-								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(true)}">
+								title="#{msg['component.personDataMask.organization.add']}"
+								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(cc.attrs.person)}">
 								<p:ajax event="dialogReturn" update="@form" />
-								<i class="fa fa-plus"></i>
+								<i class="fa fa-plus" />
 							</p:commandLink>
 						</h:panelGrid>
 					</f:facet>
 					<p:commandLink
-						actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(true)}">
-						<p:ajax event="dialogReturn" update="@form" />
-						<i class="fa fa-search"></i>
+						actionListener="#{settingsDialogHandler.removeOrganizationFromPerson(cc.attrs.person, organization)}"
+						update="@form"
+						title="#{msg['component.personDataMask.organization.remove']}">
+						<i class="fa fa-remove" style="margin-left: 8px" />
 					</p:commandLink>
 				</p:column>
-				
+
 			</p:dataTable>
 		</h:panelGrid>
 	</h:panelGrid>

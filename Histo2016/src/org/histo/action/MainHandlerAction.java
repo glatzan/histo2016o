@@ -28,6 +28,8 @@ import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -41,7 +43,7 @@ import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
 public class MainHandlerAction {
 
 	public static FacesContext test;
-	
+
 	private static Logger logger = Logger.getLogger("org.histo");
 	@Autowired
 	private CommonDataHandlerAction commonDataHandlerAction;
@@ -90,7 +92,7 @@ public class MainHandlerAction {
 				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
 
 		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
-		
+
 		test = FacesContext.getCurrentInstance();
 
 	}
@@ -127,13 +129,12 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Dialog
 	 ********************************************************/
-	
-	public void processQueues(){
+
+	public void processQueues() {
 		showQueueGrowlMessage();
 		showQueueDialog();
 	}
-	
-	
+
 	public void showQueueDialog() {
 		logger.trace("Showing Dialog from queue called");
 		if (getQueueDialog() != null) {

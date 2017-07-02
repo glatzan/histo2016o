@@ -2,6 +2,9 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
+TODO: Versionkonflik beim löschen von organisationen
+TODO: QUick add feld geht gerade nicht richtig
+TODO: Diagnosen müssen default brieffelder bekommen
 TODO: 2: erweiterte Suche / 
 TODO: 3:versionsfehler besser handlen, refresh der seite
 TODO: 6: Contact Dialog mit neuem view �berarbeiten

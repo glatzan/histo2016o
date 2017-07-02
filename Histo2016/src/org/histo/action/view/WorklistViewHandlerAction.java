@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.CommonDataHandlerAction;
+import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.WorklistSearchDialogHandler;
 import org.histo.config.enums.View;
@@ -60,6 +61,11 @@ public class WorklistViewHandlerAction {
 	@Lazy
 	private DiagnosisViewHandlerAction diagnosisViewHandlerAction;
 
+
+	@Autowired
+	@Lazy
+	private MainHandlerAction mainHandlerAction;
+	
 	/**
 	 * View
 	 */
@@ -349,6 +355,8 @@ public class WorklistViewHandlerAction {
 		}else{
 			logger.debug("Do not update, Dialog is opend");
 		}
+		
+		mainHandlerAction.sendGrowlMessages("test", "was");
 			
 		// TODO check if taks is used in dilaog
 

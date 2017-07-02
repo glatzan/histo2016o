@@ -24,12 +24,12 @@
 			styleClass="defaultListingTableCss">
 
 			<!-- ****************** Person ****************** -->
-			<h:outputLabel value=" " />
+			<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
 
-			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+			<h:panelGrid columns="1" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn100px,">
 				<!-- role -->
-				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
+
 				<p:selectCheckboxMenu updateLabel="true"
 					styleClass="customSelectCheckboxMenu"
 					value="#{settingsDialogHandler.selectedUserPhysician.associatedRolesAsArray}"
@@ -48,12 +48,6 @@
 				<h:panelGroup />
 			</h:panelGrid>
 		</h:panelGrid>
-
-
-
-
-
-
 	</div>
 
 	<div class="bottomDiv">

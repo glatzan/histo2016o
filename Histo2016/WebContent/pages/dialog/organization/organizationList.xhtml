@@ -7,8 +7,7 @@
 
 <h:head>
 	<title><h:outputLabel
-			value="#{msg['dialog.quickContact.headline.'.concat(quickContactDialog.selectedContactRole)]}" />
-	</title>
+			value="#{msg['dialog.organization.list.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -19,8 +18,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel
-					value="#{msg['dialog.quickContact.headline.'.concat(quickContactDialog.selectedContactRole)]}" />
+				<h:outputLabel value="#{msg['dialog.organization.list.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -32,39 +30,52 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 				<p:dataTable var="organization" style="width:100%;"
-					scrollable="true" scrollHeight="230" draggableRows="true"
+					rowKey="#{organization.id}" scrollable="true" scrollHeight="230"
+					selectionMode="single"
+					selection="#{dialogHandlerAction.organizationListDialog.selectedOrganization}"
 					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-					value="#{cc.attrs.person.organizsations}">
+					value="#{dialogHandlerAction.organizationListDialog.organizations}">
 
-					<p:column headerText="#{msg['dialog.settings.material.name']}">
+					<p:column headerText="#{msg['dialog.organization.list.name']}"
+						sortBy="#{organization.name}" filterBy="#{organization.name}">
 						<h:outputText value="#{organization.name}" />
 					</p:column>
 
+					<p:column headerText="#{msg['dialog.organization.list.note']}">
+						<h:outputLabel value="#{organization.note}">
+							<f:converter converterId="org.histo.ui.TruncateConverter" />
+							<f:attribute name="truncateAt" value="100" />
+							<f:attribute name="continuationMark" value="..." />
+						</h:outputLabel>
+					</p:column>
+
 					<p:column style="width:15px">
-						<f:facet name="header">
-							<h:panelGrid columns="1"
-								styleClass="defaultListingTableContainer">
-								<p:commandLink id="upload"
-									actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
-									<p:ajax event="dialogReturn" update="@form" />
-									<i class="fa fa-plus"></i>
-								</p:commandLink>
-							</h:panelGrid>
-						</f:facet>
+						<ui:fragment rendered="#{organization.intern}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['dialog.organization.list.clinicIntern']}" />
+						</ui:fragment>
+					</p:column>
+
+					<p:column style="width:15px">
 						<p:commandLink
-							actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
+							actionListener="#{dialogHandlerAction.organizationEditDialog.initAndPrepareBean(organization)}">
 							<p:ajax event="dialogReturn" update="@form" />
-							<i class="fa fa-search"></i>
+							<i class="fa fa-search"
+								title="#{msg['dialog.organization.list.edit']}" />
 						</p:commandLink>
 					</p:column>
+					<p:ajax event="rowSelect" update="@form"/>
+					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()" />
 
 				</p:dataTable>
 
 				<p:remoteCommand name="submitDoubleclick" partialSubmit="true"
-					process="@this">
+					process="@this"
+					rendered="#{dialogHandlerAction.organizationListDialog.selectMode}">
 					<f:actionListener
-						binding="#{quickContactDialog.selectContactAsRole()}" />
-					<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
+						binding="#{dialogHandlerAction.organizationListDialog.selectOrganisation()}" />
+					<f:actionListener
+						binding="#{dialogHandlerAction.organizationListDialog.hideDialog()}" />
 				</p:remoteCommand>
 			</h:panelGrid>
 		</div>
@@ -74,6 +85,14 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
+					<p:commandButton value="#{msg['dialog.organization.list.new']}"
+						styleClass="smallButton buttonLeftMarginInList"
+						icon="fa fa-fw fa-check-circle-o">
+						<f:actionListener
+							binding="#{dialogHandlerAction.organizationEditDialog.initAndPrepareBean()}" />
+						<p:ajax event="dialogReturn" update="@form"
+							listener="#{dialogHandlerAction.organizationListDialog.updateOrganizationList()}" />
+					</p:commandButton>
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="float:right;">
@@ -83,15 +102,16 @@
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-fw fa-check-circle-o">
 						<f:actionListener
-							binding="#{quickContactDialog.selectContactAsRole()}" />
-						<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.organizationListDialog.selectOrganisation()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.organizationListDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.close']}"
 						styleClass="smallButton buttonRighMarginInList"
 						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
 						process="@this"
-						actionListener="#{dialogHandlerAction.organizationListDialog.test()}"></p:commandButton>
+						actionListener="#{dialogHandlerAction.organizationListDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
 
 			</h:panelGrid>

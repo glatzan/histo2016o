@@ -6,9 +6,24 @@
 	xmlns:p="http://primefaces.org/ui">
 
 <ui:composition>
+	<h:form>
+		<p:growl id="globalgrowl" showDetail="true" autoUpdate="true"
+			widgetVar="globalgrowl" globalOnly="true" for="globalgrowl" />
 
-	<p:growl id="globalgrowl" showDetail="true" autoUpdate="true"  widgetVar="globalgrowl" globalOnly="true"
-		for="globalgrowl" />
+		<p:socket onMessage="handleMessage" channel="/growl"
+			autoConnect="false" widgetVar='subscriber' />
+
+		<script type="text/javascript">
+			function handleMessage(message) {
+				$('#headerForm\\:updateGrowl').click();
+				alert('message')
+			}
+		</script>
+
+		<p:commandButton id="updateGrowl" style="display:none"
+			update="globalgrowl">
+		</p:commandButton>
+	</h:form>
 </ui:composition>
 
 </html>
