@@ -34,7 +34,6 @@ public enum Dialog {
 	NOTIFICATION_PREVIEW("/pages/dialog/notification/notification_preview", null,  1024, 600, false, false, true), //  16:9
 	INFO("/pages/dialog/info/info", null,  1024, 600, false, false, true), //  16:9
 	UPLOAD("/pages/dialog/upload/upload", null,  640, 360, false, false, true),//  16:9
-	SETTINGS_USER_ROLE_CHANGE("/pages/dialog/settings/userRoleChanged", null,  480, 272, false, false, true), //  16:9
 	SELECT_MATERIAL("/pages/dialog/task/selectMaterial", null, 640, 360, false, false, true), // 16:9
 	DELETE_TREE_ENTITY("/pages/dialog/task/deleteTreeEntity", null,  480, 272, false, false, true), //  16:9
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9

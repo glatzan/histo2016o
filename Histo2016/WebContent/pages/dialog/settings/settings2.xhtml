@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.settings.headline']}">
+		</h:outputFormat></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+
+</h:head>
+
+<h:body styleClass="settingsDialogLayout">
+	<h:form id="adminForm">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.settings.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<p:panel styleClass="settingsPannel">
+			<p:tabView orientation="left" value="#{settingsDialogHandler.tabs}"
+				activeIndex="#{settingsDialogHandler.activeSettingsIndex}"
+				styleClass="settingsTabView">
+
+				<p:ajax event="tabChange"
+					listener="#{settingsDialogHandler.onSettingsTabChange}"
+					update="@form" />
+
+				<p:tab title="#{msg['dialog.settings.user']}">
+				
+				</p:tab>
+
+
+				<!-- ************************************************************** Benutzer ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.user']}">
+					<!-- User List -->
+					<ui:fragment
+						rendered="#{settingsDialogHandler.userListTabIndex eq 'U_LIST'}">
+						<ui:include src="userList.xhtml" />
+					</ui:fragment>
+
+					<!-- User Edit -->
+					<ui:fragment
+						rendered="#{settingsDialogHandler.userListTabIndex eq 'U_EDIT'}">
+						<ui:include src="userListEdit.xhtml" />
+					</ui:fragment>
+				</p:tab>
+				<!-- ************************************************************** Benutzer ************************************************************** -->
+
+				<!-- ************************************************************** Stainings ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.stainings']}">
+					<!-- Staining List -->
+					<ui:fragment rendered="#{!settingsDialogHandler.showStainingEdit}">
+						<ui:include src="stainingsList.xhtml" />
+					</ui:fragment>
+					<!-- Staining List -->
+
+					<!-- Edit Staining -->
+					<ui:fragment rendered="#{settingsDialogHandler.showStainingEdit}">
+						<ui:include src="stainingsEdit.xhtml" />
+					</ui:fragment>
+					<!-- Edit Staining -->
+				</p:tab>
+				<!-- ************************************************************** Stainings ************************************************************** -->
+
+				<!-- ************************************************************** Material ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.materials']}">
+
+					<!-- ******************* StainingsList List ******************* -->
+					<ui:fragment
+						rendered="#{settingsDialogHandler.materialTabIndex eq 'M_LIST'}">
+						<ui:include src="materialList.xhtml" />
+					</ui:fragment>
+					<!-- ******************* StainingsList List ******************* -->
+
+					<!-- ******************* StainingsList Edit/New ******************* -->
+					<ui:fragment
+						rendered="#{settingsDialogHandler.materialTabIndex eq 'M_EDIT'}">
+						<ui:include src="materialEdit.xhtml" />
+					</ui:fragment>
+					<!-- ******************* StainingsList Edit/New ******************* -->
+
+					<!-- ******************* StainingsList Add Staining ******************* -->
+					<ui:fragment
+						rendered="#{settingsDialogHandler.materialTabIndex eq 'M_ADD_STAINING'}">
+						<ui:include src="materialAddStaining.xhtml" />
+					</ui:fragment>
+					<!-- ******************* StainingsList Add Staining ******************* -->
+				</p:tab>
+				<!-- ************************************************************** Material ************************************************************** -->
+
+				<!-- ************************************************************** Diagnoses ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.diagnosis']}">
+					<ui:fragment
+						rendered="#{settingsDialogHandler.diagnosisIndex eq 0}">
+						<ui:include src="diagnosisList.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsDialogHandler.diagnosisIndex eq 1}">
+						<ui:include src="diagnosisEdit.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsDialogHandler.diagnosisIndex eq 2}">
+						<ui:include src="diagnosisEditTemplate.xhtml" />
+					</ui:fragment>
+				</p:tab>
+				<!-- ************************************************************** Diagnoses ************************************************************** -->
+
+				<!-- ************************************************************** Persons ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.persons']}">
+					<ui:fragment
+						rendered="#{settingsDialogHandler.physicianSettingsTab.page eq 'LIST'}">
+						<ui:include src="physician/physicianList.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsDialogHandler.physicianTabIndex eq 'EDIT' or settingsDialogHandler.physicianTabIndex eq 'EDIT_EXTERN'}">
+						<ui:include src="physician/physicianEdit.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsDialogHandler.physicianTabIndex eq 'ADD_EXTERN' or settingsDialogHandler.physicianTabIndex eq 'ADD_LDAP'}">
+						<ui:include src="physician/physicianNew.xhtml" />
+					</ui:fragment>
+				</p:tab>
+				<!-- ************************************************************** Persons ************************************************************** -->
+
+				<!-- ************************************************************** Static Lists ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.staticLists']}">
+					<ui:fragment
+						rendered="#{settingsDialogHandler.staticListTabIndex eq 'S_LIST'}">
+						<ui:include src="staticLists.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsDialogHandler.staticListTabIndex eq 'S_EDIT'}">
+						<ui:include src="staticListsEdit.xhtml" />
+					</ui:fragment>
+				</p:tab>
+				<!-- ************************************************************** Static Lists ************************************************************** -->
+
+				<!-- ************************************************************** Favorite List ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.favouriteList']}">
+					<ui:fragment
+						rendered="#{settingsDialogHandler.favouriteListTabIndex eq 'F_LIST'}">
+						<ui:include src="favouriteList.xhtml" />
+					</ui:fragment>
+					<ui:fragment
+						rendered="#{settingsDialogHandler.favouriteListTabIndex eq 'F_EDIT'}">
+						<ui:include src="favouriteListEdit.xhtml" />
+					</ui:fragment>
+				</p:tab>
+				<!-- ************************************************************** Favorite List ************************************************************** -->
+
+				<p:tab title="#{msg['dialog.settings.system']}"
+					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}">
+				</p:tab>
+
+				<!-- ************************************************************** Log ************************************************************** -->
+				<p:tab title="#{msg['dialog.settings.log']}">
+					<!-- 
+					<p:dataTable var="history" styleClass="historyDataTable"
+						scrollable="true" scrollHeight="450"
+						value="#{settingsDialogHandler.currentHistory}">
+
+						<p:column headerText="Datum" style="width:12%">
+							<h:outputText
+								value="#{mainHandlerAction.date(history.date, 'hh:mm:ss dd/MM/yyyy ')}" />
+						</p:column>
+						<p:column headerText="Benutzer" style="width:12%">
+							<h:outputText value="#{history.userAcc.username}" />
+						</p:column>
+						<p:column headerText="Patient" style="width:10%">
+							<h:outputText value="#{history.patient.piz}"
+								rendered="#{history.patient ne null}" />
+							<h:outputText value="-" rendered="#{history.patient eq null}" />
+						</p:column>
+						<p:column headerText="Level" style="width:10%">
+							<h:outputText value="#{history.level}" />
+						</p:column>
+						<p:column headerText="Nachricht" style="width:56%">
+							<h:outputText value="#{history.messages}" />
+						</p:column>
+					</p:dataTable> -->
+				</p:tab>
+				<!-- ************************************************************** Log ************************************************************** -->
+			</p:tabView>
+
+		</p:panel>
+		<p:growl id="growl" showDetail="true" sticky="true" autoUpdate="true"
+			for="globalgrowl" />
+	</h:form>
+</h:body>
+</html>
