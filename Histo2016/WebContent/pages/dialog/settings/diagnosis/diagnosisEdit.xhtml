@@ -9,7 +9,7 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{settingsDialogHandler.originalDiagnosisPrototype eq null ? msg['dialog.settings.diagnosis.edit.headline.new'] : msg['dialog.settings.diagnosis.edit.headline.edit']}"
+			header="#{settingsDialogHandler.getTab('DiagnosisTab').newDiagnosisPreset eq null ? msg['dialog.settings.diagnosis.edit.headline.new'] : msg['dialog.settings.diagnosis.edit.headline.edit']}"
 			styleClass="contentPannel" />
 
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
@@ -18,7 +18,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.category']}" />
 			<p:inputText
-				value="#{settingsDialogHandler.editDiagnosisPrototype.category}"
+				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.category}"
 				id="diagnosisName">
 				<p:watermark for="diagnosisName"
 					value="#{msg['dialog.settings.diagnosis.edit.category.watermark']}" />
@@ -27,14 +27,14 @@
 			<!-- text -->
 			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
 			<p:inputTextarea id="diagnosisText"
-				value="#{settingsDialogHandler.editDiagnosisPrototype.diagnosis}">
+				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.diagnosis}">
 				<p:watermark for="diagnosisText"
 					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
 			</p:inputTextarea>
 
 			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.icd10']}" />
 			<p:inputText
-				value="#{settingsDialogHandler.editDiagnosisPrototype.icd10}"
+				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.icd10}"
 				id="diagnosisICD">
 				<p:watermark for="diagnosisICD"
 					value="#{msg['dialog.settings.diagnosis.edit.icd10.watermark']}" />
@@ -43,12 +43,12 @@
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.malign']}" />
 			<p:selectBooleanCheckbox
-				value="#{settingsDialogHandler.editDiagnosisPrototype.malign}" />
+				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.malign}" />
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.diagnosis.edit.commentary']}" />
 			<p:inputTextarea id="diagnosisCommentary"
-				value="#{settingsDialogHandler.editDiagnosisPrototype.commentary}">
+				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.commentary}">
 				<p:watermark for="diagnosisCommentary"
 					value="#{msg['dialog.settings.diagnosis.edit.commentary.watermark']}" />
 			</p:inputTextarea>
@@ -61,26 +61,31 @@
 			<h:panelGrid columns="4" style="float:right;">
 				<!-- save -->
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-fw fa-floppy-o" update="@form"
+					icon="fa fa-fw fa-floppy-o" update=":adminForm:tabview:diagnoses"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.saveDiagnosisPrototype(settingsDialogHandler.editDiagnosisPrototype,settingsDialogHandler.originalDiagnosisPrototype)}" />
+					process=":adminForm:tabview:diagnoses" partialSubmit="true"
+					actionListener="#{settingsDialogHandler.getTab('DiagnosisTab').saveDiagnosisPreset()}" />
 
 				<p:commandButton
 					value="#{msg['dialog.settings.diagnosis.edit.button.textPreset']}"
-					icon="fa fa-fw fa-pencil-square-o" update="@form"
+					icon="fa fa-fw fa-pencil-square-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.prepareEditDiagnosisPrototypeTemplate()}" />
+					process=":adminForm:tabview:diagnoses" partialSubmit="true"
+					update=":adminForm:tabview:diagnoses"
+					actionListener="#{settingsDialogHandler.getTab('DiagnosisTab').prepareEditDiagnosisPresetTemplate()}" />
 
 				<p:commandButton value="#{msg['general.abort']}"
-					icon="fa fa-fw fa-times-circle" update="@form"
+					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.discardDiagnosisPrototype()}" />
+					actionListener="#{settingsDialogHandler.getTab('DiagnosisTab').discardDiagnosisPreset()}"
+					process="@this" partialSubmit="true"
+					update=":adminForm:tabview:diagnoses" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

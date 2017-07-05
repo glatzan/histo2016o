@@ -88,9 +88,6 @@ public class ReceiptlogViewHandlerAction {
 		// Setzte action to none
 		setActionOnMany(StainingListAction.NONE);
 
-		// TODO move
-		// init all available diagnoses
-		settingsDialogHandler.updateAllDiagnosisPrototypes();
 	}
 
 	public void performActionOnMany(Task task) {

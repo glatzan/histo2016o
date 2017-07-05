@@ -29,7 +29,7 @@ import com.google.gson.annotations.Expose;
 
 @Entity
 @SequenceGenerator(name = "diagnosisPreset_sequencegenerator", sequenceName = "diagnosisPreset_sequence")
-public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble, ListOrder<DiagnosisPreset>, HasID {
+public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, HasID {
 
 	@Expose
 	private long id;
@@ -53,7 +53,6 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 
 	public DiagnosisPreset(DiagnosisPreset diagnosisPreset) {
 		this.id = diagnosisPreset.getId();
-		update(diagnosisPreset);
 	}
 
 	/********************************************************
@@ -139,25 +138,6 @@ public class DiagnosisPreset implements EditAbleEntity<DiagnosisPreset>, LogAble
 	/********************************************************
 	 * Interface ListOrder
 	 ********************************************************/
-	
-	@Transient
-	@Override
-	public String asGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		builder.excludeFieldsWithoutExposeAnnotation();
-		final Gson gson = builder.create();
-		return gson.toJson(this);
-	}
-
-	@Transient
-	@Override
-	public void update(DiagnosisPreset diagnosisPreset) {
-		this.category = diagnosisPreset.getCategory();
-		this.icd10 = diagnosisPreset.getIcd10();
-		this.malign = diagnosisPreset.isMalign();
-		this.diagnosis = diagnosisPreset.getDiagnosis();
-		this.extendedDiagnosisText = diagnosisPreset.getExtendedDiagnosisText();
-	}
 
 	@Override
 	public boolean equals(Object obj) {

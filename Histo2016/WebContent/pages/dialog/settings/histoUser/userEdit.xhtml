@@ -14,7 +14,7 @@
 			styleClass="contentPannel" />
 
 		<histo:newPersonDataMask
-			person="#{settingsDialogHandler.selectedUserPhysician.person}"
+			person="#{settingsDialogHandler.getTab('HistUserTab').selectedUser.physician.person}"
 			pannelID="userEditPhysician"
 			disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}" />
 
@@ -32,11 +32,10 @@
 
 				<p:selectCheckboxMenu updateLabel="true"
 					styleClass="customSelectCheckboxMenu"
-					value="#{settingsDialogHandler.selectedUserPhysician.associatedRolesAsArray}"
-					multiple="true"
-					converter="#{commonDataHandlerAction.associatedRolesTransformer}">
+					value="#{settingsDialogHandler.getTab('HistUserTab').selectedUser.physician.associatedRolesAsArray}"
+					multiple="true">
 					<f:selectItems var="role"
-						value="#{commonDataHandlerAction.associatedRoles}"
+						value="#{settingsDialogHandler.getTab('HistUserTab').allRoles}"
 						itemValue="#{role}"
 						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 				</p:selectCheckboxMenu>
@@ -56,23 +55,25 @@
 			<h:panelGrid columns="3" style="float:right;">
 				<!-- save -->
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-fw fa-floppy-o"
+					icon="fa fa-fw fa-floppy-o" partialSubmit="true"
+					process=":adminForm:tabview:histoUser"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.saveEditPhysicianFromUserList(settingsDialogHandler.selectedUserPhysician)}"
-					update="@form" />
+					actionListener="#{settingsDialogHandler.getTab('HistUserTab').saveHistoUser()}"
+					update=":adminForm:tabview:histoUser" />
 
 				<!-- abort -->
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.discardTmpPhysicianFromUserList()}"
-					update="@form" />
+					actionListener="#{settingsDialogHandler.getTab('HistUserTab').discardHistoUser()}"
+					partialSubmit="true" process="@this"
+					update=":adminForm:tabview:histoUser" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

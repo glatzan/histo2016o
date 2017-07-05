@@ -15,6 +15,8 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.SettingsDAO;
+import org.histo.dao.UtilDAO;
+import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.IdManuallyAltered;
@@ -28,6 +30,9 @@ import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Controller
 @Scope("session")
@@ -57,10 +62,21 @@ public class DiagnosisViewHandlerAction {
 	private CopyHistologicalRecordDialog copyHistologicalRecordDialog;
 
 	@Autowired
-	private GenericDAO genericDAO;
-	
-	@Autowired
-	private ResourceBundle resourceBundle;
+	private UtilDAO utilDAO;
+
+	/**
+	 * List of all diagnosis presets
+	 */
+	@Getter
+	@Setter
+	private List<DiagnosisPreset> diagnosisPresets;
+
+	/**
+	 * Transfomer for diagnosis prests
+	 */
+	@Getter
+	@Setter
+	private DefaultTransformer<DiagnosisPreset> diagnosisPresetsTransformer;
 	
 	/**
 	 * List of physicians which have the role signature
@@ -112,6 +128,9 @@ public class DiagnosisViewHandlerAction {
 
 		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
 		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());
+		
+		setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
+		setDiagnosisPresetsTransformer(new DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
 	}
 
 	/**

@@ -4,9 +4,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.MaterialPreset;
+import org.histo.model.Physician;
 import org.histo.model.interfaces.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -22,12 +27,12 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
-	
+
 	/**
 	 * Initializes a datalist for an object
 	 * 
 	 * @param dataList
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public HasDataList initializeDataList(HasDataList dataList) throws CustomDatabaseInconsistentVersionException {
 		dataList = genericDAO.refresh(dataList);
@@ -57,7 +62,12 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DiagnosisPreset> getAllDiagnosisPrototypes() {
-		return getSession().createCriteria(DiagnosisPreset.class).list();
+
+		DetachedCriteria query = DetachedCriteria.forClass(DiagnosisPreset.class, "diagnosis");
+		query.addOrder(Order.asc("diagnosis.indexInList"));
+
+		List<DiagnosisPreset> result = query.getExecutableCriteria(getSession()).list();
+		return result;
 	}
 
 	// @SuppressWarnings("unchecked")

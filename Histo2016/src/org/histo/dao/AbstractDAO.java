@@ -58,6 +58,11 @@ public abstract class AbstractDAO implements Serializable {
 		System.out.println("Second Level Miss Count=" + stats.getSecondLevelCacheMissCount());
 		System.out.println("Second Level Put Count=" + stats.getSecondLevelCachePutCount());
 	}
+	
+	@SuppressWarnings("unchecked")
+	public <C> C get(Class<C> clazz, Serializable serializable) {
+		return (C) getSession().get(clazz, serializable);
+	}
 
 	public <C extends HasID> C save(C object) throws CustomDatabaseInconsistentVersionException {
 		return save(object, null, null, null);

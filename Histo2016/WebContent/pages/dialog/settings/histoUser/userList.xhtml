@@ -11,7 +11,8 @@
 		<p:panel style="width:100%;" header="#{msg['dialog.settings.user']}"
 			styleClass="contentPannel" />
 
-		<p:dataTable var="user" value="#{settingsDialogHandler.users}"
+		<p:dataTable var="user"
+			value="#{settingsDialogHandler.getTab('HistUserTab').users}"
 			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 			style="width:100%;" scrollable="true" scrollHeight="440">
 			<p:column filterBy="#{user.username}"
@@ -37,8 +38,8 @@
 					styleClass="smallerInput"
 					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('MODERATOR')}]">
 
-					<p:ajax event="change" execute="@this"
-						listener="#{settingsDialogHandler.onChangeUserRole(user)}"></p:ajax>
+					<p:ajax event="change" execute="histoUser" partialSubmit="true"
+						listener="#{settingsDialogHandler.getTab('HistUserTab').onChangeUserRole(user)}"></p:ajax>
 
 					<f:selectItems value="#{enumProvider.roles}" var="role"
 						itemValue="#{role}" itemLabel="#{msg['enum.role.'.concat(role)]}" />
@@ -56,8 +57,9 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{settingsDialogHandler.prepareEditPhysicianFromUserList(user.physician)}"
-					update="@form">
+					execute="histoUser" partialSubmit="true"
+					actionListener="#{settingsDialogHandler.getTab('HistUserTab').prepareEditHistoUser(user)}"
+					update=":adminForm:tabview:histoUser">
 					<i class="fa fa-fw fa-cog" />
 				</p:commandLink>
 			</p:column>
@@ -71,8 +73,8 @@
 			<h:panelGrid columns="2" style="float:right;">
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

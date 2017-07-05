@@ -15,7 +15,7 @@
 		<p:panelGrid columns="1" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
 			<p:editor
-				value="#{settingsDialogHandler.editDiagnosisPrototype.extendedDiagnosisText}">
+				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.extendedDiagnosisText}">
 			</p:editor>
 		</p:panelGrid>
 	</div>
@@ -26,14 +26,16 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="2" style="float:right;">
 				<p:commandButton value="#{msg['general.ok']}"
-					icon="fa fa-fw fa-floppy-o" update="@form"
+					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.discardEditDiagnosisPrototypeTemplate()}"></p:commandButton>
+					process=":adminForm:tabview:diagnoses" partialSubmit="true"
+					update=":adminForm:tabview:diagnoses"
+					actionListener="#{settingsDialogHandler.getTab('DiagnosisTab').discardEditDiagnosisPresetTemplate()}" />
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

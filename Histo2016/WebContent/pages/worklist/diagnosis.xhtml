@@ -241,14 +241,14 @@
 							<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
 								styleClass="customSerachSelectMenu" disabled="#{!taskEditable}"
 								panelStyleClass="customSerachSelectMenuPanel"
-								converter="#{settingsDialogHandler.diagnosisPrototypeListTransformer}"
+								converter="#{diagnosisViewHandlerAction.diagnosisPresetsTransformer}"
 								filter="true" filterMatchMode="startsWith">
 								<f:selectItem
 									itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
 									itemValue="#{null}" />
 
 								<f:selectItems
-									value="#{settingsDialogHandler.allAvailableDiagnosisPrototypes}"
+									value="#{diagnosisViewHandlerAction.diagnosisPresets}"
 									var="diagnosisPrototype"
 									itemLabel="#{diagnosisPrototype.diagnosis}"
 									itemValue="#{diagnosisPrototype}" />
