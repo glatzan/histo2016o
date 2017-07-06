@@ -58,8 +58,12 @@
 					icon="fa fa-fw fa-floppy-o" partialSubmit="true"
 					process=":adminForm:tabview:histoUser"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.getTab('HistUserTab').saveHistoUser()}"
-					update=":adminForm:tabview:histoUser" />
+					update=":adminForm:tabview:histoUser">
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('HistUserTab').saveHistoUser()}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('HistUserTab').discardHistoUser()}" />
+				</p:commandButton>
 
 				<!-- abort -->
 				<p:commandButton value="#{msg['general.abort']}"

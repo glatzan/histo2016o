@@ -27,9 +27,6 @@ import org.springframework.stereotype.Component;
 public class CreateSampleDialog extends AbstractDialog {
 
 	@Autowired
-	private SettingsDAO settingsDAO;
-
-	@Autowired
 	private UtilDAO utilDAO;
 
 	@Autowired
@@ -69,8 +66,7 @@ public class CreateSampleDialog extends AbstractDialog {
 
 		super.initBean(task, Dialog.SAMPLE_CREATE);
 
-		setMaterials(settingsDAO.getAllMaterialPresets());
-		utilDAO.initStainingPrototypeList(getMaterials());
+		setMaterials(utilDAO.getAllMaterialPresets(true));
 
 		if (!getMaterials().isEmpty()) {
 			setMaterialTransformer(new DefaultTransformer<>(getMaterials()));

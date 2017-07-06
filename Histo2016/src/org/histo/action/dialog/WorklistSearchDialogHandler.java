@@ -86,19 +86,16 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 	public boolean initBean() {
 		super.initBean(null, Dialog.WORKLIST_SEARCH);
 
-		
-		
 		// init only on first init
 		if (!initialized) {
-			
+
 			setWorklistSearchBasic(new WorklistSearchBasic());
-			
-			setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
-
 
 			setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
 
-			setMaterials(settingsDAO.getAllMaterialPresets());
+			setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
+
+			setMaterials(utilDAO.getAllMaterialPresets(false));
 
 			setSurgeons(physicianDAO.getPhysicians(ContactRole.SURGEON, false));
 
@@ -123,11 +120,11 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 		List<Patient> result = patientDao.getPatientByCriteria(getExtendedSearchData());
 
-//		Worklist worklist = new Worklist("search", result, false,
-//				userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
-//				userHandlerAction.getCurrentUser().isWorklistAutoUpdate());
-//
-//		worklist.setShowActiveTasksExplicit(true);
+		// Worklist worklist = new Worklist("search", result, false,
+		// userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
+		// userHandlerAction.getCurrentUser().isWorklistAutoUpdate());
+		//
+		// worklist.setShowActiveTasksExplicit(true);
 
 		return null;
 		// Worklist worklist = new Worklist("search", pat);

@@ -2,7 +2,7 @@ package org.histo.action.dialog.slide;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -14,6 +14,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.ui.ListChooser;
@@ -29,7 +30,7 @@ public class AddSlidesDialogHandler extends AbstractDialog {
 	private TaskStatusHandler taskStatusHandler;
 
 	@Autowired
-	private SettingsDAO settingsDAO;
+	private UtilDAO utilDAO;
 
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
@@ -85,11 +86,10 @@ public class AddSlidesDialogHandler extends AbstractDialog {
 
 		setStainingListChooser(new ArrayList<ListChooser<StainingPrototype>>());
 
-		List<StainingPrototype> allStainings = settingsDAO.getAllStainingPrototypes();
+		List<StainingPrototype> allStainings = utilDAO.getAllStainingPrototypes();
 
-		for (StainingPrototype staining : allStainings) {
-			getStainingListChooser().add(new ListChooser<StainingPrototype>(staining));
-		}
+		getStainingListChooser().addAll(
+				allStainings.stream().map(p -> new ListChooser<StainingPrototype>(p)).collect(Collectors.toList()));
 
 		return true;
 	}

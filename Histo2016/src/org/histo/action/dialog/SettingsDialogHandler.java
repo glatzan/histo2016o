@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
 
@@ -104,14 +105,18 @@ public class SettingsDialogHandler extends AbstractDialog {
 	/**
 	 * Tabindex of settings dialog
 	 */
+	@Getter
+	@Setter
 	private int activeSettingsIndex = 0;
 
 	@Getter
 	@Setter
-	public AbstractSettingsTab[] tabs = new AbstractSettingsTab[] { new HistoUserTab(), new DiagnosisTab() };
+	public AbstractSettingsTab[] tabs = new AbstractSettingsTab[] { new HistoUserTab(), new DiagnosisTab(),
+			new MaterialTab(), new StainingTab() };
 
 	public enum Tabs {
-		HistUserTab(HistoUserTab.class), DiagnosisTab(DiagnosisTab.class);
+		HistUserTab(HistoUserTab.class), DiagnosisTab(DiagnosisTab.class), MaterialTab(MaterialTab.class), StainingTab(
+				StainingTab.class);
 
 		@Getter
 		private final Class<? extends AbstractSettingsTab> tabClass;
@@ -125,11 +130,6 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * Tabindex of the settings tab
 	 */
 	private SettingsTab userListTabIndex = SettingsTab.U_LIST;
-
-	/**
-	 * Tabindex of the material tab
-	 */
-	private SettingsTab materialTabIndex = SettingsTab.M_LIST;
 
 	/**
 	 * Tabindex of the static list tab
@@ -186,18 +186,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		// setAllAvailableStainings(settingsDAO.getAllStainingPrototypes());
 		// } else if (getActiveSettingsIndex() ==
 		// SettingsTab.MATERIAL.getTabNumber()) {
-		// initMaterialPresets();
-		// // update stainings if selected
-		// if (getMaterialTabIndex() == SettingsTab.M_EDIT) {
-		// setStainingListChooserForMaterial(
-		// SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
 		//
-		// // bugfix, if material is null an diet tab is shown
-		// if (getEditMaterial() == null) {
-		// setEditMaterial(new MaterialPreset());
-		// setOriginalMaterial(null);
-		// }
-		// }
 		// } else if (getActiveSettingsIndex() ==
 		// SettingsTab.DIAGNOSIS.getTabNumber()) {
 		// updateAllDiagnosisPrototypes();
@@ -288,74 +277,16 @@ public class SettingsDialogHandler extends AbstractDialog {
 	 * History
 	 ********************************************************/
 
-	/********************************************************
-	 * miscellaneous
-	 ********************************************************/
-
-	/********************************************************
-	 * miscellaneous
-	 ********************************************************/
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	public int getActiveSettingsIndex() {
-		return activeSettingsIndex;
-	}
-
-	public void setActiveSettingsIndex(int activeSettingsIndex) {
-		this.activeSettingsIndex = activeSettingsIndex;
-	}
-
-	public SettingsTab getMaterialTabIndex() {
-		return materialTabIndex;
-	}
-
-	public void setMaterialTabIndex(SettingsTab materialTabIndex) {
-		this.materialTabIndex = materialTabIndex;
-	}
-
-	public SettingsTab getStaticListTabIndex() {
-		return staticListTabIndex;
-	}
-
-	public void setStaticListTabIndex(SettingsTab staticListTabIndex) {
-		this.staticListTabIndex = staticListTabIndex;
-	}
-
-	public SettingsTab getUserListTabIndex() {
-		return userListTabIndex;
-	}
-
-	public void setUserListTabIndex(SettingsTab userListTabIndex) {
-		this.userListTabIndex = userListTabIndex;
-	}
-
-	public SettingsTab getFavouriteListTabIndex() {
-		return favouriteListTabIndex;
-	}
-
-	public void setFavouriteListTabIndex(SettingsTab favouriteListTabIndex) {
-		this.favouriteListTabIndex = favouriteListTabIndex;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
+	@Getter
+	@Setter
 	public abstract class AbstractSettingsTab {
 
 		public abstract String getCenterView();
 
 		public abstract void updateData();
 
-		@Getter
-		@Setter
 		protected String name;
 
-		@Getter
-		@Setter
 		protected String viewID;
 	}
 
@@ -428,8 +359,6 @@ public class SettingsDialogHandler extends AbstractDialog {
 				genericDAO.saveDataRollbackSave(getSelectedUser().getPhysician(),
 						resourceBundle.get("log.settings.physician.physician.edit",
 								getSelectedUser().getPhysician().getPerson().getFullName()));
-
-				discardHistoUser();
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
@@ -568,7 +497,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 *
 		 * @param event
 		 */
-		public void onReorderDiagnosisList(ReorderEvent event) {
+		public void onReorderList(ReorderEvent event) {
 
 			try {
 				logger.debug("List order changed, moved material from " + event.getFromIndex() + " to "
@@ -597,283 +526,318 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 	}
 
-	// @Getter
-	// @Setter
-	// public class MaterialTab extends AbstractSettingsTab {
-	//
-	// /**
-	// * all materials
-	// */
-	// private List<MaterialPreset> allAvailableMaterials;
-	//
-	// /**
-	// * StainingPrototype for creating and editing
-	// */
-	// private MaterialPreset editMaterial;
-	//
-	// /**
-	// * original StainingPrototypeList for editing
-	// */
-	// private MaterialPreset originalMaterial;
-	//
-	// /**
-	// * List for selecting staining, this list contains all stainings. They
-	// * can be choosen and added to the material
-	// */
-	// private List<ListChooser<StainingPrototype>>
-	// stainingListChooserForMaterial;
-	//
-	// public void initMaterialPresets() {
-	// setAllAvailableMaterials(settingsDAO.getAllMaterialPresets());
-	// utilDAO.initStainingPrototypeList(getAllAvailableMaterials());
-	// }
-	//
-	// /**
-	// * Prepares a new StainingListChooser for editing
-	// */
-	// public void prepareNewMaterial() {
-	// setMaterialTabIndex(SettingsTab.M_EDIT);
-	// setEditMaterial(new MaterialPreset());
-	// setOriginalMaterial(null);
-	// }
-	//
-	// /**
-	// * Shows the edit material form
-	// *
-	// * @param stainingPrototype
-	// */
-	// public void prepareEditMaterial(MaterialPreset material) {
-	// setMaterialTabIndex(SettingsTab.M_EDIT);
-	// setEditMaterial(new MaterialPreset(material));
-	// setOriginalMaterial(material);
-	// setStainingListChooserForMaterial(SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
-	// }
-	//
-	// /**
-	// * Saves a material or creates a new one
-	// *
-	// * @param newStainingPrototypeList
-	// * @param origStainingPrototypeList
-	// */
-	// public void saveMaterial(MaterialPreset newMaterial, MaterialPreset
-	// originalMaterial) {
-	// try {
-	// if (originalMaterial == null) {
-	// logger.debug("Creating new Material " + newMaterial.getName());
-	// // case new, save
-	// getAllAvailableMaterials().add(newMaterial);
-	// genericDAO.saveDataRollbackSave(newMaterial,
-	// resourceBundle.get("log.settings.material.new", newMaterial.getName()));
-	//
-	// ListOrder.reOrderList(getAllAvailableMaterials());
-	// if (!genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
-	// resourceBundle.get("log.settings.material.list.reoder"))) {
-	// onDatabaseVersionConflict();
-	// return;
-	// }
-	// } else {
-	// logger.debug("Updating Material " + originalMaterial.getName());
-	// // case edit: update an save
-	// originalMaterial.update(newMaterial);
-	// genericDAO.saveDataRollbackSave(originalMaterial,
-	// resourceBundle.get("log.settings.material.update",
-	// originalMaterial.getName()));
-	// }
-	// discardChangesOfMaterial();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// public void prepareDeleteStainingList(MaterialPreset
-	// stainingPrototypeList) {
-	// setEditMaterial(stainingPrototypeList);
-	// setOriginalMaterial(null);
-	// }
-	//
-	// /**
-	// * discards all changes for the stainingList
-	// */
-	// public void discardChangesOfMaterial() {
-	// setMaterialTabIndex(SettingsTab.M_LIST);
-	// setOriginalMaterial(null);
-	// setEditMaterial(null);
-	// }
-	//
-	// /**
-	// * show a list with all stanings for adding them to a material
-	// */
-	// public void prepareAddStainingToMaterial() {
-	// setMaterialTabIndex(SettingsTab.M_ADD_STAINING);
-	// setStainingListChooserForMaterial(SlideUtil.getStainingListChooser(settingsDAO.getAllStainingPrototypes()));
-	// }
-	//
-	// /**
-	// * Adds all selected staining prototypes to the material
-	// *
-	// * @param stainingListChoosers
-	// * @param stainingPrototypeList
-	// */
-	// public void addStainingToMaterial(List<ListChooser<StainingPrototype>>
-	// stainingListChoosers,
-	// MaterialPreset stainingPrototypeList) {
-	// for (ListChooser<StainingPrototype> staining : stainingListChoosers) {
-	// if (staining.isChoosen()) {
-	// stainingPrototypeList.getStainingPrototypes().add(staining.getListItem());
-	// }
-	// }
-	//
-	// discardAddStainingToMaterial();
-	// }
-	//
-	// /**
-	// * Removes a staining from a material
-	// *
-	// * @param toRemove
-	// * @param stainingPrototypeList
-	// */
-	// public void removeStainingFromStainingList(StainingPrototype toRemove,
-	// MaterialPreset stainingPrototypeList) {
-	// stainingPrototypeList.getStainingPrototypes().remove(toRemove);
-	// }
-	//
-	// public void discardAddStainingToMaterial() {
-	// setMaterialTabIndex(SettingsTab.M_EDIT);
-	// }
-	//
-	// /**
-	// * Is fired if the list is reordered by the user via drag and drop
-	// *
-	// * @param event
-	// */
-	// public void onReorderMaterialList(ReorderEvent event) {
-	// try {
-	// logger.debug("List order changed, moved material from " +
-	// event.getFromIndex() + " to "
-	// + event.getToIndex());
-	// ListOrder.reOrderList(getAllAvailableMaterials());
-	//
-	// genericDAO.saveListRollbackSave(getAllAvailableMaterials(),
-	// resourceBundle.get("log.settings.staining.list.reoder"));
-	//
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// }
-	//
-	// @Getter
-	// @Setter
-	// public class StainingTab extends AbstractSettingsTab {
-	// /**
-	// * A List with all staings
-	// */
-	// private List<StainingPrototype> allAvailableStainings;
-	//
-	// /**
-	// * used in manageStaings dialog to show overview or single staining
-	// */
-	// private boolean showStainingEdit;
-	//
-	// /**
-	// * StainingPrototype for creating and editing
-	// */
-	// private StainingPrototype editStaining;
-	//
-	// /**
-	// * original StainingPrototype for editing
-	// */
-	// private StainingPrototype originalStaining;
-	//
-	// /**
-	// * Prepares a new Staining for editing
-	// */
-	// public void prepareNewStaining() {
-	// setShowStainingEdit(true);
-	// setEditStaining(new StainingPrototype());
-	// setOriginalStaining(null);
-	// }
-	//
-	// /**
-	// * Shows the edit staining form
-	// *
-	// * @param stainingPrototype
-	// */
-	// public void prepareEditStaining(StainingPrototype stainingPrototype) {
-	// setShowStainingEdit(true);
-	// setEditStaining(new StainingPrototype(stainingPrototype));
-	// setOriginalStaining(stainingPrototype);
-	// }
-	//
-	// /**
-	// * Saves or creats a new stainingprototype
-	// *
-	// * @param newStainingPrototype
-	// * @param origStainingPrototype
-	// */
-	// public void saveStainig(StainingPrototype newStainingPrototype,
-	// StainingPrototype origStainingPrototype) {
-	// try {
-	// if (origStainingPrototype == null) {
-	// logger.debug("Creating new staining " + newStainingPrototype.getName());
-	// // case new, save
-	// getAllAvailableStainings().add(newStainingPrototype);
-	//
-	// genericDAO.saveDataRollbackSave(newStainingPrototype,
-	// resourceBundle.get("log.settings.staining.new",
-	// newStainingPrototype.getName()));
-	//
-	// ListOrder.reOrderList(getAllAvailableStainings());
-	//
-	// if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
-	// resourceBundle.get("log.settings.staining.list.reoder"))) {
-	// onDatabaseVersionConflict();
-	// return;
-	// }
-	// } else {
-	// // case edit: update an save
-	// origStainingPrototype.update(newStainingPrototype);
-	//
-	// genericDAO.saveDataRollbackSave(origStainingPrototype,
-	// resourceBundle.get("log.settings.material.update",
-	// origStainingPrototype.getName()));
-	// }
-	// discardChangesOfStainig();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// /**
-	// * Is fired if the list is reordered by the user via drag and drop
-	// *
-	// * @param event
-	// */
-	// public void onReorderStainingList(ReorderEvent event) {
-	// try {
-	// logger.debug("List order changed, moved staining from " +
-	// event.getFromIndex() + " to "
-	// + event.getToIndex());
-	// ListOrder.reOrderList(getAllAvailableStainings());
-	// genericDAO.saveListRollbackSave(getAllAvailableStainings(),
-	// resourceBundle.get("log.settings.staining.list.reoder"));
-	//
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// /**
-	// * discards changes
-	// */
-	// public void discardChangesOfStainig() {
-	// setShowStainingEdit(false);
-	// setOriginalStaining(null);
-	// setEditStaining(null);
-	// }
-	// }
-	//
+	public enum MaterialPage {
+		LIST, EDIT, ADD_STAINING;
+	}
+
+	@Getter
+	@Setter
+	public class MaterialTab extends AbstractSettingsTab {
+
+		public MaterialPage page;
+
+		private List<MaterialPreset> allMaterialList;
+
+		/**
+		 * StainingPrototype for creating and editing
+		 */
+		private MaterialPreset editMaterial;
+
+		/**
+		 * List for selecting staining, this list contains all stainings. They
+		 * can be choosen and added to the material
+		 */
+		private List<ListChooser<StainingPrototype>> stainingListChooserForMaterial;
+
+		private boolean newMaterial;
+
+		public MaterialTab() {
+			setName("dialog.settings.materials");
+			setViewID("material");
+			setPage(MaterialPage.LIST);
+		}
+
+		@Override
+		public void updateData() {
+
+			switch (getPage()) {
+			case EDIT:
+			case ADD_STAINING:
+				setStainingListChooserForMaterial(utilDAO.getAllStainingPrototypes().stream()
+						.map(p -> new ListChooser<StainingPrototype>(p)).collect(Collectors.toList()));
+				break;
+			default:
+				setAllMaterialList(utilDAO.getAllMaterialPresets(true));
+				break;
+			}
+		}
+
+		/**
+		 * Prepares a new StainingListChooser for editing
+		 */
+		public void prepareNewMaterial() {
+			prepareEditMaterial(new MaterialPreset());
+		}
+
+		/**
+		 * Shows the edit material form
+		 *
+		 * @param stainingPrototype
+		 */
+		public void prepareEditMaterial(MaterialPreset material) {
+			setPage(MaterialPage.EDIT);
+			setEditMaterial(material);
+
+			if (material.getId() == 0)
+				setNewMaterial(true);
+			else
+				setNewMaterial(false);
+
+			updateData();
+		}
+
+		/**
+		 * Saves a material or creates a new one
+		 *
+		 * @param newStainingPrototypeList
+		 * @param origStainingPrototypeList
+		 */
+		public void saveMaterial() {
+			try {
+				if (getEditMaterial().getId() == 0) {
+					logger.debug("Creating new Material " + getEditMaterial().getName());
+					// case new, save+
+					getAllMaterialList().add(getEditMaterial());
+
+					genericDAO.saveDataRollbackSave(getEditMaterial(),
+							resourceBundle.get("log.settings.material.new", getEditMaterial().getName()));
+
+					ListOrder.reOrderList(getAllMaterialList());
+
+					genericDAO.saveListRollbackSave(getAllMaterialList(),
+							resourceBundle.get("log.settings.material.list.reoder"));
+
+				} else {
+					logger.debug("Updating Material " + getEditMaterial().getName());
+					// case edit: update an save
+					genericDAO.saveDataRollbackSave(getEditMaterial(),
+							resourceBundle.get("log.settings.material.update", getEditMaterial().getName()));
+				}
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		/**
+		 * discards all changes for the stainingList
+		 */
+		public void discardMaterial() {
+			if (getEditMaterial().getId() != 0)
+				genericDAO.reset(getEditMaterial());
+			setPage(MaterialPage.LIST);
+			setEditMaterial(null);
+		}
+
+		/**
+		 * show a list with all stanings for adding them to a material
+		 */
+		public void prepareAddStainingToMaterial() {
+			setPage(MaterialPage.ADD_STAINING);
+		}
+
+		/**
+		 * Adds all selected staining prototypes to the material
+		 *
+		 * @param stainingListChoosers
+		 * @param stainingPrototypeList
+		 */
+		public void addStainingToMaterial() {
+			getStainingListChooserForMaterial().forEach(p -> {
+				if (p.isChoosen()) {
+					getEditMaterial().getStainingPrototypes().add(p.getListItem());
+				}
+			});
+		}
+
+		/**
+		 * Removes a staining from a material
+		 *
+		 * @param toRemove
+		 * @param stainingPrototypeList
+		 */
+		public void removeStainingFromStainingList(StainingPrototype toRemove) {
+			getEditMaterial().getStainingPrototypes().remove(toRemove);
+		}
+
+		public void discardAddStainingToMaterial() {
+			setPage(MaterialPage.EDIT);
+		}
+
+		/**
+		 * Is fired if the list is reordered by the user via drag and drop
+		 *
+		 * @param event
+		 */
+		public void onReorderList(ReorderEvent event) {
+			try {
+				logger.debug("List order changed, moved material from " + event.getFromIndex() + " to "
+						+ event.getToIndex());
+				ListOrder.reOrderList(getAllMaterialList());
+
+				genericDAO.saveListRollbackSave(getAllMaterialList(),
+						resourceBundle.get("log.settings.staining.list.reoder"));
+
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		@Override
+		public String getCenterView() {
+			switch (getPage()) {
+			case EDIT:
+				return "material/materialEdit.xhtml";
+			case ADD_STAINING:
+				return "material/materialAddStaining.xhtml";
+			default:
+				return "material/materialList.xhtml";
+			}
+		}
+	}
+
+	public enum StainingPage {
+		LIST, EDIT;
+	}
+
+	@Getter
+	@Setter
+	public class StainingTab extends AbstractSettingsTab {
+
+		private StainingPage page;
+
+		/**
+		 * A List with all staings
+		 */
+		private List<StainingPrototype> allAvailableStainings;
+
+		/**
+		 * used in manageStaings dialog to show overview or single staining
+		 */
+		private boolean showStainingEdit;
+
+		/**
+		 * StainingPrototype for creating and editing
+		 */
+		private StainingPrototype editStaining;
+
+		/**
+		 * original StainingPrototype for editing
+		 */
+		private StainingPrototype originalStaining;
+
+		public StainingTab() {
+			setName("dialog.settings.stainings");
+			setViewID("staining");
+			setPage(StainingPage.LIST);
+		}
+
+		@Override
+		public void updateData() {
+			// TODO Auto-generated method stub
+
+		}
+
+		/**
+		 * Prepares a new Staining for editing
+		 */
+		public void prepareNewStaining() {
+			setShowStainingEdit(true);
+			setEditStaining(new StainingPrototype());
+			setOriginalStaining(null);
+		}
+
+		/**
+		 * Shows the edit staining form
+		 *
+		 * @param stainingPrototype
+		 */
+		public void prepareEditStaining(StainingPrototype stainingPrototype) {
+			setShowStainingEdit(true);
+			// setEditStaining(new StainingPrototype(stainingPrototype));
+			setOriginalStaining(stainingPrototype);
+		}
+
+		/**
+		 * Saves or creats a new stainingprototype
+		 *
+		 * @param newStainingPrototype
+		 * @param origStainingPrototype
+		 */
+		public void saveStainig(StainingPrototype newStainingPrototype, StainingPrototype origStainingPrototype) {
+			try {
+				if (origStainingPrototype == null) {
+					logger.debug("Creating new staining " + newStainingPrototype.getName());
+					// case new, save
+					getAllAvailableStainings().add(newStainingPrototype);
+
+					genericDAO.saveDataRollbackSave(newStainingPrototype,
+							resourceBundle.get("log.settings.staining.new", newStainingPrototype.getName()));
+
+					ListOrder.reOrderList(getAllAvailableStainings());
+
+					if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
+							resourceBundle.get("log.settings.staining.list.reoder"))) {
+						onDatabaseVersionConflict();
+						return;
+					}
+				} else {
+					// case edit: update an save
+					// origStainingPrototype.update(newStainingPrototype);
+
+					genericDAO.saveDataRollbackSave(origStainingPrototype,
+							resourceBundle.get("log.settings.material.update", origStainingPrototype.getName()));
+				}
+				discardChangesOfStainig();
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		/**
+		 * Is fired if the list is reordered by the user via drag and drop
+		 *
+		 * @param event
+		 */
+		public void onReorderStainingList(ReorderEvent event) {
+			try {
+				logger.debug("List order changed, moved staining from " + event.getFromIndex() + " to "
+						+ event.getToIndex());
+				ListOrder.reOrderList(getAllAvailableStainings());
+				genericDAO.saveListRollbackSave(getAllAvailableStainings(),
+						resourceBundle.get("log.settings.staining.list.reoder"));
+
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		/**
+		 * discards changes
+		 */
+		public void discardChangesOfStainig() {
+			setShowStainingEdit(false);
+			setOriginalStaining(null);
+			setEditStaining(null);
+		}
+
+		@Override
+		public String getCenterView() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+	}
+
 	// @Getter
 	// @Setter
 	// public class PhysicianSettingsTab extends AbstractSettingsTab {

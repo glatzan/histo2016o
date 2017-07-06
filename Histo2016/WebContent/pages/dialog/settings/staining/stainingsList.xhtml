@@ -9,38 +9,38 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.material']}"
+			header="#{msg['dialog.settings.stainings']}"
 			styleClass="contentPannel" />
-
-		<p:dataTable var="stainingList" style="width:100%;" scrollable="true"
+		<p:dataTable var="staining" style="width:100%;" scrollable="true"
 			scrollHeight="460" draggableRows="true"
 			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			value="#{settingsDialogHandler.allAvailableMaterials}">
+			value="#{settingsDialogHandler.allAvailableStainings}">
 
-			<p:column headerText="#{msg['dialog.settings.material.name']}"
-				sortBy="#{stainingList.name}" style="width:20%">
-				<h:outputText value="#{stainingList.name}" />
+			<p:column headerText="#{msg['dialog.settings.stainings.staining']}"
+				sortBy="#{staining.name}" style="width:20%">
+				<h:outputText value="#{staining.name}" />
+			</p:column>
+			<p:column headerText="#{msg['dialog.settings.stainings.type']}"
+				sortBy="#{staining.type}" style="width:20%">
+				<h:outputText value="#{msg['enum.stainingType.'.concat(staining.type)]}" />
 			</p:column>
 
-			<p:column headerText="#{msg['dialog.settings.material.commentary']}"
-				style="width:53%">
-				<h:outputText value="#{stainingList.commentary}" />
+			<p:column headerText="#{msg['dialog.settings.stainings.commentary']}"
+				style="width:50%">
+				<h:outputText value="#{staining.commentary}" />
 			</p:column>
-
-			<p:column style="width:7%; text-align:center;">
+			<p:column style="width:10%; text-align:center;">
 				<f:facet name="header">
 					<i class="fa fa-cog" />
 				</f:facet>
-				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-					actionListener="#{settingsDialogHandler.prepareEditMaterial(stainingList)}"
-					update="@form">
-					<i class="fa fa-fw fa-cog" />
+				<p:commandLink title="#{msg['dialog.settings.stainings.edit']}"
+					actionListener="#{settingsDialogHandler.prepareEditStaining(staining)}"
+					update="@form" styleClass="noUnderlineAtLink">
+					<i class="fa fa-cog" />
 				</p:commandLink>
 			</p:column>
-
 			<p:ajax event="rowReorder"
-				listener="#{settingsDialogHandler.onReorderMaterialList}" />
-
+				listener="#{settingsDialogHandler.onReorderStainingList}" />
 		</p:dataTable>
 	</div>
 
@@ -51,16 +51,16 @@
 			<h:panelGrid columns="1">
 				<h:panelGrid columns="2" style="margin-left: 20px;">
 					<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
-					<h:outputLabel value="#{msg['dialog.settings.material.archived']}"
+					<h:outputLabel value="#{msg['dialog.settings.stainings.archived']}"
 						style="margin-left:5px;"></h:outputLabel>
 				</h:panelGrid>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" style="float:right;">
-				<p:commandButton value="#{msg['dialog.settings.material.new']}"
+				<p:commandButton value="#{msg['dialog.settings.stainings.new']}"
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.prepareNewMaterial()}"
+					actionListener="#{settingsDialogHandler.prepareNewStaining()}"
 					update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

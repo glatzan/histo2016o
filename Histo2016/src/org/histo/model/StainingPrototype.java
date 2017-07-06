@@ -2,6 +2,8 @@ package org.histo.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
@@ -11,137 +13,55 @@ import org.histo.model.interfaces.EditAbleEntity;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;
+import org.histo.model.patient.Patient;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @SequenceGenerator(name = "stainingPrototype_sequencegenerator", sequenceName = "stainingPrototype_sequence")
-public class StainingPrototype implements EditAbleEntity<StainingPrototype>, LogAble, ListOrder<StainingPrototype>, HasID {
+@Getter
+@Setter
+public class StainingPrototype implements LogAble, ListOrder<StainingPrototype>, HasID {
 
 	public static final int TYPE_NORMAL = 0;
 	public static final int TYPE_IMMUN = 1;
 
-	@Expose
-	private long id;
-
-	@Expose
-	private String name;
-
-	@Expose
-	private String commentary;
-
-	@Expose
-	private int type;
-
-	@Expose
-	private boolean archived;
-
-	@Expose
-	private int indexInList;
-
-	public StainingPrototype() {
+	public enum StainingType {
+		NORMAL, IMMUN;
 	}
 
-	public StainingPrototype(StainingPrototype stainingPrototype) {
-		this.id = stainingPrototype.getId();
-		update(stainingPrototype);
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
 	@Id
 	@GeneratedValue(generator = "stainingPrototype_sequencegenerator")
 	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
+	private long id;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+	@Column(columnDefinition = "VARCHAR")
+	private String name;
 
-	@Column
-	public String getName() {
-		return name;
-	}
+	@Column(columnDefinition = "VARCHAR")
+	private String commentary;
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getCommentary() {
-		return commentary;
-	}
-
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
-	}
+	@Enumerated(EnumType.STRING)
+	private StainingType type;
 
 	@Column
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
+	private boolean archived;
 
 	@Column
-	public boolean isArchived() {
-		return archived;
+	private int indexInList;
+
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj instanceof StainingPrototype && ((StainingPrototype) obj).getId() == getId())
+			return true;
+
+		return super.equals(obj);
 	}
 
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	
-	/********************************************************
-	 * Interface ListOrder
-	 ********************************************************/
-	@Column
-	public int getIndexInList() {
-		return indexInList;
-	}
-
-	public void setIndexInList(int indexInList) {
-		this.indexInList = indexInList;
-	}
-	/********************************************************
-	 * Interface ListOrder
-	 ********************************************************/
-	
-	@Transient
-	public void update(StainingPrototype stainingPrototype) {
-		this.name = stainingPrototype.getName();
-		this.commentary = stainingPrototype.getCommentary();
-		this.type = stainingPrototype.getType();
-	}
-
-	@Transient
-	public String asGson() {
-		final GsonBuilder builder = new GsonBuilder();
-		builder.excludeFieldsWithoutExposeAnnotation();
-		final Gson gson = builder.create();
-		return gson.toJson(this);
-	}
-
-	@Transient
-	public String getTypeAsString() {
-		switch (getType()) {
-		case TYPE_NORMAL:
-			return "Standard";
-		case TYPE_IMMUN:
-			return "Immun";
-		default:
-			return "";
-		}
-	}
 }

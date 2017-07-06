@@ -12,6 +12,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
+import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -40,19 +41,12 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 		return dataList;
 	}
 
-	/**
-	 * Inits the stainingprotoypes of a stainingprototypeList
-	 * 
-	 * @param stainingPrototypeLists
-	 */
-	public void initStainingPrototypeList(List<MaterialPreset> stainingPrototypeLists) {
-		for (MaterialPreset stainingPrototypeList : stainingPrototypeLists) {
-			initStainingPrototypeList(stainingPrototypeList);
-		}
-	}
-
-	public void initStainingPrototypeList(MaterialPreset stainingPrototypeLists) {
-		Hibernate.initialize(stainingPrototypeLists.getStainingPrototypes());
+	@SuppressWarnings("unchecked")
+	public List<StainingPrototype> getAllStainingPrototypes() {
+		DetachedCriteria query = DetachedCriteria.forClass(StainingPrototype.class, "sPrototype");
+		query.addOrder(Order.asc("indexInList"));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
 	/**
@@ -64,30 +58,39 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	public List<DiagnosisPreset> getAllDiagnosisPrototypes() {
 
 		DetachedCriteria query = DetachedCriteria.forClass(DiagnosisPreset.class, "diagnosis");
-		query.addOrder(Order.asc("diagnosis.indexInList"));
+		query.addOrder(Order.asc("indexInList"));
 
 		List<DiagnosisPreset> result = query.getExecutableCriteria(getSession()).list();
 		return result;
 	}
 
-	// @SuppressWarnings("unchecked")
-	// public List<History> getCurrentHistory(int entryCount) {
-	// Criteria c = getSession().createCriteria(History.class, "history");
-	// c.addOrder(Order.desc("date"));
-	// c.setMaxResults(entryCount);
-	// c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-	// return (List<History>) c.list();
-	// }
-	//
-	// @SuppressWarnings("unchecked")
-	// public List<History> getCurrentHistoryForPatient(int entryCount, Patient
-	// patient) {
-	// Criteria c = getSession().createCriteria(History.class, "history");
-	// c.add(Restrictions.eq("patient.id", patient.getId()));
-	// c.addOrder(Order.desc("date"));
-	// c.setMaxResults(entryCount);
-	// c.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-	// return (List<History>) c.list();
-	// }
+	/**
+	 * Returns a list with all available MaterialPresets.
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<MaterialPreset> getAllMaterialPresets(boolean initialize) {
+		DetachedCriteria query = DetachedCriteria.forClass(MaterialPreset.class, "mPresets");
+		query.addOrder(Order.asc("indexInList"));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+		List<MaterialPreset> result = query.getExecutableCriteria(getSession()).list();
+
+		if (initialize && result != null) {
+			result.stream().forEach(p -> initMaterialPreset(p));
+		}
+
+		return query.getExecutableCriteria(getSession()).list();
+	}
+
+	/**
+	 * Initializes a MaterialPrest, stainings are fetched lazy
+	 * 
+	 * @param stainingPrototypeLists
+	 */
+	public void initMaterialPreset(MaterialPreset stainingPrototypeLists) {
+		Hibernate.initialize(stainingPrototypeLists.getStainingPrototypes());
+	}
 
 }

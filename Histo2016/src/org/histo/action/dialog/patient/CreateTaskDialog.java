@@ -21,6 +21,7 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.model.BioBank;
 import org.histo.model.Council;
 import org.histo.model.FavouriteList;
@@ -71,6 +72,9 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	@Autowired
 	private MediaDialog mediaDialog;
+	
+	@Autowired
+	private UtilDAO utilDAO;
 
 	private Patient patient;
 
@@ -113,7 +117,7 @@ public class CreateTaskDialog extends AbstractDialog {
 		super.initBean(new Task(getPatient()), Dialog.TASK_CREATE, true);
 
 		// setting material list
-		setMaterialList(settingsDAO.getAllMaterialPresets());
+		setMaterialList(utilDAO.getAllMaterialPresets(true));
 		setMaterialListTransformer(new DefaultTransformer<>(getMaterialList()));
 
 		getTask().setTaskID(getNewTaskID());

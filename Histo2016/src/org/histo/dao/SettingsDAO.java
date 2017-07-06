@@ -26,44 +26,6 @@ public class SettingsDAO extends AbstractDAO implements Serializable {
 	
 	private static Logger logger = Logger.getLogger("org.histo");
 	
-	@SuppressWarnings("unchecked")
-	public List<StainingPrototype> getAllStainingPrototypes() {
-		DetachedCriteria query = DetachedCriteria.forClass(StainingPrototype.class, "sPrototype");
-		query.addOrder(Order.asc("indexInList"));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return query.getExecutableCriteria(getSession()).list();
-	}
-
-	/**
-	 * Returns a list with all available MaterialPresets.
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<MaterialPreset> getAllMaterialPresets() {
-		DetachedCriteria query = DetachedCriteria.forClass(MaterialPreset.class, "mPresets");
-		query.addOrder(Order.asc("indexInList"));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return query.getExecutableCriteria(getSession()).list();
-	}
-	
-	/**
-	 * Initializes a list of MaterialPresets, Stainings are fetched lazy
-	 * @param stainingPrototypeLists
-	 */
-	public void initMaterialPresets(List<MaterialPreset> stainingPrototypeLists) {
-		for (MaterialPreset stainingPrototypeList : stainingPrototypeLists) {
-			initMaterialPreset(stainingPrototypeList);
-		}
-	}
-	
-	/**
-	 * Initializes a MaterialPrest, stainings are fetched lazy
-	 * @param stainingPrototypeLists
-	 */
-	public void initMaterialPreset(MaterialPreset stainingPrototypeLists) {
-		Hibernate.initialize(stainingPrototypeLists.getStainingPrototypes());
-	}
-
 
 	public List<ListItem> getAllStaticListItems(StaticList list) {
 		return getAllStaticListItems(list, false);

@@ -31,9 +31,6 @@ public class ChangeMaterialDialog extends AbstractDialog {
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
-	private SettingsDAO settingsDAO;
-
-	@Autowired
 	private UtilDAO utilDAO;
 
 	@Autowired
@@ -63,8 +60,7 @@ public class ChangeMaterialDialog extends AbstractDialog {
 
 		setSample(sample);
 
-		setMaterials(settingsDAO.getAllMaterialPresets());
-		utilDAO.initStainingPrototypeList(getMaterials());
+		setMaterials(utilDAO.getAllMaterialPresets(true));
 
 		return true;
 	}
