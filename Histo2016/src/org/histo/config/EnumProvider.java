@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import org.histo.action.dialog.SettingsDialogHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.CouncilState;
 import org.histo.config.enums.DateFormat;
@@ -20,6 +21,7 @@ import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.StaticList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.config.enums.View;
+import org.histo.model.StainingPrototype;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -144,6 +146,14 @@ public class EnumProvider {
 	 */
 	public CouncilState[] getCouncilStates() {
 		return CouncilState.values();
+	}
+
+	/**
+	 * Returns an array with all values of the StainingType enum
+	 * @return
+	 */
+	public StainingPrototype.StainingType[] getStainingTypes(){
+		return  StainingPrototype.StainingType.values();
 	}
 
 }

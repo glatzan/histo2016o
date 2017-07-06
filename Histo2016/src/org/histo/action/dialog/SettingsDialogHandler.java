@@ -112,11 +112,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 	@Getter
 	@Setter
 	public AbstractSettingsTab[] tabs = new AbstractSettingsTab[] { new HistoUserTab(), new DiagnosisTab(),
-			new MaterialTab(), new StainingTab() };
+			new MaterialTab(), new StainingTab(), new StaticListTab() };
 
 	public enum Tabs {
 		HistUserTab(HistoUserTab.class), DiagnosisTab(DiagnosisTab.class), MaterialTab(MaterialTab.class), StainingTab(
-				StainingTab.class);
+				StainingTab.class), StaticListTab(StaticListTab.class);
 
 		@Getter
 		private final Class<? extends AbstractSettingsTab> tabClass;
@@ -125,16 +125,6 @@ public class SettingsDialogHandler extends AbstractDialog {
 			this.tabClass = tabClass;
 		}
 	}
-
-	/**
-	 * Tabindex of the settings tab
-	 */
-	private SettingsTab userListTabIndex = SettingsTab.U_LIST;
-
-	/**
-	 * Tabindex of the static list tab
-	 */
-	private SettingsTab staticListTabIndex = SettingsTab.S_LIST;
 
 	/**
 	 * Tabindex of the favouriteList
@@ -179,18 +169,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 			getTabs()[getActiveSettingsIndex()].updateData();
 		}
 
-		// if (getActiveSettingsIndex() == SettingsTab.USER.getTabNumber()) {
-		// prepareUserList();
-		// } else if (getActiveSettingsIndex() ==
-		// SettingsTab.STAINING.getTabNumber()) {
-		// setAllAvailableStainings(settingsDAO.getAllStainingPrototypes());
-		// } else if (getActiveSettingsIndex() ==
-		// SettingsTab.MATERIAL.getTabNumber()) {
 		//
-		// } else if (getActiveSettingsIndex() ==
-		// SettingsTab.DIAGNOSIS.getTabNumber()) {
-		// updateAllDiagnosisPrototypes();
-		// } else if (getActiveSettingsIndex() ==
+		// else if (getActiveSettingsIndex() ==
 		// SettingsTab.PHYSICIAN.getTabNumber()) {
 		// preparePhysicianList();
 		// } else if (getActiveSettingsIndex() ==
@@ -433,6 +413,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public void prepareEditDiagnosisPreset(DiagnosisPreset diagnosisPreset) {
 			setSelectedDiagnosisPreset(diagnosisPreset);
 			setPage(DiagnosisPage.EDIT);
+
 			setNewDiagnosisPreset(diagnosisPreset.getId() == 0 ? true : false);
 
 			updateData();
@@ -588,10 +569,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setPage(MaterialPage.EDIT);
 			setEditMaterial(material);
 
-			if (material.getId() == 0)
-				setNewMaterial(true);
-			else
-				setNewMaterial(false);
+			setNewMaterial(material.getId() == 0 ? true : false);
 
 			updateData();
 		}
@@ -636,6 +614,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 				genericDAO.reset(getEditMaterial());
 			setPage(MaterialPage.LIST);
 			setEditMaterial(null);
+
+			updateData();
 		}
 
 		/**
@@ -718,22 +698,14 @@ public class SettingsDialogHandler extends AbstractDialog {
 		/**
 		 * A List with all staings
 		 */
-		private List<StainingPrototype> allAvailableStainings;
-
-		/**
-		 * used in manageStaings dialog to show overview or single staining
-		 */
-		private boolean showStainingEdit;
+		private List<StainingPrototype> allStainingsList;
 
 		/**
 		 * StainingPrototype for creating and editing
 		 */
 		private StainingPrototype editStaining;
 
-		/**
-		 * original StainingPrototype for editing
-		 */
-		private StainingPrototype originalStaining;
+		private boolean newStaining;
 
 		public StainingTab() {
 			setName("dialog.settings.stainings");
@@ -743,7 +715,13 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			// TODO Auto-generated method stub
+			switch (getPage()) {
+			case EDIT:
+				break;
+			default:
+				setAllStainingsList(utilDAO.getAllStainingPrototypes());
+				break;
+			}
 
 		}
 
@@ -751,9 +729,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 * Prepares a new Staining for editing
 		 */
 		public void prepareNewStaining() {
-			setShowStainingEdit(true);
-			setEditStaining(new StainingPrototype());
-			setOriginalStaining(null);
+			prepareEditStaining(new StainingPrototype());
 		}
 
 		/**
@@ -762,9 +738,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 * @param stainingPrototype
 		 */
 		public void prepareEditStaining(StainingPrototype stainingPrototype) {
-			setShowStainingEdit(true);
-			// setEditStaining(new StainingPrototype(stainingPrototype));
-			setOriginalStaining(stainingPrototype);
+			setEditStaining(stainingPrototype);
+			setNewStaining(stainingPrototype.getId() == 0 ? true : false);
+			setPage(StainingPage.EDIT);
 		}
 
 		/**
@@ -773,32 +749,28 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 * @param newStainingPrototype
 		 * @param origStainingPrototype
 		 */
-		public void saveStainig(StainingPrototype newStainingPrototype, StainingPrototype origStainingPrototype) {
+		public void saveStainig() {
 			try {
-				if (origStainingPrototype == null) {
-					logger.debug("Creating new staining " + newStainingPrototype.getName());
+				if (getEditStaining().getId() == 0) {
+					logger.debug("Creating new staining " + getEditStaining().getName());
 					// case new, save
-					getAllAvailableStainings().add(newStainingPrototype);
+					getAllStainingsList().add(getEditStaining());
 
-					genericDAO.saveDataRollbackSave(newStainingPrototype,
-							resourceBundle.get("log.settings.staining.new", newStainingPrototype.getName()));
+					genericDAO.saveDataRollbackSave(getEditStaining(),
+							resourceBundle.get("log.settings.staining.new", getEditStaining().getName()));
 
-					ListOrder.reOrderList(getAllAvailableStainings());
+					ListOrder.reOrderList(getAllStainingsList());
 
-					if (!genericDAO.saveListRollbackSave(getAllAvailableStainings(),
-							resourceBundle.get("log.settings.staining.list.reoder"))) {
-						onDatabaseVersionConflict();
-						return;
-					}
+					genericDAO.saveListRollbackSave(getAllStainingsList(),
+							resourceBundle.get("log.settings.staining.list.reoder"));
 				} else {
-					// case edit: update an save
-					// origStainingPrototype.update(newStainingPrototype);
-
-					genericDAO.saveDataRollbackSave(origStainingPrototype,
-							resourceBundle.get("log.settings.material.update", origStainingPrototype.getName()));
+					genericDAO.saveDataRollbackSave(getEditStaining(),
+							resourceBundle.get("log.settings.material.update", getEditStaining().getName()));
 				}
-				discardChangesOfStainig();
-			} catch (CustomDatabaseInconsistentVersionException e) {
+
+			} catch (
+
+			CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -808,12 +780,12 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 *
 		 * @param event
 		 */
-		public void onReorderStainingList(ReorderEvent event) {
+		public void onReorderList(ReorderEvent event) {
 			try {
 				logger.debug("List order changed, moved staining from " + event.getFromIndex() + " to "
 						+ event.getToIndex());
-				ListOrder.reOrderList(getAllAvailableStainings());
-				genericDAO.saveListRollbackSave(getAllAvailableStainings(),
+				ListOrder.reOrderList(getAllStainingsList());
+				genericDAO.saveListRollbackSave(getAllStainingsList(),
 						resourceBundle.get("log.settings.staining.list.reoder"));
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
@@ -824,10 +796,146 @@ public class SettingsDialogHandler extends AbstractDialog {
 		/**
 		 * discards changes
 		 */
-		public void discardChangesOfStainig() {
-			setShowStainingEdit(false);
-			setOriginalStaining(null);
+		public void discardStainig() {
+			if (getEditStaining().getId() != 0)
+				genericDAO.reset(getEditStaining());
+			setPage(StainingPage.LIST);
 			setEditStaining(null);
+
+			updateData();
+		}
+
+		@Override
+		public String getCenterView() {
+			switch (getPage()) {
+			case EDIT:
+				return "staining/stainingsEdit.xhtml";
+			default:
+				return "staining/stainingsList.xhtml";
+			}
+		}
+
+	}
+
+	public enum StaticListPage {
+		LIST, EDIT;
+	}
+
+	@Getter
+	@Setter
+	public class StaticListTab extends AbstractSettingsTab {
+
+		private StainingPage page;
+
+		/**
+		 * Current static list to edit
+		 */
+		private StaticList selectedStaticList = StaticList.WARDS;
+
+		/**
+		 * Content of the current static list
+		 */
+		private List<ListItem> staticListContent;
+
+		/**
+		 * Is used for creating and editing static lists items
+		 */
+		private ListItem tmpListItem;
+
+		/**
+		 * If true archived object will be shown.
+		 */
+		private boolean showArchivedListItems;
+
+		public void prepareStaticLists() {
+			logger.debug("Preparing list for " + getSelectedStaticList().toString());
+			setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(), isShowArchivedListItems()));
+			logger.debug("Found " + (getStaticListContent() == null ? "no" : getStaticListContent().size()) + " items");
+		}
+
+		public void prepareNewListItem() {
+			// setStaticListTabIndex(SettingsTab.S_EDIT);
+			setTmpListItem(new ListItem());
+		}
+
+		public void prepareEditListItem(ListItem listItem) {
+			// setStaticListTabIndex(SettingsTab.S_EDIT);
+			setTmpListItem(listItem);
+		}
+
+		public void saveListItem(ListItem item, StaticList type) {
+			try {
+				item.setListType(type);
+
+				if (item.getId() == 0) {
+					logger.debug("Creating new ListItem " + item.getValue() + " for " + type.toString());
+					// case new, save
+					getStaticListContent().add(item);
+					genericDAO.saveDataRollbackSave(item,
+							resourceBundle.get("log.settings.staticList.new", item.getValue(), type.toString()));
+
+					ListOrder.reOrderList(getStaticListContent());
+
+					if (!genericDAO.saveListRollbackSave(getStaticListContent(),
+							resourceBundle.get("log.settings.staticList.list.reoder", type.toString()))) {
+						onDatabaseVersionConflict();
+						return;
+					}
+				} else {
+					logger.debug("Updating ListItem " + item.getValue());
+					// case edit: update an save
+
+					genericDAO.saveDataRollbackSave(item,
+							resourceBundle.get("log.settings.staticList.update", item.getValue(), type.toString()));
+				}
+
+				discardChangeOfListItem();
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		public void discardChangeOfListItem() {
+			discardChangesOfMaterial(null);
+		}
+
+		public void discardChangesOfMaterial(ListItem item) {
+			if (item != null && item.getId() != 0)
+				genericDAO.reset(item);
+
+			// setStaticListTabIndex(SettingsTab.S_LIST);
+			setTmpListItem(null);
+		}
+
+		public void archiveListItem(ListItem item, boolean archive) {
+			try {
+				item.setArchived(archive);
+				if (archive) {
+					genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.archive",
+							item.getValue(), getSelectedStaticList().toString()));
+				} else {
+					genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.dearchive",
+							item.getValue(), getSelectedStaticList().toString()));
+				}
+
+				// removing item from current list
+				getStaticListContent().remove(item);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		public void onReorderStaticLists(ReorderEvent event) {
+			try {
+				logger.debug("List order changed, moved static list item from " + event.getFromIndex() + " to "
+						+ event.getToIndex());
+				ListOrder.reOrderList(getStaticListContent());
+
+				genericDAO.saveListRollbackSave(getStaticListContent(),
+						resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()));
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
 		}
 
 		@Override
@@ -836,6 +944,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 			return null;
 		}
 
+		@Override
+		public void updateData() {
+			// TODO Auto-generated method stub
+
+		}
 	}
 
 	// @Getter
@@ -1137,130 +1250,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 	// }
 	// }
 	//
-	// @Getter
-	// @Setter
-	// public class StaticListTab extends AbstractSettingsTab {
-	//
-	// /**
-	// * Current static list to edit
-	// */
-	// private StaticList selectedStaticList = StaticList.WARDS;
-	//
-	// /**
-	// * Content of the current static list
-	// */
-	// private List<ListItem> staticListContent;
-	//
-	// /**
-	// * Is used for creating and editing static lists items
-	// */
-	// private ListItem tmpListItem;
-	//
-	// /**
-	// * If true archived object will be shown.
-	// */
-	// private boolean showArchivedListItems;
-	//
-	// public void prepareStaticLists() {
-	// logger.debug("Preparing list for " + getSelectedStaticList().toString());
-	// setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(),
-	// isShowArchivedListItems()));
-	// logger.debug("Found " + (getStaticListContent() == null ? "no" :
-	// getStaticListContent().size()) + " items");
-	// }
-	//
-	// public void prepareNewListItem() {
-	// setStaticListTabIndex(SettingsTab.S_EDIT);
-	// setTmpListItem(new ListItem());
-	// }
-	//
-	// public void prepareEditListItem(ListItem listItem) {
-	// setStaticListTabIndex(SettingsTab.S_EDIT);
-	// setTmpListItem(listItem);
-	// }
-	//
-	// public void saveListItem(ListItem item, StaticList type) {
-	// try {
-	// item.setListType(type);
-	//
-	// if (item.getId() == 0) {
-	// logger.debug("Creating new ListItem " + item.getValue() + " for " +
-	// type.toString());
-	// // case new, save
-	// getStaticListContent().add(item);
-	// genericDAO.saveDataRollbackSave(item,
-	// resourceBundle.get("log.settings.staticList.new", item.getValue(),
-	// type.toString()));
-	//
-	// ListOrder.reOrderList(getStaticListContent());
-	//
-	// if (!genericDAO.saveListRollbackSave(getStaticListContent(),
-	// resourceBundle.get("log.settings.staticList.list.reoder",
-	// type.toString()))) {
-	// onDatabaseVersionConflict();
-	// return;
-	// }
-	// } else {
-	// logger.debug("Updating ListItem " + item.getValue());
-	// // case edit: update an save
-	//
-	// genericDAO.saveDataRollbackSave(item,
-	// resourceBundle.get("log.settings.staticList.update", item.getValue(),
-	// type.toString()));
-	// }
-	//
-	// discardChangeOfListItem();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// public void discardChangeOfListItem() {
-	// discardChangesOfMaterial(null);
-	// }
-	//
-	// public void discardChangesOfMaterial(ListItem item) {
-	// if (item != null && item.getId() != 0)
-	// genericDAO.reset(item);
-	//
-	// setStaticListTabIndex(SettingsTab.S_LIST);
-	// setTmpListItem(null);
-	// }
-	//
-	// public void archiveListItem(ListItem item, boolean archive) {
-	// try {
-	// item.setArchived(archive);
-	// if (archive) {
-	// genericDAO.saveDataRollbackSave(item,
-	// resourceBundle.get("log.settings.staticList.archive",
-	// item.getValue(), getSelectedStaticList().toString()));
-	// } else {
-	// genericDAO.saveDataRollbackSave(item,
-	// resourceBundle.get("log.settings.staticList.dearchive",
-	// item.getValue(), getSelectedStaticList().toString()));
-	// }
-	//
-	// // removing item from current list
-	// getStaticListContent().remove(item);
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// public void onReorderStaticLists(ReorderEvent event) {
-	// try {
-	// logger.debug("List order changed, moved static list item from " +
-	// event.getFromIndex() + " to "
-	// + event.getToIndex());
-	// ListOrder.reOrderList(getStaticListContent());
-	//
-	// genericDAO.saveListRollbackSave(getStaticListContent(),
-	// resourceBundle.get("log.settings.staticList.list.reoder",
-	// getSelectedStaticList().toString()));
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
+
 	//
 	// }
 	//

@@ -9,28 +9,27 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.stainings']} / #{settingsDialogHandler.originalStaining eq null ? msg['dialog.settings.stainings.new.new'] : msg['dialog.settings.stainings.new.edit']}"
+			header="#{msg['dialog.settings.stainings']} / #{settingsDialogHandler.getTab('StainingTab').newStaining ? msg['dialog.settings.stainings.new.new'] : msg['dialog.settings.stainings.new.edit']}"
 			styleClass="contentPannel" />
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
 
 			<h:outputLabel value="#{msg['dialog.settings.stainings.new.name']}"></h:outputLabel>
-			<p:inputText value="#{settingsDialogHandler.editStaining.name}"></p:inputText>
+			<p:inputText
+				value="#{settingsDialogHandler.getTab('StainingTab').editStaining.name}"></p:inputText>
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.stainings.new.commentary']}"></h:outputLabel>
 			<p:inputTextarea rows="3" style="width:390px"
-				value="#{settingsDialogHandler.editStaining.commentary}" />
+				value="#{settingsDialogHandler.getTab('StainingTab').editStaining.commentary}" />
 
 			<h:outputLabel value="#{msg['dialog.settings.stainings.new.type']}"></h:outputLabel>
 			<p:selectOneMenu style="width:125px"
-				value="#{settingsDialogHandler.editStaining.type}">
-				<f:selectItem
-					itemLabel="#{msg['dialog.settings.stainings.new.type.standard']}"
-					itemValue="0" />
-				<f:selectItem
-					itemLabel="#{msg['dialog.settings.stainings.new.type.immun']}"
-					itemValue="1" />
+				value="#{settingsDialogHandler.getTab('StainingTab').editStaining.type}">
+
+				<f:selectItems value="#{enumProvider.stainingTypes}"
+					var="stainingType"
+					itemLabel="#{msg['enum.stainingType.'.concat(stainingType)]}" />
 			</p:selectOneMenu>
 		</p:panelGrid>
 	</div>
@@ -43,20 +42,27 @@
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.saveStainig(settingsDialogHandler.editStaining, settingsDialogHandler.originalStaining)}"
-					update="@form"></p:commandButton>
+					process=":adminForm:tabview:staining" partialSubmit="true"
+					update=":adminForm:tabview:staining">
+
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('StainingTab').saveStainig()}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('StainingTab').discardStainig()}" />
+				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.discardChangesOfStainig()}"
-					update="@form"></p:commandButton>
+					partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.getTab('StainingTab').discardStainig()}"
+					update=":adminForm:tabview:staining"></p:commandButton>
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
