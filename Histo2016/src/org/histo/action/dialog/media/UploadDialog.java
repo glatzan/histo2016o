@@ -18,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.faces.convert.EnumConverter;
-
 @Component
 @Scope(value = "session")
 public class UploadDialog extends AbstractDialog {

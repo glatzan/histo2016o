@@ -19,7 +19,6 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomNotUniqueReqest;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
-import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.BioBank;
@@ -45,9 +44,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope(value = "session")
 public class CreateTaskDialog extends AbstractDialog {
-
-	@Autowired
-	private SettingsDAO settingsDAO;
 
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;

@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -15,6 +17,7 @@ import org.histo.model.Log;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,4 +72,33 @@ public class LogDAO extends AbstractDAO implements Serializable {
 		return logs;
 	}
 	
+	/**
+	 * Counts all log entries
+	 * @return
+	 */
+	public int countTotalLogs() {
+		DetachedCriteria query = DetachedCriteria.forClass(Log.class, "log");
+		query.setProjection(Projections.rowCount());
+		Number result = (Number) query.getExecutableCriteria(getSession()).uniqueResult();
+
+		return result.intValue();
+	}
+	
+	/**
+	 * Returns a pages of log entries
+	 * @param count
+	 * @param page
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "deprecation" })
+	public List<Log> getLogs(int count, int page) {
+		Criteria criteria = getSession().createCriteria(Log.class);
+		criteria.addOrder(Order.desc("id"));
+		criteria.setFirstResult(page * count);
+		criteria.setMaxResults(count);
+
+		List<Log> list = criteria.list();
+
+		return list;
+	}
 }

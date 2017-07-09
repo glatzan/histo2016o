@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
-import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomNotUniqueReqest;
 
 import lombok.Getter;

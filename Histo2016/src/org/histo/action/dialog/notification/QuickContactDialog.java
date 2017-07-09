@@ -3,7 +3,6 @@ package org.histo.action.dialog.notification;
 import java.util.Arrays;
 import java.util.List;
 
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
@@ -13,7 +12,6 @@ import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Person;
-import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.springframework.beans.factory.annotation.Autowired;

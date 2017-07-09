@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
-
 import org.histo.action.dialog.SettingsDialogHandler;
 import org.histo.action.dialog.slide.StainingPhaseLeaveDialogHandler;
 import org.histo.action.handler.SettingsHandler;

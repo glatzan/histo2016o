@@ -16,7 +16,6 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -26,13 +25,10 @@ import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.histo.model.view.ContactPhysicanRole;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 /**
  * The DAO class for generic entities

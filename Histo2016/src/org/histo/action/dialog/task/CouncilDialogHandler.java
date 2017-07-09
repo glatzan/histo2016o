@@ -1,13 +1,9 @@
 package org.histo.action.dialog.task;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang.time.DateUtils;
-import org.histo.action.UserHandlerAction;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.PrintDialogHandler;
@@ -19,12 +15,10 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.enums.StaticList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
-import org.histo.dao.SettingsDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
@@ -62,9 +56,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private MediaDialog mediaDialog;
-
+	
 	@Autowired
-	private SettingsDAO settingsDAO;
+	private UtilDAO utilDAO;
 
 	/**
 	 * Selected council from councilList
@@ -132,7 +126,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 			updatePhysicianLists();
 
-			setAttachmentList(settingsDAO.getAllStaticListItems(StaticList.COUNCIL_ATTACHMENT));
+			setAttachmentList(utilDAO.getAllStaticListItems(ListItem.StaticList.COUNCIL_ATTACHMENT));
 
 			return true;
 		} catch (CustomDatabaseInconsistentVersionException e) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -28,7 +27,6 @@ import org.hibernate.envers.Audited;
 import org.histo.config.enums.CouncilState;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
-import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 
 @Entity

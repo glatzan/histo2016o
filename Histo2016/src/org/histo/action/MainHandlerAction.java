@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -19,24 +18,16 @@ import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
-import org.histo.config.exception.CustomNotUniqueReqest;
-import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.GenericDAO;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
-import org.primefaces.push.EventBus;
-import org.primefaces.push.EventBusFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
 
 @Component
 @Scope(value = "session")

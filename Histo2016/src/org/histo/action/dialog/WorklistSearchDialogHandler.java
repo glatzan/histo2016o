@@ -1,27 +1,14 @@
 package org.histo.action.dialog;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
-import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
-import org.histo.config.enums.Month;
-import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.enums.StaticList;
 import org.histo.config.enums.WorklistSearchFilter;
-import org.histo.config.enums.WorklistSearchOption;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
-import org.histo.dao.SettingsDAO;
-import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
@@ -29,8 +16,6 @@ import org.histo.model.MaterialPreset;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Task;
-import org.histo.util.TimeUtil;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearchBasic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +31,6 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 	@Autowired
 	private PatientDao patientDao;
-
-	@Autowired
-	private SettingsDAO settingsDAO;
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
@@ -103,7 +85,7 @@ public class WorklistSearchDialogHandler extends AbstractDialog {
 
 			setSigantures(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
 
-			setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
+			setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
 
 			setDiagnoses(utilDAO.getAllDiagnosisPrototypes());
 

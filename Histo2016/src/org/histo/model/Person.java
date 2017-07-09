@@ -3,7 +3,6 @@ package org.histo.model;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -34,7 +32,6 @@ import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
-import org.histo.model.patient.Patient;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

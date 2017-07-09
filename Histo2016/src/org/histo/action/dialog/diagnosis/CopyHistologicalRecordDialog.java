@@ -10,7 +10,6 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

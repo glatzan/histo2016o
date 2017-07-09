@@ -12,7 +12,6 @@ import org.histo.config.enums.Month;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.enums.WorklistSearchOption;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;

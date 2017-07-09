@@ -9,13 +9,14 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.list.new.headline']} #{msg['enum.staticList.'.concat(settingsDialogHandler.selectedStaticList)]}"
+			header="#{settingsDialogHandler.getTab('StaticListTab').newListItem ? msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.getTab('StaticListTab').selectedStaticList)]) : msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.getTab('StaticListTab').selectedStaticList)])}"
 			styleClass="contentPannel" />
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
 			style="width:100%">
 
 			<h:outputLabel value="#{msg['dialog.settings.list.new.name']}"></h:outputLabel>
-			<p:inputText value="#{settingsDialogHandler.tmpListItem.value}"></p:inputText>
+			<p:inputText
+				value="#{settingsDialogHandler.getTab('StaticListTab').editListItem.value}"></p:inputText>
 		</p:panelGrid>
 	</div>
 
@@ -26,19 +27,25 @@
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.saveListItem(settingsDialogHandler.tmpListItem, settingsDialogHandler.selectedStaticList)}"
-					update="@form"></p:commandButton>
+					process=":adminForm:tabview:staticLists" partialSubmit="true"
+					update=":adminForm:tabview:staticLists">
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('StaticListTab').saveListItem()}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('StaticListTab').discardListItem()}" />
+				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.discardChangesOfMaterial(settingsDialogHandler.tmpListItem)}"
-					update="@form"></p:commandButton>
-					
+					styleClass="smallButton buttonRighMarginInList" process="@this"
+					partialSubmit="true"
+					actionListener="#{settingsDialogHandler.getTab('StaticListTab').discardListItem()}"
+					update=":adminForm:tabview:staticLists" />
+
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

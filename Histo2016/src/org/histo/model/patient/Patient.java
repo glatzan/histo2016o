@@ -32,7 +32,6 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;

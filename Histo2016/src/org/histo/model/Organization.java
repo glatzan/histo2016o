@@ -15,7 +15,7 @@ import javax.persistence.Version;
 
 import org.hibernate.envers.Audited;
 import org.histo.model.interfaces.HasID;
-import org.histo.model.patient.Patient;
+import org.histo.model.interfaces.ListOrder;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -54,7 +54,7 @@ public class Organization implements HasID {
 
 	@Override
 	public boolean equals(Object obj) {
-		
+
 		if (obj instanceof Organization && ((Organization) obj).getId() == getId())
 			return true;
 

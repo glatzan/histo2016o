@@ -10,8 +10,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.DiagnosisPreset;
+import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
-import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +91,21 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	 */
 	public void initMaterialPreset(MaterialPreset stainingPrototypeLists) {
 		Hibernate.initialize(stainingPrototypeLists.getStainingPrototypes());
+	}
+	
+	public List<ListItem> getAllStaticListItems(ListItem.StaticList list) {
+		return getAllStaticListItems(list, false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ListItem> getAllStaticListItems(ListItem.StaticList list, boolean archived) {
+		logger.debug("Searching for " + list.toString() + " in Database. " + (archived ? " Showing archived items." : " Showing none archived items."));
+		DetachedCriteria query = DetachedCriteria.forClass(ListItem.class, "listItem");
+		query.addOrder(Order.asc("indexInList"));
+		query.add(Restrictions.eq("listType", list));
+		query.add(Restrictions.eq("archived", archived));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
 }

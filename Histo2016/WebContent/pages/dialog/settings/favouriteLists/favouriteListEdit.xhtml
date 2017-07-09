@@ -10,7 +10,7 @@
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.favouriteList.edit.headline.new']} #{msg['dialog.settings.favouriteList.edit.headline.edit']}"
+			header="#{settingsDialogHandler.getTab('FavouriteListTab').newFavouriteList ? msg['dialog.settings.favouriteList.edit.headline.new'] : msg['dialog.settings.favouriteList.edit.headline.edit']}"
 			styleClass="contentPannel" />
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableCss"
@@ -19,8 +19,8 @@
 			<h:outputLabel
 				value="#{msg['dialog.settings.favouriteList.edit.name']}"></h:outputLabel>
 			<p:inputText style="width:390px"
-				disabled="#{settingsDialogHandler.tmpFavouriteList.defaultList}"
-				value="#{settingsDialogHandler.tmpFavouriteList.name}" />
+				disabled="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.defaultList}"
+				value="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.name}" />
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.favouriteList.edit.owner']}"></h:outputLabel>
@@ -30,22 +30,22 @@
 			<h:outputLabel
 				value="#{msg['dialog.settings.favouriteList.edit.editAble']}"></h:outputLabel>
 			<p:selectBooleanCheckbox
-				disabled="#{settingsDialogHandler.tmpFavouriteList.defaultList}"
-				value="#{settingsDialogHandler.tmpFavouriteList.editAble}"></p:selectBooleanCheckbox>
+				disabled="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.defaultList}"
+				value="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.editAble}"></p:selectBooleanCheckbox>
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.favouriteList.edit.global']}"></h:outputLabel>
 			<p:selectBooleanCheckbox
-				disabled="#{settingsDialogHandler.tmpFavouriteList.defaultList}"
-				value="#{settingsDialogHandler.tmpFavouriteList.global}"></p:selectBooleanCheckbox>
+				disabled="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.defaultList}"
+				value="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.global}"></p:selectBooleanCheckbox>
 
 			<h:outputLabel
 				value="#{msg['dialog.settings.favouriteList.edit.tasks']}"></h:outputLabel>
 			<p:dataTable var="item" style="width:100%;" scrollable="true"
 				scrollHeight="320" draggableRows="true"
-				disabled="#{settingsDialogHandler.tmpFavouriteList.defaultList}"
+				disabled="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.defaultList}"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-				value="#{settingsDialogHandler.tmpFavouriteList.items}">
+				value="#{settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.items}">
 
 				<p:column
 					headerText="#{msg['dialog.settings.favouriteList.edit.tasks.id']}"
@@ -63,23 +63,30 @@
 			<h:panelGrid columns="3" style="float:right;">
 				<!-- save -->
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-fw fa-floppy-o" rendered="#{!settingsDialogHandler.tmpFavouriteList.defaultList}"
+					icon="fa fa-fw fa-floppy-o"
+					rendered="#{!settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.defaultList}"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.saveFavouriteList()}"
-					update="@form" />
+					process=":adminForm:tabview:favouriteLists" partialSubmit="true"
+					update=":adminForm:tabview:favouriteLists">
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('FavouriteListTab').saveFavouriteList()}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('FavouriteListTab').discardFavouriteList()}" />
+				</p:commandButton>
 
 				<!-- abort -->
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.discardEditFavouriteList()}"
-					update="@form" />
+					styleClass="smallButton buttonRighMarginInList" process="@this"
+					partialSubmit="true"
+					actionListener="#{settingsDialogHandler.getTab('FavouriteListTab').discardFavouriteList()}"
+					update=":adminForm:tabview:favouriteLists" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

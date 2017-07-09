@@ -7,17 +7,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 
-import org.histo.model.interfaces.EditAbleEntity;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;
-import org.histo.model.patient.Patient;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
 
 import lombok.Getter;
 import lombok.Setter;

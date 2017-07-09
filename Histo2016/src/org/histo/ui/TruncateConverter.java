@@ -6,8 +6,6 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
 
-import org.springframework.stereotype.Service;
-
 @FacesConverter("org.histo.ui.TruncateConverter")
 public class TruncateConverter implements Converter {
 

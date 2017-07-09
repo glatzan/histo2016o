@@ -15,7 +15,7 @@
 		<p:dataTable var="favouriteList" style="width:100%;" scrollable="true"
 			scrollHeight="460"
 			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			value="#{settingsDialogHandler.favouriteLists}">
+			value="#{settingsDialogHandler.getTab('FavouriteListTab').favouriteLists}">
 
 			<p:column
 				headerText="#{msg['dialog.settings.favouriteList.list.name']}"
@@ -31,8 +31,9 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{settingsDialogHandler.prepareEditFavouriteList(favouriteList)}"
-					update="@form"
+					actionListener="#{settingsDialogHandler.getTab('FavouriteListTab').prepareEditFavouriteList(favouriteList)}"
+					update=":adminForm:tabview:favouriteLists" process="@this"
+					partialSubmit="true"
 					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('MTA')}">
 					<i class="fa fa-fw fa-cog" />
 				</p:commandLink>
@@ -57,13 +58,16 @@
 				<p:commandButton
 					value="#{msg['dialog.settings.favouriteList.list.button.new']}"
 					icon="fa fa-fw fa-plus-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.prepareNewFavouriteList()}"
-					update="@form"></p:commandButton>
+					styleClass="smallButton buttonRighMarginInList" process="@this"
+					partialSubmit="true"
+					actionListener="#{settingsDialogHandler.getTab('FavouriteListTab').prepareNewFavouriteList()}"
+					update=":adminForm:tabview:favouriteLists" />
+
+
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

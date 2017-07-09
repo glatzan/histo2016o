@@ -3,7 +3,6 @@ package org.histo.action.handler;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.histo.action.MainHandlerAction;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Block;

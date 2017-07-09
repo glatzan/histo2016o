@@ -1,14 +1,10 @@
 package org.histo.action.dialog;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.OrganizationDAO;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
-import org.primefaces.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
@@ -33,10 +34,14 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 		return ((List<Organization>) query.getExecutableCriteria(getSession()).list()).stream()
 				.collect(StreamUtils.singletonCollector());
 	}
-
 	public List<Organization> getOrganizations() {
-		DetachedCriteria query = DetachedCriteria.forClass(Organization.class, "organization");
+		return getOrganizations(true);
+	}
 
+	public List<Organization> getOrganizations(boolean orderById) {
+		DetachedCriteria query = DetachedCriteria.forClass(Organization.class, "organization");
+		if(orderById)
+			query.addOrder(Order.asc("id"));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		return (List<Organization>) query.getExecutableCriteria(getSession()).list();

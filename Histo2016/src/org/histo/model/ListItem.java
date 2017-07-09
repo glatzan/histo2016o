@@ -14,78 +14,39 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RevisionNumber;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.StaticList;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "listItem_sequencegenerator", sequenceName = "listItem_sequence")
+@Getter
+@Setter
 public class ListItem implements ListOrder<ListItem>, ArchivAble, HasID {
 
-	private long id;
-
-	private StaticList listType;
-
-	private String value;
-
-	private int indexInList;
-	
-	private boolean archived;
+	public enum StaticList {
+		WARDS, CASE_HISTORY, COUNCIL_ATTACHMENT;
+	}
 
 	@Id
 	@GeneratedValue(generator = "listItem_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	@RevisionNumber
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public StaticList getListType() {
-		return listType;
-	}
-
+	private long id;
 	@Enumerated(EnumType.STRING)
-	public void setListType(StaticList listType) {
-		this.listType = listType;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public boolean isArchived() {
-		return archived;
-	}
-
-	public void setArchived(boolean archived) {
-		this.archived = archived;
-	}
-	/********************************************************
-	 * Interface ListOrder
-	 ********************************************************/
+	private StaticList listType;
+	@Column(columnDefinition = "VARCHAR")
+	private String value;
 	@Column
-	public int getIndexInList() {
-		return indexInList;
-	}
-
-	public void setIndexInList(int indexInList) {
-		this.indexInList = indexInList;
-	}
-	/********************************************************
-	 * Interface ListOrder
-	 ********************************************************/
+	private int indexInList;
+	@Column
+	private boolean archived;
 
 	/********************************************************
 	 * Interface ArchiveAble

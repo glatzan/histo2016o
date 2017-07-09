@@ -3,7 +3,6 @@ package org.histo.action.dialog.diagnosis;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;

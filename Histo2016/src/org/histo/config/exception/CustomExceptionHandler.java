@@ -16,23 +16,17 @@ import javax.faces.event.ExceptionQueuedEvent;
 import javax.faces.event.ExceptionQueuedEventContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.model.interfaces.Parent;
-import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-
-import com.sun.faces.application.resource.Resource;
 
 /**
  * <!-- <factory> <exception-handler-factory> org.histo.config.exception.

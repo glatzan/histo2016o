@@ -1,21 +1,13 @@
 package org.histo.action.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.persistence.Transient;
-
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
-import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.Role;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
-import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

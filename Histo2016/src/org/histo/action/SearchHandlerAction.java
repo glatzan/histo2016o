@@ -1,27 +1,12 @@
 package org.histo.action;
 
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.faces.application.FacesMessage;
-
 import org.apache.log4j.Logger;
-import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
+import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.handler.SearchHandler;
-import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.QuickSearchOptions;
-import org.histo.config.exception.CustomExceptionToManyEntries;
-import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.PatientDao;
-import org.histo.model.patient.Patient;
-import org.histo.model.patient.Task;
-import org.histo.ui.ListChooser;
-import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

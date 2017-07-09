@@ -1,13 +1,9 @@
 package org.histo.action.dialog;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.histo.action.CommonDataHandlerAction;
@@ -17,39 +13,33 @@ import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.MailType;
 import org.histo.config.enums.SettingsTab;
-import org.histo.config.enums.StaticList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.LogDAO;
 import org.histo.dao.OrganizationDAO;
 import org.histo.dao.PhysicianDAO;
-import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.dao.UtilDAO;
+import org.histo.model.Contact;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.FavouriteList;
 import org.histo.model.FavouriteListItem;
 import org.histo.model.HistoUser;
 import org.histo.model.ListItem;
+import org.histo.model.Log;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Organization;
-import org.histo.model.Person;
-import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ListOrder;
-import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
-import org.histo.settings.LdapHandler;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.SlideUtil;
 import org.primefaces.event.ReorderEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -88,9 +78,6 @@ public class SettingsDialogHandler extends AbstractDialog {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private SettingsDAO settingsDAO;
-
-	@Autowired
 	private CommonDataHandlerAction commonDataHandlerAction;
 
 	@Autowired
@@ -102,6 +89,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 	@Autowired
 	private OrganizationDAO organizationDAO;
 
+	@Autowired
+	private LogDAO logDAO;
+
 	/**
 	 * Tabindex of settings dialog
 	 */
@@ -112,11 +102,13 @@ public class SettingsDialogHandler extends AbstractDialog {
 	@Getter
 	@Setter
 	public AbstractSettingsTab[] tabs = new AbstractSettingsTab[] { new HistoUserTab(), new DiagnosisTab(),
-			new MaterialTab(), new StainingTab(), new StaticListTab() };
+			new MaterialTab(), new StainingTab(), new StaticListTab(), new FavouriteListTab(), new OrganizationTab(),
+			new LogTab() };
 
 	public enum Tabs {
 		HistUserTab(HistoUserTab.class), DiagnosisTab(DiagnosisTab.class), MaterialTab(MaterialTab.class), StainingTab(
-				StainingTab.class), StaticListTab(StaticListTab.class);
+				StainingTab.class), StaticListTab(StaticListTab.class), FavouriteListTab(
+						FavouriteListTab.class), OrganizationTab(OrganizationTab.class), LogTab(LogTab.class);
 
 		@Getter
 		private final Class<? extends AbstractSettingsTab> tabClass;
@@ -825,12 +817,12 @@ public class SettingsDialogHandler extends AbstractDialog {
 	@Setter
 	public class StaticListTab extends AbstractSettingsTab {
 
-		private StainingPage page;
+		private StaticListPage page;
 
 		/**
 		 * Current static list to edit
 		 */
-		private StaticList selectedStaticList = StaticList.WARDS;
+		private ListItem.StaticList selectedStaticList = ListItem.StaticList.WARDS;
 
 		/**
 		 * Content of the current static list
@@ -840,71 +832,87 @@ public class SettingsDialogHandler extends AbstractDialog {
 		/**
 		 * Is used for creating and editing static lists items
 		 */
-		private ListItem tmpListItem;
+		private ListItem editListItem;
 
 		/**
 		 * If true archived object will be shown.
 		 */
 		private boolean showArchivedListItems;
 
-		public void prepareStaticLists() {
-			logger.debug("Preparing list for " + getSelectedStaticList().toString());
-			setStaticListContent(settingsDAO.getAllStaticListItems(getSelectedStaticList(), isShowArchivedListItems()));
-			logger.debug("Found " + (getStaticListContent() == null ? "no" : getStaticListContent().size()) + " items");
+		private boolean newListItem;
+
+		public StaticListTab() {
+			setName("dialog.settings.staticLists");
+			setViewID("staticLists");
+			setPage(StaticListPage.LIST);
+		}
+
+		@Override
+		public void updateData() {
+			switch (getPage()) {
+			case EDIT:
+				break;
+			default:
+				loadStaticList();
+				break;
+			}
+		}
+
+		public void loadStaticList() {
+			setStaticListContent(utilDAO.getAllStaticListItems(getSelectedStaticList(), isShowArchivedListItems()));
 		}
 
 		public void prepareNewListItem() {
-			// setStaticListTabIndex(SettingsTab.S_EDIT);
-			setTmpListItem(new ListItem());
+			prepareEditListItem(new ListItem());
 		}
 
 		public void prepareEditListItem(ListItem listItem) {
-			// setStaticListTabIndex(SettingsTab.S_EDIT);
-			setTmpListItem(listItem);
+			setEditListItem(listItem);
+			setPage(StaticListPage.EDIT);
+			setNewListItem(listItem.getId() == 0 ? true : false);
 		}
 
-		public void saveListItem(ListItem item, StaticList type) {
+		public void saveListItem() {
 			try {
-				item.setListType(type);
 
-				if (item.getId() == 0) {
-					logger.debug("Creating new ListItem " + item.getValue() + " for " + type.toString());
+				if (getEditListItem().getId() == 0) {
+
+					getEditListItem().setListType(getSelectedStaticList());
+
+					logger.debug("Creating new ListItem " + getEditListItem().getValue() + " for "
+							+ getSelectedStaticList().toString());
 					// case new, save
-					getStaticListContent().add(item);
-					genericDAO.saveDataRollbackSave(item,
-							resourceBundle.get("log.settings.staticList.new", item.getValue(), type.toString()));
+					getStaticListContent().add(getEditListItem());
+
+					genericDAO.saveDataRollbackSave(getEditListItem(), resourceBundle.get("log.settings.staticList.new",
+							getEditListItem().getValue(), getSelectedStaticList().toString()));
 
 					ListOrder.reOrderList(getStaticListContent());
 
-					if (!genericDAO.saveListRollbackSave(getStaticListContent(),
-							resourceBundle.get("log.settings.staticList.list.reoder", type.toString()))) {
-						onDatabaseVersionConflict();
-						return;
-					}
+					genericDAO.saveListRollbackSave(getStaticListContent(), resourceBundle
+							.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()));
 				} else {
-					logger.debug("Updating ListItem " + item.getValue());
+					logger.debug("Updating ListItem " + getEditListItem().getValue());
 					// case edit: update an save
 
-					genericDAO.saveDataRollbackSave(item,
-							resourceBundle.get("log.settings.staticList.update", item.getValue(), type.toString()));
+					genericDAO.saveDataRollbackSave(getEditListItem(),
+							resourceBundle.get("log.settings.staticList.update", getEditListItem().getValue(),
+									getSelectedStaticList().toString()));
 				}
 
-				discardChangeOfListItem();
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
 
-		public void discardChangeOfListItem() {
-			discardChangesOfMaterial(null);
-		}
+		public void discardListItem() {
+			if (getEditListItem().getId() != 0)
+				genericDAO.reset(getEditListItem());
 
-		public void discardChangesOfMaterial(ListItem item) {
-			if (item != null && item.getId() != 0)
-				genericDAO.reset(item);
+			setEditListItem(null);
+			setPage(StaticListPage.LIST);
 
-			// setStaticListTabIndex(SettingsTab.S_LIST);
-			setTmpListItem(null);
+			updateData();
 		}
 
 		public void archiveListItem(ListItem item, boolean archive) {
@@ -925,10 +933,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 			}
 		}
 
-		public void onReorderStaticLists(ReorderEvent event) {
+		public void onReorderList(ReorderEvent event) {
 			try {
-				logger.debug("List order changed, moved static list item from " + event.getFromIndex() + " to "
-						+ event.getToIndex());
 				ListOrder.reOrderList(getStaticListContent());
 
 				genericDAO.saveListRollbackSave(getStaticListContent(),
@@ -940,15 +946,14 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			// TODO Auto-generated method stub
-			return null;
+			switch (getPage()) {
+			case EDIT:
+				return "staticLists/staticListsEdit.xhtml";
+			default:
+				return "staticLists/staticLists.xhtml";
+			}
 		}
 
-		@Override
-		public void updateData() {
-			// TODO Auto-generated method stub
-
-		}
 	}
 
 	// @Getter
@@ -1251,74 +1256,214 @@ public class SettingsDialogHandler extends AbstractDialog {
 	// }
 	//
 
-	//
 	// }
-	//
-	// @Getter
-	// @Setter
-	// public class FavouriteListTab extends AbstractSettingsTab {
-	//
-	// /**
-	// * Array containing all favourite listis
-	// */
-	// private List<FavouriteList> favouriteLists;
-	//
-	// /**
-	// * Temporaray faourite list
-	// */
-	// private FavouriteList tmpFavouriteList;
-	//
-	// /**
-	// * True if new favouriteList should be created
-	// */
-	// private boolean newFavouriteList;
-	//
-	// public void prepareFavouriteLists() {
-	// setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
-	// setFavouriteListTabIndex(SettingsTab.F_LIST);
-	// }
-	//
-	// public void prepareNewFavouriteList() {
-	// FavouriteList newList = new FavouriteList();
-	// newList.setItems(new ArrayList<FavouriteListItem>());
-	// newList.setDefaultList(false);
-	// newList.setEditAble(true);
-	// newList.setGlobal(true);
-	// setTmpFavouriteList(newList);
-	// setFavouriteListTabIndex(SettingsTab.F_EDIT);
-	// setNewFavouriteList(true);
-	// }
-	//
-	// public void prepareEditFavouriteList(FavouriteList favouriteList) {
-	// setTmpFavouriteList(favouriteListDAO.getFavouriteList(favouriteList.getId(),
-	// true));
-	// setFavouriteListTabIndex(SettingsTab.F_EDIT);
-	// setNewFavouriteList(false);
-	// }
-	//
-	// public void saveFavouriteList() {
-	// try {
-	// // saving new list
-	// if (getTmpFavouriteList().getId() == 0) {
-	// genericDAO.saveDataRollbackSave(getTmpFavouriteList(),
-	// "log.settings.favouriteList.new",
-	// new Object[] { getTmpFavouriteList().toString() });
-	// } else {
-	// // updating old list
-	// genericDAO.saveDataRollbackSave(getTmpFavouriteList(),
-	// "log.settings.favouriteList.edit",
-	// new Object[] { getTmpFavouriteList().toString() });
-	// }
-	//
-	// discardEditFavouriteList();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// public void discardEditFavouriteList() {
-	// setTmpFavouriteList(null);
-	// prepareFavouriteLists();
-	// }
-	// }
+
+	public enum FavouriteListPage {
+		LIST, EDIT;
+	}
+
+	@Getter
+	@Setter
+	public class FavouriteListTab extends AbstractSettingsTab {
+
+		private FavouriteListPage page;
+
+		/**
+		 * Array containing all favourite listis
+		 */
+		private List<FavouriteList> favouriteLists;
+
+		/**
+		 * Temporaray faourite list
+		 */
+		private FavouriteList tmpFavouriteList;
+
+		/**
+		 * True if new favouriteList should be created
+		 */
+		private boolean newFavouriteList;
+
+		public FavouriteListTab() {
+			setName("dialog.settings.favouriteList");
+			setViewID("favouriteLists");
+			setPage(FavouriteListPage.LIST);
+		}
+
+		@Override
+		public void updateData() {
+			switch (getPage()) {
+			case EDIT:
+				if (getTmpFavouriteList().getId() != 0)
+					setTmpFavouriteList(favouriteListDAO.getFavouriteList(getTmpFavouriteList().getId(), true));
+				break;
+			default:
+				setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
+				break;
+			}
+
+		}
+
+		public void prepareNewFavouriteList() {
+			FavouriteList newList = new FavouriteList();
+			newList.setItems(new ArrayList<FavouriteListItem>());
+			newList.setDefaultList(false);
+			newList.setEditAble(true);
+			newList.setGlobal(true);
+			prepareEditFavouriteList(newList);
+		}
+
+		public void prepareEditFavouriteList(FavouriteList favouriteList) {
+			setTmpFavouriteList(favouriteList);
+			setPage(FavouriteListPage.EDIT);
+			setNewFavouriteList(favouriteList.getId() == 0 ? true : false);
+			updateData();
+		}
+
+		public void saveFavouriteList() {
+			try {
+				// saving new list
+				if (getTmpFavouriteList().getId() == 0) {
+					genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.new",
+							new Object[] { getTmpFavouriteList().toString() });
+				} else {
+					// updating old list
+					genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.edit",
+							new Object[] { getTmpFavouriteList().toString() });
+				}
+
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		public void discardFavouriteList() {
+			setTmpFavouriteList(null);
+			setPage(FavouriteListPage.LIST);
+			updateData();
+		}
+
+		@Override
+		public String getCenterView() {
+			switch (getPage()) {
+			case EDIT:
+				return "favouriteLists/favouriteListEdit.xhtml";
+			default:
+				return "favouriteLists/favouriteList.xhtml";
+			}
+		}
+
+	}
+
+	public enum OrganizationTabPage {
+		LIST, EDIT;
+	}
+
+	@Getter
+	@Setter
+	public class OrganizationTab extends AbstractSettingsTab {
+
+		private OrganizationTabPage page;
+
+		private List<Organization> organizations;
+
+		private Organization selectedOrganization;
+
+		private boolean newOrganization;
+
+		public OrganizationTab() {
+			setName("dialog.settings.organization");
+			setViewID("organizations");
+			setPage(OrganizationTabPage.LIST);
+		}
+
+		@Override
+		public void updateData() {
+			switch (getPage()) {
+			case EDIT:
+				break;
+			default:
+				setOrganizations(organizationDAO.getOrganizations());
+				break;
+			}
+
+		}
+
+		public void prepareNewOrganization() {
+			Organization organization = new Organization(new Contact());
+			prepareEditOrganization(organization);
+		}
+
+		public void prepareEditOrganization(Organization organization) {
+			setSelectedOrganization(organization);
+			setPage(OrganizationTabPage.EDIT);
+			setNewOrganization(organization.getId() == 0 ? true : false);
+			updateData();
+		}
+
+		public void saveOrganization() {
+			try {
+				organizationDAO.save(getSelectedOrganization(),
+						getSelectedOrganization().getId() == 0 ? "log.organization.save" : "log.organization.created",
+						new Object[] { getSelectedOrganization().getName() });
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		public void discardOrganization() {
+			setSelectedOrganization(null);
+			setPage(OrganizationTabPage.LIST);
+
+			updateData();
+		}
+
+		@Override
+		public String getCenterView() {
+			switch (getPage()) {
+			case EDIT:
+				return "organization/organizationEdit.xhtml";
+			default:
+				return "organization/organizationLists.xhtml";
+			}
+		}
+
+	}
+
+	@Getter
+	@Setter
+	public class LogTab extends AbstractSettingsTab {
+
+		private int logsPerPull;
+
+		private int selectedLogPage;
+
+		private List<Log> logs;
+		
+		private int maxLogPages;
+		
+		public LogTab() {
+			setName("dialog.settings.log");
+			setViewID("logs");
+
+			setLogsPerPull(50);
+			setSelectedLogPage(1);
+
+		}
+
+		@Override
+		public void updateData() {
+			int maxPages = logDAO.countTotalLogs();
+			int pagesCount = (int) Math.ceil((double) maxPages / logsPerPull);
+
+			setMaxLogPages(pagesCount);
+			
+			setLogs(logDAO.getLogs(getLogsPerPull(), getSelectedLogPage()-1));
+		}
+
+		@Override
+		public String getCenterView() {
+			// TODO Auto-generated method stub
+			return "log/log.xhtml";
+		}
+	}
 }

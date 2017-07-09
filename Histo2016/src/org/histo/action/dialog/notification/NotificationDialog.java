@@ -21,7 +21,6 @@ import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;

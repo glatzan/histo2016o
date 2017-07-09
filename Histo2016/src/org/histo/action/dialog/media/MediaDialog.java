@@ -1,8 +1,6 @@
 package org.histo.action.dialog.media;
 
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;

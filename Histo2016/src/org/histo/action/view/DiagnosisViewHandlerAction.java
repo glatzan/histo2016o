@@ -3,23 +3,16 @@ package org.histo.action.view;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.histo.action.CommonDataHandlerAction;
-
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
-import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.StaticList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
-import org.histo.dao.SettingsDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.Physician;
-import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -42,9 +35,6 @@ public class DiagnosisViewHandlerAction {
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
-
-	@Autowired
-	private SettingsDAO settingsDAO;
 
 	@Autowired
 	private PatientDao patientDao;
@@ -123,8 +113,8 @@ public class DiagnosisViewHandlerAction {
 		}
 
 		// loading lists
-		setCaseHistoryList(settingsDAO.getAllStaticListItems(StaticList.CASE_HISTORY));
-		setWardList(settingsDAO.getAllStaticListItems(StaticList.WARDS));
+		setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
+		setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
 
 		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
 		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());

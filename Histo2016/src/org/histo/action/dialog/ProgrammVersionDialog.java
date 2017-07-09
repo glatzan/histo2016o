@@ -4,10 +4,8 @@ import java.util.Date;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.SettingsHandler;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.model.patient.Task;
 import org.histo.settings.Version;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{settingsDialogHandler.getTab('OrganizationTab').newOrganization ? msg['dialog.settings.organization.edit.headline.new'] : msg['dialog.settings.organization.edit.headline.edit']}"
+			styleClass="contentPannel" />
+
+		<h:panelGrid columns="3"
+			columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
+			styleClass="defaultListingTableCss">
+
+			<!-- Organization -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.organization']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- name -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.name']}" />
+				<p:inputText id="organizationName"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.name}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- clinic -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.clinicIntern']}" />
+				<p:selectBooleanCheckbox id="organizationIntern"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.intern}" />
+
+			</h:panelGrid>
+
+
+			<!-- ****************** Adress ****************** -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- street -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.street']}" />
+				<p:inputText id="_street" name="street-address"
+					autocomplete="street-address"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.street}" />
+
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.building']}" />
+				<p:inputText id="_building" name="building-address"
+					autocomplete="building-address"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.building}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- Town -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.town']}" />
+				<p:inputText id="_town" name="city" autocomplete="address-level2"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.town}" />
+
+				<!-- Postcode -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.postCode']}" />
+				<p:inputText style="width:75px;"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.postcode}"
+					name="postal-code" autocomplete="postal-code" />
+			</h:panelGrid>
+			<!-- ****************** Adress ****************** -->
+
+			<!-- ****************** Contact ****************** -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.miscellaneous']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- phone -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.phone']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.phone}"
+					name="phone" autocomplete="tel" />
+				<!-- mobile -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.mobile']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.phone}"
+					name="phone" autocomplete="tel" />
+
+				<!-- homepage -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.homepage']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.homepage}"
+					name="homepage" autocomplete="homepage" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- fax -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.fax']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.fax}"
+					name="fax" autocomplete="fax" />
+				<!-- mail -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.email']}" />
+				<p:inputText id="_email" name="mail" autocomplete="mail"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.contact.email}" />
+			</h:panelGrid>
+			<!-- ****************** Contact ****************** -->
+		</h:panelGrid>
+
+		<h:panelGrid columns="2"
+			columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop"
+			styleClass="defaultListingTableCss">
+
+			<h:outputLabel value=" " />
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn15 ,">
+				<!-- name -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.note']}" />
+				<p:inputTextarea id="organizationNote" style="width:85%"
+					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.note}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="3" style="float:right;">
+				<!-- save -->
+				<p:commandButton value="#{msg['general.save']}"
+					icon="fa fa-fw fa-floppy-o"
+					rendered="#{!settingsDialogHandler.getTab('FavouriteListTab').tmpFavouriteList.defaultList}"
+					styleClass="smallButton buttonRighMarginInList"
+					process=":adminForm:tabview:organizations" partialSubmit="true"
+					update=":adminForm:tabview:organizations">
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('OrganizationTab').saveOrganization()}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('OrganizationTab').discardOrganization()}" />
+				</p:commandButton>
+
+				<!-- abort -->
+				<p:commandButton value="#{msg['general.abort']}"
+					icon="fa fa-fw fa-times-circle"
+					styleClass="smallButton buttonRighMarginInList" process="@this"
+					partialSubmit="true"
+					actionListener="#{settingsDialogHandler.getTab('OrganizationTab').discardOrganization()}"
+					update=":adminForm:tabview:organizations" />
+
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+</ui:composition>

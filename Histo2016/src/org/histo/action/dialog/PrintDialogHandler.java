@@ -8,7 +8,6 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
-
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -19,7 +18,6 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
-import org.histo.dao.UtilDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;

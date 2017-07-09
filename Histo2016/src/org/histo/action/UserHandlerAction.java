@@ -6,7 +6,6 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.Dialog;
 import org.histo.config.enums.MailType;
 import org.histo.config.enums.Role;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;

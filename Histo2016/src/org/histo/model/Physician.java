@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -33,8 +30,6 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
-
-import com.google.gson.annotations.Expose;
 
 import lombok.Getter;
 import lombok.Setter;

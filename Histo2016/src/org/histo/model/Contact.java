@@ -8,8 +8,6 @@ import javax.persistence.SequenceGenerator;
 
 import org.hibernate.envers.Audited;
 
-import com.google.gson.annotations.Expose;
-
 import lombok.Getter;
 import lombok.Setter;
 

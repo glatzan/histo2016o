@@ -28,7 +28,9 @@
 		styleClass="defaultListingTableCss">
 
 		<!-- ****************** Person ****************** -->
-		<h:outputLabel value="#{msg['component.personDataMask.person']}" />
+		<h:panelGrid columns="1">
+			<h:outputLabel value="#{msg['component.personDataMask.person']}" />
+		</h:panelGrid>
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 			columnClasses="defaultListingTableColumn30,">
@@ -86,7 +88,9 @@
 		<!-- ****************** Person ****************** -->
 
 		<!-- ****************** Adress ****************** -->
-		<h:outputLabel value="#{msg['component.personDataMask.adress']}" />
+		<h:panelGrid columns="1">
+			<h:outputLabel value="#{msg['component.personDataMask.adress']}" />
+		</h:panelGrid>
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 			columnClasses="defaultListingTableColumn30,">
@@ -121,8 +125,11 @@
 		<!-- ****************** Adress ****************** -->
 
 		<!-- ****************** Contact ****************** -->
-		<h:outputLabel
-			value="#{msg['component.personDataMask.miscellaneous']}" />
+		<h:panelGrid columns="1">
+			<h:outputLabel
+				value="#{msg['component.personDataMask.miscellaneous']}" />
+		</h:panelGrid>
+
 		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 			columnClasses="defaultListingTableColumn30,">
 			<!-- phone -->
@@ -159,7 +166,11 @@
 	<h:panelGrid columns="2"
 		columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
 		styleClass="defaultListingTableCss">
-		<h:outputLabel value="#{msg['component.personDataMask.organization']}" />
+		<h:panelGrid columns="1">
+			<h:outputLabel
+				value="#{msg['component.personDataMask.organization']}" />
+		</h:panelGrid>
+
 		<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 
 			<p:dataTable var="organization" style="width:90%;" scrollable="true"

@@ -21,7 +21,6 @@ import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearch;
-import org.primefaces.context.RequestContext;
 import org.primefaces.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.StaleStateException;
 import org.hibernate.stat.Statistics;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
@@ -19,7 +18,6 @@ import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.transaction.annotation.Transactional;
 

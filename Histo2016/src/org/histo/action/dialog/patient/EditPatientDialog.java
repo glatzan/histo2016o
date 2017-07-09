@@ -1,8 +1,5 @@
 package org.histo.action.dialog.patient;
 
-import java.util.Date;
-
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;

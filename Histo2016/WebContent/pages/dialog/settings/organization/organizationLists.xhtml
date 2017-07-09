@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.settings.favouriteList.list.headline']}"
+			styleClass="contentPannel" />
+
+		<p:dataTable var="organization" style="width:100%;" scrollable="true"
+			scrollHeight="440"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			value="#{settingsDialogHandler.getTab('OrganizationTab').organizations}">
+
+			<p:column
+				headerText="#{msg['dialog.settings.organization.list.name']}"
+				sortBy="#{organization.name}" filterBy="#{organization.name}">
+				<h:outputText value="#{organization.name}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msg['dialog.settings.organization.list.note']}">
+				<h:outputLabel value="#{organization.note}">
+					<f:converter converterId="org.histo.ui.TruncateConverter" />
+					<f:attribute name="truncateAt" value="25" />
+					<f:attribute name="continuationMark" value="..." />
+				</h:outputLabel>
+			</p:column>
+
+			<p:column style="width:15px">
+				<ui:fragment rendered="#{organization.intern}">
+					<i class="fa fa-fw fa-check-circle icon-green"
+						title="#{msg['dialog.settings.organization.list.clinicIntern']}" />
+				</ui:fragment>
+			</p:column>
+
+			<p:column style="width:15px">
+				<p:commandLink partialSubmit="true" process="@this"
+					update=":adminForm:tabview:organizations"
+					actionListener="#{settingsDialogHandler.getTab('OrganizationTab').prepareEditOrganization(organization)}">
+					<i class="fa fa-cog"
+						title="#{msg['dialog.settings.organization.list.edit']}" />
+				</p:commandLink>
+			</p:column>
+		</p:dataTable>
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+			<h:panelGrid columns="1">
+				<h:panelGrid columns="2" style="margin-left: 20px;">
+					<p:selectBooleanCheckbox styleClass="smallCheckbox" disabled="true" />
+					<h:outputLabel
+						value="#{msg['dialog.settings.organization.list.archived']}"
+						style="margin-left:5px;"></h:outputLabel>
+				</h:panelGrid>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton
+					value="#{msg['dialog.settings.organization.list.new']}"
+					icon="fa fa-fw fa-plus-circle"
+					styleClass="smallButton buttonRighMarginInList" process="@this"
+					partialSubmit="true"
+					actionListener="#{settingsDialogHandler.getTab('OrganizationTab').prepareNewOrganization()}"
+					update=":adminForm:tabview:organizations" />
+
+
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>
