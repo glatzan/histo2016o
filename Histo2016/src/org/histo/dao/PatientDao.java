@@ -33,20 +33,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(value = "session")
 public class PatientDao extends AbstractDAO implements Serializable {
 
-	private static Logger logger = Logger.getLogger("org.histo");
-
 	@Autowired
 	private GenericDAO genericDAO;
+	
+	private static Logger logger = Logger.getLogger("org.histo");
 
 	public Patient initilaizeTasksofPatient(Patient patient) throws CustomDatabaseInconsistentVersionException {
-		genericDAO.refresh(patient);
+		refresh(patient);
 		Hibernate.initialize(patient.getTasks());
 		return patient;
 	}
 
 	public Patient initializePatient(Patient patient, boolean initialize)
 			throws CustomDatabaseInconsistentVersionException {
-		genericDAO.refresh(patient);
+		refresh(patient);
 
 		if (initialize) {
 			Hibernate.initialize(patient.getTasks());
@@ -57,7 +57,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	public Patient getPatient(long id, boolean initialize) {
-		Patient patient = genericDAO.get(Patient.class, id);
+		Patient patient = get(Patient.class, id);
 		if (initialize) {
 			Hibernate.initialize(patient.getTasks());
 			Hibernate.initialize(patient.getAttachedPdfs());
@@ -79,8 +79,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			String resourcesKey, Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
 
 		// if failed false will be returned
-		return genericDAO.saveDataRollbackSave(object, resourcesKey,
-				new Object[] { hasPatient.getLogPath(), resourcesKeyInsert }, hasPatient.getPatient());
+		return save(object, resourcesKey, new Object[] { hasPatient.getLogPath(), resourcesKeyInsert },
+				hasPatient.getPatient());
 
 	}
 
@@ -170,7 +170,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return query.getExecutableCriteria(getSession()).list();
 	}
-	
+
 	/**
 	 * Returns a list without of patients without tasks between the two given
 	 * dates.
@@ -471,7 +471,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		List<Task> tasks = query.getExecutableCriteria(getSession()).list();
 
 		List<Patient> result = new ArrayList<Patient>(tasks.size());
-		
+
 		for (Task task : tasks) {
 			try {
 				task.setActive(true);
@@ -481,7 +481,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return result;
 	}
 }

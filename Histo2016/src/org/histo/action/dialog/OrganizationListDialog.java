@@ -74,4 +74,13 @@ public class OrganizationListDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 	}
+
+	public void removeOrganizationFromPerson(Person person, Organization organization) {
+		try {
+			logger.debug("Removing Person from Organization");
+			organizationDAO.removeOrganization(person, organization);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
+	}
 }

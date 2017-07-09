@@ -2,8 +2,13 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
-TODO: Versionkonflik beim löschen von organisationen
-TODO: QUick add feld geht gerade nicht richtig
+TODO: standard organisation + konsilare von claudia übernehmen, 
+TODO: Überprüfen ob organisationen beim ersten einloggen automatisch gestzt werden
+TODO: Bilder für Konsilanzeige einabauen
+TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werden
+TODO: Phasen + Phasen Buttons im Menu überprüfen
+TODO: Contact Dialog geht nicht
+TODO: Seach QUick add feld geht gerade nicht richtig
 TODO: Diagnosen müssen default brieffelder bekommen
 TODO: 2: erweiterte Suche / 
 TODO: 3:versionsfehler besser handlen, refresh der seite
@@ -26,6 +31,7 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: Versionkonflik beim löschen von organisationen
 ++++: Sort Optionen f�r worklist arbeitet nicht richtig / anzeige selected task verbessern
 ++++: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
 ++++: benutzer settings

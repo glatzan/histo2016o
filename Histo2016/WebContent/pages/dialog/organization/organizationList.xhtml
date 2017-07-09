@@ -56,14 +56,6 @@
 						</ui:fragment>
 					</p:column>
 
-					<p:column style="width:15px">
-						<p:commandLink
-							actionListener="#{dialogHandlerAction.organizationEditDialog.initAndPrepareBean(organization)}">
-							<p:ajax event="dialogReturn" update="@form" />
-							<i class="fa fa-search"
-								title="#{msg['dialog.organization.list.edit']}" />
-						</p:commandLink>
-					</p:column>
 					<p:ajax event="rowSelect" update="@form"/>
 					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()" />
 
@@ -85,14 +77,6 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
-					<p:commandButton value="#{msg['dialog.organization.list.new']}"
-						styleClass="smallButton buttonLeftMarginInList"
-						icon="fa fa-fw fa-check-circle-o">
-						<f:actionListener
-							binding="#{dialogHandlerAction.organizationEditDialog.initAndPrepareBean()}" />
-						<p:ajax event="dialogReturn" update="@form"
-							listener="#{dialogHandlerAction.organizationListDialog.updateOrganizationList()}" />
-					</p:commandButton>
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="float:right;">

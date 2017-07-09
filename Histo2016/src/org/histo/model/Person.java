@@ -107,10 +107,6 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 		this.contact = contact;
 	}
 
-	// protected String mobileNumber = "";
-	// @Expose
-	// protected String department = "";
-
 	protected boolean archived;
 
 	@Transient

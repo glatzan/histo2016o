@@ -1,9 +1,13 @@
 package org.histo.action.dialog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
 import org.histo.action.CommonDataHandlerAction;
@@ -13,7 +17,6 @@ import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.SettingsTab;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
@@ -31,9 +34,12 @@ import org.histo.model.ListItem;
 import org.histo.model.Log;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Organization;
+import org.histo.model.Person;
+import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
+import org.histo.settings.LdapHandler;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -102,26 +108,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 	@Getter
 	@Setter
 	public AbstractSettingsTab[] tabs = new AbstractSettingsTab[] { new HistoUserTab(), new DiagnosisTab(),
-			new MaterialTab(), new StainingTab(), new StaticListTab(), new FavouriteListTab(), new OrganizationTab(),
-			new LogTab() };
-
-	public enum Tabs {
-		HistUserTab(HistoUserTab.class), DiagnosisTab(DiagnosisTab.class), MaterialTab(MaterialTab.class), StainingTab(
-				StainingTab.class), StaticListTab(StaticListTab.class), FavouriteListTab(
-						FavouriteListTab.class), OrganizationTab(OrganizationTab.class), LogTab(LogTab.class);
-
-		@Getter
-		private final Class<? extends AbstractSettingsTab> tabClass;
-
-		Tabs(final Class<? extends AbstractSettingsTab> tabClass) {
-			this.tabClass = tabClass;
-		}
-	}
-
-	/**
-	 * Tabindex of the favouriteList
-	 */
-	private SettingsTab favouriteListTabIndex = SettingsTab.F_LIST;
+			new MaterialTab(), new StainingTab(), new StaticListTab(), new FavouriteListTab(),
+			new PhysicianSettingsTab(), new OrganizationTab(), new LogTab() };
 
 	/********************************************************
 	 * General
@@ -132,16 +120,29 @@ public class SettingsDialogHandler extends AbstractDialog {
 			prepareDialog();
 	}
 
+	public void initAndPrepareBean(String tabName) {
+		if (initBean(tabName))
+			prepareDialog();
+	}
+
+	public boolean initBean(String tabName) {
+		int tabNumber = 0;
+
+		for (int i = 0; i < tabs.length; i++)
+			if (tabs[i].getTabName().equals(tabName)) {
+				tabNumber = i;
+				break;
+			}
+
+		return initBean(tabNumber);
+	}
+
 	public boolean initBean(int activeTab) {
 
 		if (activeTab >= 0 && activeTab < getTabs().length) {
 			setActiveSettingsIndex(activeTab);
 
 			onSettingsTabChange(null);
-
-			commonDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
-			commonDataHandlerAction.setAssociatedRolesTransformer(
-					new AssociatedRoleTransformer(commonDataHandlerAction.getAssociatedRoles()));
 		} else {
 			return false;
 		}
@@ -152,38 +153,15 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	public void onSettingsTabChange(TabChangeEvent event) {
-
-		logger.debug("Current Tab index is " + getActiveSettingsIndex());
-		if (event != null)
-			System.out.println("Active Tab: " + event.getTab().getTitle());
-
 		if (getActiveSettingsIndex() >= 0 && getActiveSettingsIndex() < getTabs().length) {
+			logger.debug("Updating Tab with index " + getActiveSettingsIndex());
 			getTabs()[getActiveSettingsIndex()].updateData();
 		}
-
-		//
-		// else if (getActiveSettingsIndex() ==
-		// SettingsTab.PHYSICIAN.getTabNumber()) {
-		// preparePhysicianList();
-		// } else if (getActiveSettingsIndex() ==
-		// SettingsTab.STATIC_LISTS.getTabNumber()) {
-		// prepareStaticLists();
-		// } else if (getActiveSettingsIndex() ==
-		// SettingsTab.FAVOURITE_LIST.getTabNumber()) {
-		// if (getFavouriteListTabIndex() == SettingsTab.F_EDIT) {
-		// if (getTmpFavouriteList() != null && getTmpFavouriteList().getId() !=
-		// 0)
-		// // reload fav list
-		// prepareEditFavouriteList(getTmpFavouriteList());
-		// } else
-		// prepareFavouriteLists();
-		// }
-
 	}
 
-	public AbstractSettingsTab getTab(Tabs classTab) {
+	public AbstractSettingsTab getTab(String tabName) {
 		for (AbstractSettingsTab abstractSettingsTab : tabs) {
-			if (abstractSettingsTab.getClass() == classTab.getTabClass())
+			if (abstractSettingsTab.getTabName().equals(tabName))
 				return abstractSettingsTab;
 		}
 
@@ -198,20 +176,20 @@ public class SettingsDialogHandler extends AbstractDialog {
 		prepareSettingsDialog(getActiveSettingsIndex());
 	}
 
-	public void prepareSettingsDialog(SettingsTab settingsTab) {
-		// SettingsTab parentTab = settingsTab.getParent() != null ?
-		// settingsTab.getParent() : settingsTab;
-		//
-		// switch (parentTab) {
-		// case PHYSICIAN:
-		// setPhysicianTabIndex(settingsTab);
-		// break;
-		// default:
-		// break;
-		// }
-		//
-		// prepareSettingsDialog(settingsTab.getTabNumber());
-	}
+	// public void prepareSettingsDialog(SettingsTab settingsTab) {
+	// // SettingsTab parentTab = settingsTab.getParent() != null ?
+	// // settingsTab.getParent() : settingsTab;
+	// //
+	// // switch (parentTab) {
+	// // case PHYSICIAN:
+	// // setPhysicianTabIndex(settingsTab);
+	// // break;
+	// // default:
+	// // break;
+	// // }
+	// //
+	// // prepareSettingsDialog(settingsTab.getTabNumber());
+	// }
 
 	public void prepareSettingsDialog(int activeTab) {
 		super.initBean(null, Dialog.SETTINGS);
@@ -260,6 +238,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		protected String name;
 
 		protected String viewID;
+
+		protected String tabName;
 	}
 
 	public static enum HistoUserPage {
@@ -279,6 +259,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private List<ContactRole> allRoles;
 
 		public HistoUserTab() {
+			setTabName("HistoUserTab");
 			setName("dialog.settings.user");
 			setViewID("histoUser");
 			setPage(HistoUserPage.LIST);
@@ -287,12 +268,10 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		public void updateData() {
 			switch (page) {
-			case LIST:
-				setUsers(userDAO.loadAllUsers());
-				break;
 			case EDIT:
-				setSelectedUser(userDAO.get(HistoUser.class, getSelectedUser().getId()));
+				break;
 			default:
+				setUsers(userDAO.loadAllUsers());
 				break;
 			}
 		}
@@ -377,6 +356,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private boolean newDiagnosisPreset;
 
 		public DiagnosisTab() {
+			setTabName("DiagnosisTab");
 			setName("dialog.settings.diagnosis");
 			setViewID("diagnoses");
 			setPage(DiagnosisPage.LIST);
@@ -525,6 +505,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private boolean newMaterial;
 
 		public MaterialTab() {
+			setTabName("MaterialTab");
 			setName("dialog.settings.materials");
 			setViewID("material");
 			setPage(MaterialPage.LIST);
@@ -700,6 +681,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private boolean newStaining;
 
 		public StainingTab() {
+			setTabName("StainingTab");
 			setName("dialog.settings.stainings");
 			setViewID("staining");
 			setPage(StainingPage.LIST);
@@ -842,6 +824,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private boolean newListItem;
 
 		public StaticListTab() {
+			setTabName("StaticListTab");
 			setName("dialog.settings.staticLists");
 			setViewID("staticLists");
 			setPage(StaticListPage.LIST);
@@ -956,307 +939,282 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	}
 
-	// @Getter
-	// @Setter
-	// public class PhysicianSettingsTab extends AbstractSettingsTab {
-	//
-	// /**
-	// * Tabindex of the settings tab
-	// */
-	// private Page page;
-	// // private SettingsTab physicianTabIndex = SettingsTab.P_LIST;
-	//
-	// /**
-	// * True if archived physicians should be display
-	// */
-	// private boolean showArchivedPhysicians = false;
-	//
-	// /**
-	// * Array of roles for that physicians should be shown.
-	// */
-	// private ContactRole[] showPhysicianRoles;
-	//
-	// /**
-	// * List containing all physicians known in the histo database
-	// */
-	// private List<Physician> physicianList;
-	//
-	// /**
-	// * Used for creating new or for editing existing physicians
-	// */
-	// private Physician tmpPhysician;
-	//
-	// /**
-	// * List containing all physicians available from ldap
-	// */
-	// private List<Physician> ldapPhysicianList;
-	//
-	// /**
-	// * Used for selecting a physician from the ldap list
-	// */
-	// private Physician tmpLdapPhysician;
-	//
-	// /**
-	// * String is used for searching for internal physicians
-	// */
-	// private String ldapPhysicianSearchString;
-	//
-	// public void prepare() {
-	// switch (getPage()) {
-	// case LIST:
-	//
-	// if (getShowPhysicianRoles() == null || getShowPhysicianRoles().length ==
-	// 0)
-	// setShowPhysicianRoles(new ContactRole[] { ContactRole.PRIVATE_PHYSICIAN,
-	// ContactRole.SURGEON,
-	// ContactRole.OTHER_PHYSICIAN, ContactRole.SIGNATURE });
-	//
-	// setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(),
-	// isShowArchivedPhysicians()));
-	// break;
-	//
-	// default:
-	// break;
-	// }
-	// }
-	//
-	// /**
-	// * Shows the add external or ldap screen per default the ldap select
-	// * screnn is used.
-	// */
-	// public void prepareNewPhysician() {
-	// setTmpPhysician(new Physician());
-	// getTmpPhysician().setPerson(new Person());
-	// setPage(Page.ADD_LDAP);
-	//
-	// setLdapPhysicianSearchString("");
-	// setLdapPhysicianList(new ArrayList<Physician>());
-	// }
-	//
-	// /**
-	// * Shows the gui for editing an existing physician
-	// *
-	// * @param physician
-	// */
-	// public void prepareEditPhysician(Physician physician) {
-	// setTmpPhysician(physician);
-	// setPage(Page.EDIT);
-	// }
-	//
-	// /**
-	// * Opens the passed physician in the settingsDialog in order to edit the
-	// * phone number, email or faxnumber.
-	// *
-	// * @param associatedContact
-	// */
-	// public void prepareEditPhysicianFromExtern(Person person) {
-	// Physician result = physicianDAO.getPhysicianByPerson(person);
-	// if (result != null) {
-	// setTmpPhysician(result);
-	// setPhysicianTabIndex(SettingsTab.P_EDIT_EXTERN);
-	// setActiveSettingsIndex(SettingsTab.PHYSICIAN.getTabNumber());
-	// prepareSettingsDialog();
-	// }
-	// }
-	//
-	// /**
-	// * Generates an ldap search filter (?(xxx)....) and offers the result
-	// * list. The result list is a physician list with minimal details.
-	// * Before adding an clinic physician a ldap fetch for more details has
-	// * to be done
-	// *
-	// * @param name
-	// */
-	// public void searchForPhysician(String name) {
-	// // removing multiple spaces an commas and replacing them with one
-	// // space,
-	// // splitting the whole thing into an array
-	// String[] arr = name.replaceAll("[ ,]+", " ").split(" ");
-	// StringBuffer request = new StringBuffer("(&");
-	// for (int i = 0; i < arr.length; i++) {
-	// request.append("(cn=*" + arr[i] + "*)");
-	// }
-	// request.append(")");
-	//
-	// try {
-	// logger.debug("Search for " + request.toString());
-	//
-	// LdapHandler connection = settingsHandler.getLdapHandler();
-	//
-	// // searching for physicians
-	// connection.openConnection();
-	// setLdapPhysicianList(connection.getListOfPhysicians(request.toString()));
-	// connection.closeConnection();
-	//
-	// setTmpLdapPhysician(null);
-	//
-	// } catch (NamingException | IOException e) {
-	// setLdapPhysicianList(null);
-	// // TODO to many results
-	// }
-	// }
-	//
-	// /**
-	// * Saves an edited physician to the database
-	// *
-	// * @param physician
-	// */
-	// public void saveEditPhysician(Physician physician) {
-	// try {
-	// if (physician.hasNoAssociateRole())
-	// physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
-	//
-	// physicianDAO.save(physician, "log.settings.physician.physician.edit",
-	// new Object[] { physician.getPerson().getFullName() });
-	//
-	// discardTmpPhysician();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// settingsDialogHandler.onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// /**
-	// * Saves a physician to the database, if no role was selected
-	// * ContactRole.Other will be set per default.
-	// *
-	// * @param physician
-	// */
-	// public void saveNewPrivatePhysician(Physician physician) {
-	// try {
-	// // always set role to miscellaneous if no other role was
-	// // selected
-	// if (physician.hasNoAssociateRole())
-	// physician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
-	//
-	// genericDAO.saveDataRollbackSave(physician, resourceBundle
-	// .get("log.settings.physician.privatePhysician.save",
-	// physician.getPerson().getFullName()));
-	//
-	// discardTmpPhysician();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// settingsDialogHandler.onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// /**
-	// *
-	// * @param ldapPhysician
-	// * @param editPhysician
-	// */
-	// public void savePhysicianFromLdap(Physician ldapPhysician,
-	// HashSet<ContactRole> roles) {
-	// try {
-	// if (ldapPhysician == null) {
-	// discardTmpPhysician();
-	// return;
-	// }
-	//
-	// // removing id from the list
-	// ldapPhysician.setId(0);
-	//
-	// if (roles == null || roles.size() == 0)
-	// ldapPhysician.addAssociateRole(ContactRole.OTHER_PHYSICIAN);
-	// else
-	// ldapPhysician.setAssociatedRoles(roles);
-	//
-	// // tje internal physician from ldap it might have been added
-	// // before
-	// // (if
-	// // the the physician is a user of this programm),
-	// // search fur unique uid
-	// Physician physicianFromDatabase =
-	// physicianDAO.loadPhysicianByUID(ldapPhysician.getUid());
-	//
-	// // undating the foud physician
-	// if (physicianFromDatabase != null) {
-	// physicianFromDatabase.copyIntoObject(ldapPhysician);
-	//
-	// physicianFromDatabase.setArchived(false);
-	//
-	// // overwriting roles
-	// physicianFromDatabase.setAssociatedRoles(roles);
-	//
-	// genericDAO.saveDataRollbackSave(physicianFromDatabase, resourceBundle
-	// .get("log.settings.physician.ldap.update",
-	// ldapPhysician.getPerson().getFullName()));
-	//
-	// setTmpPhysician(physicianFromDatabase);
-	// discardTmpPhysician();
-	// return;
-	// }
-	//
-	// genericDAO.saveDataRollbackSave(ldapPhysician,
-	// resourceBundle.get("log.settings.physician.ldap.save",
-	// ldapPhysician.getPerson().getFullName()));
-	//
-	// discardTmpPhysician();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// settingsDialogHandler.onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// /**
-	// * Archvies or dearchvies physicians depending on the given parameters.
-	// *
-	// * @param physician
-	// * @param archive
-	// */
-	// public void archivePhysician(Physician physician, boolean archive) {
-	// try {
-	// physician.setArchived(archive);
-	// genericDAO.saveDataRollbackSave(physician,
-	// resourceBundle.get(
-	// archive ? "log.settings.physician.archived" :
-	// "log.settings.physician.archived.undo",
-	// physician.getPerson().getFullName()));
-	// preparePhysicianList();
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// settingsDialogHandler.onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// /**
-	// * Clears the temporary variables and the the physician list to display
-	// */
-	// public void discardTmpPhysician() {
-	// // if a physician is in database and changes should be discarded, so
-	// // refresh from database
-	// if ((getPhysicianTabIndex() == SettingsTab.P_EDIT ||
-	// getPhysicianTabIndex() == SettingsTab.P_EDIT_EXTERN)
-	// && getTmpPhysician().getId() != 0)
-	// genericDAO.reset(getTmpPhysician());
-	//
-	// setTmpPhysician(null);
-	// setTmpLdapPhysician(null);
-	//
-	// if (getPhysicianTabIndex() != SettingsTab.P_EDIT_EXTERN) {
-	// // update physician list
-	// preparePhysicianList();
-	// } else {
-	// // if the edit was called externally close the dialog
-	// hideDialog();
-	// }
-	//
-	// setPhysicianTabIndex(SettingsTab.P_LIST);
-	// }
-	//
-	// public void removeOrganizationFromPerson(Person person, Organization
-	// organization) {
-	// try {
-	// logger.debug("Removing Person from Organization");
-	// organizationDAO.removeOrganization(person, organization);
-	// } catch (CustomDatabaseInconsistentVersionException e) {
-	// onDatabaseVersionConflict();
-	// }
-	// }
-	//
-	// public enum Page {
-	// LIST, EDIT, EDIT_EXTERN, ADD_EXTERN, ADD_LDAP;
-	// }
-	// }
-	//
+	public enum PhysicianSettingsPage {
+		LIST, EDIT, EDIT_EXTERN, ADD_EXTERN, ADD_LDAP;
+	}
 
-	// }
+	@Getter
+	@Setter
+	public class PhysicianSettingsTab extends AbstractSettingsTab {
+
+		/**
+		 * Tabindex of the settings tab
+		 */
+		private PhysicianSettingsPage page;
+
+		/**
+		 * True if archived physicians should be display
+		 */
+		private boolean showArchivedPhysicians;
+
+		/**
+		 * Array of roles for that physicians should be shown.
+		 */
+		private ContactRole[] showPhysicianRoles;
+
+		/**
+		 * All available roles
+		 */
+		private List<ContactRole> allRoles;
+
+		/**
+		 * List containing all physicians known in the histo database
+		 */
+		private List<Physician> physicianList;
+
+		/**
+		 * Used for creating new or for editing existing physicians
+		 */
+		private Physician tmpPhysician;
+
+		/**
+		 * True if new physician
+		 */
+		private boolean newPhysician;
+
+		/**
+		 * List containing all physicians available from ldap
+		 */
+		private List<Physician> ldapPhysicianList;
+
+		/**
+		 * Used for selecting a physician from the ldap list
+		 */
+		private Physician tmpLdapPhysician;
+
+		/**
+		 * String is used for searching for internal physicians
+		 */
+		private String ldapPhysicianSearchString;
+
+		public PhysicianSettingsTab() {
+			setTabName("PhysicianSettingsTab");
+			setName("dialog.settings.persons");
+			setViewID("persons");
+			setPage(PhysicianSettingsPage.LIST);
+			setShowArchivedPhysicians(false);
+			setAllRoles(Arrays.asList(ContactRole.values()));
+			setShowPhysicianRoles(new ContactRole[] { ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON,
+					ContactRole.OTHER_PHYSICIAN, ContactRole.SIGNATURE });
+		}
+
+		@Override
+		public void updateData() {
+			switch (getPage()) {
+			case EDIT:
+				break;
+			default:
+				setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(), isShowArchivedPhysicians()));
+				break;
+			}
+		}
+
+		/**
+		 * Shows the add external or ldap screen per default the ldap select
+		 * screnn is used.
+		 */
+		public void prepareNewPhysician() {
+			setTmpPhysician(new Physician());
+			getTmpPhysician().setPerson(new Person(new Contact()));
+			setPage(PhysicianSettingsPage.ADD_LDAP);
+			setLdapPhysicianSearchString("");
+			setLdapPhysicianList(new ArrayList<Physician>());
+		}
+
+		/**
+		 * Shows the gui for editing an existing physician
+		 *
+		 * @param physician
+		 */
+		public void prepareEditPhysician(Physician physician) {
+			setTmpPhysician(physician);
+			setPage(PhysicianSettingsPage.EDIT);
+		}
+
+		/**
+		 * Opens the passed physician in the settingsDialog in order to edit the
+		 * phone number, email or faxnumber.
+		 *
+		 * @param associatedContact
+		 */
+		public void prepareEditPhysicianFromExtern(Person person) {
+			// Physician result = physicianDAO.getPhysicianByPerson(person);
+			// if (result != null) {
+			// setTmpPhysician(result);
+			// setPhysicianTabIndex(SettingsTab.P_EDIT_EXTERN);
+			// setActiveSettingsIndex(SettingsTab.PHYSICIAN.getTabNumber());
+			// prepareSettingsDialog();
+			// }
+		}
+
+		/**
+		 * Generates an ldap search filter (?(xxx)....) and offers the result
+		 * list. The result list is a physician list with minimal details.
+		 * Before adding an clinic physician a ldap fetch for more details has
+		 * to be done
+		 *
+		 * @param name
+		 */
+		public void searchForPhysician(String name) {
+			// removing multiple spaces an commas and replacing them with one
+			// space,
+			// splitting the whole thing into an array
+			String[] arr = name.replaceAll("[ ,]+", " ").split(" ");
+			StringBuffer request = new StringBuffer("(&");
+			for (int i = 0; i < arr.length; i++) {
+				request.append("(cn=*" + arr[i] + "*)");
+			}
+			request.append(")");
+
+			try {
+				logger.debug("Search for " + request.toString());
+
+				LdapHandler connection = settingsHandler.getLdapHandler();
+
+				// searching for physicians
+				connection.openConnection();
+				setLdapPhysicianList(connection.getListOfPhysicians(request.toString()));
+				connection.closeConnection();
+
+				setTmpLdapPhysician(null);
+
+			} catch (NamingException | IOException e) {
+				setLdapPhysicianList(null);
+				// TODO to many results
+			}
+		}
+
+		/**
+		 * Saves a physician to the database, if no role was selected
+		 * ContactRole.Other will be set per default.
+		 *
+		 * @param physician
+		 */
+		public void savePhysician() {
+			try {
+
+				// always set role to miscellaneous if no other role was
+				// selected
+				if (getTmpPhysician().hasNoAssociateRole())
+					getTmpPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+
+				//
+				if (getTmpPhysician().getId() == 0) {
+					genericDAO.saveDataRollbackSave(getTmpPhysician(),
+							resourceBundle.get("log.settings.physician.privatePhysician.save",
+									getTmpPhysician().getPerson().getFullName()));
+				} else {
+					physicianDAO.save(getTmpPhysician(), "log.settings.physician.physician.edit",
+							new Object[] { getTmpPhysician().getPerson().getFullName() });
+				}
+
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		public void savePhysicianFromLdap() {
+			try {
+				if (getTmpLdapPhysician() == null) {
+					return;
+				}
+
+				// removing id from the list
+				getTmpLdapPhysician().setId(0);
+
+				if (getTmpPhysician().getAssociatedRoles() == null
+						|| getTmpPhysician().getAssociatedRoles().size() == 0)
+					getTmpLdapPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+				else
+					getTmpLdapPhysician().setAssociatedRoles(getTmpPhysician().getAssociatedRoles());
+
+				// the internal physician from ldap it might have been added
+				// before (if the the physician is a user of this program),
+				// search fur unique uid
+				Physician physicianFromDatabase = physicianDAO.loadPhysicianByUID(getTmpLdapPhysician().getUid());
+
+				// undating the foud physician
+				if (physicianFromDatabase != null) {
+					physicianFromDatabase.copyIntoObject(getTmpLdapPhysician());
+
+					physicianFromDatabase.setArchived(false);
+
+					// overwriting roles
+					physicianFromDatabase.setAssociatedRoles(getTmpPhysician().getAssociatedRoles());
+
+					genericDAO.saveDataRollbackSave(physicianFromDatabase, resourceBundle.get(
+							"log.settings.physician.ldap.update", getTmpLdapPhysician().getPerson().getFullName()));
+
+					setTmpPhysician(physicianFromDatabase);
+					discardTmpPhysician();
+					return;
+				}
+
+				genericDAO.saveDataRollbackSave(getTmpLdapPhysician(), resourceBundle
+						.get("log.settings.physician.ldap.save", getTmpLdapPhysician().getPerson().getFullName()));
+
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		/**
+		 * Archvies or dearchvies physicians depending on the given parameters.
+		 *
+		 * @param physician
+		 * @param archive
+		 */
+		public void archivePhysician(Physician physician, boolean archive) {
+			try {
+				physician.setArchived(archive);
+				genericDAO.saveDataRollbackSave(physician,
+						resourceBundle.get(
+								archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
+								physician.getPerson().getFullName()));
+
+				updateData();
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+
+		/**
+		 * Clears the temporary variables and the the physician list to display
+		 */
+		public void discardTmpPhysician() {
+			setTmpPhysician(null);
+			setTmpLdapPhysician(null);
+			setPage(PhysicianSettingsPage.LIST);
+
+			updateData();
+		}
+
+		@Override
+		public String getCenterView() {
+			switch (getPage()) {
+			case EDIT:
+			case EDIT_EXTERN:
+				return "physician/physicianEdit.xhtml";
+			case ADD_EXTERN:
+				return "physician/physicianNewExtern.xhtml";
+			case ADD_LDAP:
+				return "physician/physicianNewLdap.xhtml";
+			default:
+				return "physician/physicianList.xhtml";
+			}
+		}
+
+	}
 
 	public enum FavouriteListPage {
 		LIST, EDIT;
@@ -1284,6 +1242,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private boolean newFavouriteList;
 
 		public FavouriteListTab() {
+			setTabName("FavouriteListTab");
 			setName("dialog.settings.favouriteList");
 			setViewID("favouriteLists");
 			setPage(FavouriteListPage.LIST);
@@ -1371,6 +1330,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private boolean newOrganization;
 
 		public OrganizationTab() {
+			setTabName("OrganizationTab");
 			setName("dialog.settings.organization");
 			setViewID("organizations");
 			setPage(OrganizationTabPage.LIST);
@@ -1438,16 +1398,16 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private int selectedLogPage;
 
 		private List<Log> logs;
-		
+
 		private int maxLogPages;
-		
+
 		public LogTab() {
+			setTabName("LogTab");
 			setName("dialog.settings.log");
 			setViewID("logs");
 
 			setLogsPerPull(50);
 			setSelectedLogPage(1);
-
 		}
 
 		@Override
@@ -1456,8 +1416,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 			int pagesCount = (int) Math.ceil((double) maxPages / logsPerPull);
 
 			setMaxLogPages(pagesCount);
-			
-			setLogs(logDAO.getLogs(getLogsPerPull(), getSelectedLogPage()-1));
+
+			setLogs(logDAO.getLogs(getLogsPerPull(), getSelectedLogPage() - 1));
 		}
 
 		@Override
@@ -1465,5 +1425,27 @@ public class SettingsDialogHandler extends AbstractDialog {
 			// TODO Auto-generated method stub
 			return "log/log.xhtml";
 		}
+	}
+
+	public class AdminTab extends AbstractSettingsTab {
+
+		public AdminTab() {
+			setTabName("AdminTab");
+			setName("dialog.settings.admin");
+			setViewID("admin");
+		}
+
+		@Override
+		public String getCenterView() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void updateData() {
+			// TODO Auto-generated method stub
+
+		}
+
 	}
 }

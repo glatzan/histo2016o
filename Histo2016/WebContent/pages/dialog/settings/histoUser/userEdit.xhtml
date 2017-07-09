@@ -14,7 +14,7 @@
 			styleClass="contentPannel" />
 
 		<histo:newPersonDataMask
-			person="#{settingsDialogHandler.getTab('HistUserTab').selectedUser.physician.person}"
+			person="#{settingsDialogHandler.getTab('HistoUserTab').selectedUser.physician.person}"
 			pannelID="userEditPhysician"
 			disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}" />
 
@@ -33,10 +33,10 @@
 
 				<p:selectCheckboxMenu updateLabel="true"
 					styleClass="customSelectCheckboxMenu"
-					value="#{settingsDialogHandler.getTab('HistUserTab').selectedUser.physician.associatedRolesAsArray}"
+					value="#{settingsDialogHandler.getTab('HistoUserTab').selectedUser.physician.associatedRolesAsArray}"
 					multiple="true">
 					<f:selectItems var="role"
-						value="#{settingsDialogHandler.getTab('HistUserTab').allRoles}"
+						value="#{settingsDialogHandler.getTab('HistoUserTab').allRoles}"
 						itemValue="#{role}"
 						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 				</p:selectCheckboxMenu>
@@ -61,16 +61,16 @@
 					styleClass="smallButton buttonRighMarginInList"
 					update=":adminForm:tabview:histoUser">
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('HistUserTab').saveHistoUser()}" />
+						binding="#{settingsDialogHandler.getTab('HistoUserTab').saveHistoUser()}" />
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('HistUserTab').discardHistoUser()}" />
+						binding="#{settingsDialogHandler.getTab('HistoUserTab').discardHistoUser()}" />
 				</p:commandButton>
 
 				<!-- abort -->
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.getTab('HistUserTab').discardHistoUser()}"
+					actionListener="#{settingsDialogHandler.getTab('HistoUserTab').discardHistoUser()}"
 					partialSubmit="true" process="@this"
 					update=":adminForm:tabview:histoUser" />
 

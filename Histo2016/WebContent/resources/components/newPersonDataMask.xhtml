@@ -174,7 +174,7 @@
 		<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 
 			<p:dataTable var="organization" style="width:90%;" scrollable="true"
-				scrollHeight="75" draggableRows="true"
+				id="organizationTab" scrollHeight="75" draggableRows="true"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 				value="#{cc.attrs.person.organizsations}">
 
@@ -206,14 +206,14 @@
 							<p:commandLink id="upload"
 								title="#{msg['component.personDataMask.organization.add']}"
 								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(cc.attrs.person)}">
-								<p:ajax event="dialogReturn" update="@form" />
+								<p:ajax event="dialogReturn" update="organizationTab" />
 								<i class="fa fa-plus" />
 							</p:commandLink>
 						</h:panelGrid>
 					</f:facet>
 					<p:commandLink
-						actionListener="#{settingsDialogHandler.removeOrganizationFromPerson(cc.attrs.person, organization)}"
-						update="@form"
+						actionListener="#{dialogHandlerAction.organizationListDialog.removeOrganizationFromPerson(cc.attrs.person, organization)}"
+						update="organizationTab"
 						title="#{msg['component.personDataMask.organization.remove']}">
 						<i class="fa fa-remove" style="margin-left: 8px" />
 					</p:commandLink>

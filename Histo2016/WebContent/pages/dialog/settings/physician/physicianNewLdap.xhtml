@@ -23,37 +23,26 @@
 
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 				<p:selectOneButton
-					value="#{settingsDialogHandler.physicianTabIndex}">
+					value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').page}">
 					<f:selectItem
 						itemLabel="#{msg['dialog.settings.person.new.external']}"
-						itemValue="P_ADD_EXTER" />
+						itemValue="ADD_EXTERN" />
 					<f:selectItem
 						itemLabel="#{msg['dialog.settings.person.new.employee']}"
-						itemValue="P_ADD_LDPA" />
-					<p:ajax update="@form"></p:ajax>
+						itemValue="ADD_LDAP" />
+					<p:ajax update=":adminForm:tabview:persons" partialSubmit="true"
+						process="@this"></p:ajax>
 				</p:selectOneButton>
 			</h:panelGrid>
 		</h:panelGrid>
 
 		<!-- Internal Physician (Employee, get data from LDAP)-->
-		<ui:fragment
-			rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_LDPA'}">
-			<histo:ldapPhysicianDataMask
-				physicianList="#{settingsDialogHandler.ldapPhysicianList}"
-				searchString="#{settingsDialogHandler.ldapPhysicianSearchString}"
-				performSearch="searchForPhysician"
-				performObject="#{settingsDialogHandler}"
-				selection="#{settingsDialogHandler.tmpLdapPhysician}"></histo:ldapPhysicianDataMask>
-		</ui:fragment>
-
-
-		<!-- External Physician -->
-		<ui:fragment
-			rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_EXTER'}">
-			<histo:newPersonDataMask
-				person="#{settingsDialogHandler.tmpPhysician.person}"
-				pannelID="editPhysician" disabled="false" />
-		</ui:fragment>
+		<histo:ldapPhysicianDataMask
+			physicianList="#{settingsDialogHandler.getTab('PhysicianSettingsTab').ldapPhysicianList}"
+			searchString="#{settingsDialogHandler.getTab('PhysicianSettingsTab').ldapPhysicianSearchString}"
+			performSearch="searchForPhysician"
+			performObject="#{settingsDialogHandler.getTab('PhysicianSettingsTab')}"
+			selection="#{settingsDialogHandler.getTab('PhysicianSettingsTab').tmpLdapPhysician}" />
 
 		<!-- Role -->
 		<h:panelGrid columns="3"
@@ -68,16 +57,14 @@
 				<h:outputLabel value="#{msg['dialog.settings.person.role']}" />
 				<p:selectCheckboxMenu updateLabel="true"
 					styleClass="customSelectCheckboxMenu"
-					value="#{settingsDialogHandler.tmpPhysician.associatedRolesAsArray}"
-					label="Cities" multiple="true"
-					converter="#{commonDataHandlerAction.associatedRolesTransformer}">
+					value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').tmpPhysician.associatedRolesAsArray}"
+					label="Cities" multiple="true">
 					<f:selectItems var="role"
-						value="#{commonDataHandlerAction.associatedRoles}"
+						value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').allRoles}"
 						itemValue="#{role}"
 						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 				</p:selectCheckboxMenu>
 			</h:panelGrid>
-
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumn30,">
@@ -92,31 +79,30 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="3" style="float:right;">
 
-				<!-- Button for creating a new external physician -->
-				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-fw fa-floppy-o"
-					styleClass="smallButton buttonRighMarginInList"
-					rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_EXTER'}"
-					actionListener="#{settingsDialogHandler.saveNewPrivatePhysician(settingsDialogHandler.tmpPhysician)}"
-					update="@form" />
-
 				<!-- Button for adding a physician from ldap -->
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-fw fa-floppy-o"
+					disabled="#{settingsDialogHandler.getTab('PhysicianSettingsTab').tmpLdapPhysician eq null}"
 					styleClass="smallButton buttonRighMarginInList"
-					rendered="#{settingsDialogHandler.physicianTabIndex eq 'P_ADD_LDPA'}"
-					actionListener="#{settingsDialogHandler.savePhysicianFromLdap(settingsDialogHandler.tmpLdapPhysician, settingsDialogHandler.tmpPhysician.associatedRoles)}"
-					update="@form" />
+					process=":adminForm:tabview:persons" partialSubmit="true"
+					update=":adminForm:tabview:persons">
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('PhysicianSettingsTab').savePhysicianFromLdap()}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.getTab('PhysicianSettingsTab').discardTmpPhysician()}" />
+				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.abort']}"
 					icon="fa fa-fw fa-times-circle"
-					actionListener="#{settingsDialogHandler.discardTmpPhysician()}"
-					update="@form" styleClass="smallButton buttonRighMarginInList" />
+					actionListener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').discardTmpPhysician()}"
+					partialSubmit="true" process="@this"
+					update=":adminForm:tabview:persons"
+					styleClass="smallButton buttonRighMarginInList" />
 
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}" />
+					icon="fa fa-times-circle" partialSubmit="true" process="@this"
+					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

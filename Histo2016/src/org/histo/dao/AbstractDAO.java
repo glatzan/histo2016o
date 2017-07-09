@@ -56,7 +56,7 @@ public abstract class AbstractDAO implements Serializable {
 		System.out.println("Second Level Miss Count=" + stats.getSecondLevelCacheMissCount());
 		System.out.println("Second Level Put Count=" + stats.getSecondLevelCachePutCount());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <C> C get(Class<C> clazz, Serializable serializable) {
 		return (C) getSession().get(clazz, serializable);
@@ -80,9 +80,7 @@ public abstract class AbstractDAO implements Serializable {
 		try {
 			if (resourcesKey != null) {
 				LogInfo logInfo = new LogInfo(resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);
-				SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO,
-						logInfo.getInfo() + " for "
-								+ (logInfo.getPatient() != null ? logInfo.getPatient().getPerson().getFullName() : ""));
+				SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
 			}
 			getSession().saveOrUpdate(object);
 			getSession().flush();
@@ -114,7 +112,8 @@ public abstract class AbstractDAO implements Serializable {
 			getSession().getTransaction().rollback();
 			getSession().beginTransaction();
 
-//			Class<? extends HasID> klass = (Class<? extends HasID>) object.getClass();
+			// Class<? extends HasID> klass = (Class<? extends HasID>)
+			// object.getClass();
 
 			throw new CustomDatabaseInconsistentVersionException(object);
 		} catch (HibernateException hibernateException) {

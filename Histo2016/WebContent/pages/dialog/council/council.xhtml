@@ -154,7 +154,7 @@
 								<p:commandLink title="#{msg['dialog.council.consultant.edit']}"
 									style="margin-left:10px;"
 									styleClass="noUnderlineAtLink icon-grey"
-									actionListener="#{settingsDialogHandler.prepareSettingsDialog('P_LIST')}">
+									actionListener="#{settingsDialogHandler.initAndPrepareBean('PhysicianSettingsTab')}">
 									<i class="fa fa-fw fa-cog icon-grey" />
 									<p:ajax event="dialogReturn" update="@form"
 										listener="#{councilDialogHandler.updatePhysicianLists()}" />
@@ -191,7 +191,7 @@
 								<!-- edit physician list -->
 								<p:commandLink title="#{msg['dialog.council.physician.edit']}"
 									style=" margin-left:10px;" styleClass="noUnderlineAtLink"
-									actionListener="#{settingsDialogHandler.prepareSettingsDialog('P_LIST')}">
+									actionListener="#{settingsDialogHandler.initAndPrepareBean('PhysicianSettingsTab')}">
 									<i class="fa fa-fw fa-cog icon-grey" />
 									<p:ajax event="dialogReturn" update="@form"
 										listener="#{councilDialogHandler.updatePhysicianLists()}" />

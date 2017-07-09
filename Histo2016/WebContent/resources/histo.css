@@ -248,6 +248,11 @@ ul.ui-menu-child {
 	padding: 2px 7px !important;
 }
 
+/* Kleines InputField */
+.smallSpinner.ui-inputfield {
+	padding: 2px 22px 2px 5px !important;
+}
+
 .smallCheckbox {
 	padding-top: 4px;
 	height: 16px !important;
@@ -355,6 +360,10 @@ ul.ui-menu-child {
 	width: 300px !important;
 }
 
+/* Overwrites chkbox for vertical middle align, used in settings dialog */
+.ui-chkbox {
+	vertical-align: 0px !important;
+}
 /*
 	######################################## Header ########################################
 */
@@ -422,7 +431,7 @@ ul.ui-menu-child {
 }
 
 /* hiding unnecessary header background*/
-.navigationDataTable .ui-datatable-scrollable-header{
+.navigationDataTable .ui-datatable-scrollable-header {
 	background: none !important;
 }
 
@@ -507,7 +516,7 @@ ul.ui-menu-child {
 }
 
 /* 	################# AddContectTable ################# */
-/* Settings für die Kontaktübersicht einer Aufgabe*/
+/* Settings fï¿½r die Kontaktï¿½bersicht einer Aufgabe*/
 .content .body .addedContactDataTable {
 	width: 350px;
 }
@@ -539,67 +548,67 @@ ul.ui-menu-child {
 
 /* ################# Stainings ################# */
 
-/* TabView für Diangosen und Objekträger */
+/* TabView fï¿½r Diangosen und Objektrï¿½ger */
 .content .body .tabView .ui-tabs-panel {
 	padding: 2px 0px;
 }
 
-/* Tabelle für Färbungen */
+/* Tabelle fï¿½r Fï¿½rbungen */
 .content .body .stainingTable {
 	width: 100%;
 	border-collapse: collapse !important;
 }
 
-/* BorderRadius für header Zeile in Färbungstabelle */
+/* BorderRadius fï¿½r header Zeile in Fï¿½rbungstabelle */
 .content .body .stainingTable thead tr:first-child td:first-child,
 	.content .body .stainingTable thead tr:first-child td:last-child {
 	border-radius: 3px;
 }
 
-/* Alle Ränder für die Färbungstabelle entfernen*/
+/* Alle Rï¿½nder fï¿½r die Fï¿½rbungstabelle entfernen*/
 .content .body .stainingTable  td, .content .body .stainingTable tr {
 	border-collapse: collapse !important;
 	border: none;
 }
 
-/* Größe des Auftragsfeldes */
+/* Grï¿½ï¿½e des Auftragsfeldes */
 .content .body .stainingTable .columnSample {
 	width: 15%;
 }
 
-/* Größe des Blockfeldes*/
+/* Grï¿½ï¿½e des Blockfeldes*/
 .content .body .stainingTable .columnBlock {
 	width: 15%;
 }
 
-/* Größe des Choosefeldes*/
+/* Grï¿½ï¿½e des Choosefeldes*/
 .content .body .stainingTable .columnChoose {
 	width: auto;
 	padding: 2px 5px;
 }
 
-/* Größe des Objektträgerfeldes*/
+/* Grï¿½ï¿½e des Objekttrï¿½gerfeldes*/
 .content .body .stainingTable .columnStainingID {
 	width: 25%;
 }
 
-/* Größe des Färbungsfeldes*/
+/* Grï¿½ï¿½e des Fï¿½rbungsfeldes*/
 .content .body .stainingTable .columnStaining {
 	width: 15%;
 }
 
-/* Größe des Statusfeldes*/
+/* Grï¿½ï¿½e des Statusfeldes*/
 .content .body .stainingTable .columnStatus {
 	width: 15%;
 	text-align: center;
 }
 
-/* Größe des Optionenfeldes*/
+/* Grï¿½ï¿½e des Optionenfeldes*/
 .content .body .stainingTable .columnOptions {
 	width: 12%;
 }
 
-/* Größe der inplaceInput Felder*/
+/* Grï¿½ï¿½e der inplaceInput Felder*/
 .content .body   .inplaceInput .ui-inputfield {
 	padding: 0px 0px 0px 5px;
 	width: 60% !important;
@@ -621,12 +630,12 @@ ul.ui-menu-child {
 	border-radius: 0px !important;
 }
 
-/* Alle Unterstriche bei links interhalb der Färbungstabelle entfernen*/
+/* Alle Unterstriche bei links interhalb der Fï¿½rbungstabelle entfernen*/
 .content .body .stainingTable a:-webkit-any-link {
 	text-decoration: none !important;
 }
 
-/* Hintergrundfarbe für gerade proben*/
+/* Hintergrundfarbe fï¿½r gerade proben*/
 .content .body .stainingTable .darkBackround {
 	background-color: #f9f9f9;
 }
@@ -829,12 +838,12 @@ ul.ui-menu-child {
 /*	################# Settings ################# */
 
 /*	################# Contact ################# */
-/* Layout für den ContactSelect Datatable */
+/* Layout fï¿½r den ContactSelect Datatable */
 .contactDataTable {
 	width: 100%;
 }
 
-/* UL für Auflistung der standardrolle*/
+/* UL fï¿½r Auflistung der standardrolle*/
 .contactDataTable .roleList {
 	padding-left: 20px !important;
 	margin: 0px !important;
@@ -931,27 +940,26 @@ ul.ui-menu-child {
 	padding: 0px;
 }
 
-.councilDialog .customCouncilTable td{
-	padding: 2px 0px 2px 0px !important;	
+.councilDialog .customCouncilTable td {
+	padding: 2px 0px 2px 0px !important;
 	background-color: inherit !important;
 }
 
 /*	################# council dialog ################# */
 
 /*	######################################## Dialog ######################################## */
-
 .truncate {
-    max-width: 160px;
-    width: 160 px\9;
+	max-width: 160px;
+	width: 160 px\9;
 }
 
-.truncate > div {
-    width: 160 px\9;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    display: block;
-    position: absolute;
+.truncate>div {
+	width: 160 px\9;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	-ms-text-overflow: ellipsis;
+	display: block;
+	position: absolute;
 }

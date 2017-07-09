@@ -7,12 +7,16 @@ import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.CustomAuthenticationProvider;
 import org.histo.config.SecurityContextHolderUtil;
 import org.histo.model.HistoUser;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.LogInfo;
+import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserDAO extends AbstractDAO implements Serializable {
 
-	private static Logger logger = Logger.getLogger("histo");
-
+	@SuppressWarnings("unchecked")
 	public List<HistoUser> loadAllUsers() {
-		Criteria c = getSession().createCriteria(HistoUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		return c.list();
+		DetachedCriteria query = DetachedCriteria.forClass(HistoUser.class);
+		query.addOrder(Order.asc("id"));
+		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return query.getExecutableCriteria(getSession()).list();
 	}
 
 	public HistoUser loadUserByName(String name) {
