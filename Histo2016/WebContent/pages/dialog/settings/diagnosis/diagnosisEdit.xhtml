@@ -52,6 +52,19 @@
 				<p:watermark for="diagnosisCommentary"
 					value="#{msg['dialog.settings.diagnosis.edit.commentary.watermark']}" />
 			</p:inputTextarea>
+
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.letter']}" />
+			<p:selectCheckboxMenu updateLabel="true"
+				styleClass="customSelectCheckboxMenu"
+				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.diagnosisReportAsLetterAsArray}"
+				multiple="true">
+				<f:selectItems var="role"
+					value="#{settingsDialogHandler.getTab('DiagnosisTab').allRoles}"
+					itemValue="#{role}"
+					itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+			</p:selectCheckboxMenu>
+			
 		</p:panelGrid>
 	</div>
 

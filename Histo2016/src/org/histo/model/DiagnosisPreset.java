@@ -1,6 +1,9 @@
 package org.histo.model;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -11,6 +14,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
@@ -51,7 +55,7 @@ public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, Ha
 	@Enumerated(EnumType.STRING)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
-	private List<ContactRole> diagnosisReportAsLetter;
+	private Set<ContactRole> diagnosisReportAsLetter;
 	
 	public DiagnosisPreset() {
 	}
@@ -76,7 +80,20 @@ public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, Ha
 		return (int)getId();
 	}
 	
-	
+	/**
+	 * Used for gui, can only handle arrays
+	 * 
+	 * @return
+	 */
+	@Transient
+	public ContactRole[] getDiagnosisReportAsLetterAsArray() {
+		return (ContactRole[]) getDiagnosisReportAsLetter().toArray(new ContactRole[getDiagnosisReportAsLetter().size()]);
+	}
+
+	public void setDiagnosisReportAsLetterAsArray(ContactRole[] diagnosisReportAsLetter) {
+		this.diagnosisReportAsLetter = new HashSet<>(Arrays.asList(diagnosisReportAsLetter));
+	}
+
 }
 
 
