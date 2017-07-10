@@ -99,7 +99,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	 * Transitory, if fetched from ldap this variable contains the dn objects
 	 * name.
 	 */
-	@Column(columnDefinition = "VARCHAR")
+	@Transient
 	private String dnObjectName;
 
 	/**
@@ -166,16 +166,6 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	/********************************************************
 	 * Transient
 	 ********************************************************/
-
-	@Transient
-	public String getDnObjectName() {
-		return dnObjectName;
-	}
-
-	public void setDnObjectName(String dnObjectName) {
-		this.dnObjectName = dnObjectName;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Physician && ((Physician) obj).getId() == getId())

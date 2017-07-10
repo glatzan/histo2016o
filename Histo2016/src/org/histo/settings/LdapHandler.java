@@ -79,13 +79,14 @@ public class LdapHandler implements GsonAble {
 				// check if uid is not a number, only people with a name as
 				// uid are active
 				Attribute attr = attrs.get("uid");
-				// printAllAttributes(attrs);
+//				printAllAttributes(attrs);
 				if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
 					Physician newPhysician = new Physician(new Person(new Contact()));
 					newPhysician.setUid(attr.get().toString());
 					newPhysician.setClinicEmployee(true);
 					newPhysician.setDnObjectName(result.getName());
 					newPhysician.setId(i);
+					initPhysicianFromLdapAttributes(newPhysician, attrs);
 					physicians.add(newPhysician);
 
 				}
@@ -107,7 +108,7 @@ public class LdapHandler implements GsonAble {
 	 */
 	public void initPhysicianFromLdapAttributes(Physician physician, Attributes attrs) {
 
-		logger.debug("Upadting physician data for " + physician.getUid() + " from ldap");
+//		logger.debug("Upadting physician data for " + physician.getUid() + " from ldap");
 
 		try {
 			// name surname title
@@ -165,10 +166,12 @@ public class LdapHandler implements GsonAble {
 			if (attr != null && attr.size() == 1) {
 				Organization org = null;
 				try {
+					logger.debug("Loading organization " + attr.get().toString() );
 					org = organizationDAO.getOrganizationByName(attr.get().toString());
 
 				} catch (IllegalStateException e) {
-					org = organizationDAO.createOrganization(attr.get().toString(), new Contact());
+					logger.debug("Organiation not found");
+					org = new Organization(attr.get().toString(), new Contact());
 				}
 
 				if (physician.getPerson().getOrganizsations() == null)

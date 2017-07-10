@@ -1,37 +1,57 @@
 package org.histo.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.histo.config.enums.ContactRole;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;
 
-import com.google.gson.annotations.Expose;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @SequenceGenerator(name = "diagnosisPreset_sequencegenerator", sequenceName = "diagnosisPreset_sequence")
+@Getter
+@Setter
 public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, HasID {
 
-	@Expose
+	@Id
+	@GeneratedValue(generator = "diagnosisPreset_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
-	@Expose
+	@Column(columnDefinition = "VARCHAR")
 	private String category;
-	@Expose
+	@Column(columnDefinition = "VARCHAR")
 	private String icd10;
-	@Expose
+	@Column(columnDefinition = "VARCHAR")
 	private boolean malign;
-	@Expose
+	@Column(columnDefinition = "text")
 	private String diagnosis;
-	@Expose
+	@Column(columnDefinition = "text")
 	private String extendedDiagnosisText;
-	@Expose
+	@Column(columnDefinition = "text")
 	private String commentary;
-	@Expose
+	@Column
 	private int indexInList;
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
+	private List<ContactRole> diagnosisReportAsLetter;
 	
 	public DiagnosisPreset() {
 	}
@@ -39,90 +59,6 @@ public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, Ha
 	public DiagnosisPreset(DiagnosisPreset diagnosisPreset) {
 		this.id = diagnosisPreset.getId();
 	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	@Id
-	@GeneratedValue(generator = "diagnosisPreset_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public String getIcd10() {
-		return icd10;
-	}
-
-	public void setIcd10(String icd10) {
-		this.icd10 = icd10;
-	}
-
-	public boolean isMalign() {
-		return malign;
-	}
-
-	public void setMalign(boolean malign) {
-		this.malign = malign;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getDiagnosis() {
-		return diagnosis;
-	}
-
-	public void setDiagnosis(String diagnosis) {
-		this.diagnosis = diagnosis;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getExtendedDiagnosisText() {
-		return extendedDiagnosisText;
-	}
-
-	public void setExtendedDiagnosisText(String extendedDiagnosisText) {
-		this.extendedDiagnosisText = extendedDiagnosisText;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getCommentary() {
-		return commentary;
-	}
-
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
-	}
-	
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	
-	/********************************************************
-	 * Interface ListOrder
-	 ********************************************************/
-	@Column
-	public int getIndexInList() {
-		return indexInList;
-	}
-
-	public void setIndexInList(int indexInList) {
-		this.indexInList = indexInList;
-	}
-	/********************************************************
-	 * Interface ListOrder
-	 ********************************************************/
 
 	@Override
 	public boolean equals(Object obj) {

@@ -184,4 +184,9 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	public String getPassword() {
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "HistoUser [id=" + id + ", username=" + username + "]";
+	}
 }

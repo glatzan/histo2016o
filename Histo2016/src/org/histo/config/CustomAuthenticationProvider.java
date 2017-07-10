@@ -11,6 +11,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Role;
 import org.histo.dao.UserDAO;
 import org.histo.model.HistoUser;
+import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.settings.LdapHandler;
@@ -61,7 +62,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
 					histoUser = new HistoUser(userName, Role.USER);
-				}else if(histoUser.getPhysician() == null){
+				} else if (histoUser.getPhysician() == null) {
 					histoUser.setPhysician(new Physician());
 					histoUser.getPhysician().setPerson(new Person());
 
@@ -81,7 +82,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			connection.openConnection();
 
 			Physician physician = connection.getPhyscican(userName);
-			
+
 			if (physician != null) {
 				String dn = physician.getDnObjectName() + "," + base + "," + suffix;
 
@@ -131,12 +132,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				connection.closeConnection();
 
 				histoUser.setLastLogin(System.currentTimeMillis());
-//
-//				userDAO.saveUser(histoUser.getPhysician().getPerson(), "Benutzerdaten geupdated");
-//
-//				userDAO.saveUser(histoUser.getPhysician(), "Benutzerdaten geupdated");
-//				
-				userDAO.saveUser(histoUser, "Benutzerdaten geupdated");
+
+				// saving new organizations
+				for (Organization organization : histoUser.getPhysician().getPerson().getOrganizsations()) {
+					if (organization.getId() == 0)
+						userDAO.save(organization, "log.organization.created",
+								new Object[] { organization.toString() });
+				}
+
+				userDAO.save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
 
 				Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
 

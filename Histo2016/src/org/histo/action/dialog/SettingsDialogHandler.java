@@ -213,8 +213,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	/**
-	 * Loads the current history for the given patient. Shows the current
-	 * history dialog.
+	 * Loads the current history for the given patient. Shows the current history
+	 * dialog.
 	 * 
 	 * @param patient
 	 */
@@ -285,8 +285,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * prepares an edit dialog for editing user data, only avaliable for
-		 * admins
+		 * prepares an edit dialog for editing user data, only avaliable for admins
 		 * 
 		 * @param physician
 		 */
@@ -497,8 +496,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private MaterialPreset editMaterial;
 
 		/**
-		 * List for selecting staining, this list contains all stainings. They
-		 * can be choosen and added to the material
+		 * List for selecting staining, this list contains all stainings. They can be
+		 * choosen and added to the material
 		 */
 		private List<ListChooser<StainingPrototype>> stainingListChooserForMaterial;
 
@@ -1020,8 +1019,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Shows the add external or ldap screen per default the ldap select
-		 * screnn is used.
+		 * Shows the add external or ldap screen per default the ldap select screnn is
+		 * used.
 		 */
 		public void prepareNewPhysician() {
 			setTmpPhysician(new Physician());
@@ -1042,8 +1041,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Opens the passed physician in the settingsDialog in order to edit the
-		 * phone number, email or faxnumber.
+		 * Opens the passed physician in the settingsDialog in order to edit the phone
+		 * number, email or faxnumber.
 		 *
 		 * @param associatedContact
 		 */
@@ -1058,10 +1057,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Generates an ldap search filter (?(xxx)....) and offers the result
-		 * list. The result list is a physician list with minimal details.
-		 * Before adding an clinic physician a ldap fetch for more details has
-		 * to be done
+		 * Generates an ldap search filter (?(xxx)....) and offers the result list. The
+		 * result list is a physician list with minimal details. Before adding an clinic
+		 * physician a ldap fetch for more details has to be done
 		 *
 		 * @param name
 		 */
@@ -1086,7 +1084,10 @@ public class SettingsDialogHandler extends AbstractDialog {
 				setLdapPhysicianList(connection.getListOfPhysicians(request.toString()));
 				connection.closeConnection();
 
-				setTmpLdapPhysician(null);
+				if (getLdapPhysicianList().size() == 1)
+					setTmpLdapPhysician(getLdapPhysicianList().get(0));
+				else
+					setTmpLdapPhysician(null);
 
 			} catch (NamingException | IOException e) {
 				setLdapPhysicianList(null);
@@ -1095,8 +1096,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Saves a physician to the database, if no role was selected
-		 * ContactRole.Other will be set per default.
+		 * Saves a physician to the database, if no role was selected ContactRole.Other
+		 * will be set per default.
 		 *
 		 * @param physician
 		 */
@@ -1125,6 +1126,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		public void savePhysicianFromLdap() {
 			try {
+
 				if (getTmpLdapPhysician() == null) {
 					return;
 				}
@@ -1138,6 +1140,15 @@ public class SettingsDialogHandler extends AbstractDialog {
 				else
 					getTmpLdapPhysician().setAssociatedRoles(getTmpPhysician().getAssociatedRoles());
 
+				// saving organisation if new
+				for (Organization organization : getTmpLdapPhysician().getPerson().getOrganizsations()) {
+					if (organization.getId() == 0) {
+						logger.debug("Organization " + organization.toString() + " not found, creating new one");
+						organizationDAO.save(organization, "log.organization.created",
+								new Object[] { organization.toString() });
+					}
+				}
+				
 				// the internal physician from ldap it might have been added
 				// before (if the the physician is a user of this program),
 				// search fur unique uid
@@ -1145,6 +1156,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 				// undating the foud physician
 				if (physicianFromDatabase != null) {
+					logger.debug("Physician found updating");
 					physicianFromDatabase.copyIntoObject(getTmpLdapPhysician());
 
 					physicianFromDatabase.setArchived(false);
@@ -1152,16 +1164,16 @@ public class SettingsDialogHandler extends AbstractDialog {
 					// overwriting roles
 					physicianFromDatabase.setAssociatedRoles(getTmpPhysician().getAssociatedRoles());
 
-					genericDAO.saveDataRollbackSave(physicianFromDatabase, resourceBundle.get(
+					physicianDAO.save(physicianFromDatabase, resourceBundle.get(
 							"log.settings.physician.ldap.update", getTmpLdapPhysician().getPerson().getFullName()));
 
 					setTmpPhysician(physicianFromDatabase);
-					discardTmpPhysician();
-					return;
-				}
 
-				genericDAO.saveDataRollbackSave(getTmpLdapPhysician(), resourceBundle
-						.get("log.settings.physician.ldap.save", getTmpLdapPhysician().getPerson().getFullName()));
+				} else {
+					logger.debug("Physician not found, creating new phyisician");
+					physicianDAO.save(getTmpLdapPhysician(), resourceBundle
+							.get("log.settings.physician.ldap.save", getTmpLdapPhysician().getPerson().getFullName()));
+				}
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();

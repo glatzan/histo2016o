@@ -4,15 +4,21 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence", allocationSize = 1)
+@SequenceGenerator(name = "contact_sequencegenerator", sequenceName = "contact_sequence")
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 @Getter
 @Setter
 @Audited

@@ -52,6 +52,11 @@ public class Organization implements HasID {
 		this.contact = contact;
 	}
 
+	public Organization(String name, Contact contact) {
+		this.name = name;
+		this.contact = contact;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 
@@ -60,4 +65,11 @@ public class Organization implements HasID {
 
 		return super.equals(obj);
 	}
+
+	@Override
+	public String toString() {
+		return "Organization [id=" + id + ", version=" + version + ", name=" + name + ", contact=" + contact + ", note="
+				+ note + ", persons=" + persons + ", intern=" + intern + "]";
+	}
+
 }
