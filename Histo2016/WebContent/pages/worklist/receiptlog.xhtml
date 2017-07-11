@@ -256,6 +256,10 @@
 							<h:outputLabel
 								value="#{msg['body.receiptlog.slide.headline.staining.id']}"></h:outputLabel>
 						</p:column>
+						<p:column styleClass="columnCommentary">
+							<h:outputLabel
+								value="#{msg['body.receiptlog.slide.headline.staining.commentary']}"></h:outputLabel>
+						</p:column>
 						<p:column styleClass="columnStaining">
 							<h:outputLabel
 								value="#{msg['body.receiptlog.slide.headline.staining.staining']}"></h:outputLabel>
@@ -303,18 +307,18 @@
 									<h:panelGrid columns="3">
 										<p:inputText value="#{stainingRow.sample.sampleID}"
 											id="sampleIDChangeTable#{inner.index}" />
-										
+
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
 											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,true)}"
 											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()" />
-										
+
 										<p:commandButton
 											value="#{msg['body.statiningView.idManuallyAltered.reset']}"
 											update="contentForm"
 											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,false)}"
 											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()" />
-											
+
 									</h:panelGrid>
 
 									<!-- reset on hide -->
@@ -427,6 +431,25 @@
 							</h:panelGroup>
 						</p:column>
 
+						<!-- staining commentary -->
+						<p:column
+							styleClass="columnCommentary #{stainingRow.even ? 'darkBackround' : ''}">
+
+							<h:outputLabel style="background:red; min-width:20px;"
+								value="#{stainingRow.staining.commentary}"
+								id="slideCommentary#{inner.index}" rendered="#{stainingRow.stainingType}">
+								<f:converter converterId="org.histo.ui.TruncateConverter" />
+								<f:attribute name="truncateAt" value="25" />
+								<f:attribute name="continuationMark" value="..." />
+							</h:outputLabel>
+
+							<p:overlayPanel for="slideCommentary#{inner.index}"
+								showEffect="fade" widgetVar="slideCommentary#{inner.index}"
+								hideEffect="fade" showEvent="click" hideEvent="click">
+								<h:outputText value="test"></h:outputText>
+							</p:overlayPanel>
+						</p:column>
+
 						<!-- Staining staining -->
 						<p:column
 							styleClass="columnStaining #{stainingRow.even ? 'darkBackround' : ''}">
@@ -471,14 +494,6 @@
 									<i class="fa fa-fw fa-th-list icon-orange"
 										title="#{msg['body.statiningView.status.restaining']}" />
 								</h:panelGroup>
-
-								<!-- ********** Info Button ********** -->
-								<p:commandLink id="info" type="button"
-									styleClass="noUnderlineAtLink"
-									title="#{stainingRow.staining.commentary}"
-									rendered="#{stainingRow.staining.commentary ne ''}">
-									<i class="fa fa-fw fa-info-circle" />
-								</p:commandLink>
 							</h:panelGroup>
 						</p:column>
 

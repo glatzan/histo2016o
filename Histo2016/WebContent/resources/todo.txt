@@ -2,14 +2,12 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
+TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
 TODO: Personen m�ssen auch den Organisationen hinzuge�gt werden
 TODO: standard organisation + konsilare von claudia übernehmen, 
-TODO: Bilder für Konsilanzeige einabauen
 TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werden
 TODO: Phasen + Phasen Buttons im Menu überprüfen
 TODO: Contact Dialog geht nicht
-TODO: Seach QUick add feld geht gerade nicht richtig
-TODO: Diagnosen müssen default brieffelder bekommen
 TODO: 2: erweiterte Suche / 
 TODO: 3:versionsfehler besser handlen, refresh der seite
 TODO: 6: Contact Dialog mit neuem view �berarbeiten
@@ -31,6 +29,9 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: Bilder für Konsilanzeige einabauen
+++++: Diagnosen müssen default brieffelder bekommen
+++++: Seach QUick add feld geht gerade nicht richtig
 ++++: Überprüfen ob organisationen beim ersten einloggen automatisch gestzt werden
 ++++: Versionkonflik beim löschen von organisationen
 ++++: Sort Optionen f�r worklist arbeitet nicht richtig / anzeige selected task verbessern

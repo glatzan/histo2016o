@@ -345,9 +345,9 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.createAlias("patient.person", "_person");
 
 		if (name != null && !name.isEmpty())
-			query.add(Restrictions.ilike("_person.lastname", name, MatchMode.ANYWHERE));
+			query.add(Restrictions.ilike("_person.lastName", name, MatchMode.ANYWHERE));
 		if (firstName != null && !firstName.isEmpty())
-			query.add(Restrictions.ilike("_person.firstname", firstName, MatchMode.ANYWHERE));
+			query.add(Restrictions.ilike("_person.firstName", firstName, MatchMode.ANYWHERE));
 		if (date != null)
 			query.add(Restrictions.eq("_person.birthday", date));
 		if (pizesToExclude != null && !pizesToExclude.isEmpty())

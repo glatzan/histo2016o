@@ -9,11 +9,12 @@ body {
 	width: 100%;
 }
 
-.defaultListingTableContainer>tbody>tr>td, .defaultListingTableContainer>tbody>tr
-	{
+.defaultListingTableContainer>tbody>tr>td, .defaultListingTableContainer>tbody>tr,
+	.defaultListingTableContainer>tbody, .defaultListingTableContainer {
 	padding: 0px !important;
 	border-collapse: collapse !important;
-	border: 0px !important
+	border: 0px !important;
+	border-spacing: 0px !important;
 }
 /* Default table containter, no padding at all*/
 
@@ -392,8 +393,8 @@ ul.ui-menu-child {
 
 /* Search field in search container */
 .navigation .searchContainer .seachFiled {
-	width: 93%;
-	margin: 3px 0px;
+	width: 95%;
+	margin: 3px 0px 3px 3px;
 }
 
 /*
@@ -589,12 +590,16 @@ ul.ui-menu-child {
 
 /* Gr��e des Objekttr�gerfeldes*/
 .content .body .stainingTable .columnStainingID {
-	width: 25%;
+	width: 10%;
+}
+
+.content .body .stainingTable .columnCommentary {
+	width: 23%;
 }
 
 /* Gr��e des F�rbungsfeldes*/
 .content .body .stainingTable .columnStaining {
-	width: 15%;
+	width: 7%;
 }
 
 /* Gr��e des Statusfeldes*/

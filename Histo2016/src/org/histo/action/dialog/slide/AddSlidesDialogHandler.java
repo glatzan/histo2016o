@@ -106,7 +106,6 @@ public class AddSlidesDialogHandler extends AbstractDialog {
 			}
 
 			if (!slideChoosen) {
-				hideDialog();
 				return;
 			}
 

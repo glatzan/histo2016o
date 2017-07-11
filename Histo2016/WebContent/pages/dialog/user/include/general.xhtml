@@ -91,6 +91,15 @@
 			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.worklistAutoUpdate}"
 				title="#{msg['dialog.userSettings.general.autoUpdate.text']}" />
+
+			<!-- auto update worklist -->
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.general.alternatePatientAddMode']}" />
+			<p:selectBooleanCheckbox
+				value="#{userSettingsDialog.user.alternatePatientAddMode}"
+				title="#{msg['dialog.userSettings.general.alternatePatientAddMode.text']}" />
+				
+				
 		</h:panelGrid>
 	</div>
 

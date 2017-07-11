@@ -14,7 +14,8 @@
       "worklistToLoad":"EMTY",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
-	  "hideNoneActiveTasks" : false
+	  "hideNoneActiveTasks" : false,
+	  "alternatePatientAddMode" : false
    },
    {
       "role":"MTA",
@@ -35,7 +36,8 @@
       "worklistToLoad":"STAINING_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
-	  "hideNoneActiveTasks" : false
+	  "hideNoneActiveTasks" : false,
+	  "alternatePatientAddMode" : true
    },
    {
       "role":"PHYSICIAN",
@@ -56,7 +58,8 @@
       "worklistToLoad":"DIAGNOSIS_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
-	  "hideNoneActiveTasks" : false
+	  "hideNoneActiveTasks" : false,
+	  "alternatePatientAddMode" : false
    },
    {
       "role":"MODERATOR",
@@ -77,7 +80,8 @@
       "worklistToLoad":"DIAGNOSIS_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
-	  "hideNoneActiveTasks" : false
+	  "hideNoneActiveTasks" : false,
+	  "alternatePatientAddMode" : false
    },
    {
       "role":"ADMIN",
@@ -98,7 +102,8 @@
       "worklistToLoad":"DIAGNOSIS_LIST",
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
-	  "hideNoneActiveTasks" : false
+	  "hideNoneActiveTasks" : false,
+	  "alternatePatientAddMode" : false
    }
 ]
 

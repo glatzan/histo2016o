@@ -76,7 +76,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	 */
 	@Column
 	private boolean autoSelectedPreferedPrinter;
-	
+
 	/**
 	 * Name of the preferred cups printer
 	 */
@@ -88,7 +88,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	 */
 	@Column
 	private boolean autoSelectedPreferedLabelPrinter;
-	
+
 	/**
 	 * The uuid of the preferred labelprinter
 	 */
@@ -101,7 +101,6 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	@Enumerated(EnumType.ORDINAL)
 	private View defaultView;
 
-
 	/**
 	 * Default worklist to load, staining, diagnosis, notification, none
 	 */
@@ -113,25 +112,32 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	 */
 	@Enumerated(EnumType.ORDINAL)
 	private WorklistSortOrder worklistSortOrder;
-	
+
 	/**
 	 * True the sort order is ascending, false the sortorder is descending
 	 */
 	@Column
 	private boolean worklistSortOrderAsc;
-	
+
 	/**
 	 * If true none active tasks in worklist will be hidden per default
 	 */
 	@Column
-	private boolean worklistHideNoneActiveTasks; 
-	
+	private boolean worklistHideNoneActiveTasks;
+
 	/**
 	 * True if autoupdate of the current worklist should be happening
 	 */
 	@Column
 	private boolean worklistAutoUpdate;
-	
+
+	/**
+	 * If true, a patient added viea quciksearch will be added to the worklist an
+	 * the create task dialog will be opend.
+	 */
+	@Column
+	private boolean alternatePatientAddMode;
+
 	/**
 	 * Constructor for Hibernate
 	 */
@@ -159,6 +165,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 
 	/**
 	 * Updates the user settings with predefined settings on role change
+	 * 
 	 * @param predefinedRoleSettings
 	 */
 	public void updateUserSettings(PredefinedRoleSettings predefinedRoleSettings) {
@@ -171,7 +178,6 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		setWorklistHideNoneActiveTasks(predefinedRoleSettings.isHideNoneActiveTasks());
 	}
 
-	
 	@Transient
 	public List<Role> getAuthorities() {
 		List<Role> result = new ArrayList<Role>();
