@@ -68,7 +68,6 @@ public abstract class AbstractDialog {
 	 * @throws CustomNotUniqueReqest
 	 */
 	public void hideDialog() {
-		System.out.println("hiding");
 		mainHandlerAction.hideDialog(dilaog);
 	}
 

@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 
-	<p:poll interval="10" update=":navigationForm"
+	<p:poll interval="10" update=":navigationForm" rendered="#{worklistViewHandlerAction.worklist.autoUpdate}"
 		stop="#{!worklistViewHandlerAction.worklist.autoUpdate}"
 		listener="#{worklistViewHandlerAction.updateCurrentWorklist()}" />
 
@@ -18,7 +18,9 @@
 		styleClass="searchContainer defaultListingTableContainer">
 
 		<h:panelGroup>
+			
 			<p:focus for="searchField" />
+		
 			<p:inputText placeholder="#{msg.headSearch}" id="searchField"
 				styleClass="seachFiled" value="#{searchHandlerAction.searchString}"
 				onkeyup="autoSumbitQuickSeach(event);"

@@ -590,11 +590,11 @@ ul.ui-menu-child {
 
 /* Gr��e des Objekttr�gerfeldes*/
 .content .body .stainingTable .columnStainingID {
-	width: 10%;
+	width: 13%;
 }
 
 .content .body .stainingTable .columnCommentary {
-	width: 23%;
+	width: 25%;
 }
 
 /* Gr��e des F�rbungsfeldes*/
@@ -604,7 +604,7 @@ ul.ui-menu-child {
 
 /* Gr��e des Statusfeldes*/
 .content .body .stainingTable .columnStatus {
-	width: 15%;
+	width: 10%;
 	text-align: center;
 }
 

@@ -130,7 +130,7 @@ public class MainHandlerAction {
 		logger.trace("Showing Dialog from queue called");
 		if (getQueueDialog() != null) {
 			logger.debug("Showing Dialog from queue: " + getQueueDialog());
-			RequestContext.getCurrentInstance().execute("showDialogFromFrontendByBean('" + getQueueDialog() + "')");
+			RequestContext.getCurrentInstance().execute("clickButtonFromBean('" + getQueueDialog() + "')");
 			setQueueDialog(null);
 		}
 	}

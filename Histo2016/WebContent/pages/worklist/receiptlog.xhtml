@@ -10,11 +10,8 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<c:set var="selectedTask"
-		value="#{commonDataHandlerAction.selectedTask}" />
-
 	<c:set var="taskEditable" scope="session"
-		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
+		value="#{taskStatusHandler.isTaskEditable(commonDataHandlerAction.selectedTask)}" />
 
 	<p:panel style="width: 60%"
 		styleClass="collapsedBorders noPadding noBorders">
@@ -34,10 +31,10 @@
 					styleClass="smallInput" disabled="#{!taskEditable}"
 					value="#{commonDataHandlerAction.selectedTask.dateOfReceiptAsDate}">
 					<p:ajax event="dateSelect"
-						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}"
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfReceiptAsDate))}"
 						update="receiptDate" />
 					<f:ajax event="change" execute="@this" render="receiptDate"
-						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfReceiptAsDate))}" />
 				</p:calendar>
 
 				<!-- Termin Date -->
@@ -49,7 +46,7 @@
 						value="#{commonDataHandlerAction.selectedTask.dueDateSelected}">
 						<p:ajax event="change" execute="@this"
 							update="navigationForm contentForm"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dueDate',selectedTask.dueDateSelected)}">
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.dueDate',commonDataHandlerAction.selectedTask.dueDateSelected)}">
 						</p:ajax>
 					</p:selectBooleanCheckbox>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
@@ -57,27 +54,27 @@
 						value="#{commonDataHandlerAction.selectedTask.dueDateAsDate}"
 						disabled="#{!commonDataHandlerAction.selectedTask.dueDateSelected or !taskEditable}">
 						<p:ajax event="dateSelect"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}"
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(commonDataHandlerAction.selectedTask.dueDateAsDate))}"
 							update="dueDate" />
 						<f:ajax event="change" execute="@this" render="dueDate"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(selectedTask.dueDateAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(commonDataHandlerAction.selectedTask.dueDateAsDate))}" />
 					</p:calendar>
 				</h:panelGrid>
 
 				<!-- ward -->
 				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
-				<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
+				<p:selectOneMenu id="wards" value="#{commonDataHandlerAction.selectedTask.ward}"
 					styleClass="smallInput" editable="true" disabled="#{!taskEditable}">
 					<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 					<p:ajax event="change" execute="@this"
-						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.ward', commonDataHandlerAction.selectedTask.ward)}" />
 				</p:selectOneMenu>
 
 				<!-- History -->
 				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				<p:selectOneMenu id="historyText" style="width: auto"
-					styleClass="smallInput" value="#{selectedTask.caseHistory}"
+					styleClass="smallInput" value="#{commonDataHandlerAction.selectedTask.caseHistory}"
 					disabled="#{!taskEditable}" editable="true">
 					<f:selectItem itemLabel="Select One"
 						itemValue="#{msg['body.diagnosis.story.watermark']}" />
@@ -86,7 +83,7 @@
 						itemLabel="#{item.value}" itemValue="#{item.value}" />
 
 					<p:ajax event="change" execute="@this"
-						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.caseHistory',commonDataHandlerAction.selectedTask.caseHistory)}" />
 				</p:selectOneMenu>
 
 				<!-- EYE -->
@@ -99,7 +96,7 @@
 						itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 					<p:ajax event="change" execute="@this"
-						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.eye')}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.eye',commonDataHandlerAction.selectedTask.eye)}" />
 				</p:selectOneMenu>
 
 				<!-- other -->
@@ -122,7 +119,7 @@
 				<p:outputLabel value="#{msg['body.receiptlog.material']}"
 					styleClass="big-text" />
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<c:forEach items="#{selectedTask.samples}" var="sample"
+					<c:forEach items="#{commonDataHandlerAction.selectedTask.samples}" var="sample"
 						varStatus="loopCount">
 
 						<h:panelGrid columns="3" styleClass="defaultListingTableContainer">
@@ -273,7 +270,7 @@
 								value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
 							<p:commandLink styleClass="noUnderlineAtLink"
 								id="quickTaskSettings"
-								actionListener="#{slideNamingDialog.initAndPrepareBean(selectedTask)}">
+								actionListener="#{slideNamingDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 								<i class="fa fa-wrench" />
 								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							</p:commandLink>
@@ -292,12 +289,16 @@
 							styleClass="columnSample #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.sampleType}">
 
-								<h:outputLabel id="sampleIDInput#{inner.index}"
-									value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.sample.sampleID}" />
+								<h:panelGroup id="sampleIDInput#{inner.index}" layout="block"
+									style="width: 90%; min-height:20px">
+									<h:outputLabel
+										value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.sample.sampleID}" />
 
-								<h:panelGroup rendered="#{stainingRow.sample.idManuallyAltered}">
-									<i class="fa fa-fw fa-chain"
-										title="#{msg['body.statiningView.idManuallyAltered']}" />
+									<h:panelGroup
+										rendered="#{stainingRow.sample.idManuallyAltered}">
+										<i class="fa fa-fw fa-chain"
+											title="#{msg['body.statiningView.idManuallyAltered']}" />
+									</h:panelGroup>
 								</h:panelGroup>
 
 								<p:overlayPanel for="sampleIDInput#{inner.index}"
@@ -335,13 +336,16 @@
 							styleClass="columnBlock #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.blockType}">
 
-								<h:outputLabel id="blockIDInput#{inner.index}"
-									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.block.blockID}" />
-								<h:panelGroup rendered="#{stainingRow.block.idManuallyAltered}">
-									<i class="fa fa-fw fa-chain"
-										title="#{msg['body.statiningView.idManuallyAltered']}" />
-								</h:panelGroup>
+								<h:panelGroup id="blockIDInput#{inner.index}" layout="block"
+									style="width: 90%; min-height:20px">
+									<h:outputLabel
+										value="#{msg['body.receiptlog.slide.block']} #{stainingRow.block.blockID}" />
+									<h:panelGroup rendered="#{stainingRow.block.idManuallyAltered}">
+										<i class="fa fa-fw fa-chain"
+											title="#{msg['body.statiningView.idManuallyAltered']}" />
+									</h:panelGroup>
 
+								</h:panelGroup>
 								<p:overlayPanel for="blockIDInput#{inner.index}"
 									onHide="blockIDChangeTableReset#{inner.index}()"
 									showEffect="fade" widgetVar="blockIDInputPannel#{inner.index}"
@@ -392,14 +396,17 @@
 							styleClass="columnStainingID #{stainingRow.even ? 'darkBackround' : ''}">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
 
-								<h:outputLabel id="slideIDInput#{inner.index}"
-									value="#{stainingRow.staining.slideID}" />
+								<h:panelGroup id="slideIDInput#{inner.index}" layout="block"
+									style="width: 90%; min-height:20px">
 
+									<h:outputLabel value="#{stainingRow.staining.slideID}" />
 
-								<h:panelGroup
-									rendered="#{stainingRow.staining.idManuallyAltered}">
-									<i class="fa fa-fw fa-chain"
-										title="#{msg['body.statiningView.idManuallyAltered']}" />
+									<h:panelGroup
+										rendered="#{stainingRow.staining.idManuallyAltered}">
+										<i class="fa fa-fw fa-chain"
+											title="#{msg['body.statiningView.idManuallyAltered']}" />
+									</h:panelGroup>
+
 								</h:panelGroup>
 
 								<p:overlayPanel for="slideIDInput#{inner.index}"
@@ -434,20 +441,36 @@
 						<!-- staining commentary -->
 						<p:column
 							styleClass="columnCommentary #{stainingRow.even ? 'darkBackround' : ''}">
+							<h:panelGroup rendered="#{stainingRow.stainingType}">
+								<h:panelGroup id="slideCommentary#{inner.index}" layout="block"
+									style="width: 90%; min-height:20px">
+									<h:outputLabel value="#{stainingRow.staining.commentary}">
+										<f:converter converterId="org.histo.ui.TruncateConverter" />
+										<f:attribute name="truncateAt" value="25" />
+										<f:attribute name="continuationMark" value="..." />
+									</h:outputLabel>
+								</h:panelGroup>
 
-							<h:outputLabel style="background:red; min-width:20px;"
-								value="#{stainingRow.staining.commentary}"
-								id="slideCommentary#{inner.index}" rendered="#{stainingRow.stainingType}">
-								<f:converter converterId="org.histo.ui.TruncateConverter" />
-								<f:attribute name="truncateAt" value="25" />
-								<f:attribute name="continuationMark" value="..." />
-							</h:outputLabel>
+								<p:overlayPanel for="slideCommentary#{inner.index}"
+									showEffect="fade" widgetVar="slideCommentary#{inner.index}"
+									hideEffect="fade" showEvent="click" hideEvent="click"
+									onHide="slideCommentaryTableReset#{inner.index}()">
+									<h:panelGrid columns="2">
+										<p:inputText value="#{stainingRow.staining.commentary}"
+											id="slideCommentaryInput#{inner.index}" />
+										<p:commandButton value="#{msg['general.save']}"
+											update="contentForm"
+											actionListener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.staining,'log.settings.staining.update')}"
+											oncomplete="PF('slideCommentary#{inner.index}').hide()"></p:commandButton>
+									</h:panelGrid>
 
-							<p:overlayPanel for="slideCommentary#{inner.index}"
-								showEffect="fade" widgetVar="slideCommentary#{inner.index}"
-								hideEffect="fade" showEvent="click" hideEvent="click">
-								<h:outputText value="test"></h:outputText>
-							</p:overlayPanel>
+									<!-- reset on hide -->
+									<p:remoteCommand name="slideCommentaryTableReset#{inner.index}"
+										process="@this" update="slideCommentaryInput#{inner.index}">
+										<p:resetInput target="slideCommentaryInput#{inner.index}" />
+									</p:remoteCommand>
+								</p:overlayPanel>
+							</h:panelGroup>
 						</p:column>
 
 						<!-- Staining staining -->

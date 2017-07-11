@@ -109,8 +109,6 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 					logger.debug("Database Version Conflict");
 
-					System.out.println(((CustomDatabaseInconsistentVersionException) cause).getOldVersion());
-
 					if (((CustomDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Patient) {
 						logger.debug("Version Error, replacing Patient");
 						worklistViewHandlerAction.replacePatientInCurrentWorklist(
@@ -129,14 +127,16 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					}
 					// navigationForm headerForm
 
-					// RequestContext.getCurrentInstance().update("@all");
-					ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-					try {
-						ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//					RequestContext.getCurrentInstance().update("@all");
+//					ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+//					try {
+//						ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+					
+					RequestContext.getCurrentInstance().execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
 
 					mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.version.error"),
 							resourceBundle.get("growl.version.error.text"));

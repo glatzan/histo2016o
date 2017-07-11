@@ -29,8 +29,7 @@
 		style="width:100%">
 		<h:panelGrid columns="4">
 
-			<p:selectBooleanCheckbox
-				value="" disabled="true" />
+			<p:selectBooleanCheckbox value="" disabled="true" />
 			<h:outputLabel value="#{msg['body.worklist.header.filter']}" />
 
 			<p:commandButton
@@ -56,7 +55,7 @@
 				update="navigationForm contentForm navigationForm"
 				actionListener="#{worklistViewHandlerAction.goToNavigation()}"
 				style="display:none" />
-				
+
 		</h:panelGrid>
 
 		<!-- Buttons on the right -->
@@ -479,10 +478,15 @@
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
+			<!-- update all -->
+			<p:commandButton id="updateAllContent" style="display:none"
+				update="navigationForm contentForm headerForm" />
+
+
 			<!-- Function for clicking on the dialogs -->
 			<script type="text/javascript">
 				// funktion is triggert by the backend to show a dialog, workaround
-				function showDialogFromFrontendByBean(btn) {
+				function clickButtonFromBean(btn) {
 					$(btn).click();
 				}
 			</script>

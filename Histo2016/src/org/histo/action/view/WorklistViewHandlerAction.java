@@ -60,11 +60,10 @@ public class WorklistViewHandlerAction {
 	@Lazy
 	private DiagnosisViewHandlerAction diagnosisViewHandlerAction;
 
-
 	@Autowired
 	@Lazy
 	private MainHandlerAction mainHandlerAction;
-	
+
 	/**
 	 * View
 	 */
@@ -239,10 +238,11 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void addWorklist(WorklistSearch worklistSearch, String name, boolean selected) {
-		addWorklist(new Worklist(name, worklistSearch,
-				userHandlerAction.getCurrentUser().isWorklistHideNoneActiveTasks(),
-				userHandlerAction.getCurrentUser().getWorklistSortOrder(),
-				userHandlerAction.getCurrentUser().isWorklistAutoUpdate()), selected);
+		addWorklist(
+				new Worklist(name, worklistSearch, userHandlerAction.getCurrentUser().isWorklistHideNoneActiveTasks(),
+						userHandlerAction.getCurrentUser().getWorklistSortOrder(),
+						userHandlerAction.getCurrentUser().isWorklistAutoUpdate()),
+				selected);
 	}
 
 	public void addWorklist(Worklist worklist, boolean selected) {
@@ -327,8 +327,8 @@ public class WorklistViewHandlerAction {
 		replacePatientInCurrentWorklist(task.getPatient());
 
 		logger.debug("Setting as active task and patient");
-		commonDataHandlerAction.setSelectedPatient(task.getPatient());
-		commonDataHandlerAction.setSelectedTask(task);
+
+		onSelectTaskAndPatient(task);
 	}
 
 	public void replacePatientInCurrentWorklist(long id) {
@@ -349,20 +349,16 @@ public class WorklistViewHandlerAction {
 	public void updateCurrentWorklist() {
 		logger.debug("Tasklist updated");
 
-		if (!isDialogContext()) {
-			getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
-		}else{
-			logger.debug("Do not update, Dialog is opend");
-		}
-		
+		getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
+
 		mainHandlerAction.sendGrowlMessages("test", "was");
-			
+
 		// TODO check if taks is used in dilaog
 
 	}
 
+	// TODO move
 	public static boolean isDialogContext() {
-		
 		return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap()
 				.containsKey(Constants.DIALOG_FRAMEWORK.CONVERSATION_PARAM);
 	}

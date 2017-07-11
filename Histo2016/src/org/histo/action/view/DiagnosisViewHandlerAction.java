@@ -196,6 +196,11 @@ public class DiagnosisViewHandlerAction {
 		}
 
 	}
+	
+	
+	public void onDataChange(PatientRollbackAble toSave, String resourcesKey) {
+		onDataChange(toSave, resourcesKey, new Object[0]);
+	}
 
 	public void onDataChange(PatientRollbackAble toSave, String resourcesKey, Object... arr) {
 		patientDao.savePatientAssociatedDataFailSave(toSave, toSave, resourcesKey, arr);
