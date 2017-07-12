@@ -2,6 +2,7 @@ UTF 8 Tomcat: -Dfile.encoding=UTF8
 
 Merke: keine kurzbefunde
 
+TODO: Versionfehler beim öffnen von dialogen handeln
 TODO: object für Arbeitsliste muss kopiert werden, wird momentan sofort übernommen
 TODO: Personen müssen auch den Organisationen hinzugeügt werden
 TODO: standard organisation + konsilare von claudia Ã¼bernehmen, 
@@ -9,7 +10,6 @@ TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werde
 TODO: Phasen + Phasen Buttons im Menu Ã¼berprÃ¼fen
 TODO: Contact Dialog geht nicht
 TODO: 2: erweiterte Suche / 
-TODO: 3:versionsfehler besser handlen, refresh der seite
 TODO: 6: Contact Dialog mit neuem view ï¿½berarbeiten
 TODO: 8: Liste fï¿½r normale benutzer ï¿½berarbeiten
 TODO: 9: Latex Datein
@@ -29,6 +29,7 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin ï¿½berarbeiten, methoden in generica dat shiften
 TODO: Konsile dï¿½rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: versionsfehler besser handlen, refresh der seite
 ++++: Bilder fÃ¼r Konsilanzeige einabauen
 ++++: Diagnosen mÃ¼ssen default brieffelder bekommen
 ++++: Seach QUick add feld geht gerade nicht richtig

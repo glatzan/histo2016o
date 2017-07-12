@@ -125,21 +125,15 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 								((Parent<?>) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion())
 										.getTask().getId());
 					}
-					// navigationForm headerForm
 
-//					RequestContext.getCurrentInstance().update("@all");
-//					ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-//					try {
-//						ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
-//					} catch (IOException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
+					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
+							resourceBundle.get("growl.version.error.text"));
+					
+					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
+							resourceBundle.get("growl.version.error.text"));
 					
 					RequestContext.getCurrentInstance().execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
 
-					mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.version.error"),
-							resourceBundle.get("growl.version.error.text"));
 					// TODO implement
 				}
 			}

@@ -3,13 +3,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
 
 <ui:composition>
-	<h:form>
-		<p:growl id="globalgrowl" showDetail="true" autoUpdate="true"
-			widgetVar="globalgrowl" globalOnly="true" for="globalgrowl" />
+	<h:form id="growlForm">
+		<p:growl id="globalgrowl" showDetail="true" widgetVar="globalgrowl"
+			for="globalgrowl" autoUpdate="true"/>
 
+<!-- 
+		<f:event type="preRenderView"
+			listener="#{mainHandlerAction.showQueueGrowlMessage()}" />-->
+		<!-- 
 		<p:socket onMessage="handleMessage" channel="/growl"
 			autoConnect="false" widgetVar='subscriber' />
 
@@ -22,7 +27,7 @@
 
 		<p:commandButton id="updateGrowl" style="display:none"
 			update="globalgrowl">
-		</p:commandButton>
+		</p:commandButton> -->
 	</h:form>
 </ui:composition>
 

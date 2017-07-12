@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -28,6 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Component
 @Scope(value = "session")
@@ -56,13 +60,19 @@ public class MainHandlerAction {
 	 * Navigation
 	 ********************************************************/
 
+	@Getter
+	@Setter
 	private String queueDialog;
 
-	private FacesMessage queueGrowlMessage;
+	@Getter
+	@Setter
+	private List<FacesMessage> queueGrowlMessages;
 
 	/**
 	 * Dynamic Texts which are used rarely are stroed here.
 	 */
+	@Getter
+	@Setter
 	private HistoSettings settings;
 
 	/**
@@ -84,8 +94,7 @@ public class MainHandlerAction {
 
 		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
 
-		test = FacesContext.getCurrentInstance();
-
+		setQueueGrowlMessages(new ArrayList<FacesMessage>());
 	}
 
 	/********************************************************
@@ -195,11 +204,15 @@ public class MainHandlerAction {
 	}
 
 	public void showQueueGrowlMessage() {
-		if (getQueueGrowlMessage() != null) {
+		System.out.println("Qusaf dfsdf");
+
+		for (FacesMessage facesMessage : getQueueGrowlMessages()) {
 			FacesContext context = FacesContext.getCurrentInstance();
-			context.addMessage("globalgrowl", getQueueGrowlMessage());
-			setQueueGrowlMessage(null);
+			context.addMessage("globalgrowl", facesMessage);
 		}
+
+		getQueueGrowlMessages().clear();
+
 	}
 
 	public void addQueueGrowlMessage(String headline, String message) {
@@ -207,7 +220,7 @@ public class MainHandlerAction {
 	}
 
 	public void addQueueGrowlMessage(String headline, String message, FacesMessage.Severity servertiy) {
-		setQueueGrowlMessage(new FacesMessage(servertiy, headline, message));
+		getQueueGrowlMessages().add(new FacesMessage(servertiy, headline, message));
 	}
 
 	/********************************************************
@@ -303,37 +316,5 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Save
 	 ********************************************************/
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	public String getQueueDialog() {
-		return queueDialog;
-	}
-
-	public void setQueueDialog(String queueDialog) {
-		this.queueDialog = queueDialog;
-	}
-
-	public HistoSettings getSettings() {
-		return settings;
-	}
-
-	public void setSettings(HistoSettings settings) {
-		this.settings = settings;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	public FacesMessage getQueueGrowlMessage() {
-		return queueGrowlMessage;
-	}
-
-	public void setQueueGrowlMessage(FacesMessage queueGrowlMessage) {
-		this.queueGrowlMessage = queueGrowlMessage;
-	}
 
 }

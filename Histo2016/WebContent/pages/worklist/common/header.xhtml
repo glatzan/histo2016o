@@ -478,9 +478,9 @@
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
-			<!-- update all -->
-			<p:commandButton id="updateAllContent" style="display:none"
-				update="navigationForm contentForm headerForm" />
+			<!-- update all --> 
+			<p:commandButton id="updateAllContent" style="display:none" actionListener="#{mainHandlerAction.showQueueGrowlMessage()}"
+				update="navigationForm contentForm headerForm growlForm:globalgrowl" />
 
 
 			<!-- Function for clicking on the dialogs -->
