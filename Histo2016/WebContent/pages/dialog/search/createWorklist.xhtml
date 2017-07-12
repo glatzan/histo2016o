@@ -15,7 +15,7 @@
 
 		<!-- Select -->
 		<p:selectOneRadio id="searchIndexRadio"
-			value="#{worklistSearchDialogHandler.worklistSearchBasic.searchIndex}"
+			value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchIndex}"
 			layout="custom">
 			<!-- 0 -->
 			<f:selectItem
@@ -70,7 +70,7 @@
 				itemValue="NOTIFICATION_LIST" />
 
 			<p:ajax update="@form"
-				listener="#{worklistSearchDialogHandler.worklistSearchBasic.updateSearchIndex()}"
+				listener="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.updateSearchIndex()}"
 				event="change" />
 		</p:selectOneRadio>
 
@@ -102,19 +102,19 @@
 					value="#{msg['dialog.worklistsearch.staininglist.lists']}" />
 
 				<p:selectCheckboxMenu updateLabel="true"
-					disabled="#{worklistSearchDialogHandler.worklistSearchBasic.searchForLists}"
+					disabled="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchForLists}"
 					styleClass="customSelectCheckboxMenu"
-					value="#{worklistSearchDialogHandler.worklistSearchBasic.selectedLists}"
+					value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.selectedLists}"
 					label="Cities" multiple="true">
 					<f:selectItems var="list"
-						value="#{worklistSearchDialogHandler.worklistSearchBasic.lists}"
+						value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.lists}"
 						itemValue="#{list}" itemLabel="#{list}" />
 				</p:selectCheckboxMenu>
 
 				<h:outputLabel
 					value="#{msg['dialog.worklistsearch.staininglist.new']}" />
 				<p:selectBooleanCheckbox
-					value="#{worklistSearchDialogHandler.worklistSearchBasic.newPatients}" />
+					value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.newPatients}" />
 
 			</p:panelGrid>
 
@@ -157,10 +157,10 @@
 						<h:outputLabel for="opt8" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.date.day']}" />
 						<p:calendar
-							value="#{worklistSearchDialogHandler.worklistSearchBasic.day}"
+							value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.day}"
 							styleClass="smallFont smallInput" locale="de" navigator="true"
 							pattern="dd.MM.yyyy" mask="true"
-							disabled="#{worklistSearchDialogHandler.worklistSearchBasic.searchIndex != 'DAY'}" />
+							disabled="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchIndex != 'DAY'}" />
 					</h:panelGrid>
 
 					<!-- Month -->
@@ -171,8 +171,8 @@
 
 						<p:selectOneMenu id="month_pick" style="width:125px"
 							styleClass="smallFont smallInput"
-							value="#{worklistSearchDialogHandler.worklistSearchBasic.searchMonth}"
-							disabled="#{worklistSearchDialogHandler.worklistSearchBasic.searchIndex != 'MONTH'}">
+							value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchMonth}"
+							disabled="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchIndex != 'MONTH'}">
 
 							<f:selectItems value="#{enumProvider.month}" var="month"
 								itemValue="#{month}"
@@ -181,10 +181,10 @@
 
 						<p:selectOneMenu id="year_pick" style="width:125px"
 							styleClass="smallFont smallInput"
-							value="#{worklistSearchDialogHandler.worklistSearchBasic.year}"
-							disabled="#{worklistSearchDialogHandler.worklistSearchBasic.searchIndex != 'MONTH'}">
+							value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.year}"
+							disabled="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchIndex != 'MONTH'}">
 							<f:selectItems
-								value="#{worklistSearchDialogHandler.worklistSearchBasic.years}" />
+								value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.years}" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 
@@ -196,15 +196,15 @@
 						<h:outputLabel styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.date.timespan.from']}" />
 						<p:calendar styleClass="smallFont smallInput smallCalendarInput"
-							value="#{worklistSearchDialogHandler.worklistSearchBasic.searchFrom}"
-							disabled="#{worklistSearchDialogHandler.worklistSearchBasic.searchIndex != 'TIME'}"
+							value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchFrom}"
+							disabled="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchIndex != 'TIME'}"
 							locale="de" navigator="true" pattern="dd.MM.yyyy" mask="true" />
 						<h:outputLabel styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.date.timespan.to']}" />
 						<p:calendar
-							value="#{worklistSearchDialogHandler.worklistSearchBasic.searchTo}"
+							value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchTo}"
 							locale="de" styleClass="smallFont smallInput smallCalendarInput"
-							disabled="#{worklistSearchDialogHandler.worklistSearchBasic.searchIndex != 'TIME'}"
+							disabled="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchIndex != 'TIME'}"
 							navigator="true" pattern="dd.MM.yyyy" mask="true" />
 					</h:panelGrid>
 				</h:panelGrid>
@@ -212,7 +212,7 @@
 				<!-- Filter -->
 
 				<p:selectOneRadio id="filterIndexRadio"
-					value="#{worklistSearchDialogHandler.worklistSearchBasic.filterIndex}"
+					value="#{dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.filterIndex}"
 					layout="custom">
 					<f:selectItem
 						itemLabel="#{msg['dialog.worklistsearch.filter.patient']}"
@@ -235,25 +235,25 @@
 					<h:panelGrid columns="10" cellpadding="5">
 						<!-- Patient added -->
 						<p:radioButton id="filter0" for="filterIndexRadio" itemIndex="0"
-							disabled="#{!worklistSearchDialogHandler.worklistSearchBasic.searchForLists}" />
+							disabled="#{!dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchForLists}" />
 						<h:outputLabel for="filter0" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.patient']}" />
 
 						<!-- Task created -->
 						<p:radioButton id="filter1" for="filterIndexRadio" itemIndex="1"
-							disabled="#{!worklistSearchDialogHandler.worklistSearchBasic.searchForLists}" />
+							disabled="#{!dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchForLists}" />
 						<h:outputLabel for="filter1" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.task']}" />
 
 						<!-- Staining -->
 						<p:radioButton id="filter2" for="filterIndexRadio" itemIndex="2"
-							disabled="#{!worklistSearchDialogHandler.worklistSearchBasic.searchForLists}" />
+							disabled="#{!dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchForLists}" />
 						<h:outputLabel for="filter2" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.staining']}" />
 
 						<!-- Diagnosis -->
 						<p:radioButton id="filter3" for="filterIndexRadio" itemIndex="3"
-							disabled="#{!worklistSearchDialogHandler.worklistSearchBasic.searchForLists}" />
+							disabled="#{!dialogHandlerAction.worklistSearchDialog.worklistSearchBasic.searchForLists}" />
 						<h:outputLabel for="filter3" styleClass="smallFont"
 							value="#{msg['dialog.worklistsearch.filter.diagnosis']}" />
 					</h:panelGrid>
@@ -269,12 +269,12 @@
 				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
 					process="@form">
 					<f:actionListener
-						binding="#{worklistViewHandlerAction.addWorklist(worklistSearchDialogHandler.worklistSearchBasic,'Default',true)}" />
+						binding="#{worklistViewHandlerAction.addWorklist(dialogHandlerAction.worklistSearchDialog.worklistSearchBasic,'Default',true)}" />
 					<f:actionListener
-						binding="#{worklistSearchDialogHandler.hideDialog()}" />
+						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
 				</p:commandButton>
 				<p:commandButton value="#{msg['general.abort']}"
-					actionListener="#{worklistSearchDialogHandler.hideDialog()}"
+					actionListener="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}"
 					style="margin-left:20px;"></p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>

@@ -21,24 +21,24 @@
 			<h:outputLabel value="Person" />
 			<p:outputLabel value="Name" />
 			<p:inputText
-				value="#{worklistSearchDialogHandler.extendedSearchData.name}" />
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.name}" />
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="G. Datum" />
 			<p:calendar
-				value="#{worklistSearchDialogHandler.extendedSearchData.birthday}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.birthday}"
 				locale="de" styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="Vorname" />
 			<p:inputText
-				value="#{worklistSearchDialogHandler.extendedSearchData.surename}" />
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.surename}" />
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="Geschlecht" />
 			<p:selectOneMenu style="width:100px" name="sex" autocomplete="sex"
-				value="#{worklistSearchDialogHandler.extendedSearchData.gender}">
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.gender}">
 				<f:selectItem
 					itemLabel="#{msg['component.personDataMask.gender.select']}"
 					itemValue="UNKNOWN" />
@@ -53,8 +53,8 @@
 			<h:outputLabel value="Auftrag" />
 			<p:outputLabel value="Präparat" />
 			<p:selectOneMenu editable="true" autoWidth="false"
-				value="#{worklistSearchDialogHandler.extendedSearchData.material}">
-				<f:selectItems value="#{worklistSearchDialogHandler.materials}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.material}">
+				<f:selectItems value="#{dialogHandlerAction.worklistSearchDialog.materials}"
 					var="material" itemLabel="#{material.name}"
 					itemValue="#{material.name}" />
 			</p:selectOneMenu>
@@ -62,8 +62,8 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Operateur" />
 			<p:selectOneMenu editable="true" autoWidth="false"
-				value="#{worklistSearchDialogHandler.extendedSearchData.surgeon}">
-				<f:selectItems value="#{worklistSearchDialogHandler.surgeons}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.surgeon}">
+				<f:selectItems value="#{dialogHandlerAction.worklistSearchDialog.surgeons}"
 					var="physician" itemLabel="#{physician.person.fullName}"
 					itemValue="#{physician.person.fullName}" />
 			</p:selectOneMenu>
@@ -71,9 +71,9 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Vorgeschichte" />
 			<p:selectOneMenu editable="true" autoWidth="false"
-				value="#{worklistSearchDialogHandler.extendedSearchData.caseHistory}">
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.caseHistory}">
 				<f:selectItems
-					value="#{worklistSearchDialogHandler.caseHistoryList}"
+					value="#{dialogHandlerAction.worklistSearchDialog.caseHistoryList}"
 					var="caseHistory" itemLabel="#{caseHistory.value}"
 					itemValue="#{caseHistory.value}" />
 			</p:selectOneMenu>
@@ -81,9 +81,9 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Augenarzt" />
 			<p:selectOneMenu editable="true" autoWidth="false"
-				value="#{worklistSearchDialogHandler.extendedSearchData.privatePhysician}">
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.privatePhysician}">
 				<f:selectItems
-					value="#{worklistSearchDialogHandler.privatePhysicians}"
+					value="#{dialogHandlerAction.worklistSearchDialog.privatePhysicians}"
 					var="physician" itemLabel="#{physician.person.fullName}"
 					itemValue="#{physician.person.fullName}" />
 			</p:selectOneMenu>
@@ -91,8 +91,8 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Unterschrift" />
 			<p:selectOneMenu editable="true" autoWidth="false"
-				value="#{worklistSearchDialogHandler.extendedSearchData.siganture}">
-				<f:selectItems value="#{worklistSearchDialogHandler.sigantures}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.siganture}">
+				<f:selectItems value="#{dialogHandlerAction.worklistSearchDialog.sigantures}"
 					var="physician" itemLabel="#{physician.person.fullName}"
 					itemValue="#{physician.person.fullName}" />
 			</p:selectOneMenu>
@@ -100,7 +100,7 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Auge" />
 			<p:selectOneMenu autoWidth="false"
-				value="#{worklistSearchDialogHandler.extendedSearchData.eye}">
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.eye}">
 				<f:selectItems value="#{enumProvider.eyes}" var="eye"
 					itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 			</p:selectOneMenu>
@@ -108,70 +108,70 @@
 			<h:outputLabel value="Daten" />
 			<p:outputLabel value="Patienten hinzugefügt" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.patientAdded}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.patientAdded}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<h:outputLabel value="bis" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.patientAddedTo}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.patientAddedTo}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="Auftrag erstellt" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.taskCreated}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.taskCreated}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<h:outputLabel value="bis" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.taskCreatedTo}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.taskCreatedTo}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="Gefärbt" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.stainingCompleted}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.stainingCompleted}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<h:outputLabel value="bis" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.stainingCompletedTo}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.stainingCompletedTo}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="Befundet" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.diagnosisCompleted}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.diagnosisCompleted}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<h:outputLabel value="bis" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.diagnosisCompletedTo}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.diagnosisCompletedTo}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<p:outputLabel value="Eingangsdatum" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.dateOfReceipt}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.dateOfReceipt}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<h:outputLabel value="bis" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.dateOfReceiptTo}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.dateOfReceiptTo}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
@@ -179,22 +179,22 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Entnahmedatum" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.dateOfSurgery}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.dateOfSurgery}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<p:outputLabel value="" />
 			<h:outputLabel value="bis" />
 			<p:calendar locale="de"
-				value="#{worklistSearchDialogHandler.extendedSearchData.dateOfSurgeryTo}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.dateOfSurgeryTo}"
 				styleClass="smallCalendarInput" navigator="true"
 				pattern="dd.MM.yyyy" mask="true" />
 
 			<h:outputLabel value="Diagnose" />
 			<p:outputLabel value="Diangose" />
 			<p:selectOneMenu editable="true" autoWidth="false"
-				value="#{worklistSearchDialogHandler.extendedSearchData.diagnosis}">
-				<f:selectItems value="#{worklistSearchDialogHandler.diagnoses}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.diagnosis}">
+				<f:selectItems value="#{dialogHandlerAction.worklistSearchDialog.diagnoses}"
 					var="diagnosis" itemLabel="#{diagnosis.diagnosis}"
 					itemValue="#{diagnosis.diagnosis}" />
 			</p:selectOneMenu>
@@ -202,8 +202,8 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Kategorie" />
 			<p:selectOneMenu editable="true" autoWidth="false" disabled="true"
-				value="#{worklistSearchDialogHandler.extendedSearchData.diagnosis}">
-				<f:selectItems value="#{worklistSearchDialogHandler.diagnoses}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.diagnosis}">
+				<f:selectItems value="#{dialogHandlerAction.worklistSearchDialog.diagnoses}"
 					var="diagnosis" itemLabel="#{diagnosis.category}"
 					itemValue="#{diagnosis.category}" />
 			</p:selectOneMenu>
@@ -211,7 +211,7 @@
 			<p:outputLabel value="" />
 			<p:outputLabel value="Maligne" />
 			<p:triStateCheckbox
-				value="#{worklistSearchDialogHandler.extendedSearchData.malign}" />
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchData.malign}" />
 
 		</h:panelGrid>
 
@@ -224,12 +224,12 @@
 				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
 					process="@form">
 					<f:actionListener
-						binding="#{worklistViewHandlerAction.addWorklist(worklistSearchDialogHandler.extendedSearch(),true)}" />
+						binding="#{worklistViewHandlerAction.addWorklist(dialogHandlerAction.worklistSearchDialog.extendedSearch(),true)}" />
 					<f:actionListener
-						binding="#{worklistSearchDialogHandler.hideDialog()}" />
+						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
 				</p:commandButton>
 				<p:commandButton value="#{msg['general.abort']}"
-					actionListener="#{worklistSearchDialogHandler.hideDialog()}"
+					actionListener="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}"
 					style="margin-left:20px;"></p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>

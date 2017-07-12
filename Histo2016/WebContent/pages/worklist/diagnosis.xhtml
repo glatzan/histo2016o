@@ -145,8 +145,8 @@
 						<f:selectItem
 							itemLabel="#{msg['body.diagnosis.insurance.normal']}"
 							itemValue="#{true}" />
-						<p:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.insurance', commonDataHandlerAction.selectedPatient.privateInsurance)}" />
+						<p:ajax event="change"
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedPatient,'log.patient.task.change.insurance', commonDataHandlerAction.selectedPatient.privateInsurance)}" />
 					</p:selectOneButton>
 
 					<!-- ward -->

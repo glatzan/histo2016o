@@ -8,9 +8,9 @@ import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.CommonDataHandlerAction;
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.WorklistSearchDialogHandler;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -50,7 +50,7 @@ public class WorklistViewHandlerAction {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private WorklistSearchDialogHandler worklistSearchDialogHandler;
+	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
 	@Lazy
@@ -99,17 +99,18 @@ public class WorklistViewHandlerAction {
 		worklists = new ArrayList<Worklist>();
 
 		// preparing worklistSearchDialog for creating a worklist
-		worklistSearchDialogHandler.initBean();
+		dialogHandlerAction.getWorklistSearchDialog().initBean();
 
 		setCurrentView(View.WORKLIST_TASKS);
 
 		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getWorklistToLoad();
 
 		if (defaultWorklistToLoad != null) {
-			worklistSearchDialogHandler.getWorklistSearchBasic().setSearchIndex(defaultWorklistToLoad);
-			worklistSearchDialogHandler.getWorklistSearchBasic().updateSearchIndex();
+			dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic()
+					.setSearchIndex(defaultWorklistToLoad);
+			dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic().updateSearchIndex();
 
-			addWorklist(new Worklist("Default", worklistSearchDialogHandler.getWorklistSearchBasic(),
+			addWorklist(new Worklist("Default", dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic(),
 					userHandlerAction.getCurrentUser().isWorklistHideNoneActiveTasks(),
 					userHandlerAction.getCurrentUser().getWorklistSortOrder(),
 					userHandlerAction.getCurrentUser().isWorklistAutoUpdate()), true);
@@ -347,14 +348,10 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void updateCurrentWorklist() {
-		logger.debug("Tasklist updated");
-
-		getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
-
-		mainHandlerAction.sendGrowlMessages("test", "was");
-
-		// TODO check if taks is used in dilaog
-
+		if (getWorklist().isAutoUpdate()) {
+			logger.debug("Auto updating worklist");
+			getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
+		}
 	}
 
 	// TODO move

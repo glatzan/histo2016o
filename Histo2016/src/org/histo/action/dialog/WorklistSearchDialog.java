@@ -19,15 +19,15 @@ import org.histo.model.patient.Patient;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearchBasic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Component
-@Scope(value = "session")
-public class WorklistSearchDialogHandler extends AbstractDialog {
+@Configurable
+public class WorklistSearchDialog extends AbstractDialog {
 
 	@Autowired
 	private PatientDao patientDao;

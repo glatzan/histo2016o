@@ -1,5 +1,9 @@
-[  
-	{  
+[ {  
+      "version":"1.0.5",
+      "changes":[  
+         "<b>Fix:</b> Viel Bug-Fixes, interne Verbesserungen"
+       ]
+   },{  
       "version":"1.0.3",
       "changes":[  
        	 "<b>Change:</b> Patienten hizufügen funktioniert jetzt mit Barcode-Scanner",

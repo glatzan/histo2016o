@@ -76,6 +76,13 @@ public class Worklist {
 	@Setter
 	@Getter
 	private WorklistSearch worklistSearch;
+	
+	/**
+	 * Update interval if enabled in sec
+	 */
+	@Setter
+	@Getter
+	private int udpateInterval = 10;
 
 	public Worklist(String name, WorklistSearch worklistSearch) {
 		this(name, worklistSearch, true, WorklistSortOrder.TASK_ID, false);

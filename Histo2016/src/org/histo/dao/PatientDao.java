@@ -12,7 +12,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.histo.action.dialog.WorklistSearchDialogHandler.ExtendedSearchData;
+import org.histo.action.dialog.WorklistSearchDialog.ExtendedSearchData;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.WorklistSearchFilter;

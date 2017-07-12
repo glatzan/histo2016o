@@ -9,7 +9,9 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 
-	<p:poll interval="10" update=":navigationForm" rendered="#{worklistViewHandlerAction.worklist.autoUpdate}"
+	<p:poll interval="#{worklistViewHandlerAction.worklist.udpateInterval}"
+		update=":navigationForm"
+		rendered="#{worklistViewHandlerAction.worklist.autoUpdate}"
 		stop="#{!worklistViewHandlerAction.worklist.autoUpdate}"
 		listener="#{worklistViewHandlerAction.updateCurrentWorklist()}" />
 
@@ -18,9 +20,9 @@
 		styleClass="searchContainer defaultListingTableContainer">
 
 		<h:panelGroup>
-			
+
 			<p:focus for="searchField" />
-		
+
 			<p:inputText placeholder="#{msg.headSearch}" id="searchField"
 				styleClass="seachFiled" value="#{searchHandlerAction.searchString}"
 				onkeyup="autoSumbitQuickSeach(event);"
@@ -116,7 +118,7 @@
 						<!-- Worklist change -->
 						<p:commandLink
 							title="#{msg['body.worklist.navigation.button.changelist']}"
-							actionListener="#{worklistSearchDialogHandler.initAndPrepareBean()}">
+							actionListener="#{dialogHandlerAction.worklistSearchDialog.initAndPrepareBean()}">
 							<i class="fa fa-search"></i>
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -179,11 +181,10 @@
 
 								<!-- staining needed -->
 								<h:panelGroup>
-
+									<!--  
 									<ui:fragment rendered="#{task.active}">
 										<i style="margin-left: 5px;" class="fa fa-ship icon-purple" />
-									</ui:fragment>
-
+									</ui:fragment>-->
 
 									<!-- staining needed = green -->
 									<ui:fragment
