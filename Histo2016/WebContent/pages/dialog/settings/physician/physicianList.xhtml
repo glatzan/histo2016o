@@ -25,6 +25,7 @@
 
 			<!-- Name -->
 			<p:column sortBy="#{physician.person.lastName}"
+				filterBy="#{physician.person.lastName}" filterMatchMode="contains"
 				headerText="#{msg['dialog.settings.person.list.name']}"
 				style="width:20%">
 				<h:outputText value="#{physician.person.lastName}" />

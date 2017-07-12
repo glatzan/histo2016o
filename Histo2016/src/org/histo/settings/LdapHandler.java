@@ -172,6 +172,7 @@ public class LdapHandler implements GsonAble {
 				} catch (IllegalStateException e) {
 					logger.debug("Organiation not found");
 					org = new Organization(attr.get().toString(), new Contact());
+					org.setIntern(true);
 				}
 
 				if (physician.getPerson().getOrganizsations() == null)

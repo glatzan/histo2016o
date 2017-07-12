@@ -129,9 +129,6 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
 							resourceBundle.get("growl.version.error.text"));
 					
-					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
-							resourceBundle.get("growl.version.error.text"));
-					
 					RequestContext.getCurrentInstance().execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
 
 					// TODO implement
