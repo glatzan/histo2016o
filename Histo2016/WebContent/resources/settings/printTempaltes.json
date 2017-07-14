@@ -36,7 +36,7 @@
 {
 	"id" : 50,
 	"name" : "Konsil",
-	"file" : "classpath:templates/print/Report_Intern.tex",
+	"file" : "classpath:templates/print/council.tex",
 	"file2" : "",
 	"documentType"	: "COUNCIL_REQUEST",
 	"defaultDocument" : true,

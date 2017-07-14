@@ -6,38 +6,6 @@ import java.util.Map;
 public class HistoUtil {
 
 	/**
-	 * Reads a file form the passed path.
-	 * 
-	 * @param path
-	 * @return
-	 */
-//	public static final String loadTextFile(String path) {
-//
-//		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
-//
-//		Resource resource = appContext.getResource(path);
-//
-//		StringBuffer result = new StringBuffer();
-//
-//		try {
-//			InputStream is = resource.getInputStream();
-//			BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-//
-//			String line;
-//			while ((line = br.readLine()) != null) {
-//				result.append(line);
-//			}
-//			br.close();
-//			appContext.close();
-//
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//		return result.toString();
-//	}
-
-	/**
 	 * Task a HashMap with key value pairs and replaces all entries within a
 	 * string.
 	 * 

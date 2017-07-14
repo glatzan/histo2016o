@@ -17,6 +17,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.AssociatedContact;
+import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.Physician;
@@ -46,6 +47,7 @@ import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
+import cz.kebrt.html2latex.Parser;
 import de.nixosoft.jlr.JLRConverter;
 import de.nixosoft.jlr.JLRGenerator;
 
@@ -65,7 +67,7 @@ public class PDFGeneratorHandler {
 
 	@Autowired
 	private SettingsHandler settingsHandler;
-	
+
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate) {
 		return generatePDFForReport(patient, task, printTemplate, null);
 	}
@@ -90,7 +92,8 @@ public class PDFGeneratorHandler {
 		return generator.generatePDF();
 	}
 
-	public PDFContainer generateDiagnosisReport(PrintTemplate printTemplate, Patient patient, Task task, Person addressee) {
+	public PDFContainer generateDiagnosisReport(PrintTemplate printTemplate, Patient patient, Task task,
+			Person addressee) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
@@ -100,6 +103,14 @@ public class PDFGeneratorHandler {
 		return generator.generatePDF();
 	}
 
+	public PDFContainer generateCouncilRequest(PrintTemplate printTemplate, Patient patient, Council council) {
+		PDFGenerator generator = new PDFGenerator(printTemplate);
+		generator.getConverter().replace("patient", patient);
+		generator.getConverter().replace("council", council);
+		
+		return generator.generatePDF();
+	}
+	
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate,
 			Person toSendAddress) {
 
@@ -445,7 +456,8 @@ public class PDFGeneratorHandler {
 		//
 		// AssociatedContact privatePhysician =
 		// task.getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
-		// AssociatedContact surgeon = task.getPrimaryContact(ContactRole.SURGEON);
+		// AssociatedContact surgeon =
+		// task.getPrimaryContact(ContactRole.SURGEON);
 		//
 		// setStamperField(stamper, "B_PRIVATE_PHYSICIAN",
 		// privatePhysician == null ? "" :
@@ -670,12 +682,12 @@ public class PDFGeneratorHandler {
 
 		public JLRConverter openNewPDf(PrintTemplate printTemplate) {
 			this.printTemplate = printTemplate;
-			workingDirectory = new File(
-					HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
-
+			workingDirectory = new File(HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+			System.out.println(workingDirectory.getAbsolutePath());
 			output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-			logger.debug("TemplateUtil File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+			System.out.println(output.getAbsolutePath());
+
 
 			template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
 
@@ -687,8 +699,10 @@ public class PDFGeneratorHandler {
 		}
 
 		public PDFContainer generatePDF() {
+			long test1 = System.currentTimeMillis();
+			
 			try {
-
+				System.out.println(template.getAbsolutePath());
 				if (!converter.parse(template, processedTex)) {
 					logger.error(converter.getErrorMessage());
 				}
@@ -704,9 +718,12 @@ public class PDFGeneratorHandler {
 				File test = pdfGen.getPDF();
 				byte[] data = readContentIntoByteArray(test);
 
+				System.out.println(( System.currentTimeMillis() - test1 ));
+				
 				return new PDFContainer(printTemplate.getDocumentTyp(),
 						"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
 
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -81,8 +81,8 @@ public class PrintDialogHandler extends AbstractDialog {
 	private List<ContactChooser> contactList;
 
 	/**
-	 * The associatedContact rendered, the first one will always be rendered, if not
-	 * changed, no rendering necessary
+	 * The associatedContact rendered, the first one will always be rendered, if
+	 * not changed, no rendering necessary
 	 */
 	private AssociatedContact selectedContact;
 
@@ -166,7 +166,8 @@ public class PrintDialogHandler extends AbstractDialog {
 		initBeanForExternalDisplay(task, types, defaultType, null);
 	}
 
-	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType, AssociatedContact sendTo) {
+	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType,
+			AssociatedContact sendTo) {
 		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(types);
 		initBeanForExternalDisplay(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect, defaultType), sendTo);
 	}
@@ -210,7 +211,8 @@ public class PrintDialogHandler extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the pdf content if a associatedContact was chosen for the first time
+	 * Updates the pdf content if a associatedContact was chosen for the first
+	 * time
 	 */
 	public void onChooseContact() {
 		List<ContactChooser> selectedContacts = getSelectedContactFromList();
@@ -255,6 +257,10 @@ public class PrintDialogHandler extends AbstractDialog {
 			result = pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(), getTask().getPatient(),
 					getTask(), getSelectedContact() == null ? new Person(resourceBundle.get("pdf.address.none"))
 							: getSelectedContact().getPerson());
+			break;
+		case COUNCIL_REQUEST:
+			result = pDFGeneratorHandler.generateCouncilRequest(getSelectedTemplate(), getTask().getPatient(),
+					getSelectedCouncil());
 			break;
 		default:
 			// always render the pdf with the fist associatedContact chosen
@@ -340,7 +346,8 @@ public class PrintDialogHandler extends AbstractDialog {
 						for (int i = 0; i < contactChooser.getCopies(); i++) {
 							settingsHandler.getSelectedPrinter().print(otherAddress);
 						}
-						// settings the old selected associatedContact as selected associatedContact
+						// settings the old selected associatedContact as
+						// selected associatedContact
 						setSelectedContact(tmp);
 					}
 

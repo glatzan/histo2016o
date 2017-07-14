@@ -103,6 +103,7 @@
 
 							<!-- requesting text -->
 							<h:outputLabel value="#{msg['dialog.council.requestText']}"></h:outputLabel>
+							
 							<h:inputTextarea style="width: 500px;" rows="10"
 								disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
 								value="#{councilDialogHandler.selectedCouncil.councilText}">
@@ -133,7 +134,7 @@
 								styleClass="noBordersAll, collapsedBordersAll, noPaddingAll">
 
 								<!-- council physician -->
-								<p:selectOneMenu styleClass="customSerachSelectMenu, smallInput"
+								<p:selectOneMenu styleClass="customSerachSelectMenu"
 									value="#{councilDialogHandler.selectedCouncil.councilPhysician}"
 									panelStyleClass="customSerachSelectMenuPanel"
 									disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
@@ -167,7 +168,7 @@
 							<h:panelGrid columns="2"
 								styleClass="noBordersAll, collapsedBordersAll, noPaddingAll">
 								<!-- physician requesting council -->
-								<p:selectOneMenu styleClass="customSerachSelectMenu, smallInput"
+								<p:selectOneMenu styleClass="customSerachSelectMenu"
 									panelStyleClass="customSerachSelectMenuPanel"
 									disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
 									value="#{councilDialogHandler.selectedCouncil.physicianRequestingCouncil}"

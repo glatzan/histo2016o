@@ -28,6 +28,10 @@ import org.histo.config.enums.CouncilState;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
+import org.histo.util.latex.TextToLatexConverter;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Audited
@@ -35,51 +39,68 @@ import org.histo.model.patient.Task;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "council_sequencegenerator", sequenceName = "council_sequence")
+@Getter
+@Setter
 public class Council implements HasID, HasDataList {
+
+	@Id
+	@GeneratedValue(generator = "council_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	@Version
 	private long version;
 
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Task task;
 
 	/**
 	 * Name of the council
 	 */
+	@Column(columnDefinition = "VARCHAR")
 	private String name;
 
 	/**
 	 * Council physician
 	 */
+	@OneToOne
 	private Physician councilPhysician;
 
 	/**
 	 * Physician to sign the council
 	 */
+	@OneToOne
 	private Physician physicianRequestingCouncil;
 
 	/**
 	 * Text of council
 	 */
+	@Column(columnDefinition = "text")
 	private String councilText;
 
 	/**
 	 * Attached slides of the council
 	 */
+	@Column(columnDefinition = "text")
 	private String attachment;
 
 	/**
 	 * Date of request
 	 */
+	@Column
 	private long dateOfRequest;
 
 	/**
 	 * State of the council
 	 */
+	@Enumerated(EnumType.ORDINAL)
 	private CouncilState councilState;
 
 	/**
 	 * Pdf attached to this council
 	 */
+	@OneToMany(fetch = FetchType.LAZY)
+	@OrderBy("creationDate DESC")
 	private List<PDFContainer> attachedPdfs;
 
 	public Council() {
@@ -89,108 +110,9 @@ public class Council implements HasID, HasDataList {
 		this.task = task;
 	}
 
-	@Id
-	@GeneratedValue(generator = "council_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@OneToOne
-	public Physician getCouncilPhysician() {
-		return councilPhysician;
-	}
-
-	public void setCouncilPhysician(Physician councilPhysician) {
-		this.councilPhysician = councilPhysician;
-	}
-
-	@OneToOne
-	public Physician getPhysicianRequestingCouncil() {
-		return physicianRequestingCouncil;
-	}
-
-	public void setPhysicianRequestingCouncil(Physician physicianRequestingCouncil) {
-		this.physicianRequestingCouncil = physicianRequestingCouncil;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getCouncilText() {
-		return councilText;
-	}
-
-	public void setCouncilText(String councilText) {
-		this.councilText = councilText;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getAttachment() {
-		return attachment;
-	}
-
-	public void setAttachment(String attachment) {
-		this.attachment = attachment;
-	}
-
-	@Column
-	public long getDateOfRequest() {
-		return dateOfRequest;
-	}
-
-	public void setDateOfRequest(long dateOfRequest) {
-		this.dateOfRequest = dateOfRequest;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	public Task getTask() {
-		return task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
-	}
-
-	@Column
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Enumerated(EnumType.ORDINAL)
-	public CouncilState getCouncilState() {
-		return councilState;
-	}
-
-	public void setCouncilState(CouncilState councilState) {
-		this.councilState = councilState;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY)
-	@OrderBy("creationDate DESC")
-	public List<PDFContainer> getAttachedPdfs() {
-		if (attachedPdfs == null)
-			attachedPdfs = new ArrayList<PDFContainer>();
-		return attachedPdfs;
-	}
-
-	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
-		this.attachedPdfs = attachedPdfs;
+	@Transient
+	public String getCouncilTextAsLatex() {
+		return (new TextToLatexConverter()).convertToTex(getCouncilText());
 	}
 
 	@Transient
