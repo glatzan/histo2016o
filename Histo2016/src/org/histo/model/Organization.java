@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -43,8 +44,10 @@ public class Organization implements HasID {
 	private Contact contact;
 	@Column(columnDefinition = "VARCHAR")
 	private String note;
-	@OneToMany(fetch = FetchType.LAZY)
+	
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy="organizsations")
 	private List<Person> persons;
+	
 	@Column
 	private boolean intern;
 

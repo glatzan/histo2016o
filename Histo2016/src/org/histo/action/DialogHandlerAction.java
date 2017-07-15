@@ -2,6 +2,8 @@ package org.histo.action;
 
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
+import org.histo.action.dialog.print.CustomAddress;
+import org.histo.action.dialog.print.PrintDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,11 @@ public class DialogHandlerAction {
 	private OrganizationListDialog organizationListDialog;
 
 	private WorklistSearchDialog worklistSearchDialog;
+	
+	private PrintDialog printDialog;
 
+	private CustomAddress customAddress; 
+	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -29,4 +35,19 @@ public class DialogHandlerAction {
 
 		return worklistSearchDialog;
 	}
+	
+	public PrintDialog getPrintDialog() {
+		if (printDialog == null)
+			printDialog = new PrintDialog();
+
+		return printDialog;
+	}
+	
+	public CustomAddress getCustomAddress() {
+		if(customAddress == null)
+			customAddress = new CustomAddress();
+		
+		return customAddress;
+	}
 }
+

@@ -47,7 +47,6 @@ import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
-import cz.kebrt.html2latex.Parser;
 import de.nixosoft.jlr.JLRConverter;
 import de.nixosoft.jlr.JLRGenerator;
 

@@ -104,7 +104,7 @@
 							<!-- requesting text -->
 							<h:outputLabel value="#{msg['dialog.council.requestText']}"></h:outputLabel>
 							
-							<h:inputTextarea style="width: 500px;" rows="10"
+							<h:inputTextarea style="width: 500px;" rows="13"
 								disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
 								value="#{councilDialogHandler.selectedCouncil.councilText}">
 								<p:ajax event="keyup" delay="1000"
@@ -130,11 +130,11 @@
 
 							<!-- Consultant -->
 							<h:outputLabel value="#{msg['dialog.council.consultant']}"></h:outputLabel>
-							<h:panelGrid columns="2"
-								styleClass="noBordersAll, collapsedBordersAll, noPaddingAll">
+							<h:panelGrid columns="2" style="width: auto"
+								styleClass="defaultListingTableContainer">
 
 								<!-- council physician -->
-								<p:selectOneMenu styleClass="customSerachSelectMenu"
+								<p:selectOneMenu styleClass="customSerachSelectMenu smallInput"
 									value="#{councilDialogHandler.selectedCouncil.councilPhysician}"
 									panelStyleClass="customSerachSelectMenuPanel"
 									disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
@@ -165,10 +165,10 @@
 							<!-- council requesting physician -->
 							<h:outputLabel
 								value="#{msg['dialog.council.requestingPhysician']}"></h:outputLabel>
-							<h:panelGrid columns="2"
-								styleClass="noBordersAll, collapsedBordersAll, noPaddingAll">
+							<h:panelGrid columns="2"  style="width: auto"
+								styleClass="defaultListingTableContainer">
 								<!-- physician requesting council -->
-								<p:selectOneMenu styleClass="customSerachSelectMenu"
+								<p:selectOneMenu styleClass="customSerachSelectMenu smallInput"
 									panelStyleClass="customSerachSelectMenuPanel"
 									disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
 									value="#{councilDialogHandler.selectedCouncil.physicianRequestingCouncil}"
@@ -201,7 +201,7 @@
 
 							<!-- Date -->
 							<h:outputLabel value="#{msg['dialog.council.date']}"></h:outputLabel>
-							<p:calendar
+							<p:calendar styleClass="smallInput"
 								disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
 								value="#{councilDialogHandler.selectedCouncil.dateOfRequestAsDate}"
 								tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
@@ -211,7 +211,7 @@
 
 							<!-- Status -->
 							<h:outputLabel value="#{msg['dialog.council.state']}"></h:outputLabel>
-							<p:selectOneMenu
+							<p:selectOneMenu styleClass="smallInput"
 								value="#{councilDialogHandler.selectedCouncil.councilState}">
 
 								<f:selectItems value="#{enumProvider.councilStates}"
@@ -230,7 +230,7 @@
 								rendered="#{councilDialogHandler.selectedCouncil.isCouncilState('CompletedState', 'ValidetedState')}"
 								value="#{councilDialogHandler.selectedCouncil.attachedPdfs}"
 								styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-								style="width:100%;" scrollable="true" scrollHeight="50">
+								style="width:500px" scrollable="true" scrollHeight="50">
 								<p:column headerText="#{msg['dialog.council.pdf.table.name']}">
 									<h:outputLabel value="#{pdf.name}">
 										<f:converter converterId="org.histo.ui.TruncateConverter" />

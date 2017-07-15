@@ -5,9 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.dialog.media.MediaDialog;
+import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.CouncilState;
@@ -43,7 +44,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	private PatientDao patientDao;
 
 	@Autowired
-	private PrintDialogHandler printDialogHandler;
+	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
 	private TaskDAO taskDAO;
@@ -310,7 +311,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	public void printCouncilReport() {
 		try {
 			save();
-			printDialogHandler.initBeanForCouncil(task, getSelectedCouncil());
+			dialogHandlerAction.getPrintDialog().initBeanForCouncil(task, getSelectedCouncil());
 			// workaround for showing and hiding two dialogues
 			mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
 

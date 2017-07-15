@@ -158,6 +158,12 @@ body {
 	min-width: 150px !important;
 }
 
+/* Small Datatable columns */
+.smallDatatable td {
+	padding: 1px 6px !important;
+}
+
+
 /************************************* DEFAULT TABLE *************************************/
 /************************************* Fonts *************************************/
 .bold-text {
@@ -280,8 +286,8 @@ ul.ui-menu-child {
 }
 
 /* Highlighted datatable, even rows background is different, hover and selected is different*/
-.highlightedDataTable  tr.ui-datatable-even>td {
-	background-color: #f9f9f9;
+.highlightedDataTable  tr.ui-datatable-odd>td {
+	background-color: #f2f2f2 !important;
 }
 
 .highlightedDataTable tr.ui-state-highlight>td {
@@ -639,12 +645,6 @@ ul.ui-menu-child {
 .content .body .stainingTable a:-webkit-any-link {
 	text-decoration: none !important;
 }
-
-/* Hintergrundfarbe f�r gerade proben*/
-.content .body .stainingTable .darkBackround {
-	background-color: #f9f9f9;
-}
-
 /*	################# Stainings ################# */
 
 /* ######################################## Content ######################################## */

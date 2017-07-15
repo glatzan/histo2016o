@@ -1,4 +1,4 @@
-package org.histo.action.dialog;
+package org.histo.action.dialog.print;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
+import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -24,18 +25,17 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.ui.ContactChooser;
+import org.histo.ui.ContactChooser.OrganizationChooser;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.printer.PrintTemplate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Configurable;
 
-@Component
-@Scope(value = "session")
-public class PrintDialogHandler extends AbstractDialog {
+@Configurable
+public class PrintDialog extends AbstractDialog {
 
 	@Autowired
 	private PatientDao patientDao;
@@ -120,9 +120,7 @@ public class PrintDialogHandler extends AbstractDialog {
 		getContactList().add(new ContactChooser(task, task.getPatient().getPerson(), ContactRole.PATIENT));
 
 		// setting other contacts (physicians)
-		for (AssociatedContact associatedContact : task.getContacts()) {
-			getContactList().add(new ContactChooser(associatedContact));
-		}
+		getContactList().addAll(ContactChooser.factory(task.getContacts()));
 
 		setSelectedContact(null);
 
@@ -238,6 +236,21 @@ public class PrintDialogHandler extends AbstractDialog {
 				onChangePrintTemplate();
 				RequestContext.getCurrentInstance().update("dialogContent");
 			}
+		}
+	}
+
+	public void onChooseOrganizationOfContact(OrganizationChooser chooser) {
+
+		// only one organization can be selected, removing other organizations
+		// from selection
+		if (chooser.getParent().isSelected()) {
+			for (OrganizationChooser organizationChooser : chooser.getParent().getOrganizazionsChoosers()) {
+				if (organizationChooser != chooser)
+					organizationChooser.setSelected(false);
+			}
+		} else {
+			// setting parent as selected
+			chooser.getParent().setSelected(true);
 		}
 	}
 

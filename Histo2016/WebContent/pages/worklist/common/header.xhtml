@@ -391,7 +391,7 @@
 			<p:commandButton id="printBtn" style="display:none"
 				widgetVar="printBtnVar" onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
-				actionListener="#{printDialogHandler.initAndPrepareBeanForPrinting(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.printDialog.initAndPrepareBeanForPrinting(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />

@@ -5,9 +5,10 @@ import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.log4j.Logger;
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
-import org.histo.action.dialog.PrintDialogHandler;
 import org.histo.action.dialog.media.MediaDialog;
+import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -52,7 +53,7 @@ public class NotificationDialog {
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	private PrintDialogHandler printDialogHandler;
+	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
 	private MediaDialog mediaDialog;
@@ -439,7 +440,7 @@ public class NotificationDialog {
 				PDFContainer resultPdf = PDFGeneratorHandler.mergePdfs(resultPdfs, sendReportPDF.getName(),
 						DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
 
-				printDialogHandler.savePdf(getTemporaryTask(), resultPdf);
+				dialogHandlerAction.getPrintDialog().savePdf(getTemporaryTask(), resultPdf);
 
 				favouriteListDAO.removeTaskFromList(getTemporaryTask(), PredefinedFavouriteList.NotificationList);
 				getTemporaryTask().setNotificationCompletionDate(System.currentTimeMillis());
@@ -460,7 +461,7 @@ public class NotificationDialog {
 	 * Preview
 	 ********************************************************/
 	public void showPreviewForContact(MedicalFindingsChooser notificationEmailList) {
-		printDialogHandler.initBeanForExternalDisplay(getTemporaryTask(),
+		dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(getTemporaryTask(),
 				new PrintTemplate[] { notificationEmailList.getPrintTemplate() },
 				notificationEmailList.getPrintTemplate(), notificationEmailList.getContact());
 		setShowPreview(true);

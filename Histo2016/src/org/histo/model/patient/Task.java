@@ -325,6 +325,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 					blockChooser.addChild(stainingChooser);
 				}
 			}
+
 			even = !even;
 		}
 	}
@@ -877,6 +878,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	public String getLogPath() {
 		return "Task-ID: " + getTaskID() + " (" + getId() + ")";
 	}
+
 	/********************************************************
 	 * Interface PatientRollbackAble
 	 ********************************************************/

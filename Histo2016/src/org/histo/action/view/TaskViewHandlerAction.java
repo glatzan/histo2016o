@@ -97,6 +97,7 @@ public class TaskViewHandlerAction {
 	 * Getter/Setter
 	 ********************************************************/
 	public List<Task> getTaskList() {
+		// TODO move to action not getter
 		if (taskList == null)
 			initBean();
 

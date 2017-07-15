@@ -16,8 +16,8 @@ import javax.persistence.JoinColumn;
 import org.hibernate.annotations.Immutable;
 import org.histo.config.enums.ContactRole;
 
-@Entity
-@Immutable
+//@Entity
+//@Immutable
 public class ContactPhysicanRole {
 
 	private Long id;

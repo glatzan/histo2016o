@@ -35,16 +35,21 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 				.collect(StreamUtils.singletonCollector());
 	}
 	public List<Organization> getOrganizations() {
-		return getOrganizations(true);
+		return getOrganizations(true, false);
 	}
 
-	public List<Organization> getOrganizations(boolean orderById) {
+	public List<Organization> getOrganizations(boolean orderById, boolean initialized) {
 		DetachedCriteria query = DetachedCriteria.forClass(Organization.class, "organization");
 		if(orderById)
 			query.addOrder(Order.asc("id"));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-		return (List<Organization>) query.getExecutableCriteria(getSession()).list();
+		List<Organization> result = (List<Organization>) query.getExecutableCriteria(getSession()).list();
+		
+		if(initialized && result != null)
+			result.stream().forEach(p -> initializeOrganization(p));
+		
+		return result;
 	}
 
 	public Organization createOrganization(String name, Contact contact) {
@@ -67,30 +72,12 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 			save(person, "log.organization.added", new Object[] { person.getFullName(), organization.getName() });
 			logger.debug("Added Organization to Person");
 		}
-
-		initializeOrganization(organization);
-
-		if (organization.getContact() == null)
-			organization.setPersons((new ArrayList<Person>()));
-
-		if (!organization.getPersons().stream().anyMatch(p -> p.equals(person))) {
-			organization.getPersons().add(person);
-
-			save(organization);
-			logger.debug("Added Person to Organization");
-		}
 	}
 
 	public void removeOrganization(Person person, Organization organization) {
 		if (person.getOrganizsations().remove(organization)) {
 			logger.debug("Removing Organization from Patient");
 			save(person, "log.organization.remove", new Object[] { person.getFullName(), organization.getName() });
-		}
-
-		initializeOrganization(organization);
-		
-		if (organization.getPersons().remove(person)) {
-			save(organization);
 		}
 	}
 

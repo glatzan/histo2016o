@@ -87,9 +87,9 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 	@OneToOne(cascade = CascadeType.ALL)
 	private Contact contact;
 
-	@ManyToMany
+	@ManyToMany()
 	@LazyCollection(FALSE)
-	@JoinTable(joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "organization_id"))
+	@JoinTable(name = "person_organization", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "organization_id"))
 	private List<Organization> organizsations;
 
 	public enum Gender {

@@ -1,8 +1,9 @@
 package org.histo.action.dialog.diagnosis;
 
 
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.PrintDialogHandler;
+import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
@@ -28,7 +29,7 @@ public class DiagnosisPhaseLeaveDialog extends AbstractDialog {
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
-	private PrintDialogHandler printDialogHandler;
+	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
 	private TaskManipulationHandler taskManipulationHandler;
@@ -62,7 +63,7 @@ public class DiagnosisPhaseLeaveDialog extends AbstractDialog {
 		setStayInDiagnosisPhase(false);
 
 		// inits a template for previewing
-		printDialogHandler.initBeanForExternalDisplay(task,
+		dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(task,
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
 				DocumentType.DIAGNOSIS_REPORT_EXTERN);
 

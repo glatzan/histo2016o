@@ -7,96 +7,58 @@ import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class StainingTableChooser {
 
-    private boolean even;
-    private boolean choosen;
+	private boolean choosen;
+	private boolean even;
+	
+	private Sample sample;
+	private Block block;
+	private Slide staining;
 
-    private Sample sample;
-    private Block block;
-    private Slide staining;
+	
+	private List<StainingTableChooser> children;
 
-    private List<StainingTableChooser> children;
+	public StainingTableChooser(Sample sample, boolean even) {
+		this.setSample(sample);
+		this.even = even;
+		children = new ArrayList<StainingTableChooser>();
+	}
 
-    public StainingTableChooser(Sample sample, boolean even) {
-	this.setSample(sample);
-	this.even = even;
-	children = new ArrayList<StainingTableChooser>();
-    }
+	public StainingTableChooser(Block block, boolean even) {
+		this.block = block;
+		this.even = even;
+		children = new ArrayList<StainingTableChooser>();
+	}
 
-    public StainingTableChooser(Block block, boolean even) {
-	this.block = block;
-	this.even = even;
-	children = new ArrayList<StainingTableChooser>();
-    }
+	public StainingTableChooser(Slide staining, boolean even) {
+		this.staining = staining;
+		this.even = even;
+	}
 
-    public StainingTableChooser(Slide staining, boolean even) {
-	this.staining = staining;
-	this.even = even;
-    }
+	public void setChildren(List<StainingTableChooser> children) {
+		this.children = children;
+	}
 
-    public Sample getSample() {
-	return sample;
-    }
+	public void addChild(StainingTableChooser child) {
+		getChildren().add(child);
+	}
 
-    public void setSample(Sample sample) {
-	this.sample = sample;
-    }
+	public boolean isSampleType() {
+		return sample != null;
+	}
 
-    public Block getBlock() {
-	return block;
-    }
+	public boolean isBlockType() {
+		return block != null;
+	}
 
-    public void setBlock(Block block) {
-	this.block = block;
-    }
-
-    public Slide getStaining() {
-	return staining;
-    }
-
-    public void setStaining(Slide staining) {
-	this.staining = staining;
-    }
-
-    public boolean isSampleType() {
-	return sample != null;
-    }
-
-    public boolean isBlockType() {
-	return block != null;
-    }
-
-    public boolean isStainingType() {
-	return staining != null;
-    }
-
-    public boolean isEven() {
-	return even;
-    }
-
-    public void setEven(boolean even) {
-	this.even = even;
-    }
-
-    public boolean isChoosen() {
-	return choosen;
-    }
-
-    public void setChoosen(boolean choosen) {
-	this.choosen = choosen;
-    }
-
-    public List<StainingTableChooser> getChildren() {
-	return children;
-    }
-
-    public void setChildren(List<StainingTableChooser> children) {
-	this.children = children;
-    }
-    
-    public void addChild(StainingTableChooser child){
-	getChildren().add(child);
-    }
+	public boolean isStainingType() {
+		return staining != null;
+	}
 
 }

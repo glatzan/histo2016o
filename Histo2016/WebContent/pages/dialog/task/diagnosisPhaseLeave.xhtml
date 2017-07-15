@@ -29,8 +29,8 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<p:media player="pdf" value="#{printDialogHandler.pdfContent}"
-					width="100%" rendered="#{printDialogHandler.renderPdf}"
+				<p:media player="pdf" value="#{dialogHandlerAction.printDialog.pdfContent}"
+					width="100%" rendered="#{dialogHandlerAction.printDialog.renderPdf}"
 					height="460px"></p:media>
 				<h:outputLabel value="#{msg['dialog.diagnosisPhaseLeave.text']}"></h:outputLabel>
 			</h:panelGrid>
@@ -50,17 +50,17 @@
 
 						<h:panelGroup layout="block" style="width:20px;" />
 
-						<p:selectOneMenu value="#{printDialogHandler.selectedTemplate}"
-							converter="#{printDialogHandler.templateTransformer}"
+						<p:selectOneMenu value="#{dialogHandlerAction.printDialog.selectedTemplate}"
+							converter="#{dialogHandlerAction.printDialog.templateTransformer}"
 							styleClass="customSerachSelectMenu">
-							<f:selectItems value="#{printDialogHandler.templateList}"
+							<f:selectItems value="#{dialogHandlerAction.printDialog.templateList}"
 								var="template" itemLabel="#{template.name}"
 								itemValue="#{template}" />
 
 							<p:ajax update="@form" event="change"
 								onstart="PF('blockUIWidget').block()"
 								oncomplete="PF('blockUIWidget').unblock()"
-								listener="#{printDialogHandler.onChangePrintTemplate()}"></p:ajax>
+								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"></p:ajax>
 						</p:selectOneMenu>
 					</h:panelGrid>
 				</h:panelGrid>

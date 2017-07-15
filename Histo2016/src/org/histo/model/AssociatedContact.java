@@ -19,32 +19,58 @@ import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.patient.Task;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @SequenceGenerator(name = "associatedcontact_sequencegenerator", sequenceName = "associatedcontact_sequence")
+@Getter
+@Setter
 public class AssociatedContact implements LogAble, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Task task;
 
+	@Id
+	@GeneratedValue(generator = "associatedcontact_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	/**
+	 * All cascade types, but not removing!
+	 * 
+	 * @return
+	 */
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH })
 	private Person person;
 
+	@Enumerated(EnumType.STRING)
 	private ContactRole role = ContactRole.NONE;
 
+	@Column(columnDefinition = "VARCHAR")
+	private String customContact;
+	
+	@Column
 	private boolean primaryContact;
 
+	@Column
 	private boolean usePhone;
 
+	@Column
 	private boolean useFax;
 
+	@Column
 	private boolean useEmail;
 
+	@Column
 	private long emailNotificationDate;
 
+	@Column
 	private long faxNotificationDate;
 
+	@Column
 	private long phoneNotificationDate;
 
 	/********************************************************
@@ -54,11 +80,13 @@ public class AssociatedContact implements LogAble, HasID {
 	 * Transient, is used for selecting contacts an marking already selected
 	 * ones.
 	 */
+	@Transient
 	private boolean selected;
 
 	/**
 	 * Transient, is used for selecting contacts from a list
 	 */
+	@Transient
 	private int tmpId;
 
 	/********************************************************
@@ -80,132 +108,8 @@ public class AssociatedContact implements LogAble, HasID {
 	}
 
 	/********************************************************
-	 * Getters/Setters
-	 ********************************************************/
-	@Id
-	@GeneratedValue(generator = "associatedcontact_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	/**
-	 * All cascade types, but not removing!
-	 * 
-	 * @return
-	 */
-	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.DETACH })
-	public Person getPerson() {
-		return person;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public ContactRole getRole() {
-		return role;
-	}
-
-	public void setRole(ContactRole role) {
-		this.role = role;
-	}
-
-	public boolean isUsePhone() {
-		return usePhone;
-	}
-
-	public void setUsePhone(boolean usePhone) {
-		this.usePhone = usePhone;
-	}
-
-	public boolean isUseFax() {
-		return useFax;
-	}
-
-	public void setUseFax(boolean useFax) {
-		this.useFax = useFax;
-	}
-
-	public boolean isUseEmail() {
-		return useEmail;
-	}
-
-	public void setUseEmail(boolean useEmail) {
-		this.useEmail = useEmail;
-	}
-
-	public boolean isPrimaryContact() {
-		return primaryContact;
-	}
-
-	public void setPrimaryContact(boolean primaryContact) {
-		this.primaryContact = primaryContact;
-	}
-
-	public long getEmailNotificationDate() {
-		return emailNotificationDate;
-	}
-
-	public long getFaxNotificationDate() {
-		return faxNotificationDate;
-	}
-
-	public long getPhoneNotificationDate() {
-		return phoneNotificationDate;
-	}
-
-	public void setEmailNotificationDate(long emailNotificationDate) {
-		this.emailNotificationDate = emailNotificationDate;
-	}
-
-	public void setFaxNotificationDate(long faxNotificationDate) {
-		this.faxNotificationDate = faxNotificationDate;
-	}
-
-	public void setPhoneNotificationDate(long phoneNotificationDate) {
-		this.phoneNotificationDate = phoneNotificationDate;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	public Task getTask() {
-		return task;
-	}
-
-	public void setTask(Task task) {
-		this.task = task;
-	}
-
-	/********************************************************
-	 * Getters/Setters
-	 ********************************************************/
-
-	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
-	@Transient
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
-	@Transient
-	public int getTmpId() {
-		return tmpId;
-	}
-
-	public void setTmpId(int tmpId) {
-		this.tmpId = tmpId;
-	}
-
 	@Transient
 	public boolean isEmailNotificationPerformed() {
 		return getEmailNotificationDate() != 0;

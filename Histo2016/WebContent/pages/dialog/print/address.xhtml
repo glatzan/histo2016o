@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.organization.list.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.organization.list.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+				<h:inputTextarea style="width:99%;resize: none" rows="12"
+					value="#{dialogHandlerAction.customAddress.customAddress}" />
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float:right;">
+					<p:commandButton value="#{msg['general.save']}"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-fw fa-check-circle-o">
+						<f:actionListener
+							binding="#{dialogHandlerAction.organizationListDialog.selectOrganisation()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.organizationListDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.close']}"
+						styleClass="smallButton buttonRighMarginInList"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
+						actionListener="#{dialogHandlerAction.customAddress.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

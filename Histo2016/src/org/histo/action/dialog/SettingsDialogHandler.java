@@ -1014,6 +1014,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public void updateData() {
 			switch (getPage()) {
 			case EDIT:
+				setTmpPhysician(physicianDAO.get(Physician.class, getTmpPhysician().getId()));
 				break;
 			default:
 				setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(), isShowArchivedPhysicians()));
@@ -1356,6 +1357,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public void updateData() {
 			switch (getPage()) {
 			case EDIT:
+				setSelectedOrganization(organizationDAO.get(Organization.class, getSelectedOrganization().getId()));
+				organizationDAO.initializeOrganization(getSelectedOrganization());
 				break;
 			default:
 				setOrganizations(organizationDAO.getOrganizations());

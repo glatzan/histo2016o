@@ -305,21 +305,9 @@ CREATE SEQUENCE contact_sequence
 
 ALTER TABLE contact_sequence OWNER TO postgres;
 
---
--- TOC entry 270 (class 1259 OID 57861)
--- Name: contactphysicanrole; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE contactphysicanrole (
-    id bigint NOT NULL,
-    name character varying(255),
-    personid bigint,
-    surname character varying(255),
-    title character varying(255)
-);
 
 
-ALTER TABLE contactphysicanrole OWNER TO postgres;
+
 
 --
 -- TOC entry 192 (class 1259 OID 57089)
@@ -1699,10 +1687,6 @@ ALTER TABLE ONLY contact
 -- Name: contactphysicanrole_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY contactphysicanrole
-    ADD CONSTRAINT contactphysicanrole_pkey PRIMARY KEY (id);
-
-
 --
 -- TOC entry 2338 (class 2606 OID 57104)
 -- Name: council_aud_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
@@ -2864,3 +2848,11 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 -- PostgreSQL database dump complete
 --
 
+
+CREATE VIEW contactphysicanrole AS
+SELECT physician.id AS id ,person.id As personID, person.title,  person.lastname, person.firstname from person 
+INNER JOIN physician ON physician.person_id = person.id
+
+
+CREATE VIEW FavouriteListTask AS
+select row_number() over (order by favouritelist.id) as aid ,favouritelist.id AS favouritelist_id, name, task_id from favouritelist inner join favouritelistitem on favouritelist.id = favouritelistitem.favouritelist_id

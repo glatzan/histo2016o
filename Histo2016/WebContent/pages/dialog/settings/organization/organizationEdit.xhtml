@@ -127,21 +127,49 @@
 			</h:panelGrid>
 			<!-- ****************** Contact ****************** -->
 		</h:panelGrid>
-
 		<h:panelGrid columns="2"
 			columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop"
 			styleClass="defaultListingTableCss">
 
-			<h:outputLabel value=" " />
-
-			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-				columnClasses="defaultListingTableColumn15 ,">
-				<!-- name -->
-				<p:outputLabel
+			<!-- commentary -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
 					value="#{msg['dialog.settings.organization.edit.note']}" />
-				<p:inputTextarea id="organizationNote" style="width:85%"
-					value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.note}" />
 			</h:panelGrid>
+
+			<p:inputTextarea id="organizationNote" style="width:85%"
+				value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.note}" />
+
+
+			<!-- persons -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.persons']}" />
+			</h:panelGrid>
+
+			<p:dataTable id="userTable"
+				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+				value="#{settingsDialogHandler.getTab('OrganizationTab').selectedOrganization.persons}"
+				var="person" style="width:600px" scrollable="true"
+				scrollHeight="150">
+				<p:column
+					headerText="#{msg['dialog.settings.organization.edit.persons.name']}">
+					<h:outputLabel value="#{person.fullName}" />
+
+				</p:column>
+
+				<p:column headerText="#" style="width:15px">
+					<p:commandLink update=":adminForm:tabview:organizations"
+						process="@this" partialSubmit="true"
+						title="#{msg['dialog.settings.organization.edit.persons.remove']}">
+						<i class="fa fa-remove" style="margin-left: 8px" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.organizationListDialog.removeOrganizationFromPerson(person, settingsDialogHandler.getTab('OrganizationTab').selectedOrganization)}" />
+						<f:actionListener
+							binding="#{settingsDialogHandler.getTab('OrganizationTab').updateData()}" />
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
 		</h:panelGrid>
 	</div>
 
