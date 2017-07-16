@@ -212,31 +212,33 @@ public class PrintDialog extends AbstractDialog {
 	 * Updates the pdf content if a associatedContact was chosen for the first
 	 * time
 	 */
-	public void onChooseContact() {
+	public void onChooseContact(ContactChooser chooser) {
 		List<ContactChooser> selectedContacts = getSelectedContactFromList();
-
-		if (getSelectedContact() == null && !selectedContacts.isEmpty()) {
-			setSelectedContact(selectedContacts.get(0).getContact());
-			onChangePrintTemplate();
-			RequestContext.getCurrentInstance().update("dialogContent");
-		} else if (getSelectedContact() != null) {
-			boolean found = false;
-			for (ContactChooser contactChooser : selectedContacts) {
-				if (contactChooser.getContact() == getSelectedContact()) {
-					found = true;
-					break;
-				}
-			}
-
-			if (!found) {
-				if (!selectedContacts.isEmpty()) {
-					setSelectedContact(selectedContacts.get(0).getContact());
-				} else
-					setSelectedContact(null);
-				onChangePrintTemplate();
-				RequestContext.getCurrentInstance().update("dialogContent");
-			}
-		}
+		
+		asd
+//
+//		if (getSelectedContact() == null && !selectedContacts.isEmpty()) {
+//			setSelectedContact(selectedContacts.get(0).getContact());
+//			onChangePrintTemplate();
+//			RequestContext.getCurrentInstance().update("dialogContent");
+//		} else if (getSelectedContact() != null) {
+//			boolean found = false;
+//			for (ContactChooser contactChooser : selectedContacts) {
+//				if (contactChooser.getContact() == getSelectedContact()) {
+//					found = true;
+//					break;
+//				}
+//			}
+//
+//			if (!found) {
+//				if (!selectedContacts.isEmpty()) {
+//					setSelectedContact(selectedContacts.get(0).getContact());
+//				} else
+//					setSelectedContact(null);
+//				onChangePrintTemplate();
+//				RequestContext.getCurrentInstance().update("dialogContent");
+//			}
+//		}
 	}
 
 	public void onChooseOrganizationOfContact(OrganizationChooser chooser) {
@@ -268,8 +270,8 @@ public class PrintDialog extends AbstractDialog {
 			break;
 		case DIAGNOSIS_REPORT:
 			result = pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(), getTask().getPatient(),
-					getTask(), getSelectedContact() == null ? new Person(resourceBundle.get("pdf.address.none"))
-							: getSelectedContact().getPerson());
+					getTask(), getSelectedContact() == null ? resourceBundle.get("pdf.address.none")
+							: getSelectedContact().ge);
 			break;
 		case COUNCIL_REQUEST:
 			result = pDFGeneratorHandler.generateCouncilRequest(getSelectedTemplate(), getTask().getPatient(),

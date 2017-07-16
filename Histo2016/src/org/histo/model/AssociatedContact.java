@@ -107,9 +107,6 @@ public class AssociatedContact implements LogAble, HasID {
 		this.task = task;
 	}
 
-	/********************************************************
-	 * Transient Getter/Setter
-	 ********************************************************/
 	@Transient
 	public boolean isEmailNotificationPerformed() {
 		return getEmailNotificationDate() != 0;
@@ -137,10 +134,6 @@ public class AssociatedContact implements LogAble, HasID {
 		setPhoneNotificationDate(performed ? System.currentTimeMillis() : 0);
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	@Transient
 	public boolean isNotificationPerformed() {
 
@@ -161,10 +154,6 @@ public class AssociatedContact implements LogAble, HasID {
 		}
 		return false;
 	}
-
-	/********************************************************
-	 * Transient Getter/Setter
-	 ********************************************************/
 
 	@Override
 	public String toString() {

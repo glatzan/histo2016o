@@ -92,7 +92,7 @@ public class PDFGeneratorHandler {
 	}
 
 	public PDFContainer generateDiagnosisReport(PrintTemplate printTemplate, Patient patient, Task task,
-			Person addressee) {
+			String addressee) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);

@@ -31,13 +31,12 @@
 
 		<div class="contentDiv">
 			<h:panelGrid columns="3" styleClass="defaultListingTableContainer"
-				id="navigation"
 				columnClasses="defaultListingTableColumnTop defaultListingTableColumn30,">
 				<!-- left column -->
 
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 					<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol"
-						columnClasses="defaultListingTableColumn20,">
+						columnClasses="defaultListingTableColumn20," id="navigation">
 
 						<!-- document type -->
 						<h:outputLabel value="#{msg['dialog.print.document']}" />
@@ -61,7 +60,7 @@
 
 					<!-- to -->
 					<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol"
-						style="margin-top:20px;">
+						style="margin-top:20px;" id="addressTable">
 						<h:outputLabel value="#{msg['dialog.print.addresses']}" />
 
 						<p:panelGrid styleClass="smallDatatable highlightedDataTable"
@@ -89,7 +88,7 @@
 									<p:column>
 										<p:selectBooleanCheckbox value="#{chooser.selected}"
 											styleClass="smallCheckbox">
-											<p:ajax event="change" process="@form"
+											<p:ajax event="change" process="@form" update="addressTable"
 												onstart="PF('blockUIWidget').block()"
 												oncomplete="PF('blockUIWidget').unblock()"
 												listener="#{dialogHandlerAction.printDialog.onChooseContact()}"></p:ajax>
@@ -99,7 +98,7 @@
 									<!-- count -->
 									<p:column>
 										<p:spinner value="#{chooser.copies}" styleClass="miniSpinner"
-											min="1" max="9"></p:spinner>
+											disabled="#{!chooser.selected}" min="1" max="9"></p:spinner>
 									</p:column>
 
 									<!-- role -->
@@ -116,11 +115,21 @@
 									<!-- name -->
 									<p:column>
 										<h:outputLabel value="#{chooser.contact.person.fullName}"
-											title="#{chooser.contact.person.fullName}">
+											id="editAddress#{outer.index}">
 											<f:converter converterId="org.histo.ui.TruncateConverter" />
 											<f:attribute name="truncateAt" value="23" />
 											<f:attribute name="continuationMark" value="..." />
 										</h:outputLabel>
+
+										<p:overlayPanel for="editAddress#{outer.index}"
+											widgetVar="editAddressOver#{outer.index}"
+											id="editAddressOver#{outer.index}" showEvent="mouseover"
+											hideEvent="mouseout" onShow="updateOverlay#{outer.index}();">
+
+											<h:outputText
+												value="#{dialogHandlerAction.customAddress.getGeneratedAddress(chooser)}"
+												styleClass="preformatted" />
+										</p:overlayPanel>
 									</p:column>
 
 									<p:column>
@@ -128,6 +137,8 @@
 											title="#{msg['dialog.settings.organization.edit.persons.remove']}"
 											actionListener="#{dialogHandlerAction.customAddress.initAndPrepareBean(chooser)}">
 											<i class="fa fa-gear" style="margin-left: 2px" />
+											<p:ajax event="dialogReturn"
+												update="editAddressOver#{outer.index}" />
 										</p:commandLink>
 									</p:column>
 								</p:row>
@@ -145,7 +156,7 @@
 											style="text-align: center; border: 1px solid #aaaaaa;">
 											<p:selectBooleanCheckbox value="#{organizazion.selected}"
 												styleClass="smallCheckbox">
-												<p:ajax event="change" process="@form" update="navigation"
+												<p:ajax event="change" process="@form" update="addressTable"
 													onstart="PF('blockUIWidget').block()"
 													oncomplete="PF('blockUIWidget').unblock()"
 													listener="#{dialogHandlerAction.printDialog.onChooseOrganizationOfContact(organizazion)}"></p:ajax>
@@ -153,8 +164,7 @@
 										</p:column>
 										<p:column colspan="3" styleClass="smallFont"
 											style=" border: 1px solid #aaaaaa;">
-											<h:outputText
-												value="Organisation: #{organizazion.organization.name}" />
+											<h:outputText value="#{organizazion.organization.name}" />
 										</p:column>
 									</p:row>
 								</c:forEach>

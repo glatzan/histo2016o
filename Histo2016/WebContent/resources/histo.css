@@ -163,7 +163,10 @@ body {
 	padding: 1px 6px !important;
 }
 
-
+/* Line break for \r\n */
+.preformatted {
+    white-space: pre-wrap;
+}
 /************************************* DEFAULT TABLE *************************************/
 /************************************* Fonts *************************************/
 .bold-text {
