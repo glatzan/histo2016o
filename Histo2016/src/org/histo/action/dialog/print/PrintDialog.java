@@ -24,8 +24,7 @@ import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
-import org.histo.ui.ContactChooser;
-import org.histo.ui.ContactChooser.OrganizationChooser;
+import org.histo.ui.ContactContainer;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.printer.PrintTemplate;
 import org.primefaces.context.RequestContext;
@@ -34,25 +33,43 @@ import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
+@Getter
+@Setter
 public class PrintDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private ResourceBundle resourceBundle;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PDFGeneratorHandler pDFGeneratorHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SettingsHandler settingsHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
@@ -78,13 +95,13 @@ public class PrintDialog extends AbstractDialog {
 	/**
 	 * List with all associated contacts
 	 */
-	private List<ContactChooser> contactList;
+	private List<ContactContainer> contactList;
 
 	/**
 	 * The associatedContact rendered, the first one will always be rendered, if
 	 * not changed, no rendering necessary
 	 */
-	private AssociatedContact selectedContact;
+	private ContactContainer selectedContact;
 
 	/**
 	 * True if the pdf should be rendered
@@ -114,13 +131,13 @@ public class PrintDialog extends AbstractDialog {
 		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect));
 
 		// contacts for printing
-		setContactList(new ArrayList<ContactChooser>());
+		setContactList(new ArrayList<ContactContainer>());
 
 		// setting patient
-		getContactList().add(new ContactChooser(task, task.getPatient().getPerson(), ContactRole.PATIENT));
+		getContactList().add(new ContactContainer(task, task.getPatient().getPerson(), ContactRole.PATIENT));
 
 		// setting other contacts (physicians)
-		getContactList().addAll(ContactChooser.factory(task.getContacts()));
+		getContactList().addAll(ContactContainer.factory(task.getContacts()));
 
 		setSelectedContact(null);
 
@@ -142,19 +159,18 @@ public class PrintDialog extends AbstractDialog {
 		setSelectedCouncil(council);
 
 		// contacts for printing
-		setContactList(new ArrayList<ContactChooser>());
+		setContactList(new ArrayList<ContactContainer>());
 
 		// only one adress so set as chosen
 		if (getSelectedCouncil().getCouncilPhysician() != null) {
-			ContactChooser chosser = new ContactChooser(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
-					ContactRole.CASE_CONFERENCE);
+			ContactContainer chosser = new ContactContainer(task,
+					getSelectedCouncil().getCouncilPhysician().getPerson(), ContactRole.CASE_CONFERENCE);
 			chosser.setSelected(true);
 			// setting patient
 			getContactList().add(chosser);
 
 			// setting council physicians data as rendere associatedContact data
-			setSelectedContact(new AssociatedContact(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
-					ContactRole.CASE_CONFERENCE));
+			setSelectedContact(chosser);
 		}
 
 		onChangePrintTemplate();
@@ -175,9 +191,9 @@ public class PrintDialog extends AbstractDialog {
 
 		initBean(task, types, defaultType);
 
-		setContactList(new ArrayList<ContactChooser>());
+		setContactList(new ArrayList<ContactContainer>());
 
-		setSelectedContact(sendTo);
+		setSelectedContact(new ContactContainer(sendTo));
 
 		// rendering the template
 		onChangePrintTemplate();
@@ -212,41 +228,40 @@ public class PrintDialog extends AbstractDialog {
 	 * Updates the pdf content if a associatedContact was chosen for the first
 	 * time
 	 */
-	public void onChooseContact(ContactChooser chooser) {
-		List<ContactChooser> selectedContacts = getSelectedContactFromList();
-		
-		asd
-//
-//		if (getSelectedContact() == null && !selectedContacts.isEmpty()) {
-//			setSelectedContact(selectedContacts.get(0).getContact());
-//			onChangePrintTemplate();
-//			RequestContext.getCurrentInstance().update("dialogContent");
-//		} else if (getSelectedContact() != null) {
-//			boolean found = false;
-//			for (ContactChooser contactChooser : selectedContacts) {
-//				if (contactChooser.getContact() == getSelectedContact()) {
-//					found = true;
-//					break;
-//				}
-//			}
-//
-//			if (!found) {
-//				if (!selectedContacts.isEmpty()) {
-//					setSelectedContact(selectedContacts.get(0).getContact());
-//				} else
-//					setSelectedContact(null);
-//				onChangePrintTemplate();
-//				RequestContext.getCurrentInstance().update("dialogContent");
-//			}
-//		}
+	public void onChooseContact(ContactContainer container) {
+
+		//
+		// if (getSelectedContact() == null && !selectedContacts.isEmpty()) {
+		// setSelectedContact(selectedContacts.get(0).getContact());
+		// onChangePrintTemplate();
+		// RequestContext.getCurrentInstance().update("dialogContent");
+		// } else if (getSelectedContact() != null) {
+		// boolean found = false;
+		// for (ContactContainer contactChooser : selectedContacts) {
+		// if (contactChooser.getContact() == getSelectedContact()) {
+		// found = true;
+		// break;
+		// }
+		// }
+		//
+		// if (!found) {
+		// if (!selectedContacts.isEmpty()) {
+		// setSelectedContact(selectedContacts.get(0).getContact());
+		// } else
+		// setSelectedContact(null);
+		// onChangePrintTemplate();
+		// RequestContext.getCurrentInstance().update("dialogContent");
+		// }
+		// }
 	}
 
-	public void onChooseOrganizationOfContact(OrganizationChooser chooser) {
+	public void onChooseOrganizationOfContact(ContactContainer.OrganizationChooser chooser) {
 
 		// only one organization can be selected, removing other organizations
 		// from selection
 		if (chooser.getParent().isSelected()) {
-			for (OrganizationChooser organizationChooser : chooser.getParent().getOrganizazionsChoosers()) {
+			for (ContactContainer.OrganizationChooser organizationChooser : chooser.getParent()
+					.getOrganizazionsChoosers()) {
 				if (organizationChooser != chooser)
 					organizationChooser.setSelected(false);
 			}
@@ -270,8 +285,8 @@ public class PrintDialog extends AbstractDialog {
 			break;
 		case DIAGNOSIS_REPORT:
 			result = pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(), getTask().getPatient(),
-					getTask(), getSelectedContact() == null ? resourceBundle.get("pdf.address.none")
-							: getSelectedContact().ge);
+					getTask(),
+					getSelectedContact() == null ? resourceBundle.get("pdf.address.none") : getSelectedContact());
 			break;
 		case COUNCIL_REQUEST:
 			result = pDFGeneratorHandler.generateCouncilRequest(getSelectedTemplate(), getTask().getPatient(),
@@ -280,7 +295,7 @@ public class PrintDialog extends AbstractDialog {
 		default:
 			// always render the pdf with the fist associatedContact chosen
 			result = pDFGeneratorHandler.generatePDFForReport(getTask().getPatient(), getTask(), getSelectedTemplate(),
-					getSelectedContact() == null ? null : getSelectedContact().getPerson());
+					getSelectedContact() == null ? null : getSelectedContact());
 			break;
 		}
 
@@ -296,9 +311,9 @@ public class PrintDialog extends AbstractDialog {
 	 * 
 	 * @return
 	 */
-	private List<ContactChooser> getSelectedContactFromList() {
-		ArrayList<ContactChooser> result = new ArrayList<ContactChooser>();
-		for (ContactChooser contactChooser : getContactList()) {
+	private List<ContactContainer> getSelectedContactFromList() {
+		ArrayList<ContactContainer> result = new ArrayList<ContactContainer>();
+		for (ContactContainer contactChooser : getContactList()) {
 			if (contactChooser.isSelected())
 				result.add(contactChooser);
 		}
@@ -343,7 +358,7 @@ public class PrintDialog extends AbstractDialog {
 		} else {
 			boolean oneContactSelected = false;
 			// addresses where chosen
-			for (ContactChooser contactChooser : getContactList()) {
+			for (ContactContainer contactChooser : getContactList()) {
 				if (contactChooser.isSelected()) {
 					// address of the rendered pdf, not rendering twice
 					if (contactChooser.getContact() == getSelectedContact()) {
@@ -402,72 +417,6 @@ public class PrintDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
-	}
-
-	// ************************ Getter/Setter ************************
-
-	public PrintTemplate getSelectedTemplate() {
-		return selectedTemplate;
-	}
-
-	public void setSelectedTemplate(PrintTemplate selectedTemplate) {
-		this.selectedTemplate = selectedTemplate;
-	}
-
-	public PDFContainer getPdfContainer() {
-		return pdfContainer;
-	}
-
-	public void setPdfContainer(PDFContainer pdfContainer) {
-		this.pdfContainer = pdfContainer;
-	}
-
-	public AssociatedContact getSelectedContact() {
-		return selectedContact;
-	}
-
-	public void setSelectedContact(AssociatedContact selectedContact) {
-		this.selectedContact = selectedContact;
-	}
-
-	public boolean isRenderPdf() {
-		return renderPdf;
-	}
-
-	public void setRenderPdf(boolean renderPdf) {
-		this.renderPdf = renderPdf;
-	}
-
-	public List<PrintTemplate> getTemplateList() {
-		return templateList;
-	}
-
-	public void setTemplateList(List<PrintTemplate> templateList) {
-		this.templateList = templateList;
-	}
-
-	public DefaultTransformer<PrintTemplate> getTemplateTransformer() {
-		return templateTransformer;
-	}
-
-	public void setTemplateTransformer(DefaultTransformer<PrintTemplate> templateTransformer) {
-		this.templateTransformer = templateTransformer;
-	}
-
-	public List<ContactChooser> getContactList() {
-		return contactList;
-	}
-
-	public void setContactList(List<ContactChooser> contactList) {
-		this.contactList = contactList;
-	}
-
-	public Council getSelectedCouncil() {
-		return selectedCouncil;
-	}
-
-	public void setSelectedCouncil(Council selectedCouncil) {
-		this.selectedCouncil = selectedCouncil;
 	}
 
 }

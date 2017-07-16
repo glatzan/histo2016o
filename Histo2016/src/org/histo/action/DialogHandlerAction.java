@@ -2,7 +2,7 @@ package org.histo.action;
 
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
-import org.histo.action.dialog.print.CustomAddress;
+import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.PrintDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ public class DialogHandlerAction {
 	
 	private PrintDialog printDialog;
 
-	private CustomAddress customAddress; 
+	private CustomAddressDialog customAddressDialog; 
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -43,11 +43,11 @@ public class DialogHandlerAction {
 		return printDialog;
 	}
 	
-	public CustomAddress getCustomAddress() {
-		if(customAddress == null)
-			customAddress = new CustomAddress();
+	public CustomAddressDialog getCustomAddress() {
+		if(customAddressDialog == null)
+			customAddressDialog = new CustomAddressDialog();
 		
-		return customAddress;
+		return customAddressDialog;
 	}
 }
 
