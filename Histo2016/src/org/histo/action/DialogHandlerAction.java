@@ -42,8 +42,8 @@ public class DialogHandlerAction {
 
 		return printDialog;
 	}
-	
-	public CustomAddressDialog getCustomAddress() {
+
+	public CustomAddressDialog getCustomAddressDialog() {
 		if(customAddressDialog == null)
 			customAddressDialog = new CustomAddressDialog();
 		

@@ -224,26 +224,46 @@ public class PrintDialog extends AbstractDialog {
 		}
 	}
 
-	public void onChooseContact(ContactContainer container) {
-		onChooseContact(container, false);
-	}
-
 	/**
 	 * Updates the pdf content if a associatedContact was chosen for the first
 	 * time
 	 */
-	public void onChooseContact(ContactContainer container, boolean organizationHasChanged) {
+	public void onChooseContact(ContactContainer container) {
 
-		// settings first contact as default
-		if (getRenderedContact() == null && container.isSelected()) {
-			setRenderedContact(container);
-			onChangePrintTemplate();
-			RequestContext.getCurrentInstance().update("dialogContent");
-		} else if (getRenderedContact() == container && !container.isSelected()) {
-			// disselecting the contact, selecting the first selected one
+		// contact is selected
+		if (container.isSelected()) {
+
+			// setting as rendered if nothing is rendered
+			if (getRenderedContact() == null) {
+				// generating custom name if organization was selected
+				ContactContainer.generateCustomOrganizationAddress(container);
+				setRenderedContact(container);
+				onChangePrintTemplate();
+				RequestContext.getCurrentInstance().update("dialogContent");
+				return;
+			}
+
+			// rerendering if organization has chagned
+			if (container.isOrganizationHasChagned()) {
+				container.setOrganizationHasChagned(false);
+				if (!ContactContainer.generateCustomOrganizationAddress(container)) {
+					// no organization address was generated, so the
+					// organization was deselected
+					container.getContact().setCustomContact(null);
+				}
+
+				// updating beacause container is selected and rendered
+				if (getRenderedContact() == container) {
+					onChangePrintTemplate();
+					RequestContext.getCurrentInstance().update("dialogContent");
+				}
+				return;
+			}
+
+		} else {
+			// deslecting contact and setting the first selected one
 			for (ContactContainer contactContainer : contactList) {
 				if (contactContainer.isSelected()) {
-					System.out.println("selecting new container");
 					setRenderedContact(contactContainer);
 					onChangePrintTemplate();
 					RequestContext.getCurrentInstance().update("dialogContent");
@@ -254,16 +274,11 @@ public class PrintDialog extends AbstractDialog {
 			onChangePrintTemplate();
 			RequestContext.getCurrentInstance().update("dialogContent");
 			return;
-		} else if (getRenderedContact() == container && organizationHasChanged) {
-			// same contact but organization has changed
-			onChangePrintTemplate();
-			RequestContext.getCurrentInstance().update("dialogContent");
 		}
 	}
 
 	public void onChooseOrganizationOfContact(ContactContainer.OrganizationChooser chooser) {
 
-		boolean organizationHasChanged = false;
 		// only one organization can be selected, removing other organizations
 		// from selection
 		if (chooser.getParent().isSelected()) {
@@ -271,17 +286,19 @@ public class PrintDialog extends AbstractDialog {
 					.getOrganizazionsChoosers()) {
 				if (organizationChooser != chooser) {
 					if (organizationChooser.isSelected())
-						organizationHasChanged = true;
-
+						chooser.getParent().setOrganizationHasChagned(true);
 					organizationChooser.setSelected(false);
 				}
 			}
+		} else if (!chooser.isSelected()) {
+			System.out.println("unselecting");
+			chooser.getParent().setOrganizationHasChagned(true);
 		} else {
 			// setting parent as selected
 			chooser.getParent().setSelected(true);
 		}
 
-		onChooseContact(chooser.getParent(), organizationHasChanged);
+		onChooseContact(chooser.getParent());
 	}
 
 	public void onChangePrintTemplate() {
@@ -298,7 +315,7 @@ public class PrintDialog extends AbstractDialog {
 			break;
 		case DIAGNOSIS_REPORT:
 			result = pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(), getTask().getPatient(),
-					getTask(), getRenderedContact());
+					getTask(), getRenderedContact() != null ? getRenderedContact().getContact() : null);
 			break;
 		case COUNCIL_REQUEST:
 			result = pDFGeneratorHandler.generateCouncilRequest(getSelectedTemplate(), getTask().getPatient(),
@@ -307,7 +324,7 @@ public class PrintDialog extends AbstractDialog {
 		default:
 			// always render the pdf with the fist associatedContact chosen
 			result = pDFGeneratorHandler.generatePDFForReport(getTask().getPatient(), getTask(), getSelectedTemplate(),
-					getRenderedContact());
+					getRenderedContact() != null ? getRenderedContact().getContact() : null);
 			break;
 		}
 

@@ -1,5 +1,7 @@
 package org.histo.model;
 
+import java.util.Optional;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +20,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.patient.Task;
+import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -51,7 +54,7 @@ public class AssociatedContact implements LogAble, HasID {
 
 	@Column(columnDefinition = "VARCHAR")
 	private String customContact;
-	
+
 	@Column
 	private boolean primaryContact;
 
@@ -96,16 +99,38 @@ public class AssociatedContact implements LogAble, HasID {
 	public AssociatedContact() {
 	}
 
-	public AssociatedContact(Task task,Person person) {
-		this( task,person, ContactRole.NONE);
+	public AssociatedContact(Task task, Person person) {
+		this(task, person, ContactRole.NONE);
 	}
 
-	public AssociatedContact(Task task,Person person, ContactRole role) {
+	public AssociatedContact(Task task, Person person, ContactRole role) {
 		logger.debug("Creating associatedContact for " + person.getFullName());
 		this.person = person;
 		this.role = role;
 		this.task = task;
 	}
+
+	/**
+	 * Returns if set the customContact (manually changed by the user),
+	 * otherwise it will generate the default address field
+	 * 
+	 * @return
+	 */
+	@Transient
+	public String getContactAsString() {
+		Optional<String> address = Optional.ofNullable(getCustomContact());
+
+		if (address.isPresent())
+			return address.get();
+
+		return generateAddress(this);
+	}
+	
+	@Transient
+	public String getContactAsLatex() {
+		return (new TextToLatexConverter()).convertToTex(getContactAsString());
+	}
+
 
 	@Transient
 	public boolean isEmailNotificationPerformed() {
@@ -161,6 +186,41 @@ public class AssociatedContact implements LogAble, HasID {
 			return getPerson().getFullName();
 		else
 			return getPerson().getTitle() + " " + getPerson().getFirstName() + " " + getPerson().getLastName();
+	}
+
+	public static String generateAddress(AssociatedContact associatedContact) {
+		return generateAddress(associatedContact, null);
+	}
+
+	public static String generateAddress(AssociatedContact associatedContact, Organization organization) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(associatedContact.getPerson().getFullName() + "\r\n");
+
+		Optional<String> street;
+		Optional<String> postcode;
+		Optional<String> town;
+
+		if (organization != null) {
+			street = Optional.ofNullable(organization.getContact().getStreet()).filter(s -> !s.isEmpty());
+			postcode = Optional.ofNullable(organization.getContact().getPostcode()).filter(s -> !s.isEmpty());
+			town = Optional.ofNullable(organization.getContact().getTown()).filter(s -> !s.isEmpty());
+			buffer.append(organization.getName() + "\r\n");
+
+		} else {
+			// no organization is selected or present, so add the data of the
+			// user
+			street = Optional.ofNullable(associatedContact.getPerson().getContact().getStreet())
+					.filter(s -> !s.isEmpty());
+			postcode = Optional.ofNullable(associatedContact.getPerson().getContact().getPostcode())
+					.filter(s -> !s.isEmpty());
+			town = Optional.ofNullable(associatedContact.getPerson().getContact().getTown()).filter(s -> !s.isEmpty());
+		}
+
+		buffer.append(street.isPresent() ? street.get() + "\r\n" : "");
+		buffer.append(postcode.isPresent() ? postcode.get() + " " : "");
+		buffer.append(town.isPresent() ? town.get() + "\r\n" : "");
+
+		return buffer.toString();
 	}
 
 }

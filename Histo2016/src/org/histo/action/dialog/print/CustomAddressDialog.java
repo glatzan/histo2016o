@@ -11,6 +11,7 @@ import org.histo.model.Organization;
 import org.histo.model.patient.Task;
 import org.histo.ui.ContactContainer;
 import org.histo.util.StreamUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.Getter;
@@ -21,9 +22,10 @@ import lombok.Setter;
 @Setter
 public class CustomAddressDialog extends AbstractDialog {
 
-	private ContactContainer contactContainer;
-
+	@Autowired
 	private PatientDao patientDao;
+
+	private ContactContainer contactContainer;
 
 	private String customAddress;
 
@@ -34,12 +36,12 @@ public class CustomAddressDialog extends AbstractDialog {
 
 	public void initBean(Task task, ContactContainer contactContainer) {
 		this.contactContainer = contactContainer;
-		customAddress = contactContainer.getGeneratedAddress();
+		customAddress = contactContainer.getContact().getContactAsString();
 		super.initBean(task, Dialog.PRINT_ADDRESS, false);
 	}
 
 	public void copyCustomAddress() {
-		contactContainer.getContact().setCustomContact(getCustomAddress());
+		getContactContainer().getContact().setCustomContact(getCustomAddress());
 		try {
 			patientDao.savePatientAssociatedDataFailSave(getContactContainer().getContact(), task,
 					"log.patient.task.contact.customAddress");

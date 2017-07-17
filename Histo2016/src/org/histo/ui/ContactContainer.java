@@ -25,6 +25,8 @@ public class ContactContainer {
 
 	private boolean selected;
 
+	private boolean organizationHasChagned;
+	
 	private List<OrganizationChooser> organizazionsChoosers;
 
 	public ContactContainer(Task task, Person person, ContactRole role) {
@@ -43,59 +45,28 @@ public class ContactContainer {
 			}
 	}
 
-	public String getGeneratedAddress() {
-		Optional<String> address = Optional.ofNullable(getContact().getCustomContact());
-
-		if (address.isPresent())
-			return address.get();
-
-		return generateAddress(this);
-	}
-
-	public String getGeneratedAddressAsLatex() {
-		return (new TextToLatexConverter()).convertToTex(getGeneratedAddress());
-	}
-
-	public static String generateAddress(ContactContainer contactContainer) {
+	/**
+	 * Checks if an organization was selected, then true will be returned an a
+	 * customAddress will be generated
+	 * 
+	 * @param contactContainer
+	 * @return
+	 */
+	public static boolean generateCustomOrganizationAddress(ContactContainer contactContainer) {
 		try {
+			// organization was selected generating customAddress field
 			ContactContainer.OrganizationChooser organizationChooser = contactContainer.getOrganizazionsChoosers()
 					.stream().filter(p -> p.isSelected()).collect(StreamUtils.singletonCollector());
-			return generateAddress(contactContainer.getContact(), organizationChooser.getOrganization());
+
+			contactContainer.getContact().setCustomContact(AssociatedContact
+					.generateAddress(contactContainer.getContact(), organizationChooser.getOrganization()));
+			
+			return true;
 		} catch (IllegalStateException e) {
-			return generateAddress(contactContainer.getContact(), null);
+			// no organization was selected, nothin to do
+			return false;
 		}
 
-	}
-
-	public static String generateAddress(AssociatedContact associatedContact, Organization selectedOrganization) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append(associatedContact.getPerson().getFullName() + "\r\n");
-
-		Optional<String> street;
-		Optional<String> postcode;
-		Optional<String> town;
-
-		if (selectedOrganization != null) {
-			street = Optional.ofNullable(selectedOrganization.getContact().getStreet()).filter(s -> !s.isEmpty());
-			postcode = Optional.ofNullable(selectedOrganization.getContact().getPostcode()).filter(s -> !s.isEmpty());
-			town = Optional.ofNullable(selectedOrganization.getContact().getTown()).filter(s -> !s.isEmpty());
-			buffer.append(selectedOrganization.getName() + "\r\n");
-
-		} else {
-			// no organization is selected or present, so add the data of the
-			// user
-			street = Optional.ofNullable(associatedContact.getPerson().getContact().getStreet())
-					.filter(s -> !s.isEmpty());
-			postcode = Optional.ofNullable(associatedContact.getPerson().getContact().getPostcode())
-					.filter(s -> !s.isEmpty());
-			town = Optional.ofNullable(associatedContact.getPerson().getContact().getTown()).filter(s -> !s.isEmpty());
-		}
-
-		buffer.append(street.isPresent() ? street.get() + "\r\n" : "");
-		buffer.append(postcode.isPresent() ? postcode.get() + " " : "");
-		buffer.append(town.isPresent() ? town.get() + "\r\n" : "");
-
-		return buffer.toString();
 	}
 
 	@Getter

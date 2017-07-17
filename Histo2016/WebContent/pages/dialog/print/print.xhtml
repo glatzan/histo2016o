@@ -126,7 +126,7 @@
 											id="editAddressOver#{outer.index}" showEvent="mouseover"
 											hideEvent="mouseout" onShow="updateOverlay#{outer.index}();">
 
-											<h:outputText value="#{chooser.getGeneratedAddress()}"
+											<h:outputText value="#{chooser.contact.contactAsString}"
 												styleClass="preformatted" />
 										</p:overlayPanel>
 									</p:column>
@@ -134,7 +134,7 @@
 									<p:column>
 										<p:commandLink
 											title="#{msg['dialog.settings.organization.edit.persons.remove']}"
-											actionListener="#{dialogHandlerAction.customAddress.initAndPrepareBean(chooser)}">
+											actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task,chooser)}">
 											<i class="fa fa-gear" style="margin-left: 2px" />
 											<p:ajax event="dialogReturn"
 												update="editAddressOver#{outer.index}" />

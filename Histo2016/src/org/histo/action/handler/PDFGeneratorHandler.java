@@ -93,7 +93,7 @@ public class PDFGeneratorHandler {
 	}
 
 	public PDFContainer generateDiagnosisReport(PrintTemplate printTemplate, Patient patient, Task task,
-			ContactContainer toSendAddress) {
+			AssociatedContact toSendAddress) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
@@ -112,7 +112,7 @@ public class PDFGeneratorHandler {
 	}
 
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate,
-			ContactContainer toSendAddress) {
+			AssociatedContact toSendAddress) {
 
 		File workingDirectory = new File(
 				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
