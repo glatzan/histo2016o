@@ -42,12 +42,6 @@ public class CustomAddressDialog extends AbstractDialog {
 
 	public void copyCustomAddress() {
 		getContactContainer().getContact().setCustomContact(getCustomAddress());
-		try {
-			patientDao.savePatientAssociatedDataFailSave(getContactContainer().getContact(), task,
-					"log.patient.task.contact.customAddress");
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			onDatabaseVersionConflict();
-		}
 	}
 
 }

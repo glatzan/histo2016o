@@ -20,6 +20,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
+import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
@@ -139,6 +140,8 @@ public class PrintDialog extends AbstractDialog {
 		// setting other contacts (physicians)
 		getContactList().addAll(ContactContainer.factory(task.getContacts()));
 
+		getContactList().add(new ContactContainer(task, new Person(new Contact()), ContactRole.NONE));
+		
 		setRenderedContact(null);
 
 		// rendering the template
@@ -278,24 +281,26 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void onChooseOrganizationOfContact(ContactContainer.OrganizationChooser chooser) {
-
-		// only one organization can be selected, removing other organizations
-		// from selection
-		if (chooser.getParent().isSelected()) {
-			for (ContactContainer.OrganizationChooser organizationChooser : chooser.getParent()
-					.getOrganizazionsChoosers()) {
-				if (organizationChooser != chooser) {
-					if (organizationChooser.isSelected())
-						chooser.getParent().setOrganizationHasChagned(true);
-					organizationChooser.setSelected(false);
+		System.out.println("suu");
+		if (chooser.isSelected()) {
+			// only one organization can be selected, removing other
+			// organizations
+			// from selection
+			if (chooser.getParent().isSelected()) {
+				for (ContactContainer.OrganizationChooser organizationChooser : chooser.getParent()
+						.getOrganizazionsChoosers()) {
+					if (organizationChooser != chooser) {
+						organizationChooser.setSelected(false);
+					}
 				}
+				chooser.getParent().setOrganizationHasChagned(true);
+			} else {
+				// setting parent as selected
+				chooser.getParent().setSelected(true);
 			}
-		} else if (!chooser.isSelected()) {
+		} else {
 			System.out.println("unselecting");
 			chooser.getParent().setOrganizationHasChagned(true);
-		} else {
-			// setting parent as selected
-			chooser.getParent().setSelected(true);
 		}
 
 		onChooseContact(chooser.getParent());
