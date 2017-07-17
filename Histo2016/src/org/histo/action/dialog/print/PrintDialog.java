@@ -101,7 +101,7 @@ public class PrintDialog extends AbstractDialog {
 	 * The associatedContact rendered, the first one will always be rendered, if
 	 * not changed, no rendering necessary
 	 */
-	private ContactContainer selectedContact;
+	private ContactContainer renderedContact;
 
 	/**
 	 * True if the pdf should be rendered
@@ -139,7 +139,7 @@ public class PrintDialog extends AbstractDialog {
 		// setting other contacts (physicians)
 		getContactList().addAll(ContactContainer.factory(task.getContacts()));
 
-		setSelectedContact(null);
+		setRenderedContact(null);
 
 		// rendering the template
 		onChangePrintTemplate();
@@ -170,7 +170,7 @@ public class PrintDialog extends AbstractDialog {
 			getContactList().add(chosser);
 
 			// setting council physicians data as rendere associatedContact data
-			setSelectedContact(chosser);
+			setRenderedContact(chosser);
 		}
 
 		onChangePrintTemplate();
@@ -193,7 +193,7 @@ public class PrintDialog extends AbstractDialog {
 
 		setContactList(new ArrayList<ContactContainer>());
 
-		setSelectedContact(new ContactContainer(sendTo));
+		setRenderedContact(new ContactContainer(sendTo));
 
 		// rendering the template
 		onChangePrintTemplate();
@@ -224,51 +224,64 @@ public class PrintDialog extends AbstractDialog {
 		}
 	}
 
+	public void onChooseContact(ContactContainer container) {
+		onChooseContact(container, false);
+	}
+
 	/**
 	 * Updates the pdf content if a associatedContact was chosen for the first
 	 * time
 	 */
-	public void onChooseContact(ContactContainer container) {
+	public void onChooseContact(ContactContainer container, boolean organizationHasChanged) {
 
-		//
-		// if (getSelectedContact() == null && !selectedContacts.isEmpty()) {
-		// setSelectedContact(selectedContacts.get(0).getContact());
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// } else if (getSelectedContact() != null) {
-		// boolean found = false;
-		// for (ContactContainer contactChooser : selectedContacts) {
-		// if (contactChooser.getContact() == getSelectedContact()) {
-		// found = true;
-		// break;
-		// }
-		// }
-		//
-		// if (!found) {
-		// if (!selectedContacts.isEmpty()) {
-		// setSelectedContact(selectedContacts.get(0).getContact());
-		// } else
-		// setSelectedContact(null);
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// }
-		// }
+		// settings first contact as default
+		if (getRenderedContact() == null && container.isSelected()) {
+			setRenderedContact(container);
+			onChangePrintTemplate();
+			RequestContext.getCurrentInstance().update("dialogContent");
+		} else if (getRenderedContact() == container && !container.isSelected()) {
+			// disselecting the contact, selecting the first selected one
+			for (ContactContainer contactContainer : contactList) {
+				if (contactContainer.isSelected()) {
+					System.out.println("selecting new container");
+					setRenderedContact(contactContainer);
+					onChangePrintTemplate();
+					RequestContext.getCurrentInstance().update("dialogContent");
+					return;
+				}
+			}
+			setRenderedContact(null);
+			onChangePrintTemplate();
+			RequestContext.getCurrentInstance().update("dialogContent");
+			return;
+		} else if (getRenderedContact() == container && organizationHasChanged) {
+			// same contact but organization has changed
+			onChangePrintTemplate();
+			RequestContext.getCurrentInstance().update("dialogContent");
+		}
 	}
 
 	public void onChooseOrganizationOfContact(ContactContainer.OrganizationChooser chooser) {
 
+		boolean organizationHasChanged = false;
 		// only one organization can be selected, removing other organizations
 		// from selection
 		if (chooser.getParent().isSelected()) {
 			for (ContactContainer.OrganizationChooser organizationChooser : chooser.getParent()
 					.getOrganizazionsChoosers()) {
-				if (organizationChooser != chooser)
+				if (organizationChooser != chooser) {
+					if (organizationChooser.isSelected())
+						organizationHasChanged = true;
+
 					organizationChooser.setSelected(false);
+				}
 			}
 		} else {
 			// setting parent as selected
 			chooser.getParent().setSelected(true);
 		}
+
+		onChooseContact(chooser.getParent(), organizationHasChanged);
 	}
 
 	public void onChangePrintTemplate() {
@@ -285,8 +298,7 @@ public class PrintDialog extends AbstractDialog {
 			break;
 		case DIAGNOSIS_REPORT:
 			result = pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(), getTask().getPatient(),
-					getTask(),
-					getSelectedContact() == null ? resourceBundle.get("pdf.address.none") : getSelectedContact());
+					getTask(), getRenderedContact());
 			break;
 		case COUNCIL_REQUEST:
 			result = pDFGeneratorHandler.generateCouncilRequest(getSelectedTemplate(), getTask().getPatient(),
@@ -295,7 +307,7 @@ public class PrintDialog extends AbstractDialog {
 		default:
 			// always render the pdf with the fist associatedContact chosen
 			result = pDFGeneratorHandler.generatePDFForReport(getTask().getPatient(), getTask(), getSelectedTemplate(),
-					getSelectedContact() == null ? null : getSelectedContact());
+					getRenderedContact());
 			break;
 		}
 
@@ -361,7 +373,7 @@ public class PrintDialog extends AbstractDialog {
 			for (ContactContainer contactChooser : getContactList()) {
 				if (contactChooser.isSelected()) {
 					// address of the rendered pdf, not rendering twice
-					if (contactChooser.getContact() == getSelectedContact()) {
+					if (contactChooser == getRenderedContact()) {
 						if (!getSelectedTemplate().isDoNotSave())
 							savePdf(getTask(), getPdfContainer());
 						for (int i = 0; i < contactChooser.getCopies(); i++) {
@@ -369,8 +381,8 @@ public class PrintDialog extends AbstractDialog {
 						}
 					} else {
 						// setting other associatedContact then selected
-						AssociatedContact tmp = getSelectedContact();
-						setSelectedContact(contactChooser.getContact());
+						ContactContainer tmp = getRenderedContact();
+						setRenderedContact(contactChooser);
 						// render all other pdfs
 						PDFContainer otherAddress = generatePDFFromTemplate();
 						for (int i = 0; i < contactChooser.getCopies(); i++) {
@@ -378,7 +390,7 @@ public class PrintDialog extends AbstractDialog {
 						}
 						// settings the old selected associatedContact as
 						// selected associatedContact
-						setSelectedContact(tmp);
+						setRenderedContact(tmp);
 					}
 
 					oneContactSelected = true;

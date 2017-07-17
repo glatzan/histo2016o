@@ -292,22 +292,21 @@ public class NotificationDialog {
 						} else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
 								&& notificationChooser.getPrintTemplate() != null) {
 							// attach pdf to mail
-							PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
-									getTemporaryTask().getPatient(), getTemporaryTask(),
-									notificationChooser.getPrintTemplate(),
-									notificationChooser.getContact().getPerson());
-
-							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-									notificationChooser.getContact().getPerson().getContact().getEmail(),
-									emailNotificationSettings.getEmailSubject(),
-									emailNotificationSettings.getEmailText(), pdfToSend)) {
-								emailSuccessful = true;
-								// adding mail to the result array
-								resultPdfs.add(pdfToSend);
-								logger.trace("PDF successfully send");
-							} else {
-								// TODO: HAndle fault
-							}
+//							PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
+//									getTemporaryTask().getPatient(), getTemporaryTask(),
+//									notificationChooser.getPrintTemplate(), notificationChooser);
+//TODO: rewrite
+//							if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+//									notificationChooser.getContact().getPerson().getContact().getEmail(),
+//									emailNotificationSettings.getEmailSubject(),
+//									emailNotificationSettings.getEmailText(), pdfToSend)) {
+//								emailSuccessful = true;
+//								// adding mail to the result array
+////								resultPdfs.add(pdfToSend);
+//								logger.trace("PDF successfully send");
+//							} else {
+//								// TODO: HAndle fault
+//							}
 
 						} else {
 							// plain text mail
@@ -365,11 +364,11 @@ public class NotificationDialog {
 							logger.trace("Error, no Fax-Number or TemplateUtil");
 						} else {
 							// creating pdf
-							PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
-									getTemporaryTask().getPatient(), getTemporaryTask(),
-									notificationChooser.getPrintTemplate(),
-									notificationChooser.getContact().getPerson());
-							resultPdfs.add(pdfToSend);
+//							PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
+//									getTemporaryTask().getPatient(), getTemporaryTask(),
+//									notificationChooser.getPrintTemplate(),
+//									notificationChooser.getContact().getPerson());
+//							resultPdfs.add(pdfToSend);
 
 							// TODO: SEND FAX
 

@@ -10,6 +10,7 @@ import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
+import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -51,10 +52,14 @@ public class ContactContainer {
 		return generateAddress(this);
 	}
 
+	public String getGeneratedAddressAsLatex() {
+		return (new TextToLatexConverter()).convertToTex(getGeneratedAddress());
+	}
+
 	public static String generateAddress(ContactContainer contactContainer) {
 		try {
-			ContactContainer.OrganizationChooser organizationChooser = contactContainer.getOrganizazionsChoosers().stream()
-					.filter(p -> p.isSelected()).collect(StreamUtils.singletonCollector());
+			ContactContainer.OrganizationChooser organizationChooser = contactContainer.getOrganizazionsChoosers()
+					.stream().filter(p -> p.isSelected()).collect(StreamUtils.singletonCollector());
 			return generateAddress(contactContainer.getContact(), organizationChooser.getOrganization());
 		} catch (IllegalStateException e) {
 			return generateAddress(contactContainer.getContact(), null);
@@ -92,7 +97,7 @@ public class ContactContainer {
 
 		return buffer.toString();
 	}
-	
+
 	@Getter
 	@Setter
 	public class OrganizationChooser {

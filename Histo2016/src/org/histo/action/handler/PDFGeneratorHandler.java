@@ -24,6 +24,7 @@ import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.ui.ContactContainer;
 import org.histo.ui.medicalFindings.EmailNotificationSettings;
 import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
@@ -92,11 +93,11 @@ public class PDFGeneratorHandler {
 	}
 
 	public PDFContainer generateDiagnosisReport(PrintTemplate printTemplate, Patient patient, Task task,
-			String addressee) {
+			ContactContainer toSendAddress) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
-		generator.getConverter().replace("addressee", addressee);
+		generator.getConverter().replace("addressee", toSendAddress);
 		generator.getConverter().replace("subject", "");
 
 		return generator.generatePDF();
@@ -106,12 +107,12 @@ public class PDFGeneratorHandler {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("council", council);
-		
+
 		return generator.generatePDF();
 	}
-	
+
 	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate,
-			Person toSendAddress) {
+			ContactContainer toSendAddress) {
 
 		File workingDirectory = new File(
 				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
@@ -129,7 +130,7 @@ public class PDFGeneratorHandler {
 
 		replacePatientData(converter, patient);
 
-		replaceAddressData(converter, toSendAddress);
+//		replaceAddressData(converter, toSendAddress);
 
 		if (printTemplate.getDocumentTyp() == DocumentType.U_REPORT
 				|| printTemplate.getDocumentTyp() == DocumentType.U_REPORT_EMTY) {
@@ -681,12 +682,12 @@ public class PDFGeneratorHandler {
 
 		public JLRConverter openNewPDf(PrintTemplate printTemplate) {
 			this.printTemplate = printTemplate;
-			workingDirectory = new File(HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+			workingDirectory = new File(
+					HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 			System.out.println(workingDirectory.getAbsolutePath());
 			output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
 			System.out.println(output.getAbsolutePath());
-
 
 			template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
 
@@ -699,7 +700,7 @@ public class PDFGeneratorHandler {
 
 		public PDFContainer generatePDF() {
 			long test1 = System.currentTimeMillis();
-			
+
 			try {
 				System.out.println(template.getAbsolutePath());
 				if (!converter.parse(template, processedTex)) {
@@ -717,12 +718,11 @@ public class PDFGeneratorHandler {
 				File test = pdfGen.getPDF();
 				byte[] data = readContentIntoByteArray(test);
 
-				System.out.println(( System.currentTimeMillis() - test1 ));
-				
+				System.out.println((System.currentTimeMillis() - test1));
+
 				return new PDFContainer(printTemplate.getDocumentTyp(),
 						"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
 
-				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

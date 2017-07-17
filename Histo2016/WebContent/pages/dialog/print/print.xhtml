@@ -91,7 +91,7 @@
 											<p:ajax event="change" process="@form" update="addressTable"
 												onstart="PF('blockUIWidget').block()"
 												oncomplete="PF('blockUIWidget').unblock()"
-												listener="#{dialogHandlerAction.printDialog.onChooseContact()}"></p:ajax>
+												listener="#{dialogHandlerAction.printDialog.onChooseContact(chooser)}"></p:ajax>
 										</p:selectBooleanCheckbox>
 									</p:column>
 
@@ -126,8 +126,7 @@
 											id="editAddressOver#{outer.index}" showEvent="mouseover"
 											hideEvent="mouseout" onShow="updateOverlay#{outer.index}();">
 
-											<h:outputText
-												value="#{dialogHandlerAction.customAddress.getGeneratedAddress(chooser)}"
+											<h:outputText value="#{chooser.getGeneratedAddress()}"
 												styleClass="preformatted" />
 										</p:overlayPanel>
 									</p:column>
