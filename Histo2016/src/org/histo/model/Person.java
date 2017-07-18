@@ -100,10 +100,15 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 	}
 
 	public Person(String name) {
-		setLastName(name);
+		this(name, new Contact());
 	}
 
 	public Person(Contact contact) {
+		this(null, contact);
+	}
+
+	public Person(String name, Contact contact) {
+		this.lastName = name;
 		this.contact = contact;
 	}
 

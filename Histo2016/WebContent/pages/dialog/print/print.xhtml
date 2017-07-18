@@ -103,7 +103,7 @@
 
 									<!-- role -->
 									<p:column>
-										<h:outputLabel
+										<h:outputLabel rendered="#{chooser.contact.role ne 'NONE'}"
 											value="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}"
 											title="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}">
 											<f:converter converterId="org.histo.ui.TruncateConverter" />
@@ -174,10 +174,8 @@
 					<!-- save file -->
 					<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol"
 						columnClasses="defaultListingTableColumn20,">
-
-						<!-- document type -->
+						<p:selectBooleanCheckbox styleClass="smallCheckbox" />
 						<h:outputLabel value="Datei speichern" />
-						<p:selectBooleanCheckbox />
 					</h:panelGrid>
 				</h:panelGrid>
 

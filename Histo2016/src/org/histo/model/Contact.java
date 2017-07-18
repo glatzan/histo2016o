@@ -50,6 +50,4 @@ public class Contact {
 	private String fax;
 	@Column(columnDefinition = "VARCHAR")
 	private String pager;
-	
-	
 }

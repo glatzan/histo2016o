@@ -140,7 +140,7 @@ public class PrintDialog extends AbstractDialog {
 		// setting other contacts (physicians)
 		getContactList().addAll(ContactContainer.factory(task.getContacts()));
 
-		getContactList().add(new ContactContainer(task, new Person(new Contact()), ContactRole.NONE));
+		getContactList().add(new ContactContainer(task, new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
 		
 		setRenderedContact(null);
 

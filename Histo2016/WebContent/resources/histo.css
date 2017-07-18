@@ -148,6 +148,10 @@ body {
 	width: 30%;
 }
 
+.defaultListingTableColumn40 {
+	width: 40%;
+}
+
 .defaultListingTableColumn100px {
 	width: 100px !important;
 	min-width: 100px !important;
