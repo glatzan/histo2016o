@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.histo.config.enums.ContactMethod;
 import org.histo.config.enums.NotificationOption;
 import org.histo.model.AssociatedContact;
-import org.histo.util.printer.PrintTemplate;
+import org.histo.util.printer.template.AbstractTemplate;
 
 public class MedicalFindingsChooser {
 
@@ -15,7 +15,7 @@ public class MedicalFindingsChooser {
 
 	private NotificationOption notificationAttachment;
 
-	private PrintTemplate printTemplate;
+	private AbstractTemplate printTemplate;
 
 	private AtomicBoolean performed;
 
@@ -88,11 +88,11 @@ public class MedicalFindingsChooser {
 		this.error.set(error);
 	}
 
-	public PrintTemplate getPrintTemplate() {
+	public AbstractTemplate getPrintTemplate() {
 		return printTemplate;
 	}
 
-	public void setPrintTemplate(PrintTemplate printTemplate) {
+	public void setPrintTemplate(AbstractTemplate printTemplate) {
 		this.printTemplate = printTemplate;
 	}
 }

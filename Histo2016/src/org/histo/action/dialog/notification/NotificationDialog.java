@@ -31,7 +31,7 @@ import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.MedicalFindingsChooser;
 import org.histo.ui.medicalFindings.NoContactDataNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
-import org.histo.util.printer.PrintTemplate;
+import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -423,8 +423,8 @@ public class NotificationDialog {
 				}
 
 				// getting the template for the send report
-				PrintTemplate sendReport = PrintTemplate.getDefaultTemplate(
-						PrintTemplate.getTemplatesByType(DocumentType.MEDICAL_FINDINGS_SEND_REPORT));
+				AbstractTemplate sendReport = AbstractTemplate.getDefaultTemplate(
+						AbstractTemplate.getTemplatesByType(DocumentType.MEDICAL_FINDINGS_SEND_REPORT));
 
 				// sendreport has date and datafiled
 				HashMap<String, String> addtionalFields = new HashMap<String, String>();
@@ -461,7 +461,7 @@ public class NotificationDialog {
 	 ********************************************************/
 	public void showPreviewForContact(MedicalFindingsChooser notificationEmailList) {
 		dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(getTemporaryTask(),
-				new PrintTemplate[] { notificationEmailList.getPrintTemplate() },
+				new AbstractTemplate[] { notificationEmailList.getPrintTemplate() },
 				notificationEmailList.getPrintTemplate(), notificationEmailList.getContact());
 		setShowPreview(true);
 	}

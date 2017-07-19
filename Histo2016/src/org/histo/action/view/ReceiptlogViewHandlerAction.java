@@ -21,7 +21,7 @@ import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.ui.StainingTableChooser;
-import org.histo.util.printer.PrintTemplate;
+import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -143,7 +143,7 @@ public class ReceiptlogViewHandlerAction {
 				break;
 			case PRINT:
 
-				PrintTemplate[] arr = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
+				AbstractTemplate[] arr = AbstractTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
 						new DocumentType[] { DocumentType.LABLE });
 
 				if (arr.length == 0) {
@@ -284,7 +284,7 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void printLableForSlide(Slide slide) {
 
-		PrintTemplate[] arr = PrintTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
+		AbstractTemplate[] arr = AbstractTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
 				new DocumentType[] { DocumentType.LABLE });
 
 		if (arr.length == 0) {

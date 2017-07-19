@@ -8,7 +8,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.NotificationOption;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.printer.PrintTemplate;
+import org.histo.util.printer.template.AbstractTemplate;
 
 public class FaxNotificationSettings {
 	/**
@@ -24,12 +24,12 @@ public class FaxNotificationSettings {
 	/**
 	 * List of all templates to select from
 	 */
-	private PrintTemplate[] printTemplates;
+	private AbstractTemplate[] printTemplates;
 
 	/**
 	 * The TemplateListtransformer for selecting a template
 	 */
-	private DefaultTransformer<PrintTemplate> templateTransformer;
+	private DefaultTransformer<AbstractTemplate> templateTransformer;
 	
 	/**
 	 * Temporary Task
@@ -41,10 +41,10 @@ public class FaxNotificationSettings {
 		updateNotificationFaxList();
 		setUseFax(!getNotificationFaxList().isEmpty() ? true : false);
 
-		setPrintTemplates(PrintTemplate.getTemplatesByTypes(
+		setPrintTemplates(AbstractTemplate.getTemplatesByTypes(
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN }));
 
-		setTemplateTransformer(new DefaultTransformer<PrintTemplate>(getPrintTemplates()));
+		setTemplateTransformer(new DefaultTransformer<AbstractTemplate>(getPrintTemplates()));
 	}
 
 	/**
@@ -68,11 +68,11 @@ public class FaxNotificationSettings {
 				// employees, sets the default template
 				if (notificationChooser.getContact().getRole() == ContactRole.FAMILY_PHYSICIAN
 						|| notificationChooser.getContact().getRole() == ContactRole.PRIVATE_PHYSICIAN)
-					notificationChooser.setPrintTemplate(PrintTemplate.getDefaultTemplate(PrintTemplate
+					notificationChooser.setPrintTemplate(AbstractTemplate.getDefaultTemplate(AbstractTemplate
 							.getTemplatesByType(getPrintTemplates(), DocumentType.DIAGNOSIS_REPORT_EXTERN)));
 				else
-					notificationChooser.setPrintTemplate(PrintTemplate.getDefaultTemplate(
-							PrintTemplate.getTemplatesByType(getPrintTemplates(), DocumentType.DIAGNOSIS_REPORT)));
+					notificationChooser.setPrintTemplate(AbstractTemplate.getDefaultTemplate(
+							AbstractTemplate.getTemplatesByType(getPrintTemplates(), DocumentType.DIAGNOSIS_REPORT)));
 			} else {
 				notificationChooser.setPrintTemplate(null);
 			}
@@ -110,7 +110,7 @@ public class FaxNotificationSettings {
 		return notificationFaxList;
 	}
 
-	public PrintTemplate[] getPrintTemplates() {
+	public AbstractTemplate[] getPrintTemplates() {
 		return printTemplates;
 	}
 
@@ -122,15 +122,15 @@ public class FaxNotificationSettings {
 		this.notificationFaxList = notificationFaxList;
 	}
 
-	public void setPrintTemplates(PrintTemplate[] printTemplates) {
+	public void setPrintTemplates(AbstractTemplate[] printTemplates) {
 		this.printTemplates = printTemplates;
 	}
 
-	public DefaultTransformer<PrintTemplate> getTemplateTransformer() {
+	public DefaultTransformer<AbstractTemplate> getTemplateTransformer() {
 		return templateTransformer;
 	}
 
-	public void setTemplateTransformer(DefaultTransformer<PrintTemplate> templateTransformer) {
+	public void setTemplateTransformer(DefaultTransformer<AbstractTemplate> templateTransformer) {
 		this.templateTransformer = templateTransformer;
 	}
 

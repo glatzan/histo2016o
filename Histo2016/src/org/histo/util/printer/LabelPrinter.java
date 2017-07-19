@@ -13,6 +13,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.patient.Slide;
 import org.histo.util.HistoUtil;
+import org.histo.util.printer.template.AbstractTemplate;
 
 import com.google.gson.annotations.Expose;
 
@@ -66,7 +67,7 @@ public class LabelPrinter extends AbstractPrinter {
 		printBuffer.put(fileName.replace("%count%", String.valueOf(++fileNameCounter)), toPrint);
 	}
 
-	public final void print(PrintTemplate printTemplate, Slide slide, String date) {
+	public final void print(AbstractTemplate printTemplate, Slide slide, String date) {
 		String taskID = slide.getTask().getTaskID();
 
 		logger.debug("Using printer " + getName());
@@ -85,8 +86,8 @@ public class LabelPrinter extends AbstractPrinter {
 
 	public boolean printTestPage() {
 
-		PrintTemplate test = PrintTemplate
-				.getDefaultTemplate(PrintTemplate.getTemplatesByType(DocumentType.TEST_LABLE));
+		AbstractTemplate test = AbstractTemplate
+				.getDefaultTemplate(AbstractTemplate.getTemplatesByType(DocumentType.TEST_LABLE));
 
 		String toPrint = test.getContentOfFile();
 

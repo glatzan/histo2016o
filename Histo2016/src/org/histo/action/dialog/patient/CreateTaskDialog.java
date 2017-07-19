@@ -36,7 +36,7 @@ import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.TimeUtil;
-import org.histo.util.printer.PrintTemplate;
+import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -284,7 +284,7 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTaskAndPrintUReport() {
 		createTask();
 
-		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
+		AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
 
 		if (subSelect.length == 0) {
 			logger.error("New Task: No TemplateUtil for printing UReport found");

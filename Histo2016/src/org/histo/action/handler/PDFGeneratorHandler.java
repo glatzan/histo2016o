@@ -28,7 +28,7 @@ import org.histo.ui.ContactContainer;
 import org.histo.ui.medicalFindings.EmailNotificationSettings;
 import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
-import org.histo.util.printer.PrintTemplate;
+import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -68,11 +68,11 @@ public class PDFGeneratorHandler {
 	@Autowired
 	private SettingsHandler settingsHandler;
 
-	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate) {
+	public PDFContainer generatePDFForReport(Patient patient, Task task, AbstractTemplate printTemplate) {
 		return generatePDFForReport(patient, task, printTemplate, null);
 	}
 
-	public PDFContainer generateSendReport(PrintTemplate printTemplate, Patient patient,
+	public PDFContainer generateSendReport(AbstractTemplate printTemplate, Patient patient,
 			EmailNotificationSettings emails, FaxNotificationSettings fax, PhoneNotificationSettings phone) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 
@@ -85,14 +85,14 @@ public class PDFGeneratorHandler {
 		return generator.generatePDF();
 	}
 
-	public PDFContainer generateUReport(PrintTemplate printTemplate, Patient patient, Task task) {
+	public PDFContainer generateUReport(AbstractTemplate printTemplate, Patient patient, Task task) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
 		return generator.generatePDF();
 	}
 
-	public PDFContainer generateDiagnosisReport(PrintTemplate printTemplate, Patient patient, Task task,
+	public PDFContainer generateDiagnosisReport(AbstractTemplate printTemplate, Patient patient, Task task,
 			AssociatedContact toSendAddress) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
@@ -103,7 +103,7 @@ public class PDFGeneratorHandler {
 		return generator.generatePDF();
 	}
 
-	public PDFContainer generateCouncilRequest(PrintTemplate printTemplate, Patient patient, Council council) {
+	public PDFContainer generateCouncilRequest(AbstractTemplate printTemplate, Patient patient, Council council) {
 		PDFGenerator generator = new PDFGenerator(printTemplate);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("council", council);
@@ -111,7 +111,7 @@ public class PDFGeneratorHandler {
 		return generator.generatePDF();
 	}
 
-	public PDFContainer generatePDFForReport(Patient patient, Task task, PrintTemplate printTemplate,
+	public PDFContainer generatePDFForReport(Patient patient, Task task, AbstractTemplate printTemplate,
 			AssociatedContact toSendAddress) {
 
 		File workingDirectory = new File(
@@ -132,13 +132,13 @@ public class PDFGeneratorHandler {
 
 //		replaceAddressData(converter, toSendAddress);
 
-		if (printTemplate.getDocumentTyp() == DocumentType.U_REPORT
-				|| printTemplate.getDocumentTyp() == DocumentType.U_REPORT_EMTY) {
+		if (printTemplate.getDocumentType() == DocumentType.U_REPORT
+				|| printTemplate.getDocumentType() == DocumentType.U_REPORT_EMTY) {
 			replaceUReportData(converter, task);
 		}
 
-		if (printTemplate.getDocumentTyp() == DocumentType.DIAGNOSIS_REPORT
-				|| printTemplate.getDocumentTyp() == DocumentType.DIAGNOSIS_REPORT_EXTERN) {
+		if (printTemplate.getDocumentType() == DocumentType.DIAGNOSIS_REPORT
+				|| printTemplate.getDocumentType() == DocumentType.DIAGNOSIS_REPORT_EXTERN) {
 			replaceReportData(converter, task);
 			replaceSignature(converter, task);
 		}
@@ -159,7 +159,7 @@ public class PDFGeneratorHandler {
 			File test = pdfGen.getPDF();
 			byte[] data = readContentIntoByteArray(test);
 
-			return new PDFContainer(printTemplate.getDocumentTyp(),
+			return new PDFContainer(printTemplate.getDocumentType(),
 					"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
 
 		} catch (IOException e) {
@@ -248,7 +248,7 @@ public class PDFGeneratorHandler {
 	 * @param replacements
 	 * @return
 	 */
-	public PDFContainer generateSimplePDF(PrintTemplate printTemplate, HashMap<String, String> replacements) {
+	public PDFContainer generateSimplePDF(AbstractTemplate printTemplate, HashMap<String, String> replacements) {
 		return generateSimplePDF(null, printTemplate, replacements);
 	}
 
@@ -261,7 +261,7 @@ public class PDFGeneratorHandler {
 	 * @param replacements
 	 * @return
 	 */
-	public PDFContainer generateSimplePDF(Patient patient, PrintTemplate printTemplate,
+	public PDFContainer generateSimplePDF(Patient patient, AbstractTemplate printTemplate,
 			HashMap<String, String> replacements) {
 		mainHandlerAction.getSettings();
 		File workingDirectory = new File(
@@ -303,7 +303,7 @@ public class PDFGeneratorHandler {
 			File test = pdfGen.getPDF();
 			byte[] data = readContentIntoByteArray(test);
 
-			return new PDFContainer(printTemplate.getDocumentTyp(),
+			return new PDFContainer(printTemplate.getDocumentType(),
 					"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
 
 		} catch (IOException e) {
@@ -312,7 +312,7 @@ public class PDFGeneratorHandler {
 		return null;
 	}
 
-	public PDFContainer generatePdfForTemplate(Task task, PrintTemplate tempalte, long dateOfReport,
+	public PDFContainer generatePdfForTemplate(Task task, AbstractTemplate tempalte, long dateOfReport,
 			ContactRole addressPhysicianRole, Physician externalPhysician, Physician signingPhysician) {
 		// PDFContainer result = null;
 		//
@@ -348,12 +348,12 @@ public class PDFGeneratorHandler {
 		return null;
 	}
 
-	public PDFContainer generatePdf(Task task, PrintTemplate template, long dateOfReport, Physician addressPhysician,
+	public PDFContainer generatePdf(Task task, AbstractTemplate template, long dateOfReport, Physician addressPhysician,
 			Physician signingPhysician) {
 		return generatePdf(task, template, dateOfReport, addressPhysician, signingPhysician, null);
 	}
 
-	public PDFContainer generatePdf(Task task, PrintTemplate template, long dateOfReport, Physician addressPhysician,
+	public PDFContainer generatePdf(Task task, AbstractTemplate template, long dateOfReport, Physician addressPhysician,
 			Physician signingPhysician, HashMap<String, String> additionalFields) {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -667,20 +667,20 @@ public class PDFGeneratorHandler {
 		return new PDFContainer(type, name, out.getBytes());
 	}
 
-	class PDFGenerator {
+	public class PDFGenerator {
 
 		private File workingDirectory;
 		private File output;
 		private File template;
 		private File processedTex;
 		private JLRConverter converter;
-		private PrintTemplate printTemplate;
+		private AbstractTemplate printTemplate;
 
-		public PDFGenerator(PrintTemplate printTemplate) {
+		public PDFGenerator(AbstractTemplate printTemplate) {
 			openNewPDf(printTemplate);
 		}
 
-		public JLRConverter openNewPDf(PrintTemplate printTemplate) {
+		public JLRConverter openNewPDf(AbstractTemplate printTemplate) {
 			this.printTemplate = printTemplate;
 			workingDirectory = new File(
 					HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
@@ -720,7 +720,7 @@ public class PDFGeneratorHandler {
 
 				System.out.println((System.currentTimeMillis() - test1));
 
-				return new PDFContainer(printTemplate.getDocumentTyp(),
+				return new PDFContainer(printTemplate.getDocumentType(),
 						"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
 
 			} catch (IOException e) {
@@ -749,7 +749,7 @@ public class PDFGeneratorHandler {
 			return converter;
 		}
 
-		public PrintTemplate getPrintTemplate() {
+		public AbstractTemplate getPrintTemplate() {
 			return printTemplate;
 		}
 
@@ -773,7 +773,7 @@ public class PDFGeneratorHandler {
 			this.converter = converter;
 		}
 
-		public void setPrintTemplate(PrintTemplate printTemplate) {
+		public void setPrintTemplate(AbstractTemplate printTemplate) {
 			this.printTemplate = printTemplate;
 		}
 

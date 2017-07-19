@@ -27,7 +27,7 @@ import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.ui.ContactContainer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.printer.PrintTemplate;
+import org.histo.util.printer.template.AbstractTemplate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -76,17 +76,17 @@ public class PrintDialog extends AbstractDialog {
 	/**
 	 * List of all templates for printing
 	 */
-	private List<PrintTemplate> templateList;
+	private List<AbstractTemplate> templateList;
 
 	/**
 	 * The TemplateListtransformer for selecting a template
 	 */
-	private DefaultTransformer<PrintTemplate> templateTransformer;
+	private DefaultTransformer<AbstractTemplate> templateTransformer;
 
 	/**
 	 * Selected template for printing
 	 */
-	private PrintTemplate selectedTemplate;
+	private AbstractTemplate selectedTemplate;
 
 	/**
 	 * Generated or loaded PDf
@@ -125,11 +125,11 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void initBeanForPrinting(Task task) {
-		PrintTemplate[] subSelect = PrintTemplate
+		AbstractTemplate[] subSelect = AbstractTemplate
 				.getTemplatesByTypes(new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.U_REPORT,
 						DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN });
 
-		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect));
+		initBean(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect));
 
 		// contacts for printing
 		setContactList(new ArrayList<ContactContainer>());
@@ -154,10 +154,10 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void initBeanForCouncil(Task task, Council council) {
-		PrintTemplate[] subSelect = PrintTemplate
+		AbstractTemplate[] subSelect = AbstractTemplate
 				.getTemplatesByTypes(new DocumentType[] { DocumentType.COUNCIL_REQUEST });
 
-		initBean(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect));
+		initBean(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect));
 
 		setSelectedCouncil(council);
 
@@ -185,11 +185,11 @@ public class PrintDialog extends AbstractDialog {
 
 	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType,
 			AssociatedContact sendTo) {
-		PrintTemplate[] subSelect = PrintTemplate.getTemplatesByTypes(types);
-		initBeanForExternalDisplay(task, subSelect, PrintTemplate.getDefaultTemplate(subSelect, defaultType), sendTo);
+		AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(types);
+		initBeanForExternalDisplay(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect, defaultType), sendTo);
 	}
 
-	public void initBeanForExternalDisplay(Task task, PrintTemplate[] types, PrintTemplate defaultType,
+	public void initBeanForExternalDisplay(Task task, AbstractTemplate[] types, AbstractTemplate defaultType,
 			AssociatedContact sendTo) {
 
 		initBean(task, types, defaultType);
@@ -202,7 +202,7 @@ public class PrintDialog extends AbstractDialog {
 		onChangePrintTemplate();
 	}
 
-	public void initBean(Task task, PrintTemplate[] templates, PrintTemplate selectedTemplate) {
+	public void initBean(Task task, AbstractTemplate[] templates, AbstractTemplate selectedTemplate) {
 		// getting task datalist, if was altered a updated task will be returend
 		try {
 			taskDAO.initializeTask(task, false);
@@ -215,9 +215,9 @@ public class PrintDialog extends AbstractDialog {
 		super.initBean(task, Dialog.PRINT);
 
 		if (templates != null) {
-			setTemplateList(new ArrayList<PrintTemplate>(Arrays.asList(templates)));
+			setTemplateList(new ArrayList<AbstractTemplate>(Arrays.asList(templates)));
 
-			setTemplateTransformer(new DefaultTransformer<PrintTemplate>(getTemplateList()));
+			setTemplateTransformer(new DefaultTransformer<AbstractTemplate>(getTemplateList()));
 
 			// sets the selected template
 			if (selectedTemplate == null && !getTemplateList().isEmpty())
@@ -313,7 +313,7 @@ public class PrintDialog extends AbstractDialog {
 
 	private PDFContainer generatePDFFromTemplate() {
 		PDFContainer result;
-		switch (getSelectedTemplate().getDocumentTyp()) {
+		switch (getSelectedTemplate().getDocumentType()) {
 		case U_REPORT:
 		case U_REPORT_EMTY:
 			result = pDFGeneratorHandler.generateUReport(getSelectedTemplate(), getTask().getPatient(), getTask());
