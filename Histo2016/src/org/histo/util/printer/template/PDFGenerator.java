@@ -36,6 +36,9 @@ public class PDFGenerator {
 	private JLRConverter converter;
 	private AbstractTemplate printTemplate;
 
+	public PDFGenerator() {
+	}
+
 	public PDFGenerator(AbstractTemplate printTemplate) {
 		openNewPDf(printTemplate);
 	}
@@ -44,10 +47,8 @@ public class PDFGenerator {
 		this.printTemplate = printTemplate;
 		workingDirectory = new File(
 				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
-		System.out.println(workingDirectory.getAbsolutePath());
-		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		System.out.println(output.getAbsolutePath());
+		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
 		template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
 

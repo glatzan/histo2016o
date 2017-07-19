@@ -11,6 +11,7 @@ import org.histo.model.interfaces.HasID;
 import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 
@@ -42,16 +43,7 @@ public class AbstractTemplate implements HasID, FileHandlerUtil {
 	@Expose
 	protected boolean doNotSave;
 
-	@Expose
-	protected String className;
-	
-	
-
-	public AbstractTemplate() {
-		setClassName("AbstractTemplate");
-	}
-
-	public PDFContainer generatePDF() {
+	public PDFContainer generatePDF(PDFGenerator generator) {
 		return null;
 	}
 
@@ -77,9 +69,15 @@ public class AbstractTemplate implements HasID, FileHandlerUtil {
 		Type type = new TypeToken<AbstractTemplate[]>() {
 		}.getType();
 
-		Gson gson = new Gson();
-		AbstractTemplate[] result = gson.fromJson(FileHandlerUtil.getContentOfFile(jsonFile), type);
+		GsonBuilder gb = new GsonBuilder();
+		gb.registerTypeAdapter(type, new TemplateDeserializer());
+		
+		Gson gson = gb.create();
+		
+		ArrayList<AbstractTemplate> result1 = gson.fromJson(FileHandlerUtil.getContentOfFile(jsonFile), type);
 
+		AbstractTemplate[] result = result1.toArray(new AbstractTemplate[result1.size()]);
+		
 		if (types != null)
 			result = AbstractTemplate.getTemplatesByTypes(result, types);
 
@@ -98,7 +96,8 @@ public class AbstractTemplate implements HasID, FileHandlerUtil {
 	}
 
 	/**
-	 * Loads the default list an returns a subselection containing the given types
+	 * Loads the default list an returns a subselection containing the given
+	 * types
 	 * 
 	 * @param types
 	 * @return

@@ -28,6 +28,9 @@ import org.histo.model.patient.Task;
 import org.histo.ui.ContactContainer;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.printer.template.AbstractTemplate;
+import org.histo.util.printer.template.PDFGenerator;
+import org.histo.util.printer.template.TemplateCouncil;
+import org.histo.util.printer.template.TemplateUReport;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -140,8 +143,9 @@ public class PrintDialog extends AbstractDialog {
 		// setting other contacts (physicians)
 		getContactList().addAll(ContactContainer.factory(task.getContacts()));
 
-		getContactList().add(new ContactContainer(task, new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
-		
+		getContactList().add(new ContactContainer(task,
+				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+
 		setRenderedContact(null);
 
 		// rendering the template
@@ -176,6 +180,9 @@ public class PrintDialog extends AbstractDialog {
 			setRenderedContact(chosser);
 		}
 
+		getContactList().add(new ContactContainer(task,
+				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+
 		onChangePrintTemplate();
 	}
 
@@ -186,7 +193,8 @@ public class PrintDialog extends AbstractDialog {
 	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType,
 			AssociatedContact sendTo) {
 		AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(types);
-		initBeanForExternalDisplay(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect, defaultType), sendTo);
+		initBeanForExternalDisplay(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect, defaultType),
+				sendTo);
 	}
 
 	public void initBeanForExternalDisplay(Task task, AbstractTemplate[] types, AbstractTemplate defaultType,
@@ -316,15 +324,21 @@ public class PrintDialog extends AbstractDialog {
 		switch (getSelectedTemplate().getDocumentType()) {
 		case U_REPORT:
 		case U_REPORT_EMTY:
-			result = pDFGeneratorHandler.generateUReport(getSelectedTemplate(), getTask().getPatient(), getTask());
+			((TemplateUReport) getSelectedTemplate()).setPatient(getTask().getPatient());
+			((TemplateUReport) getSelectedTemplate()).setTask(getTask());
+			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		case DIAGNOSIS_REPORT:
 			result = pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(), getTask().getPatient(),
 					getTask(), getRenderedContact() != null ? getRenderedContact().getContact() : null);
 			break;
 		case COUNCIL_REQUEST:
-			result = pDFGeneratorHandler.generateCouncilRequest(getSelectedTemplate(), getTask().getPatient(),
-					getSelectedCouncil());
+			((TemplateCouncil) getSelectedTemplate()).setPatient(getTask().getPatient());
+			((TemplateCouncil) getSelectedTemplate()).setCouncil(getSelectedCouncil());
+			((TemplateCouncil) getSelectedTemplate()).setTask(getTask());
+			((TemplateCouncil) getSelectedTemplate())
+					.setToSendAddress(getRenderedContact() != null ? getRenderedContact().getContact() : null);
+			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		default:
 			// always render the pdf with the fist associatedContact chosen

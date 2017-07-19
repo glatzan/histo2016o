@@ -12,13 +12,20 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-// https://stackoverflow.com/questions/19588020/gson-serialize-a-list-of-polymorphic-objects
 public class TemplateDeserializer implements JsonDeserializer<List<AbstractTemplate>> {
 
     private static Map<String, Class> map = new TreeMap<String, Class>();
 
     static {
-        map.put("AbstractTemplate", AbstractTemplate.class);
+        map.put("U_REPORT", TemplateUReport.class);
+        map.put("U_REPORT_EMTY", TemplateUReport.class);
+        map.put("DIAGNOSIS_REPORT", TemplateDiagnosisReport.class);
+        map.put("DIAGNOSIS_REPORT_EXTERN", TemplateDiagnosisReport.class);
+        map.put("COUNCIL_REQUEST", TemplateCouncil.class);
+        
+        map.put("LABLE", AbstractTemplate.class);
+        map.put("TEST_LABLE", AbstractTemplate.class);
+        map.put("MEDICAL_FINDINGS_SEND_REPORT", AbstractTemplate.class);
     }
 
     public List<AbstractTemplate> deserialize(JsonElement json, Type typeOfT,
@@ -29,7 +36,7 @@ public class TemplateDeserializer implements JsonDeserializer<List<AbstractTempl
 
         for (JsonElement je : ja) {
 
-            String type = je.getAsJsonObject().get("className").getAsString();
+            String type = je.getAsJsonObject().get("documentType").getAsString();
             Class c = map.get(type);
             if (c == null)
                 throw new RuntimeException("Unknow class: " + type);
