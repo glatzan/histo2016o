@@ -30,6 +30,7 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.printer.template.AbstractTemplate;
 import org.histo.util.printer.template.PDFGenerator;
 import org.histo.util.printer.template.TemplateCouncil;
+import org.histo.util.printer.template.TemplateDiagnosisReport;
 import org.histo.util.printer.template.TemplateUReport;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
@@ -116,6 +117,11 @@ public class PrintDialog extends AbstractDialog {
 	 * Council to print
 	 */
 	private Council selectedCouncil;
+
+	/**
+	 * Can be set to true, if so the generated pdf will be saved
+	 */
+	private boolean savePDF;
 
 	/**
 	 * Initializes the bean and shows the council dialog
@@ -329,8 +335,12 @@ public class PrintDialog extends AbstractDialog {
 			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		case DIAGNOSIS_REPORT:
-			result = pDFGeneratorHandler.generateDiagnosisReport(getSelectedTemplate(), getTask().getPatient(),
-					getTask(), getRenderedContact() != null ? getRenderedContact().getContact() : null);
+
+			((TemplateDiagnosisReport) getSelectedTemplate()).setPatient(getTask().getPatient());
+			((TemplateDiagnosisReport) getSelectedTemplate()).setTask(getTask());
+			((TemplateDiagnosisReport) getSelectedTemplate())
+					.setToSendAddress(getRenderedContact() != null ? getRenderedContact().getContact() : null);
+			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		case COUNCIL_REQUEST:
 			((TemplateCouncil) getSelectedTemplate()).setPatient(getTask().getPatient());

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=latex 2017.2.14)  19 JUL 2017 19:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=latex 2017.2.14)  20 JUL 2017 18:29
 entering extended mode
 **./Report_Intern.tex
 (Report_Intern.tex
@@ -1059,11 +1059,51 @@ I'll just pretend that you didn't ask for it.
 If you're in the wrong mode, you might be able to
 return to the right one by typing `I}' or `I$' or `I\par'.
 
+! You can't use `macro parameter character #' in internal vertical mode.
+l.106  				\huge #
+                  if($task.eye == "UNKNOWN")  ? #elseif($task.eye == "RIGHT"...
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+! You can't use `macro parameter character #' in math mode.
+l.106  				\huge #if($task.eye == "UNKNOWN")  ? #
+                                                 elseif($task.eye == "RIGHT"...
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+! You can't use `macro parameter character #' in horizontal mode.
+l.106 ...N")  ? #elseif($task.eye == "RIGHT") RA #
+                                                  elseif($task.eye == "LEFT"...
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+! You can't use `macro parameter character #' in math mode.
+l.106 ...T") RA #elseif($task.eye == "LEFT" ) LA #
+                                                  else BA #end  &  {\include...
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
+! You can't use `macro parameter character #' in math mode.
+l.106 ...lseif($task.eye == "LEFT" ) LA #else BA #
+                                                  end  &  {\includegraphics[...
+Sorry, but I'm not programmed to handle this case;
+I'll just pretend that you didn't ask for it.
+If you're in the wrong mode, you might be able to
+return to the right one by typing `I}' or `I$' or `I\par'.
+
 ! Extra }, or forgotten $.
 <recently read> \egroup 
                         
-l.106  				\huge $!task.eye &
-                               {\includegraphics[scale=0.4]{augen.png}} \\
+l.106 ...$task.eye == "LEFT" ) LA #else BA #end  &
+                                                    {\includegraphics[scale=...
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
 you forgot something else, as in `\hbox{$x}'. In such cases
@@ -1073,16 +1113,16 @@ deleted material, e.g., by typing `I$}'.
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.106  				\huge $!task.eye &
-                               {\includegraphics[scale=0.4]{augen.png}} \\
+l.106 ...$task.eye == "LEFT" ) LA #else BA #end  &
+                                                    {\includegraphics[scale=...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
 ! Missing } inserted.
 <inserted text> 
                 }
-l.106  				\huge $!task.eye &
-                               {\includegraphics[scale=0.4]{augen.png}} \\
+l.106 ...$task.eye == "LEFT" ) LA #else BA #end  &
+                                                    {\includegraphics[scale=...
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
 With luck, this will get me unwedged. But if you
@@ -1090,8 +1130,40 @@ really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
 
-Overfull \hbox (4.02295pt too wide) in paragraph at lines 106--106
-[]|[]$\OT1/cmr/m/n/20.74 !\OML/cmm/m/it/20.74 task:eye|  $ 
+Overfull \hbox (49.91632pt too wide) in paragraph at lines 106--106
+[]|[]\T1/phv/m/n/20.74 if($\OML/cmm/m/it/20.74 task:eye \OT1/cmr/m/n/20.74 ==
+ []
+
+
+Overfull \hbox (214.80234pt too wide) in paragraph at lines 106--106
+[]\OML/cmm/m/it/20.74 NKNOWN\OT1/cmr/m/n/20.74 ")?\OML/cmm/m/it/20.74 elseif\OT
+1/cmr/m/n/20.74 ($\T1/phv/m/n/20.74 task.eye
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 106--106
+\T1/phv/m/n/20.74 ==
+ []
+
+
+Overfull \hbox (9.24461pt too wide) in paragraph at lines 106--106
+\T1/phv/m/n/20.74 "RIGHT")
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 106--106
+\T1/phv/m/n/20.74 RA
+ []
+
+
+Overfull \hbox (87.95316pt too wide) in paragraph at lines 106--106
+\T1/phv/m/n/20.74 elseif($\OML/cmm/m/it/20.74 task:eye \OT1/cmr/m/n/20.74 ==
+ []
+
+
+Overfull \hbox (139.76022pt too wide) in paragraph at lines 106--106
+\OT1/cmr/m/n/20.74 "\OML/cmm/m/it/20.74 LEFT\OT1/cmr/m/n/20.74 ")\OML/cmm/m/it/
+20.74 LAelseBAend|  $ 
  []
 
 
@@ -1617,6 +1689,23 @@ Overfull \hbox (22.40347pt too wide) in paragraph at lines 168--177
 \T1/phv/m/n/10.95 el-se []
  []
 
+
+! LaTeX Error: Cannot determine size of graphic in background.pdf (no BoundingB
+ox).
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 \end{longtable}
+                     
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+File: background.pdf Graphic file (type eps)
+<background.pdf> [1
+
+]
 ! You can't use `macro parameter character #' in vertical mode.
 l.179 #
        end
@@ -1665,7 +1754,7 @@ e:physician:person:fullName|  $
 <recently read> \egroup 
                         
 l.186 	~
-        ~ $!task.diagnosisContainer.signatureDateAsDate & ~ &  $!task.diagno...
+        ~ $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDate...
 I've deleted a group-closing symbol because it seems to be
 spurious, as in `$x}$'. But perhaps the } is legitimate and
 you forgot something else, as in `\hbox{$x}'. In such cases
@@ -1676,7 +1765,7 @@ deleted material, e.g., by typing `I$}'.
 <inserted text> 
                 $
 l.186 	~
-        ~ $!task.diagnosisContainer.signatureDateAsDate & ~ &  $!task.diagno...
+        ~ $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDate...
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
 
@@ -1684,7 +1773,7 @@ you left one out. Proceed, with fingers crossed.
 <inserted text> 
                 }
 l.186 	~
-        ~ $!task.diagnosisContainer.signatureDateAsDate & ~ &  $!task.diagno...
+        ~ $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDate...
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
 With luck, this will get me unwedged. But if you
@@ -1697,40 +1786,11 @@ Overfull \hbox (196.46153pt too wide) in paragraph at lines 185--186
 o:physician:person:fullName|  $ 
  []
 
-! Extra }, or forgotten $.
-<recently read> \egroup 
-                        
-l.186 ....diagnosisContainer.signatureDateAsDate &
-                                                   ~ &  $!task.diagnosisCont...
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.186 ....diagnosisContainer.signatureDateAsDate &
-                                                   ~ &  $!task.diagnosisCont...
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.186 ....diagnosisContainer.signatureDateAsDate &
-                                                   ~ &  $!task.diagnosisCont...
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-
-Overfull \hbox (176.77698pt too wide) in paragraph at lines 186--186
-[]|[]   $\OT1/cmr/m/n/10.95 !\OML/cmm/m/it/10.95 task:diagnosisContainer:signat
-ureDateAsDate|  $ 
+Overfull \hbox (301.00711pt too wide) in paragraph at lines 186--186
+[]|[]   $\OML/cmm/m/it/10.95 date:format\OT1/cmr/m/n/10.95 ([]\OML/cmm/m/it/10.
+95 dd:MM:yyyy[];$\T1/phv/m/n/10.95 !task.diagnosisContainer.signatureDateAsDate
+)| 
  []
 
 ! Extra }, or forgotten $.
@@ -1811,31 +1871,15 @@ Overfull \hbox (35.99997pt too wide) in paragraph at lines 183--189
  []
 
 
-! LaTeX Error: Cannot determine size of graphic in background.pdf (no BoundingB
-ox).
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.196 \end{document}
-                    
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-File: background.pdf Graphic file (type eps)
-<background.pdf> [1
-
-] 
 AED: lastpage setting LastPage
 [2] (Report_Intern.aux) ) 
 Here is how much of TeX's memory you used:
- 6563 strings out of 493334
- 95104 string characters out of 3139223
- 363698 words of memory out of 3000000
- 9972 multiletter control sequences out of 15000+200000
+ 6566 strings out of 493334
+ 95149 string characters out of 3139223
+ 362698 words of memory out of 3000000
+ 9975 multiletter control sequences out of 15000+200000
  24714 words of font info for 60 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,23n,66p,8853b,389s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,23n,66p,8853b,469s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on Report_Intern.dvi (2 pages, 5464 bytes).
+Output written on Report_Intern.dvi (2 pages, 5780 bytes).

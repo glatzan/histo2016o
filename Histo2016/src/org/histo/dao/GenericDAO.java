@@ -50,7 +50,7 @@ public class GenericDAO extends AbstractDAO {
 		List<ContactPhysicanRole> result = query.getExecutableCriteria(getSession()).list();
 		
 		for (ContactPhysicanRole contactPhysicanRole : result) {
-			System.out.println(contactPhysicanRole.getPersonID() + " " +contactPhysicanRole.getName() + " " + contactPhysicanRole.getSurname() + " " );
+			System.out.println(contactPhysicanRole.getPersonID() + " " +contactPhysicanRole.getLastName() + " " + contactPhysicanRole.getFirstName() + " " );
 			for (ContactRole role : contactPhysicanRole.getAssociatedRoles()) {
 				System.out.println(role);
 			}

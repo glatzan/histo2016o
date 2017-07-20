@@ -102,9 +102,9 @@ $!addressee.contactAsLatex\\
  				
  				\\
  				
- 				\multicolumn{2}{l}{Vorgeschichte, klinischer Befund und Fragestellung} \\
- 				\huge $!task.eye &  {\includegraphics[scale=0.4]{augen.png}} \\
- 				\multicolumn{2}{l}{$!task.caseHistory} 
+ 				\multicolumn{2}{l}{Vorgeschichte, klinischer Befund und Fragestellung} \\ 
+ 				\huge #if($task.eye == "UNKNOWN")  ? #elseif($task.eye == "RIGHT") RA #elseif($task.eye == "LEFT" ) LA #else BA #end  &  {\includegraphics[scale=0.4]{augen.png}} \\
+ 				\multicolumn{2}{l}{$!task.caseHistory}
 			
 			\end{tabular}
 		} 
@@ -183,7 +183,7 @@ $!addressee.contactAsLatex\\
 \begin{tabular}{p{0.15\linewidth}p{0.25\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
 	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
 	Freiburg den & &  $!task.diagnosisContainer.signatureOne.physician.person.fullName &  $!task.diagnosisContainer.signatureTwo.physician.person.fullName \\
-	~~ $!task.diagnosisContainer.signatureDateAsDate & ~ &  $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.role \\\\
+	~~ $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDateAsDate) & ~ & $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.role \\\\
 
 \end{tabular}
 \end{center}

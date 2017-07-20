@@ -1,5 +1,6 @@
 package org.histo.util.printer.template;
 
+import org.apache.velocity.tools.generic.DateTool;
 import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
@@ -31,7 +32,8 @@ public class TemplateDiagnosisReport extends AbstractTemplate {
 		generator.getConverter().replace("task", task);
 		generator.getConverter().replace("addressee", toSendAddress);
 		generator.getConverter().replace("subject", "");
-
+		generator.getConverter().replace("date", new DateTool());
+		
 		return generator.generatePDF();
 	}
 }
