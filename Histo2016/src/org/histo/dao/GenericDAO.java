@@ -42,23 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class GenericDAO extends AbstractDAO {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-
-	//TODO rename use and move
-	public List<ContactPhysicanRole> getTest(){
-		DetachedCriteria query = DetachedCriteria.forClass(ContactPhysicanRole.class);
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		List<ContactPhysicanRole> result = query.getExecutableCriteria(getSession()).list();
-		
-		for (ContactPhysicanRole contactPhysicanRole : result) {
-			System.out.println(contactPhysicanRole.getPersonID() + " " +contactPhysicanRole.getLastName() + " " + contactPhysicanRole.getFirstName() + " " );
-			for (ContactRole role : contactPhysicanRole.getAssociatedRoles()) {
-				System.out.println(role);
-			}
-		}
-		
-	
-		return result;
-	}
 	
 	@SuppressWarnings("unchecked")
 	public <C> C get(Class<C> clazz, Serializable serializable) {

@@ -2,6 +2,7 @@ package org.histo.action;
 
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
+import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.PrintDialog;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +22,8 @@ public class DialogHandlerAction {
 	private PrintDialog printDialog;
 
 	private CustomAddressDialog customAddressDialog; 
+	
+	private ContactSelectDialog contactSelectDialog;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -48,6 +51,13 @@ public class DialogHandlerAction {
 			customAddressDialog = new CustomAddressDialog();
 		
 		return customAddressDialog;
+	}
+	
+	public ContactSelectDialog getContactSelectDialog() {
+		if(contactSelectDialog == null)
+			contactSelectDialog = new ContactSelectDialog();
+		
+		return contactSelectDialog;
 	}
 }
 

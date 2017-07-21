@@ -94,8 +94,6 @@ public class MainHandlerAction {
 
 		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
 
-		genericDAO.getTest();
-		
 		setQueueGrowlMessages(new ArrayList<FacesMessage>());
 	}
 

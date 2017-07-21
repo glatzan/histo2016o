@@ -24,6 +24,7 @@ public enum Dialog {
 	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisCreateRevision", null, 640, 360, false, false, true), // 16:9
 	CONTACTS("/pages/dialog/contact/associatedContact", null, 1024, 600, false, false, true), // 16:9
 	QUICK_CONTACTS("/pages/dialog/contact/quickContact", null, 858, 484, false, false, true), // 16:9
+	QUICK_CONTACTS2("/pages/dialog/contact/contactSelect", null, 858, 484, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
 	PRINT_ADDRESS("/pages/dialog/print/address", null,  480, 272, false, false, true), // 16:9

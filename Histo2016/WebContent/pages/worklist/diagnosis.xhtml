@@ -172,7 +172,7 @@
 						<p:commandLink style="float: right; margin-right:5px;"
 							styleClass="noUnderlineAtLink"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-							actionListener="#{quickContactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'SURGEON')}"
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'SURGEON')}"
 							disabled="#{!taskEditable}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />

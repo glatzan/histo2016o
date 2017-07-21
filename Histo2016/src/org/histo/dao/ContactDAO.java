@@ -3,12 +3,15 @@ package org.histo.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.DetachedCriteria;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
+import org.histo.model.view.ContactPhysicanRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
