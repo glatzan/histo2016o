@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.contact.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout bigDialog">
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.contact.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+
+				<!-- Contact Datatable -->
+				<p:dataTable var="contact"
+					styleClass="contactDataTable noBordersAll collapsedBordersAll"
+					scrollable="true" scrollHeight="390"
+					value="#{commonDataHandlerAction.contactList}">
+
+					<!-- Name -->
+					<p:column headerText="#{msg['dialog.contact.table.name']}"
+						filterBy="#{contact.person.lastName}" filterMatchMode="contains">
+						<h:outputLabel
+							value="#{contact.person.title} #{contact.person.lastName}, #{contact.person.firstName}" />
+					</p:column>
+
+					<!-- default function-->
+					<p:column
+						headerText="#{msg['dialog.contact.table.defaultFunction']}">
+
+						<p:repeat
+							value="#{contactHandlerAction.getDefaultAssociatedRoleForPhysician(contact.person)}"
+							var="associatedRoles">
+							<h:outputLabel
+								value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
+							<br/>
+						</p:repeat>
+					</p:column>
+
+					<!-- function -->
+					<p:column headerText="#{msg['dialog.contact.table.function']}"
+						styleClass="smallInput">
+						<p:selectOneMenu value="#{contact.role}">
+
+							<f:selectItems value="#{enumProvider.contactRoles}" var="role"
+								itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
+								itemValue="#{role}" />
+
+							<p:ajax oncomplete="onContactChangeRole()"
+								listener="#{contactHandlerAction.setSelectedContact(contact)}"></p:ajax>
+						</p:selectOneMenu>
+
+						<!-- change role of contact and set the new primary contact -->
+						<p:remoteCommand name="onContactChangeRole" update="@form">
+							<f:actionListener
+								binding="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask, contactHandlerAction.selectedContact)}" />
+							<f:actionListener
+								binding="#{contactHandlerAction.updateContactRolePrimary(commonDataHandlerAction.selectedTask)}" />
+						</p:remoteCommand>
+					</p:column>
+
+
+					<!-- primary contact only for surgeons and private physicians-->
+					<p:column>
+						<f:facet name="header">
+							<i class="fa fa-diamond"
+								title="#{msg['dialog.contact.table.primaryContact']}" />
+						</f:facet>
+						<p:selectBooleanCheckbox
+							rendered="#{contact.role ne 'NONE' and contact.role ne 'OTHER_PHYSICIAN'}"
+							value="#{contact.primaryContact}"
+							title="#{contact.role eq 'SURGEON' ? msg['dialog.contact.table.primaryContact.surgeon.selected'] :  msg['dialog.contact.table.primaryContact.privatePhysician.selected'] }">
+							<p:ajax event="change"
+								listener="#{contactHandlerAction.onContactChangePrimary(commonDataHandlerAction.selectedTask,contact)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
+					</p:column>
+
+					<!-- mail -->
+					<p:column>
+						<f:facet name="header">
+							<i class="fa fa-envelope-o"
+								title="#{msg['dialog.contact.table.mail']}" />
+						</f:facet>
+						<p:selectBooleanCheckbox
+							disabled="#{contact.role eq 'NONE' or contact.person.contact.email eq '' or contact.role eq 'NONE' }"
+							value="#{contact.useEmail}"
+							title="#{contact.person.contact.email eq '' ?  msg['dialog.contact.table.mail.none'] : msg['dialog.contact.table.mail']}">
+							<p:ajax event="change"
+								listener="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask,contact)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
+					</p:column>
+
+					<!-- Phone -->
+					<p:column>
+						<f:facet name="header">
+							<i class="fa fa-phone"
+								title="#{msg['dialog.contact.table.phone']}" />
+						</f:facet>
+						<p:selectBooleanCheckbox
+							disabled="#{contact.role eq 'NONE' or contact.person.contact.phone eq '' or contact.role eq 'NONE'  }"
+							value="#{contact.usePhone}"
+							title="#{contact.person.contact.phone eq '' ? msg['dialog.contact.table.phone.none'] : msg['dialog.contact.table.phone']}">
+							<p:ajax event="change"
+								listener="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask,contact)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
+					</p:column>
+
+					<!-- Fax -->
+					<p:column style="width:10px">
+						<f:facet name="header">
+							<i class="fa fa-fax" title="#{msg['dialog.contact.table.fax']}" />
+						</f:facet>
+						<p:selectBooleanCheckbox
+							disabled="#{contact.role eq 'NONE' or contact.person.contact.fax eq '' or contact.role eq 'NONE' }"
+							value="#{contact.useFax}"
+							title="#{ contact.person.contact.fax eq '' ? msg['dialog.contact.table.contact.fax.none'] : msg['dialog.contact.table.contact.fax']}">
+							<p:ajax event="change"
+								listener="#{contactHandlerAction.onContactChangeRole(commonDataHandlerAction.selectedTask,contact)}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
+					</p:column>
+
+					<!-- notification performed -->
+					<p:column style="width:15px">
+						<f:facet name="header">
+							<i class="fa fa-volume-up"
+								title="#{msg['dialog.contact.table.notificationDone']}" />
+						</f:facet>
+						<h:panelGroup
+							rendered="#{contact.notificationPerformed and contact.id ne 0}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['dialog.contact.table.notificationDone']}" />
+						</h:panelGroup>
+					</p:column>
+
+					<!-- edit person -->
+					<p:column style="width:15px">
+						<f:facet name="header">
+							<i class="fa fa-cog" title="#{msg['dialog.contact.table.edit']}" />
+						</f:facet>
+						<p:commandLink title="#{msg['dialog.contact.table.edit']}"
+							style="float: right"
+							actionListener="#{settingsDialogHandler.prepareEditPhysicianFromExtern(contact.person)}">
+							<i class="fa fa-fw fa-cog" />
+							<p:ajax event="dialogReturn" update="@form"
+								listener="#{contactHandlerAction.updateContactList()}" />
+						</p:commandLink>
+
+					</p:column>
+
+				</p:dataTable>
+				<!-- Contact Datatable -->
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+					<h:panelGrid columns="4" style="margin-left: 20px;">
+
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{contactHandlerAction.showArchivedPhysicians}">
+							<p:ajax
+								listener="#{contactHandlerAction.updateContactList()}"
+								update="@form"></p:ajax>
+						</p:selectBooleanCheckbox>
+
+						<h:outputLabel
+							value="#{msg['dialog.contact.options.addedContacts']}"
+							style="margin-left:5px;"></h:outputLabel>
+
+						<h:panelGroup layout="block" style="width:50px!important"></h:panelGroup>
+
+						<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
+							label="#{msg['dialog.contact.options.show.roles']}"
+							value="#{contactHandlerAction.showPhysicianRoles}"
+							converter="#{commonDataHandlerAction.associatedRolesTransformer}">
+							<f:selectItems var="role"
+								value="#{commonDataHandlerAction.associatedRoles}"
+								itemValue="#{role}"
+								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+
+							<p:ajax
+								listener="#{contactHandlerAction.updateContactList()}"
+								update="@form"></p:ajax>
+						</p:selectCheckboxMenu>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="1" style="float:right;">
+					<p:commandButton value="#{msg['general.close']}"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-fw fa-times-circle" id="closeBtn"
+						actionListener="#{mainHandlerAction.hideDialog('CONTACTS')}"></p:commandButton>
+				</h:panelGrid>
+
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

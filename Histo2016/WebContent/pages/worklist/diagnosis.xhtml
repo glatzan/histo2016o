@@ -191,7 +191,7 @@
 						<p:commandLink style="float: right; margin-right:5px;"
 							styleClass="noUnderlineAtLink"
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
-							actionListener="#{quickContactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}"
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}"
 							disabled="#{!taskEditable}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />

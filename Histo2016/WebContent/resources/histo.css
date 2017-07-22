@@ -529,35 +529,6 @@ ul.ui-menu-child {
 	border-collapse: collapse;
 }
 
-/* 	################# AddContectTable ################# */
-/* Settings f�r die Kontakt�bersicht einer Aufgabe*/
-.content .body .addedContactDataTable {
-	width: 350px;
-}
-
-/* jede zweite zeile mit einem anderen Hintergrund */
-.content .body .addedContactDataTable tr:nth-child(even) td {
-	background-color: #f9f9f9;
-}
-
-.content .body .addedContactDataTable td:nth-child(1), .content .body .addedContactDataTable th:nth-child(1)
-	{
-	width: auto !important;
-}
-
-.content .body .addedContactDataTable td:nth-child(2), .content .body .addedContactDataTable th:nth-child(2)
-	{
-	width: auto !important;
-}
-
-.content .body .addedContactDataTable td:nth-child(6), .content .body .addedContactDataTable th:nth-child(3)
-	{
-	width: 15px !important;
-	padding-left: 4px;
-	padding-right: 4px;
-}
-/* 	################# AddContectTable ################# */
-
 /* 	################# Body ################# */
 
 /* ################# Stainings ################# */

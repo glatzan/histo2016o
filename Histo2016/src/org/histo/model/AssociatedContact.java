@@ -1,5 +1,9 @@
 package org.histo.model;
 
+import static javax.persistence.CascadeType.ALL;
+import static org.hibernate.annotations.LazyCollectionOption.FALSE;
+
+import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.CascadeType;
@@ -11,11 +15,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.LazyCollection;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
@@ -55,46 +62,10 @@ public class AssociatedContact implements LogAble, HasID {
 	@Column(columnDefinition = "VARCHAR")
 	private String customContact;
 
-	@Column
-	private boolean primaryContact;
-
-	@Column
-	private boolean usePhone;
-
-	@Column
-	private boolean useFax;
-
-	@Column
-	private boolean useEmail;
-
-	@Column
-	private long emailNotificationDate;
-
-	@Column
-	private long faxNotificationDate;
-
-	@Column
-	private long phoneNotificationDate;
-
-	/********************************************************
-	 * Transient
-	 ********************************************************/
-	/**
-	 * Transient, is used for selecting contacts an marking already selected
-	 * ones.
-	 */
-	@Transient
-	private boolean selected;
-
-	/**
-	 * Transient, is used for selecting contacts from a list
-	 */
-	@Transient
-	private int tmpId;
-
-	/********************************************************
-	 * Transient
-	 ********************************************************/
+	@OrderColumn(name = "position")
+	@LazyCollection(FALSE)
+	@OneToMany(mappedBy = "contact", cascade = ALL)
+	private List<AssociatedContactNotification> notifications;
 
 	public AssociatedContact() {
 	}
@@ -125,57 +96,17 @@ public class AssociatedContact implements LogAble, HasID {
 
 		return generateAddress(this);
 	}
-	
+
 	@Transient
 	public String getContactAsLatex() {
 		return (new TextToLatexConverter()).convertToTex(getContactAsString());
 	}
 
-
-	@Transient
-	public boolean isEmailNotificationPerformed() {
-		return getEmailNotificationDate() != 0;
-	}
-
-	public void setEmailNotificationPerformed(boolean performed) {
-		setEmailNotificationDate(performed ? System.currentTimeMillis() : 0);
-	}
-
-	@Transient
-	public boolean isFaxNotificationPerformed() {
-		return getFaxNotificationDate() != 0;
-	}
-
-	public void setFaxNotificationPerformed(boolean performed) {
-		setFaxNotificationDate(performed ? System.currentTimeMillis() : 0);
-	}
-
-	@Transient
-	public boolean isPhoneNotificationPerformed() {
-		return getPhoneNotificationDate() != 0;
-	}
-
-	public void setPhoneNotificationPerformed(boolean performed) {
-		setPhoneNotificationDate(performed ? System.currentTimeMillis() : 0);
-	}
-
 	@Transient
 	public boolean isNotificationPerformed() {
-
-		if (isUseEmail() || isUseFax() || isUsePhone()) {
-			boolean email = true, fax = true, phone = true;
-
-			// sets email to false if useEmails and not performed
-			if (isUseEmail() && getPhoneNotificationDate() == 0)
-				email = false;
-
-			if (isUseFax() && getFaxNotificationDate() == 0)
-				fax = false;
-
-			if (isUsePhone() && getPhoneNotificationDate() == 0)
-				phone = false;
-
-			return email && fax && phone;
+		if (getNotifications() != null && getNotifications().size() > 0) {
+			if (getNotifications().stream().anyMatch(p -> p.isPerformed()))
+				return true;
 		}
 		return false;
 	}
@@ -186,6 +117,20 @@ public class AssociatedContact implements LogAble, HasID {
 			return getPerson().getFullName();
 		else
 			return getPerson().getTitle() + " " + getPerson().getFirstName() + " " + getPerson().getLastName();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof AssociatedContact) {
+			if (((AssociatedContact) obj).getId() == getId())
+				return true;
+			// same person with the same role, same object
+			if (((AssociatedContact) obj).getPerson().equals(getPerson())
+					&& ((AssociatedContact) obj).getRole().equals(getRole()))
+				return true;
+		}
+
+		return super.equals(obj);
 	}
 
 	public static String generateAddress(AssociatedContact associatedContact) {

@@ -88,7 +88,7 @@ public class ContactHandlerAction implements Serializable {
 	public void prepareContactsDialog(Task task, ContactRole[] roles, boolean showAddedContactsOnly) {
 
 		commonDataHandlerAction.setSelectedTask(task);
-		commonDataHandlerAction.setAssociatedRoles(Arrays.asList(ContactRole.values()));
+		commonDataHandlerAction.setAssociatedRoles(Arrays.asList());
 		commonDataHandlerAction.setAssociatedRolesTransformer(new AssociatedRoleTransformer(commonDataHandlerAction.getAssociatedRoles()));
 
 		setShowPhysicianRoles(new ContactRole[]{ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON, ContactRole.OTHER_PHYSICIAN});

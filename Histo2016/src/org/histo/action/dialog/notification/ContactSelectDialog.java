@@ -12,6 +12,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
+import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
@@ -52,6 +53,11 @@ public class ContactSelectDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private PhysicianDAO physicianDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PatientDao patientDao;
+
 	/**
 	 * List of all ContactRole available for selecting physicians, used by
 	 * contacts and settings
@@ -82,7 +88,6 @@ public class ContactSelectDialog extends AbstractDialog {
 	private boolean manuallySelectRole = false;
 
 	public void initAndPrepareBean(Task task, ContactRole contactRole) {
-		System.out.println("asdfas");
 		if (initBean(task, new ContactRole[] { contactRole }, new ContactRole[] { contactRole }, contactRole))
 			prepareDialog();
 	}
@@ -102,7 +107,7 @@ public class ContactSelectDialog extends AbstractDialog {
 			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 		}
 
-		super.initBean(task, Dialog.QUICK_CONTACTS2);
+		super.initBean(task, Dialog.QUICK_CONTACTS);
 
 		setSelectAbleContactRoles(selectAbleRoles);
 
@@ -143,6 +148,42 @@ public class ContactSelectDialog extends AbstractDialog {
 		setContactList(getPhysicianContainers(task, getShowRoles()));
 	}
 
+	public void addPhysicianAsRole() {
+		if (getSelectedContact() != null) {
+			AssociatedContact associatedContact = new AssociatedContact(getTask(),
+					getSelectedContact().getPhysician().getPerson());
+			addPhysicianAsRole(associatedContact, getAddAsRole());
+		}
+	}
+
+	/**
+	 * Sets the given associatedContact to the given role
+	 * 
+	 * @param associatedContact
+	 * @param role
+	 */
+	public void addPhysicianAsRole(AssociatedContact associatedContact, ContactRole role) {
+		try {
+			associatedContact.setRole(role);
+
+			if (task.getContacts().stream().anyMatch(p -> p.equals(associatedContact))) {
+				// todo error message
+				logger.debug("Not adding, double contact");
+				return;
+			}
+
+			task.getContacts().add(associatedContact);
+
+			patientDao.save(associatedContact, "log.patient.task.contact.add",
+					new Object[] { associatedContact.toString() }, task.getParent());
+
+			patientDao.save(task, "log.patient.task.update");
+
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
+	}
+
 	@Getter
 	@Setter
 	public class PhysicianContainer {
@@ -161,6 +202,20 @@ public class ContactSelectDialog extends AbstractDialog {
 				associatedRoles = new ArrayList<ContactRole>();
 
 			associatedRoles.add(role);
+		}
+
+		public boolean hasRole(ContactRole[] contactRoles) {
+			if (getAssociatedRoles() == null || getAssociatedRoles().size() == 0)
+				return false;
+
+			return getAssociatedRoles().stream().anyMatch(p -> {
+				for (int i = 0; i < contactRoles.length; i++) {
+					if (p == contactRoles[i])
+						return true;
+				}
+				return false;
+
+			});
 		}
 	}
 

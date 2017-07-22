@@ -63,7 +63,8 @@
 
 				<!-- ward -->
 				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
-				<p:selectOneMenu id="wards" value="#{commonDataHandlerAction.selectedTask.ward}"
+				<p:selectOneMenu id="wards"
+					value="#{commonDataHandlerAction.selectedTask.ward}"
 					styleClass="smallInput" editable="true" disabled="#{!taskEditable}">
 					<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
@@ -74,7 +75,8 @@
 				<!-- History -->
 				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				<p:selectOneMenu id="historyText" style="width: auto"
-					styleClass="smallInput" value="#{commonDataHandlerAction.selectedTask.caseHistory}"
+					styleClass="smallInput"
+					value="#{commonDataHandlerAction.selectedTask.caseHistory}"
 					disabled="#{!taskEditable}" editable="true">
 					<f:selectItem itemLabel="Select One"
 						itemValue="#{msg['body.diagnosis.story.watermark']}" />
@@ -119,8 +121,8 @@
 				<p:outputLabel value="#{msg['body.receiptlog.material']}"
 					styleClass="big-text" />
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<c:forEach items="#{commonDataHandlerAction.selectedTask.samples}" var="sample"
-						varStatus="loopCount">
+					<c:forEach items="#{commonDataHandlerAction.selectedTask.samples}"
+						var="sample" varStatus="loopCount">
 
 						<h:panelGrid columns="3" styleClass="defaultListingTableContainer">
 							<h:outputLabel
@@ -154,7 +156,7 @@
 						<!-- quickContact surgeon -->
 						<p:commandLink
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-							actionListener="#{quickContactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'SURGEON')}">
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'SURGEON')}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -162,7 +164,7 @@
 						<!-- quickcontact private physician  -->
 						<p:commandLink
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
-							actionListener="#{quickContactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}">
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -177,25 +179,31 @@
 				</h:panelGrid>
 
 				<p:dataTable var="contact" scrollable="true" scrollHeight="90"
-					styleClass="noBordersAll collapsedBordersAll addedContactDataTable highlightedDataTable"
+					style="width:350px"
+					styleClass="smallDatatable highlightedDataTable noBordersAll"
 					value="#{commonDataHandlerAction.selectedTask.contacts}">
 
-					<p:column headerText="#{msg['body.receiptlog.contact.name']}">
-						<h:outputText value="#{contact.person.fullName}" />
-					</p:column>
-
-					<p:column headerText="#{msg['body.receiptlog.contact.role']}">
-						<h:outputText
-							value="#{msg['body.receiptlog.contact.role.surgeon']}"
-							rendered="#{contact.role eq 'SURGEON'}" />
-						<h:outputText
-							value="#{msg['body.receiptlog.contact.role.privatePhysician']}"
-							rendered="#{contact.role eq 'PRIVATE_PHYSICIAN'}" />
-						<h:outputText value="#{msg['body.receiptlog.contact.role.other']}"
-							rendered="#{contact.role eq 'OTHER_PHYSICIAN'}" />
-					</p:column>
-
 					<p:column>
+						<f:facet name="header">
+							<h:outputLabel value="#{msg['body.receiptlog.contact.name']}" />
+						</f:facet>
+						<h:outputLabel value="#{contact.person.fullName}" />
+					</p:column>
+
+					<p:column headerText="">
+						<f:facet name="header">
+							<h:outputLabel value="#{msg['body.receiptlog.contact.role']}" />
+						</f:facet>
+						<h:outputLabel
+							value="#{msg['enum.contactRole.'.concat(contact.role)]}"
+							title="#{msg['enum.contactRole.'.concat(contact.role)]}">
+							<f:converter converterId="org.histo.ui.TruncateConverter" />
+							<f:attribute name="truncateAt" value="15" />
+							<f:attribute name="continuationMark" value="..." />
+						</h:outputLabel>
+					</p:column>
+
+					<p:column style="width:15px">
 						<f:facet name="header">
 							<i class="fa fa-check-square-o"
 								title="#{msg['body.receiptlog.contact.type.performed']}" />
@@ -285,8 +293,7 @@
 					<p:row styleClass="#{stainingRow.even ? 'ui-datatable-odd' : ''}">
 
 						<!-- Sample -->
-						<p:column
-							styleClass="columnSample">
+						<p:column styleClass="columnSample">
 							<h:panelGroup rendered="#{stainingRow.sampleType}">
 
 								<h:panelGroup id="sampleIDInput#{inner.index}" layout="block"
@@ -332,8 +339,7 @@
 						</p:column>
 
 						<!-- Block -->
-						<p:column
-							styleClass="columnBlock">
+						<p:column styleClass="columnBlock">
 							<h:panelGroup rendered="#{stainingRow.blockType}">
 
 								<h:panelGroup id="blockIDInput#{inner.index}" layout="block"
@@ -375,8 +381,7 @@
 						</p:column>
 
 						<!-- Staining chooser -->
-						<p:column
-							styleClass="columnChoose">
+						<p:column styleClass="columnChoose">
 							<h:panelGroup
 								rendered="#{stainingRow.sampleType or stainingRow.blockType}">
 								<p:commandLink
@@ -392,8 +397,7 @@
 						</p:column>
 
 						<!-- Staining Name -->
-						<p:column
-							styleClass="columnStainingID">
+						<p:column styleClass="columnStainingID">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
 
 								<h:panelGroup id="slideIDInput#{inner.index}" layout="block"
@@ -439,11 +443,10 @@
 						</p:column>
 
 						<!-- staining commentary -->
-						<p:column
-							styleClass="columnCommentary">
+						<p:column styleClass="columnCommentary">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
 								<h:panelGroup id="slideCommentary#{inner.index}" layout="block"
-									style="width: 90%; min-height:20px">
+									style="width: 99%; min-height:20px; background-color: #{stainingRow.even ? '#ffffff' : '#f2f2f2'} ">
 									<h:outputLabel value="#{stainingRow.staining.commentary}">
 										<f:converter converterId="org.histo.ui.TruncateConverter" />
 										<f:attribute name="truncateAt" value="25" />
@@ -474,8 +477,7 @@
 						</p:column>
 
 						<!-- Staining staining -->
-						<p:column
-							styleClass="columnStaining">
+						<p:column styleClass="columnStaining">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
 								<h:outputText
 									value="#{stainingRow.staining.slidePrototype.name}" />
@@ -483,8 +485,7 @@
 						</p:column>
 
 						<!-- Staining status -->
-						<p:column
-							styleClass="columnStatus">
+						<p:column styleClass="columnStatus">
 							<!-- Sample status -->
 							<h:panelGroup rendered="#{stainingRow.sampleType}">
 								<!-- ********** Staining performed ********** -->
@@ -521,8 +522,7 @@
 						</p:column>
 
 						<!-- Options -->
-						<p:column
-							styleClass="columnOptions">
+						<p:column styleClass="columnOptions">
 							<!-- Sample -->
 							<h:panelGroup rendered="#{stainingRow.sampleType}"
 								style="float: right">

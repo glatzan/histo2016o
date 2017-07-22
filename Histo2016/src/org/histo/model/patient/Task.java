@@ -269,7 +269,7 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 	@Transient
 	public AssociatedContact getPrimaryContact(ContactRole contactRole) {
 		for (AssociatedContact associatedContact : associatedContacts) {
-			if (associatedContact.getRole() == contactRole && associatedContact.isPrimaryContact())
+			if (associatedContact.getRole() == contactRole)
 				return associatedContact;
 		}
 

@@ -2,6 +2,7 @@ package org.histo.action;
 
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
+import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.PrintDialog;
@@ -18,13 +19,15 @@ public class DialogHandlerAction {
 	private OrganizationListDialog organizationListDialog;
 
 	private WorklistSearchDialog worklistSearchDialog;
-	
+
 	private PrintDialog printDialog;
 
-	private CustomAddressDialog customAddressDialog; 
-	
+	private CustomAddressDialog customAddressDialog;
+
 	private ContactSelectDialog contactSelectDialog;
-	
+
+	private ContactDialog contactDialog;
+
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -38,7 +41,7 @@ public class DialogHandlerAction {
 
 		return worklistSearchDialog;
 	}
-	
+
 	public PrintDialog getPrintDialog() {
 		if (printDialog == null)
 			printDialog = new PrintDialog();
@@ -47,17 +50,23 @@ public class DialogHandlerAction {
 	}
 
 	public CustomAddressDialog getCustomAddressDialog() {
-		if(customAddressDialog == null)
+		if (customAddressDialog == null)
 			customAddressDialog = new CustomAddressDialog();
-		
+
 		return customAddressDialog;
 	}
-	
+
 	public ContactSelectDialog getContactSelectDialog() {
-		if(contactSelectDialog == null)
+		if (contactSelectDialog == null)
 			contactSelectDialog = new ContactSelectDialog();
-		
+
 		return contactSelectDialog;
 	}
-}
 
+	public ContactDialog getContactDialog() {
+		if (contactDialog == null)
+			contactDialog = new ContactDialog();
+
+		return contactDialog;
+	}
+}

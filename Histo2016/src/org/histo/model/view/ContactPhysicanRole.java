@@ -19,10 +19,10 @@ import org.histo.config.enums.ContactRole;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Immutable
-@Getter
-@Setter
+//@Entity
+//@Immutable
+//@Getter
+//@Setter
 public class ContactPhysicanRole {
 
 	@Id
