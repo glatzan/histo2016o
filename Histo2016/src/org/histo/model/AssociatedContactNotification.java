@@ -45,6 +45,9 @@ public class AssociatedContactNotification implements HasID {
 	@Temporal(TemporalType.DATE)
 	private Date performedDate;
 
+	@Column
+	private boolean manuallyAdded;
+	
 	public enum NotificationTyp {
 		EMAIL, FAX, PHONE, NOTIFY, LETTER;
 	}

@@ -69,6 +69,8 @@ public class ContactSelectDialog extends AbstractDialog {
 	 */
 	private ContactRole[] showRoles;
 
+	private ContactRole[] addableRoles;
+
 	/**
 	 * Role of the quick associatedContact select dialog, either SURGEON or
 	 * PRIVATE_PHYSICIAN
@@ -88,17 +90,25 @@ public class ContactSelectDialog extends AbstractDialog {
 	private boolean manuallySelectRole = false;
 
 	public void initAndPrepareBean(Task task, ContactRole contactRole) {
-		if (initBean(task, new ContactRole[] { contactRole }, new ContactRole[] { contactRole }, contactRole))
+		if (initBean(task, new ContactRole[] { contactRole }, new ContactRole[] { contactRole },
+				new ContactRole[] { contactRole }, contactRole))
 			prepareDialog();
 	}
 
 	public void initAndPrepareBean(Task task, ContactRole[] selectAbleRoles, ContactRole[] showRoles,
 			ContactRole addAsRole) {
-		if (initBean(task, selectAbleRoles, showRoles, addAsRole))
+		if (initBean(task, selectAbleRoles, showRoles, new ContactRole[] { addAsRole }, addAsRole))
 			prepareDialog();
 	}
 
-	public boolean initBean(Task task, ContactRole[] selectAbleRoles, ContactRole[] showRoles, ContactRole addAsRole) {
+	public void initAndPrepareBean(Task task, ContactRole[] selectAbleRoles, ContactRole[] showRoles,
+			ContactRole[] addableRoles, ContactRole addAsRole) {
+		if (initBean(task, selectAbleRoles, showRoles, addableRoles, addAsRole))
+			prepareDialog();
+	}
+
+	public boolean initBean(Task task, ContactRole[] selectAbleRoles, ContactRole[] showRoles,
+			ContactRole[] addableRoles, ContactRole addAsRole) {
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -116,6 +126,10 @@ public class ContactSelectDialog extends AbstractDialog {
 		setContactList(getPhysicianContainers(task, getShowRoles()));
 
 		setAddAsRole(addAsRole);
+
+		setAddableRoles(addableRoles);
+		
+		setSelectedContact(null);
 
 		return true;
 	}
@@ -172,13 +186,12 @@ public class ContactSelectDialog extends AbstractDialog {
 				return;
 			}
 
-			task.getContacts().add(associatedContact);
-
-			patientDao.save(associatedContact, "log.patient.task.contact.add",
-					new Object[] { associatedContact.toString() }, task.getParent());
-
-			patientDao.save(task, "log.patient.task.update");
-
+			// saving
+			contactDAO.addAssociatedContact(task, associatedContact);
+			
+			// settings roles
+			contactDAO.updateNotificationsOnRoleChange(task, associatedContact);
+			
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

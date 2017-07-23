@@ -1,6 +1,7 @@
 package org.histo.dao;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.hibernate.criterion.CriteriaSpecification;
@@ -11,6 +12,8 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.model.view.ContactPhysicanRole;
 import org.histo.util.HistoUtil;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Set;
 
 @Component
 @Transactional
@@ -30,140 +34,67 @@ public class ContactDAO extends AbstractDAO {
 	@Autowired
 	private PatientDao patientDao;
 
-	// /**
-	// * Gets an lists of contacts for the tasks and markes the allready selecte
-	// * ones.
-	// *
-	// * @param task
-	// * @param rolesToDisplay
-	// * @param showAddedContactsOnly
-	// * @return
-	// */
-	// public List<AssociatedContact> getContactList(Task task, ContactRole[]
-	// rolesToDisplay, boolean showAddedContactsOnly) {
-	//
-	// ArrayList<AssociatedContact> result = new ArrayList<AssociatedContact>();
-	//
-	// List<AssociatedContact> associatedContacts = task.getContacts();
-	//
-	// if (!showAddedContactsOnly) {
-	// logger.debug("Show all contacts");
-	// // getting all associatedContact options
-	// List<Physician> databaseContacts =
-	// physicianDAO.getPhysicians(rolesToDisplay, false);
-	// // shows all contacts but marks the already selected contacts with
-	// // the selected flag.
-	//
-	// loop: for (Physician physician : databaseContacts) {
-	// for (AssociatedContact associatedContact : associatedContacts) {
-	// if (associatedContact.getPerson().getId() ==
-	// physician.getPerson().getId()) {
-	// associatedContact.setSelected(true);
-	// result.add(associatedContact);
-	// continue loop;
-	// }
-	// }
-	//
-	// result.add(new AssociatedContact(task,physician.getPerson()));
-	//
-	// }
-	// } else {
-	// // show only selected contacts, mark them as selected
-	// for (AssociatedContact associatedContact : associatedContacts) {
-	// associatedContact.setSelected(true);
-	// }
-	// result.addAll(associatedContacts);
-	// }
-	//
-	// // setting temp index for selecting via datalist
-	// int i = 0;
-	// for (AssociatedContact associatedContact : result) {
-	// associatedContact.setTmpId(i++);
-	// }
-	//
-	// return result;
-	// }
-	//
-	// /**
-	// * Evaluates the role of the associatedContact, sets the notification
-	// method
-	// * accordingly and adds the associatedContact to the task. (or removes it)
-	// *
-	// * @param task
-	// * @param associatedContact
-	// * @throws CustomDatabaseInconsistentVersionException
-	// */
-	// public void contactChangeRole(Task task, AssociatedContact
-	// associatedContact) throws CustomDatabaseInconsistentVersionException {
-	// logger.trace("Called onContactChangeRole(Task task, AssociatedContact
-	// associatedContact)");
-	// // role was set to none so deselect every marker
-	//
-	// if (associatedContact.getRole() == ContactRole.NONE) {
-	// logger.debug("Removing associatedContact");
-	// task.getContacts().remove(associatedContact);
-	// associatedContact.setUseEmail(false);
-	// associatedContact.setUseFax(false);
-	// associatedContact.setUsePhone(false);
-	// associatedContact.setSelected(false);
-	//
-	// patientDao.savePatientAssociatedDataFailSave(task,
-	// "log.patient.task.update");
-	//
-	// patientDao.deletePatientAssociatedDataFailSave(associatedContact, task,
-	// "log.patient.task.contact.remove",
-	// associatedContact.toString());
-	//
-	// // remove id, if someone wants to readd the associatedContact in the same
-	// // dialog session
-	// associatedContact.setId(0);
-	// } else {
-	// logger.debug("Changing or adding associatedContact");
-	//
-	// if (associatedContact.isUseEmail() || associatedContact.isUsePhone() ||
-	// associatedContact.isUseFax()) {
-	// // something was already select, do nothing
-	// } else if (associatedContact.getRole() == ContactRole.SURGEON) {
-	// // surgeon use email per default
-	// associatedContact.setUseEmail(!associatedContact.getPerson().getContact().getEmail().isEmpty()
-	// ? true : false);
-	// } else if ((associatedContact.getRole() == ContactRole.PRIVATE_PHYSICIAN
-	// || associatedContact.getRole() == ContactRole.FAMILY_PHYSICIAN) &&
-	// associatedContact.getPerson().getContact().getFax() != null
-	// && !associatedContact.getPerson().getContact().getFax().isEmpty()) {
-	// // private physician use fax per default
-	// associatedContact.setUseFax(true);
-	// } else if (associatedContact.getPerson().getContact().getEmail() != null
-	// && !associatedContact.getPerson().getContact().getEmail().isEmpty()) {
-	// // other contacts use email per default
-	// associatedContact.setUseEmail(!associatedContact.getPerson().getContact().getEmail().isEmpty()
-	// ? true : false);
-	// }
-	//
-	// patientDao.savePatientAssociatedDataFailSave(associatedContact, task,
-	// "log.patient.task.contact.add",
-	// associatedContact.toString());
-	//
-	// // adds associatedContact if not added jet
-	// if (!task.getContacts().contains(associatedContact)) {
-	// task.getContacts().add(associatedContact);
-	// patientDao.savePatientAssociatedDataFailSave(task,
-	// "log.patient.task.update");
-	// }
-	//
-	// }
-	// }
+	public void updateNotificationsOnRoleChange(Task task, AssociatedContact associatedContact) {
+
+		if (associatedContact.getNotifications() == null) {
+			associatedContact.setNotifications(new ArrayList<AssociatedContactNotification>());
+		}
+
+		// do nothing if there is
+		if (associatedContact.getNotifications().size() != 0) {
+			return;
+		}
+
+		switch (associatedContact.getRole()) {
+		case OTHER_PHYSICIAN:
+		case SURGEON:
+			if (HistoUtil.isNotNullOrEmpty(associatedContact.getPerson().getContact().getEmail()))
+				addNotificationType(task, associatedContact, AssociatedContactNotification.NotificationTyp.EMAIL);
+		default:
+			break;
+		}
+
+		updateNotificationOnDiagnosisChange(task, associatedContact);
+	}
+
+	public void updateNotificationOnDiagnosisChange(Task task, AssociatedContact associatedContact) {
+		Set<ContactRole> sendLetterTo = new HashSet<ContactRole>();
+
+		for (DiagnosisRevision diagnosisRevision : task.getDiagnosisContainer().getDiagnosisRevisions()) {
+			for (Diagnosis diagnosis : diagnosisRevision.getDiagnoses()) {
+				if (diagnosis.getDiagnosisPrototype() != null)
+					sendLetterTo.addAll(diagnosis.getDiagnosisPrototype().getDiagnosisReportAsLetter());
+			}
+		}
+
+		for (ContactRole contactRole : sendLetterTo) {
+			System.out.println(contactRole);
+		}
+
+		// checking if contact is within the send letter to roles
+		loop: for (ContactRole contactRole : sendLetterTo) {
+			if (associatedContact.getRole().equals(contactRole)) {
+
+				for (AssociatedContactNotification notification : associatedContact.getNotifications()) {
+					if (notification.getNotificationTyp().equals(AssociatedContactNotification.NotificationTyp.LETTER))
+						break loop;
+				}
+
+				addNotificationType(task, associatedContact, AssociatedContactNotification.NotificationTyp.LETTER);
+				return;
+			}
+		}
+
+	}
 
 	public void reOrderContactList(Task task, int indexRemove, int indexMove) {
 		AssociatedContact remove = task.getContacts().remove(indexRemove);
-		
+
 		task.getContacts().add(indexMove, remove);
-		
-		patientDao.savePatientAssociatedDataFailSave(task,
-				resourceBundle.get("log.patient.task.contact.list.reoder"));
+
+		patientDao.savePatientAssociatedDataFailSave(task, resourceBundle.get("log.patient.task.contact.list.reoder"));
 	}
-	
-	
+
 	public void removeAssociatedContact(Task task, AssociatedContact associatedContact) {
 		task.getContacts().remove(associatedContact);
 		patientDao.deletePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.contact.remove",
@@ -182,6 +113,12 @@ public class ContactDAO extends AbstractDAO {
 					"log.patient.task.contact.notification.removed",
 					new Object[] { notification.getNotificationTyp(), associatedContact.toString() });
 		}
+	}
+
+	public void addAssociatedContact(Task task, AssociatedContact associatedContact) {
+		task.getContacts().add(associatedContact);
+		patientDao.savePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.contact.add",
+				new Object[] { associatedContact.toString() }, task.getParent());
 	}
 
 	public void addNotificationType(Task task, AssociatedContact associatedContact,

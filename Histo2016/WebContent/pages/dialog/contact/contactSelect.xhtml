@@ -76,8 +76,7 @@
 
 				</p:dataTable>
 
-				<p:remoteCommand name="submitDoubleclick" partialSubmit="true"
-					process="@this">
+				<p:remoteCommand name="submitDoubleclick">
 					<f:actionListener
 						binding="#{dialogHandlerAction.contactSelectDialog.addPhysicianAsRole()}" />
 					<f:actionListener
@@ -91,8 +90,10 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<h:panelGrid columns="1">
-					<h:panelGrid columns="1" style="margin-left: 20px;">
-						<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
+					<h:panelGrid columns="3">
+						<p:selectCheckboxMenu
+							styleClass="customSelectCheckboxMenu smallButton"
+							style="margin-left: 10px;"
 							panelStyleClass="customSelectCheckboxMenuContactDialogPannel"
 							label="#{msg['dialog.contact.options.show.roles']}"
 							panelStyle="width:250px"
@@ -107,6 +108,18 @@
 								partialSubmit="true" process="@this"
 								update=":dialogContent:contentTable"></p:ajax>
 						</p:selectCheckboxMenu>
+
+						<h:outputLabel value="Hinzufügen als" style="margin-left: 10px;"
+							rendered="#{dialogHandlerAction.contactSelectDialog.manuallySelectRole}" />
+
+						<p:selectOneMenu style="margin-left: 10px;"
+							rendered="#{dialogHandlerAction.contactSelectDialog.manuallySelectRole}"
+							value="#{dialogHandlerAction.contactSelectDialog.addAsRole}">
+							<f:selectItems
+								value="#{dialogHandlerAction.contactSelectDialog.addableRoles}"
+								var="role" itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
+								itemValue="#{role}" />
+						</p:selectOneMenu>
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -116,7 +129,8 @@
 						icon="fa fa-fw fa-check-circle-o">
 						<f:actionListener
 							binding="#{dialogHandlerAction.contactSelectDialog.addPhysicianAsRole()}" />
-						<f:actionListener binding="#{quickContactDialog.hideDialog()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.contactSelectDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.close']}"

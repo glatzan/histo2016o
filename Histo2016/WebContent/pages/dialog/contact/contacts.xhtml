@@ -44,7 +44,7 @@
 
 					<p:column headerText="#{msg['dialog.contact.table.function']}"
 						style="width:15% !important">
-						<h:outputLabel value="#{contactHolder.contact.role}"></h:outputLabel>
+						<h:outputLabel value="#{msg['enum.contactRole.'.concat(contactHolder.contact.role)]}"></h:outputLabel>
 					</p:column>
 
 					<p:column headerText="#{msg['dialog.contact.table.function']}">
@@ -67,8 +67,11 @@
 								listener="#{dialogHandlerAction.contactDialog.updateContactHolders()}" />
 						</p:commandLink>
 						<p:commandLink styleClass="noUnderlineAtLink"
-							disabled="#{!contactHolder.deleteAble}" update="@form"
-							actionListener="#{dialogHandlerAction.contactDialog.removeContact(dialogHandlerAction.contactDialog.task, contactHolder.contact)}">
+							disabled="#{!contactHolder.deleteAble}" update="@form">
+							<f:actionListener
+								binding="#{dialogHandlerAction.contactDialog.removeContact(dialogHandlerAction.contactDialog.task, contactHolder.contact)}" />
+							<f:actionListener
+								binding="#{dialogHandlerAction.contactDialog.updateContactHolders()}" />
 							<i class="fa fa-times" />
 						</p:commandLink>
 					</p:column>
@@ -86,17 +89,6 @@
 
 				<h:panelGrid columns="1">
 					<h:panelGrid columns="1" style="margin-left: 20px;">
-						<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
-							label="#{msg['dialog.contact.options.show.roles']}"
-							value="#{dialogHandlerAction.contactDialog.showRoles}">
-							<f:selectItems var="role"
-								value="#{dialogHandlerAction.contactDialog.selectAbleContactRoles}"
-								itemValue="#{role}"
-								itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
-
-							<p:ajax listener="#{contactHandlerAction.updateContactList()}"
-								update="@form"></p:ajax>
-						</p:selectCheckboxMenu>
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -104,7 +96,7 @@
 
 					<p:commandButton value="Kontakt hinzufügen"
 						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-fw fa-times-circle"
+						icon="fa fa-fw fa-user-plus"
 						actionListener="#{dialogHandlerAction.contactDialog.addContact()}">
 						<p:ajax event="dialogReturn" update="@form"
 							listener="#{dialogHandlerAction.contactDialog.updateContactHolders()}" />

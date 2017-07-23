@@ -51,7 +51,7 @@ public class ContactDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
-	
+
 	private ContactHolder[] contacts;
 
 	/**
@@ -91,12 +91,12 @@ public class ContactDialog extends AbstractDialog {
 	}
 
 	public void addContact() {
-		dialogHandlerAction.getContactSelectDialog().initBean(task, ContactRole.values(), ContactRole.values(), ContactRole.OTHER_PHYSICIAN);
+		dialogHandlerAction.getContactSelectDialog().initBean(task, ContactRole.values(), ContactRole.values(),
+				ContactRole.values(), ContactRole.OTHER_PHYSICIAN);
 		dialogHandlerAction.getContactSelectDialog().setManuallySelectRole(true);
 		dialogHandlerAction.getContactSelectDialog().prepareDialog();
 	}
-	
-	
+
 	public void updateContactHolders() {
 		if (task.getContacts() != null) {
 
