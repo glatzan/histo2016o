@@ -3,6 +3,7 @@ package org.histo.action;
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
 import org.histo.action.dialog.notification.ContactDialog;
+import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.PrintDialog;
@@ -27,6 +28,8 @@ public class DialogHandlerAction {
 	private ContactSelectDialog contactSelectDialog;
 
 	private ContactDialog contactDialog;
+
+	private ContactNotificationDialog contactNotificationDialog;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -68,5 +71,12 @@ public class DialogHandlerAction {
 			contactDialog = new ContactDialog();
 
 		return contactDialog;
+	}
+
+	public ContactNotificationDialog getContactNotificationDialog() {
+		if (contactNotificationDialog == null)
+			contactNotificationDialog = new ContactNotificationDialog();
+
+		return contactNotificationDialog;
 	}
 }

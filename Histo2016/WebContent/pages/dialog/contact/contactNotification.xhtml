@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.quickContact.headline.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]}" />
+	</title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel
+					value="#{msg['dialog.quickContact.headline.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+				<p:dataTable var="notifications"
+					styleClass="smallDatatable highlightedDataTable noBordersAll"
+					scrollable="true" scrollHeight="390"
+					value="#{dialogHandlerAction.contactNotificationDialog.associatedContact.notifications}">
+
+					<!-- Name -->
+					<p:column headerText="#{msg['dialog.contact.table.name']}"
+						style="width: auto !important">
+						<h:outputLabel value="#{notifications.notificationTyp}" />
+					</p:column>
+
+					<p:column headerText="#{msg['dialog.contact.table.function']}"
+						style="width:15% !important">
+						<h:outputLabel value="#{notifications.active}"></h:outputLabel>
+					</p:column>
+
+					<p:column headerText="#{msg['dialog.contact.table.function']}"
+						style="width:15% !important">
+						<h:outputLabel value="#{notifications.performed}"></h:outputLabel>
+					</p:column>
+
+					<p:column headerText="#" style="width:30px !important">
+						<p:commandLink styleClass="noUnderlineAtLink" update="@form"
+							actionListener="#{dialogHandlerAction.contactNotificationDialog.removeNotification(notifications)}">
+							<i class="fa fa-times" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+					<h:panelGrid columns="1" style="margin-left: 20px;">
+						<p:menuButton value="ADD"
+							model="#{dialogHandlerAction.contactNotificationDialog.model}">
+						</p:menuButton>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float:right;">
+					<p:commandButton value="#{msg['general.close']}"
+						styleClass="smallButton buttonRighMarginInList"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
+						actionListener="#{dialogHandlerAction.contactNotificationDialog.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

@@ -378,6 +378,22 @@ ul.ui-menu-child {
 .ui-chkbox {
 	vertical-align: 0px !important;
 }
+
+/* Small Datalist  */
+.smallDataList div{
+	border: none;
+	border-collapse: collapse;
+	border-spacing: 0px;
+}
+
+.smallDataList .ui-datalist-content{
+	background: none;
+}
+
+.smallDataList .ui-datalist-data{
+	margin: 0px;
+}
+
 /*
 	######################################## Header ########################################
 */

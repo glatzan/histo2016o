@@ -154,18 +154,51 @@ public class ContactDAO extends AbstractDAO {
 	// }
 	// }
 
-	public void addNotificationTypForContact(Task task, AssociatedContact associatedContact,
+	public void reOrderContactList(Task task, int indexRemove, int indexMove) {
+		AssociatedContact remove = task.getContacts().remove(indexRemove);
+		
+		task.getContacts().add(indexMove, remove);
+		
+		patientDao.savePatientAssociatedDataFailSave(task,
+				resourceBundle.get("log.patient.task.contact.list.reoder"));
+	}
+	
+	
+	public void removeAssociatedContact(Task task, AssociatedContact associatedContact) {
+		task.getContacts().remove(associatedContact);
+		patientDao.deletePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.contact.remove",
+				associatedContact.toString());
+	}
+
+	public void removeNotification(Task task, AssociatedContact associatedContact,
+			AssociatedContactNotification notification) {
+
+		if (associatedContact.getNotifications() != null) {
+			associatedContact.getNotifications().remove(notification);
+
+			// only remove from array, and deleting the entity only (no saving
+			// of contact necessary because mapped within notification)
+			patientDao.deletePatientAssociatedDataFailSave(notification, task,
+					"log.patient.task.contact.notification.removed",
+					new Object[] { notification.getNotificationTyp(), associatedContact.toString() });
+		}
+	}
+
+	public void addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp) {
 		AssociatedContactNotification newNotification = new AssociatedContactNotification();
 		newNotification.setActive(true);
 		newNotification.setNotificationTyp(notificationTyp);
-		
+		newNotification.setContact(associatedContact);
+
 		if (associatedContact.getNotifications() == null)
 			associatedContact.setNotifications(new ArrayList<AssociatedContactNotification>());
-		
+
 		associatedContact.getNotifications().add(newNotification);
 
-		patientDao.savePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.update");
+		patientDao.savePatientAssociatedDataFailSave(associatedContact, task,
+				"log.patient.task.contact.notification.added",
+				new Object[] { notificationTyp, associatedContact.toString() });
 	}
 
 	/**
