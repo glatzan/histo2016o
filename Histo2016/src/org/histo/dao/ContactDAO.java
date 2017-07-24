@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
+import org.histo.action.handler.SettingsHandler;
+import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.AssociatedContact;
@@ -34,6 +36,9 @@ public class ContactDAO extends AbstractDAO {
 	@Autowired
 	private PatientDao patientDao;
 
+	@Autowired
+	private SettingsHandler settingsHandler;
+
 	public void updateNotificationsOnRoleChange(Task task, AssociatedContact associatedContact) {
 
 		if (associatedContact.getNotifications() == null) {
@@ -45,13 +50,11 @@ public class ContactDAO extends AbstractDAO {
 			return;
 		}
 
-		switch (associatedContact.getRole()) {
-		case OTHER_PHYSICIAN:
-		case SURGEON:
-			if (HistoUtil.isNotNullOrEmpty(associatedContact.getPerson().getContact().getEmail()))
-				addNotificationType(task, associatedContact, AssociatedContactNotification.NotificationTyp.EMAIL);
-		default:
-			break;
+		List<AssociatedContactNotification.NotificationTyp> types = settingsHandler.getDefaultNotificationSettings()
+				.getDefaultNotificationForRole(associatedContact.getRole());
+
+		for (AssociatedContactNotification.NotificationTyp notificationTyp : types) {
+			addNotificationType(task, associatedContact, notificationTyp);
 		}
 
 		updateNotificationOnDiagnosisChange(task, associatedContact);

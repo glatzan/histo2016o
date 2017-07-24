@@ -7,7 +7,7 @@
 
 <h:head>
 	<title><h:outputLabel
-			value="#{msg['dialog.quickContact.headline.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]}" />
+			value="#{msg['dialog.selectContact.headline']} (#{msg['enum.contactRole.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]})" />
 	</title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
@@ -20,7 +20,7 @@
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
 				<h:outputLabel
-					value="#{msg['dialog.quickContact.headline.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]}" />
+					value="#{msg['dialog.selectContact.headline']} (#{msg['enum.contactRole.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]})" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -34,7 +34,7 @@
 				<p:dataTable var="contact" rowKey="#{contact.id}" id="contentTable"
 					rowIndexVar="rowIdx"
 					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-					scrollable="true" scrollHeight="340" selectionMode="single"
+					scrollable="true" scrollHeight="320" selectionMode="single"
 					selection="#{dialogHandlerAction.contactSelectDialog.selectedContact}"
 					value="#{dialogHandlerAction.contactSelectDialog.contactList}">
 

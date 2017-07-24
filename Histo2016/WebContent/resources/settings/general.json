@@ -1,4 +1,23 @@
-{  
-   "offline": true,
-   "workingDirectory" : "classpath:templates/print"
+{
+	"generalSettings": {
+		"offline": true,
+		"workingDirectory": "classpath:templates/print"
+	},
+	"defaultNotification": {
+		"defaultNotifications": [
+			{
+				"role": "SURGEON",
+				"notificationTyps": [
+					"EMAIL"
+				]
+			},
+			{
+				"role": "CLINIC_PHYSICIAN",
+				"notificationTyps": [
+					"EMAIL"
+				]
+			}
+		]
+	}
 }
+	

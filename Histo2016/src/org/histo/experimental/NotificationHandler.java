@@ -1,16 +1,13 @@
 package org.histo.experimental;
 
-import org.histo.action.ContactHandlerAction;
 import org.histo.dao.GenericDAO;
 
 public class NotificationHandler implements Runnable {
 
-	private ContactHandlerAction contactHandlerAction;
 
 	private GenericDAO genericDAO;
 	
-	public NotificationHandler(ContactHandlerAction contactHandlerAction, GenericDAO genericDAO) {
-		this.contactHandlerAction = contactHandlerAction;
+	public NotificationHandler(GenericDAO genericDAO) {
 		this.genericDAO = genericDAO;
 	}
 

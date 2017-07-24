@@ -8,7 +8,7 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.contact.headline']}" /></title>
+			value="#{msg['dialog.contacts.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -18,7 +18,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.contact.headline']}" />
+				<h:outputLabel value="#{msg['dialog.contacts.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -35,38 +35,49 @@
 					value="#{dialogHandlerAction.contactDialog.contacts}">
 
 					<!-- Name -->
-					<p:column headerText="#{msg['dialog.contact.table.name']}"
+					<p:column headerText="#{msg['dialog.contacts.table.name']}"
 						style="width: auto !important"
 						filterBy="#{contactHolder.contact.person.lastName}"
 						filterMatchMode="contains">
 						<h:outputLabel value="#{contactHolder.contact.person.fullName}" />
 					</p:column>
 
-					<p:column headerText="#{msg['dialog.contact.table.function']}"
+					<p:column headerText="#{msg['dialog.contacts.table.function']}"
 						style="width:15% !important">
-						<h:outputLabel value="#{msg['enum.contactRole.'.concat(contactHolder.contact.role)]}"></h:outputLabel>
+						<h:outputLabel
+							value="#{msg['enum.contactRole.'.concat(contactHolder.contact.role)]}"></h:outputLabel>
 					</p:column>
 
-					<p:column headerText="#{msg['dialog.contact.table.function']}">
+					<p:column headerText="#{msg['dialog.contacts.table.notification']}">
 						<p:dataList var="notifications"
 							rendered="#{contactHolder.contact.notifications.size() gt 0}"
 							styleClass="smallDataList"
 							value="#{contactHolder.contact.notifications}">
 							<p:column>
-								<h:outputLabel value="#{notifications.notificationTyp}"></h:outputLabel>
+								<h:outputLabel
+									value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}"></h:outputLabel>
+								<ui:fragment rendered="#{notifications.performed}">
+									<i class="fa fa-check icon-green"
+										title="#{msg['dialog.contacts.performed']}" />
+								</ui:fragment>
 							</p:column>
 						</p:dataList>
 					</p:column>
 
 
 					<p:column headerText="#" style="width:30px !important">
+						<!-- edit -->
 						<p:commandLink styleClass="noUnderlineAtLink"
+							title="#{msg['dialog.contacts.change']}"
 							actionListener="#{dialogHandlerAction.contactNotificationDialog.initAndPrepareBean(dialogHandlerAction.contactDialog.task, contactHolder.contact)}">
 							<i class="fa fa-wrench" />
 							<p:ajax event="dialogReturn" update="@form"
 								listener="#{dialogHandlerAction.contactDialog.updateContactHolders()}" />
 						</p:commandLink>
+
+						<!-- remove, only if no notification was performed -->
 						<p:commandLink styleClass="noUnderlineAtLink"
+							title="#{contactHolder.deleteAble ? msg['dialog.contacts.remove']: msg['dialog.contacts.remove.notPossible']}"
 							disabled="#{!contactHolder.deleteAble}" update="@form">
 							<f:actionListener
 								binding="#{dialogHandlerAction.contactDialog.removeContact(dialogHandlerAction.contactDialog.task, contactHolder.contact)}" />
@@ -94,7 +105,7 @@
 
 				<h:panelGrid columns="2" style="float:right;">
 
-					<p:commandButton value="Kontakt hinzufügen"
+					<p:commandButton value="#{msg['dialog.contact.add']}"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-fw fa-user-plus"
 						actionListener="#{dialogHandlerAction.contactDialog.addContact()}">

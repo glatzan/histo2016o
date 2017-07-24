@@ -11,6 +11,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.Role;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.settings.ClinicJsonHandler;
+import org.histo.settings.DefaultNotificationSettings;
 import org.histo.settings.LdapHandler;
 import org.histo.settings.PrinterSettings;
 import org.histo.settings.ProgramSettings;
@@ -27,15 +28,26 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Component
 @Scope(value = "session")
+@Getter
+@Setter
 public class SettingsHandler {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	public static final String PROGRAM_SETTINGS = "classpath:settings/general.json";
+	public static final String GENERAL_OBJECT = "generalSettings";
+	public static final String DEFAULT_NOTIFICATION_OBJECT = "defaultNotification";
+
 	public static final String PRINTER_SETTINGS = "classpath:settings/cupsServer.json";
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";
 	public static final String LDAP_SETTINGS = "classpath:settings/ldap.json";
@@ -105,11 +117,20 @@ public class SettingsHandler {
 	 */
 	private List<PredefinedRoleSettings> predefinedRoleSettings;
 
+	/**
+	 * List with default notification options for contact roles
+	 */
+	private DefaultNotificationSettings defaultNotificationSettings;
+
 	public void initBean() {
 		Gson gson = new Gson();
 
 		logger.debug("Loading general settings");
-		programSettings = gson.fromJson(FileHandlerUtil.getContentOfFile(PROGRAM_SETTINGS), ProgramSettings.class);
+
+		JsonParser parser = new JsonParser();
+		JsonObject o = parser.parse(FileHandlerUtil.getContentOfFile(PROGRAM_SETTINGS)).getAsJsonObject();
+
+		programSettings = gson.fromJson(o.get(GENERAL_OBJECT), ProgramSettings.class);
 
 		logger.debug("Current Version");
 		Version[] versions = Version.factroy(SettingsHandler.VERSIONS_INFO);
@@ -117,6 +138,9 @@ public class SettingsHandler {
 		if (versions != null && versions.length > 0) {
 			setCurrentVersion(versions[0].getVersion());
 		}
+
+		defaultNotificationSettings = gson.fromJson(o.get(DEFAULT_NOTIFICATION_OBJECT),
+				DefaultNotificationSettings.class);
 
 		logger.debug("Loading CUPS Printers");
 		printerSettings = gson.fromJson(FileHandlerUtil.getContentOfFile(PRINTER_SETTINGS), PrinterSettings.class);
@@ -234,102 +258,4 @@ public class SettingsHandler {
 			return new PredefinedRoleSettings();
 		}
 	}
-
-	// ************************ Getter/Setter ************************
-	public ClinicPrinter getSelectedPrinter() {
-		return selectedPrinter;
-	}
-
-	public void setSelectedPrinter(ClinicPrinter selectedPrinter) {
-		this.selectedPrinter = selectedPrinter;
-	}
-
-	public List<ClinicPrinter> getPrinterList() {
-		return printerList;
-	}
-
-	public void setPrinterList(List<ClinicPrinter> printerList) {
-		this.printerList = printerList;
-	}
-
-	public DefaultTransformer<ClinicPrinter> getPrinterListTransformer() {
-		return printerListTransformer;
-	}
-
-	public void setPrinterListTransformer(DefaultTransformer<ClinicPrinter> printerListTransformer) {
-		this.printerListTransformer = printerListTransformer;
-	}
-
-	public LabelPrinter getSelectedLabelPrinter() {
-		return selectedLabelPrinter;
-	}
-
-	public void setSelectedLabelPrinter(LabelPrinter selectedLabelPrinter) {
-		this.selectedLabelPrinter = selectedLabelPrinter;
-	}
-
-	public List<LabelPrinter> getLabelPrinterList() {
-		return labelPrinterList;
-	}
-
-	public void setLabelPrinterList(List<LabelPrinter> labelPrinterList) {
-		this.labelPrinterList = labelPrinterList;
-	}
-
-	public DefaultTransformer<LabelPrinter> getLabelPrinterListTransformer() {
-		return labelPrinterListTransformer;
-	}
-
-	public void setLabelPrinterListTransformer(DefaultTransformer<LabelPrinter> labelPrinterListTransformer) {
-		this.labelPrinterListTransformer = labelPrinterListTransformer;
-	}
-
-	public LdapHandler getLdapHandler() {
-		return ldapHandler;
-	}
-
-	public void setLdapHandler(LdapHandler ldapHandler) {
-		this.ldapHandler = ldapHandler;
-	}
-
-	public VersionContainer getVersionContainer() {
-		return versionContainer;
-	}
-
-	public void setVersionContainer(VersionContainer versionContainer) {
-		this.versionContainer = versionContainer;
-	}
-
-	public ClinicJsonHandler getClinicJsonHandler() {
-		return clinicJsonHandler;
-	}
-
-	public void setClinicJsonHandler(ClinicJsonHandler clinicJsonHandler) {
-		this.clinicJsonHandler = clinicJsonHandler;
-	}
-
-	public List<PredefinedRoleSettings> getPredefinedRoleSettings() {
-		return predefinedRoleSettings;
-	}
-
-	public void setPredefinedRoleSettings(List<PredefinedRoleSettings> predefinedRoleSettings) {
-		this.predefinedRoleSettings = predefinedRoleSettings;
-	}
-
-	public String getCurrentVersion() {
-		return currentVersion;
-	}
-
-	public void setCurrentVersion(String currentVersion) {
-		this.currentVersion = currentVersion;
-	}
-
-	public ProgramSettings getProgramSettings() {
-		return programSettings;
-	}
-
-	public void setProgramSettings(ProgramSettings programSettings) {
-		this.programSettings = programSettings;
-	}
-	
 }

@@ -49,7 +49,7 @@ public class AssociatedContactNotification implements HasID {
 	private boolean manuallyAdded;
 	
 	public enum NotificationTyp {
-		EMAIL, FAX, PHONE, NOTIFY, LETTER;
+		EMAIL, FAX, PHONE, LETTER;
 	}
 
 	@Override
