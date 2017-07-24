@@ -39,7 +39,7 @@
 					value="#{dialogHandlerAction.contactSelectDialog.contactList}">
 
 					<!-- Name -->
-					<p:column headerText="#{msg['dialog.quickContact.table.name']}"
+					<p:column headerText="#{msg['dialog.selectContact.table.name']}"
 						style="width: auto !important"
 						filterBy="#{contact.physician.person.lastName}"
 						filterMatchMode="contains">
@@ -48,8 +48,7 @@
 					</p:column>
 
 					<!-- default function-->
-					<p:column
-						headerText="#{msg['dialog.contact.table.defaultFunction']}"
+					<p:column headerText="#{msg['dialog.selectContact.table.role']}"
 						style="width:30% !important">
 						<p:repeat value="#{contact.physician.associatedRoles.toArray()}"
 							var="role">
@@ -62,18 +61,17 @@
 					<p:column style="width:5%; text-align:center;">
 						<f:facet name="header">
 							<i class="fa fa-check-square-o"
-								title="#{msg['dialog.quickContact.table.selected']}" />
+								title="#{msg['dialog.selectContact.table.added']}" />
 						</f:facet>
 
 						<ui:fragment
 							rendered="#{contact.hasRole(dialogHandlerAction.contactSelectDialog.showRoles)}">
-							<i class="fa fa-check icon-green" />
+							<i class="fa fa-check icon-green"
+								title="#{msg['dialog.selectContact.table.added']}" />
 						</ui:fragment>
-
 					</p:column>
 
 					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()" />
-
 				</p:dataTable>
 
 				<p:remoteCommand name="submitDoubleclick">
@@ -98,6 +96,7 @@
 							label="#{msg['dialog.contact.options.show.roles']}"
 							panelStyle="width:250px"
 							value="#{dialogHandlerAction.contactSelectDialog.showRoles}">
+							
 							<f:selectItems var="role"
 								value="#{dialogHandlerAction.contactSelectDialog.selectAbleContactRoles}"
 								itemValue="#{role}"
@@ -107,9 +106,10 @@
 								listener="#{dialogHandlerAction.contactSelectDialog.updateContactList()}"
 								partialSubmit="true" process="@this"
 								update=":dialogContent:contentTable"></p:ajax>
+								
 						</p:selectCheckboxMenu>
 
-						<h:outputLabel value="Hinzufügen als" style="margin-left: 10px;"
+						<h:outputLabel value="#{msg['']}" style="margin-left: 10px;"
 							rendered="#{dialogHandlerAction.contactSelectDialog.manuallySelectRole}" />
 
 						<p:selectOneMenu style="margin-left: 10px;"
