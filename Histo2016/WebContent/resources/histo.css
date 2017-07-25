@@ -815,6 +815,7 @@ ul.ui-menu-child {
 .settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-panels {
 	width: 77% !important;
 	min-width: 780px;
+	height: 563px !important;
 }
 
 /* Content Pannel on the right side, header style*/
@@ -961,4 +962,10 @@ ul.ui-menu-child {
 	-ms-text-overflow: ellipsis;
 	display: block;
 	position: absolute;
+}
+
+// Css
+.test.ui-selectcheckboxmenu-panel {
+    position: relative;
+    bottom: 0px !important;
 }

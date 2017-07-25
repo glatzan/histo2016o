@@ -81,12 +81,28 @@
 					</ui:fragment>
 				</p:column>
 
-				<p:column headerText="" style="width:40px;">
-					<p:commandLink disabled="true"
-						actionListener="#{settingsDialogHandler.prepareEditStaining(staining)}"
-						update="@form" styleClass="noUnderlineAtLink">
+				<p:column headerText="" style="width:40px;text-align:center">
+					
+					<p:commandLink disabled="true" update="@form"
+						styleClass="noUnderlineAtLink">
 						<i class="fa fa-search" />
 					</p:commandLink>
+
+
+					<p:commandLink update="@form" style="margin-left:10px;"
+						rendered="#{!task.containsContact(userHandlerAction.currentUser.physician.person)}"
+						styleClass="noUnderlineAtLink" title="#{msg['body.taskList.table.button.addNotification']}"
+						actionListener="#{taskViewHandlerAction.addUserToNotification(task,userHandlerAction.currentUser)}">
+						<i class="fa fa-info" />
+					</p:commandLink>
+
+					<p:commandLink update="@form" style="margin-left:10px;"
+						rendered="#{task.containsContact(userHandlerAction.currentUser.physician.person)}"
+						styleClass="noUnderlineAtLink" title="#{msg['body.taskList.table.button.removeNotification']}"
+						actionListener="#{taskViewHandlerAction.removeUserFromNotification(task,userHandlerAction.currentUser)}">
+						<i class="fa fa-times" />
+					</p:commandLink>
+
 				</p:column>
 			</p:dataTable>
 		</h:panelGrid>

@@ -41,6 +41,7 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.FavouriteList;
 import org.histo.model.PDFContainer;
+import org.histo.model.Person;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
@@ -395,6 +396,20 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 			return true;
 
 		return super.equals(obj);
+	}
+
+	@Transient
+	public boolean containsContact(Person person) {
+		if (getContacts() != null)
+			return getContacts().stream().anyMatch(p -> p.getPerson().equals(person));
+		return false;
+	}
+
+	@Transient
+	public boolean containsContact(AssociatedContact associatedContact) {
+		if (getContacts() != null)
+			return getContacts().stream().anyMatch(p -> p.equals(associatedContact));
+		return false;
 	}
 
 	/********************************************************

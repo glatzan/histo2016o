@@ -27,6 +27,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -47,13 +49,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String password = authentication.getCredentials().toString().trim();
 
 		try {
+
+			JsonParser parser = new JsonParser();
+			JsonObject o = parser.parse(FileHandlerUtil.getContentOfFile(SettingsHandler.PROGRAM_SETTINGS))
+					.getAsJsonObject();
+
 			Gson gson = new Gson();
 
-			LdapHandler connection = gson.fromJson(FileHandlerUtil.getContentOfFile(SettingsHandler.LDAP_SETTINGS),
-					LdapHandler.class);
+			LdapHandler connection = gson.fromJson(o.get(SettingsHandler.LDAP_SETTINGS), LdapHandler.class);
 
-			ProgramSettings settings = gson.fromJson(FileHandlerUtil.getContentOfFile(SettingsHandler.PROGRAM_SETTINGS),
-					ProgramSettings.class);
+			ProgramSettings settings = gson.fromJson(o.get(SettingsHandler.GENERAL_OBJECT), ProgramSettings.class);
 
 			if (settings.isOffline()) {
 				logger.info("LDAP login disabled");

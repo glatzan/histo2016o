@@ -1,12 +1,17 @@
 package org.histo.action.dialog.notification;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.config.ResourceBundle;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.PatientDao;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.patient.Task;
@@ -32,9 +37,30 @@ public class ContactNotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private ContactDAO contactDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ResourceBundle resourceBundle;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PatientDao patientDao;
+
 	private AssociatedContact associatedContact;
 
 	private MenuModel model;
+
+	private ContactRole[] selectableRoles;
+
+	HashMap<String, String> icons = new HashMap<String, String>() {
+		{
+			put("EMAIL", "fa-envelope");
+			put("FAX", "fa-fax");
+			put("PHONE", "fa-phone");
+			put("LETTER", "fa-pencil-square-o");
+		}
+	};
 
 	public void initAndPrepareBean(Task task, AssociatedContact associatedContact) {
 		if (initBean(task, associatedContact))
@@ -53,6 +79,8 @@ public class ContactNotificationDialog extends AbstractDialog {
 		setAssociatedContact(associatedContact);
 
 		generatedMenuModel();
+
+		setSelectableRoles(ContactRole.values());
 
 		return true;
 	}
@@ -76,11 +104,11 @@ public class ContactNotificationDialog extends AbstractDialog {
 					}
 				}
 
-			DefaultMenuItem item = new DefaultMenuItem("External");
-			item.setIcon("ui-icon-home");
+			DefaultMenuItem item = new DefaultMenuItem("");
+			item.setIcon("fa " + icons.get(typeArr[i].toString()));
 			item.setCommand("#{dialogHandlerAction.contactNotificationDialog.addNotificationAndUpdate('"
 					+ typeArr[i].toString() + "')}");
-			item.setValue(typeArr[i]);
+			item.setValue(resourceBundle.get("enum.notificationType." + typeArr[i].toString()));
 			item.setDisabled(disabled);
 			item.setUpdate("@form");
 			model.addElement(item);
@@ -100,4 +128,9 @@ public class ContactNotificationDialog extends AbstractDialog {
 		contactDAO.addNotificationType(task, associatedContact, notification);
 	}
 
+	public void saveRoleChange() {
+		patientDao.savePatientAssociatedDataFailSave(getAssociatedContact(), getTask(),
+				"log.patient.task.contact.roleChange", getAssociatedContact().toString(),
+				getAssociatedContact().getRole().toString());
+	}
 }

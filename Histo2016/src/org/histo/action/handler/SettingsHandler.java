@@ -47,10 +47,10 @@ public class SettingsHandler {
 	public static final String PROGRAM_SETTINGS = "classpath:settings/general.json";
 	public static final String GENERAL_OBJECT = "generalSettings";
 	public static final String DEFAULT_NOTIFICATION_OBJECT = "defaultNotification";
+	public static final String LDAP_SETTINGS = "ldapSettings";
 
 	public static final String PRINTER_SETTINGS = "classpath:settings/cupsServer.json";
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";
-	public static final String LDAP_SETTINGS = "classpath:settings/ldap.json";
 	public static final String VERSION_SETTINGS = "classpath:settings/version.json";
 	public static final String CLINIC_BACKEND_SETTINGS = "classpath:settings/clinicBackend.json";
 	public static final String PREDEFINED_ROLE_SETTINGS = "classpath:settings/predefinedRoleSettings.json";
@@ -155,9 +155,9 @@ public class SettingsHandler {
 		setLabelPrinterListTransformer(new DefaultTransformer<LabelPrinter>(getLabelPrinterList()));
 
 		updateSelectedPrinters();
-
+		
 		logger.debug("Loading LDAP Handler");
-		ldapHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(LDAP_SETTINGS), LdapHandler.class);
+		ldapHandler = gson.fromJson(o.get(LDAP_SETTINGS), LdapHandler.class);
 
 		logger.debug("Loading clinic backend handler");
 		clinicJsonHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(CLINIC_BACKEND_SETTINGS),

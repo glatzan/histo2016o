@@ -118,10 +118,16 @@ public class ContactDAO extends AbstractDAO {
 		}
 	}
 
-	public void addAssociatedContact(Task task, AssociatedContact associatedContact) {
+	public AssociatedContact addAssociatedContact(Task task, Person person, ContactRole role) {
+		return addAssociatedContact(task, new AssociatedContact(task, person, role));
+	}
+
+	public AssociatedContact addAssociatedContact(Task task, AssociatedContact associatedContact) {
 		task.getContacts().add(associatedContact);
 		patientDao.savePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.contact.add",
 				new Object[] { associatedContact.toString() }, task.getParent());
+
+		return associatedContact;
 	}
 
 	public void addNotificationType(Task task, AssociatedContact associatedContact,

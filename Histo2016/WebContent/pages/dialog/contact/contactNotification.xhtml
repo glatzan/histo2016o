@@ -7,8 +7,7 @@
 
 <h:head>
 	<title><h:outputLabel
-			value="#{msg['dialog.quickContact.headline.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]}" />
-	</title>
+			value="#{msg['dialog.cotactNotification.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -19,8 +18,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel
-					value="#{msg['dialog.quickContact.headline.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]}" />
+				<h:outputLabel value="#{msg['dialog.cotactNotification.headline']} (#{dialogHandlerAction.contactNotificationDialog.associatedContact.person.fullName})" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -33,32 +31,80 @@
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
 				<p:dataTable var="notifications"
 					styleClass="smallDatatable highlightedDataTable noBordersAll"
-					scrollable="true" scrollHeight="390"
+					scrollable="true" scrollHeight="300"
 					value="#{dialogHandlerAction.contactNotificationDialog.associatedContact.notifications}">
 
 					<!-- Name -->
-					<p:column headerText="#{msg['dialog.contact.table.name']}"
+					<p:column
+						headerText="#{msg['dialog.cotactNotification.notificationType']}"
 						style="width: auto !important">
-						<h:outputLabel value="#{notifications.notificationTyp}" />
+
+						<ui:fragment
+							rendered="#{notifications.notificationTyp eq 'EMAIL'}">
+							<i class="fa fa-envelope icon-grey" />
+						</ui:fragment>
+
+						<ui:fragment rendered="#{notifications.notificationTyp eq 'FAX'}">
+							<i class="fa fa-fax icon-grey" />
+						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{notifications.notificationTyp eq 'LETTER'}">
+							<i class="fa fa-pencil-square-o icon-grey" />
+						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{notifications.notificationTyp eq 'PHONE'}">
+							<i class="fa fa-phone icon-grey" />
+						</ui:fragment>
+
+						<h:outputLabel style="margin-left: 10px;"
+							value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}" />
 					</p:column>
 
-					<p:column headerText="#{msg['dialog.contact.table.function']}"
-						style="width:15% !important">
-						<h:outputLabel value="#{notifications.active}"></h:outputLabel>
+					<p:column headerText="#{msg['dialog.cotactNotification.activ']}"
+						style="width:15% !important;  text-align:center; ">
+						<p:selectBooleanCheckbox value="#{notifications.active}"
+							disabled="#{notifications.performed}" />
 					</p:column>
 
-					<p:column headerText="#{msg['dialog.contact.table.function']}"
-						style="width:15% !important">
-						<h:outputLabel value="#{notifications.performed}"></h:outputLabel>
+					<p:column
+						headerText="#{msg['dialog.cotactNotification.performed']}"
+						style="width:15% !important;  text-align:center; ">
+
+						<ui:fragment rendered="#{notifications.performed}">
+							<i class="fa fa-check icon-green"
+								title="#{msg['dialog.contacts.performed']}" />
+						</ui:fragment>
+
 					</p:column>
 
-					<p:column headerText="#" style="width:30px !important">
+					<p:column headerText="#"
+						style="width:15px !important;  text-align:center; ">
 						<p:commandLink styleClass="noUnderlineAtLink" update="@form"
+							disabled="#{notifications.performed}"
+							title="#{msg['dialog.cotactNotification.remove.text']}"
 							actionListener="#{dialogHandlerAction.contactNotificationDialog.removeNotification(notifications)}">
 							<i class="fa fa-times" />
 						</p:commandLink>
 					</p:column>
 				</p:dataTable>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+				columnClasses="defaultListingTableColumn10,">
+				<h:outputLabel value="#{msg['dialog.cotactNotification.role']}"
+					style="margin-left:10px" />
+				<p:selectOneMenu
+					value="#{dialogHandlerAction.contactNotificationDialog.associatedContact.role}">
+					<f:selectItems
+						value="#{dialogHandlerAction.contactNotificationDialog.selectableRoles}"
+						var="role" itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
+						itemValue="#{role}" />
+
+					<p:ajax event="change"
+						listener="#{dialogHandlerAction.contactNotificationDialog.saveRoleChange()}" />
+				</p:selectOneMenu>
 			</h:panelGrid>
 		</div>
 
@@ -68,7 +114,8 @@
 
 				<h:panelGrid columns="1">
 					<h:panelGrid columns="1" style="margin-left: 20px;">
-						<p:menuButton value="ADD"
+						<p:menuButton styleClass="smallButton"
+							value="#{msg['dialog.cotactNotification.button.add']}"
 							model="#{dialogHandlerAction.contactNotificationDialog.model}">
 						</p:menuButton>
 					</h:panelGrid>

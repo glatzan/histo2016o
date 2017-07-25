@@ -75,7 +75,6 @@ public class AssociatedContact implements LogAble, HasID {
 	}
 
 	public AssociatedContact(Task task, Person person, ContactRole role) {
-		logger.debug("Creating associatedContact for " + person.getFullName());
 		this.person = person;
 		this.role = role;
 		this.task = task;

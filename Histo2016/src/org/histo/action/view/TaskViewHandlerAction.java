@@ -4,24 +4,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.UserHandlerAction;
+import org.histo.config.enums.ContactRole;
+import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
+import org.histo.model.AssociatedContact;
+import org.histo.model.AssociatedContactNotification;
+import org.histo.model.HistoUser;
 import org.histo.model.patient.Task;
+import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Controller
 @Scope("session")
+@Getter
+@Setter
 public class TaskViewHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ContactDAO contactDAO;
 
 	/**
 	 * Lists of task to display
@@ -89,9 +113,28 @@ public class TaskViewHandlerAction {
 	public void onChangeSelectionCriteria() {
 		setTaskList(taskDAO.getTasks(getTaskPerPull(), getPage() - 1));
 	}
-	
 
-	
+	public void addUserToNotification(Task task, HistoUser histoUser) {
+		AssociatedContact associatedContact = contactDAO.addAssociatedContact(task,
+				histoUser.getPhysician().getPerson(), ContactRole.CLINIC_PHYSICIAN);
+
+		contactDAO.addNotificationType(task, associatedContact, AssociatedContactNotification.NotificationTyp.EMAIL);
+	}
+
+	public void removeUserFromNotification(Task task, HistoUser histoUser) {
+		if (task.getContacts() != null) {
+			try {
+				AssociatedContact associatedContact = task.getContacts().stream()
+						.filter(p -> p.getPerson().equals(histoUser.getPhysician().getPerson()))
+						.collect(StreamUtils.singletonCollector());
+				
+				contactDAO.removeAssociatedContact(task, associatedContact);
+			} catch (IllegalStateException e) {
+				logger.debug("No matching contact found!");
+				// do nothing
+			}
+		}
+	}
 
 	/********************************************************
 	 * Getter/Setter
@@ -103,45 +146,5 @@ public class TaskViewHandlerAction {
 
 		return taskList;
 	}
-
-	public void setTaskList(List<Task> taskList) {
-		this.taskList = taskList;
-	}
-
-	public int getTaskPerPull() {
-		return taskPerPull;
-	}
-
-	public int getPage() {
-		return page;
-	}
-
-	public void setTaskPerPull(int taskPerPull) {
-		this.taskPerPull = taskPerPull;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
-	public Task getSelectedTask() {
-		return selectedTask;
-	}
-
-	public void setSelectedTask(Task selectedTask) {
-		this.selectedTask = selectedTask;
-	}
-
-	public List<Integer> getPages() {
-		return pages;
-	}
-
-	public void setPages(List<Integer> pages) {
-		this.pages = pages;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
 
 }

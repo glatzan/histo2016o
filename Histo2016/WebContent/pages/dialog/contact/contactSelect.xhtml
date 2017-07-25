@@ -93,10 +93,10 @@
 							styleClass="customSelectCheckboxMenu smallButton"
 							style="margin-left: 10px;"
 							panelStyleClass="customSelectCheckboxMenuContactDialogPannel"
-							label="#{msg['dialog.contact.options.show.roles']}"
+							label="#{msg['dialog.selectContact.roles']}"
 							panelStyle="width:250px"
 							value="#{dialogHandlerAction.contactSelectDialog.showRoles}">
-							
+
 							<f:selectItems var="role"
 								value="#{dialogHandlerAction.contactSelectDialog.selectAbleContactRoles}"
 								itemValue="#{role}"
@@ -106,10 +106,11 @@
 								listener="#{dialogHandlerAction.contactSelectDialog.updateContactList()}"
 								partialSubmit="true" process="@this"
 								update=":dialogContent:contentTable"></p:ajax>
-								
+
 						</p:selectCheckboxMenu>
 
-						<h:outputLabel value="#{msg['']}" style="margin-left: 10px;"
+						<h:outputLabel value="#{msg['dialog.selectContact.addAs']}"
+							style="margin-left: 10px;"
 							rendered="#{dialogHandlerAction.contactSelectDialog.manuallySelectRole}" />
 
 						<p:selectOneMenu style="margin-left: 10px;"
@@ -119,6 +120,9 @@
 								value="#{dialogHandlerAction.contactSelectDialog.addableRoles}"
 								var="role" itemLabel="#{msg['enum.contactRole.'.concat(role)]}"
 								itemValue="#{role}" />
+
+
+							<p:ajax event="change" update="@form" process="@this" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 				</h:panelGrid>

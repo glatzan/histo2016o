@@ -18,6 +18,11 @@
 				]
 			}
 		]
+	},
+	"ldapSettings": {
+		"host": "ldap.ukl.uni-freiburg.de",
+		"port": 389,
+		"suffix": "dc=ukl,dc=uni-freiburg,dc=de",
+		"base": "ou=people"
 	}
 }
-	
