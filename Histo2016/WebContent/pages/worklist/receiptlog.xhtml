@@ -28,7 +28,9 @@
 				<!-- Receipt Date -->
 				<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
 				<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
-					styleClass="smallInput" disabled="#{!taskEditable}"
+					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}"
+					styleClass="smallInput customBackground"
+					disabled="#{!taskEditable}"
 					value="#{commonDataHandlerAction.selectedTask.dateOfReceiptAsDate}">
 					<p:ajax event="dateSelect"
 						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfReceiptAsDate))}"
@@ -41,7 +43,7 @@
 				<h:outputLabel value="#{msg['body.receiptlog.taskDueDate']}" />
 				<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
 					<p:selectBooleanCheckbox style="padding-right:5px;"
-						disabled="#{!taskEditable}"
+						disabled="#{!taskEditable}" styleClass="smallCheckbox"
 						title="#{msg['body.receiptlog.taskDueDate.hint']}"
 						value="#{commonDataHandlerAction.selectedTask.dueDateSelected}">
 						<p:ajax event="change" execute="@this"
@@ -50,7 +52,8 @@
 						</p:ajax>
 					</p:selectBooleanCheckbox>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
-						styleClass="smallInput"
+						style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
+						styleClass="smallInput customBackground"
 						value="#{commonDataHandlerAction.selectedTask.dueDateAsDate}"
 						disabled="#{!commonDataHandlerAction.selectedTask.dueDateSelected or !taskEditable}">
 						<p:ajax event="dateSelect"
@@ -65,7 +68,9 @@
 				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 				<p:selectOneMenu id="wards"
 					value="#{commonDataHandlerAction.selectedTask.ward}"
-					styleClass="smallInput" editable="true" disabled="#{!taskEditable}">
+					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
+					styleClass="smallInput customBackground" editable="true"
+					disabled="#{!taskEditable}">
 					<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 					<p:ajax event="change" execute="@this"
@@ -74,8 +79,9 @@
 
 				<!-- History -->
 				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
-				<p:selectOneMenu id="historyText" style="width: auto"
-					styleClass="smallInput"
+				<p:selectOneMenu id="historyText"
+					style="width: auto;width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
+					styleClass="smallInput customBackground"
 					value="#{commonDataHandlerAction.selectedTask.caseHistory}"
 					disabled="#{!taskEditable}" editable="true">
 					<f:selectItem itemLabel="Select One"
@@ -90,7 +96,9 @@
 
 				<!-- EYE -->
 				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
-				<p:selectOneMenu styleClass="smallInput"
+				<p:selectOneMenu
+					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
+					styleClass="smallInput customBackground"
 					value="#{commonDataHandlerAction.selectedTask.eye}"
 					disabled="#{!taskEditable}">
 
@@ -128,13 +136,15 @@
 							<h:outputLabel
 								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
-							<p:inputText value="#{sample.material}" style="margin-left:10px;"
-								disabled="#{!taskEditable}" styleClass="smallInput" />
+							<p:inputText value="#{sample.material}"
+								disabled="#{!taskEditable}"
+								style="margin-left:10px;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
+								styleClass="smallInput customBackground" />
 
 							<p:commandLink
 								title="#{msg['body.receiptlog.notification.hint']}"
 								disabled="#{!taskEditable}"
-								actionListener="#{changeMaterialDialog.initAndPrepareBean(sample)}">
+								actionListener="#{dialogHandlerAction.changeMaterialDialog.initAndPrepareBean(sample)}">
 								<i class="fa fa-fw fa-cog" />
 								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							</p:commandLink>
@@ -446,7 +456,7 @@
 						<p:column styleClass="columnCommentary">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
 								<h:panelGroup id="slideCommentary#{inner.index}" layout="block"
-									style="width: 99%; min-height:20px; background-color: #{stainingRow.even ? '#ffffff' : '#f2f2f2'} ">
+									style="width: 99%; min-height:20px; border: solid 1px; padding-left: 2px; ">
 									<h:outputLabel value="#{stainingRow.staining.commentary}">
 										<f:converter converterId="org.histo.ui.TruncateConverter" />
 										<f:attribute name="truncateAt" value="25" />
@@ -459,8 +469,16 @@
 									hideEffect="fade" showEvent="click" hideEvent="click"
 									onHide="slideCommentaryTableReset#{inner.index}()">
 									<h:panelGrid columns="2">
-										<p:inputText value="#{stainingRow.staining.commentary}"
-											id="slideCommentaryInput#{inner.index}" />
+										
+										<p:selectOneMenu value="#{stainingRow.staining.commentary}"
+											styleClass="smallInput" editable="true" id="slideCommentaryInput#{inner.index}" 
+											disabled="#{!taskEditable}">
+											<f:selectItems
+												value="#{receiptlogViewHandlerAction.slideCommentary}"
+												itemValue="#{slideCommentary.value}"
+												itemLabel="#{slideCommentary.value}" var="slideCommentary" />
+										</p:selectOneMenu>
+
 										<p:commandButton value="#{msg['general.save']}"
 											update="contentForm"
 											actionListener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.staining,'log.settings.staining.update')}"

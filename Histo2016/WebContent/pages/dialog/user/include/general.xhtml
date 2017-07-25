@@ -26,6 +26,18 @@
 				<f:selectItems value="#{userSettingsDialog.availableViews}"
 					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 			</p:selectOneMenu>
+
+			<!-- background color of inputfields -->
+			<h:outputText
+				value="#{msg['dialog.userSettings.general.inputFieldColor']}" />
+			<p:colorPicker value="#{userSettingsDialog.user.inputFieldColor}" />
+
+			<!-- font color of inputfields -->
+			<h:outputText
+				value="#{msg['dialog.userSettings.general.inputFieldFontColor']}" />
+			<p:colorPicker value="#{userSettingsDialog.user.inputFieldFontColor}" />
+
+
 		</h:panelGrid>
 
 		<!-- Separator -->
@@ -98,8 +110,9 @@
 			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.alternatePatientAddMode}"
 				title="#{msg['dialog.userSettings.general.alternatePatientAddMode.text']}" />
-				
-				
+
+
+
 		</h:panelGrid>
 	</div>
 

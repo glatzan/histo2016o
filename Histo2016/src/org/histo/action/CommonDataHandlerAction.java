@@ -11,6 +11,9 @@ import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Object containing commonly used variables (mostly for dialogs)!
  * 
@@ -19,6 +22,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Scope(value = "session")
+@Getter
+@Setter
 public class CommonDataHandlerAction {
 
 	// ************************ Navigation ************************
@@ -38,73 +43,4 @@ public class CommonDataHandlerAction {
 	 */
 	private Task selectedTask;
 
-	/**
-	 * List of all ContactRole available for selecting physicians, used by
-	 * contacts and settings
-	 */
-	private List<ContactRole> associatedRoles;
-
-	/**
-	 * Transformer for associatedRoles
-	 */
-	private AssociatedRoleTransformer associatedRolesTransformer;
-
-	/**
-	 * List contain contacts to select from, used by contacts
-	 */
-	private List<AssociatedContact> contactList;
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	public List<ContactRole> getAssociatedRoles() {
-		return associatedRoles;
-	}
-
-	public AssociatedRoleTransformer getAssociatedRolesTransformer() {
-		return associatedRolesTransformer;
-	}
-
-	public void setAssociatedRoles(List<ContactRole> associatedRoles) {
-		this.associatedRoles = associatedRoles;
-	}
-
-	public void setAssociatedRolesTransformer(AssociatedRoleTransformer associatedRolesTransformer) {
-		this.associatedRolesTransformer = associatedRolesTransformer;
-	}
-
-	public Task getSelectedTask() {
-		return selectedTask;
-	}
-
-	public void setSelectedTask(Task selectedTask) {
-		this.selectedTask = selectedTask;
-	}
-
-	public List<AssociatedContact> getContactList() {
-		return contactList;
-	}
-
-	public void setContactList(List<AssociatedContact> contactList) {
-		this.contactList = contactList;
-	}
-
-	public Patient getSelectedPatient() {
-		return selectedPatient;
-	}
-
-	public void setSelectedPatient(Patient selectedPatient) {
-		this.selectedPatient = selectedPatient;
-	}
-
-	public List<View> getNavigationPages() {
-		return navigationPages;
-	}
-
-	public void setNavigationPages(List<View> navigationPages) {
-		this.navigationPages = navigationPages;
-	}
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
 }

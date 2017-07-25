@@ -139,6 +139,18 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	private boolean alternatePatientAddMode;
 
 	/**
+	 * Background-Color of all inputfields
+	 */
+	@Column(columnDefinition = "VARCHAR")
+	private String inputFieldColor;
+	
+	/**
+	 * Font-Color of the inputfields
+	 */
+	@Column(columnDefinition = "VARCHAR")
+	private String inputFieldFontColor;
+	
+	/**
 	 * Constructor for Hibernate
 	 */
 	public HistoUser() {

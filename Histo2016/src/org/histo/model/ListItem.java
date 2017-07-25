@@ -31,7 +31,7 @@ import lombok.Setter;
 public class ListItem implements ListOrder<ListItem>, ArchivAble, HasID {
 
 	public enum StaticList {
-		WARDS, CASE_HISTORY, COUNCIL_ATTACHMENT;
+		WARDS, CASE_HISTORY, COUNCIL_ATTACHMENT, SLIDES;
 	}
 
 	@Id

@@ -46,13 +46,15 @@
 									value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
 								<p:inputText value="#{sample.material}"
-									disabled="#{!taskEditable}" styleClass="smallInput"
-									style="width:200px;float:right;" />
-								<p:commandLink
+									disabled="#{!taskEditable}" tabindex="1"
+									styleClass="smallInput customBackground"
+									style="width:200px;float:right;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}" />
+
+								<p:commandLink tabindex="1"
 									title="#{msg['body.receiptlog.notification.hint']}"
 									rendered="#{taskEditable}"
 									style="float: right; margin-right:5px;"
-									actionListener="#{changeMaterialDialog.initAndPrepareBean(sample)}">
+									actionListener="#{dialogHandlerAction.changeMaterialDialog.initAndPrepareBean(sample)}">
 									<i class="fa fa-fw fa-cog" />
 									<p:ajax event="dialogReturn"
 										update="navigationForm contentForm" />
@@ -76,7 +78,9 @@
 
 				<!-- Eye -->
 				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
-					<p:selectOneMenu styleClass="smallInput"
+					<p:selectOneMenu styleClass="smallInput customBackground"
+						tabindex="6"
+						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}"
 						disabled="#{!taskEditable}" value="#{selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
@@ -86,9 +90,10 @@
 							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.eye',selectedTask.eye)}" />
 					</p:selectOneMenu>
 
-					<p:selectOneMenu id="historyText" style="width: 80%"
-						disabled="#{!taskEditable}" value="#{selectedTask.caseHistory}"
-						editable="true">
+					<p:selectOneMenu id="historyText" tabindex="7"
+						style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}"
+						styleClass="customBackground" disabled="#{!taskEditable}"
+						value="#{selectedTask.caseHistory}" editable="true">
 						<f:selectItem itemLabel="Select One"
 							itemValue="#{msg['body.diagnosis.story.watermark']}" />
 						<f:selectItems
@@ -110,8 +115,9 @@
 				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
-					<p:calendar pattern="dd.MM.yyyy" mask="true"
-						disabled="#{!taskEditable}"
+					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="2"
+						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}"
+						styleClass="customBackground" disabled="#{!taskEditable}"
 						value="#{selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
@@ -121,8 +127,10 @@
 
 					<!-- date of receipt -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskEDate']}" />
-					<p:calendar pattern="dd.MM.yyyy" mask="true"
+					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="3"
 						disabled="#{!taskEditable}"
+						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}"
+						styleClass="customBackground"
 						value="#{selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
@@ -137,7 +145,7 @@
 					<!-- insurance -->
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
 
-					<p:selectOneButton disabled="#{!taskEditable}"
+					<p:selectOneButton disabled="#{!taskEditable}" tabindex="4"
 						value="#{commonDataHandlerAction.selectedPatient.privateInsurance}">
 						<f:selectItem
 							itemLabel="#{msg['body.diagnosis.insurance.private']}"
@@ -152,7 +160,10 @@
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
-						editable="true" disabled="#{!taskEditable}">
+						editable="true" disabled="#{!taskEditable}"
+						styleClass="customBackground" tabindex="5"
+						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}">
+
 						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
@@ -170,7 +181,7 @@
 
 						<!-- quickContact surgeon -->
 						<p:commandLink style="float: right; margin-right:5px;"
-							styleClass="noUnderlineAtLink"
+							styleClass="noUnderlineAtLink" tabindex="8"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'SURGEON')}"
 							disabled="#{!taskEditable}">
@@ -189,13 +200,14 @@
 
 						<!-- quickcontact private physician  -->
 						<p:commandLink style="float: right; margin-right:5px;"
-							styleClass="noUnderlineAtLink"
+							styleClass="noUnderlineAtLink" tabindex="9"
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask,'PRIVATE_PHYSICIAN')}"
 							disabled="#{!taskEditable}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
+
 					</h:panelGroup>
 
 				</h:panelGrid>

@@ -7,6 +7,7 @@ import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.PrintDialog;
+import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,8 @@ public class DialogHandlerAction {
 	private ContactDialog contactDialog;
 
 	private ContactNotificationDialog contactNotificationDialog;
+
+	private ChangeMaterialDialog changeMaterialDialog;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -78,5 +81,12 @@ public class DialogHandlerAction {
 			contactNotificationDialog = new ContactNotificationDialog();
 
 		return contactNotificationDialog;
+	}
+
+	public ChangeMaterialDialog getChangeMaterialDialog() {
+		if (changeMaterialDialog == null)
+			changeMaterialDialog = new ChangeMaterialDialog();
+
+		return changeMaterialDialog;
 	}
 }

@@ -17,6 +17,8 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
+import org.histo.dao.UtilDAO;
+import org.histo.model.ListItem;
 import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
@@ -27,48 +29,68 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Controller
 @Scope("session")
+@Getter
+@Setter
 public class ReceiptlogViewHandlerAction {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SettingsHandler settingsHandler;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskStatusHandler taskStatusHandler;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SlideManipulationHandler slideManipulationHandler;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private StainingPhaseLeaveDialogHandler stainingPhaseLeaveDialogHandler;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SettingsDialogHandler settingsDialogHandler;
 
 	@Autowired
-	@Lazy
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UtilDAO utilDAO;
+	
 	@Autowired
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
@@ -79,6 +101,11 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	private StainingListAction actionOnMany;
 
+	/**
+	 * Contains all available case histories
+	 */
+	private List<ListItem> slideCommentary;
+	
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize ReceiptlogViewHandlerAction for task");
 		// generating guilist for display
@@ -87,6 +114,7 @@ public class ReceiptlogViewHandlerAction {
 		// Setzte action to none
 		setActionOnMany(StainingListAction.NONE);
 
+		setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
 	}
 
 	public void performActionOnMany(Task task) {
@@ -323,14 +351,4 @@ public class ReceiptlogViewHandlerAction {
 			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
 		}
 	}
-	
-	// ************************ Getter/Setter ************************
-	public StainingListAction getActionOnMany() {
-		return actionOnMany;
-	}
-
-	public void setActionOnMany(StainingListAction actionOnMany) {
-		this.actionOnMany = actionOnMany;
-	}
-
 }

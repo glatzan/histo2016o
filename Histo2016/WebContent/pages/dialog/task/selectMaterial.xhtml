@@ -30,10 +30,10 @@
 
 		<div class="contentDiv">
 			<p:dataTable var="material" scrollHeight="220" scrollable="true"
-				selection="#{changeMaterialDialog.selectedMaterial}"
+				selection="#{dialogHandlerAction.changeMaterialDialog.selectedMaterial}"
 				selectionMode="single" rowKey="#{material.id}"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll smallPaddingAll"
-				value="#{changeMaterialDialog.materials}">
+				value="#{dialogHandlerAction.changeMaterialDialog.materials}">
 				<p:column headerText="#{msg['dialog.selectMaterial.name']}"
 					sortBy="#{material.name}" filterBy="#{material.name}"
 					filterMatchMode="contains">
@@ -41,7 +41,7 @@
 				</p:column>
 
 				<p:ajax event="rowDblselect"
-					listener="#{changeMaterialDialog.changeMaterialOfSample()}" />
+					listener="#{dialogHandlerAction.changeMaterialDialog.changeMaterialOfSample()}" />
 
 
 			</p:dataTable>
@@ -56,15 +56,15 @@
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended">
 						<f:actionListener
-							binding="#{changeMaterialDialog.changeMaterialOfSample()}" />
-						<f:actionListener binding="#{changeMaterialDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.changeMaterialDialog.changeMaterialOfSample()}" />
+						<f:actionListener binding="#{dialogHandlerAction.changeMaterialDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{changeMaterialDialog.hideDialog()}" />
+						actionListener="#{dialogHandlerAction.changeMaterialDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

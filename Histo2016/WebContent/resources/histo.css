@@ -162,15 +162,6 @@ body {
 	min-width: 150px !important;
 }
 
-/* Small Datatable columns */
-.smallDatatable td {
-	padding: 1px 6px !important;
-}
-
-/* Line break for \r\n */
-.preformatted {
-    white-space: pre-wrap;
-}
 /************************************* DEFAULT TABLE *************************************/
 /************************************* Fonts *************************************/
 .bold-text {
@@ -294,11 +285,11 @@ ul.ui-menu-child {
 
 /* Highlighted datatable, even rows background is different, hover and selected is different*/
 .highlightedDataTable  tr.ui-datatable-odd>td {
-	background-color: #f2f2f2 !important;
+	background-color: #f2f2f2;
 }
 
 .highlightedDataTable tr.ui-state-highlight>td {
-	background-color: #fbf9ee;
+	background-color: #fcf1b8;
 }
 
 .highlightedDataTable tr.ui-state-highlight>td label {
@@ -306,7 +297,7 @@ ul.ui-menu-child {
 }
 
 .highlightedDataTable tr.ui-state-hover>td {
-	background-color: #fbf9ee;
+	background-color: #fcf1b8;
 }
 
 .noUnderlineAtLink {
@@ -380,18 +371,33 @@ ul.ui-menu-child {
 }
 
 /* Small Datalist  */
-.smallDataList div{
+.smallDataList div {
 	border: none;
 	border-collapse: collapse;
 	border-spacing: 0px;
 }
 
-.smallDataList .ui-datalist-content{
+.smallDataList .ui-datalist-content {
 	background: none;
 }
 
-.smallDataList .ui-datalist-data{
+.smallDataList .ui-datalist-data {
 	margin: 0px;
+}
+
+/* Small Datatable columns */
+.smallDatatable td {
+	padding: 1px 6px !important;
+}
+
+/* Line break for \r\n */
+.preformatted {
+	white-space: pre-wrap;
+}
+
+.customBackground .ui-inputfield {
+	background: inherit !important;
+	color: inherit !important;
 }
 
 /*
@@ -815,7 +821,6 @@ ul.ui-menu-child {
 .settingsDialogLayout .settingsPannel .settingsTabView .ui-tabs-panels {
 	width: 77% !important;
 	min-width: 780px;
-	height: 563px !important;
 }
 
 /* Content Pannel on the right side, header style*/
@@ -964,8 +969,9 @@ ul.ui-menu-child {
 	position: absolute;
 }
 
-// Css
+//
+Css
 .test.ui-selectcheckboxmenu-panel {
-    position: relative;
-    bottom: 0px !important;
+	position: relative;
+	bottom: 0px !important;
 }

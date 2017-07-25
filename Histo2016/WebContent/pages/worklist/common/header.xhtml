@@ -358,7 +358,7 @@
 
 			<!-- Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
-				actionListener="#{contactHandlerAction.prepareContactsDialog(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>

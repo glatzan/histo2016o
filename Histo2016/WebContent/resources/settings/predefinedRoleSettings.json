@@ -15,7 +15,9 @@
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false,
-	  "alternatePatientAddMode" : false
+	  "alternatePatientAddMode" : false,
+	  "inputFieldColor" : "ffffff",
+	  "inputFieldFontColor" : "000000"
    },
    {
       "role":"MTA",
@@ -37,7 +39,9 @@
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false,
-	  "alternatePatientAddMode" : true
+	  "alternatePatientAddMode" : true,
+	  "inputFieldColor" : "ffffff",
+	  "inputFieldFontColor" : "000000"
    },
    {
       "role":"PHYSICIAN",
@@ -59,7 +63,9 @@
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false,
-	  "alternatePatientAddMode" : false
+	  "alternatePatientAddMode" : false,
+	  "inputFieldColor" : "ffffff",
+	  "inputFieldFontColor" : "000000"
    },
    {
       "role":"MODERATOR",
@@ -81,7 +87,9 @@
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false,
-	  "alternatePatientAddMode" : false
+	  "alternatePatientAddMode" : false,
+	  "inputFieldColor" : "ffffff",
+	  "inputFieldFontColor" : "000000"
    },
    {
       "role":"ADMIN",
@@ -103,7 +111,9 @@
       "worklistSortOrder" : "TASK_ID",
       "worklistSortOrderAscending" : true,
 	  "hideNoneActiveTasks" : false,
-	  "alternatePatientAddMode" : false
+	  "alternatePatientAddMode" : false,
+	  "inputFieldColor" : "ffffff",
+	  "inputFieldFontColor" : "000000"
    }
 ]
 
