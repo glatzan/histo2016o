@@ -77,6 +77,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	 * True if clinic employee
 	 */
 	@Column
+	// TODO remove
 	private boolean clinicEmployee;
 
 	/**

@@ -455,42 +455,17 @@
 						<!-- staining commentary -->
 						<p:column styleClass="columnCommentary">
 							<h:panelGroup rendered="#{stainingRow.stainingType}">
-								<h:panelGroup id="slideCommentary#{inner.index}" layout="block"
-									style="width: 99%; min-height:20px; border: solid 1px; padding-left: 2px; ">
-									<h:outputLabel value="#{stainingRow.staining.commentary}">
-										<f:converter converterId="org.histo.ui.TruncateConverter" />
-										<f:attribute name="truncateAt" value="25" />
-										<f:attribute name="continuationMark" value="..." />
-									</h:outputLabel>
-								</h:panelGroup>
+								<p:selectOneMenu styleClass="smallInput" style="width: 90%"
+									value="#{stainingRow.staining.commentary}" editable="true"
+									disabled="#{!taskEditable}">
 
-								<p:overlayPanel for="slideCommentary#{inner.index}"
-									showEffect="fade" widgetVar="slideCommentary#{inner.index}"
-									hideEffect="fade" showEvent="click" hideEvent="click"
-									onHide="slideCommentaryTableReset#{inner.index}()">
-									<h:panelGrid columns="2">
-										
-										<p:selectOneMenu value="#{stainingRow.staining.commentary}"
-											styleClass="smallInput" editable="true" id="slideCommentaryInput#{inner.index}" 
-											disabled="#{!taskEditable}">
-											<f:selectItems
-												value="#{receiptlogViewHandlerAction.slideCommentary}"
-												itemValue="#{slideCommentary.value}"
-												itemLabel="#{slideCommentary.value}" var="slideCommentary" />
-										</p:selectOneMenu>
+									<f:selectItems value="#{receiptlogViewHandlerAction.slideCommentary}" var="commentary"
+										itemLabel="#{commentary.value}" itemValue="#{commentary.value}" />
 
-										<p:commandButton value="#{msg['general.save']}"
-											update="contentForm"
-											actionListener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.staining,'log.settings.staining.update')}"
-											oncomplete="PF('slideCommentary#{inner.index}').hide()"></p:commandButton>
-									</h:panelGrid>
+									<p:ajax event="change" execute="@this"
+										listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.staining,'log.settings.staining.update')}" />
+								</p:selectOneMenu>
 
-									<!-- reset on hide -->
-									<p:remoteCommand name="slideCommentaryTableReset#{inner.index}"
-										process="@this" update="slideCommentaryInput#{inner.index}">
-										<p:resetInput target="slideCommentaryInput#{inner.index}" />
-									</p:remoteCommand>
-								</p:overlayPanel>
 							</h:panelGroup>
 						</p:column>
 
