@@ -1,6 +1,8 @@
 package org.histo.action.view;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
@@ -115,6 +117,10 @@ public class ReceiptlogViewHandlerAction {
 		setActionOnMany(StainingListAction.NONE);
 
 		setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
+	}
+	
+	public List<String> getTest(String query){
+		return slideCommentary.stream().map(p -> p.getValue()).collect(Collectors.toList());
 	}
 
 	public void performActionOnMany(Task task) {

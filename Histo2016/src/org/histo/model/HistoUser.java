@@ -141,13 +141,13 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 	/**
 	 * Background-Color of all inputfields
 	 */
-	@Column(columnDefinition = "VARCHAR")
+	@Column(columnDefinition = "VARCHAR", length = 7)
 	private String inputFieldColor;
 	
 	/**
 	 * Font-Color of the inputfields
 	 */
-	@Column(columnDefinition = "VARCHAR")
+	@Column(columnDefinition = "VARCHAR", length = 7)
 	private String inputFieldFontColor;
 	
 	/**
