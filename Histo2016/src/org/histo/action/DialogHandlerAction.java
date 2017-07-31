@@ -5,6 +5,7 @@ import org.histo.action.dialog.WorklistSearchDialog;
 import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
+import org.histo.action.dialog.notification.NotificationDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
@@ -33,6 +34,8 @@ public class DialogHandlerAction {
 	private ContactNotificationDialog contactNotificationDialog;
 
 	private ChangeMaterialDialog changeMaterialDialog;
+
+	private NotificationDialog notificationDialog;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -88,5 +91,12 @@ public class DialogHandlerAction {
 			changeMaterialDialog = new ChangeMaterialDialog();
 
 		return changeMaterialDialog;
+	}
+
+	public NotificationDialog getNotificationDialog() {
+		if (notificationDialog == null)
+			notificationDialog = new NotificationDialog();
+
+		return notificationDialog;
 	}
 }

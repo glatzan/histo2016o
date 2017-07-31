@@ -373,7 +373,7 @@
 
 			<!-- MedicalFindings button -->
 			<p:commandButton id="medicalFindingsContactBtn" style="display:none"
-				actionListener="#{notificationDialog.prepareMedicalFindingsDialog(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
@@ -478,8 +478,9 @@
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
-			<!-- update all --> 
-			<p:commandButton id="updateAllContent" style="display:none" actionListener="#{mainHandlerAction.showQueueGrowlMessage()}"
+			<!-- update all -->
+			<p:commandButton id="updateAllContent" style="display:none"
+				actionListener="#{mainHandlerAction.showQueueGrowlMessage()}"
 				update="navigationForm contentForm headerForm growlForm:globalgrowl" />
 
 

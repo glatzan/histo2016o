@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;" styleClass="contentPannel">
+			<f:facet name="header">
+				<h:outputLabel
+					value="#{msg['dialog.medicalFindings.tab.mail.tabHeadline']}"></h:outputLabel>
+			</f:facet>
+		</p:panel>
+
+
+
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+			<!-- Use Mail -->
+			<h:outputLabel
+				value="#{msg['dialog.medicalFindings.tab.mail.useMail']}" />
+			<p:selectBooleanCheckbox
+				value="#{tab.useTab}">
+				<p:ajax event="change" update="@form" />
+			</p:selectBooleanCheckbox>
+
+			<h:outputLabel value=" " />
+			<h:outputLabel value=" " />
+
+			<!-- subject -->
+			<h:outputLabel
+				value="#{msg['dialog.medicalFindings.tab.mail.subject']}" />
+			<h:inputText
+				value="#{notificationDialog.emailNotificationSettings.emailSubject}"
+				style="width:80%"
+				disabled="#{!notificationDialog.emailNotificationSettings.useEmail}" />
+
+			<!-- Text -->
+			<h:outputLabel value="#{msg['dialog.medicalFindings.tab.mail.text']}" />
+			<h:inputTextarea
+				value="#{notificationDialog.emailNotificationSettings.emailText}"
+				style="width:80%"
+				disabled="#{!notificationDialog.emailNotificationSettings.useEmail}"
+				rows="10" />
+		</p:panelGrid>
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+			<h:panelGrid columns="1">
+				<!-- Contact -->
+				<p:commandButton
+					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
+					icon="fa fa-fw fa-cog"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{contactHandlerAction.prepareContactsDialog(commonDataHandlerAction.selectedTask)}">
+					<p:ajax event="dialogReturn" update="@form"
+						listener="#{notificationDialog.updateNotificationLists()}" />
+				</p:commandButton>
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" style="float:right;">
+
+				<!-- next -->
+				<p:commandButton value="#{msg['general.next']}"
+					icon="fa fa-fw fa-arrow-right"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{notificationDialog.nextStep()}" update="@form" />
+
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>

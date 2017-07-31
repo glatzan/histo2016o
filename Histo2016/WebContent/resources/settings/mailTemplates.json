@@ -1,16 +1,8 @@
-[{
-	"id" : 0,
-  	"subject":"Freischaltung für PathoFRO erfolgt",
-    "contentPath":"classpath:templates/mail/mailUnlock.txt",
-	"mailType"	: "Unlock"
-},{
-	"id" : 10,
- 	"subject":"Freischaltung von  %name% erbeten",
-	"contentPath":"classpath:templates/mail/mailRequestUnlock.txt",
-	"mailType"	: "RequestUnlock"
-},{
-	"id" : 50,
-	"subject":"Histologiebefung für %name%, geb. %birthday%, PIZ: %piz% abeschlossen.",
-	"contentPath":"classpath:templates/mail/mailMedicalFindingsReport.txt",
-	"mailType"	: "MedicalFindingsReport"
-}]
+[
+	{
+		"id": 0,
+		"documentType": "NotificationMail",
+		"subject": "Freischaltung für PathoFRO erfolgt",
+		"content": "test"
+	}
+]
