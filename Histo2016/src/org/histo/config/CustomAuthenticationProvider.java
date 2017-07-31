@@ -95,11 +95,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				logger.info("Physician found " + physician.getPerson().getFullName());
 
-				// if now error was thrown auth was successful
-				connection.checkPassword(dn, password);
+//				// if now error was thrown auth was successful
+//				connection.checkPassword(dn, password);
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 
+				System.out.println("------ Login successful " + physician.getPerson().getFullName());
 				// checking if histouser exsists
 				HistoUser histoUser = userDAO.loadUserByName(userName);
 
@@ -134,7 +135,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				histoUser.getPhysician().copyIntoObject(physician);
 
-				connection.closeConnection();
+//				connection.closeConnection();
 
 				histoUser.setLastLogin(System.currentTimeMillis());
 

@@ -77,6 +77,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	 * True if clinic employee
 	 */
 	@Column
+	// TODO remove
 	private boolean clinicEmployee;
 
 	/**
@@ -151,6 +152,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		setUid(dataToUpdate.getUid());
 		setClinicRole(dataToUpdate.getClinicRole());
 
+		//TODO real copy!!!!
 		getPerson().setOrganizsations(dataToUpdate.getPerson().getOrganizsations());
 		// TODO is this necessary ?
 		// setAssociatedRoles(dataToUpdate.getAssociatedRoles());

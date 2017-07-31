@@ -166,11 +166,11 @@ public class LdapHandler implements GsonAble {
 			if (attr != null && attr.size() == 1) {
 				Organization org = null;
 				try {
-					logger.debug("Loading organization " + attr.get().toString() );
+					logger.trace("Loading organization " + attr.get().toString() );
 					org = organizationDAO.getOrganizationByName(attr.get().toString());
 
 				} catch (IllegalStateException e) {
-					logger.debug("Organiation not found");
+					logger.trace("Organiation not found");
 					org = new Organization(attr.get().toString(), new Contact());
 					org.setIntern(true);
 				}
