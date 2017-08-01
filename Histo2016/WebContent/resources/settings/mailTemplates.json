@@ -1,23 +1,30 @@
 [
 	{
 		"id": 0,
-		"type": "org.histo.model.template.mail.SuccessUnlockMail",
+		"type": "org.histo.template.mail.SuccessUnlockMail",
 		"name": "Benutzer-Freischaltung erfolgt",
 		"defaultOfType" : true,
 		"content": "classpath:templates/mail/successUnlock.txt"
 	},
 	{
 		"id": 1,
-		"type": "org.histo.model.template.mail.RequestUnlockMail",
+		"type": "org.histo.template.mail.RequestUnlockMail",
 		"name": "Benutzer-Freischaltung erbeten",
 		"defaultOfType" : true,
 		"content": "classpath:templates/mail/requestUnlock.txt"
 	},
 	{
 		"id": 2,
-		"type": "org.histo.model.template.mail.DiagnosisReportMail",
+		"type": "org.histo.template.mail.DiagnosisReportMail",
 		"name": "Benutzer-Freischaltung ",
 		"defaultOfType" : true,
 		"content": "classpath:templates/mail/diagnosisReport.txt"
+	},
+	{
+		"id": 3,
+		"type": "org.histo.template.mail.ErrorMail",
+		"name": "Fehlermeldung!",
+		"defaultOfType" : true,
+		"content": "classpath:templates/mail/error.txt"
 	}
 ]

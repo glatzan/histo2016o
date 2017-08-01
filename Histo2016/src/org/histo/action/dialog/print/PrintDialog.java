@@ -124,6 +124,16 @@ public class PrintDialog extends AbstractDialog {
 	private boolean savePDF;
 
 	/**
+	 * if true no print button, but instead a select button will be display
+	 */
+	private boolean selectMode;
+
+	/**
+	 * If true only on address can be selected
+	 */
+	private boolean singleAddress;
+
+	/**
 	 * Initializes the bean and shows the council dialog
 	 * 
 	 * @param task
@@ -154,6 +164,9 @@ public class PrintDialog extends AbstractDialog {
 
 		setRenderedContact(null);
 
+		setSelectMode(false);
+
+		setSingleAddress(false);
 		// rendering the template
 		onChangePrintTemplate();
 	}
@@ -189,6 +202,10 @@ public class PrintDialog extends AbstractDialog {
 		getContactList().add(new ContactContainer(task,
 				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
 
+		setSelectMode(false);
+
+		setSingleAddress(false);
+
 		onChangePrintTemplate();
 	}
 
@@ -211,6 +228,36 @@ public class PrintDialog extends AbstractDialog {
 		setContactList(new ArrayList<ContactContainer>());
 
 		setRenderedContact(new ContactContainer(sendTo));
+
+		setSelectMode(false);
+
+		setSingleAddress(false);
+
+		// rendering the template
+		onChangePrintTemplate();
+	}
+
+	public void initBeanForSelecting(Task task, AbstractTemplate[] types, AbstractTemplate defaultType,
+			AssociatedContact[] addresses, boolean allowIndividualAddress) {
+
+		initBean(task, types, defaultType);
+
+		setContactList(new ArrayList<ContactContainer>());
+
+		if (addresses != null && addresses.length > 0) {
+			for (AssociatedContact associatedContact : addresses) {
+				getContactList()
+						.add(new ContactContainer(task, associatedContact.getPerson(), associatedContact.getRole()));
+			}
+
+			setRenderedContact(getContactList().get(0));
+		}
+
+		if (allowIndividualAddress)
+			getContactList().add(new ContactContainer(task,
+					new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+
+		setSelectMode(true);
 
 		// rendering the template
 		onChangePrintTemplate();

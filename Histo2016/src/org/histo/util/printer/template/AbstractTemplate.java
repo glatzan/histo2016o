@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.config.HistoSettings;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasID;
@@ -103,7 +103,7 @@ public class AbstractTemplate implements HasID, FileHandlerUtil {
 	 * @return
 	 */
 	public static final AbstractTemplate[] getTemplatesByTypes(DocumentType[] types) {
-		AbstractTemplate[] templates = AbstractTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON);
+		AbstractTemplate[] templates = AbstractTemplate.factroy(SettingsHandler.PRINT_DOCUMENT_TEMPLATES);
 		return getTemplatesByTypes(templates, types);
 	}
 

@@ -19,7 +19,7 @@ import org.apache.commons.mail.SimpleEmail;
 import org.apache.log4j.Logger;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.model.interfaces.GsonAble;
-import org.histo.model.template.MailTemplate;
+import org.histo.template.MailTemplate;
 import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
 
@@ -63,8 +63,9 @@ public class MailHandler implements GsonAble {
 		List<T> result = new ArrayList<T>();
 
 		for (MailTemplate mailTemplate : jsonArray) {
-			if (mailTemplate.getMailType().equals(mailType))
+			if (mailTemplate.getMailType().equals(mailType)) {
 				result.add((T)mailTemplate);
+			}
 		}
 
 		return result;

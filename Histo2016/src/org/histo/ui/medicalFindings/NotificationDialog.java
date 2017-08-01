@@ -1,4 +1,4 @@
-package org.histo.experimental;
+package org.histo.ui.medicalFindings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,11 +26,6 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.model.transitory.mail.MailTemplate;
-import org.histo.ui.medicalFindings.EmailNotificationSettings;
-import org.histo.ui.medicalFindings.FaxNotificationSettings;
-import org.histo.ui.medicalFindings.MedicalFindingsChooser;
-import org.histo.ui.medicalFindings.NoContactDataNotificationSettings;
-import org.histo.ui.medicalFindings.PhoneNotificationSettings;
 import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

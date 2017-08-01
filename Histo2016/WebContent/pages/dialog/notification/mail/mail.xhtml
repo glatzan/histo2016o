@@ -22,9 +22,10 @@
 			<!-- Use Mail -->
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.mail.useMail']}" />
-			<p:selectBooleanCheckbox
-				value="#{tab.useTab}">
-				<p:ajax event="change" update="@form" />
+
+			<p:selectBooleanCheckbox value="#{tab.useTab}">
+				<p:ajax event="change" partialSubmit="true" process="@this"
+					update=":adminForm:tabview:mailTab" />
 			</p:selectBooleanCheckbox>
 
 			<h:outputLabel value=" " />
@@ -33,18 +34,37 @@
 			<!-- subject -->
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.mail.subject']}" />
-			<h:inputText
-				value="#{notificationDialog.emailNotificationSettings.emailSubject}"
-				style="width:80%"
-				disabled="#{!notificationDialog.emailNotificationSettings.useEmail}" />
+			<h:inputText value="#{tab.mailSubject}" style="width:95%"
+				disabled="#{!tab.useTab}" />
 
 			<!-- Text -->
 			<h:outputLabel value="#{msg['dialog.medicalFindings.tab.mail.text']}" />
-			<h:inputTextarea
-				value="#{notificationDialog.emailNotificationSettings.emailText}"
-				style="width:80%"
-				disabled="#{!notificationDialog.emailNotificationSettings.useEmail}"
-				rows="10" />
+			<h:inputTextarea value="#{tab.mailBody}" style="width:95%"
+				disabled="#{!tab.useTab}" rows="10" />
+
+
+			<h:outputLabel
+				value="#{msg['dialog.medicalFindings.tab.mail.receiver']}" />
+
+			<p:dataTable var="holder" scrollable="true" scrollHeight="150"
+				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+				value="#{tab.holders}">
+
+				<!-- name of receiver -->
+				<p:column
+					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.name']}"
+					style="width:auto">
+					<h:outputText value="#{holder.contact.person.fullName}" />
+				</p:column>
+
+				<p:column
+					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.name']}"
+					style="width:auto">
+					<h:outputText value="#{holder.contact.person.contact.email}" />
+				</p:column>
+
+			</p:dataTable>
+
 		</p:panelGrid>
 	</div>
 
@@ -58,9 +78,10 @@
 					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{contactHandlerAction.prepareContactsDialog(commonDataHandlerAction.selectedTask)}">
-					<p:ajax event="dialogReturn" update="@form"
-						listener="#{notificationDialog.updateNotificationLists()}" />
+					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+					<p:ajax event="dialogReturn" update=":adminForm:tabview:mailTab"
+						partialSubmit="true" process=":adminForm:tabview:mailTab"
+						listener="#{tab.updateData()}" />
 				</p:commandButton>
 
 			</h:panelGrid>
@@ -71,12 +92,15 @@
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{notificationDialog.nextStep()}" update="@form" />
+					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
+					partialSubmit="true" process=":adminForm:tabview:mailTab"
+					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle"
+					icon="fa fa-times-circle" partialSubmit="true"
+					process=":adminForm:tabview:mailTab"
 					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>

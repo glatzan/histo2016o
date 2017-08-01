@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.LazyCollection;
 import org.histo.config.enums.ContactRole;
+import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.patient.Task;
@@ -110,6 +111,11 @@ public class AssociatedContact implements LogAble, HasID {
 		return false;
 	}
 
+	@Transient
+	public boolean containsNotificationTyp(NotificationTyp type) {
+		return getNotifications().stream().anyMatch(p -> p.getNotificationTyp().equals(type) && !p.isPerformed());
+	}
+	
 	@Override
 	public String toString() {
 		if (getPerson().getFullName() != null && !getPerson().getFullName().isEmpty())

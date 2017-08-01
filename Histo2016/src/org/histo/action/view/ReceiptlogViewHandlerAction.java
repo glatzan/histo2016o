@@ -11,7 +11,6 @@ import org.histo.action.dialog.slide.StainingPhaseLeaveDialogHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StainingListAction;
@@ -177,7 +176,7 @@ public class ReceiptlogViewHandlerAction {
 				break;
 			case PRINT:
 
-				AbstractTemplate[] arr = AbstractTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
+				AbstractTemplate[] arr = AbstractTemplate.factroy(SettingsHandler.PRINT_DOCUMENT_TEMPLATES,
 						new DocumentType[] { DocumentType.LABLE });
 
 				if (arr.length == 0) {
@@ -318,7 +317,7 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void printLableForSlide(Slide slide) {
 
-		AbstractTemplate[] arr = AbstractTemplate.factroy(HistoSettings.TEX_TEMPLATE_JSON,
+		AbstractTemplate[] arr = AbstractTemplate.factroy(SettingsHandler.PRINT_DOCUMENT_TEMPLATES,
 				new DocumentType[] { DocumentType.LABLE });
 
 		if (arr.length == 0) {

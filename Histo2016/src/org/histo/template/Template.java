@@ -1,4 +1,4 @@
-package org.histo.model.template;
+package org.histo.template;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,13 +19,13 @@ import org.histo.util.interfaces.FileHandlerUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
-@SelectBeforeUpdate(true)
-@DynamicUpdate(true)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@SequenceGenerator(name = "template_sequencegenerator", sequenceName = "template_sequence")
+//@Entity
+//@Audited
+//@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
+//@SelectBeforeUpdate(true)
+//@DynamicUpdate(true)
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@SequenceGenerator(name = "template_sequencegenerator", sequenceName = "template_sequence")
 @Getter
 @Setter
 public abstract class Template implements HasID{

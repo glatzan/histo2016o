@@ -55,7 +55,7 @@ public class SettingsHandler {
 	public static final String SETTINGS_OBJECT_MAIL = "mail";
 
 	public static final String MAIL_TEMPLATES = "classpath:settings/mailTemplates.json";
-	public static final String PRINT_DOCUMENT_TEMPLATES = "";
+	public static final String PRINT_DOCUMENT_TEMPLATES = "classpath:settings/printTempaltes.json";
 	
 	public static final String PRINTER_SETTINGS = "classpath:settings/cupsServer.json";
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";

@@ -1,4 +1,4 @@
-package org.histo.model.template.mail;
+package org.histo.template.mail;
 
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -10,12 +10,12 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.histo.model.HistoUser;
-import org.histo.model.template.MailTemplate;
+import org.histo.template.MailTemplate;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+//@Entity
 @Getter
 @Setter
 

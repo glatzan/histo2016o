@@ -1,4 +1,4 @@
-package org.histo.model.template;
+package org.histo.template;
 
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -9,7 +9,7 @@ import org.histo.util.interfaces.FileHandlerUtil;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+//@Entity
 @Getter
 @Setter
 public class MailTemplate extends Template {
@@ -29,13 +29,15 @@ public class MailTemplate extends Template {
 	public void prepareTemplate() {
 		String file =  FileHandlerUtil.getContentOfFile(getContent());
 		
-		String[] arr = file.split("\r\n", 1);
+		String[] arr = file.split("\r\n", 2);
 		
 		if(arr.length != 2)
 			return;
 		
 		subject = arr[0].replaceAll("Subject: ", "");
 		body = arr[1].replaceAll("Body: ", "");
+		
+		
 	}
 	
 	public void fillTemplate() {

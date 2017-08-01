@@ -7,8 +7,12 @@ import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.settings.Version;
+import org.histo.template.mail.ErrorMail;
+import org.histo.template.mail.RequestUnlockMail;
 import org.histo.util.TimeUtil;
+import org.histo.util.mail.MailHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +22,10 @@ public class ProgrammVersionDialog extends AbstractDialog {
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
-	
+
+	@Autowired
+	private SettingsHandler settingsHandler;
+
 	private Version[] versionInfo;
 
 	private String errorMessage;
@@ -46,14 +53,13 @@ public class ProgrammVersionDialog extends AbstractDialog {
 				+ errorMessage);
 
 		if (errorMessage != null && !errorMessage.isEmpty() && errorMessage != null) {
-			errorMessage = errorMessage + "\r\n\r\nAbsender: "
-					+ userHandlerAction.getCurrentUser().getPhysician().getPerson().getFullName();
 
-			mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-					mainHandlerAction.getSettings().getErrorMails(),
-					"Fehlermeldung vom "
-							+ TimeUtil.formatDate(dateOfError, DateFormat.GERMAN_DATE_TIME.getDateFormat()),
-					errorMessage);
+			ErrorMail mail = MailHandler.getDefaultTemplate(ErrorMail.class);
+			mail.prepareTemplate(userHandlerAction.getCurrentUser(), errorMessage,
+					new Date(System.currentTimeMillis()));
+			mail.fillTemplate();
+
+			settingsHandler.getMailHandler().sendAdminMail(mail);
 		}
 	}
 
