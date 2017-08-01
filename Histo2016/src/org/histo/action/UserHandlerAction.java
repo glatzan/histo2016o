@@ -6,12 +6,14 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.MailType;
 import org.histo.config.enums.Role;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
+import org.histo.model.template.mail.DiagnosisReportMail;
+import org.histo.model.template.mail.RequestUnlockMail;
 import org.histo.model.transitory.PredefinedRoleSettings;
+import org.histo.util.mail.MailHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -34,10 +36,6 @@ public class UserHandlerAction implements Serializable {
 
 	@Autowired
 	@Lazy
-	private MainHandlerAction mainHandlerAction;
-
-	@Autowired
-	@Lazy
 	private SettingsHandler settingsHandler;
 
 	/********************************************************
@@ -51,7 +49,6 @@ public class UserHandlerAction implements Serializable {
 	/********************************************************
 	 * login
 	 ********************************************************/
-
 
 	/**
 	 * Checks if the session is associated with a user.
@@ -121,7 +118,7 @@ public class UserHandlerAction implements Serializable {
 	 * Changes the role for the current user.
 	 * 
 	 * @param role
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public void changeRoleForCurrentUser(String role) throws CustomDatabaseInconsistentVersionException {
 		changeRoleForUser(getCurrentUser(), Role.getRoleByToken(role));
@@ -131,7 +128,7 @@ public class UserHandlerAction implements Serializable {
 	 * Changes the role of the current user.
 	 * 
 	 * @param role
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public void changeRoleForCurrentUser(Role role) throws CustomDatabaseInconsistentVersionException {
 		changeRoleForUser(getCurrentUser(), role);
@@ -142,7 +139,7 @@ public class UserHandlerAction implements Serializable {
 	 * 
 	 * @param user
 	 * @param role
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public void changeRoleForUser(HistoUser user, Role role) throws CustomDatabaseInconsistentVersionException {
 		user.setRole(role);
@@ -153,13 +150,13 @@ public class UserHandlerAction implements Serializable {
 	 * Saves a role change for a given user.
 	 * 
 	 * @param histoUser
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public void roleOfuserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
 		PredefinedRoleSettings roleSetting = settingsHandler.getRoleSettingsForRole(histoUser.getRole());
 		histoUser.updateUserSettings(roleSetting);
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getRole().toString());
-		genericDAO.saveDataRollbackSave(histoUser, "log.user.role.changed", new Object[]{histoUser.getRole()});
+		genericDAO.saveDataRollbackSave(histoUser, "log.user.role.changed", new Object[] { histoUser.getRole() });
 	}
 
 	/**
@@ -168,17 +165,11 @@ public class UserHandlerAction implements Serializable {
 	public void requestUnlock() {
 		HistoUser currentUser = getCurrentUser();
 
-		HashMap<String, String> subject = new HashMap<String, String>();
-		subject.put("%name%", currentUser.getPhysician().getPerson().getFullName());
-
-		HashMap<String, String> content = new HashMap<String, String>();
-		content.put("%name%", currentUser.getPhysician().getPerson().getFullName());
-		content.put("%username%", currentUser.getUsername());
-		content.put("%i%", currentUser.getPhysician().getClinicRole());
-
-		// sending mail to inform about unlocking request
-		mainHandlerAction.getSettings().getMail().sendTempalteMail(mainHandlerAction.getSettings().getAdminMails(),
-				MailType.RequestUnlock, subject, content);
+		RequestUnlockMail mail = MailHandler.getDefaultTemplate(RequestUnlockMail.class);
+		mail.prepareTemplate(currentUser);
+		mail.fillTemplate();
+		
+		settingsHandler.getMailHandler().sendAdminMail(mail);
 
 		setUnlockRequestSend(true);
 	}

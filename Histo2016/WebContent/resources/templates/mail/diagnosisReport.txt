@@ -1,0 +1,3 @@
+Subject: Histologische Befundung von xxx abgeschlossen
+Body: Die Histologische Befundung von xx wurde beendet
+http://test.de

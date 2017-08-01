@@ -56,9 +56,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 			Gson gson = new Gson();
 
-			LdapHandler connection = gson.fromJson(o.get(SettingsHandler.LDAP_SETTINGS), LdapHandler.class);
+			LdapHandler connection = gson.fromJson(o.get(SettingsHandler.SETTINGS_OBJECT_LDAP), LdapHandler.class);
 
-			ProgramSettings settings = gson.fromJson(o.get(SettingsHandler.GENERAL_OBJECT), ProgramSettings.class);
+			ProgramSettings settings = gson.fromJson(o.get(SettingsHandler.SETTINGS_OBJECT_GENERAL), ProgramSettings.class);
 
 			if (settings.isOffline()) {
 				logger.info("LDAP login disabled");

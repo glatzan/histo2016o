@@ -7,7 +7,6 @@ import java.util.List;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.histo.action.handler.SettingsHandler;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.AssociatedContact;

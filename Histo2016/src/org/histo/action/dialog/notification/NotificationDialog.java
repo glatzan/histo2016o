@@ -6,6 +6,8 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
+import org.histo.model.template.mail.DiagnosisReportMail;
+import org.histo.util.mail.MailHandler;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -90,11 +92,24 @@ public class NotificationDialog extends AbstractDialog {
 	public class MailTab extends AbstractTab {
 
 		private boolean useTab;
+	
+		private String mailSubject;
+		
+		private String mailBody;
+		
+		private DiagnosisReportMail mail;
 		
 		public MailTab() {
 			setTabName("MailTab");
 			setName("dialog.medicalFindings.tab.mail");
 			setViewID("mailTab");
+			
+			DiagnosisReportMail mail = MailHandler.getDefaultTemplate(DiagnosisReportMail.class);
+			mail.prepareTemplate(task.getPatient(), task, null);
+			mail.fillTemplate();
+			
+			setMailSubject(mail.getSubject());
+			setMailBody(mail.getBody());
 		}
 
 		@Override

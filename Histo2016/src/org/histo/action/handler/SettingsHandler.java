@@ -20,6 +20,7 @@ import org.histo.settings.VersionContainer;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.mail.MailHandler;
 import org.histo.util.printer.ClinicPrinter;
 import org.histo.util.printer.ClinicPrinterDummy;
 import org.histo.util.printer.LabelPrinter;
@@ -44,11 +45,18 @@ public class SettingsHandler {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	public static final String HISTO_BASE_URL = "/Histo2016";
+	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
+	
 	public static final String PROGRAM_SETTINGS = "classpath:settings/general.json";
-	public static final String GENERAL_OBJECT = "generalSettings";
-	public static final String DEFAULT_NOTIFICATION_OBJECT = "defaultNotification";
-	public static final String LDAP_SETTINGS = "ldapSettings";
+	public static final String SETTINGS_OBJECT_GENERAL = "generalSettings";
+	public static final String SETTINGS_OBJECT_DEFAULT_NOTIFICATION = "defaultNotification";
+	public static final String SETTINGS_OBJECT_LDAP = "ldapSettings";
+	public static final String SETTINGS_OBJECT_MAIL = "mail";
 
+	public static final String MAIL_TEMPLATES = "classpath:settings/mailTemplates.json";
+	public static final String PRINT_DOCUMENT_TEMPLATES = "";
+	
 	public static final String PRINTER_SETTINGS = "classpath:settings/cupsServer.json";
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";
 	public static final String VERSION_SETTINGS = "classpath:settings/version.json";
@@ -60,6 +68,7 @@ public class SettingsHandler {
 	private UserHandlerAction userHandlerAction;
 
 	private ProgramSettings programSettings;
+
 	private PrinterSettings printerSettings;
 
 	/**
@@ -122,6 +131,11 @@ public class SettingsHandler {
 	 */
 	private DefaultNotificationSettings defaultNotificationSettings;
 
+	/**
+	 * Object for handling mails
+	 */
+	private MailHandler mailHandler;
+
 	public void initBean() {
 		Gson gson = new Gson();
 
@@ -130,7 +144,12 @@ public class SettingsHandler {
 		JsonParser parser = new JsonParser();
 		JsonObject o = parser.parse(FileHandlerUtil.getContentOfFile(PROGRAM_SETTINGS)).getAsJsonObject();
 
-		programSettings = gson.fromJson(o.get(GENERAL_OBJECT), ProgramSettings.class);
+		programSettings = gson.fromJson(o.get(SETTINGS_OBJECT_GENERAL), ProgramSettings.class);
+
+		defaultNotificationSettings = gson.fromJson(o.get(SETTINGS_OBJECT_DEFAULT_NOTIFICATION),
+				DefaultNotificationSettings.class);
+
+		mailHandler = gson.fromJson(o.get(SETTINGS_OBJECT_MAIL), MailHandler.class);
 
 		logger.debug("Current Version");
 		Version[] versions = Version.factroy(SettingsHandler.VERSIONS_INFO);
@@ -138,9 +157,6 @@ public class SettingsHandler {
 		if (versions != null && versions.length > 0) {
 			setCurrentVersion(versions[0].getVersion());
 		}
-
-		defaultNotificationSettings = gson.fromJson(o.get(DEFAULT_NOTIFICATION_OBJECT),
-				DefaultNotificationSettings.class);
 
 		logger.debug("Loading CUPS Printers");
 		printerSettings = gson.fromJson(FileHandlerUtil.getContentOfFile(PRINTER_SETTINGS), PrinterSettings.class);
@@ -155,9 +171,9 @@ public class SettingsHandler {
 		setLabelPrinterListTransformer(new DefaultTransformer<LabelPrinter>(getLabelPrinterList()));
 
 		updateSelectedPrinters();
-		
+
 		logger.debug("Loading LDAP Handler");
-		ldapHandler = gson.fromJson(o.get(LDAP_SETTINGS), LdapHandler.class);
+		ldapHandler = gson.fromJson(o.get(SETTINGS_OBJECT_LDAP), LdapHandler.class);
 
 		logger.debug("Loading clinic backend handler");
 		clinicJsonHandler = gson.fromJson(FileHandlerUtil.getContentOfFile(CLINIC_BACKEND_SETTINGS),

@@ -24,5 +24,21 @@
 		"port": 389,
 		"suffix": "dc=ukl,dc=uni-freiburg,dc=de",
 		"base": "ou=people"
+	},
+	"mail": {
+		"settings": {
+			"server": "smtp.ukl.uni-freiburg.de",
+			"port": 465,
+			"ssl": true,
+			"debug": true,
+			"systemMail": "augenklinik.histologie@uniklinik-freiburg.de",
+			"systemName": "Histologisches Labor der Augenklinik Freiburg"
+		},
+		"adminRecipients": [
+			"andreas.glatz@uniklinik-freiburg.de"
+		],
+		"errorRecipients": [
+			"andreas.glatz@uniklinik-freiburg.de"
+		]
 	}
 }

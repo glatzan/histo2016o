@@ -1,8 +1,23 @@
 [
 	{
 		"id": 0,
-		"documentType": "NotificationMail",
-		"subject": "Freischaltung für PathoFRO erfolgt",
-		"content": "test"
+		"type": "org.histo.model.template.mail.SuccessUnlockMail",
+		"name": "Benutzer-Freischaltung erfolgt",
+		"defaultOfType" : true,
+		"content": "classpath:templates/mail/successUnlock.txt"
+	},
+	{
+		"id": 1,
+		"type": "org.histo.model.template.mail.RequestUnlockMail",
+		"name": "Benutzer-Freischaltung erbeten",
+		"defaultOfType" : true,
+		"content": "classpath:templates/mail/requestUnlock.txt"
+	},
+	{
+		"id": 2,
+		"type": "org.histo.model.template.mail.DiagnosisReportMail",
+		"name": "Benutzer-Freischaltung ",
+		"defaultOfType" : true,
+		"content": "classpath:templates/mail/diagnosisReport.txt"
 	}
 ]

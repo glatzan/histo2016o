@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.SettingsHandler;
-import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
@@ -68,12 +67,6 @@ public class MainHandlerAction {
 	@Setter
 	private List<FacesMessage> queueGrowlMessages;
 
-	/**
-	 * Dynamic Texts which are used rarely are stroed here.
-	 */
-	@Getter
-	@Setter
-	private HistoSettings settings;
 
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
@@ -85,9 +78,6 @@ public class MainHandlerAction {
 		commonDataHandlerAction.setNavigationPages(new ArrayList<View>());
 
 		settingsHandler.initBean();
-
-		// TODO REMOVE
-		setSettings(HistoSettings.factory(this));
 
 		PredefinedRoleSettings roleSetting = settingsHandler
 				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
@@ -109,7 +99,7 @@ public class MainHandlerAction {
 		logger.debug("Destroying Session");
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 		FacesContext.getCurrentInstance().getExternalContext()
-				.redirect(HistoSettings.HISTO_BASE_URL + HistoSettings.HISTO_LOGIN_PAGE);
+				.redirect(SettingsHandler.HISTO_BASE_URL + SettingsHandler.HISTO_LOGIN_PAGE);
 	}
 
 	/**

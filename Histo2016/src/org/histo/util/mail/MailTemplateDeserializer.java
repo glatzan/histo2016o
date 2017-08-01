@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.histo.util.mail.template.AbstractMail;
+import org.histo.model.template.MailTemplate;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -14,17 +14,17 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-public class MailTemplateDeserializer implements JsonDeserializer<List<AbstractMail>> {
+public class MailTemplateDeserializer implements JsonDeserializer<List<MailTemplate>> {
 
-	public List<AbstractMail> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+	public List<MailTemplate> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
 
-		List<AbstractMail> list = new ArrayList<AbstractMail>();
+		List<MailTemplate> list = new ArrayList<MailTemplate>();
 		JsonArray ja = json.getAsJsonArray();
 
 		for (JsonElement je : ja) {
 
-			String type = je.getAsJsonObject().get("documentType").getAsString();
+			String type = je.getAsJsonObject().get("type").getAsString();
 
 			try {
 				Class c = Class.forName(type);

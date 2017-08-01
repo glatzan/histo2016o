@@ -1,6 +1,7 @@
 package org.histo.util.interfaces;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,5 +31,21 @@ public interface FileHandlerUtil extends HasLogger {
 		}
 
 		return toPrint;
+	}
+
+	public static URI getAbsolutePath(String path) {
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
+		Resource resource = appContext.getResource(path);
+		System.out.println(resource);
+		URI result = null;
+		try {
+			result = resource.getURI();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			appContext.close();
+		}
+
+		return result;
 	}
 }

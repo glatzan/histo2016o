@@ -191,7 +191,7 @@ public class NotificationDialog {
 
 		updateNotificationLists();
 
-		MailTemplate taskReport = MailTemplate.factroy(MailType.MedicalFindingsReport);
+		DiagnosisReportMail taskReport = DiagnosisReportMail.factroy(MailType.MedicalFindingsReport);
 
 		if (getEmailNotificationSettings().getEmailSubject() == null)
 			emailNotificationSettings.setEmailSubject(taskReport.getSubject());

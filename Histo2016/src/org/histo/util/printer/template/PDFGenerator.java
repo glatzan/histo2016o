@@ -7,10 +7,10 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.SettingsHandler;
-import org.histo.config.HistoSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.model.PDFContainer;
 import org.histo.util.TimeUtil;
+import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -46,11 +46,11 @@ public class PDFGenerator {
 	public JLRConverter openNewPDf(AbstractTemplate printTemplate) {
 		this.printTemplate = printTemplate;
 		workingDirectory = new File(
-				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+				FileHandlerUtil.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 
 		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
 		processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
 

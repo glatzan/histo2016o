@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
-import org.histo.config.HistoSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DocumentType;
@@ -28,6 +27,7 @@ import org.histo.ui.ContactContainer;
 import org.histo.ui.medicalFindings.EmailNotificationSettings;
 import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
+import org.histo.util.interfaces.FileHandlerUtil;
 import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -115,14 +115,14 @@ public class PDFGeneratorHandler {
 			AssociatedContact toSendAddress) {
 
 		File workingDirectory = new File(
-				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+				FileHandlerUtil.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		logger.debug("TemplateUtil File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		logger.debug("TemplateUtil File: " + FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
 		// loading tex file
-		File template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		File template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
 		File processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
 
@@ -263,16 +263,16 @@ public class PDFGeneratorHandler {
 	 */
 	public PDFContainer generateSimplePDF(Patient patient, AbstractTemplate printTemplate,
 			HashMap<String, String> replacements) {
-		mainHandlerAction.getSettings();
+
 		File workingDirectory = new File(
-				HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+				FileHandlerUtil.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 
 		File output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		logger.debug("TemplateUtil File: " + HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		logger.debug("TemplateUtil File: " + FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
 		// loading tex file
-		File template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
+		File template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
 		File processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
 
@@ -683,13 +683,13 @@ public class PDFGeneratorHandler {
 		public JLRConverter openNewPDf(AbstractTemplate printTemplate) {
 			this.printTemplate = printTemplate;
 			workingDirectory = new File(
-					HistoSettings.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+					FileHandlerUtil.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
 			System.out.println(workingDirectory.getAbsolutePath());
 			output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
 			System.out.println(output.getAbsolutePath());
 
-			template = new File(HistoSettings.getAbsolutePath(printTemplate.getFile()));
+			template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
 			processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
 
