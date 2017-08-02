@@ -69,6 +69,7 @@
 					</f:facet>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
+						rendered="#{holder.mail.attachment eq null}"
 						title="#{msg['dialog.settings.person.list.options.edit']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
@@ -77,10 +78,30 @@
 
 						<p:ajax event="dialogReturn" update=":adminForm:tabview:mailTab"
 							partialSubmit="true" process=":adminForm:tabview:mailTab"
-							listener="#{tab.updateData()}" />
+							listener="#{tab.copySelectedPdf(holder)}" />
 
 						<i class="fa fa-fw fa-cog" />
 					</p:commandLink>
+
+					<p:commandLink styleClass="noUnderlineAtLink"
+						rendered="#{holder.mail.attachment ne null}"
+						title="#{msg['dialog.settings.person.list.options.edit']}"
+						execute="@this" partialSubmit="true"
+						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.mail.attachment)}">
+
+						<i class="fa fa-search icon-grey" />
+					</p:commandLink>
+
+					<p:commandLink styleClass="noUnderlineAtLink"
+						rendered="#{holder.mail.attachment ne null}"
+						title="#{msg['dialog.settings.person.list.options.edit']}"
+						execute="@this" partialSubmit="true"
+						update=":adminForm:tabview:mailTab"
+						actionListener="#{holder.mail.setAttachment(null)}">
+
+						<i class="fa fa-close icon-grey" />
+					</p:commandLink>
+
 				</p:column>
 			</p:dataTable>
 

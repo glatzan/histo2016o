@@ -49,6 +49,8 @@ public class DiagnosisReportMail extends MailTemplate {
 		/* create a context and add data */
 		VelocityContext context = new VelocityContext();
 
+		context.put("date", new DateTool());
+		
 		if (patient != null)
 			context.put("patient", patient);
 		
@@ -57,8 +59,7 @@ public class DiagnosisReportMail extends MailTemplate {
 		
 		if (contact != null)
 			context.put("contact", contact);
-		
-		context.put("date", new DateTool());
+	
 
 		/* now render the template into a StringWriter */
 		StringWriter writer = new StringWriter();

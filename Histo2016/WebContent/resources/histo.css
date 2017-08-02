@@ -126,6 +126,11 @@ body {
 	padding-top: 10px !important;
 }
 
+.defaultListingTableColumn2 {
+	width: 2% !important;
+	min-width: 2% !important;
+}
+
 .defaultListingTableColumn10 {
 	width: 10% !important;
 	min-width: 10% !important;

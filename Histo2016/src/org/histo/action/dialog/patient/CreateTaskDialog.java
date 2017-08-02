@@ -3,8 +3,8 @@ package org.histo.action.dialog.patient;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -67,7 +67,7 @@ public class CreateTaskDialog extends AbstractDialog {
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
-	private MediaDialog mediaDialog;
+	private DialogHandlerAction dialogHandlerAction;
 	
 	@Autowired
 	private UtilDAO utilDAO;
@@ -244,7 +244,7 @@ public class CreateTaskDialog extends AbstractDialog {
 			bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
 			patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.save");
 
-			PDFContainer selectedPDF = mediaDialog.getSelectedPdfContainer();
+			PDFContainer selectedPDF = dialogHandlerAction.getMediaDialog().getSelectedPdfContainer();
 
 			if (selectedPDF != null) {
 				// attaching pdf to biobank
@@ -318,18 +318,18 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	public void showMediaSelectDialog(PDFContainer pdfContainer) {
 		// init dialog for patient and task
-		mediaDialog.initBean(getPatient(), new HasDataList[] { getPatient() }, pdfContainer, true);
+		dialogHandlerAction.getMediaDialog().initBean(getPatient(), new HasDataList[] { getPatient() }, pdfContainer, true);
 
 		// enabeling upload to task
-		mediaDialog.enableUpload(new HasDataList[] { getPatient() },
+		dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { getPatient() },
 				new DocumentType[] { DocumentType.BIOBANK_INFORMED_CONSENT });
 
 		// setting info text
-		mediaDialog
+		dialogHandlerAction.getMediaDialog()
 				.setActionDescription(resourceBundle.get("dialog.media.headline.info.biobank", getTask().getTaskID()));
 
 		// show dialog
-		mediaDialog.prepareDialog();
+		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
 	// ************************ Getter/Setter ************************

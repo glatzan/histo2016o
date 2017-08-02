@@ -21,7 +21,7 @@
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
 				<h:outputLabel
-					value="#{(mediaDialog.selectMode ? msg['dialog.media.headline.select'] : msg['dialog.media.headline'])}: #{mediaDialog.actionDescription}" />
+					value="#{(dialogHandlerAction.mediaDialog.selectMode ? msg['dialog.media.headline.select'] : msg['dialog.media.headline'])}: #{dialogHandlerAction.mediaDialog.actionDescription}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -39,14 +39,14 @@
 					styleClass="defaultListingTableContainer navigation">
 					<!-- Nav Table -->
 					<p:dataTable var="pdf" id="patientList"
-						value="#{mediaDialog.selectedDatalist.attachedPdfs}"
+						value="#{dialogHandlerAction.mediaDialog.selectedDatalist.attachedPdfs}"
 						selectionMode="single" scrollHeight="600" scrollable="true"
-						selection="#{mediaDialog.temporaryPdfContainer}"
+						selection="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer}"
 						rowKey="#{pdf.id}" styleClass="navigationDataTable">
 
 
 						<p:ajax event="rowDblselect"
-							listener="#{mediaDialog.onMediaSelection()}" />
+							listener="#{dialogHandlerAction.mediaDialog.onMediaSelection()}" />
 
 						<p:ajax event="rowSelect" update="@form" />
 
@@ -83,8 +83,8 @@
 				<!-- right column -->
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 					<h:panelGroup id="pdfRender2">
-						<p:media player="pdf" value="#{mediaDialog.pdfContent}"
-							rendered="#{mediaDialog.temporaryPdfContainer ne null}"
+						<p:media player="pdf" value="#{dialogHandlerAction.mediaDialog.pdfContent}"
+							rendered="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer ne null}"
 							width="100%" height="630px"></p:media>
 					</h:panelGroup>
 				</h:panelGrid>
@@ -97,57 +97,60 @@
 
 				<h:panelGrid columns="1">
 					<h:panelGrid columns="2">
+
+						<p:commandButton value="#{msg['dialog.media.upload']}"
+							rendered="#{dialogHandlerAction.mediaDialog.uploadEndabled}" icon="fa fa-print"
+							styleClass="smallButton buttonLeftMarginInList"
+							actionListener="#{dialogHandlerAction.mediaDialog.showUploadDialog()}">
+							<p:ajax event="dialogReturn" update="@form"
+								listener="#{dialogHandlerAction.mediaDialog.onUploadReturn()}" />
+						</p:commandButton>
+						
 						<p:selectOneMenu title="#{msg['body.worklist.header.view']}"
-							value="#{mediaDialog.selectedDatalist}" id="dataListSelector"
-							converter="#{mediaDialog.dataListsTransformer}"
+							value="#{dialogHandlerAction.mediaDialog.selectedDatalist}" id="dataListSelector"
+							converter="#{dialogHandlerAction.mediaDialog.dataListsTransformer}"
 							styleClass="smallInput buttonLeftMarginInList"
-							rendered="#{mediaDialog.hasMoreDatalists()}">
-							<f:selectItems value="#{mediaDialog.dataLists}" var="dataList"
+							rendered="#{dialogHandlerAction.mediaDialog.hasMoreDatalists()}">
+							<f:selectItems value="#{dialogHandlerAction.mediaDialog.dataLists}" var="dataList"
 								itemLabel="#{msg[dataList.getDatalistIdentifier()]}"
 								itemValue="#{dataList}" />
 							<p:ajax event="change" process="dataListSelector" update="@form"></p:ajax>
 						</p:selectOneMenu>
 
-						<p:commandButton value="#{msg['dialog.media.upload']}"
-							rendered="#{mediaDialog.uploadEndabled}" icon="fa fa-print"
-							styleClass="smallButton buttonLeftMarginInList"
-							actionListener="#{mediaDialog.showUploadDialog()}">
-							<p:ajax event="dialogReturn" update="@form" listener="#{mediaDialog.onUploadReturn()}" />
-						</p:commandButton>
 					</h:panelGrid>
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- selection -->
-					<h:panelGrid columns="2" rendered="#{mediaDialog.selectMode}">
+					<h:panelGrid columns="2" rendered="#{dialogHandlerAction.mediaDialog.selectMode}">
 
 						<h:panelGrid columns="2"
-							rendered="#{mediaDialog.showAutoMoveOption}">
-							<p:selectBooleanCheckbox value="#{mediaDialog.deleteOnRemove}"
+							rendered="#{dialogHandlerAction.mediaDialog.showAutoMoveOption}">
+							<p:selectBooleanCheckbox value="#{dialogHandlerAction.mediaDialog.deleteOnRemove}"
 								styleClass="buttonRighMarginInList" />
 							<h:outputLabel value="#{msg['dialog.media.moveSelectedFile']}"
 								styleClass="buttonRighMarginInList standardFont" />
 						</h:panelGrid>
 
 						<p:commandButton value="#{msg['dialog.media.select']}"
-							rendered="#{mediaDialog.selectMode}" icon="fa fa-download"
+							rendered="#{dialogHandlerAction.mediaDialog.selectMode}" icon="fa fa-download"
 							ajax="false"
-							disabled="#{mediaDialog.temporaryPdfContainer eq null}"
+							disabled="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer eq null}"
 							styleClass="smallButton buttonRighMarginInListExtended">
 
-							<f:actionListener binding="#{mediaDialog.onSelectData()}" />
-							<f:actionListener binding="#{mediaDialog.hideDialog()}" />
+							<f:actionListener binding="#{dialogHandlerAction.mediaDialog.onSelectData()}" />
+							<f:actionListener binding="#{dialogHandlerAction.mediaDialog.hideDialog()}" />
 						</p:commandButton>
 
 					</h:panelGrid>
 
 					<!-- preview -> download and print -->
-					<h:panelGrid columns="3" rendered="#{!mediaDialog.selectMode}">
+					<h:panelGrid columns="3" rendered="#{!dialogHandlerAction.mediaDialog.selectMode}">
 						<!-- print -->
 						<p:commandButton value="#{msg['dialog.media.print']}"
 							icon="fa fa-print"
 							styleClass="smallButton buttonRighMarginInListExtended"
-							actionListener="#{settingsHandler.selectedPrinter.print(mediaDialog.temporaryPdfContainer)}"></p:commandButton>
+							actionListener="#{settingsHandler.selectedPrinter.print(dialogHandlerAction.mediaDialog.temporaryPdfContainer)}"></p:commandButton>
 
 						<!-- select printer -->
 						<p:selectOneMenu styleClass="customSerachSelectMenu"
@@ -162,9 +165,9 @@
 
 						<p:commandButton value="#{msg['dialog.media.open']}"
 							icon="fa fa-download" ajax="false"
-							disabled="#{mediaDialog.temporaryPdfContainer eq null}"
+							disabled="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer eq null}"
 							styleClass="smallButton buttonRighMarginInListExtended">
-							<p:fileDownload value="#{mediaDialog.pdfContent}" />
+							<p:fileDownload value="#{dialogHandlerAction.mediaDialog.pdfContent}" />
 						</p:commandButton>
 					</h:panelGrid>
 
@@ -172,7 +175,7 @@
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{mediaDialog.abortDialog()}" />
+						actionListener="#{dialogHandlerAction.mediaDialog.abortDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

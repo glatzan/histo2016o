@@ -2,6 +2,7 @@ package org.histo.action;
 
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
+import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
@@ -37,6 +38,8 @@ public class DialogHandlerAction {
 
 	private NotificationDialog notificationDialog;
 
+	private MediaDialog mediaDialog;
+	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -98,5 +101,12 @@ public class DialogHandlerAction {
 			notificationDialog = new NotificationDialog();
 
 		return notificationDialog;
+	}
+	
+	public MediaDialog getMediaDialog() {
+		if (mediaDialog == null)
+			mediaDialog = new MediaDialog();
+
+		return mediaDialog;
 	}
 }

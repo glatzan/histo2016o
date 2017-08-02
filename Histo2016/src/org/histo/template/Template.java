@@ -28,7 +28,7 @@ import lombok.Setter;
 //@SequenceGenerator(name = "template_sequencegenerator", sequenceName = "template_sequence")
 @Getter
 @Setter
-public abstract class Template implements HasID{
+public abstract class Template implements HasID, Cloneable {
 
 	@Id
 	@GeneratedValue(generator = "template_sequencegenerator")
@@ -49,12 +49,21 @@ public abstract class Template implements HasID{
 
 	@Column
 	protected boolean defaultOfType;
-	
+
 	/**
 	 * If true the generated content should not be saved in the database
 	 */
 	@Column
 	private boolean transientContent;
-	
+
 	public abstract void prepareTemplate();
+
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
+	}
+
 }

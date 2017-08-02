@@ -30,8 +30,8 @@
 		</div>
 
 		<div class="contentDiv">
-			<h:panelGrid columns="3" styleClass="defaultListingTableTwoLineContainer"
-				columnClasses="defaultListingTableColumnTop defaultListingTableColumn30,">
+			<h:panelGrid columns="3" styleClass="defaultListingTableCssOneCol"
+				columnClasses="defaultListingTableColumnTop defaultListingTableColumn30,defaultListingTableColumn2,">
 				<!-- left column -->
 
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
@@ -117,7 +117,7 @@
 										<h:outputLabel value="#{chooser.contact.person.fullName}"
 											id="editAddress#{outer.index}">
 											<f:converter converterId="org.histo.ui.TruncateConverter" />
-											<f:attribute name="truncateAt" value="23" />
+											<f:attribute name="truncateAt" value="20" />
 											<f:attribute name="continuationMark" value="..." />
 										</h:outputLabel>
 
@@ -137,6 +137,9 @@
 											actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task,chooser)}">
 											<i class="fa fa-gear" style="margin-left: 2px" />
 											<p:ajax event="dialogReturn"
+												listener="#{dialogHandlerAction.printDialog.onChangeAddressManually(chooser)}"
+												onstart="PF('blockUIWidget').block()"
+												oncomplete="PF('blockUIWidget').unblock()"
 												update="editAddressOver#{outer.index}" />
 										</p:commandLink>
 									</p:column>
@@ -199,24 +202,32 @@
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
-				<h:panelGrid columns="4" style="float:right;">
-					<!-- print -->
-					<p:commandButton value="Drucken" icon="fa fa-print"
+				<h:panelGrid columns="3" style="float:right;">
+					<h:panelGrid columns="2"
+						rendered="#{!dialogHandlerAction.printDialog.selectMode}">
+						<!-- print -->
+						<p:commandButton value="Drucken" icon="fa fa-print"
+							styleClass="smallButton buttonRighMarginInListExtended"
+							onstart="PF('blockUIWidget').block()"
+							oncomplete="PF('blockUIWidget').unblock()"
+							actionListener="#{dialogHandlerAction.printDialog.onPrintNewPdf()}"></p:commandButton>
+
+						<!-- select printer -->
+						<p:selectOneMenu styleClass="customSerachSelectMenu"
+							panelStyleClass="customSerachSelectMenuPanel"
+							converter="#{settingsHandler.printerListTransformer}"
+							value="#{settingsHandler.selectedPrinter}" filter="true"
+							filterMatchMode="contains" style="margin-right:10px">
+
+							<f:selectItems value="#{settingsHandler.printerList}"
+								var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<p:commandButton value="Auswählen" icon="fa fa-print"
+						rendered="#{dialogHandlerAction.printDialog.selectMode}"
 						styleClass="smallButton buttonRighMarginInListExtended"
-						onstart="PF('blockUIWidget').block()"
-						oncomplete="PF('blockUIWidget').unblock()"
-						actionListener="#{dialogHandlerAction.printDialog.onPrintNewPdf()}"></p:commandButton>
-
-					<!-- select printer -->
-					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						panelStyleClass="customSerachSelectMenuPanel"
-						converter="#{settingsHandler.printerListTransformer}"
-						value="#{settingsHandler.selectedPrinter}" filter="true"
-						filterMatchMode="contains" style="margin-right:10px">
-
-						<f:selectItems value="#{settingsHandler.printerList}"
-							var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
-					</p:selectOneMenu>
+						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}"></p:commandButton>
 
 					<!-- download -->
 					<p:commandButton value="Öffnen" icon="fa fa-download" ajax="false"
@@ -229,8 +240,12 @@
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-times-circle"
-						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}" />
+						icon="fa fa-times-circle">
+						<f:actionListener
+							binding="#{dialogHandlerAction.printDialog.resetPDF()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.printDialog.hideDialog()}" />
+					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

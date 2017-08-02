@@ -15,6 +15,8 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
+import org.histo.model.interfaces.HasDataList;
+import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.util.StreamUtils;
@@ -111,9 +113,51 @@ public class NotificationDialog extends AbstractDialog {
 		AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN });
 
-		dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelect, subSelect[0], new AssociatedContact[] { contact }, true);
+		dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelect, subSelect[0],
+				new AssociatedContact[] { contact }, true);
 		dialogHandlerAction.getPrintDialog().setSingleAddressSelectMode(true);
 		dialogHandlerAction.getPrintDialog().prepareDialog();
+	}
+
+	public void openMediaViewDialog(PDFContainer container) {
+
+		HasDataList dataList = new HasDataList() {
+
+			private List<PDFContainer> attachedPdfs = new ArrayList<PDFContainer>();
+
+			@Override
+			public long getId() {
+				return 0;
+			}
+
+			@Override
+			public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
+				this.attachedPdfs = attachedPdfs;
+			}
+
+			@Override
+			public String getDatalistIdentifier() {
+				return "";
+			}
+
+			@Override
+			public List<PDFContainer> getAttachedPdfs() {
+				return attachedPdfs;
+			}
+		};
+
+		dataList.getAttachedPdfs().add(container);
+
+		// init dialog for patient and task
+		dialogHandlerAction.getMediaDialog().initBean(getTask().getPatient(), new HasDataList[] { dataList }, dataList,
+				container, false, false);
+
+		// setting info text
+		dialogHandlerAction.getMediaDialog()
+				.setActionDescription(resourceBundle.get("dialog.media.headline.info.council", getTask().getTaskID()));
+
+		// show dialog
+		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
 	@Getter
@@ -151,6 +195,7 @@ public class NotificationDialog extends AbstractDialog {
 			setTabName("MailTab");
 			setName("dialog.medicalFindings.tab.mail");
 			setViewID("mailTab");
+			setUseTab(true);
 		}
 
 		@Override
@@ -160,12 +205,13 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			if (!isInitialized()) {
-				System.out.println(DiagnosisReportMail.class + " " + task + " init");
 
+			if (!isInitialized()) {
 				DiagnosisReportMail mail = MailHandler.getDefaultTemplate(DiagnosisReportMail.class);
 				mail.prepareTemplate(task.getPatient(), task, null);
 				mail.fillTemplate();
+
+				setMail(mail);
 
 				setMailSubject(mail.getSubject());
 				setMailBody(mail.getBody());
@@ -173,6 +219,7 @@ public class NotificationDialog extends AbstractDialog {
 				setHolders(new ArrayList<ContactHolder>());
 
 				setInitialized(true);
+				logger.debug("Mails initialized");
 			}
 
 			List<AssociatedContact> contacts = task.getContacts();
@@ -187,8 +234,9 @@ public class NotificationDialog extends AbstractDialog {
 								.collect(StreamUtils.singletonCollector());
 						tmpHolders.remove(tmpHolder);
 					} catch (IllegalStateException e) {
+						System.out.println(getMail());
 						// adding to list
-						getHolders().add(new ContactHolder(associatedContact, mail));
+						getHolders().add(new ContactHolder(associatedContact, (DiagnosisReportMail) getMail().clone()));
 					}
 				}
 
@@ -196,6 +244,13 @@ public class NotificationDialog extends AbstractDialog {
 
 			for (ContactHolder contactHolder : tmpHolders) {
 				getHolders().remove(contactHolder);
+			}
+		}
+
+		public void copySelectedPdf(ContactHolder contactHolder) {
+			if (dialogHandlerAction.getPrintDialog().getPdfContainer() != null) {
+				logger.debug("Selecting pdf");
+				contactHolder.getMail().setAttachment(dialogHandlerAction.getPrintDialog().getPdfContainer());
 			}
 		}
 

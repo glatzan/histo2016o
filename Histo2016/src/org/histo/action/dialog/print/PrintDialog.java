@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
@@ -77,6 +78,11 @@ public class PrintDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DialogHandlerAction dialogHandlerAction;
+	
 	/**
 	 * List of all templates for printing
 	 */
@@ -132,6 +138,11 @@ public class PrintDialog extends AbstractDialog {
 	 * If true only on address can be selected
 	 */
 	private boolean singleAddressSelectMode;
+
+	/**
+	 * If true at certain address changes the pdfs will be regenerated
+	 */
+	private boolean autoRefresh;
 
 	/**
 	 * Initializes the bean and shows the council dialog
@@ -250,6 +261,7 @@ public class PrintDialog extends AbstractDialog {
 						.add(new ContactContainer(task, associatedContact.getPerson(), associatedContact.getRole()));
 			}
 
+			getContactList().get(0).setSelected(true);
 			setRenderedContact(getContactList().get(0));
 		}
 
@@ -323,26 +335,25 @@ public class PrintDialog extends AbstractDialog {
 				}
 				return;
 			}
-			
+
 			// if only one address should be selectable
-			if(isSingleAddressSelectMode()){
-				
+			if (isSingleAddressSelectMode()) {
+
 				// deselecting all other containers
 				for (ContactContainer contactContainer : contactList) {
-					System.out.println("hallo");
-					if(contactContainer != container && contactContainer.isSelected()) {
+					if (contactContainer != container && contactContainer.isSelected()) {
 						contactContainer.setSelected(false);
 					}
 				}
-				
+
 				// rendering if not already rendered
-				if(getRenderedContact() != container) {
+				if (getRenderedContact() != container) {
 					ContactContainer.generateCustomOrganizationAddress(container);
 					setRenderedContact(container);
 					onChangePrintTemplate();
 					RequestContext.getCurrentInstance().update("dialogContent");
 				}
-				
+
 				return;
 			}
 
@@ -364,7 +375,6 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void onChooseOrganizationOfContact(ContactContainer.OrganizationChooser chooser) {
-		System.out.println("suu");
 		if (chooser.isSelected()) {
 			// only one organization can be selected, removing other
 			// organizations
@@ -382,11 +392,19 @@ public class PrintDialog extends AbstractDialog {
 				chooser.getParent().setSelected(true);
 			}
 		} else {
-			System.out.println("unselecting");
 			chooser.getParent().setOrganizationHasChagned(true);
 		}
 
 		onChooseContact(chooser.getParent());
+	}
+	
+	public void onChangeAddressManually(ContactContainer container) {
+		if(dialogHandlerAction.getCustomAddressDialog().isAddressChanged()) {
+			if(getRenderedContact() == container) {
+				onChangePrintTemplate();
+				RequestContext.getCurrentInstance().update("dialogContent");
+			}
+		}
 	}
 
 	public void onChangePrintTemplate() {
@@ -431,6 +449,11 @@ public class PrintDialog extends AbstractDialog {
 			logger.debug("No Pdf created, hiding pdf display");
 		}
 		return result;
+	}
+
+	public void resetPDF() {
+		setPdfContainer(null);
+		setRenderPdf(false);
 	}
 
 	/**

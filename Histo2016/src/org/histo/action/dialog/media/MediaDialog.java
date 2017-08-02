@@ -7,6 +7,7 @@ import javax.faces.event.PhaseId;
 
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.notification.NotificationDialog.AbstractTab;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -20,22 +21,34 @@ import org.histo.util.StreamUtils;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
-@Scope(value = "session")
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Getter
+@Setter
 public class MediaDialog extends AbstractDialog {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UploadDialog uploadDialog;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
 	/**
@@ -147,7 +160,7 @@ public class MediaDialog extends AbstractDialog {
 		return initBean(patient, new HasDataList[] { dataList }, dataList, null, selectMode);
 	}
 
-	public boolean initBean(Patient patient, HasDataList dataList, PDFContainer mediaToDisplay,boolean selectMode) {
+	public boolean initBean(Patient patient, HasDataList dataList, PDFContainer mediaToDisplay, boolean selectMode) {
 		return initBean(patient, new HasDataList[] { dataList }, dataList, mediaToDisplay, selectMode);
 	}
 
@@ -161,18 +174,26 @@ public class MediaDialog extends AbstractDialog {
 
 	public boolean initBean(Patient patient, HasDataList[] dataLists, HasDataList selectedDataList,
 			PDFContainer mediaToDisplay, boolean selectMode) {
-		try {
-			for (HasDataList hasDataList : dataLists) {
-				utilDAO.initializeDataList(hasDataList);
+		return initBean(patient, dataLists, selectedDataList, mediaToDisplay, selectMode, true);
+	}
+
+	public boolean initBean(Patient patient, HasDataList[] dataLists, HasDataList selectedDataList,
+			PDFContainer mediaToDisplay, boolean selectMode, boolean initDatalist) {
+
+		if (initDatalist) {
+			try {
+				for (HasDataList hasDataList : dataLists) {
+					utilDAO.initializeDataList(hasDataList);
+				}
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+				return false;
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			onDatabaseVersionConflict();
-			return false;
 		}
 
 		setPatient(patient);
 		setDataLists(dataLists);
-		setDataListsTransformer(new DefaultTransformer<HasDataList>(dataLists));
+		setDataListsTransformer(new DefaultTransformer<HasDataList>(dataLists, true));
 		setSelectMode(selectMode);
 		setSelectedDatalist(selectedDataList);
 
@@ -297,15 +318,15 @@ public class MediaDialog extends AbstractDialog {
 		}
 	}
 
-	public void onUploadReturn(){
-		if(getSelectedPdfContainer() == null && getSelectedDatalist().getAttachedPdfs().size() > 0){
+	public void onUploadReturn() {
+		if (getSelectedPdfContainer() == null && getSelectedDatalist().getAttachedPdfs().size() > 0) {
 			setSelectedPdfContainer(getSelectedDatalist().getAttachedPdfs().get(0));
 		}
 	}
-	
+
 	public void abortDialog() {
 		super.hideDialog();
-		if(isAutoCopy() && isSelectMode())
+		if (isAutoCopy() && isSelectMode())
 			setSelectedPdfContainer(null);
 	}
 
@@ -340,142 +361,4 @@ public class MediaDialog extends AbstractDialog {
 		} catch (IllegalStateException e) {
 		}
 	}
-
-	// ************************ Getter/Setter ************************
-	public PDFContainer getTemporaryPdfContainer() {
-		return temporaryPdfContainer;
-	}
-
-	public void setTemporaryPdfContainer(PDFContainer temporaryPdfContainer) {
-		this.temporaryPdfContainer = temporaryPdfContainer;
-	}
-
-	public PDFContainer getSelectedPdfContainer() {
-		return selectedPdfContainer;
-	}
-
-	public void setSelectedPdfContainer(PDFContainer selectedPdfContainer) {
-		this.selectedPdfContainer = selectedPdfContainer;
-	}
-
-	public DocumentType getUploadFileType() {
-		return uploadFileType;
-	}
-
-	public void setUploadFileType(DocumentType uploadFileType) {
-		this.uploadFileType = uploadFileType;
-	}
-
-	public DocumentType[] getUploadAvailableFileType() {
-		return uploadAvailableFileType;
-	}
-
-	public void setUploadAvailableFileType(DocumentType[] uploadAvailableFileType) {
-		this.uploadAvailableFileType = uploadAvailableFileType;
-	}
-
-	public boolean isSelectMode() {
-		return selectMode;
-	}
-
-	public void setSelectMode(boolean selectMode) {
-		this.selectMode = selectMode;
-	}
-
-	public HasDataList[] getDataLists() {
-		return dataLists;
-	}
-
-	public void setDataLists(HasDataList[] dataLists) {
-		this.dataLists = dataLists;
-	}
-
-	public Patient getPatient() {
-		return patient;
-	}
-
-	public void setPatient(Patient patient) {
-		this.patient = patient;
-	}
-
-	public HasDataList getSelectedDatalist() {
-		return selectedDatalist;
-	}
-
-	public void setSelectedDatalist(HasDataList selectedDatalist) {
-		this.selectedDatalist = selectedDatalist;
-	}
-
-	public HasDataList[] getUploadDataLists() {
-		return uploadDataLists;
-	}
-
-	public void setUploadDataLists(HasDataList[] uploadDataLists) {
-		this.uploadDataLists = uploadDataLists;
-	}
-
-	public String getActionDescription() {
-		return actionDescription;
-	}
-
-	public void setActionDescription(String actionDescription) {
-		this.actionDescription = actionDescription;
-	}
-
-	public DefaultTransformer<HasDataList> getDataListsTransformer() {
-		return dataListsTransformer;
-	}
-
-	public void setDataListsTransformer(DefaultTransformer<HasDataList> dataListsTransformer) {
-		this.dataListsTransformer = dataListsTransformer;
-	}
-
-	public boolean isAutoCopy() {
-		return autoCopy;
-	}
-
-	public void setAutoCopy(boolean autoCopy) {
-		this.autoCopy = autoCopy;
-	}
-
-	public boolean isAutoMove() {
-		return autoMove;
-	}
-
-	public void setAutoMove(boolean autoMove) {
-		this.autoMove = autoMove;
-	}
-
-	public boolean isShowAutoMoveOption() {
-		return showAutoMoveOption;
-	}
-
-	public void setShowAutoMoveOption(boolean showAutoMoveOption) {
-		this.showAutoMoveOption = showAutoMoveOption;
-	}
-
-	public boolean isUploadEndabled() {
-		return uploadEndabled;
-	}
-
-	public void setUploadEndabled(boolean uploadEndabled) {
-		this.uploadEndabled = uploadEndabled;
-	}
-
-	public HasDataList[] getAutoCopyModeTargetLists() {
-		return autoCopyModeTargetLists;
-	}
-
-	public void setAutoCopyModeTargetLists(HasDataList[] autoCopyModeTargetLists) {
-		this.autoCopyModeTargetLists = autoCopyModeTargetLists;
-	}
-
-	public boolean isDeleteOnRemove() {
-		return deleteOnRemove;
-	}
-
-	public void setDeleteOnRemove(boolean deleteOnRemove) {
-		this.deleteOnRemove = deleteOnRemove;
-	}
-
 }

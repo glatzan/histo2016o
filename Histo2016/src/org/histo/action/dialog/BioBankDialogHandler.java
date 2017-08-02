@@ -1,6 +1,6 @@
 package org.histo.action.dialog;
 
-import org.histo.action.dialog.media.MediaDialog;
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
@@ -33,7 +33,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
-	private MediaDialog mediaDialog;
+	private DialogHandlerAction dialogHandlerAction;
 
 	private BioBank bioBank;
 
@@ -88,23 +88,26 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 	public void showMediaSelectDialog() {
 		try {
+
 			// init dialog for patient and task
-			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() }, true);
+			dialogHandlerAction.getMediaDialog().initBean(getTask().getPatient(),
+					new HasDataList[] { getTask(), getTask().getPatient() }, true);
 
 			// setting advance copy mode with move as true and target to task
 			// and biobank
-			mediaDialog.enableAutoCopyMode(new HasDataList[] { getTask(), getBioBank() }, true, true);
+			dialogHandlerAction.getMediaDialog().enableAutoCopyMode(new HasDataList[] { getTask(), getBioBank() }, true,
+					true);
 
 			// enabeling upload to task
-			mediaDialog.enableUpload(new HasDataList[] { getTask() },
+			dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { getTask() },
 					new DocumentType[] { DocumentType.BIOBANK_INFORMED_CONSENT });
 
 			// setting info text
-			mediaDialog.setActionDescription(
+			dialogHandlerAction.getMediaDialog().setActionDescription(
 					resourceBundle.get("dialog.media.headline.info.biobank", getTask().getTaskID()));
 
 			// show dialog
-			mediaDialog.prepareDialog();
+			dialogHandlerAction.getMediaDialog().prepareDialog();
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// do nothing
 			// TODO: infom user
@@ -113,14 +116,14 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 	public void showMediaViewDialog(PDFContainer pdfContainer) {
 		// init dialog for patient and task
-		mediaDialog.initBean(getTask().getPatient(), getBioBank(), pdfContainer, false);
+		dialogHandlerAction.getMediaDialog().initBean(getTask().getPatient(), getBioBank(), pdfContainer, false);
 
 		// setting info text
-		mediaDialog
+		dialogHandlerAction.getMediaDialog()
 				.setActionDescription(resourceBundle.get("dialog.media.headline.info.biobank", getTask().getTaskID()));
 
 		// show dialog
-		mediaDialog.prepareDialog();
+		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
 	// ************************ Getter/Setter ************************

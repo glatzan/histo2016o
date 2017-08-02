@@ -7,8 +7,6 @@ import java.util.List;
 
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.media.MediaDialog;
-import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.CouncilState;
@@ -55,9 +53,6 @@ public class CouncilDialogHandler extends AbstractDialog {
 	@Autowired
 	private FavouriteListDAO favouriteListDAO;
 
-	@Autowired
-	private MediaDialog mediaDialog;
-	
 	@Autowired
 	private UtilDAO utilDAO;
 
@@ -326,24 +321,25 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	public void showMediaSelectDialog(PDFContainer pdf) {
 		try {
+			
 			// init dialog for patient and task
-			mediaDialog.initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() }, pdf,
+			dialogHandlerAction.getMediaDialog().initBean(getTask().getPatient(), new HasDataList[] { getTask(), getTask().getPatient() }, pdf,
 					true);
 
 			// setting advance copy mode with move as true and target to task
 			// and biobank
-			mediaDialog.enableAutoCopyMode(new HasDataList[] { getTask(), getSelectedCouncil() }, true, true);
+			dialogHandlerAction.getMediaDialog().enableAutoCopyMode(new HasDataList[] { getTask(), getSelectedCouncil() }, true, true);
 
 			// enabeling upload to task
-			mediaDialog.enableUpload(new HasDataList[] { getTask() },
+			dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { getTask() },
 					new DocumentType[] { DocumentType.COUNCIL_REPLY });
 
 			// setting info text
-			mediaDialog.setActionDescription(
+			dialogHandlerAction.getMediaDialog().setActionDescription(
 					resourceBundle.get("dialog.media.headline.info.council", getTask().getTaskID()));
 
 			// show dialog
-			mediaDialog.prepareDialog();
+			dialogHandlerAction.getMediaDialog().prepareDialog();
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// do nothing
 			// TODO: infom user
@@ -352,14 +348,14 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	public void showMediaViewDialog(PDFContainer pdfContainer) {
 		// init dialog for patient and task
-		mediaDialog.initBean(getTask().getPatient(), getSelectedCouncil(), pdfContainer, false);
+		dialogHandlerAction.getMediaDialog().initBean(getTask().getPatient(), getSelectedCouncil(), pdfContainer, false);
 
 		// setting info text
-		mediaDialog
+		dialogHandlerAction.getMediaDialog()
 				.setActionDescription(resourceBundle.get("dialog.media.headline.info.council", getTask().getTaskID()));
 
 		// show dialog
-		mediaDialog.prepareDialog();
+		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
 	// ************************ Getter/Setter ************************

@@ -93,14 +93,14 @@
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
 							<p:commandLink
-								actionListener="#{createTaskDialog.showMediaSelectDialog(mediaDialog.selectedPdfContainer)}">
+								actionListener="#{createTaskDialog.showMediaSelectDialog(dialogHandlerAction.mediaDialog.selectedPdfContainer)}">
 								<p:ajax event="dialogReturn" update="@form" process="@form" />
 								<i class="fa fa-search icon-grey"></i>
 							</p:commandLink>
 							<p:commandLink style="margin-right:5px" update="@form"
 								process="@form"
-								rendered="#{mediaDialog.selectedPdfContainer != null}"
-								actionListener="#{mediaDialog.setSelectedPdfContainer(null)}">
+								rendered="#{dialogHandlerAction.mediaDialog.selectedPdfContainer != null}"
+								actionListener="#{dialogHandlerAction.mediaDialog.setSelectedPdfContainer(null)}">
 								<i class="fa fa-close icon-grey"></i>
 							</p:commandLink>
 						</h:panelGrid>
@@ -122,7 +122,7 @@
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.file']}:" />
 
-							<h:outputLabel value="#{mediaDialog.selectedPdfContainer.name}">
+							<h:outputLabel value="#{dialogHandlerAction.mediaDialog.selectedPdfContainer.name}">
 								<f:converter converterId="org.histo.ui.TruncateConverter" />
 								<f:attribute name="truncateAt" value="35" />
 								<f:attribute name="continuationMark" value="..." />
@@ -134,7 +134,7 @@
 								value="#{msg['dialog.createTask.bioBank.informedConsent.type']}" />
 							<p:selectOneMenu id="consentType" styleClass="smallInput"
 								value="#{createTaskDialog.bioBank.informedConsentType}"
-								disabled="#{mediaDialog.selectedPdfContainer == null}">
+								disabled="#{dialogHandlerAction.mediaDialog.selectedPdfContainer == null}">
 								<f:selectItems value="#{enumProvider.informedConsentTypes}"
 									var="type"
 									itemLabel="#{msg['enum.informedConsentType.'.concat(type)]}"
