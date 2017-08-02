@@ -63,6 +63,25 @@
 					<h:outputText value="#{holder.contact.person.contact.email}" />
 				</p:column>
 
+				<p:column style="width:5%; text-align:center;">
+					<f:facet name="header">
+						<i class="fa fa-cog" title="#" />
+					</f:facet>
+
+					<p:commandLink styleClass="noUnderlineAtLink"
+						title="#{msg['dialog.settings.person.list.options.edit']}"
+						execute="@this" partialSubmit="true"
+						onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()"
+						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, holder.contact)}">
+
+						<p:ajax event="dialogReturn" update=":adminForm:tabview:mailTab"
+							partialSubmit="true" process=":adminForm:tabview:mailTab"
+							listener="#{tab.updateData()}" />
+
+						<i class="fa fa-fw fa-cog" />
+					</p:commandLink>
+				</p:column>
 			</p:dataTable>
 
 		</p:panelGrid>
@@ -78,7 +97,7 @@
 					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
 					<p:ajax event="dialogReturn" update=":adminForm:tabview:mailTab"
 						partialSubmit="true" process=":adminForm:tabview:mailTab"
 						listener="#{tab.updateData()}" />

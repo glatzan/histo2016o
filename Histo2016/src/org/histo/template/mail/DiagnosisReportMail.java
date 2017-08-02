@@ -9,6 +9,7 @@ import javax.persistence.Transient;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.tools.generic.DateTool;
 import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
@@ -56,6 +57,8 @@ public class DiagnosisReportMail extends MailTemplate {
 		
 		if (contact != null)
 			context.put("contact", contact);
+		
+		context.put("date", new DateTool());
 
 		/* now render the template into a StringWriter */
 		StringWriter writer = new StringWriter();

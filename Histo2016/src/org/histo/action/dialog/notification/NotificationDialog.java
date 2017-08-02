@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.ws.Holder;
 
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -46,7 +47,7 @@ public class NotificationDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PrintDialog printDialog;
+	private DialogHandlerAction dialogHandlerAction;
 
 	private int activeIndex = 0;
 
@@ -105,14 +106,14 @@ public class NotificationDialog extends AbstractDialog {
 			setActiveIndex(getActiveIndex() - 1);
 	}
 
-	public void openSelectDialog(Task task, AssociatedContact contact) {
+	public void openSelectPDFDialog(Task task, AssociatedContact contact) {
 
 		AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN });
 
-		printDialog.initBeanForSelecting(task, subSelect, subSelect[0], new AssociatedContact[] { contact }, true);
-		printDialog.setSingleAddress(true);
-		printDialog.prepareDialog();
+		dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelect, subSelect[0], new AssociatedContact[] { contact }, true);
+		dialogHandlerAction.getPrintDialog().setSingleAddressSelectMode(true);
+		dialogHandlerAction.getPrintDialog().prepareDialog();
 	}
 
 	@Getter

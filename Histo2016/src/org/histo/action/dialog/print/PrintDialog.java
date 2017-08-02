@@ -131,7 +131,7 @@ public class PrintDialog extends AbstractDialog {
 	/**
 	 * If true only on address can be selected
 	 */
-	private boolean singleAddress;
+	private boolean singleAddressSelectMode;
 
 	/**
 	 * Initializes the bean and shows the council dialog
@@ -166,7 +166,7 @@ public class PrintDialog extends AbstractDialog {
 
 		setSelectMode(false);
 
-		setSingleAddress(false);
+		setSingleAddressSelectMode(false);
 		// rendering the template
 		onChangePrintTemplate();
 	}
@@ -204,7 +204,7 @@ public class PrintDialog extends AbstractDialog {
 
 		setSelectMode(false);
 
-		setSingleAddress(false);
+		setSingleAddressSelectMode(false);
 
 		onChangePrintTemplate();
 	}
@@ -231,7 +231,7 @@ public class PrintDialog extends AbstractDialog {
 
 		setSelectMode(false);
 
-		setSingleAddress(false);
+		setSingleAddressSelectMode(false);
 
 		// rendering the template
 		onChangePrintTemplate();
@@ -321,6 +321,28 @@ public class PrintDialog extends AbstractDialog {
 					onChangePrintTemplate();
 					RequestContext.getCurrentInstance().update("dialogContent");
 				}
+				return;
+			}
+			
+			// if only one address should be selectable
+			if(isSingleAddressSelectMode()){
+				
+				// deselecting all other containers
+				for (ContactContainer contactContainer : contactList) {
+					System.out.println("hallo");
+					if(contactContainer != container && contactContainer.isSelected()) {
+						contactContainer.setSelected(false);
+					}
+				}
+				
+				// rendering if not already rendered
+				if(getRenderedContact() != container) {
+					ContactContainer.generateCustomOrganizationAddress(container);
+					setRenderedContact(container);
+					onChangePrintTemplate();
+					RequestContext.getCurrentInstance().update("dialogContent");
+				}
+				
 				return;
 			}
 
