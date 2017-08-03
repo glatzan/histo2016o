@@ -10,6 +10,7 @@ import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Role;
 import org.histo.dao.UserDAO;
+import org.histo.model.Contact;
 import org.histo.model.HistoUser;
 import org.histo.model.Organization;
 import org.histo.model.Person;
@@ -116,7 +117,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 						logger.info("Physician already in datanse " + physician.getPerson().getFullName());
 					} else {
 						// creating new physician an person
-						histoUser.setPhysician(new Physician(new Person()));
+						histoUser.setPhysician(new Physician(new Person(new Contact())));
 						histoUser.getPhysician().setUid(userName);
 						histoUser.getPhysician().setClinicEmployee(true);
 						// Default role for that physician

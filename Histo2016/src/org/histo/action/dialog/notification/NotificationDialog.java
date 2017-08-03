@@ -103,7 +103,7 @@ public class NotificationDialog extends AbstractDialog {
 	}
 
 	public void previousStep() {
-		logger.trace("Next step");
+		logger.trace("Previous step");
 		if (getActiveIndex() > 0)
 			setActiveIndex(getActiveIndex() - 1);
 	}
@@ -175,13 +175,14 @@ public class NotificationDialog extends AbstractDialog {
 		protected String tabName;
 
 		protected boolean initialized;
+
+		protected boolean useTab;
+
 	}
 
 	@Getter
 	@Setter
 	public class MailTab extends AbstractTab {
-
-		private boolean useTab;
 
 		private String mailSubject;
 
@@ -267,6 +268,8 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter
 	public class FaxTab extends AbstractTab {
 
+		private List<ContactHolder> holders;
+
 		public FaxTab() {
 			setTabName("FaxTab");
 			setName("dialog.medicalFindings.tab.fax");
@@ -280,15 +283,52 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			// TODO Auto-generated method stub
+			if (!isInitialized()) {
+				setHolders(new ArrayList<ContactHolder>());
+
+				setInitialized(true);
+				logger.debug("Fax initialized");
+			}
+
+			List<AssociatedContact> contacts = task.getContacts();
+			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
+
+			for (AssociatedContact associatedContact : contacts) {
+				if (associatedContact.containsNotificationTyp(NotificationTyp.FAX)) {
+
+					try {
+						ContactHolder tmpHolder = tmpHolders.stream()
+								.filter(p -> p.getContact().equals(associatedContact))
+								.collect(StreamUtils.singletonCollector());
+						tmpHolders.remove(tmpHolder);
+					} catch (IllegalStateException e) {
+						// adding to list
+						getHolders().add(new ContactHolder(associatedContact, null));
+					}
+				}
+
+			}
+
+			for (ContactHolder contactHolder : tmpHolders) {
+				getHolders().remove(contactHolder);
+			}
 
 		}
 
+		@Getter
+		@Setter
+		@AllArgsConstructor
+		public class ContactHolder {
+			private AssociatedContact contact;
+			private PDFContainer pdf;
+		}
 	}
 
 	@Getter
 	@Setter
 	public class LetterTab extends AbstractTab {
+
+		private List<ContactHolder> holders;
 
 		public LetterTab() {
 			setTabName("LetterTab");
@@ -303,8 +343,43 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			// TODO Auto-generated method stub
+			if (!isInitialized()) {
+				setHolders(new ArrayList<ContactHolder>());
 
+				setInitialized(true);
+				logger.debug("Fax initialized");
+			}
+
+			List<AssociatedContact> contacts = task.getContacts();
+			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
+
+			for (AssociatedContact associatedContact : contacts) {
+				if (associatedContact.containsNotificationTyp(NotificationTyp.FAX)) {
+
+					try {
+						ContactHolder tmpHolder = tmpHolders.stream()
+								.filter(p -> p.getContact().equals(associatedContact))
+								.collect(StreamUtils.singletonCollector());
+						tmpHolders.remove(tmpHolder);
+					} catch (IllegalStateException e) {
+						// adding to list
+						getHolders().add(new ContactHolder(associatedContact, null));
+					}
+				}
+
+			}
+
+			for (ContactHolder contactHolder : tmpHolders) {
+				getHolders().remove(contactHolder);
+			}
+		}
+
+		@Getter
+		@Setter
+		@AllArgsConstructor
+		public class ContactHolder {
+			private AssociatedContact contact;
+			private PDFContainer pdf;
 		}
 	}
 

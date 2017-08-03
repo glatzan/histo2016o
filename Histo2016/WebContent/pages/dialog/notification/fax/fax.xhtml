@@ -16,10 +16,33 @@
 		</p:panel>
 
 
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
+			<!-- Use Mail -->
+			<h:outputLabel
+				value="#{msg['dialog.medicalFindings.tab.fax.useFax']}" />
 
-		<h:panelGrid columns="2" styleClass="defaultListingTableCss"
-			columnClasses="defaultListingTableColumnTop defaultListingTableColumn150px, ">
-		</h:panelGrid>
+			<p:selectBooleanCheckbox value="#{tab.useTab}"
+				styleClass="smallCheckbox">
+				<p:ajax event="change" partialSubmit="true" process="@this"
+					update=":adminForm:tabview:faxTab" />
+			</p:selectBooleanCheckbox>
+
+			<h:outputLabel
+				value="#{msg['dialog.medicalFindings.tab.fax.receiver']}" />
+			<p:dataTable var="faxNotification"
+				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+				value="#{tab.holders}">
+
+				<!-- name of receiver -->
+				<p:column
+					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.name']}"
+					style="width:auto">
+					<h:outputText value="#{holder.contact.person.fullName}" />
+				</p:column>
+
+			</p:dataTable>
+		</p:panelGrid>
 	</div>
 
 	<div class="bottomDiv">
@@ -39,13 +62,21 @@
 
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" style="float:right;">
+			<h:panelGrid columns="3" style="float:right;">
+				<!-- previouse -->
+				<p:commandButton value="#{msg['general.back']}"
+					icon="fa fa-fw fa-arrow-left"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{dialogHandlerAction.notificationDialog.previousStep()}"
+					partialSubmit="true" process=":adminForm:tabview:faxTab"
+					update="@form" />
 
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{notificationDialog.nextStep()}"
+					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
+					partialSubmit="true" process=":adminForm:tabview:faxTab"
 					update="@form" />
 
 				<!-- close -->

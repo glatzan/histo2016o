@@ -19,7 +19,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel
+				<h:outputLabel id="headerText"
 					value="#{msg['dialog.selectContact.headline']} (#{msg['enum.contactRole.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]})" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -122,7 +122,7 @@
 								itemValue="#{role}" />
 
 
-							<p:ajax event="change" update="@form" process="@this" />
+							<p:ajax event="change" partialSubmit="true" process="@this" update="@this headerText" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 				</h:panelGrid>

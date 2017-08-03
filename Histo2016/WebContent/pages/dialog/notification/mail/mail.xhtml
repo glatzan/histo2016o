@@ -18,12 +18,13 @@
 
 
 		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
-			style="width:100%">
+			style="width:100%"
+			columnClasses="defaultListingTableColumn150px, ">
 			<!-- Use Mail -->
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.mail.useMail']}" />
 
-			<p:selectBooleanCheckbox value="#{tab.useTab}">
+			<p:selectBooleanCheckbox value="#{tab.useTab}" styleClass="smallCheckbox">
 				<p:ajax event="change" partialSubmit="true" process="@this"
 					update=":adminForm:tabview:mailTab" />
 			</p:selectBooleanCheckbox>
@@ -46,7 +47,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.medicalFindings.tab.mail.receiver']}" />
 
-			<p:dataTable var="holder" scrollable="true" scrollHeight="150"
+			<p:dataTable var="holder" scrollable="true" scrollHeight="150" style="width:96%"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 				value="#{tab.holders}">
 
@@ -63,9 +64,9 @@
 					<h:outputText value="#{holder.contact.person.contact.email}" />
 				</p:column>
 
-				<p:column style="width:5%; text-align:center;">
+				<p:column style="width:10%; text-align:center;">
 					<f:facet name="header">
-						<i class="fa fa-cog" title="#" />
+						<i class="fa fa-file-pdf-o" title="" />
 					</f:facet>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
@@ -80,7 +81,7 @@
 							partialSubmit="true" process=":adminForm:tabview:mailTab"
 							listener="#{tab.copySelectedPdf(holder)}" />
 
-						<i class="fa fa-fw fa-cog" />
+						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
@@ -93,6 +94,7 @@
 					</p:commandLink>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
+						style="margin-left: 10px;"
 						rendered="#{holder.mail.attachment ne null}"
 						title="#{msg['dialog.settings.person.list.options.edit']}"
 						execute="@this" partialSubmit="true"

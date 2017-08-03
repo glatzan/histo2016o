@@ -86,7 +86,7 @@ public abstract class AbstractDAO implements Serializable {
 			getSession().flush();
 			return object;
 		} catch (HibernateException hibernateException) {
-			object = (C) session.merge(object);
+			object = (C) getSession().merge(object);
 			logger.error("Mergin Objects!");
 			return object;
 		} catch (OptimisticLockException | HibernateOptimisticLockingFailureException e) {
