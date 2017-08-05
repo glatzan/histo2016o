@@ -39,13 +39,21 @@
 
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" style="float:right;">
+			<h:panelGrid columns="3" style="float:right;">
+				<!-- previouse -->
+				<p:commandButton value="#{msg['general.back']}"
+					icon="fa fa-fw fa-arrow-left"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{dialogHandlerAction.notificationDialog.previousStep()}"
+					partialSubmit="true" process=":adminForm:tabview:letterTab"
+					update="@form" />
 
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{notificationDialog.nextStep()}"
+					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
+					partialSubmit="true" process=":adminForm:tabview:letterTab"
 					update="@form" />
 
 				<!-- close -->
