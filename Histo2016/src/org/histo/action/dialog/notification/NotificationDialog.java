@@ -103,7 +103,7 @@ public class NotificationDialog extends AbstractDialog {
 	}
 
 	public void previousStep() {
-		logger.trace("Next step");
+		logger.trace("Previous step");
 		if (getActiveIndex() > 0)
 			setActiveIndex(getActiveIndex() - 1);
 	}
@@ -168,6 +168,8 @@ public class NotificationDialog extends AbstractDialog {
 
 		public abstract void updateData();
 
+		protected List<ContactHolder> holders;
+
 		protected String name;
 
 		protected String viewID;
@@ -175,6 +177,48 @@ public class NotificationDialog extends AbstractDialog {
 		protected String tabName;
 
 		protected boolean initialized;
+		
+		protected boolean useTab;
+
+		public void updateList(List<AssociatedContact> contacts) {
+
+			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
+
+			for (AssociatedContact associatedContact : contacts) {
+				if (associatedContact.containsNotificationTyp(NotificationTyp.EMAIL)) {
+
+					try {
+						ContactHolder tmpHolder = tmpHolders.stream()
+								.filter(p -> p.getContact().equals(associatedContact))
+								.collect(StreamUtils.singletonCollector());
+						tmpHolders.remove(tmpHolder);
+					} catch (IllegalStateException e) {
+						// adding to list
+						getHolders().add(new ContactHolder(associatedContact, null));
+					}
+				}
+
+			}
+
+			for (ContactHolder contactHolder : tmpHolders) {
+				getHolders().remove(contactHolder);
+			}
+		}
+
+		public void copySelectedPdf(ContactHolder contactHolder) {
+			if (dialogHandlerAction.getPrintDialog().getPdfContainer() != null) {
+				logger.debug("Selecting pdf");
+				contactHolder.getMail().setAttachment(dialogHandlerAction.getPrintDialog().getPdfContainer());
+			}
+		}
+
+		@Getter
+		@Setter
+		@AllArgsConstructor
+		public class ContactHolder {
+			private AssociatedContact contact;
+			private DiagnosisReportMail mail;
+		}
 	}
 
 	@Getter
@@ -188,8 +232,6 @@ public class NotificationDialog extends AbstractDialog {
 		private String mailBody;
 
 		private DiagnosisReportMail mail;
-
-		private List<ContactHolder> holders;
 
 		public MailTab() {
 			setTabName("MailTab");
@@ -221,45 +263,8 @@ public class NotificationDialog extends AbstractDialog {
 				setInitialized(true);
 				logger.debug("Mails initialized");
 			}
-
-			List<AssociatedContact> contacts = task.getContacts();
-			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
-
-			for (AssociatedContact associatedContact : contacts) {
-				if (associatedContact.containsNotificationTyp(NotificationTyp.EMAIL)) {
-
-					try {
-						ContactHolder tmpHolder = tmpHolders.stream()
-								.filter(p -> p.getContact().equals(associatedContact))
-								.collect(StreamUtils.singletonCollector());
-						tmpHolders.remove(tmpHolder);
-					} catch (IllegalStateException e) {
-						System.out.println(getMail());
-						// adding to list
-						getHolders().add(new ContactHolder(associatedContact, (DiagnosisReportMail) getMail().clone()));
-					}
-				}
-
-			}
-
-			for (ContactHolder contactHolder : tmpHolders) {
-				getHolders().remove(contactHolder);
-			}
-		}
-
-		public void copySelectedPdf(ContactHolder contactHolder) {
-			if (dialogHandlerAction.getPrintDialog().getPdfContainer() != null) {
-				logger.debug("Selecting pdf");
-				contactHolder.getMail().setAttachment(dialogHandlerAction.getPrintDialog().getPdfContainer());
-			}
-		}
-
-		@Getter
-		@Setter
-		@AllArgsConstructor
-		public class ContactHolder {
-			private AssociatedContact contact;
-			private DiagnosisReportMail mail;
+			
+			updateList(task.getContacts());
 		}
 	}
 
@@ -280,7 +285,13 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			// TODO Auto-generated method stub
+			if (!isInitialized()) {
+				setHolders(new ArrayList<ContactHolder>());
+
+				setInitialized(true);
+				logger.debug("Fax initialized");
+			}
+			updateList(task.getContacts());
 
 		}
 
@@ -303,7 +314,12 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			// TODO Auto-generated method stub
+			if (!isInitialized()) {
+				setHolders(new ArrayList<ContactHolder>());
+
+				setInitialized(true);
+				logger.debug("Fax initialized");
+			}
 
 		}
 	}
