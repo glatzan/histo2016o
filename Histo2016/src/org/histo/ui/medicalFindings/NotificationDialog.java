@@ -51,11 +51,6 @@ public class NotificationDialog {
 	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
-	private MediaDialog mediaDialog;
-	/**
-	 * class for creating pdfs
-	 */
-	@Autowired
 	private PDFGeneratorHandler pDFGeneratorHandler;
 
 	@Autowired

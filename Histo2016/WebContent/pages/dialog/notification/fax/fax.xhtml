@@ -11,36 +11,99 @@
 		<p:panel style="width:100%;" styleClass="contentPannel">
 			<f:facet name="header">
 				<h:outputLabel
-					value="#{msg['dialog.medicalFindings.tab.mail.tabHeadline']}"></h:outputLabel>
+					value="#{msg['dialog.notification.tab.fax.headline']}"></h:outputLabel>
 			</f:facet>
 		</p:panel>
 
 
-		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
 			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
-			<!-- Use Mail -->
-			<h:outputLabel
-				value="#{msg['dialog.medicalFindings.tab.fax.useFax']}" />
-
+			<!-- Use fax -->
+			<h:outputLabel value="#{msg['dialog.notification.tab.fax.use']}" />
 			<p:selectBooleanCheckbox value="#{tab.useTab}"
 				styleClass="smallCheckbox">
 				<p:ajax event="change" partialSubmit="true" process="@this"
 					update=":adminForm:tabview:faxTab" />
 			</p:selectBooleanCheckbox>
 
+			<!-- pdf template -->
 			<h:outputLabel
-				value="#{msg['dialog.medicalFindings.tab.fax.receiver']}" />
-			<p:dataTable var="faxNotification"
+				value="#{msg['dialog.notification.tab.fax.pdfTemplate']}" />
+			<p:selectOneMenu value="#{tab.selectedTemplate}"
+				converter="#{tab.templateTransformer}"
+				styleClass="customSerachSelectMenu">
+
+				<f:selectItem itemValue="#{null}"
+					itemLabel="#{msg['dialog.notification.tab.fax.pdfTemplate.none']}"></f:selectItem>
+
+				<f:selectItems value="#{tab.templateList}" var="template"
+					itemLabel="#{template.name}" itemValue="#{template}" />
+
+				<p:ajax update="@this" event="change" process="@this"
+					partialSubmit="true" />
+			</p:selectOneMenu>
+
+			<!-- receiver -->
+			<h:outputLabel value="#{msg['dialog.notification.tab.fax.receiver']}" />
+			<p:dataTable var="holder"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 				value="#{tab.holders}">
 
 				<!-- name of receiver -->
 				<p:column
-					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.name']}"
+					headerText="#{msg['dialog.notification.tab.fax.receiver.name']}"
 					style="width:auto">
 					<h:outputText value="#{holder.contact.person.fullName}" />
 				</p:column>
 
+				<p:column
+					headerText="#{msg['dialog.notification.tab.fax.receiver.number']}"
+					style="width:auto">
+					<p:inputText value="#{holder.contactAddress}"
+						styleClass="smallInput" style="width:98%" />
+				</p:column>
+
+				<p:column style="width:12%; text-align:center;">
+					<f:facet name="header">
+						<i class="fa fa-file-pdf-o"
+							title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}" />
+					</f:facet>
+
+					<p:commandLink styleClass="noUnderlineAtLink"
+						rendered="#{holder.pdf eq null}"
+						title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}"
+						execute="@this" partialSubmit="true"
+						onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()"
+						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, holder.contact)}">
+
+						<p:ajax event="dialogReturn" update=":adminForm:tabview:faxTab"
+							partialSubmit="true" process=":adminForm:tabview:faxTab"
+							listener="#{tab.copySelectedPdf(holder)}" />
+
+						<i class="fa fa-fw fa-file-pdf-o" />
+					</p:commandLink>
+
+					<p:commandLink styleClass="noUnderlineAtLink"
+						rendered="#{holder.pdf ne null}"
+						title="#{msg['dialog.notification.tab.fax.receiver.pdf.show']}"
+						execute="@this" partialSubmit="true"
+						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
+
+						<i class="fa fa-search icon-grey" />
+					</p:commandLink>
+
+					<p:commandLink styleClass="noUnderlineAtLink"
+						style="margin-left: 10px;" rendered="#{holder.pdf ne null}"
+						title="#{msg['dialog.notification.tab.fax.receiver.pdf.remove']}"
+						execute="@this" partialSubmit="true"
+						update=":adminForm:tabview:faxTab"
+						actionListener="#{holder.setPdf(null)}">
+
+						<i class="fa fa-close icon-grey" />
+					</p:commandLink>
+
+				</p:column>
 			</p:dataTable>
 		</p:panelGrid>
 	</div>
@@ -52,12 +115,13 @@
 			<h:panelGrid columns="1">
 				<!-- Contact -->
 				<p:commandButton
-					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
+					value="#{msg['dialog.notification.tab.fax.button.contact.select']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{contactHandlerAction.prepareContactsDialog(commonDataHandlerAction.selectedTask)}">
-					<p:ajax event="dialogReturn" update="@form"
-						listener="#{notificationDialog.updateNotificationLists()}" />
+					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
+					<p:ajax event="dialogReturn" update=":adminForm:tabview:faxTab"
+						partialSubmit="true" process=":adminForm:tabview:faxTab"
+						listener="#{tab.updateData()}" />
 				</p:commandButton>
 
 			</h:panelGrid>

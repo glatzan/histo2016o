@@ -1,6 +1,7 @@
 package org.histo.action.dialog.notification;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.ws.Holder;
@@ -19,6 +20,7 @@ import org.histo.model.interfaces.HasDataList;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.mail.DiagnosisReportMail;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
 import org.histo.util.mail.MailHandler;
 import org.histo.util.printer.template.AbstractTemplate;
@@ -53,7 +55,8 @@ public class NotificationDialog extends AbstractDialog {
 
 	private int activeIndex = 0;
 
-	public AbstractTab[] tabs = new AbstractTab[] { new MailTab(), new FaxTab(), new LetterTab(), new SendTab() };
+	public AbstractTab[] tabs = new AbstractTab[] { new MailTab(), new FaxTab(), new LetterTab(), new PhoneTab(),
+			new SendTab() };
 
 	public void initAndPrepareBean(Task task) {
 		if (initBean(task))
@@ -98,14 +101,18 @@ public class NotificationDialog extends AbstractDialog {
 
 	public void nextStep() {
 		logger.trace("Next step");
-		if (getActiveIndex() < 2)
+		if (getActiveIndex() < getTabs().length) {
 			setActiveIndex(getActiveIndex() + 1);
+			getTabs()[getActiveIndex()].updateData();
+		}
 	}
 
 	public void previousStep() {
 		logger.trace("Previous step");
-		if (getActiveIndex() > 0)
+		if (getActiveIndex() > 0) {
 			setActiveIndex(getActiveIndex() - 1);
+			getTabs()[getActiveIndex()].updateData();
+		}
 	}
 
 	public void openSelectPDFDialog(Task task, AssociatedContact contact) {
@@ -177,17 +184,21 @@ public class NotificationDialog extends AbstractDialog {
 		protected String tabName;
 
 		protected boolean initialized;
-<<<<<<< HEAD
-		
+
 		protected boolean useTab;
 
-		public void updateList(List<AssociatedContact> contacts) {
+		protected List<AbstractTemplate> templateList;
+
+		protected DefaultTransformer<AbstractTemplate> templateTransformer;
+
+		protected AbstractTemplate selectedTemplate;
+
+		public void updateList(List<AssociatedContact> contacts, NotificationTyp notificationTyp) {
 
 			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
 
 			for (AssociatedContact associatedContact : contacts) {
-				if (associatedContact.containsNotificationTyp(NotificationTyp.EMAIL)) {
-
+				if (associatedContact.containsNotificationTyp(notificationTyp)) {
 					try {
 						ContactHolder tmpHolder = tmpHolders.stream()
 								.filter(p -> p.getContact().equals(associatedContact))
@@ -195,7 +206,25 @@ public class NotificationDialog extends AbstractDialog {
 						tmpHolders.remove(tmpHolder);
 					} catch (IllegalStateException e) {
 						// adding to list
-						getHolders().add(new ContactHolder(associatedContact, null));
+
+						ContactHolder holder = new ContactHolder(associatedContact);
+
+						switch (notificationTyp) {
+						case EMAIL:
+							holder.setContactAddress(associatedContact.getPerson().getContact().getEmail());
+							break;
+						case FAX:
+							holder.setContactAddress(associatedContact.getPerson().getContact().getFax());
+							break;
+						case PHONE:
+							holder.setContactAddress(associatedContact.getPerson().getContact().getPhone());
+							break;
+						case LETTER:
+
+							break;
+						}
+
+						getHolders().add(holder);
 					}
 				}
 
@@ -209,22 +238,24 @@ public class NotificationDialog extends AbstractDialog {
 		public void copySelectedPdf(ContactHolder contactHolder) {
 			if (dialogHandlerAction.getPrintDialog().getPdfContainer() != null) {
 				logger.debug("Selecting pdf");
-				contactHolder.getMail().setAttachment(dialogHandlerAction.getPrintDialog().getPdfContainer());
+				contactHolder.setPdf(dialogHandlerAction.getPrintDialog().getPdfContainer());
 			}
 		}
 
 		@Getter
 		@Setter
-		@AllArgsConstructor
 		public class ContactHolder {
 			private AssociatedContact contact;
-			private DiagnosisReportMail mail;
+			private PDFContainer pdf;
+			private String contactAddress;
+			private NotificationTyp notificationTyp;
+			private boolean performed;
+
+			public ContactHolder(AssociatedContact contact) {
+				this.contact = contact;
+			}
 		}
-=======
 
-		protected boolean useTab;
-
->>>>>>> branch 'master' of https://github.com/blub4ever/histo2016o
 	}
 
 	@Getter
@@ -239,9 +270,18 @@ public class NotificationDialog extends AbstractDialog {
 
 		public MailTab() {
 			setTabName("MailTab");
-			setName("dialog.medicalFindings.tab.mail");
+			setName("dialog.notification.tab.mail");
 			setViewID("mailTab");
-			setUseTab(true);
+			setHolders(new ArrayList<ContactHolder>());
+
+			AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(
+					new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN });
+
+			setTemplateList(new ArrayList<AbstractTemplate>(Arrays.asList(subSelect)));
+
+			setTemplateTransformer(new DefaultTransformer<AbstractTemplate>(getTemplateList()));
+
+			setSelectedTemplate(null);
 		}
 
 		@Override
@@ -251,6 +291,8 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
+
+			updateList(task.getContacts(), NotificationTyp.EMAIL);
 
 			if (!isInitialized()) {
 				DiagnosisReportMail mail = MailHandler.getDefaultTemplate(DiagnosisReportMail.class);
@@ -262,13 +304,11 @@ public class NotificationDialog extends AbstractDialog {
 				setMailSubject(mail.getSubject());
 				setMailBody(mail.getBody());
 
-				setHolders(new ArrayList<ContactHolder>());
+				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
 				logger.debug("Mails initialized");
 			}
-			
-			updateList(task.getContacts());
 		}
 	}
 
@@ -276,12 +316,20 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter
 	public class FaxTab extends AbstractTab {
 
-		private List<ContactHolder> holders;
-
 		public FaxTab() {
 			setTabName("FaxTab");
-			setName("dialog.medicalFindings.tab.fax");
+			setName("dialog.notification.tab.fax");
 			setViewID("faxTab");
+			setHolders(new ArrayList<ContactHolder>());
+
+			AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(
+					new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN });
+
+			setTemplateList(new ArrayList<AbstractTemplate>(Arrays.asList(subSelect)));
+
+			setTemplateTransformer(new DefaultTransformer<AbstractTemplate>(getTemplateList()));
+
+			setSelectedTemplate(null);
 		}
 
 		@Override
@@ -291,61 +339,38 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
+			updateList(task.getContacts(), NotificationTyp.FAX);
+
 			if (!isInitialized()) {
-				setHolders(new ArrayList<ContactHolder>());
+
+				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
 				logger.debug("Fax initialized");
 			}
-<<<<<<< HEAD
-			updateList(task.getContacts());
-=======
-
-			List<AssociatedContact> contacts = task.getContacts();
-			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
-
-			for (AssociatedContact associatedContact : contacts) {
-				if (associatedContact.containsNotificationTyp(NotificationTyp.FAX)) {
-
-					try {
-						ContactHolder tmpHolder = tmpHolders.stream()
-								.filter(p -> p.getContact().equals(associatedContact))
-								.collect(StreamUtils.singletonCollector());
-						tmpHolders.remove(tmpHolder);
-					} catch (IllegalStateException e) {
-						// adding to list
-						getHolders().add(new ContactHolder(associatedContact, null));
-					}
-				}
-
-			}
-
-			for (ContactHolder contactHolder : tmpHolders) {
-				getHolders().remove(contactHolder);
-			}
->>>>>>> branch 'master' of https://github.com/blub4ever/histo2016o
 
 		}
 
-		@Getter
-		@Setter
-		@AllArgsConstructor
-		public class ContactHolder {
-			private AssociatedContact contact;
-			private PDFContainer pdf;
-		}
 	}
 
 	@Getter
 	@Setter
 	public class LetterTab extends AbstractTab {
 
-		private List<ContactHolder> holders;
-
 		public LetterTab() {
 			setTabName("LetterTab");
-			setName("dialog.medicalFindings.tab.letter");
+			setName("dialog.notification.tab.letter");
 			setViewID("letterTab");
+			setHolders(new ArrayList<ContactHolder>());
+
+			AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(
+					new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN });
+
+			setTemplateList(new ArrayList<AbstractTemplate>(Arrays.asList(subSelect)));
+
+			setTemplateTransformer(new DefaultTransformer<AbstractTemplate>(getTemplateList()));
+
+			setSelectedTemplate(null);
 		}
 
 		@Override
@@ -355,61 +380,65 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
+
+			updateList(task.getContacts(), NotificationTyp.LETTER);
+
 			if (!isInitialized()) {
-				setHolders(new ArrayList<ContactHolder>());
-<<<<<<< HEAD
+				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
-				logger.debug("Fax initialized");
+
+				logger.debug("Letter initialized");
 			}
-=======
->>>>>>> branch 'master' of https://github.com/blub4ever/histo2016o
+
+		}
+
+	}
+
+	@Getter
+	@Setter
+	public class PhoneTab extends AbstractTab {
+
+		public PhoneTab() {
+			setTabName("PhoneTab");
+			setName("dialog.notification.tab.phone");
+			setViewID("phoneTab");
+			setHolders(new ArrayList<ContactHolder>());
+		}
+
+		@Override
+		public String getCenterView() {
+			return "phone/phone.xhtml";
+		}
+
+		@Override
+		public void updateData() {
+
+			updateList(task.getContacts(), NotificationTyp.PHONE);
+
+			if (!isInitialized()) {
+				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
-				logger.debug("Fax initialized");
+
+				logger.debug("Phone initialized");
 			}
 
-			List<AssociatedContact> contacts = task.getContacts();
-			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
-
-			for (AssociatedContact associatedContact : contacts) {
-				if (associatedContact.containsNotificationTyp(NotificationTyp.FAX)) {
-
-					try {
-						ContactHolder tmpHolder = tmpHolders.stream()
-								.filter(p -> p.getContact().equals(associatedContact))
-								.collect(StreamUtils.singletonCollector());
-						tmpHolders.remove(tmpHolder);
-					} catch (IllegalStateException e) {
-						// adding to list
-						getHolders().add(new ContactHolder(associatedContact, null));
-					}
-				}
-
-			}
-
-			for (ContactHolder contactHolder : tmpHolders) {
-				getHolders().remove(contactHolder);
-			}
 		}
 
-		@Getter
-		@Setter
-		@AllArgsConstructor
-		public class ContactHolder {
-			private AssociatedContact contact;
-			private PDFContainer pdf;
-		}
 	}
 
 	@Getter
 	@Setter
 	public class SendTab extends AbstractTab {
 
+		private boolean notificationCompleted;
+		
 		public SendTab() {
 			setTabName("SendTab");
-			setName("dialog.medicalFindings.tab.send");
+			setName("dialog.notification.tab.send");
 			setViewID("sendTab");
+			setNotificationCompleted(false);
 		}
 
 		@Override
@@ -420,7 +449,6 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 			// TODO Auto-generated method stub
-
 		}
 	}
 }

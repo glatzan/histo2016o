@@ -11,20 +11,18 @@
 		<p:panel style="width:100%;" styleClass="contentPannel">
 			<f:facet name="header">
 				<h:outputLabel
-					value="#{msg['dialog.medicalFindings.tab.mail.tabHeadline']}"></h:outputLabel>
+					value="#{msg['dialog.notification.tab.mail.headline']}"></h:outputLabel>
 			</f:facet>
 		</p:panel>
 
-
-
-		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
-			style="width:100%"
-			columnClasses="defaultListingTableColumn150px, ">
+		<p:panelGrid columns="2"
+			styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
+			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
 			<!-- Use Mail -->
-			<h:outputLabel
-				value="#{msg['dialog.medicalFindings.tab.mail.useMail']}" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.mail.use']}" />
 
-			<p:selectBooleanCheckbox value="#{tab.useTab}" styleClass="smallCheckbox">
+			<p:selectBooleanCheckbox value="#{tab.useTab}"
+				styleClass="smallCheckbox">
 				<p:ajax event="change" partialSubmit="true" process="@this"
 					update=":adminForm:tabview:mailTab" />
 			</p:selectBooleanCheckbox>
@@ -33,45 +31,64 @@
 			<h:outputLabel value=" " />
 
 			<!-- subject -->
-			<h:outputLabel
-				value="#{msg['dialog.medicalFindings.tab.mail.subject']}" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.mail.subject']}" />
 			<h:inputText value="#{tab.mailSubject}" style="width:95%"
 				disabled="#{!tab.useTab}" />
 
 			<!-- Text -->
-			<h:outputLabel value="#{msg['dialog.medicalFindings.tab.mail.text']}" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.mail.text']}" />
 			<h:inputTextarea value="#{tab.mailBody}" style="width:95%"
 				disabled="#{!tab.useTab}" rows="10" />
 
 
+			<!-- pdf template -->
 			<h:outputLabel
-				value="#{msg['dialog.medicalFindings.tab.mail.receiver']}" />
+				value="#{msg['dialog.notification.tab.mail.pdfTemplate']}" />
+			<p:selectOneMenu value="#{tab.selectedTemplate}"
+				converter="#{tab.templateTransformer}"
+				styleClass="customSerachSelectMenu">
 
-			<p:dataTable var="holder" scrollable="true" scrollHeight="150" style="width:96%"
+				<f:selectItem itemValue="#{null}"
+					itemLabel="#{msg['dialog.notification.tab.mail.pdfTemplate.none']}"></f:selectItem>
+
+				<f:selectItems value="#{tab.templateList}" var="template"
+					itemLabel="#{template.name}" itemValue="#{template}" />
+
+				<p:ajax update="@this" event="change" process="@this"
+					partialSubmit="true" />
+			</p:selectOneMenu>
+
+			<!-- receiver -->
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.mail.receiver']}" />
+			<p:dataTable var="holder" scrollable="true" scrollHeight="150"
+				style="width:96%"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 				value="#{tab.holders}">
 
 				<!-- name of receiver -->
 				<p:column
-					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.name']}"
+					headerText="#{msg['dialog.notification.tab.mail.receiver.name']}"
 					style="width:auto">
 					<h:outputText value="#{holder.contact.person.fullName}" />
 				</p:column>
 
 				<p:column
-					headerText="#{msg['dialog.medicalFindings.tab.mail.receiver.name']}"
+					headerText="#{msg['dialog.notification.tab.mail.receiver.email']}"
 					style="width:auto">
-					<h:outputText value="#{holder.contact.person.contact.email}" />
+					<p:inputText value="#{holder.contactAddress}"
+						styleClass="smallInput" style="width:98%" />
 				</p:column>
 
-				<p:column style="width:10%; text-align:center;">
+				<p:column style="width:12%; text-align:center;">
 					<f:facet name="header">
-						<i class="fa fa-file-pdf-o" title="" />
+						<i class="fa fa-file-pdf-o"
+							title="#{msg['dialog.notification.tab.mail.receiver.pdf.info']}" />
 					</f:facet>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.mail.attachment eq null}"
-						title="#{msg['dialog.settings.person.list.options.edit']}"
+						rendered="#{holder.pdf eq null}"
+						title="#{msg['dialog.notification.tab.mail.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()"
@@ -85,21 +102,20 @@
 					</p:commandLink>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.mail.attachment ne null}"
-						title="#{msg['dialog.settings.person.list.options.edit']}"
+						rendered="#{holder.pdf ne null}"
+						title="#{msg['dialog.notification.tab.mail.receiver.pdf.show']}"
 						execute="@this" partialSubmit="true"
-						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.mail.attachment)}">
+						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
 					</p:commandLink>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
-						style="margin-left: 10px;"
-						rendered="#{holder.mail.attachment ne null}"
-						title="#{msg['dialog.settings.person.list.options.edit']}"
+						style="margin-left: 10px;" rendered="#{holder.pdf ne null}"
+						title="#{msg['dialog.notification.tab.mail.receiver.pdf.remove']}"
 						execute="@this" partialSubmit="true"
 						update=":adminForm:tabview:mailTab"
-						actionListener="#{holder.mail.setAttachment(null)}">
+						actionListener="#{holder.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
 					</p:commandLink>
@@ -117,7 +133,7 @@
 			<h:panelGrid columns="1">
 				<!-- Contact -->
 				<p:commandButton
-					value="#{msg['dialog.medicalFindings.tab.mail.button.contacts']}"
+					value="#{msg['dialog.notification.tab.mail.button.contact.select']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">

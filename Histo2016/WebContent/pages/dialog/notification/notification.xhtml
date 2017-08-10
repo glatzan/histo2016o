@@ -9,7 +9,7 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.medicalFindings.headline']}">
+			value="#{msg['dialog.notification.head']}">
 		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
@@ -20,7 +20,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.medicalFindings.headline']}" />
+				<h:outputLabel value="#{msg['dialog.notification.head']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}">

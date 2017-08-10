@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;" styleClass="contentPannel">
+			<f:facet name="header">
+				<h:outputLabel
+					value="#{msg['dialog.notification.tab.phone.headline']}"></h:outputLabel>
+			</f:facet>
+		</p:panel>
+
+
+		<p:panelGrid columns="2"
+			styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
+			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
+
+			<!-- Use phone-->
+			<h:outputLabel value="#{msg['dialog.notification.tab.phone.use']}" />
+			<p:selectBooleanCheckbox value="#{tab.useTab}"
+				styleClass="smallCheckbox">
+				<p:ajax event="change" partialSubmit="true" process="@this"
+					update=":adminForm:tabview:phoneTab" />
+			</p:selectBooleanCheckbox>
+
+			<!-- pdf template -->
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.phone.receiver']}" />
+			<p:dataTable var="holder"
+				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+				value="#{tab.holders}">
+
+				<!-- name of receiver -->
+				<p:column
+					headerText="#{msg['dialog.notification.tab.phone.receiver.name']}"
+					style="width:auto">
+					<h:outputText value="#{holder.contact.person.fullName}" />
+				</p:column>
+
+				<p:column
+					headerText="#{msg['dialog.notification.tab.phone.receiver.number']}"
+					style="width:auto">
+					<p:inputText value="#{holder.contactAddress}"
+						styleClass="smallInput" style="width:98%" />
+				</p:column>
+			</p:dataTable>
+		</p:panelGrid>
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+			<h:panelGrid columns="1">
+				<!-- Contact -->
+				<p:commandButton
+					value="#{msg['dialog.notification.tab.phone.button.contact.select']}"
+					icon="fa fa-fw fa-cog"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
+					<p:ajax event="dialogReturn" update=":adminForm:tabview:phoneTab"
+						partialSubmit="true" process=":adminForm:tabview:phoneTab"
+						listener="#{tab.updateData()}" />
+				</p:commandButton>
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="3" style="float:right;">
+				<!-- previouse -->
+				<p:commandButton value="#{msg['general.back']}"
+					icon="fa fa-fw fa-arrow-left"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{dialogHandlerAction.notificationDialog.previousStep()}"
+					partialSubmit="true" process=":adminForm:tabview:phoneTab"
+					update="@form" />
+
+				<!-- next -->
+				<p:commandButton value="#{msg['general.next']}"
+					icon="fa fa-fw fa-arrow-right"
+					styleClass="smallButton buttonRighMarginInList"
+					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
+					partialSubmit="true" process=":adminForm:tabview:phoneTab"
+					update="@form" />
+
+				<!-- close -->
+				<p:commandButton value="#{msg['general.close']}"
+					styleClass="smallButton buttonRighMarginInList"
+					icon="fa fa-times-circle"
+					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>
