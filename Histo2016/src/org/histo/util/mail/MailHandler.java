@@ -78,6 +78,10 @@ public class MailHandler implements GsonAble {
 	public boolean sendAdminMail(MailTemplate mail) {
 		return sendMail(getAdminRecipients(), settings.getSystemMail(), settings.getSystemName(), mail);
 	}
+	
+	public boolean sendMail(String mailTo, MailTemplate template) {
+		return sendMail(new String[] {mailTo} , settings.getSystemMail(), settings.getSystemName(), template);
+	}
 
 	public boolean sendMail(List<String> mailTo, MailTemplate template) {
 		return sendMail(mailTo, settings.getSystemMail(), settings.getSystemName(), template);

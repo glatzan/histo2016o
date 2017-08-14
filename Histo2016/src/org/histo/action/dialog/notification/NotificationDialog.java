@@ -2,16 +2,22 @@ package org.histo.action.dialog.notification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.ws.Holder;
 
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.print.PrintDialog;
+import org.histo.action.handler.PDFGeneratorHandler;
+import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
+import org.histo.config.enums.NotificationOption;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
@@ -20,13 +26,16 @@ import org.histo.model.interfaces.HasDataList;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.mail.DiagnosisReportMail;
+import org.histo.ui.medicalFindings.MedicalFindingsChooser;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.HistoUtil;
 import org.histo.util.StreamUtils;
 import org.histo.util.mail.MailHandler;
 import org.histo.util.printer.template.AbstractTemplate;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.scheduling.annotation.Async;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -53,9 +62,16 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SettingsHandler settingsHandler;
+
 	private int activeIndex = 0;
 
-	public AbstractTab[] tabs = new AbstractTab[] { new MailTab(), new FaxTab(), new LetterTab(), new PhoneTab(),
+	private MailTab mailTab = new MailTab();
+
+	public AbstractTab[] tabs = new AbstractTab[] { mailTab, new FaxTab(), new LetterTab(), new PhoneTab(),
 			new SendTab() };
 
 	public void initAndPrepareBean(Task task) {
@@ -433,12 +449,15 @@ public class NotificationDialog extends AbstractDialog {
 	public class SendTab extends AbstractTab {
 
 		private boolean notificationCompleted;
-		
+
+		private AtomicBoolean notificationRunning;
+
 		public SendTab() {
 			setTabName("SendTab");
 			setName("dialog.notification.tab.send");
 			setViewID("sendTab");
 			setNotificationCompleted(false);
+			setNotificationRunning(new AtomicBoolean(false));
 		}
 
 		@Override
@@ -449,6 +468,230 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 			// TODO Auto-generated method stub
+		}
+
+		@Async("taskExecutor")
+		public void performeNotification() {
+			try {
+				if (notificationRunning.get())
+					return;
+
+				notificationRunning.set(true);
+
+				logger.trace("Startin notification thread");
+
+				if (mailTab.isUseTab()) {
+					DiagnosisReportMail mail = mailTab.getMail();
+					mail.setSubject(mail.getSubject());
+					mail.setBody(mail.getBody());
+
+					for (ContactHolder holder : mailTab.getHolders()) {
+						if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
+							DiagnosisReportMail cloneMail = (DiagnosisReportMail) mail.clone();
+
+							if (holder.getPdf() != null)
+								// pdf was selected for the individual contact
+								cloneMail.setAttachment(holder.getPdf());
+							else if (mailTab.getSelectedTemplate() != null) {
+								// template was selected for pdf
+								
+							}
+							
+							boolean success = settingsHandler.getMailHandler().sendMail(holder.contactAddress,
+									cloneMail);
+							holder.setPerformed(success);
+						}
+					}
+				}
+
+				// patientDao.initializeDataList(getTmpTask());
+				// taskDAO.initializeDiagnosisData(getTmpTask());
+
+				if (emailNotificationSettings.isUseEmail() || faxNotificationSettings.isUseFax()
+						|| phoneNotificationSettings.isUsePhone()) {
+					ArrayList<PDFContainer> resultPdfs = new ArrayList<PDFContainer>();
+
+					// EMAIL
+					if (emailNotificationSettings.isUseEmail()) {
+						logger.trace("Email notification");
+
+						for (MedicalFindingsChooser notificationChooser : emailNotificationSettings
+								.getNotificationEmailList()) {
+							boolean emailSuccessful = false;
+
+							// name and mail
+							logger.trace("Email to " + notificationChooser.getContact().getPerson().getFullName() + " ("
+									+ notificationChooser.getContact().getPerson().getContact().getEmail() + ")");
+
+							// no notification
+							if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
+								logger.trace("No notification desired");
+								continue;
+							} else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
+									&& notificationChooser.getPrintTemplate() != null) {
+								// attach pdf to mail
+								// PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
+								// getTemporaryTask().getPatient(), getTemporaryTask(),
+								// notificationChooser.getPrintTemplate(), notificationChooser);
+								// TODO: rewrite
+								// if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+								// notificationChooser.getContact().getPerson().getContact().getEmail(),
+								// emailNotificationSettings.getEmailSubject(),
+								// emailNotificationSettings.getEmailText(), pdfToSend)) {
+								// emailSuccessful = true;
+								// // adding mail to the result array
+								//// resultPdfs.add(pdfToSend);
+								// logger.trace("PDF successfully send");
+								// } else {
+								// // TODO: HAndle fault
+								// }
+
+							} else {
+								// plain text mail
+								if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+										notificationChooser.getContact().getPerson().getContact().getEmail(),
+										emailNotificationSettings.getEmailSubject(),
+										emailNotificationSettings.getEmailText())) {
+									emailSuccessful = true;
+									logger.trace("Text successfully send");
+								} else {
+									// TODO: Handle fault
+								}
+							}
+
+							// check if mail was send
+							if (emailSuccessful) {
+
+								// setting the associatedContact to perfomed
+								notificationChooser.getContact().setEmailNotificationPerformed(true);
+								notificationChooser.setPerformed(true);
+
+								genericDAO.save(notificationChooser.getContact(),
+										resourceBundle.get("log.patient.task.contact.notification.performed",
+												getTemporaryTask().getTaskID(),
+												notificationChooser.getContact().getPerson().getFullName()),
+										getTemporaryTask().getPatient());
+
+							}
+						}
+
+					} else {
+						logger.trace("No Email notification");
+					}
+
+					// FAX
+					if (faxNotificationSettings.isUseFax()) {
+						logger.trace("Fax notification");
+
+						for (MedicalFindingsChooser notificationChooser : faxNotificationSettings
+								.getNotificationFaxList()) {
+							boolean faxSuccessful = false;
+
+							// name and number
+							logger.trace("Fax to " + notificationChooser.getContact().getPerson().getFullName() + " ("
+									+ notificationChooser.getContact().getPerson().getContact().getEmail() + ")");
+
+							// no notification
+							if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
+								logger.trace("No notification desired");
+								continue;
+							} else if (notificationChooser.getPrintTemplate() == null
+									|| notificationChooser.getContact().getPerson().getContact().getFax() == null
+									|| notificationChooser.getContact().getPerson().getContact().getFax().isEmpty()) {
+								// error no templat or number
+								logger.trace("Error, no Fax-Number or TemplateUtil");
+							} else {
+								// creating pdf
+								// PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
+								// getTemporaryTask().getPatient(), getTemporaryTask(),
+								// notificationChooser.getPrintTemplate(),
+								// notificationChooser.getContact().getPerson());
+								// resultPdfs.add(pdfToSend);
+
+								// TODO: SEND FAX
+
+								faxSuccessful = true;
+								logger.trace("Fax send successfully");
+
+								// sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.error"));
+							}
+
+							if (faxSuccessful) {
+								notificationChooser.getContact().setFaxNotificationPerformed(true);
+								notificationChooser.setPerformed(true);
+
+								genericDAO.save(notificationChooser.getContact(),
+										resourceBundle.get("log.patient.task.contact.notification.performed",
+												getTemporaryTask().getTaskID(),
+												notificationChooser.getContact().getPerson().getFullName()),
+										getTemporaryTask().getPatient());
+							}
+						}
+
+					} else {
+						logger.trace("No Fax notification");
+					}
+
+					// PHONE
+					if (phoneNotificationSettings.isUsePhone()) {
+						logger.trace("Phone notification");
+
+						for (MedicalFindingsChooser notificationChooser : phoneNotificationSettings
+								.getNotificationPhoneList()) {
+
+							// name and number
+							logger.trace("Phone to " + notificationChooser.getContact().getPerson().getFullName() + " ("
+									+ notificationChooser.getContact().getPerson().getContact().getPhone() + ")");
+
+							if (notificationChooser.getNotificationAttachment() == NotificationOption.NONE) {
+								continue;
+							} else {
+								notificationChooser.getContact().setPhoneNotificationPerformed(true);
+								notificationChooser.setPerformed(true);
+								genericDAO.save(notificationChooser.getContact(),
+										resourceBundle.get("log.patient.task.contact.notification.telefon.performed",
+												getTemporaryTask().getTaskID(),
+												notificationChooser.getContact().getPerson().getFullName()),
+										getTemporaryTask().getPatient());
+							}
+
+						}
+					} else {
+						logger.trace("No phone notification");
+					}
+
+					// getting the template for the send report
+					AbstractTemplate sendReport = AbstractTemplate.getDefaultTemplate(
+							AbstractTemplate.getTemplatesByType(DocumentType.MEDICAL_FINDINGS_SEND_REPORT));
+
+					// sendreport has date and datafiled
+					HashMap<String, String> addtionalFields = new HashMap<String, String>();
+					addtionalFields.put("reportDate", mainHandlerAction.date(System.currentTimeMillis()));
+
+					PDFContainer sendReportPDF = pDFGeneratorHandler.generateSendReport(sendReport,
+							getTemporaryTask().getPatient(), getEmailNotificationSettings(),
+							getFaxNotificationSettings(), getPhoneNotificationSettings());
+
+					resultPdfs.add(0, sendReportPDF);
+
+					PDFContainer resultPdf = PDFGeneratorHandler.mergePdfs(resultPdfs, sendReportPDF.getName(),
+							DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
+
+					dialogHandlerAction.getPrintDialog().savePdf(getTemporaryTask(), resultPdf);
+
+					favouriteListDAO.removeTaskFromList(getTemporaryTask(), PredefinedFavouriteList.NotificationList);
+					getTemporaryTask().setNotificationCompletionDate(System.currentTimeMillis());
+
+					mainHandlerAction.saveDataChange(getTemporaryTask(), "log.patient.task.update");
+
+					mediaDialog.setTemporaryPdfContainer(resultPdf);
+
+					notificationRunning.set(false);
+					notificationPerformed.set(true);
+				}
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				// TODO move to dialog
+			}
 		}
 	}
 }
