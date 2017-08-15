@@ -41,9 +41,15 @@ public class AssociatedContactNotification implements HasID {
 
 	@Column
 	private boolean performed;
+	
+	@Column
+	private boolean failed;
 
+	@Column(columnDefinition = "VARCHAR")
+	private String commentary;
+	
 	@Temporal(TemporalType.DATE)
-	private Date performedDate;
+	private Date dateOfAction;
 
 	@Column
 	private boolean manuallyAdded;

@@ -5,6 +5,8 @@ import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -82,8 +84,8 @@ public class AssociatedContact implements LogAble, HasID {
 	}
 
 	/**
-	 * Returns if set the customContact (manually changed by the user),
-	 * otherwise it will generate the default address field
+	 * Returns if set the customContact (manually changed by the user), otherwise it
+	 * will generate the default address field
 	 * 
 	 * @return
 	 */
@@ -112,10 +114,17 @@ public class AssociatedContact implements LogAble, HasID {
 	}
 
 	@Transient
-	public boolean containsNotificationTyp(NotificationTyp type) {
-		return getNotifications().stream().anyMatch(p -> p.getNotificationTyp().equals(type) && !p.isPerformed());
+	public boolean containsNotificationTyp(NotificationTyp type, boolean performed) {
+		return getNotificationTypAsList(type, performed).size() > 0;
 	}
-	
+
+	@Transient
+	public List<AssociatedContactNotification> getNotificationTypAsList(NotificationTyp type, boolean performed) {
+		return getNotifications().stream()
+				.filter(p -> p.getNotificationTyp().equals(type) && p.isPerformed() == performed)
+				.collect(Collectors.toList());
+	}
+
 	@Override
 	public String toString() {
 		if (getPerson().getFullName() != null && !getPerson().getFullName().isEmpty())

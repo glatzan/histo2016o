@@ -2,6 +2,7 @@ package org.histo.action.dialog.notification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,8 +20,10 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.NotificationOption;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
+import org.histo.model.AssociatedContactNotification;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.PDFContainer;
@@ -67,11 +70,17 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private SettingsHandler settingsHandler;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PatientDao patientDao;
+
 	private int activeIndex = 0;
 
 	private MailTab mailTab = new MailTab();
+	private FaxTab faxTab = new FaxTab();
 
-	public AbstractTab[] tabs = new AbstractTab[] { mailTab, new FaxTab(), new LetterTab(), new PhoneTab(),
+	public AbstractTab[] tabs = new AbstractTab[] { mailTab, faxTab, new LetterTab(), new PhoneTab(),
 			new SendTab() };
 
 	public void initAndPrepareBean(Task task) {
@@ -211,19 +220,28 @@ public class NotificationDialog extends AbstractDialog {
 
 		public void updateList(List<AssociatedContact> contacts, NotificationTyp notificationTyp) {
 
+			// list of all previously generated holders
 			List<ContactHolder> tmpHolders = new ArrayList<ContactHolder>(getHolders());
 
 			for (AssociatedContact associatedContact : contacts) {
-				if (associatedContact.containsNotificationTyp(notificationTyp)) {
+
+				List<AssociatedContactNotification> notification = null;
+
+				// holder is in list, remove holder from temporary list
+				if ((notification = associatedContact.getNotificationTypAsList(notificationTyp, false)).size() == 0) {
+					// there should only be one AssociatedContactNotification for the given type
 					try {
 						ContactHolder tmpHolder = tmpHolders.stream()
 								.filter(p -> p.getContact().equals(associatedContact))
 								.collect(StreamUtils.singletonCollector());
+						// updating notification type
+						tmpHolder.setNotification(notification.get(0));
 						tmpHolders.remove(tmpHolder);
 					} catch (IllegalStateException e) {
 						// adding to list
 
 						ContactHolder holder = new ContactHolder(associatedContact);
+						holder.setNotification(notification.get(0));
 
 						switch (notificationTyp) {
 						case EMAIL:
@@ -246,6 +264,7 @@ public class NotificationDialog extends AbstractDialog {
 
 			}
 
+			// removing old holders
 			for (ContactHolder contactHolder : tmpHolders) {
 				getHolders().remove(contactHolder);
 			}
@@ -261,7 +280,10 @@ public class NotificationDialog extends AbstractDialog {
 		@Getter
 		@Setter
 		public class ContactHolder {
+
 			private AssociatedContact contact;
+			private AssociatedContactNotification notification;
+
 			private PDFContainer pdf;
 			private String contactAddress;
 			private NotificationTyp notificationTyp;
@@ -493,15 +515,36 @@ public class NotificationDialog extends AbstractDialog {
 								// pdf was selected for the individual contact
 								cloneMail.setAttachment(holder.getPdf());
 							else if (mailTab.getSelectedTemplate() != null) {
+								
+								dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(task, types, defaultType);
+								
 								// template was selected for pdf
 								
 							}
 							
 							boolean success = settingsHandler.getMailHandler().sendMail(holder.contactAddress,
 									cloneMail);
-							holder.setPerformed(success);
+							if(success) {
+								holder.setPerformed(true);
+								holder.getNotification().setPerformed(true);
+								holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
+							}else {
+								holder.getNotification().setFailed(true);
+								holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
+								holder.getNotification().setCommentary(resourceBundle.get(""));
+								//TODO TEXT
+							}
+							
+						}else {
+							// no email provided
+							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
+							holder.getNotification().setCommentary(resourceBundle.get(""));
 						}
 					}
+				}
+				
+				if(faxTab.isUseTab()) {
+					
 				}
 
 				// patientDao.initializeDataList(getTmpTask());
@@ -530,21 +573,21 @@ public class NotificationDialog extends AbstractDialog {
 							} else if (notificationChooser.getNotificationAttachment() == NotificationOption.PDF
 									&& notificationChooser.getPrintTemplate() != null) {
 								// attach pdf to mail
-								// PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
-								// getTemporaryTask().getPatient(), getTemporaryTask(),
-								// notificationChooser.getPrintTemplate(), notificationChooser);
+								PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
+										getTemporaryTask().getPatient(), getTemporaryTask(),
+										notificationChooser.getPrintTemplate(), notificationChooser);
 								// TODO: rewrite
-								// if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-								// notificationChooser.getContact().getPerson().getContact().getEmail(),
-								// emailNotificationSettings.getEmailSubject(),
-								// emailNotificationSettings.getEmailText(), pdfToSend)) {
-								// emailSuccessful = true;
+								 if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
+								 notificationChooser.getContact().getPerson().getContact().getEmail(),
+								 emailNotificationSettings.getEmailSubject(),
+								 emailNotificationSettings.getEmailText(), pdfToSend)) {
+								 emailSuccessful = true;
 								// // adding mail to the result array
-								//// resultPdfs.add(pdfToSend);
-								// logger.trace("PDF successfully send");
-								// } else {
-								// // TODO: HAndle fault
-								// }
+									// resultPdfs.add(pdfToSend);
+									logger.trace("PDF successfully send");
+								} else {
+									// TODO: HAndle fault
+								}
 
 							} else {
 								// plain text mail
