@@ -29,8 +29,14 @@
 
 		<div class="contentDiv">
 			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
-				<h:inputTextarea style="width:99%;resize: none" rows="10"
-					value="#{dialogHandlerAction.customAddressDialog.customAddress}" />
+				<h:outputLabel
+					value="Das aktuell ausgewählte Documnt als fax versenden:" />
+
+				<h:outputLabel
+					value="#{dialogHandlerAction.faxPrintDocumentDialog.contact.person.fullName}" />
+					
+				<h:inputText
+					value="#{dialogHandlerAction.faxPrintDocumentDialog.number}" />
 			</h:panelGrid>
 		</div>
 
@@ -42,20 +48,20 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="float:right;">
-					<p:commandButton value="#{msg['general.save']}"
+					<p:commandButton value="Send fax"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-fw fa-check-circle-o">
 						<f:actionListener
-							binding="#{dialogHandlerAction.customAddressDialog.copyCustomAddress()}" />
+							binding="#{dialogHandlerAction.faxPrintDocumentDialog.sendFax()}" />
 						<f:actionListener
-							binding="#{dialogHandlerAction.customAddressDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.faxPrintDocumentDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.close']}"
 						styleClass="smallButton buttonRighMarginInList"
 						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
 						process="@this"
-						actionListener="#{dialogHandlerAction.customAddressDialog.hideDialog()}"></p:commandButton>
+						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
 
 			</h:panelGrid>

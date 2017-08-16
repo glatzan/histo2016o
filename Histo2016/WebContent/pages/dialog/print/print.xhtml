@@ -202,7 +202,13 @@
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
-				<h:panelGrid columns="3" style="float:right;">
+				<h:panelGrid columns="4" style="float:right;">
+
+					<p:commandButton value="Fax" icon="fa fa-fax"
+						title="Angezeigtes PDF als Fax versenden"
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
+
 					<h:panelGrid columns="2"
 						rendered="#{!dialogHandlerAction.printDialog.selectMode}">
 						<!-- print -->

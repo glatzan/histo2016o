@@ -1,4 +1,5 @@
 -> UTF 8 Tomcat: -Dfile.encoding=UTF8
+-> plink windows set PATH=C:\path\to\putty\directory;%PATH%
 
 Merke: keine kurzbefunde
 

@@ -22,11 +22,13 @@ import org.histo.model.interfaces.GsonAble;
 import org.histo.template.MailTemplate;
 import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +36,8 @@ import lombok.Setter;
 @Setter
 public class MailHandler implements GsonAble {
 
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	private MailSettings settings;

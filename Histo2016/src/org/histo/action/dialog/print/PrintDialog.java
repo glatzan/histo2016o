@@ -145,6 +145,11 @@ public class PrintDialog extends AbstractDialog {
 	private boolean autoRefresh;
 
 	/**
+	 * If true a fax button will be displayed
+	 */
+	private boolean faxMode;
+	
+	/**
 	 * Initializes the bean and shows the council dialog
 	 * 
 	 * @param task
@@ -176,6 +181,8 @@ public class PrintDialog extends AbstractDialog {
 		setRenderedContact(null);
 
 		setSelectMode(false);
+		
+		setFaxMode(true);
 
 		setSingleAddressSelectMode(false);
 		// rendering the template
@@ -241,6 +248,8 @@ public class PrintDialog extends AbstractDialog {
 		setRenderedContact(new ContactContainer(sendTo));
 
 		setSelectMode(false);
+		
+		setFaxMode(false);
 
 		setSingleAddressSelectMode(false);
 

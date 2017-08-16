@@ -1,8 +1,10 @@
 package org.histo.util.interfaces;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
@@ -31,6 +33,16 @@ public interface FileHandlerUtil extends HasLogger {
 		}
 
 		return toPrint;
+	}
+
+	public static boolean saveContentOfFile(File fileName, byte[] content) {
+		try {
+			FileUtils.writeByteArrayToFile(fileName, content);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public static URI getAbsolutePath(String path) {

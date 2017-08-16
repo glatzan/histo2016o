@@ -90,6 +90,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 			final NavigationHandler nav = fc.getApplication().getNavigationHandler();
 
 			logger.debug("Global exeption handler - " + cause);
+			cause.printStackTrace();
 
 			// getting root excepetion
 			while (cause instanceof FacesException || cause instanceof ELException) {
@@ -128,8 +129,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
 							resourceBundle.get("growl.version.error.text"));
-					
-					RequestContext.getCurrentInstance().execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+
+					RequestContext.getCurrentInstance()
+							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
 
 					// TODO implement
 				}

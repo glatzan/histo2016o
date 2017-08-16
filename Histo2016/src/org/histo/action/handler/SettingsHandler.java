@@ -21,6 +21,7 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.histo.util.mail.MailHandler;
+import org.histo.util.mail.fax.FaxHandler;
 import org.histo.util.printer.ClinicPrinter;
 import org.histo.util.printer.ClinicPrinterDummy;
 import org.histo.util.printer.LabelPrinter;
@@ -47,16 +48,17 @@ public class SettingsHandler {
 
 	public static final String HISTO_BASE_URL = "/Histo2016";
 	public static final String HISTO_LOGIN_PAGE = "/login.xhtml";
-	
+
 	public static final String PROGRAM_SETTINGS = "classpath:settings/general.json";
 	public static final String SETTINGS_OBJECT_GENERAL = "generalSettings";
 	public static final String SETTINGS_OBJECT_DEFAULT_NOTIFICATION = "defaultNotification";
 	public static final String SETTINGS_OBJECT_LDAP = "ldapSettings";
 	public static final String SETTINGS_OBJECT_MAIL = "mail";
+	public static final String SETTINGS_OBJECT_FAX = "fax";
 
 	public static final String MAIL_TEMPLATES = "classpath:settings/mailTemplates.json";
 	public static final String PRINT_DOCUMENT_TEMPLATES = "classpath:settings/printTempaltes.json";
-	
+
 	public static final String PRINTER_SETTINGS = "classpath:settings/cupsServer.json";
 	public static final String LABEL_PRINTER_SETTINGS = "classpath:settings/labelPrinter.json";
 	public static final String VERSION_SETTINGS = "classpath:settings/version.json";
@@ -136,6 +138,11 @@ public class SettingsHandler {
 	 */
 	private MailHandler mailHandler;
 
+	/**
+	 * Object for handling mails
+	 */
+	private FaxHandler faxHandler;
+
 	public void initBean() {
 		Gson gson = new Gson();
 
@@ -150,6 +157,8 @@ public class SettingsHandler {
 				DefaultNotificationSettings.class);
 
 		mailHandler = gson.fromJson(o.get(SETTINGS_OBJECT_MAIL), MailHandler.class);
+
+		faxHandler = gson.fromJson(o.get(SETTINGS_OBJECT_FAX), FaxHandler.class);
 
 		logger.debug("Current Version");
 		Version[] versions = Version.factroy(SettingsHandler.VERSIONS_INFO);
