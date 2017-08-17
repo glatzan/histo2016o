@@ -57,7 +57,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollbackAble, HasDataList, HasID {
+public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasDataList, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -856,33 +856,6 @@ public class Task implements Parent<Patient>, DeleteAble, LogAble, PatientRollba
 
 	/********************************************************
 	 * Interface Parent
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface Delete Able
-	 ********************************************************/
-	/**
-	 * �berschreibt Methode aus dem Interface ArchiveAble Gibt die TaskID als
-	 * identifier zur�ck
-	 */
-	@Transient
-	@Override
-	public String getTextIdentifier() {
-		return getTaskID();
-	}
-
-	/**
-	 * �berschreibt Methode aus dem Interface ArchiveAble Gibt den Dialog zum
-	 * archivieren zur�ck
-	 */
-	@Transient
-	@Override
-	public Dialog getArchiveDialog() {
-		return Dialog.TASK_ARCHIV;
-	}
-
-	/********************************************************
-	 * Interface Delete Able
 	 ********************************************************/
 
 	/********************************************************

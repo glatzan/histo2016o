@@ -194,7 +194,6 @@ public class MainHandlerAction {
 	}
 
 	public void showQueueGrowlMessage() {
-		System.out.println("Qusaf dfsdf");
 
 		for (FacesMessage facesMessage : getQueueGrowlMessages()) {
 			FacesContext context = FacesContext.getCurrentInstance();

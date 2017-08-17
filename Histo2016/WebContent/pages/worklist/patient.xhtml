@@ -102,19 +102,7 @@
 			<p:ajax event="rowSelect" update=":contentForm, :headerForm"
 				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(commonDataHandlerAction.selectedTask)}" />
 
-			<p:column>
-				<f:facet name="header">
-					<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
-						<h:outputLabel value="#{msg['body.worklist.patient.tasks']}"
-							style="float:left;"></h:outputLabel>
-						<p:commandLink id="taskList"
-							actionListener="#{createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" listener="#{mainHandlerAction.processQueues()}"/>
-							<i class="fa fa-plus" style="float: right"></i>
-						</p:commandLink>
-					</h:panelGrid>
-				</f:facet>
-
+			<p:column headerText="#{msg['body.worklist.patient.tasks']}">
 				<h:outputText
 					value="#{task.taskID} - #{mainHandlerAction.date(task.dateOfReceiptAsDate)}" />
 
@@ -203,6 +191,25 @@
 					</ui:fragment>
 				</h:panelGroup>
 
+			</p:column>
+
+			<p:column style="width:15px">
+				<f:facet name="header">
+					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+						<p:commandLink id="taskList"
+							actionListener="#{createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+							<p:ajax event="dialogReturn" update="navigationForm contentForm"
+								listener="#{mainHandlerAction.processQueues()}" />
+							<i class="fa fa-plus" />
+						</p:commandLink>
+					</h:panelGrid>
+				</f:facet>
+				<p:commandLink
+					actionListener="#{dialogHandlerAction.deleteTaskDialog.initAndPrepareBean(task)}">
+					<p:ajax event="dialogReturn" update="navigationForm contentForm"
+						listener="#{mainHandlerAction.processQueues()}" />
+					<i class="fa fa-times-circle" />
+				</p:commandLink>
 			</p:column>
 
 		</p:dataTable>

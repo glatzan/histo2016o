@@ -7,13 +7,13 @@
 <application generated-by="eclipse" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.zeroturnaround.com" xsi:schemaLocation="http://www.zeroturnaround.com http://update.zeroturnaround.com/jrebel/rebel-2_1.xsd">
 
 	<classpath>
-		<dir name="D:/Dropbox/Projekte/Histo2016offline/Histo2016/build/classes">
+		<dir name="C:/Users/glatza/git/histo2016o/Histo2016/build/classes">
 		</dir>
 	</classpath>
 
 	<web>
 		<link target="/">
-			<dir name="D:/Dropbox/Projekte/Histo2016offline/Histo2016/WebContent">
+			<dir name="C:/Users/glatza/git/histo2016o/Histo2016/WebContent">
 			</dir>
 		</link>
 	</web>

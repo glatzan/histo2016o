@@ -58,8 +58,6 @@ public class FaxHandler {
 
 			File tempFile = new File(workingDirectory.getAbsolutePath() + File.separator + settings.getFileName());
 
-			System.out.println(tempFile.getAbsolutePath());
-
 			FileHandlerUtil.saveContentOfFile(tempFile, container.getData());
 
 			for (String faxNumber : faxNumbers) {
@@ -73,24 +71,20 @@ public class FaxHandler {
 				try {
 
 					ProcessBuilder builder = new ProcessBuilder(tmpArr);
-					builder.redirectErrorStream(true);
+//					builder.redirectErrorStream(true);
 					Process p = builder.start();
-					BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					String line;
-					while (true) {
-						line = r.readLine();
-						if (line == null) {
-							break;
-						}
-						System.out.println(line);
-					}
+//					BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+//					String line;
+//					while (true) {
+//						line = r.readLine();
+//						if (line == null) {
+//							break;
+//						}
+//					}
 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
-				// plink -i Q:/AUG-T-HISTO/putty/key.ppk \"lp -d Internes_Modem -o phone=\" <
-				// $file
 			}
 		}
 	}

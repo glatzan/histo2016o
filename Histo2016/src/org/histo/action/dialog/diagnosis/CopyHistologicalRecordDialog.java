@@ -49,7 +49,7 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
 			return false;
 		}
-		super.initBean(task, Dialog.DIAGNOSIS_PHASE_LEAVE);
+		super.initBean(task, Dialog.DIAGNOSIS_RECORD_OVERWRITE);
 
 		return true;
 	}

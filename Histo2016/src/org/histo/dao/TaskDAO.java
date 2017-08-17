@@ -9,6 +9,8 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
 import org.histo.model.patient.Task;
@@ -27,7 +29,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
-	
+
 	/**
 	 * Counts all tasks of the current year
 	 * 
@@ -126,4 +128,8 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return list;
 	}
 
+	public List<Task> getTasksRevisions(long taskID) {
+		return AuditReaderFactory.get(getSession()).createQuery().forRevisionsOfEntity(Task.class, false, false)
+				.add(AuditEntity.id().eq(taskID)).addOrder(AuditEntity.revisionNumber().asc()).getResultList();
+	}
 }

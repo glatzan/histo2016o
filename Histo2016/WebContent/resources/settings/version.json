@@ -1,39 +1,50 @@
-[ {  
-      "version":"1.0.7",
-      "changes":[  
-         "<b>Fix:</b> Viel Bug-Fixes, interne Verbesserungen"
-       ]
-   },{  
-      "version":"1.0.5",
-      "changes":[  
-         "<b>Fix:</b> Viel Bug-Fixes, interne Verbesserungen"
-       ]
-   },{  
-      "version":"1.0.3",
-      "changes":[  
-       	 "<b>Change:</b> Patienten hizufügen funktioniert jetzt mit Barcode-Scanner",
-     	 "<b>Change:</b> Konsile Dialog überarbeitet, Konsile werden jetzt je nach Status in Favoritenlisten eingeteilt",
-         "<b>Fix:</b> Sortierung der Arbeitsliste überarbeitet",
-         "<b>Fix:</b> Navigationsknöpfe der Arbeitsliste überarbeitet",
-         "<b>Fix:</b> Bennunung von Blöcken funktioniert wieder richtig"
-       ]
-   },
- 	{  
-      "version":"1.0.2",
-      "changes":[  
-         "<b>Added:</b> Erweiterte Suche funktionsfähig"    
-       ]
-   },
-   {  
-      "version":"1.0.1",
-      "changes":[  
-         "<b>Change:</b> Session-Timeout hochgesetzt"    
-       ]
-   },
-   {  
-      "version":"1.0.0",
-      "changes":[  
-         "Erste Veröffentlichung"    
-       ]
-   }
+[
+	{
+		"version": "1.0.8",
+		"changes": [
+			"<b>Fix:</b> Kopieren der vorgefertigenten Diangosen-Text funktionert wieder",
+			"<b>Added:</b> Faxen ist über den Drucken-Dialog möglich",
+			"<b>Added:</b> Löschen von Aufträgen, die noch nicht bearbeiten wurden ist möglich"
+		]
+	},
+	{
+		"version": "1.0.7",
+		"changes": [
+			"<b>Fix:</b> Viel Bug-Fixes, interne Verbesserungen"
+		]
+	},
+	{
+		"version": "1.0.5",
+		"changes": [
+			"<b>Fix:</b> Viel Bug-Fixes, interne Verbesserungen"
+		]
+	},
+	{
+		"version": "1.0.3",
+		"changes": [
+			"<b>Change:</b> Patienten hizufügen funktioniert jetzt mit Barcode-Scanner",
+			"<b>Change:</b> Konsile Dialog überarbeitet, Konsile werden jetzt je nach Status in Favoritenlisten eingeteilt",
+			"<b>Fix:</b> Sortierung der Arbeitsliste überarbeitet",
+			"<b>Fix:</b> Navigationsknöpfe der Arbeitsliste überarbeitet",
+			"<b>Fix:</b> Bennunung von Blöcken funktioniert wieder richtig"
+		]
+	},
+	{
+		"version": "1.0.2",
+		"changes": [
+			"<b>Added:</b> Erweiterte Suche funktionsfähig"
+		]
+	},
+	{
+		"version": "1.0.1",
+		"changes": [
+			"<b>Change:</b> Session-Timeout hochgesetzt"
+		]
+	},
+	{
+		"version": "1.0.0",
+		"changes": [
+			"Erste Veröffentlichung"
+		]
+	}
 ]
