@@ -36,19 +36,19 @@ public class DeleteTaskDialog extends AbstractDialog {
 
 	public void initBean(Task task) {
 		super.initBean(task, Dialog.TASK_DELETE, false);
-		setDeleteAble(taskWasAltered());
+		setDeleteAble(!taskWasAltered());
 	}
 
 	public boolean taskWasAltered() {
-		List<Task> revisions = taskDAO.getTasksRevisions(task.getVersion());
+		List<Task> revisions = taskDAO.getTasksRevisions(task.getId());
 
 		logger.debug(revisions.size() + " Revsions available");
 
-		if (revisions.size() >= maxRevisionToDelete) {
-			return false;
+		if (revisions.size() > maxRevisionToDelete) {
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	public void deleteTask() {
