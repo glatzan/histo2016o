@@ -31,7 +31,7 @@ import lombok.Setter;
 @SequenceGenerator(name = "diagnosisPreset_sequencegenerator", sequenceName = "diagnosisPreset_sequence")
 @Getter
 @Setter
-public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, HasID {
+public class DiagnosisPreset implements LogAble, ListOrder<DiagnosisPreset>, HasID {
 
 	@Id
 	@GeneratedValue(generator = "diagnosisPreset_sequencegenerator")
@@ -56,7 +56,7 @@ public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, Ha
 	@Fetch(value = FetchMode.SUBSELECT)
 	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
 	private Set<ContactRole> diagnosisReportAsLetter;
-	
+
 	public DiagnosisPreset() {
 	}
 
@@ -66,20 +66,20 @@ public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, Ha
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof DiagnosisPreset){
-			if(getId() == ((DiagnosisPreset)obj).getId()){
+		if (obj instanceof DiagnosisPreset) {
+			if (getId() == ((DiagnosisPreset) obj).getId()) {
 				return true;
 			}
 		}
-		
+
 		return super.equals(obj);
 	}
 
 	@Override
 	public int hashCode() {
-		return (int)getId();
+		return (int) getId();
 	}
-	
+
 	/**
 	 * Used for gui, can only handle arrays
 	 * 
@@ -87,7 +87,10 @@ public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, Ha
 	 */
 	@Transient
 	public ContactRole[] getDiagnosisReportAsLetterAsArray() {
-		return (ContactRole[]) getDiagnosisReportAsLetter().toArray(new ContactRole[getDiagnosisReportAsLetter().size()]);
+		return getDiagnosisReportAsLetter() != null
+				? (ContactRole[]) getDiagnosisReportAsLetter()
+						.toArray(new ContactRole[getDiagnosisReportAsLetter().size()])
+				: new ContactRole[0];
 	}
 
 	public void setDiagnosisReportAsLetterAsArray(ContactRole[] diagnosisReportAsLetter) {
@@ -95,5 +98,3 @@ public class DiagnosisPreset implements  LogAble, ListOrder<DiagnosisPreset>, Ha
 	}
 
 }
-
-

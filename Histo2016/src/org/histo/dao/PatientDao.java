@@ -81,7 +81,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		// if failed false will be returned
 		return save(object, resourcesKey, new Object[] { hasPatient.getLogPath(), resourcesKeyInsert },
 				hasPatient.getPatient());
-
 	}
 
 	public <C extends HasID & PatientRollbackAble> C deletePatientAssociatedDataFailSave(C object, String resourcesKey,

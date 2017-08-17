@@ -103,9 +103,8 @@ public class TaskManipulationHandler {
 
 		revision.getDiagnoses().add(diagnosis);
 
-		// saving to database
-		mainHandlerAction.saveDataChange(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.new",
-				diagnosis.getName());
+		patientDao.savePatientAssociatedDataFailSave(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.new",
+				diagnosis.toString());
 
 		return diagnosis;
 	}
@@ -165,20 +164,21 @@ public class TaskManipulationHandler {
 		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().indexOf(diagnosisRevision));
 
 		// saving to database
-		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
-				diagnosisRevision.getName());
+		patientDao.savePatientAssociatedDataFailSave(diagnosisRevision,
+				"log.patient.task.diagnosisContainer.diagnosisRevision.new", diagnosisRevision.toString());
 
 		// creating a diagnosis for every sample
 		for (Sample sample : parent.getParent().getSamples()) {
 			createDiagnosis(diagnosisRevision, sample);
 		}
 
-		// saving to database
-		mainHandlerAction.saveDataChange(diagnosisRevision,
-				"log.patient.task.diagnosisContainer.diagnosisRevision.update", diagnosisRevision.getName());
+//		// saving to database
+//		mainHandlerAction.saveDataChange(diagnosisRevision,
+//				"log.patient.task.diagnosisContainer.diagnosisRevision.update", diagnosisRevision.getName());
 
-		// saving parent
-		mainHandlerAction.saveDataChange(parent, "log.patient.task.diagnosisContainer.update");
+		// // saving parent
+		// mainHandlerAction.saveDataChange(parent,
+		// "log.patient.task.diagnosisContainer.update");
 
 	}
 
@@ -200,8 +200,8 @@ public class TaskManipulationHandler {
 	}
 
 	/**
-	 * Updates a diagnosisRevision with a sample list. Used for adding and
-	 * removing samples after initial revision creation.
+	 * Updates a diagnosisRevision with a sample list. Used for adding and removing
+	 * samples after initial revision creation.
 	 * 
 	 * @param diagnosisRevision
 	 * @param samples
@@ -265,8 +265,8 @@ public class TaskManipulationHandler {
 	 * Sample Manipulation
 	 ********************************************************/
 	/**
-	 * Creates a new sample and adds this sample to the given task. Creates a
-	 * new diagnosis and a new block with slides as well.
+	 * Creates a new sample and adds this sample to the given task. Creates a new
+	 * diagnosis and a new block with slides as well.
 	 * 
 	 * @param task
 	 */
@@ -293,8 +293,8 @@ public class TaskManipulationHandler {
 	 ********************************************************/
 
 	/**
-	 * Creates a new block for the given sample. Adds all slides from the
-	 * material preset to the block.
+	 * Creates a new block for the given sample. Adds all slides from the material
+	 * preset to the block.
 	 * 
 	 * @param sample
 	 * @param material
@@ -304,17 +304,17 @@ public class TaskManipulationHandler {
 		block.setParent(sample);
 		sample.getBlocks().add(block);
 
-		mainHandlerAction.saveDataChange(block, "log.patient.task.sample.blok.new", block.getBlockID());
+		patientDao.savePatientAssociatedDataFailSave(block, "log.patient.task.sample.blok.new", block.getBlockID());
 
 		logger.debug("Creating new block " + block.getBlockID());
 
 		for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
 			createSlide(proto, block);
 		}
-		
+
 		block.updateAllNames(useAutoNomenclature, false);
 
-		mainHandlerAction.saveDataChange(block, "log.patient.task.sample.block.update", block.getBlockID());
+		patientDao.savePatientAssociatedDataFailSave(block, "log.patient.task.sample.block.update", block.getBlockID());
 
 		return block;
 	}
@@ -327,8 +327,8 @@ public class TaskManipulationHandler {
 	 * Staining Manipulation
 	 ********************************************************/
 	/**
-	 * Adds a new staining to a block. Needs the sample an the patient for
-	 * logging. Commentary will be null.
+	 * Adds a new staining to a block. Needs the sample an the patient for logging.
+	 * Commentary will be null.
 	 * 
 	 * @param prototype
 	 * @param sample
@@ -340,8 +340,8 @@ public class TaskManipulationHandler {
 	}
 
 	/**
-	 * Adds a new staining to a block. Needs the sample an the patient for
-	 * logging. Commentary the given string.
+	 * Adds a new staining to a block. Needs the sample an the patient for logging.
+	 * Commentary the given string.
 	 * 
 	 * @param prototype
 	 * @param sample
@@ -368,7 +368,8 @@ public class TaskManipulationHandler {
 
 		slide.setReStaining(reStaining);
 
-		mainHandlerAction.saveDataChange(slide, "log.patient.task.sample.block.slide.new", slide.getSlideID());
+		patientDao.savePatientAssociatedDataFailSave(slide, "log.patient.task.sample.block.slide.new",
+				slide.toString());
 
 	}
 

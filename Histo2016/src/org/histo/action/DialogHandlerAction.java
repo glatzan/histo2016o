@@ -7,6 +7,7 @@ import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.notification.NotificationDialog;
+import org.histo.action.dialog.patient.DeleteTaskDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
@@ -42,6 +43,8 @@ public class DialogHandlerAction {
 	private MediaDialog mediaDialog;
 
 	private FaxPrintDocumentDialog faxPrintDocumentDialog;
+
+	private DeleteTaskDialog deleteTaskDialog;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -118,5 +121,13 @@ public class DialogHandlerAction {
 			faxPrintDocumentDialog = new FaxPrintDocumentDialog();
 
 		return faxPrintDocumentDialog;
+	}
+
+	public DeleteTaskDialog getDeleteTaskDialog() {
+		if (deleteTaskDialog == null) {
+			deleteTaskDialog = new DeleteTaskDialog();
+		}
+
+		return deleteTaskDialog;
 	}
 }

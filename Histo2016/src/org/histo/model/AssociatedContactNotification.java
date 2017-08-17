@@ -54,6 +54,9 @@ public class AssociatedContactNotification implements HasID {
 	@Column
 	private boolean manuallyAdded;
 	
+	@Column(columnDefinition = "VARCHAR")
+	private String contactAddress;
+	
 	public enum NotificationTyp {
 		EMAIL, FAX, PHONE, LETTER;
 	}

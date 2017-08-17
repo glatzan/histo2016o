@@ -68,7 +68,7 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	@Autowired
 	private DialogHandlerAction dialogHandlerAction;
-	
+
 	@Autowired
 	private UtilDAO utilDAO;
 
@@ -138,8 +138,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the name and the amount of samples which should be created with
-	 * the new task.
+	 * Updates the name and the amount of samples which should be created with the
+	 * new task.
 	 */
 	public void updateDialog() {
 
@@ -192,21 +192,6 @@ public class CreateTaskDialog extends AbstractDialog {
 			getPatient().getTasks().add(0, getTask());
 			// sets the new task as the selected task
 
-			// saving task
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.new", task.getTaskID());
-
-			getTask().setDiagnosisContainer(new DiagnosisContainer(task));
-			getTask().getDiagnosisContainer().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
-
-			// setting signature
-			getTask().getDiagnosisContainer().setSignatureOne(new Signature());
-			getTask().getDiagnosisContainer().setSignatureTwo(new Signature());
-
-			// saving diagnosis container
-			patientDao.savePatientAssociatedDataFailSave(task.getDiagnosisContainer(),
-					"log.patient.task.diagnosisContainer.new", task.getTaskID());
-
-			
 			getTask().setCaseHistory("");
 			getTask().setWard("");
 
@@ -214,8 +199,21 @@ public class CreateTaskDialog extends AbstractDialog {
 
 			getTask().setFavouriteLists(new ArrayList<FavouriteList>());
 
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.update", task.getTaskID());
-			
+			// saving task
+			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.new", getTask().getTaskID());
+
+			DiagnosisContainer diagnosisContainer = new DiagnosisContainer(getTask());
+			getTask().setDiagnosisContainer(diagnosisContainer);
+			diagnosisContainer.setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
+
+			// setting signature
+			diagnosisContainer.setSignatureOne(new Signature());
+			diagnosisContainer.setSignatureTwo(new Signature());
+
+			// saving diagnosis container
+			patientDao.savePatientAssociatedDataFailSave(diagnosisContainer, "log.patient.task.diagnosisContainer.new",
+					getTask().getTaskID());
+
 			for (Sample sample : getTask().getSamples()) {
 				// set name of material for changing it manually
 				sample.setMaterial(sample.getMaterilaPreset().getName());
@@ -227,10 +225,6 @@ public class CreateTaskDialog extends AbstractDialog {
 				// TODO: save for version conflict
 				taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
 
-				// saving the sample
-				// saving samples
-				patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.update",
-						sample.getSampleID());
 			}
 
 			// creating standard diagnoses
@@ -242,7 +236,6 @@ public class CreateTaskDialog extends AbstractDialog {
 
 			// creating bioBank for Task
 			bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
-			patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.save");
 
 			PDFContainer selectedPDF = dialogHandlerAction.getMediaDialog().getSelectedPdfContainer();
 
@@ -264,12 +257,13 @@ public class CreateTaskDialog extends AbstractDialog {
 					patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.pdf.removed",
 							selectedPDF.getName());
 				}
+			} else {
+				patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.bioBank.save");
 			}
 
 			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.update", task.getTaskID());
-			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StainingList);
 
-			patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.save");
+			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StainingList);
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
@@ -284,7 +278,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTaskAndPrintUReport() {
 		createTask();
 
-		AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
+		AbstractTemplate[] subSelect = AbstractTemplate
+				.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
 
 		if (subSelect.length == 0) {
 			logger.error("New Task: No TemplateUtil for printing UReport found");
@@ -318,7 +313,8 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	public void showMediaSelectDialog(PDFContainer pdfContainer) {
 		// init dialog for patient and task
-		dialogHandlerAction.getMediaDialog().initBean(getPatient(), new HasDataList[] { getPatient() }, pdfContainer, true);
+		dialogHandlerAction.getMediaDialog().initBean(getPatient(), new HasDataList[] { getPatient() }, pdfContainer,
+				true);
 
 		// enabeling upload to task
 		dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { getPatient() },

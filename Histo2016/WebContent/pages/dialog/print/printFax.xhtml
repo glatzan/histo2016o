@@ -7,7 +7,7 @@
 
 <h:head>
 	<title><h:outputLabel
-			value="#{msg['dialog.organization.list.headline']}" /></title>
+			value="#{msg['dialog.printFax.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -18,7 +18,7 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.organization.list.headline']}" />
+				<h:outputLabel value="#{msg['dialog.printFax.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -28,15 +28,32 @@
 		</div>
 
 		<div class="contentDiv">
-			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
-				<h:outputLabel
-					value="Das aktuell ausgewählte Documnt als fax versenden:" />
+			<h:panelGrid columns="1" styleClass="defaultListingTableCss">
+				<h:outputLabel value="#{msg['dialog.printFax.text.1']}" />
 
 				<h:outputLabel
+					rendered="#{dialogHandlerAction.faxPrintDocumentDialog.contact ne null}"
 					value="#{dialogHandlerAction.faxPrintDocumentDialog.contact.person.fullName}" />
-					
-				<h:inputText
-					value="#{dialogHandlerAction.faxPrintDocumentDialog.number}" />
+
+				<h:outputLabel
+					rendered="#{dialogHandlerAction.faxPrintDocumentDialog.contact eq null}"
+					value="#{msg['dialog.printFax.text.noContact']}" />
+
+				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+					<h:outputLabel value="#{msg['dialog.printFax.faxNumber']}" />
+					<h:inputText
+						value="#{dialogHandlerAction.faxPrintDocumentDialog.number}">
+						<p:ajax event="keyup" process="@this" partialSubmit="true"
+							update="@form" delay="100"
+							listener="#{dialogHandlerAction.faxPrintDocumentDialog.updateFaxButton()}" />
+
+						<p:ajax event="blur" process="@this" partialSubmit="true"
+							update="@form" delay="100"
+							listener="#{dialogHandlerAction.faxPrintDocumentDialog.updateFaxButton()}" />
+					</h:inputText>
+				</h:panelGrid>
+
+				<h:outputLabel value="#{msg['dialog.printFax.text.intern']}" />
 			</h:panelGrid>
 		</div>
 
@@ -48,9 +65,12 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" style="float:right;">
-					<p:commandButton value="Send fax"
+					<p:commandButton value="#{msg['dialog.printFax.button.sendFax']}"
+						disabled="#{dialogHandlerAction.faxPrintDocumentDialog.faxButtonDisabled}"
 						styleClass="smallButton buttonRighMarginInList"
-						icon="fa fa-fw fa-check-circle-o">
+						title="#{dialogHandlerAction.faxPrintDocumentDialog.faxButtonDisabled ? msg['dialog.printFax.button.sendFax.title.disabled'] : msg['dialog.printFax.button.sendFax.text']}"
+						icon="fa fa-fw fa-fax" onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()">
 						<f:actionListener
 							binding="#{dialogHandlerAction.faxPrintDocumentDialog.sendFax()}" />
 						<f:actionListener
@@ -66,6 +86,7 @@
 
 			</h:panelGrid>
 		</div>
+		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>
 </html>

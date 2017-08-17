@@ -1,6 +1,7 @@
 package org.histo.dao;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -129,10 +130,20 @@ public class ContactDAO extends AbstractDAO {
 		return associatedContact;
 	}
 
-	public void addNotificationType(Task task, AssociatedContact associatedContact,
+	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp) {
+		return addNotificationType(task, associatedContact, notificationTyp, true, false, false, null);
+
+	}
+
+	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
+			AssociatedContactNotification.NotificationTyp notificationTyp, boolean active, boolean performed,
+			boolean failed, Date dateOfAction) {
 		AssociatedContactNotification newNotification = new AssociatedContactNotification();
-		newNotification.setActive(true);
+		newNotification.setActive(active);
+		newNotification.setPerformed(performed);
+		newNotification.setDateOfAction(dateOfAction);
+		newNotification.setFailed(failed);
 		newNotification.setNotificationTyp(notificationTyp);
 		newNotification.setContact(associatedContact);
 
@@ -144,6 +155,8 @@ public class ContactDAO extends AbstractDAO {
 		patientDao.savePatientAssociatedDataFailSave(associatedContact, task,
 				"log.patient.task.contact.notification.added",
 				new Object[] { notificationTyp, associatedContact.toString() });
+
+		return newNotification;
 	}
 
 	/**

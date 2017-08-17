@@ -204,22 +204,25 @@
 
 				<h:panelGrid columns="4" style="float:right;">
 
-					<p:commandButton value="Fax" icon="fa fa-fax"
-						title="Angezeigtes PDF als Fax versenden"
+					<p:commandButton value="#{msg['dialog.print.button.fax']}"
+						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
 
 					<h:panelGrid columns="2"
 						rendered="#{!dialogHandlerAction.printDialog.selectMode}">
 						<!-- print -->
-						<p:commandButton value="Drucken" icon="fa fa-print"
+						<p:commandButton value="#{msg['dialog.print.button.print']}"
+							icon="fa fa-print"
 							styleClass="smallButton buttonRighMarginInListExtended"
+							title="#{msg['dialog.print.button.print.text']}"
 							onstart="PF('blockUIWidget').block()"
 							oncomplete="PF('blockUIWidget').unblock()"
 							actionListener="#{dialogHandlerAction.printDialog.onPrintNewPdf()}"></p:commandButton>
 
 						<!-- select printer -->
 						<p:selectOneMenu styleClass="customSerachSelectMenu"
+							title="#{msg['dialog.print.selectPrinter']}"
 							panelStyleClass="customSerachSelectMenuPanel"
 							converter="#{settingsHandler.printerListTransformer}"
 							value="#{settingsHandler.selectedPrinter}" filter="true"
@@ -236,7 +239,9 @@
 						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}"></p:commandButton>
 
 					<!-- download -->
-					<p:commandButton value="Öffnen" icon="fa fa-download" ajax="false"
+					<p:commandButton value="#{msg['dialog.print.button.open']}"
+						icon="fa fa-download" ajax="false"
+						title="#{msg['dialog.print.button.open.text']}"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{dialogHandlerAction.printDialog.onDownloadPdf}">
 						<p:fileDownload
