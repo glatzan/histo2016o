@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
@@ -14,6 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
 @Scope(value = "session")
 public class SlideManipulationHandler {
@@ -21,7 +26,9 @@ public class SlideManipulationHandler {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	private PatientDao patientDao;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GenericDAO genericDAO;
 
 	/**
 	 * Sets all slides of a task to staining completed/not completed
@@ -29,9 +36,10 @@ public class SlideManipulationHandler {
 	 * @param task
 	 * @param completed
 	 * @return
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public boolean setStainingCompletedForAllSlides(Task task, boolean completed) throws CustomDatabaseInconsistentVersionException {
+	public boolean setStainingCompletedForAllSlides(Task task, boolean completed)
+			throws CustomDatabaseInconsistentVersionException {
 
 		boolean changed = false;
 
@@ -42,8 +50,8 @@ public class SlideManipulationHandler {
 						slide.setStainingCompleted(completed);
 						slide.setCompletionDate(System.currentTimeMillis());
 
-						patientDao
-								.savePatientAssociatedDataFailSave(slide,
+						genericDAO
+								.savePatientData(slide,
 										completed ? "log.patient.task.sample.blok.slide.stainingPerformed"
 												: "log.patient.task.sample.blok.slide.stainingNotPerformed",
 										slide.toString());
@@ -56,13 +64,13 @@ public class SlideManipulationHandler {
 	}
 
 	/**
-	 * Sets all selected slides to chosen/unchosen an returns true is something
-	 * was altered.
+	 * Sets all selected slides to chosen/unchosen an returns true is something was
+	 * altered.
 	 * 
 	 * @param stainingTableChoosers
 	 * @param completed
 	 * @return
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public boolean setStainingCompletedForSelectedSlides(List<StainingTableChooser> stainingTableChoosers,
 			boolean completed) throws CustomDatabaseInconsistentVersionException {
@@ -75,10 +83,8 @@ public class SlideManipulationHandler {
 				slide.setStainingCompleted(completed);
 				slide.setCompletionDate(System.currentTimeMillis());
 
-				patientDao.savePatientAssociatedDataFailSave(slide,
-						completed ? "log.patient.task.sample.blok.slide.stainingPerformed"
-								: "log.patient.task.sample.blok.slide.stainingNotPerformed",
-						slide.toString());
+				genericDAO.savePatientData(slide, completed ? "log.patient.task.sample.blok.slide.stainingPerformed"
+						: "log.patient.task.sample.blok.slide.stainingNotPerformed", slide.toString());
 
 				changed = true;
 			}

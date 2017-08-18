@@ -34,7 +34,7 @@ public class ContactDAO extends AbstractDAO {
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
-	private PatientDao patientDao;
+	private GenericDAO genericDAO;
 
 	@Autowired
 	private SettingsHandler settingsHandler;
@@ -95,12 +95,12 @@ public class ContactDAO extends AbstractDAO {
 
 		task.getContacts().add(indexMove, remove);
 
-		patientDao.savePatientAssociatedDataFailSave(task, resourceBundle.get("log.patient.task.contact.list.reoder"));
+		genericDAO.savePatientData(task, "log.patient.task.contact.list.reoder");
 	}
 
 	public void removeAssociatedContact(Task task, AssociatedContact associatedContact) {
 		task.getContacts().remove(associatedContact);
-		patientDao.deletePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.contact.remove",
+		genericDAO.deletePatientData(associatedContact, task, "log.patient.task.contact.remove",
 				associatedContact.toString());
 	}
 
@@ -112,9 +112,8 @@ public class ContactDAO extends AbstractDAO {
 
 			// only remove from array, and deleting the entity only (no saving
 			// of contact necessary because mapped within notification)
-			patientDao.deletePatientAssociatedDataFailSave(notification, task,
-					"log.patient.task.contact.notification.removed",
-					new Object[] { notification.getNotificationTyp(), associatedContact.toString() });
+			genericDAO.deletePatientData(notification, task, "log.patient.task.contact.notification.removed",
+					notification.getNotificationTyp().toString(), associatedContact.toString());
 		}
 	}
 
@@ -124,7 +123,7 @@ public class ContactDAO extends AbstractDAO {
 
 	public AssociatedContact addAssociatedContact(Task task, AssociatedContact associatedContact) {
 		task.getContacts().add(associatedContact);
-		patientDao.savePatientAssociatedDataFailSave(associatedContact, task, "log.patient.task.contact.add",
+		genericDAO.savePatientData(associatedContact, task, "log.patient.task.contact.add",
 				new Object[] { associatedContact.toString() }, task.getParent());
 
 		return associatedContact;
@@ -152,9 +151,8 @@ public class ContactDAO extends AbstractDAO {
 
 		associatedContact.getNotifications().add(newNotification);
 
-		patientDao.savePatientAssociatedDataFailSave(associatedContact, task,
-				"log.patient.task.contact.notification.added",
-				new Object[] { notificationTyp, associatedContact.toString() });
+		genericDAO.savePatientData(associatedContact, task, "log.patient.task.contact.notification.added",
+				notificationTyp.toString(), associatedContact.toString());
 
 		return newNotification;
 	}

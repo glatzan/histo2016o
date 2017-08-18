@@ -8,6 +8,7 @@ import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
@@ -24,6 +25,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
 @Scope(value = "session")
 public class TaskManipulationHandler {
@@ -31,14 +36,12 @@ public class TaskManipulationHandler {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	@Lazy
-	private MainHandlerAction mainHandlerAction;
-
-	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	private PatientDao patientDao;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GenericDAO genericDAO;
 
 	/********************************************************
 	 * Diagnosis Info
@@ -55,7 +58,9 @@ public class TaskManipulationHandler {
 			updateDiagnosisRevisionToSampleCount(revision, samples);
 		}
 
-		mainHandlerAction.saveDataChange(diagnosisContainer, "log.patient.task.diagnosisContainer.update");
+		genericDAO.savePatientData(diagnosisContainer, "log.patient.task.diagnosisContainer.update",
+				diagnosisContainer);
+
 	}
 
 	/**
@@ -70,11 +75,8 @@ public class TaskManipulationHandler {
 		for (DiagnosisRevision revision : revisions) {
 			revision.setDiagnosisCompleted(finalize);
 			revision.setCompleationDate(finalize ? System.currentTimeMillis() : 0);
-			patientDao
-					.savePatientAssociatedDataFailSave(revision,
-							finalize ? "log.patient.task.diagnosisContainer.diagnosisRevision.lock"
-									: "log.patient.task.diagnosisContainer.diagnosisRevision.unlock",
-							revision.getName());
+			genericDAO.savePatientData(revision, finalize ? "log.patient.task.diagnosisContainer.diagnosisRevision.lock"
+					: "log.patient.task.diagnosisContainer.diagnosisRevision.unlock", revision.getName());
 		}
 	}
 
@@ -103,7 +105,7 @@ public class TaskManipulationHandler {
 
 		revision.getDiagnoses().add(diagnosis);
 
-		patientDao.savePatientAssociatedDataFailSave(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.new",
+		genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.new",
 				diagnosis.toString());
 
 		return diagnosis;
@@ -122,8 +124,7 @@ public class TaskManipulationHandler {
 
 		diagnosis.getParent().getDiagnoses().remove(diagnosis);
 
-		mainHandlerAction.deleteDate(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.remove",
-				diagnosis.getName());
+		genericDAO.deletePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.remov", diagnosis.toString());
 
 		return diagnosis;
 	}
@@ -164,21 +165,13 @@ public class TaskManipulationHandler {
 		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().indexOf(diagnosisRevision));
 
 		// saving to database
-		patientDao.savePatientAssociatedDataFailSave(diagnosisRevision,
-				"log.patient.task.diagnosisContainer.diagnosisRevision.new", diagnosisRevision.toString());
+		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
+				diagnosisRevision.toString());
 
 		// creating a diagnosis for every sample
 		for (Sample sample : parent.getParent().getSamples()) {
 			createDiagnosis(diagnosisRevision, sample);
 		}
-
-//		// saving to database
-//		mainHandlerAction.saveDataChange(diagnosisRevision,
-//				"log.patient.task.diagnosisContainer.diagnosisRevision.update", diagnosisRevision.getName());
-
-		// // saving parent
-		// mainHandlerAction.saveDataChange(parent,
-		// "log.patient.task.diagnosisContainer.update");
 
 	}
 
@@ -193,8 +186,8 @@ public class TaskManipulationHandler {
 
 		revision.getParent().getDiagnosisRevisions().remove(revision);
 
-		mainHandlerAction.deleteDate(revision, "log.patient.task.diagnosisContainer.diagnosisRevision.delete",
-				revision.getName());
+		genericDAO.deletePatientData(revision, "log.patient.task.diagnosisContainer.diagnosisRevision.delete",
+				revision.toString());
 
 		return revision;
 	}
@@ -241,8 +234,9 @@ public class TaskManipulationHandler {
 			createDiagnosis(diagnosisRevision, sample);
 		}
 
-		mainHandlerAction.saveDataChange(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
-				diagnosisRevision.getName());
+		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
+				diagnosisRevision);
+
 	}
 
 	public void copyHistologicalRecord(Diagnosis tmpDiagnosis, boolean overwrite)
@@ -253,7 +247,7 @@ public class TaskManipulationHandler {
 						: tmpDiagnosis.getParent().getText() + "\r\n"
 								+ tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 
-		patientDao.savePatientAssociatedDataFailSave(tmpDiagnosis.getParent(),
+		genericDAO.savePatientData(tmpDiagnosis.getParent(),
 				"log.patient.task.diagnosisContainer.diagnosisRevision.update", tmpDiagnosis.getParent().toString());
 	}
 
@@ -273,12 +267,12 @@ public class TaskManipulationHandler {
 	public void createNewSample(Task task, MaterialPreset material) {
 		Sample sample = new Sample(task, material);
 
-		mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.new", sample.getSampleID());
+		genericDAO.savePatientData(sample, "log.patient.task.sample.new", sample);
 
 		// creating needed blocks
 		createNewBlock(sample, false);
 
-		mainHandlerAction.saveDataChange(sample, "log.patient.task.sample.update", sample.getSampleID());
+		genericDAO.savePatientData(sample, "log.patient.task.sample.update", sample);
 
 		// creating first default diagnosis
 		updateDiagnosisContainerToSampleCount(task.getDiagnosisContainer(), task.getSamples());
@@ -304,7 +298,7 @@ public class TaskManipulationHandler {
 		block.setParent(sample);
 		sample.getBlocks().add(block);
 
-		patientDao.savePatientAssociatedDataFailSave(block, "log.patient.task.sample.blok.new", block.getBlockID());
+		genericDAO.savePatientData(block, "log.patient.task.sample.blok.new", block.getBlockID());
 
 		logger.debug("Creating new block " + block.getBlockID());
 
@@ -314,7 +308,7 @@ public class TaskManipulationHandler {
 
 		block.updateAllNames(useAutoNomenclature, false);
 
-		patientDao.savePatientAssociatedDataFailSave(block, "log.patient.task.sample.block.update", block.getBlockID());
+		genericDAO.savePatientData(block, "log.patient.task.sample.block.update", block.getBlockID());
 
 		return block;
 	}
@@ -368,8 +362,7 @@ public class TaskManipulationHandler {
 
 		slide.setReStaining(reStaining);
 
-		patientDao.savePatientAssociatedDataFailSave(slide, "log.patient.task.sample.block.slide.new",
-				slide.toString());
+		genericDAO.savePatientData(slide, "log.patient.task.sample.block.slide.new", slide.toString());
 
 	}
 

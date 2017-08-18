@@ -51,11 +51,6 @@ public class PrintDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PatientDao patientDao;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
@@ -565,11 +560,11 @@ public class PrintDialog extends AbstractDialog {
 				logger.debug("Pdf not saved jet, saving" + pdf.getName());
 
 				// saving new pdf and updating task
-				patientDao.savePatientAssociatedDataFailSave(pdf, task, "log.patient.task.pdf.created", pdf.getName());
+				genericDAO.savePatientData(pdf, task, "log.patient.task.pdf.created", pdf.getName());
 
 				task.getAttachedPdfs().add(pdf);
 
-				patientDao.savePatientAssociatedDataFailSave(task, "log.patient.pdf.attached", pdf.getName());
+				genericDAO.savePatientData(task, "log.patient.pdf.attached", pdf.getName());
 			} else {
 				logger.debug("PDF allready saved, not saving. " + pdf.getName());
 			}

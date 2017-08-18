@@ -1,8 +1,12 @@
 -> UTF 8 Tomcat: -Dfile.encoding=UTF8
 -> plink windows set PATH=C:\path\to\putty\directory;%PATH%
 
+
+-> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
 Merke: keine kurzbefunde
 
+
+TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
 TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werden

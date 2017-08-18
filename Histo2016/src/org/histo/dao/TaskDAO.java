@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -12,6 +14,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.model.BioBank;
 import org.histo.model.Council;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
@@ -19,6 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 @Component
 @Transactional
@@ -29,6 +36,16 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListDAO favouriteListDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private BioBankDAO bioBankDAO;
 
 	/**
 	 * Counts all tasks of the current year
@@ -128,8 +145,40 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return list;
 	}
 
+	/**
+	 * Returns a list of task revisions
+	 * 
+	 * @param taskID
+	 * @return
+	 */
 	public List<Task> getTasksRevisions(long taskID) {
 		return AuditReaderFactory.get(getSession()).createQuery().forRevisionsOfEntity(Task.class, false, false)
 				.add(AuditEntity.id().eq(taskID)).addOrder(AuditEntity.revisionNumber().asc()).getResultList();
+	}
+
+	public void deleteTask(Task task) {
+		// LockOptions(LockMode.OPTIMISTIC_FORCE_INCREMENT)).lock(task.getParent());
+
+		task = genericDAO.refresh(task);
+		
+		// removing from favouriteLists
+		while (task.getFavouriteLists().size() > 0) {
+			favouriteListDAO.removeTaskFromList(task,
+					favouriteListDAO.initFavouriteList(task.getFavouriteLists().get(0)));
+		}
+
+		logger.debug("Deleting Task " + task.getTaskID());
+
+		BioBank bioBank = bioBankDAO.getAssociatedBioBankObject(task);
+
+		bioBankDAO.delete(bioBank);
+
+		genericDAO.deletePatientData(task, "log.patient.task.remove", task.toString());
+		
+		task.getPatient().getTasks().remove(task);
+		
+		genericDAO.save(task.getPatient());
+		
+		System.out.println(task.getPatient().getVersion());
 	}
 }

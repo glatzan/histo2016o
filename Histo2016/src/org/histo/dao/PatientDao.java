@@ -35,7 +35,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private GenericDAO genericDAO;
-	
+
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	public Patient initilaizeTasksofPatient(Patient patient) throws CustomDatabaseInconsistentVersionException {
@@ -65,39 +65,9 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return patient;
 	}
 
-	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedDataFailSave(C object)
-			throws CustomDatabaseInconsistentVersionException {
-		return savePatientAssociatedDataFailSave(object, object, null);
-	}
-
-	public <C extends HasID & PatientRollbackAble> C savePatientAssociatedDataFailSave(C object, String resourcesKey,
-			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
-		return savePatientAssociatedDataFailSave(object, object, resourcesKey, resourcesKeyInsert);
-	}
-
-	public <C extends HasID> C savePatientAssociatedDataFailSave(C object, PatientRollbackAble hasPatient,
-			String resourcesKey, Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
-
-		// if failed false will be returned
-		return save(object, resourcesKey, new Object[] { hasPatient.getLogPath(), resourcesKeyInsert },
-				hasPatient.getPatient());
-	}
-
-	public <C extends HasID & PatientRollbackAble> C deletePatientAssociatedDataFailSave(C object, String resourcesKey,
-			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
-		return deletePatientAssociatedDataFailSave(object, object, resourcesKey, resourcesKeyInsert);
-	}
-
-	public <C extends HasID> C deletePatientAssociatedDataFailSave(C object, PatientRollbackAble hasPatient,
-			String resourcesKey, Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
-		return genericDAO.deleteDataRollbackSave(object, resourcesKey,
-				new Object[] { hasPatient.getLogPath(), resourcesKeyInsert }, hasPatient.getPatient());
-
-	}
-
 	/**
-	 * Returns a list of useres with the given piz. At least 6 numbers of the
-	 * piz are needed.
+	 * Returns a list of useres with the given piz. At least 6 numbers of the piz
+	 * are needed.
 	 * 
 	 * @param piz
 	 * @return
@@ -118,8 +88,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a patient object for a specific piz. The piz has to be 8
-	 * characters long.
+	 * Returns a patient object for a specific piz. The piz has to be 8 characters
+	 * long.
 	 * 
 	 * @param piz
 	 * @return
@@ -171,8 +141,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list without of patients without tasks between the two given
-	 * dates.
+	 * Returns a list without of patients without tasks between the two given dates.
 	 * 
 	 * @param fromDate
 	 * @param toDate
@@ -189,8 +158,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list of patients added to the worklist between the two given
-	 * dates.
+	 * Returns a list of patients added to the worklist between the two given dates.
 	 * 
 	 * @param fromDate
 	 * @param toDate
@@ -206,8 +174,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list of patients which had a sample created between the two
-	 * given dates
+	 * Returns a list of patients which had a sample created between the two given
+	 * dates
 	 * 
 	 * @param fromDate
 	 * @param toDate
@@ -245,8 +213,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list of patients for that the staining had been completed
-	 * within the time period. Don't start with zero.
+	 * Returns a list of patients for that the staining had been completed within
+	 * the time period. Don't start with zero.
 	 * 
 	 * @param fromDate
 	 * @param toDate
@@ -283,8 +251,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list of patients for that the diagnosis had been completed
-	 * within the time period. Don't start with zero.
+	 * Returns a list of patients for that the diagnosis had been completed within
+	 * the time period. Don't start with zero.
 	 * 
 	 * @param fromDate
 	 * @param toDate
@@ -483,4 +451,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		return result;
 	}
+
+
 }

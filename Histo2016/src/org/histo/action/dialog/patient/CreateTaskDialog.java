@@ -200,7 +200,7 @@ public class CreateTaskDialog extends AbstractDialog {
 			getTask().setFavouriteLists(new ArrayList<FavouriteList>());
 
 			// saving task
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.new", getTask().getTaskID());
+			genericDAO.savePatientData(getTask(), "log.patient.task.new", getTask().getTaskID());
 
 			DiagnosisContainer diagnosisContainer = new DiagnosisContainer(getTask());
 			getTask().setDiagnosisContainer(diagnosisContainer);
@@ -211,7 +211,7 @@ public class CreateTaskDialog extends AbstractDialog {
 			diagnosisContainer.setSignatureTwo(new Signature());
 
 			// saving diagnosis container
-			patientDao.savePatientAssociatedDataFailSave(diagnosisContainer, "log.patient.task.diagnosisContainer.new",
+			genericDAO.savePatientData(diagnosisContainer, "log.patient.task.diagnosisContainer.new",
 					getTask().getTaskID());
 
 			for (Sample sample : getTask().getSamples()) {
@@ -219,7 +219,7 @@ public class CreateTaskDialog extends AbstractDialog {
 				sample.setMaterial(sample.getMaterilaPreset().getName());
 
 				// saving samples
-				patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.new",
+				genericDAO.savePatientData(sample, "log.patient.task.sample.new",
 						sample.getSampleID());
 				// creating needed blocks
 				// TODO: save for version conflict
@@ -243,28 +243,28 @@ public class CreateTaskDialog extends AbstractDialog {
 				// attaching pdf to biobank
 				bioBank.getAttachedPdfs().add(selectedPDF);
 
-				patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.bioBank.pdf.attached",
+				genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.pdf.attached",
 						selectedPDF.getName());
 
 				// and task
 				getTask().setAttachedPdfs(new ArrayList<PDFContainer>());
 				getTask().getAttachedPdfs().add(selectedPDF);
 
-				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.pdf.attached");
+				genericDAO.savePatientData(getTask(), "log.patient.pdf.attached");
 
 				if (isMoveInformedConsent()) {
 					patient.getAttachedPdfs().remove(selectedPDF);
-					patientDao.savePatientAssociatedDataFailSave(getPatient(), "log.patient.pdf.removed",
+					genericDAO.savePatientData(getPatient(), "log.patient.pdf.removed",
 							selectedPDF.getName());
 				}
 			} else {
-				patientDao.savePatientAssociatedDataFailSave(bioBank, getTask(), "log.patient.bioBank.save");
+				genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.save");
 			}
 
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.update", task.getTaskID());
+			genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
 
 			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StainingList);
-
+			
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

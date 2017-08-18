@@ -1,6 +1,7 @@
 package org.histo.dao;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.OptimisticLockException;
 
@@ -14,6 +15,7 @@ import org.histo.config.SecurityContextHolderUtil;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogInfo;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +105,59 @@ public abstract class AbstractDAO implements Serializable {
 		}
 	}
 
+	public <C extends HasID> void saveCollection(List<C> objects, String resourcesKey) {
+		saveCollection(objects, resourcesKey, null);
+	}
+
+	public <C extends HasID> void saveCollection(List<C> objects, String resourcesKey, Object[] resourcesKeyInsert) {
+		saveCollection(objects, resourcesKey, resourcesKeyInsert, null);
+	}
+
+	public <C extends HasID> void saveCollection(List<C> objects, String resourcesKey, Object[] resourcesKeyInsert,
+			Patient patient) {
+		for (C object : objects) {
+			save(object, resourcesKey, resourcesKeyInsert, patient);
+		}
+	}
+
+	public <C extends HasID> C delete(C object) {
+		return delete(object, null);
+	}
+
+	public <C extends HasID> C delete(C object, String resourcesKey) {
+		return delete(object, resourcesKey, null);
+	}
+
+	public <C extends HasID> C delete(C object, String resourcesKey, Object[] resourcesKeyInsert) {
+		return delete(object, resourcesKey, resourcesKeyInsert, null);
+	}
+
+	public <C extends HasID> C delete(C object, String resourcesKey, Object[] resourcesKeyInsert, Patient patient) {
+
+		if (resourcesKey != null) {
+			LogInfo logInfo = new LogInfo(resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);
+			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
+		}
+
+		try {
+			getSession().delete(object);
+			getSession().flush();
+		} catch (HibernateException hibernateException) {
+			session.delete(session.merge(object));
+		} catch (javax.persistence.OptimisticLockException e) {
+			getSession().getTransaction().rollback();
+			throw new CustomDatabaseInconsistentVersionException(object);
+		} catch (Exception e) {
+			getSession().getTransaction().rollback();
+			logger.error("Error, rolling back!");
+			logger.error(e);
+			e.printStackTrace();
+			throw new CustomDatabaseInconsistentVersionException(object);
+		}
+
+		return object;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <C extends HasID> C refresh(C object) throws CustomDatabaseInconsistentVersionException {
 		try {
@@ -122,5 +177,13 @@ public abstract class AbstractDAO implements Serializable {
 			hibernateException.printStackTrace();
 		}
 		return object;
+	}
+
+	public void reset(Object object) {
+		getSession().refresh(object);
+	}
+
+	public void commit() {
+		getSession().getTransaction().commit();
 	}
 }

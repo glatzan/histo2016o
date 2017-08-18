@@ -42,11 +42,6 @@ public class ContactNotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private ResourceBundle resourceBundle;
 
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PatientDao patientDao;
-
 	private AssociatedContact associatedContact;
 
 	private MenuModel model;
@@ -129,7 +124,7 @@ public class ContactNotificationDialog extends AbstractDialog {
 	}
 
 	public void saveRoleChange() {
-		patientDao.savePatientAssociatedDataFailSave(getAssociatedContact(), getTask(),
+		genericDAO.savePatientData(getAssociatedContact(), getTask(),
 				"log.patient.task.contact.roleChange", getAssociatedContact().toString(),
 				getAssociatedContact().getRole().toString());
 	}

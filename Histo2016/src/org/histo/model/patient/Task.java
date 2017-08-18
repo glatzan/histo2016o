@@ -207,8 +207,8 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	private ArrayList<StainingTableChooser> stainingTableChoosers;
 
 	/**
-	 * If set to true, this task is shown in the navigation column on the left
-	 * hand side, however there are actions to perform or not.
+	 * If set to true, this task is shown in the navigation column on the left hand
+	 * side, however there are actions to perform or not.
 	 */
 	private boolean active;
 
@@ -278,10 +278,10 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	}
 
 	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
+	 * Creates linear list of all slides of the given task. The StainingTableChosser
+	 * is used as holder class in order to offer an option to select the slides by
+	 * clicking on a checkbox. Archived elements will not be shown if showArchived
+	 * is false.
 	 */
 	@Transient
 	public final void generateSlideGuiList() {
@@ -289,10 +289,10 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	}
 
 	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
+	 * Creates linear list of all slides of the given task. The StainingTableChosser
+	 * is used as holder class in order to offer an option to select the slides by
+	 * clicking on a checkbox. Archived elements will not be shown if showArchived
+	 * is false.
 	 * 
 	 * @param showArchived
 	 */
@@ -365,8 +365,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 
 	/**
 	 * Returns true if the task is marked as active or an action is pending. If
-	 * activeOnly is true only the active attribute of the task will be
-	 * evaluated.
+	 * activeOnly is true only the active attribute of the task will be evaluated.
 	 * 
 	 * @param task
 	 * @return
@@ -628,7 +627,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 		this.accounting = accounting;
 	}
 
-	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	public DiagnosisContainer getDiagnosisContainer() {
 		return diagnosisContainer;
 	}
@@ -769,8 +768,8 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	}
 
 	/**
-	 * Returns a report with the given type. If no matching record was found
-	 * null will be returned.
+	 * Returns a report with the given type. If no matching record was found null
+	 * will be returned.
 	 * 
 	 * @param type
 	 * @return

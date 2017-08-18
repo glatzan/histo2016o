@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GenericDAO extends AbstractDAO {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-	
+
 	@SuppressWarnings("unchecked")
 	public <C> C get(Class<C> clazz, Serializable serializable) {
 		return (C) getSession().get(clazz, serializable);
@@ -81,221 +81,32 @@ public class GenericDAO extends AbstractDAO {
 				.setProjection(Projections.rowCount()).uniqueResult()).intValue();
 	}
 
-	// ************************ Save ************************
-
-	public <C extends HasID> boolean saveListRollbackSave(Collection<? extends HasID> objects, String resourcesKey)
+	public <C extends HasID & PatientRollbackAble> C savePatientData(C object)
 			throws CustomDatabaseInconsistentVersionException {
-		for (HasID object : objects) {
-			saveDataRollbackSave(object, resourcesKey, null, null);
-		}
-		return true;
+		return savePatientData(object, object, null);
 	}
 
-	// ************************ Save data RollbackSave ************************
-
-	public <C extends HasID> C saveDataRollbackSave(C object) throws CustomDatabaseInconsistentVersionException {
-		return saveDataRollbackSave(object, null, null, null);
+	public <C extends HasID & PatientRollbackAble> C savePatientData(C object, String resourcesKey,
+			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+		return savePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
-	public <C extends HasID> C saveDataRollbackSave(C object, String resourcesKey)
-			throws CustomDatabaseInconsistentVersionException {
-		return saveDataRollbackSave(object, resourcesKey, null, null);
+	public <C extends HasID> C savePatientData(C object, PatientRollbackAble hasPatient, String resourcesKey,
+			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+
+		// if failed false will be returned
+		return save(object, resourcesKey, new Object[] { hasPatient.getLogPath(), resourcesKeyInsert },
+				hasPatient.getPatient());
 	}
 
-	public <C extends HasID> C saveDataRollbackSave(C object, String resourcesKey, Object[] resourcesKeyInsert)
-			throws CustomDatabaseInconsistentVersionException {
-		return saveDataRollbackSave(object, resourcesKey, resourcesKeyInsert, null);
+	public <C extends HasID & PatientRollbackAble> C deletePatientData(C object, String resourcesKey,
+			String... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+		return deletePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
-	public <C extends HasID> C saveDataRollbackSave(C object, String resourcesKey, Object[] resourcesKeyInsert,
-			Patient patient) throws CustomDatabaseInconsistentVersionException {
-		try {
-			if (resourcesKey != null)
-				return save(object, resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);
-			else {
-				return save(object);
-			}
-		} catch (OptimisticLockException | HibernateOptimisticLockingFailureException | StaleStateException e) {
-			getSession().getTransaction().rollback();
-			throw new CustomDatabaseInconsistentVersionException(object);
-		} catch (Exception e) {
-			getSession().getTransaction().rollback();
-			throw new CustomDatabaseInconsistentVersionException(object);
-		}
-	}
-
-	// ************************ SimpleSave ************************
-
-	@Deprecated
-	public <C> C save(C object) {
-		return save(object, (LogInfo) null);
-	}
-
-	@Deprecated
-	public <C> C save(C object, String logMessage) {
-		return save(object, new LogInfo(logMessage));
-	}
-
-	@Deprecated
-	public <C> C save(C object, String logMessage, Patient patient) {
-		return save(object, new LogInfo(logMessage, patient));
-	}
-
-	/**
-	 * Saves an object to the database. No locking save.
-	 * 
-	 * @param object
-	 * @param logInfo
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	public <C> C save(C object, LogInfo logInfo) {
-
-		// sets a logMessage to the securityContext, this is a workaround for
-		// passing variables to the revisionListener
-		if (logInfo != null) {
-			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo.getInfo() + " for "
-					+ (logInfo.getPatient() != null ? logInfo.getPatient().getPerson().getFullName() : ""));
-		}
-
-		Session session = getSession();
-
-		// Statistics stats = sessionFactory.getStatistics();
-		// stats.setStatisticsEnabled(true);
-		// printStats(stats);
-
-		try {
-			session.saveOrUpdate(object);
-			session.flush();
-		} catch (HibernateException hibernateException) {
-			object = (C) session.merge(object);
-			hibernateException.printStackTrace();
-		}
-		
-
-		return object;
-	}
-
-	public void saveCollection(Collection<?> objects) {
-		for (Object object : objects) {
-			save(object);
-		}
-	}
-
-	// ************************ Delete ************************
-	public void deleteDate(Object toSave, String resourcesKey, Object... arr) {
-		if (toSave instanceof PatientRollbackAble) {
-			delete(toSave, resourceBundle.get(resourcesKey, ((PatientRollbackAble) toSave).getLogPath(), arr),
-					((PatientRollbackAble) toSave).getPatient());
-		} else {
-			delete(toSave, resourceBundle.get(resourcesKey, arr));
-		}
-	}
-	
-	public <C extends HasID> C deleteDataRollbackSave(C object, String resourcesKey, Object[] resourcesKeyInsert)
-			throws CustomDatabaseInconsistentVersionException {
-		return deleteDataRollbackSave(object, resourcesKey, resourcesKeyInsert, null);
-	}
-
-	
-	public <C extends HasID> C deleteDataRollbackSave(C object, String resourcesKey, Object[] resourcesKeyInsert,
-			Patient patient) throws CustomDatabaseInconsistentVersionException {
-		try {
-			if (resourcesKey != null)
-				return delete(object, resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);
-			else {
-				return delete(object);
-			}
-		} catch (javax.persistence.OptimisticLockException e) {
-			getSession().getTransaction().rollback();
-			throw new CustomDatabaseInconsistentVersionException(object);
-		}
-	}
-
-	@Deprecated
-	public <C> C delete(C object){
-		return delete(object, (LogInfo) null);
-	}
-
-	@Deprecated
-	public <C> C delete(C object, String logMessage){
-		return delete(object, new LogInfo(logMessage));
-	}
-
-	@Deprecated
-	public <C> C delete(C object, String logMessage, Patient patient){
-		return delete(object, new LogInfo(logMessage, patient));
-	}
-
-	@Deprecated
-	public <C> C delete(C object, LogInfo logInfo){
-
-		// sets a logMessage to the securityContext, this is a workaround for
-		// passing variables to the revisionListener
-		if (logInfo != null) {
-			SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
-		}
-
-		Session session = getSession();
-		try {
-			session.delete(object);
-			session.flush();
-		} catch (HibernateException hibernateException) {
-			session.delete(session.merge(object));
-		}
-		
-		return object;
-	}
-
-	public void delete(Collection<?> objects) {
-		Session session = getSession();
-		for (Object object : objects) {
-			try {
-				session.delete(object);
-			} catch (HibernateException hibernateException) {
-				session.delete(session.merge(object));
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public <C extends HasID> C refresh(C object) throws CustomDatabaseInconsistentVersionException {
-		try {
-			getSession().saveOrUpdate(object);
-			getSession().flush();
-		} catch (javax.persistence.OptimisticLockException e) {
-			getSession().getTransaction().rollback();
-			getSession().beginTransaction();
-		
-//			Class<? extends HasID> klass = (Class<? extends HasID>)
-//			object.getClass();
-			
-			throw new CustomDatabaseInconsistentVersionException(object);
-		} catch (HibernateException hibernateException) {
-			object = (C) getSession().merge(object);
-			logger.debug("Error: Merging objects");
-			hibernateException.printStackTrace();
-		}
-		return object;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <C> C refresh(C object) {
-		try {
-			object = save(object);
-			getSession().flush();
-		} catch (javax.persistence.OptimisticLockException e) {
-			getSession().getTransaction().rollback();
-		}
-		return object;
-	}
-
-	public void reset(Object object) {
-		getSession().refresh(object);
-	}
-
-	public void commit() {
-		getSession().getTransaction().commit();
+	public <C extends HasID> C deletePatientData(C object, PatientRollbackAble hasPatient, String resourcesKey,
+			String... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+		return delete(object, resourcesKey, new Object[] { hasPatient.getLogPath(), resourcesKeyInsert },
+				hasPatient.getPatient());
 	}
 }

@@ -37,9 +37,6 @@ public class CreateSampleDialog extends AbstractDialog {
 	@Autowired
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
-	@Autowired
-	private PatientDao patientDao;
-
 	private List<MaterialPreset> materials;
 
 	private DefaultTransformer<MaterialPreset> materialTransformer;
@@ -77,7 +74,7 @@ public class CreateSampleDialog extends AbstractDialog {
 			taskManipulationHandler.createNewSample(getTask(), getSelectedMaterial());
 			// updating names
 			task.updateAllNames();
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.update", task.getTaskID());
+			genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
 			// checking if staining flag of the task object has to be false
 			receiptlogViewHandlerAction.checkStainingPhase(getTask(), true);
 			// generating gui list

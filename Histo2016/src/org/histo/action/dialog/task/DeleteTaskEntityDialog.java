@@ -29,9 +29,6 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
-	private PatientDao patientDao;
-
-	@Autowired
 	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
 
 	@Autowired
@@ -75,10 +72,10 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 
 				parent.updateAllNames(parent.getParent().getParent().isUseAutoNomenclature(), false);
 
-				patientDao.savePatientAssociatedDataFailSave(parent, "log.patient.task.sample.block.update",
+				genericDAO.savePatientData(parent, "log.patient.task.sample.block.update",
 						parent.toString());
 
-				patientDao.deletePatientAssociatedDataFailSave(toDeleteSlide,
+				genericDAO.deletePatientData(toDeleteSlide,
 						"log.patient.task.sample.block.slide.delete", toDeleteSlide.toString());
 
 				// checking if staining flag of the task object has to be false
@@ -96,10 +93,10 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 
 				parent.updateAllNames(parent.getParent().isUseAutoNomenclature(), false);
 
-				patientDao.savePatientAssociatedDataFailSave(parent, "log.patient.task.sample.update",
+				genericDAO.savePatientData(parent, "log.patient.task.sample.update",
 						parent.toString());
 
-				patientDao.deletePatientAssociatedDataFailSave(toDeleteBlock, "log.patient.task.sample.block.delete",
+				genericDAO.deletePatientData(toDeleteBlock, "log.patient.task.sample.block.delete",
 						toDeleteBlock.toString());
 
 				// checking if staining flag of the task object has to be false
@@ -120,9 +117,9 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 
 				parent.updateAllNames();
 
-				patientDao.savePatientAssociatedDataFailSave(parent, "log.patient.task.update", parent.toString());
+				genericDAO.savePatientData(parent, "log.patient.task.update", parent.toString());
 
-				patientDao.deletePatientAssociatedDataFailSave(toDeleteSample, "log.patient.task.sample.delete",
+				genericDAO.deletePatientData(toDeleteSample, "log.patient.task.sample.delete",
 						toDeleteSample.toString());
 
 				// checking if staining flag of the task object has to be false

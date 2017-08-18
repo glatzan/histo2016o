@@ -25,19 +25,7 @@ public class UploadDialog extends AbstractDialog {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	private GenericDAO genericDAO;
-
-	@Autowired
-	private ResourceBundle resourceBundle;
-
-	@Autowired
-	private MainHandlerAction mainHandlerAction;
-
-	@Autowired
 	private UtilDAO utilDAO;
-
-	@Autowired
-	private PatientDao patientDao;
 
 	/**
 	 * Uploaded file
@@ -133,14 +121,14 @@ public class UploadDialog extends AbstractDialog {
 
 				// saving pdf
 
-				patientDao.savePatientAssociatedDataFailSave(upload, getPatient(), "log.patient.pdf.created",
+				genericDAO.savePatientData(upload, getPatient(), "log.patient.pdf.created",
 						new Object[] { upload.getName().toString(), getPatient().toString() });
 
 				for (HasDataList hasDataList : dataLists) {
 					hasDataList.getAttachedPdfs().add(upload);
 
 					// saving list
-					patientDao.savePatientAssociatedDataFailSave(hasDataList, getPatient(), "log.patient.pdf.attached",
+					genericDAO.savePatientData(hasDataList, getPatient(), "log.patient.pdf.attached",
 							upload.getName());
 				}
 

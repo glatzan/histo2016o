@@ -24,9 +24,6 @@ public class BioBankDialogHandler extends AbstractDialog {
 	private BioBankDAO bioBankDAO;
 
 	@Autowired
-	private PatientDao patientDao;
-
-	@Autowired
 	private TaskDAO taskDAO;
 
 	@Autowired
@@ -80,7 +77,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 	public void saveBioBank() {
 		try {
 			// saving biobank
-			patientDao.savePatientAssociatedDataFailSave(getBioBank(), getTask(), "log.patient.bioBank.save");
+			genericDAO.savePatientData(getBioBank(), getTask(), "log.patient.bioBank.save");
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

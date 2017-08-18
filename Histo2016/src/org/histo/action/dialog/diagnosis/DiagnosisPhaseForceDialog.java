@@ -62,7 +62,7 @@ public class DiagnosisPhaseForceDialog extends AbstractDialog {
 			
 			if(getTask().getDiagnosisCompletionDate() == 0){
 				getTask().setDiagnosisCompletionDate(System.currentTimeMillis());
-				patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.change.diagnosisPhase.end");
+				genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.end");
 			}
 			
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -80,7 +80,7 @@ public class DiagnosisPhaseForceDialog extends AbstractDialog {
 					getTask().getDiagnosisContainer().getDiagnosisRevisions(), false);
 
 			getTask().setDiagnosisCompletionDate(0);
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.change.diagnosisPhase.reentered");
+			genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.reentered");
 			
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

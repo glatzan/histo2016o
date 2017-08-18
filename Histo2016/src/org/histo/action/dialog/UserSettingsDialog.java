@@ -58,7 +58,7 @@ public class UserSettingsDialog extends AbstractDialog {
 		logger.debug("Saving user Settings");
 		
 		try {
-			genericDAO.saveDataRollbackSave(getUser());
+			genericDAO.save(getUser());
 			settingsHandler.updateSelectedPrinters();
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

@@ -38,11 +38,6 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private ContactDAO contactDAO;
 
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PatientDao patientDao;
-
 	private PDFContainer pdf;
 
 	private AssociatedContact contact;
@@ -60,9 +55,13 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 		this.contact = contact;
 		this.pdf = pdf;
 
+		System.out.println("gallo");
+		
 		if (contact != null)
 			this.number = contact.getPerson().getContact().getFax();
-
+		else
+			this.number = null;
+		
 		updateFaxButton();
 
 		super.initBean(task, Dialog.PRINT_FAX, false);
@@ -88,7 +87,7 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 				associatedContactNotification.setDateOfAction(new Date(System.currentTimeMillis()));
 				associatedContactNotification.setContactAddress(getNumber());
 
-				patientDao.savePatientAssociatedDataFailSave(associatedContactNotification, getTask(),
+				genericDAO.savePatientData(associatedContactNotification, getTask(),
 						"log.patient.task.contact.notification.performed", associatedContactNotification.toString(),
 						getContact().toString());
 

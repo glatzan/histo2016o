@@ -24,9 +24,6 @@ public class FavouriteListDAO extends AbstractDAO {
 	@Autowired
 	private GenericDAO genericDAO;
 
-	@Autowired
-	private PatientDao patientDao;
-
 	public FavouriteList getFavouriteList(long id, boolean initialized) {
 		FavouriteList favList = genericDAO.get(FavouriteList.class, id);
 
@@ -35,6 +32,13 @@ public class FavouriteListDAO extends AbstractDAO {
 			Hibernate.initialize(favList.getItems());
 		}
 
+		return favList;
+	}
+	
+	public FavouriteList initFavouriteList(FavouriteList favList) {
+		genericDAO.refresh(favList);
+		Hibernate.initialize(favList.getOwner());
+		Hibernate.initialize(favList.getItems());
 		return favList;
 	}
 
@@ -61,10 +65,10 @@ public class FavouriteListDAO extends AbstractDAO {
 					"Adding task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
 			FavouriteListItem favItem = new FavouriteListItem(favouriteList, task);
 			// saving new fav item
-			genericDAO.saveDataRollbackSave(favItem);
+			save(favItem);
 			favouriteList.getItems().add(favItem);
 			// saving favlist
-			genericDAO.saveDataRollbackSave(favouriteList);
+			save(favouriteList);
 		} else {
 			logger.debug("List (" + favouriteList.getName() + ") already contains task (" + task.getTaskID() + ")");
 		}
@@ -75,7 +79,7 @@ public class FavouriteListDAO extends AbstractDAO {
 			logger.debug("Adding favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID() + ")");
 
 			task.getFavouriteLists().add(favouriteList);
-			patientDao.savePatientAssociatedDataFailSave(task, "log.patient.task.favouriteList.added",
+			genericDAO.savePatientData(task, "log.patient.task.favouriteList.added",
 					new Object[] { task.getTaskID().toString(), favouriteList.toString() });
 		} else
 			logger.debug("Task (" + task.getTaskID() + ") alread contains list (" + favouriteList.getName() + ")");
@@ -110,10 +114,9 @@ public class FavouriteListDAO extends AbstractDAO {
 
 			favouriteList.getItems().remove(itemToRemove);
 			// saving new fav item
-			genericDAO.saveDataRollbackSave(favouriteList);
-			patientDao.deletePatientAssociatedDataFailSave(itemToRemove, task.getPatient(),
-					"log.patient.task.favouriteList.removed",
-					new Object[] { task.getTaskID().toString(), favouriteList.toString() });
+			save(favouriteList);
+			genericDAO.deletePatientData(itemToRemove, task.getPatient(), "log.patient.task.favouriteList.removed",
+					task.getTaskID().toString(), favouriteList.toString());
 		} catch (IllegalStateException e) {
 			// no item found
 			logger.debug("Can not remove task (" + task.getTaskID() + ") from favourite list ("
@@ -130,7 +133,7 @@ public class FavouriteListDAO extends AbstractDAO {
 			task.getFavouriteLists().remove(listToRemove);
 
 			// saving new fav item
-			genericDAO.saveDataRollbackSave(task);
+			save(task);
 		} catch (IllegalStateException e) {
 			// no item found
 			logger.debug("Can not remove favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID()

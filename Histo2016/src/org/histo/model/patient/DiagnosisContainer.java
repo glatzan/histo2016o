@@ -115,7 +115,7 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 		this.id = id;
 	}
 
-	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("sequenceNumber ASC")
 	public List<DiagnosisRevision> getDiagnosisRevisions() {

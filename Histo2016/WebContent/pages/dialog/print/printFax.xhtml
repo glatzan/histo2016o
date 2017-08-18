@@ -69,8 +69,7 @@
 						disabled="#{dialogHandlerAction.faxPrintDocumentDialog.faxButtonDisabled}"
 						styleClass="smallButton buttonRighMarginInList"
 						title="#{dialogHandlerAction.faxPrintDocumentDialog.faxButtonDisabled ? msg['dialog.printFax.button.sendFax.title.disabled'] : msg['dialog.printFax.button.sendFax.text']}"
-						icon="fa fa-fw fa-fax" onstart="PF('blockUIWidget').block()"
-						oncomplete="PF('blockUIWidget').unblock()">
+						icon="fa fa-fw fa-fax">
 						<f:actionListener
 							binding="#{dialogHandlerAction.faxPrintDocumentDialog.sendFax()}" />
 						<f:actionListener
@@ -86,7 +85,6 @@
 
 			</h:panelGrid>
 		</div>
-		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>
 </html>

@@ -25,9 +25,6 @@ public class SlideNamingDialog extends AbstractDialog {
 	@Autowired
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
-	@Autowired
-	private PatientDao patientDao;
-
 	private boolean useAutoNomeclature;
 
 	public void initAndPrepareBean(Task task) {
@@ -55,19 +52,19 @@ public class SlideNamingDialog extends AbstractDialog {
 			for (Sample sample : task.getSamples()) {
 
 				if (sample.updateNameOfSample(true, ignoreManuallyChangedEntities)) {
-					patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.updateName");
+					genericDAO.savePatientData(sample, "log.patient.task.sample.updateName");
 				}
 
 				for (Block block : sample.getBlocks()) {
 
 					if (block.updateNameOfBlock(true, ignoreManuallyChangedEntities)) {
-						patientDao.savePatientAssociatedDataFailSave(block, "log.patient.task.sample.block.updateName");
+						genericDAO.savePatientData(block, "log.patient.task.sample.block.updateName");
 					}
 
 					for (Slide slide : block.getSlides()) {
 
 						if (slide.updateNameOfSlide(true, ignoreManuallyChangedEntities)) {
-							patientDao.savePatientAssociatedDataFailSave(slide,
+							genericDAO.savePatientData(slide,
 									"log.patient.task.sample.block.slide.updateName");
 						}
 					}
@@ -82,7 +79,7 @@ public class SlideNamingDialog extends AbstractDialog {
 		try {
 			if (task.isUseAutoNomenclature() != isUseAutoNomeclature()) {
 				task.setUseAutoNomenclature(isUseAutoNomeclature());
-				patientDao.savePatientAssociatedDataFailSave(task, "log.patient.task.update");
+				genericDAO.savePatientData(task, "log.patient.task.update");
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

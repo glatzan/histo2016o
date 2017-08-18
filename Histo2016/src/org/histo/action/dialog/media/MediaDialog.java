@@ -46,11 +46,6 @@ public class MediaDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private UploadDialog uploadDialog;
 
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PatientDao patientDao;
-
 	/**
 	 * Description for the user what he or she is about to do
 	 */
@@ -128,8 +123,8 @@ public class MediaDialog extends AbstractDialog {
 	private boolean showAutoMoveOption;
 
 	/**
-	 * If advance copy mode is enabled, the selected file will be copied to
-	 * these lists
+	 * If advance copy mode is enabled, the selected file will be copied to these
+	 * lists
 	 */
 	private HasDataList[] autoCopyModeTargetLists;
 
@@ -298,7 +293,7 @@ public class MediaDialog extends AbstractDialog {
 					copyToList.getAttachedPdfs().add(getSelectedPdfContainer());
 
 					logger.debug("Adding file to targetlist " + copyToList.getDatalistIdentifier());
-					patientDao.savePatientAssociatedDataFailSave(copyToList, getPatient(), "log.patient.pdf.attached",
+					genericDAO.savePatientData(copyToList, getPatient(), "log.patient.pdf.attached",
 							getSelectedPdfContainer().getName());
 
 				}
@@ -351,12 +346,11 @@ public class MediaDialog extends AbstractDialog {
 
 			dataList.getAttachedPdfs().remove(toRemove);
 
-			patientDao.savePatientAssociatedDataFailSave(dataList, patient, "log.patient.pdf.removed",
-					container.getName());
+			genericDAO.savePatientData(dataList, patient, "log.patient.pdf.removed", container.getName());
 
 			logger.debug("Removed PDF (" + container.getName() + ") from Datalist");
 			if (delete)
-				genericDAO.deleteDate(container, "log.patient.pdft.deleted", container.getName());
+				genericDAO.delete(container, "log.patient.pdft.deleted", new Object[] { container.getName() });
 
 		} catch (IllegalStateException e) {
 		}

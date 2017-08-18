@@ -96,7 +96,7 @@ public class DiagnosisPhaseLeaveDialog extends AbstractDialog {
 
 			getTask().setDiagnosisCompletionDate(System.currentTimeMillis());
 
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.change.diagnosisPhase.end");
+			genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.end");
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

@@ -210,8 +210,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	/**
-	 * Loads the current history for the given patient. Shows the current
-	 * history dialog.
+	 * Loads the current history for the given patient. Shows the current history
+	 * dialog.
 	 * 
 	 * @param patient
 	 */
@@ -282,8 +282,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * prepares an edit dialog for editing user data, only avaliable for
-		 * admins
+		 * prepares an edit dialog for editing user data, only avaliable for admins
 		 * 
 		 * @param physician
 		 */
@@ -304,7 +303,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 				if (getSelectedUser().getPhysician().hasNoAssociateRole())
 					getSelectedUser().getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
-				genericDAO.saveDataRollbackSave(getSelectedUser().getPhysician(),
+				genericDAO.save(getSelectedUser().getPhysician(),
 						resourceBundle.get("log.settings.physician.physician.edit",
 								getSelectedUser().getPhysician().getPerson().getFullName()));
 
@@ -402,13 +401,12 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 					getDiagnosisPresets().add(getSelectedDiagnosisPreset());
 
-					genericDAO.saveDataRollbackSave(getSelectedDiagnosisPreset(), resourceBundle
-							.get("log.settings.diagnosis.new", getSelectedDiagnosisPreset().getCategory()));
+					genericDAO.save(getSelectedDiagnosisPreset(), resourceBundle.get("log.settings.diagnosis.new",
+							getSelectedDiagnosisPreset().getCategory()));
 
 					ListOrder.reOrderList(getDiagnosisPresets());
 
-					genericDAO.saveListRollbackSave(getDiagnosisPresets(),
-							resourceBundle.get("log.settings.diagnosis.list.reoder"));
+					genericDAO.saveCollection(getDiagnosisPresets(), "log.settings.diagnosis.list.reoder");
 
 				} else {
 
@@ -416,8 +414,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 					// case edit: update an save
 					logger.debug("Updating diagnosis " + getSelectedDiagnosisPreset().getCategory());
 
-					genericDAO.saveDataRollbackSave(getSelectedDiagnosisPreset(), resourceBundle
-							.get("log.settings.diagnosis.update", getSelectedDiagnosisPreset().getCategory()));
+					genericDAO.save(getSelectedDiagnosisPreset(), resourceBundle.get("log.settings.diagnosis.update",
+							getSelectedDiagnosisPreset().getCategory()));
 				}
 
 				discardDiagnosisPreset();
@@ -460,8 +458,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 				ListOrder.reOrderList(getDiagnosisPresets());
 
-				genericDAO.saveListRollbackSave(getDiagnosisPresets(),
-						resourceBundle.get("log.settings.diagnosis.list.reoder"));
+				genericDAO.saveCollection(getDiagnosisPresets(), "log.settings.diagnosis.list.reoder");
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
@@ -499,8 +496,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private MaterialPreset editMaterial;
 
 		/**
-		 * List for selecting staining, this list contains all stainings. They
-		 * can be choosen and added to the material
+		 * List for selecting staining, this list contains all stainings. They can be
+		 * choosen and added to the material
 		 */
 		private List<ListChooser<StainingPrototype>> stainingListChooserForMaterial;
 
@@ -562,18 +559,17 @@ public class SettingsDialogHandler extends AbstractDialog {
 					// case new, save+
 					getAllMaterialList().add(getEditMaterial());
 
-					genericDAO.saveDataRollbackSave(getEditMaterial(),
+					genericDAO.save(getEditMaterial(),
 							resourceBundle.get("log.settings.material.new", getEditMaterial().getName()));
 
 					ListOrder.reOrderList(getAllMaterialList());
 
-					genericDAO.saveListRollbackSave(getAllMaterialList(),
-							resourceBundle.get("log.settings.material.list.reoder"));
+					genericDAO.saveCollection(getAllMaterialList(), "log.settings.material.list.reoder");
 
 				} else {
 					logger.debug("Updating Material " + getEditMaterial().getName());
 					// case edit: update an save
-					genericDAO.saveDataRollbackSave(getEditMaterial(),
+					genericDAO.save(getEditMaterial(),
 							resourceBundle.get("log.settings.material.update", getEditMaterial().getName()));
 				}
 			} catch (CustomDatabaseInconsistentVersionException e) {
@@ -639,8 +635,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 						+ event.getToIndex());
 				ListOrder.reOrderList(getAllMaterialList());
 
-				genericDAO.saveListRollbackSave(getAllMaterialList(),
-						resourceBundle.get("log.settings.staining.list.reoder"));
+				genericDAO.saveCollection(getAllMaterialList(), "log.settings.staining.list.reoder");
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
@@ -732,15 +727,14 @@ public class SettingsDialogHandler extends AbstractDialog {
 					// case new, save
 					getAllStainingsList().add(getEditStaining());
 
-					genericDAO.saveDataRollbackSave(getEditStaining(),
+					genericDAO.save(getEditStaining(),
 							resourceBundle.get("log.settings.staining.new", getEditStaining().getName()));
 
 					ListOrder.reOrderList(getAllStainingsList());
 
-					genericDAO.saveListRollbackSave(getAllStainingsList(),
-							resourceBundle.get("log.settings.staining.list.reoder"));
+					genericDAO.saveCollection(getAllStainingsList(), "log.settings.staining.list.reoder");
 				} else {
-					genericDAO.saveDataRollbackSave(getEditStaining(),
+					genericDAO.save(getEditStaining(),
 							resourceBundle.get("log.settings.material.update", getEditStaining().getName()));
 				}
 
@@ -761,8 +755,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 				logger.debug("List order changed, moved staining from " + event.getFromIndex() + " to "
 						+ event.getToIndex());
 				ListOrder.reOrderList(getAllStainingsList());
-				genericDAO.saveListRollbackSave(getAllStainingsList(),
-						resourceBundle.get("log.settings.staining.list.reoder"));
+				genericDAO.saveCollection(getAllStainingsList(), "log.settings.staining.list.reoder");
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
@@ -869,20 +862,19 @@ public class SettingsDialogHandler extends AbstractDialog {
 					// case new, save
 					getStaticListContent().add(getEditListItem());
 
-					genericDAO.saveDataRollbackSave(getEditListItem(), resourceBundle.get("log.settings.staticList.new",
+					genericDAO.save(getEditListItem(), resourceBundle.get("log.settings.staticList.new",
 							getEditListItem().getValue(), getSelectedStaticList().toString()));
 
 					ListOrder.reOrderList(getStaticListContent());
 
-					genericDAO.saveListRollbackSave(getStaticListContent(), resourceBundle
-							.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()));
+					genericDAO.saveCollection(getStaticListContent(), "log.settings.staticList.list.reoder",
+							new Object[] { getSelectedStaticList().toString() });
 				} else {
 					logger.debug("Updating ListItem " + getEditListItem().getValue());
 					// case edit: update an save
 
-					genericDAO.saveDataRollbackSave(getEditListItem(),
-							resourceBundle.get("log.settings.staticList.update", getEditListItem().getValue(),
-									getSelectedStaticList().toString()));
+					genericDAO.save(getEditListItem(), resourceBundle.get("log.settings.staticList.update",
+							getEditListItem().getValue(), getSelectedStaticList().toString()));
 				}
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
@@ -904,11 +896,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 			try {
 				item.setArchived(archive);
 				if (archive) {
-					genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.archive",
-							item.getValue(), getSelectedStaticList().toString()));
+					genericDAO.save(item, resourceBundle.get("log.settings.staticList.archive", item.getValue(),
+							getSelectedStaticList().toString()));
 				} else {
-					genericDAO.saveDataRollbackSave(item, resourceBundle.get("log.settings.staticList.dearchive",
-							item.getValue(), getSelectedStaticList().toString()));
+					genericDAO.save(item, resourceBundle.get("log.settings.staticList.dearchive", item.getValue(),
+							getSelectedStaticList().toString()));
 				}
 
 				// removing item from current list
@@ -922,8 +914,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 			try {
 				ListOrder.reOrderList(getStaticListContent());
 
-				genericDAO.saveListRollbackSave(getStaticListContent(),
-						resourceBundle.get("log.settings.staticList.list.reoder", getSelectedStaticList().toString()));
+				genericDAO.saveCollection(getStaticListContent(), "log.settings.staticList.list.reoder",
+						new Object[] { getSelectedStaticList().toString() });
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
@@ -1023,8 +1015,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Shows the add external or ldap screen per default the ldap select
-		 * screnn is used.
+		 * Shows the add external or ldap screen per default the ldap select screnn is
+		 * used.
 		 */
 		public void prepareNewPhysician() {
 			setTmpPhysician(new Physician());
@@ -1045,8 +1037,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Opens the passed physician in the settingsDialog in order to edit the
-		 * phone number, email or faxnumber.
+		 * Opens the passed physician in the settingsDialog in order to edit the phone
+		 * number, email or faxnumber.
 		 *
 		 * @param associatedContact
 		 */
@@ -1061,10 +1053,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Generates an ldap search filter (?(xxx)....) and offers the result
-		 * list. The result list is a physician list with minimal details.
-		 * Before adding an clinic physician a ldap fetch for more details has
-		 * to be done
+		 * Generates an ldap search filter (?(xxx)....) and offers the result list. The
+		 * result list is a physician list with minimal details. Before adding an clinic
+		 * physician a ldap fetch for more details has to be done
 		 *
 		 * @param name
 		 */
@@ -1101,8 +1092,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Saves a physician to the database, if no role was selected
-		 * ContactRole.Other will be set per default.
+		 * Saves a physician to the database, if no role was selected ContactRole.Other
+		 * will be set per default.
 		 *
 		 * @param physician
 		 */
@@ -1116,7 +1107,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 				//
 				if (getTmpPhysician().getId() == 0) {
-					genericDAO.saveDataRollbackSave(getTmpPhysician(),
+					genericDAO.save(getTmpPhysician(),
 							resourceBundle.get("log.settings.physician.privatePhysician.save",
 									getTmpPhysician().getPerson().getFullName()));
 				} else {
@@ -1194,7 +1185,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public void archivePhysician(Physician physician, boolean archive) {
 			try {
 				physician.setArchived(archive);
-				genericDAO.saveDataRollbackSave(physician,
+				genericDAO.save(physician,
 						resourceBundle.get(
 								archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
 								physician.getPerson().getFullName()));
@@ -1299,11 +1290,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 			try {
 				// saving new list
 				if (getTmpFavouriteList().getId() == 0) {
-					genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.new",
+					genericDAO.save(getTmpFavouriteList(), "log.settings.favouriteList.new",
 							new Object[] { getTmpFavouriteList().toString() });
 				} else {
 					// updating old list
-					genericDAO.saveDataRollbackSave(getTmpFavouriteList(), "log.settings.favouriteList.edit",
+					genericDAO.save(getTmpFavouriteList(), "log.settings.favouriteList.edit",
 							new Object[] { getTmpFavouriteList().toString() });
 				}
 

@@ -39,9 +39,6 @@ public class CouncilDialogHandler extends AbstractDialog {
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
-	private PatientDao patientDao;
-
-	@Autowired
 	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
@@ -279,17 +276,17 @@ public class CouncilDialogHandler extends AbstractDialog {
 		if (getSelectedCouncil().getId() == 0) {
 			logger.debug("Council Dialog: Creating new council");
 			// TODO: Better loggin
-			patientDao.savePatientAssociatedDataFailSave(getSelectedCouncil(), getTask(),
+			genericDAO.savePatientData(getSelectedCouncil(), getTask(),
 					"log.patient.task.council.create");
 
 			task.getCouncils().add(getSelectedCouncil());
 
-			patientDao.savePatientAssociatedDataFailSave(getTask(), "log.patient.task.council.attached",
+			genericDAO.savePatientData(getTask(), "log.patient.task.council.attached",
 					String.valueOf(getSelectedCouncil().getId()));
 
 		} else {
 			logger.debug("Council Dialog: Saving council");
-			patientDao.savePatientAssociatedDataFailSave(getSelectedCouncil(), getTask(),
+			genericDAO.savePatientData(getSelectedCouncil(), getTask(),
 					"log.patient.task.council.update", String.valueOf(getSelectedCouncil().getId()));
 		}
 

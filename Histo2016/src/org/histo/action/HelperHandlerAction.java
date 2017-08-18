@@ -46,15 +46,6 @@ public class HelperHandlerAction implements Serializable {
 	}
 
 	/**
-	 * Saves the given Object to the database
-	 * 
-	 * @param object
-	 */
-	public void saveObject(Object object) {
-		genericDAO.save(object);
-	}
-
-	/**
 	 * Returns a list with all Log for a passed object implementing LogAble.
 	 * This method uses a caching mechanism because the overlaypanel calls this
 	 * method several times. Logs will be updated after some time atomically.

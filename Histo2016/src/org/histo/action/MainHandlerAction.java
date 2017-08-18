@@ -281,29 +281,4 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Date
 	 ********************************************************/
-
-	/********************************************************
-	 * Delete
-	 ********************************************************/
-	@Deprecated
-	public void deleteDate(PatientRollbackAble toSave, String resourcesKey, String... arr) {
-		genericDAO.delete(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
-	}
-
-	/********************************************************
-	 * Delete
-	 ********************************************************/
-
-	/********************************************************
-	 * Save
-	 ********************************************************/
-	@Deprecated
-	public void saveDataChange(PatientRollbackAble toSave, String resourcesKey, String... arr) {
-		genericDAO.save(toSave, resourceBundle.get(resourcesKey, toSave.getLogPath(), arr), toSave.getPatient());
-	}
-
-	/********************************************************
-	 * Save
-	 ********************************************************/
-
 }

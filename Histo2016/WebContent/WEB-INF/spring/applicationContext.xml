@@ -39,6 +39,11 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
+	<bean id="transactionTemplate"
+		class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+
 	<!-- Detect @Transactional -->
 	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
 

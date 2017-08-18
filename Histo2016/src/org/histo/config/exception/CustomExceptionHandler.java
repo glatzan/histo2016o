@@ -132,7 +132,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 					RequestContext.getCurrentInstance()
 							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
-
+					
+					System.out.println("Versionfehler!");
+					
 					// TODO implement
 				}
 			}

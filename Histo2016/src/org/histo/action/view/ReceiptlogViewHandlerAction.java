@@ -45,11 +45,6 @@ public class ReceiptlogViewHandlerAction {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PatientDao patientDao;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private MainHandlerAction mainHandlerAction;
 
 	@Autowired
@@ -239,7 +234,7 @@ public class ReceiptlogViewHandlerAction {
 			if (taskStatusHandler.isStainingCompleted(task)) {
 				logger.trace("Staining phase completed removing from staing list, adding to diagnosisList");
 				task.setStainingCompletionDate(System.currentTimeMillis());
-				patientDao.savePatientAssociatedDataFailSave(task, "log.patient.task.change.stainingPhase.end");
+				genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.end");
 
 				// removing from staining or restaing list
 
@@ -255,7 +250,7 @@ public class ReceiptlogViewHandlerAction {
 				logger.trace("Enter staining phase, adding to staingin list");
 
 				task.setStainingCompletionDate(0);
-				patientDao.savePatientAssociatedDataFailSave(task, "log.patient.task.change.stainingPhase.reentered");
+				genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.reentered");
 
 				if (taskStatusHandler.isReStainingFlag(task)) {
 					logger.debug("Adding to restaining list, if not in list");
@@ -347,7 +342,7 @@ public class ReceiptlogViewHandlerAction {
 			idManuallyAltered.updateAllNames(idManuallyAltered.getTask().isUseAutoNomenclature(), false);
 			
 			//TODO update childrens names
-			patientDao.savePatientAssociatedDataFailSave(idManuallyAltered, "log.patient.task.idManuallyAltered",
+			genericDAO.savePatientData(idManuallyAltered, "log.patient.task.idManuallyAltered",
 					idManuallyAltered.toString());
 			
 			

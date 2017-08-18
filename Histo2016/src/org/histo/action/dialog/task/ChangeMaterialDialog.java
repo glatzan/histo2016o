@@ -42,11 +42,6 @@ public class ChangeMaterialDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
 
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PatientDao patientDao;
-
 	private Sample sample;
 
 	private List<MaterialPreset> materials;
@@ -84,7 +79,7 @@ public class ChangeMaterialDialog extends AbstractDialog {
 				getSample().setMaterial(getSelectedMaterial().getName());
 				sample.setMaterilaPreset(getSelectedMaterial());
 
-				patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.material.update",
+				genericDAO.savePatientData(sample, "log.patient.task.sample.material.update",
 						getSelectedMaterial().toString());
 
 			}

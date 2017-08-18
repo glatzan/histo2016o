@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
+import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.util.StreamUtils;
@@ -27,6 +28,9 @@ public class SearchHandler {
 	@Autowired
 	private PatientDao patientDao;
 
+	@Autowired
+	private GenericDAO genericDAO;
+	
 	@Autowired
 	private SettingsHandler settingsHandler;
 
@@ -51,10 +55,10 @@ public class SearchHandler {
 			// set add date
 			patient.setCreationDate(System.currentTimeMillis());
 			patient.setInDatabase(true);
-			patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.new");
+			genericDAO.savePatientData(patient, "log.patient.search.new");
 		} else {
 			logger.debug("Patient in database, updating and saving");
-			patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.update");
+			genericDAO.savePatientData(patient, "log.patient.search.update");
 		}
 	}
 
@@ -70,9 +74,9 @@ public class SearchHandler {
 			patient.setExternalPatient(true);
 			patient.setInDatabase(true);
 			patient.setCreationDate(System.currentTimeMillis());
-			patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.extern.new");
+			genericDAO.savePatientData(patient, "log.patient.extern.new");
 		} else {
-			patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.edit");
+			genericDAO.savePatientData(patient, "log.patient.edit");
 		}
 	}
 
@@ -96,7 +100,7 @@ public class SearchHandler {
 			clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
 			if (patient != null) {
 				if (patient.copyIntoObject(clinicPatient))
-					patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.update");
+					genericDAO.savePatientData(patient, "log.patient.search.update");
 				return patient;
 			} else {
 				return clinicPatient;
@@ -128,7 +132,7 @@ public class SearchHandler {
 
 			clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
 			if (patient.copyIntoObject(clinicPatient))
-				patientDao.savePatientAssociatedDataFailSave(patient, "log.patient.search.update");
+				genericDAO.savePatientData(patient, "log.patient.search.update");
 
 		}
 		return patients;
@@ -185,7 +189,7 @@ public class SearchHandler {
 
 					if (res.copyIntoObject(cP)) {
 						try {
-							patientDao.savePatientAssociatedDataFailSave(res, "log.patient.search.update");
+							genericDAO.savePatientData(res, "log.patient.search.update");
 						} catch (Exception e) {
 						}
 					}

@@ -118,7 +118,7 @@ public class DiagnosisRevisionDialog extends AbstractDialog {
 								revisionHolder.getRevision());
 					} else {
 						// update revision
-						patientDao.savePatientAssociatedDataFailSave(revisionHolder.getRevision(),
+						genericDAO.savePatientData(revisionHolder.getRevision(),
 								"log.patient.task.diagnosisContainer.diagnosisRevision.update",
 								revisionHolder.getRevision().toString());
 					}

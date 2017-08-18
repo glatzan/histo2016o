@@ -7,6 +7,7 @@ import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,9 +37,6 @@ public class DiagnosisViewHandlerAction {
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
-
-	@Autowired
-	private PatientDao patientDao;
 
 	@Autowired
 	private WorklistViewHandlerAction worklistViewHandlerAction;
@@ -54,6 +53,11 @@ public class DiagnosisViewHandlerAction {
 	@Autowired
 	private UtilDAO utilDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GenericDAO genericDAO;
+	
 	/**
 	 * List of all diagnosis presets
 	 */
@@ -67,7 +71,7 @@ public class DiagnosisViewHandlerAction {
 	@Getter
 	@Setter
 	private DefaultTransformer<DiagnosisPreset> diagnosisPresetsTransformer;
-	
+
 	/**
 	 * List of physicians which have the role signature
 	 */
@@ -118,7 +122,7 @@ public class DiagnosisViewHandlerAction {
 
 		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
 		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());
-		
+
 		setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
 		setDiagnosisPresetsTransformer(new DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
 	}
@@ -145,7 +149,7 @@ public class DiagnosisViewHandlerAction {
 			sample.getParent().generateSlideGuiList();
 
 			// saving patient
-			patientDao.savePatientAssociatedDataFailSave(sample, "log.patient.task.sample.update", sample.toString());
+			genericDAO.savePatientData(sample, "log.patient.task.sample.update", sample.toString());
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
@@ -177,8 +181,8 @@ public class DiagnosisViewHandlerAction {
 
 			diagnosis.updateDiagnosisWithPrest(diagnosis.getDiagnosisPrototype());
 
-			patientDao.savePatientAssociatedDataFailSave(diagnosis,
-					"log.patient.task.diagnosisContainer.diagnosis.update", diagnosis.toString());
+			genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.update",
+					diagnosis.toString());
 
 			// only setting diagnosis text if one sample and no text has been
 			// added
@@ -186,7 +190,7 @@ public class DiagnosisViewHandlerAction {
 			if (diagnosis.getParent().getText() == null || diagnosis.getParent().getText().isEmpty()) {
 				diagnosis.getParent().setText(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 				logger.debug("Updating revision extended text");
-				patientDao.savePatientAssociatedDataFailSave(diagnosis.getParent(),
+				genericDAO.savePatientData(diagnosis.getParent(),
 						"log.patient.task.diagnosisContainer.diagnosisRevision.update",
 						diagnosis.getParent().toString());
 			}
@@ -196,16 +200,15 @@ public class DiagnosisViewHandlerAction {
 		}
 
 	}
-	
-	
+
 	public void onDataChange(PatientRollbackAble toSave, String resourcesKey) {
 		onDataChange(toSave, resourcesKey, new Object[0]);
 	}
 
 	public void onDataChange(PatientRollbackAble toSave, String resourcesKey, Object... arr) {
-		patientDao.savePatientAssociatedDataFailSave(toSave, toSave, resourcesKey, arr);
+		genericDAO.savePatientData(toSave, toSave, resourcesKey, arr);
 	}
-	
+
 	// ************************ Getter/Setter ************************
 	public List<Physician> getPhysiciansToSignList() {
 		return physiciansToSignList;

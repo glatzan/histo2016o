@@ -156,7 +156,7 @@ public class UserHandlerAction implements Serializable {
 		PredefinedRoleSettings roleSetting = settingsHandler.getRoleSettingsForRole(histoUser.getRole());
 		histoUser.updateUserSettings(roleSetting);
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getRole().toString());
-		genericDAO.saveDataRollbackSave(histoUser, "log.user.role.changed", new Object[] { histoUser.getRole() });
+		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getRole() });
 	}
 
 	/**

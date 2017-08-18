@@ -1,5 +1,7 @@
 package org.histo.action.dialog;
 
+import javax.faces.event.AbortProcessingException;
+
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
@@ -71,9 +73,11 @@ public abstract class AbstractDialog {
 		mainHandlerAction.hideDialog(dilaog);
 	}
 
-	public void onDatabaseVersionConflict() {
+	public void onDatabaseVersionConflict()	{
 		hideDialog();
 		mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
 				resourceBundle.get("growl.version.error.text"));
+
+		throw new AbortProcessingException();
 	}
 }
