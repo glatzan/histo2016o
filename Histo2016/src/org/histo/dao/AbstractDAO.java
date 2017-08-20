@@ -7,15 +7,16 @@ import javax.persistence.OptimisticLockException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.hibernate.RootAware;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogInfo;
-import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +162,7 @@ public abstract class AbstractDAO implements Serializable {
 	@SuppressWarnings("unchecked")
 	public <C extends HasID> C refresh(C object) throws CustomDatabaseInconsistentVersionException {
 		try {
+			System.out.println(getSession().hashCode());
 			getSession().saveOrUpdate(object);
 			getSession().flush();
 		} catch (javax.persistence.OptimisticLockException e) {
@@ -169,7 +171,6 @@ public abstract class AbstractDAO implements Serializable {
 
 			// Class<? extends HasID> klass = (Class<? extends HasID>)
 			// object.getClass();
-
 			throw new CustomDatabaseInconsistentVersionException(object);
 		} catch (HibernateException hibernateException) {
 			object = (C) getSession().merge(object);
@@ -185,5 +186,15 @@ public abstract class AbstractDAO implements Serializable {
 
 	public void commit() {
 		getSession().getTransaction().commit();
+	}
+
+	public void lockParent(RootAware<?> rootAware) {
+		lock(rootAware.root());
+	}
+
+	public void lock(Object object) {
+		System.out.println(getSession().hashCode() + "lock");
+		getSession().lock(object, LockMode.OPTIMISTIC_FORCE_INCREMENT);
+		getSession().flush();
 	}
 }

@@ -1,14 +1,10 @@
 package org.histo.action.dialog.media;
 
 import org.apache.log4j.Logger;
-import org.histo.action.MainHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.GenericDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;

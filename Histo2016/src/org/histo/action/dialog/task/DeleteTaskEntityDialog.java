@@ -7,7 +7,6 @@ import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.patient.Block;

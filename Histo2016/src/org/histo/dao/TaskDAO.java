@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
-import org.hibernate.LockMode;
-import org.hibernate.LockOptions;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -80,7 +78,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 	public Task initializeTask(Task task, boolean initialized) throws CustomDatabaseInconsistentVersionException {
-		task = genericDAO.refresh(task);
+		task = refresh(task);
 
 		if (initialized) {
 			Hibernate.initialize(task.getCouncils());
@@ -92,13 +90,12 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 	public Task initializeTaskAndPatient(Task task) throws CustomDatabaseInconsistentVersionException {
-		task = genericDAO.refresh(task);
+		refresh(task.getPatient());
+		refresh(task);
 
 		Hibernate.initialize(task.getCouncils());
 		Hibernate.initialize(task.getDiagnosisContainer());
 		Hibernate.initialize(task.getAttachedPdfs());
-
-		genericDAO.refresh(task.getParent());
 
 		Hibernate.initialize(task.getParent().getTasks());
 		Hibernate.initialize(task.getParent().getAttachedPdfs());
@@ -108,21 +105,25 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 	public void initializeCouncils(Task task) throws CustomDatabaseInconsistentVersionException {
 		for (Council council : task.getCouncils()) {
-			genericDAO.refresh(council);
+			refresh(council);
 			Hibernate.initialize(council.getAttachedPdfs());
 		}
 	}
 
 	public Task getTaskAndPatientInitialized(long id) {
-		Task task = genericDAO.get(Task.class, id);
+		Task task = get(Task.class, id);
 
-		Hibernate.initialize(task.getCouncils());
-		Hibernate.initialize(task.getDiagnosisContainer());
-		Hibernate.initialize(task.getAttachedPdfs());
+		if (task != null) {
+			getSession().refresh(task.getPatient());
+			getSession().refresh(task);
 
-		Hibernate.initialize(task.getParent().getTasks());
-		Hibernate.initialize(task.getParent().getAttachedPdfs());
+			Hibernate.initialize(task.getCouncils());
+			Hibernate.initialize(task.getDiagnosisContainer());
+			Hibernate.initialize(task.getAttachedPdfs());
 
+			Hibernate.initialize(task.getParent().getTasks());
+			Hibernate.initialize(task.getParent().getAttachedPdfs());
+		}
 		return task;
 	}
 
@@ -157,14 +158,15 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 	public void deleteTask(Task task) {
-		// LockOptions(LockMode.OPTIMISTIC_FORCE_INCREMENT)).lock(task.getParent());
-
-		task = genericDAO.refresh(task);
+		System.out.println(getSession().hashCode()+"--");
 		
+		refresh(task.getPatient());
+		refresh(task);
+
 		// removing from favouriteLists
 		while (task.getFavouriteLists().size() > 0) {
 			favouriteListDAO.removeTaskFromList(task,
-					favouriteListDAO.initFavouriteList(task.getFavouriteLists().get(0)));
+					favouriteListDAO.getFavouriteList(task.getFavouriteLists().get(0).getId(), true));
 		}
 
 		logger.debug("Deleting Task " + task.getTaskID());
@@ -172,13 +174,9 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		BioBank bioBank = bioBankDAO.getAssociatedBioBankObject(task);
 
 		bioBankDAO.delete(bioBank);
-
+		
 		genericDAO.deletePatientData(task, "log.patient.task.remove", task.toString());
-		
+		System.out.println(getSession().hashCode() +"--");
 		task.getPatient().getTasks().remove(task);
-		
-		genericDAO.save(task.getPatient());
-		
-		System.out.println(task.getPatient().getVersion());
 	}
 }

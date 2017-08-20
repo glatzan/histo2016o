@@ -23,7 +23,6 @@ import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.ui.ContactContainer;
 import org.histo.ui.medicalFindings.EmailNotificationSettings;
 import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;

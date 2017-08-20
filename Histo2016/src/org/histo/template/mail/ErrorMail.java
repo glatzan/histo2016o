@@ -8,10 +8,8 @@ import javax.persistence.Transient;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.histo.config.enums.DateFormat;
 import org.histo.model.HistoUser;
 import org.histo.template.MailTemplate;
-import org.histo.util.TimeUtil;
 
 //errorMessage = errorMessage + "\r\n\r\nAbsender: "
 //		+ userHandlerAction.getCurrentUser().getPhysician().getPerson().getFullName();

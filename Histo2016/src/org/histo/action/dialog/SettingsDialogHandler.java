@@ -3,14 +3,12 @@ package org.histo.action.dialog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.SettingsHandler;
@@ -41,7 +39,6 @@ import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
 import org.histo.settings.LdapHandler;
 import org.histo.ui.ListChooser;
-import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.ReorderEvent;
 import org.primefaces.event.TabChangeEvent;

@@ -3,20 +3,15 @@ package org.histo.action.dialog.task;
 import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.notification.ContactDialog.ContactHolder;
 import org.histo.action.view.WorklistViewHandlerAction;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.MaterialPreset;
 import org.histo.model.patient.Sample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;

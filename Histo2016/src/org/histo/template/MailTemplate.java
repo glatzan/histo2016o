@@ -1,6 +1,5 @@
 package org.histo.template;
 
-import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.histo.model.PDFContainer;

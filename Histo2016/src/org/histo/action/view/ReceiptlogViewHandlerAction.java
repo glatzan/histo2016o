@@ -1,7 +1,6 @@
 package org.histo.action.view;
 
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -17,7 +16,6 @@ import org.histo.config.enums.StainingListAction;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.UtilDAO;
 import org.histo.model.ListItem;
 import org.histo.model.interfaces.IdManuallyAltered;

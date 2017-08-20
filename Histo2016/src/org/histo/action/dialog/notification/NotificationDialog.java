@@ -7,11 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.xml.ws.Holder;
-
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -25,8 +22,8 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.PDFContainer;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.ui.medicalFindings.MedicalFindingsChooser;
@@ -41,7 +38,6 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.Async;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

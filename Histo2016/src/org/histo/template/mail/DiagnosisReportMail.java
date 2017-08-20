@@ -1,9 +1,7 @@
 package org.histo.template.mail;
 
 import java.io.StringWriter;
-import java.util.Map;
 
-import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.apache.velocity.VelocityContext;
@@ -11,11 +9,9 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.tools.generic.DateTool;
 import org.histo.model.AssociatedContact;
-import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.MailTemplate;
-import org.histo.util.interfaces.FileHandlerUtil;
 
 import lombok.Getter;
 import lombok.Setter;

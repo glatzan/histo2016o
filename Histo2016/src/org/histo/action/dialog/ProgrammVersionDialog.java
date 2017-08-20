@@ -8,11 +8,9 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.settings.Version;
 import org.histo.template.mail.ErrorMail;
-import org.histo.template.mail.RequestUnlockMail;
 import org.histo.util.TimeUtil;
 import org.histo.util.mail.MailHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

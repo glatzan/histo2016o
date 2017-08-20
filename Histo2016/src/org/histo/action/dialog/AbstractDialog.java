@@ -77,7 +77,7 @@ public abstract class AbstractDialog {
 		hideDialog();
 		mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
 				resourceBundle.get("growl.version.error.text"));
-
+		
 		throw new AbortProcessingException();
 	}
 }

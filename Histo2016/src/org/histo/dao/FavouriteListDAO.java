@@ -34,7 +34,7 @@ public class FavouriteListDAO extends AbstractDAO {
 
 		return favList;
 	}
-	
+
 	public FavouriteList initFavouriteList(FavouriteList favList) {
 		genericDAO.refresh(favList);
 		Hibernate.initialize(favList.getOwner());
@@ -52,7 +52,15 @@ public class FavouriteListDAO extends AbstractDAO {
 
 	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-		genericDAO.refresh(task);
+		addTaskToList(task, predefinedFavouriteList, true);
+	}
+
+	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList, boolean refresh)
+			throws CustomDatabaseInconsistentVersionException {
+
+		refresh(task);
+		refresh(task.getParent());
+
 		addTaskToList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
 	}
 
@@ -61,8 +69,7 @@ public class FavouriteListDAO extends AbstractDAO {
 
 		// list should not contain the task
 		if (favouriteList.getItems().stream().noneMatch(p -> p.getTask().getId() == task.getId())) {
-			logger.debug(
-					"Adding task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
+			logger.debug("Adding task (" + task.getTaskID() + ") to favourite lists (" + favouriteList.getName() + ")");
 			FavouriteListItem favItem = new FavouriteListItem(favouriteList, task);
 			// saving new fav item
 			save(favItem);
@@ -76,7 +83,7 @@ public class FavouriteListDAO extends AbstractDAO {
 		// adding to task if task is not member of this list
 		if (task.getFavouriteLists().stream().noneMatch(p -> p.getId() == favouriteList.getId())) {
 
-			logger.debug("Adding favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID() + ")");
+			logger.debug("Adding favourite list(" + favouriteList.getName() + ") to task (" + task.getTaskID() + ")");
 
 			task.getFavouriteLists().add(favouriteList);
 			genericDAO.savePatientData(task, "log.patient.task.favouriteList.added",
@@ -96,14 +103,14 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void removeTaskFromList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
 		if (task.isListedInFavouriteList(predefinedFavouriteList)) {
-			genericDAO.refresh(task);
+			refresh(task);
 			removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
 		}
 	}
 
 	public void removeTaskFromList(Task task, FavouriteList favouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-
+		System.out.println(getSession().hashCode() + "!!");
 		try {
 			logger.debug(
 					"Removing task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
@@ -142,4 +149,11 @@ public class FavouriteListDAO extends AbstractDAO {
 		// TODO Delete FavouriteListItem?
 	}
 
+	public void removeTaskFromAllLists(Task task) {
+		// removing from favouriteLists
+		while (task.getFavouriteLists().size() > 0) {
+			System.out.println(getSession().hashCode() + "fav");
+			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true));
+		}
+	}
 }

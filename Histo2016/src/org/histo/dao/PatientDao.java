@@ -18,8 +18,6 @@ import org.histo.config.enums.Eye;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Person;
-import org.histo.model.interfaces.HasID;
-import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
@@ -57,7 +55,10 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	public Patient getPatient(long id, boolean initialize) {
+		
 		Patient patient = get(Patient.class, id);
+		getSession().refresh(patient);
+		
 		if (initialize) {
 			Hibernate.initialize(patient.getTasks());
 			Hibernate.initialize(patient.getAttachedPdfs());

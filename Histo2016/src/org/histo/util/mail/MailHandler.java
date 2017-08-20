@@ -6,12 +6,10 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
-import javax.persistence.Transient;
 
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
@@ -22,7 +20,6 @@ import org.histo.model.interfaces.GsonAble;
 import org.histo.template.MailTemplate;
 import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

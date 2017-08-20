@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.DetachedCriteria;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.Person;
@@ -17,13 +15,10 @@ import org.histo.model.Physician;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
-import org.histo.model.view.ContactPhysicanRole;
-import org.histo.util.HistoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Set;
 
 @Component
 @Transactional

@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.histo.action.MainHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PatientDao;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
@@ -21,7 +19,6 @@ import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

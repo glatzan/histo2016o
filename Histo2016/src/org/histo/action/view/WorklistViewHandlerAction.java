@@ -11,6 +11,7 @@ import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -21,6 +22,7 @@ import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearch;
+import org.primefaces.context.RequestContext;
 import org.primefaces.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -64,6 +66,10 @@ public class WorklistViewHandlerAction {
 	@Lazy
 	private MainHandlerAction mainHandlerAction;
 
+	@Autowired
+	@Lazy
+	private ResourceBundle resourceBundle;
+	
 	/**
 	 * View
 	 */
@@ -169,14 +175,15 @@ public class WorklistViewHandlerAction {
 
 		try {
 			patientDao.initializePatient(patient, true);
+			commonDataHandlerAction.setSelectedPatient(patient);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// Reloading the Patient, should not be happening
 			logger.debug("Version conflict, updating entity");
-			patient = patientDao.getPatient(patient.getId(), true);
+			patientDao.reset(patient);
+			patientDao.initializePatient(patient, true);
 			replacePatientInCurrentWorklist(patient);
 		}
 
-		commonDataHandlerAction.setSelectedPatient(patient);
 		commonDataHandlerAction.setSelectedTask(null);
 
 		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
@@ -209,11 +216,25 @@ public class WorklistViewHandlerAction {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// Reloading the Task, should not be happening
 			logger.debug("Version conflict, updating entity");
-			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			replacePatientInCurrentWorklist(task.getParent());
-		}
 
-		replacePatientInCurrentWorklist(task.getPatient());
+			// getting new task, possibility of deletion
+			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+
+			if (task != null)
+				replacePatientInCurrentWorklist(task.getParent());
+			else {
+				// task might be delete from an other user
+				if (commonDataHandlerAction.getSelectedPatient() != null) {
+					replacePatientInCurrentWorklist(commonDataHandlerAction.getSelectedPatient().getId());
+
+					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
+							resourceBundle.get("growl.version.error.text"));
+
+					RequestContext.getCurrentInstance()
+							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+				}
+			}
+		}
 
 		commonDataHandlerAction.setSelectedPatient(task.getPatient());
 		commonDataHandlerAction.setSelectedTask(task);

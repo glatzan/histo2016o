@@ -1,20 +1,17 @@
 package org.histo.action.dialog.print;
 
 import java.util.Date;
-import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
-import org.histo.dao.PatientDao;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.ui.ContactContainer;
 import org.histo.util.HistoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

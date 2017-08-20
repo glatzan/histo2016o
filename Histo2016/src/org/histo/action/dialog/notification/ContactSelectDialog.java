@@ -1,7 +1,6 @@
 package org.histo.action.dialog.notification;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -18,9 +17,6 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
-import org.histo.model.view.ContactPhysicanRole;
-import org.histo.ui.ListChooser;
-import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

@@ -1,9 +1,5 @@
 package org.histo.template;
 
-import javax.persistence.Entity;
-
-import org.histo.model.PDFContainer;
-
 import lombok.Getter;
 import lombok.Setter;
 

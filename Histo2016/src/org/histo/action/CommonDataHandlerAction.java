@@ -2,12 +2,9 @@ package org.histo.action;
 
 import java.util.List;
 
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.View;
-import org.histo.model.AssociatedContact;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.ui.transformer.AssociatedRoleTransformer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

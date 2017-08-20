@@ -28,9 +28,6 @@ public class SearchHandlerAction {
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
-	private CreateTaskDialog createTaskDialog;
-
-	@Autowired
 	private PatientDao patientDao;
 
 	@Autowired
@@ -47,6 +44,9 @@ public class SearchHandlerAction {
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	private DialogHandlerAction dialogHandlerAction;
 
 	private String searchString;
 
@@ -113,7 +113,7 @@ public class SearchHandlerAction {
 						// shown
 						// after the patient is added to the worklist
 						if (alternateMode) {
-							createTaskDialog.initAndPrepareBean(patient);
+							dialogHandlerAction.getCreateTaskDialog().initAndPrepareBean(patient);
 						}
 
 					} else {

@@ -38,39 +38,67 @@ import org.histo.util.HistoUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.transaction.support.TransactionTemplate;
 
-@Component
-@Scope(value = "session")
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Getter
+@Setter
 public class CreateTaskDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SettingsHandler settingsHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PDFGeneratorHandler pDFGeneratorHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TransactionTemplate transactionTemplate;
 
 	private Patient patient;
 
@@ -138,8 +166,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the name and the amount of samples which should be created with the
-	 * new task.
+	 * Updates the name and the amount of samples which should be created with
+	 * the new task.
 	 */
 	public void updateDialog() {
 
@@ -184,6 +212,11 @@ public class CreateTaskDialog extends AbstractDialog {
 	 */
 	public void createTask() {
 		uniqueRequestID.checkUniqueRequestID(true);
+		//
+		// transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		//
+		// @Override
+		// protected void doInTransactionWithoutResult(TransactionStatus arg0) {
 		try {
 			if (getPatient().getTasks() == null) {
 				getPatient().setTasks(new ArrayList<>());
@@ -192,6 +225,7 @@ public class CreateTaskDialog extends AbstractDialog {
 			getPatient().getTasks().add(0, getTask());
 			// sets the new task as the selected task
 
+			getTask().setParent(getPatient());
 			getTask().setCaseHistory("");
 			getTask().setWard("");
 
@@ -219,8 +253,7 @@ public class CreateTaskDialog extends AbstractDialog {
 				sample.setMaterial(sample.getMaterilaPreset().getName());
 
 				// saving samples
-				genericDAO.savePatientData(sample, "log.patient.task.sample.new",
-						sample.getSampleID());
+				genericDAO.savePatientData(sample, "log.patient.task.sample.new", sample.getSampleID());
 				// creating needed blocks
 				// TODO: save for version conflict
 				taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
@@ -254,8 +287,7 @@ public class CreateTaskDialog extends AbstractDialog {
 
 				if (isMoveInformedConsent()) {
 					patient.getAttachedPdfs().remove(selectedPDF);
-					genericDAO.savePatientData(getPatient(), "log.patient.pdf.removed",
-							selectedPDF.getName());
+					genericDAO.savePatientData(getPatient(), "log.patient.pdf.removed", selectedPDF.getName());
 				}
 			} else {
 				genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.save");
@@ -263,11 +295,23 @@ public class CreateTaskDialog extends AbstractDialog {
 
 			genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
 
-			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StainingList);
-			
+			FavouriteList f = favouriteListDAO.getFavouriteList(PredefinedFavouriteList.StainingList.getId(), true);
+
+			favouriteListDAO.addTaskToList(getTask(), f);
+
+			genericDAO.save(task.getPatient());
+
+			genericDAO.lockParent(task);
+
+			// worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient().getId());
+
 		} catch (CustomDatabaseInconsistentVersionException e) {
+			getPatient().getTasks().remove(0);
 			onDatabaseVersionConflict();
 		}
+		// }
+
+		// });
 	}
 
 	/**
@@ -328,61 +372,9 @@ public class CreateTaskDialog extends AbstractDialog {
 		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
-	// ************************ Getter/Setter ************************
-	public List<MaterialPreset> getMaterialList() {
-		return materialList;
-	}
-
-	public void setMaterialList(List<MaterialPreset> materialList) {
-		this.materialList = materialList;
-	}
-
-	public DefaultTransformer<MaterialPreset> getMaterialListTransformer() {
-		return materialListTransformer;
-	}
-
-	public void setMaterialListTransformer(DefaultTransformer<MaterialPreset> materialListTransformer) {
-		this.materialListTransformer = materialListTransformer;
-	}
-
-	public Patient getPatient() {
-		return patient;
-	}
-
-	public void setPatient(Patient patient) {
-		this.patient = patient;
-	}
-
-	public int getSampleCount() {
-		return sampleCount;
-	}
-
-	public void setSampleCount(int sampleCount) {
-		this.sampleCount = sampleCount;
-	}
-
-	public boolean isAutoNomenclatureChangedManually() {
-		return autoNomenclatureChangedManually;
-	}
-
-	public void setAutoNomenclatureChangedManually(boolean autoNomenclatureChangedManually) {
-		this.autoNomenclatureChangedManually = autoNomenclatureChangedManually;
-	}
-
-	public BioBank getBioBank() {
-		return bioBank;
-	}
-
-	public void setBioBank(BioBank bioBank) {
-		this.bioBank = bioBank;
-	}
-
-	public boolean isMoveInformedConsent() {
-		return moveInformedConsent;
-	}
-
-	public void setMoveInformedConsent(boolean moveInformedConsent) {
-		this.moveInformedConsent = moveInformedConsent;
+	public void onDatabaseVersionConflict() {
+		worklistViewHandlerAction.replacePatientInCurrentWorklist(getTask().getParent().getId());
+		super.onDatabaseVersionConflict();
 	}
 
 }

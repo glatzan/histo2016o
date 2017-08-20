@@ -3,7 +3,6 @@ package org.histo.dao;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -16,7 +15,6 @@ import org.histo.config.SecurityContextHolderUtil;
 import org.histo.model.HistoUser;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.LogInfo;
-import org.histo.model.patient.Patient;
 import org.histo.model.util.LogListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

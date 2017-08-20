@@ -8,7 +8,6 @@ import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;

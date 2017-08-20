@@ -32,17 +32,16 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
+import org.histo.config.hibernate.RootAware;
 import org.histo.model.Accounting;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.FavouriteList;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
-import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
@@ -57,7 +56,7 @@ import org.histo.util.TimeUtil;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
-public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasDataList, HasID {
+public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasDataList, HasID, RootAware<Patient> {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -874,5 +873,11 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	@Transient
 	public String getDatalistIdentifier() {
 		return "interface.hasDataList.task";
+	}
+
+	@Override
+	@Transient
+	public Patient root() {
+		return parent;
 	}
 }

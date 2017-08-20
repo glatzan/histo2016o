@@ -1,6 +1,7 @@
 package org.histo.util.latex;
 
 import org.apache.commons.lang3.StringUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 

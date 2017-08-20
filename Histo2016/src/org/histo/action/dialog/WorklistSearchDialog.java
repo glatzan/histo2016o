@@ -20,8 +20,6 @@ import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearchBasic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import lombok.Getter;
 import lombok.Setter;

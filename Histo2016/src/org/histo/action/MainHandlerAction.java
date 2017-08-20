@@ -20,7 +20,6 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
 import org.histo.dao.GenericDAO;
-import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -66,7 +65,6 @@ public class MainHandlerAction {
 	@Getter
 	@Setter
 	private List<FacesMessage> queueGrowlMessages;
-
 
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
@@ -201,7 +199,6 @@ public class MainHandlerAction {
 		}
 
 		getQueueGrowlMessages().clear();
-
 	}
 
 	public void addQueueGrowlMessage(String headline, String message) {

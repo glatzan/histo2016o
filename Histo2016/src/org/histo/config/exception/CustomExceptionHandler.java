@@ -1,6 +1,5 @@
 package org.histo.config.exception;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -10,11 +9,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.ExceptionHandler;
 import javax.faces.context.ExceptionHandlerWrapper;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ExceptionQueuedEvent;
 import javax.faces.event.ExceptionQueuedEventContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
@@ -90,7 +88,6 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 			final NavigationHandler nav = fc.getApplication().getNavigationHandler();
 
 			logger.debug("Global exeption handler - " + cause);
-			cause.printStackTrace();
 
 			// getting root excepetion
 			while (cause instanceof FacesException || cause instanceof ELException) {
@@ -99,6 +96,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 				else
 					cause = ((ELException) cause).getCause();
 			}
+			
+			logger.debug("Global exeption handler - " + cause);
 
 			if (cause != null) {
 
@@ -125,6 +124,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 						worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(
 								((Parent<?>) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion())
 										.getTask().getId());
+					} else {
+						logger.debug("Version Error,"
+								+ ((CustomDatabaseInconsistentVersionException) cause).getOldVersion().getClass());
 					}
 
 					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
@@ -132,10 +134,15 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 					RequestContext.getCurrentInstance()
 							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
-					
+
 					System.out.println("Versionfehler!");
-					
+
 					// TODO implement
+				}else if(cause instanceof AbortProcessingException) {
+					logger.debug("Error aboring all actions!");
+				}else {
+					logger.debug("Other exception!");
+					cause.printStackTrace();
 				}
 			}
 

@@ -1,11 +1,7 @@
 package org.histo.action.dialog.notification;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.notification.ContactSelectDialog.PhysicianContainer;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -13,14 +9,10 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
-import org.histo.model.AssociatedContactNotification;
-import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Task;
 import org.primefaces.event.ReorderEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

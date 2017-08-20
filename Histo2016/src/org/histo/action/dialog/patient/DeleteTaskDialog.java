@@ -2,22 +2,18 @@ package org.histo.action.dialog.patient;
 
 import java.util.List;
 
-import org.hibernate.LockMode;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.BioBankDAO;
 import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
-import org.histo.model.AssociatedContact;
-import org.histo.model.BioBank;
-import org.histo.model.FavouriteList;
-import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -40,7 +36,22 @@ public class DeleteTaskDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
-	
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListDAO favouriteListDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private BioBankDAO bioBankDAO;
+
 	private boolean deleteAble;
 
 	public void initAndPrepareBean(Task task) {
@@ -68,25 +79,37 @@ public class DeleteTaskDialog extends AbstractDialog {
 	public void deleteTask() {
 		try {
 
-			taskDAO.deleteTask(getTask());
-			
-		} catch (CustomDatabaseInconsistentVersionException e) {
+			if (!(transactionTemplate.execute(new TransactionCallback<Boolean>() {
+
+				public Boolean doInTransaction(TransactionStatus transactionStatus) {
+					try {
+						genericDAO.refresh(getTask());
+						genericDAO.refresh(getTask().getPatient());
+						favouriteListDAO.removeTaskFromAllLists(getTask());
+						bioBankDAO.removeAssociatedBioBank(getTask());
+						genericDAO.deletePatientData(task, "log.patient.task.remove", task.toString());
+						task.getPatient().getTasks().remove(task);
+						return new Boolean(true);
+					} catch (Exception e) {
+						return new Boolean(false);
+					}
+				}
+
+			})).booleanValue()) {
+				throw new CustomDatabaseInconsistentVersionException(getTask());
+			}
+
+			taskDAO.lock(getTask().getParent());
+
+		} catch (Exception e) {
+			System.out.println("0");
 			onDatabaseVersionConflict();
 		}
+	}
 
-		// boolean returnValue = transactionTemplate.execute(session -> {
-		// session.buildLockRequest(new
-		// LockOptions(LockMode.OPTIMISTIC_FORCE_INCREMENT)).lock(getTask().getParent());
-		// Commit commit = new Commit(repository);
-		// commit.getChanges().add(new Change("README.txt", "0a1,5..."));
-		// commit.getChanges().add(new Change("web.xml", "17c17..."));
-		// session.persist(commit);
-		//
-		// return true;
-		// });
-
-		// // removing task from patient
-		// .getTasks().remove(getTask());patientDao.deletePatientAssociatedDataFailSave(getTask(),"log.patient.task.remove",getTask());}
+	public void onDatabaseVersionConflict() {
+		worklistViewHandlerAction.replacePatientInCurrentWorklist(getTask().getParent().getId());
+		super.onDatabaseVersionConflict();
 	}
 
 }

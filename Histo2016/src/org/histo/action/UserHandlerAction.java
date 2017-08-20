@@ -1,7 +1,6 @@
 package org.histo.action;
 
 import java.io.Serializable;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.SettingsHandler;
@@ -11,7 +10,6 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.model.HistoUser;
 import org.histo.model.transitory.PredefinedRoleSettings;
-import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.template.mail.RequestUnlockMail;
 import org.histo.util.mail.MailHandler;
 import org.springframework.beans.factory.annotation.Autowired;

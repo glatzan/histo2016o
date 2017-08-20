@@ -48,12 +48,18 @@ public class BioBankDAO extends AbstractDAO implements Serializable {
 	 * Initializes the datalist and the taks of an biobank object
 	 * 
 	 * @param bioBank
-	 * @throws CustomDatabaseInconsistentVersionException 
+	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public BioBank initializeBioBank(BioBank bioBank) throws CustomDatabaseInconsistentVersionException {
 		bioBank = genericDAO.refresh(bioBank);
 		Hibernate.initialize(bioBank.getAttachedPdfs());
 		Hibernate.initialize(bioBank.getTask());
 		return bioBank;
+	}
+
+	public void removeAssociatedBioBank(Task task) {
+		System.out.println(getSession().hashCode() + "bio");
+		BioBank bioBank = getAssociatedBioBankObject(task);
+		delete(bioBank);
 	}
 }

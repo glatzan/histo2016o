@@ -2,7 +2,6 @@ package org.histo.template.mail;
 
 import java.io.StringWriter;
 
-import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.apache.velocity.VelocityContext;

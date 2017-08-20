@@ -287,7 +287,7 @@
 
 			<!-- New Task Button -->
 			<p:commandButton id="newTaskBtn" style="display:none"
-				actionListener="#{createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+				actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 

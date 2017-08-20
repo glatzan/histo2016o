@@ -2,7 +2,6 @@ package org.histo.ui;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContact;
@@ -10,7 +9,6 @@ import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
-import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;

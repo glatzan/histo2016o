@@ -17,7 +17,6 @@ import org.histo.model.Log;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Task;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

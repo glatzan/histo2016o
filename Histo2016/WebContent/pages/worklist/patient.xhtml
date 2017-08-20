@@ -99,7 +99,7 @@
 			selection="#{commonDataHandlerAction.selectedTask}"
 			rowKey="#{task.id}">
 
-			<p:ajax event="rowSelect" update=":contentForm, :headerForm"
+			<p:ajax event="rowSelect" update=":contentForm, :headerForm, :navigationForm"
 				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(commonDataHandlerAction.selectedTask)}" />
 
 			<p:column headerText="#{msg['body.worklist.patient.tasks']}">
@@ -197,8 +197,8 @@
 				<f:facet name="header">
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="taskList"
-							actionListener="#{createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
-							<p:ajax event="dialogReturn" update="navigationForm contentForm"
+							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+							<p:ajax event="dialogReturn" update="navigationForm contentForm headerForm"
 								listener="#{mainHandlerAction.processQueues()}" />
 							<i class="fa fa-plus" />
 						</p:commandLink>
