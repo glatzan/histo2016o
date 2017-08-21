@@ -313,7 +313,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 * Shows the userlist aganin
 		 */
 		public void discardHistoUser() {
-			genericDAO.reset(getSelectedUser());
+			genericDAO.refresh(getSelectedUser());
 			setSelectedUser(null);
 			setPage(HistoUserPage.LIST);
 
@@ -427,7 +427,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 */
 		public void discardDiagnosisPreset() {
 			if (getSelectedDiagnosisPreset().getId() != 0)
-				genericDAO.reset(getSelectedDiagnosisPreset());
+				genericDAO.refresh(getSelectedDiagnosisPreset());
 			setPage(DiagnosisPage.LIST);
 			setSelectedDiagnosisPreset(null);
 
@@ -579,7 +579,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 */
 		public void discardMaterial() {
 			if (getEditMaterial().getId() != 0)
-				genericDAO.reset(getEditMaterial());
+				genericDAO.refresh(getEditMaterial());
 			setPage(MaterialPage.LIST);
 			setEditMaterial(null);
 
@@ -764,7 +764,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 */
 		public void discardStainig() {
 			if (getEditStaining().getId() != 0)
-				genericDAO.reset(getEditStaining());
+				genericDAO.refresh(getEditStaining());
 			setPage(StainingPage.LIST);
 			setEditStaining(null);
 
@@ -881,7 +881,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		public void discardListItem() {
 			if (getEditListItem().getId() != 0)
-				genericDAO.reset(getEditListItem());
+				genericDAO.refresh(getEditListItem());
 
 			setEditListItem(null);
 			setPage(StaticListPage.LIST);

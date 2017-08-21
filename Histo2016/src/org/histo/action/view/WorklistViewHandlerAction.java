@@ -179,7 +179,7 @@ public class WorklistViewHandlerAction {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// Reloading the Patient, should not be happening
 			logger.debug("Version conflict, updating entity");
-			patientDao.reset(patient);
+			patientDao.refresh(patient);
 			patientDao.initializePatient(patient, true);
 			replacePatientInCurrentWorklist(patient);
 		}

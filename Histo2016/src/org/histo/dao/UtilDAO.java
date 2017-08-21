@@ -36,7 +36,7 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public HasDataList initializeDataList(HasDataList dataList) throws CustomDatabaseInconsistentVersionException {
-		dataList = genericDAO.refresh(dataList);
+		dataList = genericDAO.reattach(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
 		return dataList;
 	}

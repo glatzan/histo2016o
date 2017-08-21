@@ -42,7 +42,7 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 
 	public boolean initBean(Diagnosis diagnosis) {
 		try {
-			setDiagnosis(genericDAO.refresh(diagnosis));
+			setDiagnosis(genericDAO.reattach(diagnosis));
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(diagnosis.getTask().getId());

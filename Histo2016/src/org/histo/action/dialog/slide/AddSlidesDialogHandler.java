@@ -72,7 +72,7 @@ public class AddSlidesDialogHandler extends AbstractDialog {
 	public boolean initBean(Block block) {
 		super.initBean(null, Dialog.SLIDE_CREATE);
 		try {
-			setBlock(genericDAO.refresh(block));
+			setBlock(genericDAO.reattach(block));
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(block.getTask().getId());

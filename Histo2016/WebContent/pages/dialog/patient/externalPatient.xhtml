@@ -14,7 +14,7 @@
 			styleClass="contentPannel" />
 
 		<histo:newPersonDataMask
-			person="#{addPatientDialogHandler.patient.person}"
+			person="#{dialogHandlerAction.addPatientDialogHandler.patient.person}"
 			pannelID="newPatient" disabled="false" />
 
 		<!-- Piz -->
@@ -30,7 +30,7 @@
 				<!-- role -->
 				<h:outputLabel value="#{msg['dialog.addPatient.extern.piz']}" />
 				<p:inputText id="piz" name="piz"
-					value="#{addPatientDialogHandler.patient.piz}" />
+					value="#{dialogHandlerAction.addPatientDialogHandler.patient.piz}" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
@@ -50,15 +50,15 @@
 					partialSubmit="true"
 					styleClass="smallButton buttonRighMarginInListExtended">
 					<f:actionListener
-						binding="#{addPatientDialogHandler.addExternalPatient(true)}" />
-					<f:actionListener binding="#{addPatientDialogHandler.hideDialog()}" />
+						binding="#{dialogHandlerAction.addPatientDialogHandler.addExternalPatient(true)}" />
+					<f:actionListener binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
 				</p:commandButton>
 
 				<!-- Close Button -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
-					actionListener="#{addPatientDialogHandler.hideDialog()}" />
+					actionListener="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

@@ -4,7 +4,11 @@
 		"changes": [
 			"<b>Fix:</b> Kopieren der vorgefertigenten Diangosen-Text funktionert wieder",
 			"<b>Added:</b> Faxen ist über den Drucken-Dialog möglich",
-			"<b>Added:</b> Löschen von Aufträgen, die noch nicht bearbeiten wurden ist möglich"
+			"<b>Added:</b> Löschen von Aufträgen, die noch nicht bearbeiten wurden ist möglich",
+			"<b>Added:</b> Löschen von Aufträgen die noch nicht bearbeitet wurden ist möglich",
+			"<b>Change:</b> Es können keine doppelten Auftragsnummern mehr angelegt werden",
+			"<b>Change:</b> Versionsverwaltung verbessert",
+			"<b>Fix:</b> Rechtschreibkorrekturen"
 		]
 	},
 	{

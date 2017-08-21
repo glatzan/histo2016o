@@ -17,78 +17,69 @@ import org.histo.model.patient.Patient;
 import org.histo.ui.ListChooser;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-@Component
-@Scope(value = "session")
+@Configurable
+@Getter
+@Setter
 public class AddPatientDialogHandler extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private SearchHandler searchHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	/**
 	 * Patient for creating external Patient
 	 */
-	@Getter
-	@Setter
 	private Patient patient;
 
 	/**
 	 * Patient to search for, piz
 	 */
-	@Getter
-	@Setter
 	private String patientPiz;
 
 	/**
 	 * Patient to search for, name
 	 */
-	@Getter
-	@Setter
 	private String patientName;
 
 	/**
 	 * Patient to search for, surname
 	 */
-	@Getter
-	@Setter
 	private String patientSurname;
 
 	/**
 	 * Patient to search for, birthday
 	 */
-	@Getter
-	@Setter
 	private Date patientBirthday;
 
 	/**
 	 * True if to many matches have been found in the clinic database, an so the
 	 * clinic database did not return any data
 	 */
-	@Getter
-	@Setter
 	private boolean toManyMatchesInClinicDatabase;
 
 	/**
 	 * List of all found Patients of the patientSearchRequest, PatientList is
 	 * used instead of Patient because primefaces needs a unique row collum.
 	 */
-	@Getter
-	@Setter
 	private List<ListChooser<Patient>> patientList;
 
 	/**
 	 * Selectes PatientList item
 	 */
-	@Getter
-	@Setter
 	private ListChooser<Patient> selectedPatientListItem;
 
 	public void initAndPrepareBean() {
@@ -126,6 +117,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 					worklistViewHandlerAction.addPatientToWorkList(getPatient(), true);
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
+			// TODO: reload patient?
 			onDatabaseVersionConflict();
 		}
 	}
@@ -139,6 +131,7 @@ public class AddPatientDialogHandler extends AbstractDialog {
 			}
 		} catch (JSONException | CustomDatabaseInconsistentVersionException | CustomExceptionToManyEntries
 				| CustomNullPatientExcepetion e) {
+			// TODO: reload patient?
 			onDatabaseVersionConflict();
 		}
 	}

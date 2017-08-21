@@ -38,7 +38,7 @@
 			<p:commandButton disabled="true"
 				value="#{msg['body.userlist.header.button.searchPatient']}"
 				styleClass="buttonMarginLeft"
-				actionListener="#{addPatientDialogHandler.initAndPrepareBean()}">
+				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" update=" contentForm" />
 			</p:commandButton>
 

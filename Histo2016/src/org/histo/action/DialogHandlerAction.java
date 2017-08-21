@@ -7,8 +7,10 @@ import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.notification.NotificationDialog;
+import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.DeleteTaskDialog;
+import org.histo.action.dialog.patient.EditPatientDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
@@ -48,6 +50,10 @@ public class DialogHandlerAction {
 	private DeleteTaskDialog deleteTaskDialog;
 
 	private CreateTaskDialog createTaskDialog;
+
+	private EditPatientDialog editPatientDialog;
+
+	private AddPatientDialogHandler addPatientDialogHandler;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -141,4 +147,21 @@ public class DialogHandlerAction {
 
 		return createTaskDialog;
 	}
+
+	public EditPatientDialog getEditPatientDialog() {
+		if (editPatientDialog == null) {
+			editPatientDialog = new EditPatientDialog();
+		}
+
+		return editPatientDialog;
+	}
+
+	public AddPatientDialogHandler getAddPatientDialogHandler() {
+		if (addPatientDialogHandler == null) {
+			addPatientDialogHandler = new AddPatientDialogHandler();
+		}
+
+		return addPatientDialogHandler;
+	}
+
 }

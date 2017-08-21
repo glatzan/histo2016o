@@ -36,7 +36,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	}
 
 	public FavouriteList initFavouriteList(FavouriteList favList) {
-		genericDAO.refresh(favList);
+		genericDAO.reattach(favList);
 		Hibernate.initialize(favList.getOwner());
 		Hibernate.initialize(favList.getItems());
 		return favList;
@@ -58,8 +58,8 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList, boolean refresh)
 			throws CustomDatabaseInconsistentVersionException {
 
-		refresh(task);
-		refresh(task.getParent());
+		reattach(task);
+		reattach(task.getParent());
 
 		addTaskToList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
 	}
@@ -103,7 +103,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void removeTaskFromList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
 		if (task.isListedInFavouriteList(predefinedFavouriteList)) {
-			refresh(task);
+			reattach(task);
 			removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
 		}
 	}

@@ -82,7 +82,7 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 	}
 
 	public void initializeOrganization(Organization organization) {
-		refresh(organization);
+		reattach(organization);
 		Hibernate.initialize(organization.getPersons());
 	}
 }

@@ -3,6 +3,13 @@ package org.histo.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
+
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
@@ -78,7 +85,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 	public Task initializeTask(Task task, boolean initialized) throws CustomDatabaseInconsistentVersionException {
-		task = refresh(task);
+		task = reattach(task);
 
 		if (initialized) {
 			Hibernate.initialize(task.getCouncils());
@@ -90,8 +97,8 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 	public Task initializeTaskAndPatient(Task task) throws CustomDatabaseInconsistentVersionException {
-		refresh(task.getPatient());
-		refresh(task);
+		reattach(task.getPatient());
+		reattach(task);
 
 		Hibernate.initialize(task.getCouncils());
 		Hibernate.initialize(task.getDiagnosisContainer());
@@ -105,7 +112,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 	public void initializeCouncils(Task task) throws CustomDatabaseInconsistentVersionException {
 		for (Council council : task.getCouncils()) {
-			refresh(council);
+			reattach(council);
 			Hibernate.initialize(council.getAttachedPdfs());
 		}
 	}
@@ -157,26 +164,25 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 				.add(AuditEntity.id().eq(taskID)).addOrder(AuditEntity.revisionNumber().asc()).getResultList();
 	}
 
-	public void deleteTask(Task task) {
-		System.out.println(getSession().hashCode()+"--");
-		
-		refresh(task.getPatient());
-		refresh(task);
+	public Task getTaskWithLastID() {
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		// removing from favouriteLists
-		while (task.getFavouriteLists().size() > 0) {
-			favouriteListDAO.removeTaskFromList(task,
-					favouriteListDAO.getFavouriteList(task.getFavouriteLists().get(0).getId(), true));
-		}
+		// Create CriteriaQuery
+		CriteriaQuery<Task> criteria = qb.createQuery(Task.class);
+		Root<Task> taskRoot = criteria.from(Task.class);
+		criteria.select(taskRoot);
 
-		logger.debug("Deleting Task " + task.getTaskID());
+		Subquery<Task> subquery = criteria.subquery(Task.class);
+		Root<Task> subTaskRoot = subquery.from(Task.class);
+		subquery.select(qb.max((Expression) subTaskRoot.get("id")));
 
-		BioBank bioBank = bioBankDAO.getAssociatedBioBankObject(task);
+		criteria.where(qb.equal(taskRoot.get("id"), subquery));
 
-		bioBankDAO.delete(bioBank);
-		
-		genericDAO.deletePatientData(task, "log.patient.task.remove", task.toString());
-		System.out.println(getSession().hashCode() +"--");
-		task.getPatient().getTasks().remove(task);
+		Task task = getSession().createQuery(criteria).getSingleResult();
+
+		return task;
 	}
 }
+// DetachedCriteria maxID = DetachedCriteria.forClass(Task.class);
+// maxID.setProjection(Projections.max("id"));

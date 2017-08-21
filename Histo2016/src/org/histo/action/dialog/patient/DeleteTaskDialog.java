@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -25,7 +26,7 @@ import lombok.Setter;
 @Setter
 public class DeleteTaskDialog extends AbstractDialog {
 
-	public static final int maxRevisionToDelete = 3;
+	public static final int maxRevisionToDelete = 1;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -79,30 +80,22 @@ public class DeleteTaskDialog extends AbstractDialog {
 	public void deleteTask() {
 		try {
 
-			if (!(transactionTemplate.execute(new TransactionCallback<Boolean>() {
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-				public Boolean doInTransaction(TransactionStatus transactionStatus) {
-					try {
-						genericDAO.refresh(getTask());
-						genericDAO.refresh(getTask().getPatient());
-						favouriteListDAO.removeTaskFromAllLists(getTask());
-						bioBankDAO.removeAssociatedBioBank(getTask());
-						genericDAO.deletePatientData(task, "log.patient.task.remove", task.toString());
-						task.getPatient().getTasks().remove(task);
-						return new Boolean(true);
-					} catch (Exception e) {
-						return new Boolean(false);
-					}
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					genericDAO.reattach(getTask());
+					genericDAO.reattach(getTask().getPatient());
+					favouriteListDAO.removeTaskFromAllLists(getTask());
+					bioBankDAO.removeAssociatedBioBank(getTask());
+					genericDAO.deletePatientData(task, "log.patient.task.remove", task.toString());
+					task.getPatient().getTasks().remove(task);
 				}
-
-			})).booleanValue()) {
-				throw new CustomDatabaseInconsistentVersionException(getTask());
-			}
+			});
 
 			taskDAO.lock(getTask().getParent());
 
 		} catch (Exception e) {
-			System.out.println("0");
+			System.out.println("0" + e.getClass() + " cupu");
 			onDatabaseVersionConflict();
 		}
 	}

@@ -86,7 +86,6 @@ public class GenericDAO extends AbstractDAO {
 
 	public <C extends HasID & PatientRollbackAble> C deletePatientData(C object, String resourcesKey,
 			String... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
-		System.out.println(getSession().hashCode()  + "delete");
 		return deletePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 

@@ -50,7 +50,7 @@ public class OrganizationListDialog extends AbstractDialog {
 			this.selectMode = false;
 		else {
 			try {
-				organizationDAO.refresh(person);
+				organizationDAO.reattach(person);
 				setPerson(person);
 				this.selectMode = true;
 			} catch (CustomDatabaseInconsistentVersionException e) {

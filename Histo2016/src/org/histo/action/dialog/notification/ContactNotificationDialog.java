@@ -58,7 +58,7 @@ public class ContactNotificationDialog extends AbstractDialog {
 
 	public boolean initBean(Task task, AssociatedContact associatedContact) {
 		try {
-			contactDAO.refresh(associatedContact);
+			contactDAO.reattach(associatedContact);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 		}

@@ -67,7 +67,7 @@ public class UserSettingsDialog extends AbstractDialog {
 	
 	public void resetUserSettings(){
 		logger.debug("Resetting user Settings");
-		genericDAO.reset(getUser());
+		genericDAO.refresh(getUser());
 	}
 	
 	// ************************ Getter/Setter ************************

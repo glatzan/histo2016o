@@ -35,7 +35,7 @@
 			<p:commandButton
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
-				actionListener="#{addPatientDialogHandler.initAndPrepareBean()}">
+				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
@@ -258,7 +258,7 @@
 			<!-- *************** Patient Menu *************** -->
 			<!-- Show Patient Overview -->
 			<p:commandButton id="addPatient" style="display:none"
-				actionListener="#{addPatientDialogHandler.initAndPrepareBean()}">
+				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 			<!-- Show Overview -->
@@ -276,7 +276,7 @@
 
 			<!-- Edit Patient data -->
 			<p:commandButton id="editPatientData" style="display:none"
-				actionListener="#{editPatientDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+				actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 

@@ -37,14 +37,14 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	public Patient initilaizeTasksofPatient(Patient patient) throws CustomDatabaseInconsistentVersionException {
-		refresh(patient);
+		reattach(patient);
 		Hibernate.initialize(patient.getTasks());
 		return patient;
 	}
 
 	public Patient initializePatient(Patient patient, boolean initialize)
 			throws CustomDatabaseInconsistentVersionException {
-		refresh(patient);
+		reattach(patient);
 
 		if (initialize) {
 			Hibernate.initialize(patient.getTasks());

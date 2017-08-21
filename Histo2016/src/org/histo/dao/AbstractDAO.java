@@ -85,6 +85,7 @@ public abstract class AbstractDAO implements Serializable {
 				LogInfo logInfo = new LogInfo(resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);
 				SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
 			}
+			System.out.println(getSession().hashCode() + " save");
 			getSession().saveOrUpdate(object);
 			getSession().flush();
 			return object;
@@ -160,9 +161,8 @@ public abstract class AbstractDAO implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <C extends HasID> C refresh(C object) throws CustomDatabaseInconsistentVersionException {
+	public <C extends HasID> C reattach(C object) throws CustomDatabaseInconsistentVersionException {
 		try {
-			System.out.println(getSession().hashCode());
 			getSession().saveOrUpdate(object);
 			getSession().flush();
 		} catch (javax.persistence.OptimisticLockException e) {
@@ -180,7 +180,7 @@ public abstract class AbstractDAO implements Serializable {
 		return object;
 	}
 
-	public void reset(Object object) {
+	public void refresh(Object object) {
 		getSession().refresh(object);
 	}
 
@@ -193,7 +193,6 @@ public abstract class AbstractDAO implements Serializable {
 	}
 
 	public void lock(Object object) {
-		System.out.println(getSession().hashCode() + "lock");
 		getSession().lock(object, LockMode.OPTIMISTIC_FORCE_INCREMENT);
 		getSession().flush();
 	}
