@@ -39,6 +39,8 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.printer.template.AbstractTemplate;
+import org.histo.util.printer.template.PDFGenerator;
+import org.histo.util.printer.template.TemplateUReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
@@ -236,8 +238,9 @@ public class CreateTaskDialog extends AbstractDialog {
 					getTask().setParent(getPatient());
 					getTask().setCaseHistory("");
 					getTask().setWard("");
-					
-					// renewing taskID, if somebody has created an other task meanwhile 
+
+					// renewing taskID, if somebody has created an other task
+					// meanwhile
 					getTask().setTaskID(getNewTaskID());
 
 					getTask().setCouncils(new ArrayList<Council>());
@@ -340,7 +343,10 @@ public class CreateTaskDialog extends AbstractDialog {
 		}
 
 		// printing u report
-		PDFContainer newPdf = pDFGeneratorHandler.generateUReport(subSelect[0], task.getPatient(), task);
+
+		((TemplateUReport) subSelect[0]).initData(task.getPatient(), getTask());
+		PDFContainer newPdf = ((TemplateUReport) subSelect[0]).generatePDF(new PDFGenerator());
+
 		settingsHandler.getSelectedPrinter().print(newPdf);
 	}
 

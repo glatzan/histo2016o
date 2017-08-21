@@ -40,9 +40,6 @@ public class SearchHandlerAction {
 	private SearchHandler searchHandler;
 
 	@Autowired
-	private AddPatientDialogHandler addPatientDialogHandler;
-
-	@Autowired
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
@@ -146,10 +143,10 @@ public class SearchHandlerAction {
 					// name, surename; name surename
 					String[] arr = searchString.split("[, ]");
 
-					addPatientDialogHandler.initAndPrepareBeanFromExternal(arr[0], arr[1], "", new Date());
+					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[0], arr[1], "", new Date());
 
 				} else if (searchString.matches("^[\\p{Alpha}\\-]+")) {
-					addPatientDialogHandler.initAndPrepareBeanFromExternal(searchString, "", "", new Date());
+					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(searchString, "", "", new Date());
 				} else {
 
 				}

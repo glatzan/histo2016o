@@ -10,23 +10,24 @@ import org.histo.model.patient.Task;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class TemplateCouncil extends AbstractTemplate {
 
-	@Getter
-	@Setter
 	private Patient patient;
 
-	@Getter
-	@Setter
 	private Council council;
 
-	@Getter
-	@Setter
 	private Task task;
-	
-	@Getter
-	@Setter
+
 	private AssociatedContact toSendAddress;
+
+	public void initData(Patient patient, Task task, Council council, AssociatedContact toSendAddress) {
+		this.patient = patient;
+		this.task = task;
+		this.council = council;
+		this.toSendAddress = toSendAddress;
+	}
 
 	public PDFContainer generatePDF(PDFGenerator generator) {
 		generator.openNewPDf(this);
@@ -36,7 +37,7 @@ public class TemplateCouncil extends AbstractTemplate {
 		generator.getConverter().replace("council", council);
 		generator.getConverter().replace("addressee", toSendAddress);
 		generator.getConverter().replace("date", new DateTool());
-		
+
 		return generator.generatePDF();
 	}
 

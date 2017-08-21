@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=latex 2017.2.14)  20 JUL 2017 18:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=latex 2017.2.14)  21 AUG 2017 21:04
 entering extended mode
 **./Report_Intern.tex
 (Report_Intern.tex
@@ -1167,6 +1167,21 @@ Overfull \hbox (139.76022pt too wide) in paragraph at lines 106--106
  []
 
 
+LaTeX Warning: File `augen.png' not found on input line 106.
+
+
+! LaTeX Error: File `augen.png' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.106 ...  {\includegraphics[scale=0.4]{augen.png}
+                                                  } \\
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
 ! LaTeX Error: Cannot determine size of graphic in augen.png (no BoundingBox).
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -1690,6 +1705,21 @@ Overfull \hbox (22.40347pt too wide) in paragraph at lines 168--177
  []
 
 
+LaTeX Warning: File `background.pdf' not found on input line 178.
+
+
+! LaTeX Error: File `background.pdf' not found.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.178 \end{longtable}
+                     
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
 ! LaTeX Error: Cannot determine size of graphic in background.pdf (no BoundingB
 ox).
 
@@ -1880,6 +1910,6 @@ Here is how much of TeX's memory you used:
  9975 multiletter control sequences out of 15000+200000
  24714 words of font info for 60 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,23n,66p,8853b,469s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,23n,66p,8853b,459s stack positions out of 5000i,500n,10000p,200000b,50000s
 
 Output written on Report_Intern.dvi (2 pages, 5780 bytes).

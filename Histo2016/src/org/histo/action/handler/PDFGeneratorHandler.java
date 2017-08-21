@@ -28,6 +28,10 @@ import org.histo.ui.medicalFindings.FaxNotificationSettings;
 import org.histo.ui.medicalFindings.PhoneNotificationSettings;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.histo.util.printer.template.AbstractTemplate;
+import org.histo.util.printer.template.PDFGenerator;
+import org.histo.util.printer.template.TemplateCouncil;
+import org.histo.util.printer.template.TemplateDiagnosisReport;
+import org.histo.util.printer.template.TemplateUReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -67,9 +71,7 @@ public class PDFGeneratorHandler {
 	@Autowired
 	private SettingsHandler settingsHandler;
 
-	public PDFContainer generatePDFForReport(Patient patient, Task task, AbstractTemplate printTemplate) {
-		return generatePDFForReport(patient, task, printTemplate, null);
-	}
+
 
 	public PDFContainer generateSendReport(AbstractTemplate printTemplate, Patient patient,
 			EmailNotificationSettings emails, FaxNotificationSettings fax, PhoneNotificationSettings phone) {
@@ -84,31 +86,8 @@ public class PDFGeneratorHandler {
 		return generator.generatePDF();
 	}
 
-	public PDFContainer generateUReport(AbstractTemplate printTemplate, Patient patient, Task task) {
-		PDFGenerator generator = new PDFGenerator(printTemplate);
-		generator.getConverter().replace("patient", patient);
-		generator.getConverter().replace("task", task);
-		return generator.generatePDF();
-	}
 
-	public PDFContainer generateDiagnosisReport(AbstractTemplate printTemplate, Patient patient, Task task,
-			AssociatedContact toSendAddress) {
-		PDFGenerator generator = new PDFGenerator(printTemplate);
-		generator.getConverter().replace("patient", patient);
-		generator.getConverter().replace("task", task);
-		generator.getConverter().replace("addressee", toSendAddress);
-		generator.getConverter().replace("subject", "");
 
-		return generator.generatePDF();
-	}
-
-	public PDFContainer generateCouncilRequest(AbstractTemplate printTemplate, Patient patient, Council council) {
-		PDFGenerator generator = new PDFGenerator(printTemplate);
-		generator.getConverter().replace("patient", patient);
-		generator.getConverter().replace("council", council);
-
-		return generator.generatePDF();
-	}
 
 	public PDFContainer generatePDFForReport(Patient patient, Task task, AbstractTemplate printTemplate,
 			AssociatedContact toSendAddress) {
@@ -129,7 +108,7 @@ public class PDFGeneratorHandler {
 
 		replacePatientData(converter, patient);
 
-//		replaceAddressData(converter, toSendAddress);
+		// replaceAddressData(converter, toSendAddress);
 
 		if (printTemplate.getDocumentType() == DocumentType.U_REPORT
 				|| printTemplate.getDocumentType() == DocumentType.U_REPORT_EMTY) {
@@ -166,6 +145,11 @@ public class PDFGeneratorHandler {
 		}
 		return null;
 
+	}
+
+	public class DataContainer {
+		private Patient patient;
+		private Task task;
 	}
 
 	public final void replacePatientData(JLRConverter converter, Patient patient) {
@@ -664,117 +648,5 @@ public class PDFGeneratorHandler {
 		}
 
 		return new PDFContainer(type, name, out.getBytes());
-	}
-
-	public class PDFGenerator {
-
-		private File workingDirectory;
-		private File output;
-		private File template;
-		private File processedTex;
-		private JLRConverter converter;
-		private AbstractTemplate printTemplate;
-
-		public PDFGenerator(AbstractTemplate printTemplate) {
-			openNewPDf(printTemplate);
-		}
-
-		public JLRConverter openNewPDf(AbstractTemplate printTemplate) {
-			this.printTemplate = printTemplate;
-			workingDirectory = new File(
-					FileHandlerUtil.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
-			System.out.println(workingDirectory.getAbsolutePath());
-			output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
-
-			System.out.println(output.getAbsolutePath());
-
-			template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
-
-			processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
-
-			converter = new JLRConverter(workingDirectory);
-
-			return converter;
-		}
-
-		public PDFContainer generatePDF() {
-			long test1 = System.currentTimeMillis();
-
-			try {
-				System.out.println(template.getAbsolutePath());
-				if (!converter.parse(template, processedTex)) {
-					logger.error(converter.getErrorMessage());
-				}
-
-				JLRGenerator pdfGen = new JLRGenerator();
-
-				if (!pdfGen.generate(processedTex, output, workingDirectory)) {
-					logger.debug("Error in File " + processedTex.getAbsolutePath());
-					logger.error(pdfGen.getErrorMessage());
-					return null;
-				}
-
-				File test = pdfGen.getPDF();
-				byte[] data = readContentIntoByteArray(test);
-
-				System.out.println((System.currentTimeMillis() - test1));
-
-				return new PDFContainer(printTemplate.getDocumentType(),
-						"_" + mainHandlerAction.date(System.currentTimeMillis()).replace(".", "_") + ".pdf", data);
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		public File getWorkingDirectory() {
-			return workingDirectory;
-		}
-
-		public File getOutput() {
-			return output;
-		}
-
-		public File getTemplate() {
-			return template;
-		}
-
-		public File getProcessedTex() {
-			return processedTex;
-		}
-
-		public JLRConverter getConverter() {
-			return converter;
-		}
-
-		public AbstractTemplate getPrintTemplate() {
-			return printTemplate;
-		}
-
-		public void setWorkingDirectory(File workingDirectory) {
-			this.workingDirectory = workingDirectory;
-		}
-
-		public void setOutput(File output) {
-			this.output = output;
-		}
-
-		public void setTemplate(File template) {
-			this.template = template;
-		}
-
-		public void setProcessedTex(File processedTex) {
-			this.processedTex = processedTex;
-		}
-
-		public void setConverter(JLRConverter converter) {
-			this.converter = converter;
-		}
-
-		public void setPrintTemplate(AbstractTemplate printTemplate) {
-			this.printTemplate = printTemplate;
-		}
-
 	}
 }

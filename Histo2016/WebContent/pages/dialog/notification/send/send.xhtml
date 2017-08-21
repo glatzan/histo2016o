@@ -200,7 +200,8 @@
 				<p:commandButton value="Benachrichtigung ausführen"
 					icon="fa fa-fw fa-mail-forward"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{notificationDialog.nextStep()}" update="@form" />
+					actionListener="#{dialogHandlerAction.notificationDialog.sendTab.performeNotification()}"
+					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"

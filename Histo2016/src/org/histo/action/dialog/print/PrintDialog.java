@@ -10,7 +10,6 @@ import javax.faces.event.PhaseId;
 
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
@@ -60,11 +59,6 @@ public class PrintDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PDFGeneratorHandler pDFGeneratorHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private SettingsHandler settingsHandler;
 
 	@Autowired
@@ -76,7 +70,7 @@ public class PrintDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
-	
+
 	/**
 	 * List of all templates for printing
 	 */
@@ -142,7 +136,7 @@ public class PrintDialog extends AbstractDialog {
 	 * If true a fax button will be displayed
 	 */
 	private boolean faxMode;
-	
+
 	/**
 	 * Initializes the bean and shows the council dialog
 	 * 
@@ -175,7 +169,7 @@ public class PrintDialog extends AbstractDialog {
 		setRenderedContact(null);
 
 		setSelectMode(false);
-		
+
 		setFaxMode(true);
 
 		setSingleAddressSelectMode(false);
@@ -242,7 +236,7 @@ public class PrintDialog extends AbstractDialog {
 		setRenderedContact(new ContactContainer(sendTo));
 
 		setSelectMode(false);
-		
+
 		setFaxMode(false);
 
 		setSingleAddressSelectMode(false);
@@ -400,10 +394,10 @@ public class PrintDialog extends AbstractDialog {
 
 		onChooseContact(chooser.getParent());
 	}
-	
+
 	public void onChangeAddressManually(ContactContainer container) {
-		if(dialogHandlerAction.getCustomAddressDialog().isAddressChanged()) {
-			if(getRenderedContact() == container) {
+		if (dialogHandlerAction.getCustomAddressDialog().isAddressChanged()) {
+			if (getRenderedContact() == container) {
 				onChangePrintTemplate();
 				RequestContext.getCurrentInstance().update("dialogContent");
 			}
@@ -420,30 +414,23 @@ public class PrintDialog extends AbstractDialog {
 		switch (getSelectedTemplate().getDocumentType()) {
 		case U_REPORT:
 		case U_REPORT_EMTY:
-			((TemplateUReport) getSelectedTemplate()).setPatient(getTask().getPatient());
-			((TemplateUReport) getSelectedTemplate()).setTask(getTask());
+			((TemplateUReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask());
 			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		case DIAGNOSIS_REPORT:
 
-			((TemplateDiagnosisReport) getSelectedTemplate()).setPatient(getTask().getPatient());
-			((TemplateDiagnosisReport) getSelectedTemplate()).setTask(getTask());
-			((TemplateDiagnosisReport) getSelectedTemplate())
-					.setToSendAddress(getRenderedContact() != null ? getRenderedContact().getContact() : null);
+			((TemplateDiagnosisReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask(),
+					getRenderedContact() != null ? getRenderedContact().getContact() : null);
 			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		case COUNCIL_REQUEST:
-			((TemplateCouncil) getSelectedTemplate()).setPatient(getTask().getPatient());
-			((TemplateCouncil) getSelectedTemplate()).setCouncil(getSelectedCouncil());
-			((TemplateCouncil) getSelectedTemplate()).setTask(getTask());
-			((TemplateCouncil) getSelectedTemplate())
-					.setToSendAddress(getRenderedContact() != null ? getRenderedContact().getContact() : null);
+			((TemplateCouncil) getSelectedTemplate()).initData(getTask().getPatient(), getTask(), getSelectedCouncil(),
+					getRenderedContact() != null ? getRenderedContact().getContact() : null);
 			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		default:
 			// always render the pdf with the fist associatedContact chosen
-			result = pDFGeneratorHandler.generatePDFForReport(getTask().getPatient(), getTask(), getSelectedTemplate(),
-					getRenderedContact() != null ? getRenderedContact().getContact() : null);
+			result = null;
 			break;
 		}
 

@@ -2,6 +2,7 @@ package org.histo.util.printer.template;
 
 import org.apache.velocity.tools.generic.DateTool;
 import org.histo.model.AssociatedContact;
+import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
@@ -9,21 +10,20 @@ import org.histo.model.patient.Task;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 public class TemplateDiagnosisReport extends AbstractTemplate {
 
-	@Getter
-	@Setter
 	private Patient patient;
-	
-	@Getter
-	@Setter
+
 	private Task task;
 
-	@Getter
-	@Setter
 	private AssociatedContact toSendAddress;
 
-	public TemplateDiagnosisReport() {
+	public void initData(Patient patient, Task task, AssociatedContact toSendAddress) {
+		this.patient = patient;
+		this.task = task;
+		this.toSendAddress = toSendAddress;
 	}
 
 	public PDFContainer generatePDF(PDFGenerator generator) {
@@ -33,7 +33,7 @@ public class TemplateDiagnosisReport extends AbstractTemplate {
 		generator.getConverter().replace("addressee", toSendAddress);
 		generator.getConverter().replace("subject", "");
 		generator.getConverter().replace("date", new DateTool());
-		
+
 		return generator.generatePDF();
 	}
 }
