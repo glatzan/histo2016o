@@ -7,7 +7,6 @@ import javax.persistence.NoResultException;
 
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.PDFGeneratorHandler;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -75,11 +74,6 @@ public class CreateTaskDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private SettingsHandler settingsHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PDFGeneratorHandler pDFGeneratorHandler;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)

@@ -5,8 +5,6 @@ import java.util.Date;
 import javax.faces.application.FacesMessage;
 
 import org.apache.log4j.Logger;
-import org.histo.action.dialog.patient.AddPatientDialogHandler;
-import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.handler.SearchHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;

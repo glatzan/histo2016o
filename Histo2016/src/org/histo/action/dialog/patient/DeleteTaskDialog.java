@@ -5,7 +5,6 @@ import java.util.List;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.BioBankDAO;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.TaskDAO;
@@ -13,7 +12,6 @@ import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 

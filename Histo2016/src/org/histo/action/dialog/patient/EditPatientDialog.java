@@ -8,8 +8,6 @@ import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;

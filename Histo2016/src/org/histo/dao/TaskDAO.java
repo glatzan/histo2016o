@@ -6,7 +6,6 @@ import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
@@ -19,7 +18,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.model.BioBank;
 import org.histo.model.Council;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
