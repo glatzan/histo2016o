@@ -26,6 +26,7 @@ public class TemplateDiagnosisReport extends AbstractTemplate {
 	}
 
 	public PDFContainer generatePDF(PDFGenerator generator) {
+		System.out.println("sfd");
 		generator.openNewPDf(this);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
@@ -33,6 +34,7 @@ public class TemplateDiagnosisReport extends AbstractTemplate {
 		generator.getConverter().replace("subject", "");
 		generator.getConverter().replace("date", new DateTool());
 
+		System.out.println("tut");
 		return generator.generatePDF();
 	}
 }

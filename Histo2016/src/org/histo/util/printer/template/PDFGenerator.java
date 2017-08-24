@@ -5,29 +5,33 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.ProgrammVersionDialog;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.DateFormat;
 import org.histo.model.PDFContainer;
+import org.histo.settings.LdapHandler;
+import org.histo.settings.ProgramSettings;
 import org.histo.util.TimeUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import de.nixosoft.jlr.JLRConverter;
 import de.nixosoft.jlr.JLRGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
-@Configurable
 @Getter
 @Setter
 public class PDFGenerator {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-
-	@Autowired
-	private SettingsHandler settingsHandler;
 
 	private File workingDirectory;
 	private File output;
@@ -36,23 +40,37 @@ public class PDFGenerator {
 	private JLRConverter converter;
 	private AbstractTemplate printTemplate;
 
+	private ProgramSettings programSettings;
+
 	public PDFGenerator() {
+		this(null);
 	}
 
 	public PDFGenerator(AbstractTemplate printTemplate) {
-		openNewPDf(printTemplate);
+		if (printTemplate != null)
+			openNewPDf(printTemplate);
+
+		// loading program settings, can't use settings bean, because this
+		// object might operate in a thread
+		JsonParser parser = new JsonParser();
+		JsonObject o = parser.parse(FileHandlerUtil.getContentOfFile(SettingsHandler.PROGRAM_SETTINGS))
+				.getAsJsonObject();
+
+		Gson gson = new Gson();
+
+		programSettings = gson.fromJson(o.get(SettingsHandler.SETTINGS_OBJECT_GENERAL), ProgramSettings.class);
 	}
 
 	public JLRConverter openNewPDf(AbstractTemplate printTemplate) {
 		this.printTemplate = printTemplate;
-		workingDirectory = new File(
-				FileHandlerUtil.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+		workingDirectory = new File(FileHandlerUtil.getAbsolutePath(programSettings.getWorkingDirectory()));
 
 		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
 		template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
-		processedTex = new File(workingDirectory.getAbsolutePath() + File.separator + "tmp.tex");
+		processedTex = new File(
+				workingDirectory.getAbsolutePath() + File.separator + RandomStringUtils.random(10) + ".tex");
 
 		converter = new JLRConverter(workingDirectory);
 

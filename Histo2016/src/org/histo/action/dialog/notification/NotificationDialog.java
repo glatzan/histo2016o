@@ -1,5 +1,6 @@
 package org.histo.action.dialog.notification;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -34,6 +35,7 @@ import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -69,19 +71,24 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ThreadPoolTaskExecutor taskExecutor;
+
 	private int activeIndex = 0;
 
-	private MailTab mailTab = new MailTab();
+	private MailTab mailTab;
 
-	private FaxTab faxTab = new FaxTab();
+	private FaxTab faxTab;
 
-	private LetterTab letterTab = new LetterTab();
+	private LetterTab letterTab;
 
-	private PhoneTab phoneTab = new PhoneTab();
-	
-	private SendTab sendTab = new SendTab();
+	private PhoneTab phoneTab;
 
-	public AbstractTab[] tabs = new AbstractTab[] { mailTab, faxTab, letterTab, phoneTab, sendTab };
+	private SendTab sendTab;
+
+	public AbstractTab[] tabs = new AbstractTab[5];
 
 	public void initAndPrepareBean(Task task) {
 		if (initBean(task))
@@ -95,6 +102,15 @@ public class NotificationDialog extends AbstractDialog {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
+		}
+
+		if (getTask() != task) {
+			logger.debug("Resetting Bean");
+			tabs[0] = mailTab = new MailTab();
+			tabs[1] = faxTab = new FaxTab();
+			tabs[2] = letterTab = new LetterTab();
+			tabs[3] = phoneTab = new PhoneTab();
+			tabs[4] = sendTab = new SendTab();
 		}
 
 		super.initBean(task, Dialog.NOTIFICATION);
@@ -494,10 +510,7 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			if (getRenderStepProgress().get())
-				return "send/progress.xhtml";
-			else
-				return "send/send.xhtml";
+			return "send/send.xhtml";
 		}
 
 		@Override
@@ -507,8 +520,8 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Async("taskExecutor")
 		public void performeNotification() {
-			logger.trace("Startin notification thread");
-			
+			logger.debug("Startin notification thread");
+
 			try {
 				if (notificationRunning.get())
 					return;
@@ -519,58 +532,75 @@ public class NotificationDialog extends AbstractDialog {
 
 				getRenderStepProgress().set(true);
 
-				getStepProgress().set(1);
+				getStepProgress().set(0);
 
 				if (mailTab.isUseTab()) {
+					logger.debug("Mail is used");
 					DiagnosisReportMail mail = mailTab.getMail();
 					mail.setSubject(mail.getSubject());
 					mail.setBody(mail.getBody());
 
+					System.out.println("begin loop");
 					for (ContactHolder holder : mailTab.getHolders()) {
-						if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
+						System.out.println("loop" + holder.getContactAddress());
+						if (HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
+							System.out.println("hallo");
 							DiagnosisReportMail cloneMail = (DiagnosisReportMail) mail.clone();
-
+							System.out.println("hallo11");
 							if (holder.getPdf() != null)
-								// pdf was selected for the individual contact
+								// pdf was selected for the individual
+								// contact
 								cloneMail.setAttachment(holder.getPdf());
 							else if (mailTab.getSelectedTemplate() != null) {
 								// generating pdf from list
 								// Template has a TemplateDiagnosisReport
 								// generator
+								logger.debug("creating pdf");
 								((TemplateDiagnosisReport) mailTab.getSelectedTemplate())
 										.initData(getTask().getPatient(), getTask(), holder.getContact());
-								;
-								PDFContainer container = ((TemplateDiagnosisReport) mailTab.getSelectedTemplate())
-										.generatePDF(new PDFGenerator());
+
+								PDFGenerator t = new PDFGenerator();
+								System.out.println("generating pdf");
+								PDFContainer container = mailTab.getSelectedTemplate().generatePDF(t);
+								System.out.println("set attachement");
 								cloneMail.setAttachment(container);
+								logger.debug("end pdf");
 							}
 
-							boolean success = false;
-							// success =
+							 boolean success = false;
+							// // success =
+							// //
 							// settingsHandler.getMailHandler().sendMail(holder.contactAddress,
-							// cloneMail);
-
-							if (success) {
-								holder.setPerformed(true);
-								holder.getNotification().setPerformed(true);
-								holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							} else {
-								holder.getNotification().setFailed(true);
-								holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-								holder.getNotification().setCommentary(resourceBundle.get(""));
-								// TODO TEXT
-							}
+							// // cloneMail);
+							
+							 if (success) {
+							 holder.setPerformed(true);
+							 holder.getNotification().setPerformed(true);
+							 holder.getNotification().setDateOfAction(new
+							 Date(System.currentTimeMillis()));
+							 } else {
+							 holder.getNotification().setFailed(true);
+							 holder.getNotification().setDateOfAction(new
+							 Date(System.currentTimeMillis()));
+							 holder.getNotification().setCommentary("");
+							 // resourceBundle.get("")
+							 // TODO TEXT
+							 }
 
 						} else {
+							System.out.println("no email");
 							// no email provided
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							holder.getNotification().setCommentary(resourceBundle.get(""));
+							holder.getNotification().setCommentary(""); // resourceBundle.get("")
+							System.out.println("end step");
 						}
+						System.out.println("halloasdasda");
 						progressStep();
 					}
 				}
 
 				if (faxTab.isUseTab()) {
+					logger.debug("fax is used");
 					for (ContactHolder holder : faxTab.getHolders()) {
 						if (faxTab.getSelectedTemplate() != null
 								|| HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
@@ -599,6 +629,7 @@ public class NotificationDialog extends AbstractDialog {
 				}
 
 				if (letterTab.isUseTab()) {
+					logger.debug("letter is used");
 					for (ContactHolder holder : letterTab.getHolders()) {
 						if (letterTab.getSelectedTemplate() != null
 								|| HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
@@ -628,10 +659,14 @@ public class NotificationDialog extends AbstractDialog {
 				}
 
 				if (phoneTab.isUseTab()) {
+					logger.debug("Phone is used");
 					progressStep();
 				}
+				progressStep();
 
+				logger.debug("Messaging ended");
 			} catch (Exception e) {
+				System.out.println(e);
 			}
 		}
 
@@ -644,6 +679,7 @@ public class NotificationDialog extends AbstractDialog {
 			steps += letterTab.isUseTab() ? letterTab.getHolders().size() : 0;
 			steps += phoneTab.isUseTab() ? 1 : 0;
 
+			logger.debug("Steps calculated = " + steps);
 			return steps;
 		}
 
@@ -651,8 +687,8 @@ public class NotificationDialog extends AbstractDialog {
 		 * Increment steps
 		 */
 		public void progressStep() {
-			getStepProgress().set(getStepProgress().get() + 100 / getSteps());
-			logger.debug("Setting Progress to " +getStepProgress().get());
+			getStepProgress().set(getStepProgress().get() + (100 / getSteps()));
+			logger.debug("Setting Progress to " + getStepProgress().get());
 		}
 	}
 }

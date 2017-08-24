@@ -37,6 +37,7 @@ import com.google.gson.reflect.TypeToken;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Component
 @Scope(value = "session")
 @Getter

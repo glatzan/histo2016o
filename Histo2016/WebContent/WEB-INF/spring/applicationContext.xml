@@ -92,13 +92,10 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
-	<task:annotation-driven mode="aspectj" />
+	<task:executor id="taskExecutor" pool-size="5-10"
+		queue-capacity="25" />
+	<task:annotation-driven executor="taskExecutor"
+		mode="aspectj" />
 
-	<bean id="taskExecutor"
-		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
-		<property name="corePoolSize" value="5" />
-		<property name="maxPoolSize" value="10" />
-		<property name="queueCapacity" value="25" />
-	</bean>
 
 </beans>
