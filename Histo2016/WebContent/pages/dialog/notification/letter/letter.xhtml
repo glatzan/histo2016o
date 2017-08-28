@@ -32,7 +32,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.notification.tab.letter.pdfTemplate']}" />
 			<p:selectOneMenu value="#{tab.selectedTemplate}"
-				converter="#{tab.templateTransformer}"
+				converter="#{tab.templateTransformer}" disabled="#{!tab.useTab}"
 				styleClass="customSerachSelectMenu">
 
 				<f:selectItem itemValue="#{null}"
@@ -67,7 +67,7 @@
 					</f:facet>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null}"
+						rendered="#{holder.pdf eq null}" disabled="#{!tab.useTab}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
@@ -84,7 +84,7 @@
 					<p:commandLink styleClass="noUnderlineAtLink"
 						rendered="#{holder.pdf ne null}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.show']}"
-						execute="@this" partialSubmit="true"
+						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
@@ -93,7 +93,7 @@
 					<p:commandLink styleClass="noUnderlineAtLink"
 						style="margin-left: 10px;" rendered="#{holder.pdf ne null}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.remove']}"
-						execute="@this" partialSubmit="true"
+						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
 						update=":adminForm:tabview:letterTab"
 						actionListener="#{holder.setPdf(null)}">
 

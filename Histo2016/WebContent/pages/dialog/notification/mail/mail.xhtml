@@ -46,7 +46,7 @@
 				value="#{msg['dialog.notification.tab.mail.pdfTemplate']}" />
 			<p:selectOneMenu value="#{tab.selectedTemplate}"
 				converter="#{tab.templateTransformer}"
-				styleClass="customSerachSelectMenu">
+				styleClass="customSerachSelectMenu" disabled="#{!tab.useTab}">
 
 				<f:selectItem itemValue="#{null}"
 					itemLabel="#{msg['dialog.notification.tab.mail.pdfTemplate.none']}"></f:selectItem>
@@ -77,7 +77,8 @@
 					headerText="#{msg['dialog.notification.tab.mail.receiver.email']}"
 					style="width:auto">
 					<p:inputText value="#{holder.contactAddress}"
-						styleClass="smallInput" style="width:98%" />
+						disabled="#{!tab.useTab}" styleClass="smallInput"
+						style="width:98%" />
 				</p:column>
 
 				<p:column style="width:12%; text-align:center;">
@@ -87,7 +88,7 @@
 					</f:facet>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null}"
+						rendered="#{holder.pdf eq null}" disabled="#{!tab.useTab}"
 						title="#{msg['dialog.notification.tab.mail.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
@@ -104,7 +105,7 @@
 					<p:commandLink styleClass="noUnderlineAtLink"
 						rendered="#{holder.pdf ne null}"
 						title="#{msg['dialog.notification.tab.mail.receiver.pdf.show']}"
-						execute="@this" partialSubmit="true"
+						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
@@ -113,7 +114,7 @@
 					<p:commandLink styleClass="noUnderlineAtLink"
 						style="margin-left: 10px;" rendered="#{holder.pdf ne null}"
 						title="#{msg['dialog.notification.tab.mail.receiver.pdf.remove']}"
-						execute="@this" partialSubmit="true"
+						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
 						update=":adminForm:tabview:mailTab"
 						actionListener="#{holder.setPdf(null)}">
 

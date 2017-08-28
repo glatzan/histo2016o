@@ -15,185 +15,172 @@
 			</f:facet>
 		</p:panel>
 
-		<p:panelGrid columns="1" styleClass="defaultListingTableContainer" rendered="#{dialogHandlerAction.notificationDialog.sendTab.renderStepProgress.get()}"
+		<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+			rendered="#{dialogHandlerAction.notificationDialog.sendTab.renderStepProgress.get()}"
 			style="width:100%">
 			<p:progressBar widgetVar="pbAjax" ajax="true"
-				value="#{dialogHandlerAction.notificationDialog.sendTab.stepProgress.get()}"
-				labelTemplate="#{dialogHandlerAction.notificationDialog.sendTab.stepProgress.get()}%"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}"
+				labelTemplate="#{dialogHandlerAction.notificationDialog.sendTab.progressText} (#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%)"
 				styleClass="animated" global="false">
 				<p:ajax event="complete" update="@form" />
 			</p:progressBar>
 		</p:panelGrid>
 
-		<p:scrollPanel style="width:100%;height:500px" rendered="#{!dialogHandlerAction.notificationDialog.sendTab.renderStepProgress.get()}">
-				<!-- email -->
-				<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-					style="width:100%">
-					<p:panelGrid columns="2"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%"
-						columnClasses="defaultListingTableColumn150px, ">
-						<h:panelGroup>
-							<h:outputText
-								value="#{msg['dialog.notification.tab.send.email']}: "
-								styleClass="bold-text" />
+		<p:scrollPanel style="width:100%;height:500px"
+			rendered="#{!dialogHandlerAction.notificationDialog.sendTab.renderStepProgress.get()}">
+			<!-- email -->
+			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+				style="width:100%;margin-top:10px;">
+				<p:panelGrid columns="2"
+					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+					<h:panelGroup>
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.email']}: "
+							styleClass="bold-text" />
 
-							<ui:fragment
-								rendered="#{dialogHandlerAction.notificationDialog.getTab('MailTab').useTab}">
-								<i class="fa fa-fw fa-check-circle icon-green"
-									title="#{msg['dialog.notification.tab.send.email.active']}" />
-							</ui:fragment>
+						<ui:fragment
+							rendered="#{dialogHandlerAction.notificationDialog.getTab('MailTab').useTab}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['dialog.notification.notifiy.email.enabled']}" />
+						</ui:fragment>
 
-							<ui:fragment
-								rendered="#{!dialogHandlerAction.notificationDialog.getTab('MailTab').useTab}">
-								<i class="fa fa-fw fa-times-circle icon-red"
-									title="#{msg['dialog.notification.tab.send.email.inactive']}" />
-							</ui:fragment>
-						</h:panelGroup>
-					</p:panelGrid>
-
-					<p:panelGrid columns="1"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%">
-						<p:dataTable var="emailHolder"
-							styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-							value="#{dialogHandlerAction.notificationDialog.getTab('MailTab').holders}">
-							<p:column headerText="Email">
-								<h:outputLabel
-									value="#{emailHolder.contact.person.fullName} (#{emailHolder.contactAddress})"></h:outputLabel>
-							</p:column>
-							<p:column headerText="Status" style="width:10%">
-
-							</p:column>
-						</p:dataTable>
-					</p:panelGrid>
-
+						<ui:fragment
+							rendered="#{!dialogHandlerAction.notificationDialog.getTab('MailTab').useTab}">
+							<i class="fa fa-fw fa-times-circle icon-red"
+								title="#{msg['dialog.notification.notifiy.email.disabled']}" />
+						</ui:fragment>
+					</h:panelGroup>
 				</p:panelGrid>
 
-				<!-- fax -->
-				<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-					style="width:100%">
-
-					<p:panelGrid columns="2"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%"
-						columnClasses="defaultListingTableColumn150px, ">
-						<h:panelGroup>
-							<h:outputText
-								value="#{msg['dialog.notification.tab.send.fax']}: "
-								styleClass="bold-text" />
-
-							<ui:fragment
-								rendered="#{dialogHandlerAction.notificationDialog.getTab('FaxTab').useTab}">
-								<i class="fa fa-fw fa-check-circle icon-green"
-									title="#{msg['dialog.notification.tab.send.fax.active']}" />
-							</ui:fragment>
-
-							<ui:fragment
-								rendered="#{!dialogHandlerAction.notificationDialog.getTab('FaxTab').useTab}">
-								<i class="fa fa-fw fa-times-circle icon-red"
-									title="#{msg['dialog.notification.tab.send.fax.inactive']}" />
-							</ui:fragment>
-						</h:panelGroup>
-					</p:panelGrid>
-
-					<p:panelGrid columns="1"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%">
-						<p:dataTable var="faxHolder"
-							styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-							value="#{dialogHandlerAction.notificationDialog.getTab('FaxTab').holders}">
-							<p:column headerText="Fax">
-								<h:outputLabel
-									value="#{faxHolder.contact.person.fullName} (#{faxHolder.contactAddress})"></h:outputLabel>
-							</p:column>
-							<p:column headerText="Status" style="width:10%">
-
-							</p:column>
-						</p:dataTable>
-					</p:panelGrid>
+				<p:panelGrid columns="1"
+					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+					<p:dataTable var="emailHolder"
+						styleClass="noBordersAll collapsedBordersAll hide-column-names"
+						value="#{dialogHandlerAction.notificationDialog.getTab('MailTab').holders}">
+						<p:column>
+							<h:outputLabel
+								value="#{emailHolder.contact.person.fullName} (#{emailHolder.contactAddress})"></h:outputLabel>
+						</p:column>
+					</p:dataTable>
 				</p:panelGrid>
 
-				<!-- letter -->
-				<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-					style="width:100%">
+			</p:panelGrid>
 
-					<p:panelGrid columns="2"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%"
-						columnClasses="defaultListingTableColumn150px, ">
-						<h:panelGroup>
-							<h:outputText
-								value="#{msg['dialog.notification.tab.send.letter']}: "
-								styleClass="bold-text" />
+			<!-- fax -->
+			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+				style="width:100%">
 
-							<ui:fragment
-								rendered="#{dialogHandlerAction.notificationDialog.getTab('LetterTab').useTab}">
-								<i class="fa fa-fw fa-check-circle icon-green"
-									title="#{msg['dialog.notification.tab.send.letter.active']}" />
-							</ui:fragment>
+				<p:panelGrid columns="2"
+					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+					<h:panelGroup>
+						<h:outputText value="#{msg['dialog.notification.notifiy.fax']}: "
+							styleClass="bold-text" />
 
-							<ui:fragment
-								rendered="#{!dialogHandlerAction.notificationDialog.getTab('LetterTab').useTab}">
-								<i class="fa fa-fw fa-times-circle icon-red"
-									title="#{msg['dialog.notification.tab.send.letter.inactive']}" />
-							</ui:fragment>
-						</h:panelGroup>
-					</p:panelGrid>
+						<ui:fragment
+							rendered="#{dialogHandlerAction.notificationDialog.getTab('FaxTab').useTab}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['dialog.notification.notifiy.fax.enabled']}" />
+						</ui:fragment>
 
-					<p:panelGrid columns="1"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%">
-						<p:dataTable var="letterHolder"
-							styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-							value="#{dialogHandlerAction.notificationDialog.getTab('LetterTab').holders}">
-							<p:column headerText="Fax">
-								<h:outputLabel
-									value="#{letterHolder.contact.person.fullName} (#{letterHolder.contactAddress})"></h:outputLabel>
-							</p:column>
-							<p:column headerText="Status" style="width:10%">
-
-							</p:column>
-						</p:dataTable>
-					</p:panelGrid>
+						<ui:fragment
+							rendered="#{!dialogHandlerAction.notificationDialog.getTab('FaxTab').useTab}">
+							<i class="fa fa-fw fa-times-circle icon-red"
+								title="#{msg['dialog.notification.notifiy.fax.disabled']}" />
+						</ui:fragment>
+					</h:panelGroup>
 				</p:panelGrid>
 
-				<!-- letter -->
-				<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-					style="width:100%">
-
-					<p:panelGrid columns="2"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%"
-						columnClasses="defaultListingTableColumn150px, ">
-						<h:panelGroup>
-							<h:outputText
-								value="#{msg['dialog.notification.tab.send.phone']}: "
-								styleClass="bold-text" />
-
-							<ui:fragment
-								rendered="#{dialogHandlerAction.notificationDialog.getTab('PhoneTab').useTab}">
-								<i class="fa fa-fw fa-check-circle icon-green"
-									title="#{msg['dialog.notification.tab.send.phone.active']}" />
-							</ui:fragment>
-
-							<ui:fragment
-								rendered="#{!dialogHandlerAction.notificationDialog.getTab('PhoneTab').useTab}">
-								<i class="fa fa-fw fa-times-circle icon-red"
-									title="#{msg['dialog.notification.tab.send.phone.inactive']}" />
-							</ui:fragment>
-						</h:panelGroup>
-					</p:panelGrid>
-
-					<p:panelGrid columns="1"
-						styleClass="noBordersAll collapsedBordersAll" style="width:100%">
-						<p:dataTable var="phoneHolder"
-							styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-							value="#{dialogHandlerAction.notificationDialog.getTab('PhoneTab').holders}">
-							<p:column headerText="Fax">
-								<h:outputLabel
-									value="#{phoneHolder.contact.person.fullName} (#{phoneHolder.contactAddress})"></h:outputLabel>
-							</p:column>
-							<p:column headerText="Status" style="width:10%">
-
-							</p:column>
-						</p:dataTable>
-					</p:panelGrid>
+				<p:panelGrid columns="1"
+					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+					<p:dataTable var="faxHolder"
+						styleClass="noBordersAll collapsedBordersAll hide-column-names"
+						value="#{dialogHandlerAction.notificationDialog.getTab('FaxTab').holders}">
+						<p:column>
+							<h:outputLabel
+								value="#{faxHolder.contact.person.fullName} (#{faxHolder.contactAddress})"></h:outputLabel>
+						</p:column>
+					</p:dataTable>
 				</p:panelGrid>
-			</p:scrollPanel>
+			</p:panelGrid>
+
+			<!-- letter -->
+			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+				style="width:100%">
+
+				<p:panelGrid columns="2"
+					styleClass="noBordersAll collapsedBordersAll hide-column-names"
+					style="width:100%">
+					<h:panelGroup>
+						<h:outputText
+							value="#{msg['dialog.notification.notifiy.letter']}: "
+							styleClass="bold-text" />
+
+						<ui:fragment
+							rendered="#{dialogHandlerAction.notificationDialog.getTab('LetterTab').useTab}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['dialog.notification.notifiy.letter.enabled']}" />
+						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{!dialogHandlerAction.notificationDialog.getTab('LetterTab').useTab}">
+							<i class="fa fa-fw fa-times-circle icon-red"
+								title="#{msg['dialog.notification.notifiy.letter.disabled']}" />
+						</ui:fragment>
+					</h:panelGroup>
+				</p:panelGrid>
+
+				<p:panelGrid columns="1"
+					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+					<p:dataTable var="letterHolder"
+						styleClass="noBordersAll collapsedBordersAll hide-column-names"
+						value="#{dialogHandlerAction.notificationDialog.getTab('LetterTab').holders}">
+						<p:column>
+							<h:outputLabel
+								value="#{letterHolder.contact.person.fullName} (#{letterHolder.contactAddress})"></h:outputLabel>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+			</p:panelGrid>
+
+			<!-- phone -->
+			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+				style="width:100%">
+
+				<p:panelGrid columns="2"
+					styleClass="noBordersAll collapsedBordersAll" style="width:100%"
+					columnClasses="defaultListingTableColumn150px, ">
+					<h:panelGroup>
+						<h:outputText
+							value="#{msg['dialog.notification.notifiy.phone']}: "
+							styleClass="bold-text" />
+
+						<ui:fragment
+							rendered="#{dialogHandlerAction.notificationDialog.getTab('PhoneTab').useTab}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['dialog.notification.notifiy.phone.enabled']}" />
+						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{!dialogHandlerAction.notificationDialog.getTab('PhoneTab').useTab}">
+							<i class="fa fa-fw fa-times-circle icon-red"
+								title="#{msg['dialog.notification.notifiy.phone.disabled']}" />
+						</ui:fragment>
+					</h:panelGroup>
+				</p:panelGrid>
+
+				<p:panelGrid columns="1"
+					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
+					<p:dataTable var="phoneHolder"
+						styleClass="noBordersAll collapsedBordersAll hide-column-names"
+						value="#{dialogHandlerAction.notificationDialog.getTab('PhoneTab').holders}">
+						<p:column>
+							<h:outputLabel
+								value="#{phoneHolder.contact.person.fullName} (#{phoneHolder.contactAddress})"></h:outputLabel>
+						</p:column>
+					</p:dataTable>
+				</p:panelGrid>
+			</p:panelGrid>
+		</p:scrollPanel>
 	</div>
 
 	<div class="bottomDiv">
@@ -208,7 +195,7 @@
 
 				<p:commandButton value="Benachrichtigung ausführen"
 					icon="fa fa-fw fa-mail-forward" oncomplete="PF('pbAjax').start()"
-					styleClass="smallButton buttonRighMarginInList" async="true" 
+					styleClass="smallButton buttonRighMarginInList" async="true"
 					actionListener="#{dialogHandlerAction.notificationDialog.sendTab.performeNotification()}"
 					update="@form" />
 

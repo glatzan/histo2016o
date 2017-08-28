@@ -46,7 +46,8 @@
 					headerText="#{msg['dialog.notification.tab.phone.receiver.number']}"
 					style="width:auto">
 					<p:inputText value="#{holder.contactAddress}"
-						styleClass="smallInput" style="width:98%" />
+						disabled="#{!tab.useTab}" styleClass="smallInput"
+						style="width:98%" />
 				</p:column>
 			</p:dataTable>
 		</p:panelGrid>

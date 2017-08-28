@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.faces.context.FacesContext;
+
+import org.apache.commons.validator.routines.EmailValidator;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.SettingsHandler;
@@ -40,6 +44,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Synchronized;
 
 @Configurable
 @Getter
@@ -341,7 +346,9 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			return "mail/mail.xhtml";
+			if (!getSendTab().isNotificationCompleted())
+				return "mail/mail.xhtml";
+			return "send/status.xhtml";
 		}
 
 		@Override
@@ -371,6 +378,8 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter
 	public class FaxTab extends AbstractTab {
 
+		private boolean autoSendFax;
+
 		public FaxTab() {
 			setTabName("FaxTab");
 			setName("dialog.notification.tab.fax");
@@ -385,11 +394,15 @@ public class NotificationDialog extends AbstractDialog {
 			setTemplateTransformer(new DefaultTransformer<AbstractTemplate>(getTemplateList()));
 
 			setSelectedTemplate(null);
+
+			setAutoSendFax(true);
 		}
 
 		@Override
 		public String getCenterView() {
-			return "fax/fax.xhtml";
+			if (!getSendTab().isNotificationCompleted())
+				return "fax/fax.xhtml";
+			return "send/status.xhtml";
 		}
 
 		@Override
@@ -430,7 +443,9 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			return "letter/letter.xhtml";
+			if (!getSendTab().isNotificationCompleted())
+				return "letter/letter.xhtml";
+			return "send/status.xhtml";
 		}
 
 		@Override
@@ -463,7 +478,9 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			return "phone/phone.xhtml";
+			if (!getSendTab().isNotificationCompleted())
+				return "phone/phone.xhtml";
+			return "send/status.xhtml";
 		}
 
 		@Override
@@ -493,9 +510,13 @@ public class NotificationDialog extends AbstractDialog {
 
 		private AtomicBoolean renderStepProgress;
 
-		private AtomicInteger stepProgress;
+		private int progressPercent;
+
+		private String progressText;
 
 		private int steps;
+
+		private Locale locale;
 
 		public SendTab() {
 			setTabName("SendTab");
@@ -504,13 +525,17 @@ public class NotificationDialog extends AbstractDialog {
 			setNotificationCompleted(false);
 			setNotificationRunning(new AtomicBoolean(false));
 			setRenderStepProgress(new AtomicBoolean(false));
-			setStepProgress(new AtomicInteger(0));
+			setProgressPercent(0);
+			setProgressText("");
 			setSteps(1);
+			setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 
 		@Override
 		public String getCenterView() {
-			return "send/send.xhtml";
+			if (!isNotificationCompleted())
+				return "send/send.xhtml";
+			return "send/status.xhtml";
 		}
 
 		@Override
@@ -520,11 +545,14 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Async("taskExecutor")
 		public void performeNotification() {
+
 			logger.debug("Startin notification thread");
 
 			try {
-				if (notificationRunning.get())
+				if (notificationRunning.get()) {
+					logger.debug("Thread allready running, abort new request!");
 					return;
+				}
 
 				notificationRunning.set(true);
 
@@ -532,76 +560,92 @@ public class NotificationDialog extends AbstractDialog {
 
 				getRenderStepProgress().set(true);
 
-				getStepProgress().set(0);
+				setProgressPercent(0);
+
+				setProgressText(resourceBundle.get("pdf.notification.status.starting", locale));
 
 				if (mailTab.isUseTab()) {
+
 					logger.debug("Mail is used");
+
 					DiagnosisReportMail mail = mailTab.getMail();
 					mail.setSubject(mail.getSubject());
 					mail.setBody(mail.getBody());
 
-					System.out.println("begin loop");
 					for (ContactHolder holder : mailTab.getHolders()) {
-						System.out.println("loop" + holder.getContactAddress());
-						if (HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
-							System.out.println("hallo");
+
+						if (HistoUtil.isNotNullOrEmpty(holder.getContactAddress())
+								&& EmailValidator.getInstance().isValid(holder.getContactAddress())) {
+							logger.debug("Send mail to " + holder.getContactAddress());
+
 							DiagnosisReportMail cloneMail = (DiagnosisReportMail) mail.clone();
-							System.out.println("hallo11");
-							if (holder.getPdf() != null)
+							if (holder.getPdf() != null) {
 								// pdf was selected for the individual
 								// contact
 								cloneMail.setAttachment(holder.getPdf());
-							else if (mailTab.getSelectedTemplate() != null) {
+								logger.debug("Attaching pdf to mail");
+							} else if (mailTab.getSelectedTemplate() != null) {
+
+								logger.debug("Creating PDF from selected template");
+								setProgressText(resourceBundle.get("pdf.notification.status.generatingPDF", locale,
+										holder.getContact().getPerson().getFullName()));
 								// generating pdf from list
 								// Template has a TemplateDiagnosisReport
 								// generator
-								logger.debug("creating pdf");
+
 								((TemplateDiagnosisReport) mailTab.getSelectedTemplate())
 										.initData(getTask().getPatient(), getTask(), holder.getContact());
 
 								PDFGenerator t = new PDFGenerator();
-								System.out.println("generating pdf");
 								PDFContainer container = mailTab.getSelectedTemplate().generatePDF(t);
-								System.out.println("set attachement");
 								cloneMail.setAttachment(container);
-								logger.debug("end pdf");
+								holder.setPdf(container);
 							}
 
-							 boolean success = false;
+							setProgressText(
+									resourceBundle.get("pdf.notification.status.sendMail", locale, holder.getContactAddress()));
+
+							boolean success = false;
 							// // success =
 							// //
 							// settingsHandler.getMailHandler().sendMail(holder.contactAddress,
 							// // cloneMail);
-							
-							 if (success) {
-							 holder.setPerformed(true);
-							 holder.getNotification().setPerformed(true);
-							 holder.getNotification().setDateOfAction(new
-							 Date(System.currentTimeMillis()));
-							 } else {
-							 holder.getNotification().setFailed(true);
-							 holder.getNotification().setDateOfAction(new
-							 Date(System.currentTimeMillis()));
-							 holder.getNotification().setCommentary("");
-							 // resourceBundle.get("")
-							 // TODO TEXT
-							 }
+
+							if (success) {
+								holder.setPerformed(true);
+								holder.getNotification().setPerformed(true);
+								holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
+								setProgressText(resourceBundle.get("pdf.notification.status.sendMail.success", locale,
+										holder.getContactAddress()));
+							} else {
+								holder.getNotification().setFailed(true);
+								holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
+								holder.getNotification().setCommentary(resourceBundle
+										.get("pdf.notification.status.sendMail.failed", locale, holder.getContactAddress()));
+								setProgressText(resourceBundle.get("pdf.notification.status.sendMail.failed", locale,
+										holder.getContactAddress()));
+							}
 
 						} else {
-							System.out.println("no email");
+							logger.debug("No email provided!");
+
 							// no email provided
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							holder.getNotification().setCommentary(""); // resourceBundle.get("")
-							System.out.println("end step");
+							holder.getNotification()
+									.setCommentary(resourceBundle.get("pdf.notification.status.sendMail.noMail", locale)); // resourceBundle.get("")
+							setProgressText(resourceBundle.get("pdf.notification.status.sendMail.noMail", locale));
 						}
-						System.out.println("halloasdasda");
+
 						progressStep();
 					}
 				}
 
 				if (faxTab.isUseTab()) {
+
 					logger.debug("fax is used");
+
 					for (ContactHolder holder : faxTab.getHolders()) {
+
 						if (faxTab.getSelectedTemplate() != null
 								|| HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
 
@@ -623,7 +667,7 @@ public class NotificationDialog extends AbstractDialog {
 						// no template or no number
 						holder.setPerformed(false);
 						holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-						holder.getNotification().setCommentary(resourceBundle.get(""));
+						holder.getNotification().setCommentary(resourceBundle.get("hallo", locale));
 						progressStep();
 					}
 				}
@@ -652,7 +696,7 @@ public class NotificationDialog extends AbstractDialog {
 						// no template or no number
 						holder.setPerformed(false);
 						holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-						holder.getNotification().setCommentary(resourceBundle.get(""));
+						holder.getNotification().setCommentary(resourceBundle.get("hallo", locale));
 						progressStep();
 
 					}
@@ -662,12 +706,24 @@ public class NotificationDialog extends AbstractDialog {
 					logger.debug("Phone is used");
 					progressStep();
 				}
+
+				// TODO generating send report
+				
 				progressStep();
+
+				setProgressText("Notification completed");
 
 				logger.debug("Messaging ended");
 			} catch (Exception e) {
 				System.out.println(e);
+				e.printStackTrace();
 			}
+
+			notificationRunning.set(false);
+
+			setNotificationCompleted(true);
+
+			getRenderStepProgress().set(false);
 		}
 
 		public int calculateSteps() {
@@ -687,222 +743,29 @@ public class NotificationDialog extends AbstractDialog {
 		 * Increment steps
 		 */
 		public void progressStep() {
-			getStepProgress().set(getStepProgress().get() + (100 / getSteps()));
-			logger.debug("Setting Progress to " + getStepProgress().get());
+			setProgressPercent(getProgressPercent() + (100 / getSteps()));
+			logger.debug("Setting Progress to " + getProgressPercent());
 		}
+
+		@Synchronized
+		public int getProgressPercent() {
+			return progressPercent;
+		}
+
+		@Synchronized
+		public void setProgressPercent(int progressPercent) {
+			this.progressPercent = progressPercent;
+		}
+
+		@Synchronized
+		public String getProgressText() {
+			return progressText;
+		}
+
+		@Synchronized
+		public void setProgressText(String progressText) {
+			this.progressText = progressText;
+		}
+
 	}
 }
-
-// patientDao.initializeDataList(getTmpTask());
-// taskDAO.initializeDiagnosisData(getTmpTask());
-//
-// if (emailNotificationSettings.isUseEmail() ||
-// faxNotificationSettings.isUseFax()
-// || phoneNotificationSettings.isUsePhone()) {
-// ArrayList<PDFContainer> resultPdfs = new ArrayList<PDFContainer>();
-
-// // EMAIL
-// if (emailNotificationSettings.isUseEmail()) {
-// logger.trace("Email notification");
-//
-// for (MedicalFindingsChooser notificationChooser : emailNotificationSettings
-// .getNotificationEmailList()) {
-// boolean emailSuccessful = false;
-//
-// // name and mail
-// logger.trace("Email to " +
-// notificationChooser.getContact().getPerson().getFullName() + " ("
-// + notificationChooser.getContact().getPerson().getContact().getEmail() +
-// ")");
-//
-// // no notification
-// if (notificationChooser.getNotificationAttachment() ==
-// NotificationOption.NONE) {
-// logger.trace("No notification desired");
-// continue;
-// } else if (notificationChooser.getNotificationAttachment() ==
-// NotificationOption.PDF
-// && notificationChooser.getPrintTemplate() != null) {
-// // attach pdf to mail
-// PDFContainer pdfToSend = pDFGeneratorHandler.generatePDFForReport(
-// getTemporaryTask().getPatient(), getTemporaryTask(),
-// notificationChooser.getPrintTemplate(), notificationChooser);
-// // TODO: rewrite
-// if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-// notificationChooser.getContact().getPerson().getContact().getEmail(),
-// emailNotificationSettings.getEmailSubject(),
-// emailNotificationSettings.getEmailText(), pdfToSend)) {
-// emailSuccessful = true;
-// // // adding mail to the result array
-// // resultPdfs.add(pdfToSend);
-// logger.trace("PDF successfully send");
-// } else {
-// // TODO: HAndle fault
-// }
-//
-// } else {
-// // plain text mail
-// if (mainHandlerAction.getSettings().getMail().sendMailFromSystem(
-// notificationChooser.getContact().getPerson().getContact().getEmail(),
-// emailNotificationSettings.getEmailSubject(),
-// emailNotificationSettings.getEmailText())) {
-// emailSuccessful = true;
-// logger.trace("Text successfully send");
-// } else {
-// // TODO: Handle fault
-// }
-// }
-//
-// // check if mail was send
-// if (emailSuccessful) {
-//
-// // setting the associatedContact to perfomed
-// notificationChooser.getContact().setEmailNotificationPerformed(true);
-// notificationChooser.setPerformed(true);
-//
-// genericDAO.save(notificationChooser.getContact(),
-// resourceBundle.get("log.patient.task.contact.notification.performed",
-// getTemporaryTask().getTaskID(),
-// notificationChooser.getContact().getPerson().getFullName()),
-// getTemporaryTask().getPatient());
-//
-// }
-// }
-//
-// } else {
-// logger.trace("No Email notification");
-// }
-//
-// // FAX
-// if (faxNotificationSettings.isUseFax()) {
-// logger.trace("Fax notification");
-//
-// for (MedicalFindingsChooser notificationChooser : faxNotificationSettings
-// .getNotificationFaxList()) {
-// boolean faxSuccessful = false;
-//
-// // name and number
-// logger.trace("Fax to " +
-// notificationChooser.getContact().getPerson().getFullName() + " ("
-// + notificationChooser.getContact().getPerson().getContact().getEmail() +
-// ")");
-//
-// // no notification
-// if (notificationChooser.getNotificationAttachment() ==
-// NotificationOption.NONE) {
-// logger.trace("No notification desired");
-// continue;
-// } else if (notificationChooser.getPrintTemplate() == null
-// || notificationChooser.getContact().getPerson().getContact().getFax() == null
-// ||
-// notificationChooser.getContact().getPerson().getContact().getFax().isEmpty())
-// {
-// // error no templat or number
-// logger.trace("Error, no Fax-Number or TemplateUtil");
-// } else {
-// // creating pdf
-// // PDFContainer pdfToSend =
-// // pDFGeneratorHandler.generatePDFForReport(
-// // getTemporaryTask().getPatient(),
-// // getTemporaryTask(),
-// // notificationChooser.getPrintTemplate(),
-// // notificationChooser.getContact().getPerson());
-// // resultPdfs.add(pdfToSend);
-//
-// // TODO: SEND FAX
-//
-// faxSuccessful = true;
-// logger.trace("Fax send successfully");
-//
-// //
-// sendLog.append(resourceBundle.get("pdf.notification.faxNotification.fax.error"));
-// }
-//
-// if (faxSuccessful) {
-// notificationChooser.getContact().setFaxNotificationPerformed(true);
-// notificationChooser.setPerformed(true);
-//
-// genericDAO.save(notificationChooser.getContact(),
-// resourceBundle.get("log.patient.task.contact.notification.performed",
-// getTemporaryTask().getTaskID(),
-// notificationChooser.getContact().getPerson().getFullName()),
-// getTemporaryTask().getPatient());
-// }
-// }
-//
-// } else {
-// logger.trace("No Fax notification");
-// }
-//
-// // PHONE
-// if (phoneNotificationSettings.isUsePhone()) {
-// logger.trace("Phone notification");
-//
-// for (MedicalFindingsChooser notificationChooser : phoneNotificationSettings
-// .getNotificationPhoneList()) {
-//
-// // name and number
-// logger.trace("Phone to " +
-// notificationChooser.getContact().getPerson().getFullName() + " ("
-// + notificationChooser.getContact().getPerson().getContact().getPhone() +
-// ")");
-//
-// if (notificationChooser.getNotificationAttachment() ==
-// NotificationOption.NONE) {
-// continue;
-// } else {
-// notificationChooser.getContact().setPhoneNotificationPerformed(true);
-// notificationChooser.setPerformed(true);
-// genericDAO.save(notificationChooser.getContact(),
-// resourceBundle.get("log.patient.task.contact.notification.telefon.performed",
-// getTemporaryTask().getTaskID(),
-// notificationChooser.getContact().getPerson().getFullName()),
-// getTemporaryTask().getPatient());
-// }
-//
-// }
-// } else {
-// logger.trace("No phone notification");
-// }
-//
-// // getting the template for the send report
-// AbstractTemplate sendReport = AbstractTemplate.getDefaultTemplate(
-// AbstractTemplate.getTemplatesByType(DocumentType.MEDICAL_FINDINGS_SEND_REPORT));
-//
-// // sendreport has date and datafiled
-// HashMap<String, String> addtionalFields = new HashMap<String, String>();
-// addtionalFields.put("reportDate",
-// mainHandlerAction.date(System.currentTimeMillis()));
-//
-// PDFContainer sendReportPDF =
-// pDFGeneratorHandler.generateSendReport(sendReport,
-// getTemporaryTask().getPatient(), getEmailNotificationSettings(),
-// getFaxNotificationSettings(), getPhoneNotificationSettings());
-//
-// resultPdfs.add(0, sendReportPDF);
-//
-// PDFContainer resultPdf = PDFGeneratorHandler.mergePdfs(resultPdfs,
-// sendReportPDF.getName(),
-// DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
-//
-// dialogHandlerAction.getPrintDialog().savePdf(getTemporaryTask(), resultPdf);
-//
-// favouriteListDAO.removeTaskFromList(getTemporaryTask(),
-// PredefinedFavouriteList.NotificationList);
-// getTemporaryTask().setNotificationCompletionDate(System.currentTimeMillis());
-//
-// mainHandlerAction.saveDataChange(getTemporaryTask(),
-// "log.patient.task.update");
-//
-// mediaDialog.setTemporaryPdfContainer(resultPdf);
-//
-// notificationRunning.set(false);
-// notificationPerformed.set(true);
-// }
-// }catch(
-//
-// CustomDatabaseInconsistentVersionException e)
-// {
-// // TODO move to dialog
-// }
-// }

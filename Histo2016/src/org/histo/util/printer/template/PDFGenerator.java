@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.ProgrammVersionDialog;
 import org.histo.action.handler.SettingsHandler;
 import org.histo.config.enums.DateFormat;
+import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.settings.LdapHandler;
 import org.histo.settings.ProgramSettings;
@@ -21,6 +23,13 @@ import org.springframework.beans.factory.annotation.Configurable;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 import de.nixosoft.jlr.JLRConverter;
 import de.nixosoft.jlr.JLRGenerator;
@@ -69,8 +78,8 @@ public class PDFGenerator {
 
 		template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
 
-		processedTex = new File(
-				workingDirectory.getAbsolutePath() + File.separator + RandomStringUtils.random(10) + ".tex");
+		processedTex = new File(workingDirectory.getAbsolutePath() + File.separator
+				+ RandomStringUtils.randomAlphanumeric(10) + ".tex");
 
 		converter = new JLRConverter(workingDirectory);
 
@@ -81,7 +90,6 @@ public class PDFGenerator {
 		long test1 = System.currentTimeMillis();
 
 		try {
-			System.out.println(template.getAbsolutePath());
 			if (!converter.parse(template, processedTex)) {
 				logger.error(converter.getErrorMessage());
 			}
@@ -123,5 +131,35 @@ public class PDFGenerator {
 			e.printStackTrace();
 		}
 		return bFile;
+	}
+
+	public static final PDFContainer mergePdfs(List<PDFContainer> containers, String name, DocumentType type) {
+		Document document = new Document();
+		ByteOutputStream out = new ByteOutputStream();
+
+		PdfWriter writer;
+		try {
+			writer = PdfWriter.getInstance(document, out);
+			document.open();
+			PdfContentByte cb = writer.getDirectContent();
+
+			for (PDFContainer pdfContainer : containers) {
+				PdfReader pdfReader = new PdfReader(pdfContainer.getData());
+				for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
+					document.newPage();
+					// import the page from source pdf
+					PdfImportedPage page = writer.getImportedPage(pdfReader, i);
+					// add the page to the destination pdf
+					cb.addTemplate(page, 0, 0);
+				}
+			}
+
+			document.close();
+		} catch (DocumentException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		return new PDFContainer(type, name, out.getBytes());
 	}
 }

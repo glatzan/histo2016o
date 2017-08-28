@@ -16,7 +16,8 @@
 		</p:panel>
 
 
-		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
+		<p:panelGrid columns="2"
+			styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
 			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
 			<!-- Use fax -->
 			<h:outputLabel value="#{msg['dialog.notification.tab.fax.use']}" />
@@ -26,12 +27,18 @@
 					update=":adminForm:tabview:faxTab" />
 			</p:selectBooleanCheckbox>
 
+			<!-- Send fax -->
+			<h:outputLabel value="#{msg['dialog.notification.tab.fax.send']}" />
+			<p:selectBooleanCheckbox value="#{tab.autoSendFax}"
+				disabled="#{!tab.useTab}" styleClass="smallCheckbox">
+			</p:selectBooleanCheckbox>
+
 			<!-- pdf template -->
 			<h:outputLabel
 				value="#{msg['dialog.notification.tab.fax.pdfTemplate']}" />
 			<p:selectOneMenu value="#{tab.selectedTemplate}"
 				converter="#{tab.templateTransformer}"
-				styleClass="customSerachSelectMenu">
+				styleClass="customSerachSelectMenu" disabled="#{!tab.useTab}">
 
 				<f:selectItem itemValue="#{null}"
 					itemLabel="#{msg['dialog.notification.tab.fax.pdfTemplate.none']}"></f:selectItem>
@@ -60,7 +67,8 @@
 					headerText="#{msg['dialog.notification.tab.fax.receiver.number']}"
 					style="width:auto">
 					<p:inputText value="#{holder.contactAddress}"
-						styleClass="smallInput" style="width:98%" />
+						disabled="#{!tab.useTab}" styleClass="smallInput"
+						style="width:98%" />
 				</p:column>
 
 				<p:column style="width:12%; text-align:center;">
@@ -70,7 +78,7 @@
 					</f:facet>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null}"
+						rendered="#{holder.pdf eq null}" disabled="#{!tab.useTab}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
@@ -85,7 +93,7 @@
 					</p:commandLink>
 
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf ne null}"
+						rendered="#{holder.pdf ne null}" disabled="#{!tab.useTab}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.show']}"
 						execute="@this" partialSubmit="true"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
@@ -97,7 +105,7 @@
 						style="margin-left: 10px;" rendered="#{holder.pdf ne null}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.remove']}"
 						execute="@this" partialSubmit="true"
-						update=":adminForm:tabview:faxTab"
+						update=":adminForm:tabview:faxTab" disabled="#{!tab.useTab}"
 						actionListener="#{holder.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
