@@ -14,7 +14,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
@@ -46,13 +46,7 @@ public class MainHandlerAction {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private GenericDAO genericDAO;
-
-	@Autowired
-	private ResourceBundle resourceBundle;
-
-	@Autowired
-	private SettingsHandler settingsHandler;
+	private GlobalSettings globalSettings;
 
 	/********************************************************
 	 * Navigation
@@ -75,9 +69,9 @@ public class MainHandlerAction {
 
 		commonDataHandlerAction.setNavigationPages(new ArrayList<View>());
 
-		settingsHandler.initBean();
+		userHandlerAction.updateSelectedPrinters();
 
-		PredefinedRoleSettings roleSetting = settingsHandler
+		PredefinedRoleSettings roleSetting = globalSettings
 				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
 
 		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
@@ -97,7 +91,7 @@ public class MainHandlerAction {
 		logger.debug("Destroying Session");
 		FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
 		FacesContext.getCurrentInstance().getExternalContext()
-				.redirect(SettingsHandler.HISTO_BASE_URL + SettingsHandler.HISTO_LOGIN_PAGE);
+				.redirect(GlobalSettings.HISTO_BASE_URL + GlobalSettings.HISTO_LOGIN_PAGE);
 	}
 
 	/**

@@ -48,7 +48,6 @@ public interface FileHandlerUtil extends HasLogger {
 	public static URI getAbsolutePath(String path) {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
 		Resource resource = appContext.getResource(path);
-		System.out.println(resource);
 		URI result = null;
 		try {
 			result = resource.getURI();

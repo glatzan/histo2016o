@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.apache.log4j.Logger;
 import org.histo.model.interfaces.HasID;
 
 import lombok.Getter;
@@ -20,6 +21,8 @@ import lombok.Setter;
 @Setter
 public abstract class Template implements HasID, Cloneable {
 
+	protected static Logger logger = Logger.getLogger("org.histo");
+
 	@Id
 	@GeneratedValue(generator = "template_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -34,9 +37,15 @@ public abstract class Template implements HasID, Cloneable {
 	@Column(columnDefinition = "VARCHAR")
 	protected String content2;
 
+	/**
+	 * Type of the template
+	 */
 	@Column(columnDefinition = "VARCHAR")
 	protected String type;
 
+	/**
+	 * If True the default of it's type
+	 */
 	@Column
 	protected boolean defaultOfType;
 
@@ -45,6 +54,12 @@ public abstract class Template implements HasID, Cloneable {
 	 */
 	@Column
 	private boolean transientContent;
+
+	/**
+	 * Name of the template class
+	 */
+	@Column
+	private String templateName;
 
 	public abstract void prepareTemplate();
 

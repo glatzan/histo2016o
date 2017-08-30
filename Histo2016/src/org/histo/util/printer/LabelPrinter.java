@@ -12,8 +12,8 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.patient.Slide;
+import org.histo.template.DocumentTemplate;
 import org.histo.util.HistoUtil;
-import org.histo.util.printer.template.AbstractTemplate;
 
 import com.google.gson.annotations.Expose;
 
@@ -35,7 +35,7 @@ public class LabelPrinter extends AbstractPrinter {
 
 	@Expose
 	private int timeout;
-	
+
 	/**
 	 * Saves the current number of printed files.
 	 */
@@ -67,12 +67,14 @@ public class LabelPrinter extends AbstractPrinter {
 		printBuffer.put(fileName.replace("%count%", String.valueOf(++fileNameCounter)), toPrint);
 	}
 
-	public final void print(AbstractTemplate printTemplate, Slide slide, String date) {
+	public final void print(DocumentTemplate printTemplate, Slide slide, String date) {
 		String taskID = slide.getTask().getTaskID();
 
 		logger.debug("Using printer " + getName());
 
-		String toPrint = printTemplate.getContentOfFile();
+		printTemplate.prepareTemplate();
+		
+		String toPrint = printTemplate.getFileContent();
 
 		HashMap<String, String> args = new HashMap<String, String>();
 		args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 3, '0'));
@@ -86,10 +88,12 @@ public class LabelPrinter extends AbstractPrinter {
 
 	public boolean printTestPage() {
 
-		AbstractTemplate test = AbstractTemplate
-				.getDefaultTemplate(AbstractTemplate.getTemplatesByType(DocumentType.TEST_LABLE));
+		DocumentTemplate test = DocumentTemplate
+				.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.TEST_LABLE));
 
-		String toPrint = test.getContentOfFile();
+		test.prepareTemplate();
+		
+		String toPrint = test.getFileContent();
 
 		if (toPrint == null)
 			return false;
@@ -220,8 +224,6 @@ public class LabelPrinter extends AbstractPrinter {
 	public void setTimeout(int timeout) {
 		this.timeout = timeout;
 	}
-	
-	
 
 	/********************************************************
 	 * Getter/Setter

@@ -14,14 +14,8 @@
 					value="#{msg['dialog.notification.tab.send.headline']}"></h:outputLabel>
 			</f:facet>
 		</p:panel>
-
-		<p:progressBar widgetVar="pbAjax" ajax="true" 
-			value="#{dialogHandlerAction.notificationDialog.sendTab.stepProgress.get()}"
-			labelTemplate="#{dialogHandlerAction.notificationDialog.sendTab.stepProgress.get()}%"
-			styleClass="animated" global="false">
-			<p:ajax event="complete" update="@form" />
-		</p:progressBar>
-
+		
+		Anezgie
 	</div>
 
 	<div class="bottomDiv">
@@ -38,7 +32,8 @@
 				<p:commandButton value="Benachrichtigung ausführen"
 					icon="fa fa-fw fa-mail-forward"
 					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}" update="@form" />
+					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
+					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"

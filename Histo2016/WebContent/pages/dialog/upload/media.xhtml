@@ -160,16 +160,16 @@
 						<p:commandButton value="#{msg['dialog.media.print']}"
 							icon="fa fa-print"
 							styleClass="smallButton buttonRighMarginInListExtended"
-							actionListener="#{settingsHandler.selectedPrinter.print(dialogHandlerAction.mediaDialog.temporaryPdfContainer)}"></p:commandButton>
+							actionListener="#{userHandlerAction.selectedPrinter.print(dialogHandlerAction.mediaDialog.temporaryPdfContainer)}"></p:commandButton>
 
 						<!-- select printer -->
 						<p:selectOneMenu styleClass="customSerachSelectMenu"
 							panelStyleClass="customSerachSelectMenuPanel"
-							converter="#{settingsHandler.printerListTransformer}"
-							value="#{settingsHandler.selectedPrinter}" filter="true"
+							converter="#{globalSettings.printerListTransformer}"
+							value="#{userHandlerAction.selectedPrinter}" filter="true"
 							filterMatchMode="contains" style="margin-right:10px">
 
-							<f:selectItems value="#{settingsHandler.printerList}"
+							<f:selectItems value="#{globalSettings.printerList}"
 								var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
 						</p:selectOneMenu>
 

@@ -9,8 +9,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.histo.action.DialogHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.SettingsHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -24,13 +24,13 @@ import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
+import org.histo.template.DocumentTemplate;
+import org.histo.template.documents.TemplateCouncil;
+import org.histo.template.documents.TemplateDiagnosisReport;
+import org.histo.template.documents.TemplateUReport;
 import org.histo.ui.ContactContainer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.printer.template.AbstractTemplate;
-import org.histo.util.printer.template.PDFGenerator;
-import org.histo.util.printer.template.TemplateCouncil;
-import org.histo.util.printer.template.TemplateDiagnosisReport;
-import org.histo.util.printer.template.TemplateUReport;
+import org.histo.util.PDFGenerator;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -59,11 +59,6 @@ public class PrintDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private SettingsHandler settingsHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
@@ -71,20 +66,25 @@ public class PrintDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
+	
 	/**
 	 * List of all templates for printing
 	 */
-	private List<AbstractTemplate> templateList;
+	private List<DocumentTemplate> templateList;
 
 	/**
 	 * The TemplateListtransformer for selecting a template
 	 */
-	private DefaultTransformer<AbstractTemplate> templateTransformer;
+	private DefaultTransformer<DocumentTemplate> templateTransformer;
 
 	/**
 	 * Selected template for printing
 	 */
-	private AbstractTemplate selectedTemplate;
+	private DocumentTemplate selectedTemplate;
 
 	/**
 	 * Generated or loaded PDf
@@ -148,11 +148,10 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void initBeanForPrinting(Task task) {
-		AbstractTemplate[] subSelect = AbstractTemplate
-				.getTemplatesByTypes(new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.U_REPORT,
-						DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN });
+		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+				DocumentType.U_REPORT, DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
-		initBean(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect));
+		initBean(task, subSelect, DocumentTemplate.getDefaultTemplate(subSelect));
 
 		// contacts for printing
 		setContactList(new ArrayList<ContactContainer>());
@@ -183,10 +182,9 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void initBeanForCouncil(Task task, Council council) {
-		AbstractTemplate[] subSelect = AbstractTemplate
-				.getTemplatesByTypes(new DocumentType[] { DocumentType.COUNCIL_REQUEST });
+		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.COUNCIL_REQUEST);
 
-		initBean(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect));
+		initBean(task, subSelect, DocumentTemplate.getDefaultTemplate(subSelect));
 
 		setSelectedCouncil(council);
 
@@ -221,12 +219,12 @@ public class PrintDialog extends AbstractDialog {
 
 	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType,
 			AssociatedContact sendTo) {
-		AbstractTemplate[] subSelect = AbstractTemplate.getTemplatesByTypes(types);
-		initBeanForExternalDisplay(task, subSelect, AbstractTemplate.getDefaultTemplate(subSelect, defaultType),
+		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(types);
+		initBeanForExternalDisplay(task, subSelect, DocumentTemplate.getDefaultTemplate(subSelect, defaultType),
 				sendTo);
 	}
 
-	public void initBeanForExternalDisplay(Task task, AbstractTemplate[] types, AbstractTemplate defaultType,
+	public void initBeanForExternalDisplay(Task task, DocumentTemplate[] types, DocumentTemplate defaultType,
 			AssociatedContact sendTo) {
 
 		initBean(task, types, defaultType);
@@ -245,7 +243,7 @@ public class PrintDialog extends AbstractDialog {
 		onChangePrintTemplate();
 	}
 
-	public void initBeanForSelecting(Task task, AbstractTemplate[] types, AbstractTemplate defaultType,
+	public void initBeanForSelecting(Task task, DocumentTemplate[] types, DocumentTemplate defaultType,
 			AssociatedContact[] addresses, boolean allowIndividualAddress) {
 
 		initBean(task, types, defaultType);
@@ -272,7 +270,7 @@ public class PrintDialog extends AbstractDialog {
 		onChangePrintTemplate();
 	}
 
-	public void initBean(Task task, AbstractTemplate[] templates, AbstractTemplate selectedTemplate) {
+	public void initBean(Task task, DocumentTemplate[] templates, DocumentTemplate selectedTemplate) {
 		// getting task datalist, if was altered a updated task will be returend
 		try {
 			taskDAO.initializeTask(task, false);
@@ -285,9 +283,9 @@ public class PrintDialog extends AbstractDialog {
 		super.initBean(task, Dialog.PRINT);
 
 		if (templates != null) {
-			setTemplateList(new ArrayList<AbstractTemplate>(Arrays.asList(templates)));
+			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(templates)));
 
-			setTemplateTransformer(new DefaultTransformer<AbstractTemplate>(getTemplateList()));
+			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
 			// sets the selected template
 			if (selectedTemplate == null && !getTemplateList().isEmpty())
@@ -482,7 +480,7 @@ public class PrintDialog extends AbstractDialog {
 	public void onDownloadPdf() {
 		if (getPdfContainer().getId() == 0) {
 			logger.debug("Pdf not saved jet, saving");
-			if (!getSelectedTemplate().isDoNotSave())
+			if (!getSelectedTemplate().isTransientContent())
 				savePdf(getTask(), getPdfContainer());
 		}
 	}
@@ -492,9 +490,9 @@ public class PrintDialog extends AbstractDialog {
 		// weiterbehandelden Kollegen" this was generated and saved in
 		// tmpPdfContainer
 		if (getContactList().isEmpty()) {
-			if (!getSelectedTemplate().isDoNotSave())
+			if (!getSelectedTemplate().isTransientContent())
 				savePdf(getTask(), getPdfContainer());
-			settingsHandler.getSelectedPrinter().print(getPdfContainer());
+			userHandlerAction.getSelectedPrinter().print(getPdfContainer());
 		} else {
 			boolean oneContactSelected = false;
 			// addresses where chosen
@@ -502,10 +500,10 @@ public class PrintDialog extends AbstractDialog {
 				if (contactChooser.isSelected()) {
 					// address of the rendered pdf, not rendering twice
 					if (contactChooser == getRenderedContact()) {
-						if (!getSelectedTemplate().isDoNotSave())
+						if (!getSelectedTemplate().isTransientContent())
 							savePdf(getTask(), getPdfContainer());
 						for (int i = 0; i < contactChooser.getCopies(); i++) {
-							settingsHandler.getSelectedPrinter().print(getPdfContainer());
+							userHandlerAction.getSelectedPrinter().print(getPdfContainer());
 						}
 					} else {
 						// setting other associatedContact then selected
@@ -514,7 +512,7 @@ public class PrintDialog extends AbstractDialog {
 						// render all other pdfs
 						PDFContainer otherAddress = generatePDFFromTemplate();
 						for (int i = 0; i < contactChooser.getCopies(); i++) {
-							settingsHandler.getSelectedPrinter().print(otherAddress);
+							userHandlerAction.getSelectedPrinter().print(otherAddress);
 						}
 						// settings the old selected associatedContact as
 						// selected associatedContact
@@ -528,7 +526,7 @@ public class PrintDialog extends AbstractDialog {
 
 			// printin if no container was selected, with the default address
 			if (!oneContactSelected) {
-				settingsHandler.getSelectedPrinter().print(getPdfContainer());
+				userHandlerAction.getSelectedPrinter().print(getPdfContainer());
 			}
 		}
 

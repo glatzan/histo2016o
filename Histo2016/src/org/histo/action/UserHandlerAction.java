@@ -3,7 +3,7 @@ package org.histo.action;
 import java.io.Serializable;
 
 import org.apache.log4j.Logger;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Role;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -12,14 +12,22 @@ import org.histo.model.HistoUser;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.template.mail.RequestUnlockMail;
 import org.histo.util.mail.MailHandler;
+import org.histo.util.printer.ClinicPrinter;
+import org.histo.util.printer.LabelPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
 @Scope(value = "session")
+@Getter
+@Setter
 public class UserHandlerAction implements Serializable {
 
 	private static final long serialVersionUID = -8314968695816748306L;
@@ -27,14 +35,14 @@ public class UserHandlerAction implements Serializable {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private ResourceBundle resourceBundle;
-
-	@Autowired
-	@Lazy
-	private SettingsHandler settingsHandler;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalSettings globalSettings;
 
 	/********************************************************
 	 * login
@@ -47,6 +55,16 @@ public class UserHandlerAction implements Serializable {
 	/********************************************************
 	 * login
 	 ********************************************************/
+
+	/**
+	 * Selected ClinicPrinter to print the document
+	 */
+	private ClinicPrinter selectedPrinter;
+
+	/**
+	 * Selected label pirnter
+	 */
+	private LabelPrinter selectedLabelPrinter;
 
 	/**
 	 * Checks if the session is associated with a user.
@@ -151,7 +169,7 @@ public class UserHandlerAction implements Serializable {
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public void roleOfuserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
-		PredefinedRoleSettings roleSetting = settingsHandler.getRoleSettingsForRole(histoUser.getRole());
+		PredefinedRoleSettings roleSetting = globalSettings.getRoleSettingsForRole(histoUser.getRole());
 		histoUser.updateUserSettings(roleSetting);
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getRole().toString());
 		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getRole() });
@@ -166,25 +184,44 @@ public class UserHandlerAction implements Serializable {
 		RequestUnlockMail mail = MailHandler.getDefaultTemplate(RequestUnlockMail.class);
 		mail.prepareTemplate(currentUser);
 		mail.fillTemplate();
-		
-		settingsHandler.getMailHandler().sendAdminMail(mail);
+
+		globalSettings.getMailHandler().sendAdminMail(mail);
 
 		setUnlockRequestSend(true);
 	}
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
+	public void updateSelectedPrinters() {
 
-	public boolean isUnlockRequestSend() {
-		return unlockRequestSend;
-	}
+		if (getCurrentUser().getPreferedPrinter() == null) {
+			// dummy printer is allways there
+			setSelectedPrinter(globalSettings.getPrinterList().get(0));
+			getCurrentUser().setPreferedPrinter(getSelectedPrinter().getName());
+		} else {
+			ClinicPrinter printer = globalSettings.getPrinterByName(getCurrentUser().getPreferedPrinter());
+			// if printer was found set it
+			if (printer != null) {
+				logger.debug("Settings printer " + printer.getName() + " as selected printer");
+				setSelectedPrinter(printer);
+			} else {
+				// TODO search for printer in the same room
+				setSelectedPrinter(globalSettings.getPrinterList().get(0));
+			}
+		}
 
-	public void setUnlockRequestSend(boolean unlockRequestSend) {
-		this.unlockRequestSend = unlockRequestSend;
+		if (getCurrentUser().getPreferedLabelPritner() == null) {
+			setSelectedLabelPrinter(globalSettings.getLabelPrinterList().get(0));
+			getCurrentUser().setPreferedLabelPritner(Long.toString(getSelectedLabelPrinter().getId()));
+		} else {
+			LabelPrinter labelPrinter = globalSettings.getLabelPrinterByID(getCurrentUser().getPreferedLabelPritner());
+
+			if (labelPrinter != null) {
+				logger.debug("Settings printer " + labelPrinter.getName() + " as selected printer");
+				setSelectedLabelPrinter(labelPrinter);
+			} else {
+				// TODO serach for pritner in the same room
+				setSelectedLabelPrinter(globalSettings.getLabelPrinterList().get(0));
+			}
+		}
 	}
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
 
 }

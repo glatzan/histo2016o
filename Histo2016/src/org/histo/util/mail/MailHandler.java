@@ -15,9 +15,10 @@ import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.MultiPartEmail;
 import org.apache.commons.mail.SimpleEmail;
 import org.apache.log4j.Logger;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.template.MailTemplate;
+import org.histo.template.TemplateDeserializer;
 import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
 
@@ -54,17 +55,17 @@ public class MailHandler implements GsonAble {
 		}.getType();
 
 		GsonBuilder gb = new GsonBuilder();
-		gb.registerTypeAdapter(type, new MailTemplateDeserializer());
+		gb.registerTypeAdapter(type, new TemplateDeserializer<MailTemplate>());
 
 		Gson gson = gb.create();
 
 		ArrayList<MailTemplate> jsonArray = gson
-				.fromJson(FileHandlerUtil.getContentOfFile(SettingsHandler.MAIL_TEMPLATES), type);
+				.fromJson(FileHandlerUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
 
 		List<T> result = new ArrayList<T>();
 
 		for (MailTemplate mailTemplate : jsonArray) {
-			if (mailTemplate.getMailType().equals(mailType)) {
+			if (mailTemplate.getTemplateName().equals(mailType)) {
 				result.add((T)mailTemplate);
 			}
 		}

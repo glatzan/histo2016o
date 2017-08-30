@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -14,11 +18,13 @@ import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.util.StreamUtils;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Transactional
+@Scope(value = "session")
 public class OrganizationDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = 6964886166116853913L;
@@ -26,29 +32,40 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 	private static Logger logger = Logger.getLogger("histo");
 
 	public Organization getOrganizationByName(String name) {
-		DetachedCriteria query = DetachedCriteria.forClass(Organization.class, "organization");
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		query.add(Restrictions.like("name", name));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		// Create CriteriaQuery
+		CriteriaQuery<Organization> criteria = qb.createQuery(Organization.class);
+		Root<Organization> root = criteria.from(Organization.class);
+		criteria.select(root);
 
-		return ((List<Organization>) query.getExecutableCriteria(getSession()).list()).stream()
-				.collect(StreamUtils.singletonCollector());
+		criteria.where(qb.like(root.get("name"), name));
+		criteria.distinct(true);
+
+		List<Organization> organizations = getSession().createQuery(criteria).getResultList();
+
+		if (!organizations.isEmpty())
+			return organizations.get(0);
+
+		return null;
 	}
+
 	public List<Organization> getOrganizations() {
 		return getOrganizations(true, false);
 	}
 
 	public List<Organization> getOrganizations(boolean orderById, boolean initialized) {
 		DetachedCriteria query = DetachedCriteria.forClass(Organization.class, "organization");
-		if(orderById)
+		if (orderById)
 			query.addOrder(Order.asc("id"));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		List<Organization> result = (List<Organization>) query.getExecutableCriteria(getSession()).list();
-		
-		if(initialized && result != null)
+
+		if (initialized && result != null)
 			result.stream().forEach(p -> initializeOrganization(p));
-		
+
 		return result;
 	}
 

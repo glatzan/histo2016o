@@ -3,7 +3,7 @@ package org.histo.action.dialog.print;
 import java.util.Date;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
@@ -28,7 +28,7 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private SettingsHandler settingsHandler;
+	private GlobalSettings globalSettings;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -53,12 +53,12 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 		this.pdf = pdf;
 
 		System.out.println("gallo");
-		
+
 		if (contact != null)
 			this.number = contact.getPerson().getContact().getFax();
 		else
 			this.number = null;
-		
+
 		updateFaxButton();
 
 		super.initBean(task, Dialog.PRINT_FAX, false);
@@ -92,7 +92,7 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 
 			}
 
-			settingsHandler.getFaxHandler().sendFax(number, pdf);
+			globalSettings.getFaxHandler().sendFax(number, pdf);
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

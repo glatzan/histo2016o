@@ -1,70 +1,78 @@
 [{
 	"id" : 0,
 	"name" : "Eingangsbogen",
-	"file" : "classpath:templates/print/USchein_full.tex",
-	"file2" : "",
-	"documentType"	: "U_REPORT",
-	"defaultDocument" : false,
-	"doNotSave" : true
+	"content" : "classpath:templates/print/USchein_full.tex",
+	"content2" : "",
+	"type"	: "U_REPORT",
+	"templateName": "org.histo.template.documents.TemplateUReport",
+	"defaultOfType" : false,
+	"transientContent" : true
 },{
 	"id" : 1,
 	"name" : "Eingangsbogen bedrucken",
-	"file" : "classpath:templates/print/USchein_empty.tex",
-	"file2" : "",
-	"documentType"	: "U_REPORT_EMTY",
-	"defaultDocument" : false,
-	"doNotSave" : true
+	"content" : "classpath:templates/print/USchein_empty.tex",
+	"content2" : "",
+	"type"	: "U_REPORT_EMTY",
+	"templateName": "org.histo.template.documents.TemplateUReport",
+	"defaultOfType" : false,
+	"transientContent" : true
 },
 {
 	"id" : 10,
 	"name" : "Befundbericht",
-	"file" : "classpath:templates/print/Report_Intern.tex",
-	"file2" : "",
-	"documentType"	: "DIAGNOSIS_REPORT",
-	"defaultDocument" : true,
-	"doNotSave" : false
+	"content" : "classpath:templates/print/Report_Intern.tex",
+	"content2" : "",
+	"type"	: "DIAGNOSIS_REPORT",
+	"templateName": "org.histo.template.documents.TemplateDiagnosisReport",
+	"defaultOfType" : true,
+	"transientContent" : false
 },
 {
 	"id" : 20,
 	"name" : "Befundbericht Extern",
-	"file" : "classpath:templates/print/Report_Extern.tex",
-	"file2" : "",
-	"documentType"	: "DIAGNOSIS_REPORT_EXTERN",
-	"defaultDocument" : true,
-	"doNotSave" : false
+	"content" : "classpath:templates/print/Report_Extern.tex",
+	"content2" : "",
+	"type"	: "DIAGNOSIS_REPORT_EXTERN",
+	"templateName": "org.histo.template.documents.TemplateDiagnosisReport",
+	"defaultOfType" : true,
+	"transientContent" : false
 },
 {
 	"id" : 50,
 	"name" : "Konsil",
-	"file" : "classpath:templates/print/council.tex",
-	"file2" : "",
-	"documentType"	: "COUNCIL_REQUEST",
-	"defaultDocument" : true,
-	"doNotSave" : false
+	"content" : "classpath:templates/print/council.tex",
+	"content2" : "",
+	"type"	: "COUNCIL_REQUEST",
+	"templateName": "org.histo.template.documents.TemplateCouncil",
+	"defaultOfType" : true,
+	"transientContent" : false
 },{
 	"id" : 100,
 	"name" : "Default Slide Lable",
-	"file" : "classpath:templates/print_label/defaultLable.zpl",
-	"file2" : "",
-	"documentType"	: "LABLE",
-	"defaultDocument" : true,
-	"doNotSave" : false
+	"content" : "classpath:templates/print_label/defaultLable.zpl",
+	"content2" : "",
+	"type"	: "LABLE",
+	"templateName": "org.histo.template.DocumentTemplate",
+	"defaultOfType" : true,
+	"transientContent" : false
 },{
 	"id" : 150,
 	"name" : "Default Slide Lable",
-	"file" : "classpath:templates/print_label/testLable.zpl",
-	"file2" : "",
-	"documentType"	: "TEST_LABLE",
-	"defaultDocument" : true,
-	"doNotSave" : false
+	"content" : "classpath:templates/print_label/testLable.zpl",
+	"content2" : "",
+	"type"	: "TEST_LABLE",
+	"templateName": "org.histo.template.DocumentTemplate",
+	"defaultOfType" : true,
+	"transientContent" : false
 },{
 	"id" : 1000,
 	"name" : "Send Report",
-	"file" : "classpath:templates/print/SendReport.tex",
-	"file2" : "",
-	"documentType"	: "MEDICAL_FINDINGS_SEND_REPORT",
-	"defaultDocument" : true,
-	"doNotSave" : false
+	"content" : "classpath:templates/print/SendReport.tex",
+	"content2" : "",
+	"type"	: "NOTIFICATION_SEND_REPORT",
+	"templateName": "org.histo.template.documents.TemplateSendReport",
+	"defaultOfType" : true,
+	"transientContent" : false
 }]
 
 

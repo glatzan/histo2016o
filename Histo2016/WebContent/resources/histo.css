@@ -405,6 +405,10 @@ ul.ui-menu-child {
 	color: inherit !important;
 }
 
+.animatedProgress .ui-progressbar-value { 
+    background-image: url("gfx/progress.gif");
+}
+
 /*
 	######################################## Header ########################################
 */

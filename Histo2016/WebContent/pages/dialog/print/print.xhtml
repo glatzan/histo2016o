@@ -224,11 +224,11 @@
 						<p:selectOneMenu styleClass="customSerachSelectMenu"
 							title="#{msg['dialog.print.selectPrinter']}"
 							panelStyleClass="customSerachSelectMenuPanel"
-							converter="#{settingsHandler.printerListTransformer}"
-							value="#{settingsHandler.selectedPrinter}" filter="true"
+							converter="#{globalSettings.printerListTransformer}"
+							value="#{userHandlerAction.selectedPrinter}" filter="true"
 							filterMatchMode="contains" style="margin-right:10px">
 
-							<f:selectItems value="#{settingsHandler.printerList}"
+							<f:selectItems value="#{globalSettings.printerList}"
 								var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
 						</p:selectOneMenu>
 					</h:panelGrid>

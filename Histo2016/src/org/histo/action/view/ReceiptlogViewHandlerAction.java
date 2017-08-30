@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.SettingsDialogHandler;
 import org.histo.action.dialog.slide.StainingPhaseLeaveDialogHandler;
-import org.histo.action.handler.SettingsHandler;
 import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.enums.DocumentType;
@@ -21,8 +21,8 @@ import org.histo.model.ListItem;
 import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.template.DocumentTemplate;
 import org.histo.ui.StainingTableChooser;
-import org.histo.util.printer.template.AbstractTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -48,7 +48,7 @@ public class ReceiptlogViewHandlerAction {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private SettingsHandler settingsHandler;
+	private UserHandlerAction userHandlerAction;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -169,8 +169,7 @@ public class ReceiptlogViewHandlerAction {
 				break;
 			case PRINT:
 
-				AbstractTemplate[] arr = AbstractTemplate.factroy(SettingsHandler.PRINT_DOCUMENT_TEMPLATES,
-						new DocumentType[] { DocumentType.LABLE });
+				DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE); 
 
 				if (arr.length == 0) {
 					logger.debug("No template found for printing, returning!");
@@ -183,12 +182,12 @@ public class ReceiptlogViewHandlerAction {
 					if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
 
 						Slide slide = stainingTableChooser.getStaining();
-						settingsHandler.getSelectedLabelPrinter().print(arr[0], slide,
+						userHandlerAction.getSelectedLabelPrinter().print(arr[0], slide,
 								mainHandlerAction.date(System.currentTimeMillis()));
 					}
 				}
 
-				settingsHandler.getSelectedLabelPrinter().flushPrints();
+				userHandlerAction.getSelectedLabelPrinter().flushPrints();
 
 				break;
 			default:
@@ -310,17 +309,16 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void printLableForSlide(Slide slide) {
 
-		AbstractTemplate[] arr = AbstractTemplate.factroy(SettingsHandler.PRINT_DOCUMENT_TEMPLATES,
-				new DocumentType[] { DocumentType.LABLE });
+		DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE); 
 
 		if (arr.length == 0) {
 			logger.debug("No template found for lable printn!");
 			return;
 		}
 
-		settingsHandler.getSelectedLabelPrinter().print(arr[0], slide,
+		userHandlerAction.getSelectedLabelPrinter().print(arr[0], slide,
 				mainHandlerAction.date(System.currentTimeMillis()));
-		settingsHandler.getSelectedLabelPrinter().flushPrints();
+		userHandlerAction.getSelectedLabelPrinter().flushPrints();
 
 	}
 

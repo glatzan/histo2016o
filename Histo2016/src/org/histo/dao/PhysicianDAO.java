@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
@@ -94,15 +98,24 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	public Physician loadPhysicianByUID(String uid) {
-		Criteria c = getSession().createCriteria(Physician.class);
-		c.add(Restrictions.eq("uid", uid)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		List<Physician> res = c.list();
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		if (res.size() != 1) {
-			return null;
+		// Create CriteriaQuery
+		CriteriaQuery<Physician> criteria = qb.createQuery(Physician.class);
+		Root<Physician> root = criteria.from(Physician.class);
+		criteria.select(root);
+
+		criteria.where(qb.like(root.get("uid"), uid));
+		criteria.distinct(true);
+
+		List<Physician> physician = getSession().createQuery(criteria).getResultList();
+
+		if (!physician.isEmpty()) {
+			return physician.get(0);
 		}
 
-		return res.get(0);
+		return null;
 	}
 
 	/**

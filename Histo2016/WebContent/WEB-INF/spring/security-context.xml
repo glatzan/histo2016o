@@ -22,8 +22,6 @@
 			access="hasAnyRole('ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
 
 
-
-
 		<csrf disabled="true" />
 
 		<headers>

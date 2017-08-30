@@ -6,8 +6,9 @@ import java.util.List;
 import javax.persistence.NoResultException;
 
 import org.histo.action.DialogHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.dialog.UserSettingsDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.DiagnosisRevisionType;
@@ -34,12 +35,12 @@ import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
+import org.histo.template.DocumentTemplate;
+import org.histo.template.documents.TemplateUReport;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
+import org.histo.util.PDFGenerator;
 import org.histo.util.TimeUtil;
-import org.histo.util.printer.template.AbstractTemplate;
-import org.histo.util.printer.template.PDFGenerator;
-import org.histo.util.printer.template.TemplateUReport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
@@ -73,11 +74,6 @@ public class CreateTaskDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private SettingsHandler settingsHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
@@ -99,6 +95,11 @@ public class CreateTaskDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private TransactionTemplate transactionTemplate;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
 
 	private Patient patient;
 
@@ -328,8 +329,7 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTaskAndPrintUReport() {
 		createTask();
 
-		AbstractTemplate[] subSelect = AbstractTemplate
-				.getTemplatesByTypes(new DocumentType[] { DocumentType.U_REPORT });
+		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.U_REPORT);
 
 		if (subSelect.length == 0) {
 			logger.error("New Task: No TemplateUtil for printing UReport found");
@@ -341,7 +341,7 @@ public class CreateTaskDialog extends AbstractDialog {
 		((TemplateUReport) subSelect[0]).initData(task.getPatient(), getTask());
 		PDFContainer newPdf = ((TemplateUReport) subSelect[0]).generatePDF(new PDFGenerator());
 
-		settingsHandler.getSelectedPrinter().print(newPdf);
+		userHandlerAction.getSelectedPrinter().print(newPdf);
 	}
 
 	/**

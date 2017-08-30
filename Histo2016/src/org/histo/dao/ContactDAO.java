@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
@@ -32,7 +32,7 @@ public class ContactDAO extends AbstractDAO {
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private SettingsHandler settingsHandler;
+	private GlobalSettings globalSettings;
 
 	public void updateNotificationsOnRoleChange(Task task, AssociatedContact associatedContact) {
 
@@ -45,7 +45,7 @@ public class ContactDAO extends AbstractDAO {
 			return;
 		}
 
-		List<AssociatedContactNotification.NotificationTyp> types = settingsHandler.getDefaultNotificationSettings()
+		List<AssociatedContactNotification.NotificationTyp> types = globalSettings.getDefaultNotificationSettings()
 				.getDefaultNotificationForRole(associatedContact.getRole());
 
 		for (AssociatedContactNotification.NotificationTyp notificationTyp : types) {

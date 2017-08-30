@@ -1,4 +1,4 @@
-package org.histo.util.printer.template;
+package org.histo.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,21 +8,15 @@ import java.util.List;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
-import org.histo.action.dialog.ProgrammVersionDialog;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
-import org.histo.settings.LdapHandler;
-import org.histo.settings.ProgramSettings;
-import org.histo.util.TimeUtil;
+import org.histo.template.DocumentTemplate;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -33,50 +27,47 @@ import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 import de.nixosoft.jlr.JLRConverter;
 import de.nixosoft.jlr.JLRGenerator;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+@Configurable
 @Getter
 @Setter
 public class PDFGenerator {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalSettings globalSettings;
+
 	private File workingDirectory;
 	private File output;
 	private File template;
 	private File processedTex;
 	private JLRConverter converter;
-	private AbstractTemplate printTemplate;
-
-	private ProgramSettings programSettings;
+	private DocumentTemplate printTemplate;
 
 	public PDFGenerator() {
 		this(null);
 	}
 
-	public PDFGenerator(AbstractTemplate printTemplate) {
+	public PDFGenerator(DocumentTemplate printTemplate) {
 		if (printTemplate != null)
 			openNewPDf(printTemplate);
-
-		// loading program settings, can't use settings bean, because this
-		// object might operate in a thread
-		JsonParser parser = new JsonParser();
-		JsonObject o = parser.parse(FileHandlerUtil.getContentOfFile(SettingsHandler.PROGRAM_SETTINGS))
-				.getAsJsonObject();
-
-		Gson gson = new Gson();
-
-		programSettings = gson.fromJson(o.get(SettingsHandler.SETTINGS_OBJECT_GENERAL), ProgramSettings.class);
 	}
 
-	public JLRConverter openNewPDf(AbstractTemplate printTemplate) {
+	public JLRConverter openNewPDf(DocumentTemplate printTemplate) {
 		this.printTemplate = printTemplate;
-		workingDirectory = new File(FileHandlerUtil.getAbsolutePath(programSettings.getWorkingDirectory()));
+
+		workingDirectory = new File(
+				FileHandlerUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
 
 		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 
-		template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getFile()));
+		template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getContent()));
 
 		processedTex = new File(workingDirectory.getAbsolutePath() + File.separator
 				+ RandomStringUtils.randomAlphanumeric(10) + ".tex");
@@ -105,7 +96,7 @@ public class PDFGenerator {
 			File test = pdfGen.getPDF();
 			byte[] data = readContentIntoByteArray(test);
 
-			System.out.println((System.currentTimeMillis() - test1));
+			logger.debug("Generation time " + (System.currentTimeMillis() - test1) + " ms");
 
 			return new PDFContainer(printTemplate.getDocumentType(),
 					"_" + TimeUtil

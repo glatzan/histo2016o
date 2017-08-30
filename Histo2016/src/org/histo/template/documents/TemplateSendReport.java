@@ -1,4 +1,4 @@
-package org.histo.util.printer.template;
+package org.histo.template.documents;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,8 +11,10 @@ import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.template.DocumentTemplate;
+import org.histo.util.PDFGenerator;
 
-public class TemplateSendReport extends AbstractTemplate {
+public class TemplateSendReport extends DocumentTemplate {
 	private Patient patient;
 
 	private Task task;

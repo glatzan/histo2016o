@@ -3,7 +3,7 @@ package org.histo.action.dialog;
 import java.util.Date;
 
 import org.histo.action.UserHandlerAction;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.settings.Version;
@@ -22,7 +22,7 @@ public class ProgrammVersionDialog extends AbstractDialog {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private SettingsHandler settingsHandler;
+	private GlobalSettings globalSettings;
 
 	private Version[] versionInfo;
 
@@ -38,7 +38,7 @@ public class ProgrammVersionDialog extends AbstractDialog {
 	public boolean initBean() {
 		super.initBean(null, Dialog.INFO);
 		logger.trace("Preparing Info Dialog");
-		setVersionInfo(Version.factroy(SettingsHandler.VERSIONS_INFO));
+		setVersionInfo(Version.factroy(GlobalSettings.VERSIONS_INFO));
 		setErrorDate(new Date(System.currentTimeMillis()));
 		setErrorMessage("");
 		return true;
@@ -57,7 +57,7 @@ public class ProgrammVersionDialog extends AbstractDialog {
 					new Date(System.currentTimeMillis()));
 			mail.fillTemplate();
 
-			settingsHandler.getMailHandler().sendAdminMail(mail);
+			globalSettings.getMailHandler().sendAdminMail(mail);
 		}
 	}
 

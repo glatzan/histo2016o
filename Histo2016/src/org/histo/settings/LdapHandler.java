@@ -19,6 +19,7 @@ import javax.naming.directory.SearchResult;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.histo.dao.OrganizationDAO;
+import org.histo.dao.TransientDAO;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
@@ -29,13 +30,21 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.gson.annotations.Expose;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
+@Getter
+@Setter
 public class LdapHandler implements GsonAble {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	private OrganizationDAO organizationDAO;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TransientDAO transientDAO;
 
 	@Expose
 	private String host;
@@ -167,7 +176,7 @@ public class LdapHandler implements GsonAble {
 				Organization org = null;
 				try {
 					logger.trace("Loading organization " + attr.get().toString() );
-					org = organizationDAO.getOrganizationByName(attr.get().toString());
+					org = transientDAO.getOrganizationByName(attr.get().toString());
 
 				} catch (IllegalStateException e) {
 					logger.trace("Organiation not found");
@@ -254,46 +263,6 @@ public class LdapHandler implements GsonAble {
 
 	/********************************************************
 	 * static
-	 ********************************************************/
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	public String getHost() {
-		return host;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public String getSuffix() {
-		return suffix;
-	}
-
-	public String getBase() {
-		return base;
-	}
-
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
-
-	public void setSuffix(String suffix) {
-		this.suffix = suffix;
-	}
-
-	public void setBase(String base) {
-		this.base = base;
-	}
-
-	/********************************************************
-	 * Getter/Setter
 	 ********************************************************/
 
 }

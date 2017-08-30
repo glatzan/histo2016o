@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=latex 2017.2.14)  28 AUG 2017 17:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=latex 2017.2.14)  30 AUG 2017 16:07
 entering extended mode
 **./Report_Intern.tex
 (Report_Intern.tex
@@ -1167,21 +1167,6 @@ Overfull \hbox (139.76022pt too wide) in paragraph at lines 106--106
  []
 
 
-LaTeX Warning: File `augen.png' not found on input line 106.
-
-
-! LaTeX Error: File `augen.png' not found.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.106 ...  {\includegraphics[scale=0.4]{augen.png}
-                                                  } \\
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
 ! LaTeX Error: Cannot determine size of graphic in augen.png (no BoundingBox).
 
 See the LaTeX manual or LaTeX Companion for explanation.
@@ -1206,35 +1191,11 @@ With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-! Extra }, or forgotten $.
-<recently read> \egroup 
-                        
-l.117 				E
-           ingangsnummer & $!task.taskID \\
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.117 				E
-           ingangsnummer & $!task.taskID \\
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.117 				E
-           ingangsnummer & $!task.taskID \\
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
+Overfull \hbox (122.63297pt too wide) in paragraph at lines 116--117
+[]|$\OML/cmm/m/it/10.95 date:format\OT1/cmr/m/n/10.95 ([]\OML/cmm/m/it/10.95 dd
+:MM:yyyy[];$\T1/phv/m/n/10.95 !task.dateOfReceipt)| 
+ []
 
 ! Extra }, or forgotten $.
 <recently read> \egroup 
@@ -1705,21 +1666,6 @@ Overfull \hbox (22.40347pt too wide) in paragraph at lines 168--177
  []
 
 
-LaTeX Warning: File `background.pdf' not found on input line 178.
-
-
-! LaTeX Error: File `background.pdf' not found.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.178 \end{longtable}
-                     
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
 ! LaTeX Error: Cannot determine size of graphic in background.pdf (no BoundingB
 ox).
 
@@ -1910,6 +1856,6 @@ Here is how much of TeX's memory you used:
  9975 multiletter control sequences out of 15000+200000
  24714 words of font info for 60 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 43i,23n,66p,8853b,459s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,23n,66p,8853b,469s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on Report_Intern.dvi (2 pages, 5780 bytes).
+Output written on Report_Intern.dvi (2 pages, 5836 bytes).

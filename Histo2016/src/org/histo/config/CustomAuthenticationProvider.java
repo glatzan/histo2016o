@@ -6,18 +6,15 @@ import java.util.Collection;
 import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Role;
-import org.histo.dao.UserDAO;
+import org.histo.dao.TransientDAO;
 import org.histo.model.Contact;
 import org.histo.model.HistoUser;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.settings.LdapHandler;
-import org.histo.settings.ProgramSettings;
-import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,10 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -42,7 +35,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	public static String base = "ou=people";
 
 	@Autowired
-	private UserDAO userDAO;
+	private GlobalSettings globalSettings;
+
+	@Autowired
+	private TransientDAO transientDAO;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {
@@ -51,20 +47,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 		try {
 
-			JsonParser parser = new JsonParser();
-			JsonObject o = parser.parse(FileHandlerUtil.getContentOfFile(SettingsHandler.PROGRAM_SETTINGS))
-					.getAsJsonObject();
-
-			Gson gson = new Gson();
-
-			LdapHandler connection = gson.fromJson(o.get(SettingsHandler.SETTINGS_OBJECT_LDAP), LdapHandler.class);
-
-			ProgramSettings settings = gson.fromJson(o.get(SettingsHandler.SETTINGS_OBJECT_GENERAL), ProgramSettings.class);
-
-			if (settings.isOffline()) {
+			if (globalSettings.getProgramSettings().isOffline()) {
 				logger.info("LDAP login disabled");
 
-				HistoUser histoUser = userDAO.loadUserByName(userName);
+				HistoUser histoUser = transientDAO.loadUserByName(userName);
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
 					histoUser = new HistoUser(userName, Role.USER);
@@ -78,32 +64,32 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				histoUser.setLastLogin(System.currentTimeMillis());
 
-				userDAO.saveUser(histoUser, "Benutzerdaten geupdated");
+				transientDAO.save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
 
 				Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
 
 				return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
 			}
 
-			connection.openConnection();
+			globalSettings.getLdapHandler().openConnection();
 
-			Physician physician = connection.getPhyscican(userName);
+			Physician physician = globalSettings.getLdapHandler().getPhyscican(userName);
 
 			if (physician != null) {
 				String dn = physician.getDnObjectName() + "," + base + "," + suffix;
 
-				connection.closeConnection();
+				globalSettings.getLdapHandler().closeConnection();
 
 				logger.info("Physician found " + physician.getPerson().getFullName());
 
 				// if now error was thrown auth was successful
-				connection.checkPassword(dn, password);
+				globalSettings.getLdapHandler().checkPassword(dn, password);
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 
 				System.out.println("------ Login successful " + physician.getPerson().getFullName());
 				// checking if histouser exsists
-				HistoUser histoUser = userDAO.loadUserByName(userName);
+				HistoUser histoUser = transientDAO.loadUserByName(userName);
 
 				if (histoUser == null) {
 					logger.info("Creating new HistoUser " + physician.getPerson().getFullName());
@@ -111,7 +97,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 					// if the physician was added as surgeon the useracc an the
 					// physician will be merged
-					Physician physicianFromDatabase = userDAO.loadPhysicianByUID(userName);
+					Physician physicianFromDatabase = transientDAO.loadPhysicianByUID(userName);
 					if (physicianFromDatabase != null) {
 						histoUser.setPhysician(physicianFromDatabase);
 						logger.info("Physician already in datanse " + physician.getPerson().getFullName());
@@ -136,18 +122,18 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				histoUser.getPhysician().copyIntoObject(physician);
 
-				connection.closeConnection();
+				globalSettings.getLdapHandler().closeConnection();
 
 				histoUser.setLastLogin(System.currentTimeMillis());
 
 				// saving new organizations
 				for (Organization organization : histoUser.getPhysician().getPerson().getOrganizsations()) {
 					if (organization.getId() == 0)
-						userDAO.save(organization, "log.organization.created",
+						transientDAO.save(organization, "log.organization.created",
 								new Object[] { organization.toString() });
 				}
 
-				userDAO.save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
+				transientDAO.save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
 
 				Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
 

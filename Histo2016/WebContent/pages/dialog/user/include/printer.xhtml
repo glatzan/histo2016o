@@ -34,7 +34,7 @@
 					value="#{userHandlerAction.currentUser.preferedPrinter}"
 					filter="true" filterMatchMode="contains">
 
-					<f:selectItems value="#{settingsHandler.printerList}" var="printer"
+					<f:selectItems value="#{globalSettings.printerList}" var="printer"
 						itemLabel="#{printer.name}" itemValue="#{printer.name}" />
 
 				</p:selectOneMenu>
@@ -43,7 +43,7 @@
 				<p:commandLink
 					title="#{msg['dialog.userSettings.printer.testPage.hint']}"
 					style="float: right; margin-right:5px;"
-					actionListener="#{settingsHandler.selectedPrinter.printTestPage()}">
+					actionListener="#{userHandlerAction.selectedPrinter.printTestPage()}">
 					<i class="fa fa-fw fa-print" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -75,7 +75,7 @@
 					value="#{userHandlerAction.currentUser.preferedLabelPritner}"
 					filter="true" filterMatchMode="contains">
 
-					<f:selectItems value="#{settingsHandler.labelPrinterList}"
+					<f:selectItems value="#{globalSettings.labelPrinterList}"
 						var="printer" itemLabel="#{printer.name}"
 						itemValue="#{printer.id}" />
 
@@ -85,7 +85,7 @@
 				<p:commandLink
 					title="#{msg['dialog.userSettings.labelPrinter.testPage.hint']}"
 					style="float: right; margin-right:5px;"
-					actionListener="#{settingsHandler.selectedLabelPrinter.printTestPage()}">
+					actionListener="#{globalSettings.selectedLabelPrinter.printTestPage()}">
 					<i class="fa fa-fw fa-print" />
 				</p:commandLink>
 			</h:panelGrid>

@@ -1,7 +1,8 @@
 {
 	"generalSettings": {
 		"offline": true,
-		"workingDirectory": "classpath:templates/print"
+		"workingDirectory": "classpath:templates/print",
+		"phoneRegex" : "^\\s*(?:[\\+#]?(\\d{1,3}))?([-. ()\/\\\\]*(\\d*))*?\\s*$"
 	},
 	"defaultNotification": {
 		"defaultNotifications": [
@@ -19,11 +20,46 @@
 			}
 		]
 	},
+	"labelPrinters": [
+		{
+			"name": "Aug-Histo-Etikettendrucker-1",
+			"id": 1,
+			"location": "Histologie-Engesserstraße",
+			"commentary": "",
+			"address": "172.30.1.70",
+			"port": 21,
+			"userName": "admin",
+			"password": "1234",
+			"fileName": "print%count%.zpl",
+			"timeout": 1000
+		},
+		{
+			"name": "Aug-Histo-Etikettendrucker-2",
+			"id": 2,
+			"location": "Histologie-Hörsaal",
+			"commentary": "",
+			"address": "10.210.50.39",
+			"port": 21,
+			"userName": "admin",
+			"password": "1234",
+			"fileName": "print%count%.zpl",
+			"timeout": 1000
+		}
+	],
+	"cupsServer": {
+		"cupsHost": "10.210.21.254/printers/",
+		"cupsPost": 631,
+		"testPage": "classpath:templates/print/testPage.pdf"
+	},
 	"ldapSettings": {
 		"host": "ldap.ukl.uni-freiburg.de",
 		"port": 389,
 		"suffix": "dc=ukl,dc=uni-freiburg,dc=de",
 		"base": "ou=people"
+	},
+	"clinicBackend": {
+		"baseUrl": "http://auginfo/piz",
+		"userAgent": "Mozilla/5.0"
 	},
 	"mail": {
 		"settings": {
@@ -43,10 +79,127 @@
 	},
 	"fax": {
 		"settings": {
-			"fileName": "tmpFax.pdf",
 			"commandSplitter": "!%",
 			"windows_command": "cmd.exe!%/c!%plink -i Q:/AUG-T-HISTO/putty/key.ppk admin@10.210.21.152 \"lp -d Internes_Modem -o phone=$faxNumber\" < $file",
 			"linux_command": "ssh -i Q:/AUG-T-HISTO/putty/id_rsa admin@10.210.21.152 \"lp -d Internes_Modem -o phone=$faxNumber\" < $file"
 		}
-	}
+	},
+	"predefinedRoles": [
+		{
+			"role": "USER",
+			"autoSelectedPreferedPrinter": true,
+			"autoSelectedPreferedLabelPrinter": true,
+			"defaultView": "USERLIST",
+			"availableViews": [
+				"USERLIST"
+			],
+			"selectableViews": [
+				"USERLIST"
+			],
+			"defaultWorklistView": null,
+			"worklistToLoad": "EMTY",
+			"worklistSortOrder": "TASK_ID",
+			"worklistSortOrderAscending": true,
+			"hideNoneActiveTasks": false,
+			"alternatePatientAddMode": false,
+			"inputFieldColor": "ffffff",
+			"inputFieldFontColor": "000000"
+		},
+		{
+			"role": "MTA",
+			"autoSelectedPreferedPrinter": true,
+			"autoSelectedPreferedLabelPrinter": true,
+			"defaultView": "WORKLIST_RECEIPTLOG",
+			"availableViews": [
+				"WORKLIST_TASKS",
+				"WORKLIST_PATIENT",
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"selectableViews": [
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"defaultWorklistView": null,
+			"worklistToLoad": "STAINING_LIST",
+			"worklistSortOrder": "TASK_ID",
+			"worklistSortOrderAscending": true,
+			"hideNoneActiveTasks": false,
+			"alternatePatientAddMode": true,
+			"inputFieldColor": "ffffff",
+			"inputFieldFontColor": "000000"
+		},
+		{
+			"role": "PHYSICIAN",
+			"autoSelectedPreferedPrinter": true,
+			"autoSelectedPreferedLabelPrinter": true,
+			"defaultView": "WORKLIST_DIAGNOSIS",
+			"availableViews": [
+				"WORKLIST_TASKS",
+				"WORKLIST_PATIENT",
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"selectableViews": [
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"defaultWorklistView": null,
+			"worklistToLoad": "DIAGNOSIS_LIST",
+			"worklistSortOrder": "TASK_ID",
+			"worklistSortOrderAscending": true,
+			"hideNoneActiveTasks": false,
+			"alternatePatientAddMode": false,
+			"inputFieldColor": "ffffff",
+			"inputFieldFontColor": "000000"
+		},
+		{
+			"role": "MODERATOR",
+			"autoSelectedPreferedPrinter": true,
+			"autoSelectedPreferedLabelPrinter": true,
+			"defaultView": "WORKLIST_DIAGNOSIS",
+			"availableViews": [
+				"WORKLIST_TASKS",
+				"WORKLIST_PATIENT",
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"selectableViews": [
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"defaultWorklistView": null,
+			"worklistToLoad": "DIAGNOSIS_LIST",
+			"worklistSortOrder": "TASK_ID",
+			"worklistSortOrderAscending": true,
+			"hideNoneActiveTasks": false,
+			"alternatePatientAddMode": false,
+			"inputFieldColor": "ffffff",
+			"inputFieldFontColor": "000000"
+		},
+		{
+			"role": "ADMIN",
+			"autoSelectedPreferedPrinter": true,
+			"autoSelectedPreferedLabelPrinter": true,
+			"defaultView": "WORKLIST_DIAGNOSIS",
+			"availableViews": [
+				"WORKLIST_TASKS",
+				"WORKLIST_PATIENT",
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"selectableViews": [
+				"WORKLIST_RECEIPTLOG",
+				"WORKLIST_DIAGNOSIS"
+			],
+			"defaultWorklistView": null,
+			"worklistToLoad": "DIAGNOSIS_LIST",
+			"worklistSortOrder": "TASK_ID",
+			"worklistSortOrderAscending": true,
+			"hideNoneActiveTasks": false,
+			"alternatePatientAddMode": false,
+			"inputFieldColor": "ffffff",
+			"inputFieldFontColor": "000000"
+		}
+	]
 }

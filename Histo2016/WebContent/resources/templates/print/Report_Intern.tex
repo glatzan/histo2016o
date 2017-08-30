@@ -113,7 +113,7 @@ $!addressee.contactAsLatex\\
 			\renewcommand{\arraystretch}{1}
 			\begin{tabular}[t]{p{0.46\linewidth}p{0.5\linewidth}}
 				
-				Eingangsdatum & $!task.dateOfReceipt \\
+				Eingangsdatum &  $date.format('dd.MM.yyyy', $!task.dateOfReceipt) \\
 				Eingangsnummer & $!task.taskID \\
 				~ & 
 					\X=.30mm        % The width of code will be greater

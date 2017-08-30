@@ -13,5 +13,14 @@ package org.histo.config.enums;
  * @author andi
  */
 public enum DocumentType {
-	U_REPORT, U_REPORT_EMTY, U_REPORT_COMPLETED, DIAGNOSIS_REPORT, DIAGNOSIS_REPORT_EXTERN, LABLE, BIOBANK_INFORMED_CONSENT, TEST_LABLE, COUNCIL_REQUEST, COUNCIL_REPLY, OTHER, EMPTY, MEDICAL_FINDINGS_SEND_REPORT, MEDICAL_FINDINGS_SEND_REPORT_COMPLETED;
+	U_REPORT, U_REPORT_EMTY, U_REPORT_COMPLETED, DIAGNOSIS_REPORT, DIAGNOSIS_REPORT_EXTERN, LABLE, BIOBANK_INFORMED_CONSENT, TEST_LABLE, COUNCIL_REQUEST, COUNCIL_REPLY, OTHER, EMPTY, NOTIFICATION_SEND_REPORT, MEDICAL_FINDINGS_SEND_REPORT_COMPLETED;
+
+	public static DocumentType fromString(String text) {
+		for (DocumentType b : DocumentType.values()) {
+			if (b.name().equalsIgnoreCase(text)) {
+				return b;
+			}
+		}
+		throw new IllegalArgumentException("No constant with text " + text + " found");
+	}
 }

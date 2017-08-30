@@ -32,7 +32,7 @@ public class SearchHandler {
 	private GenericDAO genericDAO;
 	
 	@Autowired
-	private SettingsHandler settingsHandler;
+	private GlobalSettings globalSettings;
 
 	/**
 	 * Saves a patient found in the clinic-backend to the hist-backend or if the
@@ -45,7 +45,7 @@ public class SearchHandler {
 		// patient, piz search is more specific
 		if (!patient.getPiz().isEmpty()) {
 			Patient clinicPatient;
-			clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
 			patient.copyIntoObject(clinicPatient);
 		}
 
@@ -97,7 +97,7 @@ public class SearchHandler {
 		if (piz != null && piz.matches("^[0-9]{8}$")) {
 			Patient patient = patientDao.searchForPatientByPiz(piz);
 			Patient clinicPatient;
-			clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
+			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
 			if (patient != null) {
 				if (patient.copyIntoObject(clinicPatient))
 					genericDAO.savePatientData(patient, "log.patient.search.update");
@@ -130,7 +130,7 @@ public class SearchHandler {
 		for (Patient patient : patients) {
 			Patient clinicPatient;
 
-			clinicPatient = settingsHandler.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
 			if (patient.copyIntoObject(clinicPatient))
 				genericDAO.savePatientData(patient, "log.patient.search.update");
 
@@ -157,7 +157,7 @@ public class SearchHandler {
 		List<String> foundPiz = new ArrayList<String>();
 
 		// getting all patienties from clinic database
-		List<Patient> clinicPatients = settingsHandler.getClinicJsonHandler()
+		List<Patient> clinicPatients = globalSettings.getClinicJsonHandler()
 				.getPatientsFromClinicJson("?name=" + name + (surname != null ? ("&vorname=" + surname) : "")
 						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
 

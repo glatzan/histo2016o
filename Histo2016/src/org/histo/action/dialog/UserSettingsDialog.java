@@ -4,27 +4,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.action.UserHandlerAction;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.HistoUser;
 import org.histo.model.transitory.PredefinedRoleSettings;
+import org.histo.util.printer.ClinicPrinter;
+import org.histo.util.printer.LabelPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
 @Scope(value = "session")
+@Getter
+@Setter
 public class UserSettingsDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private SettingsHandler settingsHandler;
-
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalSettings globalSettings;
+	
 	private HistoUser user;
 
 	private List<View> availableViews;
@@ -40,59 +52,33 @@ public class UserSettingsDialog extends AbstractDialog {
 		super.initBean(null, Dialog.USER_SETTINGS);
 		setUser(userHandlerAction.getCurrentUser());
 
-		PredefinedRoleSettings roleSetting = settingsHandler
+		PredefinedRoleSettings roleSetting = globalSettings
 				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
 
 		setAvailableViews(roleSetting.getSelectableViews());
-		
+
 		setAvailableWorklistsToLoad(new ArrayList<WorklistSearchOption>());
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.DIAGNOSIS_LIST);
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.STAINING_LIST);
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.NOTIFICATION_LIST);
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.EMTY);
-		
+
 		return true;
 	}
 
-	public void saveUserSettings(){
+	public void saveUserSettings() {
 		logger.debug("Saving user Settings");
-		
+
 		try {
 			genericDAO.save(getUser());
-			settingsHandler.updateSelectedPrinters();
+			userHandlerAction.updateSelectedPrinters();
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
-	
-	public void resetUserSettings(){
+
+	public void resetUserSettings() {
 		logger.debug("Resetting user Settings");
 		genericDAO.refresh(getUser());
 	}
-	
-	// ************************ Getter/Setter ************************
-	public HistoUser getUser() {
-		return user;
-	}
-
-	public void setUser(HistoUser user) {
-		this.user = user;
-	}
-
-	public List<View> getAvailableViews() {
-		return availableViews;
-	}
-
-	public void setAvailableViews(List<View> availableViews) {
-		this.availableViews = availableViews;
-	}
-
-	public List<WorklistSearchOption> getAvailableWorklistsToLoad() {
-		return availableWorklistsToLoad;
-	}
-
-	public void setAvailableWorklistsToLoad(List<WorklistSearchOption> availableWorklistsToLoad) {
-		this.availableWorklistsToLoad = availableWorklistsToLoad;
-	}
-
 }

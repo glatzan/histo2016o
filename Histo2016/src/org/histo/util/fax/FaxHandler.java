@@ -1,14 +1,16 @@
-package org.histo.util.mail.fax;
+package org.histo.util.fax;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.model.PDFContainer;
+import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -31,7 +33,7 @@ public class FaxHandler {
 	@Lazy
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private SettingsHandler settingsHandler;
+	private GlobalSettings globalSettings;
 
 	private FaxSettings settings;
 
@@ -51,9 +53,10 @@ public class FaxHandler {
 		if (faxCommand != null && faxNumbers.size() > 0) {
 
 			File workingDirectory = new File(
-					FileHandlerUtil.getAbsolutePath(settingsHandler.getProgramSettings().getWorkingDirectory()));
+					FileHandlerUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
 
-			File tempFile = new File(workingDirectory.getAbsolutePath() + File.separator + settings.getFileName());
+			File tempFile = new File(workingDirectory.getAbsolutePath() + File.separator
+					+ RandomStringUtils.randomAlphanumeric(10) + ".pdf");
 
 			FileHandlerUtil.saveContentOfFile(tempFile, container.getData());
 
@@ -68,16 +71,17 @@ public class FaxHandler {
 				try {
 
 					ProcessBuilder builder = new ProcessBuilder(tmpArr);
-//					builder.redirectErrorStream(true);
+					// builder.redirectErrorStream(true);
 					Process p = builder.start();
-//					BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-//					String line;
-//					while (true) {
-//						line = r.readLine();
-//						if (line == null) {
-//							break;
-//						}
-//					}
+					// BufferedReader r = new BufferedReader(new
+					// InputStreamReader(p.getInputStream()));
+					// String line;
+					// while (true) {
+					// line = r.readLine();
+					// if (line == null) {
+					// break;
+					// }
+					// }
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -89,7 +93,6 @@ public class FaxHandler {
 	@Getter
 	@Setter
 	public class FaxSettings {
-		private String fileName;
 		private String windows_command;
 		private String linux_command;
 		private String commandSplitter;

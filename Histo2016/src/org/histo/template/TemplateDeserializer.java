@@ -1,10 +1,8 @@
-package org.histo.util.mail;
+package org.histo.template;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.histo.template.MailTemplate;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -12,18 +10,17 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-public class MailTemplateDeserializer implements JsonDeserializer<List<MailTemplate>> {
+public class TemplateDeserializer<T> implements JsonDeserializer<List<T>> {
 
-	public List<MailTemplate> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+	public List<T> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
 			throws JsonParseException {
 
-		List<MailTemplate> list = new ArrayList<MailTemplate>();
+		List<T> list = new ArrayList<T>();
 		JsonArray ja = json.getAsJsonArray();
 
 		for (JsonElement je : ja) {
 
-			String type = je.getAsJsonObject().get("type").getAsString();
-
+			String type = je.getAsJsonObject().get("templateName").getAsString();
 			try {
 				Class c = Class.forName(type);
 				list.add(context.deserialize(je, c));
@@ -34,7 +31,5 @@ public class MailTemplateDeserializer implements JsonDeserializer<List<MailTempl
 		}
 
 		return list;
-
 	}
-
 }

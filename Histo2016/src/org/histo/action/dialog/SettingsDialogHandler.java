@@ -11,7 +11,7 @@ import javax.naming.NamingException;
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.handler.SettingsHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -81,7 +81,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
-	private SettingsHandler settingsHandler;
+	private GlobalSettings globalSettings;
 
 	@Autowired
 	private FavouriteListDAO favouriteListDAO;
@@ -1070,7 +1070,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 			try {
 				logger.debug("Search for " + request.toString());
 
-				LdapHandler connection = settingsHandler.getLdapHandler();
+				LdapHandler connection = globalSettings.getLdapHandler();
 
 				// searching for physicians
 				connection.openConnection();

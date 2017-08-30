@@ -6,6 +6,7 @@
 Merke: keine kurzbefunde
 
 
+TODO: Global settings thread save -> LDAP HANDLER, LabelPrinter (stateless machen)
 TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen

@@ -14,6 +14,11 @@ import org.histo.settings.PrinterSettings;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ClinicPrinter extends AbstractPrinter {
 
 	protected PrinterSettings settings;
@@ -75,7 +80,6 @@ public class ClinicPrinter extends AbstractPrinter {
 		Resource resource = appContext.getResource(settings.getTestPage());
 		try {
 			print(new File(resource.getURI()));
-			System.out.println(resource.getURI());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,39 +96,4 @@ public class ClinicPrinter extends AbstractPrinter {
 
 		return super.equals(obj);
 	}
-
-	// ************************ Getter/Setter ************************
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
 }

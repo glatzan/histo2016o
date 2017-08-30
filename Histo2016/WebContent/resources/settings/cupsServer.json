@@ -1,5 +1,0 @@
-{  
-      "cupsHost":"10.210.21.254/printers/",
-      "cupsPost":631,
-      "testPage":"classpath:templates/print/testPage.pdf"
-}

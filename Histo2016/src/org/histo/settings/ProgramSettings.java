@@ -1,25 +1,16 @@
 package org.histo.settings;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ProgramSettings {
 	
 	private boolean offline;
 	
 	private String workingDirectory;
+	
+	private String phoneRegex;
 
-	// ************************ Getter/Setter ************************
-	public boolean isOffline() {
-		return offline;
-	}
-
-	public void setOffline(boolean offline) {
-		this.offline = offline;
-	}
-
-	public String getWorkingDirectory() {
-		return workingDirectory;
-	}
-
-	public void setWorkingDirectory(String workingDirectory) {
-		this.workingDirectory = workingDirectory;
-	}
 }

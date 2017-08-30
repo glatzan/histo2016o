@@ -15,19 +15,7 @@
 			</f:facet>
 		</p:panel>
 
-		<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-			rendered="#{dialogHandlerAction.notificationDialog.sendTab.renderStepProgress.get()}"
-			style="width:100%">
-			<p:progressBar widgetVar="pbAjax" ajax="true"
-				value="#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}"
-				labelTemplate="#{dialogHandlerAction.notificationDialog.sendTab.progressText} (#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%)"
-				styleClass="animated" global="false">
-				<p:ajax event="complete" update="@form" />
-			</p:progressBar>
-		</p:panelGrid>
-
-		<p:scrollPanel style="width:100%;height:500px"
-			rendered="#{!dialogHandlerAction.notificationDialog.sendTab.renderStepProgress.get()}">
+		<p:scrollPanel style="width:100%;height:450px">
 			<!-- email -->
 			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
 				style="width:100%;margin-top:10px;">
@@ -60,6 +48,20 @@
 						<p:column>
 							<h:outputLabel
 								value="#{emailHolder.contact.person.fullName} (#{emailHolder.contactAddress})"></h:outputLabel>
+
+
+						</p:column>
+
+						<p:column style="width:5%">
+							<ui:fragment rendered="#{emailHolder.notification.performed}">
+								<i class="fa fa-fw fa-check-circle icon-green"
+									title="#{msg['dialog.notification.notifiy.email.enabled']}" />
+							</ui:fragment>
+
+							<ui:fragment rendered="#{emailHolder.notification.failed}">
+								<i class="fa fa-fw fa-times-circle icon-red"
+									title="#{emailHolder.notification.commentary}" />
+							</ui:fragment>
 						</p:column>
 					</p:dataTable>
 				</p:panelGrid>
@@ -181,6 +183,23 @@
 				</p:panelGrid>
 			</p:panelGrid>
 		</p:scrollPanel>
+
+		<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+			style="width:100%;">
+
+			<h:outputText
+				value="#{dialogHandlerAction.notificationDialog.sendTab.progressText} (#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%)"
+				id="progressLable"
+				style="border: 1px solid; width:90%;display:block; text-align:center; background: linear-gradient(90deg, #fcf1b8 #{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%, transparent 0%);margin: 0px auto;" />
+
+			<p:poll autoStart="false" widgetVar="ajaxProgressPoll"
+				stop="#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
+				partialSubmit="true" update="progressLable" interval="1"
+				oncprocess="@this"
+				oncomplete="if(#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}){ PF('blockUIWidget').unblock(); alert('')}" />
+
+		</p:panelGrid>
+
 	</div>
 
 	<div class="bottomDiv">
@@ -194,17 +213,22 @@
 			<h:panelGrid columns="2" style="float:right;">
 
 				<p:commandButton value="Benachrichtigung ausführen"
-					icon="fa fa-fw fa-mail-forward" oncomplete="PF('pbAjax').start()"
-					styleClass="smallButton buttonRighMarginInList" async="true"
-					actionListener="#{dialogHandlerAction.notificationDialog.sendTab.performeNotification()}"
-					update="@form" />
+					icon="fa fa-fw fa-mail-forward"
+					onstart="PF('blockUIWidget').block()"
+					onclick="rc();PF('startButton2').disable();PF('ajaxProgressPoll').start();"
+					styleClass="smallButton buttonRighMarginInList"
+					widgetVar="startButton2" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
 					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
+
+				<p:remoteCommand async="true" name="rc"
+					actionListener="#{dialogHandlerAction.notificationDialog.sendTab.performeNotification()}"></p:remoteCommand>
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 </ui:composition>
