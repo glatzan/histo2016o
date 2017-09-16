@@ -134,11 +134,11 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 		if (getTitle() != null && !getTitle().isEmpty())
 			result.append(getTitle() + " ");
 
-		if (getLastName() != null && !getLastName().isEmpty())
-			result.append(getLastName() + " ");
-
 		if (getFirstName() != null && !getFirstName().isEmpty())
 			result.append(getFirstName() + " ");
+		
+		if (getLastName() != null && !getLastName().isEmpty())
+			result.append(getLastName() + " ");
 
 		// remove the last space from the string
 		if (result.length() > 0)

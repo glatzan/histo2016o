@@ -85,7 +85,6 @@ public abstract class AbstractDAO implements Serializable {
 				LogInfo logInfo = new LogInfo(resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);
 				SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
 			}
-			System.out.println(getSession().hashCode() + " save");
 			getSession().saveOrUpdate(object);
 			getSession().flush();
 			return object;

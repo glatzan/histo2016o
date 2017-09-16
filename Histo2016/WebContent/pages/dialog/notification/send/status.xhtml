@@ -14,8 +14,18 @@
 					value="#{msg['dialog.notification.tab.send.headline']}"></h:outputLabel>
 			</f:facet>
 		</p:panel>
-		
-		Anezgie
+
+		<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+			style="width:100%;margin-top:180px;">
+			<h:panelGroup
+				style=" margin-right: auto; margin-left: auto;display:block">
+				<h:outputText
+					value="Benachrichtigung wurde bereits am xx.xx.xx druchgeführt." />
+			</h:panelGroup>
+
+			<p:commandButton style="margin-top:50px;"
+				value="Benachrichtigung erneut durchführen" />
+		</p:panelGrid>
 	</div>
 
 	<div class="bottomDiv">

@@ -409,6 +409,10 @@ ul.ui-menu-child {
     background-image: url("gfx/progress.gif");
 }
 
+
+.defaultOverlayPanel > div{
+	padding: 4px !important;
+}
 /*
 	######################################## Header ########################################
 */

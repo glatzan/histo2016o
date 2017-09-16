@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
@@ -1070,12 +1071,12 @@ public class SettingsDialogHandler extends AbstractDialog {
 			try {
 				logger.debug("Search for " + request.toString());
 
-				LdapHandler connection = globalSettings.getLdapHandler();
+				LdapHandler ldapHandler = globalSettings.getLdapHandler();
+				DirContext connection = ldapHandler.openConnection();
+				
+				setLdapPhysicianList(ldapHandler.getListOfPhysicians(connection,request.toString()));
 
-				// searching for physicians
-				connection.openConnection();
-				setLdapPhysicianList(connection.getListOfPhysicians(request.toString()));
-				connection.closeConnection();
+				ldapHandler.closeConnection(connection);
 
 				if (getLdapPhysicianList().size() == 1)
 					setTmpLdapPhysician(getLdapPhysicianList().get(0));

@@ -12,5 +12,11 @@ public class ProgramSettings {
 	private String workingDirectory;
 	
 	private String phoneRegex;
+	
+	private DefaultDocuments defaultDocuments;
 
+	public class DefaultDocuments{
+		private long defaultTaskCreationDocument;
+		private long defaultSendReport;
+	}
 }

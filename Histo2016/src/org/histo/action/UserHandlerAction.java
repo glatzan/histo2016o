@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
-import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Role;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
@@ -15,7 +14,6 @@ import org.histo.util.mail.MailHandler;
 import org.histo.util.printer.ClinicPrinter;
 import org.histo.util.printer.LabelPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;

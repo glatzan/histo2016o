@@ -30,45 +30,55 @@ import lombok.Setter;
 
 @Controller
 @Scope("session")
+@Getter
+@Setter
 public class DiagnosisViewHandlerAction {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private CopyHistologicalRecordDialog copyHistologicalRecordDialog;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
-	
+
 	/**
 	 * List of all diagnosis presets
 	 */
-	@Getter
-	@Setter
 	private List<DiagnosisPreset> diagnosisPresets;
 
 	/**
 	 * Transfomer for diagnosis prests
 	 */
-	@Getter
-	@Setter
 	private DefaultTransformer<DiagnosisPreset> diagnosisPresetsTransformer;
 
 	/**
@@ -101,6 +111,11 @@ public class DiagnosisViewHandlerAction {
 	 */
 	private List<ListItem> wardList;
 
+	/**
+	 * selected List item form caseHistory list
+	 */
+	private ListItem selectedCaseHistoryItem;
+	
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize DiagnosisViewHandlerAction for task");
 
@@ -208,53 +223,9 @@ public class DiagnosisViewHandlerAction {
 		genericDAO.savePatientData(toSave, toSave, resourcesKey, arr);
 	}
 
-	// ************************ Getter/Setter ************************
-	public List<Physician> getPhysiciansToSignList() {
-		return physiciansToSignList;
+	public void copyCaseHistory(Task task,  ListItem selectedcaseHistoryItem) {
+		logger.debug("Copy " + selectedcaseHistoryItem.getValue() + " to " + task);
+		task.setCaseHistory(selectedcaseHistoryItem.getValue());
+		onDataChange(task, "log.patient.task.change.caseHistory", selectedcaseHistoryItem.getValue());
 	}
-
-	public void setPhysiciansToSignList(List<Physician> physiciansToSignList) {
-		this.physiciansToSignList = physiciansToSignList;
-	}
-
-	public DefaultTransformer<Physician> getPhysiciansToSignListTransformer() {
-		return physiciansToSignListTransformer;
-	}
-
-	public void setPhysiciansToSignListTransformer(DefaultTransformer<Physician> physiciansToSignListTransformer) {
-		this.physiciansToSignListTransformer = physiciansToSignListTransformer;
-	}
-
-	public Physician getSignatureOne() {
-		return signatureOne;
-	}
-
-	public void setSignatureOne(Physician signatureOne) {
-		this.signatureOne = signatureOne;
-	}
-
-	public Physician getSignatureTwo() {
-		return signatureTwo;
-	}
-
-	public void setSignatureTwo(Physician signatureTwo) {
-		this.signatureTwo = signatureTwo;
-	}
-
-	public List<ListItem> getCaseHistoryList() {
-		return caseHistoryList;
-	}
-
-	public void setCaseHistoryList(List<ListItem> caseHistoryList) {
-		this.caseHistoryList = caseHistoryList;
-	}
-
-	public List<ListItem> getWardList() {
-		return wardList;
-	}
-
-	public void setWardList(List<ListItem> wardList) {
-		this.wardList = wardList;
-	}
-
 }

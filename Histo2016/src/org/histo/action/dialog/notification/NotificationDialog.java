@@ -1,18 +1,14 @@
 package org.histo.action.dialog.notification;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.faces.context.FacesContext;
 
 import org.apache.commons.validator.routines.EmailValidator;
-import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.GlobalSettings;
@@ -36,7 +32,6 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.PDFGenerator;
 import org.histo.util.StreamUtils;
-import org.histo.util.mail.MailHandler;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -543,6 +538,14 @@ public class NotificationDialog extends AbstractDialog {
 			// TODO Auto-generated method stub
 		}
 
+		public void getStatus() {
+			RequestContext context = RequestContext.getCurrentInstance();
+			if (isNotificationCompleted()) {
+				// Adiciona as variáveis para o JS (variável args da assinatura)
+				context.addCallbackParam("hasEnded", true);
+			}
+		}
+
 		@Async("taskExecutor")
 		public void performeNotification() {
 
@@ -573,10 +576,10 @@ public class NotificationDialog extends AbstractDialog {
 						try {
 
 							if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
-								throw new IllegalIdentifierException("pdf.notification.status.sendMail.error.noMail");
+								throw new IllegalArgumentException("pdf.notification.status.sendMail.error.noMail");
 
-							if (EmailValidator.getInstance().isValid(holder.getContactAddress()))
-								throw new IllegalIdentifierException(
+							if (!EmailValidator.getInstance().isValid(holder.getContactAddress()))
+								throw new IllegalArgumentException(
 										"pdf.notification.status.sendMail.error.mailNotValid");
 
 							logger.debug("Send mail to " + holder.getContactAddress());
@@ -605,7 +608,7 @@ public class NotificationDialog extends AbstractDialog {
 								PDFContainer container = mailTab.getSelectedTemplate().generatePDF(new PDFGenerator());
 
 								if (container == null)
-									throw new IllegalIdentifierException("pdf.notification.status.pdf.noTemplate" + "");
+									throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate" + "");
 
 								cloneMail.setAttachment(container);
 								holder.setPdf(container);
@@ -622,7 +625,7 @@ public class NotificationDialog extends AbstractDialog {
 							// // cloneMail);
 
 							if (!success)
-								throw new IllegalIdentifierException("pdf.notification.status.sendMail.error.failed");
+								throw new IllegalArgumentException("pdf.notification.status.sendMail.error.failed");
 
 							holder.setPerformed(true);
 							holder.getNotification().setPerformed(true);
@@ -740,13 +743,11 @@ public class NotificationDialog extends AbstractDialog {
 
 				progressStep();
 
+				setProgressPercent(100);
 				setProgressText("Notification completed");
 
 				logger.debug("Messaging ended");
-			} catch (
-
-			Exception e) {
-				System.out.println(e);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 

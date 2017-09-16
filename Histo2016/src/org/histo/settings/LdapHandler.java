@@ -18,7 +18,6 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.histo.dao.OrganizationDAO;
 import org.histo.dao.TransientDAO;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
@@ -55,16 +54,15 @@ public class LdapHandler implements GsonAble {
 	@Expose
 	private String base;
 
-	private DirContext connection;
-
-	public Physician getPhyscican(String userName) throws NamingException, SocketException, IOException {
-		ArrayList<Physician> physicians = getListOfPhysicians("(uid=" + userName + ")");
+	public Physician getPhyscican(DirContext connection, String userName)
+			throws NamingException, SocketException, IOException {
+		ArrayList<Physician> physicians = getListOfPhysicians(connection, "(uid=" + userName + ")");
 		if (physicians.size() == 1)
 			return physicians.get(0);
 		return null;
 	}
 
-	public ArrayList<Physician> getListOfPhysicians(String filter) throws NamingException {
+	public ArrayList<Physician> getListOfPhysicians(DirContext connection, String filter) throws NamingException {
 
 		ArrayList<Physician> physicians = new ArrayList<Physician>();
 
@@ -88,7 +86,7 @@ public class LdapHandler implements GsonAble {
 				// check if uid is not a number, only people with a name as
 				// uid are active
 				Attribute attr = attrs.get("uid");
-//				printAllAttributes(attrs);
+				// printAllAttributes(attrs);
 				if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
 					Physician newPhysician = new Physician(new Person(new Contact()));
 					newPhysician.setUid(attr.get().toString());
@@ -117,7 +115,8 @@ public class LdapHandler implements GsonAble {
 	 */
 	public void initPhysicianFromLdapAttributes(Physician physician, Attributes attrs) {
 
-//		logger.debug("Upadting physician data for " + physician.getUid() + " from ldap");
+		// logger.debug("Upadting physician data for " + physician.getUid() + "
+		// from ldap");
 
 		try {
 			// name surname title
@@ -175,7 +174,7 @@ public class LdapHandler implements GsonAble {
 			if (attr != null && attr.size() == 1) {
 				Organization org = null;
 				try {
-					logger.trace("Loading organization " + attr.get().toString() );
+					logger.trace("Loading organization " + attr.get().toString());
 					org = transientDAO.getOrganizationByName(attr.get().toString());
 
 				} catch (IllegalStateException e) {
@@ -212,33 +211,41 @@ public class LdapHandler implements GsonAble {
 		}
 	}
 
+	/**
+	 * Throws error if password does not match
+	 * @param userName
+	 * @param password
+	 * @return
+	 * @throws SocketException
+	 * @throws IOException
+	 * @throws NamingException
+	 */
 	public boolean checkPassword(String userName, String password)
 			throws SocketException, IOException, NamingException {
 		Hashtable<String, String> env = new Hashtable<String, String>();
 		env.put(Context.SECURITY_PRINCIPAL, userName);
 		env.put(Context.SECURITY_CREDENTIALS, password);
-		openConnection(env);
+		DirContext connection = openConnection(env);
+		closeConnection(connection);
 		return true;
 	}
 
-	public void openConnection() throws SocketException, IOException, NamingException {
-		openConnection(new Hashtable<String, String>());
+	public DirContext openConnection() throws SocketException, IOException, NamingException {
+		return openConnection(new Hashtable<String, String>());
 	}
 
-	public void openConnection(Hashtable<String, String> env) throws SocketException, IOException, NamingException {
-		if (connection == null) {
-			env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-			env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port + "/" + suffix);
+	public DirContext openConnection(Hashtable<String, String> env)
+			throws SocketException, IOException, NamingException {
+		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		env.put(Context.PROVIDER_URL, "ldap://" + host + ":" + port + "/" + suffix);
 
-			logger.debug("Open connection to ldap: " + env.get(Context.PROVIDER_URL));
+		logger.debug("Open connection to ldap: " + env.get(Context.PROVIDER_URL));
 
-			connection = new InitialDirContext(env);
-		}
+		return new InitialDirContext(env);
 	}
 
-	public void closeConnection() throws IOException, NamingException {
+	public void closeConnection(DirContext connection) throws IOException, NamingException {
 		connection.close();
-		connection = null;
 	}
 
 	/********************************************************

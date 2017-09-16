@@ -8,6 +8,20 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+	<script type="text/javascript">
+		// disables the autofocus for the caseHistoryOverlayplpanel 
+		(function() {
+			var proxied = PrimeFaces.widget.OverlayPanel.prototype.applyFocus;
+
+			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
+				if (this.id == "contentForm:caseHistoryOverlayPanel")
+					return;
+
+				return proxied.apply(this, arguments);
+			};
+		})();
+	</script>
+
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
 	<c:set var="taskEditable" scope="session"
@@ -79,20 +93,37 @@
 
 				<!-- History -->
 				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
-				<p:selectOneMenu id="historyText"
-					style="width: auto;width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
-					styleClass="smallInput customBackground"
-					value="#{commonDataHandlerAction.selectedTask.caseHistory}"
-					disabled="#{!taskEditable}" editable="true">
-					<f:selectItem itemLabel="Select One"
-						itemValue="#{msg['body.diagnosis.story.watermark']}" />
-					<f:selectItems
-						value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
-						itemLabel="#{item.value}" itemValue="#{item.value}" />
+				<h:panelGroup>
+					<p:inputTextarea
+						value="#{commonDataHandlerAction.selectedTask.caseHistory}"
+						title="#{msg['body.diagnosis.story.watermark']}"
+						id="caseHistoryInput" style="width:90%"
+						onfocus="PF('caseHistoryOverlayPanel').show();">
+						<p:ajax event="change"
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.caseHistory',commonDataHandlerAction.selectedTask.caseHistory)}"></p:ajax>
+					</p:inputTextarea>
 
-					<p:ajax event="change" execute="@this"
-						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.caseHistory',commonDataHandlerAction.selectedTask.caseHistory)}" />
-				</p:selectOneMenu>
+					<p:overlayPanel id="caseHistoryOverlayPanel"
+						styleClass="defaultOverlayPanel" for="caseHistoryInput"
+						widgetVar="caseHistoryOverlayPanel" hideEffect="fade"
+						style="width:500px" hideEvent="none" showEvent="none">
+						<p:dataTable value="#{diagnosisViewHandlerAction.caseHistoryList}"
+							var="item"
+							styleClass="smallDatatable highlightedDataTable noBordersAll"
+							scrollable="true" scrollHeight="200" rowKey="#{item.id}"
+							selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
+							selectionMode="single">
+							<p:column filterBy="#{item.value}" filterMatchMode="contains">
+								<h:outputText value="#{item.value}" />
+							</p:column>
+
+							<p:ajax event="rowSelect" update="contentForm:caseHistoryInput"
+								listener="#{diagnosisViewHandlerAction.copyCaseHistory(commonDataHandlerAction.selectedTask, diagnosisViewHandlerAction.selectedCaseHistoryItem)}"
+								oncomplete="PF('caseHistoryOverlayPanel').hide();" />
+						</p:dataTable>
+
+					</p:overlayPanel>
+				</h:panelGroup>
 
 				<!-- EYE -->
 				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
@@ -459,8 +490,10 @@
 									value="#{stainingRow.staining.commentary}" editable="true"
 									disabled="#{!taskEditable}">
 
-									<f:selectItems value="#{receiptlogViewHandlerAction.slideCommentary}" var="commentary"
-										itemLabel="#{commentary.value}" itemValue="#{commentary.value}" />
+									<f:selectItems
+										value="#{receiptlogViewHandlerAction.slideCommentary}"
+										var="commentary" itemLabel="#{commentary.value}"
+										itemValue="#{commentary.value}" />
 
 									<p:ajax event="change" execute="@this"
 										listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.staining,'log.settings.staining.update')}" />

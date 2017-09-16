@@ -6,8 +6,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
 import org.histo.model.HistoUser;
 import org.histo.model.Organization;
 import org.histo.model.Physician;

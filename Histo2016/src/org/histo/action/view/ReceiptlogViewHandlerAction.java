@@ -1,5 +1,7 @@
 package org.histo.action.view;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
+import org.histo.template.documents.TemplateSlideLable;
 import org.histo.ui.StainingTableChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -84,7 +87,7 @@ public class ReceiptlogViewHandlerAction {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
-	
+
 	@Autowired
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
@@ -99,7 +102,7 @@ public class ReceiptlogViewHandlerAction {
 	 * Contains all available case histories
 	 */
 	private List<ListItem> slideCommentary;
-	
+
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize ReceiptlogViewHandlerAction for task");
 		// generating guilist for display
@@ -110,8 +113,8 @@ public class ReceiptlogViewHandlerAction {
 
 		setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
 	}
-	
-	public List<String> getTest(String query){
+
+	public List<String> getTest(String query) {
 		return slideCommentary.stream().map(p -> p.getValue()).collect(Collectors.toList());
 	}
 
@@ -169,25 +172,35 @@ public class ReceiptlogViewHandlerAction {
 				break;
 			case PRINT:
 
-				DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE); 
+				DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE);
 
-				if (arr.length == 0) {
+				if (arr.length == 0 || !(arr[0] instanceof TemplateSlideLable)) {
 					logger.debug("No template found for printing, returning!");
 					return;
 				}
 
+				TemplateSlideLable printTemplate = (TemplateSlideLable) arr[0];
+
+				printTemplate.prepareTemplate();
+
 				logger.debug("Printing labes for selected slides");
+
+				List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();
 
 				for (StainingTableChooser stainingTableChooser : list) {
 					if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
 
 						Slide slide = stainingTableChooser.getStaining();
-						userHandlerAction.getSelectedLabelPrinter().print(arr[0], slide,
-								mainHandlerAction.date(System.currentTimeMillis()));
+
+						TemplateSlideLable tmp = (TemplateSlideLable) printTemplate.clone();
+						tmp.initData(task, slide, new Date(System.currentTimeMillis()));
+						tmp.fillTemplate();
+						toPrint.add(tmp);
 					}
 				}
 
-				userHandlerAction.getSelectedLabelPrinter().flushPrints();
+				if (toPrint.size() != 0)
+					userHandlerAction.getSelectedLabelPrinter().print(toPrint);
 
 				break;
 			default:
@@ -309,19 +322,21 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void printLableForSlide(Slide slide) {
 
-		DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE); 
+		DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE);
 
-		if (arr.length == 0) {
+		if (arr.length == 0 || !(arr[0] instanceof TemplateSlideLable)) {
 			logger.debug("No template found for lable printn!");
 			return;
 		}
 
-		userHandlerAction.getSelectedLabelPrinter().print(arr[0], slide,
-				mainHandlerAction.date(System.currentTimeMillis()));
-		userHandlerAction.getSelectedLabelPrinter().flushPrints();
+		TemplateSlideLable printTemplate = (TemplateSlideLable) arr[0];
+		printTemplate.prepareTemplate();
+		printTemplate.initData(slide.getTask(), slide, new Date(System.currentTimeMillis()));
+		printTemplate.fillTemplate();
+				
+		userHandlerAction.getSelectedLabelPrinter().print(printTemplate);
 
 	}
-
 
 	/**
 	 * Saves the manually altered flag, if the sample/block/ or slide id was
@@ -332,16 +347,15 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void entityIDmanuallyAltered(IdManuallyAltered idManuallyAltered, boolean altered) {
 		try {
-			
+
 			idManuallyAltered.setIdManuallyAltered(altered);
-			
+
 			idManuallyAltered.updateAllNames(idManuallyAltered.getTask().isUseAutoNomenclature(), false);
-			
-			//TODO update childrens names
+
+			// TODO update childrens names
 			genericDAO.savePatientData(idManuallyAltered, "log.patient.task.idManuallyAltered",
 					idManuallyAltered.toString());
-			
-			
+
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
 			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();

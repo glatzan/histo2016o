@@ -15,11 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
-import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
-import org.histo.dao.GenericDAO;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;

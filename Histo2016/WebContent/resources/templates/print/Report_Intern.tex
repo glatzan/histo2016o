@@ -20,6 +20,8 @@
 
 \renewcommand{\familydefault}{\sfdefault} 
 
+\def\fs{\kern 0.33em}
+
 % header
 \pagestyle{fancy}
 
@@ -92,19 +94,21 @@ $!addressee.contactAsLatex\\
 			\renewcommand{\arraystretch}{1}
 			\begin{tabular}[t]{p{0.3\linewidth}p{0.67\linewidth}}
 				
- 				#foreach ($sample in $task.samples)
-					#if( $foreach.index == 0 )
-	   				 	Präperat & $!sample.getMaterial() \\
-	   				#else
-						~ & $!sample.getMaterial() \\	   				
-	   				#end
-				#end
+	 				#foreach ($sample in $task.samples)
+						#if( $foreach.index == 0 )
+		   				 	Präparat & $!sample.sampleID $!sample.getMaterial() \\
+		   				#else
+							~ & $!sample.sampleID $!sample.getMaterial() \\	   				
+		   				#end
+					#end
  				
+ 			
+ 				
+ 				Auge & #if($task.eye == "UNKNOWN")  ? #elseif($task.eye == "RIGHT") RA #elseif($task.eye == "LEFT" ) LA #else BA #end  \\
  				\\
- 				
- 				\multicolumn{2}{l}{Vorgeschichte, klinischer Befund und Fragestellung} \\ 
- 				\huge #if($task.eye == "UNKNOWN")  ? #elseif($task.eye == "RIGHT") RA #elseif($task.eye == "LEFT" ) LA #else BA #end  &  {\includegraphics[scale=0.4]{augen.png}} \\
- 				\multicolumn{2}{l}{$!task.caseHistory}
+ 				\multicolumn{2}{l}{Vorgeschichte} \\ 
+ 				\multicolumn{2}{l}{$!task.caseHistory} \\ 
+ 				\multicolumn{2}{l}
 			
 			\end{tabular}
 		} 
@@ -112,7 +116,7 @@ $!addressee.contactAsLatex\\
 		{
 			\renewcommand{\arraystretch}{1}
 			\begin{tabular}[t]{p{0.46\linewidth}p{0.5\linewidth}}
-				
+
 				Eingangsdatum &  $date.format('dd.MM.yyyy', $!task.dateOfReceipt) \\
 				Eingangsnummer & $!task.taskID \\
 				~ & 
@@ -143,8 +147,8 @@ $!addressee.contactAsLatex\\
 					}\\
 				Station & $!task.ward \\
 				Maligner Tumor & $ \Box$  \\
-				Operateur/Einsender & $!task.getPrimarySurgeon() \\
-				Augenarzt & $!task.getPrimaryPrivatePhysician() 
+				Operateur/Einsender & \fs $!task.getPrimarySurgeon() \\
+				Augenarzt & \fs $!task.getPrimaryPrivatePhysician() 
 			 
 			\end{tabular}
 		}
@@ -163,26 +167,24 @@ $!addressee.contactAsLatex\\
 	\begin{addmargin}{0.2cm}
 		\normalsize $!diagnosisRevision.text
 	\end{addmargin}\\
-	\large \underline{ Diagnose: }\\*
+	\large \underline{ Diagnosen: }\\*
 	\begin{addmargin}{0.2cm}
-		#if($diagnosisRevision.getDiagnoses().size == 1)
-			\normalsize $!diagnosisRevision.diagnoses.get(0).diagnosis;
-		#else
-			\begin{tabular}{p{0.15\linewidth}p{0.85\linewidth}}
+	
+			\begin{tabular}{p{0.05\linewidth}p{0.95\linewidth}}
 			#foreach ($diagnosis in $diagnosisRevision.diagnoses)
-				Präperat $!diagnosis.sample.sampleID & $!diagnosis.diagnosis \\
+				$!diagnosis.sample.sampleID & $!diagnosis.diagnosis \\
 			#end
 			\end{tabular}			
-		#end
+
 	\end{addmargin} 
 \end{longtable}
 #end
 \end{center}
  
 \begin{center}
-\begin{tabular}{p{0.15\linewidth}p{0.25\linewidth}p{0.3\linewidth}p{0.3\linewidth}}
+\begin{tabular}{p{0.15\linewidth}p{0.05\linewidth}p{0.40\linewidth}p{0.40\linewidth}}
 	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
-	Freiburg den & &  $!task.diagnosisContainer.signatureOne.physician.person.fullName &  $!task.diagnosisContainer.signatureTwo.physician.person.fullName \\
+	\fs Freiburg den & & \fs  $!task.diagnosisContainer.signatureOne.physician.person.fullName & \fs $!task.diagnosisContainer.signatureTwo.physician.person.fullName \\
 	~~ $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDateAsDate) & ~ & $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.role \\\\
 
 \end{tabular}

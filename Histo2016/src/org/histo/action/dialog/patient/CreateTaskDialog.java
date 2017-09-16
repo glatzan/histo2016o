@@ -8,7 +8,6 @@ import javax.persistence.NoResultException;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.UserSettingsDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.DiagnosisRevisionType;

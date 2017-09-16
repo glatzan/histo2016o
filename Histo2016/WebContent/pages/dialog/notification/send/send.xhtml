@@ -7,6 +7,20 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
+	<script type="text/javascript">
+		function handleComplete(xhr, status, args) {
+			var hasEnded = args.hasEnded;
+		
+			alert(hasEnded )
+			
+			if(hasEnded == true){
+				PF('blockUIWidget').unblock()
+			}
+		
+		}
+	</script>
+
+
 	<div class="contentDiv">
 		<p:panel style="width:100%;" styleClass="contentPannel">
 			<f:facet name="header">
@@ -195,8 +209,8 @@
 			<p:poll autoStart="false" widgetVar="ajaxProgressPoll"
 				stop="#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
 				partialSubmit="true" update="progressLable" interval="1"
-				oncprocess="@this"
-				oncomplete="if(#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}){ PF('blockUIWidget').unblock(); alert('')}" />
+				oncprocess="@this" listener="#{dialogHandlerAction.notificationDialog.sendTab.getStatus()}"
+				oncomplete="handleComplete(xhr, status, args)" />
 
 		</p:panelGrid>
 

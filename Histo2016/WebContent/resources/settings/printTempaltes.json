@@ -6,7 +6,8 @@
 	"type"	: "U_REPORT",
 	"templateName": "org.histo.template.documents.TemplateUReport",
 	"defaultOfType" : false,
-	"transientContent" : true
+	"transientContent" : true,
+	"hidden" : false
 },{
 	"id" : 1,
 	"name" : "Eingangsbogen bedrucken",
@@ -15,7 +16,18 @@
 	"type"	: "U_REPORT_EMTY",
 	"templateName": "org.histo.template.documents.TemplateUReport",
 	"defaultOfType" : false,
-	"transientContent" : true
+	"transientContent" : true,
+	"hidden" : false
+},{
+	"id" : 2,
+	"name" : "Eingangsbogen bedrucken, umgekehrt",
+	"content" : "classpath:templates/print/USchein_empty_rotated180.tex",
+	"content2" : "",
+	"type"	: "U_REPORT_EMTY_ROTATED_180",
+	"templateName": "org.histo.template.documents.TemplateUReport",
+	"defaultOfType" : false,
+	"transientContent" : true,
+	"hidden" : false
 },
 {
 	"id" : 10,
@@ -25,7 +37,8 @@
 	"type"	: "DIAGNOSIS_REPORT",
 	"templateName": "org.histo.template.documents.TemplateDiagnosisReport",
 	"defaultOfType" : true,
-	"transientContent" : false
+	"transientContent" : false,
+	"hidden" : false
 },
 {
 	"id" : 20,
@@ -35,7 +48,8 @@
 	"type"	: "DIAGNOSIS_REPORT_EXTERN",
 	"templateName": "org.histo.template.documents.TemplateDiagnosisReport",
 	"defaultOfType" : true,
-	"transientContent" : false
+	"transientContent" : false,
+	"hidden" : false
 },
 {
 	"id" : 50,
@@ -45,25 +59,28 @@
 	"type"	: "COUNCIL_REQUEST",
 	"templateName": "org.histo.template.documents.TemplateCouncil",
 	"defaultOfType" : true,
-	"transientContent" : false
+	"transientContent" : false,
+	"hidden" : false
 },{
 	"id" : 100,
 	"name" : "Default Slide Lable",
 	"content" : "classpath:templates/print_label/defaultLable.zpl",
 	"content2" : "",
 	"type"	: "LABLE",
-	"templateName": "org.histo.template.DocumentTemplate",
+	"templateName": "org.histo.template.documents.TemplateSlideLable",
 	"defaultOfType" : true,
-	"transientContent" : false
+	"transientContent" : false,
+	"hidden" : false
 },{
 	"id" : 150,
-	"name" : "Default Slide Lable",
+	"name" : "Test Slide Lable",
 	"content" : "classpath:templates/print_label/testLable.zpl",
 	"content2" : "",
 	"type"	: "TEST_LABLE",
-	"templateName": "org.histo.template.DocumentTemplate",
+	"templateName": "org.histo.template.documents.TemplateSlideLable",
 	"defaultOfType" : true,
-	"transientContent" : false
+	"transientContent" : false,
+	"hidden" : false
 },{
 	"id" : 1000,
 	"name" : "Send Report",
@@ -72,7 +89,8 @@
 	"type"	: "NOTIFICATION_SEND_REPORT",
 	"templateName": "org.histo.template.documents.TemplateSendReport",
 	"defaultOfType" : true,
-	"transientContent" : false
+	"transientContent" : false,
+	"hidden" : false
 }]
 
 

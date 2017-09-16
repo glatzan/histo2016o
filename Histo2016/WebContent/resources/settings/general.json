@@ -2,7 +2,11 @@
 	"generalSettings": {
 		"offline": true,
 		"workingDirectory": "classpath:templates/print",
-		"phoneRegex" : "^\\s*(?:[\\+#]?(\\d{1,3}))?([-. ()\/\\\\]*(\\d*))*?\\s*$"
+		"phoneRegex": "^\\s*(?:[\\+#]?(\\d{1,3}))?([-. ()\/\\\\]*(\\d*))*?\\s*$",
+		"defaultDocuments": {
+			"defaultTaskCreationDocument": 2,
+			"defaultSendReport": 1000
+		}
 	},
 	"defaultNotification": {
 		"defaultNotifications": [
@@ -30,7 +34,6 @@
 			"port": 21,
 			"userName": "admin",
 			"password": "1234",
-			"fileName": "print%count%.zpl",
 			"timeout": 1000
 		},
 		{
@@ -42,7 +45,6 @@
 			"port": 21,
 			"userName": "admin",
 			"password": "1234",
-			"fileName": "print%count%.zpl",
 			"timeout": 1000
 		}
 	],

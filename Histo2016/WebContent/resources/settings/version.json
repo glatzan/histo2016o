@@ -4,13 +4,17 @@
 		"changes": [
 			"<b>Fix:</b> Kopieren der vorgefertigenten Diangosen-Text funktionert wieder",
 			"<b>Added:</b> Faxen ist über den Drucken-Dialog möglich",
-			"<b>Added:</b> Löschen von Aufträgen, die noch nicht bearbeiten wurden ist möglich",
 			"<b>Added:</b> Löschen von Aufträgen die noch nicht bearbeitet wurden ist möglich",
 			"<b>Change:</b> Es können keine doppelten Auftragsnummern mehr angelegt werden",
 			"<b>Change:</b> Versionsverwaltung verbessert",
 			"<b>Fix:</b> Rechtschreibkorrekturen",
 			"<b>Fix:</b> Konsile können wieder gedruckt werden",
-			"<b>Fix:</b> Diagnose-Benachrichtigungs-Dialog funktioniert wieder und wurde überarbeitet"
+			"<b>Fix:</b> Diagnose-Benachrichtigungs-Dialog funktioniert wieder und wurde überarbeitet",
+			"<b>Fix:</b> Nach und Vorname werden in der richtigen Reinfolge angezeigt",
+			"<b>Change:</b> Eingabefeld der Vorgeschichte vergrößert",
+			"<b>Change:</b> Befundbericht überarbeitet und angepasst",
+			"<b>Change:</b> Etikettendrucken ist nun Thread-Save", 
+			"<b>Change:</b> LDAP-Requests sind nun Thread-Save"
 		]
 	},
 	{

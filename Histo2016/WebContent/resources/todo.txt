@@ -5,13 +5,15 @@
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
 Merke: keine kurzbefunde
 
+TODO: Notification!
+TODO: Phasen + Phasen Buttons im Menu überprüfen
+TODO: Labelprinten und Ldap, Fax überprüfen ob richtig gehen
+TODO: batches gui für färbungen
 
-TODO: Global settings thread save -> LDAP HANDLER, LabelPrinter (stateless machen)
 TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
 TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werden
-TODO: Phasen + Phasen Buttons im Menu überprüfen
 TODO: 2: erweiterte Suche / 
 TODO: 8: Liste f�r normale benutzer �berarbeiten
 TODO: 9: Latex Datein
@@ -30,6 +32,7 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: Global settings thread save -> LDAP HANDLER, LabelPrinter (stateless machen)
 ++++: Contact Dialog geht nicht
 ++++: 6: Contact Dialog mit neuem view �berarbeiten
 ++++: Personen m�ssen auch den Organisationen hinzuge�gt werden

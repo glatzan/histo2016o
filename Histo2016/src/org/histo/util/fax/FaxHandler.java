@@ -10,7 +10,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.model.PDFContainer;
-import org.histo.util.HistoUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

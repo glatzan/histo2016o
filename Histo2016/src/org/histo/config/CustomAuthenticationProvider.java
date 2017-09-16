@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
@@ -15,6 +16,7 @@ import org.histo.model.HistoUser;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.settings.LdapHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -71,19 +73,20 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
 			}
 
-			globalSettings.getLdapHandler().openConnection();
+			LdapHandler ladpHandler = globalSettings.getLdapHandler();
+			DirContext connection = ladpHandler.openConnection();
 
-			Physician physician = globalSettings.getLdapHandler().getPhyscican(userName);
+			Physician physician = ladpHandler.getPhyscican(connection,userName);
 
 			if (physician != null) {
 				String dn = physician.getDnObjectName() + "," + base + "," + suffix;
 
-				globalSettings.getLdapHandler().closeConnection();
+				ladpHandler.closeConnection(connection);
 
 				logger.info("Physician found " + physician.getPerson().getFullName());
 
 				// if now error was thrown auth was successful
-				globalSettings.getLdapHandler().checkPassword(dn, password);
+				ladpHandler.checkPassword(dn, password);
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 
@@ -121,8 +124,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				}
 
 				histoUser.getPhysician().copyIntoObject(physician);
-
-				globalSettings.getLdapHandler().closeConnection();
 
 				histoUser.setLastLogin(System.currentTimeMillis());
 

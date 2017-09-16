@@ -1,9 +1,9 @@
 package org.histo.config.exception;
 
+import java.lang.reflect.Method;
+
 import org.apache.log4j.Logger;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
-
-import java.lang.reflect.Method;
 
 public class ThreadExceptionHandler implements AsyncUncaughtExceptionHandler{
 

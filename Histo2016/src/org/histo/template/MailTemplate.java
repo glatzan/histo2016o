@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.Transient;
 
 import org.histo.action.handler.GlobalSettings;
-import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;

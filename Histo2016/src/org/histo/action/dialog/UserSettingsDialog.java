@@ -11,8 +11,6 @@ import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.HistoUser;
 import org.histo.model.transitory.PredefinedRoleSettings;
-import org.histo.util.printer.ClinicPrinter;
-import org.histo.util.printer.LabelPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

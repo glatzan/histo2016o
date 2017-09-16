@@ -5,17 +5,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.patient.Slide;
 import org.histo.template.DocumentTemplate;
+import org.histo.template.documents.TemplateSendReport;
+import org.histo.template.documents.TemplateSlideLable;
 import org.histo.util.HistoUtil;
 
 import com.google.gson.annotations.Expose;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Zebra AbstractPrinter with ftp printing function. Buffer can be filled
@@ -24,66 +32,42 @@ import com.google.gson.annotations.Expose;
  * @author andi
  *
  */
+@Getter
+@Setter
 public class LabelPrinter extends AbstractPrinter {
 
 	/**
 	 * Default name of the ftp uploaded file. Should contain %counter% in order
 	 * to print multiple files.
 	 */
-	@Expose
-	private String fileName;
 
 	@Expose
 	private int timeout;
 
 	/**
-	 * Saves the current number of printed files.
-	 */
-	private int fileNameCounter;
-
-	/**
-	 * In order to print faster only one
-	 */
-	private HashMap<String, String> printBuffer;
-
-	/**
-	 * Connection Object for ftp connection
-	 */
-	private FTPClient connection;
-
-	/**
 	 * Default constructor
 	 */
 	public LabelPrinter() {
-		printBuffer = new HashMap<String, String>();
+		// printBuffer = new HashMap<String, String>();
 	}
 
-	/**
-	 * Adds a zpl command to the buffer
-	 * 
-	 * @param toPrint
-	 */
-	public void addTaskToBuffer(String toPrint) {
-		printBuffer.put(fileName.replace("%count%", String.valueOf(++fileNameCounter)), toPrint);
+	public void print(TemplateSlideLable tempalte) {
+		List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();
+		toPrint.add(tempalte);
+		print(toPrint);
 	}
+	
+	public void print(List<TemplateSlideLable> tempaltes) {
 
-	public final void print(DocumentTemplate printTemplate, Slide slide, String date) {
-		String taskID = slide.getTask().getTaskID();
-
-		logger.debug("Using printer " + getName());
-
-		printTemplate.prepareTemplate();
-		
-		String toPrint = printTemplate.getFileContent();
-
-		HashMap<String, String> args = new HashMap<String, String>();
-		args.put("%slideNumber%", taskID + HistoUtil.fitString(slide.getUniqueIDinBlock(), 3, '0'));
-		args.put("%slideName%", taskID + " " + slide.getSlideID());
-		args.put("%slideText%", slide.getCommentary());
-		args.put("%date%", date);
-
-		addTaskToBuffer(HistoUtil.replaceWildcardsInString(toPrint, args));
-
+		try {
+			FTPClient connection = openConnection();
+			for (TemplateSlideLable documentTemplate : tempaltes) {
+				print(connection, documentTemplate.getContent(), generateUnqiueName());
+			}
+			closeConnection(connection);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean printTestPage() {
@@ -92,61 +76,21 @@ public class LabelPrinter extends AbstractPrinter {
 				.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.TEST_LABLE));
 
 		test.prepareTemplate();
-		
+
 		String toPrint = test.getFileContent();
 
 		if (toPrint == null)
 			return false;
 
-		logger.debug("Printing Testpage an flushing, printer " + getFileName());
-		addTaskToBuffer(toPrint);
-		flushPrints();
-		return true;
-	}
-
-	/**
-	 * Flushes all prints of the given printer
-	 * 
-	 * @param printer
-	 * @return
-	 */
-	public boolean flushPrints() {
-		if (isBufferNotEmpty()) {
-			try {
-				openConnection();
-				flushBuffer();
-				closeConnection();
-			} catch (IOException e) {
-				logger.error(e);
-			}
-			logger.debug("Flushing prints of printer " + getName());
-			return true;
-		} else
-			logger.debug("Nothing in buffer of printer " + getName());
-
-		return false;
-	}
-
-	/**
-	 * Print the whole buffer and clears it if successful.
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public boolean flushBuffer() throws IOException {
-		boolean result = true;
-
-		for (Map.Entry<String, String> entry : printBuffer.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-			if (!print(value, key)) {
-				result = false;
-			}
+		try {
+			FTPClient connection = openConnection();
+			print(connection, toPrint, generateUnqiueName());
+			closeConnection(connection);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
-		printBuffer.clear();
-
-		return result;
+		return true;
 	}
 
 	/**
@@ -157,7 +101,7 @@ public class LabelPrinter extends AbstractPrinter {
 	 * @return
 	 * @throws IOException
 	 */
-	public boolean print(String content, String file) throws IOException {
+	public boolean print(FTPClient connection, String content, String file) throws IOException {
 		InputStream stream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 
 		if (connection.storeFile(file, stream)) {
@@ -175,8 +119,8 @@ public class LabelPrinter extends AbstractPrinter {
 	 * @throws SocketException
 	 * @throws IOException
 	 */
-	public void openConnection() throws SocketException, IOException {
-		connection = new FTPClient();
+	public FTPClient openConnection() throws SocketException, IOException {
+		FTPClient connection = new FTPClient();
 
 		logger.debug("Connecting to label printer ftp://" + address + ":" + port);
 
@@ -184,6 +128,8 @@ public class LabelPrinter extends AbstractPrinter {
 		connection.connect(address, Integer.valueOf(getPort()));
 		connection.login(userName, password);
 		connection.setFileType(FTP.ASCII_FILE_TYPE);
+
+		return connection;
 	}
 
 	/**
@@ -191,42 +137,12 @@ public class LabelPrinter extends AbstractPrinter {
 	 * 
 	 * @throws IOException
 	 */
-	public void closeConnection() throws IOException {
+	public void closeConnection(FTPClient connection) throws IOException {
 		connection.logout();
 		connection.disconnect();
 	}
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	/**
-	 * Returns true if the butter is not empty
-	 * 
-	 * @return
-	 */
-	public boolean isBufferNotEmpty() {
-		return !printBuffer.isEmpty();
+	public static String generateUnqiueName() {
+		return RandomStringUtils.randomAlphanumeric(10) + ".zpl";
 	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
-
-	public int getTimeout() {
-		return timeout;
-	}
-
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
 }

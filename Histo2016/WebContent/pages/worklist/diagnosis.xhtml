@@ -8,6 +8,21 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+
+	<script type="text/javascript">
+		// disables the autofocus for the caseHistoryOverlayplpanel 
+		(function() {
+			var proxied = PrimeFaces.widget.OverlayPanel.prototype.applyFocus;
+
+			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
+				if (this.id == "contentForm:caseHistoryOverlayPanel")
+					return;
+
+				return proxied.apply(this, arguments);
+			};
+		})();
+	</script>
+
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
 	<c:set var="selectedTask"
@@ -62,22 +77,8 @@
 							</h:panelGrid>
 						</c:forEach>
 					</h:panelGrid>
-
-				</h:panelGrid>
-				<!-- material -->
-
-				<!-- historical record -->
-				<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
-					<h:outputLabel value="#{msg['body.diagnosis.story']}"
-						styleClass="big-text" />
-
-					<h:graphicImage value="/resources/gfx/augen.png"
-						style="width: 280px;float:right;margin-right:50px;" />
-				</h:panelGrid>
-				<!-- historical record -->
-
-				<!-- Eye -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
+					<!-- Eye -->
+					<h:outputLabel value="#{msg['body.diagnosis.eye']}" />
 					<p:selectOneMenu styleClass="smallInput customBackground"
 						tabindex="6"
 						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}"
@@ -89,22 +90,47 @@
 						<p:ajax event="change" execute="@this"
 							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.eye',selectedTask.eye)}" />
 					</p:selectOneMenu>
-
-					<p:selectOneMenu id="historyText" tabindex="7"
-						style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor}"
-						styleClass="customBackground" disabled="#{!taskEditable}"
-						value="#{selectedTask.caseHistory}" editable="true">
-						<f:selectItem itemLabel="Select One"
-							itemValue="#{msg['body.diagnosis.story.watermark']}" />
-						<f:selectItems
-							value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
-							itemLabel="#{item.value}" itemValue="#{item.value}" />
-
-						<p:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.caseHistory',selectedTask.caseHistory)}" />
-					</p:selectOneMenu>
+					<!-- Eye -->
 				</h:panelGrid>
-				<!-- Eye -->
+				<!-- material -->
+
+				<h:panelGrid columns="1" styleClass="defaultListingTableCss">
+					<h:outputLabel value="#{msg['body.diagnosis.story']}" />
+					<h:panelGroup>
+
+						<p:inputTextarea value="#{selectedTask.caseHistory}"
+							title="#{msg['body.diagnosis.story.watermark']}"
+							id="caseHistoryInput" style="width:90%"
+							onfocus="PF('caseHistoryOverlayPanel').show();"
+							onkeypress="PF('caseHistoryOverlayPanel').hide();"
+							onclick="PF('caseHistoryOverlayPanel').show();">
+							<p:ajax event="change"
+								listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.caseHistory',commonDataHandlerAction.selectedTask.caseHistory)}"></p:ajax>
+						</p:inputTextarea>
+
+						<p:overlayPanel id="caseHistoryOverlayPanel"
+							styleClass="defaultOverlayPanel" for="caseHistoryInput"
+							widgetVar="caseHistoryOverlayPanel" hideEffect="fade"
+							style="width:500px" hideEvent="none" showEvent="none">
+							<p:dataTable
+								value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
+								styleClass="smallDatatable highlightedDataTable noBordersAll"
+								scrollable="true" scrollHeight="200" rowKey="#{item.id}"
+								selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
+								selectionMode="single">
+								<p:column filterBy="#{item.value}" filterMatchMode="contains">
+									<h:outputText value="#{item.value}" />
+								</p:column>
+
+								<p:ajax event="rowSelect" update="contentForm:caseHistoryInput"
+									listener="#{diagnosisViewHandlerAction.copyCaseHistory(selectedTask, diagnosisViewHandlerAction.selectedCaseHistoryItem)}"
+									oncomplete="PF('caseHistoryOverlayPanel').hide();" />
+							</p:dataTable>
+
+						</p:overlayPanel>
+					</h:panelGroup>
+				</h:panelGrid>
+
 			</h:panelGrid>
 			<!-- Left Column -->
 
