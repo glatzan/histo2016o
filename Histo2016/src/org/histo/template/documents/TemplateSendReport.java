@@ -19,17 +19,27 @@ public class TemplateSendReport extends DocumentTemplate {
 
 	private Task task;
 
+	private boolean useMail;
 	private List<ContactHolder> mailHolders;
+	private boolean useFax;
 	private List<ContactHolder> faxHolders;
+	private boolean useLetter;
 	private List<ContactHolder> letterHolders;
+	private boolean usePhone;
 	private List<ContactHolder> phoneHolders;
 
 	private Date dateOfReport;
 
-	public void initData(Patient patient, Task task, List<ContactHolder> mailHolders, List<ContactHolder> faxHolders,
-			List<ContactHolder> letterHolders, List<ContactHolder> phoneHolders, Date dateOfReport) {
+	public void initData(Patient patient, Task task, boolean useMail, List<ContactHolder> mailHolders, boolean useFax,
+			List<ContactHolder> faxHolders, boolean useLetter, List<ContactHolder> letterHolders, boolean usePhone,
+			List<ContactHolder> phoneHolders, Date dateOfReport) {
 		this.patient = patient;
 		this.task = task;
+
+		this.useMail = useMail;
+		this.useFax = useFax;
+		this.useLetter = useLetter;
+		this.usePhone = usePhone;
 
 		this.mailHolders = mailHolders;
 		this.faxHolders = faxHolders;
@@ -45,9 +55,13 @@ public class TemplateSendReport extends DocumentTemplate {
 
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
+		generator.getConverter().replace("useMail", useMail);
 		generator.getConverter().replace("mailHolders", mailHolders);
+		generator.getConverter().replace("useFax", useFax);
 		generator.getConverter().replace("faxHolders", faxHolders);
+		generator.getConverter().replace("useLetter", useLetter);
 		generator.getConverter().replace("letterHolders", letterHolders);
+		generator.getConverter().replace("usePhone", usePhone);
 		generator.getConverter().replace("phoneHolders", phoneHolders);
 		generator.getConverter().replace("reportDate", dateOfReport);
 		generator.getConverter().replace("date", new DateTool());

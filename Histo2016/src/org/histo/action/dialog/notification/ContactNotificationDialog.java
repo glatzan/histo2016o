@@ -16,6 +16,9 @@ import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.MenuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,6 +38,11 @@ public class ContactNotificationDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ResourceBundle resourceBundle;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TransactionTemplate transactionTemplate;
 
 	private AssociatedContact associatedContact;
 
@@ -87,7 +95,7 @@ public class ContactNotificationDialog extends AbstractDialog {
 				for (AssociatedContactNotification associatedContactNotification : getAssociatedContact()
 						.getNotifications()) {
 					if (associatedContactNotification.getNotificationTyp().equals(typeArr[i])
-							&& associatedContactNotification.isActive()) {
+							&& associatedContactNotification.isActive() && !associatedContactNotification.isFailed()) {
 						disabled = true;
 						break;
 					}
@@ -104,8 +112,17 @@ public class ContactNotificationDialog extends AbstractDialog {
 		}
 	}
 
+	public void removeNotificationAndUpdate(AssociatedContactNotification associatedContactNotification) {
+		removeNotification(associatedContactNotification);
+		generatedMenuModel();
+	}
+
 	public void removeNotification(AssociatedContactNotification associatedContactNotification) {
-		contactDAO.removeNotification(task, associatedContact, associatedContactNotification);
+		try {
+			contactDAO.removeNotification(task, associatedContact, associatedContactNotification);
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
 	}
 
 	public void addNotificationAndUpdate(AssociatedContactNotification.NotificationTyp notification) {
@@ -114,12 +131,30 @@ public class ContactNotificationDialog extends AbstractDialog {
 	}
 
 	public void addNotification(AssociatedContactNotification.NotificationTyp notification) {
-		contactDAO.addNotificationType(task, associatedContact, notification);
+
+		try {
+
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					// setting all other notifications with the same type as
+					// inactive
+					contactDAO.setNotificationsAsInactive(task, associatedContact, notification);
+					contactDAO.addNotificationType(task, associatedContact, notification);
+				}
+			});
+
+		} catch (Exception e) {
+			onDatabaseVersionConflict();
+		}
 	}
 
 	public void saveRoleChange() {
-		genericDAO.savePatientData(getAssociatedContact(), getTask(),
-				"log.patient.task.contact.roleChange", getAssociatedContact().toString(),
-				getAssociatedContact().getRole().toString());
+		try {
+			genericDAO.savePatientData(getAssociatedContact(), getTask(), "log.patient.task.contact.roleChange",
+					getAssociatedContact().toString(), getAssociatedContact().getRole().toString());
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
 	}
 }

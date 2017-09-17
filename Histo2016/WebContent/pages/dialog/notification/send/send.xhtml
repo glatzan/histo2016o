@@ -10,13 +10,12 @@
 	<script type="text/javascript">
 		function handleComplete(xhr, status, args) {
 			var hasEnded = args.hasEnded;
-		
-			alert(hasEnded )
-			
-			if(hasEnded == true){
-				PF('blockUIWidget').unblock()
+
+			if (hasEnded == true) {
+				PF('blockUIWidget').unblock();
+				updateContent();
 			}
-		
+
 		}
 	</script>
 
@@ -32,7 +31,7 @@
 		<p:scrollPanel style="width:100%;height:450px">
 			<!-- email -->
 			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-				style="width:100%;margin-top:10px;">
+				style="width:100%;margin-top:10px;" id="mailTable">
 				<p:panelGrid columns="2"
 					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
 					<h:panelGroup>
@@ -67,12 +66,12 @@
 						</p:column>
 
 						<p:column style="width:5%">
-							<ui:fragment rendered="#{emailHolder.notification.performed}">
+							<ui:fragment rendered="#{emailHolder.notification.performed and !emailHolder.notification.failed}">
 								<i class="fa fa-fw fa-check-circle icon-green"
 									title="#{msg['dialog.notification.notifiy.email.enabled']}" />
 							</ui:fragment>
 
-							<ui:fragment rendered="#{emailHolder.notification.failed}">
+							<ui:fragment rendered="#{emailHolder.notification.performed and emailHolder.notification.failed}">
 								<i class="fa fa-fw fa-times-circle icon-red"
 									title="#{emailHolder.notification.commentary}" />
 							</ui:fragment>
@@ -84,7 +83,7 @@
 
 			<!-- fax -->
 			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-				style="width:100%">
+				style="width:100%" id="faxTable">
 
 				<p:panelGrid columns="2"
 					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
@@ -121,7 +120,7 @@
 
 			<!-- letter -->
 			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-				style="width:100%">
+				style="width:100%" id="letterTable">
 
 				<p:panelGrid columns="2"
 					styleClass="noBordersAll collapsedBordersAll hide-column-names"
@@ -160,7 +159,7 @@
 
 			<!-- phone -->
 			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-				style="width:100%">
+				style="width:100%" id="phoneTable">
 
 				<p:panelGrid columns="2"
 					styleClass="noBordersAll collapsedBordersAll" style="width:100%"
@@ -208,9 +207,13 @@
 
 			<p:poll autoStart="false" widgetVar="ajaxProgressPoll"
 				stop="#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
-				partialSubmit="true" update="progressLable" interval="1"
-				oncprocess="@this" listener="#{dialogHandlerAction.notificationDialog.sendTab.getStatus()}"
+				partialSubmit="true" update="progressLable mailTable faxTable phoneTable letterTable" interval="1"
+				oncprocess="@this"
+				listener="#{dialogHandlerAction.notificationDialog.sendTab.updateStatus()}"
 				oncomplete="handleComplete(xhr, status, args)" />
+
+			<p:remoteCommand name="updateContent"
+				update=":adminForm:tabview:sendTab"></p:remoteCommand>
 
 		</p:panelGrid>
 
@@ -228,10 +231,11 @@
 
 				<p:commandButton value="Benachrichtigung ausführen"
 					icon="fa fa-fw fa-mail-forward"
+					rendered="#{!dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
 					onstart="PF('blockUIWidget').block()"
-					onclick="rc();PF('startButton2').disable();PF('ajaxProgressPoll').start();"
+					onclick="performeNotificationCommand();PF('startNotificationButton').disable();PF('ajaxProgressPoll').start();"
 					styleClass="smallButton buttonRighMarginInList"
-					widgetVar="startButton2" />
+					widgetVar="startNotificationButton" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
@@ -239,7 +243,7 @@
 					icon="fa fa-times-circle"
 					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
 
-				<p:remoteCommand async="true" name="rc"
+				<p:remoteCommand async="true" name="performeNotificationCommand"
 					actionListener="#{dialogHandlerAction.notificationDialog.sendTab.performeNotification()}"></p:remoteCommand>
 			</h:panelGrid>
 		</h:panelGrid>

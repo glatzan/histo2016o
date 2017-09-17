@@ -152,6 +152,17 @@ public class ContactDAO extends AbstractDAO {
 		return newNotification;
 	}
 
+	public void setNotificationsAsInactive(Task task, AssociatedContact associatedContact,
+			AssociatedContactNotification.NotificationTyp notificationTyp) {
+		for (AssociatedContactNotification notification : associatedContact.getNotifications()) {
+			if (notification.getNotificationTyp().equals(notificationTyp) && notification.isActive()) {
+				notification.setActive(false);
+				genericDAO.savePatientData(notification, task, "log.patient.task.contact.notification.inavtiv",
+						notificationTyp.toString(), associatedContact.toString());
+			}
+		}
+	}
+
 	/**
 	 * Gets the Physician object for a person an returns the associated roles.
 	 * 

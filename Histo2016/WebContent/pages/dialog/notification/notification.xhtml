@@ -30,7 +30,7 @@
 		</div>
 
 		<p:panel styleClass="settingsPannel">
-			<p:tabView orientation="left" id="tabview"
+			<p:tabView orientation="left" id="tabview" onTabChange="changeTab()"
 				activeIndex="#{dialogHandlerAction.notificationDialog.activeIndex}"
 				styleClass="settingsTabView">
 
@@ -50,6 +50,7 @@
 				</c:forEach>
 
 			</p:tabView>
+			<p:remoteCommand name="changeTab" process="@form" />
 		</p:panel>
 		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>

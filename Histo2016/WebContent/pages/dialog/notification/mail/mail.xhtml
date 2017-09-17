@@ -71,6 +71,11 @@
 					headerText="#{msg['dialog.notification.tab.mail.receiver.name']}"
 					style="width:auto">
 					<h:outputText value="#{holder.contact.person.fullName}" />
+					<ui:fragment
+						rendered="#{holder.notification.performed and holder.notification.failed}">
+						<i class="fa fa-fw fa-times-circle icon-red"
+							title="#{msg['dialog.notification.tab.mail.receiver.failedAndRetry']}: #{holder.notification.commentary}" />
+					</ui:fragment>
 				</p:column>
 
 				<p:column

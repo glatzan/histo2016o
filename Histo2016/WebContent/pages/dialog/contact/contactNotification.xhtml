@@ -18,7 +18,8 @@
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.cotactNotification.headline']} (#{dialogHandlerAction.contactNotificationDialog.associatedContact.person.fullName})" />
+				<h:outputLabel
+					value="#{msg['dialog.cotactNotification.headline']} (#{dialogHandlerAction.contactNotificationDialog.associatedContact.person.fullName})" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -65,16 +66,23 @@
 					<p:column headerText="#{msg['dialog.cotactNotification.activ']}"
 						style="width:15% !important;  text-align:center; ">
 						<p:selectBooleanCheckbox value="#{notifications.active}"
-							disabled="#{notifications.performed}" />
+							disabled="true" />
 					</p:column>
 
 					<p:column
 						headerText="#{msg['dialog.cotactNotification.performed']}"
 						style="width:15% !important;  text-align:center; ">
 
-						<ui:fragment rendered="#{notifications.performed}">
+						<ui:fragment
+							rendered="#{notifications.performed and !notifications.failed}">
 							<i class="fa fa-check icon-green"
 								title="#{msg['dialog.contacts.performed']}" />
+						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{notifications.performed and notifications.failed}">
+							<i class="fa fa-fw fa-times-circle icon-red"
+								title="#{msg['dialog.contacts.failed']}: #{notifications.commentary}" />
 						</ui:fragment>
 
 					</p:column>
@@ -84,7 +92,7 @@
 						<p:commandLink styleClass="noUnderlineAtLink" update="@form"
 							disabled="#{notifications.performed}"
 							title="#{msg['dialog.cotactNotification.remove.text']}"
-							actionListener="#{dialogHandlerAction.contactNotificationDialog.removeNotification(notifications)}">
+							actionListener="#{dialogHandlerAction.contactNotificationDialog.removeNotificationAndUpdate(notifications)}">
 							<i class="fa fa-times" />
 						</p:commandLink>
 					</p:column>

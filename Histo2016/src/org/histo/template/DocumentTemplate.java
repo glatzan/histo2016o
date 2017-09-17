@@ -89,6 +89,9 @@ public class DocumentTemplate extends Template {
 	}
 
 	public static final DocumentTemplate getDefaultTemplate(DocumentTemplate[] array, DocumentType ofType) {
+		if(array == null)
+			return null;
+		
 		for (int i = 0; i < array.length; i++) {
 			if (array[i].isDefaultOfType()) {
 				if (ofType == null || array[i].getDocumentType() == ofType) {

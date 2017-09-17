@@ -56,9 +56,16 @@
 							<p:column>
 								<h:outputLabel
 									value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}"></h:outputLabel>
-								<ui:fragment rendered="#{notifications.performed}">
+								<ui:fragment
+									rendered="#{notifications.performed and !notifications.failed}">
 									<i class="fa fa-check icon-green"
 										title="#{msg['dialog.contacts.performed']}" />
+								</ui:fragment>
+
+								<ui:fragment
+									rendered="#{notifications.performed and notifications.failed}">
+									<i class="fa fa-fw fa-times-circle icon-red"
+										title="#{msg['dialog.contacts.failed']}: #{notifications.commentary}" />
 								</ui:fragment>
 							</p:column>
 						</p:dataList>

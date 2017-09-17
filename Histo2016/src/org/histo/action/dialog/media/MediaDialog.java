@@ -201,6 +201,11 @@ public class MediaDialog extends AbstractDialog {
 
 		return true;
 	}
+	
+	public boolean initiBeanForExternalView(PDFContainer container) {
+		setTemporaryPdfContainer(container);
+		return true;
+	}
 
 	public void enableUpload(HasDataList[] dataListsToUpload, DocumentType[] availableFileType) {
 		enableUpload(dataListsToUpload, availableFileType, availableFileType[0]);

@@ -15,16 +15,11 @@
 			</f:facet>
 		</p:panel>
 
-		<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
-			columnClasses="horizontalAlignCenterAll"
-			style="width:100%;margin-top:180px;">
-
-			<h:outputText
-				value="Benachrichtigung wurde bereits am xx.xx.xx druchgeführt." />
-
-			<p:commandButton style="margin-top:50px;"
-				value="Benachrichtigung erneut durchführen" />
-		</p:panelGrid>
+		<p:media player="pdf"
+			value="#{dialogHandlerAction.mediaDialog.pdfContent}"
+			rendered="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer ne null}"
+			width="100%" height="630px"></p:media>
+			
 	</div>
 
 	<div class="bottomDiv">

@@ -118,9 +118,9 @@ public class AssociatedContact implements LogAble, HasID {
 	}
 
 	@Transient
-	public List<AssociatedContactNotification> getNotificationTypAsList(NotificationTyp type, boolean performed) {
+	public List<AssociatedContactNotification> getNotificationTypAsList(NotificationTyp type, boolean active) {
 		return getNotifications().stream()
-				.filter(p -> p.getNotificationTyp().equals(type) && p.isPerformed() == performed)
+				.filter(p -> p.getNotificationTyp().equals(type) && p.isActive() == active)
 				.collect(Collectors.toList());
 	}
 

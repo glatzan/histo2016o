@@ -21,6 +21,9 @@
 \renewcommand{\familydefault}{\sfdefault} 
 \newcommand\tab[1][1cm]{\hspace*{#1}}
 
+\def\fs{\kern 0.33em}
+
+
 % header
 \pagestyle{fancy}
 
@@ -57,25 +60,24 @@
 {
 \scriptsize
 \begin{textblock}{100}(19, 8) 
-\noindent $patient.person.fullName\\
-$patient.person.street\\
-$patient.person.postcode $patient.person.town\\
+\noindent $!patient.person.fullName\\
+$!patient.person.street\\
+$!patient.person.postcode $!patient.person.town\\
 \X=.35mm        
 \barheight=1cm 
-\code{#if((!$patient.piz) ||($patient.piz == "")) 0 #else $patient.piz #end}\\
-$patient.piz\\
+\code{#if($patient.piz == "") 0 #else $!patient.piz #end}\\
+$!patient.piz\\
 \end{textblock}
 }
 
 
-
 \noindent\makebox[\linewidth]{\rule{\linewidth}{0.4pt}}\\\\
-{\huge Sendebericht, vom $reportDate} \\\\
+{\huge Sendebericht, vom $date.format('HH:mm dd.MM.yyyy', $reportDate)} \\\\
 {\normalsize Email-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
-	#if($emailInfos.useEmail)
-		#foreach( $email in $emailInfos.notificationEmailList)
-			$email.contact.person.fullName ($email.contact.person.email) & #if ($email.performed) \textcolor{green}{OK ($email.notificationAttachment)} #elseif($email.error) \textcolor{red}{Fehler} #else - #end \\
+	#if($useMail)
+		#foreach( $email in $mailHolders)
+			 \fs $email.contact.person.fullName ($email.contactAddress) & \fs #if ($email.notification.performed) #if(!$email.notification.failed) \textcolor{green}{OK #if($email.pdf) (PDF) #end} #else \textcolor{red}{$email.notification.commentary} #end #else - #end \\
 		#end
 	#else
 		Keine Email-Benachrichtigung
@@ -86,9 +88,9 @@ $patient.piz\\
 \noindent
 {\normalsize Fax-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
-	#if($faxInfos.useFax)
-		#foreach( $fax in $faxInfos.notificationFaxList)
-			$fax.contact.person.fullName ($fax.contact.person.fax) & #if ($fax.performed) \textcolor{green}{OK ($fax.notificationAttachment)} #elseif($fax.error) \textcolor{red}{Fehler} #else - #end \\
+	#if($useFax)
+		#foreach( $fax in $faxHolders)
+			 \fs $fax.contact.person.fullName ($fax.contactAddress) & \fs #if ($fax.notification.performed) #if(!$fax.notification.failed) \textcolor{green}{OK} #else \textcolor{red}{$fax.notification.commentary} #end #else - #end \\
 		#end
 	#else
 		Keine Fax-Benachrichtigung
