@@ -61,24 +61,33 @@
 					headerText="#{msg['dialog.notification.tab.fax.receiver.name']}"
 					style="width:auto">
 					<h:outputText value="#{holder.contact.person.fullName}" />
+					<ui:fragment rendered="#{holder.notification.failed}">
+						<i class="fa fa-fw fa-times-circle icon-red"
+							title="#{msg['dialog.notification.tab.fax.receiver.failedAndRetry']}: #{holder.notification.commentary}" />
+					</ui:fragment>
 				</p:column>
 
+				<!-- fax number -->
 				<p:column
 					headerText="#{msg['dialog.notification.tab.fax.receiver.number']}"
 					style="width:auto">
-					<p:inputText value="#{holder.contactAddress}"
-						disabled="#{!tab.useTab}" styleClass="smallInput"
+					<p:inputText
+						value="#{holder.contactAddress}"
+						disabled="#{!tab.useTab or holder.notification.failed}" styleClass="smallInput"
 						style="width:98%" />
 				</p:column>
 
+				<!-- options -->
 				<p:column style="width:12%; text-align:center;">
 					<f:facet name="header">
 						<i class="fa fa-file-pdf-o"
 							title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}" />
 					</f:facet>
 
+					<!-- add pdf, if pdf == null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null}" disabled="#{!tab.useTab}"
+						rendered="#{holder.pdf eq null and !holder.notification.failed}"
+						disabled="#{!tab.useTab}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
@@ -92,8 +101,10 @@
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>
 
+					<!-- show pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf ne null}" disabled="#{!tab.useTab}"
+						rendered="#{holder.pdf ne null and !holder.notification.failed}"
+						disabled="#{!tab.useTab}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.show']}"
 						execute="@this" partialSubmit="true"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
@@ -101,14 +112,31 @@
 						<i class="fa fa-search icon-grey" />
 					</p:commandLink>
 
+					<!-- remove pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						style="margin-left: 10px;" rendered="#{holder.pdf ne null}"
+						style="margin-left: 10px;"
+						rendered="#{holder.pdf ne null and !holder.notification.failed}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.remove']}"
 						execute="@this" partialSubmit="true"
 						update=":adminForm:tabview:faxTab" disabled="#{!tab.useTab}"
 						actionListener="#{holder.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
+					</p:commandLink>
+
+					<!-- refresh failed notification, if = notification.failed -->
+					<p:commandLink styleClass="noUnderlineAtLink"
+						rendered="#{holder.notification.failed}"
+						update=":adminForm:tabview:faxTab"
+						title="#{msg['dialog.notification.tab.fax.receiver.renew']}"
+						execute="@this" partialSubmit="true">
+
+						<i class="fa fa-fw fa-refresh" />
+
+						<f:actionListener
+							binding="#{tab.renewNotification(dialogHandlerAction.notificationDialog.task, holder)}" />
+
+						<f:actionListener binding="#{tab.updateData()}" />
 					</p:commandLink>
 
 				</p:column>

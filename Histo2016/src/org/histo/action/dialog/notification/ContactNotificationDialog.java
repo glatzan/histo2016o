@@ -139,7 +139,7 @@ public class ContactNotificationDialog extends AbstractDialog {
 				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 					// setting all other notifications with the same type as
 					// inactive
-					contactDAO.setNotificationsAsInactive(task, associatedContact, notification);
+					contactDAO.setNotificationsAsActive(task, associatedContact, notification, false);
 					contactDAO.addNotificationType(task, associatedContact, notification);
 				}
 			});

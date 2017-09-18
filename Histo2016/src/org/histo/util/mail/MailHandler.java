@@ -111,7 +111,7 @@ public class MailHandler implements GsonAble {
 				email.setFrom(mailFrom, nameFrom);
 
 				email.setSubject(mail.getSubject());
-				email.setMsg(mail.getContent());
+				email.setMsg(mail.getBody());
 				email.send();
 			} catch (EmailException e) {
 				e.printStackTrace();
@@ -133,7 +133,7 @@ public class MailHandler implements GsonAble {
 				email.setFrom(mailFrom, nameFrom);
 
 				email.setSubject(mail.getSubject());
-				email.setMsg(mail.getContent());
+				email.setMsg(mail.getBody());
 
 				InputStream is = new ByteArrayInputStream(mail.getAttachment().getData());
 

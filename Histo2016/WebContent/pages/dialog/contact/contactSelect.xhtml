@@ -51,8 +51,9 @@
 					<p:column headerText="#{msg['dialog.selectContact.table.role']}"
 						style="width:30% !important">
 						<p:repeat value="#{contact.physician.associatedRoles.toArray()}"
-							var="role">
-							<h:outputLabel value="#{msg['enum.contactRole.'.concat(role)]}" />
+							varStatus="roleCount" var="role">
+							<h:outputLabel value="#{msg['enum.contactRole.'.concat(role)]}"
+								id="#{roleCount.index}_#{contact.id}_role" />
 							<br />
 						</p:repeat>
 					</p:column>
@@ -91,7 +92,7 @@
 					<h:panelGrid columns="3">
 						<p:selectCheckboxMenu
 							styleClass="customSelectCheckboxMenu smallButton"
-							style="margin-left: 10px;"
+							style="margin-left: 10px;" id="roleSelectCheckbox"
 							panelStyleClass="customSelectCheckboxMenuContactDialogPannel"
 							label="#{msg['dialog.selectContact.roles']}"
 							panelStyle="width:250px"
@@ -110,10 +111,10 @@
 						</p:selectCheckboxMenu>
 
 						<h:outputLabel value="#{msg['dialog.selectContact.addAs']}"
-							style="margin-left: 10px;"
+							style="margin-left: 10px;" id="selectRoleText"
 							rendered="#{dialogHandlerAction.contactSelectDialog.manuallySelectRole}" />
 
-						<p:selectOneMenu style="margin-left: 10px;"
+						<p:selectOneMenu style="margin-left: 10px;" id="selectroleMenu"
 							rendered="#{dialogHandlerAction.contactSelectDialog.manuallySelectRole}"
 							value="#{dialogHandlerAction.contactSelectDialog.addAsRole}">
 							<f:selectItems
@@ -122,7 +123,8 @@
 								itemValue="#{role}" />
 
 
-							<p:ajax event="change" partialSubmit="true" process="@this" update="@this headerText" />
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								update="@this headerText" />
 						</p:selectOneMenu>
 					</h:panelGrid>
 				</h:panelGrid>

@@ -14,7 +14,8 @@
 			"<b>Change:</b> Eingabefeld der Vorgeschichte vergrößert",
 			"<b>Change:</b> Befundbericht überarbeitet und angepasst",
 			"<b>Change:</b> Etikettendrucken ist nun Thread-Save", 
-			"<b>Change:</b> LDAP-Requests sind nun Thread-Save"
+			"<b>Change:</b> LDAP-Requests sind nun Thread-Save",
+			"<b>Fix:</b> Kontakt-Dialog verursacht keine Fehler mehr beim Suchen nach Personen"
 		]
 	},
 	{

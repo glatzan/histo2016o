@@ -39,13 +39,13 @@
 						style="width: auto !important"
 						filterBy="#{contactHolder.contact.person.lastName}"
 						filterMatchMode="contains">
-						<h:outputLabel value="#{contactHolder.contact.person.fullName}" />
+						<h:outputText value="#{contactHolder.contact.person.fullName}" />
 					</p:column>
 
 					<p:column headerText="#{msg['dialog.contacts.table.function']}"
 						style="width:15% !important">
-						<h:outputLabel
-							value="#{msg['enum.contactRole.'.concat(contactHolder.contact.role)]}"></h:outputLabel>
+						<h:outputText
+							value="#{msg['enum.contactRole.'.concat(contactHolder.contact.role)]}" />
 					</p:column>
 
 					<p:column headerText="#{msg['dialog.contacts.table.notification']}">
@@ -54,8 +54,8 @@
 							styleClass="smallDataList"
 							value="#{contactHolder.contact.notifications}">
 							<p:column>
-								<h:outputLabel
-									value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}"></h:outputLabel>
+								<h:outputText
+									value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}"></h:outputText>
 								<ui:fragment
 									rendered="#{notifications.performed and !notifications.failed}">
 									<i class="fa fa-check icon-green"
@@ -66,6 +66,13 @@
 									rendered="#{notifications.performed and notifications.failed}">
 									<i class="fa fa-fw fa-times-circle icon-red"
 										title="#{msg['dialog.contacts.failed']}: #{notifications.commentary}" />
+								</ui:fragment>
+								<ui:fragment rendered="#{notifications.performed}">
+									<h:outputText value=" (" />
+									<h:outputText value="#{notifications.dateOfAction}">
+										<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm:ss" />
+									</h:outputText>
+									<h:outputText value=")" />
 								</ui:fragment>
 							</p:column>
 						</p:dataList>

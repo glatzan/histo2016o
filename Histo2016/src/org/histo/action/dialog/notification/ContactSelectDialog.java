@@ -1,5 +1,6 @@
 package org.histo.action.dialog.notification;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -83,6 +84,9 @@ public class ContactSelectDialog extends AbstractDialog {
 	 */
 	private PhysicianContainer selectedContact;
 
+	/**
+	 * If true the user can change the role, for the the physician is added
+	 */
 	private boolean manuallySelectRole = false;
 
 	public void initAndPrepareBean(Task task, ContactRole contactRole) {
@@ -126,6 +130,8 @@ public class ContactSelectDialog extends AbstractDialog {
 		setAddableRoles(addableRoles);
 		
 		setSelectedContact(null);
+		
+		setManuallySelectRole(false);
 
 		return true;
 	}
@@ -195,8 +201,10 @@ public class ContactSelectDialog extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class PhysicianContainer {
+	public class PhysicianContainer implements Serializable {
 
+		private static final long serialVersionUID = -4105916869081787460L;
+		
 		private int id;
 		private Physician physician;
 		private List<ContactRole> associatedRoles;

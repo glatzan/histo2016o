@@ -207,6 +207,7 @@
 					<p:commandButton value="#{msg['dialog.print.button.fax']}"
 						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
 						styleClass="smallButton buttonRighMarginInListExtended"
+						rendered="#{dialogHandlerAction.printDialog.faxMode}"
 						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
 
 					<h:panelGrid columns="2"
@@ -233,7 +234,8 @@
 						</p:selectOneMenu>
 					</h:panelGrid>
 
-					<p:commandButton value="Auswählen" icon="fa fa-print"
+					<!-- select -->
+					<p:commandButton value="#{msg['dialog.print.button.select']}" icon="fa fa-print"
 						rendered="#{dialogHandlerAction.printDialog.selectMode}"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}"></p:commandButton>

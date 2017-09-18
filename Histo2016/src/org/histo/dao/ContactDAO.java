@@ -93,12 +93,23 @@ public class ContactDAO extends AbstractDAO {
 		genericDAO.savePatientData(task, "log.patient.task.contact.list.reoder");
 	}
 
+	/**
+	 * removes a contact
+	 * @param task
+	 * @param associatedContact
+	 */
 	public void removeAssociatedContact(Task task, AssociatedContact associatedContact) {
 		task.getContacts().remove(associatedContact);
 		genericDAO.deletePatientData(associatedContact, task, "log.patient.task.contact.remove",
 				associatedContact.toString());
 	}
 
+	/**
+	 * removes a notification 
+	 * @param task
+	 * @param associatedContact
+	 * @param notification
+	 */
 	public void removeNotification(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification notification) {
 
@@ -112,24 +123,55 @@ public class ContactDAO extends AbstractDAO {
 		}
 	}
 
+	/**
+	 * Adds an associated contact
+	 * @param task
+	 * @param associatedContact
+	 * @return
+	 */
 	public AssociatedContact addAssociatedContact(Task task, Person person, ContactRole role) {
 		return addAssociatedContact(task, new AssociatedContact(task, person, role));
 	}
 
+	/**
+	 * Adds an associated contact
+	 * @param task
+	 * @param associatedContact
+	 * @return
+	 */
 	public AssociatedContact addAssociatedContact(Task task, AssociatedContact associatedContact) {
 		task.getContacts().add(associatedContact);
+		associatedContact.setTask(task);
 		genericDAO.savePatientData(associatedContact, task, "log.patient.task.contact.add",
 				new Object[] { associatedContact.toString() }, task.getParent());
 
 		return associatedContact;
 	}
 
+	/**
+	 * Adds a new notification with the given type
+	 * @param task
+	 * @param associatedContact
+	 * @param notificationTyp
+	 * @return
+	 */
 	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp) {
 		return addNotificationType(task, associatedContact, notificationTyp, true, false, false, null);
 
 	}
-
+	
+	/**
+	 * Adds a new notification with the given type
+	 * @param task
+	 * @param associatedContact
+	 * @param notificationTyp
+	 * @param active
+	 * @param performed
+	 * @param failed
+	 * @param dateOfAction
+	 * @return
+	 */
 	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp, boolean active, boolean performed,
 			boolean failed, Date dateOfAction) {
@@ -152,12 +194,34 @@ public class ContactDAO extends AbstractDAO {
 		return newNotification;
 	}
 
-	public void setNotificationsAsInactive(Task task, AssociatedContact associatedContact,
-			AssociatedContactNotification.NotificationTyp notificationTyp) {
+	/**
+	 * Sets the given notification as inactive an adds a new notification of the same type (active)
+	 * @param task
+	 * @param associatedContact
+	 * @param notification
+	 */
+	public void renewNotification(Task task, AssociatedContact associatedContact,
+			AssociatedContactNotification notification) {
+
+		notification.setActive(false);
+		genericDAO.savePatientData(notification, task, "log.patient.task.contact.notification.inactive",
+				notification.getNotificationTyp().toString(), associatedContact.toString());
+		addNotificationType(task, associatedContact, notification.getNotificationTyp());
+	}
+
+	/**
+	 * Sets all notifications with the given type to the given active status
+	 * @param task
+	 * @param associatedContact
+	 * @param notificationTyp
+	 * @param active
+	 */
+	public void setNotificationsAsActive(Task task, AssociatedContact associatedContact,
+			AssociatedContactNotification.NotificationTyp notificationTyp, boolean active) {
 		for (AssociatedContactNotification notification : associatedContact.getNotifications()) {
 			if (notification.getNotificationTyp().equals(notificationTyp) && notification.isActive()) {
-				notification.setActive(false);
-				genericDAO.savePatientData(notification, task, "log.patient.task.contact.notification.inavtiv",
+				notification.setActive(active);
+				genericDAO.savePatientData(notification, task, "log.patient.task.contact.notification.inactive",
 						notificationTyp.toString(), associatedContact.toString());
 			}
 		}

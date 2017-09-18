@@ -82,7 +82,7 @@
 	"fax": {
 		"settings": {
 			"commandSplitter": "!%",
-			"windows_command": "cmd.exe!%/c!%plink -i Q:/AUG-T-HISTO/putty/key.ppk admin@10.210.21.152 \"lp -d Internes_Modem -o phone=$faxNumber\" < $file",
+			"windows_command": "cmd.exe!%/c!%plink -i C:/Users/andi/Downloads/ssh/key.ppk admin@10.210.21.152 \"lp -d Internes_Modem -o phone=$faxNumber\" < $file",
 			"linux_command": "ssh -i Q:/AUG-T-HISTO/putty/id_rsa admin@10.210.21.152 \"lp -d Internes_Modem -o phone=$faxNumber\" < $file"
 		}
 	},

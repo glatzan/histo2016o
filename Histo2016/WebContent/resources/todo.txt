@@ -5,10 +5,11 @@
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
 Merke: keine kurzbefunde
 
-TODO: Notification!
+TODO: Notification! -> send report latex, save sendreport, reperform send
 TODO: Phasen + Phasen Buttons im Menu überprüfen
-TODO: Labelprinten und Ldap, Fax überprüfen ob richtig gehen
+TODO: Labelprinten überprüfen ob richtig geht
 TODO: batches gui für färbungen
+TODO: Briefliste in diagnose muss bei diagnose Änderugnen übernommen werden -< updateNotificationOnDiagnosisChange
 
 TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Versionfehler beim �ffnen von dialogen handeln
@@ -32,6 +33,7 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: Ldap, Fax überprüfen ob richtig gehen
 ++++: Global settings thread save -> LDAP HANDLER, LabelPrinter (stateless machen)
 ++++: Contact Dialog geht nicht
 ++++: 6: Contact Dialog mit neuem view �berarbeiten

@@ -17,6 +17,7 @@ import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.ContactDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
@@ -88,6 +89,11 @@ public class NotificationDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ContactDAO contactDAO;
 
 	private int activeIndex = 0;
 
@@ -177,6 +183,7 @@ public class NotificationDialog extends AbstractDialog {
 		dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelect, subSelect[0],
 				new AssociatedContact[] { contact }, true);
 		dialogHandlerAction.getPrintDialog().setSingleAddressSelectMode(true);
+		dialogHandlerAction.getPrintDialog().setFaxMode(false);
 		dialogHandlerAction.getPrintDialog().prepareDialog();
 	}
 
@@ -307,6 +314,10 @@ public class NotificationDialog extends AbstractDialog {
 			}
 		}
 
+		public void renewNotification(Task task, ContactHolder contactHolder) {
+			contactDAO.renewNotification(task, contactHolder.getContact(), contactHolder.getNotification());
+		}
+
 		@Getter
 		@Setter
 		public class ContactHolder {
@@ -317,7 +328,9 @@ public class NotificationDialog extends AbstractDialog {
 			private PDFContainer pdf;
 			private String contactAddress;
 			private NotificationTyp notificationTyp;
-			private boolean performed;
+
+			private boolean warning;
+			private String warningInfo;
 
 			public ContactHolder(AssociatedContact contact) {
 				this.contact = contact;
@@ -547,7 +560,66 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			// TODO Auto-generated method stub
+			if (!isNotificationCompleted()) {
+
+				for (ContactHolder holder : mailTab.getHolders()) {
+					if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
+						holder.setWarning(true);
+						holder.setWarningInfo("Keine Email angegeben");
+					} else if (!EmailValidator.getInstance().isValid(holder.getContactAddress())) {
+						holder.setWarning(true);
+						holder.setWarningInfo("Emailadresse ist nicht gült!");
+					} else {
+						holder.setWarning(false);
+						holder.setWarningInfo("");
+					}
+
+					if (holder.isWarning())
+						logger.debug("Warning for Email (" + holder.getContact().getPerson().getFullName() + ") = "
+								+ holder.warningInfo);
+				}
+
+				for (ContactHolder holder : faxTab.getHolders()) {
+					if (faxTab.getSelectedTemplate() == null && holder.getPdf() == null) {
+						holder.setWarning(true);
+						holder.setWarningInfo("Kein Pdf auswählt");
+					} else if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
+						holder.setWarning(true);
+						holder.setWarningInfo("Keine Nummer angegeben");
+					} else if (!holder.getContactAddress()
+							.matches(globalSettings.getProgramSettings().getPhoneRegex())) {
+						holder.setWarning(true);
+						holder.setWarningInfo("Nummer nicht gültig");
+					} else {
+						holder.setWarning(false);
+						holder.setWarningInfo("");
+					}
+
+					if (holder.isWarning())
+						logger.debug("Warning for Fax (" + holder.getContact().getPerson().getFullName() + ") = "
+								+ holder.warningInfo);
+				}
+
+				for (ContactHolder holder : letterTab.getHolders()) {
+					if (letterTab.getSelectedTemplate() == null && holder.getPdf() == null) {
+						holder.setWarning(true);
+						holder.setWarningInfo("Kein Pdf auswählt");
+					} else {
+						holder.setWarning(false);
+						holder.setWarningInfo("");
+					}
+				}
+
+				for (ContactHolder holder : phoneTab.getHolders()) {
+					if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
+						holder.setWarning(true);
+						holder.setWarningInfo("Keine Telefonunummer angegeben");
+					} else {
+						holder.setWarning(false);
+						holder.setWarningInfo("");
+					}
+				}
+			}
 		}
 
 		public void updateStatus() {
@@ -640,15 +712,17 @@ public class NotificationDialog extends AbstractDialog {
 									holder.getContactAddress()));
 
 							boolean success = false;
-							// // success =
-							// //
-							// globalSettings.getMailHandler().sendMail(holder.contactAddress,
-							// // cloneMail);
+
+							if (!globalSettings.getProgramSettings().isOffline())
+								success = globalSettings.getMailHandler().sendMail(holder.contactAddress, cloneMail);
+							else {
+								logger.debug("Offline mode, not sending email!");
+								throw new IllegalArgumentException("pdf.notification.status.sendMail.error.offline");
+							}
 
 							if (!success)
 								throw new IllegalArgumentException("pdf.notification.status.sendMail.error.failed");
 
-							holder.setPerformed(true);
 							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
@@ -696,6 +770,7 @@ public class NotificationDialog extends AbstractDialog {
 							setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
 									holder.getContact().getPerson().getFullName()));
 
+							// generating pdf
 							((TemplateDiagnosisReport) faxTab.getSelectedTemplate()).initData(getTask().getPatient(),
 									getTask(), holder.getContact());
 							PDFContainer container = ((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
@@ -704,10 +779,15 @@ public class NotificationDialog extends AbstractDialog {
 							if (container == null)
 								throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
 
-							globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), container);
+							// offline mode
+							if (!globalSettings.getProgramSettings().isOffline())
+								globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), container);
+							else {
+								logger.debug("Offline mode, not sending email!");
+								throw new IllegalArgumentException("pdf.notification.status.sendFax.error.offline");
+							}
 
 							holder.setPdf(container);
-							holder.setPerformed(true);
 							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
@@ -738,6 +818,9 @@ public class NotificationDialog extends AbstractDialog {
 								throw new IllegalArgumentException(
 										"pdf.notification.status.sendLetter.error.noAddress");
 
+							setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
+									holder.getContact().getPerson().getFullName()));
+
 							((TemplateDiagnosisReport) letterTab.getSelectedTemplate()).initData(getTask().getPatient(),
 									getTask(), holder.getContact());
 							PDFContainer container = ((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
@@ -747,14 +830,16 @@ public class NotificationDialog extends AbstractDialog {
 								throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
 
 							holder.setPdf(container);
-							holder.setPerformed(true);
+							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
 
 							progressStep();
 						} catch (IllegalArgumentException e) {
 							// no template or no number
-							holder.setPerformed(false);
+							holder.getNotification().setPerformed(true);
+							holder.getNotification().setFailed(true);
+							holder.getNotification().setActive(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
 							holder.getNotification().setCommentary(e.getMessage());
 							progressStep(resourceBundle.get(e.getMessage(), locale));
@@ -766,6 +851,12 @@ public class NotificationDialog extends AbstractDialog {
 
 				if (phoneTab.isUseTab()) {
 					logger.debug("Phone is used");
+					for (ContactHolder holder : phoneTab.getHolders()) {
+						holder.getNotification().setActive(false);
+						holder.getNotification().setPerformed(true);
+						holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
+					}
+
 					progressStep();
 				}
 
@@ -784,12 +875,11 @@ public class NotificationDialog extends AbstractDialog {
 					setSendReport(sendReportPdf);
 
 				}
-				// TODO generating send report
 
 				progressStep();
 
 				setProgressPercent(100);
-				setProgressText("Notification completed");
+				setProgressText(resourceBundle.get("pdf.notification.status.completed", locale));
 
 				logger.debug("Messaging ended");
 
@@ -803,19 +893,19 @@ public class NotificationDialog extends AbstractDialog {
 							for (ContactHolder holder : mailTab.getHolders()) {
 								genericDAO.save(holder.getContact());
 							}
-							
+
 							for (ContactHolder holder : faxTab.getHolders()) {
 								genericDAO.save(holder.getContact());
 							}
-							
+
 							for (ContactHolder holder : letterTab.getHolders()) {
 								genericDAO.save(holder.getContact());
 							}
-							
+
 							for (ContactHolder holder : phoneTab.getHolders()) {
 								genericDAO.save(holder.getContact());
 							}
-							
+
 							logger.debug("Saving progress, completed");
 						}
 					});

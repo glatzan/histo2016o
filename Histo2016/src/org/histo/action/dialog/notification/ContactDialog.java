@@ -1,5 +1,7 @@
 package org.histo.action.dialog.notification;
 
+import java.io.Serializable;
+
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -85,6 +87,7 @@ public class ContactDialog extends AbstractDialog {
 	public void addContact() {
 		dialogHandlerAction.getContactSelectDialog().initBean(task, ContactRole.values(), ContactRole.values(),
 				ContactRole.values(), ContactRole.OTHER_PHYSICIAN);
+		// user can manually change the role for that the physician is added
 		dialogHandlerAction.getContactSelectDialog().setManuallySelectRole(true);
 		dialogHandlerAction.getContactSelectDialog().prepareDialog();
 	}
@@ -134,7 +137,10 @@ public class ContactDialog extends AbstractDialog {
 	@Getter
 	@Setter
 	@AllArgsConstructor
-	public class ContactHolder {
+	public class ContactHolder implements Serializable{
+
+		private static final long serialVersionUID = 5002313305080131549L;
+		
 		private AssociatedContact contact;
 		private boolean deleteAble;
 	}
