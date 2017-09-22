@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
@@ -12,6 +13,7 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
+import org.histo.model.interfaces.HasDataList;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,5 +154,27 @@ public class PDFGenerator {
 		}
 
 		return new PDFContainer(type, name, out.getBytes());
+	}
+
+	public static final List<PDFContainer> getPDFsofType(List<PDFContainer> containers, DocumentType type) {
+		return containers.stream().filter(p -> p.getType().equals(type)).collect(Collectors.toList());
+	}
+
+	public static final PDFContainer getLatestPDFofType(List<PDFContainer> containers, DocumentType type) {
+		return getLatestPDFofType(getPDFsofType(containers, type));
+	}
+
+	public static final PDFContainer getLatestPDFofType(List<PDFContainer> containers) {
+		if (containers.size() == 0)
+			return null;
+
+		PDFContainer latest = containers.get(0);
+
+		for (PDFContainer pdfContainer : containers) {
+			if (latest.getCreationDate() < pdfContainer.getCreationDate())
+				latest = pdfContainer;
+		}
+
+		return latest;
 	}
 }

@@ -77,7 +77,7 @@ $!patient.piz\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
 	#if($useMail)
 		#foreach( $email in $mailHolders)
-			 \fs $email.contact.person.fullName ($email.contactAddress) & \fs #if ($email.notification.performed) #if(!$email.notification.failed) \textcolor{green}{OK #if($email.pdf) (PDF) #end} #else \textcolor{red}{$email.notification.commentary} #end #else - #end \\
+			 \fs $!email.contact.person.fullName ($!email.contactAddress) & \fs #if ($email.notification.performed) #if(!$email.notification.failed) \textcolor{green}{OK #if($email.pdf) (PDF) #end} #else \textcolor{red}{$!email.notification.commentary} #end #else - #end \\
 		#end
 	#else
 		Keine Email-Benachrichtigung
@@ -90,7 +90,7 @@ $!patient.piz\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
 	#if($useFax)
 		#foreach( $fax in $faxHolders)
-			 \fs $fax.contact.person.fullName ($fax.contactAddress) & \fs #if ($fax.notification.performed) #if(!$fax.notification.failed) \textcolor{green}{OK} #else \textcolor{red}{$fax.notification.commentary} #end #else - #end \\
+			 \fs $!fax.contact.person.fullName ($!fax.contactAddress) & \fs #if ($fax.notification.performed) #if(!$fax.notification.failed) \textcolor{green}{OK} #else \textcolor{red}{$!fax.notification.commentary} #end #else - #end \\
 		#end
 	#else
 		Keine Fax-Benachrichtigung
@@ -99,11 +99,24 @@ $!patient.piz\\
 }
 \\\\
 \noindent
+{\normalsize Brief-Benachrichtigung\\
+	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
+	#if($useFax)
+		#foreach( $letter in $letterHolders)
+			 \fs $!letter.contact.person.fullName & \fs #if ($letter.notification.performed) #if(!$letter.notification.failed) \textcolor{green}{OK} #else \textcolor{red}{$!letter.notification.commentary} #end #else - #end \\
+		#end
+	#else
+		Keine Brief-Benachrichtigung
+	#end  
+	\end{tabular}
+}
+\\\\
+\noindent
 {\normalsize Telefon-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
-	#if($phoneInfos.usePhone)
-		#foreach( $phone in $phoneInfos.notificationFaxList)
-			$phone.contact.person.fullName ($phone.contact.person.phoneNumber) & - \\
+	#if($usePhone)
+		#foreach( $phone in $phoneHolders)
+			$!phone.contact.person.fullName ($!phone.contactAddress) & - \\
 		#end
 	#else
 		Keine Telefon-Benachrichtigung

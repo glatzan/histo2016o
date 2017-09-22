@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.histo.config.enums.DocumentType;
+import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.model.patient.Slide;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateSendReport;
@@ -51,20 +53,22 @@ public class LabelPrinter extends AbstractPrinter {
 		// printBuffer = new HashMap<String, String>();
 	}
 
-	public void print(TemplateSlideLable tempalte) {
+	public void print(TemplateSlideLable tempalte) throws CustomUserNotificationExcepetion {
 		List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();
 		toPrint.add(tempalte);
 		print(toPrint);
 	}
-	
-	public void print(List<TemplateSlideLable> tempaltes) {
+
+	public void print(List<TemplateSlideLable> tempaltes) throws CustomUserNotificationExcepetion {
 
 		try {
 			FTPClient connection = openConnection();
 			for (TemplateSlideLable documentTemplate : tempaltes) {
-				print(connection, documentTemplate.getContent(), generateUnqiueName());
+				print(connection, documentTemplate.getFileContent(), generateUnqiueName(6));
 			}
 			closeConnection(connection);
+		} catch (SocketTimeoutException e) {
+			throw new CustomUserNotificationExcepetion("growl.error", "growl.error.priter.timeout");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -84,7 +88,7 @@ public class LabelPrinter extends AbstractPrinter {
 
 		try {
 			FTPClient connection = openConnection();
-			print(connection, toPrint, generateUnqiueName());
+			print(connection, toPrint, generateUnqiueName(6));
 			closeConnection(connection);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -142,7 +146,7 @@ public class LabelPrinter extends AbstractPrinter {
 		connection.disconnect();
 	}
 
-	public static String generateUnqiueName() {
-		return RandomStringUtils.randomAlphanumeric(10) + ".zpl";
+	public static String generateUnqiueName(int length) {
+		return RandomStringUtils.randomAlphanumeric(length) + ".zpl";
 	}
 }

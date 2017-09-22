@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.notification.ContactDialog.ContactHolder;
 import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -19,6 +20,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.PatientDao;
+import org.histo.dao.PdfDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
@@ -60,6 +62,11 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PdfDAO pdfDAO;
+	
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -134,11 +141,14 @@ public class NotificationDialog extends AbstractDialog {
 
 		super.initBean(task, Dialog.NOTIFICATION);
 
-		System.out.println(task);
-
 		setActiveIndex(0);
 
-		onTabChange(null);
+		initTabs();
+		
+		// notification has been performed
+		if(task.getNotificationCompletionDate() != 0) {
+			sendTab.setNotificationCompleted(true);
+		}
 
 		return true;
 	}
@@ -227,6 +237,29 @@ public class NotificationDialog extends AbstractDialog {
 		// show dialog
 		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
+	
+	public void initTabs() {
+		mailTab.setInitialized(false);
+		mailTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
+		mailTab.updateData();
+		
+		faxTab.setInitialized(false);
+		faxTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
+		faxTab.updateData();
+		
+		letterTab.setInitialized(false);
+		letterTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
+		letterTab.updateData();
+		
+		phoneTab.setInitialized(false);
+		phoneTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
+		phoneTab.updateData();
+		
+		sendTab.setNotificationCompleted(false);
+		sendTab.setProgressPercent(0);
+		sendTab.setProgressText("");
+		sendTab.updateData();
+	}
 
 	@Getter
 	@Setter
@@ -253,6 +286,8 @@ public class NotificationDialog extends AbstractDialog {
 		protected DefaultTransformer<DocumentTemplate> templateTransformer;
 
 		protected DocumentTemplate selectedTemplate;
+		
+		protected NotificationTyp notificationTyp;
 
 		public void updateList(List<AssociatedContact> contacts, NotificationTyp notificationTyp) {
 
@@ -279,6 +314,7 @@ public class NotificationDialog extends AbstractDialog {
 
 						ContactHolder holder = new ContactHolder(associatedContact);
 						holder.setNotification(notification.get(0));
+						holder.setFaildPreviously(notification.get(0).isFailed());
 
 						switch (notificationTyp) {
 						case EMAIL:
@@ -315,7 +351,9 @@ public class NotificationDialog extends AbstractDialog {
 		}
 
 		public void renewNotification(Task task, ContactHolder contactHolder) {
+			getHolders().remove(contactHolder);
 			contactDAO.renewNotification(task, contactHolder.getContact(), contactHolder.getNotification());
+			updateList(task.getContacts(), getNotificationTyp());
 		}
 
 		@Getter
@@ -329,7 +367,17 @@ public class NotificationDialog extends AbstractDialog {
 			private String contactAddress;
 			private NotificationTyp notificationTyp;
 
+			/**
+			 * True if the notification failed on a previous notification attemt
+			 */
+			private boolean faildPreviously;
+			/**
+			 * True if e.g. the address is not correct
+			 */
 			private boolean warning;
+			/**
+			 * Warning text
+			 */
 			private String warningInfo;
 
 			public ContactHolder(AssociatedContact contact) {
@@ -354,6 +402,7 @@ public class NotificationDialog extends AbstractDialog {
 			setName("dialog.notification.tab.mail");
 			setViewID("mailTab");
 			setHolders(new ArrayList<ContactHolder>());
+			setNotificationTyp(NotificationTyp.EMAIL);
 
 			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
 					DocumentType.DIAGNOSIS_REPORT_EXTERN);
@@ -375,7 +424,7 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 
-			updateList(task.getContacts(), NotificationTyp.EMAIL);
+			updateList(task.getContacts(), getNotificationTyp());
 
 			if (!isInitialized()) {
 				DiagnosisReportMail mail = MailTemplate.getDefaultTemplate(DiagnosisReportMail.class);
@@ -406,7 +455,8 @@ public class NotificationDialog extends AbstractDialog {
 			setName("dialog.notification.tab.fax");
 			setViewID("faxTab");
 			setHolders(new ArrayList<ContactHolder>());
-
+			setNotificationTyp(NotificationTyp.FAX);
+			
 			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
 					DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
@@ -428,7 +478,7 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			updateList(task.getContacts(), NotificationTyp.FAX);
+			updateList(task.getContacts(), getNotificationTyp());
 
 			if (!isInitialized()) {
 
@@ -450,6 +500,7 @@ public class NotificationDialog extends AbstractDialog {
 			setTabName("LetterTab");
 			setName("dialog.notification.tab.letter");
 			setViewID("letterTab");
+			setNotificationTyp(NotificationTyp.LETTER);
 			setHolders(new ArrayList<ContactHolder>());
 
 			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
@@ -472,7 +523,7 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 
-			updateList(task.getContacts(), NotificationTyp.LETTER);
+			updateList(task.getContacts(), getNotificationTyp());
 
 			if (!isInitialized()) {
 				setUseTab(getHolders().size() > 0 ? true : false);
@@ -495,6 +546,7 @@ public class NotificationDialog extends AbstractDialog {
 			setName("dialog.notification.tab.phone");
 			setViewID("phoneTab");
 			setHolders(new ArrayList<ContactHolder>());
+			setNotificationTyp(NotificationTyp.PHONE);
 		}
 
 		@Override
@@ -507,7 +559,7 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 
-			updateList(task.getContacts(), NotificationTyp.PHONE);
+			updateList(task.getContacts(), getNotificationTyp());
 
 			if (!isInitialized()) {
 				setUseTab(getHolders().size() > 0 ? true : false);
@@ -539,6 +591,10 @@ public class NotificationDialog extends AbstractDialog {
 
 		private PDFContainer sendReport;
 
+		private List<PDFContainer> sendReports;
+		
+		private PDFContainer selectedSendreport;
+		
 		public SendTab() {
 			setTabName("SendTab");
 			setName("dialog.notification.tab.send");
@@ -633,6 +689,12 @@ public class NotificationDialog extends AbstractDialog {
 			}
 		}
 
+		public void reperformNotification() {
+			this.setNotificationCompleted(false);
+			initTabs();
+		}
+		
+		
 		@Async("taskExecutor")
 		public void performeNotification() {
 
@@ -660,6 +722,12 @@ public class NotificationDialog extends AbstractDialog {
 					mail.setBody(mail.getBody());
 
 					for (ContactHolder holder : mailTab.getHolders()) {
+
+						// failed and not renewed holders will not be executed
+						// again
+						if (holder.isFaildPreviously())
+							continue;
+
 						try {
 
 							// holder.getNotification().setCommentary("");
@@ -751,6 +819,10 @@ public class NotificationDialog extends AbstractDialog {
 
 					for (ContactHolder holder : faxTab.getHolders()) {
 
+						// failed and not renewed holders will not be executed again
+						if (holder.isFaildPreviously())
+							continue;
+						
 						try {
 
 							setProgressText(resourceBundle.get("pdf.notification.status.sendFax.send", locale,
@@ -809,7 +881,13 @@ public class NotificationDialog extends AbstractDialog {
 
 				if (letterTab.isUseTab()) {
 					logger.debug("letter is used");
+					
 					for (ContactHolder holder : letterTab.getHolders()) {
+						
+						// failed and not renewed holders will not be executed again
+						if (holder.isFaildPreviously())
+							continue;
+						
 						try {
 							if (faxTab.getSelectedTemplate() == null)
 								throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
@@ -906,6 +984,7 @@ public class NotificationDialog extends AbstractDialog {
 								genericDAO.save(holder.getContact());
 							}
 
+							
 							logger.debug("Saving progress, completed");
 						}
 					});
@@ -913,6 +992,12 @@ public class NotificationDialog extends AbstractDialog {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
+				task.setNotificationCompletionDate(System.currentTimeMillis());
+				
+				pdfDAO.attachPDF(getTask(), sendReport);
+				
+				genericDAO.save(task);
 
 			} catch (Exception e) {
 				e.printStackTrace();

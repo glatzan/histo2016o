@@ -1,5 +1,6 @@
 package org.histo.action.view;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StainingListAction;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.UtilDAO;
@@ -199,8 +201,14 @@ public class ReceiptlogViewHandlerAction {
 					}
 				}
 
-				if (toPrint.size() != 0)
-					userHandlerAction.getSelectedLabelPrinter().print(toPrint);
+				if (toPrint.size() != 0) {
+					try {
+						userHandlerAction.getSelectedLabelPrinter().print(toPrint);
+					} catch (CustomUserNotificationExcepetion e) {
+						// handling offline error
+						mainHandlerAction.sendGrowlMessages(e);
+					}
+				}
 
 				break;
 			default:
@@ -333,7 +341,7 @@ public class ReceiptlogViewHandlerAction {
 		printTemplate.prepareTemplate();
 		printTemplate.initData(slide.getTask(), slide, new Date(System.currentTimeMillis()));
 		printTemplate.fillTemplate();
-				
+
 		userHandlerAction.getSelectedLabelPrinter().print(printTemplate);
 
 	}

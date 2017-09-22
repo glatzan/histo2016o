@@ -24,7 +24,7 @@ public class TemplateSlideLable extends DocumentTemplate{
 	}
 
 	public void fillTemplate() {
-		String result = getContent().replaceAll("%slideNumber%",
+		String result = getFileContent().replaceAll("%slideNumber%",
 				task.getTaskID() + HistoUtil.fitString(slide.getUniqueIDinBlock(), 3, '0'));
 		result = result.replaceAll("%slideName%", task.getTaskID() + " " + slide.getSlideID());
 		result = result.replaceAll("%slideText%", slide.getCommentary());
@@ -32,7 +32,7 @@ public class TemplateSlideLable extends DocumentTemplate{
 		result = result.replaceAll("%date%",
 				ldt.format(DateTimeFormatter.ofPattern(DateFormat.GERMAN_DATE.getDateFormat())));
 
-		setContent(result);
+		setFileContent(result);
 	}
 	
 }

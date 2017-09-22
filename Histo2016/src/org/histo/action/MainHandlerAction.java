@@ -18,6 +18,7 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
+import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
@@ -173,6 +174,10 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Dialog
 	 ********************************************************/
+	public void sendGrowlMessages(CustomUserNotificationExcepetion e) {
+		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
+	}
+	
 	public void sendGrowlMessages(String headline, String message) {
 		sendGrowlMessages(headline, message, FacesMessage.SEVERITY_INFO);
 	}

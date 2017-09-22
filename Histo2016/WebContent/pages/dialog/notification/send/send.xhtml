@@ -67,21 +67,29 @@
 								value="#{emailHolder.contact.person.fullName} (#{emailHolder.contactAddress})"></h:outputLabel>
 
 							<!-- Warning -->
-							<ui:fragment rendered="#{emailHolder.warning}">
+							<ui:fragment
+								rendered="#{!emailHolder.faildPreviously and emailHolder.warning}">
 								<i class="fa fa-fw fa-exclamation-circle icon-orange"
 									title="#{emailHolder.warningInfo}" />
 							</ui:fragment>
+
+							<!-- Warning -->
+							<ui:fragment rendered="#{emailHolder.faildPreviously}">
+								<i class="fa fa-fw fa-exclamation-circle icon-red"
+									title="#{msg['dialog.medicalFindings.tab.notify.failed']} (emailHolder.notification.commentary)" />
+							</ui:fragment>
+
 						</p:column>
 
 						<!-- performed -->
 						<p:column style="width: 5%">
 							<ui:fragment
-								rendered="#{emailHolder.notification.performed and !emailHolder.notification.failed}">
+								rendered="#{!emailHolder.faildPreviously and emailHolder.notification.performed and !emailHolder.notification.failed}">
 								<i class="fa fa-fw fa-check-circle icon-green" />
 							</ui:fragment>
 
 							<ui:fragment
-								rendered="#{emailHolder.notification.performed and emailHolder.notification.failed}">
+								rendered="#{!emailHolder.faildPreviously and emailHolder.notification.performed and emailHolder.notification.failed}">
 								<i class="fa fa-fw fa-times-circle icon-red"
 									title="#{emailHolder.notification.commentary}" />
 							</ui:fragment>
@@ -129,21 +137,28 @@
 								value="#{faxHolder.contact.person.fullName} (#{faxHolder.contactAddress})"></h:outputLabel>
 
 							<!-- Warning -->
-							<ui:fragment rendered="#{faxHolder.warning}">
+							<ui:fragment
+								rendered="#{!faxHolder.faildPreviously and faxHolder.warning}">
 								<i class="fa fa-fw fa-exclamation-circle icon-orange"
 									title="#{faxHolder.warningInfo}" />
+							</ui:fragment>
+
+							<!-- Warning -->
+							<ui:fragment rendered="#{faxHolder.faildPreviously}">
+								<i class="fa fa-fw fa-exclamation-circle icon-red"
+									title="#{msg['dialog.medicalFindings.tab.notify.failed']} (#{faxHolder.notification.commentary})" />
 							</ui:fragment>
 						</p:column>
 
 						<!-- performed -->
 						<p:column style="width: 5%">
 							<ui:fragment
-								rendered="#{faxHolder.notification.performed and !faxHolder.notification.failed}">
+								rendered="#{!faxHolder.faildPreviously and faxHolder.notification.performed and !faxHolder.notification.failed}">
 								<i class="fa fa-fw fa-check-circle icon-green" />
 							</ui:fragment>
 
 							<ui:fragment
-								rendered="#{faxHolder.notification.performed and faxHolder.notification.failed}">
+								rendered="#{!faxHolder.faildPreviously and  faxHolder.notification.performed and faxHolder.notification.failed}">
 								<i class="fa fa-fw fa-times-circle icon-red"
 									title="#{faxHolder.notification.commentary}" />
 							</ui:fragment>
@@ -192,21 +207,27 @@
 							<h:outputLabel value="#{letterHolder.contact.person.fullName}" />
 
 							<!-- Warning -->
-							<ui:fragment rendered="#{letterHolder.warning}">
+							<ui:fragment rendered="#{!letterHolder.faildPreviously and letterHolder.warning}">
 								<i class="fa fa-fw fa-exclamation-circle icon-orange"
 									title="#{letterHolder.warningInfo}" />
+							</ui:fragment>
+
+							<!-- Warning -->
+							<ui:fragment rendered="#{letterHolder.faildPreviously}">
+								<i class="fa fa-fw fa-exclamation-circle icon-red"
+									title="#{msg['dialog.medicalFindings.tab.notify.failed']} (#{letterHolder.notification.commentary})" />
 							</ui:fragment>
 						</p:column>
 
 						<!-- performed -->
 						<p:column style="width: 5%">
 							<ui:fragment
-								rendered="#{letterHolder.notification.performed and !letterHolder.notification.failed}">
+								rendered="#{!letterHolder.faildPreviously and letterHolder.notification.performed and !letterHolder.notification.failed}">
 								<i class="fa fa-fw fa-check-circle icon-green" />
 							</ui:fragment>
 
 							<ui:fragment
-								rendered="#{letterHolder.notification.performed and letterHolder.notification.failed}">
+								rendered="#{!letterHolder.faildPreviously and letterHolder.notification.performed and letterHolder.notification.failed}">
 								<i class="fa fa-fw fa-times-circle icon-red"
 									title="#{letterHolder.notification.commentary}" />
 							</ui:fragment>

@@ -11,7 +11,7 @@
 		<p:panel style="width:100%;" styleClass="contentPannel">
 			<f:facet name="header">
 				<h:outputLabel
-					value="#{msg['dialog.notification.tab.send.headline']}"></h:outputLabel>
+					value="#{msg['dialog.notification.tab.status.headline']}"></h:outputLabel>
 			</f:facet>
 		</p:panel>
 
@@ -19,11 +19,19 @@
 			columnClasses="horizontalAlignCenterAll"
 			style="width:100%;margin-top:180px;">
 
-			<h:outputText
-				value="Benachrichtigung wurde bereits am xx.xx.xx druchgeführt." />
+			<h:panelGroup>
+				<h:outputText value="#{msg['dialog.notification.tab.status.text.1']}" />
+				<h:outputText style="font-weight:bold;"
+					value="#{dialogHandlerAction.notificationDialog.task.notificationCompletionDate}">
+					<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
+				</h:outputText>
+				<h:outputText value="#{msg['dialog.notification.tab.status.text.2']}" />
+			</h:panelGroup>
 
 			<p:commandButton style="margin-top:50px;"
-				value="Benachrichtigung erneut durchführen" />
+				value="#{msg['dialog.notification.tab.status.button.resend']}" update="@form"
+				actionListener="#{dialogHandlerAction.notificationDialog.sendTab.reperformNotification()}" />
+				
 		</p:panelGrid>
 	</div>
 
