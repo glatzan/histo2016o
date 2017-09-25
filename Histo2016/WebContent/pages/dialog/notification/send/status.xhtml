@@ -20,18 +20,21 @@
 			style="width:100%;margin-top:180px;">
 
 			<h:panelGroup>
-				<h:outputText value="#{msg['dialog.notification.tab.status.text.1']}" />
+				<h:outputText
+					value="#{msg['dialog.notification.tab.status.text.1']}" />
 				<h:outputText style="font-weight:bold;"
 					value="#{dialogHandlerAction.notificationDialog.task.notificationCompletionDate}">
 					<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
 				</h:outputText>
-				<h:outputText value="#{msg['dialog.notification.tab.status.text.2']}" />
+				<h:outputText
+					value="#{msg['dialog.notification.tab.status.text.2']}" />
 			</h:panelGroup>
 
 			<p:commandButton style="margin-top:50px;"
-				value="#{msg['dialog.notification.tab.status.button.resend']}" update="@form"
+				value="#{msg['dialog.notification.tab.status.button.resend']}"
+				update="@form"
 				actionListener="#{dialogHandlerAction.notificationDialog.sendTab.reperformNotification()}" />
-				
+
 		</p:panelGrid>
 	</div>
 
@@ -48,9 +51,8 @@
 				<!-- next -->
 				<p:commandButton value="Sendebericht"
 					icon="fa fa-fw fa-mail-forward"
-					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
-					update="@form" />
+					actionListener="#{dialogHandlerAction.notificationDialog.setActiveIndex(4)}"
+					update="@form" styleClass="smallButton buttonRighMarginInList" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"

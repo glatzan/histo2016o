@@ -16,10 +16,9 @@
 		</p:panel>
 
 		<p:media player="pdf"
-			value="#{dialogHandlerAction.mediaDialog.pdfContent}"
-			rendered="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer ne null}"
-			width="100%" height="630px"></p:media>
-			
+			value="#{dialogHandlerAction.mediaDialog.pdfContent}" width="100%"
+			height="490px"></p:media>
+
 	</div>
 
 	<div class="bottomDiv">
@@ -27,17 +26,32 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 			<h:panelGrid columns="1">
+				<p:selectOneMenu styleClass="smallInput"
+					converter="#{dialogHandlerAction.notificationDialog.sendTab.sendReportConverter}"
+					title="#{msg['body.worklist.header.view']}"
+					value="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer}">
 
+					<f:selectItems
+						value="#{dialogHandlerAction.mediaDialog.selectedDatalist.attachedPdfs}"
+						var="pdf"
+						itemLabel="Sendebericht #{mainHandlerAction.date(pdf.creationDate, 'HH:MM:ss - dd.mm.yyyy')}"
+						itemValue="#{pdf}" />
+
+					<p:ajax event="change" process="@this" partialSubmit="@this"
+						update=":adminForm:tabview:sendTab"></p:ajax>
+
+				</p:selectOneMenu>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" style="float:right;">
 
-				<!-- next -->
-				<p:commandButton value="Sendebericht"
-					icon="fa fa-fw fa-mail-forward"
-					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
-					update="@form" />
+				<p:commandButton value="Download"
+					icon="fa fa-download" ajax="false"
+					disabled="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer eq null}"
+					styleClass="smallButton buttonRighMarginInList">
+					<p:fileDownload
+						value="#{dialogHandlerAction.mediaDialog.pdfContent}" />
+				</p:commandButton>
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"

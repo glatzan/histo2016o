@@ -58,6 +58,10 @@
 					headerText="#{msg['dialog.notification.tab.letter.receiver.name']}"
 					style="width:auto">
 					<h:outputText value="#{holder.contact.person.fullName}" />
+					<ui:fragment rendered="#{holder.notification.failed}">
+						<i class="fa fa-fw fa-times-circle icon-red"
+							title="#{msg['dialog.notification.tab.letter.receiver.failedAndRetry']}: #{holder.notification.commentary}" />
+					</ui:fragment>
 				</p:column>
 
 				<p:column style="width:10%; text-align:center;">
@@ -66,8 +70,10 @@
 							title="#{msg['dialog.notification.tab.letter.receiver.pdf.info']}" />
 					</f:facet>
 
+					<!-- add pdf, if pdf == null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null}" disabled="#{!tab.useTab}"
+						rendered="#{holder.pdf eq null and !holder.notification.failed}"
+						disabled="#{!tab.useTab}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
@@ -81,8 +87,9 @@
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>
 
+					<!-- show pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf ne null}"
+						rendered="#{holder.pdf ne null and !holder.notification.failed}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.show']}"
 						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
@@ -90,8 +97,10 @@
 						<i class="fa fa-search icon-grey" />
 					</p:commandLink>
 
+					<!-- remove pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						style="margin-left: 10px;" rendered="#{holder.pdf ne null}"
+						style="margin-left: 10px;"
+						rendered="#{holder.pdf ne null and !holder.notification.failed}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.remove']}"
 						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
 						update=":adminForm:tabview:letterTab"
@@ -100,6 +109,20 @@
 						<i class="fa fa-close icon-grey" />
 					</p:commandLink>
 
+					<!-- refresh failed notification, if = notification.failed -->
+					<p:commandLink styleClass="noUnderlineAtLink"
+						rendered="#{holder.notification.failed}"
+						update=":adminForm:tabview:letterTab"
+						title="#{msg['dialog.notification.tab.letter.receiver.renew']}"
+						execute="@this" partialSubmit="true">
+
+						<i class="fa fa-fw fa-refresh" />
+
+						<f:actionListener
+							binding="#{tab.renewNotification(dialogHandlerAction.notificationDialog.task, holder)}" />
+
+						<f:actionListener binding="#{tab.updateData()}" />
+					</p:commandLink>
 				</p:column>
 			</p:dataTable>
 		</p:panelGrid>

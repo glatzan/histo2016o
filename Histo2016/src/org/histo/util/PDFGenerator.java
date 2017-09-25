@@ -3,12 +3,14 @@ package org.histo.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.notification.NotificationDialog.AbstractTab.ContactHolder;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.DocumentType;
@@ -176,5 +178,21 @@ public class PDFGenerator {
 		}
 
 		return latest;
+	}
+
+	public static final List<PDFContainer> sortPDFListByDate(List<PDFContainer> list, boolean asc) {
+
+		// sorting
+		Collections.sort(list, (PDFContainer p1, PDFContainer p2) -> {
+			if (p1.getCreationDate() == p2.getCreationDate()) {
+				return 0;
+			} else if (p1.getCreationDate() < p2.getCreationDate()) {
+				return asc ? -1 : 1;
+			} else {
+				return asc ? 1 : -1;
+			}
+		});
+
+		return null;
 	}
 }

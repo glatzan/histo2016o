@@ -7,19 +7,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<script type="text/javascript">
-		function handleComplete(xhr, status, args) {
-			var hasEnded = args.hasEnded;
-
-			if (hasEnded == true) {
-				PF('blockUIWidget').unblock();
-				updateContent();
-			}
-
-		}
-	</script>
-
-
 	<div class="contentDiv">
 		<p:panel style="width:100%;" styleClass="contentPannel">
 			<f:facet name="header">
@@ -52,6 +39,12 @@
 							<i class="fa fa-fw fa-times-circle icon-red"
 								title="#{msg['dialog.notification.notifiy.email.disabled']}" />
 						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedMailHolders}">
+							<i class="fa fa-fw fa-exclamation-circle icon-red"
+								title="#{msg['dialog.medicalFindings.tab.notify.failed']}" />
+						</ui:fragment>
 					</h:panelGroup>
 				</p:panelGrid>
 
@@ -59,7 +52,7 @@
 					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
 					<p:dataTable var="emailHolder"
 						styleClass="noBordersAll collapsedBordersAll hide-column-names"
-						value="#{dialogHandlerAction.notificationDialog.mailTab.holders}">
+						value="#{dialogHandlerAction.notificationDialog.sendTab.currentMailHolders}">
 
 						<!-- name and email -->
 						<p:column>
@@ -67,29 +60,21 @@
 								value="#{emailHolder.contact.person.fullName} (#{emailHolder.contactAddress})"></h:outputLabel>
 
 							<!-- Warning -->
-							<ui:fragment
-								rendered="#{!emailHolder.faildPreviously and emailHolder.warning}">
+							<ui:fragment rendered="#{emailHolder.warning}">
 								<i class="fa fa-fw fa-exclamation-circle icon-orange"
 									title="#{emailHolder.warningInfo}" />
 							</ui:fragment>
-
-							<!-- Warning -->
-							<ui:fragment rendered="#{emailHolder.faildPreviously}">
-								<i class="fa fa-fw fa-exclamation-circle icon-red"
-									title="#{msg['dialog.medicalFindings.tab.notify.failed']} (emailHolder.notification.commentary)" />
-							</ui:fragment>
-
 						</p:column>
 
 						<!-- performed -->
 						<p:column style="width: 5%">
 							<ui:fragment
-								rendered="#{!emailHolder.faildPreviously and emailHolder.notification.performed and !emailHolder.notification.failed}">
+								rendered="#{emailHolder.notification.performed and !emailHolder.notification.failed}">
 								<i class="fa fa-fw fa-check-circle icon-green" />
 							</ui:fragment>
 
 							<ui:fragment
-								rendered="#{!emailHolder.faildPreviously and emailHolder.notification.performed and emailHolder.notification.failed}">
+								rendered="#{emailHolder.notification.performed and emailHolder.notification.failed}">
 								<i class="fa fa-fw fa-times-circle icon-red"
 									title="#{emailHolder.notification.commentary}" />
 							</ui:fragment>
@@ -122,6 +107,12 @@
 							<i class="fa fa-fw fa-times-circle icon-red"
 								title="#{msg['dialog.notification.notifiy.fax.disabled']}" />
 						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedFaxHolders}">
+							<i class="fa fa-fw fa-exclamation-circle icon-red"
+								title="#{msg['dialog.medicalFindings.tab.notify.failed']}" />
+						</ui:fragment>
 					</h:panelGroup>
 				</p:panelGrid>
 
@@ -129,7 +120,7 @@
 					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
 					<p:dataTable var="faxHolder"
 						styleClass="noBordersAll collapsedBordersAll hide-column-names"
-						value="#{dialogHandlerAction.notificationDialog.faxTab.holders}">
+						value="#{dialogHandlerAction.notificationDialog.sendTab.currentFaxHolders}">
 
 						<!-- name and fax -->
 						<p:column>
@@ -137,28 +128,22 @@
 								value="#{faxHolder.contact.person.fullName} (#{faxHolder.contactAddress})"></h:outputLabel>
 
 							<!-- Warning -->
-							<ui:fragment
-								rendered="#{!faxHolder.faildPreviously and faxHolder.warning}">
+							<ui:fragment rendered="#{faxHolder.warning}">
 								<i class="fa fa-fw fa-exclamation-circle icon-orange"
 									title="#{faxHolder.warningInfo}" />
 							</ui:fragment>
 
-							<!-- Warning -->
-							<ui:fragment rendered="#{faxHolder.faildPreviously}">
-								<i class="fa fa-fw fa-exclamation-circle icon-red"
-									title="#{msg['dialog.medicalFindings.tab.notify.failed']} (#{faxHolder.notification.commentary})" />
-							</ui:fragment>
 						</p:column>
 
 						<!-- performed -->
 						<p:column style="width: 5%">
 							<ui:fragment
-								rendered="#{!faxHolder.faildPreviously and faxHolder.notification.performed and !faxHolder.notification.failed}">
+								rendered="#{faxHolder.notification.performed and !faxHolder.notification.failed}">
 								<i class="fa fa-fw fa-check-circle icon-green" />
 							</ui:fragment>
 
 							<ui:fragment
-								rendered="#{!faxHolder.faildPreviously and  faxHolder.notification.performed and faxHolder.notification.failed}">
+								rendered="#{faxHolder.notification.performed and faxHolder.notification.failed}">
 								<i class="fa fa-fw fa-times-circle icon-red"
 									title="#{faxHolder.notification.commentary}" />
 							</ui:fragment>
@@ -193,6 +178,12 @@
 							<i class="fa fa-fw fa-times-circle icon-red"
 								title="#{msg['dialog.notification.notifiy.letter.disabled']}" />
 						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedLetterHolders}">
+							<i class="fa fa-fw fa-exclamation-circle icon-red"
+								title="#{msg['dialog.medicalFindings.tab.notify.failed']}" />
+						</ui:fragment>
 					</h:panelGroup>
 				</p:panelGrid>
 
@@ -200,34 +191,29 @@
 					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
 					<p:dataTable var="letterHolder"
 						styleClass="noBordersAll collapsedBordersAll hide-column-names"
-						value="#{dialogHandlerAction.notificationDialog.letterTab.holders}">
+						value="#{dialogHandlerAction.notificationDialog.sendTab.currentLetterHolders}">
 
 						<!-- name -->
 						<p:column>
 							<h:outputLabel value="#{letterHolder.contact.person.fullName}" />
 
 							<!-- Warning -->
-							<ui:fragment rendered="#{!letterHolder.faildPreviously and letterHolder.warning}">
+							<ui:fragment rendered="#{letterHolder.warning}">
 								<i class="fa fa-fw fa-exclamation-circle icon-orange"
 									title="#{letterHolder.warningInfo}" />
 							</ui:fragment>
 
-							<!-- Warning -->
-							<ui:fragment rendered="#{letterHolder.faildPreviously}">
-								<i class="fa fa-fw fa-exclamation-circle icon-red"
-									title="#{msg['dialog.medicalFindings.tab.notify.failed']} (#{letterHolder.notification.commentary})" />
-							</ui:fragment>
 						</p:column>
 
 						<!-- performed -->
 						<p:column style="width: 5%">
 							<ui:fragment
-								rendered="#{!letterHolder.faildPreviously and letterHolder.notification.performed and !letterHolder.notification.failed}">
+								rendered="#{letterHolder.notification.performed and !letterHolder.notification.failed}">
 								<i class="fa fa-fw fa-check-circle icon-green" />
 							</ui:fragment>
 
 							<ui:fragment
-								rendered="#{!letterHolder.faildPreviously and letterHolder.notification.performed and letterHolder.notification.failed}">
+								rendered="#{letterHolder.notification.performed and letterHolder.notification.failed}">
 								<i class="fa fa-fw fa-times-circle icon-red"
 									title="#{letterHolder.notification.commentary}" />
 							</ui:fragment>
@@ -296,12 +282,10 @@
 				stop="#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
 				partialSubmit="true"
 				update="progressLable mailTable faxTable phoneTable letterTable"
-				interval="1" oncprocess="@this"
-				listener="#{dialogHandlerAction.notificationDialog.sendTab.updateStatus()}"
-				oncomplete="handleComplete(xhr, status, args)" />
+				interval="1" oncprocess="@this" />
 
-			<p:remoteCommand name="updateContent"
-				update=":adminForm:tabview:sendTab"></p:remoteCommand>
+			<p:remoteCommand name="updateContent" 
+				update="@form"></p:remoteCommand>
 
 		</p:panelGrid>
 

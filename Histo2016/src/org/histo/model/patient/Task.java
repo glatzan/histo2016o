@@ -409,6 +409,8 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 			return getContacts().stream().anyMatch(p -> p.equals(associatedContact));
 		return false;
 	}
+	
+	
 
 	/********************************************************
 	 * Transient

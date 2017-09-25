@@ -1,6 +1,7 @@
 package org.histo.action.dialog.media;
 
 import java.io.ByteArrayInputStream;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -119,8 +120,8 @@ public class MediaDialog extends AbstractDialog {
 	private boolean showAutoMoveOption;
 
 	/**
-	 * If advance copy mode is enabled, the selected file will be copied to these
-	 * lists
+	 * If advance copy mode is enabled, the selected file will be copied to
+	 * these lists
 	 */
 	private HasDataList[] autoCopyModeTargetLists;
 
@@ -201,9 +202,36 @@ public class MediaDialog extends AbstractDialog {
 
 		return true;
 	}
-	
-	public boolean initiBeanForExternalView(PDFContainer container) {
-		setTemporaryPdfContainer(container);
+
+	public boolean initiBeanForExternalView(List<PDFContainer> pdfList, PDFContainer selectedPDf) {
+		setDataLists(new HasDataList[] { new HasDataList() {
+
+			private List<PDFContainer> list = pdfList;
+
+			@Override
+			public long getId() {
+				return 1;
+			}
+
+			@Override
+			public List<PDFContainer> getAttachedPdfs() {
+				return list;
+			}
+
+			@Override
+			public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
+				list = attachedPdfs;
+			}
+
+			@Override
+			public String getDatalistIdentifier() {
+				return "";
+			}
+		} });
+
+		setSelectedDatalist(getDataLists()[0]);
+
+		setTemporaryPdfContainer(selectedPDf);
 		return true;
 	}
 
