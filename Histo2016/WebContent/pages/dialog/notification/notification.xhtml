@@ -17,13 +17,6 @@
 <h:body styleClass="settingsDialogLayout">
 	<h:form id="adminForm">
 
-		<script type="text/javascript">
-			function chagneTab(index) {
-				PF('tabview').select(index);
-			}
-		</script>
-
-
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
@@ -58,6 +51,7 @@
 
 			</p:tabView>
 			<p:remoteCommand name="changeTab" process="@form" />
+			<p:remoteCommand name="updateContent" update=":adminForm:tabview:sendTab"></p:remoteCommand>
 		</p:panel>
 		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>

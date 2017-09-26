@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.histo.action.DialogHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.notification.ContactDialog.ContactHolder;
 import org.histo.action.dialog.print.PrintDialog;
@@ -105,6 +106,12 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private ContactDAO contactDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
+
+	
 	private int activeIndex = 0;
 
 	private MailTab mailTab;
@@ -147,11 +154,6 @@ public class NotificationDialog extends AbstractDialog {
 		setActiveIndex(0);
 
 		initTabs();
-
-		// notification has been performed
-		if (task.getNotificationCompletionDate() != 0) {
-			sendTab.setNotificationCompleted(true);
-		}
 
 		return true;
 	}
@@ -243,24 +245,18 @@ public class NotificationDialog extends AbstractDialog {
 
 	public void initTabs() {
 		mailTab.setInitialized(false);
-		mailTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
 		mailTab.updateData();
 
 		faxTab.setInitialized(false);
-		faxTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
 		faxTab.updateData();
 
 		letterTab.setInitialized(false);
-		letterTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
 		letterTab.updateData();
 
 		phoneTab.setInitialized(false);
-		phoneTab.setHolders(new ArrayList<NotificationDialog.AbstractTab.ContactHolder>());
 		phoneTab.updateData();
 
-		sendTab.setNotificationCompleted(false);
-		sendTab.setProgressPercent(0);
-		sendTab.setProgressText("");
+		sendTab.setInitialized(false);
 		sendTab.updateData();
 	}
 
@@ -334,6 +330,8 @@ public class NotificationDialog extends AbstractDialog {
 
 								break;
 							}
+						} else {
+							holder.setContactAddress(associatedContact.getCustomContact());
 						}
 
 						getHolders().add(holder);
@@ -417,17 +415,7 @@ public class NotificationDialog extends AbstractDialog {
 			setTabName("MailTab");
 			setName("dialog.notification.tab.mail");
 			setViewID("mailTab");
-			setHolders(new ArrayList<ContactHolder>());
 			setNotificationTyp(NotificationTyp.EMAIL);
-
-			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-					DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
-
-			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
-
-			setSelectedTemplate(null);
 		}
 
 		@Override
@@ -440,9 +428,22 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 
-			updateList(task.getContacts(), getNotificationTyp());
-
+			// init after constructor
 			if (!isInitialized()) {
+				
+				// cleaing all holders
+				setHolders(new ArrayList<ContactHolder>());
+				updateList(task.getContacts(), getNotificationTyp());
+
+				DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+						DocumentType.DIAGNOSIS_REPORT_EXTERN);
+
+				setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+
+				setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+
+				setSelectedTemplate(null);
+
 				DiagnosisReportMail mail = MailTemplate.getDefaultTemplate(DiagnosisReportMail.class);
 				mail.prepareTemplate(task.getPatient(), task, null);
 				mail.fillTemplate();
@@ -455,9 +456,15 @@ public class NotificationDialog extends AbstractDialog {
 				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
+				
 				logger.debug("Mails initialized");
+			}else {
+				updateList(task.getContacts(), getNotificationTyp());
 			}
+			
+			
 		}
+
 	}
 
 	@Getter
@@ -470,19 +477,7 @@ public class NotificationDialog extends AbstractDialog {
 			setTabName("FaxTab");
 			setName("dialog.notification.tab.fax");
 			setViewID("faxTab");
-			setHolders(new ArrayList<ContactHolder>());
 			setNotificationTyp(NotificationTyp.FAX);
-
-			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-					DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
-
-			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
-
-			setSelectedTemplate(null);
-
-			setAutoSendFax(true);
 		}
 
 		@Override
@@ -494,14 +489,30 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
-			updateList(task.getContacts(), getNotificationTyp());
 
 			if (!isInitialized()) {
+
+				// clearing all holders
+				setHolders(new ArrayList<ContactHolder>());
+				updateList(task.getContacts(), getNotificationTyp());
+
+				DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+						DocumentType.DIAGNOSIS_REPORT_EXTERN);
+
+				setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+
+				setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+
+				setSelectedTemplate(null);
+
+				setAutoSendFax(true);
 
 				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
 				logger.debug("Fax initialized");
+			}else {
+				updateList(task.getContacts(), getNotificationTyp());
 			}
 
 		}
@@ -512,21 +523,13 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter
 	public class LetterTab extends AbstractTab {
 
+		private boolean print;
+
 		public LetterTab() {
 			setTabName("LetterTab");
 			setName("dialog.notification.tab.letter");
 			setViewID("letterTab");
 			setNotificationTyp(NotificationTyp.LETTER);
-			setHolders(new ArrayList<ContactHolder>());
-
-			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-					DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
-
-			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
-
-			setSelectedTemplate(null);
 		}
 
 		@Override
@@ -539,14 +542,32 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 
-			updateList(task.getContacts(), getNotificationTyp());
+			
 
 			if (!isInitialized()) {
+				
+				// clearing all holders
+				setHolders(new ArrayList<ContactHolder>());
+				updateList(task.getContacts(), getNotificationTyp());
+				
+				setPrint(true);
+
+				DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+						DocumentType.DIAGNOSIS_REPORT_EXTERN);
+
+				setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+
+				setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+
+				setSelectedTemplate(null);
+
 				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
 
 				logger.debug("Letter initialized");
+			}else {
+				updateList(task.getContacts(), getNotificationTyp());
 			}
 
 		}
@@ -561,7 +582,6 @@ public class NotificationDialog extends AbstractDialog {
 			setTabName("PhoneTab");
 			setName("dialog.notification.tab.phone");
 			setViewID("phoneTab");
-			setHolders(new ArrayList<ContactHolder>());
 			setNotificationTyp(NotificationTyp.PHONE);
 		}
 
@@ -575,14 +595,19 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 
-			updateList(task.getContacts(), getNotificationTyp());
-
 			if (!isInitialized()) {
+				
+				// clearing all holders
+				setHolders(new ArrayList<ContactHolder>());
+				updateList(task.getContacts(), getNotificationTyp());
+				
 				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
 
 				logger.debug("Phone initialized");
+			}else {
+				updateList(task.getContacts(), getNotificationTyp());
 			}
 
 		}
@@ -618,12 +643,6 @@ public class NotificationDialog extends AbstractDialog {
 			setTabName("SendTab");
 			setName("dialog.notification.tab.send");
 			setViewID("sendTab");
-			setNotificationCompleted(false);
-			setNotificationRunning(false);
-			setProgressPercent(0);
-			setProgressText("");
-			setSteps(1);
-			setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		}
 
 		@Override
@@ -635,6 +654,25 @@ public class NotificationDialog extends AbstractDialog {
 
 		@Override
 		public void updateData() {
+
+			if (!isInitialized()) {
+				sendTab.setProgressPercent(0);
+				sendTab.setProgressText("");
+				setNotificationCompleted(false);
+				setNotificationRunning(false);
+				setProgressPercent(0);
+				setProgressText("");
+				setSteps(1);
+				setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+				
+				// notification has been performed
+				if (getTask().getNotificationCompletionDate() != 0) {
+					setNotificationCompleted(true);
+				}
+				
+				setInitialized(true);
+			}
+
 			if (!isNotificationCompleted()) {
 
 				setFailedMailHolders(mailTab.getHolders().stream().anyMatch(p -> p.isFaildPreviously()));
@@ -716,14 +754,14 @@ public class NotificationDialog extends AbstractDialog {
 				// updating mediadialog
 				dialogHandlerAction.getMediaDialog().initiBeanForExternalView(lists,
 						PDFGenerator.getLatestPDFofType(lists));
-				
+
 				setSendReportConverter(new DefaultTransformer<>(lists));
 			}
 		}
 
 		public void reperformNotification() {
-			this.setNotificationCompleted(false);
 			initTabs();
+			this.setNotificationCompleted(false);
 		}
 
 		// @Async("taskExecutor")
@@ -815,6 +853,8 @@ public class NotificationDialog extends AbstractDialog {
 
 							boolean success = false;
 
+							holder.getNotification().setContactAddress(holder.getContactAddress());
+
 							if (!globalSettings.getProgramSettings().isOffline())
 								success = globalSettings.getMailHandler().sendMail(holder.contactAddress, cloneMail);
 							else {
@@ -863,9 +903,6 @@ public class NotificationDialog extends AbstractDialog {
 							setProgressText(resourceBundle.get("pdf.notification.status.sendFax.send", locale,
 									holder.getContactAddress()));
 
-							if (faxTab.getSelectedTemplate() == null)
-								throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
-
 							if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
 								throw new IllegalArgumentException("pdf.notification.status.sendFax.error.noNumber");
 
@@ -874,27 +911,36 @@ public class NotificationDialog extends AbstractDialog {
 								throw new IllegalArgumentException(
 										"pdf.notification.status.sendFax.error.numberNotValid");
 
-							setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
-									holder.getContact().getPerson().getFullName()));
+							// only generate pdf is no pdf was selected
+							if (holder.getPdf() == null) {
+								if (faxTab.getSelectedTemplate() == null)
+									throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
 
-							// generating pdf
-							((TemplateDiagnosisReport) faxTab.getSelectedTemplate()).initData(getTask().getPatient(),
-									getTask(), holder.getContact());
-							PDFContainer container = ((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
-									.generatePDF(new PDFGenerator());
+								setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
+										holder.getContact().getPerson().getFullName()));
 
-							if (container == null)
-								throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
+								// generating pdf
+								((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
+										.initData(getTask().getPatient(), getTask(), holder.getContact());
+								PDFContainer container = ((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
+										.generatePDF(new PDFGenerator());
+
+								if (container == null)
+									throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
+
+								holder.setPdf(container);
+							}
+
+							holder.getNotification().setContactAddress(holder.getContactAddress());
 
 							// offline mode
 							if (!globalSettings.getProgramSettings().isOffline())
-								globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), container);
+								globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), holder.getPdf());
 							else {
 								logger.debug("Offline mode, not sending email!");
 								throw new IllegalArgumentException("pdf.notification.status.sendFax.error.offline");
 							}
 
-							holder.setPdf(container);
 							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
@@ -925,25 +971,35 @@ public class NotificationDialog extends AbstractDialog {
 							continue;
 
 						try {
-							if (faxTab.getSelectedTemplate() == null)
-								throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
+							// if
+							// (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
+							// throw new IllegalArgumentException(
+							// "pdf.notification.status.sendLetter.error.noAddress");
 
-							if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
-								throw new IllegalArgumentException(
-										"pdf.notification.status.sendLetter.error.noAddress");
+							// only generate pdf if no pdf was selected
+							if (holder.getPdf() == null) {
+								if (letterTab.getSelectedTemplate() == null)
+									throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
 
-							setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
-									holder.getContact().getPerson().getFullName()));
+								setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
+										holder.getContact().getPerson().getFullName()));
 
-							((TemplateDiagnosisReport) letterTab.getSelectedTemplate()).initData(getTask().getPatient(),
-									getTask(), holder.getContact());
-							PDFContainer container = ((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
-									.generatePDF(new PDFGenerator());
+								((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
+										.initData(getTask().getPatient(), getTask(), holder.getContact());
+								PDFContainer container = ((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
+										.generatePDF(new PDFGenerator());
 
-							if (container == null)
-								throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
+								if (container == null)
+									throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
+								holder.setPdf(container);
+							}
 
-							holder.setPdf(container);
+							if(letterTab.isPrint()) {
+								setProgressText(resourceBundle.get("pdf.notification.status.pdf.printing", locale));
+								userHandlerAction.getSelectedPrinter().print(holder.getPdf());
+							}
+							
+							holder.getNotification().setContactAddress(holder.getContactAddress());
 							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
@@ -969,6 +1025,7 @@ public class NotificationDialog extends AbstractDialog {
 						holder.getNotification().setActive(false);
 						holder.getNotification().setPerformed(true);
 						holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
+						holder.getNotification().setContactAddress(holder.getContactAddress());
 					}
 
 					progressStep();

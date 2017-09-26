@@ -23,14 +23,15 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.fax.use']}" />
 			<p:selectBooleanCheckbox value="#{tab.useTab}"
 				styleClass="smallCheckbox">
-				<p:ajax event="change" partialSubmit="true" process="@this"
-					update=":adminForm:tabview:faxTab" />
+				<p:ajax event="change" process="@this" partialSubmit="true"
+					update=":adminForm:tabview:faxTab"></p:ajax>
 			</p:selectBooleanCheckbox>
 
 			<!-- Send fax -->
 			<h:outputLabel value="#{msg['dialog.notification.tab.fax.send']}" />
 			<p:selectBooleanCheckbox value="#{tab.autoSendFax}"
 				disabled="#{!tab.useTab}" styleClass="smallCheckbox">
+				<p:ajax event="change" update=":adminForm:tabview:faxTab"></p:ajax>
 			</p:selectBooleanCheckbox>
 
 			<!-- pdf template -->
@@ -71,10 +72,9 @@
 				<p:column
 					headerText="#{msg['dialog.notification.tab.fax.receiver.number']}"
 					style="width:auto">
-					<p:inputText
-						value="#{holder.contactAddress}"
-						disabled="#{!tab.useTab or holder.notification.failed}" styleClass="smallInput"
-						style="width:98%" />
+					<p:inputText value="#{holder.contactAddress}"
+						disabled="#{!tab.useTab or holder.notification.failed}"
+						styleClass="smallInput" style="width:98%" />
 				</p:column>
 
 				<!-- options -->

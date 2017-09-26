@@ -5,6 +5,9 @@
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
 Merke: keine kurzbefunde
 
+
+-> https://stackoverflow.com/questions/18994288/primefaces-update-pdf-media-not-working
+
 TODO: Notification! -> send report latex, save sendreport, reperform send
 TODO: Phasen + Phasen Buttons im Menu überprüfen
 

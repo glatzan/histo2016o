@@ -283,10 +283,6 @@
 				partialSubmit="true"
 				update="progressLable mailTable faxTable phoneTable letterTable"
 				interval="1" oncprocess="@this" />
-
-			<p:remoteCommand name="updateContent" 
-				update="@form"></p:remoteCommand>
-
 		</p:panelGrid>
 
 	</div>
@@ -295,8 +291,24 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
-			<h:panelGrid columns="1">
+			<h:panelGrid columns="2">
 
+				<!-- print -->
+				<h:outputLabel value="#{msg['dialog.notification.tab.send.print']} " title="#{msg['dialog.notification.tab.send.print.text']}" />
+
+				<p:selectOneMenu styleClass="customSerachSelectMenu" id="printerfax"
+					title="#{msg['dialog.print.selectPrinter']}"
+					panelStyleClass="customSerachSelectMenuPanel"
+					converter="#{globalSettings.printerListTransformer}"
+					value="#{userHandlerAction.selectedPrinter}" filter="true"
+					filterMatchMode="contains" style="margin-left:5px;">
+
+					<f:selectItems value="#{globalSettings.printerList}" var="printer"
+						itemLabel="#{printer.name}" itemValue="#{printer}" />
+
+					<p:ajax event="change" process=":adminForm:tabview:faxTab"
+						partialSubmit="true" update=":adminForm:tabview:faxTab"></p:ajax>
+				</p:selectOneMenu>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" style="float:right;">
