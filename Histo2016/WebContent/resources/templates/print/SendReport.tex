@@ -80,7 +80,7 @@ $!patient.piz\\
 			 \fs $!email.contact.person.fullName ($!email.contactAddress) & \fs #if ($email.notification.performed) #if(!$email.notification.failed) \textcolor{green}{OK #if($email.pdf) (PDF) #end} #else \textcolor{red}{$!email.notification.commentary} #end #else - #end \\
 		#end
 	#else
-		Keine Email-Benachrichtigung
+		\fs Keine Email-Benachrichtigung
 	#end  
 	\end{tabular}
 }
@@ -93,7 +93,7 @@ $!patient.piz\\
 			 \fs $!fax.contact.person.fullName ($!fax.contactAddress) & \fs #if ($fax.notification.performed) #if(!$fax.notification.failed) \textcolor{green}{OK} #else \textcolor{red}{$!fax.notification.commentary} #end #else - #end \\
 		#end
 	#else
-		Keine Fax-Benachrichtigung
+		\fs Keine Fax-Benachrichtigung
 	#end  
 	\end{tabular}
 }
@@ -106,7 +106,7 @@ $!patient.piz\\
 			 \fs $!letter.contact.person.fullName & \fs #if ($letter.notification.performed) #if(!$letter.notification.failed) \textcolor{green}{OK} #else \textcolor{red}{$!letter.notification.commentary} #end #else - #end \\
 		#end
 	#else
-		Keine Brief-Benachrichtigung
+		\fs Keine Brief-Benachrichtigung
 	#end  
 	\end{tabular}
 }
@@ -116,10 +116,10 @@ $!patient.piz\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
 	#if($usePhone)
 		#foreach( $phone in $phoneHolders)
-			$!phone.contact.person.fullName ($!phone.contactAddress) & - \\
+			\fs $!phone.contact.person.fullName ($!phone.contactAddress) & \fs - \\
 		#end
 	#else
-		Keine Telefon-Benachrichtigung
+		\fs Keine Telefon-Benachrichtigung
 	#end  
 	\end{tabular}
 }

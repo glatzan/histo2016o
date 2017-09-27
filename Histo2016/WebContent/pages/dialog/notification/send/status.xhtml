@@ -30,6 +30,7 @@
 					value=" #{msg['dialog.notification.tab.status.text.2']}" />
 			</h:panelGroup>
 
+			<!-- reperform send -->
 			<p:commandButton style="margin-top:50px;"
 				value="#{msg['dialog.notification.tab.status.button.resend']}"
 				update="@form"
@@ -43,15 +44,14 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 			<h:panelGrid columns="1">
-
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" style="float:right;">
-
-				<!-- next -->
-				<p:commandButton value="Sendebericht"
+				<!-- sendreport -->
+				<p:commandButton
+					value="#{msg['dialog.notification.tab.status.button.sendReport']}"
 					icon="fa fa-fw fa-mail-forward"
-					actionListener="#{dialogHandlerAction.notificationDialog.setActiveIndex(4)}"
+					actionListener="#{dialogHandlerAction.notificationDialog.setActiveIndex(5)}"
 					update="@form" styleClass="smallButton buttonRighMarginInList" />
 
 				<!-- close -->

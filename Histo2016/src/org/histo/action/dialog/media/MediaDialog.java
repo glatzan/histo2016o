@@ -288,6 +288,7 @@ public class MediaDialog extends AbstractDialog {
 			// that it will generate right URL.
 			return new DefaultStreamedContent();
 		} else {
+			System.out.println("calling");
 			return new DefaultStreamedContent(new ByteArrayInputStream(getTemporaryPdfContainer().getData()),
 					"application/pdf", getTemporaryPdfContainer().getName());
 		}

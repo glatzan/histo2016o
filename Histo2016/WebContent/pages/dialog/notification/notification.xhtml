@@ -17,10 +17,24 @@
 <h:body styleClass="settingsDialogLayout">
 	<h:form id="adminForm">
 
+		<script type="text/javascript">
+			function chagneTab(index) {
+				PF('tabview').select(index);
+			}
+		</script>
+
+
 		<div class="defaulDilaogHeaderDivWithBackground">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.notification.head']}" />
+				<h:panelGroup>
+					<!-- notification -->
+					<h:outputLabel value="#{msg['dialog.notification.head']}"
+						rendered="#{!dialogHandlerAction.notificationDialog.sendTab.reperformSend}" />
+					<!-- reperform notification -->
+					<h:outputLabel value="#{msg['dialog.notification.head.reperform']}"
+						rendered="#{dialogHandlerAction.notificationDialog.sendTab.reperformSend}" />
+				</h:panelGroup>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}">
@@ -31,6 +45,7 @@
 
 		<p:panel styleClass="settingsPannel">
 			<p:tabView orientation="left" id="tabview" onTabChange="changeTab()"
+				widgetVar="tabview"
 				activeIndex="#{dialogHandlerAction.notificationDialog.activeIndex}"
 				styleClass="settingsTabView">
 
@@ -41,7 +56,7 @@
 				<c:forEach items="#{dialogHandlerAction.notificationDialog.tabs}"
 					var="tab" varStatus="loop">
 
-					<p:tab title="#{msg[tab.name]}">
+					<p:tab title="#{msg[tab.name]}" disabled="#{tab.disabled}">
 						<h:panelGroup id="#{tab.viewID}">
 							<ui:include src="#{tab.getCenterView()}" />
 						</h:panelGroup>
@@ -51,7 +66,7 @@
 
 			</p:tabView>
 			<p:remoteCommand name="changeTab" process="@form" />
-			<p:remoteCommand name="updateContent" update=":adminForm:tabview:sendTab"></p:remoteCommand>
+			<p:remoteCommand name="updateContent" update="@form"></p:remoteCommand>
 		</p:panel>
 		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>

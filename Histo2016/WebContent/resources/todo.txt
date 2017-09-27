@@ -6,9 +6,8 @@
 Merke: keine kurzbefunde
 
 
--> https://stackoverflow.com/questions/18994288/primefaces-update-pdf-media-not-working
-
-TODO: Notification! -> send report latex, save sendreport, reperform send
+TODO: associated contact und associated contact notification haben beide ein custom addres field, von associated contact diese entfernen
+TODO: Notification! ->  save sendreport, 
 TODO: Phasen + Phasen Buttons im Menu überprüfen
 
 TODO: batches gui für färbungen
@@ -36,6 +35,7 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: reperform send, send report latex
 ++++: Labelprinten überprüfen ob richtig geht
 ++++: Ldap, Fax überprüfen ob richtig gehen
 ++++: Global settings thread save -> LDAP HANDLER, LabelPrinter (stateless machen)

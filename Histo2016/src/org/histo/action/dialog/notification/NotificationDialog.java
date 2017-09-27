@@ -111,7 +111,6 @@ public class NotificationDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
 
-	
 	private int activeIndex = 0;
 
 	private MailTab mailTab;
@@ -124,7 +123,9 @@ public class NotificationDialog extends AbstractDialog {
 
 	private SendTab sendTab;
 
-	public AbstractTab[] tabs = new AbstractTab[5];
+	private SendReportTab sendReportTab;
+
+	public AbstractTab[] tabs = new AbstractTab[6];
 
 	public void initAndPrepareBean(Task task) {
 		if (initBean(task))
@@ -147,13 +148,17 @@ public class NotificationDialog extends AbstractDialog {
 			tabs[2] = letterTab = new LetterTab();
 			tabs[3] = phoneTab = new PhoneTab();
 			tabs[4] = sendTab = new SendTab();
+			tabs[5] = sendReportTab = new SendReportTab();
 		}
 
 		super.initBean(task, Dialog.NOTIFICATION);
 
-		setActiveIndex(0);
+		// resetting even resend settings
+		sendTab.setReperformSend(false);
 
 		initTabs();
+
+		setActiveIndex(0);
 
 		return true;
 	}
@@ -244,6 +249,7 @@ public class NotificationDialog extends AbstractDialog {
 	}
 
 	public void initTabs() {
+
 		mailTab.setInitialized(false);
 		mailTab.updateData();
 
@@ -258,6 +264,8 @@ public class NotificationDialog extends AbstractDialog {
 
 		sendTab.setInitialized(false);
 		sendTab.updateData();
+
+		sendReportTab.updateData();
 	}
 
 	@Getter
@@ -279,6 +287,8 @@ public class NotificationDialog extends AbstractDialog {
 		protected boolean initialized;
 
 		protected boolean useTab;
+
+		private boolean disabled;
 
 		protected List<DocumentTemplate> templateList;
 
@@ -331,7 +341,7 @@ public class NotificationDialog extends AbstractDialog {
 								break;
 							}
 						} else {
-							holder.setContactAddress(associatedContact.getCustomContact());
+							holder.setContactAddress(notification.get(0).getContactAddress());
 						}
 
 						getHolders().add(holder);
@@ -430,7 +440,7 @@ public class NotificationDialog extends AbstractDialog {
 
 			// init after constructor
 			if (!isInitialized()) {
-				
+
 				// cleaing all holders
 				setHolders(new ArrayList<ContactHolder>());
 				updateList(task.getContacts(), getNotificationTyp());
@@ -456,13 +466,12 @@ public class NotificationDialog extends AbstractDialog {
 				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
-				
+
 				logger.debug("Mails initialized");
-			}else {
+			} else {
 				updateList(task.getContacts(), getNotificationTyp());
 			}
-			
-			
+
 		}
 
 	}
@@ -472,6 +481,8 @@ public class NotificationDialog extends AbstractDialog {
 	public class FaxTab extends AbstractTab {
 
 		private boolean autoSendFax;
+
+		private boolean print;
 
 		public FaxTab() {
 			setTabName("FaxTab");
@@ -507,11 +518,13 @@ public class NotificationDialog extends AbstractDialog {
 
 				setAutoSendFax(true);
 
+				setPrint(false);
+
 				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
 				logger.debug("Fax initialized");
-			}else {
+			} else {
 				updateList(task.getContacts(), getNotificationTyp());
 			}
 
@@ -542,14 +555,12 @@ public class NotificationDialog extends AbstractDialog {
 		@Override
 		public void updateData() {
 
-			
-
 			if (!isInitialized()) {
-				
+
 				// clearing all holders
 				setHolders(new ArrayList<ContactHolder>());
 				updateList(task.getContacts(), getNotificationTyp());
-				
+
 				setPrint(true);
 
 				DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
@@ -566,7 +577,7 @@ public class NotificationDialog extends AbstractDialog {
 				setInitialized(true);
 
 				logger.debug("Letter initialized");
-			}else {
+			} else {
 				updateList(task.getContacts(), getNotificationTyp());
 			}
 
@@ -596,17 +607,17 @@ public class NotificationDialog extends AbstractDialog {
 		public void updateData() {
 
 			if (!isInitialized()) {
-				
+
 				// clearing all holders
 				setHolders(new ArrayList<ContactHolder>());
 				updateList(task.getContacts(), getNotificationTyp());
-				
+
 				setUseTab(getHolders().size() > 0 ? true : false);
 
 				setInitialized(true);
 
 				logger.debug("Phone initialized");
-			}else {
+			} else {
 				updateList(task.getContacts(), getNotificationTyp());
 			}
 
@@ -630,14 +641,14 @@ public class NotificationDialog extends AbstractDialog {
 
 		private Locale locale;
 
-		private DefaultTransformer<PDFContainer> sendReportConverter;
-
 		private List<ContactHolder> currentMailHolders;
 		private boolean failedMailHolders;
 		private List<ContactHolder> currentFaxHolders;
 		private boolean failedFaxHolders;
 		private List<ContactHolder> currentLetterHolders;
 		private boolean failedLetterHolders;
+
+		private boolean reperformSend;
 
 		public SendTab() {
 			setTabName("SendTab");
@@ -649,7 +660,7 @@ public class NotificationDialog extends AbstractDialog {
 		public String getCenterView() {
 			if (!isNotificationCompleted())
 				return "send/send.xhtml";
-			return "send/sendReport.xhtml";
+			return "send/status.xhtml";
 		}
 
 		@Override
@@ -664,12 +675,29 @@ public class NotificationDialog extends AbstractDialog {
 				setProgressText("");
 				setSteps(1);
 				setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
-				
-				// notification has been performed
-				if (getTask().getNotificationCompletionDate() != 0) {
-					setNotificationCompleted(true);
+
+				if (isReperformSend()) {
+					setNotificationCompleted(false);
+				} else {
+					// notification has been performed
+					if (getTask().getNotificationCompletionDate() != 0) {
+						setNotificationCompleted(true);
+					}
 				}
-				
+
+				mailTab.setDisabled(sendTab.isNotificationCompleted());
+				faxTab.setDisabled(sendTab.isNotificationCompleted());
+				letterTab.setDisabled(sendTab.isNotificationCompleted());
+				phoneTab.setDisabled(sendTab.isNotificationCompleted());
+				sendTab.setDisabled(sendTab.isNotificationCompleted());
+
+				// if resend there is a sendreport, so the sendreport tab is
+				// shown!
+				if (!isReperformSend())
+					sendReportTab.setDisabled(!sendTab.isNotificationCompleted());
+				else
+					sendReportTab.setDisabled(false);
+
 				setInitialized(true);
 			}
 
@@ -683,10 +711,12 @@ public class NotificationDialog extends AbstractDialog {
 
 					if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
 						holder.setWarning(true);
-						holder.setWarningInfo("Keine Email angegeben");
+						holder.setWarningInfo(
+								resourceBundle.get("dialog.notification.sendProcess.mail.error.noaddress"));
 					} else if (!EmailValidator.getInstance().isValid(holder.getContactAddress())) {
 						holder.setWarning(true);
-						holder.setWarningInfo("Emailadresse ist nicht gült!");
+						holder.setWarningInfo(
+								resourceBundle.get("dialog.notification.sendProcess.mail.error.mailNotValid"));
 					} else {
 						holder.setWarning(false);
 						holder.setWarningInfo("");
@@ -704,14 +734,16 @@ public class NotificationDialog extends AbstractDialog {
 				for (ContactHolder holder : getCurrentFaxHolders()) {
 					if (faxTab.getSelectedTemplate() == null && holder.getPdf() == null) {
 						holder.setWarning(true);
-						holder.setWarningInfo("Kein Pdf auswählt");
+						holder.setWarningInfo(
+								resourceBundle.get("dialog.notification.sendProcess.pdf.error.noTemplate"));
 					} else if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
 						holder.setWarning(true);
-						holder.setWarningInfo("Keine Nummer angegeben");
+						holder.setWarningInfo(resourceBundle.get("dialog.notification.sendProcess.fax.error.nonumber"));
 					} else if (!holder.getContactAddress()
 							.matches(globalSettings.getProgramSettings().getPhoneRegex())) {
 						holder.setWarning(true);
-						holder.setWarningInfo("Nummer nicht gültig");
+						holder.setWarningInfo(
+								resourceBundle.get("dialog.notification.sendProcess.fax.error.numberNotValid"));
 					} else {
 						holder.setWarning(false);
 						holder.setWarningInfo("");
@@ -729,7 +761,8 @@ public class NotificationDialog extends AbstractDialog {
 				for (ContactHolder holder : getCurrentLetterHolders()) {
 					if (letterTab.getSelectedTemplate() == null && holder.getPdf() == null) {
 						holder.setWarning(true);
-						holder.setWarningInfo("Kein Pdf auswählt");
+						holder.setWarningInfo(
+								resourceBundle.get("dialog.notification.sendProcess.pdf.error.noTemplate"));
 					} else {
 						holder.setWarning(false);
 						holder.setWarningInfo("");
@@ -739,29 +772,20 @@ public class NotificationDialog extends AbstractDialog {
 				for (ContactHolder holder : phoneTab.getHolders()) {
 					if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
 						holder.setWarning(true);
-						holder.setWarningInfo("Keine Telefonunummer angegeben");
+						holder.setWarningInfo(
+								resourceBundle.get("dialog.notification.sendProcess.phone.error.nonumber"));
 					} else {
 						holder.setWarning(false);
 						holder.setWarningInfo("");
 					}
 				}
-			} else {
-
-				// getting all sendreports
-				List<PDFContainer> lists = PDFGenerator.getPDFsofType(task.getAttachedPdfs(),
-						DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
-
-				// updating mediadialog
-				dialogHandlerAction.getMediaDialog().initiBeanForExternalView(lists,
-						PDFGenerator.getLatestPDFofType(lists));
-
-				setSendReportConverter(new DefaultTransformer<>(lists));
 			}
 		}
 
 		public void reperformNotification() {
+			setReperformSend(true);
 			initTabs();
-			this.setNotificationCompleted(false);
+			setActiveIndex(0);
 		}
 
 		// @Async("taskExecutor")
@@ -783,7 +807,7 @@ public class NotificationDialog extends AbstractDialog {
 
 				setProgressPercent(0);
 
-				setProgressText(resourceBundle.get("pdf.notification.status.starting", locale));
+				progressStepText("dialog.notification.sendProcess.starting");
 
 				if (mailTab.isUseTab()) {
 
@@ -802,17 +826,17 @@ public class NotificationDialog extends AbstractDialog {
 
 						try {
 
-							// holder.getNotification().setCommentary("");
-							// holder.setPerformed(false);
-							// holder.getNotification().setPerformed(false);
-							// holder.getNotification().setFailed(false);
+							// copy contact address before sending -> save
+							// before error
+							holder.getNotification().setContactAddress(holder.getContactAddress());
 
 							if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
-								throw new IllegalArgumentException("pdf.notification.status.sendMail.error.noMail");
+								throw new IllegalArgumentException(
+										"dialog.notification.sendProcess.mail.error.noaddress");
 
 							if (!EmailValidator.getInstance().isValid(holder.getContactAddress()))
 								throw new IllegalArgumentException(
-										"pdf.notification.status.sendMail.error.mailNotValid");
+										"dialog.notification.sendProcess.mail.error.mailNotValid");
 
 							logger.debug("Send mail to " + holder.getContactAddress());
 
@@ -827,8 +851,8 @@ public class NotificationDialog extends AbstractDialog {
 
 								logger.debug("Creating PDF from selected template");
 
-								setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
-										holder.getContact().getPerson().getFullName()));
+								progressStepText("dialog.notification.sendProcess.pdf.generating",
+										holder.getContact().getPerson().getFullName());
 
 								// generating pdf from list
 								// Template has a TemplateDiagnosisReport
@@ -840,7 +864,8 @@ public class NotificationDialog extends AbstractDialog {
 								PDFContainer container = mailTab.getSelectedTemplate().generatePDF(new PDFGenerator());
 
 								if (container == null)
-									throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
+									throw new IllegalArgumentException(
+											"dialog.notification.sendProcess.pdf.error.failed");
 
 								cloneMail.setAttachment(container);
 								holder.setPdf(container);
@@ -848,28 +873,27 @@ public class NotificationDialog extends AbstractDialog {
 
 							logger.debug("Sending mail to " + holder.getContactAddress());
 
-							setProgressText(resourceBundle.get("pdf.notification.status.sendMail.send", locale,
-									holder.getContactAddress()));
+							progressStepText("dialog.notification.sendProcess.mail.send", holder.getContactAddress());
 
 							boolean success = false;
-
-							holder.getNotification().setContactAddress(holder.getContactAddress());
 
 							if (!globalSettings.getProgramSettings().isOffline())
 								success = globalSettings.getMailHandler().sendMail(holder.contactAddress, cloneMail);
 							else {
 								logger.debug("Offline mode, not sending email!");
-								throw new IllegalArgumentException("pdf.notification.status.sendMail.error.offline");
+								throw new IllegalArgumentException(
+										"dialog.notification.sendProcess.mail.error.offline");
 							}
 
 							if (!success)
-								throw new IllegalArgumentException("pdf.notification.status.sendMail.error.failed");
+								throw new IllegalArgumentException("dialog.notification.sendProcess.mail.error.failed");
 
 							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							progressStep(resourceBundle.get("pdf.notification.status.sendMail.success", locale,
-									holder.getContactAddress()));
+
+							progressStepText("dialog.notification.sendProcess.mail.success",
+									holder.getContactAddress());
 
 							logger.debug("Sending completed " + holder.getNotification().getCommentary());
 
@@ -878,12 +902,13 @@ public class NotificationDialog extends AbstractDialog {
 							holder.getNotification().setFailed(true);
 							holder.getNotification().setActive(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							holder.getNotification().setCommentary(
-									resourceBundle.get(e.getMessage(), locale, holder.getContactAddress()));
-							progressStep(resourceBundle.get(e.getMessage(), locale, holder.getContactAddress()));
+							holder.getNotification()
+									.setCommentary(resourceBundle.get(e.getMessage(), holder.getContactAddress()));
+							progressStepText(e.getMessage(), holder.getContactAddress());
 							logger.debug("Sending failed");
 						}
 
+						progressStep();
 					}
 				}
 
@@ -900,24 +925,29 @@ public class NotificationDialog extends AbstractDialog {
 
 						try {
 
-							setProgressText(resourceBundle.get("pdf.notification.status.sendFax.send", locale,
-									holder.getContactAddress()));
+							// copy contact address before sending -> save
+							// before error
+							holder.getNotification().setContactAddress(holder.getContactAddress());
+
+							progressStepText("dialog.notification.sendProcess.fax.send", holder.getContactAddress());
 
 							if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
-								throw new IllegalArgumentException("pdf.notification.status.sendFax.error.noNumber");
+								throw new IllegalArgumentException(
+										"dialog.notification.sendProcess.fax.error.nonumber");
 
 							if (!holder.getContactAddress()
 									.matches(globalSettings.getProgramSettings().getPhoneRegex()))
 								throw new IllegalArgumentException(
-										"pdf.notification.status.sendFax.error.numberNotValid");
+										"dialog.notification.sendProcess.fax.error.numberNotValid");
 
 							// only generate pdf is no pdf was selected
 							if (holder.getPdf() == null) {
 								if (faxTab.getSelectedTemplate() == null)
-									throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
+									throw new IllegalArgumentException(
+											"dialog.notification.sendProcess.pdf.error.noTemplate");
 
-								setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
-										holder.getContact().getPerson().getFullName()));
+								progressStepText("dialog.notification.sendProcess.pdf.generating",
+										holder.getContact().getPerson().getFullName());
 
 								// generating pdf
 								((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
@@ -926,26 +956,27 @@ public class NotificationDialog extends AbstractDialog {
 										.generatePDF(new PDFGenerator());
 
 								if (container == null)
-									throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
+									throw new IllegalArgumentException(
+											"dialog.notification.sendProcess.pdf.error.failed");
 
 								holder.setPdf(container);
 							}
 
-							holder.getNotification().setContactAddress(holder.getContactAddress());
-
 							// offline mode
-							if (!globalSettings.getProgramSettings().isOffline())
-								globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), holder.getPdf());
-							else {
+							if (globalSettings.getProgramSettings().isOffline()) {
 								logger.debug("Offline mode, not sending email!");
-								throw new IllegalArgumentException("pdf.notification.status.sendFax.error.offline");
+								throw new IllegalArgumentException("dialog.notification.sendProcess.fax.error.offline");
+							} else if (faxTab.isAutoSendFax()) {
+								globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), holder.getPdf());
+								progressStepText("dialog.notification.sendProcess.fax.success");
+							} else if (faxTab.isPrint()) {
+								progressStepText("dialog.notification.sendProcess.pdf.print");
+								userHandlerAction.getSelectedPrinter().print(holder.getPdf());
 							}
 
 							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							progressStep(resourceBundle.get("pdf.notification.status.sendFax.success", locale,
-									holder.getContactAddress()));
 
 							progressStep();
 						} catch (IllegalArgumentException e) {
@@ -954,9 +985,10 @@ public class NotificationDialog extends AbstractDialog {
 							holder.getNotification().setFailed(true);
 							holder.getNotification().setActive(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							holder.getNotification().setCommentary(resourceBundle.get(e.getMessage(), locale));
-							progressStep(resourceBundle.get(e.getMessage(), locale));
+							holder.getNotification().setCommentary(resourceBundle.get(e.getMessage()));
+							progressStepText(e.getMessage());
 						}
+						progressStep();
 					}
 				}
 
@@ -971,18 +1003,17 @@ public class NotificationDialog extends AbstractDialog {
 							continue;
 
 						try {
-							// if
-							// (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
-							// throw new IllegalArgumentException(
-							// "pdf.notification.status.sendLetter.error.noAddress");
+							// TODO maybe dialog for adding address without
+							// creating a pdf
 
 							// only generate pdf if no pdf was selected
 							if (holder.getPdf() == null) {
 								if (letterTab.getSelectedTemplate() == null)
-									throw new IllegalArgumentException("pdf.notification.status.pdf.noTemplate");
+									throw new IllegalArgumentException(
+											"dialog.notification.sendProcess.pdf.error.noTemplate");
 
-								setProgressText(resourceBundle.get("pdf.notification.status.pdf.generating", locale,
-										holder.getContact().getPerson().getFullName()));
+								progressStepText("dialog.notification.sendProcess.pdf.generating",
+										holder.getContact().getPerson().getFullName());
 
 								((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
 										.initData(getTask().getPatient(), getTask(), holder.getContact());
@@ -990,15 +1021,17 @@ public class NotificationDialog extends AbstractDialog {
 										.generatePDF(new PDFGenerator());
 
 								if (container == null)
-									throw new IllegalArgumentException("pdf.notification.status.pdf.pdfError");
+									throw new IllegalArgumentException(
+											"dialog.notification.sendProcess.pdf.error.failed");
+
 								holder.setPdf(container);
 							}
 
-							if(letterTab.isPrint()) {
-								setProgressText(resourceBundle.get("pdf.notification.status.pdf.printing", locale));
+							if (letterTab.isPrint()) {
+								progressStepText("dialog.notification.sendProcess.pdf.print");
 								userHandlerAction.getSelectedPrinter().print(holder.getPdf());
 							}
-							
+
 							holder.getNotification().setContactAddress(holder.getContactAddress());
 							holder.getNotification().setActive(false);
 							holder.getNotification().setPerformed(true);
@@ -1012,9 +1045,10 @@ public class NotificationDialog extends AbstractDialog {
 							holder.getNotification().setActive(true);
 							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
 							holder.getNotification().setCommentary(e.getMessage());
-							progressStep(resourceBundle.get(e.getMessage(), locale));
+							progressStepText(e.getMessage());
 						}
 
+						progressStep();
 					}
 
 				}
@@ -1034,6 +1068,8 @@ public class NotificationDialog extends AbstractDialog {
 				DocumentTemplate sendreportTemplate = DocumentTemplate
 						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.NOTIFICATION_SEND_REPORT));
 
+				progressStepText("dialog.notification.sendProcess.sendReport.generating");
+
 				if (sendreportTemplate != null) {
 					TemplateSendReport template = (TemplateSendReport) sendreportTemplate;
 
@@ -1043,13 +1079,17 @@ public class NotificationDialog extends AbstractDialog {
 
 					sendReport = template.generatePDF(new PDFGenerator());
 
-					// TODO error
+					if (sendReport == null) {
+						// TODO handle error
+						progressStepText("dialog.notification.sendProcess.pdf.error.failed");
+					}
 				}
+
+				setProgressPercent(100);
 
 				progressStep();
 
-				setProgressPercent(100);
-				setProgressText(resourceBundle.get("pdf.notification.status.completed", locale));
+				progressStepText("dialog.notification.sendProcess.success");
 
 				logger.debug("Messaging ended");
 
@@ -1107,19 +1147,24 @@ public class NotificationDialog extends AbstractDialog {
 			setNotificationRunning(false);
 
 			// updating data, loading sendreports
-			updateData();
+			mailTab.setDisabled(true);
+			faxTab.setDisabled(true);
+			letterTab.setDisabled(true);
+			phoneTab.setDisabled(true);
+			sendTab.setDisabled(true);
+			sendReportTab.setDisabled(false);
 
 			// unblocking gui and updating content
-			RequestContext.getCurrentInstance().execute("PF('blockUIWidget').unblock();updateContent();");
+			RequestContext.getCurrentInstance().execute("PF('blockUIWidget').unblock();chagneTab(5);");
 		}
 
 		public int calculateSteps() {
 			// one step for creating the send report
 			int steps = 1;
 
-			steps += mailTab.isUseTab() ? mailTab.getHolders().size() : 0;
-			steps += faxTab.isUseTab() ? faxTab.getHolders().size() : 0;
-			steps += letterTab.isUseTab() ? letterTab.getHolders().size() : 0;
+			steps += mailTab.isUseTab() ? currentMailHolders.size() : 0;
+			steps += faxTab.isUseTab() ? currentFaxHolders.size() : 0;
+			steps += letterTab.isUseTab() ? currentLetterHolders.size() : 0;
 			steps += phoneTab.isUseTab() ? 1 : 0;
 
 			logger.debug("Steps calculated = " + steps);
@@ -1127,18 +1172,11 @@ public class NotificationDialog extends AbstractDialog {
 		}
 
 		public void progressStep() {
-			progressStep(null);
+			setProgressPercent(getProgressPercent() + (100 / getSteps()));
 		}
 
-		/**
-		 * Increment steps
-		 */
-		public void progressStep(String message) {
-			setProgressPercent(getProgressPercent() + (100 / getSteps()));
-			if (message != null)
-				setProgressText(message);
-
-			logger.debug("Setting Progress to " + getProgressPercent());
+		public void progressStepText(String resourcesKey, Object... args) {
+			setProgressText(resourceBundle.get(resourcesKey, args));
 		}
 
 		@Synchronized
@@ -1179,6 +1217,39 @@ public class NotificationDialog extends AbstractDialog {
 		@Synchronized
 		public void setNotificationCompleted(boolean notificationCompleted) {
 			this.notificationCompleted = notificationCompleted;
+		}
+
+	}
+
+	@Getter
+	@Setter
+	public class SendReportTab extends AbstractTab {
+
+		private DefaultTransformer<PDFContainer> sendReportConverter;
+
+		public SendReportTab() {
+			setTabName("SendReport");
+			setName("dialog.notification.tab.sendReport");
+			setViewID("sendReportTab");
+		}
+
+		@Override
+		public String getCenterView() {
+			return "send/sendReport.xhtml";
+		}
+
+		@Override
+		public void updateData() {
+			// getting all sendreports
+			List<PDFContainer> lists = PDFGenerator.getPDFsofType(task.getAttachedPdfs(),
+					DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
+
+			// updating mediadialog
+			dialogHandlerAction.getMediaDialog().initiBeanForExternalView(lists,
+					PDFGenerator.getLatestPDFofType(lists));
+
+			setSendReportConverter(new DefaultTransformer<>(lists));
+
 		}
 
 	}

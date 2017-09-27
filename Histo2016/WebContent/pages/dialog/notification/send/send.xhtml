@@ -28,22 +28,20 @@
 							styleClass="bold-text" />
 
 						<!-- enable -->
-						<ui:fragment
-							rendered="#{dialogHandlerAction.notificationDialog.mailTab.useTab}">
-							<i class="fa fa-fw fa-check-circle icon-green"
-								title="#{msg['dialog.notification.notifiy.email.enabled']}" />
-						</ui:fragment>
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.active']}"
+							styleClass="icon-green bold-text"
+							rendered="#{dialogHandlerAction.notificationDialog.mailTab.useTab}" />
 						<!-- disable -->
-						<ui:fragment
-							rendered="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}">
-							<i class="fa fa-fw fa-times-circle icon-red"
-								title="#{msg['dialog.notification.notifiy.email.disabled']}" />
-						</ui:fragment>
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.inacitve']}"
+							rendered="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}" />
 
+						<!-- failed holders, not renewed warning -->
 						<ui:fragment
 							rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedMailHolders}">
 							<i class="fa fa-fw fa-exclamation-circle icon-red"
-								title="#{msg['dialog.medicalFindings.tab.notify.failed']}" />
+								title="#{msg['dialog.notification.tab.send.failed']}" />
 						</ui:fragment>
 					</h:panelGroup>
 				</p:panelGrid>
@@ -91,27 +89,24 @@
 				<p:panelGrid columns="2"
 					styleClass="noBordersAll collapsedBordersAll" style="width:100%">
 					<h:panelGroup>
-						<h:outputText value="#{msg['dialog.notification.notifiy.fax']}: "
+						<h:outputText value="#{msg['dialog.notification.tab.send.fax']}: "
 							styleClass="bold-text" />
 
-						<!-- active -->
-						<ui:fragment
-							rendered="#{dialogHandlerAction.notificationDialog.faxTab.useTab}">
-							<i class="fa fa-fw fa-check-circle icon-green"
-								title="#{msg['dialog.notification.notifiy.fax.enabled']}" />
-						</ui:fragment>
+						<!-- enable -->
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.active']}"
+							styleClass="icon-green bold-text"
+							rendered="#{dialogHandlerAction.notificationDialog.faxTab.useTab}" />
+						<!-- disable -->
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.inacitve']}"
+							rendered="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}" />
 
-						<!-- inactive -->
-						<ui:fragment
-							rendered="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}">
-							<i class="fa fa-fw fa-times-circle icon-red"
-								title="#{msg['dialog.notification.notifiy.fax.disabled']}" />
-						</ui:fragment>
-
+						<!-- failed holders, not renewed warning -->
 						<ui:fragment
 							rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedFaxHolders}">
 							<i class="fa fa-fw fa-exclamation-circle icon-red"
-								title="#{msg['dialog.medicalFindings.tab.notify.failed']}" />
+								title="#{msg['dialog.notification.tab.send.failed']}" />
 						</ui:fragment>
 					</h:panelGroup>
 				</p:panelGrid>
@@ -162,27 +157,23 @@
 					style="width:100%">
 					<h:panelGroup>
 						<h:outputText
-							value="#{msg['dialog.notification.notifiy.letter']}: "
+							value="#{msg['dialog.notification.tab.send.letter']}: "
 							styleClass="bold-text" />
 
-						<!-- active -->
-						<ui:fragment
-							rendered="#{dialogHandlerAction.notificationDialog.letterTab.useTab}">
-							<i class="fa fa-fw fa-check-circle icon-green"
-								title="#{msg['dialog.notification.notifiy.letter.enabled']}" />
-						</ui:fragment>
-
-						<!-- inactive -->
-						<ui:fragment
-							rendered="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}">
-							<i class="fa fa-fw fa-times-circle icon-red"
-								title="#{msg['dialog.notification.notifiy.letter.disabled']}" />
-						</ui:fragment>
+						<!-- enable -->
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.active']}"
+							styleClass="icon-green bold-text"
+							rendered="#{dialogHandlerAction.notificationDialog.letterTab.useTab}" />
+						<!-- disable -->
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.inacitve']}"
+							rendered="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}" />
 
 						<ui:fragment
 							rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedLetterHolders}">
 							<i class="fa fa-fw fa-exclamation-circle icon-red"
-								title="#{msg['dialog.medicalFindings.tab.notify.failed']}" />
+								title="#{msg['dialog.notification.tab.send.failed']}" />
 						</ui:fragment>
 					</h:panelGroup>
 				</p:panelGrid>
@@ -231,21 +222,19 @@
 					columnClasses="defaultListingTableColumn150px, ">
 					<h:panelGroup>
 						<h:outputText
-							value="#{msg['dialog.notification.notifiy.phone']}: "
+							value="#{msg['dialog.notification.tab.send.phone']}: "
 							styleClass="bold-text" />
 
-						<!-- active -->
-						<ui:fragment
-							rendered="#{dialogHandlerAction.notificationDialog.phoneTab.useTab}">
-							<i class="fa fa-fw fa-check-circle icon-green"
-								title="#{msg['dialog.notification.notifiy.phone.enabled']}" />
-						</ui:fragment>
-						<!-- inactive -->
-						<ui:fragment
-							rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.useTab}">
-							<i class="fa fa-fw fa-times-circle icon-red"
-								title="#{msg['dialog.notification.notifiy.phone.disabled']}" />
-						</ui:fragment>
+						<!-- enable -->
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.active']}"
+							styleClass="icon-green bold-text"
+							rendered="#{dialogHandlerAction.notificationDialog.phoneTab.useTab}" />
+						<!-- disable -->
+						<h:outputText
+							value="#{msg['dialog.notification.tab.send.inacitve']}"
+							rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.useTab}" />
+
 					</h:panelGroup>
 				</p:panelGrid>
 
@@ -294,7 +283,8 @@
 			<h:panelGrid columns="2">
 
 				<!-- print -->
-				<h:outputLabel value="#{msg['dialog.notification.tab.send.print']} " title="#{msg['dialog.notification.tab.send.print.text']}" />
+				<h:outputLabel value="#{msg['dialog.notification.tab.send.print']} "
+					title="#{msg['dialog.notification.tab.send.print.text']}" />
 
 				<p:selectOneMenu styleClass="customSerachSelectMenu" id="printerfax"
 					title="#{msg['dialog.print.selectPrinter']}"
@@ -313,8 +303,10 @@
 
 			<h:panelGrid columns="2" style="float:right;">
 
-				<p:commandButton value="Benachrichtigung ausführen"
+				<p:commandButton
+					value="#{msg['dialog.notification.tab.send.perform']}"
 					icon="fa fa-fw fa-mail-forward"
+					title="#{msg['dialog.notification.tab.send.perform.text']}"
 					rendered="#{!dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
 					onstart="PF('blockUIWidget').block()"
 					onclick="performeNotificationCommand();PF('startNotificationButton').disable();PF('ajaxProgressPoll').start();"

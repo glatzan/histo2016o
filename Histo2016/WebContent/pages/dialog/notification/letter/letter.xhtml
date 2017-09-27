@@ -23,10 +23,21 @@
 			<!-- Use letter -->
 			<h:outputLabel value="#{msg['dialog.notification.tab.letter.use']}" />
 			<p:selectBooleanCheckbox value="#{tab.useTab}"
+				title="#{msg['dialog.notification.tab.letter.use.text']}"
 				styleClass="smallCheckbox">
 				<p:ajax event="change" partialSubmit="true" process="@this"
 					update=":adminForm:tabview:letterTab" />
 			</p:selectBooleanCheckbox>
+
+			<!-- print -->
+			<h:outputLabel value="#{msg['dialog.notification.tab.letter.print']}" />
+			<p:selectBooleanCheckbox value="#{tab.print}"
+				title="#{msg['dialog.notification.tab.letter.print.text']}"
+				styleClass="smallCheckbox">
+				<p:ajax event="change" partialSubmit="true" process="@this"
+					update=":adminForm:tabview:letterTab" />
+			</p:selectBooleanCheckbox>
+
 
 			<!-- pdf template -->
 			<h:outputLabel

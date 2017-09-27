@@ -22,6 +22,7 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.mail.use']}" />
 
 			<p:selectBooleanCheckbox value="#{tab.useTab}"
+				title="#{msg['dialog.notification.tab.mail.use.text']}"
 				styleClass="smallCheckbox">
 				<p:ajax event="change" partialSubmit="true" process="@this"
 					update=":adminForm:tabview:mailTab" />
