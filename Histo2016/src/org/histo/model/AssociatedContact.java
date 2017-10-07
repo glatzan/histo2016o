@@ -23,7 +23,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.interfaces.HasID;
@@ -38,6 +41,9 @@ import lombok.Setter;
 @SequenceGenerator(name = "associatedcontact_sequencegenerator", sequenceName = "associatedcontact_sequence")
 @Getter
 @Setter
+@Audited
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 public class AssociatedContact implements LogAble, HasID {
 
 	private static Logger logger = Logger.getLogger("org.histo");
@@ -61,9 +67,6 @@ public class AssociatedContact implements LogAble, HasID {
 	@Enumerated(EnumType.STRING)
 	private ContactRole role = ContactRole.NONE;
 
-	@Column(columnDefinition = "VARCHAR")
-	private String customContact;
-
 	@OrderColumn(name = "position")
 	@LazyCollection(FALSE)
 	@OneToMany(mappedBy = "contact", cascade = ALL)
@@ -82,27 +85,6 @@ public class AssociatedContact implements LogAble, HasID {
 		this.task = task;
 	}
 
-	/**
-	 * Returns if set the customContact (manually changed by the user), otherwise it
-	 * will generate the default address field
-	 * 
-	 * @return
-	 */
-	@Transient
-	public String getContactAsString() {
-		Optional<String> address = Optional.ofNullable(getCustomContact());
-
-		if (address.isPresent())
-			return address.get();
-
-		return generateAddress(this);
-	}
-
-	@Transient
-	public String getContactAsLatex() {
-		return (new TextToLatexConverter()).convertToTex(getContactAsString());
-	}
-
 	@Transient
 	public boolean isNotificationPerformed() {
 		if (getNotifications() != null && getNotifications().size() > 0) {
@@ -119,8 +101,7 @@ public class AssociatedContact implements LogAble, HasID {
 
 	@Transient
 	public List<AssociatedContactNotification> getNotificationTypAsList(NotificationTyp type, boolean active) {
-		return getNotifications().stream()
-				.filter(p -> p.getNotificationTyp().equals(type) && p.isActive() == active)
+		return getNotifications().stream().filter(p -> p.getNotificationTyp().equals(type) && p.isActive() == active)
 				.collect(Collectors.toList());
 	}
 
@@ -180,5 +161,4 @@ public class AssociatedContact implements LogAble, HasID {
 
 		return buffer.toString();
 	}
-
 }

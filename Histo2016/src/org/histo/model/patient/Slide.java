@@ -29,7 +29,6 @@ import org.histo.util.TaskUtil;
 
 @Entity
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
@@ -225,7 +224,7 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingTreeParent
+	 * ï¿½berschreibt Methode aus dem Interface StainingTreeParent
 	 */
 	@Transient
 	@Override
@@ -250,18 +249,18 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 	 * Interface Delete Able
 	 ********************************************************/
 	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
-	 * Gibt die ObjektträgerID als identifier zurück
+	 * ï¿½berschreibt Methode aus dem Interface ArchiveAble <br>
+	 * Gibt die Objekttrï¿½gerID als identifier zurï¿½ck
 	 */
 	@Transient
 	@Override
 	public String getTextIdentifier() {
-		return "Objektträger " + getSlideID();
+		return "Objekttrï¿½ger " + getSlideID();
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble <br>
-	 * Gibt den Dialog zum archivieren zurück
+	 * ï¿½berschreibt Methode aus dem Interface ArchiveAble <br>
+	 * Gibt den Dialog zum archivieren zurï¿½ck
 	 */
 	@Transient
 	@Override

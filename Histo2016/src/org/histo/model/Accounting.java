@@ -15,7 +15,6 @@ import org.hibernate.envers.Audited;
 
 @Entity
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "accounting_sequencegenerator", sequenceName = "accounting_sequence")

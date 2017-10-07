@@ -158,8 +158,6 @@ public class NotificationDialog extends AbstractDialog {
 
 		initTabs();
 
-		setActiveIndex(0);
-
 		return true;
 	}
 
@@ -689,14 +687,18 @@ public class NotificationDialog extends AbstractDialog {
 				faxTab.setDisabled(sendTab.isNotificationCompleted());
 				letterTab.setDisabled(sendTab.isNotificationCompleted());
 				phoneTab.setDisabled(sendTab.isNotificationCompleted());
-				sendTab.setDisabled(sendTab.isNotificationCompleted());
+				// never disable
+				sendTab.setDisabled(false);
 
 				// if resend there is a sendreport, so the sendreport tab is
 				// shown!
-				if (!isReperformSend())
+				if (!isReperformSend()) {
 					sendReportTab.setDisabled(!sendTab.isNotificationCompleted());
-				else
+				} else {
 					sendReportTab.setDisabled(false);
+				}
+
+				setActiveIndex(sendTab.isNotificationCompleted() ? 4 : 0);
 
 				setInitialized(true);
 			}
@@ -1125,6 +1127,7 @@ public class NotificationDialog extends AbstractDialog {
 								genericDAO.save(holder.getContact());
 							}
 
+							genericDAO.savePatientData(getTask(), "log.patient.task.notification.send");
 						}
 					});
 
@@ -1134,7 +1137,7 @@ public class NotificationDialog extends AbstractDialog {
 
 				getTask().setNotificationCompletionDate(System.currentTimeMillis());
 
-				pdfDAO.attachPDF(getTask(), sendReport);
+				pdfDAO.attachPDF(getTask().getPatient(), getTask(), sendReport);
 
 				logger.debug("Saving progress, completed");
 
@@ -1151,7 +1154,7 @@ public class NotificationDialog extends AbstractDialog {
 			faxTab.setDisabled(true);
 			letterTab.setDisabled(true);
 			phoneTab.setDisabled(true);
-			sendTab.setDisabled(true);
+			sendTab.setDisabled(false);
 			sendReportTab.setDisabled(false);
 
 			// unblocking gui and updating content

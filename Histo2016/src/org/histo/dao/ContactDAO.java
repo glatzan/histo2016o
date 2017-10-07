@@ -157,7 +157,7 @@ public class ContactDAO extends AbstractDAO {
 	 */
 	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp) {
-		return addNotificationType(task, associatedContact, notificationTyp, true, false, false, null);
+		return addNotificationType(task, associatedContact, notificationTyp, true, false, false, null, null);
 
 	}
 	
@@ -174,7 +174,7 @@ public class ContactDAO extends AbstractDAO {
 	 */
 	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp, boolean active, boolean performed,
-			boolean failed, Date dateOfAction) {
+			boolean failed, Date dateOfAction, String customAddress) {
 		AssociatedContactNotification newNotification = new AssociatedContactNotification();
 		newNotification.setActive(active);
 		newNotification.setPerformed(performed);
@@ -182,6 +182,7 @@ public class ContactDAO extends AbstractDAO {
 		newNotification.setFailed(failed);
 		newNotification.setNotificationTyp(notificationTyp);
 		newNotification.setContact(associatedContact);
+		newNotification.setContactAddress(customAddress);
 
 		if (associatedContact.getNotifications() == null)
 			associatedContact.setNotifications(new ArrayList<AssociatedContactNotification>());

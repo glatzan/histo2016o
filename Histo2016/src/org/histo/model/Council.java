@@ -34,7 +34,6 @@ import lombok.Setter;
 
 @Entity
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "council_sequencegenerator", sequenceName = "council_sequence")

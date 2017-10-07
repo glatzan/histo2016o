@@ -1,6 +1,7 @@
 package org.histo.model;
 
 import java.util.Date;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
+import org.hibernate.envers.Audited;
 import org.histo.model.interfaces.HasID;
+import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +29,9 @@ import lombok.Setter;
 @SequenceGenerator(name = "associatedcontactnotification_sequencegenerator", sequenceName = "associatedcontactnotification_sequence")
 @Getter
 @Setter
+@Audited
+@SelectBeforeUpdate(true)
+@DynamicUpdate(true)
 public class AssociatedContactNotification implements HasID {
 
 	@Id
@@ -41,24 +50,24 @@ public class AssociatedContactNotification implements HasID {
 
 	@Column
 	private boolean performed;
-	
+
 	@Column
 	private boolean failed;
 
 	@Column(columnDefinition = "VARCHAR")
 	private String commentary;
-	
+
 	@Temporal(TemporalType.DATE)
 	private Date dateOfAction;
 
 	@Column
 	private boolean manuallyAdded;
-	
+
 	@Column(columnDefinition = "VARCHAR")
 	private String contactAddress;
-	
+
 	public enum NotificationTyp {
-		EMAIL, FAX, PHONE, LETTER;
+		EMAIL, FAX, PHONE, LETTER, PRINT;
 	}
 
 	@Override
@@ -68,5 +77,4 @@ public class AssociatedContactNotification implements HasID {
 
 		return super.equals(obj);
 	}
-
 }

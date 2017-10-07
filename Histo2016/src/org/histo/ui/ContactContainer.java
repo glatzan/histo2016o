@@ -2,13 +2,20 @@ package org.histo.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.Column;
+import javax.persistence.Transient;
+
+import org.apache.log4j.Logger;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContact;
+import org.histo.model.AssociatedContactNotification;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
+import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +24,8 @@ import lombok.Setter;
 @Setter
 public class ContactContainer {
 
+	private static Logger logger = Logger.getLogger("org.histo");
+
 	private AssociatedContact contact;
 
 	private int copies;
@@ -24,8 +33,10 @@ public class ContactContainer {
 	private boolean selected;
 
 	private boolean organizationHasChagned;
-	
+
 	private List<OrganizationChooser> organizazionsChoosers;
+
+	private String customAddress;
 
 	public ContactContainer(Task task, Person person, ContactRole role) {
 		this(new AssociatedContact(task, person, role));
@@ -41,31 +52,86 @@ public class ContactContainer {
 			for (Organization organization : associatedContact.getPerson().getOrganizsations()) {
 				this.organizazionsChoosers.add(new OrganizationChooser(this, organization));
 			}
+
+		generateAddress();
 	}
 
-	/**
-	 * Checks if an organization was selected, then true will be returned an a
-	 * customAddress will be generated
-	 * 
-	 * @param contactContainer
-	 * @return
-	 */
-	public static boolean generateCustomOrganizationAddress(ContactContainer contactContainer) {
+	public OrganizationChooser getSelectedOrganization() {
 		try {
-			// organization was selected generating customAddress field
-			ContactContainer.OrganizationChooser organizationChooser = contactContainer.getOrganizazionsChoosers()
-					.stream().filter(p -> p.isSelected()).collect(StreamUtils.singletonCollector());
-
-			contactContainer.getContact().setCustomContact(AssociatedContact
-					.generateAddress(contactContainer.getContact(), organizationChooser.getOrganization()));
-			
-			return true;
+			return getOrganizazionsChoosers().stream().filter(p -> p.isSelected())
+					.collect(StreamUtils.singletonCollector());
 		} catch (IllegalStateException e) {
-			// no organization was selected, nothin to do
-			return false;
+			return null;
 		}
-
 	}
+
+	public void generateAddress() {
+		generateAddress(false);
+	}
+
+	public void generateAddress(boolean overwrite) {
+		Optional<String> address = Optional.ofNullable(getCustomAddress());
+
+		if (address.isPresent() && !overwrite)
+			return;
+
+		Optional<Organization> selectedOrganization = Optional.ofNullable(getSelectedOrganization())
+				.map(OrganizationChooser::getOrganization);
+
+		setCustomAddress(AssociatedContact.generateAddress(getContact(), selectedOrganization.orElse(null)));
+
+		logger.debug("Custom Address is: " + getCustomAddress());
+	}
+
+	// /**
+	// * Returns if set the customContact (manually changed by the user),
+	// * otherwise it will generate the default address field
+	// *
+	// * @return
+	// */
+	// public String getCustomOrGeneratedAddress() {
+	// Optional<String> address = Optional.ofNullable(getCustomAddress());
+	//
+	// if (address.isPresent())
+	// return address.get();
+	//
+	// setCustomAddress(AssociatedContact.generateAddress(getContact()));
+	//
+	// return getCustomAddress();
+	// }
+	// //
+	// // @Transient
+	// // public String getContactAsLatex() {
+	// // return (new
+	// TextToLatexConverter()).convertToTex(getContactAsString());
+	// // }
+	//
+	// /**
+	// * Checks if an organization was selected, then true will be returned an a
+	// * customAddress will be generated
+	// *
+	// * @param contactContainer
+	// * @return
+	// */
+	// public static boolean generateCustomOrganizationAddress(ContactContainer
+	// contactContainer) {
+	// try {
+	// // organization was selected generating customAddress field
+	// ContactContainer.OrganizationChooser organizationChooser =
+	// contactContainer.getOrganizazionsChoosers()
+	// .stream().filter(p ->
+	// p.isSelected()).collect(StreamUtils.singletonCollector());
+	//
+	// contactContainer.setCustomAddress(AssociatedContact.generateAddress(contactContainer.getContact(),
+	// organizationChooser.getOrganization()));
+	//
+	// return true;
+	// } catch (IllegalStateException e) {
+	// // no organization was selected, nothin to do
+	// return false;
+	// }
+	//
+	// }
 
 	@Getter
 	@Setter

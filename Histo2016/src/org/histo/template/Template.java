@@ -12,7 +12,6 @@ import lombok.Setter;
 
 //@Entity
 //@Audited
-//@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 //@SelectBeforeUpdate(true)
 //@DynamicUpdate(true)
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)

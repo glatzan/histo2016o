@@ -17,7 +17,6 @@ import org.histo.model.interfaces.LogAble;
 
 @Entity
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "signature_sequencegenerator", sequenceName = "signature_sequence")

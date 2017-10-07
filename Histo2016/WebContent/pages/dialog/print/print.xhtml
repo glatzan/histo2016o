@@ -126,14 +126,14 @@
 											id="editAddressOver#{outer.index}" showEvent="mouseover"
 											hideEvent="mouseout" onShow="updateOverlay#{outer.index}();">
 
-											<h:outputText value="#{chooser.contact.contactAsString}"
+											<h:outputText value="#{chooser.customAddress}"
 												styleClass="preformatted" />
 										</p:overlayPanel>
 									</p:column>
 
 									<p:column>
 										<p:commandLink
-											title="#{msg['dialog.settings.organization.edit.persons.remove']}"
+											title="#{msg['dialog.print.individualAddress']}"
 											actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task,chooser)}">
 											<i class="fa fa-gear" style="margin-left: 2px" />
 											<p:ajax event="dialogReturn"
@@ -176,9 +176,11 @@
 
 					<!-- save file -->
 					<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol"
-						style="margin-left:20px">
-						<p:selectBooleanCheckbox styleClass="smallCheckbox" />
-						<h:outputLabel value="Datei speichern" />
+						columnClasses="defaultListingTableColumn40, ">
+						<h:outputLabel value="#{msg['dialog.print.save']}" />
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{dialogHandlerAction.printDialog.savePDF}"
+							title="#{msg['dialog.print.save.text']}" />
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -235,7 +237,8 @@
 					</h:panelGrid>
 
 					<!-- select -->
-					<p:commandButton value="#{msg['dialog.print.button.select']}" icon="fa fa-print"
+					<p:commandButton value="#{msg['dialog.print.button.select']}"
+						icon="fa fa-print"
 						rendered="#{dialogHandlerAction.printDialog.selectMode}"
 						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}"></p:commandButton>

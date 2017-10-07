@@ -10,6 +10,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
+import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.patient.Task;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
@@ -83,8 +84,8 @@ public class ContactNotificationDialog extends AbstractDialog {
 	}
 
 	public void generatedMenuModel() {
-		AssociatedContactNotification.NotificationTyp[] typeArr = AssociatedContactNotification.NotificationTyp
-				.values();
+		AssociatedContactNotification.NotificationTyp[] typeArr = { NotificationTyp.EMAIL, NotificationTyp.FAX,
+				NotificationTyp.LETTER, NotificationTyp.PHONE };
 
 		model = new DefaultMenuModel();
 

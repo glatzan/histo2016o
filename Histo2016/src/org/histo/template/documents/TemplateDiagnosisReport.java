@@ -7,6 +7,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.PDFGenerator;
+import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,9 +20,9 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 
 	private Task task;
 
-	private AssociatedContact toSendAddress;
+	private String toSendAddress;
 
-	public void initData(Patient patient, Task task, AssociatedContact toSendAddress) {
+	public void initData(Patient patient, Task task, String toSendAddress) {
 		this.patient = patient;
 		this.task = task;
 		this.toSendAddress = toSendAddress;
@@ -31,7 +32,7 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 		generator.openNewPDf(this);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
-		generator.getConverter().replace("addressee", toSendAddress);
+		generator.getConverter().replace("address", (new TextToLatexConverter()).convertToTex(toSendAddress));
 		generator.getConverter().replace("subject", "");
 		generator.getConverter().replace("date", new DateTool());
 

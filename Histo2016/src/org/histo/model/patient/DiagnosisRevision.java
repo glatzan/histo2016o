@@ -35,7 +35,6 @@ import org.histo.model.interfaces.PatientRollbackAble;
 
 @Entity
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
@@ -250,7 +249,7 @@ public class DiagnosisRevision
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingTreeParent
+	 * ï¿½berschreibt Methode aus dem Interface StainingTreeParent
 	 */
 	@Transient
 	@Override

@@ -22,7 +22,6 @@ import org.histo.model.interfaces.HasID;
 
 @Entity
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "pdfs_sequencegenerator", sequenceName = "pdfs_sequence")

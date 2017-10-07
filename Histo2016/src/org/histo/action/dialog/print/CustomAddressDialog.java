@@ -24,7 +24,7 @@ public class CustomAddressDialog extends AbstractDialog {
 	private String customAddress;
 
 	private boolean addressChanged;
-	
+
 	public void initAndPrepareBean(Task task, ContactContainer contactContainer) {
 		initBean(task, contactContainer);
 		prepareDialog();
@@ -32,18 +32,19 @@ public class CustomAddressDialog extends AbstractDialog {
 
 	public void initBean(Task task, ContactContainer contactContainer) {
 		this.contactContainer = contactContainer;
-		customAddress = contactContainer.getContact().getContactAsString();
-		
+
+		customAddress = contactContainer.getCustomAddress();
+
 		setAddressChanged(false);
-		
+
 		super.initBean(task, Dialog.PRINT_ADDRESS, false);
 	}
 
 	public void copyCustomAddress() {
-		if(!getCustomAddress().equals(getContactContainer().getContact().getCustomContact()))
+		if (!getCustomAddress().equals(getContactContainer().getCustomAddress()))
 			setAddressChanged(true);
-		
-		getContactContainer().getContact().setCustomContact(getCustomAddress());
+
+		getContactContainer().setCustomAddress(getCustomAddress());
 	}
 
 }

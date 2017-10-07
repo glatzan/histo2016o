@@ -73,7 +73,7 @@ $!patient.piz\\
 
 \noindent\makebox[\linewidth]{\rule{\linewidth}{0.4pt}}\\\\
 {\huge Sendebericht, vom $date.format('HH:mm dd.MM.yyyy', $reportDate)} \\\\
-{\normalsize Email-Benachrichtigung\\
+{\normalsize \fs Email-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
 	#if($useMail)
 		#foreach( $email in $mailHolders)
@@ -84,7 +84,7 @@ $!patient.piz\\
 	#end  
 	\end{tabular}
 }
-\\\\
+\\\\ \fs
 \noindent
 {\normalsize Fax-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
@@ -97,11 +97,11 @@ $!patient.piz\\
 	#end  
 	\end{tabular}
 }
-\\\\
+\\\\ \fs
 \noindent
 {\normalsize Brief-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
-	#if($useFax)
+	#if($useLetter)
 		#foreach( $letter in $letterHolders)
 			 \fs $!letter.contact.person.fullName & \fs #if ($letter.notification.performed) #if(!$letter.notification.failed) \textcolor{green}{OK} #else \textcolor{red}{$!letter.notification.commentary} #end #else - #end \\
 		#end
@@ -110,9 +110,9 @@ $!patient.piz\\
 	#end  
 	\end{tabular}
 }
-\\\\
+\\\\ \fs 
 \noindent
-{\normalsize Telefon-Benachrichtigung\\
+{\normalsize \fs Telefon-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
 	#if($usePhone)
 		#foreach( $phone in $phoneHolders)

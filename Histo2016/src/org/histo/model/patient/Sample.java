@@ -38,7 +38,6 @@ import org.histo.util.TaskUtil;
 
 @Entity
 @Audited
-@Cache(usage = CacheConcurrencyStrategy.TRANSACTIONAL)
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
@@ -268,7 +267,7 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface StainingTreeParent
+	 * ï¿½berschreibt Methode aus dem Interface StainingTreeParent
 	 */
 	@Transient
 	@Override
@@ -293,8 +292,8 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	 * Interface Delete Able
 	 ********************************************************/
 	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt die SampleID als
-	 * identifier zurück
+	 * ï¿½berschreibt Methode aus dem Interface ArchiveAble Gibt die SampleID als
+	 * identifier zurï¿½ck
 	 */
 	@Transient
 	@Override
@@ -303,8 +302,8 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	}
 
 	/**
-	 * Überschreibt Methode aus dem Interface ArchiveAble Gibt den Dialog zum
-	 * archivieren zurück
+	 * ï¿½berschreibt Methode aus dem Interface ArchiveAble Gibt den Dialog zum
+	 * archivieren zurï¿½ck
 	 */
 	@Transient
 	@Override
