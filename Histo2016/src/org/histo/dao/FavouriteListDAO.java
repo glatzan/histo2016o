@@ -2,6 +2,10 @@ package org.histo.dao;
 
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
@@ -9,6 +13,8 @@ import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.FavouriteList;
 import org.histo.model.FavouriteListItem;
+import org.histo.model.HistoUser;
+import org.histo.model.Physician;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +46,23 @@ public class FavouriteListDAO extends AbstractDAO {
 		Hibernate.initialize(favList.getOwner());
 		Hibernate.initialize(favList.getItems());
 		return favList;
+	}
+
+	public List<FavouriteList> getFavouriteListsOfUser(HistoUser user) {
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<FavouriteList> criteria = qb.createQuery(FavouriteList.class);
+		Root<FavouriteList> root = criteria.from(FavouriteList.class);
+		criteria.select(root);
+
+		criteria.where(qb.equal(root.get("owner"), user));
+		criteria.distinct(true);
+
+		List<FavouriteList> favouriteLists = getSession().createQuery(criteria).getResultList();
+
+		return favouriteLists;
 	}
 
 	@SuppressWarnings("unchecked")

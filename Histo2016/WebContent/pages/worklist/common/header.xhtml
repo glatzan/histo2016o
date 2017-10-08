@@ -219,6 +219,14 @@
 					<!-- ************ Notification ************ -->
 
 					<p:separator />
+					<!-- favourite Lists -->
+					<p:menuitem
+						value="#{msg['header.menu.task.sample.favouriteLists']}"
+						icon="fa fa-tasks" disabled="#{!taskEditable}"
+						rendered="#{commonDataHandlerAction.selectedPatient ne null}"
+						onclick="$('#headerForm\\:favouriteListsBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
+
 					<!-- accounting -->
 					<p:menuitem value="#{msg['header.menu.task.sample.accounting']}"
 						icon="fa fa-dollar" disabled="true"
@@ -374,6 +382,14 @@
 			<!-- MedicalFindings button -->
 			<p:commandButton id="medicalFindingsContactBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm"
+					listener="#{mainHandlerAction.processQueues()}" />
+			</p:commandButton>
+
+			<!-- Favourite-Lists button -->
+			<p:commandButton id="favouriteListsBtn" style="display:none"
+				actionListener="#{dialogHandlerAction.favouriteListsDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />

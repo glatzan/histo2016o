@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.biobank.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.biobank.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+
+		<div class="contentDiv">
+			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<h:outputLabel value="Fortschritt"></h:outputLabel>
+
+				<h:panelGrid columns="5"
+					styleClass="defaultListingTableThreeLineContainer">
+					<h:panelGrid>Färbe-Liste</h:panelGrid>
+					<h:panelGroup />
+					<h:panelGrid>Befundungs-Liste</h:panelGrid>
+					<h:panelGroup />
+					<h:panelGrid>Benachrichtigungs-Liste</h:panelGrid>
+
+					<!-- staining needed = green -->
+					<ui:fragment
+						rendered="#{dialogHandlerAction.favouriteListsDialog.task.isListedInFavouriteList('StainingList')}">
+						<i style="margin-left: 5px;" class="fa fa-image icon-green"
+							title="#{msg['body.worklist.navigation.activtasks.staining']}" />
+					</ui:fragment>
+
+					<!-- re-staining needed = orange -->
+					<ui:fragment
+						rendered="#{dialogHandlerAction.favouriteListsDialog.task.isListedInFavouriteList('ReStainingList')}">
+						<i style="margin-left: 5px;" class="fa fa-image icon-orange"
+							title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
+					</ui:fragment>
+
+					<!--  no staining needed = purple -->
+					<ui:fragment
+						rendered="#{dialogHandlerAction.favouriteListsDialog.task.isListedInFavouriteList('StayInStainingList')}">
+						<i style="margin-left: 5px;" class="fa fa-image icon-purple"
+							title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
+					</ui:fragment>
+
+					<h:panelGroup />
+					
+					<ui:fragment
+						rendered="#{dialogHandlerAction.favouriteListsDialog.task.isListedInFavouriteList('DiagnosisList')}">
+						<div style="width:100%;background-color:green" > test</div>
+						<i style="margin-left: 5px;" class="fa fa-eye icon-green"
+							title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
+					</ui:fragment>
+
+					<!-- re-diagnosis needed = orange -->
+					<ui:fragment
+						rendered="#{dialogHandlerAction.favouriteListsDialog.task.isListedInFavouriteList('ReDiagnosisList')}">
+						<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
+							title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+					</ui:fragment>
+
+					<!-- no diagnosis needed = purple -->
+					<ui:fragment
+						rendered="#{dialogHandlerAction.favouriteListsDialog.task.isListedInFavouriteList('StayInDiagnosisList')}">
+						<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
+							title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
+					</ui:fragment>
+				</h:panelGrid>
+
+				<h:outputLabel value="Eigene Listen"></h:outputLabel>
+
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="1" style="float:right;">
+
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-check-circle-o">
+						<f:actionListener binding="#{bioBankDialogHandler.saveBioBank()}"></f:actionListener>
+						<f:actionListener binding="#{bioBankDialogHandler.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

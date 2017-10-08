@@ -432,7 +432,7 @@ public class PrintDialog extends AbstractDialog {
 			break;
 		case COUNCIL_REQUEST:
 			((TemplateCouncil) getSelectedTemplate()).initData(getTask().getPatient(), getTask(), getSelectedCouncil(),
-					getRenderedContact() != null ? getRenderedContact().getContact() : null);
+					getRenderedContact() != null ? getRenderedContact().getCustomAddress() : null);
 			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		default:
