@@ -21,8 +21,10 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PdfDAO;
 import org.histo.dao.TaskDAO;
@@ -110,7 +112,12 @@ public class NotificationDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
-
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListDAO favouriteListDAO;
+	
 	private int activeIndex = 0;
 
 	private MailTab mailTab;
@@ -1152,6 +1159,10 @@ public class NotificationDialog extends AbstractDialog {
 
 				logger.debug("Saving progress, completed");
 
+				// removing from diagnosis list
+				if (getTask().isListedInFavouriteList(PredefinedFavouriteList.NotificationList))
+					favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.NotificationList);
+				
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

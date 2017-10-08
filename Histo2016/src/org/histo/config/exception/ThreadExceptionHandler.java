@@ -10,7 +10,6 @@ public class ThreadExceptionHandler implements AsyncUncaughtExceptionHandler{
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	public ThreadExceptionHandler() {
-		System.out.println("------------------------------------------------------------------------");
 	}
 	
     @Override

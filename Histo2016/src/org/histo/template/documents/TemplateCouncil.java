@@ -7,6 +7,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
+import org.histo.util.HistoUtil;
 import org.histo.util.PDFGenerator;
 import org.histo.util.latex.TextToLatexConverter;
 
@@ -38,7 +39,9 @@ public class TemplateCouncil extends DocumentTemplate {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
 		generator.getConverter().replace("council", council);
-		generator.getConverter().replace("address", (new TextToLatexConverter()).convertToTex(toSendAddress));
+		generator.getConverter().replace("address",
+				HistoUtil.isNotNullOrEmpty(toSendAddress) ? (new TextToLatexConverter()).convertToTex(toSendAddress)
+						: " ");
 		generator.getConverter().replace("date", new DateTool());
 
 		return generator.generatePDF();

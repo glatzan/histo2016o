@@ -221,7 +221,7 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType) {
-		initBeanForExternalDisplay(task, types, defaultType, null);
+		initBeanForExternalDisplay(task, types, defaultType, new AssociatedContact(task, new Person(new Contact())));
 	}
 
 	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType,
@@ -425,7 +425,6 @@ public class PrintDialog extends AbstractDialog {
 			result = getSelectedTemplate().generatePDF(new PDFGenerator());
 			break;
 		case DIAGNOSIS_REPORT:
-
 			((TemplateDiagnosisReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask(),
 					getRenderedContact() != null ? getRenderedContact().getCustomAddress() : null);
 			result = getSelectedTemplate().generatePDF(new PDFGenerator());

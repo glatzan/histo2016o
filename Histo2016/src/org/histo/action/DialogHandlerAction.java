@@ -2,6 +2,7 @@ package org.histo.action;
 
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
+import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactNotificationDialog;
@@ -15,7 +16,6 @@ import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
-import org.histo.action.dialog.task.FavouriteListsDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

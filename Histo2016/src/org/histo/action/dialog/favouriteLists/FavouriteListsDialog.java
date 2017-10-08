@@ -1,4 +1,4 @@
-package org.histo.action.dialog.task;
+package org.histo.action.dialog.favouriteLists;
 
 import java.util.List;
 

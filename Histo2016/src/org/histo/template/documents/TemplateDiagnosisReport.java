@@ -6,6 +6,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
+import org.histo.util.HistoUtil;
 import org.histo.util.PDFGenerator;
 import org.histo.util.latex.TextToLatexConverter;
 
@@ -32,7 +33,9 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 		generator.openNewPDf(this);
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
-		generator.getConverter().replace("address", (new TextToLatexConverter()).convertToTex(toSendAddress));
+		generator.getConverter().replace("address",
+				HistoUtil.isNotNullOrEmpty(toSendAddress) ? (new TextToLatexConverter()).convertToTex(toSendAddress)
+						: " ");
 		generator.getConverter().replace("subject", "");
 		generator.getConverter().replace("date", new DateTool());
 

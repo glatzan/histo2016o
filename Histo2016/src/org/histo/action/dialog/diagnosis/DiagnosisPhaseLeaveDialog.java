@@ -12,6 +12,9 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
+import org.histo.model.AssociatedContact;
+import org.histo.model.Contact;
+import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -64,7 +67,7 @@ public class DiagnosisPhaseLeaveDialog extends AbstractDialog {
 		// inits a template for previewing
 		dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(task,
 				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
-				DocumentType.DIAGNOSIS_REPORT_EXTERN);
+				DocumentType.DIAGNOSIS_REPORT, new AssociatedContact(task, new Person(resourceBundle.get("pdf.address.none"), new Contact())));
 
 		return true;
 	}
