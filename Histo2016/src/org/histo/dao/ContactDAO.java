@@ -34,6 +34,13 @@ public class ContactDAO extends AbstractDAO {
 	@Autowired
 	private GlobalSettings globalSettings;
 
+	/**
+	 * Loads the predifend notification methods for the specific roles and
+	 * applies them on the contact.
+	 * 
+	 * @param task
+	 * @param associatedContact
+	 */
 	public void updateNotificationsOnRoleChange(Task task, AssociatedContact associatedContact) {
 
 		if (associatedContact.getNotifications() == null) {
@@ -52,12 +59,26 @@ public class ContactDAO extends AbstractDAO {
 			addNotificationType(task, associatedContact, notificationTyp);
 		}
 
-		updateNotificationOnDiagnosisChange(task, associatedContact);
+		updateNotificationForPhysicalDiagnosisReport(task, associatedContact);
 	}
 
-	public void updateNotificationOnDiagnosisChange(Task task, AssociatedContact associatedContact) {
+	/**
+	 * Checks all diagnoses for physical diagnosis report sending, and checks if
+	 * the contact is a affected. If so the contact will be marked.
+	 * 
+	 * @param task
+	 * @param associatedContact
+	 */
+	public void updateNotificationForPhysicalDiagnosisReport(Task task, AssociatedContact associatedContact) {
 		Set<ContactRole> sendLetterTo = new HashSet<ContactRole>();
 
+		// checking if a already a report should be send physically, if so do
+		// nothing and return
+		if (associatedContact.getNotifications().stream()
+				.anyMatch(p -> p.getNotificationTyp().equals(AssociatedContactNotification.NotificationTyp.LETTER)))
+			return;
+
+		// collecting roles for which a report should be physically send
 		for (DiagnosisRevision diagnosisRevision : task.getDiagnosisContainer().getDiagnosisRevisions()) {
 			for (Diagnosis diagnosis : diagnosisRevision.getDiagnoses()) {
 				if (diagnosis.getDiagnosisPrototype() != null)
@@ -65,24 +86,28 @@ public class ContactDAO extends AbstractDAO {
 			}
 		}
 
-		for (ContactRole contactRole : sendLetterTo) {
-			System.out.println(contactRole);
-		}
-
 		// checking if contact is within the send letter to roles
-		loop: for (ContactRole contactRole : sendLetterTo) {
+		for (ContactRole contactRole : sendLetterTo) {
 			if (associatedContact.getRole().equals(contactRole)) {
-
-				for (AssociatedContactNotification notification : associatedContact.getNotifications()) {
-					if (notification.getNotificationTyp().equals(AssociatedContactNotification.NotificationTyp.LETTER))
-						break loop;
-				}
-
+				// adding notification and return;
 				addNotificationType(task, associatedContact, AssociatedContactNotification.NotificationTyp.LETTER);
 				return;
 			}
 		}
 
+	}
+
+	/**
+	 * Updates all contacts an checks if a physical letter should be send to
+	 * them (depending on the selected diagnosis)
+	 * 
+	 * @param task
+	 * @param diagnosisRevision
+	 */
+	public void updateNotificationsForPhysicalDiagnosisReport(Task task) {
+		for (AssociatedContact associatedContact : task.getContacts()) {
+			updateNotificationForPhysicalDiagnosisReport(task, associatedContact);
+		}
 	}
 
 	public void reOrderContactList(Task task, int indexRemove, int indexMove) {
@@ -95,6 +120,7 @@ public class ContactDAO extends AbstractDAO {
 
 	/**
 	 * removes a contact
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 */
@@ -105,7 +131,8 @@ public class ContactDAO extends AbstractDAO {
 	}
 
 	/**
-	 * removes a notification 
+	 * removes a notification
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 * @param notification
@@ -125,6 +152,7 @@ public class ContactDAO extends AbstractDAO {
 
 	/**
 	 * Adds an associated contact
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 * @return
@@ -135,11 +163,15 @@ public class ContactDAO extends AbstractDAO {
 
 	/**
 	 * Adds an associated contact
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 * @return
 	 */
 	public AssociatedContact addAssociatedContact(Task task, AssociatedContact associatedContact) {
+		if (task.getContacts().stream().anyMatch(p -> p.equals(associatedContact)))
+			throw new IllegalArgumentException("Already in list");
+
 		task.getContacts().add(associatedContact);
 		associatedContact.setTask(task);
 		genericDAO.savePatientData(associatedContact, task, "log.patient.task.contact.add",
@@ -150,6 +182,7 @@ public class ContactDAO extends AbstractDAO {
 
 	/**
 	 * Adds a new notification with the given type
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 * @param notificationTyp
@@ -160,9 +193,10 @@ public class ContactDAO extends AbstractDAO {
 		return addNotificationType(task, associatedContact, notificationTyp, true, false, false, null, null);
 
 	}
-	
+
 	/**
 	 * Adds a new notification with the given type
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 * @param notificationTyp
@@ -196,7 +230,9 @@ public class ContactDAO extends AbstractDAO {
 	}
 
 	/**
-	 * Sets the given notification as inactive an adds a new notification of the same type (active)
+	 * Sets the given notification as inactive an adds a new notification of the
+	 * same type (active)
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 * @param notification
@@ -212,6 +248,7 @@ public class ContactDAO extends AbstractDAO {
 
 	/**
 	 * Sets all notifications with the given type to the given active status
+	 * 
 	 * @param task
 	 * @param associatedContact
 	 * @param notificationTyp

@@ -7,6 +7,7 @@ import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.ContactDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
@@ -71,6 +72,11 @@ public class DiagnosisViewHandlerAction {
 	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ContactDAO contactDAO;
+	
 	/**
 	 * List of all diagnosis presets
 	 */
@@ -194,6 +200,9 @@ public class DiagnosisViewHandlerAction {
 			logger.debug("Updating diagnosis prototype");
 
 			diagnosis.updateDiagnosisWithPrest(diagnosis.getDiagnosisPrototype());
+			
+			// updating all contacts on diagnosis change, an determine if the contact should receive a physical case report
+			contactDAO.updateNotificationsForPhysicalDiagnosisReport(diagnosis.getTask());
 
 			genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.update",
 					diagnosis.toString());

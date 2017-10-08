@@ -10,6 +10,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
@@ -18,6 +19,7 @@ import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomNotUniqueReqest;
+import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
@@ -94,11 +96,16 @@ public class CreateTaskDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private TransactionTemplate transactionTemplate;
-	
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ContactDAO contactDAO;
 
 	private Patient patient;
 
@@ -300,6 +307,9 @@ public class CreateTaskDialog extends AbstractDialog {
 						genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.save");
 					}
 
+					// adding patient to the contact list
+					contactDAO.addAssociatedContact(task, getPatient().getPerson(), ContactRole.PATIENT);
+
 					genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
 
 					FavouriteList f = favouriteListDAO.getFavouriteList(PredefinedFavouriteList.StainingList.getId(),
@@ -308,7 +318,6 @@ public class CreateTaskDialog extends AbstractDialog {
 					favouriteListDAO.addTaskToList(getTask(), f);
 
 					genericDAO.save(task.getPatient());
-					System.out.println("asd");
 				}
 			});
 

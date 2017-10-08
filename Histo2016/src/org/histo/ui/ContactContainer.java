@@ -83,56 +83,6 @@ public class ContactContainer {
 		logger.debug("Custom Address is: " + getCustomAddress());
 	}
 
-	// /**
-	// * Returns if set the customContact (manually changed by the user),
-	// * otherwise it will generate the default address field
-	// *
-	// * @return
-	// */
-	// public String getCustomOrGeneratedAddress() {
-	// Optional<String> address = Optional.ofNullable(getCustomAddress());
-	//
-	// if (address.isPresent())
-	// return address.get();
-	//
-	// setCustomAddress(AssociatedContact.generateAddress(getContact()));
-	//
-	// return getCustomAddress();
-	// }
-	// //
-	// // @Transient
-	// // public String getContactAsLatex() {
-	// // return (new
-	// TextToLatexConverter()).convertToTex(getContactAsString());
-	// // }
-	//
-	// /**
-	// * Checks if an organization was selected, then true will be returned an a
-	// * customAddress will be generated
-	// *
-	// * @param contactContainer
-	// * @return
-	// */
-	// public static boolean generateCustomOrganizationAddress(ContactContainer
-	// contactContainer) {
-	// try {
-	// // organization was selected generating customAddress field
-	// ContactContainer.OrganizationChooser organizationChooser =
-	// contactContainer.getOrganizazionsChoosers()
-	// .stream().filter(p ->
-	// p.isSelected()).collect(StreamUtils.singletonCollector());
-	//
-	// contactContainer.setCustomAddress(AssociatedContact.generateAddress(contactContainer.getContact(),
-	// organizationChooser.getOrganization()));
-	//
-	// return true;
-	// } catch (IllegalStateException e) {
-	// // no organization was selected, nothin to do
-	// return false;
-	// }
-	//
-	// }
-
 	@Getter
 	@Setter
 	public class OrganizationChooser {

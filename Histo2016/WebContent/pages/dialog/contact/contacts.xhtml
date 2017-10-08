@@ -54,8 +54,37 @@
 							styleClass="smallDataList"
 							value="#{contactHolder.contact.notifications}">
 							<p:column>
-								<h:outputText
-									value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}"></h:outputText>
+
+								<ui:fragment
+									rendered="#{notifications.notificationTyp eq 'EMAIL'}">
+									<i class="fa fa-envelope icon-grey" />
+								</ui:fragment>
+
+								<ui:fragment
+									rendered="#{notifications.notificationTyp eq 'FAX'}">
+									<i class="fa fa-fax icon-grey" />
+								</ui:fragment>
+
+								<ui:fragment
+									rendered="#{notifications.notificationTyp eq 'LETTER'}">
+									<i class="fa fa-pencil-square-o icon-grey" />
+								</ui:fragment>
+
+								<ui:fragment
+									rendered="#{notifications.notificationTyp eq 'PHONE'}">
+									<i class="fa fa-phone icon-grey" />
+								</ui:fragment>
+
+								<ui:fragment
+									rendered="#{notifications.notificationTyp eq 'PRINT'}">
+									<i class="fa fa-print icon-grey" />
+								</ui:fragment>
+
+								<span style="marign-left: 10px;">
+									<h:outputText
+										value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}"></h:outputText>
+								</span>
+
 								<ui:fragment
 									rendered="#{notifications.performed and !notifications.failed}">
 									<i class="fa fa-check icon-green"

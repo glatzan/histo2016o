@@ -5,14 +5,11 @@
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
 Merke: keine kurzbefunde
 
-
-TODO: associated contact und associated contact notification haben beide ein custom addres field, von associated contact diese entfernen
-TODO: Notification! ->  save sendreport, 
 TODO: Phasen + Phasen Buttons im Menu überprüfen
 
 TODO: batches gui für färbungen
-TODO: Briefliste in diagnose muss bei diagnose Änderugnen übernommen werden -< updateNotificationOnDiagnosisChange
 
+TODO: Individelle Adressen beim drucken sollten aus personen gespeichert werden?
 TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
@@ -35,6 +32,9 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: Briefliste in diagnose muss bei diagnose Änderugnen übernommen werden -< updateNotificationOnDiagnosisChange
+++++: Notification! ->  save sendreport, 
+++++: associated contact und associated contact notification haben beide ein custom addres field, von associated contact diese entfernen
 ++++: reperform send, send report latex
 ++++: Labelprinten überprüfen ob richtig geht
 ++++: Ldap, Fax überprüfen ob richtig gehen

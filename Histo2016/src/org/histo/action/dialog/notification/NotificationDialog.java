@@ -335,7 +335,9 @@ public class NotificationDialog extends AbstractDialog {
 								holder.setContactAddress(associatedContact.getPerson().getContact().getPhone());
 								break;
 							case LETTER:
-
+								break;
+							default:
+								// do nothing for e.g. print 
 								break;
 							}
 						} else {
@@ -860,8 +862,11 @@ public class NotificationDialog extends AbstractDialog {
 								// Template has a TemplateDiagnosisReport
 								// generator
 
+								// generating the address field of the pdf
+								String reportAddressField = AssociatedContact.generateAddress(holder.getContact());
+
 								((TemplateDiagnosisReport) mailTab.getSelectedTemplate())
-										.initData(getTask().getPatient(), getTask(), holder.getContact());
+										.initData(getTask().getPatient(), getTask(), reportAddressField);
 
 								PDFContainer container = mailTab.getSelectedTemplate().generatePDF(new PDFGenerator());
 
@@ -951,9 +956,12 @@ public class NotificationDialog extends AbstractDialog {
 								progressStepText("dialog.notification.sendProcess.pdf.generating",
 										holder.getContact().getPerson().getFullName());
 
+								// generating the address field of the pdf
+								String reportAddressField = AssociatedContact.generateAddress(holder.getContact());
+
 								// generating pdf
 								((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
-										.initData(getTask().getPatient(), getTask(), holder.getContact());
+										.initData(getTask().getPatient(), getTask(), reportAddressField);
 								PDFContainer container = ((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
 										.generatePDF(new PDFGenerator());
 
@@ -1017,8 +1025,11 @@ public class NotificationDialog extends AbstractDialog {
 								progressStepText("dialog.notification.sendProcess.pdf.generating",
 										holder.getContact().getPerson().getFullName());
 
+								// generating the address field of the pdf
+								String reportAddressField = AssociatedContact.generateAddress(holder.getContact());
+
 								((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
-										.initData(getTask().getPatient(), getTask(), holder.getContact());
+										.initData(getTask().getPatient(), getTask(), reportAddressField);
 								PDFContainer container = ((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
 										.generatePDF(new PDFGenerator());
 

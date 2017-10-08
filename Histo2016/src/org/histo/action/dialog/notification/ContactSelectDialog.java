@@ -128,9 +128,9 @@ public class ContactSelectDialog extends AbstractDialog {
 		setAddAsRole(addAsRole);
 
 		setAddableRoles(addableRoles);
-		
+
 		setSelectedContact(null);
-		
+
 		setManuallySelectRole(false);
 
 		return true;
@@ -145,6 +145,8 @@ public class ContactSelectDialog extends AbstractDialog {
 				.map(p -> new PhysicianContainer(p, i.getAndIncrement())).collect(Collectors.toList());
 
 		loop: for (PhysicianContainer physicianContainer : resultList) {
+			// adds the role to the physicianContainer to display that the
+			// physician is already added
 			for (AssociatedContact associatedContact : task.getContacts()) {
 				if (associatedContact.getPerson().equals(physicianContainer.getPhysician().getPerson())) {
 					physicianContainer.addAssociatedRole(associatedContact.getRole());
@@ -182,18 +184,15 @@ public class ContactSelectDialog extends AbstractDialog {
 		try {
 			associatedContact.setRole(role);
 
-			if (task.getContacts().stream().anyMatch(p -> p.equals(associatedContact))) {
-				// todo error message
-				logger.debug("Not adding, double contact");
-				return;
-			}
-
 			// saving
 			contactDAO.addAssociatedContact(task, associatedContact);
-			
+
 			// settings roles
 			contactDAO.updateNotificationsOnRoleChange(task, associatedContact);
-			
+
+		} catch (IllegalArgumentException e) {
+			// todo error message
+			logger.debug("Not adding, double contact");
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
@@ -204,7 +203,7 @@ public class ContactSelectDialog extends AbstractDialog {
 	public class PhysicianContainer implements Serializable {
 
 		private static final long serialVersionUID = -4105916869081787460L;
-		
+
 		private int id;
 		private Physician physician;
 		private List<ContactRole> associatedRoles;

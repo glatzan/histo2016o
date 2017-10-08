@@ -164,9 +164,6 @@ public class PrintDialog extends AbstractDialog {
 		// contacts for printing
 		setContactList(new ArrayList<ContactContainer>());
 
-		// setting patient
-		getContactList().add(new ContactContainer(task, task.getPatient().getPerson(), ContactRole.PATIENT));
-
 		// setting other contacts (physicians)
 		getContactList().addAll(ContactContainer.factory(task.getContacts()));
 
@@ -525,9 +522,15 @@ public class PrintDialog extends AbstractDialog {
 					setRenderedContact(tmp);
 				}
 
-				contactDAO.addNotificationType(task, contactChooser.getContact(),
-						AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,
-						new Date(System.currentTimeMillis()), contactChooser.getCustomAddress());
+				// individual contact, adding to contact list
+				if (contactChooser.getContact().getRole() != ContactRole.NONE) {
+
+					contactDAO.addNotificationType(task, contactChooser.getContact(),
+							AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,
+							new Date(System.currentTimeMillis()), contactChooser.getCustomAddress());
+				} else {
+					// TODO add indivuell address as person
+				}
 
 				oneContactSelected = true;
 			}

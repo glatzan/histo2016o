@@ -59,6 +59,11 @@
 							<i class="fa fa-phone icon-grey" />
 						</ui:fragment>
 
+						<ui:fragment
+							rendered="#{notifications.notificationTyp eq 'PRINT'}">
+							<i class="fa fa-print icon-grey" />
+						</ui:fragment>
+
 						<h:outputLabel style="margin-left: 10px;"
 							value="#{msg['enum.notificationType.'.concat(notifications.notificationTyp)]}" />
 					</p:column>
