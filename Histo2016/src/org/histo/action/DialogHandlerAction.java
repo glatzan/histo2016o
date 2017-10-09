@@ -15,6 +15,7 @@ import org.histo.action.dialog.patient.EditPatientDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
+import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -57,6 +58,8 @@ public class DialogHandlerAction {
 	private AddPatientDialogHandler addPatientDialogHandler;
 
 	private FavouriteListsDialog favouriteListsDialog;
+
+	private SlideOverviewDialog slideOverviewDialog;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -173,6 +176,14 @@ public class DialogHandlerAction {
 		}
 
 		return favouriteListsDialog;
+	}
+
+	public SlideOverviewDialog getSlideOverviewDialog() {
+		if (slideOverviewDialog == null) {
+			slideOverviewDialog = new SlideOverviewDialog();
+		}
+
+		return slideOverviewDialog;
 	}
 
 }

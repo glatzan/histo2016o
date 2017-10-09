@@ -197,7 +197,7 @@ body {
 /* Auto width for menu on top */
 ul.ui-menu-child {
 	white-space: nowrap;
-	width: auto !important;
+	width: 200px !important;
 }
 
 /* Default table for listing inputfields*/
