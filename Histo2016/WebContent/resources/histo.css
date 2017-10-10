@@ -410,12 +410,11 @@ ul.ui-menu-child {
 	color: inherit !important;
 }
 
-.animatedProgress .ui-progressbar-value { 
-    background-image: url("gfx/progress.gif");
+.animatedProgress .ui-progressbar-value {
+	background-image: url("gfx/progress.gif");
 }
 
-
-.defaultOverlayPanel > div{
+.defaultOverlayPanel>div {
 	padding: 4px !important;
 }
 /*
@@ -579,62 +578,72 @@ ul.ui-menu-child {
 }
 
 /* Tabelle f�r F�rbungen */
-.content .body .stainingTable {
+.stainingTable {
 	width: 100%;
 	border-collapse: collapse !important;
+	border-spacing: 0px;
 }
 
 /* BorderRadius f�r header Zeile in F�rbungstabelle */
-.content .body .stainingTable thead tr:first-child td:first-child,
-	.content .body .stainingTable thead tr:first-child td:last-child {
-	border-radius: 3px;
+.stainingTable thead tr:first-child td:first-child {
+	border-radius: 3px 0px 0px 3px;
+}
+
+.stainingTable thead tr:first-child td:last-child{
+	border-radius: 0px 3px 3px 0px;
 }
 
 /* Alle R�nder f�r die F�rbungstabelle entfernen*/
-.content .body .stainingTable  td, .content .body .stainingTable tr {
+.stainingTable  td, .stainingTable tr {
 	border-collapse: collapse !important;
-	border: none;
+	border: none !important;
+	border-spacing: 0px !important;
 }
 
 /* Gr��e des Auftragsfeldes */
-.content .body .stainingTable .columnSample {
+.stainingTable .columnSample {
 	width: 15%;
 }
 
 /* Gr��e des Blockfeldes*/
-.content .body .stainingTable .columnBlock {
+.stainingTable .columnBlock {
 	width: 15%;
 }
 
 /* Gr��e des Choosefeldes*/
-.content .body .stainingTable .columnChoose {
+.stainingTable .columnChoose {
 	width: auto;
 	padding: 2px 5px;
 }
 
 /* Gr��e des Objekttr�gerfeldes*/
-.content .body .stainingTable .columnStainingID {
+.stainingTable .columnStainingID {
 	width: 13%;
 }
 
-.content .body .stainingTable .columnCommentary {
+.stainingTable .columnCommentary {
 	width: 25%;
 }
 
 /* Gr��e des F�rbungsfeldes*/
-.content .body .stainingTable .columnStaining {
+.stainingTable .columnStaining {
 	width: 7%;
 }
 
 /* Gr��e des Statusfeldes*/
-.content .body .stainingTable .columnStatus {
+.stainingTable .columnStatus {
 	width: 10%;
 	text-align: center;
 }
 
 /* Gr��e des Optionenfeldes*/
-.content .body .stainingTable .columnOptions {
-	width: 12%;
+.stainingTable .columnOptions {
+	width: 8%;
+}
+
+/* Alle Unterstriche bei links interhalb der F�rbungstabelle entfernen*/
+.stainingTable a:-webkit-any-link {
+	text-decoration: none !important;
 }
 
 /* Gr��e der inplaceInput Felder*/
@@ -659,10 +668,6 @@ ul.ui-menu-child {
 	border-radius: 0px !important;
 }
 
-/* Alle Unterstriche bei links interhalb der F�rbungstabelle entfernen*/
-.content .body .stainingTable a:-webkit-any-link {
-	text-decoration: none !important;
-}
 /*	################# Stainings ################# */
 
 /* ######################################## Content ######################################## */

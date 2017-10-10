@@ -16,12 +16,11 @@ public class StainingTableChooser {
 
 	private boolean choosen;
 	private boolean even;
-	
+
 	private Sample sample;
 	private Block block;
 	private Slide staining;
 
-	
 	private List<StainingTableChooser> children;
 
 	public StainingTableChooser(Sample sample, boolean even) {
@@ -61,4 +60,31 @@ public class StainingTableChooser {
 		return staining != null;
 	}
 
+	public void setIDText(String text) {
+		if (isSampleType()) {
+			sample.setSampleID(text);
+			return;
+		}
+
+		if (isBlockType()) {
+			block.setBlockID(text);
+			return;
+		}
+
+		if (isStainingType()) {
+			staining.setSlideID(text);
+			return;
+		}
+	}
+
+	public String getIDText() {
+		if (isSampleType())
+			return sample.getSampleID();
+		if (isBlockType())
+			return block.getBlockID();
+		if (isStainingType())
+			return staining.getSlideID();
+
+		return "";
+	}
 }
