@@ -3,6 +3,8 @@ package org.histo.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
@@ -12,78 +14,89 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StainingTableChooser {
+public class StainingTableChooser<T extends IdManuallyAltered> {
+
+	protected static Logger logger = Logger.getLogger("org.histo");
 
 	private boolean choosen;
 	private boolean even;
 
-	private Sample sample;
-	private Block block;
-	private Slide staining;
+	private boolean idChanged;
 
-	private List<StainingTableChooser> children;
+	private T entity;
 
-	public StainingTableChooser(Sample sample, boolean even) {
-		this.setSample(sample);
+	private List<StainingTableChooser<?>> children;
+
+	public StainingTableChooser(T entity, boolean even) {
+		this.entity = entity;
 		this.even = even;
-		children = new ArrayList<StainingTableChooser>();
+		children = new ArrayList<StainingTableChooser<?>>();
 	}
 
-	public StainingTableChooser(Block block, boolean even) {
-		this.block = block;
-		this.even = even;
-		children = new ArrayList<StainingTableChooser>();
-	}
-
-	public StainingTableChooser(Slide staining, boolean even) {
-		this.staining = staining;
-		this.even = even;
-	}
-
-	public void setChildren(List<StainingTableChooser> children) {
+	public void setChildren(List<StainingTableChooser<?>> children) {
 		this.children = children;
 	}
 
-	public void addChild(StainingTableChooser child) {
+	public void addChild(StainingTableChooser<?> child) {
 		getChildren().add(child);
 	}
 
 	public boolean isSampleType() {
-		return sample != null;
+		return entity instanceof Sample;
 	}
 
 	public boolean isBlockType() {
-		return block != null;
+		return entity instanceof Block;
 	}
 
 	public boolean isStainingType() {
-		return staining != null;
+		return entity instanceof Slide;
 	}
 
 	public void setIDText(String text) {
+
+		// prevent null errors
+		if (text == null)
+			text = "";
+
+		logger.debug("Updating text to " + text);
+
 		if (isSampleType()) {
-			sample.setSampleID(text);
+			if (!text.equals(((Sample) entity).getSampleID())) {
+				setIdChanged(true);
+				logger.debug("Text chagned");
+			}
+
+			((Sample) entity).setSampleID(text);
 			return;
 		}
 
 		if (isBlockType()) {
-			block.setBlockID(text);
+			if (!text.equals(((Block) entity).getBlockID())) {
+				setIdChanged(true);
+				logger.debug("Text chagned");
+			}
+			((Block) entity).setBlockID(text);
 			return;
 		}
 
 		if (isStainingType()) {
-			staining.setSlideID(text);
+			if (!text.equals(((Slide) entity).getSlideID())) {
+				setIdChanged(true);
+				logger.debug("Text chagned");
+			}
+			((Slide) entity).setSlideID(text);
 			return;
 		}
 	}
 
 	public String getIDText() {
 		if (isSampleType())
-			return sample.getSampleID();
+			return ((Sample) entity).getSampleID();
 		if (isBlockType())
-			return block.getBlockID();
+			return ((Block) entity).getBlockID();
 		if (isStainingType())
-			return staining.getSlideID();
+			return ((Slide) entity).getSlideID();
 
 		return "";
 	}

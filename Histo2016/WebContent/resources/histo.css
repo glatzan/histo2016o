@@ -584,12 +584,16 @@ ul.ui-menu-child {
 	border-spacing: 0px;
 }
 
+.stainingTable tbody {
+	border: none !important;
+}
+
 /* BorderRadius f�r header Zeile in F�rbungstabelle */
-.stainingTable thead tr:first-child td:first-child {
+.stainingTable thead tr th:first-child {
 	border-radius: 3px 0px 0px 3px;
 }
 
-.stainingTable thead tr:first-child td:last-child{
+.stainingTable thead tr th:last-child {
 	border-radius: 0px 3px 3px 0px;
 }
 
@@ -602,48 +606,53 @@ ul.ui-menu-child {
 
 /* Gr��e des Auftragsfeldes */
 .stainingTable .columnSample {
-	width: 15%;
+	width: 12%;
 }
 
 /* Gr��e des Blockfeldes*/
 .stainingTable .columnBlock {
-	width: 15%;
+	width: 12%;
 }
 
 /* Gr��e des Choosefeldes*/
 .stainingTable .columnChoose {
-	width: auto;
+	width: 3%;
 	padding: 2px 5px;
 }
 
 /* Gr��e des Objekttr�gerfeldes*/
 .stainingTable .columnStainingID {
-	width: 13%;
+	width: 19%;
 }
 
 .stainingTable .columnCommentary {
-	width: 25%;
+	width: auto%;
 }
 
 /* Gr��e des F�rbungsfeldes*/
 .stainingTable .columnStaining {
-	width: 7%;
+	width: 8%;
 }
 
 /* Gr��e des Statusfeldes*/
 .stainingTable .columnStatus {
-	width: 10%;
+	width: 9%;
 	text-align: center;
 }
 
 /* Gr��e des Optionenfeldes*/
 .stainingTable .columnOptions {
-	width: 8%;
+	width: 10%;
 }
 
 /* Alle Unterstriche bei links interhalb der F�rbungstabelle entfernen*/
 .stainingTable a:-webkit-any-link {
 	text-decoration: none !important;
+}
+
+/* Highlighted datatable, even rows background is different, hover and selected is different*/
+.stainingTable  .datatable-odd {
+	background-color: #f2f2f2;
 }
 
 /* Gr��e der inplaceInput Felder*/

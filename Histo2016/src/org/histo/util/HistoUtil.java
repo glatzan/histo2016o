@@ -49,9 +49,13 @@ public class HistoUtil {
 		}
 		return str.toString();
 	}
-	
+
+	public final static boolean isNullOrEmpty(String str) {
+		return !isNotNullOrEmpty(str);
+	}
+
 	public final static boolean isNotNullOrEmpty(String str) {
-		if(str != null && !str.isEmpty())
+		if (str != null && !str.isEmpty())
 			return true;
 		return false;
 	}

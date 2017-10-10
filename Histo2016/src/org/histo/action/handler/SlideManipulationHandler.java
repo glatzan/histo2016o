@@ -71,14 +71,14 @@ public class SlideManipulationHandler {
 	 * @return
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public boolean setStainingCompletedForSelectedSlides(List<StainingTableChooser> stainingTableChoosers,
+	public boolean setStainingCompletedForSelectedSlides(List<StainingTableChooser<?>> stainingTableChoosers,
 			boolean completed) throws CustomDatabaseInconsistentVersionException {
 
 		boolean changed = false;
-		for (StainingTableChooser stainingTableChooser : stainingTableChoosers) {
+		for (StainingTableChooser<?> stainingTableChooser : stainingTableChoosers) {
 			if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()
-					&& stainingTableChooser.getStaining().isStainingCompleted() != completed) {
-				Slide slide = stainingTableChooser.getStaining();
+					&& ((Slide)stainingTableChooser.getEntity()).isStainingCompleted() != completed) {
+				Slide slide = (Slide)stainingTableChooser.getEntity();
 				slide.setStainingCompleted(completed);
 				slide.setCompletionDate(System.currentTimeMillis());
 

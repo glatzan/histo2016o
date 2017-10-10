@@ -202,7 +202,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	/**
 	 * Currently selected task in table form, transient, used for gui
 	 */
-	private ArrayList<StainingTableChooser> stainingTableChoosers;
+	private ArrayList<StainingTableChooser<?>> stainingTableChoosers;
 
 	/**
 	 * If set to true, this task is shown in the navigation column on the left hand
@@ -306,20 +306,20 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 		for (Sample sample : getSamples()) {
 			// skips archived tasks
 
-			StainingTableChooser sampleChooser = new StainingTableChooser(sample, even);
+			StainingTableChooser<Sample> sampleChooser = new StainingTableChooser<Sample>(sample, even);
 			getStainingTableRows().add(sampleChooser);
 
 			for (Block block : sample.getBlocks()) {
 				// skips archived blocks
 
-				StainingTableChooser blockChooser = new StainingTableChooser(block, even);
+				StainingTableChooser<Block> blockChooser = new StainingTableChooser<Block>(block, even);
 				getStainingTableRows().add(blockChooser);
 				sampleChooser.addChild(blockChooser);
 
 				for (Slide staining : block.getSlides()) {
 					// skips archived sliedes
 
-					StainingTableChooser stainingChooser = new StainingTableChooser(staining, even);
+					StainingTableChooser<Slide> stainingChooser = new StainingTableChooser<Slide>(staining, even);
 					getStainingTableRows().add(stainingChooser);
 					blockChooser.addChild(stainingChooser);
 				}
@@ -718,11 +718,11 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	}
 
 	@Transient
-	public ArrayList<StainingTableChooser> getStainingTableRows() {
+	public ArrayList<StainingTableChooser<?>> getStainingTableRows() {
 		return stainingTableChoosers;
 	}
 
-	public void setStainingTableRows(ArrayList<StainingTableChooser> stainingTableChoosers) {
+	public void setStainingTableRows(ArrayList<StainingTableChooser<?>> stainingTableChoosers) {
 		this.stainingTableChoosers = stainingTableChoosers;
 	}
 

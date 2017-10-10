@@ -10,8 +10,7 @@
 						rendered="#{taskIsNotNull and !selectedTask.isListedInFavouriteList('StainingList', 'ReStainingList','StayInStainingList')}" />
 						
 TODO: Phasen + Phasen Buttons im Menu überprüfen
-
-TODO: batches gui für färbungen
+TODO: AUW Dokument überarbeiten
 
 TODO: Update header menu wenn nachfärbung erstellt wird
 TODO: Individelle Adressen beim drucken sollten aus personen gespeichert werden?
@@ -37,6 +36,7 @@ TODO: Archivieren + Dearchivieren
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
+++++: batches gui für färbungen
 ++++: Briefliste in diagnose muss bei diagnose Änderugnen übernommen werden -< updateNotificationOnDiagnosisChange
 ++++: Notification! ->  save sendreport, 
 ++++: associated contact und associated contact notification haben beide ein custom addres field, von associated contact diese entfernen

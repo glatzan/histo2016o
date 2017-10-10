@@ -133,11 +133,11 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void performActionOnMany(Task task, StainingListAction action) {
 		try {
-			List<StainingTableChooser> list = task.getStainingTableRows();
+			List<StainingTableChooser<?>> list = task.getStainingTableRows();
 
 			// at least one thing has to bee selected
 			boolean atLeastOnechoosen = false;
-			for (StainingTableChooser stainingTableChooser : list) {
+			for (StainingTableChooser<?> stainingTableChooser : list) {
 				if (stainingTableChooser.isChoosen()) {
 					atLeastOnechoosen = true;
 					break;
@@ -189,10 +189,10 @@ public class ReceiptlogViewHandlerAction {
 
 				List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();
 
-				for (StainingTableChooser stainingTableChooser : list) {
+				for (StainingTableChooser<?> stainingTableChooser : list) {
 					if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
 
-						Slide slide = stainingTableChooser.getStaining();
+						Slide slide = (Slide) stainingTableChooser.getEntity();
 
 						TemplateSlideLable tmp = (TemplateSlideLable) printTemplate.clone();
 						tmp.initData(task, slide, new Date(System.currentTimeMillis()));
@@ -287,7 +287,7 @@ public class ReceiptlogViewHandlerAction {
 	 * 
 	 * @param chooser
 	 */
-	public void toggleChildrenChoosenFlag(StainingTableChooser chooser) {
+	public void toggleChildrenChoosenFlag(StainingTableChooser<?> chooser) {
 		setChildrenAsChoosen(chooser, !chooser.isChoosen());
 	}
 
@@ -297,10 +297,10 @@ public class ReceiptlogViewHandlerAction {
 	 * @param chooser
 	 * @param choosen
 	 */
-	public void setChildrenAsChoosen(StainingTableChooser chooser, boolean chosen) {
+	public void setChildrenAsChoosen(StainingTableChooser<?> chooser, boolean chosen) {
 		chooser.setChoosen(chosen);
 		if (chooser.isSampleType() || chooser.isBlockType()) {
-			for (StainingTableChooser tmp : chooser.getChildren()) {
+			for (StainingTableChooser<?> tmp : chooser.getChildren()) {
 				setChildrenAsChoosen(tmp, chosen);
 			}
 		}
@@ -315,8 +315,8 @@ public class ReceiptlogViewHandlerAction {
 	 * @param choosers
 	 * @param choosen
 	 */
-	public void setListAsChoosen(List<StainingTableChooser> choosers, boolean chosen) {
-		for (StainingTableChooser chooser : choosers) {
+	public void setListAsChoosen(List<StainingTableChooser<?>> choosers, boolean chosen) {
+		for (StainingTableChooser<?> chooser : choosers) {
 			if (chooser.isSampleType()) {
 				setChildrenAsChoosen(chooser, chosen);
 			}
@@ -353,20 +353,25 @@ public class ReceiptlogViewHandlerAction {
 	 * @param idManuallyAltered
 	 * @param altered
 	 */
-	public void entityIDmanuallyAltered(IdManuallyAltered idManuallyAltered, boolean altered) {
-		try {
+	public void onEntityIDAlteredOverlayClose(StainingTableChooser<?> chooser) {
 
-			idManuallyAltered.setIdManuallyAltered(altered);
+		// checking if something was altered, if not do nothing
+		if (chooser.isIdChanged()) {
+			try {
 
-			idManuallyAltered.updateAllNames(idManuallyAltered.getTask().isUseAutoNomenclature(), false);
+				chooser.getEntity().setIdManuallyAltered(true);
 
-			// TODO update childrens names
-			genericDAO.savePatientData(idManuallyAltered, "log.patient.task.idManuallyAltered",
-					idManuallyAltered.toString());
+				chooser.getEntity().updateAllNames(chooser.getEntity().getTask().isUseAutoNomenclature(), false);
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// catching database version inconsistencies
-			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
+				// TODO update childrens names
+				genericDAO.savePatientData(chooser.getEntity(), "log.patient.task.idManuallyAltered",
+						chooser.getEntity().toString());
+
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				// catching database version inconsistencies
+				worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
+			}
+			chooser.setIdChanged(false);
 		}
 	}
 }

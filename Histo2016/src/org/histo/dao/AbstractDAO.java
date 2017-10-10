@@ -81,8 +81,6 @@ public abstract class AbstractDAO implements Serializable {
 	public <C extends HasID> C save(C object, String resourcesKey, Object[] resourcesKeyInsert, Patient patient)
 			throws CustomDatabaseInconsistentVersionException {
 
-		System.out.println(resourcesKey + "-------------------" + patient);
-		
 		try {
 			if (resourcesKey != null) {
 				LogInfo logInfo = new LogInfo(resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);

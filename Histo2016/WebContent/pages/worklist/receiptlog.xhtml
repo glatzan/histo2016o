@@ -27,7 +27,7 @@
 	<c:set var="taskEditable" scope="session"
 		value="#{taskStatusHandler.isTaskEditable(commonDataHandlerAction.selectedTask)}" />
 
-	<p:panel style="width: 60%"
+	<p:panel style="width: 70%"
 		styleClass="collapsedBorders noPadding noBorders">
 
 		<h:outputLabel
@@ -286,344 +286,250 @@
 
 
 			<!-- ******************************** Slides ******************************** -->
-			<p:panelGrid styleClass="stainingTable highlightedDataTable">
-				<f:facet name="header">
-					<p:row>
-						<p:column styleClass="columnSample">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.sample']}"></h:outputLabel>
-						</p:column>
-						<p:column styleClass="columnBlock">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.block']}"></h:outputLabel>
-						</p:column>
-						<p:column styleClass="columnChoose"></p:column>
-						<p:column styleClass="columnStainingID">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.staining.id']}"></h:outputLabel>
-						</p:column>
-						<p:column styleClass="columnCommentary">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.staining.commentary']}"></h:outputLabel>
-						</p:column>
-						<p:column styleClass="columnStaining">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.staining.staining']}"></h:outputLabel>
-						</p:column>
-						<p:column styleClass="columnStatus">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.status']}"></h:outputLabel>
-						</p:column>
-						<p:column styleClass="columnOptions">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
-							<p:commandLink styleClass="noUnderlineAtLink"
-								id="quickTaskSettings"
-								actionListener="#{slideNamingDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
-								<i class="fa fa-wrench" />
-								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+			<p:dataTable var="stainingRow" styleClass="stainingTable"
+				value="#{commonDataHandlerAction.selectedTask.stainingTableRows}"
+				rowIndexVar="index">
+
+				<!-- sample -->
+				<p:column
+					styleClass="columnSample #{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.sample']}">
+					<h:panelGroup rendered="#{stainingRow.sampleType}">
+
+						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
+							<p:commandLink process="@this" update="contentForm"
+								actionListener="#{commonDataHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
+								<h:outputLabel
+									value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.entity.sampleID}" />
+
+								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
+								</h:panelGroup>
 							</p:commandLink>
+						</h:panelGroup>
 
-						</p:column>
-					</p:row>
-				</f:facet>
+					</h:panelGroup>
+				</p:column>
 
-				<c:forEach varStatus="inner"
-					items="#{commonDataHandlerAction.selectedTask.stainingTableRows}"
-					var="stainingRow">
-					<p:row styleClass="#{stainingRow.even ? 'ui-datatable-odd' : ''}">
-
-						<!-- Sample -->
-						<p:column styleClass="columnSample">
-							<h:panelGroup rendered="#{stainingRow.sampleType}">
-
-								<h:panelGroup id="sampleIDInput#{inner.index}" layout="block"
-									style="width: 90%; min-height:20px">
-									<h:outputLabel
-										value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.sample.sampleID}" />
-
-									<h:panelGroup
-										rendered="#{stainingRow.sample.idManuallyAltered}">
-										<i class="fa fa-fw fa-chain"
-											title="#{msg['body.statiningView.idManuallyAltered']}" />
-									</h:panelGroup>
+				<!-- Block -->
+				<p:column
+					styleClass="columnBlock #{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.block']}">
+					<h:panelGroup rendered="#{stainingRow.blockType}">
+						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
+							<p:commandLink process="@this" update="contentForm"
+								actionListener="#{commonDataHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
+								<h:outputLabel
+									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.entity.blockID}" />
+								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
 								</h:panelGroup>
+							</p:commandLink>
+						</h:panelGroup>
+					</h:panelGroup>
+				</p:column>
 
-								<p:overlayPanel for="sampleIDInput#{inner.index}"
-									showEffect="fade" widgetVar="sampleIDInputPannel#{inner.index}"
-									hideEffect="fade" showEvent="click" hideEvent="click"
-									onHide="sampleIDChangeTableReset#{inner.index}()">
-									<h:panelGrid columns="3">
-										<p:inputText value="#{stainingRow.sample.sampleID}"
-											id="sampleIDChangeTable#{inner.index}" />
+				<!-- Staining chooser -->
+				<p:column
+					styleClass="columnChoose #{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="">
+					<h:panelGroup
+						rendered="#{stainingRow.sampleType or stainingRow.blockType}">
+						<p:commandLink
+							actionListener="#{receiptlogViewHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
+							update="contentForm"
+							title="#{stainingRow.sampleType ? msg['body.statiningView.chooseSample'] : msg['body.statiningView.chooseBlock']}">
+							<i class="fa fa-fw fa-check-circle" />
+						</p:commandLink>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<p:selectBooleanCheckbox value="#{stainingRow.choosen}" />
+					</h:panelGroup>
+				</p:column>
 
-										<p:commandButton value="#{msg['general.save']}"
-											update="contentForm"
-											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,true)}"
-											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()" />
+				<!-- staining - name -->
+				<p:column
+					styleClass="columnStainingID #{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.staining.id']}">
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
+							<p:commandLink process="@this" update="contentForm"
+								actionListener="#{commonDataHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
+								<h:outputLabel value="#{stainingRow.entity.slideID}" />
 
-										<p:commandButton
-											value="#{msg['body.statiningView.idManuallyAltered.reset']}"
-											update="contentForm"
-											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.sample,false)}"
-											oncomplete="PF('sampleIDInputPannel#{inner.index}').hide()" />
-
-									</h:panelGrid>
-
-									<!-- reset on hide -->
-									<p:remoteCommand name="sampleIDChangeTableReset#{inner.index}"
-										process="@this" update="sampleIDChangeTable#{inner.index}">
-										<p:resetInput target="sampleIDChangeTable#{inner.index}" />
-									</p:remoteCommand>
-								</p:overlayPanel>
-							</h:panelGroup>
-						</p:column>
-
-						<!-- Block -->
-						<p:column styleClass="columnBlock">
-							<h:panelGroup rendered="#{stainingRow.blockType}">
-
-								<h:panelGroup id="blockIDInput#{inner.index}" layout="block"
-									style="width: 90%; min-height:20px">
-									<h:outputLabel
-										value="#{msg['body.receiptlog.slide.block']} #{stainingRow.block.blockID}" />
-									<h:panelGroup rendered="#{stainingRow.block.idManuallyAltered}">
-										<i class="fa fa-fw fa-chain"
-											title="#{msg['body.statiningView.idManuallyAltered']}" />
-									</h:panelGroup>
-
+								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
 								</h:panelGroup>
-								<p:overlayPanel for="blockIDInput#{inner.index}"
-									onHide="blockIDChangeTableReset#{inner.index}()"
-									showEffect="fade" widgetVar="blockIDInputPannel#{inner.index}"
-									hideEffect="fade" showEvent="click" hideEvent="click">
-									<h:panelGrid columns="3">
-										<p:inputText value="#{stainingRow.block.blockID}"
-											id="blockIDChangeTable#{inner.index}" />
-										<p:commandButton value="#{msg['general.save']}"
-											update="contentForm"
-											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.block,true)}"
-											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()" />
+							</p:commandLink>
+						</h:panelGroup>
+					</h:panelGroup>
+				</p:column>
 
-										<p:commandButton
-											value="#{msg['body.statiningView.idManuallyAltered.reset']}"
-											update="contentForm"
-											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.block,false)}"
-											oncomplete="PF('blockIDInputPannel#{inner.index}').hide()"></p:commandButton>
-									</h:panelGrid>
+				<!-- staining commentary -->
+				<p:column
+					styleClass="columnCommentary #{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.staining.commentary']}">
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<p:selectOneMenu styleClass="smallInput" style="width: 90%"
+							value="#{stainingRow.entity.commentary}" editable="true"
+							disabled="#{!taskEditable}">
 
-									<!-- reset on hide -->
-									<p:remoteCommand name="blockIDChangeTableReset#{inner.index}"
-										process="@this" update="blockIDChangeTable#{inner.index}">
-										<p:resetInput target="blockIDChangeTable#{inner.index}" />
-									</p:remoteCommand>
-								</p:overlayPanel>
-							</h:panelGroup>
-						</p:column>
+							<f:selectItems
+								value="#{receiptlogViewHandlerAction.slideCommentary}"
+								var="commentary" itemLabel="#{commentary.value}"
+								itemValue="#{commentary.value}" />
 
-						<!-- Staining chooser -->
-						<p:column styleClass="columnChoose">
-							<h:panelGroup
-								rendered="#{stainingRow.sampleType or stainingRow.blockType}">
-								<p:commandLink
-									actionListener="#{receiptlogViewHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
-									update="contentForm"
-									title="#{stainingRow.sampleType ? msg['body.statiningView.chooseSample'] : msg['body.statiningView.chooseBlock']}">
-									<i class="fa fa-fw fa-check-circle" />
-								</p:commandLink>
-							</h:panelGroup>
-							<h:panelGroup rendered="#{stainingRow.stainingType}">
-								<p:selectBooleanCheckbox value="#{stainingRow.choosen}" />
-							</h:panelGroup>
-						</p:column>
+							<p:ajax event="change" execute="@this"
+								listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.entity,'log.settings.staining.update')}" />
+						</p:selectOneMenu>
 
-						<!-- Staining Name -->
-						<p:column styleClass="columnStainingID">
-							<h:panelGroup rendered="#{stainingRow.stainingType}">
+					</h:panelGroup>
+				</p:column>
 
-								<h:panelGroup id="slideIDInput#{inner.index}" layout="block"
-									style="width: 90%; min-height:20px">
+				<!-- Staining staining -->
+				<p:column
+					styleClass="columnStaining #{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.staining.staining']}">
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<h:outputText value="#{stainingRow.entity.slidePrototype.name}" />
+					</h:panelGroup>
+				</p:column>
 
-									<h:outputLabel value="#{stainingRow.staining.slideID}" />
+				<!-- Staining status -->
+				<p:column
+					styleClass="columnStatus #{stainingRow.even ? 'datatable-odd' : ''}">
+					<!-- Sample status -->
+					<h:panelGroup rendered="#{stainingRow.sampleType}">
+						<!-- ********** Staining performed ********** -->
+						<h:panelGroup
+							rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.entity)}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['body.statiningView.status.performed']}" />
+						</h:panelGroup>
+					</h:panelGroup>
+					<!-- Block status -->
+					<h:panelGroup rendered="#{stainingRow.blockType}">
+						<!-- ********** Staining performed ********** -->
+						<h:panelGroup
+							rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.entity)}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['body.statiningView.status.performed']}" />
+						</h:panelGroup>
+					</h:panelGroup>
 
-									<h:panelGroup
-										rendered="#{stainingRow.staining.idManuallyAltered}">
-										<i class="fa fa-fw fa-chain"
-											title="#{msg['body.statiningView.idManuallyAltered']}" />
-									</h:panelGroup>
+					<!-- Slide status -->
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<!-- ********** Staining performed ********** -->
+						<h:panelGroup rendered="#{stainingRow.entity.stainingCompleted}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['body.statiningView.status.performed']}" />
+						</h:panelGroup>
 
-								</h:panelGroup>
+						<h:panelGroup rendered="#{stainingRow.entity.reStaining}">
+							<i class="fa fa-fw fa-th-list icon-orange"
+								title="#{msg['body.statiningView.status.restaining']}" />
+						</h:panelGroup>
+					</h:panelGroup>
+				</p:column>
 
-								<p:overlayPanel for="slideIDInput#{inner.index}"
-									showEffect="fade" widgetVar="slideIDInputPannel#{inner.index}"
-									hideEffect="fade" showEvent="click" hideEvent="click"
-									onHide="slideIDChangeTableReset#{inner.index}()">
-									<h:panelGrid columns="3">
-										<p:inputText value="#{stainingRow.staining.slideID}"
-											id="slideIDChangeTable#{inner.index}" />
-										<p:commandButton value="#{msg['general.save']}"
-											update="contentForm"
-											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.staining,true)}"
-											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()"></p:commandButton>
+				<!-- Options -->
+				<p:column
+					styleClass="columnOptions #{stainingRow.even ? 'datatable-odd' : ''}">
+					<f:facet name="header">
+						<h:outputLabel
+							value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
+						<p:commandLink styleClass="noUnderlineAtLink"
+							id="quickTaskSettings"
+							actionListener="#{slideNamingDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+							<i class="fa fa-wrench" />
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</f:facet>
+					<!-- Sample -->
+					<h:panelGroup rendered="#{stainingRow.sampleType}"
+						style="float: right">
+						<!-- ********** New Block Button ********** -->
+						<p:commandLink title="#{msg['body.statiningView.newBlock']}"
+							styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
+							update="navigationForm contentForm"
+							actionListener="#{diagnosisViewHandlerAction.createNewBlock(stainingRow.entity)}">
+							<i class="fa fa-fw fa-th-large"></i>
+						</p:commandLink>
+						<!-- ********** Delete Button ********** -->
+						<p:commandLink styleClass="noUnderlineAtLink"
+							title="#{msg['body.statiningView.archiveSample']}"
+							disabled="#{!taskEditable}"
+							actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							<i class="fa fa-fw fa-times-circle"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</h:panelGroup>
 
-										<p:commandButton
-											value="#{msg['body.statiningView.idManuallyAltered.reset']}"
-											update="contentForm"
-											actionListener="#{receiptlogViewHandlerAction.entityIDmanuallyAltered(stainingRow.staining,false)}"
-											oncomplete="PF('slideIDInputPannel#{inner.index}').hide()" />
-									</h:panelGrid>
+					<!-- Block -->
+					<h:panelGroup rendered="#{stainingRow.blockType}"
+						style="float: right">
+						<!-- ********** New Staining Button ********** -->
+						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
+							styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
+							actionListener="#{addSlidesDialogHandler.initAndPrepareBean(stainingRow.entity)}">
+							<i class="fa fa-fw fa-paint-brush"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+						<!-- ********** Delete Button ********** -->
+						<p:commandLink styleClass="noUnderlineAtLink"
+							disabled="#{!taskEditable}"
+							title="#{msg['body.statiningView.archiveBlock']}"
+							actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							<i class="fa fa-fw fa-times-circle"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</h:panelGroup>
 
-									<!-- reset on hide -->
-									<p:remoteCommand name="slideIDChangeTableReset#{inner.index}"
-										process="@this" update="slideIDChangeTable#{inner.index}">
-										<p:resetInput target="slideIDChangeTable#{inner.index}" />
-									</p:remoteCommand>
-								</p:overlayPanel>
+					<!-- Staining -->
+					<h:panelGroup rendered="#{stainingRow.stainingType}"
+						style="float: right">
+						<!-- ********** Print Button ********** -->
+						<p:commandLink styleClass="noUnderlineAtLink"
+							actionListener="#{receiptlogViewHandlerAction.printLableForSlide(stainingRow.entity)}"
+							title="#{msg['body.statiningView.printStaining']}">
+							<i class="fa fa-fw fa-print" />
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+						<!-- ********** Cloud Button ********** -->
+						<p:commandLink styleClass="noUnderlineAtLink"
+							title="#{msg['body.statiningView.showStaining']}">
+							<i class="fa fa-fw fa-file-photo-o" />
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+						<!-- ********** Delete Button ********** -->
+						<p:commandLink styleClass="noUnderlineAtLink"
+							disabled="#{!taskEditable}"
+							title="#{msg['body.statiningView.archiveStaining']}"
+							actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							<i class="fa fa-fw fa-times-circle" />
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</h:panelGroup>
+				</p:column>
+			</p:dataTable>
 
-							</h:panelGroup>
-						</p:column>
+			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
+				styleClass="defaultOverlayPanel" widgetVar="idInputPannel"
+				hideEffect="fade" hideEvent="none" showEvent="none">
+				<p:inputText id="idInputPannelInput"
+					rendered="#{commonDataHandlerAction.selectedStainingTableChooser ne null}"
+					value="#{commonDataHandlerAction.selectedStainingTableChooser.IDText}" />
+			</p:overlayPanel>
 
-						<!-- staining commentary -->
-						<p:column styleClass="columnCommentary">
-							<h:panelGroup rendered="#{stainingRow.stainingType}">
-								<p:selectOneMenu styleClass="smallInput" style="width: 90%"
-									value="#{stainingRow.staining.commentary}" editable="true"
-									disabled="#{!taskEditable}">
-
-									<f:selectItems
-										value="#{receiptlogViewHandlerAction.slideCommentary}"
-										var="commentary" itemLabel="#{commentary.value}"
-										itemValue="#{commentary.value}" />
-
-									<p:ajax event="change" execute="@this"
-										listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.staining,'log.settings.staining.update')}" />
-								</p:selectOneMenu>
-
-							</h:panelGroup>
-						</p:column>
-
-						<!-- Staining staining -->
-						<p:column styleClass="columnStaining">
-							<h:panelGroup rendered="#{stainingRow.stainingType}">
-								<h:outputText
-									value="#{stainingRow.staining.slidePrototype.name}" />
-							</h:panelGroup>
-						</p:column>
-
-						<!-- Staining status -->
-						<p:column styleClass="columnStatus">
-							<!-- Sample status -->
-							<h:panelGroup rendered="#{stainingRow.sampleType}">
-								<!-- ********** Staining performed ********** -->
-								<h:panelGroup
-									rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.sample)}">
-									<i class="fa fa-fw fa-check-circle icon-green"
-										title="#{msg['body.statiningView.status.performed']}" />
-								</h:panelGroup>
-							</h:panelGroup>
-							<!-- Block status -->
-							<h:panelGroup rendered="#{stainingRow.blockType}">
-								<!-- ********** Staining performed ********** -->
-								<h:panelGroup
-									rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.block)}">
-									<i class="fa fa-fw fa-check-circle icon-green"
-										title="#{msg['body.statiningView.status.performed']}" />
-								</h:panelGroup>
-							</h:panelGroup>
-
-							<!-- Slide status -->
-							<h:panelGroup rendered="#{stainingRow.stainingType}">
-								<!-- ********** Staining performed ********** -->
-								<h:panelGroup
-									rendered="#{stainingRow.staining.stainingCompleted}">
-									<i class="fa fa-fw fa-check-circle icon-green"
-										title="#{msg['body.statiningView.status.performed']}" />
-								</h:panelGroup>
-
-								<h:panelGroup rendered="#{stainingRow.staining.reStaining}">
-									<i class="fa fa-fw fa-th-list icon-orange"
-										title="#{msg['body.statiningView.status.restaining']}" />
-								</h:panelGroup>
-							</h:panelGroup>
-						</p:column>
-
-						<!-- Options -->
-						<p:column styleClass="columnOptions">
-							<!-- Sample -->
-							<h:panelGroup rendered="#{stainingRow.sampleType}"
-								style="float: right">
-								<!-- ********** New Block Button ********** -->
-								<p:commandLink title="#{msg['body.statiningView.newBlock']}"
-									styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
-									update="navigationForm contentForm"
-									actionListener="#{diagnosisViewHandlerAction.createNewBlock(stainingRow.sample)}">
-									<i class="fa fa-fw fa-th-large"></i>
-								</p:commandLink>
-								<!-- ********** Delete Button ********** -->
-								<p:commandLink styleClass="noUnderlineAtLink"
-									title="#{msg['body.statiningView.archiveSample']}"
-									disabled="#{!taskEditable}"
-									actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.sample.task,stainingRow.sample)}">
-									<i class="fa fa-fw fa-times-circle"></i>
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-							</h:panelGroup>
-
-							<!-- Block -->
-							<h:panelGroup rendered="#{stainingRow.blockType}"
-								style="float: right">
-								<!-- ********** New Staining Button ********** -->
-								<p:commandLink title="#{msg['body.statiningView.newStaining']}"
-									styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
-									actionListener="#{addSlidesDialogHandler.initAndPrepareBean(stainingRow.block)}">
-									<i class="fa fa-fw fa-paint-brush"></i>
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-								<!-- ********** Delete Button ********** -->
-								<p:commandLink styleClass="noUnderlineAtLink"
-									disabled="#{!taskEditable}"
-									title="#{msg['body.statiningView.archiveBlock']}"
-									actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.block.task,stainingRow.block)}">
-									<i class="fa fa-fw fa-times-circle"></i>
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-							</h:panelGroup>
-
-							<!-- Staining -->
-							<h:panelGroup rendered="#{stainingRow.stainingType}"
-								style="float: right">
-								<!-- ********** Print Button ********** -->
-								<p:commandLink styleClass="noUnderlineAtLink"
-									actionListener="#{receiptlogViewHandlerAction.printLableForSlide(stainingRow.staining)}"
-									title="#{msg['body.statiningView.printStaining']}">
-									<i class="fa fa-fw fa-print" />
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-								<!-- ********** Cloud Button ********** -->
-								<p:commandLink styleClass="noUnderlineAtLink"
-									title="#{msg['body.statiningView.showStaining']}">
-									<i class="fa fa-fw fa-file-photo-o" />
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-								<!-- ********** Delete Button ********** -->
-								<p:commandLink styleClass="noUnderlineAtLink"
-									disabled="#{!taskEditable}"
-									title="#{msg['body.statiningView.archiveStaining']}"
-									actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.staining.task,stainingRow.staining)}">
-									<i class="fa fa-fw fa-times-circle" />
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-							</h:panelGroup>
-						</p:column>
-					</p:row>
-				</c:forEach>
-			</p:panelGrid>
+			<p:remoteCommand
+				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(commonDataHandlerAction.selectedStainingTableChooser)}"
+				name="saveNameChange" update="navigationForm contentForm" />
 
 			<h:panelGrid columns="5" style="margin-top:10px;">
 
