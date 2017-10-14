@@ -174,7 +174,7 @@
 							value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
 						<p:commandLink styleClass="noUnderlineAtLink"
 							id="quickTaskSettings"
-							actionListener="#{slideNamingDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+							actionListener="#{slideNamingDialog.initAndPrepareBean(stainingRow.entity)}">
 							<i class="fa fa-wrench" />
 							<p:ajax event="dialogReturn" update="dialogContent" />
 						</p:commandLink>
@@ -209,7 +209,7 @@
 			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
 				styleClass="defaultOverlayPanel" widgetVar="idInputPannel"
 				hideEffect="fade" hideEvent="none" showEvent="none">
-				<p:inputText id="idInputPannelInput"
+				<p:inputText id="idInputPannelInput" rendered="#{commonDataHandlerAction.selectedStainingTableChooser ne null}"
 					value="#{commonDataHandlerAction.selectedStainingTableChooser.IDText}" />
 			</p:overlayPanel>
 

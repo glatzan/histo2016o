@@ -2,7 +2,6 @@ package org.histo.action.dialog.notification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -15,8 +14,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.notification.ContactDialog.ContactHolder;
-import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;

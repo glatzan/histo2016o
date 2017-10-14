@@ -69,7 +69,10 @@ public class WorklistViewHandlerAction {
 	@Autowired
 	@Lazy
 	private ResourceBundle resourceBundle;
-	
+
+	@Autowired
+	@Lazy	
+	private TaskViewHandlerAction taskViewHandlerAction;
 	/**
 	 * View
 	 */
@@ -136,12 +139,13 @@ public class WorklistViewHandlerAction {
 		switch (view) {
 		case WORKLIST_TASKS:
 			setCurrentView(view);
+			taskViewHandlerAction.initBean();
 			break;
 		case WORKLIST_PATIENT:
 			if (commonDataHandlerAction.getSelectedPatient() != null)
 				setCurrentView(view);
 			else
-				setCurrentView(View.WORKLIST_TASKS);
+				goToNavigation(View.WORKLIST_TASKS);
 			break;
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
@@ -150,10 +154,10 @@ public class WorklistViewHandlerAction {
 					&& commonDataHandlerAction.getSelectedTask() != null)
 				setCurrentView(view);
 			else
-				setCurrentView(View.WORKLIST_TASKS);
+				goToNavigation(View.WORKLIST_TASKS);
 			break;
 		default:
-			setCurrentView(View.WORKLIST_TASKS);
+			goToNavigation(View.WORKLIST_TASKS);
 		}
 
 	}

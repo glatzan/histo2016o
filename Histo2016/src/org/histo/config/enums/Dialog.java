@@ -43,12 +43,11 @@ public enum Dialog {
 	DELETE_TREE_ENTITY("/pages/dialog/task/deleteTreeEntity", null,  480, 272, false, false, true), //  16:9
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
 	MEDIA("/pages/dialog/upload/media", null,  1280, 720,  false, false, true), // 16:9
-	STAINING_PHASE_LEAVE("/pages/dialog/task/stainingPhaseLeave", null, 480, 272, false, false, true), // 16:9
-	STAINING_PHASE_FORCE_ENTER("/pages/dialog/task/stainingPhaseForceEnter", null, 480, 272, false, false, true), // 16:9
-	STAINING_PHASE_FORCE_LEAVE("/pages/dialog/task/stainingPhaseForceLeave", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_LEAVE("/pages/dialog/task/diagnosisPhaseLeave", null, 1024, 600, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_FORCE_ENTER("/pages/dialog/task/diagnosisPhaseForceEnter", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_FORCE_LEAVE("/pages/dialog/task/diagnosisPhaseForceLeave", null, 480, 272, false, false, true), // 16:9
+	STAINING_PHASE_EXIT("/pages/dialog/task/staining/stainingPhaseExit", null, 480, 272, false, false, true), // 16:9
+	STAINING_EXIT_STAY_IN_PHASE("/pages/dialog/task/staining/stayInStainingPhaseExit", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_EXIT("/pages/dialog/task/diagnosis/diagnosisPhaseExit", null, 1024, 600, false, false, true), // 16:9
+	DIAGNOSIS_EXIT_STAY_IN_PHASE_DIALOG("/pages/dialog/task/diagnosis/stayInDiagnosisPhaseExit", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_UN_FINALIZE("/pages/dialog/task/diagnosis/unFinalize", null, 480, 272, false, false, true), // 16:9
 	ORGANIZATION_EDIT("/pages/dialog/organization/organizationEdit", null, 858, 484, false, false, true), // 16:9
 	ORGANIZATION_LIST("/pages/dialog/organization/organizationList", null, 858, 484, false, false, true); // 16:9
 	

@@ -108,6 +108,7 @@ public class TaskViewHandlerAction {
 	}
 
 	public void onChangeSelectionCriteria() {
+		logger.debug("Reloading task lists");
 		setTaskList(taskDAO.getTasks(getTaskPerPull(), getPage() - 1));
 	}
 
@@ -138,8 +139,8 @@ public class TaskViewHandlerAction {
 	 ********************************************************/
 	public List<Task> getTaskList() {
 		// TODO move to action not getter
-		if (taskList == null)
-			initBean();
+//		if (taskList == null)
+//			initBean();
 
 		return taskList;
 	}

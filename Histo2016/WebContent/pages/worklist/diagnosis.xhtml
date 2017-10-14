@@ -100,8 +100,8 @@
 
 						<p:inputTextarea value="#{selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
-							id="caseHistoryInput" style="width:90%"
-							onfocus="PF('caseHistoryOverlayPanel').show();"
+							disabled="#{!taskEditable}" id="caseHistoryInput"
+							style="width:90%" onfocus="PF('caseHistoryOverlayPanel').show();"
 							onkeypress="PF('caseHistoryOverlayPanel').hide();"
 							onclick="PF('caseHistoryOverlayPanel').show();">
 							<p:ajax event="change"

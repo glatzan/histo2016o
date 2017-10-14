@@ -32,6 +32,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
@@ -408,8 +409,6 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 			return getContacts().stream().anyMatch(p -> p.equals(associatedContact));
 		return false;
 	}
-	
-	
 
 	/********************************************************
 	 * Transient

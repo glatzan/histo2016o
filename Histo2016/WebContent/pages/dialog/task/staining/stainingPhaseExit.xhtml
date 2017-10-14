@@ -8,9 +8,10 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.staingingPhaseEndManual.headline']}" /></title>
+			value="#{msg['dialog.staingingPhaseExit.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
+
 
 <h:body styleClass="defaultDialogLayout infoDialog">
 	<h:form id="dialogContent">
@@ -19,7 +20,7 @@
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
 				<h:outputLabel
-					value="#{msg['dialog.staingingPhaseEndManual.headline']}" />
+					value="#{msg['dialog.staingingPhaseExit.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -31,30 +32,43 @@
 		<div class="contentDiv">
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
-				<h:outputLabel value="#{msg['dialog.staingingPhaseEndManual.text']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.staingingPhaseExit.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
+			<h:panelGrid columns="2" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+					<h:panelGrid columns="2" styleClass="buttonLeftMarginInList">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{dialogHandlerAction.stainingPhaseExitDialog.stayInStainingPhase}" />
+						<h:outputLabel value="#{msg['dialog.staingingPhaseExit.stay']}"
+							style="margin-left:5px;" />
+					</h:panelGrid>
+				</h:panelGrid>
+
+
 				<h:panelGrid columns="2" style="float:right;">
-					<!-- confirm -->
-					<p:commandButton
-						value="#{msg['dialog.staingingPhaseEndManual.button.remove']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended">
+
+					<!-- Ok button -->
+					<p:commandButton value="#{msg['general.ok']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-check-circle-o">
 						<f:actionListener
-							binding="#{stainingPhaseForceDialogHandler.leaveStayInStainingPhase()}"></f:actionListener>
+							binding="#{dialogHandlerAction.stainingPhaseExitDialog.exitPhase()}" />
 						<f:actionListener
-							binding="#{stainingPhaseForceDialogHandler.hideDialog()}"></f:actionListener>
+							binding="#{dialogHandlerAction.stainingPhaseExitDialog.hideDialog()}" />
 					</p:commandButton>
 
-					<!-- Abort button -->
-					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
+					<!-- abort -->
+					<p:commandButton value="#{msg['general.abort']}"
 						icon="fa fa-times-circle"
-						actionListener="#{stainingPhaseForceDialogHandler.hideDialog()}" />
+						styleClass="smallButton buttonRighMarginInListExtended"
+						actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.hideDialog()}"></p:commandButton>
+
+
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

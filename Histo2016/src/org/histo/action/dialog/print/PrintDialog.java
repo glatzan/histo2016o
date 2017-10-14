@@ -34,6 +34,7 @@ import org.histo.template.documents.TemplateUReport;
 import org.histo.ui.ContactContainer;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.PDFGenerator;
+import org.histo.util.StreamUtils;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -572,4 +573,19 @@ public class PrintDialog extends AbstractDialog {
 		}
 	}
 
+	public void setDefaultTemplateOfType(DocumentType type) {
+		if (getTemplateList() != null) {
+			try {
+				DocumentTemplate defaultTemplate = getTemplateList().stream()
+						.filter(p -> p.getDocumentType().equals(type) && p.isDefaultOfType())
+						.collect(StreamUtils.singletonCollector());
+
+				setSelectedTemplate(defaultTemplate);
+
+				onChangePrintTemplate();
+			} catch (IllegalStateException e) {
+				// do nothing
+			}
+		}
+	}
 }

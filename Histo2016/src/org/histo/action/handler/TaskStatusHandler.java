@@ -39,8 +39,8 @@ public class TaskStatusHandler {
 			return false;
 		}
 
-		if (isDiagnosisCompleted(task) && isStainingCompleted(task))
-			return false;
+//		if (isDiagnosisCompleted(task) && isStainingCompleted(task))
+//			return false;
 
 		// Blocked
 		// TODO: Blocking

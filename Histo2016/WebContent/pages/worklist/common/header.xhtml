@@ -129,7 +129,7 @@
 					<!-- ************ Staining ************ -->
 					<p:submenu label="#{msg['header.menu.task.sample.staining']}"
 						icon="fa fa-paint-brush">
-						
+
 						<!-- New Slides -->
 						<p:menuitem
 							value="#{msg['header.menu.task.sample.staining.newSlide']}"
@@ -141,16 +141,16 @@
 						<p:menuitem
 							value="#{msg['header.menu.task.sample.staining.leave']}"
 							disabled="#{!taskEditable}" icon="fa fa-fw fa-image"
-							onclick="$('#headerForm\\:stainingPhaseLeave').click();$('#headerForm\\:tieredOptions').hide();return false;"
+							onclick="$('#headerForm\\:stainingPhaseExit').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('StainingList', 'ReStainingList')}" />
 
 						<!-- Staining, end staining phase if all staining tasks have been completed-->
 						<p:menuitem
 							value="#{msg['header.menu.task.sample.staining.stayInPhase.leave']}"
 							icon="fa fa-fw fa-image"
-							onclick="$('#headerForm\\:stainingPhaseForceLeave').click();$('#headerForm\\:tieredOptions').hide();return false;"
+							onclick="$('#headerForm\\:stainingPhaseForceExitStayInPhase').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('StayInStainingList')}" />
-							
+
 					</p:submenu>
 					<!-- ************ Staining ************ -->
 
@@ -159,29 +159,22 @@
 						<!-- New Diagnosis revision-->
 						<p:menuitem icon="fa fa-pencil-square-o"
 							value="#{msg['header.menu.task.sample.diagnosisRevion']}"
-							disabled="#{!taskEditable}"
-							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList') }"
+							disabled="#{!taskEditable and !selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList')}"
+							rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:newDiagnosisRevision').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 						<!-- Leave diagnosis phase if in phase an not completed -->
 						<p:menuitem icon="fa fa-eye-slash"
 							value="#{msg['header.menu.task.sample.diagnosisPhase.leave']}"
 							disabled="#{!taskEditable}"
-							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList' , 'StayInDiagnosisList') and selectedTask.diagnosisCompletionDate == 0}"
-							onclick="$('#headerForm\\:diagnosisPhaseLeave').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList' , 'StayInDiagnosisList') and !selectedTask.finalized}"
+							onclick="$('#headerForm\\:diagnosisPhaseExit').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 						<!-- Leave phase if stay in phase -->
 						<p:menuitem icon="fa fa-eye-slash"
 							value="#{msg['header.menu.task.sample.diagnosisPhase.force.leave']}"
-							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList' , 'StayInDiagnosisList') and selectedTask.diagnosisCompletionDate != 0}"
-							onclick="$('#headerForm\\:diagnosisPhaseForceLeave').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-
-						<!-- Enter phase to unfinalize all diagnoses -->
-						<p:menuitem
-							value="#{msg['header.menu.task.sample.diagnosisPhase.force.enter2']}"
-							disabled="#{selectedTask.finalized}" icon="fa fa-fw fa-eye"
-							onclick="$('#headerForm\\:diagnosisPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{taskIsNotNull and !selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList' , 'StayInDiagnosisList')}" />
+							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('StayInDiagnosisList') and selectedTask.finalized}"
+							onclick="$('#headerForm\\:diagnosisExitStayInPhase').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 						<!-- council -->
 						<p:menuitem value="#{msg['header.menu.task.council']}"
@@ -195,41 +188,41 @@
 					<p:submenu label="Benachrichtigung" icon="fa fa-volume-up">
 						<!-- Contacts -->
 						<p:menuitem value="#{msg['header.menu.task.sample.contact']}"
-							icon="fa fa-envelope-o" disabled="#{!taskEditable}"
-							rendered="#{commonDataHandlerAction.selectedPatient ne null}"
+							icon="fa fa-envelope-o" rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
 						<!-- medical findings -->
 						<p:menuitem value="#{msg['header.menu.task.sample.notification']}"
-							icon="fa fa-volume-up"
-							disabled="#{commonDataHandlerAction.selectedTask eq null}"
-							rendered="#{commonDataHandlerAction.selectedPatient ne null}"
+							icon="fa fa-volume-up" rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:medicalFindingsContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
-						<!-- un finalize task -->
-						<p:menuitem value="#{msg['header.menu.task.sample.unFinalize']}"
-							disabled="#{!selectedTask.finalized}" icon="fa fa-key"
-							rendered="#{commonDataHandlerAction.selectedTask ne null}" />
-
-
 						<!-- Print -->
 						<p:menuitem value="#{msg['header.menu.task.sample.print']}"
-							icon="fa fa-print"
-							disabled="#{commonDataHandlerAction.selectedTask eq null}"
-							rendered="#{commonDataHandlerAction.selectedPatient ne null}"
+							icon="fa fa-print" rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 					</p:submenu>
 					<!-- ************ Notification ************ -->
 
+					<!-- Edit Task if completed -->
+					<p:separator rendered="#{taskIsNotNull and selectedTask.finalized}" />
+
+					<!-- un finalize task -->
+					<p:menuitem value="#{msg['header.menu.task.sample.unFinalize']}"
+						icon="fa fa-fw fa-eye"
+						onclick="$('#headerForm\\:diagnosisPhaseUnFinalize').click();$('#headerForm\\:tieredOptions').hide();return false;"
+						rendered="#{taskIsNotNull and selectedTask.finalized}" />
+
+					<!-- Edit Task if completed -->
+
 					<p:separator />
 					<!-- favourite Lists -->
 					<p:menuitem
 						value="#{msg['header.menu.task.sample.favouriteLists']}"
-						icon="fa fa-tasks" disabled="#{!taskEditable}"
-						rendered="#{commonDataHandlerAction.selectedPatient ne null}"
+						icon="fa fa-tasks"
+						rendered="#{commonDataHandlerAction.selectedTask ne null}"
 						onclick="$('#headerForm\\:favouriteListsBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
@@ -311,22 +304,16 @@
 			</p:commandButton>
 
 			<!-- Staining List, leave phase an set all stainigs to performed -->
-			<p:commandButton id="stainingPhaseLeave" style="display:none"
-				actionListener="#{receiptlogViewHandlerAction.performStainingsAndCheckStainingPhase(commonDataHandlerAction.selectedTask)}">
+			<p:commandButton id="stainingPhaseExit" style="display:none"
+				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Staining List, force add to list -->
-			<p:commandButton id="stainingPhaseForceEnter" style="display:none"
-				actionListener="#{stainingPhaseForceDialogHandler.initAndPrepareBeanForEnter(commonDataHandlerAction.selectedTask)}">
-				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
-			</p:commandButton>
-
-			<!-- Staining List, force remove from  list -->
-			<p:commandButton id="stainingPhaseForceLeave" style="display:none"
-				actionListener="#{stainingPhaseForceDialogHandler.initAndPrepareBeanForLeave(commonDataHandlerAction.selectedTask)}">
+			<!-- Staining List,  remove from  list stay in list -->
+			<p:commandButton id="stainingPhaseForceExitStayInPhase"
+				style="display:none"
+				actionListener="#{dialogHandlerAction.stainingExitStayInPhaseDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
@@ -339,24 +326,24 @@
 			</p:commandButton>
 
 			<!-- Diagnosis List, leave diagnosis phase after completion -->
-			<p:commandButton id="diagnosisPhaseLeave" style="display:none"
+			<p:commandButton id="diagnosisPhaseExit" style="display:none"
 				onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
-				actionListener="#{diagnosisPhaseLeaveDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Diagnosis List, force leave diagnosis phase, if still in diagnosis phase after diagnosis completion -->
-			<p:commandButton id="diagnosisPhaseForceLeave" style="display:none"
-				actionListener="#{diagnosisPhaseForceDialog.initAndPrepareBeanForLeave(commonDataHandlerAction.selectedTask)}">
+			<p:commandButton id="diagnosisExitStayInPhase" style="display:none"
+				actionListener="#{dialogHandlerAction.diagnosisExitStayInPhaseDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Diagnosis List, force enter diagnosis phase, if diagnosis phase was left -->
-			<p:commandButton id="diagnosisPhaseForceEnter" style="display:none"
-				actionListener="#{diagnosisPhaseForceDialog.initAndPrepareBeanForEnter(commonDataHandlerAction.selectedTask)}">
+			<!-- Un finalize Diagnosis -->
+			<p:commandButton id="diagnosisPhaseUnFinalize" style="display:none"
+				actionListener="#{dialogHandlerAction.diagnosisUnFinalizeDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>

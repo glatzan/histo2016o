@@ -1,6 +1,5 @@
 package org.histo.action.dialog.slide;
 
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
@@ -10,29 +9,36 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
-@Scope(value = "session")
-public class StainingPhaseForceDialogHandler extends AbstractDialog {
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Getter
+@Setter
+public class StainingExitStayInPhaseDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
-	public void initAndPrepareBeanForEnter(Task task) {
-		initBean(task, Dialog.STAINING_PHASE_FORCE_ENTER);
-		prepareDialog();
-	}
-
-	public void initAndPrepareBeanForLeave(Task task) {
-		initBean(task, Dialog.STAINING_PHASE_FORCE_LEAVE);
+	public void initAndPrepareBean(Task task) {
+		initBean(task, Dialog.STAINING_EXIT_STAY_IN_PHASE);
 		prepareDialog();
 	}
 
@@ -48,17 +54,9 @@ public class StainingPhaseForceDialogHandler extends AbstractDialog {
 		super.initBean(task, dialog);
 	}
 
-	public void leaveStayInStainingPhase() {
+	public void exitPhase() {
 		try {
 			favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInStainingList);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			onDatabaseVersionConflict();
-		}
-	}
-
-	public void enterStayInStainingPhase() {
-		try {
-			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInStainingList);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

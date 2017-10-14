@@ -1,6 +1,5 @@
 package org.histo.action.dialog.diagnosis;
 
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -12,35 +11,45 @@ import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Configurable;
 
-@Component
-@Scope(value = "session")
-public class DiagnosisPhaseForceDialog extends AbstractDialog {
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
+
+@Configurable
+@Getter
+@Setter
+public class DiagnosisExitStayInPhaseDialog extends AbstractDialog {
+	
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
-	public void initAndPrepareBeanForEnter(Task task) {
-		initBean(task, Dialog.DIAGNOSIS_PHASE_FORCE_ENTER);
-		prepareDialog();
-	}
-
-	public void initAndPrepareBeanForLeave(Task task) {
-		initBean(task, Dialog.DIAGNOSIS_PHASE_FORCE_LEAVE);
+	public void initAndPrepareBean(Task task) {
+		initBean(task, Dialog.DIAGNOSIS_EXIT_STAY_IN_PHASE_DIALOG);
 		prepareDialog();
 	}
 
@@ -56,31 +65,9 @@ public class DiagnosisPhaseForceDialog extends AbstractDialog {
 		super.initBean(task, dialog);
 	}
 
-	public void leaveStayInStainingPhase() {
+	public void exitPhase() {
 		try {
 			favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
-			
-			if(getTask().getDiagnosisCompletionDate() == 0){
-				getTask().setDiagnosisCompletionDate(System.currentTimeMillis());
-				genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.end");
-			}
-			
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			onDatabaseVersionConflict();
-		}
-	}
-
-	public void enterStayInStainingPhase() {
-		try {
-			// all is editable so normal diagnosis list
-			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.DiagnosisList);
-			
-			// unfinalizes all diangoses
-			taskManipulationHandler.finalizeAllDiangosisRevisions(
-					getTask().getDiagnosisContainer().getDiagnosisRevisions(), false);
-
-			getTask().setDiagnosisCompletionDate(0);
-			genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.reentered");
 			
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

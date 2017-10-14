@@ -5,9 +5,10 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
+
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.diagnosisPhaseUnFinalize.headline']}" /></title>
+			value="#{msg['dialog.staingingPhaseExitStayInPhase.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 </h:head>
 
@@ -18,7 +19,7 @@
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
 				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseUnFinalize.headline']}" />
+					value="#{msg['dialog.staingingPhaseExitStayInPhase.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -31,7 +32,7 @@
 			<h:panelGrid columns="1"
 				styleClass="defaultListingTableContainer, standardFont">
 				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseUnFinalize.text']}"></h:outputLabel>
+					value="#{msg['dialog.staingingPhaseExitStayInPhase.text']}"></h:outputLabel>
 			</h:panelGrid>
 		</div>
 
@@ -40,20 +41,21 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 				<h:panelGrid columns="2" style="float:right;">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['general.ok']}"
+					<p:commandButton
+						value="#{msg['dialog.staingingPhaseExitStayInPhase.button.remove']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended">
 						<f:actionListener
-							binding="#{diagnosisPhaseForceDialog.enterStayInStainingPhase()}" />
+							binding="#{dialogHandlerAction.stainingExitStayInPhaseDialog.exitPhase()}"></f:actionListener>
 						<f:actionListener
-							binding="#{diagnosisPhaseForceDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.stainingExitStayInPhaseDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{diagnosisPhaseForceDialog.hideDialog()}" />
+						actionListener="#{dialogHandlerAction.stainingExitStayInPhaseDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

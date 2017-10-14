@@ -94,7 +94,7 @@
 				<!-- History -->
 				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				<h:panelGroup>
-					<p:inputTextarea
+					<p:inputTextarea disabled="#{!taskEditable}"
 						value="#{commonDataHandlerAction.selectedTask.caseHistory}"
 						title="#{msg['body.diagnosis.story.watermark']}"
 						id="caseHistoryInput" style="width:90%"

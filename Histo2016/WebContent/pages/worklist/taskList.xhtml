@@ -94,7 +94,7 @@
 				</p:column>
 
 				<p:column headerText="" style="width:40px;">
-					<p:commandLink disabled="true"
+					<p:commandLink disabled="#{task.diagnosisCompletionDate eq 0}"
 						actionListener="#{settingsDialogHandler.prepareEditStaining(staining)}"
 						update="@form" styleClass="noUnderlineAtLink">
 						<i class="fa fa-search" />

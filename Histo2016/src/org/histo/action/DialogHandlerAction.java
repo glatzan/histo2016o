@@ -2,6 +2,9 @@ package org.histo.action;
 
 import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
+import org.histo.action.dialog.diagnosis.DiagnosisExitStayInPhaseDialog;
+import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
+import org.histo.action.dialog.diagnosis.DiagnosisUnFinalizeDialog;
 import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.dialog.notification.ContactDialog;
@@ -16,6 +19,8 @@ import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
+import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
+import org.histo.action.dialog.slide.StainingPhaseExitDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -60,6 +65,16 @@ public class DialogHandlerAction {
 	private FavouriteListsDialog favouriteListsDialog;
 
 	private SlideOverviewDialog slideOverviewDialog;
+
+	private DiagnosisPhaseExitDialog diagnosisPhaseExitDialog;
+
+	private DiagnosisExitStayInPhaseDialog diagnosisExitStayInPhaseDialog;
+
+	private DiagnosisUnFinalizeDialog diagnosisUnFinalizeDialog;
+
+	private StainingPhaseExitDialog stainingPhaseExitDialog;
+
+	private StainingExitStayInPhaseDialog stainingExitStayInPhaseDialog;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -184,6 +199,46 @@ public class DialogHandlerAction {
 		}
 
 		return slideOverviewDialog;
+	}
+
+	public DiagnosisPhaseExitDialog getDiagnosisPhaseExitDialog() {
+		if (diagnosisPhaseExitDialog == null) {
+			diagnosisPhaseExitDialog = new DiagnosisPhaseExitDialog();
+		}
+
+		return diagnosisPhaseExitDialog;
+	}
+
+	public DiagnosisExitStayInPhaseDialog getDiagnosisExitStayInPhaseDialog() {
+		if (diagnosisExitStayInPhaseDialog == null) {
+			diagnosisExitStayInPhaseDialog = new DiagnosisExitStayInPhaseDialog();
+		}
+
+		return diagnosisExitStayInPhaseDialog;
+	}
+
+	public StainingPhaseExitDialog getStainingPhaseExitDialog() {
+		if (stainingPhaseExitDialog == null) {
+			stainingPhaseExitDialog = new StainingPhaseExitDialog();
+		}
+
+		return stainingPhaseExitDialog;
+	}
+
+	public StainingExitStayInPhaseDialog getStainingExitStayInPhaseDialog() {
+		if (stainingExitStayInPhaseDialog == null) {
+			stainingExitStayInPhaseDialog = new StainingExitStayInPhaseDialog();
+		}
+
+		return stainingExitStayInPhaseDialog;
+	}
+
+	public DiagnosisUnFinalizeDialog getDiagnosisUnFinalizeDialog() {
+		if (diagnosisUnFinalizeDialog == null) {
+			diagnosisUnFinalizeDialog = new DiagnosisUnFinalizeDialog();
+		}
+
+		return diagnosisUnFinalizeDialog;
 	}
 
 }

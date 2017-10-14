@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.SettingsDialogHandler;
-import org.histo.action.dialog.slide.StainingPhaseLeaveDialogHandler;
+import org.histo.action.dialog.slide.StainingPhaseExitDialog;
 import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.enums.DocumentType;
@@ -68,11 +69,6 @@ public class ReceiptlogViewHandlerAction {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private StainingPhaseLeaveDialogHandler stainingPhaseLeaveDialogHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
@@ -91,6 +87,13 @@ public class ReceiptlogViewHandlerAction {
 	private UtilDAO utilDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DialogHandlerAction dialogHandlerAction;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
@@ -251,17 +254,7 @@ public class ReceiptlogViewHandlerAction {
 			// staining phase
 			if (taskStatusHandler.isStainingCompleted(task)) {
 				logger.trace("Staining phase completed removing from staing list, adding to diagnosisList");
-				task.setStainingCompletionDate(System.currentTimeMillis());
-				genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.end");
-
-				// removing from staining or restaing list
-
-				favouriteListDAO.removeTaskFromList(task, new PredefinedFavouriteList[] {
-						PredefinedFavouriteList.StainingList, PredefinedFavouriteList.ReStainingList });
-
-				favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
-
-				stainingPhaseLeaveDialogHandler.initAndPrepareBean(task);
+				dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(task);
 			} else {
 				// reentering the staining phase, adding task to staining or
 				// restaining list
