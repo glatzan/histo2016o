@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.Criteria;
@@ -26,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Scope("session")
 public class FavouriteListDAO extends AbstractDAO {
+
+	private static final long serialVersionUID = 7314048344901513342L;
 
 	@Autowired
 	private GenericDAO genericDAO;
@@ -71,6 +75,23 @@ public class FavouriteListDAO extends AbstractDAO {
 		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		return (List<FavouriteList>) query.getExecutableCriteria(getSession()).list();
+	}
+
+	public List<FavouriteList> getAllFavouriteLists(List<Integer> ids) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<FavouriteList> criteria = qb.createQuery(FavouriteList.class);
+		Root<FavouriteList> root = criteria.from(FavouriteList.class);
+		criteria.select(root);
+
+		Expression<String> exp = root.get("id");
+		Predicate predicate = exp.in(ids);
+		criteria.where(predicate);
+
+		List<FavouriteList> physician = getSession().createQuery(criteria).getResultList();
+
+		return physician;
 	}
 
 	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList)
@@ -133,7 +154,6 @@ public class FavouriteListDAO extends AbstractDAO {
 
 	public void removeTaskFromList(Task task, FavouriteList favouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-		System.out.println(getSession().hashCode() + "!!");
 		try {
 			logger.debug(
 					"Removing task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
@@ -175,7 +195,6 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void removeTaskFromAllLists(Task task) {
 		// removing from favouriteLists
 		while (task.getFavouriteLists().size() > 0) {
-			System.out.println(getSession().hashCode() + "fav");
 			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true));
 		}
 	}

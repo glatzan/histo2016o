@@ -5,6 +5,7 @@ import org.histo.action.dialog.WorklistSearchDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisExitStayInPhaseDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisUnFinalizeDialog;
+import org.histo.action.dialog.favouriteLists.AddTaskToFavouriteListDialog;
 import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.dialog.notification.ContactDialog;
@@ -63,6 +64,8 @@ public class DialogHandlerAction {
 	private AddPatientDialogHandler addPatientDialogHandler;
 
 	private FavouriteListsDialog favouriteListsDialog;
+
+	private AddTaskToFavouriteListDialog addTaskToFavouriteListDialog;
 
 	private SlideOverviewDialog slideOverviewDialog;
 
@@ -239,6 +242,14 @@ public class DialogHandlerAction {
 		}
 
 		return diagnosisUnFinalizeDialog;
+	}
+
+	public AddTaskToFavouriteListDialog getAddTaskToFavouriteListDialog() {
+		if (addTaskToFavouriteListDialog == null) {
+			addTaskToFavouriteListDialog = new AddTaskToFavouriteListDialog();
+		}
+
+		return addTaskToFavouriteListDialog;
 	}
 
 }

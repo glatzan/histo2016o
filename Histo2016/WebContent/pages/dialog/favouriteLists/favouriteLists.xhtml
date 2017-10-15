@@ -49,8 +49,15 @@
 		<div class="buttonContainer">
 			<h:panelGrid columns="1" style="width:100%"
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="1" style="float:right;">
-
+				<h:panelGrid columns="2" style="float:right;">
+					<!-- Close button -->
+					<p:commandButton value="Hizufügen"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-check-circle-o">
+						<f:actionListener
+							binding="#{dialogHandlerAction.addTaskToFavouriteListDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}"></f:actionListener>
+					</p:commandButton>
+					
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
 						styleClass="smallButton buttonRighMarginInList"
