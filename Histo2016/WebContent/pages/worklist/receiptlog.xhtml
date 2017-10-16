@@ -522,7 +522,7 @@
 			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
 				styleClass="defaultOverlayPanel" widgetVar="idInputPannel"
 				hideEffect="fade" hideEvent="none" showEvent="none">
-				<p:inputText id="idInputPannelInput"
+				<p:inputText id="idInputPannelInput" disabled="#{!taskEditable}"
 					rendered="#{commonDataHandlerAction.selectedStainingTableChooser ne null}"
 					value="#{commonDataHandlerAction.selectedStainingTableChooser.IDText}" />
 			</p:overlayPanel>

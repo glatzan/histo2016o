@@ -71,6 +71,13 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton value="#{msg['dialog.settings.user.button.add']}"
+					icon="fa fa-fw fa-plus-circle"
+					styleClass="smallButton buttonRighMarginInList" process="@this"
+					partialSubmit="true"
+					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean()}"
+					update=":adminForm:tabview:histoUser" />
+
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"

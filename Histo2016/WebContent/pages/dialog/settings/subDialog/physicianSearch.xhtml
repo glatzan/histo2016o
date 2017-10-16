@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.biobank.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.biobank.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+
+		<div class="contentDiv">
+			<!-- Internal Physician (Employee, get data from LDAP)-->
+			<histo:ldapPhysicianDataMask
+				physicianList="#{dialogHandlerAction.physicianSearchDialog.physicianList}"
+				searchString="#{dialogHandlerAction.physicianSearchDialog.searchString}"
+				performSearch="searchForPhysician"
+				performObject="#{dialogHandlerAction.physicianSearchDialog}"
+				selection="#{dialogHandlerAction.physicianSearchDialog.selectedPhysician}" />
+
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="1" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				<h:panelGrid columns="2" style="float:right;">
+
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.select']}"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-check-circle-o">
+						<f:actionListener
+							binding="#{dialogHandlerAction.physicianSearchDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle">
+						<f:actionListener
+							binding="#{dialogHandlerAction.physicianSearchDialog.setSelectedPhysician(null)}"></f:actionListener>
+						<f:actionListener
+							binding="#{dialogHandlerAction.physicianSearchDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

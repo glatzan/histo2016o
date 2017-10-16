@@ -9,9 +9,8 @@
 						onclick="$('#headerForm\\:stainingPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{taskIsNotNull and !selectedTask.isListedInFavouriteList('StainingList', 'ReStainingList','StayInStainingList')}" />
 
-TODO: 0: Bennung von Proben usw verbieten, wenn task nicht editiertbar
 TODO: 0.1: Finaliz in task, wird dies benötig -> löschen durch diagnosis date ersetzen
-TODO: 1: AUW Dokument überarbeiten						
+TODO: 1: AUW Dokument überarbeiten	-> Rücksprache					
 TODO: 2: favouriten f�r benutzer zug�nlich machen
 TODO: 3: chargen für färbungen
 TODO: 4: erweiterte Suche / 
@@ -39,6 +38,7 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+++++: Bennung von Proben usw verbieten, wenn task nicht editiertbar
 ++++: Schnelle Nachf�rbug Dialog
 ++++: Phasen + Phasen Buttons im Menu überprüfen
 ++++: batches gui für färbungen

@@ -118,7 +118,7 @@ $address \\
 			\begin{tabular}[t]{p{0.46\linewidth}p{0.5\linewidth}}
 
 				Eingangsdatum &  $date.format('dd.MM.yyyy', $!task.dateOfReceipt) \\
-				Eingangsnummer & $!task.taskID \\
+				Eingangsnummer & \textbf{$!task.taskID} \\
 				~ & 
 					\X=.30mm        % The width of code will be greater
 					\barheight=1cm % the height will be smaller.
@@ -147,8 +147,8 @@ $address \\
 					}\\
 				Station & $!task.ward \\
 				Maligner Tumor & $ \Box$  \\
-				Operateur/Einsender & \fs $!task.getPrimarySurgeon() \\
-				Augenarzt & \fs $!task.getPrimaryPrivatePhysician() 
+				Operateur/Einsender & \mbox{$!task.getPrimarySurgeon()} \\
+				Augenarzt & \mbox{$!task.getPrimaryPrivatePhysician()} 
 			 
 			\end{tabular}
 		}
@@ -182,10 +182,10 @@ $address \\
 \end{center}
  
 \begin{center}
-\begin{tabular}{p{0.15\linewidth}p{0.05\linewidth}p{0.40\linewidth}p{0.40\linewidth}}
+\begin{tabular}{p{0.25\linewidth}p{0.05\linewidth}p{0.35\linewidth}p{0.35\linewidth}}
 	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
-	\fs Freiburg den & & \fs  $!task.diagnosisContainer.signatureOne.physician.person.fullName & \fs $!task.diagnosisContainer.signatureTwo.physician.person.fullName \\
-	~~ $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDateAsDate) & ~ & $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.role \\\\
+	\mbox{Freiburg den $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDateAsDate)} & & \mbox{$!task.diagnosisContainer.signatureOne.physician.person.fullName} & \mbox{$!task.diagnosisContainer.signatureTwo.physician.person.fullName} \\
+	~~ & ~ & $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.role \\\\
 
 \end{tabular}
 \end{center}

@@ -90,7 +90,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 
-				System.out.println("------ Login successful " + physician.getPerson().getFullName());
 				// checking if histouser exsists
 				HistoUser histoUser = transientDAO.loadUserByName(userName);
 
