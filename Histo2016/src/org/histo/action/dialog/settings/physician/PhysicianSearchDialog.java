@@ -1,14 +1,14 @@
-package org.histo.action.dialog.settings;
+package org.histo.action.dialog.settings.physician;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.SettingsDialogHandler.PhysicianSettingsPage;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -63,6 +63,8 @@ public class PhysicianSearchDialog extends AbstractDialog {
 	 */
 	private ContactRole[] associatedRoles;
 
+	private List<ContactRole> allRoles;
+	
 	public void initAndPrepareBean() {
 		initAndPrepareBean(false);
 	}
@@ -79,7 +81,8 @@ public class PhysicianSearchDialog extends AbstractDialog {
 		setExternalMode(externalMode);
 		setSearchView(SearchView.INTERNAL);
 		setAssociatedRoles(new ContactRole[] { ContactRole.NONE });
-
+		setAllRoles(Arrays.asList(ContactRole.values()));
+		
 		super.initBean(task, Dialog.PHYSICIAN_SEARCH);
 		return true;
 	}

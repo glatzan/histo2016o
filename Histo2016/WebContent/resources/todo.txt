@@ -16,7 +16,7 @@ TODO: 3: chargen für färbungen
 TODO: 4: erweiterte Suche / 
 TODO: 5: Latex Datei für externen Befund
 TODO: 6: Liste f�r normale benutzer �berarbeiten
-TODO: 7: Histouser vor einloggen hinzufügen
+
 
 TODO: rechte durchsetzten
 TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werde
@@ -38,6 +38,7 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+++++: 7: Histouser vor einloggen hinzufügen
 ++++: Bennung von Proben usw verbieten, wenn task nicht editiertbar
 ++++: Schnelle Nachf�rbug Dialog
 ++++: Phasen + Phasen Buttons im Menu überprüfen

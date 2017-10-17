@@ -19,8 +19,9 @@ import org.histo.action.dialog.patient.EditPatientDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
-import org.histo.action.dialog.settings.PhysicianEditDialog;
-import org.histo.action.dialog.settings.PhysicianSearchDialog;
+import org.histo.action.dialog.settings.material.MaterialEditDialog;
+import org.histo.action.dialog.settings.physician.PhysicianEditDialog;
+import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
@@ -84,6 +85,8 @@ public class DialogHandlerAction {
 	private PhysicianSearchDialog physicianSearchDialog;
 
 	private PhysicianEditDialog physicianEditDialog;
+
+	private MaterialEditDialog materialEditDialog;
 
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -272,6 +275,14 @@ public class DialogHandlerAction {
 		}
 
 		return physicianEditDialog;
+	}
+
+	public MaterialEditDialog getMaterialEditDialog() {
+		if (materialEditDialog == null) {
+			materialEditDialog = new MaterialEditDialog();
+		}
+
+		return materialEditDialog;
 	}
 
 }

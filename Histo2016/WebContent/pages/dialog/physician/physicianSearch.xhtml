@@ -69,7 +69,7 @@
 				rendered="#{dialogHandlerAction.physicianSearchDialog.externalMode}">
 
 				<!-- ****************** Person ****************** -->
-				<h:outputLabel value="#{msg['dialog.settings.person.new.employee']}" />
+				<h:outputLabel value="#{msg['dialog.physicianSearch.employe']}" />
 
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 					<p:selectOneButton
@@ -119,7 +119,7 @@
 					value="#{dialogHandlerAction.physicianSearchDialog.associatedRoles}"
 					multiple="true">
 					<f:selectItems var="role"
-						value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').allRoles}"
+						value="#{dialogHandlerAction.physicianEditDialog.allRoles}"
 						itemValue="#{role}"
 						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
