@@ -6,7 +6,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:composite="http://java.sun.com/jsf/composite">
+	xmlns:composite="http://java.sun.com/jsf/composite"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 <composite:interface>
 	<!-- list of all physicians in ldap -->
@@ -23,12 +24,13 @@
 
 	<!-- selection variable for the selected physician -->
 	<composite:attribute name="selection" required="true" />
-	
+
 </composite:interface>
 
 <composite:implementation>
 
-	<h:panelGrid columns="2" columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, "
+	<h:panelGrid columns="2"
+		columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, "
 		styleClass="defaultListingTableCss">
 
 		<h:outputLabel value="#{msg['include.ladpPhysician.search']}" />
@@ -39,6 +41,8 @@
 				<p:inputText value="#{cc.attrs.searchString}" id="searchStringInput"
 					widgetVar="searchStringInput" style="width: 98%">
 					<p:ajax event="keyup" delay="500"
+						onstart="PF('blockSeach').block()"
+						oncomplete="PF('blockSeach').unblock()"
 						listener="#{cc.attrs.performObject[cc.attrs.performSearch](cc.attrs.searchString)}"
 						update="ldapPhysicianList" process="@this" />
 				</p:inputText>
@@ -48,7 +52,8 @@
 
 			<p:dataTable var="physician" value="#{cc.attrs.physicianList}"
 				id="ldapPhysicianList" selectionMode="single" scrollable="true"
-				scrollHeight="300" rowKey="#{physician.id}" selection="#{cc.attrs.selection}"
+				scrollHeight="300" rowKey="#{physician.id}"
+				selection="#{cc.attrs.selection}" style="width: 99%"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
 
 				<!-- title -->
@@ -63,11 +68,21 @@
 					style="width:20%">
 					<h:outputText value="#{physician.clinicRole}" />
 				</p:column>
-				
-				 <p:ajax event="rowSelect" process="@this" update="@form" />
+
+				<p:ajax event="rowSelect" process="@this" update="@form" />
 			</p:dataTable>
 
 		</h:panelGrid>
+
+		<pe:blockUI widgetVar="blockSeach">
+			<h:panelGrid columns="2">
+				<h:graphicImage value="/resources/gfx/ajax-loader1.gif"
+					style="margin-right: 12px; vertical-align: middle;" />
+				<h:outputText value="#{msg['dialog.blockui.widget.wait']}"
+					style="white-space: nowrap;" />
+			</h:panelGrid>
+		</pe:blockUI>
+
 	</h:panelGrid>
 </composite:implementation>
 </html>

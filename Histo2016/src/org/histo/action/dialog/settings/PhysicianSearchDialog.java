@@ -8,8 +8,12 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.SettingsDialogHandler.PhysicianSettingsPage;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
+import org.histo.model.Contact;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.settings.LdapHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +34,16 @@ public class PhysicianSearchDialog extends AbstractDialog {
 	private GlobalSettings globalSettings;
 
 	/**
+	 * If true it is possible to create an external physician or patient
+	 */
+	private boolean externalMode;
+
+	/**
+	 * Tabindex of the settings tab
+	 */
+	private SearchView searchView;
+
+	/**
 	 * List containing all physicians known in the histo database
 	 */
 	private List<Physician> physicianList;
@@ -44,12 +58,27 @@ public class PhysicianSearchDialog extends AbstractDialog {
 	 */
 	private String searchString;
 
+	/**
+	 * Array of roles which the physician should be associated
+	 */
+	private ContactRole[] associatedRoles;
+
 	public void initAndPrepareBean() {
-		if (initBean())
+		initAndPrepareBean(false);
+	}
+
+	public void initAndPrepareBean(boolean externalMode) {
+		if (initBean(externalMode))
 			prepareDialog();
 	}
 
-	public boolean initBean() {
+	public boolean initBean(boolean externalMode) {
+		setSelectedPhysician(null);
+		setSearchString("");
+		setPhysicianList(null);
+		setExternalMode(externalMode);
+		setSearchView(SearchView.INTERNAL);
+		setAssociatedRoles(new ContactRole[] { ContactRole.NONE });
 
 		super.initBean(task, Dialog.PHYSICIAN_SEARCH);
 		return true;
@@ -63,31 +92,56 @@ public class PhysicianSearchDialog extends AbstractDialog {
 	 * @param name
 	 */
 	public void searchForPhysician(String name) {
-		// removing multiple spaces an commas and replacing them with one
-		// space,
-		// splitting the whole thing into an array
-		String[] arr = name.replaceAll("[ ,]+", " ").split(" ");
-		StringBuffer request = new StringBuffer("(&");
-		for (int i = 0; i < arr.length; i++) {
-			request.append("(cn=*" + arr[i] + "*)");
+		if (name != null && name.length() > 3) {
+			// removing multiple spaces an commas and replacing them with one
+			// space,
+			// splitting the whole thing into an array
+			String[] arr = name.replaceAll("[ ,]+", " ").split(" ");
+			StringBuffer request = new StringBuffer("(&");
+			for (int i = 0; i < arr.length; i++) {
+				request.append("(cn=*" + arr[i] + "*)");
+			}
+			request.append(")");
+
+			try {
+				logger.debug("Search for " + request.toString());
+
+				LdapHandler ldapHandler = globalSettings.getLdapHandler();
+				DirContext connection = ldapHandler.openConnection();
+
+				setPhysicianList(ldapHandler.getListOfPhysicians(connection, request.toString()));
+
+				ldapHandler.closeConnection(connection);
+
+				setSelectedPhysician(null);
+
+			} catch (NamingException | IOException e) {
+				setPhysicianList(new ArrayList<Physician>());
+				// TODO to many results
+			}
 		}
-		request.append(")");
+	}
 
-		try {
-			logger.debug("Search for " + request.toString());
+	public void changeMode() {
+		setAssociatedRoles(new ContactRole[] { ContactRole.NONE });
 
-			LdapHandler ldapHandler = globalSettings.getLdapHandler();
-			DirContext connection = ldapHandler.openConnection();
-
-			setPhysicianList(ldapHandler.getListOfPhysicians(connection, request.toString()));
-
-			ldapHandler.closeConnection(connection);
-
+		if (searchView == SearchView.EXTERNAL) {
+			setSelectedPhysician(new Physician(new Person(new Contact())));
+		} else
 			setSelectedPhysician(null);
+	}
 
-		} catch (NamingException | IOException e) {
-			setPhysicianList(new ArrayList<Physician>());
-			// TODO to many results
-		}
+	/**
+	 * Sets the role Array and returns the physician
+	 * 
+	 * @return
+	 */
+	public Physician getPhysician() {
+		getSelectedPhysician().setAssociatedRolesAsArray(getAssociatedRoles());
+		return getSelectedPhysician();
+	}
+
+	public enum SearchView {
+		EXTERNAL, INTERNAL;
 	}
 }

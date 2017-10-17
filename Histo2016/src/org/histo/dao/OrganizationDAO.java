@@ -29,6 +29,30 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 
 	private static Logger logger = Logger.getLogger("histo");
 
+	/**
+	 * Takes a list of organizations, all organizations which are not in the
+	 * database will be created
+	 * 
+	 * @param organizations
+	 */
+	public void synchronizeOrganizations(List<Organization> organizations) {
+		if (organizations == null)
+			return;
+
+		// saving new organizations
+		for (int i = 0; i < organizations.size(); i++) {
+			Organization databaseOrganization = getOrganizationByName(organizations.get(i).getName());
+			if (databaseOrganization == null) {
+				logger.debug("Organization " + organizations.get(i).getName() + " not found, creating!");
+				createOrganization(organizations.get(i));
+			} else {
+				logger.debug("Organization " + organizations.get(i).getName() + " found, replacing in linst!");
+				organizations.remove(i);
+				organizations.add(i, databaseOrganization);
+			}
+		}
+	}
+
 	public Organization getOrganizationByName(String name) {
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
@@ -71,7 +95,12 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 		Organization newOrganization = new Organization(contact);
 		newOrganization.setName(name);
 
-		save(newOrganization, "log.organization.created", new Object[] { name });
+		return createOrganization(newOrganization);
+	}
+
+	public Organization createOrganization(Organization newOrganization) {
+
+		save(newOrganization, "log.organization.created", new Object[] { newOrganization.getName() });
 
 		return newOrganization;
 	}

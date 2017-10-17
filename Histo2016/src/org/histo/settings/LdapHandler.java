@@ -62,6 +62,14 @@ public class LdapHandler implements GsonAble {
 		return null;
 	}
 
+	/**
+	 * Returns a lists with found physicians. Attentions id has to be deleted!
+	 * 
+	 * @param connection
+	 * @param filter
+	 * @return
+	 * @throws NamingException
+	 */
 	public ArrayList<Physician> getListOfPhysicians(DirContext connection, String filter) throws NamingException {
 
 		ArrayList<Physician> physicians = new ArrayList<Physician>();
@@ -90,10 +98,11 @@ public class LdapHandler implements GsonAble {
 				if (attr != null && attr.size() == 1 && !StringUtils.isNumeric(attr.get().toString())) {
 					Physician newPhysician = new Physician(new Person(new Contact()));
 					newPhysician.setUid(attr.get().toString());
-					newPhysician.setClinicEmployee(true);
 					newPhysician.setDnObjectName(result.getName());
 					newPhysician.setId(i);
+					
 					initPhysicianFromLdapAttributes(newPhysician, attrs);
+
 					physicians.add(newPhysician);
 
 				}
@@ -172,16 +181,8 @@ public class LdapHandler implements GsonAble {
 			// department
 			attr = attrs.get("ou");
 			if (attr != null && attr.size() == 1) {
-				Organization org = null;
-				try {
-					logger.trace("Loading organization " + attr.get().toString());
-					org = transientDAO.getOrganizationByName(attr.get().toString());
-
-				} catch (IllegalStateException e) {
-					logger.trace("Organiation not found");
-					org = new Organization(attr.get().toString(), new Contact());
-					org.setIntern(true);
-				}
+				Organization org = new Organization(attr.get().toString(), new Contact());
+				org.setIntern(true);
 
 				if (physician.getPerson().getOrganizsations() == null)
 					physician.getPerson().setOrganizsations(new ArrayList<Organization>());
@@ -213,6 +214,7 @@ public class LdapHandler implements GsonAble {
 
 	/**
 	 * Throws error if password does not match
+	 * 
 	 * @param userName
 	 * @param password
 	 * @return

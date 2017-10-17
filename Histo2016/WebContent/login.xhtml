@@ -37,8 +37,14 @@
 			</h:panelGrid>
 
 			<h:commandButton type="submit" id="login" value="Login"
+				onstart="PF('blockSeach').block()"
+				oncomplete="PF('blockSeach').unblock()"
 				action="#{loginController.doLogin}" style="width:100%" />
 		</p:panelGrid>
+
+		<ui:include src="pages/template/blockUi.xhtml"></ui:include>
+
+
 	</h:form>
 </h:body>
 </html>

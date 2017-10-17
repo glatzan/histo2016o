@@ -766,6 +766,7 @@ ul.ui-menu-child {
 .infoDialog {
 	padding: 0px !important;
 	border: 0px !important;
+	overflow: hidden;
 }
 
 .infoDialog .buttonContainer {

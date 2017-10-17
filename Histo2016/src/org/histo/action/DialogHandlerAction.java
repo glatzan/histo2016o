@@ -19,6 +19,7 @@ import org.histo.action.dialog.patient.EditPatientDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
+import org.histo.action.dialog.settings.PhysicianEditDialog;
 import org.histo.action.dialog.settings.PhysicianSearchDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
@@ -81,7 +82,9 @@ public class DialogHandlerAction {
 	private StainingExitStayInPhaseDialog stainingExitStayInPhaseDialog;
 
 	private PhysicianSearchDialog physicianSearchDialog;
-	
+
+	private PhysicianEditDialog physicianEditDialog;
+
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -262,5 +265,13 @@ public class DialogHandlerAction {
 
 		return physicianSearchDialog;
 	}
-	
+
+	public PhysicianEditDialog getPhysicianEditDialog() {
+		if (physicianEditDialog == null) {
+			physicianEditDialog = new PhysicianEditDialog();
+		}
+
+		return physicianEditDialog;
+	}
+
 }

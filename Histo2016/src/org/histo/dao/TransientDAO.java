@@ -6,6 +6,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.histo.model.Contact;
 import org.histo.model.HistoUser;
 import org.histo.model.Organization;
 import org.histo.model.Physician;
@@ -84,5 +85,34 @@ public class TransientDAO extends AbstractDAO {
 		}
 
 		return null;
+	}
+
+	public void synchronizeOrganizations(List<Organization> organizations) {
+		// saving new organizations
+		for (int i = 0; i < organizations.size(); i++) {
+			Organization databaseOrganization = getOrganizationByName(organizations.get(i).getName());
+			if (databaseOrganization == null) {
+				logger.debug("Organization " + organizations.get(i).getName() + " not found, creating!");
+				createOrganization(organizations.get(i));
+			} else {
+				logger.debug("Organization " + organizations.get(i).getName() + " found, replacing in linst!");
+				organizations.remove(i);
+				organizations.add(i, databaseOrganization);
+			}
+		}
+	}
+
+	public Organization createOrganization(String name, Contact contact) {
+		Organization newOrganization = new Organization(contact);
+		newOrganization.setName(name);
+
+		return createOrganization(newOrganization);
+	}
+
+	public Organization createOrganization(Organization newOrganization) {
+
+		save(newOrganization, "log.organization.created", new Object[] { newOrganization.getName() });
+
+		return newOrganization;
 	}
 }

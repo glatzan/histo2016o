@@ -7,7 +7,13 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.histo.config.enums.ContactRole;
+import org.histo.model.Contact;
 import org.histo.model.HistoUser;
+import org.histo.model.Organization;
+import org.histo.model.Person;
+import org.histo.model.Physician;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = -5033258085582728679L;
+
+	@Autowired
+	private OrganizationDAO organizationDAO;
+
+	@Autowired
+	private PhysicianDAO physicianDAO;
 
 	public List<HistoUser> loadAllUsers() {
 		// Create CriteriaBuilder
@@ -34,5 +46,64 @@ public class UserDAO extends AbstractDAO implements Serializable {
 		List<HistoUser> users = getSession().createQuery(criteria).getResultList();
 
 		return users;
+	}
+
+	public HistoUser loadUserByName(String name) {
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<HistoUser> criteria = qb.createQuery(HistoUser.class);
+		Root<HistoUser> root = criteria.from(HistoUser.class);
+		criteria.select(root);
+
+		criteria.where(qb.like(root.get("username"), name));
+		criteria.distinct(true);
+
+		List<HistoUser> users = getSession().createQuery(criteria).getResultList();
+
+		if (!users.isEmpty()) {
+			return users.get(0);
+		}
+
+		return null;
+	}
+
+	public boolean addUser(Physician physician) {
+
+		if (physician == null) {
+			return false;
+		}
+
+		String userName = physician.getUid();
+
+		// removing id from the list
+		physician.setId(0);
+
+		// checking if histouser exsists
+		HistoUser histoUser = loadUserByName(userName);
+
+		if (histoUser == null) {
+			logger.info("No User found, creating new HistoUser " + physician.getPerson().getFullName());
+			histoUser = new HistoUser(userName);
+
+			// saving or updating physician, also updating organizations
+			physician = physicianDAO.synchronizePhysician(physician);
+
+			if (physician.getAssociatedRoles().size() == 0)
+				physician.addAssociateRole(ContactRole.NONE);
+
+			save(physician, "log.settings.physician.ldap.update", new Object[] { physician.toString() });
+
+			histoUser.setPhysician(physician);
+
+		} else {
+			histoUser.getPhysician().copyIntoObject(physician);
+			organizationDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
+		}
+
+		save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
+
+		return true;
 	}
 }

@@ -63,13 +63,16 @@
 					<i class="fa fa-cog"
 						title="#{msg['dialog.settings.person.list.options']}" />
 				</f:facet>
+
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').prepareEditPhysician(physician)}"
-					update=":adminForm:tabview:persons" partialSubmit="true"
-					process="@this">
+					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(physician)}"
+					partialSubmit="true" process="@this">
 					<i class="fa fa-fw fa-cog" />
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').updateData()}"
+						update=":adminForm:tabview:persons" />
 				</p:commandLink>
 
 				<!-- archive -->
@@ -125,13 +128,16 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" style="float:right;">
-				<p:commandButton
-					value="#{msg['dialog.settings.person.list.button.new']}"
+				<p:commandButton value="#{msg['dialog.settings.user.button.add']}"
 					icon="fa fa-fw fa-plus-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').prepareNewPhysician()}"
-					partialSubmit="true" process="@this"
-					update=":adminForm:tabview:persons"></p:commandButton>
+					styleClass="smallButton buttonRighMarginInList" process="@this"
+					partialSubmit="true"
+					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean(true)}">
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').addPhysician(dialogHandlerAction.physicianSearchDialog.physician)}"
+						update=":adminForm:tabview:histoUser" />
+				</p:commandButton>
+
 
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

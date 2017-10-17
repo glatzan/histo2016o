@@ -77,8 +77,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	 * True if clinic employee
 	 */
 	@Column
-	// TODO remove
-	private boolean clinicEmployee;
+	private boolean manuallyAltered;
 
 	/**
 	 * List of all contactRoles
@@ -152,7 +151,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		setUid(dataToUpdate.getUid());
 		setClinicRole(dataToUpdate.getClinicRole());
 
-		//TODO real copy!!!!
+		// TODO real copy!!!!
 		getPerson().setOrganizsations(dataToUpdate.getPerson().getOrganizsations());
 		// TODO is this necessary ?
 		// setAssociatedRoles(dataToUpdate.getAssociatedRoles());
@@ -224,6 +223,11 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	@Transient
 	public void addAssociateRole(ContactRole role) {
 		getAssociatedRoles().add(role);
+	}
+
+	@Transient
+	public boolean isClinicEmployee() {
+		return getPerson().getOrganizsations().stream().anyMatch(p -> p.isIntern());
 	}
 
 	/********************************************************

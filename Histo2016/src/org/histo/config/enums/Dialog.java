@@ -29,7 +29,8 @@ public enum Dialog {
 	CONTACTS_NOTIFICATION("/pages/dialog/contact/contactNotification", null, 858, 484, false, false, true), // 16:9
 	QUICK_CONTACTS("/pages/dialog/contact/contactSelect", null, 858, 484, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
-	PHYSICIAN_SEARCH("/pages/dialog/settings/subDialog/physicianSearch", null, 858, 484, false, false, true), // 16:9
+	PHYSICIAN_SEARCH("/pages/dialog/settings/subDialog/physicianSearch", null, 1024, 600, false, false, true), // 4:3
+	PHYSICIAN_EDIT("/pages/dialog/settings/subDialog/physicianEdit", null, 1024, 600, false, false, true), // 4:3
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
 	PRINT_ADDRESS("/pages/dialog/print/address", null,  480, 272, false, false, true), // 16:9
 	PRINT_FAX("/pages/dialog/print/printFax", null,  480, 272, false, false, true), // 16:9

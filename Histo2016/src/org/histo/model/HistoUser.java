@@ -170,9 +170,6 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID {
 		setRole(role);
 		setPhysician(new Physician());
 		getPhysician().setPerson(new Person());
-
-		// set role clinicalDoctor or clical personnel
-		getPhysician().setClinicEmployee(true);
 	}
 
 	/**

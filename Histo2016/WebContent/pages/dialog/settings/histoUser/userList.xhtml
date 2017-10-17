@@ -58,9 +58,11 @@
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
 					execute="histoUser" partialSubmit="true"
-					actionListener="#{settingsDialogHandler.getTab('HistoUserTab').prepareEditHistoUser(user)}"
-					update=":adminForm:tabview:histoUser">
+					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(user.physician)}">
 					<i class="fa fa-fw fa-cog" />
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.getTab('HistoUserTab').updateData()}"
+						update=":adminForm:tabview:histoUser" />
 				</p:commandLink>
 			</p:column>
 		</p:dataTable>
@@ -75,8 +77,11 @@
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList" process="@this"
 					partialSubmit="true"
-					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean()}"
-					update=":adminForm:tabview:histoUser" />
+					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean()}">
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.getTab('HistoUserTab').addHistoUser(dialogHandlerAction.physicianSearchDialog.physician)}"
+						update=":adminForm:tabview:histoUser" />
+				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

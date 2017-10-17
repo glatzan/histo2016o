@@ -15,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PhysicianDAO extends AbstractDAO implements Serializable {
 
 	private static final long serialVersionUID = 7297474866699408016L;
+
+	@Autowired
+	private OrganizationDAO organizationDAO;
 
 	/**
 	 * Gets a list of physicians which are associated with one role in the
@@ -37,9 +41,9 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Physician> getPhysicians(ContactRole role, boolean archived) {
-		return getPhysicians(new ContactRole[]{role}, archived);
+		return getPhysicians(new ContactRole[] { role }, archived);
 	}
-	
+
 	/**
 	 * Gets a list of physicians which are associated with one role in the
 	 * Contactrole Array. If archived is true, even archived physicians will be
@@ -71,9 +75,7 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		if (roles == null || roles.length == 0)
 			return new ArrayList<>();
 
-		
-		DetachedCriteria query = DetachedCriteria.forClass(Physician.class,"physician");
-		query.addOrder(Order.asc("clinicEmployee"));
+		DetachedCriteria query = DetachedCriteria.forClass(Physician.class, "physician");
 		query.addOrder(Order.asc("id"));
 		query.createAlias("physician.associatedRoles", "a");
 		// don't select archived physicians
@@ -82,9 +84,9 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 
 		query.add(Restrictions.in("a.elements", roles));
 		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		
+
 		List<Physician> result = query.getExecutableCriteria(getSession()).list();
-		
+
 		return result;
 	}
 
@@ -137,6 +139,47 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 			return result.get(0);
 
 		return null;
+	}
+
+	/**
+	 * Checks if physician is saved in database, if so the saved physician will
+	 * be updted, otherwiese a new physician will be created.
+	 * 
+	 * @param physician
+	 * @return
+	 */
+	public Physician synchronizePhysician(Physician physician) {
+		// if the physician was added as surgeon the useracc an the
+		// physician will be merged
+		Physician physicianFromDatabase = loadPhysicianByUID(physician.getUid());
+
+		// undating the foud physician
+		if (physicianFromDatabase != null) {
+			logger.info("Physician already in database " + physician.getPerson().getFullName());
+			physicianFromDatabase.copyIntoObject(physician);
+
+			physicianFromDatabase.setArchived(false);
+
+			// overwriting roles
+			physicianFromDatabase.setAssociatedRoles(physician.getAssociatedRoles());
+
+			organizationDAO.synchronizeOrganizations(physicianFromDatabase.getPerson().getOrganizsations());
+
+			save(physicianFromDatabase, resourceBundle.get("log.settings.physician.ldap.update",
+					physicianFromDatabase.getPerson().getFullName()));
+
+			physician = physicianFromDatabase;
+
+		} else {
+			logger.info("Creating new phyisician " + physician.getPerson().getFullName());
+
+			organizationDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
+		
+			save(physician,
+					resourceBundle.get("log.settings.physician.ldap.save", physician.getPerson().getFullName()));
+		}
+
+		return physician;
 	}
 
 }

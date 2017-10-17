@@ -208,8 +208,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	/**
-	 * Loads the current history for the given patient. Shows the current history
-	 * dialog.
+	 * Loads the current history for the given patient. Shows the current
+	 * history dialog.
 	 * 
 	 * @param patient
 	 */
@@ -280,7 +280,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * prepares an edit dialog for editing user data, only avaliable for admins
+		 * prepares an edit dialog for editing user data, only avaliable for
+		 * admins
 		 * 
 		 * @param physician
 		 */
@@ -327,6 +328,13 @@ public class SettingsDialogHandler extends AbstractDialog {
 				return "histoUser/userEdit.xhtml";
 			else
 				return "histoUser/userList.xhtml";
+		}
+
+		public void addHistoUser(Physician physician) {
+			if (physician != null) {
+				userDAO.addUser(physician);
+				updateData();
+			}
 		}
 
 	}
@@ -494,8 +502,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private MaterialPreset editMaterial;
 
 		/**
-		 * List for selecting staining, this list contains all stainings. They can be
-		 * choosen and added to the material
+		 * List for selecting staining, this list contains all stainings. They
+		 * can be choosen and added to the material
 		 */
 		private List<ListChooser<StainingPrototype>> stainingListChooserForMaterial;
 
@@ -1013,8 +1021,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Shows the add external or ldap screen per default the ldap select screnn is
-		 * used.
+		 * Shows the add external or ldap screen per default the ldap select
+		 * screnn is used.
 		 */
 		public void prepareNewPhysician() {
 			setTmpPhysician(new Physician());
@@ -1035,8 +1043,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Opens the passed physician in the settingsDialog in order to edit the phone
-		 * number, email or faxnumber.
+		 * Opens the passed physician in the settingsDialog in order to edit the
+		 * phone number, email or faxnumber.
 		 *
 		 * @param associatedContact
 		 */
@@ -1051,9 +1059,10 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		/**
-		 * Generates an ldap search filter (?(xxx)....) and offers the result list. The
-		 * result list is a physician list with minimal details. Before adding an clinic
-		 * physician a ldap fetch for more details has to be done
+		 * Generates an ldap search filter (?(xxx)....) and offers the result
+		 * list. The result list is a physician list with minimal details.
+		 * Before adding an clinic physician a ldap fetch for more details has
+		 * to be done
 		 *
 		 * @param name
 		 */
@@ -1073,8 +1082,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 				LdapHandler ldapHandler = globalSettings.getLdapHandler();
 				DirContext connection = ldapHandler.openConnection();
-				
-				setLdapPhysicianList(ldapHandler.getListOfPhysicians(connection,request.toString()));
+
+				setLdapPhysicianList(ldapHandler.getListOfPhysicians(connection, request.toString()));
 
 				ldapHandler.closeConnection(connection);
 
@@ -1089,9 +1098,16 @@ public class SettingsDialogHandler extends AbstractDialog {
 			}
 		}
 
+		public void addPhysician(Physician physician) {
+			if (physician != null) {
+				physicianDAO.synchronizePhysician(physician);
+				updateData();
+			}
+		}
+
 		/**
-		 * Saves a physician to the database, if no role was selected ContactRole.Other
-		 * will be set per default.
+		 * Saves a physician to the database, if no role was selected
+		 * ContactRole.Other will be set per default.
 		 *
 		 * @param physician
 		 */

@@ -2,6 +2,7 @@ package org.histo.config;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -59,9 +60,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				} else if (histoUser.getPhysician() == null) {
 					histoUser.setPhysician(new Physician());
 					histoUser.getPhysician().setPerson(new Person());
-
-					// set role clinicalDoctor or clical personnel
-					histoUser.getPhysician().setClinicEmployee(true);
 				}
 
 				histoUser.setLastLogin(System.currentTimeMillis());
@@ -76,7 +74,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			LdapHandler ladpHandler = globalSettings.getLdapHandler();
 			DirContext connection = ladpHandler.openConnection();
 
-			Physician physician = ladpHandler.getPhyscican(connection,userName);
+			Physician physician = ladpHandler.getPhyscican(connection, userName);
 
 			if (physician != null) {
 				String dn = physician.getDnObjectName() + "," + base + "," + suffix;
@@ -86,7 +84,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				logger.info("Physician found " + physician.getPerson().getFullName());
 
 				// if now error was thrown auth was successful
-				ladpHandler.checkPassword(dn, password);
+				// ladpHandler.checkPassword(dn, password);
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 
@@ -107,7 +105,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 						// creating new physician an person
 						histoUser.setPhysician(new Physician(new Person(new Contact())));
 						histoUser.getPhysician().setUid(userName);
-						histoUser.getPhysician().setClinicEmployee(true);
 						// Default role for that physician
 						histoUser.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 					}
@@ -117,7 +114,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 					logger.info("No Physsican found");
 					histoUser.setPhysician(new Physician(new Person()));
 					histoUser.getPhysician().setUid(userName);
-					histoUser.getPhysician().setClinicEmployee(true);
 					// Default role for that physician
 					histoUser.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 				}
@@ -126,12 +122,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				histoUser.setLastLogin(System.currentTimeMillis());
 
-				// saving new organizations
-				for (Organization organization : histoUser.getPhysician().getPerson().getOrganizsations()) {
-					if (organization.getId() == 0)
-						transientDAO.save(organization, "log.organization.created",
-								new Object[] { organization.toString() });
-				}
+				transientDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
 
 				transientDAO.save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
 
