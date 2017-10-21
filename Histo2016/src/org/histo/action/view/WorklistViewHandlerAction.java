@@ -71,7 +71,7 @@ public class WorklistViewHandlerAction {
 	private ResourceBundle resourceBundle;
 
 	@Autowired
-	@Lazy	
+	@Lazy
 	private TaskViewHandlerAction taskViewHandlerAction;
 	/**
 	 * View
@@ -170,6 +170,8 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void onSelectPatient(Patient patient) {
+		long test = System.currentTimeMillis();
+		logger.info("start - > 0");
 		if (patient == null) {
 			logger.debug("Deselecting patient");
 			commonDataHandlerAction.setSelectedPatient(null);
@@ -193,6 +195,7 @@ public class WorklistViewHandlerAction {
 		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
 
 		goToNavigation(View.WORKLIST_PATIENT);
+		logger.info("end -> " + (System.currentTimeMillis()-test));
 	}
 
 	public void onDeselectPatient() {
@@ -207,6 +210,8 @@ public class WorklistViewHandlerAction {
 	 * @param task
 	 */
 	public void onSelectTaskAndPatient(Task task) {
+		long test = System.currentTimeMillis();
+		logger.info("start - > 0");
 		if (task == null) {
 			logger.debug("Deselecting task");
 			goToNavigation(View.WORKLIST_TASKS);
@@ -250,6 +255,8 @@ public class WorklistViewHandlerAction {
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(getLastTaskView());
 		}
+		
+		logger.info("end -> " + (System.currentTimeMillis()-test));
 	}
 
 	/**

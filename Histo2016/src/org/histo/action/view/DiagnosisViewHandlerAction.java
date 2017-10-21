@@ -76,7 +76,7 @@ public class DiagnosisViewHandlerAction {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ContactDAO contactDAO;
-	
+
 	/**
 	 * List of all diagnosis presets
 	 */
@@ -121,11 +121,12 @@ public class DiagnosisViewHandlerAction {
 	 * selected List item form caseHistory list
 	 */
 	private ListItem selectedCaseHistoryItem;
-	
+
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize DiagnosisViewHandlerAction for task");
 
-		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
+		if (getPhysiciansToSignList() == null)
+			setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
 		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
 
 		if (task.getDiagnosisContainer().getSignatureDate() == 0) {
@@ -137,13 +138,16 @@ public class DiagnosisViewHandlerAction {
 		}
 
 		// loading lists
-		setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
-		setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
+		if (getCaseHistoryList() == null)
+			setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
+		if (getWardList() == null)
+			setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
 
 		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
 		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());
 
-		setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
+		if (getDiagnosisPresets() == null)
+			setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
 		setDiagnosisPresetsTransformer(new DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
 	}
 
@@ -200,8 +204,9 @@ public class DiagnosisViewHandlerAction {
 			logger.debug("Updating diagnosis prototype");
 
 			diagnosis.updateDiagnosisWithPrest(diagnosis.getDiagnosisPrototype());
-			
-			// updating all contacts on diagnosis change, an determine if the contact should receive a physical case report
+
+			// updating all contacts on diagnosis change, an determine if the
+			// contact should receive a physical case report
 			contactDAO.updateNotificationsForPhysicalDiagnosisReport(diagnosis.getTask());
 
 			genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.update",
@@ -232,7 +237,7 @@ public class DiagnosisViewHandlerAction {
 		genericDAO.savePatientData(toSave, toSave, resourcesKey, arr);
 	}
 
-	public void copyCaseHistory(Task task,  ListItem selectedcaseHistoryItem) {
+	public void copyCaseHistory(Task task, ListItem selectedcaseHistoryItem) {
 		logger.debug("Copy " + selectedcaseHistoryItem.getValue() + " to " + task);
 		task.setCaseHistory(selectedcaseHistoryItem.getValue());
 		onDataChange(task, "log.patient.task.change.caseHistory", selectedcaseHistoryItem.getValue());

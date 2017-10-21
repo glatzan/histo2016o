@@ -9,6 +9,11 @@
 						onclick="$('#headerForm\\:stainingPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{taskIsNotNull and !selectedTask.isListedInFavouriteList('StainingList', 'ReStainingList','StayInStainingList')}" />
 
+create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
+
+create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
+
+TODO: Patienten Daten im header menu geht nicht
 TODO: 0.1: Finaliz in task, wird dies benötig -> löschen durch diagnosis date ersetzen
 TODO: 1: AUW Dokument überarbeiten	-> Rücksprache					
 TODO: 2: favouriten f�r benutzer zug�nlich machen

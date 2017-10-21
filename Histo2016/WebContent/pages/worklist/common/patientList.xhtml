@@ -68,12 +68,11 @@
 	<!-- Nav Table -->
 	<p:dataTable var="patient" id="patientList"
 		value="#{worklistViewHandlerAction.worklist.items}"
-		selectionMode="single"
+		selectionMode="single" rowIndexVar="rowIdx"
 		selection="#{commonDataHandlerAction.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navigationDataTable">
 
-		<p:ajax event="rowSelect"
-			update=":contentForm :headerForm :navigationForm"
+		<p:ajax event="rowSelect" update=":contentForm :headerForm"
 			listener="#{worklistViewHandlerAction.onSelectPatient(commonDataHandlerAction.selectedPatient)}" />
 
 		<p:column>
@@ -116,7 +115,7 @@
 						</p:commandLink>
 
 						<!-- Worklist change -->
-						<p:commandLink
+						<p:commandLink partialSubmit="true" process="@this"
 							title="#{msg['body.worklist.navigation.button.changelist']}"
 							actionListener="#{dialogHandlerAction.worklistSearchDialog.initAndPrepareBean()}">
 							<i class="fa fa-search"></i>
@@ -141,9 +140,10 @@
 				</p:row>
 				<p:row>
 					<p:column>
-						<h:outputLabel
-							value="#{mainHandlerAction.date(patient.person.birthday)}"
-							rendered="#{patient.person.birthday ne null}" />
+						<h:outputText value="#{patient.person.birthday}"
+							rendered="#{patient.person.birthday ne null}">
+							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+						</h:outputText>
 					</p:column>
 					<p:column>
 					</p:column>
@@ -164,9 +164,9 @@
 						<!-- task list -->
 						<p:repeat var="task"
 							value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
-							<p:commandLink
+							<p:commandLink partialSubmit="true" process="@this"
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
-								update="navigationForm contentForm headerForm"
+								update=":navigationForm:patientList:@row(#{rowIdx}) contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 
 								<h:outputLabel value="#{task.taskID}"

@@ -90,7 +90,7 @@ public class ReceiptlogViewHandlerAction {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
-	
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -116,7 +116,8 @@ public class ReceiptlogViewHandlerAction {
 		// Setzte action to none
 		setActionOnMany(StainingListAction.NONE);
 
-		setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
+		if (getSlideCommentary() == null)
+			setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
 	}
 
 	public List<String> getTest(String query) {

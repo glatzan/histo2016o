@@ -88,7 +88,6 @@ public abstract class AbstractDAO implements Serializable {
 			}
 			getSession().saveOrUpdate(object);
 			getSession().flush();
-			System.out.println(getSession().hashCode());
 			return object;
 		} catch (HibernateException hibernateException) {
 			object = (C) getSession().merge(object);

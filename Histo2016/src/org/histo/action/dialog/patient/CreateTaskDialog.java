@@ -170,7 +170,6 @@ public class CreateTaskDialog extends AbstractDialog {
 		getBioBank().setTask(getTask());
 
 		setMoveInformedConsent(false);
-		System.out.println(getNewTaskID());
 	}
 
 	/**
@@ -233,6 +232,8 @@ public class CreateTaskDialog extends AbstractDialog {
 						getPatient().setTasks(new ArrayList<>());
 					}
 
+					logger.debug("Creating new Task");
+					
 					getPatient().getTasks().add(0, getTask());
 					// sets the new task as the selected task
 
@@ -273,11 +274,11 @@ public class CreateTaskDialog extends AbstractDialog {
 						taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
 
 					}
-
+					
+					logger.debug("Creating diagnosis");
 					// creating standard diagnoses
 					taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(),
 							DiagnosisRevisionType.DIAGNOSIS);
-
 					// generating gui list
 					getTask().generateSlideGuiList();
 

@@ -341,6 +341,8 @@ public class TaskManipulationHandler {
 	 * @param patientOfSample
 	 */
 	public void createSlide(StainingPrototype prototype, Block block, String commentary, boolean reStaining) {
+		logger.debug("Creating new slide " + prototype.getName());
+
 		Slide slide = new Slide();
 
 		slide.setCreationDate(System.currentTimeMillis());

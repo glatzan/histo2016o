@@ -65,7 +65,7 @@
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
 					partialSubmit="true" process="@this"
-					actionListener="#{settingsDialogHandler.getTab('StainingTab').prepareNewStaining()}"
+					actionListener="#{dialogHandlerAction.stainingEditDialog.initAndPrepareBean()}"
 					update=":adminForm:tabview:staining" />
 
 				<p:commandButton value="#{msg['general.close']}"

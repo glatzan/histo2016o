@@ -22,6 +22,7 @@ import org.histo.action.dialog.print.PrintDialog;
 import org.histo.action.dialog.settings.material.MaterialEditDialog;
 import org.histo.action.dialog.settings.physician.PhysicianEditDialog;
 import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
+import org.histo.action.dialog.settings.staining.StainingEditDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
@@ -88,6 +89,8 @@ public class DialogHandlerAction {
 
 	private MaterialEditDialog materialEditDialog;
 
+	private StainingEditDialog stainingEditDialog;
+	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -284,5 +287,13 @@ public class DialogHandlerAction {
 
 		return materialEditDialog;
 	}
+	
+	public StainingEditDialog getStainingEditDialog() {
+		if (stainingEditDialog == null) {
+			stainingEditDialog = new StainingEditDialog();
+		}
 
+		return stainingEditDialog;
+	}
+	
 }
