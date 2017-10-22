@@ -90,8 +90,7 @@ public class TaskViewHandlerAction {
 		for (int i = 0; i < pagesCount; i++) {
 			getPages().add(i + 1);
 		}
-		
-		
+
 		taskDAO.getTasksMenuModel();
 
 		onChangeSelectionCriteria();
@@ -99,7 +98,7 @@ public class TaskViewHandlerAction {
 
 	public void onAddTask(Task task) {
 
-		if (worklistViewHandlerAction.getWorklist().containsPatient(task.getPatient())) {
+		if (worklistViewHandlerAction.getWorklist().containsPatient(task.getPatient().getId())) {
 			logger.debug("Showning task " + task.getTaskID());
 			worklistViewHandlerAction.onSelectTaskAndPatient(task);
 		} else {
@@ -128,7 +127,7 @@ public class TaskViewHandlerAction {
 				AssociatedContact associatedContact = task.getContacts().stream()
 						.filter(p -> p.getPerson().equals(histoUser.getPhysician().getPerson()))
 						.collect(StreamUtils.singletonCollector());
-				
+
 				contactDAO.removeAssociatedContact(task, associatedContact);
 			} catch (IllegalStateException e) {
 				logger.debug("No matching contact found!");
@@ -142,8 +141,8 @@ public class TaskViewHandlerAction {
 	 ********************************************************/
 	public List<Task> getTaskList() {
 		// TODO move to action not getter
-//		if (taskList == null)
-//			initBean();
+		// if (taskList == null)
+		// initBean();
 
 		return taskList;
 	}

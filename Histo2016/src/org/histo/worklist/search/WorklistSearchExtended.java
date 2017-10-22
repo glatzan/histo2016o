@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.histo.config.enums.Eye;
 import org.histo.model.Person;
+import org.histo.model.immutable.patientmenu.PatientMenuModel;
 import org.histo.model.patient.Patient;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -115,7 +116,7 @@ public class WorklistSearchExtended extends WorklistSearch {
 	private String malign;
 
 	@Override
-	public List<Patient> getWorklist() {
+	public List<PatientMenuModel> getWorklist() {
 		// TODO Auto-generated method stub
 		return null;
 	}

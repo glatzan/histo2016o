@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
+import org.histo.dao.PatientMenuDAO;
+import org.histo.model.immutable.patientmenu.PatientMenuModel;
+import org.histo.model.immutable.patientmenu.TaskMenuModel;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TaskUtil;
@@ -23,13 +26,13 @@ import lombok.Setter;
 public class Worklist {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-	
+
 	@Autowired
-	private PatientDao patientDao;
+	private PatientMenuDAO patientMenuDAO;
 
 	@Getter
 	@Setter
-	private List<Patient> items;
+	private List<PatientMenuModel> items;
 
 	/**
 	 * Sortorder of worklist
@@ -76,7 +79,7 @@ public class Worklist {
 	@Setter
 	@Getter
 	private WorklistSearch worklistSearch;
-	
+
 	/**
 	 * Update interval if enabled in sec
 	 */
@@ -98,28 +101,27 @@ public class Worklist {
 		this.worklistSortOrder = worklistSortOrder;
 		this.autoUpdate = autoUpdate;
 
-		this.items = new ArrayList<Patient>();
+		this.items = new ArrayList<PatientMenuModel>();
 	}
 
-	public void removePatient(Patient toRemovePatient) {
-		for (Patient patient : items) {
-			if (patient.equals(toRemovePatient.getId())) {
+	public void removePatient(PatientMenuModel toRemovePatient) {
+		for (PatientMenuModel patient : items) {
+			if (patient.equals(toRemovePatient)) {
 				items.remove(patient);
 				return;
 			}
-
 		}
 	}
 
-	public void addPatient(Patient patient) {
-		if (containsPatient(patient))
+	public void addPatient(PatientMenuModel patient) {
+		if (containsPatient(patient.getId()))
 			replacePatient(patient);
 		else
 			getItems().add(patient);
 	}
 
-	public boolean replacePatient(Patient patient) {
-		for (Patient pListItem : getItems()) {
+	public boolean replacePatient(PatientMenuModel patient) {
+		for (PatientMenuModel pListItem : getItems()) {
 			if (pListItem.equals(patient)) {
 				int index = getItems().indexOf(pListItem);
 				updateTaksActiveStatus(pListItem, patient);
@@ -132,9 +134,9 @@ public class Worklist {
 		return false;
 	}
 
-	public void updateTaksActiveStatus(Patient old, Patient newPat) {
-		for (Task newTask : newPat.getTasks()) {
-			for (Task oldTask : old.getTasks()) {
+	public void updateTaksActiveStatus(PatientMenuModel old, PatientMenuModel newPat) {
+		for (TaskMenuModel newTask : newPat.getTasks()) {
+			for (TaskMenuModel oldTask : old.getTasks()) {
 				if (newTask.equals(oldTask)) {
 					newTask.setActive(oldTask.isActive());
 				}
@@ -143,8 +145,16 @@ public class Worklist {
 		}
 	}
 
-	public boolean containsPatient(Patient patient) {
-		return getItems().stream().anyMatch(p -> p.equals(patient));
+	public boolean containsPatient(long id) {
+		return getItems().stream().anyMatch(p -> p.getId() == id);
+	}
+
+	public int indexOf(long id) {
+		for (int i = 0; i < getItems().size(); i++) {
+			if (getItems().get(i).getId() == id)
+				return i;
+		}
+		return -1;
 	}
 
 	public void sortWordklist() {
@@ -161,13 +171,15 @@ public class Worklist {
 		switch (order) {
 		case TASK_ID:
 			// Sorting
-			Collections.sort(items, new Comparator<Patient>() {
+			Collections.sort(items, new Comparator<PatientMenuModel>() {
 				@Override
-				public int compare(Patient patientOne, Patient patientTwo) {
-					Task lastTaskOne = patientOne.hasActiveTasks(showActiveTasksExplicit)
-							? patientOne.getActiveTasks(showActiveTasksExplicit).get(0) : null;
-					Task lastTaskTwo = patientTwo.hasActiveTasks(showActiveTasksExplicit)
-							? patientTwo.getActiveTasks(showActiveTasksExplicit).get(0) : null;
+				public int compare(PatientMenuModel patientOne, PatientMenuModel patientTwo) {
+					TaskMenuModel lastTaskOne = patientOne.hasActiveTasks(showActiveTasksExplicit)
+							? patientOne.getActiveTasks(showActiveTasksExplicit).get(0)
+							: null;
+					TaskMenuModel lastTaskTwo = patientTwo.hasActiveTasks(showActiveTasksExplicit)
+							? patientTwo.getActiveTasks(showActiveTasksExplicit).get(0)
+							: null;
 
 					if (lastTaskOne == null && lastTaskTwo == null)
 						return 0;
@@ -184,9 +196,9 @@ public class Worklist {
 			break;
 		case PIZ:
 			// Sorting
-			Collections.sort(items, new Comparator<Patient>() {
+			Collections.sort(items, new Comparator<PatientMenuModel>() {
 				@Override
-				public int compare(Patient patientOne, Patient patientTwo) {
+				public int compare(PatientMenuModel patientOne, PatientMenuModel patientTwo) {
 					if (patientOne.getPiz() == null && patientTwo.getPiz() == null)
 						return 0;
 					else if (patientOne.getPiz() == null)
@@ -201,31 +213,33 @@ public class Worklist {
 			});
 			break;
 		case NAME:
-			Collections.sort(items, new Comparator<Patient>() {
+			Collections.sort(items, new Comparator<PatientMenuModel>() {
 				@Override
-				public int compare(Patient patientOne, Patient patientTwo) {
-					if (patientOne.getPerson().getLastName() == null && patientTwo.getPerson().getLastName() == null)
+				public int compare(PatientMenuModel patientOne, PatientMenuModel patientTwo) {
+					if (patientOne.getLastName() == null && patientTwo.getLastName() == null)
 						return 0;
-					else if (patientOne.getPerson().getLastName() == null)
+					else if (patientOne.getLastName() == null)
 						return asc ? -1 : 1;
-					else if (patientTwo.getPerson().getLastName() == null)
+					else if (patientTwo.getLastName() == null)
 						return asc ? 1 : -1;
 					else {
-						int res = patientOne.getPerson().getLastName().compareTo(patientTwo.getPerson().getLastName());
+						int res = patientOne.getLastName().compareTo(patientTwo.getLastName());
 						return asc ? res : res * -1;
 					}
 				}
 			});
 			break;
 		case PRIORITY:
-			Collections.sort(items, new Comparator<Patient>() {
+			Collections.sort(items, new Comparator<PatientMenuModel>() {
 				@Override
-				public int compare(Patient patientOne, Patient patientTwo) {
-					Task highestPriorityOne = patientOne.hasActiveTasks(showActiveTasksExplicit)
-							? TaskUtil.getTaskByHighestPriority(patientOne.getActiveTasks(showActiveTasksExplicit))
+				public int compare(PatientMenuModel patientOne, PatientMenuModel patientTwo) {
+					TaskMenuModel highestPriorityOne = patientOne.hasActiveTasks(showActiveTasksExplicit)
+							? TaskUtil.getTaskMenuModelByHighestPriority(
+									patientOne.getActiveTasks(showActiveTasksExplicit))
 							: null;
-					Task highestPriorityTwo = patientTwo.hasActiveTasks(showActiveTasksExplicit)
-							? TaskUtil.getTaskByHighestPriority(patientTwo.getActiveTasks(showActiveTasksExplicit))
+					TaskMenuModel highestPriorityTwo = patientTwo.hasActiveTasks(showActiveTasksExplicit)
+							? TaskUtil.getTaskMenuModelByHighestPriority(
+									patientTwo.getActiveTasks(showActiveTasksExplicit))
 							: null;
 
 					if (highestPriorityOne == null && highestPriorityTwo == null)
@@ -249,31 +263,31 @@ public class Worklist {
 	}
 
 	public void updateWorklist() {
-		updateWorklist(new Patient());
+		updateWorklist(new PatientMenuModel());
 
 	}
 
-	public void updateWorklist(Patient activePatient) {
+	public void updateWorklist(PatientMenuModel activePatient) {
 
 		try {
 			// executing worklistsearch
-			List<Patient> update = getWorklistSearch().getWorklist();
+			List<PatientMenuModel> update = getWorklistSearch().getWorklist();
 
-			for (Patient patient : update) {
+			for (PatientMenuModel patient : update) {
 				// Skipping if patient is active patient
 				if (!patient.equals(activePatient)) {
 					logger.trace("Updatin or adding: " + patient.toString());
-					patientDao.initilaizeTasksofPatient(patient);
+					// patientDao.initilaizeTasksofPatient(patient);
 					addPatient(patient);
-				}else
+				} else
 					logger.trace("Skippting " + activePatient.toString() + " (is selected patient)");
 			}
 
 			// fining patients which were not updated
 			List<Long> manuallyUdatePizes = new ArrayList<Long>();
 
-			loop: for (Patient inList : getItems()) {
-				for (Patient patient : update) {
+			loop: for (PatientMenuModel inList : getItems()) {
+				for (PatientMenuModel patient : update) {
 					if (inList.equals(patient))
 						continue loop;
 				}
@@ -286,11 +300,11 @@ public class Worklist {
 			if (!manuallyUdatePizes.isEmpty()) {
 				// updating patients in worklist which were not found by generic
 				// search
-				List<Patient> histoMatchList = patientDao.searchForPatientIDsList(manuallyUdatePizes);
+				List<PatientMenuModel> histoMatchList = patientMenuDAO
+						.getPatientByTaskInFavouriteList(manuallyUdatePizes);
 
-				for (Patient patient : histoMatchList) {
+				for (PatientMenuModel patient : histoMatchList) {
 					logger.trace("Upadtin Patient not in search query: " + patient.toString());
-					patientDao.initilaizeTasksofPatient(patient);
 					addPatient(patient);
 				}
 			}

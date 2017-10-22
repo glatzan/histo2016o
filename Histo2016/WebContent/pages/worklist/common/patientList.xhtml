@@ -131,7 +131,7 @@
 				<p:row>
 					<p:column>
 						<h:outputText
-							value="#{patient.person.lastName}, #{patient.person.firstName}" />
+							value="#{patient.lastName}, #{patient.firstName}" />
 					</p:column>
 					<p:column>
 						<h:outputText
@@ -140,8 +140,8 @@
 				</p:row>
 				<p:row>
 					<p:column>
-						<h:outputText value="#{patient.person.birthday}"
-							rendered="#{patient.person.birthday ne null}">
+						<h:outputText value="#{patient.birthday}"
+							rendered="#{patient.birthday ne null}">
 							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
 						</h:outputText>
 					</p:column>
@@ -166,7 +166,7 @@
 							value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
 							<p:commandLink partialSubmit="true" process="@this"
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
-								update=":navigationForm:patientList:@row(#{rowIdx}) contentForm headerForm"
+								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 
 								<h:outputLabel value="#{task.taskID}"
@@ -276,13 +276,6 @@
 											class="fa  fa-stethoscope icon-purple"
 											title="#{msg['body.worklist.navigation.activtasks.councilCompleted']}" />
 									</ui:fragment>
-								</h:panelGroup>
-
-								<!-- Pendings completed -->
-								<h:panelGroup rendered="#{task.finalized}">
-									<i style="margin-left: 5px;"
-										class="fa fa-check-circle icon-green"
-										title="#{msg['body.worklist.navigation.activtasks.pendencies']}" />
 								</h:panelGroup>
 
 							</p:commandLink>

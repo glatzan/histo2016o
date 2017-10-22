@@ -16,7 +16,10 @@ import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.PatientDao;
+import org.histo.dao.PatientMenuDAO;
 import org.histo.dao.TaskDAO;
+import org.histo.model.immutable.patientmenu.PatientMenuModel;
+import org.histo.model.immutable.patientmenu.TaskMenuModel;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
@@ -44,6 +47,10 @@ public class WorklistViewHandlerAction {
 	@Autowired
 	@Lazy
 	private PatientDao patientDao;
+
+	@Autowired
+	@Lazy
+	private PatientMenuDAO patientMenuDAO;
 
 	@Autowired
 	private TaskDAO taskDAO;
@@ -169,6 +176,16 @@ public class WorklistViewHandlerAction {
 			return View.WORKLIST_BLANK.getPath();
 	}
 
+	public void onSelectPatient(long id) {
+		Patient p = patientDao.getPatient(id, false);
+		onSelectPatient(p);
+	}
+
+	public void onSelectPatient(PatientMenuModel patient) {
+		Patient p = patientDao.getPatient(patient.getId(), false);
+		onSelectPatient(p);
+	}
+
 	public void onSelectPatient(Patient patient) {
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
@@ -187,7 +204,7 @@ public class WorklistViewHandlerAction {
 			logger.debug("Version conflict, updating entity");
 			patientDao.refresh(patient);
 			patientDao.initializePatient(patient, true);
-			replacePatientInCurrentWorklist(patient);
+			onVersionConflictPatient(patient, false);
 		}
 
 		commonDataHandlerAction.setSelectedTask(null);
@@ -195,7 +212,7 @@ public class WorklistViewHandlerAction {
 		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
 
 		goToNavigation(View.WORKLIST_PATIENT);
-		logger.info("end -> " + (System.currentTimeMillis()-test));
+		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
 	public void onDeselectPatient() {
@@ -204,12 +221,16 @@ public class WorklistViewHandlerAction {
 		goToNavigation(View.WORKLIST_TASKS);
 	}
 
-	/**
-	 * Selects a task and sets the patient of this task as selectedPatient
-	 * 
-	 * @param task
-	 */
+	public void onSelectTaskAndPatient(TaskMenuModel taskMenuModel) {
+		Task t = taskDAO.get(Task.class, taskMenuModel.getId());
+		onSelectTaskAndPatient(t);
+	}
+
 	public void onSelectTaskAndPatient(Task task) {
+		onSelectTaskAndPatient(task, true);
+	}
+
+	public void onSelectTaskAndPatient(Task task, boolean reload) {
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
 		if (task == null) {
@@ -220,27 +241,29 @@ public class WorklistViewHandlerAction {
 
 		logger.debug("Selecting task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
 
-		try {
-			taskDAO.initializeTaskAndPatient(task);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// Reloading the Task, should not be happening
-			logger.debug("Version conflict, updating entity");
+		if (reload) {
+			try {
+				taskDAO.initializeTaskAndPatient(task);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				// Reloading the Task, should not be happening
+				logger.debug("Version conflict, updating entity");
 
-			// getting new task, possibility of deletion
-			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+				// getting new task, possibility of deletion
+				task = taskDAO.getTaskAndPatientInitialized(task.getId());
 
-			if (task != null)
-				replacePatientInCurrentWorklist(task.getParent());
-			else {
-				// task might be delete from an other user
-				if (commonDataHandlerAction.getSelectedPatient() != null) {
-					replacePatientInCurrentWorklist(commonDataHandlerAction.getSelectedPatient().getId());
+				if (task != null)
+					onVersionConflictPatient(task.getParent(), false);
+				else {
+					// task might be delete from an other user
+					if (commonDataHandlerAction.getSelectedPatient() != null) {
+						onVersionConflictPatient(commonDataHandlerAction.getSelectedPatient());
 
-					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
-							resourceBundle.get("growl.version.error.text"));
+						mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
+								resourceBundle.get("growl.version.error.text"));
 
-					RequestContext.getCurrentInstance()
-							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+						RequestContext.getCurrentInstance()
+								.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+					}
 				}
 			}
 		}
@@ -255,8 +278,8 @@ public class WorklistViewHandlerAction {
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(getLastTaskView());
 		}
-		
-		logger.info("end -> " + (System.currentTimeMillis()-test));
+
+		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
 	/**
@@ -306,6 +329,10 @@ public class WorklistViewHandlerAction {
 			setWorklist(new Worklist("", new WorklistSearch()));
 	}
 
+	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
+		addPatientToWorkList(patientMenuDAO.getPatientMenuModelFromId(patient.getId()), asSelectedPatient);
+	}
+
 	/**
 	 * Adds a patient to the worklist. If already added it is check if the
 	 * patient should be selected. If so the patient will be selected. The
@@ -314,17 +341,11 @@ public class WorklistViewHandlerAction {
 	 * @param patient
 	 * @param asSelectedPatient
 	 */
-	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
+	public void addPatientToWorkList(PatientMenuModel patient, boolean asSelectedPatient) {
 
 		// checks if patient is already in database
-		if (!getWorklist().containsPatient(patient)) {
-			try {
-				patientDao.initilaizeTasksofPatient(patient);
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				logger.debug("Version conflict, updating entity");
-				patient = patientDao.getPatient(patient.getId(), true);
-				replacePatientInCurrentWorklist(patient);
-			}
+		if (!getWorklist().containsPatient(patient.getId())) {
+
 			getWorklist().addPatient(patient);
 
 			getWorklist().sortWordklist();
@@ -339,51 +360,58 @@ public class WorklistViewHandlerAction {
 	 * 
 	 * @param patient
 	 */
-	public void removeFromWorklist(Patient patient) {
-		if (commonDataHandlerAction.getSelectedPatient() == patient) {
+	public void removeFromWorklist(PatientMenuModel patient) {
+		if (commonDataHandlerAction.getSelectedPatient().getId() == patient.getId()) {
 			onDeselectPatient();
 		}
 
 		getWorklist().removePatient(patient);
 	}
 
-	public void replacePatientTaskInCurrentWorklistAndSetSelected() {
-		replacePatientTaskInCurrentWorklistAndSetSelected(commonDataHandlerAction.getSelectedTask().getId());
+	public void onVersionConflictTask() {
+		onVersionConflictTask(commonDataHandlerAction.getSelectedTask(), true);
 	}
 
-	public void replacePatientTaskInCurrentWorklistAndSetSelected(long taskID) {
-		Task task = taskDAO.getTaskAndPatientInitialized(taskID);
-		replacePatientTaskInCurrentWorklistAndSetSelected(task);
+	public void onVersionConflictTask(Task task) {
+		onVersionConflictTask(task, true);
 	}
 
-	public void replacePatientTaskInCurrentWorklistAndSetSelected(Task task) {
-		replacePatientInCurrentWorklist(task.getPatient());
+	public void onVersionConflictTask(Task task, boolean reload) {
+		if (reload)
+			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+
+		onVersionConflictPatient(task.getPatient());
 
 		logger.debug("Setting as active task and patient");
 
-		onSelectTaskAndPatient(task);
+		onSelectTaskAndPatient(task, false);
 	}
 
-	public void replacePatientInCurrentWorklist(long id) {
-		Patient patient = patientDao.getPatient(id, true);
-		replacePatientInCurrentWorklist(patient);
+	public void onVersionConflictPatient(Patient patient) {
+		onVersionConflictPatient(patient, true);
 	}
 
-	public void replacePatientInCurrentWorklist(Patient patient) {
+	public void onVersionConflictPatient(Patient patient, boolean reload) {
+		if (reload)
+			patient = patientDao.getPatient(patient.getId(), true);
+
 		if (commonDataHandlerAction.getSelectedPatient() != null
-				&& commonDataHandlerAction.getSelectedPatient().getId() == patient.getId())
+				&& commonDataHandlerAction.getSelectedPatient().equals(patient))
 			commonDataHandlerAction.setSelectedPatient(patient);
 
 		logger.debug("Replacing patient due to external changes!");
-		getWorklist().replacePatient(patient);
 
+		// TODO copy data view object do not gerete a new database request
+		getWorklist().replacePatient(patientMenuDAO.getPatientMenuModelFromId(patient.getId()));
 	}
 
 	public void updateCurrentWorklist() {
-		if (getWorklist().isAutoUpdate()) {
-			logger.debug("Auto updating worklist");
-			getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
-		}
+
+		// TODO update methode
+		// if (getWorklist().isAutoUpdate()) {
+		// logger.debug("Auto updating worklist");
+		// getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
+		// }
 	}
 
 	// TODO move
@@ -410,13 +438,13 @@ public class WorklistViewHandlerAction {
 					return;
 				}
 
-				int indexOfPatient = getWorklist().getItems().indexOf(commonDataHandlerAction.getSelectedPatient());
+				int indexOfPatient = getWorklist().indexOf(commonDataHandlerAction.getSelectedPatient().getId());
 
 				if (indexOfPatient == -1)
 					return;
 
 				if (indexOfPatient - 1 >= 0) {
-					Patient newPatient = getWorklist().getItems().get(indexOfPatient - 1);
+					PatientMenuModel newPatient = getWorklist().getItems().get(indexOfPatient - 1);
 
 					if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
 						onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit())
@@ -426,7 +454,7 @@ public class WorklistViewHandlerAction {
 					}
 				}
 			} else {
-				Patient newPatient = getWorklist().getItems().get(getWorklist().getItems().size() - 1);
+				PatientMenuModel newPatient = getWorklist().getItems().get(getWorklist().getItems().size() - 1);
 
 				if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
 					onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit())
@@ -454,13 +482,13 @@ public class WorklistViewHandlerAction {
 					return;
 				}
 
-				int indexOfPatient = getWorklist().getItems().indexOf(commonDataHandlerAction.getSelectedPatient());
+				int indexOfPatient = getWorklist().indexOf(commonDataHandlerAction.getSelectedPatient().getId());
 
 				if (indexOfPatient == -1)
 					return;
 
 				if (indexOfPatient + 1 < getWorklist().getItems().size()) {
-					Patient newPatient = getWorklist().getItems().get(indexOfPatient + 1);
+					PatientMenuModel newPatient = getWorklist().getItems().get(indexOfPatient + 1);
 
 					if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
 						onSelectTaskAndPatient(
@@ -470,7 +498,7 @@ public class WorklistViewHandlerAction {
 					}
 				}
 			} else {
-				Patient newPatient = getWorklist().getItems().get(0);
+				PatientMenuModel newPatient = getWorklist().getItems().get(0);
 
 				if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
 					onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(0));

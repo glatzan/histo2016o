@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
+import org.histo.model.immutable.patientmenu.TaskMenuModel;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
@@ -120,7 +121,6 @@ public class TaskUtil {
 		return String.valueOf(Character.toChars(((int) 'a') + number));
 	}
 
-	
 	/**
 	 * Returns a name for a diagnosis revision
 	 * 
@@ -173,6 +173,27 @@ public class TaskUtil {
 			return null;
 
 		Task highest = tasks.get(0);
+
+		for (int i = 1; i < tasks.size(); i++) {
+			if (highest.getTaskPriority().getPriority() < tasks.get(i).getTaskPriority().getPriority())
+				highest = tasks.get(i);
+		}
+
+		return highest;
+	}
+
+	/**
+	 * Returns the task with the highest priority. If several tasks share the
+	 * same priority the first one is returned.
+	 * 
+	 * @param tasks
+	 * @return
+	 */
+	public static final TaskMenuModel getTaskMenuModelByHighestPriority(List<TaskMenuModel> tasks) {
+		if (tasks == null || tasks.size() == 0)
+			return null;
+
+		TaskMenuModel highest = tasks.get(0);
 
 		for (int i = 1; i < tasks.size(); i++) {
 			if (highest.getTaskPriority().getPriority() < tasks.get(i).getTaskPriority().getPriority())

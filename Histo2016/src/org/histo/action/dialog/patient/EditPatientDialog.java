@@ -41,7 +41,7 @@ public class EditPatientDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			setPatient(patientDao.getPatient(patient.getId(), true));
-			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient());
+			worklistViewHandlerAction.onVersionConflictPatient(getPatient(), false);
 		}
 		super.initBean(null, Dialog.PATIENT_EDIT);
 
@@ -57,7 +57,7 @@ public class EditPatientDialog extends AbstractDialog {
 	}
 
 	public void onDatabaseVersionConflict() {
-		worklistViewHandlerAction.replacePatientInCurrentWorklist(getTask().getParent().getId());
+		worklistViewHandlerAction.onVersionConflictPatient(getTask().getParent());
 		super.onDatabaseVersionConflict();
 	}
 }

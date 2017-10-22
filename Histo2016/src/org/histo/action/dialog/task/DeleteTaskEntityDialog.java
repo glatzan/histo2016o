@@ -49,7 +49,7 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
+			worklistViewHandlerAction.onVersionConflictTask(task, false);
 			return false;
 		}
 		super.initBean(task, Dialog.DELETE_TREE_ENTITY);

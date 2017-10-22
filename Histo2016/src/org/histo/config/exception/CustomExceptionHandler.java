@@ -96,7 +96,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 				else
 					cause = ((ELException) cause).getCause();
 			}
-			
+
 			logger.debug("Global exeption handler - " + cause);
 
 			if (cause != null) {
@@ -111,19 +111,18 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 					if (((CustomDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Patient) {
 						logger.debug("Version Error, replacing Patient");
-						worklistViewHandlerAction.replacePatientInCurrentWorklist(
-								((Patient) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion())
-										.getId());
+						worklistViewHandlerAction.onVersionConflictPatient(
+								((Patient) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion()));
 					} else if (((CustomDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Task) {
 						logger.debug("Version Error, replacing task");
-						worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(
-								((Task) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion()).getId());
+						worklistViewHandlerAction.onVersionConflictTask(
+								((Task) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion()));
 					} else if (((CustomDatabaseInconsistentVersionException) cause)
 							.getOldVersion() instanceof Parent<?>) {
 						logger.debug("Version Error, replacing parent -> task");
-						worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(
+						worklistViewHandlerAction.onVersionConflictTask(
 								((Parent<?>) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion())
-										.getTask().getId());
+										.getTask());
 					} else {
 						logger.debug("Version Error,"
 								+ ((CustomDatabaseInconsistentVersionException) cause).getOldVersion().getClass());
@@ -138,9 +137,9 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					System.out.println("Versionfehler!");
 
 					// TODO implement
-				}else if(cause instanceof AbortProcessingException) {
+				} else if (cause instanceof AbortProcessingException) {
 					logger.debug("Error aboring all actions!");
-				}else {
+				} else {
 					logger.debug("Other exception!");
 					cause.printStackTrace();
 				}
