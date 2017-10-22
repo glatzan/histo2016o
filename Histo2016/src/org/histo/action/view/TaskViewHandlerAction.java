@@ -90,9 +90,6 @@ public class TaskViewHandlerAction {
 		for (int i = 0; i < pagesCount; i++) {
 			getPages().add(i + 1);
 		}
-		
-		
-		taskDAO.getTasksMenuModel();
 
 		onChangeSelectionCriteria();
 	}

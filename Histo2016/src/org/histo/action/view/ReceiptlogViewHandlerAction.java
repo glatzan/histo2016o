@@ -220,7 +220,7 @@ public class ReceiptlogViewHandlerAction {
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
+			worklistViewHandlerAction.onVersionConflictTask();
 		}
 
 		setActionOnMany(StainingListAction.NONE);
@@ -238,7 +238,7 @@ public class ReceiptlogViewHandlerAction {
 			checkStainingPhase(task, changed);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
+			worklistViewHandlerAction.onVersionConflictTask();
 		}
 	}
 
@@ -363,7 +363,7 @@ public class ReceiptlogViewHandlerAction {
 
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				// catching database version inconsistencies
-				worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected();
+				worklistViewHandlerAction.onVersionConflictTask();
 			}
 			chooser.setIdChanged(false);
 		}

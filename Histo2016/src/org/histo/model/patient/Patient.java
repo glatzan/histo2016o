@@ -42,69 +42,93 @@ import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
+import org.histo.util.HistoUtil;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
+@Getter
+@Setter
 public class Patient
 		implements Parent<Patient>, CreationDate, LogAble, ArchivAble, PatientRollbackAble, HasDataList, HasID {
 
+	@Id
+	@GeneratedValue(generator = "patient_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	@Version
 	private long version;
 
 	/**
 	 * PIZ
 	 */
+	@Column
 	private String piz = "";
 
 	/**
 	 * Insurance of the patient
 	 */
+	@Column
 	private String insurance = "";
 
 	/**
 	 * Date of adding to the database
 	 */
+	@Column
 	private long creationDate = 0;
 
 	/**
 	 * Person data
 	 */
+	@OneToOne(cascade = CascadeType.ALL)
+	@NotAudited
 	private Person person;
 
 	/**
 	 * Task for this patient
 	 */
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("id DESC")
 	private List<Task> tasks;
 
 	/**
 	 * True if insurance is private
 	 */
+	@Column
 	private boolean privateInsurance = false;
 
 	/**
 	 * True if patient was added as an external patient.
 	 */
+	@Column
 	private boolean externalPatient = false;
 
 	/**
 	 * Pdf attached to this patient, this might be an informed consent
 	 */
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("creationDate DESC")
 	private List<PDFContainer> attachedPdfs;
 
 	/**
 	 * If true the patient is archived. Thus he won't be displayed.
 	 */
+	@Column
 	private boolean archived = false;
 
 	/**
 	 * True if saved in database, false if only in clinic backend
 	 */
+	@Transient
 	private boolean inDatabase = true;
 
 	/**
@@ -127,70 +151,77 @@ public class Patient
 	 * 
 	 * @param patient
 	 */
+	@Transient
 	public final boolean copyIntoObject(Patient patient) {
 		boolean change = false;
 
-		if (isStringDifferent(getPiz(), patient.getPiz())) {
+		if (HistoUtil.isStringDifferent(getPiz(), patient.getPiz())) {
 			change = true;
 			setPiz(patient.getPiz());
 		}
 
-		if (isStringDifferent(getInsurance(), patient.getInsurance())) {
+		if (HistoUtil.isStringDifferent(getInsurance(), patient.getInsurance())) {
 			change = true;
 			setInsurance(getInsurance());
 		}
 
-		if (isStringDifferent(getPerson().getTitle(), patient.getPerson().getTitle())) {
+		if (HistoUtil.isStringDifferent(getPerson().getTitle(), patient.getPerson().getTitle())) {
 			change = true;
 			getPerson().setTitle(patient.getPerson().getTitle());
 		}
 
-		if (isStringDifferent(getPerson().getLastName(), patient.getPerson().getLastName())) {
+		if (HistoUtil.isStringDifferent(getPerson().getLastName(), patient.getPerson().getLastName())) {
 			change = true;
 			getPerson().setLastName(patient.getPerson().getLastName());
 		}
 
-		if (isStringDifferent(getPerson().getFirstName(), patient.getPerson().getFirstName())) {
+		if (HistoUtil.isStringDifferent(getPerson().getFirstName(), patient.getPerson().getFirstName())) {
 			change = true;
 			getPerson().setFirstName(patient.getPerson().getFirstName());
 		}
 
-		if (isStringDifferent(getPerson().getBirthday(), patient.getPerson().getBirthday())) {
+		if (HistoUtil.isStringDifferent(getPerson().getBirthday(), patient.getPerson().getBirthday())) {
 			change = true;
 			getPerson().setBirthday(patient.getPerson().getBirthday());
 		}
 
-		if (isStringDifferent(getPerson().getContact().getTown(), patient.getPerson().getContact().getTown())) {
+		if (HistoUtil.isStringDifferent(getPerson().getContact().getTown(),
+				patient.getPerson().getContact().getTown())) {
 			change = true;
 			getPerson().getContact().setTown(patient.getPerson().getContact().getTown());
 		}
 
-		if (isStringDifferent(getPerson().getContact().getCountry(), patient.getPerson().getContact().getCountry())) {
+		if (HistoUtil.isStringDifferent(getPerson().getContact().getCountry(),
+				patient.getPerson().getContact().getCountry())) {
 			change = true;
 			getPerson().getContact().setCountry(patient.getPerson().getContact().getCountry());
 		}
 
-		if (isStringDifferent(getPerson().getContact().getPostcode(), patient.getPerson().getContact().getPostcode())) {
+		if (HistoUtil.isStringDifferent(getPerson().getContact().getPostcode(),
+				patient.getPerson().getContact().getPostcode())) {
 			change = true;
 			getPerson().getContact().setPostcode(patient.getPerson().getContact().getPostcode());
 		}
 
-		if (isStringDifferent(getPerson().getContact().getStreet(), patient.getPerson().getContact().getStreet())) {
+		if (HistoUtil.isStringDifferent(getPerson().getContact().getStreet(),
+				patient.getPerson().getContact().getStreet())) {
 			change = true;
 			getPerson().getContact().setStreet(patient.getPerson().getContact().getStreet());
 		}
 
-		if (isStringDifferent(getPerson().getContact().getPhone(), patient.getPerson().getContact().getPhone())) {
+		if (HistoUtil.isStringDifferent(getPerson().getContact().getPhone(),
+				patient.getPerson().getContact().getPhone())) {
 			change = true;
 			getPerson().getContact().setPhone(patient.getPerson().getContact().getPhone());
 		}
 
-		if (isStringDifferent(getPerson().getGender(), patient.getPerson().getGender())) {
+		if (HistoUtil.isStringDifferent(getPerson().getGender(), patient.getPerson().getGender())) {
 			change = true;
 			getPerson().setGender(patient.getPerson().getGender());
 		}
 
-		if (isStringDifferent(getPerson().getContact().getEmail(), patient.getPerson().getContact().getEmail())) {
+		if (HistoUtil.isStringDifferent(getPerson().getContact().getEmail(),
+				patient.getPerson().getContact().getEmail())) {
 			change = true;
 			getPerson().getContact().setEmail(patient.getPerson().getContact().getEmail());
 		}
@@ -205,6 +236,7 @@ public class Patient
 	 * @throws CustomNullPatientExcepetion
 	 * @throws JSONException
 	 */
+	@Transient
 	public final void copyIntoObject(String json) throws JSONException, CustomNullPatientExcepetion {
 		copyIntoObject(new JSONObject(json));
 	}
@@ -226,6 +258,7 @@ public class Patient
 	 * @return
 	 * @throws CustomNullPatientExcepetion
 	 */
+	@Transient
 	public final void copyIntoObject(JSONObject obj) throws CustomNullPatientExcepetion {
 
 		// check if not an null patient is returned
@@ -285,26 +318,6 @@ public class Patient
 	}
 
 	@Transient
-	public boolean isStringDifferent(Object arg1, Object arg2) {
-		if (arg1 == arg2)
-			return false;
-		if (arg1 == null || arg2 == null)
-			return true;
-		if (arg1.equals(arg2))
-			return false;
-		return true;
-	}
-
-	@Transient
-	public boolean isInDatabase() {
-		return inDatabase;
-	}
-
-	public void setInDatabase(boolean inDatabase) {
-		this.inDatabase = inDatabase;
-	}
-
-	@Transient
 	public List<Task> getActiveTasks() {
 		return getActiveTasks(false);
 	}
@@ -361,131 +374,12 @@ public class Patient
 	 ********************************************************/
 
 	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	@Override
-	@Id
-	@GeneratedValue(generator = "patient_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@Column
-	public String getPiz() {
-		return piz;
-	}
-
-	public void setPiz(String piz) {
-		this.piz = piz;
-	}
-
-	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("id DESC")
-	public List<Task> getTasks() {
-		if (tasks == null)
-			tasks = new ArrayList<Task>();
-		return tasks;
-	}
-
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL)
-	@NotAudited
-	public Person getPerson() {
-		return person;
-	}
-
-	public void setPerson(Person person) {
-		this.person = person;
-	}
-
-	@Basic
-	public boolean isExternalPatient() {
-		return externalPatient;
-	}
-
-	public void setExternalPatient(boolean externalPatient) {
-		this.externalPatient = externalPatient;
-	}
-
-	@Column
-	@Override
-	public long getCreationDate() {
-		return creationDate;
-	}
-
-	@Override
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	@Column
-	public String getInsurance() {
-		return insurance;
-	}
-
-	public void setInsurance(String insurance) {
-		this.insurance = insurance;
-	}
-
-	public boolean isPrivateInsurance() {
-		return privateInsurance;
-	}
-
-	public void setPrivateInsurance(boolean privateInsurance) {
-		this.privateInsurance = privateInsurance;
-	}
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OrderBy("creationDate DESC")
-	public List<PDFContainer> getAttachedPdfs() {
-		if (attachedPdfs == null)
-			attachedPdfs = new ArrayList<PDFContainer>();
-		return attachedPdfs;
-	}
-
-	public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
-		this.attachedPdfs = attachedPdfs;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	/********************************************************
 	 * Interface StainingTreeParent
 	 ********************************************************/
 	@Transient
 	@Override
 	public Patient getPatient() {
 		return this;
-	}
-
-	@Override
-	public boolean isArchived() {
-		return archived;
-	}
-
-	@Override
-	public void setArchived(boolean archived) {
-		this.archived = archived;
 	}
 
 	@Transient

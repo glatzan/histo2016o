@@ -27,4 +27,25 @@ public interface HasDataList extends HasID {
 
 		return false;
 	}
+
+	public default void addReport(PDFContainer pdfTemplate) {
+		getAttachedPdfs().add(pdfTemplate);
+	}
+
+	/**
+	 * Removes a report with a specific type from the database
+	 * 
+	 * @param type
+	 * @return
+	 */
+	@Transient
+	public default PDFContainer removeReport(DocumentType type) {
+		for (PDFContainer pdfContainer : getAttachedPdfs()) {
+			if (pdfContainer.getType().equals(type)) {
+				getAttachedPdfs().remove(pdfContainer);
+				return pdfContainer;
+			}
+		}
+		return null;
+	}
 }

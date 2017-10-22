@@ -132,6 +132,8 @@ public class FavouriteListDAO extends AbstractDAO {
 			task.getFavouriteLists().add(favouriteList);
 			genericDAO.savePatientData(task, "log.patient.task.favouriteList.added",
 					new Object[] { task.getTaskID().toString(), favouriteList.toString() });
+			
+			task.generateTaskStatus();
 		} else
 			logger.debug("Task (" + task.getTaskID() + ") alread contains list (" + favouriteList.getName() + ")");
 	}
@@ -184,6 +186,7 @@ public class FavouriteListDAO extends AbstractDAO {
 
 			// saving new fav item
 			save(task);
+			task.generateTaskStatus();
 		} catch (IllegalStateException e) {
 			// no item found
 			logger.debug("Can not remove favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID()

@@ -170,6 +170,10 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void onSelectPatient(Patient patient) {
+		onSelectPatient(patient, true);
+	}
+
+	public void onSelectPatient(Patient patient, boolean reload) {
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
 		if (patient == null) {
@@ -179,15 +183,17 @@ public class WorklistViewHandlerAction {
 			return;
 		}
 
-		try {
-			patientDao.initializePatient(patient, true);
-			commonDataHandlerAction.setSelectedPatient(patient);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// Reloading the Patient, should not be happening
-			logger.debug("Version conflict, updating entity");
-			patientDao.refresh(patient);
-			patientDao.initializePatient(patient, true);
-			replacePatientInCurrentWorklist(patient);
+		if (reload) {
+			try {
+				patientDao.initializePatient(patient, true);
+				commonDataHandlerAction.setSelectedPatient(patient);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				// Reloading the Patient, should not be happening
+				logger.debug("Version conflict, updating entity");
+				patientDao.refresh(patient);
+				patientDao.initializePatient(patient, true);
+				onVersionConflictPatient(patient, false);
+			}
 		}
 
 		commonDataHandlerAction.setSelectedTask(null);
@@ -195,7 +201,7 @@ public class WorklistViewHandlerAction {
 		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
 
 		goToNavigation(View.WORKLIST_PATIENT);
-		logger.info("end -> " + (System.currentTimeMillis()-test));
+		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
 	public void onDeselectPatient() {
@@ -204,12 +210,16 @@ public class WorklistViewHandlerAction {
 		goToNavigation(View.WORKLIST_TASKS);
 	}
 
+	public void onSelectTaskAndPatient(Task task) {
+		onSelectTaskAndPatient(task, true);
+	}
+
 	/**
 	 * Selects a task and sets the patient of this task as selectedPatient
 	 * 
 	 * @param task
 	 */
-	public void onSelectTaskAndPatient(Task task) {
+	public void onSelectTaskAndPatient(Task task, boolean reload) {
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
 		if (task == null) {
@@ -220,27 +230,29 @@ public class WorklistViewHandlerAction {
 
 		logger.debug("Selecting task " + task.getPatient().getPerson().getFullName() + " " + task.getTaskID());
 
-		try {
-			taskDAO.initializeTaskAndPatient(task);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// Reloading the Task, should not be happening
-			logger.debug("Version conflict, updating entity");
+		if (reload) {
+			try {
+				taskDAO.initializeTaskAndPatient(task);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				// Reloading the Task, should not be happening
+				logger.debug("Version conflict, updating entity");
 
-			// getting new task, possibility of deletion
-			task = taskDAO.getTaskAndPatientInitialized(task.getId());
+				// getting new task, possibility of deletion
+				task = taskDAO.getTaskAndPatientInitialized(task.getId());
 
-			if (task != null)
-				replacePatientInCurrentWorklist(task.getParent());
-			else {
-				// task might be delete from an other user
-				if (commonDataHandlerAction.getSelectedPatient() != null) {
-					replacePatientInCurrentWorklist(commonDataHandlerAction.getSelectedPatient().getId());
+				if (task != null)
+					onVersionConflictPatient(task.getParent(), false);
+				else {
+					// task might be delete from an other user
+					if (commonDataHandlerAction.getSelectedPatient() != null) {
+						onVersionConflictPatient(commonDataHandlerAction.getSelectedPatient());
 
-					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
-							resourceBundle.get("growl.version.error.text"));
+						mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
+								resourceBundle.get("growl.version.error.text"));
 
-					RequestContext.getCurrentInstance()
-							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+						RequestContext.getCurrentInstance()
+								.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+					}
 				}
 			}
 		}
@@ -255,8 +267,8 @@ public class WorklistViewHandlerAction {
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(getLastTaskView());
 		}
-		
-		logger.info("end -> " + (System.currentTimeMillis()-test));
+
+		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
 	/**
@@ -323,8 +335,8 @@ public class WorklistViewHandlerAction {
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
 				patient = patientDao.getPatient(patient.getId(), true);
-				replacePatientInCurrentWorklist(patient);
 			}
+
 			getWorklist().addPatient(patient);
 
 			getWorklist().sortWordklist();
@@ -347,35 +359,37 @@ public class WorklistViewHandlerAction {
 		getWorklist().removePatient(patient);
 	}
 
-	public void replacePatientTaskInCurrentWorklistAndSetSelected() {
-		replacePatientTaskInCurrentWorklistAndSetSelected(commonDataHandlerAction.getSelectedTask().getId());
+	public void onVersionConflictTask() {
+		if (commonDataHandlerAction.getSelectedTask() != null)
+			onVersionConflictTask(commonDataHandlerAction.getSelectedTask(), true);
 	}
 
-	public void replacePatientTaskInCurrentWorklistAndSetSelected(long taskID) {
-		Task task = taskDAO.getTaskAndPatientInitialized(taskID);
-		replacePatientTaskInCurrentWorklistAndSetSelected(task);
+	public void onVersionConflictTask(Task task) {
+		onVersionConflictTask(task, true);
 	}
 
-	public void replacePatientTaskInCurrentWorklistAndSetSelected(Task task) {
-		replacePatientInCurrentWorklist(task.getPatient());
+	public void onVersionConflictTask(Task task, boolean reload) {
+		if (reload)
+			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 
-		logger.debug("Setting as active task and patient");
-
-		onSelectTaskAndPatient(task);
+		onVersionConflictPatient(task.getParent(), false);
+		onSelectTaskAndPatient(task, false);
 	}
 
-	public void replacePatientInCurrentWorklist(long id) {
-		Patient patient = patientDao.getPatient(id, true);
-		replacePatientInCurrentWorklist(patient);
+	public void onVersionConflictPatient(Patient patient) {
+		onVersionConflictPatient(patient, true);
 	}
 
-	public void replacePatientInCurrentWorklist(Patient patient) {
+	public void onVersionConflictPatient(Patient patient, boolean reload) {
+		if (reload)
+			patient = patientDao.getPatient(patient.getId(), true);
+
 		if (commonDataHandlerAction.getSelectedPatient() != null
 				&& commonDataHandlerAction.getSelectedPatient().getId() == patient.getId())
 			commonDataHandlerAction.setSelectedPatient(patient);
 
 		logger.debug("Replacing patient due to external changes!");
-		getWorklist().replacePatient(patient);
+		getWorklist().addPatient(patient);
 
 	}
 

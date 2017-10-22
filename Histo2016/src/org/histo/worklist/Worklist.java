@@ -23,7 +23,7 @@ import lombok.Setter;
 public class Worklist {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-	
+
 	@Autowired
 	private PatientDao patientDao;
 
@@ -76,7 +76,7 @@ public class Worklist {
 	@Setter
 	@Getter
 	private WorklistSearch worklistSearch;
-	
+
 	/**
 	 * Update interval if enabled in sec
 	 */
@@ -103,7 +103,7 @@ public class Worklist {
 
 	public void removePatient(Patient toRemovePatient) {
 		for (Patient patient : items) {
-			if (patient.equals(toRemovePatient.getId())) {
+			if (patient.equals(toRemovePatient)) {
 				items.remove(patient);
 				return;
 			}
@@ -116,6 +116,8 @@ public class Worklist {
 			replacePatient(patient);
 		else
 			getItems().add(patient);
+		
+		generateTaskStatus(patient);
 	}
 
 	public boolean replacePatient(Patient patient) {
@@ -151,6 +153,12 @@ public class Worklist {
 		sortWordklist(getWorklistSortOrder(), isSortAscending());
 	}
 
+	public void generateTaskStatus(Patient patient) {
+		for (Task task : patient.getTasks()) {
+			task.generateTaskStatus();
+		}
+	}
+
 	/**
 	 * Sorts a list with patients either by task id or name of the patient
 	 * 
@@ -165,9 +173,11 @@ public class Worklist {
 				@Override
 				public int compare(Patient patientOne, Patient patientTwo) {
 					Task lastTaskOne = patientOne.hasActiveTasks(showActiveTasksExplicit)
-							? patientOne.getActiveTasks(showActiveTasksExplicit).get(0) : null;
+							? patientOne.getActiveTasks(showActiveTasksExplicit).get(0)
+							: null;
 					Task lastTaskTwo = patientTwo.hasActiveTasks(showActiveTasksExplicit)
-							? patientTwo.getActiveTasks(showActiveTasksExplicit).get(0) : null;
+							? patientTwo.getActiveTasks(showActiveTasksExplicit).get(0)
+							: null;
 
 					if (lastTaskOne == null && lastTaskTwo == null)
 						return 0;
@@ -250,7 +260,6 @@ public class Worklist {
 
 	public void updateWorklist() {
 		updateWorklist(new Patient());
-
 	}
 
 	public void updateWorklist(Patient activePatient) {
@@ -265,7 +274,7 @@ public class Worklist {
 					logger.trace("Updatin or adding: " + patient.toString());
 					patientDao.initilaizeTasksofPatient(patient);
 					addPatient(patient);
-				}else
+				} else
 					logger.trace("Skippting " + activePatient.toString() + " (is selected patient)");
 			}
 

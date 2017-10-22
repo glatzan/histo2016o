@@ -48,7 +48,7 @@ public class StainingExitStayInPhaseDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
+			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
 		super.initBean(task, dialog);

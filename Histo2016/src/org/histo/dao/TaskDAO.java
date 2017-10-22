@@ -21,8 +21,6 @@ import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
 import org.histo.model.FavouriteList;
-import org.histo.model.immutable.patientmenu.PatientMenuModel;
-import org.histo.model.immutable.patientmenu.TaskMenuModel;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,24 +184,6 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return task;
 	}
 	
-	public List<PatientMenuModel> getTasksMenuModel() {
-		Criteria criteria = getSession().createCriteria(PatientMenuModel.class);
-		criteria.addOrder(Order.desc("id"));
-
-		List<PatientMenuModel> list = criteria.list();
-
-		for (PatientMenuModel task : list) {
-			System.out.println(task.getFirstName());
-			for (TaskMenuModel taskMenuModel: task.getTasks()) {
-				System.out.println(" --> " + taskMenuModel.getTaskID());
-				for (FavouriteList favouriteList: taskMenuModel.getFavouriteLists()) {
-					System.out.println(" ------> " + favouriteList.getName());
-				}
-			}
-		}
-		
-		return list;
-	}
 }
 // DetachedCriteria maxID = DetachedCriteria.forClass(Task.class);
 // maxID.setProjection(Projections.max("id"));

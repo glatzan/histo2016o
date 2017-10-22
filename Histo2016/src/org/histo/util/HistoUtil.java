@@ -3,6 +3,8 @@ package org.histo.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Transient;
+
 public class HistoUtil {
 
 	/**
@@ -58,5 +60,15 @@ public class HistoUtil {
 		if (str != null && !str.isEmpty())
 			return true;
 		return false;
+	}
+
+	public final static boolean isStringDifferent(Object arg1, Object arg2) {
+		if (arg1 == arg2)
+			return false;
+		if (arg1 == null || arg2 == null)
+			return true;
+		if (arg1.equals(arg2))
+			return false;
+		return true;
 	}
 }

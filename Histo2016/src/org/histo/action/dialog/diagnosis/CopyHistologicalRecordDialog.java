@@ -46,7 +46,7 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(diagnosis.getTask().getId());
-			worklistViewHandlerAction.replacePatientTaskInCurrentWorklistAndSetSelected(task);
+			worklistViewHandlerAction.onVersionConflictTask(task, false);
 			return false;
 		}
 		super.initBean(task, Dialog.DIAGNOSIS_RECORD_OVERWRITE);
