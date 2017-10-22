@@ -64,7 +64,7 @@
 		<div class="contentDiv" style="height: 500px;">
 
 			<h:panelGrid columns="2" columnClasses="defaultListingTableColumn15,"
-				styleClass="defaultListingTableCss">
+				styleClass="defaultListingTableFirstColumEnummeration">
 
 
 				<h:outputLabel value="#{msg['dialog.settings.stainings.new.name']}"></h:outputLabel>
@@ -86,67 +86,109 @@
 				</p:selectOneMenu>
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" styleClass="defaultListingTableCss">
-				<p:dataList style="width:100%" itemType="none" styleClass="noPaddingAll"
-					value="#{dialogHandlerAction.stainingEditDialog.stainingPrototype.batchDetails}"
-					var="batch">
+			<h:panelGrid columns="1" styleClass="defaultListingTable">
+
+				<p:commandLink update="@form"
+					actionListener="#{dialogHandlerAction.stainingEditDialog.addBatch()}">
+					<i class="fa fa-plus"></i>
+				</p:commandLink>
+
+				<p:dataTable var="batch" scrollable="true" scrollHeight="200"
+					rowIndexVar="rowIdx" id="batchList"
+					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+					value="#{dialogHandlerAction.stainingEditDialog.stainingPrototype.batchDetails}">
 					<f:facet name="header">
-						<p:commandLink update="@form"
-							actionListener="#{dialogHandlerAction.stainingEditDialog.addBatch()}">
-							<i class="fa fa-plus"></i>
-						</p:commandLink>
+						<h:outputLabel value="test" />
 					</f:facet>
+					<p:column style="width:16px">
+						<p:rowToggler />
+					</p:column>
+					<p:column headerText="Name">
+						<h:outputText value="#{batch.name} " />
+						<h:outputText value="#{batch.deliveryDate}">
+							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+						</h:outputText>
+					</p:column>
 
-					<h:panelGrid columns="8">
-						<h:outputLabel value="Wirt" />
-						<p:inputText value="#{batch.host}" styleClass="smallInput"></p:inputText>
+					<p:rowExpansion styleClass="noPadding">
+						<h:panelGrid columns="8" styleClass="defaultListingTable">
+							<h:outputText value="Wirt" styleClass="smallFont" />
+							<p:inputText value="#{batch.host}" styleClass="smallInputText">
+								<p:ajax event="keyup" process="@this" partialSubmit="true"
+									update=":dialogContent:batchList:@row(#{rowIdx})" />
+							</p:inputText>
 
-						<h:outputLabel value="Liefermenge" />
-						<p:inputText value="#{batch.quantityDelivered}"
-							styleClass="smallInput"></p:inputText>
+							<h:outputText value="Liefermenge" styleClass="smallFont" />
+							<p:inputText value="#{batch.quantityDelivered}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Lagerung" />
-						<p:inputText value="#{batch.storage}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="Lagerung" styleClass="smallFont" />
+							<p:inputText value="#{batch.storage}" styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Bezugsquelle" />
-						<p:inputText value="#{batch.supplier}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="Bezugsquelle" styleClass="smallFont" />
+							<p:inputText value="#{batch.supplier}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Spezifität" />
-						<p:inputText value="#{batch.specifity}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="Spezifität" styleClass="smallFont" />
+							<p:inputText value="#{batch.specifity}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Lieferdatum" />
-						<p:inputText value="#{batch.deliveryDate}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="Lieferdatum" styleClass="smallFont" />
+							<p:calendar styleClass=" smallInput smallCalendarInput"
+								value="#{batch.deliveryDate}" locale="de" navigator="true"
+								pattern="dd.MM.yyyy" mask="true">
+								<p:ajax event="dateSelect" process="@this" partialSubmit="true"
+									update=":dialogContent:batchList:@row(#{rowIdx})" />
+								<f:ajax event="change" process="@this" partialSubmit="true"
+									update=":dialogContent:batchList:@row(#{rowIdx})" />
+							</p:calendar>
 
-						<h:outputLabel value="haltbar bis" />
-						<p:inputText value="#{batch.bestBefore}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="haltbar bis" styleClass="smallFont" />
+							<p:calendar styleClass=" smallInput smallCalendarInput"
+								value="#{batch.bestBefore}" locale="de" navigator="true"
+								pattern="dd.MM.yyyy" mask="true">
+								<p:ajax event="dateSelect" process="@this" partialSubmit="true"
+									update=":dialogContent:batchList:@row(#{rowIdx})" />
+								<f:ajax event="change" process="@this" partialSubmit="true"
+									update=":dialogContent:batchList:@row(#{rowIdx})" />
+							</p:calendar>
 
-						<h:outputLabel value="leer am" />
-						<p:inputText value="#{batch.emptyDate}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="leer am" styleClass="smallFont" />
+							<p:calendar styleClass="smallFont smallInput smallCalendarInput"
+								value="#{batch.emptyDate}" locale="de" navigator="true"
+								pattern="dd.MM.yyyy" mask="true">
+								<p:ajax event="dateSelect" process="@this" partialSubmit="true"
+									update=":dialogContent:batchList:@row(#{rowIdx})" />
+								<f:ajax event="change" process="@this" partialSubmit="true"
+									update=":dialogContent:batchList:@row(#{rowIdx})" />
+							</p:calendar>
 
-						<h:outputLabel value="Vorbehandlung" />
-						<p:inputText value="#{batch.treatment}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="Vorbehandlung" styleClass="smallFont" />
+							<p:inputText value="#{batch.treatment}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Inkubationszeit" />
-						<p:inputText value="#{batch.incubationTime}"
-							styleClass="smallInput"></p:inputText>
+							<h:outputText value="Inkubationszeit" styleClass="smallFont" />
+							<p:inputText value="#{batch.incubationTime}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Verdünnung" />
-						<p:inputText value="#{batch.dilution}" styleClass="smallInput"></p:inputText>
+							<h:outputText value="Verdünnung" styleClass="smallFont" />
+							<p:inputText value="#{batch.dilution}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Standardverdünnung" />
-						<p:inputText value="#{batch.standardDilution}"
-							styleClass="smallInput"></p:inputText>
+							<h:outputText value="Standardverdünnung" styleClass="smallFont" />
+							<p:inputText value="#{batch.standardDilution}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="positive Kontrolle" />
-						<p:inputText value="#{batch.positiveControl}"
-							styleClass="smallInput"></p:inputText>
+							<h:outputText value="positive Kontrolle" styleClass="smallFont" />
+							<p:inputText value="#{batch.positiveControl}"
+								styleClass="smallInputText"></p:inputText>
 
-						<h:outputLabel value="Methode" />
-						<p:inputText value="#{batch.process}" styleClass="smallInput"></p:inputText>
-					</h:panelGrid>
+							<h:outputText value="Methode" styleClass="smallFont" />
+							<p:inputText value="#{batch.process}" styleClass="smallInputText"></p:inputText>
+						</h:panelGrid>
+					</p:rowExpansion>
+				</p:dataTable>
 
-
-				</p:dataList>
 			</h:panelGrid>
 		</div>
 

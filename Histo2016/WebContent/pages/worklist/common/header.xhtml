@@ -258,12 +258,13 @@
 			<!-- Show Patient Overview -->
 			<p:commandButton id="addPatient" style="display:none"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn" />
 			</p:commandButton>
+
 			<!-- Show Overview -->
 			<p:commandButton id="showPatientOverview" style="display:none"
+				update="navigationForm contentForm headerForm"
 				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
 			<!-- upload button to patient -->

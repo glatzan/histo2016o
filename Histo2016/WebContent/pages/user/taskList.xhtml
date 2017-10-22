@@ -16,7 +16,7 @@
 		<h:outputLabel value="#{msg['body.taskList.headline']}"
 			style="font-size:1.5em;"></h:outputLabel>
 
-		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol"
+		<h:panelGrid columns="1" styleClass="defaultListingTable"
 			style="margin-top:10px;">
 			<p:dataTable var="task" value="#{taskViewHandlerAction.taskList}"
 				scrollHeight="600" draggableRows="true"
@@ -107,7 +107,7 @@
 			</p:dataTable>
 		</h:panelGrid>
 
-		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+		<h:panelGrid columns="1" styleClass="defaultListingTable">
 			<h:panelGrid columns="4" style="float:right">
 
 				<h:outputLabel value="#{msg['body.taskList.perPage']}" />

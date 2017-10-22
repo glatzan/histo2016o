@@ -28,6 +28,9 @@ public class StainingPrototypeDetails {
 	@Column(unique = true, nullable = false)
 	private long id;
 
+	@Column(columnDefinition = "VARCHAR")
+	private String name;
+	
 	/**
 	 * Parent
 	 */

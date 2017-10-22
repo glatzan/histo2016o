@@ -38,7 +38,7 @@
 			styleClass="defaultListingTableThreeLineContainer">
 
 			<!-- left column -->
-			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
 				<!-- Receipt Date -->
 				<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
 				<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
@@ -155,7 +155,7 @@
 			<h:panelGroup />
 
 			<!-- middle column -->
-			<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+			<h:panelGrid columns="1" styleClass="defaultListingTable">
 				<!-- material -->
 				<p:outputLabel value="#{msg['body.receiptlog.material']}"
 					styleClass="big-text" />
@@ -189,7 +189,7 @@
 
 			<!-- right column -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-				<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol">
+				<h:panelGrid columns="2" styleClass="defaultListingTable">
 					<!-- contact -->
 					<h:outputLabel value="#{msg['body.receiptlog.notification']}"
 						styleClass="big-text" />
@@ -259,7 +259,7 @@
 		</h:panelGrid>
 
 		<!-- Slides -->
-		<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol">
+		<h:panelGrid columns="1" styleClass="defaultListingTable">
 			<!-- healinse -->
 			<h:panelGroup>
 				<h:outputLabel value="#{msg['body.receiptlog.slide.name']}"

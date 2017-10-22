@@ -56,19 +56,19 @@ body {
 
 /*******************************************/
 /* Default table for listing inputfields, one col*/
-.defaultListingTableCssOneCol {
+.defaultListingTable {
 	width: 100%;
 }
 
-.defaultListingTableCssOneCol td {
+.defaultListingTable td {
 	padding: 3px;
 }
 
-.defaultListingTableCssOneCol .big-text {
+.defaultListingTable .big-text {
 	font-size: 1.2em !important;
 }
 
-.defaultListingTableCssOneCol label {
+.defaultListingTable label {
 	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-size: 1.0em !important;
 	font-style: normal;
@@ -80,28 +80,28 @@ body {
 
 /*******************************************/
 /* Default table for listing inputfields, two cols*/
-.defaultListingTableCss {
+.defaultListingTableFirstColumEnummeration {
 	width: 100%;
 }
 
-.defaultListingTableCss>tbody>tr>td:first-child {
+.defaultListingTableFirstColumEnummeration>tbody>tr>td:first-child {
 	min-width: 150px;
 	width: 200px;
 }
 
-.defaultListingTableCss>tbody>tr>td:first-child label {
+.defaultListingTableFirstColumEnummeration>tbody>tr>td:first-child label {
 	font-size: 1.2em !important;
 }
 
-.defaultListingTableCss .big-text {
+.defaultListingTableFirstColumEnummeration .big-text {
 	font-size: 1.2em !important;
 }
 
-.defaultListingTableCss td {
+.defaultListingTableFirstColumEnummeration td {
 	padding: 3px !important;
 }
 
-.defaultListingTableCss input {
+.defaultListingTableFirstColumEnummeration input {
 	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-size: 1.0em !important;
 	font-style: normal;
@@ -110,7 +110,7 @@ body {
 	line-height: 22px;
 }
 
-.defaultListingTableCss label {
+.defaultListingTableFirstColumEnummeration label {
 	font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
 	font-size: 1.0em !important;
 	font-style: normal;
@@ -257,6 +257,11 @@ ul.ui-menu-child {
 	padding-top: 0.2em !important;
 	padding-bottom: 0.2em !important;
 }
+
+.smallInputText {
+	padding: 2px 7px !important;
+}
+
 
 /* Kleines InputField */
 .smallInput .ui-inputfield {

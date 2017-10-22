@@ -30,12 +30,12 @@
 		</div>
 
 		<div class="contentDiv">
-			<h:panelGrid columns="3" styleClass="defaultListingTableCssOneCol"
+			<h:panelGrid columns="3" styleClass="defaultListingTable"
 				columnClasses="defaultListingTableColumnTop defaultListingTableColumn30, defaultListingTableColumn2, ">
 				<!-- left column -->
 
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol"
+					<h:panelGrid columns="2" styleClass="defaultListingTable"
 						columnClasses="defaultListingTableColumn20," id="navigation">
 
 						<!-- document type -->
@@ -59,7 +59,7 @@
 					</h:panelGrid>
 
 					<!-- to -->
-					<h:panelGrid columns="1" styleClass="defaultListingTableCssOneCol"
+					<h:panelGrid columns="1" styleClass="defaultListingTable"
 						style="margin-top:20px;" id="addressTable">
 						<h:outputLabel value="#{msg['dialog.print.addresses']}" />
 
@@ -175,7 +175,7 @@
 					</h:panelGrid>
 
 					<!-- save file -->
-					<h:panelGrid columns="2" styleClass="defaultListingTableCssOneCol"
+					<h:panelGrid columns="2" styleClass="defaultListingTable"
 						columnClasses="defaultListingTableColumn40, ">
 						<h:outputLabel value="#{msg['dialog.print.save']}" />
 						<p:selectBooleanCheckbox styleClass="smallCheckbox"

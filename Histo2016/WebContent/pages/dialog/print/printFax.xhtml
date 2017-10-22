@@ -28,7 +28,7 @@
 		</div>
 
 		<div class="contentDiv">
-			<h:panelGrid columns="1" styleClass="defaultListingTableCss">
+			<h:panelGrid columns="1" styleClass="defaultListingTableFirstColumEnummeration">
 				<h:outputLabel value="#{msg['dialog.printFax.text.1']}" />
 
 				<h:outputLabel
@@ -39,7 +39,7 @@
 					rendered="#{dialogHandlerAction.faxPrintDocumentDialog.contact eq null}"
 					value="#{msg['dialog.printFax.text.noContact']}" />
 
-				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
 					<h:outputLabel value="#{msg['dialog.printFax.faxNumber']}" />
 					<h:inputText
 						value="#{dialogHandlerAction.faxPrintDocumentDialog.number}">

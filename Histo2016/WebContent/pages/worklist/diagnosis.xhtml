@@ -44,7 +44,7 @@
 			<!-- Left Column -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 				<!-- material -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+				<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
 					columnClasses="defaultListingTableColumnTop,">
 
 					<h:outputLabel value="#{msg['body.diagnosis.material']}" />
@@ -94,7 +94,7 @@
 				</h:panelGrid>
 				<!-- material -->
 
-				<h:panelGrid columns="1" styleClass="defaultListingTableCss">
+				<h:panelGrid columns="1" styleClass="defaultListingTableFirstColumEnummeration">
 					<h:outputLabel value="#{msg['body.diagnosis.story']}" />
 					<h:panelGroup>
 
@@ -138,7 +138,7 @@
 
 			<!-- Right Column -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-				<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+				<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="2"
@@ -248,7 +248,7 @@
 		<ui:repeat var="revision"
 			value="#{selectedTask.diagnosisContainer.diagnosisRevisions}">
 
-			<h:panelGrid columns="2" styleClass="defaultListingTableCss"
+			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
 				columnClasses="defaultListingTableColumnTop,">
 				<!-- Extended Diagnosis Text -->
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
@@ -344,7 +344,7 @@
 		<h:panelGrid columns="3"
 			styleClass="defaultListingTableTwoLineContainer">
 			<!-- left column -->
-			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
 				<!-- Date of signature -->
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.date']}"></h:outputLabel>
@@ -361,7 +361,7 @@
 			<h:panelGroup />
 
 			<!-- right column -->
-			<h:panelGrid columns="2" styleClass="defaultListingTableCss">
+			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
 
 				<!-- physician -->
 				<h:outputLabel
