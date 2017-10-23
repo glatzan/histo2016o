@@ -155,6 +155,7 @@ public class CreateTaskDialog extends AbstractDialog {
 		getTask().setTaskPriority(TaskPriority.NONE);
 		getTask().setDateOfReceipt(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 		getTask().setUseAutoNomenclature(true);
+		getTask().setSamples(new ArrayList<Sample>());
 
 		// samplecount for new task
 		setSampleCount(1);

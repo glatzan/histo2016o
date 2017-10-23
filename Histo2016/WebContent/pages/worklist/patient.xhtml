@@ -17,7 +17,8 @@
 		<h:panelGrid columns="3"
 			styleClass="defaultListingTableTwoLineContainer">
 			<!-- left column -->
-			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2"
+				styleClass="defaultListingTableFirstColumEnummeration">
 
 				<!-- piz -->
 				<h:outputLabel value="#{msg['body.worklist.patient.piz']}" />
@@ -63,7 +64,8 @@
 			<h:panelGroup />
 
 			<!-- right column -->
-			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2"
+				styleClass="defaultListingTableFirstColumEnummeration">
 
 				<h:outputLabel value="" />
 				<h:outputLabel value="" />
@@ -99,7 +101,8 @@
 			selection="#{commonDataHandlerAction.selectedTask}"
 			rowKey="#{task.id}">
 
-			<p:ajax event="rowSelect" update=":contentForm, :headerForm, :navigationForm"
+			<p:ajax event="rowSelect"
+				update=":contentForm, :headerForm, :navigationForm"
 				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(commonDataHandlerAction.selectedTask)}" />
 
 			<p:column headerText="#{msg['body.worklist.patient.tasks']}">
@@ -109,8 +112,7 @@
 				<!-- staining needed -->
 				<h:panelGroup>
 					<!-- staining needed = green -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('StainingList')}">
+					<ui:fragment rendered="#{task.taskStatus.stainingNeeded}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.stainingPhase.stainingNeeded']}"
@@ -119,8 +121,7 @@
 					</ui:fragment>
 
 					<!-- re-staining needed = orange -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('ReStainingList')}">
+					<ui:fragment rendered="#{task.taskStatus.reStainingNeeded}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.stainingPhase.reStainingNeeded']}"
@@ -129,8 +130,7 @@
 					</ui:fragment>
 
 					<!--  no staining needed = purple -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('StayInStainingList')}">
+					<ui:fragment rendered="#{task.taskStatus.stayInStainingList}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.stainingPhase.inList']}"
@@ -140,8 +140,7 @@
 
 					<!-- diagnosis needed -->
 					<!-- diagnosis needed = green -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('DiagnosisList')}">
+					<ui:fragment rendered="#{task.taskStatus.diagnosisNeeded}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.diagnosisPhase.diagnosisNeeded']}"
@@ -150,8 +149,7 @@
 					</ui:fragment>
 
 					<!-- re-diagnosis needed = orange -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('ReDiagnosisList')}">
+					<ui:fragment rendered="#{task.taskStatus.reDiagnosisNeeded}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.diagnosisPhase.reDiagnosisNeeded']}"
@@ -160,8 +158,7 @@
 					</ui:fragment>
 
 					<!-- no diagnosis needed = purple -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('StayInDiagnosisList')}">
+					<ui:fragment rendered="#{task.taskStatus.stayInDiagnosisList}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.diagnosisPhase.inList']}"
@@ -171,8 +168,7 @@
 
 					<!-- notification needed -->
 					<!-- notification need = green -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('NotificationList')}">
+					<ui:fragment rendered="#{task.taskStatus.notificationNeeded}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.notificationPhase.notificationNeeded']}"
@@ -181,8 +177,7 @@
 					</ui:fragment>
 
 					<!-- stay in phase = purple -->
-					<ui:fragment
-						rendered="#{task.isListedInFavouriteList('StayInNotificationList')}">
+					<ui:fragment rendered="#{task.taskStatus.stayInNotificationList}">
 						<h:outputText value=" ("></h:outputText>
 						<h:outputText
 							value="#{msg['body.worklist.patient.notificationPhase.inList']}"
@@ -198,7 +193,8 @@
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="taskList"
 							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
-							<p:ajax event="dialogReturn" update="navigationForm contentForm headerForm"
+							<p:ajax event="dialogReturn"
+								update="navigationForm contentForm headerForm"
 								listener="#{mainHandlerAction.processQueues()}" />
 							<i class="fa fa-plus" />
 						</p:commandLink>

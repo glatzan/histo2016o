@@ -128,7 +128,7 @@
 
 					<!-- ************ Staining ************ -->
 					<p:submenu label="#{msg['header.menu.task.sample.staining']}"
-						icon="fa fa-paint-brush">
+						icon="fa fa-paint-brush" rendered="#{taskIsNotNull}">
 
 						<!-- New Slides -->
 						<p:menuitem
@@ -142,24 +142,25 @@
 							value="#{msg['header.menu.task.sample.staining.leave']}"
 							disabled="#{!taskEditable}" icon="fa fa-fw fa-image"
 							onclick="$('#headerForm\\:stainingPhaseExit').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('StainingList', 'ReStainingList')}" />
+							rendered="#{taskIsNotNull and (task.taskStatus.stainingNeeded or task.taskStatus.reStainingNeeded)}" />
 
 						<!-- Staining, end staining phase if all staining tasks have been completed-->
 						<p:menuitem
 							value="#{msg['header.menu.task.sample.staining.stayInPhase.leave']}"
 							icon="fa fa-fw fa-image"
 							onclick="$('#headerForm\\:stainingPhaseForceExitStayInPhase').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('StayInStainingList')}" />
+							rendered="#{taskIsNotNull and task.taskStatus.stayInStainingList}" />
 
 					</p:submenu>
 					<!-- ************ Staining ************ -->
 
 					<!-- ************ Diagnosis ************ -->
-					<p:submenu label="Diagnose" icon="fa fa-search">
+					<p:submenu label="#{msg['header.menu.task.sample.diagnosis']}"
+						icon="fa fa-search" rendered="#{taskIsNotNull}">
 						<!-- New Diagnosis revision-->
 						<p:menuitem icon="fa fa-pencil-square-o"
 							value="#{msg['header.menu.task.sample.diagnosisRevion']}"
-							disabled="#{!taskEditable and !selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList')}"
+							disabled="#{!taskEditable and !(task.taskStatus.diagnosisNeeded or task.taskStatus.reDiagnosisNeeded)}"
 							rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:newDiagnosisRevision').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
@@ -167,13 +168,13 @@
 						<p:menuitem icon="fa fa-eye-slash"
 							value="#{msg['header.menu.task.sample.diagnosisPhase.leave']}"
 							disabled="#{!taskEditable}"
-							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('DiagnosisList', 'ReDiagnosisList' , 'StayInDiagnosisList') and !selectedTask.finalized}"
+							rendered="#{taskIsNotNull and (task.taskStatus.diagnosisNeeded or task.taskStatus.reDiagnosisNeeded or task.taskStatus.stayInDiagnosisList) and !selectedTask.finalized}"
 							onclick="$('#headerForm\\:diagnosisPhaseExit').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 						<!-- Leave phase if stay in phase -->
 						<p:menuitem icon="fa fa-eye-slash"
 							value="#{msg['header.menu.task.sample.diagnosisPhase.force.leave']}"
-							rendered="#{taskIsNotNull and selectedTask.isListedInFavouriteList('StayInDiagnosisList') and selectedTask.finalized}"
+							rendered="#{taskIsNotNull and task.taskStatus.stayInDiagnosisList and selectedTask.finalized}"
 							onclick="$('#headerForm\\:diagnosisExitStayInPhase').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 						<!-- council -->
@@ -185,21 +186,25 @@
 					<!-- ************ Diagnosis ************ -->
 
 					<!-- ************ Notification ************ -->
-					<p:submenu label="Benachrichtigung" icon="fa fa-volume-up">
+					<p:submenu label="#{msg['header.menu.task.sample.notification']}"
+						icon="fa fa-volume-up" rendered="#{taskIsNotNull}">
 						<!-- Contacts -->
-						<p:menuitem value="#{msg['header.menu.task.sample.contact']}"
+						<p:menuitem
+							value="#{msg['header.menu.task.sample.notification.contact']}"
 							icon="fa fa-envelope-o" rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
 						<!-- medical findings -->
-						<p:menuitem value="#{msg['header.menu.task.sample.notification']}"
+						<p:menuitem
+							value="#{msg['header.menu.task.sample.notification.notification']}"
 							icon="fa fa-volume-up" rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:medicalFindingsContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
 
 						<!-- Print -->
-						<p:menuitem value="#{msg['header.menu.task.sample.print']}"
+						<p:menuitem
+							value="#{msg['header.menu.task.sample.notification.print']}"
 							icon="fa fa-print" rendered="#{taskIsNotNull}"
 							onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
 							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />

@@ -11,9 +11,10 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.physicianSearch.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-<h:body styleClass="defaultDialogLayout infoDialog">
+<h:body styleClass="contentInputDialog">
 
 	<h:form enctype="multipart/form-data" id="dialogContent">
 		<script type="text/javascript">
@@ -48,9 +49,9 @@
 			})();
 		</script>
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.physicianSearch.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -61,10 +62,10 @@
 		</div>
 
 
-		<div class="contentDiv" style="height: 500px;">
+		<div class="dialogContent" style="height: 500px;">
 
-			<h:panelGrid columns="2" columnClasses="defaultListingTableColumn15,"
-				styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150,columnInputContainer300">
 
 
 				<h:outputLabel value="#{msg['dialog.settings.stainings.new.name']}"></h:outputLabel>
@@ -73,11 +74,11 @@
 
 				<h:outputLabel
 					value="#{msg['dialog.settings.stainings.new.commentary']}"></h:outputLabel>
-				<p:inputTextarea rows="3" style="width:390px"
+				<p:inputTextarea rows="3"
 					value="#{dialogHandlerAction.stainingEditDialog.stainingPrototype.commentary}" />
 
 				<h:outputLabel value="#{msg['dialog.settings.stainings.new.type']}"></h:outputLabel>
-				<p:selectOneMenu style="width:125px"
+				<p:selectOneMenu
 					value="#{dialogHandlerAction.stainingEditDialog.stainingPrototype.type}">
 
 					<f:selectItems value="#{enumProvider.stainingTypes}"
@@ -86,121 +87,112 @@
 				</p:selectOneMenu>
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" styleClass="defaultListingTable">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+				style="margin-top:10px;">
 
-				<p:commandLink update="@form"
-					actionListener="#{dialogHandlerAction.stainingEditDialog.addBatch()}">
-					<i class="fa fa-plus"></i>
-				</p:commandLink>
+				<h:outputLabel value="Charge"></h:outputLabel>
 
-				<p:dataTable var="batch" scrollable="true" scrollHeight="200"
-					rowIndexVar="rowIdx" id="batchList"
-					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+				<p:dataTable var="batch" scrollable="true" scrollHeight="250"
+					rowIndexVar="rowIdx" id="batchList" styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.stainingEditDialog.stainingPrototype.batchDetails}">
-					<f:facet name="header">
-						<h:outputLabel value="test" />
-					</f:facet>
 					<p:column style="width:16px">
 						<p:rowToggler />
 					</p:column>
 					<p:column headerText="Name">
-						<h:outputText value="#{batch.name} " />
-						<h:outputText value="#{batch.deliveryDate}">
+						<h:outputLabel value="#{batch.name} " />
+						<h:outputLabel value="#{batch.deliveryDate}">
 							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-						</h:outputText>
+						</h:outputLabel>
 					</p:column>
 
 					<p:rowExpansion styleClass="noPadding">
-						<h:panelGrid columns="8" styleClass="defaultListingTable">
-							<h:outputText value="Wirt" styleClass="smallFont" />
-							<p:inputText value="#{batch.host}" styleClass="smallInputText">
+						<h:panelGrid columns="6" styleClass="newStyleListingTable"
+							columnClasses="columnMinWidth, columnAutoWidth, columnMinWidth, columnAutoWidth, columnMinWidth, columnAutoWidth ">
+							<h:outputLabel value="Bezugsquelle" />
+							<p:inputText value="#{batch.supplier}"></p:inputText>
+
+							<h:outputLabel value="Liefermenge" />
+							<p:inputText value="#{batch.quantityDelivered}"></p:inputText>
+
+							<h:outputLabel value="Lagerung" />
+							<p:inputText value="#{batch.storage}"></p:inputText>
+
+
+							<h:outputLabel value="Wirt" />
+							<p:inputText value="#{batch.host}">
 								<p:ajax event="keyup" process="@this" partialSubmit="true"
 									update=":dialogContent:batchList:@row(#{rowIdx})" />
 							</p:inputText>
 
-							<h:outputText value="Liefermenge" styleClass="smallFont" />
-							<p:inputText value="#{batch.quantityDelivered}"
-								styleClass="smallInputText"></p:inputText>
+							<h:outputLabel value="Spezifität" />
+							<p:inputText value="#{batch.specifity}"></p:inputText>
 
-							<h:outputText value="Lagerung" styleClass="smallFont" />
-							<p:inputText value="#{batch.storage}" styleClass="smallInputText"></p:inputText>
 
-							<h:outputText value="Bezugsquelle" styleClass="smallFont" />
-							<p:inputText value="#{batch.supplier}"
-								styleClass="smallInputText"></p:inputText>
+							<h:outputLabel value="Inkubationszeit" />
+							<p:inputText value="#{batch.incubationTime}"></p:inputText>
 
-							<h:outputText value="Spezifität" styleClass="smallFont" />
-							<p:inputText value="#{batch.specifity}"
-								styleClass="smallInputText"></p:inputText>
-
-							<h:outputText value="Lieferdatum" styleClass="smallFont" />
-							<p:calendar styleClass=" smallInput smallCalendarInput"
-								value="#{batch.deliveryDate}" locale="de" navigator="true"
-								pattern="dd.MM.yyyy" mask="true">
+							<h:outputLabel value="Lieferdatum" />
+							<p:calendar value="#{batch.deliveryDate}" locale="de"
+								navigator="true" pattern="dd.MM.yyyy" mask="true">
 								<p:ajax event="dateSelect" process="@this" partialSubmit="true"
 									update=":dialogContent:batchList:@row(#{rowIdx})" />
 								<f:ajax event="change" process="@this" partialSubmit="true"
 									update=":dialogContent:batchList:@row(#{rowIdx})" />
 							</p:calendar>
 
-							<h:outputText value="haltbar bis" styleClass="smallFont" />
-							<p:calendar styleClass=" smallInput smallCalendarInput"
-								value="#{batch.bestBefore}" locale="de" navigator="true"
-								pattern="dd.MM.yyyy" mask="true">
+							<h:outputLabel value="haltbar bis" />
+							<p:calendar value="#{batch.bestBefore}" locale="de"
+								navigator="true" pattern="dd.MM.yyyy" mask="true">
 								<p:ajax event="dateSelect" process="@this" partialSubmit="true"
 									update=":dialogContent:batchList:@row(#{rowIdx})" />
 								<f:ajax event="change" process="@this" partialSubmit="true"
 									update=":dialogContent:batchList:@row(#{rowIdx})" />
 							</p:calendar>
 
-							<h:outputText value="leer am" styleClass="smallFont" />
-							<p:calendar styleClass="smallFont smallInput smallCalendarInput"
-								value="#{batch.emptyDate}" locale="de" navigator="true"
-								pattern="dd.MM.yyyy" mask="true">
+							<h:outputLabel value="leer am" />
+							<p:calendar value="#{batch.emptyDate}" locale="de"
+								navigator="true" pattern="dd.MM.yyyy" mask="true">
 								<p:ajax event="dateSelect" process="@this" partialSubmit="true"
 									update=":dialogContent:batchList:@row(#{rowIdx})" />
 								<f:ajax event="change" process="@this" partialSubmit="true"
 									update=":dialogContent:batchList:@row(#{rowIdx})" />
 							</p:calendar>
 
-							<h:outputText value="Vorbehandlung" styleClass="smallFont" />
-							<p:inputText value="#{batch.treatment}"
-								styleClass="smallInputText"></p:inputText>
+							<h:outputLabel value="Vorbehandlung" />
+							<p:inputText value="#{batch.treatment}"></p:inputText>
 
-							<h:outputText value="Inkubationszeit" styleClass="smallFont" />
-							<p:inputText value="#{batch.incubationTime}"
-								styleClass="smallInputText"></p:inputText>
+							<h:outputLabel value="Verdünnung" />
+							<p:inputText value="#{batch.dilution}"></p:inputText>
 
-							<h:outputText value="Verdünnung" styleClass="smallFont" />
-							<p:inputText value="#{batch.dilution}"
-								styleClass="smallInputText"></p:inputText>
+							<h:outputLabel value="Standardverdünnung" />
+							<p:inputText value="#{batch.standardDilution}"></p:inputText>
 
-							<h:outputText value="Standardverdünnung" styleClass="smallFont" />
-							<p:inputText value="#{batch.standardDilution}"
-								styleClass="smallInputText"></p:inputText>
+							<h:outputLabel value="positive Kontrolle" />
+							<p:inputText value="#{batch.positiveControl}"></p:inputText>
 
-							<h:outputText value="positive Kontrolle" styleClass="smallFont" />
-							<p:inputText value="#{batch.positiveControl}"
-								styleClass="smallInputText"></p:inputText>
-
-							<h:outputText value="Methode" styleClass="smallFont" />
-							<p:inputText value="#{batch.process}" styleClass="smallInputText"></p:inputText>
+							<h:outputLabel value="Methode" />
+							<p:inputText value="#{batch.process}"></p:inputText>
 						</h:panelGrid>
 					</p:rowExpansion>
 				</p:dataTable>
-
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
 
-				<h:panelGrid columns="2" style="float:right;">
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+					<!-- Save button -->
+					<p:commandButton value="#{msg['general.save']}" icon="fa fa-plus">
+						<f:actionListener
+							binding="#{dialogHandlerAction.stainingEditDialog.addBatch()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
 
-					<!-- Close button -->
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<!-- Save button -->
 					<p:commandButton value="#{msg['general.save']}"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
 							binding="#{dialogHandlerAction.physicianSearchDialog.hideDialog()}"></f:actionListener>
@@ -208,7 +200,6 @@
 
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle">
 						<f:actionListener
 							binding="#{dialogHandlerAction.stainingEditDialog.hideDialog()}"></f:actionListener>

@@ -1,0 +1,173 @@
+/* -------------- Pannelgrid container --------------*/
+.newTableContainer>tbody>tr>td, .newTableContainer>tbody>tr,
+	.newTableContainer>tbody, .newTableContainer {
+	padding: 0px !important;
+	border-collapse: collapse !important;
+	border: 0px !important;
+	border-spacing: 0px !important;
+}
+
+/* -------------- New Pannelgrid Style --------------*/
+.newStyleListingTable {
+	border: none !important;
+	border-spacing: 0px !important;
+	width: 100% !important;
+	table-layout: auto !important;
+}
+
+.newStyleListingTable td {
+	padding: 3px !important;
+	border: none !important;
+	border-spacing: 0px !important;
+	width: auto;
+	white-space: nowrap;
+}
+
+.newStyleListingTable label {
+	padding: 4px !important;
+	font-size: 12px !important;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	box-shadow: none !important;
+	font-style: normal !important;
+	font-variant: normal !important;
+}
+
+.newStyleListingTable .ui-state-focus {
+	box-shadow: none !important;
+}
+
+/* inputfields should be flat, no shadow*/
+.newStyleListingTable input, .newStyleListingTable textarea {
+	padding: 4px !important;
+	font-size: 12px !important;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	box-shadow: none !important;
+	font-style: normal !important;
+	font-variant: normal !important;
+}
+
+/* -------------- New Pannelgridn Column Styles --------------*/
+.newStyleListingTable .columnLabelContainer150 {
+	width: 150px !important;
+}
+
+.newStyleListingTable .columnInputContainer300 input,
+	.newStyleListingTable .columnInputContainer300 textarea {
+	width: 500px !important;
+}
+
+/* min width column*/
+.newStyleListingTable .columnMinWidth {
+	width: 1%;
+	white-space: nowrap;
+}
+
+/* auto width column*/
+.newStyleListingTable .columnAutoWidth {
+	text-align: left;
+	background-color: #fff;
+	max-width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* -------------- New DataTable Style --------------*/
+/* for scrollable datatables*/
+.newStyleDataTable {
+	width: 100%;
+}
+
+/* labels and column header size */
+.newStyleDataTable label, .newStyleDataTable .ui-datatable-scrollable-header .ui-column-title
+	{
+	padding: 4px;
+	font-size: 12px;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
+}
+
+/* hide unnecessary header*/
+.newStyleDataTable .ui-datatable-scrollable-theadclone {
+	display: none;
+}
+
+.newStyleDataTable  tr.ui-datatable-odd>td {
+	background-color: #f2f2f2;
+}
+
+.newStyleDataTable tr.ui-state-highlight>td {
+	background-color: #fcf1b8;
+}
+
+.newStyleDataTable tr.ui-state-highlight>td label {
+	font-weight: bold !important;
+}
+
+.newStyleDataTable tr.ui-state-hover>td {
+	background-color: #fcf1b8;
+}
+
+/* -------------- Simple Dialog Style --------------*/
+/* Diloag for adding content */
+.contentInputDialog {
+	padding: 0px !important;
+	border: 0px !important;
+	overflow: hidden;
+}
+
+/* Dialog header */
+.contentInputDialog .dialogHeader {
+	padding: 8px 10px;
+	font-weight: bold;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	background: #cccccc
+		url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)
+		50% 50% repeat-x;
+}
+
+.contentInputDialog .dialogHeader, .contentInputDialog .dialogHeader a:-webkit-any-link
+	{
+	color: #555555;
+	font-size: 15px;
+}
+
+.contentInputDialog .dialogContent {
+	padding: 5px;
+	padding-bottom: 0.5em;
+}
+
+.contentInputDialog .buttonContainer {
+	position: absolute !important;
+	bottom: 0.5em !important;
+	vertical-align: bottom !important;
+	width: 100%;
+}
+
+/* small buttons */
+.contentInputDialog .buttonContainer .ui-button-text {
+	padding-top: 0.2em !important;
+	padding-bottom: 0.2em !important;
+}
+
+/* left table*/
+.contentInputDialog .buttonContainer .left {
+	margin-left: 0px;
+}
+
+/* button margin for left buttons*/
+.contentInputDialog .buttonContainer .left button {
+	margin-left: 0.6em !important;
+}
+
+/* right table */
+.contentInputDialog .buttonContainer .right {
+	margin-right: 0px;
+	float: right;
+}
+
+/* button margin for right buttons*/
+.contentInputDialog .buttonContainer .right button {
+	margin-right: 0.6em !important;
+}
