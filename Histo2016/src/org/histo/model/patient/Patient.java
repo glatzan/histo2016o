@@ -329,7 +329,9 @@ public class Patient
 	 */
 	@Transient
 	public List<Task> getActiveTasks(boolean activeOnly) {
-		return getTasks().stream().filter(p -> p.isActiveOrActionPending(activeOnly)).collect(Collectors.toList());
+		return getTasks() != null
+				? getTasks().stream().filter(p -> p.isActiveOrActionPending(activeOnly)).collect(Collectors.toList())
+				: null;
 	}
 
 	@Transient
@@ -345,7 +347,7 @@ public class Patient
 	 */
 	@Transient
 	public boolean hasActiveTasks(boolean activeOnly) {
-		return getTasks().stream().anyMatch(p -> p.isActiveOrActionPending(activeOnly));
+		return getTasks() != null ? getTasks().stream().anyMatch(p -> p.isActiveOrActionPending(activeOnly)) : false;
 	}
 
 	/**
@@ -355,7 +357,9 @@ public class Patient
 	 */
 	@Transient
 	public List<Task> getNoneActiveTasks() {
-		return getTasks().stream().filter(p -> !p.isActiveOrActionPending()).collect(Collectors.toList());
+		return getTasks() != null
+				? getTasks().stream().filter(p -> !p.isActiveOrActionPending()).collect(Collectors.toList())
+				: null;
 	}
 
 	/**
@@ -366,7 +370,7 @@ public class Patient
 	 */
 	@Transient
 	public boolean hasNoneActiveTasks() {
-		return getTasks().stream().anyMatch(p -> !p.isActiveOrActionPending());
+		return getTasks() != null ? getTasks().stream().anyMatch(p -> !p.isActiveOrActionPending()) : false;
 	}
 
 	/********************************************************

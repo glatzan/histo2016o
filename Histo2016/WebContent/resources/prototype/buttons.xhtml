@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
+
+<h:head>
+</h:head>
+
+<h:body>
+	<!-- Close button -->
+	<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+		icon="fa fa-times-circle">
+		<f:actionListener
+			binding="#{dialogHandlerAction.stainingEditDialog.hideDialog()}"></f:actionListener>
+	</p:commandButton>
+
+
+	<!-- Save button -->
+	<p:commandButton value="#{msg['general.save']}" icon="fa fa-save">
+		<f:actionListener
+			binding="#{dialogHandlerAction.stainingEditDialog.saveStaining(dialogHandlerAction.stainingEditDialog.stainingPrototype)}"></f:actionListener>
+		<f:actionListener
+			binding="#{dialogHandlerAction.stainingEditDialog.hideDialog()}"></f:actionListener>
+	</p:commandButton>
+
+
+	<!-- **************************************** Icons links -->
+	<!-- edit -->
+	<p:commandLink title="#{msg['dialog.settings.material.edit']}"
+		actionListener="#{settingsDialogHandler.getTab('StaticListTab').prepareEditListItem(item)}"
+		styleClass="noUnderlineAtLink" update=":adminForm:tabview:staticLists"
+		process="@this" partialSubmit="true">
+		<i class="fa fa-fw fa-cog" />
+	</p:commandLink>
+
+	<!-- delete -->
+	<p:commandLink title="#{msg['dialog.settings.material.edit']}"
+		rendered="#{!item.archived}" styleClass="noUnderlineAtLink"
+		actionListener="#{settingsDialogHandler.getTab('StaticListTab').archiveListItem(item, true)}"
+		update=":adminForm:tabview:staticLists" process="@this"
+		partialSubmit="true">
+		<i class="fa fa-fw fa-times-circle" />
+	</p:commandLink>
+</h:body>
+</html>

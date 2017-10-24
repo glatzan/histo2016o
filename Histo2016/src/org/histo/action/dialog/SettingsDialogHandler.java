@@ -601,15 +601,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 	}
 
-	public enum StainingPage {
-		LIST, EDIT;
-	}
-
 	@Getter
 	@Setter
 	public class StainingTab extends AbstractSettingsTab {
-
-		private StainingPage page;
 
 		/**
 		 * A List with all staings
@@ -627,68 +621,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setTabName("StainingTab");
 			setName("dialog.settings.stainings");
 			setViewID("staining");
-			setPage(StainingPage.LIST);
 		}
 
 		@Override
 		public void updateData() {
-			switch (getPage()) {
-			case EDIT:
-				break;
-			default:
-				setAllStainingsList(utilDAO.getAllStainingPrototypes());
-				break;
-			}
-
-		}
-
-		/**
-		 * Prepares a new Staining for editing
-		 */
-		public void prepareNewStaining() {
-			prepareEditStaining(new StainingPrototype());
-		}
-
-		/**
-		 * Shows the edit staining form
-		 *
-		 * @param stainingPrototype
-		 */
-		public void prepareEditStaining(StainingPrototype stainingPrototype) {
-			setEditStaining(stainingPrototype);
-			setNewStaining(stainingPrototype.getId() == 0 ? true : false);
-			setPage(StainingPage.EDIT);
-		}
-
-		/**
-		 * Saves or creats a new stainingprototype
-		 *
-		 * @param newStainingPrototype
-		 * @param origStainingPrototype
-		 */
-		public void saveStainig() {
-			try {
-				if (getEditStaining().getId() == 0) {
-					logger.debug("Creating new staining " + getEditStaining().getName());
-					// case new, save
-					getAllStainingsList().add(getEditStaining());
-
-					genericDAO.save(getEditStaining(),
-							resourceBundle.get("log.settings.staining.new", getEditStaining().getName()));
-
-					ListOrder.reOrderList(getAllStainingsList());
-
-					genericDAO.saveCollection(getAllStainingsList(), "log.settings.staining.list.reoder");
-				} else {
-					genericDAO.save(getEditStaining(),
-							resourceBundle.get("log.settings.material.update", getEditStaining().getName()));
-				}
-
-			} catch (
-
-			CustomDatabaseInconsistentVersionException e) {
-				onDatabaseVersionConflict();
-			}
+			setAllStainingsList(utilDAO.getAllStainingPrototypes());
 		}
 
 		/**
@@ -708,26 +645,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 			}
 		}
 
-		/**
-		 * discards changes
-		 */
-		public void discardStainig() {
-			if (getEditStaining().getId() != 0)
-				genericDAO.refresh(getEditStaining());
-			setPage(StainingPage.LIST);
-			setEditStaining(null);
-
-			updateData();
-		}
-
 		@Override
 		public String getCenterView() {
-			switch (getPage()) {
-			case EDIT:
-				return "staining/stainingsEdit.xhtml";
-			default:
-				return "staining/stainingsList.xhtml";
-			}
+			return "staining/stainingsList.xhtml";
 		}
 
 	}
@@ -898,16 +818,15 @@ public class SettingsDialogHandler extends AbstractDialog {
 		 */
 		private List<Physician> physicianList;
 
-
 		private List<ContactRole> allRoles;
-		
+
 		public PhysicianSettingsTab() {
 			setTabName("PhysicianSettingsTab");
 			setName("dialog.settings.persons");
 			setViewID("persons");
 			setShowArchivedPhysicians(false);
 			setAllRoles(Arrays.asList(ContactRole.values()));
-			
+
 			setShowPhysicianRoles(new ContactRole[] { ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON,
 					ContactRole.OTHER_PHYSICIAN, ContactRole.SIGNATURE });
 		}
@@ -950,7 +869,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-				return "physician/physicianList.xhtml";
+			return "physician/physicianList.xhtml";
 		}
 
 	}

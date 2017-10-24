@@ -11,7 +11,7 @@
 		<p:panel style="width:100%;"
 			header="#{msg['dialog.settings.stainings']}"
 			styleClass="contentPannel" />
-			
+
 		<p:dataTable var="staining" style="width:100%;" scrollable="true"
 			scrollHeight="460" draggableRows="true"
 			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
@@ -21,7 +21,7 @@
 				sortBy="#{staining.name}" style="width:20%">
 				<h:outputText value="#{staining.name}" />
 			</p:column>
-			
+
 			<p:column headerText="#{msg['dialog.settings.stainings.type']}"
 				sortBy="#{staining.type}" style="width:20%">
 				<h:outputText
@@ -38,9 +38,12 @@
 				</f:facet>
 				<p:commandLink title="#{msg['dialog.settings.stainings.edit']}"
 					partialSubmit="true" process="@this"
-					actionListener="#{settingsDialogHandler.getTab('StainingTab').prepareEditStaining(staining)}"
-					update=":adminForm:tabview:staining" styleClass="noUnderlineAtLink">
+					actionListener="#{dialogHandlerAction.stainingEditDialog.initAndPrepareBean(staining)}"
+					styleClass="noUnderlineAtLink">
 					<i class="fa fa-cog" />
+
+					<p:ajax event="dialogReturn" update=":adminForm:tabview:staining"
+						listener="#{settingsDialogHandler.getTab('StainingTab').updateData()}" />
 				</p:commandLink>
 			</p:column>
 			<p:ajax event="rowReorder"
@@ -65,8 +68,10 @@
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList"
 					partialSubmit="true" process="@this"
-					actionListener="#{dialogHandlerAction.stainingEditDialog.initAndPrepareBean()}"
-					update=":adminForm:tabview:staining" />
+					actionListener="#{dialogHandlerAction.stainingEditDialog.initAndPrepareBean()}">
+					<p:ajax event="dialogReturn" update=":adminForm:tabview:staining"
+						listener="#{settingsDialogHandler.getTab('StainingTab').updateData()}" />
+				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

@@ -191,7 +191,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
 	@NotAudited
-	private List<AssociatedContact> contacts;
+	private List<AssociatedContact> contacts = new ArrayList<AssociatedContact>();
 
 	/**
 	 * List with all samples
@@ -199,7 +199,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	@OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id ASC")
-	private List<Sample> samples;
+	private List<Sample> samples = new ArrayList<Sample>();
 
 	/**
 	 * Element containg all diangnoses
@@ -212,7 +212,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	 */
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OrderBy("creationDate DESC")
-	private List<PDFContainer> attachedPdfs;
+	private List<PDFContainer> attachedPdfs = new ArrayList<PDFContainer>();
 
 	/**
 	 * List of all councils of this task, lazy
@@ -220,7 +220,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "task")
 	@OrderBy("dateOfRequest DESC")
 	@Fetch(value = FetchMode.SUBSELECT)
-	private List<Council> councils;
+	private List<Council> councils = new ArrayList<Council>();
 
 	/**
 	 * List of all favorite Lists in which the task is listed

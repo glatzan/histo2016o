@@ -12,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.Fetch;
@@ -57,8 +58,9 @@ public class StainingPrototype implements LogAble, ListOrder<StainingPrototype>,
 	private int indexInList;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "staining")
+	@OrderColumn(name="INDEX")
 	private List<StainingPrototypeDetails> batchDetails;
-	
+
 	@Override
 	public boolean equals(Object obj) {
 

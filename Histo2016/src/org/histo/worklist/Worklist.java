@@ -116,7 +116,7 @@ public class Worklist {
 			replacePatient(patient);
 		else
 			getItems().add(patient);
-		
+
 		generateTaskStatus(patient);
 	}
 
@@ -154,9 +154,10 @@ public class Worklist {
 	}
 
 	public void generateTaskStatus(Patient patient) {
-		for (Task task : patient.getTasks()) {
-			task.generateTaskStatus();
-		}
+		if (patient.getTasks() != null)
+			for (Task task : patient.getTasks()) {
+				task.generateTaskStatus();
+			}
 	}
 
 	/**

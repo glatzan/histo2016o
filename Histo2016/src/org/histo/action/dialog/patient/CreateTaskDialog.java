@@ -221,11 +221,11 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTask() {
 		uniqueRequestID.checkUniqueRequestID(true);
 
-		try {
-
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+//		try {
+//
+//			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+//
+//				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 					genericDAO.reattach(getPatient());
 
@@ -319,17 +319,17 @@ public class CreateTaskDialog extends AbstractDialog {
 
 					favouriteListDAO.addTaskToList(getTask(), f);
 
-					genericDAO.save(task.getPatient());
+//					genericDAO.save(task.getPatient());
 				}
-			});
-
-			genericDAO.lockParent(task);
-
-		} catch (Exception e) {
-			getPatient().getTasks().remove(0);
-			onDatabaseVersionConflict();
-		}
-	}
+//			});
+//
+//			genericDAO.lockParent(task);
+//
+//		} catch (Exception e) {
+//			getPatient().getTasks().remove(0);
+//			onDatabaseVersionConflict();
+//		}
+//	}
 
 	/**
 	 * Calls createTask and prints the Ureport form
