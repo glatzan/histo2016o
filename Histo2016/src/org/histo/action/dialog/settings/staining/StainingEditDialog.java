@@ -66,9 +66,10 @@ public class StainingEditDialog extends AbstractDialog {
 				logger.debug("Version conflict, updating entity");
 				setStainingPrototype(settingsDAO.getStainingPrototype(stainingPrototype.getId(), true));
 			}
+		}else {
+			setStainingPrototype(staining);	
 		}
-
-		setStainingPrototype(staining);
+		
 		setNewStaining(staining.getId() == 0 ? true : false);
 
 		setToRemove(new ArrayList<StainingPrototypeDetails>());
@@ -76,7 +77,7 @@ public class StainingEditDialog extends AbstractDialog {
 		if (staining.getBatchDetails() == null)
 			staining.setBatchDetails(new ArrayList<StainingPrototypeDetails>());
 
-		super.initBean(task, Dialog.STAINING_EDIT);
+		super.initBean(task, Dialog.SETTINGS_STAINING_EDIT);
 		return true;
 	}
 

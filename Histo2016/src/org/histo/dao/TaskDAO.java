@@ -20,7 +20,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
-import org.histo.model.FavouriteList;
+import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -46,9 +46,27 @@
 	font-variant: normal !important;
 }
 
+/* -- addintion for seperator table */
+.newStyleListingTableSeparator {
+	margin-bottom: 5px;
+}
+
+.newStyleListingTableSeparator label {
+	padding: 4px !important;
+	font-size: 15px !important;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	box-shadow: none !important;
+	font-style: normal !important;
+	font-weight: bold !important;
+	font-variant: normal !important;
+}
 /* -------------- New Pannelgridn Column Styles --------------*/
 .newStyleListingTable .columnLabelContainer150 {
 	width: 150px !important;
+}
+
+.newStyleListingTable .columnLabelContainer200 {
+	width: 200px !important;
 }
 
 .newStyleListingTable .columnInputContainer300 input,
@@ -69,6 +87,10 @@
 	max-width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.newStyleListingTable .columnBold {
+	font-weight: bold !important;
 }
 
 /* -------------- New DataTable Style --------------*/
@@ -107,6 +129,11 @@
 
 .newStyleDataTable tr.ui-state-hover>td {
 	background-color: #fcf1b8;
+}
+
+/* option column, no underline*/
+.newStyleDataTable .optionsColumn a {
+	text-decoration: none !important;
 }
 
 /* -------------- Simple Dialog Style --------------*/
@@ -161,6 +188,10 @@
 	margin-left: 0.6em !important;
 }
 
+.contentInputDialog .buttonContainer .left .ui-chkbox-box {
+	margin-left: 0.6em !important;
+}
+
 /* right table */
 .contentInputDialog .buttonContainer .right {
 	margin-right: 0px;
@@ -170,4 +201,31 @@
 /* button margin for right buttons*/
 .contentInputDialog .buttonContainer .right button {
 	margin-right: 0.6em !important;
+}
+
+/* -------------- components --------------*/
+/* selectCheckboxMenu */
+.selectCheckboxMenu .ui-inputfield {
+	box-shadow: none;
+}
+
+/* centered checkbox*/
+.centerCheckbox {
+	padding-top: 4px;
+	height: 16px !important;
+}
+
+/* Small button */
+.smallButton .ui-button-text {
+	padding-top: 0.2em !important;
+	padding-bottom: 0.2em !important;
+}
+/* ---------------- Fonts ------------ */
+.standardFont, .standardFont label {
+	padding: 4px;
+	font-size: 12px;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
 }

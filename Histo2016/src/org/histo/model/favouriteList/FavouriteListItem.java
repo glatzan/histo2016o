@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.favouriteList;
 
 import java.util.List;
 

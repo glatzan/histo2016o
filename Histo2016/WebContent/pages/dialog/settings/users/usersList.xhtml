@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.userList.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel value="#{msg['dialog.userList.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent" style="height: 500px;">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150,columnInputContainer300">
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="newStyleListingTable">
+				<p:dataTable var="user" scrollable="true" scrollHeight="400"
+					selection="#{dialogHandlerAction.userListDialog.selectedUser}"
+					selectionMode="single" rowIndexVar="rowIdx" id="batchList"
+					styleClass="newStyleDataTable" rowKey="#{user.id}"
+					value="#{dialogHandlerAction.userListDialog.users}">
+
+					<p:column filterBy="#{user.username}"
+						headerText="#{msg['dialog.userList.list.username']}"
+						filterMatchMode="contains">
+						<h:outputLabel value="#{user.username}" />
+					</p:column>
+
+					<p:column headerText="#{msg['dialog.userList.list.name']}">
+						<h:outputLabel value="#{user.physician.person.fullName}" />
+					</p:column>
+
+					<p:column headerText="#{msg['dialog.userList.list.clinicRole']}">
+						<h:outputLabel value="#{user.physician.clinicRole}" />
+					</p:column>
+
+					<p:column headerText="#{msg['dialog.userList.list.group']}">
+						<p:selectOneMenu style="margin-top:1px;"
+							title="#{msg['dialog.userList.list.group.text']}"
+							value="#{user.role}"
+							disabled="#{!(userHandlerAction.currentUserHasRoleOrHigher('MODERATOR') and dialogHandlerAction.userListDialog.editMode)}">
+
+							<p:ajax event="change" execute="@this" partialSubmit="true"
+								listener="#{dialogHandlerAction.userListDialog.onChangeUserRole(user)}"></p:ajax>
+
+							<f:selectItems value="#{enumProvider.roles}" var="role"
+								itemValue="#{role}"
+								itemLabel="#{msg['enum.role.'.concat(role)]}" />
+
+						</p:selectOneMenu>
+					</p:column>
+
+					<!-- edit user only rendere if admin -->
+					<p:column style="width:5%; text-align:center;"
+						styleClass="optionsColumn"
+						rendered="#{userHandlerAction.currentUserHasRoleOrHigher('ADMIN') and dialogHandlerAction.userListDialog.editMode}">
+						<f:facet name="header">
+							<i class="fa fa-cog"
+								title="#{msg['dialog.userList.list.options']}" />
+						</f:facet>
+
+						<!-- Edit -->
+						<p:commandLink title="#{msg['dialog.userList.list.options.edit']}"
+							execute="@this" partialSubmit="true"
+							actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(user.physician)}">
+							<i class="fa fa-fw fa-cog" />
+							<p:ajax event="dialogReturn"
+								listener="#{dialogHandlerAction.userListDialog.updateData()}"
+								update="@form" />
+						</p:commandLink>
+					</p:column>
+
+					<p:ajax event="rowSelect" update="@form" />
+				</p:dataTable>
+			</h:panelGrid>
+
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<!-- archived -->
+				<h:panelGrid columns="2" styleClass="newTableContainer left">
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						title="#{msg['dialog.userList.checkBox.archive.text']}"
+						value="#{dialogHandlerAction.userListDialog.showArchived}">
+						<p:ajax
+							listener="#{dialogHandlerAction.userListDialog.updateData()}"
+							partialSubmit="true" process="@this" update="@form" />
+					</p:selectBooleanCheckbox>
+
+					<h:outputLabel styleClass="standardFont"
+						value="#{msg['dialog.userList.checkBox.archive']}"
+						style="margin-left:5px;"></h:outputLabel>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<!-- Select User-->
+					<p:commandButton value="#{msg['general.select']}"
+						disabled="#{dialogHandlerAction.userListDialog.selectedUser eq null}"
+						rendered="#{dialogHandlerAction.userListDialog.selectMode}"
+						icon="fa fa-check-circle-o ">
+						<f:actionListener
+							binding="#{dialogHandlerAction.userListDialog.selectUserAndHide()}"></f:actionListener>
+					</p:commandButton>
+
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						icon="fa fa-times-circle">
+						<f:actionListener
+							binding="#{dialogHandlerAction.userListDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

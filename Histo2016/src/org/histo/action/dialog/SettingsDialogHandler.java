@@ -26,9 +26,6 @@ import org.histo.dao.UserDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Contact;
 import org.histo.model.DiagnosisPreset;
-import org.histo.model.FavouriteList;
-import org.histo.model.FavouriteListItem;
-import org.histo.model.HistoUser;
 import org.histo.model.ListItem;
 import org.histo.model.Log;
 import org.histo.model.MaterialPreset;
@@ -36,8 +33,11 @@ import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
+import org.histo.model.favouriteList.FavouriteList;
+import org.histo.model.favouriteList.FavouriteListItem;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
+import org.histo.model.user.HistoUser;
 import org.histo.settings.LdapHandler;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -250,7 +250,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		public void updateData() {
-			setUsers(userDAO.loadAllUsers());
+			setUsers(userDAO.getUsers(false));
 		}
 
 		public void onChangeUserRole(HistoUser histoUser) {
@@ -263,7 +263,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			return "histoUser/userList.xhtml";
+			return "globalSettings/userList.xhtml";
 		}
 
 		public void addHistoUser(Physician physician) {
@@ -415,11 +415,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public String getCenterView() {
 			switch (getPage()) {
 			case EDIT:
-				return "diagnosis/diagnosisEdit.xhtml";
+				return "globalSettings/diagnosisEdit.xhtml";
 			case EDIT_TEXT_TEMPLATE:
-				return "diagnosis/diagnosisEditTemplate.xhtml";
+				return "globalSettings/diagnosisEditTemplate.xhtml";
 			default:
-				return "diagnosis/diagnosisList.xhtml";
+				return "globalSettings/diagnosisList.xhtml";
 			}
 		}
 	}
@@ -592,11 +592,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public String getCenterView() {
 			switch (getPage()) {
 			case EDIT:
-				return "material/materialEdit.xhtml";
+				return "globalSettings/materialEdit.xhtml";
 			case ADD_STAINING:
-				return "material/materialAddStaining.xhtml";
+				return "globalSettings/materialAddStaining.xhtml";
 			default:
-				return "material/materialList.xhtml";
+				return "globalSettings/materialList.xhtml";
 			}
 		}
 	}
@@ -647,7 +647,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			return "staining/stainingsList.xhtml";
+			return "globalSettings/stainingsList.xhtml";
 		}
 
 	}
@@ -791,9 +791,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public String getCenterView() {
 			switch (getPage()) {
 			case EDIT:
-				return "staticLists/staticListsEdit.xhtml";
+				return "globalSettings/staticListsEdit.xhtml";
 			default:
-				return "staticLists/staticLists.xhtml";
+				return "globalSettings/staticLists.xhtml";
 			}
 		}
 
@@ -869,104 +869,35 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		@Override
 		public String getCenterView() {
-			return "physician/physicianList.xhtml";
+			return "globalSettings/physicianList.xhtml";
 		}
 
-	}
-
-	public enum FavouriteListPage {
-		LIST, EDIT;
 	}
 
 	@Getter
 	@Setter
 	public class FavouriteListTab extends AbstractSettingsTab {
 
-		private FavouriteListPage page;
-
 		/**
 		 * Array containing all favourite listis
 		 */
 		private List<FavouriteList> favouriteLists;
 
-		/**
-		 * Temporaray faourite list
-		 */
-		private FavouriteList tmpFavouriteList;
-
-		/**
-		 * True if new favouriteList should be created
-		 */
-		private boolean newFavouriteList;
-
 		public FavouriteListTab() {
 			setTabName("FavouriteListTab");
 			setName("dialog.settings.favouriteList");
 			setViewID("favouriteLists");
-			setPage(FavouriteListPage.LIST);
 		}
 
 		@Override
 		public void updateData() {
-			switch (getPage()) {
-			case EDIT:
-				if (getTmpFavouriteList().getId() != 0)
-					setTmpFavouriteList(favouriteListDAO.getFavouriteList(getTmpFavouriteList().getId(), true));
-				break;
-			default:
-				setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
-				break;
-			}
+			setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
 
-		}
-
-		public void prepareNewFavouriteList() {
-			FavouriteList newList = new FavouriteList();
-			newList.setItems(new ArrayList<FavouriteListItem>());
-			newList.setDefaultList(false);
-			newList.setEditAble(true);
-			newList.setGlobal(true);
-			prepareEditFavouriteList(newList);
-		}
-
-		public void prepareEditFavouriteList(FavouriteList favouriteList) {
-			setTmpFavouriteList(favouriteList);
-			setPage(FavouriteListPage.EDIT);
-			setNewFavouriteList(favouriteList.getId() == 0 ? true : false);
-			updateData();
-		}
-
-		public void saveFavouriteList() {
-			try {
-				// saving new list
-				if (getTmpFavouriteList().getId() == 0) {
-					genericDAO.save(getTmpFavouriteList(), "log.settings.favouriteList.new",
-							new Object[] { getTmpFavouriteList().toString() });
-				} else {
-					// updating old list
-					genericDAO.save(getTmpFavouriteList(), "log.settings.favouriteList.edit",
-							new Object[] { getTmpFavouriteList().toString() });
-				}
-
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				onDatabaseVersionConflict();
-			}
-		}
-
-		public void discardFavouriteList() {
-			setTmpFavouriteList(null);
-			setPage(FavouriteListPage.LIST);
-			updateData();
 		}
 
 		@Override
 		public String getCenterView() {
-			switch (getPage()) {
-			case EDIT:
-				return "favouriteLists/favouriteListEdit.xhtml";
-			default:
-				return "favouriteLists/favouriteList.xhtml";
-			}
+			return "globalSettings/favouriteList.xhtml";
 		}
 
 	}
@@ -1041,9 +972,9 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public String getCenterView() {
 			switch (getPage()) {
 			case EDIT:
-				return "organization/organizationEdit.xhtml";
+				return "globalSettings/organizationEdit.xhtml";
 			default:
-				return "organization/organizationLists.xhtml";
+				return "globalSettings/organizationLists.xhtml";
 			}
 		}
 
@@ -1083,7 +1014,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		@Override
 		public String getCenterView() {
 			// TODO Auto-generated method stub
-			return "log/log.xhtml";
+			return "globalSettings/log.xhtml";
 		}
 	}
 

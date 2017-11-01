@@ -1,4 +1,4 @@
-package org.histo.config;
+ package org.histo.config;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -9,7 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
-import org.histo.model.HistoUser;
+import org.histo.model.user.HistoUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;

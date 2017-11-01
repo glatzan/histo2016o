@@ -12,11 +12,11 @@
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
+-> organizsation so verändern wie user + group dialog
 
 TODO: 0.1: Finaliz in task, wird dies benötig -> löschen durch diagnosis date ersetzen
 TODO: 1: AUW Dokument überarbeiten	-> Rücksprache					
 TODO: 2: favouriten f�r benutzer zug�nlich machen
-TODO: 3: chargen für färbungen
 TODO: 4: erweiterte Suche / 
 TODO: 5: Latex Datei für externen Befund
 TODO: 6: Liste f�r normale benutzer �berarbeiten
@@ -42,8 +42,9 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+++++: chargen für färbungen
 ++++: Patienten Daten im header menu geht nicht
-++++: 7: Histouser vor einloggen hinzufügen
+++++: Histouser vor einloggen hinzufügen
 ++++: Bennung von Proben usw verbieten, wenn task nicht editiertbar
 ++++: Schnelle Nachf�rbug Dialog
 ++++: Phasen + Phasen Buttons im Menu überprüfen

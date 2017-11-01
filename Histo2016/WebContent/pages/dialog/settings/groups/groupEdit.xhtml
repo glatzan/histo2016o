@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{dialogHandlerAction.groupEditDialog.newGroup ? msg['dialog.groupEdit.new.headline'] : msg['dialog.groupEdit.edit.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel
+					value="#{dialogHandlerAction.groupEditDialog.newGroup ? msg['dialog.groupEdit.new.headline'] : msg['dialog.groupEdit.edit.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent" style="height: 500px;">
+
+			<!-- Name -->
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
+				<h:outputLabel value="#{msg['dialog.groupEdit.group.name']}" />
+				<p:inputText
+					value="#{dialogHandlerAction.groupEditDialog.group.name}"></p:inputText>
+			</h:panelGrid>
+
+			<!-- Separator -->
+			<h:panelGrid columns="1"
+				styleClass="newStyleListingTable newStyleListingTableSeparator">
+				<p:separator style="width:100%" />
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.view']}" />
+			</h:panelGrid>
+
+			<!-- Available views -->
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.view.masks']}" />
+				<p:selectCheckboxMenu updateLabel="true" multiple="true"
+					label="#{msg['dialog.groupEdit.group.settings.view.masks.text']}"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.availableViewsAsArray}">
+					<f:selectItems var="allView"
+						value="#{dialogHandlerAction.groupEditDialog.allViews}"
+						itemValue="#{allView}"
+						itemLabel="#{msg['enum.pages.'.concat(allView)]}" />
+					<p:ajax partialSubmit="true"
+						update=":dialogContent:standardViewInput" process="@this" />
+				</p:selectCheckboxMenu>
+			</h:panelGrid>
+
+			<h:panelGrid columns="6" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150 columnBold, columnLabelContainer200, columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth">
+				<!-- default view -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.defaultView']}" />
+				<p:selectOneMenu id="standardViewInput"
+					disabled="#{dialogHandlerAction.groupEditDialog.group.settings.availableViews eq null}"
+					title="#{msg['dialog.groupEdit.group.settings.defaultView.text']}"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.defaultView}">
+
+					<f:selectItems
+						value="#{dialogHandlerAction.groupEditDialog.group.settings.availableViews}"
+						var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
+				</p:selectOneMenu>
+
+				<!-- input field color -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.inputFieldColor']}" />
+				<p:colorPicker
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.inputFieldColor}" />
+
+				<!-- font color of inputfields -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.inputFieldFontColor']}" />
+				<p:colorPicker
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.inputFieldFontColor}" />
+			</h:panelGrid>
+
+			<!-- Separator -->
+			<h:panelGrid columns="1"
+				styleClass="newStyleListingTable newStyleListingTableSeparator">
+				<p:separator style="width:100%" />
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.worklist']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="5" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth">
+
+				<!-- worklist -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.worklist.default']}" />
+				<p:selectOneMenu
+					title="#{msg['dialog.groupEdit.group.settings.worklist.default.text']}"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistToLoad}">
+
+					<f:selectItems
+						value="#{dialogHandlerAction.groupEditDialog.availableWorklistsToLoad}"
+						var="page"
+						itemLabel="#{msg['enum.worklistSearchOption.'.concat(page)]}" />
+				</p:selectOneMenu>
+
+				<!-- sorting -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.worklist.sorting']}" />
+
+				<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+					style="width: 300px;">
+					<p:selectOneMenu
+						title="#{msg['dialog.groupEdit.group.settings.worklist.sorting.text']}"
+						value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistSortOrder}">
+						<f:selectItem
+							itemLabel="#{msg['dialog.worklistorder.sorting.tasknumber']}"
+							itemValue="TASK_ID" />
+						<f:selectItem
+							itemLabel="#{msg['dialog.worklistorder.sorting.piz']}"
+							itemValue="PIZ" />
+						<f:selectItem
+							itemLabel="#{msg['dialog.worklistorder.sorting.name']}"
+							itemValue="NAME" />
+						<f:selectItem
+							itemLabel="#{msg['dialog.worklistorder.sorting.priority']}"
+							itemValue="PRIORITY" />
+					</p:selectOneMenu>
+
+					<p:selectBooleanButton styleClass="smallButton"
+						value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistSortOrderAsc}"
+						style="margin-left:15px;"
+						onLabel="#{msg['dialog.groupEdit.group.settings.worklist.sorting.asc']}"
+						offLabel="#{msg['dialog.groupEdit.group.settings.worklist.sorting.desc']}" />
+				</h:panelGrid>
+			</h:panelGrid>
+
+			<h:panelGrid columns="6" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth">
+
+				<!-- hide inactive tasks -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.worklist.hideNonActiveTasks']}" />
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistHideNoneActiveTasks}"
+					title="#{msg['dialog.groupEdit.group.settings.worklist.hideNonActiveTasks.text']}" />
+
+				<!-- auto update worklist -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.worklist.autoUpdate']}" />
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistAutoUpdate}"
+					title="#{msg['dialog.groupEdit.group.settings.worklist.autoUpdate.text']}" />
+
+				<!-- auto update worklist -->
+				<h:outputLabel
+					value="#{msg['dialog.groupEdit.group.settings.worklist.alternatePatientAddMode']}" />
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.alternatePatientAddMode}"
+					title="#{msg['dialog.groupEdit.group.settings.worklist.alternatePatientAddMode.text']}" />
+			</h:panelGrid>
+
+			<!-- Separator -->
+			<h:panelGrid columns="1"
+				styleClass="newStyleListingTable newStyleListingTableSeparator">
+				<p:separator style="width:100%" />
+				<h:outputLabel value="Rechte" />
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<!-- Save button -->
+					<p:commandButton value="#{msg['general.save']}" icon="fa fa-save ">
+						<f:actionListener
+							binding="#{dialogHandlerAction.groupEditDialog.saveGroup()}"></f:actionListener>
+						<f:actionListener
+							binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						icon="fa fa-times-circle">
+						<f:actionListener
+							binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

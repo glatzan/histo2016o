@@ -91,6 +91,21 @@
 						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.ward', commonDataHandlerAction.selectedTask.ward)}" />
 				</p:selectOneMenu>
 
+				<!-- EYE -->
+				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
+				<p:selectOneMenu
+					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
+					styleClass="smallInput customBackground"
+					value="#{commonDataHandlerAction.selectedTask.eye}"
+					disabled="#{!taskEditable}">
+
+					<f:selectItems value="#{enumProvider.eyes}" var="eye"
+						itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
+
+					<p:ajax event="change" execute="@this"
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.eye',commonDataHandlerAction.selectedTask.eye)}" />
+				</p:selectOneMenu>
+
 				<!-- History -->
 				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				<h:panelGroup>
@@ -125,20 +140,6 @@
 					</p:overlayPanel>
 				</h:panelGroup>
 
-				<!-- EYE -->
-				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
-				<p:selectOneMenu
-					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.inputFieldFontColor};"
-					styleClass="smallInput customBackground"
-					value="#{commonDataHandlerAction.selectedTask.eye}"
-					disabled="#{!taskEditable}">
-
-					<f:selectItems value="#{enumProvider.eyes}" var="eye"
-						itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
-
-					<p:ajax event="change" execute="@this"
-						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.eye',commonDataHandlerAction.selectedTask.eye)}" />
-				</p:selectOneMenu>
 
 				<!-- other -->
 				<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />

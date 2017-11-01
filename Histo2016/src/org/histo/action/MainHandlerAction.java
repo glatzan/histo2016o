@@ -167,8 +167,12 @@ public class MainHandlerAction {
 	 * @param dialog
 	 */
 	public void hideDialog(Dialog dialog) {
+		hideDialog(dialog, null);
+	}
+
+	public void hideDialog(Dialog dialog, Object obj) {
 		logger.debug("Hiding Dialog: " + dialog);
-		RequestContext.getCurrentInstance().closeDialog(null);
+		RequestContext.getCurrentInstance().closeDialog(obj);
 	}
 
 	/********************************************************
@@ -177,7 +181,7 @@ public class MainHandlerAction {
 	public void sendGrowlMessages(CustomUserNotificationExcepetion e) {
 		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
 	}
-	
+
 	public void sendGrowlMessages(String headline, String message) {
 		sendGrowlMessages(headline, message, FacesMessage.SEVERITY_INFO);
 	}

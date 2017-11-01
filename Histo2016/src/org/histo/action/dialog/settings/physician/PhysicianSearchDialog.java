@@ -83,7 +83,7 @@ public class PhysicianSearchDialog extends AbstractDialog {
 		setAssociatedRoles(new ContactRole[] { ContactRole.NONE });
 		setAllRoles(Arrays.asList(ContactRole.values()));
 
-		super.initBean(task, Dialog.PHYSICIAN_SEARCH);
+		super.initBean(task, Dialog.SETTINGS_PHYSICIAN_SEARCH);
 		return true;
 	}
 

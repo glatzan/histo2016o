@@ -1,7 +1,8 @@
-package org.histo.action.dialog;
+package org.histo.action.dialog.settings.organizations;
 
 import java.util.List;
 
+import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.OrganizationDAO;

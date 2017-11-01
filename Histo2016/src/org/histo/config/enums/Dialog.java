@@ -29,9 +29,13 @@ public enum Dialog {
 	CONTACTS_NOTIFICATION("/pages/dialog/contact/contactNotification", null, 858, 484, false, false, true), // 16:9
 	QUICK_CONTACTS("/pages/dialog/contact/contactSelect", null, 858, 484, false, false, true), // 16:9
 	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
-	PHYSICIAN_SEARCH("/pages/dialog/physician/physicianSearch", null, 960, 540, false, false, true), // 4:3
-	PHYSICIAN_EDIT("/pages/dialog/physician/physicianEdit", null, 960, 540, false, false, true), // 4:3
-	STAINING_EDIT("/pages/dialog/staining/stainingEdit", null, 960, 540, false, false, true), // 4:3
+	SETTINGS_PHYSICIAN_SEARCH("/pages/dialog/settings/physician/physicianSearch", null, 960, 540, false, false, true), // 16:9
+	SETTINGS_PHYSICIAN_EDIT("/pages/dialog/settings/physician/physicianEdit", null, 960, 540, false, false, true), //  16:9
+	SETTINGS_STAINING_EDIT("/pages/dialog/settings/staining/stainingEdit", null, 960, 540, false, false, true), //  16:9
+	SETTINGS_GROUP_LIST("/pages/dialog/settings/groups/groupList", null, 960, 540, false, false, true), //  16:9
+	SETTINGS_GROUP_EDIT("/pages/dialog/settings/groups/groupEdit", null, 960, 540, false, false, true), //  16:9
+	SETTINGS_USERS_LIST("/pages/dialog/settings/users/usersList", null, 960, 540, false, false, true), //  16:9
+	SETTINGS_FAVOURITE_LIST_EDIT("/pages/dialog/settings/favouriteList/favouriteListEdit", null, 960, 540, false, false, true), //  16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
 	PRINT_ADDRESS("/pages/dialog/print/address", null,  480, 272, false, false, true), // 16:9
 	PRINT_FAX("/pages/dialog/print/printFax", null,  480, 272, false, false, true), // 16:9

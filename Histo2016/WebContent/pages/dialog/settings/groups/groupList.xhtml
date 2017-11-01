@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.groupList.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel value="#{msg['dialog.groupList.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent" style="height: 500px;">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150,columnInputContainer300">
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="newStyleListingTable">
+				<p:dataTable var="group" scrollable="true" scrollHeight="400"
+					selection="#{dialogHandlerAction.groupListDialog.selectedGroup}"
+					rowKey="#{group.id}" selectionMode="single" rowIndexVar="rowIdx"
+					id="batchList" styleClass="newStyleDataTable"
+					value="#{dialogHandlerAction.groupListDialog.groups}">
+
+					<p:column headerText="#{msg['dialog.groupList.list.name']}">
+						<h:outputText value="#{group.name}" />
+					</p:column>
+
+					<p:column headerText="#{msg['dialog.groupList.list.options']}"
+						rendered="#{dialogHandlerAction.groupListDialog.editMode}"
+						style="width:50px;" styleClass="optionsColumn">
+						<!-- edit -->
+						<p:commandLink
+							title="#{msg['dialog.groupList.list.options.edit']}"
+							actionListener="#{dialogHandlerAction.groupEditDialog.initAndPrepareBean(group)}"
+							process="@this" partialSubmit="true">
+							<p:ajax event="dialogReturn"
+								listener="#{dialogHandlerAction.groupListDialog.updateData()}"
+								update="@form" />
+							<i class="fa fa-fw fa-cog" />
+						</p:commandLink>
+
+						<!-- archive -->
+						<p:commandLink
+							title="#{group.archived ? msg['dialog.groupList.list.options.dearchive'] :  msg['dialog.groupList.list.options.archive']}"
+							update="@form" partialSubmit="true" process="@this">
+							<i class="fa fa-fw #{group.archived ? 'fa-undo' : 'fa-times' }" />
+
+							<f:actionListener
+								binding="#{dialogHandlerAction.groupListDialog.archive(group, !group.archived)}" />
+							<f:actionListener
+								binding="#{dialogHandlerAction.groupListDialog.updateData()}" />
+						</p:commandLink>
+					</p:column>
+
+					<p:ajax event="rowSelect" update="@form" />
+				</p:dataTable>
+			</h:panelGrid>
+
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<!-- archived -->
+				<h:panelGrid columns="2" styleClass="newTableContainer left">
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						title="#{msg['dialog.groupList.checkBox.archive.text']}"
+						value="#{dialogHandlerAction.groupListDialog.showArchived}">
+						<p:ajax
+							listener="#{dialogHandlerAction.groupListDialog.updateData()}"
+							partialSubmit="true" process="@this" update="@form" />
+					</p:selectBooleanCheckbox>
+
+					<h:outputLabel styleClass="standardFont"
+						value="#{msg['dialog.groupList.checkBox.archive']}"
+						style="margin-left:5px;"></h:outputLabel>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<!-- New group, only editMode -->
+					<p:commandButton value="#{msg['dialog.groupList.button.newGroup']}"
+						rendered="#{dialogHandlerAction.groupListDialog.editMode}"
+						icon="fa fa-plus-circle ">
+						<f:actionListener
+							binding="#{dialogHandlerAction.groupEditDialog.initAndPrepareBean()}"></f:actionListener>
+						<p:ajax event="dialogReturn"
+							listener="#{dialogHandlerAction.groupListDialog.updateData()}"
+							update="@form" />
+					</p:commandButton>
+
+					<!-- select group, only selectMode -->
+					<p:commandButton value="#{msg['general.select']}"
+						disabled="#{dialogHandlerAction.groupListDialog.selectedGroup eq null}"
+						rendered="#{dialogHandlerAction.groupListDialog.selectMode}"
+						icon="fa fa-check-circle-o ">
+						<f:actionListener
+							binding="#{dialogHandlerAction.groupListDialog.selectGroupAndHide()}"></f:actionListener>
+					</p:commandButton>
+
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						icon="fa fa-times-circle">
+						<f:actionListener
+							binding="#{dialogHandlerAction.groupListDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

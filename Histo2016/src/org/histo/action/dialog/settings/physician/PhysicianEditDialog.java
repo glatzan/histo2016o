@@ -30,7 +30,7 @@ public class PhysicianEditDialog extends AbstractDialog {
 	public boolean initBean(Physician physician) {
 		setPhysician(physician);
 		setAllRoles(Arrays.asList(ContactRole.values()));
-		super.initBean(task, Dialog.PHYSICIAN_EDIT);
+		super.initBean(task, Dialog.SETTINGS_PHYSICIAN_EDIT);
 		
 		return true;
 	}

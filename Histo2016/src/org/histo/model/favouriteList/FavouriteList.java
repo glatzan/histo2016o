@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.favouriteList;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.histo.model.interfaces.HasID;
+import org.histo.model.user.HistoUser;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,21 +35,31 @@ public class FavouriteList implements HasID {
 	@GeneratedValue(generator = "favouritelist_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	private long id;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	private HistoUser owner;
+	
 	@Column(columnDefinition = "VARCHAR")
 	private String name;
+	
 	@Column
 	private boolean defaultList;
+	
 	@Column
-	private boolean editAble;
-	@Column
-	private boolean global;
+	private boolean globalView;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList")
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<FavouriteListItem> items;
 
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("id ASC")
+	private List<FavouritePermissionsGroup> groups;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("id ASC")
+	private List<FavouritePermissionsUser> users;
+	
 	@Override
 	public String toString() {
 		return "ID: " + getId() + ", Name: " +getName(); 

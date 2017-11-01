@@ -7,12 +7,15 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.Hibernate;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Contact;
-import org.histo.model.HistoUser;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.StainingPrototype;
+import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,7 +34,7 @@ public class UserDAO extends AbstractDAO implements Serializable {
 	@Autowired
 	private PhysicianDAO physicianDAO;
 
-	public List<HistoUser> loadAllUsers() {
+	public List<HistoUser> getUsers(boolean archived) {
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
@@ -39,6 +42,9 @@ public class UserDAO extends AbstractDAO implements Serializable {
 		CriteriaQuery<HistoUser> criteria = qb.createQuery(HistoUser.class);
 		Root<HistoUser> root = criteria.from(HistoUser.class);
 		criteria.select(root);
+
+		if (!archived)
+			criteria.where(qb.equal(root.get("archived"), false));
 
 		criteria.distinct(true);
 		criteria.orderBy(qb.asc(root.get("id")));
@@ -106,4 +112,46 @@ public class UserDAO extends AbstractDAO implements Serializable {
 
 		return true;
 	}
+
+	public List<HistoGroup> getGroups(boolean archived) {
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<HistoGroup> criteria = qb.createQuery(HistoGroup.class);
+		Root<HistoGroup> root = criteria.from(HistoGroup.class);
+		criteria.select(root);
+
+		if (!archived)
+			criteria.where(qb.equal(root.get("archived"), false));
+
+		criteria.distinct(true);
+		criteria.orderBy(qb.asc(root.get("id")));
+
+		List<HistoGroup> groups = getSession().createQuery(criteria).getResultList();
+
+		return groups;
+	}
+
+	public HistoGroup initializeGroup(HistoGroup group, boolean initialize) {
+		group = reattach(group);
+
+		if (initialize) {
+			Hibernate.initialize(group.getSettings());
+		}
+
+		return group;
+	}
+
+	public HistoGroup getHistoGroup(long id, boolean initialize) {
+
+		HistoGroup group = get(HistoGroup.class, id);
+
+		if (initialize) {
+			Hibernate.initialize(group.getSettings());
+		}
+
+		return group;
+	}
+
 }

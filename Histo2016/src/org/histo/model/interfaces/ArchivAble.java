@@ -1,31 +1,43 @@
 package org.histo.model.interfaces;
 
+import java.beans.Transient;
+
 import org.histo.config.enums.Dialog;
 
 /**
- * Alle Objekte werden nicht gelöscht, sondern nurch archiviert.
+ * Alle Objekte werden nicht gelï¿½scht, sondern nurch archiviert.
+ * 
  * @author andi
  *
  */
 public interface ArchivAble {
-  
-    public boolean isArchived();
-    
-    /**
-     * Setzt das Objekt und alles Kinder als "archived"
-     * @param archived
-     */
-    public void setArchived(boolean archived);
-    
-    /**
-     * Gibt den Namen des Objektes zurück
-     * @return
-     */
-    public String getTextIdentifier();
-    
-    /**
-     * Gibt den Dilaog zum Archivieren zurück
-     * @return
-     */
-    public Dialog getArchiveDialog();
+
+	public boolean isArchived();
+
+	/**
+	 * Setzt das Objekt und alles Kinder als "archived"
+	 * 
+	 * @param archived
+	 */
+	public void setArchived(boolean archived);
+
+	/**
+	 * Gibt den Namen des Objektes zurï¿½ck
+	 * 
+	 * @return
+	 */
+	@Transient
+	public default String getTextIdentifier() {
+		return "";
+	}
+
+	/**
+	 * Gibt den Dilaog zum Archivieren zurï¿½ck
+	 * 
+	 * @return
+	 */
+	@Transient
+	public default Dialog getArchiveDialog() {
+		return null;
+	}
 }

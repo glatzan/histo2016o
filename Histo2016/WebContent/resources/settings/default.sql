@@ -242,18 +242,18 @@ INSERT INTO histouser (id, alternatepatientaddmode, autoselectedpreferedlabelpri
  
  SELECT setval('user_sequence', (SELECT MAX(id) FROM histouser));
 
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (1, true, false, false, 'Färbeliste', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (2, true, false, false, 'Diagnosislist', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (3, true, false, false, 'Benachrichtigungsliste', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (4, true, false, false, 'Nachfärbeliste', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (5, true, false, false, 'Rediagnoseliste', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (6, true, false, false, 'Verbleibe in Färbeliste', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (7, true, false, false, 'Verbleibe in Diangoseliste', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (8, true, false, false, 'Verbleibe in Benachrichtigungslite', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (9, true, false, false, 'Konsil-Ausleihe (MTA)', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (10, true, false, false, 'Konsil-Ausleihe (Sekretariat)', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (11, true, false, false, 'Konsil steht aus', NULL);
-INSERT INTO favouritelist (id, defaultlist, editable, global, name, owner_id) VALUES (12, true, false, false, 'Konsil erledigt', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (1, true, false, 'Färbeliste', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (2, true, false, 'Diagnosislist', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (3, true, false, 'Benachrichtigungsliste', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (4, true, false, 'Nachfärbeliste', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (5, true, false, 'Rediagnoseliste', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (6, true, false, 'Verbleibe in Färbeliste', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (7, true, false, 'Verbleibe in Diangoseliste', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (8, true, false, 'Verbleibe in Benachrichtigungslite', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (9, true, false, 'Konsil-Ausleihe (MTA)', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (10, true, false, 'Konsil-Ausleihe (Sekretariat)', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (11, true, false, 'Konsil steht aus', NULL);
+INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (12, true, false, 'Konsil erledigt', NULL);
 
  SELECT setval('favouritelist_sequence', (SELECT MAX(id) FROM favouritelist));
 

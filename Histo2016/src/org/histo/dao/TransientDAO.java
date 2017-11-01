@@ -7,9 +7,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.histo.model.Contact;
-import org.histo.model.HistoUser;
 import org.histo.model.Organization;
 import org.histo.model.Physician;
+import org.histo.model.user.HistoUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

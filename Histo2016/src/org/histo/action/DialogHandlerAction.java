@@ -1,6 +1,5 @@
 package org.histo.action;
 
-import org.histo.action.dialog.OrganizationListDialog;
 import org.histo.action.dialog.WorklistSearchDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisExitStayInPhaseDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
@@ -19,10 +18,15 @@ import org.histo.action.dialog.patient.EditPatientDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
+import org.histo.action.dialog.settings.favouriteLists.FavouriteListEditDialog;
+import org.histo.action.dialog.settings.groups.GroupEditDialog;
+import org.histo.action.dialog.settings.groups.GroupListDialog;
 import org.histo.action.dialog.settings.material.MaterialEditDialog;
+import org.histo.action.dialog.settings.organizations.OrganizationListDialog;
 import org.histo.action.dialog.settings.physician.PhysicianEditDialog;
 import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
 import org.histo.action.dialog.settings.staining.StainingEditDialog;
+import org.histo.action.dialog.settings.users.UserListDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
@@ -69,6 +73,8 @@ public class DialogHandlerAction {
 
 	private FavouriteListsDialog favouriteListsDialog;
 
+	private FavouriteListEditDialog favouriteListEditDialog;
+
 	private AddTaskToFavouriteListDialog addTaskToFavouriteListDialog;
 
 	private SlideOverviewDialog slideOverviewDialog;
@@ -90,6 +96,12 @@ public class DialogHandlerAction {
 	private MaterialEditDialog materialEditDialog;
 
 	private StainingEditDialog stainingEditDialog;
+
+	private GroupListDialog groupListDialog;
+
+	private GroupEditDialog groupEditDialog;
+
+	private UserListDialog userListDialog;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -287,7 +299,7 @@ public class DialogHandlerAction {
 
 		return materialEditDialog;
 	}
-	
+
 	public StainingEditDialog getStainingEditDialog() {
 		if (stainingEditDialog == null) {
 			stainingEditDialog = new StainingEditDialog();
@@ -295,5 +307,37 @@ public class DialogHandlerAction {
 
 		return stainingEditDialog;
 	}
+
+	public GroupListDialog getGroupListDialog() {
+		if (groupListDialog == null) {
+			groupListDialog = new GroupListDialog();
+		}
+
+		return groupListDialog;
+	}
+
+	public GroupEditDialog getGroupEditDialog() {
+		if (groupEditDialog == null) {
+			groupEditDialog = new GroupEditDialog();
+		}
+
+		return groupEditDialog;
+	}
+
+	public FavouriteListEditDialog getFavouriteListEditDialog() {
+		if (favouriteListEditDialog == null) {
+			favouriteListEditDialog = new FavouriteListEditDialog();
+		}
+
+		return favouriteListEditDialog;
+	}
 	
+	public UserListDialog getUserListDialog() {
+		if (userListDialog == null) {
+			userListDialog = new UserListDialog();
+		}
+
+		return userListDialog;
+	}
+
 }

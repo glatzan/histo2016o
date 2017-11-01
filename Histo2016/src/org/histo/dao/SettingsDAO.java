@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Scope(value = "session")
 public class SettingsDAO extends AbstractDAO {
 
-	
 	public StainingPrototype initializeStainingPrototype(StainingPrototype stainingPrototype, boolean initialize) {
 		stainingPrototype = reattach(stainingPrototype);
 

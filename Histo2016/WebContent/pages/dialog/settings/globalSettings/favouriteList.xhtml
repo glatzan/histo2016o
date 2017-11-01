@@ -60,9 +60,11 @@
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList" process="@this"
 					partialSubmit="true"
-					actionListener="#{settingsDialogHandler.getTab('FavouriteListTab').prepareNewFavouriteList()}"
-					update=":adminForm:tabview:favouriteLists" />
-
+					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean()}">
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.getTab('FavouriteListTab').updateData()}"
+						update=":adminForm:tabview:favouriteLists" />
+				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"
 					styleClass="smallButton buttonRighMarginInList"

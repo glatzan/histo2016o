@@ -73,11 +73,15 @@ public abstract class AbstractDialog {
 		mainHandlerAction.hideDialog(dilaog);
 	}
 
-	public void onDatabaseVersionConflict()	{
+	public void hideDialog(Object returnValue) {
+		mainHandlerAction.hideDialog(dilaog, returnValue);
+	}
+
+	public void onDatabaseVersionConflict() {
 		hideDialog();
 		mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
 				resourceBundle.get("growl.version.error.text"));
-		
+
 		throw new AbortProcessingException();
 	}
 }
