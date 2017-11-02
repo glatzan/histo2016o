@@ -113,7 +113,9 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 
 			person.getOrganizsations().add(organization);
 
-			save(person, "log.organization.added", new Object[] { person.getFullName(), organization.getName() });
+			// only save if person was saved before
+			if (person.getId() != 0)
+				save(person, "log.organization.added", new Object[] { person.getFullName(), organization.getName() });
 			logger.debug("Added Organization to Person");
 		}
 	}

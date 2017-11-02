@@ -43,15 +43,15 @@
 					<p:column filterBy="#{user.username}"
 						headerText="#{msg['dialog.userList.list.username']}"
 						filterMatchMode="contains">
-						<h:outputLabel value="#{user.username}" />
+						<h:outputText value="#{user.username}" />
 					</p:column>
 
 					<p:column headerText="#{msg['dialog.userList.list.name']}">
-						<h:outputLabel value="#{user.physician.person.fullName}" />
+						<h:outputText value="#{user.physician.person.fullName}" />
 					</p:column>
 
 					<p:column headerText="#{msg['dialog.userList.list.clinicRole']}">
-						<h:outputLabel value="#{user.physician.clinicRole}" />
+						<h:outputText value="#{user.physician.clinicRole}" />
 					</p:column>
 
 					<p:column headerText="#{msg['dialog.userList.list.group']}">

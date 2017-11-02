@@ -48,9 +48,11 @@
 						value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.owner.physician.person.fullName}" />
 
 					<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-						rendered="{userHandlerAction.getCurrentUser().equals(dialogHandlerAction.favouriteListEditDialog.favouriteList.owner) or dialogHandlerAction.favouriteListEditDialog.newFavouriteList}"
-						actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean()}"
+						rendered="#{userHandlerAction.currentUser.equals(dialogHandlerAction.favouriteListEditDialog.favouriteList.owner) or dialogHandlerAction.favouriteListEditDialog.newFavouriteList}"
+						actionListener="#{dialogHandlerAction.userListDialog.initAndPrepareBean(true,false)}"
 						styleClass="noUnderlineAtLink" partialSubmit="true">
+						<p:ajax event="dialogReturn" update="@form"
+							listener="#{dialogHandlerAction.favouriteListEditDialog.onReturnSelectOwner}" />
 						<i class="fa fa-fw fa-cog" />
 					</p:commandLink>
 
@@ -59,48 +61,91 @@
 				<!-- global view -->
 				<h:outputLabel value="Globale Freigabe"></h:outputLabel>
 				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.globalView}" />
+					value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.globalView}">
+
+					<p:ajax event="change" process="@form" update="@form"
+						listener="#{dialogHandlerAction.favouriteListEditDialog.onSelectGlobalView()}" />
+				</p:selectBooleanCheckbox>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150 columnBold columnTop, ">
 
 				<!-- Users -->
 				<h:outputLabel value="Benutzerfreigabe"></h:outputLabel>
+
 				<p:dataTable var="userPermission" style="width:100%;"
 					scrollable="true" scrollHeight="100" styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.users}">
 
-					<p:column
-						headerText="#{msg['dialog.settings.favouriteList.edit.tasks.id']}"
-						style="width:20%">
-						<h:outputText
+					<p:column headerText="Benutzer">
+						<h:outputLabel
 							value="#{userPermission.user.physician.person.fullName}" />
+					</p:column>
+
+					<p:column headerText="R" style="width:15px">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{userPermission.readable}"
+							disabled="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.globalView}" />
+					</p:column>
+
+					<p:column headerText="W" style="width:15px">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{userPermission.editable}"></p:selectBooleanCheckbox>
+					</p:column>
+
+					<p:column headerText="A" style="width:15px">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{userPermission.admin}"></p:selectBooleanCheckbox>
 					</p:column>
 
 
 					<p:column style="width:15px">
 						<f:facet name="header">
-							<h:panelGrid columns="1"
-								styleClass="defaultListingTableContainer">
-								<p:commandLink
-									actionListener="#{dialogHandlerAction.userListDialog.initAndPrepareBean(true,false)}">
-									<p:ajax event="dialogReturn" update="@form"
-										listener="#{dialogHandlerAction.favouriteListEditDialog.onReturnSelectUser}" />
-									<i class="fa fa-plus" />
-								</p:commandLink>
-							</h:panelGrid>
+							<p:commandLink
+								actionListener="#{dialogHandlerAction.userListDialog.initAndPrepareBean(true,false)}">
+								<p:ajax event="dialogReturn" update="@form"
+									listener="#{dialogHandlerAction.favouriteListEditDialog.onReturnSelectUser}" />
+								<i class="fa fa-plus" />
+							</p:commandLink>
 						</f:facet>
+
+						<p:commandLink title="" update="@form" partialSubmit="true"
+							process="@this">
+							<i class="fa fa-fw fa-times" />
+
+							<f:actionListener
+								binding="#{dialogHandlerAction.favouriteListEditDialog.removeEntityFromList(dialogHandlerAction.favouriteListEditDialog.favouriteList.users, userPermission)}" />
+						</p:commandLink>
 					</p:column>
 
 				</p:dataTable>
 
 				<!-- groups -->
 				<h:outputLabel value="Gruppenfreigabe"></h:outputLabel>
+
 				<p:dataTable var="groupPermission" style="width:100%;"
 					scrollable="true" scrollHeight="100" styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.groups}">
 
-					<p:column
-						headerText="#{msg['dialog.settings.favouriteList.edit.tasks.id']}"
-						style="width:20%">
+					<p:column headerText="Gruppe">
 						<h:outputText value="#{groupPermission.group.name}" />
+					</p:column>
+
+					<p:column headerText="R" style="width:15px">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{userPermission.readable}"
+							disabled="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.globalView}" />
+					</p:column>
+
+					<p:column headerText="W" style="width:15px">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{userPermission.editable}"></p:selectBooleanCheckbox>
+					</p:column>
+
+					<p:column headerText="A" style="width:15px">
+						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+							value="#{userPermission.admin}"></p:selectBooleanCheckbox>
 					</p:column>
 
 					<p:column style="width:15px">
@@ -115,6 +160,13 @@
 								</p:commandLink>
 							</h:panelGrid>
 						</f:facet>
+						<p:commandLink title="" update="@form" partialSubmit="true"
+							process="@this">
+							<i class="fa fa-fw fa-times" />
+
+							<f:actionListener
+								binding="#{dialogHandlerAction.favouriteListEditDialog.removeEntityFromList(dialogHandlerAction.favouriteListEditDialog.favouriteList.users, groupPermission)}" />
+						</p:commandLink>
 					</p:column>
 				</p:dataTable>
 
@@ -132,7 +184,6 @@
 
 				</p:dataTable>
 			</h:panelGrid>
-
 		</div>
 
 		<div class="buttonContainer">

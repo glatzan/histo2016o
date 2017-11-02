@@ -15,7 +15,7 @@
 	table-layout: auto !important;
 }
 
-.newStyleListingTable td {
+.newStyleListingTable>td {
 	padding: 3px !important;
 	border: none !important;
 	border-spacing: 0px !important;
@@ -93,16 +93,31 @@
 	font-weight: bold !important;
 }
 
+.newStyleListingTable .columnTop {
+	vertical-align: top;
+}
 /* -------------- New DataTable Style --------------*/
 /* for scrollable datatables*/
 .newStyleDataTable {
 	width: 100%;
+	white-space: normal;
+}
+
+.newStyleDataTable td{
+	padding-top: 3px !important;
+	padding-bottom: 3px !important;
+	border: none !important;
+	border-spacing: 0px !important;
+	font-size: 12px;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
 }
 
 /* labels and column header size */
 .newStyleDataTable label, .newStyleDataTable .ui-datatable-scrollable-header .ui-column-title
 	{
-	padding: 4px;
 	font-size: 12px;
 	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
 	box-shadow: none;
@@ -121,6 +136,7 @@
 
 .newStyleDataTable tr.ui-state-highlight>td {
 	background-color: #fcf1b8;
+	font-weight: bold !important;
 }
 
 .newStyleDataTable tr.ui-state-highlight>td label {
