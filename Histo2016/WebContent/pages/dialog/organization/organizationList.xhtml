@@ -57,7 +57,7 @@
 					</p:column>
 
 					<p:ajax event="rowSelect" update="@form"/>
-					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()" />
+					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()" disabled="#{!dialogHandlerAction.organizationListDialog.selectMode}" />
 
 				</p:dataTable>
 

@@ -16,9 +16,10 @@ import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
+import org.histo.model.favouriteList.FavouritePermissions;
 import org.histo.model.favouriteList.FavouritePermissionsGroup;
 import org.histo.model.favouriteList.FavouritePermissionsUser;
-import org.histo.model.transitory.PredefinedRoleSettings;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
@@ -46,7 +47,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private UserDAO userDAO;
+	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -61,6 +62,8 @@ public class FavouriteListEditDialog extends AbstractDialog {
 	private boolean newFavouriteList;
 
 	private FavouriteList favouriteList;
+
+	private List<FavouritePermissions> toDeleteList;
 
 	public void initAndPrepareBean() {
 		FavouriteList favouriteList = new FavouriteList();
@@ -82,17 +85,19 @@ public class FavouriteListEditDialog extends AbstractDialog {
 	public boolean initBean(FavouriteList favouriteList, boolean initialize) {
 
 		if (initialize) {
-			// try {
-			// setGroup(userDAO.initializeGroup(group, true));
-			// } catch (CustomDatabaseInconsistentVersionException e) {
-			// logger.debug("Version conflict, updating entity");
-			// setGroup(userDAO.getHistoGroup(group.getId(), true));
-			// }
+			try {
+				setFavouriteList(favouriteListDAO.initFavouriteList(favouriteList, true));
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				logger.debug("Version conflict, updating entity");
+				setFavouriteList(favouriteListDAO.getFavouriteList(favouriteList.getId(), true, true));
+			}
 		} else {
 			setFavouriteList(favouriteList);
 		}
 
 		setNewFavouriteList(favouriteList.getId() == 0);
+
+		setToDeleteList(new ArrayList<FavouritePermissions>());
 
 		super.initBean(task, Dialog.SETTINGS_FAVOURITE_LIST_EDIT);
 		return true;
@@ -102,6 +107,13 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		if (favouriteList.isGlobalView()) {
 			favouriteList.getUsers().stream().forEach(p -> p.setReadable(true));
 			favouriteList.getGroups().stream().forEach(p -> p.setReadable(true));
+		}
+	}
+
+	public void onSelectAdmin(FavouritePermissions permission) {
+		if (permission.isAdmin()) {
+			permission.setEditable(true);
+			permission.setReadable(true);
 		}
 	}
 
@@ -116,7 +128,8 @@ public class FavouriteListEditDialog extends AbstractDialog {
 			if (!favouriteList.getUsers().stream().anyMatch(p -> p.getUser().equals(event.getObject()))) {
 				FavouritePermissionsUser permission = new FavouritePermissionsUser((HistoUser) event.getObject());
 				favouriteList.getUsers().add(permission);
-
+				permission.setFavouriteList(favouriteList);
+				
 				if (favouriteList.isGlobalView())
 					permission.setReadable(true);
 			}
@@ -127,79 +140,47 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		if (event.getObject() != null && event.getObject() instanceof HistoGroup) {
 			if (!favouriteList.getGroups().stream().anyMatch(p -> p.getGroup().equals(event.getObject()))) {
 				FavouritePermissionsGroup permission = new FavouritePermissionsGroup((HistoGroup) event.getObject());
-
 				favouriteList.getGroups().add(permission);
-
+				permission.setFavouriteList(favouriteList);
+				
 				if (favouriteList.isGlobalView())
 					permission.setReadable(true);
 			}
 		}
 	}
 
-	public void removeEntityFromList(List<?> list, Object toRemove) {
+	public void removeEntityFromList(List<? extends FavouritePermissions> list, FavouritePermissions toRemove) {
+		if (toRemove.getId() != 0)
+			toDeleteList.add(toRemove);
+
 		list.remove(toRemove);
 	}
 
-	public void saveGroup() {
+	public void saveFavouriteList() {
 
-		// if (getGroup().getSettings().getDefaultView() == null) {
-		// if (getGroup().getSettings().getAvailableViews() == null
-		// && getGroup().getSettings().getAvailableViews().size() > 0)
-		// getGroup().getSettings().setDefaultView(getGroup().getSettings().getAvailableViewsAsArray()[0]);
-		// }
-		//
-		// try {
-		// if (getGroup().getId() == 0) {
-		// userDAO.save(getGroup(), resourceBundle.get("log.settings.group.new",
-		// getGroup()));
-		// } else {
-		// userDAO.save(getGroup(),
-		// resourceBundle.get("log.settings.group.edit", getGroup()));
-		// }
-		//
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// onDatabaseVersionConflict();
-		// }
+		try {
 
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					if (!toDeleteList.isEmpty()) {
+						for (FavouritePermissions favouritePermissions : toDeleteList) {
+							favouriteListDAO.delete(favouritePermissions);
+						}
+					}
+
+					if (getFavouriteList().getId() == 0) {
+						favouriteListDAO.save(getFavouriteList(),
+								resourceBundle.get("log.settings.favouriteList.new", getFavouriteList()));
+					} else {
+						favouriteListDAO.save(getFavouriteList(),
+								resourceBundle.get("log.settings.favouriteList.edit", getFavouriteList()));
+					}
+				}
+			});
+
+		} catch (Exception e) {
+			onDatabaseVersionConflict();
+		}
 	}
 }
-
-// public void prepareNewFavouriteList() {
-// FavouriteList newList = new FavouriteList();
-// newList.setItems(new ArrayList<FavouriteListItem>());
-// newList.setDefaultList(false);
-// newList.setEditAble(true);
-// newList.setGlobal(true);
-// prepareEditFavouriteList(newList);
-// }
-//
-// public void prepareEditFavouriteList(FavouriteList favouriteList) {
-// setTmpFavouriteList(favouriteList);
-// setPage(FavouriteListPage.EDIT);
-// setNewFavouriteList(favouriteList.getId() == 0 ? true : false);
-// updateData();
-// }
-//
-// public void saveFavouriteList() {
-// try {
-// // saving new list
-// if (getTmpFavouriteList().getId() == 0) {
-// genericDAO.save(getTmpFavouriteList(), "log.settings.favouriteList.new",
-// new Object[] { getTmpFavouriteList().toString() });
-// } else {
-// // updating old list
-// genericDAO.save(getTmpFavouriteList(), "log.settings.favouriteList.edit",
-// new Object[] { getTmpFavouriteList().toString() });
-// }
-//
-// } catch (CustomDatabaseInconsistentVersionException e) {
-// onDatabaseVersionConflict();
-// }
-// }
-//
-// public void discardFavouriteList() {
-// setTmpFavouriteList(null);
-// setPage(FavouriteListPage.LIST);
-// updateData();
-// }

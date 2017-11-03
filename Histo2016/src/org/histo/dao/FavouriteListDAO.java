@@ -5,6 +5,8 @@ import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -16,6 +18,8 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Physician;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
+import org.histo.model.favouriteList.FavouritePermissionsGroup;
+import org.histo.model.favouriteList.FavouritePermissionsUser;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
 import org.histo.util.StreamUtils;
@@ -34,7 +38,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	@Autowired
 	private GenericDAO genericDAO;
 
-	public FavouriteList getFavouriteList(long id, boolean initialized) {
+	public FavouriteList getFavouriteList(long id, boolean initialized, boolean permissions) {
 		FavouriteList favList = genericDAO.get(FavouriteList.class, id);
 
 		if (initialized) {
@@ -42,17 +46,28 @@ public class FavouriteListDAO extends AbstractDAO {
 			Hibernate.initialize(favList.getItems());
 		}
 
+		if (permissions) {
+			Hibernate.initialize(favList.getUsers());
+			Hibernate.initialize(favList.getGroups());
+		}
+
 		return favList;
 	}
 
-	public FavouriteList initFavouriteList(FavouriteList favList) {
+	public FavouriteList initFavouriteList(FavouriteList favList, boolean permissions) {
 		genericDAO.reattach(favList);
 		Hibernate.initialize(favList.getOwner());
 		Hibernate.initialize(favList.getItems());
+
+		if (permissions) {
+			Hibernate.initialize(favList.getUsers());
+			Hibernate.initialize(favList.getGroups());
+		}
+
 		return favList;
 	}
 
-	public List<FavouriteList> getFavouriteListsOfUser(HistoUser user) {
+	public List<FavouriteList> getFavouriteListsForUser(HistoUser user) {
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
@@ -61,7 +76,23 @@ public class FavouriteListDAO extends AbstractDAO {
 		Root<FavouriteList> root = criteria.from(FavouriteList.class);
 		criteria.select(root);
 
-		criteria.where(qb.equal(root.get("owner"), user));
+		Join<FavouriteList, FavouritePermissionsUser> userQuery = root.join("users", JoinType.LEFT);
+		Join<FavouriteList, FavouritePermissionsGroup> groupQuery = root.join("groups", JoinType.LEFT);
+
+		// predicates.add(criteriaBuilder.like(country.<String>
+		// get("countryName"), "%" + countryName + "%"));
+
+		Predicate orClause = qb.or(
+				qb.equal(root.get("owner"), user), 
+				qb.equal(root.get("globalView"), true),
+				qb.equal(userQuery.get("id"), user.getId()));
+
+		// qb.equal(root.get("groups").<FavouritePermissionsGroup> get("group"),
+		// user.get)
+		// ,qb.equal(userQuery.get("id"), user.getId())
+
+		criteria.where(orClause);
+
 		criteria.distinct(true);
 
 		List<FavouriteList> favouriteLists = getSession().createQuery(criteria).getResultList();
@@ -105,7 +136,7 @@ public class FavouriteListDAO extends AbstractDAO {
 		reattach(task);
 		reattach(task.getParent());
 
-		addTaskToList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
+		addTaskToList(task, getFavouriteList(predefinedFavouriteList.getId(), true, false));
 	}
 
 	public void addTaskToList(Task task, FavouriteList favouriteList)
@@ -132,7 +163,7 @@ public class FavouriteListDAO extends AbstractDAO {
 			task.getFavouriteLists().add(favouriteList);
 			genericDAO.savePatientData(task, "log.patient.task.favouriteList.added",
 					new Object[] { task.getTaskID().toString(), favouriteList.toString() });
-			
+
 			task.generateTaskStatus();
 		} else
 			logger.debug("Task (" + task.getTaskID() + ") alread contains list (" + favouriteList.getName() + ")");
@@ -150,7 +181,7 @@ public class FavouriteListDAO extends AbstractDAO {
 			throws CustomDatabaseInconsistentVersionException {
 		if (task.isListedInFavouriteList(predefinedFavouriteList)) {
 			reattach(task);
-			removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true));
+			removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true, false));
 		}
 	}
 
@@ -198,7 +229,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void removeTaskFromAllLists(Task task) {
 		// removing from favouriteLists
 		while (task.getFavouriteLists().size() > 0) {
-			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true));
+			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true, false));
 		}
 	}
 }

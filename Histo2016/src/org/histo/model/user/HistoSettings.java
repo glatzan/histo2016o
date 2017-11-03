@@ -37,7 +37,7 @@ import lombok.Setter;
 @SequenceGenerator(name = "settings_sequencegenerator", sequenceName = "settings_sequence")
 @Getter
 @Setter
-public class HistoSettings implements HasID {
+public class HistoSettings implements HasID, Cloneable {
 
 	@Id
 	@GeneratedValue(generator = "settings_sequencegenerator")
@@ -46,6 +46,7 @@ public class HistoSettings implements HasID {
 
 	@Version
 	private long version;
+
 	/**
 	 * True if the printer should be autoselected
 	 */
@@ -53,10 +54,22 @@ public class HistoSettings implements HasID {
 	private boolean autoSelectedPreferedPrinter;
 
 	/**
+	 * Name of the preferred cups printer
+	 */
+	@Column(columnDefinition = "VARCHAR")
+	private String preferedPrinter;
+	
+	/**
 	 * True if the label printer should be autoselected
 	 */
 	@Column
 	private boolean autoSelectedPreferedLabelPrinter;
+
+	/**
+	 * The uuid of the preferred labelprinter
+	 */
+	@Column(columnDefinition = "VARCHAR")
+	private String preferedLabelPritner;
 
 	/**
 	 * Page which should be shown as default page
@@ -130,4 +143,10 @@ public class HistoSettings implements HasID {
 	public void setAvailableViewsAsArray(View[] views) {
 		this.availableViews = new HashSet<View>(Arrays.asList(views));
 	}
+
+	@Override
+	protected HistoSettings clone() throws CloneNotSupportedException {
+		return (HistoSettings) super.clone();
+	}
+
 }

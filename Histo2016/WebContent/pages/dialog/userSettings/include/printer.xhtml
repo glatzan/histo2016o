@@ -12,14 +12,15 @@
 			header="#{msg['dialog.userSettings.printer']}"
 			styleClass="contentPannel" />
 
-		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
-			style="width:100%" id="printerContent">
+		<p:panelGrid columns="2" id="printerContent"
+			styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
 
 			<!-- pritner select auto view -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.printer.autoPrinte']}" />
 			<p:selectBooleanCheckbox
-				value="#{userSettingsDialog.user.autoSelectedPreferedPrinter}">
+				value="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}">
 				<p:ajax event="change" update="printerContent" />
 			</p:selectBooleanCheckbox>
 
@@ -29,9 +30,9 @@
 				<!-- select printer -->
 				<p:selectOneMenu styleClass="customSerachSelectMenu"
 					style="width:80% !important;"
-					disabled="#{userSettingsDialog.user.autoSelectedPreferedPrinter}"
+					disabled="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}"
 					panelStyleClass="customSerachSelectMenuPanel"
-					value="#{userHandlerAction.currentUser.preferedPrinter}"
+					value="#{userHandlerAction.currentUser.settings.preferedPrinter}"
 					filter="true" filterMatchMode="contains">
 
 					<f:selectItems value="#{globalSettings.printerList}" var="printer"
@@ -42,7 +43,7 @@
 				<!-- testprint -->
 				<p:commandLink
 					title="#{msg['dialog.userSettings.printer.testPage.hint']}"
-					style="float: right; margin-right:5px;"
+					style="margin-left:10px;"
 					actionListener="#{userHandlerAction.selectedPrinter.printTestPage()}">
 					<i class="fa fa-fw fa-print" />
 				</p:commandLink>
@@ -59,7 +60,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.labelPrinter.autoPrinte']}" />
 			<p:selectBooleanCheckbox
-				value="#{userSettingsDialog.user.autoSelectedPreferedLabelPrinter}">
+				value="#{userSettingsDialog.user.settings.autoSelectedPreferedLabelPrinter}">
 				<p:ajax event="change" update="printerContent" />
 			</p:selectBooleanCheckbox>
 
@@ -70,9 +71,9 @@
 				<!-- select printer -->
 				<p:selectOneMenu styleClass="customSerachSelectMenu"
 					style="width:80% !important;"
-					disabled="#{userSettingsDialog.user.autoSelectedPreferedLabelPrinter}"
+					disabled="#{userSettingsDialog.user.settings.autoSelectedPreferedLabelPrinter}"
 					panelStyleClass="customSerachSelectMenuPanel"
-					value="#{userHandlerAction.currentUser.preferedLabelPritner}"
+					value="#{userHandlerAction.currentUser.settings.preferedLabelPritner}"
 					filter="true" filterMatchMode="contains">
 
 					<f:selectItems value="#{globalSettings.labelPrinterList}"
@@ -84,7 +85,7 @@
 				<!-- testprint -->
 				<p:commandLink
 					title="#{msg['dialog.userSettings.labelPrinter.testPage.hint']}"
-					style="float: right; margin-right:5px;"
+					style="margin-left:10px;"
 					actionListener="#{userHandlerAction.selectedLabelPrinter.printTestPage()}">
 					<i class="fa fa-fw fa-print" />
 				</p:commandLink>
@@ -94,12 +95,11 @@
 	</div>
 
 
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="2" style="float:right;">
+			styleClass="newTableContainer">
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.save']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-check-circle-o" partialSubmit="true"
 					process="printerTab generalTab">
 					<f:actionListener
@@ -108,7 +108,6 @@
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle">
 					<f:actionListener
 						binding="#{userSettingsDialog.resetUserSettings()}" />

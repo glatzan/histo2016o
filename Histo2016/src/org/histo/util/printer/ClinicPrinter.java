@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
@@ -67,6 +69,10 @@ public class ClinicPrinter extends AbstractPrinter {
 			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
 			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
 			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
+//			Map<String, String> tesT= new HashMap();
+//			tesT.put("job-attributes", "orientation-requested:enum:6#fit-to-page:boolean:true");
+//			printJob.setAttributes(tesT);
+//			System.out.println("printsingss");
 			printer.print(printJob);
 			return true;
 		} catch (Exception e) {

@@ -190,12 +190,13 @@ public class UserHandlerAction implements Serializable {
 
 	public void updateSelectedPrinters() {
 
-		if (getCurrentUser().getPreferedPrinter() == null) {
+		if (getCurrentUser().getSettings().getPreferedPrinter() == null) {
 			// dummy printer is allways there
 			setSelectedPrinter(globalSettings.getPrinterList().get(0));
-			getCurrentUser().setPreferedPrinter(getSelectedPrinter().getName());
+			getCurrentUser().getSettings().setPreferedPrinter(getSelectedPrinter().getName());
 		} else {
-			ClinicPrinter printer = globalSettings.getPrinterByName(getCurrentUser().getPreferedPrinter());
+			ClinicPrinter printer = globalSettings
+					.getPrinterByName(getCurrentUser().getSettings().getPreferedPrinter());
 			// if printer was found set it
 			if (printer != null) {
 				logger.debug("Settings printer " + printer.getName() + " as selected printer");
@@ -206,11 +207,12 @@ public class UserHandlerAction implements Serializable {
 			}
 		}
 
-		if (getCurrentUser().getPreferedLabelPritner() == null) {
+		if (getCurrentUser().getSettings().getPreferedLabelPritner() == null) {
 			setSelectedLabelPrinter(globalSettings.getLabelPrinterList().get(0));
-			getCurrentUser().setPreferedLabelPritner(Long.toString(getSelectedLabelPrinter().getId()));
+			getCurrentUser().getSettings().setPreferedLabelPritner(Long.toString(getSelectedLabelPrinter().getId()));
 		} else {
-			LabelPrinter labelPrinter = globalSettings.getLabelPrinterByID(getCurrentUser().getPreferedLabelPritner());
+			LabelPrinter labelPrinter = globalSettings
+					.getLabelPrinterByID(getCurrentUser().getSettings().getPreferedLabelPritner());
 
 			if (labelPrinter != null) {
 				logger.debug("Settings printer " + labelPrinter.getName() + " as selected printer");

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.userSettings.favouriteLists']}"
+			styleClass="contentPannel" />
+
+		<p:panelGrid columns="2" id="favouriteContent"
+			styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
+
+		</p:panelGrid>
+	</div>
+
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<p:commandButton value="#{msg['general.save']}"
+					icon="fa fa-check-circle-o" partialSubmit="true"
+					process="printerTab generalTab">
+					<f:actionListener
+						binding="#{userSettingsDialog.saveUserSettings()}" />
+					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
+				</p:commandButton>
+
+				<p:commandButton value="#{msg['general.close']}"
+					icon="fa fa-times-circle">
+					<f:actionListener
+						binding="#{userSettingsDialog.resetUserSettings()}" />
+					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
+				</p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+</ui:composition>

@@ -8,12 +8,14 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<div class="contentDiv">
+
 		<p:panel style="width:100%;"
 			header="#{msg['dialog.userSettings.general']}"
 			styleClass="contentPannel" />
 
 		<!-- standard view -->
-		<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
 			<!-- standard view -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.defaultView']}" />
@@ -21,43 +23,43 @@
 			<p:selectOneMenu
 				title="#{msg['dialog.userSettings.general.defaultView.text']}"
 				styleClass="smallInput"
-				value="#{userSettingsDialog.user.defaultView}">
+				value="#{userSettingsDialog.user.settings.defaultView}">
 
-				<f:selectItems value="#{userSettingsDialog.availableViews}"
+				<f:selectItems value="#{userSettingsDialog.generalTab.availableViews}"
 					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 			</p:selectOneMenu>
 
 			<!-- background color of inputfields -->
-			<h:outputText
+			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.inputFieldColor']}" />
-			<p:colorPicker value="#{userSettingsDialog.user.inputFieldColor}" />
+			<p:colorPicker value="#{userSettingsDialog.user.settings.inputFieldColor}" />
 
 			<!-- font color of inputfields -->
-			<h:outputText
+			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.inputFieldFontColor']}" />
-			<p:colorPicker value="#{userSettingsDialog.user.inputFieldFontColor}" />
-
+			<p:colorPicker value="#{userSettingsDialog.user.settings.inputFieldFontColor}" />
 
 		</h:panelGrid>
 
 		<!-- Separator -->
-		<h:panelGrid columns="1" styleClass="defaultListingTableFirstColumEnummeration"
-			style="margin-top:20px;">
+		<h:panelGrid columns="1"
+			styleClass="newStyleListingTable newStyleListingTableSeparator">
 			<p:separator style="width:100%" />
-			<h:outputLabel value="#{msg['dialog.userSettings.general.worklist']}"
-				style="font-weight:bold !important;"></h:outputLabel>
+			<h:outputLabel value="#{msg['dialog.userSettings.general.worklist']}" />
 		</h:panelGrid>
 
-		<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
 			<!-- standard work list -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.defaultWorklist']}" />
 			<p:selectOneMenu styleClass="smallInput"
 				title="#{msg['dialog.userSettings.general.defaultWorklist.text']}"
-				value="#{userSettingsDialog.user.worklistToLoad}">
+				value="#{userSettingsDialog.user.settings.worklistToLoad}">
 
 				<f:selectItems
-					value="#{userSettingsDialog.availableWorklistsToLoad}" var="page"
+					value="#{userSettingsDialog.generalTab.availableWorklistsToLoad}" var="page"
 					itemLabel="#{msg['enum.worklistSearchOption.'.concat(page)]}" />
 			</p:selectOneMenu>
 
@@ -68,7 +70,7 @@
 				style="width: 300px;">
 				<p:selectOneMenu styleClass="smallInput"
 					title="#{msg['dialog.userSettings.general.sorting.text']}"
-					value="#{userSettingsDialog.user.worklistSortOrder}">
+					value="#{userSettingsDialog.user.settings.worklistSortOrder}">
 					<f:selectItem
 						itemLabel="#{msg['dialog.worklistorder.sorting.tasknumber']}"
 						itemValue="TASK_ID" />
@@ -84,7 +86,7 @@
 				</p:selectOneMenu>
 
 				<p:selectBooleanButton styleClass="smallInput smallFont smallButton"
-					value="#{userSettingsDialog.user.worklistSortOrderAsc}"
+					value="#{userSettingsDialog.user.settings.worklistSortOrderAsc}"
 					style="margin-left:15px;"
 					onLabel="#{msg['dialog.userSettings.general.sorting.asc']}"
 					offLabel="#{msg['dialog.userSettings.general.sorting.desc']}" />
@@ -94,34 +96,31 @@
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.hideNonActiveTasks']}" />
 			<p:selectBooleanCheckbox
-				value="#{userSettingsDialog.user.worklistHideNoneActiveTasks}"
+				value="#{userSettingsDialog.user.settings.worklistHideNoneActiveTasks}"
 				title="#{msg['dialog.userSettings.general.hideNonActiveTasks.text']}" />
 
 			<!-- auto update worklist -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.autoUpdate']}" />
 			<p:selectBooleanCheckbox
-				value="#{userSettingsDialog.user.worklistAutoUpdate}"
+				value="#{userSettingsDialog.user.settings.worklistAutoUpdate}"
 				title="#{msg['dialog.userSettings.general.autoUpdate.text']}" />
 
 			<!-- auto update worklist -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.alternatePatientAddMode']}" />
 			<p:selectBooleanCheckbox
-				value="#{userSettingsDialog.user.alternatePatientAddMode}"
+				value="#{userSettingsDialog.user.settings.alternatePatientAddMode}"
 				title="#{msg['dialog.userSettings.general.alternatePatientAddMode.text']}" />
-
-
 
 		</h:panelGrid>
 	</div>
 
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="2" style="float:right;">
+			styleClass="newTableContainer">
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.save']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-check-circle-o" partialSubmit="true"
 					process="printerTab generalTab">
 					<f:actionListener
@@ -130,7 +129,6 @@
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle">
 					<f:actionListener
 						binding="#{userSettingsDialog.resetUserSettings()}" />

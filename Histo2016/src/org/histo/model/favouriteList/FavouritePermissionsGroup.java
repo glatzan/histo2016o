@@ -19,7 +19,7 @@ public class FavouritePermissionsGroup extends FavouritePermissions {
 
 	@OneToOne
 	private HistoGroup group;
-	
+
 	public FavouritePermissionsGroup() {
 	}
 	

@@ -19,8 +19,16 @@
 
 			<p:column
 				headerText="#{msg['dialog.settings.favouriteList.list.name']}"
-				sortBy="#{favouriteList.name}" style="width:20%">
+				sortBy="#{favouriteList.name}">
 				<h:outputText value="#{favouriteList.name}" />
+			</p:column>
+
+			<p:column
+				headerText="#{msg['dialog.settings.favouriteList.list.systemList']}"
+				style="text-align:center;width:20%">
+				<h:panelGroup rendered="#{favouriteList.defaultList}">
+					<i class="fa fa-fw fa-check-circle icon-green" />
+				</h:panelGroup>
 			</p:column>
 
 			<p:column style="width:5%; text-align:center;">
@@ -31,10 +39,12 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{settingsDialogHandler.getTab('FavouriteListTab').prepareEditFavouriteList(favouriteList)}"
-					update=":adminForm:tabview:favouriteLists" process="@this"
-					partialSubmit="true"
+					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteList)}"
+					process="@this" partialSubmit="true"
 					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('MTA')}">
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.getTab('FavouriteListTab').updateData()}"
+						update=":adminForm:tabview:favouriteLists" />
 					<i class="fa fa-fw fa-cog" />
 				</p:commandLink>
 			</p:column>

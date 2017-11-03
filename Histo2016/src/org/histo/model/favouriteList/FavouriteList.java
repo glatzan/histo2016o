@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -35,16 +37,16 @@ public class FavouriteList implements HasID {
 	@GeneratedValue(generator = "favouritelist_sequencegenerator")
 	@Column(unique = true, nullable = false)
 	private long id;
-	
+
 	@OneToOne(fetch = FetchType.LAZY)
 	private HistoUser owner;
-	
+
 	@Column(columnDefinition = "VARCHAR")
 	private String name;
-	
+
 	@Column
 	private boolean defaultList;
-	
+
 	@Column
 	private boolean globalView;
 
@@ -53,15 +55,19 @@ public class FavouriteList implements HasID {
 	private List<FavouriteListItem> items;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "favouritepermissions", joinColumns = {
+			@JoinColumn(name = "favouritelist_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
 	@OrderBy("id ASC")
 	private List<FavouritePermissionsGroup> groups;
-	
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "favouritepermissions", joinColumns = {
+			@JoinColumn(name = "favouritelist_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
 	@OrderBy("id ASC")
 	private List<FavouritePermissionsUser> users;
-	
+
 	@Override
 	public String toString() {
-		return "ID: " + getId() + ", Name: " +getName(); 
+		return "ID: " + getId() + ", Name: " + getName();
 	}
 }

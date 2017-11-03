@@ -234,13 +234,23 @@ INSERT INTO diagnosispreset (id, category, commentary, diagnosis, extendeddiagno
 
 SELECT setval('diagnosispreset_sequence', (SELECT MAX(id) FROM diagnosispreset));
 
-INSERT INTO histouser (id, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, lastlogin, preferedlabelpritner, preferedprinter, role, username, version, worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload, physician_id) VALUES (2, false, true, true, 8, 'ffffff', '000000', 0, NULL, NULL, 'MTA', 'joosb', 1, false, true, 0, true, 0, 2);
-INSERT INTO histouser (id, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, lastlogin, preferedlabelpritner, preferedprinter, role, username, version, worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload, physician_id) VALUES (3, false, true, true, 8, 'ffffff', '000000', 0, NULL, NULL, 'MTA', 'zeitler', 1, false, true, 0, true, 0, 3);
-INSERT INTO histouser (id, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, lastlogin, preferedlabelpritner, preferedprinter, role, username, version, worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload, physician_id) VALUES (4, false, true, true, 9, 'ffffff', '000000', 0, NULL, NULL, 'PHYSICIAN', 'zimmeli', 1, false, true, 0, true, 1, 15);
-INSERT INTO histouser (id, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, lastlogin, preferedlabelpritner, preferedprinter, role, username, version, worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload, physician_id) VALUES (5, false, true, true, 9, 'ffffff', '000000', 0, NULL, NULL, 'MODERATOR', 'auw', 1, false, true, 0, true, 1, 6);
-INSERT INTO histouser (id, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, lastlogin, preferedlabelpritner, preferedprinter, role, username, version, worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload, physician_id) VALUES (1, false, true, true, 9, 'ffffff', '000000', 1501080892461, NULL, '', 'ADMIN', 'glatza', 5, false, true, 0, true, 1, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (2,0,false, true, true, 8, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 0)
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (3,0,false, true, true, 8, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 0)
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (15,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1)
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (6,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1)
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (1,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1)
+
+SELECT setval('settings_sequence', (SELECT MAX(id) FROM histosettings));
+
+INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (2,  0, 'MTA', 'joosb', 0, 2, 2);
+INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (3,  0, 'MTA', 'zeitler', 0, 3, 3);
+INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (4,  0, 'PHYSICIAN', 'zimmeli', 0, 15);
+INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (5,  0, 'MODERATOR', 'auw', 0,  6);
+INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (1, ,0, 'ADMIN', 'glatza', 0, 1);
  
- SELECT setval('user_sequence', (SELECT MAX(id) FROM histouser));
+
+
+SELECT setval('user_sequence', (SELECT MAX(id) FROM histouser));
 
 INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (1, true, false, 'Färbeliste', NULL);
 INSERT INTO favouritelist (id, defaultlist, globalView, name, owner_id) VALUES (2, true, false, 'Diagnosislist', NULL);

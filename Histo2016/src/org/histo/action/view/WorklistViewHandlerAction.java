@@ -112,7 +112,7 @@ public class WorklistViewHandlerAction {
 
 		setCurrentView(View.WORKLIST_TASKS);
 
-		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getWorklistToLoad();
+		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings().getWorklistToLoad();
 
 		if (defaultWorklistToLoad != null) {
 			dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic()
@@ -120,14 +120,14 @@ public class WorklistViewHandlerAction {
 			dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic().updateSearchIndex();
 
 			addWorklist(new Worklist("Default", dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic(),
-					userHandlerAction.getCurrentUser().isWorklistHideNoneActiveTasks(),
-					userHandlerAction.getCurrentUser().getWorklistSortOrder(),
-					userHandlerAction.getCurrentUser().isWorklistAutoUpdate()), true);
+					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
+					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate()), true);
 		} else {
 			addWorklist(new Worklist("Default", new WorklistSearch()), true);
 		}
 
-		setLastTaskView(userHandlerAction.getCurrentUser().getDefaultView());
+		setLastTaskView(userHandlerAction.getCurrentUser().getSettings().getDefaultView());
 
 	}
 
@@ -284,9 +284,9 @@ public class WorklistViewHandlerAction {
 
 	public void addWorklist(WorklistSearch worklistSearch, String name, boolean selected) {
 		addWorklist(
-				new Worklist(name, worklistSearch, userHandlerAction.getCurrentUser().isWorklistHideNoneActiveTasks(),
-						userHandlerAction.getCurrentUser().getWorklistSortOrder(),
-						userHandlerAction.getCurrentUser().isWorklistAutoUpdate()),
+				new Worklist(name, worklistSearch, userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
+						userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
+						userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate()),
 				selected);
 	}
 

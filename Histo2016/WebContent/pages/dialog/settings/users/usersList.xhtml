@@ -91,6 +91,11 @@
 					</p:column>
 
 					<p:ajax event="rowSelect" update="@form" />
+
+					<p:ajax event="rowDblselect"
+						listener="#{dialogHandlerAction.userListDialog.selectUserAndHide()}"
+						disabled="#{!dialogHandlerAction.userListDialog.selectMode}" />
+
 				</p:dataTable>
 			</h:panelGrid>
 

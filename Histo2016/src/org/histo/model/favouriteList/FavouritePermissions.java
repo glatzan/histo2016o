@@ -2,40 +2,42 @@ package org.histo.model.favouriteList;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
+import org.histo.model.interfaces.HasID;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@SelectBeforeUpdate(true)
-@DynamicUpdate(true)
 @Getter
 @Setter
-@SequenceGenerator(name = "favourite_permissions_generator", sequenceName = "favourite_permissions_seq", allocationSize = 50)
+//@MappedSuperclass
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class FavouritePermissions {
+public class FavouritePermissions implements HasID {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "favourite_permissions_generator")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(unique = true, nullable = false)
-	private long id;
+	protected long id;
 
 	@Column
-	private boolean admin;
+	protected boolean admin;
 
 	@Column
-	private boolean readable;
+	protected boolean readable;
 
 	@Column
-	private boolean editable;
+	protected boolean editable;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	protected FavouriteList favouriteList;
 
 }

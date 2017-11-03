@@ -163,63 +163,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		return null;
 	}
 
-	/**
-	 * Show the adminSettigns Dialog and inits the used values
-	 */
-
-	public void prepareSettingsDialog() {
-		prepareSettingsDialog(getActiveSettingsIndex());
-	}
-
-	// public void prepareSettingsDialog(SettingsTab settingsTab) {
-	// // SettingsTab parentTab = settingsTab.getParent() != null ?
-	// // settingsTab.getParent() : settingsTab;
-	// //
-	// // switch (parentTab) {
-	// // case PHYSICIAN:
-	// // setPhysicianTabIndex(settingsTab);
-	// // break;
-	// // default:
-	// // break;
-	// // }
-	// //
-	// // prepareSettingsDialog(settingsTab.getTabNumber());
-	// }
-
-	public void prepareSettingsDialog(int activeTab) {
-		super.initBean(null, Dialog.SETTINGS);
-
-		mainHandlerAction.showDialog(Dialog.SETTINGS);
-	}
-
 	/********************************************************
 	 * General
-	 ********************************************************/
-
-	/********************************************************
-	 * History
-	 ********************************************************/
-	/**
-	 * Loads the current history, for all events 100 entries. Shows the current
-	 * history dialog.
-	 */
-	public void loadGeneralHistory() {
-		// setCurrentHistory(utilDAO.getCurrentHistory(100));
-	}
-
-	/**
-	 * Loads the current history for the given patient. Shows the current
-	 * history dialog.
-	 * 
-	 * @param patient
-	 */
-	public void loadPatientHistory(Patient patient) {
-		// setCurrentHistory(utilDAO.getCurrentHistoryForPatient(100,
-		// patient));
-	}
-
-	/********************************************************
-	 * History
 	 ********************************************************/
 
 	@Getter

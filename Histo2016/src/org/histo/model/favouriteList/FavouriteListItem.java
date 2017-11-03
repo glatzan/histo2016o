@@ -84,7 +84,7 @@ public class FavouriteListItem implements HasID {
 		this.slides = slides;
 	}
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	public FavouriteList getFavouriteList() {
 		return favouriteList;
 	}

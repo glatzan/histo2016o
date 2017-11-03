@@ -19,7 +19,6 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
-import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,10 +69,9 @@ public class MainHandlerAction {
 
 		userHandlerAction.updateSelectedPrinters();
 
-		PredefinedRoleSettings roleSetting = globalSettings
-				.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
-
-		commonDataHandlerAction.setNavigationPages(roleSetting.getAvailableViews());
+		// settings views
+		commonDataHandlerAction.setNavigationPages(
+				new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
 
 		setQueueGrowlMessages(new ArrayList<FacesMessage>());
 	}

@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.histo.config.enums.Role;
-import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.settings.ClinicJsonHandler;
 import org.histo.settings.DefaultNotificationSettings;
 import org.histo.settings.LdapHandler;
@@ -57,7 +56,6 @@ public class GlobalSettings {
 	public static final String SETTINGS_CUPS_SERVER = "cupsServer";
 	public static final String SETTINGS_LABLE_PRINTERS = "labelPrinters";
 	public static final String SETTINGS_CLINIC_BACKEND = "clinicBackend";
-	public static final String SETTINGS_PREDEFINED_ROLES = "predefinedRoles";
 
 	public static final String VERSIONS_INFO = "classpath:settings/version.json";
 	public static final String MAIL_TEMPLATES = "classpath:settings/mailTemplates.json";
@@ -76,11 +74,6 @@ public class GlobalSettings {
 	 * List with default notification options for contact roles
 	 */
 	private DefaultNotificationSettings defaultNotificationSettings;
-
-	/**
-	 * List of predefined role settings
-	 */
-	private List<PredefinedRoleSettings> predefinedRoleSettings;
 
 	/**
 	 * List of clinicla pritners
@@ -164,10 +157,6 @@ public class GlobalSettings {
 
 		clinicJsonHandler = gson.fromJson(o.get(SETTINGS_CLINIC_BACKEND), ClinicJsonHandler.class);
 
-		listType = new TypeToken<ArrayList<PredefinedRoleSettings>>() {
-		}.getType();
-		setPredefinedRoleSettings(gson.fromJson(o.get(SETTINGS_PREDEFINED_ROLES), listType));
-
 		Version[] versions = Version.factroy(VERSIONS_INFO);
 		// setting current version
 		if (versions != null && versions.length > 0) {
@@ -200,16 +189,6 @@ public class GlobalSettings {
 			result.add(new ClinicPrinterDummy(0));
 
 		return result;
-	}
-
-	public PredefinedRoleSettings getRoleSettingsForRole(Role role) {
-		try {
-			return getPredefinedRoleSettings().stream().filter(p -> p.getRole() == role)
-					.collect(StreamUtils.singletonCollector());
-		} catch (IllegalStateException e) {
-			// settings not found returning empty one
-			return new PredefinedRoleSettings();
-		}
 	}
 
 	public ClinicPrinter getPrinterByName(String name) {

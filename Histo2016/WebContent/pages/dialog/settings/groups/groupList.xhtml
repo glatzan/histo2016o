@@ -72,6 +72,10 @@
 					</p:column>
 
 					<p:ajax event="rowSelect" update="@form" />
+
+					<p:ajax event="rowDblselect"
+						listener="#{dialogHandlerAction.groupListDialog.selectGroupAndHide()}"
+						disabled="#{!dialogHandlerAction.groupListDialog.selectMode}" />
 				</p:dataTable>
 			</h:panelGrid>
 

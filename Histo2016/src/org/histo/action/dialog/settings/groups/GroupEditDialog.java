@@ -12,7 +12,6 @@ import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
-import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoSettings;
 import org.springframework.beans.factory.annotation.Autowired;

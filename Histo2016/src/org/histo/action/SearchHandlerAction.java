@@ -48,7 +48,7 @@ public class SearchHandlerAction {
 	private boolean searchWorklist;
 
 	public void quickSearch() {
-		quickSearch(getSearchString(), userHandlerAction.getCurrentUser().isAlternatePatientAddMode());
+		quickSearch(getSearchString(), userHandlerAction.getCurrentUser().getSettings().isAlternatePatientAddMode());
 	}
 
 	/**

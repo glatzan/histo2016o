@@ -63,7 +63,7 @@ public class AddTaskToFavouriteListDialog extends AbstractDialog {
 			super.initBean(task, Dialog.FAVOURITE_LIST_ADD);
 
 			// loading lists of current user
-			setUserFavouriteLists(favouriteListDAO.getFavouriteListsOfUser(userHandlerAction.getCurrentUser()));
+			setUserFavouriteLists(favouriteListDAO.getFavouriteListsForUser(userHandlerAction.getCurrentUser()));
 			
 			// getting default lists
 			defaultFavouriteLists = new ArrayList<FavouriteList>();
