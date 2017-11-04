@@ -22,12 +22,12 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
-import org.histo.config.enums.Role;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
+import org.histo.model.user.HistoGroup.AuthRole;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
@@ -60,9 +60,6 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID, Arc
 	@Column(columnDefinition = "boolean default false")
 	private boolean archived;
 
-	@Enumerated(EnumType.STRING)
-	private Role role;
-
 	@ManyToOne(fetch = FetchType.EAGER)
 	@NotAudited
 	private HistoGroup group;
@@ -89,27 +86,22 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID, Arc
 	public HistoUser() {
 	}
 
-	/**
-	 * Consturctor for creating new Histouser
-	 * 
-	 * @param name
-	 */
 	public HistoUser(String name) {
-		this(name, Role.GUEST);
-	}
-
-	public HistoUser(String name, Role role) {
 		setUsername(name);
-		setRole(role);
 		setPhysician(new Physician());
 		getPhysician().setPerson(new Person());
-
 	}
 
 	@Transient
-	public List<Role> getAuthorities() {
-		List<Role> result = new ArrayList<Role>();
-		result.add(role);
+	public List<HistoGroup> getAuthorities() {
+		List<HistoGroup> result = new ArrayList<HistoGroup>();
+
+		if (group == null)
+			result.add(new HistoGroup(null, AuthRole.ROLE_NONEAUTH));
+		else {
+			result.add(group);
+		}
+
 		return result;
 	}
 
@@ -126,10 +118,8 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID, Arc
 
 	@Override
 	public boolean equals(Object obj) {
-
 		if (obj instanceof HistoUser && ((HistoUser) obj).getId() == getId())
 			return true;
-
 		return super.equals(obj);
 	}
 }

@@ -314,7 +314,7 @@
 /* Tabs on the left side style */
 .tabDialogLayout .tabView .ui-tabs-nav li {
 	border: 1px solid #a8a8a8 !important;
-	border-radius: 3px  !important;
+	border-radius: 3px !important;
 	float: left !important;
 	width: 100% !important;
 	margin-left: 1px !important;
@@ -352,6 +352,11 @@
 .smallButton .ui-button-text {
 	padding-top: 0.2em !important;
 	padding-bottom: 0.2em !important;
+	font-size: 12px;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
 }
 /* ---------------- Fonts ------------ */
 .standardFont, .standardFont label {

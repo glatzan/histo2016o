@@ -2,13 +2,13 @@ package org.histo.action.handler;
 
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
-import org.histo.config.enums.Role;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
+import org.histo.model.user.HistoPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class TaskStatusHandler {
 			return false;
 
 		// users and guest can't edit anything
-		if (!userHandlerAction.currentUserHasRoleOrHigher(Role.MTA)) {
+		if (!userHandlerAction.currentUserHasPermission(HistoPermissions.EDIT_TASK)) {
 			logger.debug("Task not editable, user has no permission");
 			return false;
 		}

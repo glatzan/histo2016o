@@ -7,7 +7,6 @@ import org.histo.config.enums.Display;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.Month;
-import org.histo.config.enums.Role;
 import org.histo.config.enums.SignatureRole;
 import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.TaskPriority;
@@ -35,15 +34,6 @@ public class EnumProvider {
 	 */
 	public Display[] getDisplays() {
 		return Display.values();
-	}
-
-	/**
-	 * Returns an array containing all available roles.
-	 * 
-	 * @return
-	 */
-	public Role[] getRoles() {
-		return Role.values();
 	}
 
 	/**

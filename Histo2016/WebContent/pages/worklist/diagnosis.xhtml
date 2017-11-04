@@ -63,7 +63,7 @@
 								<p:inputText value="#{sample.material}"
 									disabled="#{!taskEditable}" tabindex="1"
 									styleClass="smallInput customBackground"
-									style="width:200px;float:right;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}" />
+									style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}" />
 
 								<p:commandLink tabindex="1"
 									title="#{msg['body.receiptlog.notification.hint']}"
@@ -81,7 +81,7 @@
 					<h:outputLabel value="#{msg['body.diagnosis.eye']}" />
 					<p:selectOneMenu styleClass="smallInput customBackground"
 						tabindex="6"
-						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
+						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						disabled="#{!taskEditable}" value="#{selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
@@ -142,7 +142,7 @@
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="2"
-						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
+						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						styleClass="customBackground" disabled="#{!taskEditable}"
 						value="#{selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
@@ -155,7 +155,7 @@
 					<h:outputLabel value="#{msg['body.diagnosis.taskEDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="3"
 						disabled="#{!taskEditable}"
-						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
+						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						styleClass="customBackground"
 						value="#{selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
@@ -188,7 +188,7 @@
 					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
 						editable="true" disabled="#{!taskEditable}"
 						styleClass="customBackground" tabindex="5"
-						style="background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
+						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
 						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />

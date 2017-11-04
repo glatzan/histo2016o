@@ -58,7 +58,7 @@
 						<p:selectOneMenu style="margin-top:1px;"
 							title="#{msg['dialog.userList.list.group.text']}"
 							value="#{user.role}"
-							disabled="#{!(userHandlerAction.currentUserHasRoleOrHigher('MODERATOR') and dialogHandlerAction.userListDialog.editMode)}">
+							disabled="#{!(userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS') and dialogHandlerAction.userListDialog.editMode)}">
 
 							<p:ajax event="change" execute="@this" partialSubmit="true"
 								listener="#{dialogHandlerAction.userListDialog.onChangeUserRole(user)}"></p:ajax>
@@ -73,7 +73,7 @@
 					<!-- edit user only rendere if admin -->
 					<p:column style="width:5%; text-align:center;"
 						styleClass="optionsColumn"
-						rendered="#{userHandlerAction.currentUserHasRoleOrHigher('ADMIN') and dialogHandlerAction.userListDialog.editMode}">
+						rendered="#{userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS') and dialogHandlerAction.userListDialog.editMode}">
 						<f:facet name="header">
 							<i class="fa fa-cog"
 								title="#{msg['dialog.userList.list.options']}" />

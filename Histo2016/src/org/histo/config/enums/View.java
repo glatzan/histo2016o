@@ -20,23 +20,29 @@ public enum View {
 
 	private final String path;
 
-	private final View parentView;
+	private final View rootView;
 	
 	View(final String path) {
 		this.path = path;
-		this.parentView = null;
+		this.rootView = null;
 	}
 	
 	View(final String path, View parentView) {
 		this.path = path;
-		this.parentView = parentView;
+		this.rootView = parentView;
 	}
 
 	public String getPath() {
 		return path;
 	}
+
+	public String getRootPath(){
+		if(rootView != null)
+			return rootView.getPath();
+		return getPath();
+	}
 	
-	public View getParentView(){
-		return parentView;
+	public View getRootView(){
+		return rootView;
 	}
 }

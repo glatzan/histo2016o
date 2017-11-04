@@ -37,6 +37,7 @@ import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.patient.Patient;
+import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.settings.LdapHandler;
 import org.histo.ui.ListChooser;
@@ -73,16 +74,10 @@ public class SettingsDialogHandler extends AbstractDialog {
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
-	private MainHandlerAction mainHandlerAction;
-
-	@Autowired
 	private ResourceBundle resourceBundle;
 
 	@Autowired
 	private UserHandlerAction userHandlerAction;
-
-	@Autowired
-	private GlobalSettings globalSettings;
 
 	@Autowired
 	private FavouriteListDAO favouriteListDAO;
@@ -188,6 +183,10 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		private List<HistoUser> users;
 
+		private List<HistoGroup> groups;
+		
+		private DefaultTransformer<HistoGroup> groupTransformer;
+		
 		public HistoUserTab() {
 			setTabName("HistoUserTab");
 			setName("dialog.settings.user");
@@ -196,11 +195,13 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 		public void updateData() {
 			setUsers(userDAO.getUsers(false));
+			setGroups(userDAO.getGroups(false));
+			setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 		}
 
 		public void onChangeUserRole(HistoUser histoUser) {
 			try {
-				userHandlerAction.roleOfuserHasChanged(histoUser);
+				userHandlerAction.groupOfUserHasChanged(histoUser);
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}

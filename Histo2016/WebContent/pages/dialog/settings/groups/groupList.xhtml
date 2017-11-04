@@ -49,6 +49,7 @@
 						style="width:40px;" styleClass="optionsColumn">
 						<!-- edit -->
 						<p:commandLink
+							disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_GROUP_SETTINGS')}"
 							title="#{msg['dialog.groupList.list.options.edit']}"
 							actionListener="#{dialogHandlerAction.groupEditDialog.initAndPrepareBean(group)}"
 							process="@this" partialSubmit="true">
@@ -60,6 +61,7 @@
 
 						<!-- archive -->
 						<p:commandLink
+							disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_GROUP_SETTINGS')}"
 							title="#{group.archived ? msg['dialog.groupList.list.options.dearchive'] :  msg['dialog.groupList.list.options.archive']}"
 							update="@form" partialSubmit="true" process="@this">
 							<i class="fa fa-fw #{group.archived ? 'fa-undo' : 'fa-times' }" />
@@ -103,7 +105,7 @@
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- New group, only editMode -->
 					<p:commandButton value="#{msg['dialog.groupList.button.newGroup']}"
-						rendered="#{dialogHandlerAction.groupListDialog.editMode}"
+						rendered="#{dialogHandlerAction.groupListDialog.editMode and userHandlerAction.currentUserHasPermission('EDIT_GROUP_SETTINGS')}"
 						icon="fa fa-plus-circle ">
 						<f:actionListener
 							binding="#{dialogHandlerAction.groupEditDialog.initAndPrepareBean()}"></f:actionListener>

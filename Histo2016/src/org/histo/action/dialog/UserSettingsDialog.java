@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.SettingsDialogHandler.AbstractSettingsTab;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
@@ -12,7 +11,6 @@ import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.model.favouriteList.FavouriteList;
-import org.histo.model.transitory.PredefinedRoleSettings;
 import org.histo.model.user.HistoUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -106,10 +104,8 @@ public class UserSettingsDialog extends AbstractTabDialog {
 		}
 
 		public boolean initTab() {
-			PredefinedRoleSettings roleSetting = globalSettings
-					.getRoleSettingsForRole(userHandlerAction.getCurrentUser().getRole());
-
-			setAvailableViews(roleSetting.getSelectableViews());
+			
+			setAvailableViews(new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
 
 			setAvailableWorklistsToLoad(new ArrayList<WorklistSearchOption>());
 			getAvailableWorklistsToLoad().add(WorklistSearchOption.DIAGNOSIS_LIST);

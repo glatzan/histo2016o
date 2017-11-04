@@ -33,7 +33,7 @@
 
 			<!-- Name -->
 			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
+				columnClasses="columnLabelContainer150, columnAutoWidth">
 				<h:outputLabel value="#{msg['dialog.groupEdit.group.name']}" />
 				<p:inputText
 					value="#{dialogHandlerAction.groupEditDialog.group.name}"></p:inputText>
@@ -49,7 +49,7 @@
 
 			<!-- Available views -->
 			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
+				columnClasses="columnLabelContainer150 , columnAutoWidth">
 				<h:outputLabel
 					value="#{msg['dialog.groupEdit.group.settings.view.masks']}" />
 				<p:selectCheckboxMenu updateLabel="true" multiple="true"
@@ -65,7 +65,7 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="6" styleClass="newStyleListingTable"
-				columnClasses="columnLabelContainer150 columnBold, columnLabelContainer200, columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth">
+				columnClasses="columnLabelContainer150 , columnLabelContainer200, columnLabelContainer150 , columnAutoWidth, columnLabelContainer150 , columnAutoWidth">
 				<!-- default view -->
 				<h:outputLabel
 					value="#{msg['dialog.groupEdit.group.settings.defaultView']}" />
@@ -101,7 +101,7 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="5" styleClass="newStyleListingTable"
-				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth">
+				columnClasses="columnLabelContainer150 , columnAutoWidth, columnLabelContainer150 , columnAutoWidth">
 
 				<!-- worklist -->
 				<h:outputLabel
@@ -144,11 +144,12 @@
 						style="margin-left:15px;"
 						onLabel="#{msg['dialog.groupEdit.group.settings.worklist.sorting.asc']}"
 						offLabel="#{msg['dialog.groupEdit.group.settings.worklist.sorting.desc']}" />
+
 				</h:panelGrid>
 			</h:panelGrid>
 
 			<h:panelGrid columns="6" styleClass="newStyleListingTable"
-				columnClasses="columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth, columnLabelContainer150 columnBold, columnAutoWidth">
+				columnClasses="columnLabelContainer150 , columnAutoWidth, columnLabelContainer150 , columnAutoWidth, columnLabelContainer150 , columnAutoWidth">
 
 				<!-- hide inactive tasks -->
 				<h:outputLabel
@@ -178,6 +179,21 @@
 				<p:separator style="width:100%" />
 				<h:outputLabel value="Rechte" />
 			</h:panelGrid>
+			
+			
+			<p:dataGrid var="permission" value="#{dialogHandlerAction.groupEditDialog.permissions}" columns="3"
+				layout="grid" rows="12" paginator="true" id="cars"
+				rowsPerPageTemplate="6,12,16">
+
+				<f:facet name="header">
+            Cars for Sale
+        </f:facet>
+
+				<p:panel style="text-align:center">
+				#{permission.key.name()}
+				</p:panel>
+
+			</p:dataGrid>
 		</div>
 
 		<div class="buttonContainer">

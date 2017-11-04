@@ -4,10 +4,9 @@ import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
-import org.histo.config.enums.Role;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
-import org.histo.model.transitory.PredefinedRoleSettings;
+import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoUser;
 import org.histo.template.mail.RequestUnlockMail;
 import org.histo.util.mail.MailHandler;
@@ -91,8 +90,8 @@ public class UserHandlerAction implements Serializable {
 	 * @param role
 	 * @return
 	 */
-	public boolean currentUserHasRole(Role role) {
-		return userHasRole(getCurrentUser(), role);
+	public boolean currentUserHasPermission(HistoPermissions permissions) {
+		return userHasPermission(getCurrentUser(), permissions);
 	}
 
 	/**
@@ -102,62 +101,8 @@ public class UserHandlerAction implements Serializable {
 	 * @param role
 	 * @return
 	 */
-	public boolean userHasRole(HistoUser user, Role role) {
-		return user.getRole().equals(role);
-	}
-
-	/**
-	 * Checks if the current user has the passed role, or has a role with more
-	 * rights.
-	 * 
-	 * @param role
-	 * @return
-	 */
-	public boolean currentUserHasRoleOrHigher(Role role) {
-		return userHasRoleOrHigher(getCurrentUser(), role);
-	}
-
-	/**
-	 * Check if the user has the passed role, or has a role with more rights.
-	 * 
-	 * @param user
-	 * @param role
-	 * @return
-	 */
-	public boolean userHasRoleOrHigher(HistoUser user, Role role) {
-		return user.getRole().getRoleValue() >= role.getRoleValue();
-	}
-
-	/**
-	 * Changes the role for the current user.
-	 * 
-	 * @param role
-	 * @throws CustomDatabaseInconsistentVersionException
-	 */
-	public void changeRoleForCurrentUser(String role) throws CustomDatabaseInconsistentVersionException {
-		changeRoleForUser(getCurrentUser(), Role.getRoleByToken(role));
-	}
-
-	/**
-	 * Changes the role of the current user.
-	 * 
-	 * @param role
-	 * @throws CustomDatabaseInconsistentVersionException
-	 */
-	public void changeRoleForCurrentUser(Role role) throws CustomDatabaseInconsistentVersionException {
-		changeRoleForUser(getCurrentUser(), role);
-	}
-
-	/**
-	 * Changes the role of the given user.
-	 * 
-	 * @param user
-	 * @param role
-	 * @throws CustomDatabaseInconsistentVersionException
-	 */
-	public void changeRoleForUser(HistoUser user, Role role) throws CustomDatabaseInconsistentVersionException {
-		user.setRole(role);
-		roleOfuserHasChanged(user);
+	public boolean userHasPermission(HistoUser user, HistoPermissions role) {
+		return user.getGroup().getPermissions().stream().anyMatch(p -> p == role);
 	}
 
 	/**
@@ -166,11 +111,10 @@ public class UserHandlerAction implements Serializable {
 	 * @param histoUser
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public void roleOfuserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
-		PredefinedRoleSettings roleSetting = globalSettings.getRoleSettingsForRole(histoUser.getRole());
-		histoUser.updateUserSettings(roleSetting);
-		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getRole().toString());
-		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getRole() });
+	public void groupOfUserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
+		histoUser.getSettings().updateCrucialSettings(histoUser.getGroup().getSettings());
+		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getGroup().toString());
+		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getGroup() });
 	}
 
 	/**

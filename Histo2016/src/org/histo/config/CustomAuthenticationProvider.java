@@ -10,7 +10,6 @@ import javax.naming.directory.DirContext;
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.Role;
 import org.histo.dao.TransientDAO;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
@@ -56,7 +55,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				HistoUser histoUser = transientDAO.loadUserByName(userName);
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
-					histoUser = new HistoUser(userName, Role.USER);
+					histoUser = new HistoUser(userName);
 				} else if (histoUser.getPhysician() == null) {
 					histoUser.setPhysician(new Physician());
 					histoUser.getPhysician().setPerson(new Person());

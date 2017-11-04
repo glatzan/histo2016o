@@ -5,7 +5,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<div class="contentDiv">
 		<p:panel style="width:100%;" header="#{msg['dialog.settings.user']}"
@@ -34,22 +35,24 @@
 				style="width: auto !important">
 
 				<p:selectOneMenu style="margin-top:1px;"
-					title="#{msg['body.worklist.header.view']}" value="#{user.role}"
+					title="#{msg['body.worklist.header.view']}" value="#{user.group}"
 					styleClass="smallerInput"
-					disabled="#{!userHandlerAction.currentUserHasRoleOrHigher('MODERATOR')}]">
+					converter="#{settingsDialogHandler.getTab('HistoUserTab').groupTransformer}"
+					disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}]">
 
 					<p:ajax event="change" execute="histoUser" partialSubmit="true"
 						listener="#{settingsDialogHandler.getTab('HistoUserTab').onChangeUserRole(user)}"></p:ajax>
 
-					<f:selectItems value="#{enumProvider.roles}" var="role"
-						itemValue="#{role}" itemLabel="#{msg['enum.role.'.concat(role)]}" />
+					<f:selectItems
+						value="#{settingsDialogHandler.getTab('HistoUserTab').groups}"
+						var="group" itemValue="#{group}" itemLabel="#{group.name}" />
 
 				</p:selectOneMenu>
 			</p:column>
 
 			<!-- edit user only rendere if admin -->
 			<p:column style="width:5%; text-align:center;"
-				rendered="#{userHandlerAction.currentUserHasRoleOrHigher('ADMIN')}">
+				rendered="#{userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}">
 				<f:facet name="header">
 					<i class="fa fa-cog"
 						title="#{msg['dialog.settings.person.list.options']}" />
@@ -57,7 +60,7 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					execute="histoUser" partialSubmit="true"
+					execute="@this" partialSubmit="true"
 					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(user.physician)}">
 					<i class="fa fa-fw fa-cog" />
 					<p:ajax event="dialogReturn"
@@ -74,6 +77,7 @@
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 			<h:panelGrid columns="3" style="float:right;">
 				<p:commandButton
+					rendered="#{userHandlerAction.currentUserHasPermission('EDIT_GROUP_SETTINGS')}"
 					value="#{msg['dialog.settings.user.button.groups']}"
 					icon="fa fa-fw fa-cog"
 					styleClass="smallButton buttonRighMarginInList" process="@this"
@@ -85,6 +89,7 @@
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['dialog.settings.user.button.add']}"
+					rendered="#{userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}"
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList" process="@this"
 					partialSubmit="true"

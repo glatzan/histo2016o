@@ -9,7 +9,6 @@ import javax.annotation.PostConstruct;
 import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
-import org.histo.config.enums.Role;
 import org.histo.settings.ClinicJsonHandler;
 import org.histo.settings.DefaultNotificationSettings;
 import org.histo.settings.LdapHandler;

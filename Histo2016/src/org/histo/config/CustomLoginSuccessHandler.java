@@ -7,8 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.histo.config.enums.Role;
 import org.histo.config.enums.View;
+import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,33 +51,27 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
 			HistoUser user = (HistoUser) authentication.getPrincipal();
 
-			Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+			// always one group
+			HistoGroup group = user.getAuthorities().get(0);
 
-			Collection<Role> roles = (Collection<Role>) authorities;
-
-			Role userRole = null;
-			if (!roles.isEmpty()) {
-				userRole = roles.iterator().next();
-			} else {
-				return View.LOGIN.getPath();
-			}
-
-			if (userRole == Role.NONE_AUTH)
+			if (group.getAuthRole() == AuthRole.ROLE_NONEAUTH)
 				// no role, should never happen
 				return View.LOGIN.getPath();
-			else if (userRole == Role.GUEST)
-				// guest need to be unlocked first
-				return View.GUEST.getPath();
-			else if(userRole == Role.USER)
-				return View.USERLIST.getPath();
-			else if (userRole == Role.SCIENTIST)
-				// no names are displayed
-				return View.SCIENTIST.getPath();
-			else if (userRole.getRoleValue() >= Role.MTA.getRoleValue()) {
-				// normal work environment
-				return View.WORKLIST.getPath();
-			} else
-				return View.LOGIN.getPath();
+			else 
+				return user.getSettings().getDefaultView().getRootPath();
+			
+//			if (userRole == Role.GUEST)
+//				// guest need to be unlocked first
+//				return View.GUEST.getPath();
+//			else if(userRole == Role.USER)
+//				return View.USERLIST.getPath();
+//			else if (userRole == Role.SCIENTIST)
+//				// no names are displayed
+//				return View.SCIENTIST.getPath();
+//			else if (userRole.getRoleValue() >= Role.MTA.getRoleValue()) {
+//				// normal work environment
+//				return View.WORKLIST.getPath();
+//			} else
 		}
 
 		return View.LOGIN.getPath();

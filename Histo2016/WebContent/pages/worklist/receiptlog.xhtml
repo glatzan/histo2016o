@@ -43,7 +43,7 @@
 				<!-- Receipt Date -->
 				<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
 				<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
-					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
+					style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 					styleClass="smallInput customBackground"
 					disabled="#{!taskEditable}"
 					value="#{commonDataHandlerAction.selectedTask.dateOfReceiptAsDate}">
@@ -67,7 +67,7 @@
 						</p:ajax>
 					</p:selectBooleanCheckbox>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
-						style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
+						style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
 						styleClass="smallInput customBackground"
 						value="#{commonDataHandlerAction.selectedTask.dueDateAsDate}"
 						disabled="#{!commonDataHandlerAction.selectedTask.dueDateSelected or !taskEditable}">
@@ -83,7 +83,7 @@
 				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 				<p:selectOneMenu id="wards"
 					value="#{commonDataHandlerAction.selectedTask.ward}"
-					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
+					style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
 					styleClass="smallInput customBackground" editable="true"
 					disabled="#{!taskEditable}">
 					<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
@@ -95,7 +95,7 @@
 				<!-- EYE -->
 				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
 				<p:selectOneMenu
-					style="width: 80%;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
+					style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
 					styleClass="smallInput customBackground"
 					value="#{commonDataHandlerAction.selectedTask.eye}"
 					disabled="#{!taskEditable}">
@@ -171,7 +171,7 @@
 
 							<p:inputText value="#{sample.material}"
 								disabled="#{!taskEditable}"
-								style="margin-left:10px;background:##{userHandlerAction.currentUser.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
+								style="margin-left:10px;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
 								styleClass="smallInput customBackground" />
 
 							<p:commandLink

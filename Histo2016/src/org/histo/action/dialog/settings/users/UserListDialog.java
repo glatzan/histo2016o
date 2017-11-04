@@ -85,7 +85,7 @@ public class UserListDialog extends AbstractDialog {
 
 	public void onChangeUserRole(HistoUser histoUser) {
 		try {
-			userHandlerAction.roleOfuserHasChanged(histoUser);
+			userHandlerAction.groupOfUserHasChanged(histoUser);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

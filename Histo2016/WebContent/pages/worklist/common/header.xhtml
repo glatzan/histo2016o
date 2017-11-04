@@ -437,6 +437,7 @@
 
 				<!-- s button -->
 				<p:menuitem value="#{msg['body.worklist.header.button.settings']}"
+					rendered="#{userHandlerAction.currentUserHasPermission('SHOW_SETTINGS_DIALOG')}"
 					onclick="$('#headerForm\\:settingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
 
 				<!-- notification -->

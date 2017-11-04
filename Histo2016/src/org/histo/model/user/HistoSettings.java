@@ -1,5 +1,6 @@
 package org.histo.model.user;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -58,7 +60,7 @@ public class HistoSettings implements HasID, Cloneable {
 	 */
 	@Column(columnDefinition = "VARCHAR")
 	private String preferedPrinter;
-	
+
 	/**
 	 * True if the label printer should be autoselected
 	 */
@@ -133,7 +135,8 @@ public class HistoSettings implements HasID, Cloneable {
 	@Enumerated(EnumType.STRING)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
-	private Set<View> availableViews;
+	@OrderColumn(name = "position")
+	private List<View> availableViews;
 
 	@Transient
 	public View[] getAvailableViewsAsArray() {
@@ -141,12 +144,27 @@ public class HistoSettings implements HasID, Cloneable {
 	}
 
 	public void setAvailableViewsAsArray(View[] views) {
-		this.availableViews = new HashSet<View>(Arrays.asList(views));
+		this.availableViews = Arrays.asList(views);
 	}
 
 	@Override
 	protected HistoSettings clone() throws CloneNotSupportedException {
 		return (HistoSettings) super.clone();
+	}
+
+	/**
+	 * Only copies crucial settings
+	 * 
+	 * @param newSettings
+	 */
+	public void updateCrucialSettings(HistoSettings newSettings) {
+		setDefaultView(newSettings.getDefaultView());
+		setWorklistToLoad(newSettings.getWorklistToLoad());
+		setWorklistSortOrder(newSettings.getWorklistSortOrder());
+		setWorklistSortOrderAsc(newSettings.isWorklistSortOrderAsc());
+		setWorklistHideNoneActiveTasks(newSettings.isWorklistHideNoneActiveTasks());
+		setAlternatePatientAddMode(newSettings.isAlternatePatientAddMode());
+		setAvailableViews(new ArrayList<View>(newSettings.getAvailableViews()));
 	}
 
 }

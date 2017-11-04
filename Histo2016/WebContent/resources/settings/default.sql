@@ -234,21 +234,70 @@ INSERT INTO diagnosispreset (id, category, commentary, diagnosis, extendeddiagno
 
 SELECT setval('diagnosispreset_sequence', (SELECT MAX(id) FROM diagnosispreset));
 
-INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (2,0,false, true, true, 8, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 0)
-INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (3,0,false, true, true, 8, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 0)
-INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (15,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1)
-INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (6,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1)
-INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (1,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1)
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (1,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (2,0,false, true, true, 8, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 0);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (3,0,false, true, true, 8, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 0);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (4,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (5,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (6,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (7,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (8,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (9,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (10,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (11,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
+INSERT INTO histosettings (id, version, alternatepatientaddmode, autoselectedpreferedlabelprinter, autoselectedpreferedprinter, defaultview, inputfieldcolor, inputfieldfontcolor, preferedlabelpritner, preferedprinter,worklistautoupdate, worklisthidenoneactivetasks, worklistsortorder, worklistsortorderasc, worklisttoload) VALUES (12,0,false, true, true, 9, 'ffffff', '000000', NULL, NULL,false, true, 0, true, 1);
 
 SELECT setval('settings_sequence', (SELECT MAX(id) FROM histosettings));
 
-INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (2,  0, 'MTA', 'joosb', 0, 2, 2);
-INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (3,  0, 'MTA', 'zeitler', 0, 3, 3);
-INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (4,  0, 'PHYSICIAN', 'zimmeli', 0, 15);
-INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (5,  0, 'MODERATOR', 'auw', 0,  6);
-INSERT INTO histouser (id, lastlogin, role, username, version, physician_id, settings_id) VALUES (1, ,0, 'ADMIN', 'glatza', 0, 1);
- 
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (1, 'WORKLIST_TASKS', 0);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (1, 'WORKLIST_PATIENT', 1);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (1, 'WORKLIST_RECEIPTLOG', 2);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (1, 'WORKLIST_DIAGNOSIS', 3);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (2, 'WORKLIST_TASKS', 0);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (2, 'WORKLIST_PATIENT', 1);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (2, 'WORKLIST_RECEIPTLOG', 2);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (2, 'WORKLIST_DIAGNOSIS', 3);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (3, 'WORKLIST_TASKS', 0);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (3, 'WORKLIST_PATIENT', 1);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (3, 'WORKLIST_RECEIPTLOG', 2);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (3, 'WORKLIST_DIAGNOSIS', 3); 
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (4, 'WORKLIST_TASKS', 0);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (4, 'WORKLIST_PATIENT', 1);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (4, 'WORKLIST_RECEIPTLOG', 2);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (4, 'WORKLIST_DIAGNOSIS', 3);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (5, 'WORKLIST_TASKS', 0);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (5, 'WORKLIST_PATIENT', 1);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (5, 'WORKLIST_RECEIPTLOG', 2);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (5, 'WORKLIST_DIAGNOSIS', 3);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (6, 'WORKLIST_TASKS', 0);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (6, 'WORKLIST_PATIENT', 1);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (6, 'WORKLIST_RECEIPTLOG', 2);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (6, 'WORKLIST_DIAGNOSIS', 3);
 
+INSERT INTO histogroup_permissions (histogroup_id, permissions) values (7, 'SHOW_SETTINGS_DIALOG');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) values (7, 'EDIT_USER_SETTINGS');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) values (7, 'EDIT_GROUP_SETTINGS');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) values (7, 'EDIT_FAVOURITE_LIST_SETTINGS');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) values (7, 'EDIT_TASK');
+
+
+
+
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (1, false, 'Keine Berechtigung', 'Keine Berechtigung', 0, 6, 'ROLE_NONEAUTH');
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (2, false, 'Gast', 'Warte auf Freischaltung', 0, 7, 'ROLE_GUEST');
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (3, false, 'Benutzer', 'Kann fertige Befundungen einsehen', 0, 8, 'ROLE_USER');
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (4, false, 'MTA', 'MTA', 0, 9, 'ROLE_USER');
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (5, false, 'Befunder', 'Befunder', 0, 10, 'ROLE_USER');
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (6, false, 'Moderator', 'Moderator', 0, 11, 'ROLE_USER');
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (7, false, 'Admin', 'Admin', 0, 12, 'ROLE_USER');
+
+SELECT setval('group_sequence', (SELECT MAX(id) FROM histogroup));
+			
+INSERT INTO histouser (id, lastlogin, username, version, physician_id, settings_id, group_id) VALUES (1,  0, 'glatza', 0, 1, 1,7);
+INSERT INTO histouser (id, lastlogin, username, version, physician_id, settings_id, group_id) VALUES (2,  0, 'joosb', 0, 2, 2, 4);
+INSERT INTO histouser (id, lastlogin, username, version, physician_id, settings_id, group_id) VALUES (3,  0, 'zeitler', 0, 3, 3, 4);
+INSERT INTO histouser (id, lastlogin, username, version, physician_id, settings_id, group_id) VALUES (4,  0, 'zimmeli', 0, 15, 4, 5);
+INSERT INTO histouser (id, lastlogin, username, version, physician_id, settings_id, group_id) VALUES (5,  0, 'auw', 0, 6, 5, 6);
 
 SELECT setval('user_sequence', (SELECT MAX(id) FROM histouser));
 

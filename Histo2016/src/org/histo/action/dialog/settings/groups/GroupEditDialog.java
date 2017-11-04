@@ -1,8 +1,11 @@
 package org.histo.action.dialog.settings.groups;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
@@ -13,6 +16,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -52,9 +56,13 @@ public class GroupEditDialog extends AbstractDialog {
 
 	private List<WorklistSearchOption> availableWorklistsToLoad;
 
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private Map<HistoPermissions, BooleanHolder> permissions;
+
 	public void initAndPrepareBean() {
 		HistoGroup group = new HistoGroup(new HistoSettings());
-		group.getSettings().setAvailableViews(new HashSet<View>());
+		group.getSettings().setAvailableViews(new ArrayList<View>());
 		if (initBean(group, false))
 			prepareDialog();
 	}
@@ -88,8 +96,35 @@ public class GroupEditDialog extends AbstractDialog {
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.NOTIFICATION_LIST);
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.EMTY);
 
+		setPermissions(group.getPermissions());
+
 		super.initBean(task, Dialog.SETTINGS_GROUP_EDIT);
 		return true;
+	}
+
+	public void setPermissions(Set<HistoPermissions> groupPermissions) {
+		permissions = new HashMap<HistoPermissions, BooleanHolder>();
+
+		Set<HistoPermissions> groupPermissionsCopy = new HashSet<HistoPermissions>(groupPermissions);
+		HistoPermissions[] permissionArr = HistoPermissions.values();
+
+		for (int i = 0; i < permissionArr.length; i++) {
+			System.out.println(permissionArr[i]);
+			BooleanHolder permissionIsSet = new BooleanHolder(false);
+			for (HistoPermissions histoPermission : groupPermissionsCopy) {
+				if (permissionArr[i] == histoPermission) {
+					permissionIsSet.setValue(true);
+					break;
+				}
+			}
+
+			permissions.put(permissionArr[i], permissionIsSet);
+		}
+	}
+
+	public List<Map.Entry<HistoPermissions, BooleanHolder>> getPermissions() {
+		Set<Map.Entry<HistoPermissions, BooleanHolder>> productSet = permissions.entrySet();
+		return new ArrayList<Map.Entry<HistoPermissions, BooleanHolder>>(productSet);
 	}
 
 	public void saveGroup() {
@@ -112,5 +147,15 @@ public class GroupEditDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 
+	}
+
+	@Getter
+	@Setter
+	public class BooleanHolder {
+		private boolean value;
+
+		public BooleanHolder(boolean value) {
+			this.value = value;
+		}
 	}
 }
