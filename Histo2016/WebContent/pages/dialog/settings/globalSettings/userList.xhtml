@@ -41,7 +41,7 @@
 					disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}]">
 
 					<p:ajax event="change" execute="histoUser" partialSubmit="true"
-						listener="#{settingsDialogHandler.getTab('HistoUserTab').onChangeUserRole(user)}"></p:ajax>
+						listener="#{settingsDialogHandler.getTab('HistoUserTab').onChangeUserGroup(user)}"></p:ajax>
 
 					<f:selectItems
 						value="#{settingsDialogHandler.getTab('HistoUserTab').groups}"

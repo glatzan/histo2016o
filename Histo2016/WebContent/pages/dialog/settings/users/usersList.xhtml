@@ -57,15 +57,16 @@
 					<p:column headerText="#{msg['dialog.userList.list.group']}">
 						<p:selectOneMenu style="margin-top:1px;"
 							title="#{msg['dialog.userList.list.group.text']}"
-							value="#{user.role}"
+							value="#{user.group}"
+							converter="#{dialogHandlerAction.userListDialog.groupTransformer}"
 							disabled="#{!(userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS') and dialogHandlerAction.userListDialog.editMode)}">
 
 							<p:ajax event="change" execute="@this" partialSubmit="true"
-								listener="#{dialogHandlerAction.userListDialog.onChangeUserRole(user)}"></p:ajax>
+								listener="#{dialogHandlerAction.userListDialog.onChangeUserGroup(user)}"></p:ajax>
 
-							<f:selectItems value="#{enumProvider.roles}" var="role"
-								itemValue="#{role}"
-								itemLabel="#{msg['enum.role.'.concat(role)]}" />
+							<f:selectItems
+								value="#{dialogHandlerAction.userListDialog.groups}" var="group"
+								itemValue="#{group}" itemLabel="#{group.name}" />
 
 						</p:selectOneMenu>
 					</p:column>

@@ -34,7 +34,7 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="1" styleClass="newStyleListingTable">
-				<p:dataTable var="group" scrollable="true" scrollHeight="400"
+				<p:dataTable var="group" scrollable="true" scrollHeight="480"
 					selection="#{dialogHandlerAction.groupListDialog.selectedGroup}"
 					rowKey="#{group.id}" selectionMode="single" rowIndexVar="rowIdx"
 					id="batchList" styleClass="newStyleDataTable"
@@ -76,9 +76,18 @@
 					<p:ajax event="rowSelect" update="@form" />
 
 					<p:ajax event="rowDblselect"
-						listener="#{dialogHandlerAction.groupListDialog.selectGroupAndHide()}"
-						disabled="#{!dialogHandlerAction.groupListDialog.selectMode}" />
+						oncomplete="$('#dialogContent\\:rowDblSelectCommand').click();">
+					</p:ajax>
 				</p:dataTable>
+
+				<p:commandButton widgetVar="rowDblSelectCommand"
+					style="display: none" id="rowDblSelectCommand"
+					actionListener="#{dialogHandlerAction.groupListDialog.onRowDblSelect()}"
+					name="rowDblSelectCommand">
+					<p:ajax event="dialogReturn"
+						listener="#{dialogHandlerAction.groupListDialog.updateData()}"
+						update="@form" />
+				</p:commandButton>
 			</h:panelGrid>
 
 		</div>

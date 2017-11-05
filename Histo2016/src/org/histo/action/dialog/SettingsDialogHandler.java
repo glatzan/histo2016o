@@ -199,7 +199,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 		}
 
-		public void onChangeUserRole(HistoUser histoUser) {
+		public void onChangeUserGroup(HistoUser histoUser) {
 			try {
 				userHandlerAction.groupOfUserHasChanged(histoUser);
 			} catch (CustomDatabaseInconsistentVersionException e) {

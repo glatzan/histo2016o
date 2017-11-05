@@ -87,7 +87,7 @@
 					value="#{msg['dialog.favouriteListEdit.userPermissions']}"></h:outputLabel>
 
 				<p:dataTable var="userPermission" style="width:100%;"
-					scrollable="true" scrollHeight="100" styleClass="newStyleDataTable"
+					scrollable="true" scrollHeight="120" styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.users}">
 
 					<!-- Name -->
@@ -166,7 +166,7 @@
 					value="#{msg['dialog.favouriteListEdit.groupPermissions']}"></h:outputLabel>
 
 				<p:dataTable var="groupPermission" style="width:100%;"
-					scrollable="true" scrollHeight="100" styleClass="newStyleDataTable"
+					scrollable="true" scrollHeight="120" styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.groups}">
 
 					<!-- name -->
@@ -244,7 +244,7 @@
 
 				<!-- taks -->
 				<h:outputLabel value="#{msg['dialog.favouriteListEdit.tasks']}"></h:outputLabel>
-				<p:dataTable var="item" scrollable="true" scrollHeight="80"
+				<p:dataTable var="item" scrollable="true" scrollHeight="100"
 					styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.favouriteListEditDialog.favouriteList.items}">
 					<p:column headerText="#{msg['dialog.favouriteListEdit.tasks.id']}"

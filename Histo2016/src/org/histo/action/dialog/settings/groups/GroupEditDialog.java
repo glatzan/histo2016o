@@ -16,6 +16,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,11 +59,14 @@ public class GroupEditDialog extends AbstractDialog {
 
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private Map<HistoPermissions, BooleanHolder> permissions;
+	private Map<String, PermissionHolder> permissions;
 
 	public void initAndPrepareBean() {
 		HistoGroup group = new HistoGroup(new HistoSettings());
 		group.getSettings().setAvailableViews(new ArrayList<View>());
+		group.setAuthRole(AuthRole.ROLE_NONEAUTH);
+		group.setPermissions(new HashSet<HistoPermissions>());
+		
 		if (initBean(group, false))
 			prepareDialog();
 	}
@@ -88,7 +92,7 @@ public class GroupEditDialog extends AbstractDialog {
 		setNewGroup(group.getId() == 0 ? true : false);
 
 		setAllViews(
-				new View[] { View.USERLIST, View.WORKLIST_DIAGNOSIS, View.WORKLIST_RECEIPTLOG, View.WORKLIST_TASKS });
+				new View[] { View.GUEST, View.USERLIST, View.WORKLIST_TASKS , View.WORKLIST_PATIENT,  View.WORKLIST_DIAGNOSIS, View.WORKLIST_RECEIPTLOG});
 
 		setAvailableWorklistsToLoad(new ArrayList<WorklistSearchOption>());
 		getAvailableWorklistsToLoad().add(WorklistSearchOption.DIAGNOSIS_LIST);
@@ -98,19 +102,31 @@ public class GroupEditDialog extends AbstractDialog {
 
 		setPermissions(group.getPermissions());
 
+		for (View view : group.getSettings().getAvailableViews()) {
+			System.out.println(view);
+		}
+		
 		super.initBean(task, Dialog.SETTINGS_GROUP_EDIT);
 		return true;
 	}
 
+	public void onChangePermission(PermissionHolder holder) {
+		permissions.forEach((k, v) -> {
+			if (v.getPermission().getParent() == holder.getPermission()) {
+				v.setValue(holder.isValue());
+			}
+			;
+		});
+	}
+
 	public void setPermissions(Set<HistoPermissions> groupPermissions) {
-		permissions = new HashMap<HistoPermissions, BooleanHolder>();
+		permissions = new HashMap<String, PermissionHolder>();
 
 		Set<HistoPermissions> groupPermissionsCopy = new HashSet<HistoPermissions>(groupPermissions);
 		HistoPermissions[] permissionArr = HistoPermissions.values();
 
 		for (int i = 0; i < permissionArr.length; i++) {
-			System.out.println(permissionArr[i]);
-			BooleanHolder permissionIsSet = new BooleanHolder(false);
+			PermissionHolder permissionIsSet = new PermissionHolder(false, permissionArr[i]);
 			for (HistoPermissions histoPermission : groupPermissionsCopy) {
 				if (permissionArr[i] == histoPermission) {
 					permissionIsSet.setValue(true);
@@ -118,13 +134,12 @@ public class GroupEditDialog extends AbstractDialog {
 				}
 			}
 
-			permissions.put(permissionArr[i], permissionIsSet);
+			permissions.put(permissionArr[i].name(), permissionIsSet);
 		}
 	}
 
-	public List<Map.Entry<HistoPermissions, BooleanHolder>> getPermissions() {
-		Set<Map.Entry<HistoPermissions, BooleanHolder>> productSet = permissions.entrySet();
-		return new ArrayList<Map.Entry<HistoPermissions, BooleanHolder>>(productSet);
+	public Map<String, PermissionHolder> getPermissions() {
+		return permissions;
 	}
 
 	public void saveGroup() {
@@ -134,6 +149,16 @@ public class GroupEditDialog extends AbstractDialog {
 					&& getGroup().getSettings().getAvailableViews().size() > 0)
 				getGroup().getSettings().setDefaultView(getGroup().getSettings().getAvailableViewsAsArray()[0]);
 		}
+
+		// settings permissions
+		getGroup().getPermissions().clear();
+
+		// adding/ readding permissions
+		permissions.forEach((p, v) -> {
+			if (v.isValue()) {
+				getGroup().getPermissions().add(v.getPermission());
+			}
+		});
 
 		try {
 			if (getGroup().getId() == 0) {
@@ -151,11 +176,14 @@ public class GroupEditDialog extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class BooleanHolder {
-		private boolean value;
+	public class PermissionHolder {
 
-		public BooleanHolder(boolean value) {
+		private boolean value;
+		private HistoPermissions permission;
+
+		public PermissionHolder(boolean value, HistoPermissions permission) {
 			this.value = value;
+			this.permission = permission;
 		}
 	}
 }

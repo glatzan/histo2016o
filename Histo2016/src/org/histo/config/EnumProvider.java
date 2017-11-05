@@ -12,6 +12,8 @@ import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.TaskPriority;
 import org.histo.model.ListItem;
 import org.histo.model.StainingPrototype;
+import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoPermissions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -137,5 +139,8 @@ public class EnumProvider {
 	public StainingPrototype.StainingType[] getStainingTypes(){
 		return  StainingPrototype.StainingType.values();
 	}
-
+	
+	public HistoGroup.AuthRole[] getAuthRoles(){
+		return HistoGroup.AuthRole.values();
+	}
 }

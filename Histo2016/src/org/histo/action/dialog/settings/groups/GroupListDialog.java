@@ -2,6 +2,8 @@ package org.histo.action.dialog.settings.groups;
 
 import java.util.List;
 
+import org.histo.action.DialogHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
@@ -9,6 +11,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.UserDAO;
 import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -34,6 +37,16 @@ public class GroupListDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private UserDAO userDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DialogHandlerAction dialogHandlerAction;
 
 	private List<HistoGroup> groups;
 
@@ -71,6 +84,19 @@ public class GroupListDialog extends AbstractDialog {
 
 	public void updateData() {
 		setGroups(userDAO.getGroups(showArchived));
+		setSelectedGroup(null);
+	}
+
+	public void onRowDblSelect() {
+		if (isSelectMode()) {
+			logger.debug("Select Mode: hiding dialog");
+			selectGroupAndHide();
+		} else {
+			logger.debug("Edit Mode: showing edit dialog");
+			if (userHandlerAction.currentUserHasPermission(HistoPermissions.EDIT_GROUP_SETTINGS)
+					&& selectedGroup != null)
+				dialogHandlerAction.getGroupEditDialog().initAndPrepareBean(selectedGroup);
+		}
 	}
 
 	public void selectGroupAndHide() {

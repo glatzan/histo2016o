@@ -11,6 +11,7 @@ import org.histo.dao.UserDAO;
 import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,6 +45,10 @@ public class UserListDialog extends AbstractDialog {
 
 	private List<HistoUser> users;
 
+	private List<HistoGroup> groups;
+	
+	private DefaultTransformer<HistoGroup> groupTransformer;
+	
 	private boolean showArchived;
 
 	private HistoUser selectedUser;
@@ -63,13 +68,13 @@ public class UserListDialog extends AbstractDialog {
 	}
 
 	public boolean initBean(boolean selectMode, boolean editMode) {
-		updateData();
-
 		setShowArchived(false);
 		setSelectMode(selectMode);
 		setEditMode(editMode);
 
 		setSelectedUser(null);
+		
+		updateData();
 
 		super.initBean(task, Dialog.SETTINGS_USERS_LIST);
 		return true;
@@ -77,13 +82,15 @@ public class UserListDialog extends AbstractDialog {
 
 	public void updateData() {
 		setUsers(userDAO.getUsers(showArchived));
+		setGroups(userDAO.getGroups(false));
+		setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 	}
 
 	public void selectUserAndHide() {
 		super.hideDialog(getSelectedUser());
 	}
 
-	public void onChangeUserRole(HistoUser histoUser) {
+	public void onChangeUserGroup(HistoUser histoUser) {
 		try {
 			userHandlerAction.groupOfUserHasChanged(histoUser);
 		} catch (CustomDatabaseInconsistentVersionException e) {
