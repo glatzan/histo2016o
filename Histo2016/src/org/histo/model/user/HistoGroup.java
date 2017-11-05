@@ -42,6 +42,8 @@ public class HistoGroup implements GrantedAuthority, HasID, ArchivAble {
 
 	private static final long serialVersionUID = 5926752130546123895L;
 
+	public static final long GROUP_GUEST_ID = 2;
+	
 	@Id
 	@GeneratedValue(generator = "group_sequencegenerator")
 	@Column(unique = true, nullable = false)

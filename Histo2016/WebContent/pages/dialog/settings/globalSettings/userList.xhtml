@@ -38,7 +38,7 @@
 					title="#{msg['body.worklist.header.view']}" value="#{user.group}"
 					styleClass="smallerInput"
 					converter="#{settingsDialogHandler.getTab('HistoUserTab').groupTransformer}"
-					disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}]">
+					disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}">
 
 					<p:ajax event="change" execute="histoUser" partialSubmit="true"
 						listener="#{settingsDialogHandler.getTab('HistoUserTab').onChangeUserGroup(user)}"></p:ajax>
@@ -51,8 +51,7 @@
 			</p:column>
 
 			<!-- edit user only rendere if admin -->
-			<p:column style="width:5%; text-align:center;"
-				rendered="#{userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}">
+			<p:column style="width:5%; text-align:center;">
 				<f:facet name="header">
 					<i class="fa fa-cog"
 						title="#{msg['dialog.settings.person.list.options']}" />
@@ -61,6 +60,7 @@
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
 					execute="@this" partialSubmit="true"
+					disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}"
 					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(user.physician)}">
 					<i class="fa fa-fw fa-cog" />
 					<p:ajax event="dialogReturn"

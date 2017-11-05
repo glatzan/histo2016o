@@ -15,6 +15,8 @@ import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
 import org.histo.settings.LdapHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,12 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
 					histoUser = new HistoUser(userName);
+					
+					HistoGroup group = transientDAO.getHistoGroup(HistoGroup.GROUP_GUEST_ID, true);
+					histoUser.setGroup(group);
+					histoUser.setSettings(new HistoSettings());
+					histoUser.getSettings().updateCrucialSettings(group.getSettings());
+					
 				} else if (histoUser.getPhysician() == null) {
 					histoUser.setPhysician(new Physician());
 					histoUser.getPhysician().setPerson(new Person());
@@ -94,6 +102,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 					logger.info("Creating new HistoUser " + physician.getPerson().getFullName());
 					histoUser = new HistoUser(userName);
 
+					HistoGroup group = transientDAO.getHistoGroup(HistoGroup.GROUP_GUEST_ID, true);
+					histoUser.setGroup(group);
+					histoUser.setSettings(new HistoSettings());
+					histoUser.getSettings().updateCrucialSettings(group.getSettings());
+					
 					// if the physician was added as surgeon the useracc an the
 					// physician will be merged
 					Physician physicianFromDatabase = transientDAO.loadPhysicianByUID(userName);

@@ -22,6 +22,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.ArchivAble;
@@ -89,7 +90,7 @@ public class HistoUser implements UserDetails, Serializable, LogAble, HasID, Arc
 	public HistoUser(String name) {
 		setUsername(name);
 		setPhysician(new Physician());
-		getPhysician().setPerson(new Person());
+		getPhysician().setPerson(new Person(new Contact()));
 	}
 
 	@Transient

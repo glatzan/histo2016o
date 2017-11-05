@@ -6,9 +6,11 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
+import org.hibernate.Hibernate;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Physician;
+import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -114,5 +116,16 @@ public class TransientDAO extends AbstractDAO {
 		save(newOrganization, "log.organization.created", new Object[] { newOrganization.getName() });
 
 		return newOrganization;
+	}
+
+	public HistoGroup getHistoGroup(long id, boolean initialize) {
+
+		HistoGroup group = get(HistoGroup.class, id);
+
+		if (initialize) {
+			Hibernate.initialize(group.getSettings());
+		}
+
+		return group;
 	}
 }

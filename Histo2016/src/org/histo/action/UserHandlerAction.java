@@ -6,6 +6,8 @@ import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
+import org.histo.dao.UserDAO;
+import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoUser;
 import org.histo.template.mail.RequestUnlockMail;
@@ -40,6 +42,11 @@ public class UserHandlerAction implements Serializable {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserDAO userDAO;
 
 	/********************************************************
 	 * login
@@ -112,7 +119,10 @@ public class UserHandlerAction implements Serializable {
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
 	public void groupOfUserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
-		histoUser.getSettings().updateCrucialSettings(histoUser.getGroup().getSettings());
+		// init histo group
+		HistoGroup group = userDAO.initializeGroup(histoUser.getGroup(), true);
+		
+		histoUser.getSettings().updateCrucialSettings(group.getSettings());
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getGroup().toString());
 		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getGroup() });
 	}

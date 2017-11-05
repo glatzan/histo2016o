@@ -85,11 +85,8 @@ public class FavouriteListDAO extends AbstractDAO {
 		Predicate orClause = qb.or(
 				qb.equal(root.get("owner"), user), 
 				qb.equal(root.get("globalView"), true),
-				qb.equal(userQuery.get("id"), user.getId()));
-
-		// qb.equal(root.get("groups").<FavouritePermissionsGroup> get("group"),
-		// user.get)
-		// ,qb.equal(userQuery.get("id"), user.getId())
+				qb.equal(userQuery.get("id"), user.getId()),
+				qb.equal(groupQuery.get("id"), user.getGroup().getId()));
 
 		criteria.where(orClause);
 
