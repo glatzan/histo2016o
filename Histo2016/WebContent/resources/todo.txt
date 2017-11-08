@@ -9,6 +9,11 @@
 						onclick="$('#headerForm\\:stainingPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
 						rendered="#{taskIsNotNull and !selectedTask.isListedInFavouriteList('StainingList', 'ReStainingList','StayInStainingList')}" />
 
+helper getPrinterForIP => sub { my ($self, $ip)=@_;
+    my $room = Mojo::UserAgent->new->get('http://10.210.21.11:3009/DB/PLS/ip2room/ip/'.$ip)->res->json->[0]->{aufruftext};
+    return sprintf("Amb-U%02d", $1) if $room =~/U([0-9]+)$/oi;
+};
+
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 

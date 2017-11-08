@@ -75,18 +75,16 @@ public class FavouriteListDAO extends AbstractDAO {
 		CriteriaQuery<FavouriteList> criteria = qb.createQuery(FavouriteList.class);
 		Root<FavouriteList> root = criteria.from(FavouriteList.class);
 		criteria.select(root);
-
+		
+		
 		Join<FavouriteList, FavouritePermissionsUser> userQuery = root.join("users", JoinType.LEFT);
 		Join<FavouriteList, FavouritePermissionsGroup> groupQuery = root.join("groups", JoinType.LEFT);
 
-		// predicates.add(criteriaBuilder.like(country.<String>
-		// get("countryName"), "%" + countryName + "%"));
-
-		Predicate orClause = qb.or(
-				qb.equal(root.get("owner"), user), 
+		Predicate orClause = qb.or(qb.equal(root.get("owner"), user), 
 				qb.equal(root.get("globalView"), true),
-				qb.equal(userQuery.get("id"), user.getId()),
-				qb.equal(groupQuery.get("id"), user.getGroup().getId()));
+				qb.equal(userQuery.get("user"), user.getId()),
+				qb.equal(groupQuery.get("group"), user.getGroup().getId()));
+		
 
 		criteria.where(orClause);
 

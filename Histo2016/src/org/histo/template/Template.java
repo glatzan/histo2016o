@@ -52,13 +52,15 @@ public abstract class Template implements HasID, Cloneable {
 	 * If true the generated content should not be saved in the database
 	 */
 	@Column
-	private boolean transientContent;
+	protected boolean transientContent;
 
 	/**
 	 * Name of the template class
 	 */
 	@Column
-	private String templateName;
+	protected String templateName;
+	
+	protected String attributes;
 
 	public abstract void prepareTemplate();
 

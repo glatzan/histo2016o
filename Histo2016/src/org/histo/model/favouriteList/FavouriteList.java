@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -54,15 +55,11 @@ public class FavouriteList implements HasID {
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<FavouriteListItem> items;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "favouritepermissions", joinColumns = {
-			@JoinColumn(name = "favouritelist_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList", targetEntity = FavouritePermissionsGroup.class)
 	@OrderBy("id ASC")
 	private List<FavouritePermissionsGroup> groups;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinTable(name = "favouritepermissions", joinColumns = {
-			@JoinColumn(name = "favouritelist_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList", targetEntity = FavouritePermissionsUser.class)
 	@OrderBy("id ASC")
 	private List<FavouritePermissionsUser> users;
 

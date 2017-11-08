@@ -289,7 +289,7 @@ INSERT INTO histosettings_availableviews (histosettings_id, availableviews, posi
 INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) values (12, 'WORKLIST_DIAGNOSIS', 3);
 
 INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (1, false, 'Kein Account', 'Keine Berechtigung', 0, 6, 'ROLE_NONEAUTH');
-INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (2, false, 'Gast', 'Warte auf Freischaltung', 0, 7, 'ROLE_GUEST');
+INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (2, false, 'Nicht freigeschaltet', 'Warte auf Freischaltung', 0, 7, 'ROLE_GUEST');
 INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (3, false, 'Benutzer', 'Kann fertige Befundungen einsehen', 0, 8, 'ROLE_USER');
 INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (4, false, 'MTA', 'MTA', 0, 9, 'ROLE_USER');
 INSERT INTO histogroup (id, archived, name, commentary, version, settings_id, authrole) values (5, false, 'Befunder', 'Befunder', 0, 10, 'ROLE_USER');

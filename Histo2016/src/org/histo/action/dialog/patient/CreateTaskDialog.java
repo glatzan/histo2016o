@@ -8,6 +8,7 @@ import javax.persistence.NoResultException;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
@@ -106,6 +107,11 @@ public class CreateTaskDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ContactDAO contactDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalSettings globalSettings;
 
 	private Patient patient;
 
@@ -343,19 +349,21 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTaskAndPrintUReport() {
 		createTask();
 
-		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.U_REPORT);
+		DocumentTemplate subSelect = DocumentTemplate.getTemplateByID(
+				globalSettings.getProgramSettings().getDefaultDocuments().getDefaultTaskCreationDocument());
 
-		if (subSelect.length == 0) {
+		if (subSelect == null) {
 			logger.error("New Task: No TemplateUtil for printing UReport found");
 			return;
 		}
 
 		// printing u report
 
-		((TemplateUReport) subSelect[0]).initData(task.getPatient(), getTask());
-		PDFContainer newPdf = ((TemplateUReport) subSelect[0]).generatePDF(new PDFGenerator());
+		((TemplateUReport) subSelect).initData(task.getPatient(), getTask());
+		PDFContainer newPdf = ((TemplateUReport) subSelect).generatePDF(new PDFGenerator());
 
-		userHandlerAction.getSelectedPrinter().print(newPdf);
+		logger.debug("printing task page");
+		userHandlerAction.getSelectedPrinter().print(newPdf, subSelect.getAttributes());
 	}
 
 	/**

@@ -55,6 +55,22 @@ public class DocumentTemplate extends Template {
 		return result.toArray(resultArr);
 	}
 
+	public static final DocumentTemplate getTemplateByID(long id) {
+		return getTemplateByID(loadTemplates(), id);
+	}
+
+	public static final DocumentTemplate getTemplateByID(DocumentTemplate[] tempaltes, long id) {
+
+		logger.debug("Getting templates out of " + tempaltes.length);
+
+		for (int i = 0; i < tempaltes.length; i++) {
+			if (tempaltes[i].getId() == id)
+				return tempaltes[i];
+		}
+
+		return null;
+	}
+	
 	public static DocumentTemplate[] loadTemplates(DocumentType... types) {
 
 		// TODO move to Database
@@ -69,19 +85,25 @@ public class DocumentTemplate extends Template {
 		ArrayList<DocumentTemplate> jsonArray = gson
 				.fromJson(FileHandlerUtil.getContentOfFile(GlobalSettings.PRINT_TEMPLATES), type);
 
-		List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
+		if (types != null && types.length > 0) {
+			List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
 
-		for (DocumentTemplate documentTemplate : jsonArray) {
-			for (DocumentType documentType : types) {
-				if (documentTemplate.getDocumentType() == documentType) {
-					result.add(documentTemplate);
+			for (DocumentTemplate documentTemplate : jsonArray) {
+				for (DocumentType documentType : types) {
+					if (documentTemplate.getDocumentType() == documentType) {
+						result.add(documentTemplate);
+					}
 				}
 			}
+
+			DocumentTemplate[] resultArr = new DocumentTemplate[result.size()];
+
+			return result.toArray(resultArr);
+		} else {
+			DocumentTemplate[] resultArr = new DocumentTemplate[jsonArray.size()];
+
+			return jsonArray.toArray(resultArr);
 		}
-
-		DocumentTemplate[] resultArr = new DocumentTemplate[result.size()];
-
-		return result.toArray(resultArr);
 	}
 
 	public static final DocumentTemplate getDefaultTemplate(DocumentTemplate[] array) {
@@ -89,9 +111,9 @@ public class DocumentTemplate extends Template {
 	}
 
 	public static final DocumentTemplate getDefaultTemplate(DocumentTemplate[] array, DocumentType ofType) {
-		if(array == null)
+		if (array == null)
 			return null;
-		
+
 		for (int i = 0; i < array.length; i++) {
 			if (array[i].isDefaultOfType()) {
 				if (ofType == null || array[i].getDocumentType() == ofType) {

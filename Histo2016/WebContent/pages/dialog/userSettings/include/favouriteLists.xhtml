@@ -12,9 +12,31 @@
 			header="#{msg['dialog.userSettings.favouriteLists']}"
 			styleClass="contentPannel" />
 
-		<p:panelGrid columns="2" id="favouriteContent"
-			styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer150 columnBold, columnAutoWidth">
+		<p:panelGrid columns="1" id="favouriteContent"
+			styleClass="newStyleListingTable">
+
+
+			<p:dataTable var="favouriteListContainer" style="width:100%;"
+				sortBy="#{favouriteListContainer.type}" scrollable="true"
+				expandableRowGroups="true" scrollHeight="450"
+				styleClass="newStyleDataTable"
+				value="#{userSettingsDialog.favouriteListTab.containers}">
+
+				<p:headerRow>
+					<p:column colspan="3">
+						<h:outputText value="#{favouriteListContainer.type}" />
+					</p:column>
+				</p:headerRow>
+
+				<p:column headerText="Name">
+					<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
+				</p:column>
+
+				<p:column headerText="#">
+
+				</p:column>
+
+			</p:dataTable>
 
 		</p:panelGrid>
 	</div>
@@ -23,7 +45,17 @@
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
-			<h:panelGrid columns="2" styleClass="newTableContainer right">
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
+
+				<p:commandButton
+					value="-> #{msg['dialog.settings.favouriteList.list.button.new']}"
+					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
+					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean()}">
+					<p:ajax event="dialogReturn"
+						listener="#{userSettingsDialog.favouriteListTab.updateData()}"
+						update="@form" />
+				</p:commandButton>
+
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-check-circle-o" partialSubmit="true"
 					process="printerTab generalTab">

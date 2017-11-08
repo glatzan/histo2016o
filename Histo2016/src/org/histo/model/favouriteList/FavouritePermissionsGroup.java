@@ -17,7 +17,6 @@ import lombok.Setter;
 @DynamicUpdate(true)
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class FavouritePermissionsGroup extends FavouritePermissions {
 
 	@OneToOne

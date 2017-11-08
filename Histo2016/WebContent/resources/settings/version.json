@@ -3,8 +3,10 @@
 		"version": "1.0.9",
 		"changes": [
 			"<b>Change:</b> Gruppenrichtlinien",
+			"<b>Change:</b> Geschwindkigkeitsverbesserung",
 			"<b>Added:</b> Favouritenlisten für Benutzer",
-			"<b>Added:</b> Favouritenlisten können freigegeben werden (Bentuzer, Gruppe, Global)"
+			"<b>Added:</b> Favouritenlisten können freigegeben werden (Bentuzer, Gruppe, Global)",
+			"<b>Added:</b> Umgedrehter Eingangsbogen, Dokument-Vorlagen können nun Attribute zugewiesen werden."
 		]
 	},
 	{
@@ -26,7 +28,9 @@
 			"<b>Fix:</b> Kontakt-Dialog verursacht keine Fehler mehr beim Suchen nach Personen",
 			"<b>Added:</b> Fehlermeldung, falls Drucker nicht erreichbar ist",
 			"<b>Added:</b> Dialog für schnelle Nachfärbungen implementiert",
-			"<b>Added:</b> Aufträge können gelöscht werden, wenn sie noch nicht bearbeitet wurden."
+			"<b>Added:</b> Aufträge können gelöscht werden, wenn sie noch nicht bearbeitet wurden.",
+			"<b>Added:</b> Benutzer können vor dem ersten Login freigeschaltet werden.",
+			"<b>Added:</b> Chargen für Färbungen können angelegt werden."
 		]
 	},
 	{

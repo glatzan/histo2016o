@@ -506,7 +506,7 @@ public class PrintDialog extends AbstractDialog {
 						savePdf(getTask(), getPdfContainer());
 
 					for (int i = 0; i < contactChooser.getCopies(); i++) {
-						userHandlerAction.getSelectedPrinter().print(getPdfContainer());
+						userHandlerAction.getSelectedPrinter().print(getPdfContainer(), getSelectedTemplate().getAttributes());
 					}
 				} else {
 					// setting other associatedContact then selected
@@ -515,7 +515,7 @@ public class PrintDialog extends AbstractDialog {
 					// render all other pdfs
 					PDFContainer otherAddress = generatePDFFromTemplate();
 					for (int i = 0; i < contactChooser.getCopies(); i++) {
-						userHandlerAction.getSelectedPrinter().print(otherAddress);
+						userHandlerAction.getSelectedPrinter().print(otherAddress, getSelectedTemplate().getAttributes());
 					}
 					// settings the old selected associatedContact as
 					// selected associatedContact
@@ -543,7 +543,7 @@ public class PrintDialog extends AbstractDialog {
 		if (!oneContactSelected) {
 			if (!getSelectedTemplate().isTransientContent())
 				savePdf(getTask(), getPdfContainer());
-			userHandlerAction.getSelectedPrinter().print(getPdfContainer());
+			userHandlerAction.getSelectedPrinter().print(getPdfContainer(), getSelectedTemplate().getAttributes());
 		}
 
 	}

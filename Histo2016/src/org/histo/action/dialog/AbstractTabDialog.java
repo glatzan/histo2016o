@@ -21,9 +21,9 @@ import lombok.Setter;
 @Setter
 public abstract class AbstractTabDialog extends AbstractDialog {
 
-	public AbstractTab[] tabs;
+	protected AbstractTab[] tabs;
 
-	private int activeIndex = 0;
+	protected int activeIndex = 0;
 
 	public void onTabChange(TabChangeEvent event) {
 		if (getActiveIndex() >= 0 && getActiveIndex() < getTabs().length) {

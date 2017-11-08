@@ -16,11 +16,11 @@ import org.histo.model.interfaces.HasID;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+//@Entity
 @Getter
 @Setter
-//@MappedSuperclass
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@MappedSuperclass
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class FavouritePermissions implements HasID {
 
 	@Id

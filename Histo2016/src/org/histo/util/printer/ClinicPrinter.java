@@ -57,22 +57,29 @@ public class ClinicPrinter extends AbstractPrinter {
 		}
 	}
 
+	public boolean print(PDFContainer container) {
+		return print(container, null);
+	}
+
 	/**
 	 * Prints a pdfContainer
 	 * 
 	 * @param container
 	 * @return
 	 */
-	public boolean print(PDFContainer container) {
+	public boolean print(PDFContainer container, String args) {
 		CupsClient cupsClient;
 		try {
 			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
 			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
+
 			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
-//			Map<String, String> tesT= new HashMap();
-//			tesT.put("job-attributes", "orientation-requested:enum:6#fit-to-page:boolean:true");
-//			printJob.setAttributes(tesT);
-//			System.out.println("printsingss");
+			if (args != null) {
+				Map<String, String> attribute = new HashMap<String, String>();
+				attribute.put("job-attributes", args);
+				printJob.setAttributes(attribute);
+				logger.debug("Printig with args: " + args);
+			}
 			printer.print(printJob);
 			return true;
 		} catch (Exception e) {

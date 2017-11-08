@@ -15,6 +15,8 @@ public class ProgramSettings {
 	
 	private DefaultDocuments defaultDocuments;
 
+	@Getter
+	@Setter
 	public class DefaultDocuments{
 		private long defaultTaskCreationDocument;
 		private long defaultSendReport;
