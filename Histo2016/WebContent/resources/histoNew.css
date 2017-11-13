@@ -165,6 +165,21 @@
 	text-decoration: none !important;
 }
 
+/* min width column*/
+.newStyleDataTable .columnMinWidth {
+	width: 1%;
+	white-space: nowrap;
+}
+
+/* auto width column*/
+.newStyleDataTable .columnAutoWidth {
+	text-align: left;
+	background-color: #fff;
+	max-width: 500px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 /* -------------- Simple Dialog Style --------------*/
 /* Dialog for adding content */
 .contentInputDialog {

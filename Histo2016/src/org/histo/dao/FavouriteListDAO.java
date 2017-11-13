@@ -2,6 +2,7 @@ package org.histo.dao;
 
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -75,16 +76,60 @@ public class FavouriteListDAO extends AbstractDAO {
 		CriteriaQuery<FavouriteList> criteria = qb.createQuery(FavouriteList.class);
 		Root<FavouriteList> root = criteria.from(FavouriteList.class);
 		criteria.select(root);
-		
-		
+
 		Join<FavouriteList, FavouritePermissionsUser> userQuery = root.join("users", JoinType.LEFT);
 		Join<FavouriteList, FavouritePermissionsGroup> groupQuery = root.join("groups", JoinType.LEFT);
 
-		Predicate orClause = qb.or(qb.equal(root.get("owner"), user), 
-				qb.equal(root.get("globalView"), true),
+		Predicate orClause = qb.or(qb.equal(root.get("owner"), user), qb.equal(root.get("globalView"), true),
 				qb.equal(userQuery.get("user"), user.getId()),
 				qb.equal(groupQuery.get("group"), user.getGroup().getId()));
-		
+
+		criteria.where(orClause);
+
+		criteria.distinct(true);
+
+		List<FavouriteList> favouriteLists = getSession().createQuery(criteria).getResultList();
+
+		return favouriteLists;
+	}
+
+	public List<FavouriteList> getFavouriteListsWithTasksForUser(HistoUser user, boolean writeable, boolean readable) {
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<FavouriteList> criteria = qb.createQuery(FavouriteList.class);
+		Root<FavouriteList> root = criteria.from(FavouriteList.class);
+		criteria.select(root);
+
+		Join<FavouriteList, FavouritePermissionsUser> userQuery = root.join("users", JoinType.LEFT);
+		Join<FavouriteList, FavouritePermissionsGroup> groupQuery = root.join("groups", JoinType.LEFT);
+
+		root.fetch("items", JoinType.LEFT);
+
+		Predicate andUser = null;
+		Predicate andGroup = null;
+
+		if (writeable && readable) {
+			andUser = qb.and(qb.equal(userQuery.get("readable"), true), qb.equal(userQuery.get("editable"), true),
+					qb.equal(userQuery.get("user"), user.getId()));
+			andGroup = qb.and(qb.equal(groupQuery.get("readable"), true), qb.equal(groupQuery.get("editable"), true),
+					qb.equal(groupQuery.get("group"), user.getGroup().getId()));
+		} else if (writeable) {
+			andUser = qb.and(qb.equal(userQuery.get("editable"), true), qb.equal(userQuery.get("user"), user.getId()));
+			andGroup = qb.and(qb.equal(groupQuery.get("editable"), true),
+					qb.equal(groupQuery.get("group"), user.getGroup().getId()));
+		} else if (readable) {
+			andUser = qb.and(qb.equal(userQuery.get("readable"), true), qb.equal(userQuery.get("user"), user.getId()));
+			andGroup = qb.and(qb.equal(groupQuery.get("readable"), true),
+					qb.equal(groupQuery.get("group"), user.getGroup().getId()));
+		} else {
+			andUser = qb.equal(userQuery.get("user"), user.getId());
+			andGroup = qb.equal(groupQuery.get("group"), user.getGroup().getId());
+		}
+
+		Predicate orClause = qb.or(qb.equal(root.get("owner"), user), qb.equal(root.get("globalView"), true), andUser,
+				andGroup);
 
 		criteria.where(orClause);
 

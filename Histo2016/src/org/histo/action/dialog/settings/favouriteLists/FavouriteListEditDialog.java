@@ -65,7 +65,13 @@ public class FavouriteListEditDialog extends AbstractDialog {
 
 	private List<FavouritePermissions> toDeleteList;
 
+	private boolean adminMode;
+
 	public void initAndPrepareBean() {
+		initAndPrepareBean(false);
+	}
+
+	public void initAndPrepareBean(boolean adminMode) {
 		FavouriteList favouriteList = new FavouriteList();
 		favouriteList.setDefaultList(false);
 		favouriteList.setUsers(new ArrayList<FavouritePermissionsUser>());
@@ -73,16 +79,20 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		favouriteList.setItems(new ArrayList<FavouriteListItem>());
 		favouriteList.setOwner(userHandlerAction.getCurrentUser());
 
-		if (initBean(favouriteList, false))
+		if (initBean(favouriteList, false, false))
 			prepareDialog();
 	}
 
 	public void initAndPrepareBean(FavouriteList favouriteList) {
-		if (initBean(favouriteList, true))
+		initAndPrepareBean(favouriteList, false);
+	}
+
+	public void initAndPrepareBean(FavouriteList favouriteList, boolean adminMode) {
+		if (initBean(favouriteList, adminMode, true))
 			prepareDialog();
 	}
 
-	public boolean initBean(FavouriteList favouriteList, boolean initialize) {
+	public boolean initBean(FavouriteList favouriteList, boolean adminMode, boolean initialize) {
 
 		if (initialize) {
 			try {
@@ -98,6 +108,8 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		setNewFavouriteList(favouriteList.getId() == 0);
 
 		setToDeleteList(new ArrayList<FavouritePermissions>());
+
+		setAdminMode(adminMode);
 
 		super.initBean(task, Dialog.SETTINGS_FAVOURITE_LIST_EDIT);
 		return true;
@@ -129,7 +141,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 				FavouritePermissionsUser permission = new FavouritePermissionsUser((HistoUser) event.getObject());
 				favouriteList.getUsers().add(permission);
 				permission.setFavouriteList(favouriteList);
-				
+
 				if (favouriteList.isGlobalView())
 					permission.setReadable(true);
 			}
@@ -142,7 +154,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 				FavouritePermissionsGroup permission = new FavouritePermissionsGroup((HistoGroup) event.getObject());
 				favouriteList.getGroups().add(permission);
 				permission.setFavouriteList(favouriteList);
-				
+
 				if (favouriteList.isGlobalView())
 					permission.setReadable(true);
 			}
@@ -182,5 +194,9 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
+	}
+
+	public enum Mode {
+		ADMIN, USER;
 	}
 }

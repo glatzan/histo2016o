@@ -1,5 +1,6 @@
 package org.histo.model.favouriteList;
 
+import java.beans.Transient;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.histo.model.interfaces.HasID;
+import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
 
 import lombok.Getter;
@@ -66,5 +68,10 @@ public class FavouriteList implements HasID {
 	@Override
 	public String toString() {
 		return "ID: " + getId() + ", Name: " + getName();
+	}
+	
+	@Transient
+	public boolean containsTask(Task task) {
+		return items.stream().anyMatch(p -> p.getTask().equals(task));
 	}
 }

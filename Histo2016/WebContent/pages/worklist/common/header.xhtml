@@ -67,6 +67,17 @@
 				actionListener="#{programmVersionDialog.initAndPrepareBean()}"></p:commandLink>
 
 			<!-- button edit -->
+			<p:commandButton id="taskMenuButton"
+				value="#{msg['header.menu.edit']}" type="button"
+				icon="ui-icon-triangle-1-s" styleClass="buttonRighMarginInList" />
+
+			<!-- Options menu -->
+			<p:tieredMenu overlay="true" trigger="taskMenuButton" my="left top"
+				model="#{worklistViewHandlerAction.taskMenuModel}" at="left bottom"
+				id="taskTieredMenuButton">
+			</p:tieredMenu>
+
+			<!-- button edit -->
 			<p:commandButton id="dynaButton" value="#{msg['header.menu.edit']}"
 				type="button" icon="ui-icon-triangle-1-s"
 				styleClass="buttonRighMarginInList" />
@@ -81,7 +92,7 @@
 					<!-- add Patient -->
 					<p:menuitem value="#{msg['header.menu.patient.new']}"
 						icon="fa fa-user"
-						onclick="$('#headerForm\\:addPatient').click();$('#headerForm\\:tieredOptions').hide();return false;" />
+						onclick="$('#headerForm\\:addPatientButton').click();$('#headerForm\\:tieredOptions').hide();return false;" />
 
 					<p:separator
 						rendered="#{commonDataHandlerAction.selectedPatient ne null}" />
@@ -261,7 +272,7 @@
 
 			<!-- *************** Patient Menu *************** -->
 			<!-- Show Patient Overview -->
-			<p:commandButton id="addPatient" style="display:none"
+			<p:commandButton id="addPatientButton" style="display:none"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" />
 			</p:commandButton>

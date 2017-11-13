@@ -23,18 +23,36 @@
 				value="#{userSettingsDialog.favouriteListTab.containers}">
 
 				<p:headerRow>
-					<p:column colspan="3">
-						<h:outputText value="#{favouriteListContainer.type}" />
+					<p:column colspan="2">
+						<h:outputText
+							value="#{msg['dialog.userSettings.favouriteLists.list.'.concat(favouriteListContainer.type)]}" />
 					</p:column>
 				</p:headerRow>
 
-				<p:column headerText="Name">
+				<p:column headerText="Name" styleClass="columnAutoWidth">
 					<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
 				</p:column>
 
-				<p:column headerText="#">
+				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">
+					<p:commandLink styleClass="noUnderlineAtLink"
+						title="#{msg['dialog.settings.person.list.options.edit']}"
+						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+						disabled="#{!favouriteListContainer.editable}" process="@this"
+						partialSubmit="true">
+						<p:ajax event="dialogReturn" update="@form" />
+						<i class="fa fa-fw fa-cog" />
+					</p:commandLink>
 
+					<p:commandLink styleClass="noUnderlineAtLink"
+						title="#{msg['dialog.settings.person.list.options.edit']}"
+						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+						process="@this" partialSubmit="true">
+						<p:ajax event="dialogReturn" update="@form" />
+						<i class="fa fa-fw fa-search" />
+					</p:commandLink>
 				</p:column>
+
+
 
 			</p:dataTable>
 

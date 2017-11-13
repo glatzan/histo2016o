@@ -40,7 +40,7 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteList)}"
+					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteList, true)}"
 					process="@this" partialSubmit="true"
 					disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_FAVOURITE_LIST_SETTINGS')}">
 					<p:ajax event="dialogReturn"
@@ -71,7 +71,7 @@
 					icon="fa fa-fw fa-plus-circle"
 					styleClass="smallButton buttonRighMarginInList" process="@this"
 					partialSubmit="true"
-					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean()}">
+					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(true)}">
 					<p:ajax event="dialogReturn"
 						listener="#{settingsDialogHandler.getTab('FavouriteListTab').updateData()}"
 						update=":adminForm:tabview:favouriteLists" />

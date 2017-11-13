@@ -58,7 +58,7 @@
 					<!-- change owner, if admin or user is owner -->
 					<p:commandLink
 						title="#{msg['dialog.favouriteListEdit.owner.change']}"
-						rendered="#{userHandlerAction.currentUser.equals(dialogHandlerAction.favouriteListEditDialog.favouriteList.owner) or dialogHandlerAction.favouriteListEditDialog.newFavouriteList}"
+						rendered="#{dialogHandlerAction.favouriteListEditDialog.adminMode and !dialogHandlerAction.favouriteListEditDialog.favouriteList.defaultList}"
 						actionListener="#{dialogHandlerAction.userListDialog.initAndPrepareBean(true,false)}"
 						styleClass="noUnderlineAtLink" partialSubmit="true">
 						<p:ajax event="dialogReturn" update="@form"
@@ -237,7 +237,7 @@
 							<i class="fa fa-fw fa-times" />
 
 							<f:actionListener
-								binding="#{dialogHandlerAction.favouriteListEditDialog.removeEntityFromList(dialogHandlerAction.favouriteListEditDialog.favouriteList.users, groupPermission)}" />
+								binding="#{dialogHandlerAction.favouriteListEditDialog.removeEntityFromList(dialogHandlerAction.favouriteListEditDialog.favouriteList.groups, groupPermission)}" />
 						</p:commandLink>
 					</p:column>
 				</p:dataTable>
