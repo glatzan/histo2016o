@@ -1,4 +1,4 @@
-package org.histo.settings;
+package org.histo.adaptors;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -24,6 +24,7 @@ import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.FavouriteListContainer;
+import org.histo.ui.menu.MenuGenerator;
 import org.histo.util.StreamUtils;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearch;
@@ -88,9 +89,6 @@ public class WorklistViewHandlerAction {
 	@Lazy
 	private TaskViewHandlerAction taskViewHandlerAction;
 
-	@Autowired
-	private FavouriteListDAO favouriteListDAO;
-
 	/**
 	 * View
 	 */
@@ -151,285 +149,6 @@ public class WorklistViewHandlerAction {
 		}
 
 		setLastTaskView(userHandlerAction.getCurrentUser().getSettings().getDefaultView());
-
-		setTaskMenuModel(generateMenuModel());
-	}
-
-	private MenuModel generateMenuModel() {
-		logger.debug("Generating new MenuModel");
-
-		MenuModel model = new DefaultMenuModel();
-
-		DefaultSubMenu patientSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.patient"));
-		model.addElement(patientSubMenu);
-
-		DefaultMenuItem item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.new"));
-		item.setOnclick(
-				"$('#headerForm\\\\:addPatientButton').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-		item.setIcon("fa fa-user");
-		patientSubMenu.addElement(item);
-
-		if (commonDataHandlerAction.getSelectedPatient() != null) {
-			// patient
-			{
-				// separator
-				DefaultSeparator seperator = new DefaultSeparator();
-				patientSubMenu.addElement(seperator);
-
-				// patient overview
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.overview"));
-				item.setOnclick(
-						"$('#headerForm\\\\:showPatientOverview').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-				item.setIcon("fa fa-tablet");
-				patientSubMenu.addElement(item);
-
-				// patient edit data, disabled if not external patient
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.edit"));
-				item.setOnclick(
-						"$('#headerForm\\\\:editPatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-				item.setIcon("fa fa-pencil-square-o");
-				item.setDisabled(!commonDataHandlerAction.getSelectedPatient().isExternalPatient());
-				patientSubMenu.addElement(item);
-
-				// patient upload pdf
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.upload"));
-				item.setOnclick(
-						"$('#headerForm\\\\:uploadBtnToPatient').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-				item.setIcon("fa fa-cloud-upload");
-				patientSubMenu.addElement(item);
-			}
-
-			// task
-			{
-
-				boolean taskIsNull = commonDataHandlerAction.getSelectedTask() != null;
-				boolean taskIsEditable = taskStatusHandler.isTaskEditable(commonDataHandlerAction.getSelectedTask());
-
-				DefaultSubMenu taskSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.task"));
-				model.addElement(taskSubMenu);
-
-				// new task
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.create"));
-				item.setOnclick(
-						"$('#headerForm\\\\:newTaskBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-				item.setIcon("fa fa-file");
-				item.setStyleClass("headerSubMenuStyle");
-				taskSubMenu.addElement(item);
-
-				// new sample, if task is not null
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.create"));
-				item.setOnclick(
-						"$('#headerForm\\\\:newSampleBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-				item.setIcon("fa fa-eyedropper");
-				item.setDisabled(commonDataHandlerAction.getSelectedTask() == null || !taskIsEditable);
-				item.setStyleClass("headerSubMenuStyle");
-				taskSubMenu.addElement(item);
-
-				if (commonDataHandlerAction.getSelectedTask() != null) {
-					// staining submenu
-					{
-						DefaultSubMenu stainingSubMenu = new DefaultSubMenu(
-								resourceBundle.get("header.menu.task.sample.staining"));
-						stainingSubMenu.setIcon("fa fa-paint-brush");
-						taskSubMenu.addElement(stainingSubMenu);
-
-						// new slide
-						item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.newSlide"));
-						item.setOnclick(
-								"$('#headerForm\\\\:stainingOverview').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-						item.setIcon("fa fa-paint-brush");
-						item.setStyleClass("headerSubMenuStyle");
-						item.setDisabled(!taskIsEditable);
-						stainingSubMenu.addElement(item);
-
-						// leave staining phase and set all stainings to
-						// completed
-						if (commonDataHandlerAction.getSelectedTask().getTaskStatus().isStainingNeeded()
-								|| commonDataHandlerAction.getSelectedTask().getTaskStatus().isReStainingNeeded()) {
-
-							item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.leave"));
-							item.setOnclick(
-									"$('#headerForm\\\\:stainingPhaseExit').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-							item.setIcon("fa fa-image");
-							item.setStyleClass("headerSubMenuStyle");
-							item.setDisabled(!taskIsEditable);
-							stainingSubMenu.addElement(item);
-						}
-
-						// Staining, end staining phase if all staining tasks
-						// have
-						// been completed
-						if (commonDataHandlerAction.getSelectedTask().getTaskStatus().isStayInStainingList()) {
-							item = new DefaultMenuItem(
-									resourceBundle.get("header.menu.task.sample.staining.stayInPhase.leave"));
-							item.setOnclick(
-									"$('#headerForm\\\\:stainingPhaseForceExitStayInPhase').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-							item.setIcon("fa fa-image");
-							item.setStyleClass("headerSubMenuStyle");
-							stainingSubMenu.addElement(item);
-						}
-					}
-
-					// diagnosis submenu
-					{
-						DefaultSubMenu diagnosisSubMenu = new DefaultSubMenu(
-								resourceBundle.get("header.menu.task.sample.diagnosis"));
-						diagnosisSubMenu.setIcon("fa fa-search");
-						taskSubMenu.addElement(diagnosisSubMenu);
-
-						// new diagnosis
-						item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.diagnosisRevion"));
-						item.setOnclick(
-								"$('#headerForm\\\\:newDiagnosisRevision').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-						item.setIcon("fa fa-pencil-square-o");
-						item.setStyleClass("headerSubMenuStyle");
-						item.setDisabled(!taskIsEditable && !(commonDataHandlerAction.getSelectedTask().getTaskStatus()
-								.isDiagnosisNeeded()
-								|| commonDataHandlerAction.getSelectedTask().getTaskStatus().isReDiagnosisNeeded()));
-						diagnosisSubMenu.addElement(item);
-
-						// Leave diagnosis phase if in phase an not complete
-						if (commonDataHandlerAction.getSelectedTask().getTaskStatus().isDiagnosisNeeded()
-								|| commonDataHandlerAction.getSelectedTask().getTaskStatus().isReDiagnosisNeeded()) {
-							item = new DefaultMenuItem(
-									resourceBundle.get("header.menu.task.sample.diagnosisPhase.leave"));
-							item.setOnclick(
-									"$('#headerForm\\\\:diagnosisPhaseExit').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-							item.setIcon("fa fa-eye-slash");
-							item.setStyleClass("headerSubMenuStyle");
-							item.setDisabled(!taskIsEditable);
-							diagnosisSubMenu.addElement(item);
-						}
-
-						// Leave phase if stay in phase
-						if (commonDataHandlerAction.getSelectedTask().getTaskStatus().isStayInDiagnosisList()
-								&& commonDataHandlerAction.getSelectedTask().isFinalized()) {
-							item = new DefaultMenuItem(
-									resourceBundle.get("header.menu.task.sample.diagnosisPhase.force.leave"));
-							item.setOnclick(
-									"$('#headerForm\\\\:diagnosisExitStayInPhase').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-							item.setIcon("fa fa-eye-slash");
-							item.setStyleClass("headerSubMenuStyle");
-							diagnosisSubMenu.addElement(item);
-						}
-
-						// council
-						item = new DefaultMenuItem(resourceBundle.get("header.menu.task.council"));
-						item.setOnclick(
-								"$('#headerForm\\\\:councilBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-						item.setIcon("fa fa-comment-o");
-						item.setStyleClass("headerSubMenuStyle");
-						item.setDisabled(!taskIsEditable);
-						diagnosisSubMenu.addElement(item);
-
-					}
-
-					// notification submenu
-					{
-						DefaultSubMenu notificationSubMenu = new DefaultSubMenu(
-								resourceBundle.get("header.menu.task.sample.notification"));
-						notificationSubMenu.setIcon("fa fa-volume-up");
-						taskSubMenu.addElement(notificationSubMenu);
-
-						// contacts
-						item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.contact"));
-						item.setOnclick(
-								"$('#headerForm\\\\:editContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-						item.setIcon("fa fa-envelope-o");
-						item.setStyleClass("headerSubMenuStyle");
-						item.setDisabled(!taskIsEditable);
-						notificationSubMenu.addElement(item);
-
-						// report
-						item = new DefaultMenuItem(
-								resourceBundle.get("header.menu.task.sample.notification.notification"));
-						item.setOnclick(
-								"$('#headerForm\\\\:medicalFindingsContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-						item.setIcon("fa fa-volume-up");
-						item.setStyleClass("headerSubMenuStyle");
-						item.setDisabled(!taskIsEditable);
-						notificationSubMenu.addElement(item);
-
-						// print
-						item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.print"));
-						item.setOnclick(
-								"$('#headerForm\\\\:printBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-						item.setIcon("fa fa-print");
-						item.setStyleClass("headerSubMenuStyle");
-						item.setDisabled(!taskIsEditable);
-						notificationSubMenu.addElement(item);
-					}
-
-					// finalized
-					if (commonDataHandlerAction.getSelectedTask().isFinalized()) {
-						// separator
-						DefaultSeparator seperator = new DefaultSeparator();
-						taskSubMenu.addElement(seperator);
-
-						// unfinalize task
-						item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.unFinalize"));
-						item.setOnclick(
-								"$('#headerForm\\\\:diagnosisPhaseUnFinalize').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-						item.setIcon("fa fa-eye");
-						item.setStyleClass("headerSubMenuStyle");
-						item.setDisabled(!taskIsEditable);
-						taskSubMenu.addElement(item);
-
-					}
-
-					// Favorite lists
-					{
-						DefaultSubMenu favouriteSubMenu = new DefaultSubMenu("F. lists");
-						favouriteSubMenu.setIcon("fa fa-search");
-						taskSubMenu.addElement(favouriteSubMenu);
-
-						List<FavouriteList> lists = favouriteListDAO
-								.getFavouriteListsWithTasksForUser(userHandlerAction.getCurrentUser(), true, false);
-
-						for (FavouriteList favouriteList : lists) {
-							item = new DefaultMenuItem(favouriteList.getName());
-							item.setIcon("fa fa-pencil-square-o");
-							item.setStyleClass("headerSubMenuStyle");
-							favouriteSubMenu.addElement(item);
-						}
-					}
-					
-					// accounting
-					item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.accounting"));
-					item.setIcon("fa fa-dollar");
-					item.setStyleClass("headerSubMenuStyle");
-					item.setDisabled(true);
-					taskSubMenu.addElement(item);
-					
-					// biobank
-					item = new DefaultMenuItem(resourceBundle.get("header.menu.task.biobank"));
-					item.setOnclick(
-							"$('#headerForm\\\\:bioBankBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-					item.setIcon("fa fa-leaf");
-					item.setStyleClass("headerSubMenuStyle");
-					item.setDisabled(!taskIsEditable);
-					taskSubMenu.addElement(item);
-					
-					// upload 
-					item = new DefaultMenuItem(resourceBundle.get("header.menu.task.upload"));
-					item.setOnclick(
-							"$('#headerForm\\\\:uploadBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-					item.setIcon("fa fa-cloud-upload");
-					item.setStyleClass("headerSubMenuStyle");
-					item.setDisabled(!taskIsEditable);
-					taskSubMenu.addElement(item);
-				}
-			}
-			
-			// log
-			item = new DefaultMenuItem(resourceBundle.get("header.menu.log"));
-			item.setOnclick(
-					"$('#headerForm\\\\:logBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-			item.setStyleClass("headerSubMenuStyle");
-			model.addElement(item);
-		}
-
-		return model;
 	}
 
 	public void goToNavigation() {
@@ -477,6 +196,7 @@ public class WorklistViewHandlerAction {
 	public void onSelectPatient(Patient patient, boolean reload) {
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
+
 		if (patient == null) {
 			logger.debug("Deselecting patient");
 			commonDataHandlerAction.setSelectedPatient(null);
@@ -499,7 +219,8 @@ public class WorklistViewHandlerAction {
 
 		commonDataHandlerAction.setSelectedTask(null);
 
-		setTaskMenuModel(generateMenuModel());
+		setTaskMenuModel((new MenuGenerator()).generateEditMenu(commonDataHandlerAction.getSelectedPatient(),
+				commonDataHandlerAction.getSelectedTask()));
 
 		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
 
@@ -567,7 +288,10 @@ public class WorklistViewHandlerAction {
 		receiptlogViewHandlerAction.prepareForTask(task);
 		diagnosisViewHandlerAction.prepareForTask(task);
 
-		setTaskMenuModel(generateMenuModel());
+		getWorklist().generateTaskStatus(task.getPatient());
+
+		setTaskMenuModel((new MenuGenerator()).generateEditMenu(commonDataHandlerAction.getSelectedPatient(),
+				commonDataHandlerAction.getSelectedTask()));
 
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(getLastTaskView());
@@ -616,6 +340,18 @@ public class WorklistViewHandlerAction {
 		}
 	}
 
+	public void addTaskToWorklist(Task task) {
+
+		if (getWorklist().containsPatient(task.getPatient())) {
+			logger.debug("Showning task " + task.getTaskID());
+			onSelectTaskAndPatient(task);
+		} else {
+			logger.debug("Adding task " + task.getTaskID() + " to worklist");
+			task.setActive(true);
+			addPatientToWorkList(task.getPatient(), false);
+		}
+	}
+
 	public void removeWorklist(Worklist worklist) {
 		getWorklists().remove(worklist);
 		if (getWorklist() == worklist)
@@ -648,6 +384,8 @@ public class WorklistViewHandlerAction {
 
 		if (asSelectedPatient)
 			onSelectPatient(patient);
+
+		getWorklist().generateTaskStatus(patient);
 	}
 
 	/**

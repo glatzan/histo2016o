@@ -10,12 +10,12 @@ import javax.naming.directory.DirContext;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.adaptors.LdapHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.settings.LdapHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

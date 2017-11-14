@@ -15,6 +15,7 @@ import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.DeleteTaskDialog;
 import org.histo.action.dialog.patient.EditPatientDialog;
+import org.histo.action.dialog.patient.PatientLogDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
@@ -102,6 +103,8 @@ public class DialogHandlerAction {
 	private GroupEditDialog groupEditDialog;
 
 	private UserListDialog userListDialog;
+	
+	private PatientLogDialog patientLogDialog;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -338,6 +341,14 @@ public class DialogHandlerAction {
 		}
 
 		return userListDialog;
+	}
+
+	public PatientLogDialog getPatientLogDialog() {
+		if (patientLogDialog == null) {
+			patientLogDialog = new PatientLogDialog();
+		}
+
+		return patientLogDialog;
 	}
 
 }

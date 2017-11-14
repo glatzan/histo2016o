@@ -1,4 +1,4 @@
-package org.histo.util.fax;
+package org.histo.adaptors;
 
 import java.io.File;
 import java.io.IOException;

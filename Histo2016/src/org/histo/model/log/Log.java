@@ -1,4 +1,4 @@
-package org.histo.model;
+package org.histo.model.log;
 
 import java.util.Date;
 
@@ -14,9 +14,9 @@ import org.hibernate.envers.RevisionEntity;
 import org.hibernate.envers.RevisionNumber;
 import org.hibernate.envers.RevisionTimestamp;
 import org.histo.config.enums.DateFormat;
+import org.histo.config.log.LogListener;
 import org.histo.model.patient.Patient;
 import org.histo.model.user.HistoUser;
-import org.histo.model.util.LogListener;
 import org.histo.util.TimeUtil;
 
 

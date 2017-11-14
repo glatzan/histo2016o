@@ -9,6 +9,7 @@ import javax.naming.directory.DirContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.adaptors.LdapHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.dao.TransientDAO;
 import org.histo.model.Contact;
@@ -18,7 +19,6 @@ import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
-import org.histo.settings.LdapHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

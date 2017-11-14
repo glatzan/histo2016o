@@ -94,19 +94,6 @@ public class TaskViewHandlerAction {
 		onChangeSelectionCriteria();
 	}
 
-	public void onAddTask(Task task) {
-
-		if (worklistViewHandlerAction.getWorklist().containsPatient(task.getPatient())) {
-			logger.debug("Showning task " + task.getTaskID());
-			worklistViewHandlerAction.onSelectTaskAndPatient(task);
-		} else {
-			logger.debug("Adding task " + task.getTaskID() + " to worklist");
-			task.setActive(true);
-			worklistViewHandlerAction.addPatientToWorkList(task.getPatient(), false);
-		}
-
-	}
-
 	public void onChangeSelectionCriteria() {
 		logger.debug("Reloading task lists");
 		setTaskList(taskDAO.getTasks(getTaskPerPull(), getPage() - 1));

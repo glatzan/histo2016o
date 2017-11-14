@@ -1,4 +1,4 @@
-package org.histo.util.mail;
+package org.histo.adaptors;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

@@ -31,7 +31,7 @@
 				selection="#{taskViewHandlerAction.selectedTask}">
 
 				<p:ajax event="rowSelect"
-					listener="#{taskViewHandlerAction.onAddTask(taskViewHandlerAction.selectedTask)}"
+					listener="#{worklistViewHandlerAction.addTaskToWorklist(taskViewHandlerAction.selectedTask)}"
 					update="navigationForm contentForm headerForm" />
 
 				<p:column headerText="#{msg['body.taskList.table.task']}"

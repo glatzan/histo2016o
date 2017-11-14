@@ -1,4 +1,4 @@
-package org.histo.settings;
+package org.histo.adaptors;
 
 import java.io.IOException;
 import java.net.SocketException;

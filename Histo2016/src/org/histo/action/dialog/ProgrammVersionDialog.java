@@ -4,12 +4,12 @@ import java.util.Date;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.adaptors.MailHandler;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.settings.Version;
+import org.histo.model.transitory.settings.Version;
 import org.histo.template.mail.ErrorMail;
 import org.histo.util.TimeUtil;
-import org.histo.util.mail.MailHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

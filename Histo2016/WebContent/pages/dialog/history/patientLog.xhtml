@@ -32,7 +32,8 @@
 			<p:dataTable var="log"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll smallPaddingAll smallFont"
 				scrollable="true" scrollHeight="510"
-				value="#{logHandlerAction.patientLog}" resizableColumns="false">
+				value="#{dialogHandlerAction.patientLogDialog.patientLog}"
+				resizableColumns="false">
 				<p:column headerText="ID" style="width:50px;text-align:center">
 					<h:outputLabel value="#{log.id}"></h:outputLabel>
 				</p:column>

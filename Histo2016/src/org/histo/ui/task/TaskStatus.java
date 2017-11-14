@@ -1,8 +1,13 @@
 package org.histo.ui.task;
 
+import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.model.patient.Task;
+import org.histo.model.user.HistoPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +20,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Configurable(preConstruction=true)
 public class TaskStatus {
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
 
 	private Task task;
 
@@ -37,9 +48,14 @@ public class TaskStatus {
 
 	private boolean finalized;
 
+	private boolean editable;
+
 	public TaskStatus(Task task) {
 		this.task = task;
+		updateStatus();
+	}
 
+	public void updateStatus() {
 		this.stainingNeeded = task.isListedInFavouriteList(PredefinedFavouriteList.StainingList);
 		this.reStainingNeeded = task.isListedInFavouriteList(PredefinedFavouriteList.ReStainingList);
 		this.stayInStainingList = task.isListedInFavouriteList(PredefinedFavouriteList.StayInStainingList);
@@ -57,6 +73,30 @@ public class TaskStatus {
 		this.councilCompleted = task.isListedInFavouriteList(PredefinedFavouriteList.CouncilCompleted);
 
 		this.finalized = task.isFinalized();
+
+		this.editable = isTaksEditable();
+
+	}
+
+	public boolean isTaksEditable() {
+		// task is editable
+		// users and guest can't edit anything
+		if (!userHandlerAction.currentUserHasPermission(HistoPermissions.EDIT_TASK)) {
+			return false;
+		}
+
+		// finalized
+		if (task.isFinalized()) {
+			return false;
+		}
+
+		// if (isDiagnosisCompleted(task) && isStainingCompleted(task))
+		// return false;
+
+		// Blocked
+		// TODO: Blocking
+
+		return true;
 	}
 
 }

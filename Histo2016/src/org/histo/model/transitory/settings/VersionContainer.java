@@ -1,4 +1,4 @@
-package org.histo.settings;
+package org.histo.model.transitory.settings;
 
 import java.util.List;
 

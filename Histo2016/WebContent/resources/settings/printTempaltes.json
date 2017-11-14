@@ -5,7 +5,7 @@
 	"content2" : "",
 	"type"	: "U_REPORT",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateUReport",
+	"templateName" : "org.histo.template.documents.TemplateUReport",
 	"defaultOfType" : false,
 	"transientContent" : true,
 	"hidden" : false

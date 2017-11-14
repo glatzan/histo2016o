@@ -1,4 +1,4 @@
-package org.histo.util.printer;
+package org.histo.adaptors.printer;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

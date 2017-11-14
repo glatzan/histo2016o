@@ -1,4 +1,4 @@
-package org.histo.util.printer;
+package org.histo.adaptors.printer;
 
 import org.apache.log4j.Logger;
 import org.histo.model.interfaces.HasID;

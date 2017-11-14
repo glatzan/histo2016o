@@ -432,7 +432,7 @@
 
 			<!-- *************** Log Menu *************** -->
 			<p:commandButton id="logBtn" style="display:none"
-				actionListener="#{logHandlerAction.preparePatientLogDialog(commonDataHandlerAction.selectedPatient)}">
+				actionListener="#{dialogHandlerAction.patientLogDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 			<!-- *************** Log Menu *************** -->
