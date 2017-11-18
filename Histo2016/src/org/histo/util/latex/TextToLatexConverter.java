@@ -18,14 +18,20 @@ public class TextToLatexConverter {
 	}
 
 	public String convertToTex(String string) {
+		if(string == null)
+			return "";
+		
+		string = StringUtils.replace(string, " ", config.getSpace());
 		string = StringUtils.replace(string, "\r\n", config.getLineBreak());
-		System.out.println(string);
 		return string;
 	}
 
 	@Getter
 	@Setter
 	public class Config {
-		private String lineBreak = "\r\n\\\\[1mm]";
+		private String lineBreak = "\\linebreak\r\n";
+		private String space = "\\kern 0.33em ";
 	}
 }
+
+

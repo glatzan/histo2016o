@@ -115,7 +115,7 @@
 								itemValue="#{commentary.value}" />
 
 							<p:ajax event="change" execute="@this"
-								listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.staining,'log.settings.staining.update')}" />
+								listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.entity,'log.settings.staining.update')}" />
 						</p:selectOneMenu>
 					</h:panelGroup>
 				</p:column>

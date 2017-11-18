@@ -38,7 +38,8 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 						: " ");
 		generator.getConverter().replace("subject", "");
 		generator.getConverter().replace("date", new DateTool());
-
+		generator.getConverter().replace("latexTextConverter", new TextToLatexConverter());
+		
 		return generator.generatePDF();
 	}
 }

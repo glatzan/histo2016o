@@ -15,21 +15,20 @@
 			var proxied = PrimeFaces.widget.OverlayPanel.prototype.applyFocus;
 
 			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
-				if (this.id == "contentForm:caseHistoryOverlayPanel")
+
+				if (this.jq.hasClass("selectOverlayPanel"))
 					return;
 
 				return proxied.apply(this, arguments);
 			};
+
 		})();
 	</script>
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<c:set var="selectedTask"
-		value="#{commonDataHandlerAction.selectedTask}" />
-
 	<c:set var="taskEditable" scope="session"
-		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
+		value="#{taskStatusHandler.isTaskEditable(commonDataHandlerAction.selectedTask)}" />
 
 	<p:panel style="width: 80%"
 		styleClass="collapsedBorders noPadding noBorders">
@@ -44,14 +43,15 @@
 			<!-- Left Column -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 				<!-- material -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
+				<h:panelGrid columns="2"
+					styleClass="defaultListingTableFirstColumEnummeration"
 					columnClasses="defaultListingTableColumnTop,">
 
 					<h:outputLabel value="#{msg['body.diagnosis.material']}" />
 
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer"
 						style="width:410px">
-						<c:forEach items="#{selectedTask.samples}" var="sample"
+						<c:forEach items="#{commonDataHandlerAction.selectedTask.samples}" var="sample"
 							varStatus="loopCount">
 
 							<h:panelGrid columns="3"
@@ -82,23 +82,25 @@
 					<p:selectOneMenu styleClass="smallInput customBackground"
 						tabindex="6"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
-						disabled="#{!taskEditable}" value="#{selectedTask.eye}">
+						disabled="#{!taskEditable}" value="#{commonDataHandlerAction.selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
 							itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
 						<p:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.eye',selectedTask.eye)}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.eye',commonDataHandlerAction.selectedTask.eye)}" />
 					</p:selectOneMenu>
 					<!-- Eye -->
 				</h:panelGrid>
 				<!-- material -->
 
-				<h:panelGrid columns="1" styleClass="defaultListingTableFirstColumEnummeration">
+				<!-- history -->
+				<h:panelGrid columns="1"
+					styleClass="defaultListingTableFirstColumEnummeration">
 					<h:outputLabel value="#{msg['body.diagnosis.story']}" />
 					<h:panelGroup>
 
-						<p:inputTextarea value="#{selectedTask.caseHistory}"
+						<p:inputTextarea value="#{commonDataHandlerAction.selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
 							disabled="#{!taskEditable}" id="caseHistoryInput"
 							style="width:90%" onfocus="PF('caseHistoryOverlayPanel').show();"
@@ -109,9 +111,10 @@
 						</p:inputTextarea>
 
 						<p:overlayPanel id="caseHistoryOverlayPanel"
-							styleClass="defaultOverlayPanel" for="caseHistoryInput"
-							widgetVar="caseHistoryOverlayPanel" hideEffect="fade"
-							style="width:500px" hideEvent="none" showEvent="none">
+							styleClass="defaultOverlayPanel selectOverlayPanel"
+							for="caseHistoryInput" widgetVar="caseHistoryOverlayPanel"
+							hideEffect="fade" style="width:500px" hideEvent="none"
+							showEvent="none">
 							<p:dataTable
 								value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
 								styleClass="smallDatatable highlightedDataTable noBordersAll"
@@ -123,7 +126,7 @@
 								</p:column>
 
 								<p:ajax event="rowSelect" update="contentForm:caseHistoryInput"
-									listener="#{diagnosisViewHandlerAction.copyCaseHistory(selectedTask, diagnosisViewHandlerAction.selectedCaseHistoryItem)}"
+									listener="#{diagnosisViewHandlerAction.copyCaseHistory(commonDataHandlerAction.selectedTask, diagnosisViewHandlerAction.selectedCaseHistoryItem)}"
 									oncomplete="PF('caseHistoryOverlayPanel').hide();" />
 							</p:dataTable>
 
@@ -138,17 +141,18 @@
 
 			<!-- Right Column -->
 			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-				<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+				<h:panelGrid columns="2"
+					styleClass="defaultListingTableFirstColumEnummeration">
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="2"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						styleClass="customBackground" disabled="#{!taskEditable}"
-						value="#{selectedTask.dateOfSugeryAsDate}">
+						value="#{commonDataHandlerAction.selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfSugeryAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(selectedTask.dateOfSugeryAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfSugeryAsDate))}" />
 					</p:calendar>
 
 					<!-- date of receipt -->
@@ -157,16 +161,16 @@
 						disabled="#{!taskEditable}"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						styleClass="customBackground"
-						value="#{selectedTask.dateOfReceiptAsDate}">
+						value="#{commonDataHandlerAction.selectedTask.dateOfReceiptAsDate}">
 						<p:ajax event="dateSelect"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfReceiptAsDate))}" />
 						<f:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(selectedTask.dateOfReceiptAsDate))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfReceiptAsDate))}" />
 					</p:calendar>
 
 					<!-- Task Number -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskNumber']}" />
-					<p:inputText disabled="true" value="#{selectedTask.taskID}" />
+					<p:inputText disabled="true" value="#{commonDataHandlerAction.selectedTask.taskID}" />
 
 					<!-- insurance -->
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
@@ -185,7 +189,7 @@
 
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
-					<p:selectOneMenu id="wards" value="#{selectedTask.ward}"
+					<p:selectOneMenu id="wards" value="#{commonDataHandlerAction.selectedTask.ward}"
 						editable="true" disabled="#{!taskEditable}"
 						styleClass="customBackground" tabindex="5"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
@@ -193,7 +197,7 @@
 						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask,'log.patient.task.change.ward', selectedTask.ward)}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask,'log.patient.task.change.ward', commonDataHandlerAction.selectedTask.ward)}" />
 					</p:selectOneMenu>
 
 					<!-- surgeon -->
@@ -203,7 +207,7 @@
 
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
 						<h:outputLabel style="margin-left:10px;"
-							value="#{selectedTask.getPrimaryContact('SURGEON')}"></h:outputLabel>
+							value="#{commonDataHandlerAction.selectedTask.getPrimaryContact('SURGEON')}"></h:outputLabel>
 
 						<!-- quickContact surgeon -->
 						<p:commandLink style="float: right; margin-right:5px;"
@@ -222,7 +226,7 @@
 
 					<h:panelGroup layout="block" style="margin: 6px 0px 3px 0px;">
 						<h:outputLabel style="margin-left:10px;"
-							value="#{selectedTask.getPrimaryContact('PRIVATE_PHYSICIAN')}"></h:outputLabel>
+							value="#{commonDataHandlerAction.selectedTask.getPrimaryContact('PRIVATE_PHYSICIAN')}"></h:outputLabel>
 
 						<!-- quickcontact private physician  -->
 						<p:commandLink style="float: right; margin-right:5px;"
@@ -245,10 +249,12 @@
 		<p:separator />
 
 		<!-- Diagnoses -->
-		<ui:repeat var="revision"
-			value="#{selectedTask.diagnosisContainer.diagnosisRevisions}">
+		<c:forEach
+			items="#{commonDataHandlerAction.selectedTask.diagnosisContainer.diagnosisRevisions}"
+			varStatus="varCounterOuter" var="revision">
 
-			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
+			<h:panelGrid columns="2"
+				styleClass="defaultListingTableFirstColumEnummeration"
 				columnClasses="defaultListingTableColumnTop,">
 				<!-- Extended Diagnosis Text -->
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
@@ -267,46 +273,24 @@
 
 				<!-- Diagnosis for sample -->
 				<h:outputLabel value="#{msg['body.diagnosis.diagnoses']}"></h:outputLabel>
-				<ui:repeat var="diagnosis" value="#{revision.diagnoses}">
+				<c:forEach items="#{revision.diagnoses}" varStatus="varCounterInner"
+					var="diagnosis">
 					<h:panelGrid columns="3" styleClass="defaultListingTableContainer"
 						columnClasses="defaultListingTableColumn15,">
 						<!-- sample -->
 						<h:outputLabel
 							value="#{msg['body.diagnosis.diagnosis.sample']} #{diagnosis.sample.sampleID}"></h:outputLabel>
 
-						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
-							<!-- diagnosis category -->
-							<p:selectOneMenu value="#{diagnosis.diagnosisPrototype}"
-								styleClass="customSerachSelectMenu" disabled="#{!taskEditable}"
-								panelStyleClass="customSerachSelectMenuPanel"
-								converter="#{diagnosisViewHandlerAction.diagnosisPresetsTransformer}"
-								filter="true" filterMatchMode="startsWith">
-								<f:selectItem
-									itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.choose']}"
-									itemValue="#{null}" />
-
-								<f:selectItems
-									value="#{diagnosisViewHandlerAction.diagnosisPresets}"
-									var="diagnosisPrototype"
-									itemLabel="#{diagnosisPrototype.diagnosis}"
-									itemValue="#{diagnosisPrototype}" />
-
-								<p:ajax event="change" update="contentForm"
-									listener="#{diagnosisViewHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}" />
-
-							</p:selectOneMenu>
-
-							<!-- copy diagnosis text -->
-							<p:commandLink styleClass="noUnderlineAtLink"
-								style="margin-left:20px;" disabled="#{!taskEditable}"
-								title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
-								rendered="#{diagnosis.diagnosisPrototype ne null}"
-								actionListener="#{diagnosisViewHandlerAction.onCopyHistologicalRecord(diagnosis)}"
-								update="contentForm">
-								<i class="fa fa-hand-o-up"></i>
-								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
-							</p:commandLink>
-						</h:panelGrid>
+						<!-- copy diagnosis text -->
+						<p:commandLink styleClass="noUnderlineAtLink"
+							style="margin-left:20px;" disabled="#{!taskEditable}"
+							title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
+							rendered="#{diagnosis.diagnosisPrototype ne null}"
+							actionListener="#{diagnosisViewHandlerAction.onCopyHistologicalRecord(diagnosis)}"
+							update="contentForm">
+							<i class="fa fa-hand-o-up"></i>
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
 
 						<!-- malign -->
 						<h:panelGrid columns="2" style="float:right;margin-right:20px;"
@@ -322,46 +306,83 @@
 						</h:panelGrid>
 					</h:panelGrid>
 
-					<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+					<h:outputLabel />
+
+					<h:panelGrid columns="1" styleClass="defaultListingTableContainer"
 						style="width:100%" columnClasses="defaultListingTableColumn15,">
-						<h:outputLabel />
-						<!-- diagnosis text -->
-						<p:inputTextarea value="#{diagnosis.diagnosis}" id="diagnosisText"
-							disabled="#{!taskEditable}" style="width:100%">
-							<p:watermark for="diagnosisText"
-								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
-							<f:ajax event="change" execute="@this"
-								listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
-						</p:inputTextarea>
+						<h:panelGroup>
+							<!-- diagnosis text -->
+							<p:inputTextarea value="#{diagnosis.diagnosis}"
+								styleClass="keepOverlayFocus"
+								onkeypress="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();"
+								onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
+								onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
+								id="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
+								disabled="#{!taskEditable}" style="width:100%">
+								<p:watermark
+									for="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
+									value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
+								<f:ajax event="change" execute="@this"
+									listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
+							</p:inputTextarea>
+
+							<p:overlayPanel
+								widgetVar="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
+								id="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
+								styleClass="defaultOverlayPanel selectOverlayPanel"
+								for="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
+								hideEffect="fade" style="width:500px" hideEvent="none"
+								showEvent="none">
+								<p:dataTable
+									value="#{diagnosisViewHandlerAction.diagnosisPresets}"
+									var="item"
+									styleClass="smallDatatable highlightedDataTable noBordersAll"
+									scrollable="true" scrollHeight="200" rowKey="#{item.id}"
+									selection="#{diagnosis.diagnosisPrototype}"
+									selectionMode="single">
+									<p:column filterBy="#{item.diagnosis.name}"
+										filterMatchMode="contains">
+										<h:outputText value="#{item.diagnosis}" />
+									</p:column>
+
+									<p:ajax event="rowSelect" update="contentForm"
+										listener="#{diagnosisViewHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}"
+										oncomplete="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();" />
+
+								</p:dataTable>
+							</p:overlayPanel>
+						</h:panelGroup>
 					</h:panelGrid>
 					<!-- Diagnosis for sample -->
-				</ui:repeat>
+				</c:forEach>
 			</h:panelGrid>
-		</ui:repeat>
+		</c:forEach>
 
 		<p:separator />
 
 		<h:panelGrid columns="3"
 			styleClass="defaultListingTableTwoLineContainer">
 			<!-- left column -->
-			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2"
+				styleClass="defaultListingTableFirstColumEnummeration">
 				<!-- Date of signature -->
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.date']}"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
 					disabled="#{!taskEditable}"
-					value="#{selectedTask.diagnosisContainer.signatureDateAsDate}">
+					value="#{commonDataHandlerAction.selectedTask.diagnosisContainer.signatureDateAsDate}">
 					<p:ajax event="dateSelect"
-						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(commonDataHandlerAction.selectedTask.diagnosisContainer.signatureDate))}" />
 					<f:ajax event="change" execute="@this"
-						listener="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(selectedTask.diagnosisContainer.signatureDate))}" />
+						listener="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(commonDataHandlerAction.selectedTask.diagnosisContainer.signatureDate))}" />
 				</p:calendar>
 			</h:panelGrid>
 
 			<h:panelGroup />
 
 			<!-- right column -->
-			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2"
+				styleClass="defaultListingTableFirstColumEnummeration">
 
 				<!-- physician -->
 				<h:outputLabel
@@ -391,9 +412,9 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitPhysicianChange">
 						<f:actionListener
-							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureOne(diagnosisViewHandlerAction.signatureOne)}" />
+							binding="#{commonDataHandlerAction.selectedTask.diagnosisContainer.setPhysicianAsSignatureOne(diagnosisViewHandlerAction.signatureOne)}" />
 						<f:actionListener
-							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one',selectedTask.diagnosisContainer.signatureOne.physician.person.fullName)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one',commonDataHandlerAction.selectedTask.diagnosisContainer.signatureOne.physician.person.fullName)}" />
 					</p:commandButton>
 				</h:panelGroup>
 
@@ -405,7 +426,7 @@
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="pysicianToSignRole" editable="true"
 						style="width:80% !important;" disabled="#{!taskEditable}"
-						value="#{selectedTask.diagnosisContainer.signatureOne.role}">
+						value="#{commonDataHandlerAction.selectedTask.diagnosisContainer.signatureOne.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"
 							itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
@@ -419,7 +440,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitPhysicianRoleChange">
 						<f:actionListener
-							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one.role',selectedTask.diagnosisContainer.signatureOne.role)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.one.role',commonDataHandlerAction.selectedTask.diagnosisContainer.signatureOne.role)}" />
 					</p:commandButton>
 				</h:panelGroup>
 
@@ -453,9 +474,9 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitConsultantChange">
 						<f:actionListener
-							binding="#{selectedTask.diagnosisContainer.setPhysicianAsSignatureTwo(diagnosisViewHandlerAction.signatureTwo)}" />
+							binding="#{commonDataHandlerAction.selectedTask.diagnosisContainer.setPhysicianAsSignatureTwo(diagnosisViewHandlerAction.signatureTwo)}" />
 						<f:actionListener
-							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two',selectedTask.diagnosisContainer.signatureTwo.physician.person.fullName)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two',commonDataHandlerAction.selectedTask.diagnosisContainer.signatureTwo.physician.person.fullName)}" />
 					</p:commandButton>
 
 				</h:panelGroup>
@@ -466,7 +487,7 @@
 					<p:selectOneMenu styleClass="customSerachSelectMenu"
 						id="consultantToSignRole" editable="true"
 						style="width:80% !important" disabled="#{!taskEditable}"
-						value="#{selectedTask.diagnosisContainer.signatureTwo.role}">
+						value="#{commonDataHandlerAction.selectedTask.diagnosisContainer.signatureTwo.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"
 							itemLabel="#{msg['enum.signatureRole.'.concat(signatureRole)]}"
@@ -481,7 +502,7 @@
 					<p:commandButton style="display:none" update="@form"
 						id="submitConsultantRoleChange">
 						<f:actionListener
-							binding="#{diagnosisViewHandlerAction.onDataChange(selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two.role',selectedTask.diagnosisContainer.signatureTwo.role)}" />
+							binding="#{diagnosisViewHandlerAction.onDataChange(commonDataHandlerAction.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signature.two.role',commonDataHandlerAction.selectedTask.diagnosisContainer.signatureTwo.role)}" />
 					</p:commandButton>
 
 				</h:panelGroup>

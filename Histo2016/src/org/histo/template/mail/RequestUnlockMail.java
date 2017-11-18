@@ -32,7 +32,6 @@ public class RequestUnlockMail extends MailTemplate {
 	
 	public void prepareTemplate(HistoUser histoUser) {
 		prepareTemplate();
-		
 		this.histoUser = histoUser;
 	}
 	

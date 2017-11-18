@@ -270,8 +270,15 @@ public class MenuGenerator {
 
 				for (FavouriteList favouriteList : lists) {
 					item = new DefaultMenuItem(favouriteList.getName());
-					item.setIcon("fa fa-pencil-square-o");
+					if (favouriteList.containsTask(task))
+						item.setIcon("fa fa-pencil-square-o icon-green");
+					else
+						item.setIcon("fa fa-pencil-square-o");
+
 					item.setStyleClass("headerSubMenuStyle icon-red");
+					item.setCommand(
+							"#{diagnosisViewHandlerAction.addOrRemoveTaskToFavouriteList(commonDataHandlerAction.selectedTask, "
+									+ favouriteList.getId() + ")}");
 					favouriteSubMenu.addElement(item);
 				}
 			}

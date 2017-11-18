@@ -178,6 +178,15 @@ public class FavouriteListDAO extends AbstractDAO {
 
 		addTaskToList(task, getFavouriteList(predefinedFavouriteList.getId(), true, false));
 	}
+	
+	public void addTaskToList(Task task, long id)
+			throws CustomDatabaseInconsistentVersionException {
+
+		reattach(task);
+		reattach(task.getParent());
+
+		addTaskToList(task, getFavouriteList(id, true, false));
+	}
 
 	public void addTaskToList(Task task, FavouriteList favouriteList)
 			throws CustomDatabaseInconsistentVersionException {

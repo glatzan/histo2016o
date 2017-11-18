@@ -2,18 +2,22 @@ package org.histo.action.view;
 
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.Physician;
+import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
@@ -76,6 +80,11 @@ public class DiagnosisViewHandlerAction {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ContactDAO contactDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListDAO favouriteListDAO;
 
 	/**
 	 * List of all diagnosis presets
@@ -241,5 +250,15 @@ public class DiagnosisViewHandlerAction {
 		logger.debug("Copy " + selectedcaseHistoryItem.getValue() + " to " + task);
 		task.setCaseHistory(selectedcaseHistoryItem.getValue());
 		onDataChange(task, "log.patient.task.change.caseHistory", selectedcaseHistoryItem.getValue());
+	}
+
+	public void addOrRemoveTaskToFavouriteList(Task task, long id) {
+//		System.out.println(event.getComponent().getChildCount());
+//		if(event.getComponent() instanceof FavouriteListMenuItem) {
+//			
+//		}
+//		
+//		Task task, FavouriteList favouriteList
+		favouriteListDAO.addTaskToList(task, id);
 	}
 }

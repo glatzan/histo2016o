@@ -32,7 +32,7 @@
 }
 
 % footer 
-\cfoot{\thepage\ of \pageref{LastPage}}
+\cfoot{Seite \thepage\ von \pageref{LastPage}}
 
 \setcounter{secnumdepth}{0}
 
@@ -165,14 +165,14 @@ $address \\
 \begin{longtable}{p{\linewidth}}
 	\large \underline{ $!diagnosisRevision.name: }\\*
 	\begin{addmargin}{0.2cm}
-		\normalsize $!diagnosisRevision.text
+		\normalsize $!latexTextConverter.convertToTex($diagnosisRevision.text)
 	\end{addmargin}\\
 	\large \underline{ Diagnosen: }\\*
 	\begin{addmargin}{0.2cm}
 	
 			\begin{tabular}{p{0.05\linewidth}p{0.95\linewidth}}
 			#foreach ($diagnosis in $diagnosisRevision.diagnoses)
-				$!diagnosis.sample.sampleID & $!diagnosis.diagnosis \\
+				$!diagnosis.sample.sampleID & $!latexTextConverter.convertToTex($diagnosis.diagnosis)  \\
 			#end
 			\end{tabular}			
 

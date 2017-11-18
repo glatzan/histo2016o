@@ -3,7 +3,6 @@ body {
 	font-size: 0.8em !important;
 }
 
-
 /************************************* DEFAULT TABLE *************************************/
 /*******************************************/
 /* Default table containter, no padding at all*/
@@ -426,6 +425,16 @@ ul.ui-menu-child {
 
 .defaultOverlayPanel>div {
 	padding: 4px !important;
+}
+
+.selectOverlayPanel .ui-datatable .ui-column-filter {
+	width: 95% !important;
+	padding: 4px !important;
+	font-size: 12px !important;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	box-shadow: none !important;
+	font-style: normal !important;
+	font-variant: normal !important;
 }
 /*
 	######################################## Header ########################################
