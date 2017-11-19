@@ -10,10 +10,10 @@
 
 
 	<c:set var="selectedPatient"
-		value="#{commonDataHandlerAction.selectedPatient}" />
+		value="#{globalEditViewHandler.selectedPatient}" />
 
 	<c:set var="selectedTask"
-		value="#{commonDataHandlerAction.selectedTask}" />
+		value="#{globalEditViewHandler.selectedTask}" />
 
 	<c:set var="taskEditable" scope="request"
 		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />

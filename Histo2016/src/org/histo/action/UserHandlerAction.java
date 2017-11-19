@@ -2,6 +2,8 @@ package org.histo.action;
 
 import java.io.Serializable;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.adaptors.MailHandler;
@@ -71,6 +73,14 @@ public class UserHandlerAction implements Serializable {
 	private LabelPrinter selectedLabelPrinter;
 
 	/**
+	 * Method called on postconstruct. Initializes all important variables.
+	 */
+	@PostConstruct
+	public void init() {
+		updateSelectedPrinters();
+	}
+
+	/**
 	 * Checks if the session is associated with a user.
 	 * 
 	 * @return
@@ -121,7 +131,7 @@ public class UserHandlerAction implements Serializable {
 	public void groupOfUserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
 		// init histo group
 		HistoGroup group = userDAO.initializeGroup(histoUser.getGroup(), true);
-		
+
 		histoUser.getSettings().updateCrucialSettings(group.getSettings());
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getGroup().toString());
 		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getGroup() });

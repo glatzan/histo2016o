@@ -69,11 +69,11 @@
 	<p:dataTable var="patient" id="patientList"
 		value="#{worklistViewHandlerAction.worklist.items}"
 		selectionMode="single" rowIndexVar="rowIdx"
-		selection="#{commonDataHandlerAction.selectedPatient}"
+		selection="#{globalEditViewHandler.selectedPatient}"
 		rowKey="#{patient.id}" styleClass="navigationDataTable">
 
 		<p:ajax event="rowSelect" update=":navigationForm :contentForm :headerForm"
-			listener="#{worklistViewHandlerAction.onSelectPatient(commonDataHandlerAction.selectedPatient)}" />
+			listener="#{worklistViewHandlerAction.onSelectPatient(globalEditViewHandler.selectedPatient)}" />
 
 		<p:column>
 			<!-- Header -->
@@ -170,7 +170,7 @@
 								styleClass="noUnderlineAtLink">
 
 								<h:outputLabel value="#{task.taskID}"
-									style="#{commonDataHandlerAction.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
+									style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 
 								<!-- priority -->
 								<h:panelGroup rendered="#{task.taskPriority ne 'NONE'}">
@@ -296,7 +296,7 @@
 								update="navigationForm contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 								<h:outputLabel value="#{task.taskID}"
-									style="#{commonDataHandlerAction.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
+									style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 							</p:commandLink>
 							<br />
 						</p:repeat>
@@ -310,7 +310,7 @@
 
 	<p:contextMenu for="patientList" >
 		<p:menuitem value="Entfernen" icon="ui-icon-close"
-			actionListener="#{worklistViewHandlerAction.removeFromWorklist(commonDataHandlerAction.selectedPatient)}"
+			actionListener="#{worklistViewHandlerAction.removeFromWorklist(globalEditViewHandler.selectedPatient)}"
 			update="navigationForm contentForm" />
 	</p:contextMenu>
 </ui:composition>

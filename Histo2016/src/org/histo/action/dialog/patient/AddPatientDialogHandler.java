@@ -12,8 +12,10 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.Contact;
+import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.histo.ui.ListChooser;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +105,8 @@ public class AddPatientDialogHandler extends AbstractDialog {
 		setPatientList(null);
 
 		setPatient(new Patient(new Person(new Contact())));
+		getPatient().setTasks(new ArrayList<Task>());
+		getPatient().setAttachedPdfs(new ArrayList<PDFContainer>());
 
 		setToManyMatchesInClinicDatabase(false);
 	}

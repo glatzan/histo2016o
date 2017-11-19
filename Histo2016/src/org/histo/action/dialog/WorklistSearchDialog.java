@@ -1,12 +1,21 @@
 package org.histo.action.dialog;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.histo.action.UserHandlerAction;
+import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
+import org.histo.action.dialog.UserSettingsDialog.FavouriteListTab;
+import org.histo.action.dialog.UserSettingsDialog.GeneralTab;
+import org.histo.action.dialog.UserSettingsDialog.PrinterTab;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.WorklistSearchFilter;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
@@ -15,48 +24,65 @@ import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
+import org.histo.ui.FavouriteListContainer;
 import org.histo.worklist.Worklist;
-import org.histo.worklist.search.WorklistSearchBasic;
+import org.histo.worklist.search.WorklistFavouriteSearch;
+import org.histo.worklist.search.WorklistSimpleSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 @Configurable
-public class WorklistSearchDialog extends AbstractDialog {
+@Getter
+@Setter
+public class WorklistSearchDialog extends AbstractTabDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
 
-	@Getter
-	@Setter
-	private WorklistSearchBasic worklistSearchBasic;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListDAO favouriteListDAO;
 
-	private boolean initialized;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
-	private WorklistSearchFilter filterIndex;
+	private SimpleSearchTab simpleSearchTab;
+	private FavouriteSearchTab favouriteSearchTab;
+	private ExtendedSearchTab extendedSearchTab;
 
-	private ExtendedSearchData extendedSearchData;
+	public WorklistSearchDialog() {
+		setSimpleSearchTab(new SimpleSearchTab());
+		setFavouriteSearchTab(new FavouriteSearchTab());
+		setExtendedSearchTab(new ExtendedSearchTab());
 
-	private List<MaterialPreset> materials;
-
-	private List<Physician> surgeons;
-
-	private List<Physician> privatePhysicians;
-
-	private List<Physician> sigantures;
-
-	private List<ListItem> caseHistoryList;
-
-	private List<DiagnosisPreset> diagnoses;
+		tabs = new AbstractTab[] { simpleSearchTab, favouriteSearchTab, extendedSearchTab };
+	}
 
 	public void initAndPrepareBean() {
 		initBean();
@@ -66,39 +92,114 @@ public class WorklistSearchDialog extends AbstractDialog {
 	public boolean initBean() {
 		super.initBean(null, Dialog.WORKLIST_SEARCH);
 
-		// init only on first init
-		if (!initialized) {
-
-			setWorklistSearchBasic(new WorklistSearchBasic());
-
-			setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
-
-			setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
-
-			setMaterials(utilDAO.getAllMaterialPresets(false));
-
-			setSurgeons(physicianDAO.getPhysicians(ContactRole.SURGEON, false));
-
-			setPrivatePhysicians(physicianDAO.getPhysicians(ContactRole.PRIVATE_PHYSICIAN, false));
-
-			setSigantures(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
-
-			setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
-
-			setDiagnoses(utilDAO.getAllDiagnosisPrototypes());
-
-			initialized = true;
+		for (int i = 0; i < tabs.length; i++) {
+			tabs[i].initTab();
 		}
 
-		setExtendedSearchData(new ExtendedSearchData());
+		if (activeIndex >= 0 && activeIndex < getTabs().length) {
+			onTabChange(null);
+		}
+
 		return true;
+	}
+
+	@Getter
+	@Setter
+	public class SimpleSearchTab extends AbstractTab {
+
+		private WorklistSimpleSearch worklistSearch;
+
+		public SimpleSearchTab() {
+			setTabName("SimpleSearchTab");
+			setName("dialog.worklistsearch.simple");
+			setViewID("simpleSearch");
+			setCenterInclude("include/simpleSearch.xhtml");
+		}
+
+		public boolean initTab() {
+			setWorklistSearch(new WorklistSimpleSearch());
+			return true;
+		}
+
+		@Override
+		public void updateData() {
+		}
+
+	}
+
+	@Getter
+	@Setter
+	public class FavouriteSearchTab extends AbstractTab {
+
+		private WorklistFavouriteSearch worklistSearch;
+
+		private List<FavouriteListContainer> containers;
+
+		private FavouriteListContainer selectedContainer;
+
+		public FavouriteSearchTab() {
+			setTabName("FavouriteSearchTab");
+			setName("dialog.worklistsearch.favouriteList");
+			setViewID("favouriteListSearch");
+			setCenterInclude("include/favouriteSearch.xhtml");
+		}
+
+		public boolean initTab() {
+			setWorklistSearch(new WorklistFavouriteSearch());
+			return true;
+		}
+
+		@Override
+		public void updateData() {
+
+			List<FavouriteList> list = favouriteListDAO.getFavouriteListsForUser(userHandlerAction.getCurrentUser(),
+					false, true, true, true, true);
+
+			containers = list.stream().map(p -> new FavouriteListContainer(p, userHandlerAction.getCurrentUser()))
+					.collect(Collectors.toList());
+
+			
+			if(selectedContainer != null) {
+				List<Patient> patient = favouriteListDAO.getPatientFromFavouriteList(selectedContainer.getFavouriteList());
+				System.out.println(patient.size());
+			}
+		}
+
+		public void selectAsWorklist() {
+			
+			if(selectedContainer != null) {
+				List<Patient> patient = favouriteListDAO.getPatientFromFavouriteList(selectedContainer.getFavouriteList());
+				System.out.println(patient.size());
+			}
+			
+			if (selectedContainer != null) {
+//				worklistSearch.setFavouriteList(selectedContainer.getFavouriteList());
+//				worklistViewHandlerAction.addWorklist(worklistSearch, "Default", true);
+			}
+		}
+	}
+
+	public class ExtendedSearchTab extends AbstractTab {
+
+		public ExtendedSearchTab() {
+			setTabName("ExtendedSearchTab");
+			setName("dialog.worklistsearch.extended");
+			setViewID("extendedSearch");
+			setCenterInclude("include/extendedSearch.xhtml");
+		}
+
+		@Override
+		public void updateData() {
+		}
+
 	}
 
 	public Worklist extendedSearch() {
 
 		logger.debug("Calling extended search");
 
-		List<Patient> result = patientDao.getPatientByCriteria(getExtendedSearchData());
+		// List<Patient> result =
+		// patientDao.getPatientByCriteria(getExtendedSearchData());
 
 		// Worklist worklist = new Worklist("search", result, false,
 		// userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
@@ -140,70 +241,6 @@ public class WorklistSearchDialog extends AbstractDialog {
 	}
 
 	// ************************ Getter/Setter ************************
-
-	public WorklistSearchFilter getFilterIndex() {
-		return filterIndex;
-	}
-
-	public void setFilterIndex(WorklistSearchFilter filterIndex) {
-		this.filterIndex = filterIndex;
-	}
-
-	public ExtendedSearchData getExtendedSearchData() {
-		return extendedSearchData;
-	}
-
-	public void setExtendedSearchData(ExtendedSearchData extendedSearchData) {
-		this.extendedSearchData = extendedSearchData;
-	}
-
-	public List<MaterialPreset> getMaterials() {
-		return materials;
-	}
-
-	public void setMaterials(List<MaterialPreset> materials) {
-		this.materials = materials;
-	}
-
-	public List<Physician> getSigantures() {
-		return sigantures;
-	}
-
-	public void setSigantures(List<Physician> sigantures) {
-		this.sigantures = sigantures;
-	}
-
-	public List<Physician> getSurgeons() {
-		return surgeons;
-	}
-
-	public void setSurgeons(List<Physician> surgeons) {
-		this.surgeons = surgeons;
-	}
-
-	public List<Physician> getPrivatePhysicians() {
-		return privatePhysicians;
-	}
-
-	public void setPrivatePhysicians(List<Physician> privatePhysicians) {
-		this.privatePhysicians = privatePhysicians;
-	}
-
-	public List<ListItem> getCaseHistoryList() {
-		return caseHistoryList;
-	}
-
-	public void setCaseHistoryList(List<ListItem> caseHistoryList) {
-		this.caseHistoryList = caseHistoryList;
-	}
-
-	public List<DiagnosisPreset> getDiagnoses() {
-		return diagnoses;
-	}
-
-	public void setDiagnoses(List<DiagnosisPreset> diagnoses) {
-		this.diagnoses = diagnoses;
-	}
 
 	public class ExtendedSearchData {
 		private String name;
@@ -441,4 +478,5 @@ public class WorklistSearchDialog extends AbstractDialog {
 		}
 
 	}
+
 }

@@ -22,9 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Configurable
-public class WorklistSearchBasic extends WorklistSearch {
-
-	private static Logger logger = Logger.getLogger("org.histo");
+public class WorklistSimpleSearch extends WorklistSearch {
 
 	@Autowired
 	private PatientDao patientDao;
@@ -73,7 +71,7 @@ public class WorklistSearchBasic extends WorklistSearch {
 	@Setter
 	private WorklistSearchOption searchIndex;
 
-	public WorklistSearchBasic() {
+	public WorklistSimpleSearch() {
 		setLists(PredefinedFavouriteList.values());
 
 		setSearchIndex(WorklistSearchOption.STAINING_LIST);

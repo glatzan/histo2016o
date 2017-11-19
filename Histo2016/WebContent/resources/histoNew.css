@@ -35,6 +35,10 @@
 	font-variant: normal !important;
 }
 
+.newStyleListingTable .ui-radiobutton {
+	padding: 4px !important;
+}
+
 .newStyleListingTable .ui-state-focus {
 	box-shadow: none !important;
 }

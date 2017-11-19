@@ -8,7 +8,6 @@ import javax.faces.context.FacesContext;
 import javax.persistence.criteria.Predicate;
 
 import org.apache.log4j.Logger;
-import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
@@ -50,7 +49,8 @@ public class WorklistViewHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
-	private CommonDataHandlerAction commonDataHandlerAction;
+	@Lazy
+	private GlobalEditViewHandler globalEditViewHandler;
 
 	@Autowired
 	@Lazy
@@ -116,10 +116,6 @@ public class WorklistViewHandlerAction {
 	@Getter
 	private Worklist worklist;
 
-	@Getter
-	@Setter
-	private MenuModel taskMenuModel;
-
 	@PostConstruct
 	public void initBean() {
 		logger.debug("PostConstruct Init worklist");
@@ -136,11 +132,12 @@ public class WorklistViewHandlerAction {
 				.getWorklistToLoad();
 
 		if (defaultWorklistToLoad != null) {
-			dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic()
+			dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch()
 					.setSearchIndex(defaultWorklistToLoad);
-			dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic().updateSearchIndex();
+			dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch().updateSearchIndex();
 
-			addWorklist(new Worklist("Default", dialogHandlerAction.getWorklistSearchDialog().getWorklistSearchBasic(),
+			addWorklist(new Worklist("Default",
+					dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch(),
 					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
 					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
 					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate()), true);
@@ -162,7 +159,7 @@ public class WorklistViewHandlerAction {
 			taskViewHandlerAction.initBean();
 			break;
 		case WORKLIST_PATIENT:
-			if (commonDataHandlerAction.getSelectedPatient() != null)
+			if (globalEditViewHandler.getSelectedPatient() != null)
 				setCurrentView(view);
 			else
 				goToNavigation(View.WORKLIST_TASKS);
@@ -170,8 +167,7 @@ public class WorklistViewHandlerAction {
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
 			setLastTaskView(view);
-			if (commonDataHandlerAction.getSelectedPatient() != null
-					&& commonDataHandlerAction.getSelectedTask() != null)
+			if (globalEditViewHandler.getSelectedPatient() != null && globalEditViewHandler.getSelectedTask() != null)
 				setCurrentView(view);
 			else
 				goToNavigation(View.WORKLIST_TASKS);
@@ -199,7 +195,7 @@ public class WorklistViewHandlerAction {
 
 		if (patient == null) {
 			logger.debug("Deselecting patient");
-			commonDataHandlerAction.setSelectedPatient(null);
+			globalEditViewHandler.setSelectedPatient(null);
 			goToNavigation(View.WORKLIST_TASKS);
 			return;
 		}
@@ -207,7 +203,7 @@ public class WorklistViewHandlerAction {
 		if (reload) {
 			try {
 				patientDao.initializePatient(patient, true);
-				commonDataHandlerAction.setSelectedPatient(patient);
+				globalEditViewHandler.setSelectedPatient(patient);
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				// Reloading the Patient, should not be happening
 				logger.debug("Version conflict, updating entity");
@@ -217,20 +213,20 @@ public class WorklistViewHandlerAction {
 			}
 		}
 
-		commonDataHandlerAction.setSelectedTask(null);
+		globalEditViewHandler.setSelectedTask(null);
 
-		setTaskMenuModel((new MenuGenerator()).generateEditMenu(commonDataHandlerAction.getSelectedPatient(),
-				commonDataHandlerAction.getSelectedTask()));
+		// replacing patient, generating task status
+		getWorklist().addPatient(patient);
 
-		logger.debug("Select patient " + commonDataHandlerAction.getSelectedPatient().getPerson().getFullName());
+		logger.debug("Select patient " + globalEditViewHandler.getSelectedPatient().getPerson().getFullName());
 
 		goToNavigation(View.WORKLIST_PATIENT);
 		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
 	public void onDeselectPatient() {
-		commonDataHandlerAction.setSelectedPatient(null);
-		commonDataHandlerAction.setSelectedTask(null);
+		globalEditViewHandler.setSelectedPatient(null);
+		globalEditViewHandler.setSelectedTask(null);
 		goToNavigation(View.WORKLIST_TASKS);
 	}
 
@@ -268,8 +264,8 @@ public class WorklistViewHandlerAction {
 					onVersionConflictPatient(task.getParent(), false);
 				else {
 					// task might be delete from an other user
-					if (commonDataHandlerAction.getSelectedPatient() != null) {
-						onVersionConflictPatient(commonDataHandlerAction.getSelectedPatient());
+					if (globalEditViewHandler.getSelectedPatient() != null) {
+						onVersionConflictPatient(globalEditViewHandler.getSelectedPatient());
 
 						mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
 								resourceBundle.get("growl.version.error.text"));
@@ -281,17 +277,17 @@ public class WorklistViewHandlerAction {
 			}
 		}
 
-		commonDataHandlerAction.setSelectedPatient(task.getPatient());
-		commonDataHandlerAction.setSelectedTask(task);
+		globalEditViewHandler.setSelectedPatient(task.getPatient());
+		globalEditViewHandler.setSelectedTask(task);
 
 		// init all available materials
 		receiptlogViewHandlerAction.prepareForTask(task);
 		diagnosisViewHandlerAction.prepareForTask(task);
 
-		getWorklist().generateTaskStatus(task.getPatient());
+		// replacing patient, generating task status
+		getWorklist().addPatient(task.getPatient());
 
-		setTaskMenuModel((new MenuGenerator()).generateEditMenu(commonDataHandlerAction.getSelectedPatient(),
-				commonDataHandlerAction.getSelectedTask()));
+		globalEditViewHandler.updateTaskMenuModel(true);
 
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(getLastTaskView());
@@ -307,7 +303,7 @@ public class WorklistViewHandlerAction {
 	 * @return
 	 */
 	public void onDeselectTask() {
-		commonDataHandlerAction.setSelectedTask(null);
+		globalEditViewHandler.setSelectedTask(null);
 		setCurrentView(View.WORKLIST_PATIENT);
 	}
 
@@ -340,6 +336,12 @@ public class WorklistViewHandlerAction {
 		}
 	}
 
+	public void removeWorklist(Worklist worklist) {
+		getWorklists().remove(worklist);
+		if (getWorklist() == worklist)
+			setWorklist(new Worklist("", new WorklistSearch()));
+	}
+
 	public void addTaskToWorklist(Task task) {
 
 		if (getWorklist().containsPatient(task.getPatient())) {
@@ -350,12 +352,6 @@ public class WorklistViewHandlerAction {
 			task.setActive(true);
 			addPatientToWorkList(task.getPatient(), false);
 		}
-	}
-
-	public void removeWorklist(Worklist worklist) {
-		getWorklists().remove(worklist);
-		if (getWorklist() == worklist)
-			setWorklist(new Worklist("", new WorklistSearch()));
 	}
 
 	/**
@@ -394,7 +390,7 @@ public class WorklistViewHandlerAction {
 	 * @param patient
 	 */
 	public void removeFromWorklist(Patient patient) {
-		if (commonDataHandlerAction.getSelectedPatient() == patient) {
+		if (globalEditViewHandler.getSelectedPatient() == patient) {
 			onDeselectPatient();
 		}
 
@@ -402,8 +398,8 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void onVersionConflictTask() {
-		if (commonDataHandlerAction.getSelectedTask() != null)
-			onVersionConflictTask(commonDataHandlerAction.getSelectedTask(), true);
+		if (globalEditViewHandler.getSelectedTask() != null)
+			onVersionConflictTask(globalEditViewHandler.getSelectedTask(), true);
 	}
 
 	public void onVersionConflictTask(Task task) {
@@ -426,9 +422,9 @@ public class WorklistViewHandlerAction {
 		if (reload)
 			patient = patientDao.getPatient(patient.getId(), true);
 
-		if (commonDataHandlerAction.getSelectedPatient() != null
-				&& commonDataHandlerAction.getSelectedPatient().getId() == patient.getId())
-			commonDataHandlerAction.setSelectedPatient(patient);
+		if (globalEditViewHandler.getSelectedPatient() != null
+				&& globalEditViewHandler.getSelectedPatient().getId() == patient.getId())
+			globalEditViewHandler.setSelectedPatient(patient);
 
 		logger.debug("Replacing patient due to external changes!");
 		getWorklist().addPatient(patient);
@@ -438,7 +434,7 @@ public class WorklistViewHandlerAction {
 	public void updateCurrentWorklist() {
 		if (getWorklist().isAutoUpdate()) {
 			logger.debug("Auto updating worklist");
-			getWorklist().updateWorklist(commonDataHandlerAction.getSelectedPatient());
+			getWorklist().updateWorklist(globalEditViewHandler.getSelectedPatient());
 		}
 	}
 
@@ -453,20 +449,20 @@ public class WorklistViewHandlerAction {
 	 */
 	public void selectNextTask() {
 		if (!getWorklist().isEmpty()) {
-			if (commonDataHandlerAction.getSelectedPatient() != null) {
+			if (globalEditViewHandler.getSelectedPatient() != null) {
 
-				int indexOfTask = commonDataHandlerAction.getSelectedPatient()
+				int indexOfTask = globalEditViewHandler.getSelectedPatient()
 						.getActiveTasks(getWorklist().isShowActiveTasksExplicit())
-						.indexOf(commonDataHandlerAction.getSelectedTask());
+						.indexOf(globalEditViewHandler.getSelectedTask());
 
 				// next task is within the same patient
 				if (indexOfTask - 1 >= 0) {
-					onSelectTaskAndPatient(commonDataHandlerAction.getSelectedPatient()
+					onSelectTaskAndPatient(globalEditViewHandler.getSelectedPatient()
 							.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(indexOfTask - 1));
 					return;
 				}
 
-				int indexOfPatient = getWorklist().getItems().indexOf(commonDataHandlerAction.getSelectedPatient());
+				int indexOfPatient = getWorklist().getItems().indexOf(globalEditViewHandler.getSelectedPatient());
 
 				if (indexOfPatient == -1)
 					return;
@@ -496,21 +492,21 @@ public class WorklistViewHandlerAction {
 
 	public void selectPreviouseTask() {
 		if (!getWorklist().isEmpty()) {
-			if (commonDataHandlerAction.getSelectedPatient() != null) {
+			if (globalEditViewHandler.getSelectedPatient() != null) {
 
-				int indexOfTask = commonDataHandlerAction.getSelectedPatient()
+				int indexOfTask = globalEditViewHandler.getSelectedPatient()
 						.getActiveTasks(getWorklist().isShowActiveTasksExplicit())
-						.indexOf(commonDataHandlerAction.getSelectedTask());
+						.indexOf(globalEditViewHandler.getSelectedTask());
 
 				// next task is within the same patient
-				if (indexOfTask + 1 < commonDataHandlerAction.getSelectedPatient()
+				if (indexOfTask + 1 < globalEditViewHandler.getSelectedPatient()
 						.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).size()) {
-					onSelectTaskAndPatient(commonDataHandlerAction.getSelectedPatient()
+					onSelectTaskAndPatient(globalEditViewHandler.getSelectedPatient()
 							.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(indexOfTask + 1));
 					return;
 				}
 
-				int indexOfPatient = getWorklist().getItems().indexOf(commonDataHandlerAction.getSelectedPatient());
+				int indexOfPatient = getWorklist().getItems().indexOf(globalEditViewHandler.getSelectedPatient());
 
 				if (indexOfPatient == -1)
 					return;

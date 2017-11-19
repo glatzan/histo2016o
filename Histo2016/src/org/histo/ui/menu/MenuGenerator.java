@@ -59,43 +59,41 @@ public class MenuGenerator {
 			item.setIcon("fa fa-user");
 			patientSubMenu.addElement(item);
 
-			// separator
-			DefaultSeparator seperator = new DefaultSeparator();
-			seperator.setRendered(patient != null);
-			patientSubMenu.addElement(seperator);
+			if (patient != null) {
+				// separator
+				DefaultSeparator seperator = new DefaultSeparator();
+				patientSubMenu.addElement(seperator);
 
-			// patient overview
-			item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.overview"));
-			item.setOnclick(
-					"$('#headerForm\\\\:showPatientOverview').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-			item.setIcon("fa fa-tablet");
-			item.setRendered(patient != null);
-			patientSubMenu.addElement(item);
+				// patient overview
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.overview"));
+				item.setOnclick(
+						"$('#headerForm\\\\:showPatientOverview').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setIcon("fa fa-tablet");
+				patientSubMenu.addElement(item);
 
-			// patient edit data, disabled if not external patient
-			item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.edit"));
-			item.setOnclick(
-					"$('#headerForm\\\\:editPatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-			item.setIcon("fa fa-pencil-square-o");
-			item.setRendered(patient != null);
-			item.setDisabled(!patient.isExternalPatient());
-			// TODO comment that patient is not edtiable
-			patientSubMenu.addElement(item);
+				// patient edit data, disabled if not external patient
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.edit"));
+				item.setOnclick(
+						"$('#headerForm\\\\:editPatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setIcon("fa fa-pencil-square-o");
+				item.setDisabled(!patient.isExternalPatient());
+				// TODO comment that patient is not edtiable
+				patientSubMenu.addElement(item);
 
-			// patient upload pdf
-			item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.upload"));
-			item.setOnclick(
-					"$('#headerForm\\\\:uploadBtnToPatient').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-			item.setIcon("fa fa-cloud-upload");
-			item.setRendered(patient != null);
-			patientSubMenu.addElement(item);
+				// patient upload pdf
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.upload"));
+				item.setOnclick(
+						"$('#headerForm\\\\:uploadBtnToPatient').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setIcon("fa fa-cloud-upload");
+				patientSubMenu.addElement(item);
+			}
 		}
 
 		// task menu
 		if (patient != null) {
 
 			boolean taskIsNull = task == null;
-			boolean taskIsEditable = task.getTaskStatus().isEditable();
+			boolean taskIsEditable = taskIsNull ? false : task.getTaskStatus().isEditable();
 
 			DefaultSubMenu taskSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.task"));
 			model.addElement(taskSubMenu);
@@ -105,7 +103,6 @@ public class MenuGenerator {
 			item.setOnclick(
 					"$('#headerForm\\\\:newTaskBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 			item.setIcon("fa fa-file");
-			item.setStyleClass("headerSubMenuStyle");
 			taskSubMenu.addElement(item);
 
 			// new sample, if task is not null
@@ -115,7 +112,6 @@ public class MenuGenerator {
 			item.setIcon("fa fa-eyedropper");
 			item.setRendered(!taskIsNull);
 			item.setDisabled(!taskIsEditable);
-			item.setStyleClass("headerSubMenuStyle");
 			taskSubMenu.addElement(item);
 
 			// staining submenu
@@ -130,7 +126,6 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:stainingOverview').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-paint-brush");
-				item.setStyleClass("headerSubMenuStyle");
 				item.setDisabled(!taskIsEditable);
 				stainingSubMenu.addElement(item);
 
@@ -140,7 +135,6 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:stainingPhaseExit').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-image");
-				item.setStyleClass("headerSubMenuStyle");
 				item.setRendered(task.getTaskStatus().isStainingNeeded() || task.getTaskStatus().isReStainingNeeded());
 				item.setDisabled(!taskIsEditable);
 				stainingSubMenu.addElement(item);
@@ -151,8 +145,8 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:stainingPhaseForceExitStayInPhase').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-image");
-				item.setRendered(task.getTaskStatus().isReStainingNeeded());
-				item.setStyleClass("headerSubMenuStyle");
+				item.setRendered(task.getTaskStatus().isStayInStainingList());
+
 				stainingSubMenu.addElement(item);
 			}
 
@@ -168,7 +162,7 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:newDiagnosisRevision').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-pencil-square-o");
-				item.setStyleClass("headerSubMenuStyle");
+
 				item.setDisabled(!taskIsEditable
 						&& !(task.getTaskStatus().isDiagnosisNeeded() || task.getTaskStatus().isReDiagnosisNeeded()));
 				diagnosisSubMenu.addElement(item);
@@ -178,11 +172,13 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:diagnosisPhaseExit').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-eye-slash");
-				item.setStyleClass("headerSubMenuStyle");
 				item.setRendered(
 						task.getTaskStatus().isDiagnosisNeeded() || task.getTaskStatus().isReDiagnosisNeeded());
 				item.setDisabled(!taskIsEditable);
 				diagnosisSubMenu.addElement(item);
+
+				logger.debug(
+						task.getTaskStatus().isDiagnosisNeeded() + " " + task.getTaskStatus().isReDiagnosisNeeded());
 
 				// Leave phase if stay in phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.diagnosisPhase.force.leave"));
@@ -190,7 +186,7 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:diagnosisExitStayInPhase').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setRendered(task.getTaskStatus().isStayInDiagnosisList() && task.isFinalized());
 				item.setIcon("fa fa-eye-slash");
-				item.setStyleClass("headerSubMenuStyle");
+
 				diagnosisSubMenu.addElement(item);
 
 				// council
@@ -198,7 +194,7 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:councilBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-comment-o");
-				item.setStyleClass("headerSubMenuStyle");
+
 				item.setDisabled(!taskIsEditable);
 				diagnosisSubMenu.addElement(item);
 			}
@@ -215,8 +211,6 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:editContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-envelope-o");
-				item.setStyleClass("headerSubMenuStyle");
-				item.setDisabled(!taskIsEditable);
 				notificationSubMenu.addElement(item);
 
 				// report
@@ -224,8 +218,6 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:medicalFindingsContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-volume-up");
-				item.setStyleClass("headerSubMenuStyle");
-				item.setDisabled(!taskIsEditable);
 				notificationSubMenu.addElement(item);
 
 				// print
@@ -233,8 +225,6 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:printBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-print");
-				item.setStyleClass("headerSubMenuStyle");
-				item.setDisabled(!taskIsEditable);
 				notificationSubMenu.addElement(item);
 			}
 
@@ -250,8 +240,6 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:diagnosisPhaseUnFinalize').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-eye");
 				item.setRendered(task.isFinalized());
-				item.setStyleClass("headerSubMenuStyle");
-				item.setDisabled(!taskIsEditable);
 				taskSubMenu.addElement(item);
 			}
 
@@ -266,19 +254,23 @@ public class MenuGenerator {
 				taskSubMenu.addElement(favouriteSubMenu);
 
 				List<FavouriteList> lists = favouriteListDAO
-						.getFavouriteListsWithTasksForUser(userHandlerAction.getCurrentUser(), true, false);
+						.getFavouriteListsForUser(userHandlerAction.getCurrentUser(), true, false, false, true, false);
 
 				for (FavouriteList favouriteList : lists) {
 					item = new DefaultMenuItem(favouriteList.getName());
-					if (favouriteList.containsTask(task))
-						item.setIcon("fa fa-pencil-square-o icon-green");
-					else
-						item.setIcon("fa fa-pencil-square-o");
+					if (favouriteList.containsTask(task)) {
+						item.setIcon("fa fa-list-ul icon-green");
+						item.setCommand(
+								"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
+										+ favouriteList.getId() + ")}");
+					} else {
+						item.setIcon("fa fa-list-ul");
+						item.setCommand(
+								"#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
+										+ favouriteList.getId() + ")}");
+					}
 
-					item.setStyleClass("headerSubMenuStyle icon-red");
-					item.setCommand(
-							"#{diagnosisViewHandlerAction.addOrRemoveTaskToFavouriteList(commonDataHandlerAction.selectedTask, "
-									+ favouriteList.getId() + ")}");
+					item.setUpdate("navigationForm contentForm headerForm");
 					favouriteSubMenu.addElement(item);
 				}
 			}
@@ -286,7 +278,7 @@ public class MenuGenerator {
 			// accounting
 			item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.accounting"));
 			item.setIcon("fa fa-dollar");
-			item.setStyleClass("headerSubMenuStyle");
+
 			item.setDisabled(true);
 			taskSubMenu.addElement(item);
 
@@ -295,7 +287,7 @@ public class MenuGenerator {
 			item.setOnclick(
 					"$('#headerForm\\\\:bioBankBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 			item.setIcon("fa fa-leaf");
-			item.setStyleClass("headerSubMenuStyle");
+
 			item.setDisabled(!taskIsEditable);
 			taskSubMenu.addElement(item);
 
@@ -304,7 +296,7 @@ public class MenuGenerator {
 			item.setOnclick(
 					"$('#headerForm\\\\:uploadBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 			item.setIcon("fa fa-cloud-upload");
-			item.setStyleClass("headerSubMenuStyle");
+
 			item.setDisabled(!taskIsEditable);
 			taskSubMenu.addElement(item);
 
@@ -312,7 +304,7 @@ public class MenuGenerator {
 			item = new DefaultMenuItem(resourceBundle.get("header.menu.log"));
 			item.setOnclick(
 					"$('#headerForm\\\\:logBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-			item.setStyleClass("headerSubMenuStyle");
+
 			model.addElement(item);
 
 		}

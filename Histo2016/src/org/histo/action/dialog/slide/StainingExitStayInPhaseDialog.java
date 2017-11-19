@@ -1,6 +1,7 @@
 package org.histo.action.dialog.slide;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;
@@ -37,6 +38,11 @@ public class StainingExitStayInPhaseDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	public void initAndPrepareBean(Task task) {
 		initBean(task, Dialog.STAINING_EXIT_STAY_IN_PHASE);
 		prepareDialog();
@@ -60,5 +66,7 @@ public class StainingExitStayInPhaseDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
+		
+		globalEditViewHandler.updateTaskMenuModel(false);
 	}
 }

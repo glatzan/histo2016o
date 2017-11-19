@@ -31,7 +31,7 @@
 			<p:dataTable var="staining"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll smallPaddingAll"
 				scrollable="true" scrollHeight="190"
-				value="#{addSlidesDialogHandler.stainingListChooser}">
+				value="#{dialogHandlerAction.addSlidesDialog.stainingListChooser}">
 				<p:column headerText="#{msg['dialog.addSlide.staining']}">
 					<h:outputLabel value="#{staining.listItem.name}" />
 				</p:column>
@@ -43,11 +43,11 @@
 
 			<h:panelGrid columns="2" style="width:100%">
 				<h:outputLabel value="#{msg['dialog.addSlide.commentray']}" />
-				<p:inputText value="#{addSlidesDialogHandler.commentary}"
+				<p:inputText value="#{dialogHandlerAction.addSlidesDialog.commentary}"
 					styleClass="smallInput" style="width:90%"></p:inputText>
 				<h:outputLabel value="#{msg['dialog.addSlide.restaining']}" />
 				<p:selectBooleanCheckbox
-					value="#{addSlidesDialogHandler.restaining}" />
+					value="#{dialogHandlerAction.addSlidesDialog.restaining}" />
 
 			</h:panelGrid>
 		</div>
@@ -60,13 +60,13 @@
 					<p:commandButton value="#{msg['general.create']}"
 						icon="fa fa-check-circle-o"
 						styleClass="smallButton buttonRighMarginInListExtended">
-						<f:actionListener binding="#{addSlidesDialogHandler.addSlides()}"></f:actionListener>
-						<f:actionListener binding="#{addSlidesDialogHandler.hideDialog()}"></f:actionListener>
+						<f:actionListener binding="#{dialogHandlerAction.addSlidesDialog.addSlides()}"></f:actionListener>
+						<f:actionListener binding="#{dialogHandlerAction.addSlidesDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						actionListener="#{addSlidesDialogHandler.hideDialog()}"
+						actionListener="#{dialogHandlerAction.addSlidesDialog.hideDialog()}"
 						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"></p:commandButton>
 				</h:panelGrid>

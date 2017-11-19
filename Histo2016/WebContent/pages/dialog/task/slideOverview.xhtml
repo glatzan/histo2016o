@@ -31,7 +31,7 @@
 		<div class="contentDiv" style="height: 520px">
 
 			<p:dataTable var="stainingRow" styleClass="stainingTable"
-				value="#{commonDataHandlerAction.selectedTask.stainingTableRows}"
+				value="#{globalEditViewHandler.selectedTask.stainingTableRows}"
 				scrollable="true" scrollHeight="480" rowIndexVar="index">
 
 				<!-- sample -->
@@ -43,7 +43,7 @@
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
 							<p:commandLink process="@this"
 								update=":dialogContent:idInputPannelInput"
-								actionListener="#{commonDataHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								actionListener="#{dialogHandlerAction.slideOverviewDialog.setSelectedStainingTableChooser(stainingRow)}"
 								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
 								<h:outputLabel
 									value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.entity.sampleID}" />
@@ -66,7 +66,7 @@
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
 							<p:commandLink process="@this"
 								update=":dialogContent:idInputPannelInput"
-								actionListener="#{commonDataHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								actionListener="#{dialogHandlerAction.slideOverviewDialog.setSelectedStainingTableChooser(stainingRow)}"
 								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
 								<h:outputLabel
 									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.entity.blockID}" />
@@ -87,7 +87,7 @@
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
 							<p:commandLink process="@this"
 								update=":dialogContent:idInputPannelInput"
-								actionListener="#{commonDataHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								actionListener="#{dialogHandlerAction.slideOverviewDialog.setSelectedStainingTableChooser(stainingRow)}"
 								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
 								<h:outputLabel value="#{stainingRow.entity.slideID}" />
 
@@ -185,7 +185,7 @@
 						<!-- ********** New Staining Button ********** -->
 						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
 							styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
-							actionListener="#{addSlidesDialogHandler.initAndPrepareBean(stainingRow.entity)}">
+							actionListener="#{dialogHandlerAction.addSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
 							<i class="fa fa-fw fa-paint-brush"></i>
 							<p:ajax event="dialogReturn" update="dialogContent" />
 						</p:commandLink>
@@ -209,13 +209,13 @@
 			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
 				styleClass="defaultOverlayPanel" widgetVar="idInputPannel"
 				hideEffect="fade" hideEvent="none" showEvent="none">
-				<p:inputText id="idInputPannelInput" rendered="#{commonDataHandlerAction.selectedStainingTableChooser ne null}"
-					value="#{commonDataHandlerAction.selectedStainingTableChooser.IDText}" />
+				<p:inputText id="idInputPannelInput" rendered="#{dialogHandlerAction.slideOverviewDialog.selectedStainingTableChooser ne null}"
+					value="#{dialogHandlerAction.slideOverviewDialog.selectedStainingTableChooser.IDText}" />
 			</p:overlayPanel>
 
 
 			<p:remoteCommand update="dialogContent"
-				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(commonDataHandlerAction.selectedStainingTableChooser)}"
+				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(dialogHandlerAction.slideOverviewDialog.selectedStainingTableChooser)}"
 				name="saveNameChange" />
 		</div>
 

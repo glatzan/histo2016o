@@ -2,6 +2,7 @@ package org.histo.model.favouriteList;
 
 import java.beans.Transient;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -47,6 +48,9 @@ public class FavouriteList implements HasID {
 	@Column(columnDefinition = "VARCHAR")
 	private String name;
 
+	@Column(columnDefinition = "VARCHAR")
+	private String commentary;
+	
 	@Column
 	private boolean defaultList;
 
@@ -59,11 +63,11 @@ public class FavouriteList implements HasID {
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList", targetEntity = FavouritePermissionsGroup.class)
 	@OrderBy("id ASC")
-	private List<FavouritePermissionsGroup> groups;
+	private Set<FavouritePermissionsGroup> groups;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList", targetEntity = FavouritePermissionsUser.class)
 	@OrderBy("id ASC")
-	private List<FavouritePermissionsUser> users;
+	private Set<FavouritePermissionsUser> users;
 
 	@Override
 	public String toString() {

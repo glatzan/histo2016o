@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
@@ -17,35 +18,56 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.ui.ListChooser;
+import org.histo.ui.StainingTableChooser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
-@Scope(value = "session")
-public class AddSlidesDialogHandler extends AbstractDialog {
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Getter
+@Setter
+public class AddSlidesDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskStatusHandler taskStatusHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
 
 	@Autowired
-	private PatientDao patientDao;
-
-	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	private Block block;
 
 	private String commentary;
@@ -131,39 +153,7 @@ public class AddSlidesDialogHandler extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
+		
+		globalEditViewHandler.updateTaskMenuModel(false);
 	}
-
-	// ************************ Getter/Setter ************************
-	public Block getBlock() {
-		return block;
-	}
-
-	public void setBlock(Block block) {
-		this.block = block;
-	}
-
-	public String getCommentary() {
-		return commentary;
-	}
-
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
-	}
-
-	public boolean isRestaining() {
-		return restaining;
-	}
-
-	public void setRestaining(boolean restaining) {
-		this.restaining = restaining;
-	}
-
-	public List<ListChooser<StainingPrototype>> getStainingListChooser() {
-		return stainingListChooser;
-	}
-
-	public void setStainingListChooser(List<ListChooser<StainingPrototype>> stainingListChooser) {
-		this.stainingListChooser = stainingListChooser;
-	}
-
 }

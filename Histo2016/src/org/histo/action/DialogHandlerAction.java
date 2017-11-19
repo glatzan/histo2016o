@@ -28,6 +28,7 @@ import org.histo.action.dialog.settings.physician.PhysicianEditDialog;
 import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
 import org.histo.action.dialog.settings.staining.StainingEditDialog;
 import org.histo.action.dialog.settings.users.UserListDialog;
+import org.histo.action.dialog.slide.AddSlidesDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
@@ -105,6 +106,8 @@ public class DialogHandlerAction {
 	private UserListDialog userListDialog;
 	
 	private PatientLogDialog patientLogDialog;
+	
+	private AddSlidesDialog addSlidesDialog;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -351,4 +354,13 @@ public class DialogHandlerAction {
 		return patientLogDialog;
 	}
 
+	public AddSlidesDialog getAddSlidesDialog() {
+		if (addSlidesDialog == null) {
+			addSlidesDialog = new AddSlidesDialog();
+		}
+
+		return addSlidesDialog;
+	}
+	
+	
 }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.worklistsearch.simple']}"
+			styleClass="contentPannel" />
+
+		<p:panelGrid columns="1" id="favouriteContent"
+			styleClass="newStyleListingTable">
+
+
+			<p:dataTable var="favouriteListContainer" style="width:100%;"
+				sortBy="#{favouriteListContainer.type}" scrollable="true"
+				expandableRowGroups="true" scrollHeight="450" rowKey="#{favouriteListContainer.favouriteList.id}"
+				styleClass="newStyleDataTable" selectionMode="single" selection="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectedContainer}"
+				value="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.containers}">
+
+				<p:headerRow>
+					<p:column colspan="2">
+						<h:outputText
+							value="#{msg['dialog.userSettings.favouriteLists.list.'.concat(favouriteListContainer.type)]}" />
+					</p:column>
+				</p:headerRow>
+
+				<p:column headerText="Name" styleClass="columnAutoWidth">
+					<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
+				</p:column>
+
+				<p:column headerText="Kommentar" styleClass="columnAutoWidth">
+					<h:outputLabel value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
+				</p:column>
+
+				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">
+					<p:commandLink styleClass="noUnderlineAtLink"
+						title="#{msg['dialog.settings.person.list.options.edit']}"
+						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+						disabled="#{!favouriteListContainer.editable}" process="@this"
+						partialSubmit="true">
+						<p:ajax event="dialogReturn" update="@form" />
+						<i class="fa fa-fw fa-cog" />
+					</p:commandLink>
+
+					<p:commandLink styleClass="noUnderlineAtLink"
+						title="#{msg['dialog.settings.person.list.options.edit']}"
+						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+						process="@this" partialSubmit="true">
+						<p:ajax event="dialogReturn" update="@form" />
+						<i class="fa fa-fw fa-search" />
+					</p:commandLink>
+				</p:column>
+
+
+
+			</p:dataTable>
+
+		</p:panelGrid>
+	</div>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
+					process="@form">
+					<f:actionListener
+						binding="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectAsWorklist()}" />
+					<f:actionListener
+						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
+				</p:commandButton>
+
+				<p:commandButton value="#{msg['general.close']}"
+					icon="fa fa-times-circle">
+					<f:actionListener
+						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
+				</p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>

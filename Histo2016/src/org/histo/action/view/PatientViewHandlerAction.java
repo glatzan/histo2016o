@@ -1,6 +1,5 @@
 package org.histo.action.view;
 
-import org.histo.action.CommonDataHandlerAction;
 import org.histo.action.DialogHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DocumentType;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Controller;
 public class PatientViewHandlerAction {
 
 	@Autowired
-	private CommonDataHandlerAction commonDataHandlerAction;
+	private GlobalEditViewHandler globalEditViewHandler;
 
 	@Autowired
 	private DialogHandlerAction dialogHandlerAction;
@@ -29,17 +28,17 @@ public class PatientViewHandlerAction {
 
 	public void showPatientMediaDialog(PDFContainer container) {
 		// init dialog for patient and task
-		dialogHandlerAction.getMediaDialog().initBean(commonDataHandlerAction.getSelectedPatient(),
-				new HasDataList[] { commonDataHandlerAction.getSelectedPatient() }, container, false);
+		dialogHandlerAction.getMediaDialog().initBean(globalEditViewHandler.getSelectedPatient(),
+				new HasDataList[] { globalEditViewHandler.getSelectedPatient() }, container, false);
 
 		// enabeling upload to task
-		dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { commonDataHandlerAction.getSelectedPatient() },
+		dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { globalEditViewHandler.getSelectedPatient() },
 				new DocumentType[] { DocumentType.U_REPORT, DocumentType.COUNCIL_REPLY,
 						DocumentType.BIOBANK_INFORMED_CONSENT, DocumentType.OTHER });
 
 		// setting info text
 		dialogHandlerAction.getMediaDialog().setActionDescription(resourceBundle.get("dialog.media.headline.info.patient",
-				commonDataHandlerAction.getSelectedPatient().getPerson().getFullName()));
+				globalEditViewHandler.getSelectedPatient().getPerson().getFullName()));
 
 		// show dialog
 		dialogHandlerAction.getMediaDialog().prepareDialog();
@@ -47,17 +46,17 @@ public class PatientViewHandlerAction {
 
 	public void showTaskMediaDialog() {
 		// init dialog for patient and task
-		dialogHandlerAction.getMediaDialog().initBean(commonDataHandlerAction.getSelectedPatient(),
-				new HasDataList[] { commonDataHandlerAction.getSelectedTask() }, false);
+		dialogHandlerAction.getMediaDialog().initBean(globalEditViewHandler.getSelectedPatient(),
+				new HasDataList[] { globalEditViewHandler.getSelectedTask() }, false);
 
 		// enabeling upload to task
-		dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { commonDataHandlerAction.getSelectedTask() },
+		dialogHandlerAction.getMediaDialog().enableUpload(new HasDataList[] { globalEditViewHandler.getSelectedTask() },
 				new DocumentType[] { DocumentType.U_REPORT, DocumentType.COUNCIL_REPLY,
 						DocumentType.BIOBANK_INFORMED_CONSENT, DocumentType.OTHER });
 
 		// setting info text
 		dialogHandlerAction.getMediaDialog().setActionDescription(resourceBundle.get("dialog.media.headline.info.task",
-				commonDataHandlerAction.getSelectedTask().getTaskID()));
+				globalEditViewHandler.getSelectedTask().getTaskID()));
 
 		// show dialog
 		dialogHandlerAction.getMediaDialog().prepareDialog();

@@ -10,10 +10,10 @@
 
 
 	<c:set var="selectedPatient"
-		value="#{commonDataHandlerAction.selectedPatient}" />
+		value="#{globalEditViewHandler.selectedPatient}" />
 
 	<c:set var="selectedTask"
-		value="#{commonDataHandlerAction.selectedTask}" />
+		value="#{globalEditViewHandler.selectedTask}" />
 
 	<c:set var="taskEditable" scope="session"
 		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
@@ -43,7 +43,7 @@
 				title="#{msg['body.worklist.header.view']}"
 				value="#{worklistViewHandlerAction.currentView}">
 
-				<f:selectItems value="#{commonDataHandlerAction.navigationPages}"
+				<f:selectItems value="#{globalEditViewHandler.navigationPages}"
 					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 
 				<p:ajax event="change" process="@this"
@@ -73,201 +73,8 @@
 
 			<!-- Options menu -->
 			<p:tieredMenu overlay="true" trigger="taskMenuButton" my="left top"
-				model="#{worklistViewHandlerAction.taskMenuModel}" at="left bottom"
+				model="#{globalEditViewHandler.taskMenuModel}" at="left bottom"
 				id="taskTieredMenuButton">
-			</p:tieredMenu>
-
-			<!-- button edit -->
-			<p:commandButton id="dynaButton" value="#{msg['header.menu.edit']}"
-				type="button" icon="ui-icon-triangle-1-s"
-				styleClass="buttonRighMarginInList" />
-
-			<!-- Options menu -->
-			<p:tieredMenu overlay="true" trigger="dynaButton" my="left top"
-				at="left bottom" id="tieredOptions">
-
-				<!-- Patient -->
-				<p:submenu label="#{msg['header.menu.patient']}">
-
-					<!-- add Patient -->
-					<p:menuitem value="#{msg['header.menu.patient.new']}"
-						icon="fa fa-user"
-						onclick="$('#headerForm\\:addPatientButton').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-
-					<p:separator
-						rendered="#{commonDataHandlerAction.selectedPatient ne null}" />
-
-					<!-- Overview, rendered if selected patient is not null -->
-					<p:menuitem value="#{msg['header.menu.patient.overview']}"
-						icon="fa fa-tablet"
-						onclick="$('#headerForm\\:showPatientOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{patientIsNotNull}" />
-
-					<!-- edit patient, rendered if selected patient is not null, disabled  if patient is not extern -->
-					<p:menuitem value="#{msg['header.menu.patient.edit']}"
-						icon="fa fa-pencil-square-o"
-						title="#{!commonDataHandlerAction.selectedPatient.externalPatient ? msg['header.menu.patient.edit.disabled'] : ''}"
-						disabled="#{!commonDataHandlerAction.selectedPatient.externalPatient}"
-						onclick="$('#headerForm\\:editPatientData').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{patientIsNotNull}" />
-
-					<!-- upload to patient -->
-					<p:menuitem value="#{msg['header.menu.patient.upload']}"
-						icon="fa fa-cloud-upload"
-						onclick="$('#headerForm\\:uploadBtnToPatient').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{patientIsNotNull}" />
-				</p:submenu>
-
-				<!-- Task -->
-				<p:submenu label="#{msg['header.menu.task']}"
-					rendered="#{selectedPatient ne null}">
-					<!-- ************ Task ************ -->
-					<!-- New Task, rendered if selected patient not null -->
-					<p:menuitem value="#{msg['header.menu.task.create']}"
-						styleClass="headerSubMenuStyle" icon="fa fa-file"
-						onclick="$('#headerForm\\:newTaskBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{patientIsNotNull}" />
-
-					<!-- New Sample, rendered if selected patient is not null, disabled if no task was selected -->
-					<p:menuitem value="#{msg['header.menu.task.sample.create']}"
-						icon="fa fa-eyedropper"
-						onclick="$('#headerForm\\:newSampleBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						disabled="#{!taskIsNotNull or !taskEditable}"
-						rendered="#{patientIsNotNull}"
-						title="#{!taskIsNotNull ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-					<!-- ************ Task ************ -->
-
-					<!-- ************ Staining ************ -->
-					<p:submenu label="#{msg['header.menu.task.sample.staining']}"
-						icon="fa fa-paint-brush" rendered="#{taskIsNotNull}">
-
-						<!-- New Slides -->
-						<p:menuitem
-							value="#{msg['header.menu.task.sample.staining.newSlide']}"
-							disabled="#{!taskEditable}" icon="fa fa-fw fa-paint-brush"
-							onclick="$('#headerForm\\:stainingOverview').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{taskIsNotNull}" />
-
-						<!-- leave staining phase and set all stainings to completed -->
-						<p:menuitem
-							value="#{msg['header.menu.task.sample.staining.leave']}"
-							disabled="#{!taskEditable}" icon="fa fa-fw fa-image"
-							onclick="$('#headerForm\\:stainingPhaseExit').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{taskIsNotNull and (task.taskStatus.stainingNeeded or task.taskStatus.reStainingNeeded)}" />
-
-						<!-- Staining, end staining phase if all staining tasks have been completed-->
-						<p:menuitem
-							value="#{msg['header.menu.task.sample.staining.stayInPhase.leave']}"
-							icon="fa fa-fw fa-image"
-							onclick="$('#headerForm\\:stainingPhaseForceExitStayInPhase').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{taskIsNotNull and task.taskStatus.stayInStainingList}" />
-
-					</p:submenu>
-					<!-- ************ Staining ************ -->
-
-					<!-- ************ Diagnosis ************ -->
-					<p:submenu label="#{msg['header.menu.task.sample.diagnosis']}"
-						icon="fa fa-search" rendered="#{taskIsNotNull}">
-						<!-- New Diagnosis revision-->
-						<p:menuitem icon="fa fa-pencil-square-o"
-							value="#{msg['header.menu.task.sample.diagnosisRevion']}"
-							disabled="#{!taskEditable and !(task.taskStatus.diagnosisNeeded or task.taskStatus.reDiagnosisNeeded)}"
-							rendered="#{taskIsNotNull}"
-							onclick="$('#headerForm\\:newDiagnosisRevision').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-
-						<!-- Leave diagnosis phase if in phase an not completed -->
-						<p:menuitem icon="fa fa-eye-slash"
-							value="#{msg['header.menu.task.sample.diagnosisPhase.leave']}"
-							disabled="#{!taskEditable}"
-							rendered="#{taskIsNotNull and (task.taskStatus.diagnosisNeeded or task.taskStatus.reDiagnosisNeeded or task.taskStatus.stayInDiagnosisList) and !selectedTask.finalized}"
-							onclick="$('#headerForm\\:diagnosisPhaseExit').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-
-						<!-- Leave phase if stay in phase -->
-						<p:menuitem icon="fa fa-eye-slash"
-							value="#{msg['header.menu.task.sample.diagnosisPhase.force.leave']}"
-							rendered="#{taskIsNotNull and task.taskStatus.stayInDiagnosisList and selectedTask.finalized}"
-							onclick="$('#headerForm\\:diagnosisExitStayInPhase').click();$('#headerForm\\:tieredOptions').hide();return false;" />
-
-						<!-- council -->
-						<p:menuitem value="#{msg['header.menu.task.council']}"
-							disabled="#{!taskEditable}" icon="fa fa-comment-o"
-							onclick="$('#headerForm\\:councilBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							rendered="#{taskIsNotNull}" />
-					</p:submenu>
-					<!-- ************ Diagnosis ************ -->
-
-					<!-- ************ Notification ************ -->
-					<p:submenu label="#{msg['header.menu.task.sample.notification']}"
-						icon="fa fa-volume-up" rendered="#{taskIsNotNull}">
-						<!-- Contacts -->
-						<p:menuitem
-							value="#{msg['header.menu.task.sample.notification.contact']}"
-							icon="fa fa-envelope-o" rendered="#{taskIsNotNull}"
-							onclick="$('#headerForm\\:editContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-
-						<!-- medical findings -->
-						<p:menuitem
-							value="#{msg['header.menu.task.sample.notification.notification']}"
-							icon="fa fa-volume-up" rendered="#{taskIsNotNull}"
-							onclick="$('#headerForm\\:medicalFindingsContactBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-
-						<!-- Print -->
-						<p:menuitem
-							value="#{msg['header.menu.task.sample.notification.print']}"
-							icon="fa fa-print" rendered="#{taskIsNotNull}"
-							onclick="$('#headerForm\\:printBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-							title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-					</p:submenu>
-					<!-- ************ Notification ************ -->
-
-					<!-- Edit Task if completed -->
-					<p:separator rendered="#{taskIsNotNull and selectedTask.finalized}" />
-
-					<!-- un finalize task -->
-					<p:menuitem value="#{msg['header.menu.task.sample.unFinalize']}"
-						icon="fa fa-fw fa-eye"
-						onclick="$('#headerForm\\:diagnosisPhaseUnFinalize').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{taskIsNotNull and selectedTask.finalized}" />
-
-					<!-- Edit Task if completed -->
-
-					<p:separator />
-					<!-- favourite Lists -->
-					<p:menuitem
-						value="#{msg['header.menu.task.sample.favouriteLists']}"
-						icon="fa fa-tasks"
-						rendered="#{commonDataHandlerAction.selectedTask ne null}"
-						onclick="$('#headerForm\\:favouriteListsBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-
-					<!-- accounting -->
-					<p:menuitem value="#{msg['header.menu.task.sample.accounting']}"
-						icon="fa fa-dollar" disabled="true"
-						rendered="#{commonDataHandlerAction.selectedPatient ne null}"
-						title="#{commonDataHandlerAction.selectedTask eq null ? msg['header.menu.task.selectTaskFirst'] : ''}" />
-
-					<!-- biobank -->
-					<p:menuitem value="#{msg['header.menu.task.biobank']}"
-						disabled="#{!taskEditable}" icon="fa fa-leaf"
-						onclick="$('#headerForm\\:bioBankBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{commonDataHandlerAction.selectedPatient ne null and commonDataHandlerAction.selectedTask ne null  }" />
-
-					<!-- upload -->
-					<p:menuitem value="#{msg['header.menu.task.upload']}"
-						icon="fa fa-cloud-upload"
-						onclick="$('#headerForm\\:uploadBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{commonDataHandlerAction.selectedPatient ne null and commonDataHandlerAction.selectedTask ne null  }" />
-				</p:submenu>
-
-
-				<!-- Log -->
-				<p:menuitem value="#{msg['header.menu.log']}"
-					onclick="$('#headerForm\\:logBtn').click();$('#headerForm\\:tieredOptions').hide();return false;"
-					rendered="#{commonDataHandlerAction.selectedPatient ne null}" />
-
-
 			</p:tieredMenu>
 
 			<!-- *************** Patient Menu *************** -->
@@ -292,7 +99,7 @@
 
 			<!-- Edit Patient data -->
 			<p:commandButton id="editPatientData" style="display:none"
-				actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+				actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
@@ -303,26 +110,26 @@
 
 			<!-- New Task Button -->
 			<p:commandButton id="newTaskBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+				<p:ajax event="dialogReturn" update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining List, New Sample -->
 			<p:commandButton id="newSampleBtn" style="display:none"
-				actionListener="#{createSampleDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				actionListener="#{createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				<p:ajax event="dialogReturn" update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining overview -->
 			<p:commandButton id="stainingOverview" style="display:none"
-				actionListener="#{dialogHandlerAction.slideOverviewDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.slideOverviewDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining List, leave phase an set all stainigs to performed -->
 			<p:commandButton id="stainingPhaseExit" style="display:none"
-				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
@@ -330,14 +137,14 @@
 			<!-- Staining List,  remove from  list stay in list -->
 			<p:commandButton id="stainingPhaseForceExitStayInPhase"
 				style="display:none"
-				actionListener="#{dialogHandlerAction.stainingExitStayInPhaseDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.stainingExitStayInPhaseDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Diagnosis List, new diagnosis revision -->
 			<p:commandButton id="newDiagnosisRevision" style="display:none"
-				actionListener="#{diagnosisRevisionDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
@@ -346,28 +153,28 @@
 			<p:commandButton id="diagnosisPhaseExit" style="display:none"
 				onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
-				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Diagnosis List, force leave diagnosis phase, if still in diagnosis phase after diagnosis completion -->
 			<p:commandButton id="diagnosisExitStayInPhase" style="display:none"
-				actionListener="#{dialogHandlerAction.diagnosisExitStayInPhaseDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.diagnosisExitStayInPhaseDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Un finalize Diagnosis -->
 			<p:commandButton id="diagnosisPhaseUnFinalize" style="display:none"
-				actionListener="#{dialogHandlerAction.diagnosisUnFinalizeDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.diagnosisUnFinalizeDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Council button -->
 			<p:commandButton id="councilBtn" style="display:none"
-				actionListener="#{councilDialogHandler.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{councilDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
@@ -375,14 +182,14 @@
 
 			<!-- Contacts button -->
 			<p:commandButton id="editContactBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Notification button -->
 			<p:commandButton id="notificationContactBtn" style="display:none"
-				actionListener="#{notificationHandlerAction.showinfoDialog(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{notificationHandlerAction.showinfoDialog(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
@@ -390,7 +197,7 @@
 
 			<!-- MedicalFindings button -->
 			<p:commandButton id="medicalFindingsContactBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
@@ -398,7 +205,7 @@
 
 			<!-- Favourite-Lists button -->
 			<p:commandButton id="favouriteListsBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.favouriteListsDialog.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.favouriteListsDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
@@ -406,7 +213,7 @@
 
 			<!-- Biobank button -->
 			<p:commandButton id="bioBankBtn" style="display:none"
-				actionListener="#{bioBankDialogHandler.initAndPrepareBean(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{bioBankDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
@@ -416,7 +223,7 @@
 			<p:commandButton id="printBtn" style="display:none"
 				widgetVar="printBtnVar" onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
-				actionListener="#{dialogHandlerAction.printDialog.initAndPrepareBeanForPrinting(commonDataHandlerAction.selectedTask)}">
+				actionListener="#{dialogHandlerAction.printDialog.initAndPrepareBeanForPrinting(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
@@ -432,7 +239,7 @@
 
 			<!-- *************** Log Menu *************** -->
 			<p:commandButton id="logBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.patientLogDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+				actionListener="#{dialogHandlerAction.patientLogDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 			<!-- *************** Log Menu *************** -->

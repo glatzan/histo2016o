@@ -125,7 +125,8 @@ public class Worklist {
 			if (pListItem.equals(patient)) {
 				int index = getItems().indexOf(pListItem);
 				updateTaksActiveStatus(pListItem, patient);
-
+				generateTaskStatus(patient);
+				
 				getItems().remove(pListItem);
 				getItems().add(index, patient);
 				return true;

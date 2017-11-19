@@ -1,5 +1,6 @@
 package org.histo.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -14,20 +15,33 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
+import org.histo.config.enums.Eye;
 import org.histo.config.enums.PredefinedFavouriteList;
+import org.histo.config.enums.TaskPriority;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.model.Accounting;
+import org.histo.model.AssociatedContact;
+import org.histo.model.Council;
+import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
 import org.histo.model.favouriteList.FavouritePermissionsGroup;
 import org.histo.model.favouriteList.FavouritePermissionsUser;
+import org.histo.model.patient.DiagnosisContainer;
+import org.histo.model.patient.Patient;
+import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
+import org.histo.ui.StainingTableChooser;
+import org.histo.ui.task.TaskStatus;
 import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.Getter;
 
 @Component
 @Transactional
@@ -68,32 +82,12 @@ public class FavouriteListDAO extends AbstractDAO {
 		return favList;
 	}
 
-	public List<FavouriteList> getFavouriteListsForUser(HistoUser user) {
-		// Create CriteriaBuilder
-		CriteriaBuilder qb = getSession().getCriteriaBuilder();
-
-		// Create CriteriaQuery
-		CriteriaQuery<FavouriteList> criteria = qb.createQuery(FavouriteList.class);
-		Root<FavouriteList> root = criteria.from(FavouriteList.class);
-		criteria.select(root);
-
-		Join<FavouriteList, FavouritePermissionsUser> userQuery = root.join("users", JoinType.LEFT);
-		Join<FavouriteList, FavouritePermissionsGroup> groupQuery = root.join("groups", JoinType.LEFT);
-
-		Predicate orClause = qb.or(qb.equal(root.get("owner"), user), qb.equal(root.get("globalView"), true),
-				qb.equal(userQuery.get("user"), user.getId()),
-				qb.equal(groupQuery.get("group"), user.getGroup().getId()));
-
-		criteria.where(orClause);
-
-		criteria.distinct(true);
-
-		List<FavouriteList> favouriteLists = getSession().createQuery(criteria).getResultList();
-
-		return favouriteLists;
+	public List<FavouriteList> getFavouriteListsForUser(HistoUser user, boolean writeable, boolean readable) {
+		return getFavouriteListsForUser(user, writeable, readable, false, false, false);
 	}
 
-	public List<FavouriteList> getFavouriteListsWithTasksForUser(HistoUser user, boolean writeable, boolean readable) {
+	public List<FavouriteList> getFavouriteListsForUser(HistoUser user, boolean writeable, boolean readable,
+			boolean initOwner, boolean initItems, boolean initPermissions) {
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
@@ -105,7 +99,16 @@ public class FavouriteListDAO extends AbstractDAO {
 		Join<FavouriteList, FavouritePermissionsUser> userQuery = root.join("users", JoinType.LEFT);
 		Join<FavouriteList, FavouritePermissionsGroup> groupQuery = root.join("groups", JoinType.LEFT);
 
-		root.fetch("items", JoinType.LEFT);
+		if (initOwner)
+			root.fetch("owner", JoinType.LEFT);
+
+		if (initItems)
+			root.fetch("items", JoinType.LEFT);
+
+		if (initPermissions) {
+			root.fetch("users", JoinType.LEFT);
+			root.fetch("groups", JoinType.LEFT);
+		}
 
 		Predicate andUser = null;
 		Predicate andGroup = null;
@@ -140,6 +143,28 @@ public class FavouriteListDAO extends AbstractDAO {
 		return favouriteLists;
 	}
 
+	public List<Patient> getPatientFromFavouriteList(FavouriteList list) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Patient> criteria = qb.createQuery(Patient.class);
+		Root<Patient> root = criteria.from(Patient.class);
+		criteria.select(root);
+
+		
+		Join<Patient, Task> patientTaskQuery = root.join("tasks", JoinType.LEFT);
+		Join<Task, FavouriteList> taskFavouriteQuery = patientTaskQuery.join("favouriteLists", JoinType.LEFT);
+		
+		
+		criteria.where(qb.equal(taskFavouriteQuery.get("id"), list.getId()));
+		
+		criteria.distinct(true);
+
+		List<Patient> patients = getSession().createQuery(criteria).getResultList();
+		
+		return patients;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<FavouriteList> getAllFavouriteLists() {
 		DetachedCriteria query = DetachedCriteria.forClass(FavouriteList.class, "favList");
@@ -167,20 +192,11 @@ public class FavouriteListDAO extends AbstractDAO {
 
 	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-		addTaskToList(task, predefinedFavouriteList, true);
+
+		addTaskToList(task, predefinedFavouriteList.getId());
 	}
 
-	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList, boolean refresh)
-			throws CustomDatabaseInconsistentVersionException {
-
-		reattach(task);
-		reattach(task.getParent());
-
-		addTaskToList(task, getFavouriteList(predefinedFavouriteList.getId(), true, false));
-	}
-	
-	public void addTaskToList(Task task, long id)
-			throws CustomDatabaseInconsistentVersionException {
+	public void addTaskToList(Task task, long id) throws CustomDatabaseInconsistentVersionException {
 
 		reattach(task);
 		reattach(task.getParent());
@@ -228,9 +244,13 @@ public class FavouriteListDAO extends AbstractDAO {
 
 	public void removeTaskFromList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-		if (task.isListedInFavouriteList(predefinedFavouriteList)) {
+		removeTaskFromList(task, predefinedFavouriteList.getId());
+	}
+
+	public void removeTaskFromList(Task task, long id) throws CustomDatabaseInconsistentVersionException {
+		if (task.isListedInFavouriteList(id)) {
 			reattach(task);
-			removeTaskFromList(task, getFavouriteList(predefinedFavouriteList.getId(), true, false));
+			removeTaskFromList(task, getFavouriteList(id, true, false));
 		}
 	}
 

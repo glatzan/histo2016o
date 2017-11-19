@@ -3,6 +3,7 @@ package org.histo.action.dialog.patient;
 import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.config.enums.Dialog;
 import org.histo.dao.LogDAO;
 import org.histo.model.log.Log;
 import org.histo.model.patient.Patient;
@@ -37,5 +38,6 @@ public class PatientLogDialog extends AbstractDialog {
 	 */
 	public void initBean(Patient patient) {
 		setPatientLog(logDAO.getPatientLog(patient));
+		super.initBean(null, Dialog.PATIENT_LOG);
 	}
 }

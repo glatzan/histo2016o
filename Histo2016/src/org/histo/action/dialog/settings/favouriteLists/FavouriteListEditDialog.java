@@ -74,8 +74,8 @@ public class FavouriteListEditDialog extends AbstractDialog {
 	public void initAndPrepareBean(boolean adminMode) {
 		FavouriteList favouriteList = new FavouriteList();
 		favouriteList.setDefaultList(false);
-		favouriteList.setUsers(new ArrayList<FavouritePermissionsUser>());
-		favouriteList.setGroups(new ArrayList<FavouritePermissionsGroup>());
+		favouriteList.setUsers(new HashSet<FavouritePermissionsUser>());
+		favouriteList.setGroups(new HashSet<FavouritePermissionsGroup>());
 		favouriteList.setItems(new ArrayList<FavouriteListItem>());
 		favouriteList.setOwner(userHandlerAction.getCurrentUser());
 

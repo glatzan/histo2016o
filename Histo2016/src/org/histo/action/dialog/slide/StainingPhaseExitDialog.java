@@ -2,6 +2,7 @@ package org.histo.action.dialog.slide;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.SlideManipulationHandler;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;
@@ -48,6 +49,11 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private SlideManipulationHandler slideManipulationHandler;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
 
 	/**
 	 * Can be set to true if the task should stay in diagnosis phase.
@@ -111,5 +117,7 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
+		
+		globalEditViewHandler.updateTaskMenuModel(false);
 	}
 }

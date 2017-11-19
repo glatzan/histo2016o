@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<div class="contentDiv">
+		<p:panel style="width:100%;"
+			header="#{msg['dialog.worklistsearch.simple']}"
+			styleClass="contentPannel" />
+	</div>
+
+	<div class="bottomDiv">
+		<h:panelGrid columns="1" style="width:100%"
+			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2" style="float:right;">
+				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
+					process="@form">
+					<f:actionListener
+						binding="#{worklistViewHandlerAction.addWorklist(dialogHandlerAction.worklistSearchDialog.worklistSearchBasic,'Default',true)}" />
+					<f:actionListener
+						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
+				</p:commandButton>
+				<p:commandButton value="#{msg['general.abort']}"
+					actionListener="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}"
+					style="margin-left:20px;"></p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>

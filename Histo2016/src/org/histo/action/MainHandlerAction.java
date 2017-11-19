@@ -36,15 +36,10 @@ public class MainHandlerAction {
 	public static FacesContext test;
 
 	private static Logger logger = Logger.getLogger("org.histo");
-	@Autowired
-	private CommonDataHandlerAction commonDataHandlerAction;
 
 	@Autowired
 	@Lazy
 	private UserHandlerAction userHandlerAction;
-
-	@Autowired
-	private GlobalSettings globalSettings;
 
 	/********************************************************
 	 * Navigation
@@ -56,25 +51,7 @@ public class MainHandlerAction {
 
 	@Getter
 	@Setter
-	private List<FacesMessage> queueGrowlMessages;
-
-	/**
-	 * Method called on postconstruct. Initializes all important variables.
-	 */
-	@PostConstruct
-	public void init() {
-		logger.debug("PostConstruct Init program");
-
-		commonDataHandlerAction.setNavigationPages(new ArrayList<View>());
-
-		userHandlerAction.updateSelectedPrinters();
-
-		// settings views
-		commonDataHandlerAction.setNavigationPages(
-				new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
-
-		setQueueGrowlMessages(new ArrayList<FacesMessage>());
-	}
+	private List<FacesMessage> queueGrowlMessages = new ArrayList<FacesMessage>();
 
 	/********************************************************
 	 * Session

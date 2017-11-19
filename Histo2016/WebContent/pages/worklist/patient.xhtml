@@ -11,7 +11,7 @@
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
 	<p:panel style="width: 60%"
-		rendered="#{commonDataHandlerAction.selectedPatient ne null}"
+		rendered="#{globalEditViewHandler.selectedPatient ne null}"
 		styleClass="collapsedBorders noPadding noBorders">
 
 		<h:panelGrid columns="3"
@@ -23,38 +23,38 @@
 				<!-- piz -->
 				<h:outputLabel value="#{msg['body.worklist.patient.piz']}" />
 				<h:outputLabel
-					value="#{commonDataHandlerAction.selectedPatient.piz}" />
+					value="#{globalEditViewHandler.selectedPatient.piz}" />
 
 				<!-- name -->
 				<h:outputLabel value="#{msg['body.worklist.patient.name']}" />
 				<h:outputLabel
-					value="#{commonDataHandlerAction.selectedPatient.person.lastName}#{commonDataHandlerAction.selectedPatient.person.title ne '' ? ',' : ''} #{commonDataHandlerAction.selectedPatient.person.title}" />
+					value="#{globalEditViewHandler.selectedPatient.person.lastName}#{globalEditViewHandler.selectedPatient.person.title ne '' ? ',' : ''} #{globalEditViewHandler.selectedPatient.person.title}" />
 
 				<!-- street -->
 				<p:outputLabel value="#{msg['body.worklist.patient.street']}" />
 				<p:outputLabel
-					value="#{commonDataHandlerAction.selectedPatient.person.contact.street}" />
+					value="#{globalEditViewHandler.selectedPatient.person.contact.street}" />
 
 				<!-- postcode -->
 				<p:outputLabel value="#{msg['body.worklist.patient.postcode']}" />
 				<p:outputLabel
-					value="#{commonDataHandlerAction.selectedPatient.person.contact.postcode}" />
+					value="#{globalEditViewHandler.selectedPatient.person.contact.postcode}" />
 
 				<!-- phone -->
 
 				<p:outputLabel value="#{msg['body.worklist.patient.phone']}" />
 				<p:outputLabel
-					value="#{commonDataHandlerAction.selectedPatient.person.contact.phone}" />
+					value="#{globalEditViewHandler.selectedPatient.person.contact.phone}" />
 
 				<!-- extern -->
 				<p:outputLabel value="#{msg['body.worklist.patient.extern']}" />
 
 				<h:panelGroup>
 					<p:outputLabel
-						value="#{commonDataHandlerAction.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
+						value="#{globalEditViewHandler.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
 					<p:commandLink
-						rendered="#{commonDataHandlerAction.selectedPatient.externalPatient}"
-						actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+						rendered="#{globalEditViewHandler.selectedPatient.externalPatient}"
+						actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						<i class="fa fa-wrench"></i>
 					</p:commandLink>
@@ -73,37 +73,37 @@
 				<!-- firstName -->
 				<h:outputLabel value="#{msg['body.worklist.patient.firstName']}" />
 				<h:outputLabel
-					value="#{commonDataHandlerAction.selectedPatient.person.firstName}" />
+					value="#{globalEditViewHandler.selectedPatient.person.firstName}" />
 
 				<!-- birthday -->
 				<p:outputLabel value="#{msg['body.worklist.patient.birthday']}" />
 				<p:outputLabel
-					value="#{ commonDataHandlerAction.selectedPatient.person.birthday ne null ? mainHandlerAction.date(commonDataHandlerAction.selectedPatient.person.birthday) : ''}" />
+					value="#{ globalEditViewHandler.selectedPatient.person.birthday ne null ? mainHandlerAction.date(globalEditViewHandler.selectedPatient.person.birthday) : ''}" />
 
 				<!-- town -->
 				<p:outputLabel value="#{msg['body.worklist.patient.town']}" />
 				<p:outputLabel
-					value=" #{commonDataHandlerAction.selectedPatient.person.contact.town}" />
+					value=" #{globalEditViewHandler.selectedPatient.person.contact.town}" />
 
 				<!-- insurance -->
 
 				<p:outputLabel value="#{msg['body.worklist.patient.insurance']}" />
 				<p:outputLabel
-					value="#{commonDataHandlerAction.selectedPatient.insurance}" />
+					value="#{globalEditViewHandler.selectedPatient.insurance}" />
 			</h:panelGrid>
 		</h:panelGrid>
 
 		<p:dataTable var="task" style="margin-top:20px;" id="taskList"
-			value="#{commonDataHandlerAction.selectedPatient.tasks}"
+			value="#{globalEditViewHandler.selectedPatient.tasks}"
 			selectionMode="single"
 			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			rendered="#{commonDataHandlerAction.selectedPatient != null}"
-			selection="#{commonDataHandlerAction.selectedTask}"
+			rendered="#{globalEditViewHandler.selectedPatient != null}"
+			selection="#{globalEditViewHandler.selectedTask}"
 			rowKey="#{task.id}">
 
 			<p:ajax event="rowSelect"
 				update=":contentForm, :headerForm, :navigationForm"
-				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(commonDataHandlerAction.selectedTask)}" />
+				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(globalEditViewHandler.selectedTask)}" />
 
 			<p:column headerText="#{msg['body.worklist.patient.tasks']}">
 				<h:outputText
@@ -192,7 +192,7 @@
 				<f:facet name="header">
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="taskList"
-							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(commonDataHandlerAction.selectedPatient)}">
+							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 							<p:ajax event="dialogReturn"
 								update="navigationForm contentForm headerForm"
 								listener="#{mainHandlerAction.processQueues()}" />
@@ -213,9 +213,9 @@
 
 		<p:dataTable var="attachedPdf" style="margin-top:50px;"
 			id="attachedPdfList"
-			value="#{commonDataHandlerAction.selectedPatient.attachedPdfs}"
+			value="#{globalEditViewHandler.selectedPatient.attachedPdfs}"
 			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			rendered="#{commonDataHandlerAction.selectedPatient != null}">
+			rendered="#{globalEditViewHandler.selectedPatient != null}">
 
 
 			<p:column style="width:30%">

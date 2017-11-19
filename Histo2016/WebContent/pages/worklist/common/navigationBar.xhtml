@@ -10,7 +10,7 @@
 	<!-- Navigation Bar -->
 	<h:panelGrid columns="2" styleClass="navigation">
 		<h:panelGroup
-			rendered="#{commonDataHandlerAction.selectedPatient ne null}">
+			rendered="#{globalEditViewHandler.selectedPatient ne null}">
 
 			<!-- Name -->
 			<h:commandLink update="navigationForm contentForm"
@@ -18,23 +18,23 @@
 				<h:outputFormat value="#{msg['bodyNavigationOverview']}"
 					styleClass="navigationText">
 					<f:param
-						value="#{commonDataHandlerAction.selectedPatient.person.lastName}" />
+						value="#{globalEditViewHandler.selectedPatient.person.lastName}" />
 					<f:param
-						value="#{commonDataHandlerAction.selectedPatient.person.firstName}" />
-					<f:param value="#{commonDataHandlerAction.selectedPatient.piz}" />
+						value="#{globalEditViewHandler.selectedPatient.person.firstName}" />
+					<f:param value="#{globalEditViewHandler.selectedPatient.piz}" />
 				</h:outputFormat>
 			</h:commandLink>
 
 			<!-- Auftrag -->
 			<h:commandLink
-				rendered="#{commonDataHandlerAction.selectedPatient ne null and commonDataHandlerAction.selectedTask ne null}"
+				rendered="#{globalEditViewHandler.selectedPatient ne null and globalEditViewHandler.selectedTask ne null}"
 				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
 				<h:outputFormat value="#{msg['bodyNavigationTask']}"
 					styleClass="navigationText">
 					<f:param
-						value="#{mainHandlerAction.date(commonDataHandlerAction.selectedTask.dateOfReceiptAsDate)}" />
+						value="#{mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfReceiptAsDate)}" />
 					<f:param
-						value="#{commonDataHandlerAction.selectedTask.taskID}" />
+						value="#{globalEditViewHandler.selectedTask.taskID}" />
 				</h:outputFormat>
 			</h:commandLink>
 

@@ -252,13 +252,4 @@ public class DiagnosisViewHandlerAction {
 		onDataChange(task, "log.patient.task.change.caseHistory", selectedcaseHistoryItem.getValue());
 	}
 
-	public void addOrRemoveTaskToFavouriteList(Task task, long id) {
-//		System.out.println(event.getComponent().getChildCount());
-//		if(event.getComponent() instanceof FavouriteListMenuItem) {
-//			
-//		}
-//		
-//		Task task, FavouriteList favouriteList
-		favouriteListDAO.addTaskToList(task, id);
-	}
 }

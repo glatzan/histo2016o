@@ -2,6 +2,7 @@ package org.histo.action.dialog.diagnosis;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;
@@ -48,6 +49,11 @@ public class DiagnosisUnFinalizeDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	public void initAndPrepareBean(Task task) {
 		initBean(task, Dialog.DIAGNOSIS_PHASE_UN_FINALIZE);
 		prepareDialog();
@@ -82,5 +88,7 @@ public class DiagnosisUnFinalizeDialog extends AbstractDialog {
 		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
+		
+		globalEditViewHandler.updateTaskMenuModel(false);
 	}
 }

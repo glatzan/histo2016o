@@ -2,6 +2,7 @@ package org.histo.action.dialog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
@@ -162,17 +163,14 @@ public class UserSettingsDialog extends AbstractTabDialog {
 
 		@Override
 		public void updateData() {
-			List<FavouriteList> list = favouriteListDAO.getFavouriteListsForUser(user);
+			long test = System.currentTimeMillis();
+			logger.info("start - > 0");
 
-			for (FavouriteList favouriteList : list) {
-				favouriteListDAO.initFavouriteList(favouriteList, true);
-			}
+			List<FavouriteList> list = favouriteListDAO.getFavouriteListsForUser(user, false, false, true, true, true);
 
-			containers = new ArrayList<FavouriteListContainer>();
+			containers = list.stream().map(p -> new FavouriteListContainer(p, user)).collect(Collectors.toList());
 
-			for (FavouriteList favouriteList : list) {
-				containers.add(new FavouriteListContainer(favouriteList, userHandlerAction.getCurrentUser()));
-			}
+			logger.info("end -> " + (System.currentTimeMillis() - test));
 		}
 
 	}
