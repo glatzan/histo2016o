@@ -154,6 +154,6 @@ public class AddSlidesDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 		
-		globalEditViewHandler.updateTaskMenuModel(false);
+		globalEditViewHandler.updateDataOfTask(false);
 	}
 }

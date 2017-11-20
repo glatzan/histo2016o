@@ -89,6 +89,6 @@ public class DiagnosisUnFinalizeDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 		
-		globalEditViewHandler.updateTaskMenuModel(false);
+		globalEditViewHandler.updateDataOfTask(false);
 	}
 }

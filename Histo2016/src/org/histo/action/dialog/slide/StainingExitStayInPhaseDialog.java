@@ -67,6 +67,6 @@ public class StainingExitStayInPhaseDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 		
-		globalEditViewHandler.updateTaskMenuModel(false);
+		globalEditViewHandler.updateDataOfTask(false);
 	}
 }

@@ -375,7 +375,10 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 
 	@Transient
 	public void generateTaskStatus() {
-		setTaskStatus(new TaskStatus(this));
+		if (getTaskStatus() == null)
+			setTaskStatus(new TaskStatus(this));
+		else
+			getTaskStatus().updateStatus();
 	}
 
 	@Transient

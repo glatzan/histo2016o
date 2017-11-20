@@ -19,8 +19,10 @@
 
 			<p:dataTable var="favouriteListContainer" style="width:100%;"
 				sortBy="#{favouriteListContainer.type}" scrollable="true"
-				expandableRowGroups="true" scrollHeight="450" rowKey="#{favouriteListContainer.favouriteList.id}"
-				styleClass="newStyleDataTable" selectionMode="single" selection="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectedContainer}"
+				expandableRowGroups="true" scrollHeight="450"
+				rowKey="#{favouriteListContainer.favouriteList.id}"
+				styleClass="newStyleDataTable" selectionMode="single"
+				selection="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectedContainer}"
 				value="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.containers}">
 
 				<p:headerRow>
@@ -35,7 +37,8 @@
 				</p:column>
 
 				<p:column headerText="Kommentar" styleClass="columnAutoWidth">
-					<h:outputLabel value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
+					<h:outputLabel
+						value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
 				</p:column>
 
 				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">

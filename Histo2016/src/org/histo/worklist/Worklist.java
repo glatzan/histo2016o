@@ -274,7 +274,6 @@ public class Worklist {
 				// Skipping if patient is active patient
 				if (!patient.equals(activePatient)) {
 					logger.trace("Updatin or adding: " + patient.toString());
-					patientDao.initilaizeTasksofPatient(patient);
 					addPatient(patient);
 				} else
 					logger.trace("Skippting " + activePatient.toString() + " (is selected patient)");

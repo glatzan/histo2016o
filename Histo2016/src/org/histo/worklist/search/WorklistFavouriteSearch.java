@@ -19,16 +19,15 @@ public class WorklistFavouriteSearch extends WorklistSearch {
 
 	@Autowired
 	private FavouriteListDAO favouriteListDAO;
-	
+
 	private FavouriteList favouriteList;
-	
+
 	@Override
 	public List<Patient> getWorklist() {
 		logger.debug("Searching current worklist");
 
-//		favouriteList.getItems().stream().map(p -> p.getTask())
+		List<Patient> patient = favouriteListDAO.getPatientFromFavouriteList(favouriteList.getId(), true);
 
-	
-		return null;
+		return patient;
 	}
 }

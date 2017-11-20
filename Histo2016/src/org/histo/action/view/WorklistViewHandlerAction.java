@@ -287,7 +287,7 @@ public class WorklistViewHandlerAction {
 		// replacing patient, generating task status
 		getWorklist().addPatient(task.getPatient());
 
-		globalEditViewHandler.updateTaskMenuModel(true);
+		globalEditViewHandler.updateDataOfTask(true);
 
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(getLastTaskView());

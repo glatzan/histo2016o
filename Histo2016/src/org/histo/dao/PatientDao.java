@@ -194,26 +194,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns an Array of patients which tasks are associted with the list ids.
-	 * 
-	 * @param listIds
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientByTaskList(List<Long> listIds) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-
-		query.createAlias("patient.tasks", "_tasks");
-		query.createAlias("_tasks.favouriteLists", "_flist");
-
-		query.add(Restrictions.in("_flist.id", listIds));
-
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-
-		return query.getExecutableCriteria(getSession()).list();
-	}
-
-	/**
 	 * Returns a list of patients for that the staining had been completed within
 	 * the time period. Don't start with zero.
 	 * 

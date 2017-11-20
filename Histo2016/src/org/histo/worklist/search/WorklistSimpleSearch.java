@@ -1,17 +1,22 @@
 package org.histo.worklist.search;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import org.apache.log4j.Logger;
 import org.histo.config.enums.Month;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.enums.WorklistSearchOption;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.util.TimeUtil;
@@ -26,7 +31,10 @@ public class WorklistSimpleSearch extends WorklistSearch {
 
 	@Autowired
 	private PatientDao patientDao;
-	
+
+	@Autowired
+	private FavouriteListDAO favouriteListDAO;
+
 	@Getter
 	@Setter
 	private PredefinedFavouriteList[] lists;
@@ -159,7 +167,7 @@ public class WorklistSimpleSearch extends WorklistSearch {
 		case STAINING_LIST:
 		case DIAGNOSIS_LIST:
 		case NOTIFICATION_LIST:
-			
+
 			logger.debug("Staining list selected");
 
 			// getting new stainigs
@@ -168,13 +176,11 @@ public class WorklistSimpleSearch extends WorklistSearch {
 						TimeUtil.setDayEnding(cal).getTimeInMillis()));
 			}
 
-			ArrayList<Long> search = new ArrayList<Long>();
-
-			for (PredefinedFavouriteList predefinedFavouriteList : getSelectedLists()) {
-				search.add((long)predefinedFavouriteList.getId());
+			if (getSelectedLists() != null && getSelectedLists().length > 0) {
+				result.addAll(favouriteListDAO.getPatientFromFavouriteList(
+						Arrays.asList(getSelectedLists()).stream().map(p -> p.getId()).collect(Collectors.toList()),
+						true));
 			}
-			
-			result.addAll(patientDao.getPatientByTaskList(search));
 
 			break;
 		case TODAY:
