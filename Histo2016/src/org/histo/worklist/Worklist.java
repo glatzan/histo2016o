@@ -90,10 +90,15 @@ public class Worklist {
 
 	public Worklist(String name, WorklistSearch worklistSearch, boolean showNoneActiveTasks,
 			WorklistSortOrder worklistSortOrder, boolean autoUpdate) {
+		this(name, worklistSearch,showNoneActiveTasks, worklistSortOrder,autoUpdate, false);
+	}
+
+	public Worklist(String name, WorklistSearch worklistSearch, boolean showNoneActiveTasks,
+			WorklistSortOrder worklistSortOrder, boolean autoUpdate, boolean showActiveTasksExplicit) {
 		this.name = name;
 		this.worklistSearch = worklistSearch;
 
-		this.showActiveTasksExplicit = false;
+		this.showActiveTasksExplicit = showActiveTasksExplicit;
 		this.showNoneActiveTasks = showNoneActiveTasks;
 		this.worklistSortOrder = worklistSortOrder;
 		this.autoUpdate = autoUpdate;
@@ -126,7 +131,7 @@ public class Worklist {
 				int index = getItems().indexOf(pListItem);
 				updateTaksActiveStatus(pListItem, patient);
 				generateTaskStatus(patient);
-				
+
 				getItems().remove(pListItem);
 				getItems().add(index, patient);
 				return true;

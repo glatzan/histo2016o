@@ -435,6 +435,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	 */
 	@Transient
 	public boolean isActiveOrActionPending(boolean activeOnly) {
+		System.out.println(activeOnly + " " + isActive() + " " +this);
 		if (activeOnly)
 			return isActive();
 

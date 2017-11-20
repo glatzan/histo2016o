@@ -178,12 +178,11 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		public void selectAsWorklist() {
 
 			worklistSearch.setFavouriteList(selectedContainer.getFavouriteList());
-			
-			Worklist worklist = new Worklist("Default", worklistSearch,
-					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
+
+			Worklist worklist = new Worklist("Default", worklistSearch, false,
 					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
-					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate());
-			
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), true);
+
 			worklistViewHandlerAction.addWorklist(worklist, true);
 		}
 	}

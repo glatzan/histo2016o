@@ -289,6 +289,8 @@ public class WorklistViewHandlerAction {
 
 		globalEditViewHandler.updateDataOfTask(true);
 
+		task.setActive(true);
+		
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
 			setCurrentView(getLastTaskView());
 		}
@@ -349,8 +351,8 @@ public class WorklistViewHandlerAction {
 			onSelectTaskAndPatient(task);
 		} else {
 			logger.debug("Adding task " + task.getTaskID() + " to worklist");
-			task.setActive(true);
 			addPatientToWorkList(task.getPatient(), false);
+			task.setActive(true);
 		}
 	}
 
