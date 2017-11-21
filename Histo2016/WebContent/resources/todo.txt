@@ -31,8 +31,11 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 
 TODO: 2: favouriten f�r benutzer zug�nlich machen
+TODO: Datenbankabfragen in globaleidt handler shiften
 TODO: 4: erweiterte Suche / 
-TODO: 1: AUW 3 Änderungen!
+TODO: 1: AUW 3 Änderungen 
+	TODO: Auswahl der Diagnose im Druckmenu
+	TODO: Feld für zurückgegebene konsile ausleihe str + bool
 
 TODO: 0.1: Finaliz in task, wird dies benötig -> löschen durch diagnosis date ersetzen
 TODO: 5: Latex Datei für externen Befund

@@ -16,6 +16,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.StainingTableChooser;
 import org.histo.ui.menu.MenuGenerator;
+import org.histo.ui.task.TaskStatus;
 import org.primefaces.model.menu.MenuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -84,18 +85,20 @@ public class GlobalEditViewHandler {
 		// settings views
 		setNavigationPages(new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
 
-		updateTaskMenuModel(false);
-
+		updateDataOfTask(false);
 	}
 
-	public void updateTaskMenuModel(boolean updateFavouriteLists) {
+	public void updateDataOfTask(boolean updateFavouriteLists) {
+		if (selectedTask != null)
+			selectedTask.generateTaskStatus();
+		
 		setTaskMenuModel((new MenuGenerator()).generateEditMenu(selectedPatient, selectedTask));
 	}
 
 	public void addTaskToFavouriteList(Task task, long id) {
 		try {
 			favouriteListDAO.addTaskToList(task, id);
-			updateTaskMenuModel(true);
+			updateDataOfTask(true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.onVersionConflictPatient(task.getPatient(), true);
 		}
@@ -104,7 +107,7 @@ public class GlobalEditViewHandler {
 	public void removeTaskFromFavouriteList(Task task, long id) {
 		try {
 			favouriteListDAO.removeTaskFromList(task, id);
-			updateTaskMenuModel(true);
+			updateDataOfTask(true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.onVersionConflictPatient(task.getPatient(), true);
 		}

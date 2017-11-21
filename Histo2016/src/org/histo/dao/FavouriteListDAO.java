@@ -1,6 +1,7 @@
 package org.histo.dao;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -146,7 +147,11 @@ public class FavouriteListDAO extends AbstractDAO {
 		return favouriteLists;
 	}
 
-	public List<Patient> getPatientFromFavouriteList(FavouriteList list) {
+	public List<Patient> getPatientFromFavouriteList(long id, boolean initTasks) {
+		return getPatientFromFavouriteList(Arrays.asList(id), initTasks);
+	}
+
+	public List<Patient> getPatientFromFavouriteList(List<Long> ids, boolean initTasks) {
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
 		// Create CriteriaQuery
@@ -154,15 +159,21 @@ public class FavouriteListDAO extends AbstractDAO {
 		Root<Patient> root = criteria.from(Patient.class);
 		criteria.select(root);
 
+
+		if (initTasks)
+			root.fetch("tasks", JoinType.LEFT);
+
 		Join<Patient, Task> patientTaskQuery = root.join("tasks", JoinType.LEFT);
 		Join<Task, FavouriteList> taskFavouriteQuery = patientTaskQuery.join("favouriteLists", JoinType.LEFT);
 
-		criteria.where(qb.equal(taskFavouriteQuery.get("id"), list.getId()));
+		criteria.where(taskFavouriteQuery.get("id").in(ids));
 
 		criteria.distinct(true);
 
 		List<Patient> patients = getSession().createQuery(criteria).getResultList();
 
+
+		System.out.println(patients.size());
 		return patients;
 	}
 

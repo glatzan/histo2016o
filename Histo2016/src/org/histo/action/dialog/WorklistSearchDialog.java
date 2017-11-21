@@ -32,6 +32,7 @@ import org.histo.worklist.search.WorklistFavouriteSearch;
 import org.histo.worklist.search.WorklistSimpleSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Lazy;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -68,6 +69,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
+	@Lazy
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
@@ -125,6 +127,14 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		public void updateData() {
 		}
 
+		public void selectAsWorklist() {
+			Worklist worklist = new Worklist("Default", worklistSearch,
+					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
+					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate());
+
+			worklistViewHandlerAction.addWorklist(worklist, true);
+		}
 	}
 
 	@Getter
@@ -158,24 +168,22 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 			containers = list.stream().map(p -> new FavouriteListContainer(p, userHandlerAction.getCurrentUser()))
 					.collect(Collectors.toList());
 
-			
-			if(selectedContainer != null) {
-				List<Patient> patient = favouriteListDAO.getPatientFromFavouriteList(selectedContainer.getFavouriteList());
+			if (selectedContainer != null) {
+				List<Patient> patient = favouriteListDAO
+						.getPatientFromFavouriteList(selectedContainer.getFavouriteList().getId(), false);
 				System.out.println(patient.size());
 			}
 		}
 
 		public void selectAsWorklist() {
-			
-			if(selectedContainer != null) {
-				List<Patient> patient = favouriteListDAO.getPatientFromFavouriteList(selectedContainer.getFavouriteList());
-				System.out.println(patient.size());
-			}
-			
-			if (selectedContainer != null) {
-//				worklistSearch.setFavouriteList(selectedContainer.getFavouriteList());
-//				worklistViewHandlerAction.addWorklist(worklistSearch, "Default", true);
-			}
+
+			worklistSearch.setFavouriteList(selectedContainer.getFavouriteList());
+
+			Worklist worklist = new Worklist("Default", worklistSearch, false,
+					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), true);
+
+			worklistViewHandlerAction.addWorklist(worklist, true);
 		}
 	}
 

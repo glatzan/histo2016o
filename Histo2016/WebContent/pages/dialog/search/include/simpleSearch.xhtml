@@ -74,7 +74,8 @@
 				event="change" />
 		</p:selectOneRadio>
 
-		<h:panelGrid columns="1" styleClass="newTableContainer" cellpadding="5">
+		<h:panelGrid columns="1" styleClass="newTableContainer"
+			cellpadding="5">
 
 			<!-- predefined lists -->
 			<h:panelGrid columns="6" styleClass="newStyleListingTable">
@@ -224,7 +225,8 @@
 				itemValue="DIAGNOSIS_COMPLETED" />
 		</p:selectOneRadio>
 
-		<h:panelGrid columns="1" styleClass="newTableContainer" cellpadding="5">
+		<h:panelGrid columns="1" styleClass="newTableContainer"
+			cellpadding="5">
 
 			<h:panelGrid columns="1" styleClass="newStyleListingTable">
 				<h:outputLabel value="#{msg['dialog.worklistsearch.filter']}" />
@@ -234,25 +236,25 @@
 				<!-- Patient added -->
 				<p:radioButton id="filter0" for="filterIndexRadio" itemIndex="0"
 					disabled="#{!dialogHandlerAction.worklistSearchDialog.simpleSearchTab.worklistSearch.searchForLists}" />
-				<h:outputLabel for="filter0" 
+				<h:outputLabel for="filter0"
 					value="#{msg['dialog.worklistsearch.filter.patient']}" />
 
 				<!-- Task created -->
 				<p:radioButton id="filter1" for="filterIndexRadio" itemIndex="1"
 					disabled="#{!dialogHandlerAction.worklistSearchDialog.simpleSearchTab.worklistSearch.searchForLists}" />
-				<h:outputLabel for="filter1" 
+				<h:outputLabel for="filter1"
 					value="#{msg['dialog.worklistsearch.filter.task']}" />
 
 				<!-- Staining -->
 				<p:radioButton id="filter2" for="filterIndexRadio" itemIndex="2"
 					disabled="#{!dialogHandlerAction.worklistSearchDialog.simpleSearchTab.worklistSearch.searchForLists}" />
-				<h:outputLabel for="filter2" 
+				<h:outputLabel for="filter2"
 					value="#{msg['dialog.worklistsearch.filter.staining']}" />
 
 				<!-- Diagnosis -->
 				<p:radioButton id="filter3" for="filterIndexRadio" itemIndex="3"
 					disabled="#{!dialogHandlerAction.worklistSearchDialog.simpleSearchTab.worklistSearch.searchForLists}" />
-				<h:outputLabel for="filter3" 
+				<h:outputLabel for="filter3"
 					value="#{msg['dialog.worklistsearch.filter.diagnosis']}" />
 			</h:panelGrid>
 		</h:panelGrid>
@@ -265,7 +267,7 @@
 				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
 					process="@form">
 					<f:actionListener
-						binding="#{worklistViewHandlerAction.addWorklist(dialogHandlerAction.worklistSearchDialog.simpleSearchTab.worklistSearch,'Default',true)}" />
+						binding="#{dialogHandlerAction.worklistSearchDialog.simpleSearchTab.selectAsWorklist()}" />
 					<f:actionListener
 						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
 				</p:commandButton>

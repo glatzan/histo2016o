@@ -9,19 +9,19 @@ public enum PredefinedFavouriteList {
 			6), StayInDiagnosisList(7), StayInNotificationList(
 					8), CouncilLendingMTA(9), CouncilLendingSecretary(10), CouncilPending(11), CouncilCompleted(12);
 
-	private final int id;
+	private final long id;
 
 	PredefinedFavouriteList(final int id) {
 		this.id = id;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public static List<Integer> getIdArr() {
+	public static List<Long> getIdArr() {
 		PredefinedFavouriteList[] entry = PredefinedFavouriteList.values();
-		List<Integer> ids = new ArrayList<Integer>(entry.length);
+		List<Long> ids = new ArrayList<Long>(entry.length);
 
 		for (int i = 0; i < entry.length; i++) {
 			ids.add(entry[i].getId());
