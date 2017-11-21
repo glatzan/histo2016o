@@ -11,6 +11,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
+import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.StainingTableChooser;
@@ -82,8 +83,7 @@ public class GlobalEditViewHandler {
 
 		// settings views
 		setNavigationPages(new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
-		
-		
+
 		updateTaskMenuModel(false);
 
 	}

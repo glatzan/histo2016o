@@ -98,7 +98,7 @@ public class Patient
 	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
 	@Fetch(value = FetchMode.SUBSELECT)
 	@OrderBy("id DESC")
-	private List<Task> tasks;
+	private List<Task> tasks = new ArrayList<Task>();
 
 	/**
 	 * True if insurance is private
@@ -117,8 +117,7 @@ public class Patient
 	 */
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OrderBy("creationDate DESC")
-	private List<PDFContainer> attachedPdfs;
-
+	private List<PDFContainer> attachedPdfs = new ArrayList<PDFContainer>();
 	/**
 	 * If true the patient is archived. Thus he won't be displayed.
 	 */
@@ -146,8 +145,8 @@ public class Patient
 	 ********************************************************/
 
 	/**
-	 * Updates the patient data with a given patient dummy. Returns true if data
-	 * are changed. Returns true if data were changed
+	 * Updates the patient data with a given patient dummy. Returns true if data are
+	 * changed. Returns true if data were changed
 	 * 
 	 * @param patient
 	 */
@@ -242,16 +241,14 @@ public class Patient
 	}
 
 	/**
-	 * Updates the patient object with a given json array from the clinic
-	 * backend
+	 * Updates the patient object with a given json array from the clinic backend
 	 *
 	 * { "vorname":"Test", "mode":"W", "status":null, "piz":"25201957",
 	 * "sonderinfo":"", "iknr":"00190", "kvnr":null, "titel":"Prof. Dr. med.",
 	 * "versichertenstatus":" ", "tel":"12-4085", "anschrift": "Gillenweg 4",
 	 * "wop":null, "plz":"79110", "name":"Test", "geburtsdatum":"1972-08-22",
 	 * "gueltig_bis":null, "krankenkasse":"Wissenschaftliche Unters.",
-	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg",
-	 * "status2":null }
+	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg", "status2":null }
 	 * 
 	 * @param patient
 	 * @param json

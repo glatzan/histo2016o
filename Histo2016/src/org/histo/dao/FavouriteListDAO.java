@@ -15,6 +15,8 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.Transformers;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
@@ -24,6 +26,7 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
+import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
 import org.histo.model.favouriteList.FavouritePermissionsGroup;
@@ -151,18 +154,26 @@ public class FavouriteListDAO extends AbstractDAO {
 		Root<Patient> root = criteria.from(Patient.class);
 		criteria.select(root);
 
-		
 		Join<Patient, Task> patientTaskQuery = root.join("tasks", JoinType.LEFT);
 		Join<Task, FavouriteList> taskFavouriteQuery = patientTaskQuery.join("favouriteLists", JoinType.LEFT);
-		
-		
+
 		criteria.where(qb.equal(taskFavouriteQuery.get("id"), list.getId()));
-		
+
 		criteria.distinct(true);
 
 		List<Patient> patients = getSession().createQuery(criteria).getResultList();
-		
+
 		return patients;
+	}
+
+	public List<FavouriteListMenuItem> getMenuItems(HistoUser user, Task task) {
+
+		List<FavouriteListMenuItem> items = getSession().createNamedQuery("favouriteListMenuItemDTO")
+				.setParameter("user_id", user.getId()).setParameter("group_id", user.getGroup().getId()).setParameter("task_id", task.getId())
+				.getResultList();
+
+		return items;
+
 	}
 
 	@SuppressWarnings("unchecked")

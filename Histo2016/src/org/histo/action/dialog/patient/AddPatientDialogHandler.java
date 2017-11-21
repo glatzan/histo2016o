@@ -105,8 +105,6 @@ public class AddPatientDialogHandler extends AbstractDialog {
 		setPatientList(null);
 
 		setPatient(new Patient(new Person(new Contact())));
-		getPatient().setTasks(new ArrayList<Task>());
-		getPatient().setAttachedPdfs(new ArrayList<PDFContainer>());
 
 		setToManyMatchesInClinicDatabase(false);
 	}

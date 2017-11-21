@@ -14,6 +14,17 @@ helper getPrinterForIP => sub { my ($self, $ip)=@_;
     return sprintf("Amb-U%02d", $1) if $room =~/U([0-9]+)$/oi;
 };
 
+
+select flist.id, flist.name, CASE WHEN fitem.task_id = 1 THEN 'true' ELSE 'false' END As containsTask from favouritelist flist 
+left join favouritepermissionsgroup fgroup on fgroup.favouritelist_id = flist.id  
+left join favouritepermissionsuser fuser on fuser.favouritelist_id = flist.id
+left join favouritelistitem fitem on fitem.favouritelist_id = flist.id
+left join favouritelist_histouser hideList on hideList.favouritelist_id = flist.id
+
+where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.hidelistforuser_id IS NULL or hideList.hidelistforuser_id != 1)
+
+
+
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 

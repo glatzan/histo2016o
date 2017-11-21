@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.dao.FavouriteListDAO;
+import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
@@ -253,21 +254,20 @@ public class MenuGenerator {
 				favouriteSubMenu.setIcon("fa fa-search");
 				taskSubMenu.addElement(favouriteSubMenu);
 
-				List<FavouriteList> lists = favouriteListDAO
-						.getFavouriteListsForUser(userHandlerAction.getCurrentUser(), true, false, false, true, false);
+				List<FavouriteListMenuItem> items = favouriteListDAO.getMenuItems(userHandlerAction.getCurrentUser(), task);
 
-				for (FavouriteList favouriteList : lists) {
-					item = new DefaultMenuItem(favouriteList.getName());
-					if (favouriteList.containsTask(task)) {
+				for (FavouriteListMenuItem favouriteListItem : items) {
+					item = new DefaultMenuItem(favouriteListItem.getName());
+					if (favouriteListItem.isContainsTask()) {
 						item.setIcon("fa fa-list-ul icon-green");
 						item.setCommand(
 								"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
-										+ favouriteList.getId() + ")}");
+										+ favouriteListItem.getId() + ")}");
 					} else {
 						item.setIcon("fa fa-list-ul");
 						item.setCommand(
 								"#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
-										+ favouriteList.getId() + ")}");
+										+ favouriteListItem.getId() + ")}");
 					}
 
 					item.setUpdate("navigationForm contentForm headerForm");

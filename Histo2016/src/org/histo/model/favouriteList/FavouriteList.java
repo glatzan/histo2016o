@@ -69,6 +69,9 @@ public class FavouriteList implements HasID {
 	@OrderBy("id ASC")
 	private Set<FavouritePermissionsUser> users;
 
+	@OneToMany(fetch = FetchType.LAZY)
+	private Set<HistoUser> hideListForUser;
+	 
 	@Override
 	public String toString() {
 		return "ID: " + getId() + ", Name: " + getName();
