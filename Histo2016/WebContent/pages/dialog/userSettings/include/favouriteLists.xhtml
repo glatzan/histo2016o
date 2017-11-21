@@ -23,7 +23,7 @@
 				value="#{userSettingsDialog.favouriteListTab.containers}">
 
 				<p:headerRow>
-					<p:column colspan="2">
+					<p:column colspan="3">
 						<h:outputText
 							value="#{msg['dialog.userSettings.favouriteLists.list.'.concat(favouriteListContainer.type)]}" />
 					</p:column>
@@ -31,6 +31,10 @@
 
 				<p:column headerText="Name" styleClass="columnAutoWidth">
 					<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
+				</p:column>
+
+				<p:column headerText="Kommentar" styleClass="columnAutoWidth">
+					<h:outputLabel value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
 				</p:column>
 
 				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">

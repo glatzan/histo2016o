@@ -12,8 +12,7 @@
 	<c:set var="selectedPatient"
 		value="#{globalEditViewHandler.selectedPatient}" />
 
-	<c:set var="selectedTask"
-		value="#{globalEditViewHandler.selectedTask}" />
+	<c:set var="selectedTask" value="#{globalEditViewHandler.selectedTask}" />
 
 	<c:set var="taskEditable" scope="session"
 		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
@@ -111,13 +110,15 @@
 			<!-- New Task Button -->
 			<p:commandButton id="newTaskBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm headerForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining List, New Sample -->
 			<p:commandButton id="newSampleBtn" style="display:none"
 				actionListener="#{createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm headerForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining overview -->
@@ -253,7 +254,7 @@
 			<p:tieredMenu overlay="true" trigger="menuBtn" my="left top"
 				id="tiredMenu" at="left bottom" style="width:200px">
 
-				<!-- s button -->
+				<!-- settings button -->
 				<p:menuitem value="#{msg['body.worklist.header.button.settings']}"
 					rendered="#{userHandlerAction.currentUserHasPermission('SHOW_SETTINGS_DIALOG')}"
 					onclick="$('#headerForm\\:settingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
@@ -274,6 +275,7 @@
 
 			<!-- settings button -->
 			<p:commandButton id="settingsDialogBtn" style="display:none"
+				partialSubmit="true" process="@this"
 				actionListener="#{settingsDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>

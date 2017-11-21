@@ -254,7 +254,8 @@ public class MenuGenerator {
 				favouriteSubMenu.setIcon("fa fa-search");
 				taskSubMenu.addElement(favouriteSubMenu);
 
-				List<FavouriteListMenuItem> items = favouriteListDAO.getMenuItems(userHandlerAction.getCurrentUser(), task);
+				List<FavouriteListMenuItem> items = favouriteListDAO.getMenuItems(userHandlerAction.getCurrentUser(),
+						task);
 
 				for (FavouriteListMenuItem favouriteListItem : items) {
 					item = new DefaultMenuItem(favouriteListItem.getName());
@@ -306,7 +307,6 @@ public class MenuGenerator {
 					"$('#headerForm\\\\:logBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 
 			model.addElement(item);
-
 		}
 
 		return model;

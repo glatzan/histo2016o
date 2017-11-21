@@ -15,13 +15,13 @@ helper getPrinterForIP => sub { my ($self, $ip)=@_;
 };
 
 
-select flist.id, flist.name, CASE WHEN fitem.task_id = 1 THEN 'true' ELSE 'false' END As containsTask from favouritelist flist 
+select flist.id, flist.name, coalesce(bool_or(fitem.task_id = 1),false) As containsTask from favouritelist flist 
 left join favouritepermissionsgroup fgroup on fgroup.favouritelist_id = flist.id  
 left join favouritepermissionsuser fuser on fuser.favouritelist_id = flist.id
 left join favouritelistitem fitem on fitem.favouritelist_id = flist.id
 left join favouritelist_histouser hideList on hideList.favouritelist_id = flist.id
 
-where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.hidelistforuser_id IS NULL or hideList.hidelistforuser_id != 1)
+where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.hidelistforuser_id IS NULL or hideList.hidelistforuser_id != 1) GROUP BY flist.id 
 
 
 

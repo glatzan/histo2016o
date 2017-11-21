@@ -17,13 +17,14 @@ import lombok.Setter;
 	        "select " +
 	        "flist.id AS id, " +
 	        "flist.name AS name, " +
-	        "CASE WHEN fitem.task_id = :task_id THEN true ELSE false END As containstask " +
+	        "coalesce(bool_or(fitem.task_id = :task_id),false) As containstask " +
 	        "from favouritelist flist " +
 	        "left join favouritepermissionsgroup fgroup on fgroup.favouritelist_id = flist.id "+
 	        "left join favouritepermissionsuser fuser on fuser.favouritelist_id = flist.id "+
 	        "left join favouritelistitem fitem on fitem.favouritelist_id = flist.id "+
 	        "left join favouritelist_histouser hideList on hideList.favouritelist_id = flist.id "+
-	        "where (owner_id = :user_id or fgroup.group_id = :group_id or fuser.user_id = :user_id) and (hideList.hidelistforuser_id IS NULL or hideList.hidelistforuser_id != :user_id)",
+	        "where (owner_id = :user_id or fgroup.group_id = :group_id or fuser.user_id = :user_id) and (hideList.hidelistforuser_id IS NULL or hideList.hidelistforuser_id != :user_id) " +
+	        "GROUP BY flist.id",
 	    resultSetMapping = "FavouriteListMenuItem"
 	)
 	@SqlResultSetMapping(

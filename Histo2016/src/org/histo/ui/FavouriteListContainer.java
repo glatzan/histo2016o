@@ -70,4 +70,8 @@ public class FavouriteListContainer {
 			}
 		}
 	}
+	
+	public boolean isOwnerOrAdmin() {
+		return admin || owner;
+	}
 }

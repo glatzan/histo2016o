@@ -159,7 +159,6 @@ public class FavouriteListDAO extends AbstractDAO {
 		Root<Patient> root = criteria.from(Patient.class);
 		criteria.select(root);
 
-
 		if (initTasks)
 			root.fetch("tasks", JoinType.LEFT);
 
@@ -172,7 +171,6 @@ public class FavouriteListDAO extends AbstractDAO {
 
 		List<Patient> patients = getSession().createQuery(criteria).getResultList();
 
-
 		System.out.println(patients.size());
 		return patients;
 	}
@@ -180,8 +178,8 @@ public class FavouriteListDAO extends AbstractDAO {
 	public List<FavouriteListMenuItem> getMenuItems(HistoUser user, Task task) {
 
 		List<FavouriteListMenuItem> items = getSession().createNamedQuery("favouriteListMenuItemDTO")
-				.setParameter("user_id", user.getId()).setParameter("group_id", user.getGroup().getId()).setParameter("task_id", task.getId())
-				.getResultList();
+				.setParameter("user_id", user.getId()).setParameter("group_id", user.getGroup().getId())
+				.setParameter("task_id", task.getId()).getResultList();
 
 		return items;
 

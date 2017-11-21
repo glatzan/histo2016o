@@ -3,6 +3,7 @@ package org.histo.action.dialog.settings.favouriteLists;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
@@ -23,6 +24,7 @@ import org.histo.model.interfaces.HasID;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
+import org.histo.ui.FavouriteListContainer;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -66,7 +68,9 @@ public class FavouriteListEditDialog extends AbstractDialog {
 	private List<FavouritePermissions> toDeleteList;
 
 	private boolean adminMode;
-
+	
+	private FavouriteListContainer userPermission;
+	
 	public void initAndPrepareBean() {
 		initAndPrepareBean(false);
 	}
@@ -78,7 +82,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		favouriteList.setGroups(new HashSet<FavouritePermissionsGroup>());
 		favouriteList.setItems(new ArrayList<FavouriteListItem>());
 		favouriteList.setOwner(userHandlerAction.getCurrentUser());
-
+		
 		if (initBean(favouriteList, false, false))
 			prepareDialog();
 	}
@@ -110,16 +114,11 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		setToDeleteList(new ArrayList<FavouritePermissions>());
 
 		setAdminMode(adminMode);
-
+		
+		setUserPermission(new FavouriteListContainer(favouriteList, userHandlerAction.getCurrentUser()));
+		
 		super.initBean(task, Dialog.SETTINGS_FAVOURITE_LIST_EDIT);
 		return true;
-	}
-
-	public void onSelectGlobalView() {
-		if (favouriteList.isGlobalView()) {
-			favouriteList.getUsers().stream().forEach(p -> p.setReadable(true));
-			favouriteList.getGroups().stream().forEach(p -> p.setReadable(true));
-		}
 	}
 
 	public void onSelectAdmin(FavouritePermissions permission) {
@@ -141,6 +140,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 				FavouritePermissionsUser permission = new FavouritePermissionsUser((HistoUser) event.getObject());
 				favouriteList.getUsers().add(permission);
 				permission.setFavouriteList(favouriteList);
+				permission.setReadable(true);
 
 				if (favouriteList.isGlobalView())
 					permission.setReadable(true);
@@ -154,6 +154,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 				FavouritePermissionsGroup permission = new FavouritePermissionsGroup((HistoGroup) event.getObject());
 				favouriteList.getGroups().add(permission);
 				permission.setFavouriteList(favouriteList);
+				permission.setReadable(true);
 
 				if (favouriteList.isGlobalView())
 					permission.setReadable(true);
@@ -161,7 +162,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		}
 	}
 
-	public void removeEntityFromList(List<? extends FavouritePermissions> list, FavouritePermissions toRemove) {
+	public void removeEntityFromList(Set<? extends FavouritePermissions> list, FavouritePermissions toRemove) {
 		if (toRemove.getId() != 0)
 			toDeleteList.add(toRemove);
 
