@@ -112,11 +112,11 @@
 							</h:inputTextarea>
 
 							<!-- attachment -->
-							<h:outputLabel value="#{msg['dialog.council.attachment']}"></h:outputLabel>
+							<h:outputLabel value="#{msg['dialog.council.sampleShippedCommentary']}"></h:outputLabel>
 
 
 							<p:selectOneMenu id="attachments" style="width:450px;"
-								value="#{councilDialogHandler.selectedCouncil.attachment}"
+								value="#{councilDialogHandler.selectedCouncil.sampleShippedCommentary}"
 								disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
 								styleClass="smallInput" editable="true">
 								<f:selectItems value="#{councilDialogHandler.attachmentList}"
@@ -203,7 +203,7 @@
 							<h:outputLabel value="#{msg['dialog.council.date']}"></h:outputLabel>
 							<p:calendar styleClass="smallInput"
 								disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
-								value="#{councilDialogHandler.selectedCouncil.dateOfRequestAsDate}"
+								value="#{councilDialogHandler.selectedCouncil.dateOfRequest}"
 								tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
 								<p:ajax event="dateSelect" update="@form"
 									listener="#{councilDialogHandler.onNameChange()}" />

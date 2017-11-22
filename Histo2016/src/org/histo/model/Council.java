@@ -15,11 +15,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
@@ -77,16 +77,45 @@ public class Council implements HasID, HasDataList {
 	private String councilText;
 
 	/**
+	 * True if samples were send to external clinics
+	 */
+	@Column
+	private boolean sampleShipped;
+	/**
 	 * Attached slides of the council
 	 */
 	@Column(columnDefinition = "text")
-	private String attachment;
+	private String sampleShippedCommentary;
+	
+	/**
+	 * Date of request
+	 */
+	@Temporal(TemporalType.DATE)
+	private Date sampleShippedDate;
+	
+	/**
+	 * True if sample is returned
+	 */
+	@Column
+	private boolean sampleReturned;
+	
+	/**
+	 * Commentary
+	 */
+	@Column(columnDefinition = "text")
+	private String sample;
 
 	/**
 	 * Date of request
 	 */
-	@Column
-	private long dateOfRequest;
+	@Temporal(TemporalType.DATE)
+	private Date sampleReturnedDate;
+	
+	/**
+	 * Date of request
+	 */
+	@Temporal(TemporalType.DATE)
+	private Date dateOfRequest;
 
 	/**
 	 * State of the council
@@ -111,15 +140,6 @@ public class Council implements HasID, HasDataList {
 	@Transient
 	public String getCouncilTextAsLatex() {
 		return (new TextToLatexConverter()).convertToTex(getCouncilText());
-	}
-
-	@Transient
-	public Date getDateOfRequestAsDate() {
-		return new Date(dateOfRequest);
-	}
-
-	public void setDateOfRequestAsDate(Date dateOfRequestAsDate) {
-		this.dateOfRequest = dateOfRequestAsDate.getTime();
 	}
 
 	@Transient
