@@ -11,14 +11,15 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.council.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-<h:body styleClass="defaultDialogLayout infoDialog">
+<h:body styleClass="contentInputDialog">
 	<h:form id="dialogContent">
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.council.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -28,7 +29,7 @@
 			</h:panelGrid>
 		</div>
 
-		<div class="contentDiv councilDialog">
+		<div class="dialogContent">
 			<h:panelGrid columns="3" styleClass="defaultListingTableContainer"
 				columnClasses="defaultListingTableColumnTop defaultListingTableColumn25, defaultListingTableColumnTop">
 				<p:dataTable value="#{councilDialogHandler.task.councils}"
@@ -92,7 +93,8 @@
 				<h:panelGroup>
 					<ui:fragment
 						rendered="#{councilDialogHandler.selectedCouncil ne null}">
-						<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
+						<h:panelGrid columns="2"
+							styleClass="defaultListingTableFirstColumEnummeration"
 							columnClasses="defaultListingTableColumnTop,">
 
 							<!-- name -->
@@ -103,7 +105,7 @@
 
 							<!-- requesting text -->
 							<h:outputLabel value="#{msg['dialog.council.requestText']}"></h:outputLabel>
-							
+
 							<h:inputTextarea style="width: 500px;" rows="13"
 								disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
 								value="#{councilDialogHandler.selectedCouncil.councilText}">
@@ -112,7 +114,8 @@
 							</h:inputTextarea>
 
 							<!-- attachment -->
-							<h:outputLabel value="#{msg['dialog.council.sampleShippedCommentary']}"></h:outputLabel>
+							<h:outputLabel
+								value="#{msg['dialog.council.sampleShippedCommentary']}"></h:outputLabel>
 
 
 							<p:selectOneMenu id="attachments" style="width:450px;"
@@ -165,7 +168,7 @@
 							<!-- council requesting physician -->
 							<h:outputLabel
 								value="#{msg['dialog.council.requestingPhysician']}"></h:outputLabel>
-							<h:panelGrid columns="2"  style="width: auto"
+							<h:panelGrid columns="2" style="width: auto"
 								styleClass="defaultListingTableContainer">
 								<!-- physician requesting council -->
 								<p:selectOneMenu styleClass="customSerachSelectMenu smallInput"
@@ -265,18 +268,19 @@
 				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
 				<!-- add new council -->
-				<h:panelGrid columns="1">
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+					<!-- Save button -->
 					<p:commandButton value="#{msg['dialog.council.button.create']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonLeftMarginInList" update="@form"
+						icon="fa fa-check-circle-o" update="@form"
 						actionListener="#{councilDialogHandler.addNewCouncil()}"></p:commandButton>
 				</h:panelGrid>
 
-				<h:panelGrid columns="3" style="float:right;">
+
+
+				<h:panelGrid columns="3" styleClass="newTableContainer right">
 
 					<!-- media select for coincil reply -->
-					<p:commandButton styleClass="smallButton buttonRighMarginInList"
-						icon="fa-upload fa"
+					<p:commandButton icon="fa-upload fa"
 						rendered="#{councilDialogHandler.selectedCouncil.isCouncilState('CompletedState', 'ValidetedState')}"
 						title="#{msg['dialog.council.button.upload']}"
 						actionListener="#{councilDialogHandler.showMediaSelectDialog()}">
@@ -286,8 +290,7 @@
 					<!-- create and print -->
 					<p:commandButton value="#{msg['general.print']}"
 						icon="fa fa-check-circle-o" onstart="PF('blockUIWidget').block()"
-						oncomplete="PF('blockUIWidget').unblock()"
-						styleClass="smallButton buttonRighMarginInListExtended">
+						oncomplete="PF('blockUIWidget').unblock()">
 						<f:actionListener binding="#{councilDialogHandler.hideDialog()}" />
 						<f:actionListener
 							binding="#{councilDialogHandler.printCouncilReport()}" />
@@ -295,7 +298,6 @@
 
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle">
 						<f:actionListener
 							binding="#{councilDialogHandler.saveCouncilData()}" />

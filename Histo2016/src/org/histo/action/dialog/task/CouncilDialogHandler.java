@@ -3,9 +3,12 @@ package org.histo.action.dialog.task;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -148,8 +151,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 */
 	public void addNewCouncil() {
 		logger.info("Adding new council");
+		
 		setSelectedCouncil(new Council(getTask()));
-		getSelectedCouncil().setDateOfRequest((new Date(System.currentTimeMillis())));
+		getSelectedCouncil().setDateOfRequest(DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH));
 		getSelectedCouncil().setName(generateName());
 		getSelectedCouncil().setCouncilState(CouncilState.EditState);
 
