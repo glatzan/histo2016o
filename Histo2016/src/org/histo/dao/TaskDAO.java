@@ -171,13 +171,13 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		// Create CriteriaQuery
 		CriteriaQuery<Task> criteria = qb.createQuery(Task.class);
 		Root<Task> taskRoot = criteria.from(Task.class);
-		criteria.select(taskRoot);
+		criteria.select(qb.max((Expression) taskRoot.get("taskID")));
 
-		Subquery<Task> subquery = criteria.subquery(Task.class);
-		Root<Task> subTaskRoot = subquery.from(Task.class);
-		subquery.select(qb.max((Expression) subTaskRoot.get("id")));
+//		Subquery<Task> subquery = criteria.subquery(Task.class);
+//		Root<Task> subTaskRoot = subquery.from(Task.class);
+//		subquery.select();
 
-		criteria.where(qb.equal(taskRoot.get("id"), subquery));
+//		criteria.where(qb.like(taskRoot.get("taskID"), subquery));
 
 		Task task = getSession().createQuery(criteria).getSingleResult();
 

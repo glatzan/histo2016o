@@ -103,7 +103,7 @@ public class Council implements HasID, HasDataList {
 	 * Commentary
 	 */
 	@Column(columnDefinition = "text")
-	private String sample;
+	private String sampleReturnedCommentary;
 
 	/**
 	 * Date of request

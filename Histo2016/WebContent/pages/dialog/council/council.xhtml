@@ -30,11 +30,12 @@
 		</div>
 
 		<div class="dialogContent">
-			<h:panelGrid columns="3" styleClass="defaultListingTableContainer"
-				columnClasses="defaultListingTableColumnTop defaultListingTableColumn25, defaultListingTableColumnTop">
+			<h:panelGrid columns="2" styleClass="newTableContainer"
+				columnClasses="columnTop column25, columnTop">
+
 				<p:dataTable value="#{councilDialogHandler.task.councils}"
 					selection="#{councilDialogHandler.selectedCouncil}"
-					scrollable="true" scrollHeight="450" var="council"
+					scrollable="true" scrollHeight="550" var="council"
 					selectionMode="single" rowKey="#{council.id}"
 					rowIndexVar="rowIndex"
 					styleClass="navigationDataTable highlightedDataTable">
@@ -114,22 +115,37 @@
 							</h:inputTextarea>
 
 							<!-- attachment -->
-							<h:outputLabel
-								value="#{msg['dialog.council.sampleShippedCommentary']}"></h:outputLabel>
+							<h:outputLabel value="#{msg['dialog.council.sampleShipped']}"></h:outputLabel>
 
+							<h:panelGrid columns="2" styleClass="newTableContainer">
+								<p:selectBooleanCheckbox
+									title="#{msg['dialog.council.sampleShipped.text']}"
+									value="#{councilDialogHandler.selectedCouncil.sampleShipped}" />
 
-							<p:selectOneMenu id="attachments" style="width:450px;"
-								value="#{councilDialogHandler.selectedCouncil.sampleShippedCommentary}"
-								disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
-								styleClass="smallInput" editable="true">
-								<f:selectItems value="#{councilDialogHandler.attachmentList}"
-									itemValue="#{attachment.value}" itemLabel="#{attachment.value}"
-									var="attachment" />
-								<p:ajax event="change"
-									listener="#{councilDialogHandler.saveCouncilData()}" />
-								<p:ajax event="keyup" delay="1000"
-									listener="#{councilDialogHandler.saveCouncilData()}" />
-							</p:selectOneMenu>
+								<p:selectOneMenu id="attachments"
+									style="width:450px; margin-left: 10px;"
+									value="#{councilDialogHandler.selectedCouncil.sampleShippedCommentary}"
+									disabled="#{!councilDialogHandler.selectedCouncil.isCouncilState('EditState')}"
+									styleClass="smallInput" editable="true">
+									<f:selectItems value="#{councilDialogHandler.attachmentList}"
+										itemValue="#{attachment.value}"
+										itemLabel="#{attachment.value}" var="attachment" />
+									<p:ajax event="change"
+										listener="#{councilDialogHandler.saveCouncilData()}" />
+									<p:ajax event="keyup" delay="1000"
+										listener="#{councilDialogHandler.saveCouncilData()}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:outputLabel value="#{msg['dialog.council.sampleReturned']}"></h:outputLabel>
+
+							<h:panelGrid columns="2" styleClass="newTableContainer">
+								<p:selectBooleanCheckbox
+									title="#{msg['dialog.council.sampleReturned.text']}"
+									value="#{councilDialogHandler.selectedCouncil.sampleReturned}" />
+								<p:inputText
+									value="#{councilDialogHandler.selectedCouncil.sampleReturnedCommentary}"></p:inputText>
+							</h:panelGrid>
 
 							<!-- Consultant -->
 							<h:outputLabel value="#{msg['dialog.council.consultant']}"></h:outputLabel>

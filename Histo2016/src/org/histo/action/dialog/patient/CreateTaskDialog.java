@@ -251,9 +251,9 @@ public class CreateTaskDialog extends AbstractDialog {
 			getTask().setWard("");
 
 			// renewing taskID, if somebody has created an other
-			// task
-			// meanwhile
-			getTask().setTaskID(getNewTaskID());
+			// task in the meanwhile
+			//TODO uncomment this next line
+			//getTask().setTaskID(getNewTaskID());
 
 			getTask().setCouncils(new ArrayList<Council>());
 

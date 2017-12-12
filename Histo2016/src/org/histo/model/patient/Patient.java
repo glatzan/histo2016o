@@ -97,7 +97,7 @@ public class Patient
 	 */
 	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
 	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("id DESC")
+	@OrderBy("taskid DESC")
 	private List<Task> tasks = new ArrayList<Task>();
 
 	/**

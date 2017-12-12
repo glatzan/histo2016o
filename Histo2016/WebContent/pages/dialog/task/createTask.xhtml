@@ -33,12 +33,14 @@
 			<h:panelGrid columns="3"
 				styleClass="defaultListingTableTwoLineContainer">
 				<!-- Left Column -->
-				<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
+				<h:panelGrid columns="2"
+					styleClass="defaultListingTableFirstColumEnummeration"
 					columnClasses="defaultListingTableColumnTop,">
 
 					<!-- Task number -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
-					<h:outputLabel value="#{dialogHandlerAction.createTaskDialog.task.taskID}"></h:outputLabel>
+					<p:inputText
+						value="#{dialogHandlerAction.createTaskDialog.task.taskID}"></p:inputText>
 
 					<!-- Task Date -->
 
@@ -122,7 +124,8 @@
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.file']}:" />
 
-							<h:outputLabel value="#{dialogHandlerAction.mediaDialog.selectedPdfContainer.name}">
+							<h:outputLabel
+								value="#{dialogHandlerAction.mediaDialog.selectedPdfContainer.name}">
 								<f:converter converterId="org.histo.ui.TruncateConverter" />
 								<f:attribute name="truncateAt" value="35" />
 								<f:attribute name="continuationMark" value="..." />
@@ -154,14 +157,17 @@
 
 				<!-- Right column -->
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+					<h:panelGrid columns="2"
+						styleClass="defaultListingTableFirstColumEnummeration">
 
 						<!-- samplecount -->
 						<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
-						<p:spinner id="basic" value="#{dialogHandlerAction.createTaskDialog.sampleCount}"
+						<p:spinner id="basic"
+							value="#{dialogHandlerAction.createTaskDialog.sampleCount}"
 							styleClass="taskSpinner" min="1" max="5">
 							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
-								event="change" listener="#{dialogHandlerAction.createTaskDialog.updateDialog()}"></p:ajax>
+								event="change"
+								listener="#{dialogHandlerAction.createTaskDialog.updateDialog()}"></p:ajax>
 						</p:spinner>
 
 
@@ -184,7 +190,8 @@
 								style="margin-left:30px;"
 								converter="#{dialogHandlerAction.createTaskDialog.materialListTransformer}"
 								value="#{sample.materilaPreset}">
-								<f:selectItems value="#{dialogHandlerAction.createTaskDialog.materialList}"
+								<f:selectItems
+									value="#{dialogHandlerAction.createTaskDialog.materialList}"
 									var="materialSelect" itemLabel="#{materialSelect.name}"
 									itemValue="#{materialSelect}">
 								</f:selectItems>
@@ -206,8 +213,10 @@
 						styleClass="smallButton buttonRighMarginInListExtended">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
-						<f:actionListener binding="#{dialogHandlerAction.createTaskDialog.createTask()}"></f:actionListener>
-						<f:actionListener binding="#{dialogHandlerAction.createTaskDialog.hideDialog()}"></f:actionListener>
+						<f:actionListener
+							binding="#{dialogHandlerAction.createTaskDialog.createTask()}"></f:actionListener>
+						<f:actionListener
+							binding="#{dialogHandlerAction.createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- print ureport -->
@@ -220,7 +229,8 @@
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener
 							binding="#{dialogHandlerAction.createTaskDialog.createTaskAndPrintUReport()}"></f:actionListener>
-						<f:actionListener binding="#{dialogHandlerAction.createTaskDialog.hideDialog()}"></f:actionListener>
+						<f:actionListener
+							binding="#{dialogHandlerAction.createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- select printer -->
@@ -230,8 +240,8 @@
 						value="#{userHandlerAction.selectedPrinter}" filter="true"
 						filterMatchMode="contains" style="margin-right:10px">
 
-						<f:selectItems value="#{globalSettings.printerList}"
-							var="printer" itemLabel="#{printer.name}" itemValue="#{printer}" />
+						<f:selectItems value="#{globalSettings.printerList}" var="printer"
+							itemLabel="#{printer.name}" itemValue="#{printer}" />
 					</p:selectOneMenu>
 
 					<!-- Abort button -->
@@ -240,7 +250,8 @@
 						icon="fa fa-times-circle">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
-						<f:actionListener binding="#{dialogHandlerAction.createTaskDialog.hideDialog()}"></f:actionListener>
+						<f:actionListener
+							binding="#{dialogHandlerAction.createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
