@@ -24,6 +24,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Task;
+import org.histo.model.user.HistoUser;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -153,6 +154,27 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		List<Task> list = criteria.list();
 
 		return list;
+	}
+
+	/**
+	 * Returns true if task exsists in database
+	 * @param taskID
+	 * @return
+	 */
+	public boolean isTaskIDPresentInDatabase(String taskID) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Task> criteria = qb.createQuery(Task.class);
+		Root<Task> root = criteria.from(Task.class);
+		criteria.select(root);
+
+		criteria.where(qb.like(root.get("taskID"), taskID));
+		criteria.distinct(true);
+
+		List<Task> task = getSession().createQuery(criteria).getResultList();
+
+		return task.size() > 0;
 	}
 
 	/**

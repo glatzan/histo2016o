@@ -1,6 +1,7 @@
 package org.histo.action.dialog.task;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,35 +26,55 @@ import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
 import org.histo.model.ListItem;
+import org.histo.model.MaterialPreset;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
-@Scope(value = "session")
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Getter
+@Setter
 public class CouncilDialogHandler extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
 
 	/**
@@ -92,6 +113,11 @@ public class CouncilDialogHandler extends AbstractDialog {
 	private List<ListItem> attachmentList;
 
 	/**
+	 * True if editable
+	 */
+	private boolean editable;
+	
+	/**
 	 * Initializes the bean and shows the council dialog
 	 * 
 	 * @param task
@@ -118,11 +144,14 @@ public class CouncilDialogHandler extends AbstractDialog {
 			// setting council as default
 			if (getCouncilList().size() != 0) {
 				setSelectedCouncil(getCouncilList().get(0));
-			}
+			}else
+				setSelectedCouncil(null);
 
 			updatePhysicianLists();
 
 			setAttachmentList(utilDAO.getAllStaticListItems(ListItem.StaticList.COUNCIL_ATTACHMENT));
+
+			setEditable(task.getTaskStatus().isEditable());
 
 			return true;
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -241,6 +270,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	public void onNameChange() {
 		getSelectedCouncil().setName(generateName());
+		saveCouncilData();
 	}
 
 	public String generateName() {
@@ -254,8 +284,11 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 		str.append(" ");
 
+		
+		LocalDateTime ldt = LocalDateTime.ofInstant(selectedCouncil.getDateOfRequest().toInstant(), ZoneId.systemDefault());
+		
 		// adding date
-		str.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern(DateFormat.GERMAN_DATE.getDateFormat())));
+		str.append(ldt.format(DateTimeFormatter.ofPattern(DateFormat.GERMAN_DATE.getDateFormat())));
 
 		return str.toString();
 	}
@@ -357,61 +390,4 @@ public class CouncilDialogHandler extends AbstractDialog {
 		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
-	// ************************ Getter/Setter ************************
-
-	public List<Physician> getPhysicianCouncilList() {
-		return physicianCouncilList;
-	}
-
-	public void setPhysicianCouncilList(List<Physician> physicianCouncilList) {
-		this.physicianCouncilList = physicianCouncilList;
-	}
-
-	public DefaultTransformer<Physician> getPhysicianCouncilTransformer() {
-		return physicianCouncilTransformer;
-	}
-
-	public void setPhysicianCouncilTransformer(DefaultTransformer<Physician> physicianCouncilTransformer) {
-		this.physicianCouncilTransformer = physicianCouncilTransformer;
-	}
-
-	public List<Physician> getPhysicianSigantureList() {
-		return physicianSigantureList;
-	}
-
-	public void setPhysicianSigantureList(List<Physician> physicianSigantureList) {
-		this.physicianSigantureList = physicianSigantureList;
-	}
-
-	public DefaultTransformer<Physician> getPhysicianSigantureListTransformer() {
-		return physicianSigantureListTransformer;
-	}
-
-	public void setPhysicianSigantureListTransformer(DefaultTransformer<Physician> physicianSigantureListTransformer) {
-		this.physicianSigantureListTransformer = physicianSigantureListTransformer;
-	}
-
-	public List<Council> getCouncilList() {
-		return councilList;
-	}
-
-	public void setCouncilList(List<Council> councilList) {
-		this.councilList = councilList;
-	}
-
-	public Council getSelectedCouncil() {
-		return selectedCouncil;
-	}
-
-	public void setSelectedCouncil(Council selectedCouncil) {
-		this.selectedCouncil = selectedCouncil;
-	}
-
-	public List<ListItem> getAttachmentList() {
-		return attachmentList;
-	}
-
-	public void setAttachmentList(List<ListItem> attachmentList) {
-		this.attachmentList = attachmentList;
-	}
 }

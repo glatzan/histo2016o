@@ -130,6 +130,8 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	private boolean taskIdManuallyAltered;
 
+	private boolean taskIDisPresentInDatabase;
+
 	/**
 	 * Initializes the bean and shows the createTaskDialog
 	 * 
@@ -171,6 +173,9 @@ public class CreateTaskDialog extends AbstractDialog {
 
 		setAutoNomenclatureChangedManually(false);
 
+		setTaskIdManuallyAltered(false);
+		setTaskIDisPresentInDatabase(false);
+
 		// creates a new sample, is automatically added to the task
 		new Sample(getTask(), !getMaterialList().isEmpty() ? getMaterialList().get(0) : null);
 
@@ -183,8 +188,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the name and the amount of samples which should be created with the
-	 * new task.
+	 * Updates the name and the amount of samples which should be created with
+	 * the new task.
 	 */
 	public void updateDialog() {
 
@@ -420,6 +425,11 @@ public class CreateTaskDialog extends AbstractDialog {
 
 		// show dialog
 		dialogHandlerAction.getMediaDialog().prepareDialog();
+	}
+
+	public void onTaskIDManuallyAltered() {
+		setTaskIdManuallyAltered(true);
+		setTaskIDisPresentInDatabase(taskDAO.isTaskIDPresentInDatabase(task.getTaskID()));
 	}
 
 	public void onDatabaseVersionConflict() {

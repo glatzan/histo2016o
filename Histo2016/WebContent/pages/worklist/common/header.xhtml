@@ -175,7 +175,7 @@
 
 			<!-- Council button -->
 			<p:commandButton id="councilBtn" style="display:none"
-				actionListener="#{councilDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />

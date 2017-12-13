@@ -32,8 +32,6 @@ TODO: Datenbankabfragen in globaleidt handler shiften
 TODO: 4: erweiterte Suche / 
 TODO: 1: AUW 3 Änderungen 
 	TODO: Auswahl der Diagnose im Druckmenu
-	TODO: Konsil speichern
-	TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
 TODO: 0.1: Finaliz in task, wird dies benötig -> löschen durch diagnosis date ersetzen
 TODO: 5: Latex Datei für externen Befund
@@ -60,6 +58,9 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+++++: Warnung bei doppelten Tasknummern
+++++: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
+++++: Konsil speichern
 ++++: Konsil aus der Task Liste direkt öffnen
 ++++: Task Id vollständig veränderbar
 ++++: Konsil, drucken soll nicht den dialog schlißen

@@ -196,7 +196,6 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:councilBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-comment-o");
 
-				item.setDisabled(!taskIsEditable);
 				diagnosisSubMenu.addElement(item);
 			}
 

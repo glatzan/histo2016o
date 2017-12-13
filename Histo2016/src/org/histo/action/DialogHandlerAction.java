@@ -33,6 +33,7 @@ import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
+import org.histo.action.dialog.task.CouncilDialogHandler;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -108,6 +109,8 @@ public class DialogHandlerAction {
 	private PatientLogDialog patientLogDialog;
 	
 	private AddSlidesDialog addSlidesDialog;
+	
+	private CouncilDialogHandler councilDialogHandler;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -362,5 +365,12 @@ public class DialogHandlerAction {
 		return addSlidesDialog;
 	}
 	
+	public CouncilDialogHandler getCouncilDialogHandler() {
+		if (councilDialogHandler == null) {
+			councilDialogHandler = new CouncilDialogHandler();
+		}
+
+		return councilDialogHandler;
+	}
 	
 }

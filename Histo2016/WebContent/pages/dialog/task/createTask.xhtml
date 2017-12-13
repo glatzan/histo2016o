@@ -10,15 +10,17 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.createTask.Headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-<h:body styleClass="defaultDialogLayout infoDialog">
+<h:body styleClass="contentInputDialog">
 
 	<h:form enctype="multipart/form-data" id="dialogContent">
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.createTask.Headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -29,28 +31,32 @@
 		</div>
 
 
-		<div class="contentDiv">
-			<h:panelGrid columns="3"
-				styleClass="defaultListingTableTwoLineContainer">
+		<div class="dialogContent">
+			<h:panelGrid columns="3" styleClass="newTableContainer"
+				columnClasses="columnTop, columnTop, columnTop">
 				<!-- Left Column -->
-				<h:panelGrid columns="2"
-					styleClass="defaultListingTableFirstColumEnummeration"
-					columnClasses="defaultListingTableColumnTop,">
+				<h:panelGrid columns="2" styleClass="newStyleListingTable">
 
 					<!-- Task number -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
 					<p:inputText
 						value="#{dialogHandlerAction.createTaskDialog.task.taskID}">
-						<p:ajax event="change"
-							listener="#{dialogHandlerAction.createTaskDialog.setTaskIdManuallyAltered(true)}">
-						</p:ajax>
+						<p:ajax event="change" process="@form" update="@form"
+							listener="#{dialogHandlerAction.createTaskDialog.onTaskIDManuallyAltered()}" />
+						<p:ajax event="keyup" delay="500" process="@form" update="@form"
+							listener="#{dialogHandlerAction.createTaskDialog.onTaskIDManuallyAltered()}" />
 					</p:inputText>
 
-					<!-- Task Date -->
+					<h:outputLabel value=""
+						rendered="#{dialogHandlerAction.createTaskDialog.taskIDisPresentInDatabase}" />
+					<h:outputLabel styleClass="icon-red"
+						value="Auftragsnummer bereits vorhanden"
+						rendered="#{dialogHandlerAction.createTaskDialog.taskIDisPresentInDatabase}" />
 
+
+					<!-- Task Date -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
 					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
-						styleClass="smallInput"
 						value="#{dialogHandlerAction.createTaskDialog.task.dateOfReceiptAsDate}">
 					</p:calendar>
 
@@ -65,8 +71,8 @@
 
 					<!-- priority -->
 					<h:outputLabel value="#{msg['dialog.createTask.priority']}" />
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-						<p:selectOneRadio id="console"
+					<h:panelGrid columns="1" styleClass="newStyleListingTable">
+						<p:selectOneRadio
 							value="#{dialogHandlerAction.createTaskDialog.task.taskPriority}">
 							<f:selectItem itemLabel="#{msg['enum.taskPriority.LOW']}"
 								itemValue="NONE" />
@@ -78,11 +84,11 @@
 							<p:ajax update="@form" process="@form"></p:ajax>
 						</p:selectOneRadio>
 
-						<h:panelGrid columns="2">
+						<h:panelGrid columns="2" styleClass="newTableContainer">
 							<h:outputLabel
 								value="#{msg['dialog.createTask.priority.dueDate']}" />
 							<p:calendar pattern="dd.MM.yyyy" mask="true"
-								styleClass="smallInput"
+								style="margin-left:10px"
 								disabled="#{!dialogHandlerAction.createTaskDialog.task.dueDateSelected}"
 								value="#{dialogHandlerAction.createTaskDialog.task.dueDateAsDate}">
 							</p:calendar>
@@ -92,9 +98,9 @@
 
 					<!-- biobank -->
 					<h:outputLabel value="#{msg['dialog.createTask.bioBank']}" />
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+					<h:panelGrid columns="1" styleClass="newTableContainer">
 
-						<h:panelGrid columns="3" styleClass="defaultListingTableContainer">
+						<h:panelGrid columns="3" styleClass="newStyleListingTable">
 							<!-- select file -->
 							<h:outputLabel
 								value="#{msg['dialog.createTask.bioBank.informedConsent.signed']}" />
@@ -111,7 +117,7 @@
 							</p:commandLink>
 						</h:panelGrid>
 
-						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
+						<h:panelGrid columns="2" styleClass="newStyleListingTable">
 							<!-- move file -->
 							<h:outputLabel
 								value="#{msg['dialog.createTask.moveInformedConsent']}" />
@@ -121,8 +127,7 @@
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
 
-						<h:panelGrid columns="2" styleClass="defaultListingTableContainer">
-
+						<h:panelGrid columns="2" styleClass="newStyleListingTable">
 
 							<!-- selected file /remove file -->
 							<h:outputLabel
@@ -160,15 +165,14 @@
 				<h:panelGroup></h:panelGroup>
 
 				<!-- Right column -->
-				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<h:panelGrid columns="2"
-						styleClass="defaultListingTableFirstColumEnummeration">
+				<h:panelGrid columns="1" styleClass="newTableContainer">
+					<h:panelGrid columns="2" styleClass="newStyleListingTable">
 
 						<!-- samplecount -->
 						<h:outputLabel value="#{msg['dialog.createTask.sampleCount']}"></h:outputLabel>
-						<p:spinner id="basic"
+						<p:spinner styleClass="numberFixForSpinner"
 							value="#{dialogHandlerAction.createTaskDialog.sampleCount}"
-							styleClass="taskSpinner" min="1" max="5">
+							min="1" max="5">
 							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
 								event="change"
 								listener="#{dialogHandlerAction.createTaskDialog.updateDialog()}"></p:ajax>
@@ -176,8 +180,9 @@
 
 
 					</h:panelGrid>
+
 					<p:dataTable var="sample" id="sampleMaterial"
-						styleClass="smallPaddingAll noBordersAll hide-column-names standardFont"
+						styleClass="newStyleDataList"
 						value="#{dialogHandlerAction.createTaskDialog.task.samples}">
 						<p:column style="width: 40px;">
 							<ul style="margin: 0px;">
@@ -208,13 +213,13 @@
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="4" style="float:right;">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<h:panelGrid columns="3" styleClass="newTableContainer left">
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.create']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended">
+						icon="fa fa-check-circle-o">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener
@@ -225,9 +230,7 @@
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
-						icon="fa fa-print"
-						styleClass="smallButton buttonRighMarginInListExtended"
-						onstart="PF('blockUIWidget').block()"
+						icon="fa fa-print" onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
@@ -238,8 +241,7 @@
 					</p:commandButton>
 
 					<!-- select printer -->
-					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						panelStyleClass="customSerachSelectMenuPanel"
+					<p:selectOneMenu panelStyleClass="iconFixForSelectOneMenu"
 						converter="#{globalSettings.printerListTransformer}"
 						value="#{userHandlerAction.selectedPrinter}" filter="true"
 						filterMatchMode="contains" style="margin-right:10px">
@@ -247,16 +249,18 @@
 						<f:selectItems value="#{globalSettings.printerList}" var="printer"
 							itemLabel="#{printer.name}" itemValue="#{printer}" />
 					</p:selectOneMenu>
+				</h:panelGrid>
 
+				<h:panelGrid columns="1" styleClass="newTableContainer right">
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener
 							binding="#{dialogHandlerAction.createTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
+
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

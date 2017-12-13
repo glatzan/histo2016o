@@ -188,6 +188,32 @@
 	text-overflow: ellipsis;
 }
 
+/* -------------- New DataList Style --------------*/
+.newStyleDataList {
+	width: 100%;
+	white-space: normal;
+}
+
+.newStyleDataList table thead tr {
+	display: none;
+}
+
+.newStyleDataList tr, .newStyleDataList tbody {
+	border: none !important;
+}
+
+.newStyleDataList td {
+	padding-top: 3px !important;
+	padding-bottom: 3px !important;
+	border: none !important;
+	border-spacing: 0px !important;
+	font-size: 12px;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
+}
+
 /* -------------- Simple Dialog Style --------------*/
 /* Dialog for adding content */
 .contentInputDialog {
@@ -244,6 +270,17 @@
 	margin-left: 0.6em !important;
 }
 
+/* style of the popup menu*/
+.contentInputDialog .buttonContainer .left .ui-selectonemenu {
+	margin-left: 0.6em !important;
+}
+
+/* style of the popup menu*/
+.contentInputDialog .buttonContainer .left .ui-selectonemenu .ui-selectonemenu-label
+	{
+	padding: 0.2em !important;
+}
+
 /* right table */
 .contentInputDialog .buttonContainer .right {
 	margin-right: 0px;
@@ -255,7 +292,13 @@
 	margin-right: 0.6em !important;
 }
 
-/* -------------- Tab Dialog Style --------------*/
+/* style of the popup menu*/
+.customSerachSelectMenuPanel {
+	padding: 0px;
+}
+
+.customSerachSelectMenuPanel
+	/* -------------- Tab Dialog Style --------------*/   
 .tabDialogLayout {
 	padding: 0px !important;
 	margin: 0px !important;
@@ -406,6 +449,9 @@
 	padding: 3px 7px;
 }
 
+.numberFixForSpinner .ui-spinner-input {
+	padding-right: 25px !important;
+}
 /* ---------------- Fonts ------------ */
 .standardFont, .standardFont label {
 	padding: 4px;
