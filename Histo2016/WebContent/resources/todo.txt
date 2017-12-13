@@ -24,23 +24,20 @@ left join favouritelist_histouser hideList on hideList.favouritelist_id = flist.
 where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.hidelistforuser_id IS NULL or hideList.hidelistforuser_id != 1) GROUP BY flist.id 
 
 
-
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
-
-
 
 TODO: 2: favouriten f�r benutzer zug�nlich machen
 TODO: Datenbankabfragen in globaleidt handler shiften
 TODO: 4: erweiterte Suche / 
 TODO: 1: AUW 3 Änderungen 
 	TODO: Auswahl der Diagnose im Druckmenu
-	TODO: Feld für zurückgegebene konsile ausleihe str + bool
+	TODO: Konsil speichern
+	TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 
 TODO: 0.1: Finaliz in task, wird dies benötig -> löschen durch diagnosis date ersetzen
 TODO: 5: Latex Datei für externen Befund
 TODO: 6: Liste f�r normale benutzer �berarbeiten
-
 
 TODO: rechte durchsetzten
 TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werde
@@ -52,7 +49,7 @@ TODO: Ansicht abh�ngige Kn�pfe
 TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
 TODO: Archivieren + Dearchivieren
-TODO: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
+TODO: Konsil listenabfragen statisch, zur geschwindikeitsverbesserung
 
 weniger wichtig
 TODO: organizsation so verändern wie user + group dialog
@@ -63,6 +60,10 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+++++: Konsil aus der Task Liste direkt öffnen
+++++: Task Id vollständig veränderbar
+++++: Konsil, drucken soll nicht den dialog schlißen
+++++: Feld für zurückgegebene konsile ausleihe str + boo
 ++++: chargen für färbungen
 ++++: Patienten Daten im header menu geht nicht
 ++++: Histouser vor einloggen hinzufügen

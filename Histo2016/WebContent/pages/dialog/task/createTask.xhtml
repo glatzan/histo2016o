@@ -40,7 +40,11 @@
 					<!-- Task number -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
 					<p:inputText
-						value="#{dialogHandlerAction.createTaskDialog.task.taskID}"></p:inputText>
+						value="#{dialogHandlerAction.createTaskDialog.task.taskID}">
+						<p:ajax event="change"
+							listener="#{dialogHandlerAction.createTaskDialog.setTaskIdManuallyAltered(true)}">
+						</p:ajax>
+					</p:inputText>
 
 					<!-- Task Date -->
 

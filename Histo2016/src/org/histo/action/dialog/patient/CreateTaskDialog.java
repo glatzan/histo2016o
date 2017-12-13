@@ -1,6 +1,7 @@
 package org.histo.action.dialog.patient;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -127,6 +128,8 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	private boolean moveInformedConsent;
 
+	private boolean taskIdManuallyAltered;
+
 	/**
 	 * Initializes the bean and shows the createTaskDialog
 	 * 
@@ -180,8 +183,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the name and the amount of samples which should be created with
-	 * the new task.
+	 * Updates the name and the amount of samples which should be created with the
+	 * new task.
 	 */
 	public void updateDialog() {
 
@@ -250,10 +253,13 @@ public class CreateTaskDialog extends AbstractDialog {
 			getTask().setCaseHistory("");
 			getTask().setWard("");
 
-			// renewing taskID, if somebody has created an other
-			// task in the meanwhile
-			//TODO uncomment this next line
-			//getTask().setTaskID(getNewTaskID());
+			if (isTaskIdManuallyAltered()) {
+				// TODO check if task id exists
+			} else {
+				// renewing taskID, if somebody has created an other
+				// task in the meanwhile
+				getTask().setTaskID(getNewTaskID());
+			}
 
 			getTask().setCouncils(new ArrayList<Council>());
 
@@ -382,22 +388,17 @@ public class CreateTaskDialog extends AbstractDialog {
 	 * @return
 	 */
 	public String getNewTaskID() {
-		try {
-			// generating new task id
-			Task task = taskDAO.getTaskWithLastID();
-			String currentYear = Integer.toString(TimeUtil.getCurrentYear() - 2000);
+		// generating new task id
+		Task task = taskDAO.getTaskWithLastID(Calendar.getInstance());
 
-			// task is within the current year
-			if (task.getTaskID().startsWith(currentYear)) {
-				// getting counter
-				String count = task.getTaskID().substring(2, 6);
-				// increment counter
-				int counterAsInt = Integer.valueOf(count) + 1;
-				return currentYear + HistoUtil.fitString(counterAsInt, 4, '0');
-			} else {
-				throw new NoResultException();
-			}
-		} catch (NoResultException e) {
+		// task is within the current year
+		if (task != null) {
+			// getting counter
+			String count = task.getTaskID().substring(2, 6);
+			// increment counter
+			int counterAsInt = Integer.valueOf(count) + 1;
+			return Integer.toString(TimeUtil.getCurrentYear() - 2000) + HistoUtil.fitString(counterAsInt, 4, '0');
+		} else {
 			// first task ever, or first task of year , year + 0001
 			return Integer.toString(TimeUtil.getCurrentYear() - 2000) + HistoUtil.fitString(1, 4, '0');
 		}

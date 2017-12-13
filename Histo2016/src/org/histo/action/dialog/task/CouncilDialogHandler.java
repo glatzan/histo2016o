@@ -156,6 +156,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 		getSelectedCouncil().setDateOfRequest(DateUtils.truncate(new Date(), java.util.Calendar.DAY_OF_MONTH));
 		getSelectedCouncil().setName(generateName());
 		getSelectedCouncil().setCouncilState(CouncilState.EditState);
+		getSelectedCouncil().setAttachedPdfs(new ArrayList<PDFContainer>());
 
 		saveCouncilData();
 	}
@@ -240,7 +241,6 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 	public void onNameChange() {
 		getSelectedCouncil().setName(generateName());
-		saveCouncilData();
 	}
 
 	public String generateName() {
@@ -307,10 +307,8 @@ public class CouncilDialogHandler extends AbstractDialog {
 	public void printCouncilReport() {
 		try {
 			save();
-			dialogHandlerAction.getPrintDialog().initBeanForCouncil(task, getSelectedCouncil());
+			dialogHandlerAction.getPrintDialog().initAndPrepareBeanForCouncil(task, getSelectedCouncil());
 			// workaround for showing and hiding two dialogues
-			mainHandlerAction.setQueueDialog("#headerForm\\\\:printBtnShowOnly");
-
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

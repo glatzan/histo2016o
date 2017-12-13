@@ -1,6 +1,8 @@
 package org.histo.dao;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -164,26 +166,33 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 				.add(AuditEntity.id().eq(taskID)).addOrder(AuditEntity.revisionNumber().asc()).getResultList();
 	}
 
-	public Task getTaskWithLastID() {
+	public Task getTaskWithLastID(Calendar ofYear) {
+
+		String currentYear = Integer.toString(TimeUtil.getYearAsInt(ofYear) - 2000) + "%";
+
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
 		// Create CriteriaQuery
 		CriteriaQuery<Task> criteria = qb.createQuery(Task.class);
 		Root<Task> taskRoot = criteria.from(Task.class);
-		criteria.select(qb.max((Expression) taskRoot.get("taskID")));
+		criteria.select(taskRoot);
 
-//		Subquery<Task> subquery = criteria.subquery(Task.class);
-//		Root<Task> subTaskRoot = subquery.from(Task.class);
-//		subquery.select();
+		Subquery<Task> subquery = criteria.subquery(Task.class);
+		Root<Task> subTaskRoot = subquery.from(Task.class);
+		subquery.where(qb.like(subTaskRoot.get("taskID"), currentYear));
+		subquery.select(qb.max((Expression) subTaskRoot.get("taskID")));
 
-//		criteria.where(qb.like(taskRoot.get("taskID"), subquery));
+		criteria.where(qb.equal(taskRoot.get("taskID"), subquery));
 
-		Task task = getSession().createQuery(criteria).getSingleResult();
+		List<Task> task = getSession().createQuery(criteria).getResultList();
 
-		return task;
+		if (task.size() == 0)
+			return null;
+		else
+			return task.get(0);
 	}
-	
+
 }
 // DetachedCriteria maxID = DetachedCriteria.forClass(Task.class);
 // maxID.setProjection(Projections.max("id"));

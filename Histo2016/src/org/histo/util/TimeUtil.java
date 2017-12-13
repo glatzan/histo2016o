@@ -11,8 +11,11 @@ public class TimeUtil {
 	private static Logger log = Logger.getLogger(TimeUtil.class.getName());
 
 	public static final int getCurrentYear() {
-		int year = Calendar.getInstance().get(Calendar.YEAR);
-		return year;
+		return getYearAsInt(Calendar.getInstance());
+	}
+
+	public static final int getYearAsInt(Calendar cal) {
+		return cal.get(Calendar.YEAR);
 	}
 
 	public static final long getDateInUnixTimestamp(int year, int month, int day, int hour, int minute, int second) {
@@ -86,8 +89,8 @@ public class TimeUtil {
 		return cal;
 	}
 
-	public static final String formatDate(long date, String formatString){
-		return formatDate(new Date(date),formatString);
+	public static final String formatDate(long date, String formatString) {
+		return formatDate(new Date(date), formatString);
 	}
 
 	/**

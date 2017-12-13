@@ -395,6 +395,17 @@
 	font-variant: normal;
 }
 
+/* style of the popup SelectOneMenu*/
+.iconFixForSelectOneMenu {
+	padding: 0px;
+}
+
+/* style of the popup menu*/
+.iconFixForSelectOneMenu .ui-selectonemenu-filter {
+	width: 77% !important;
+	padding: 3px 7px;
+}
+
 /* ---------------- Fonts ------------ */
 .standardFont, .standardFont label {
 	padding: 4px;
