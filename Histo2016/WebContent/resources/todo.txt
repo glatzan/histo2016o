@@ -27,15 +27,21 @@ where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.h
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
-TODO: 2: favouriten f�r benutzer zug�nlich machen
-TODO: Datenbankabfragen in globaleidt handler shiften
-TODO: 4: erweiterte Suche / 
+Minor Changes:
 TODO:  -> Auswahl der Diagnose im Druckmenu
-TODO:  -> Generierung der Vorschau nach Diagnose optional
+TODO:  -> Generierung der Vorschau nach Diagnose-Beenden optional
+TODO:  -> SessionTimout auf 12h setzten
+TODO:  -> Historie zeigt Einträge mehrfach an
 
-TODO: 0.1: Finaliz in task, wird dies benötig -> löschen durch diagnosis date ersetzen
+Urgent Changes 
+TODO: Favouriten-Listen für Benutzer zugänglich machen
+TODO: Datenbankabfragen in globaleidt handler shiften
+TODO: erweiterte Suche 
 TODO: 5: Latex Datei für externen Befund
-TODO: 6: Liste f�r normale benutzer �berarbeiten
+
+Changes to come
+TODO: Finaliz in task, wird dies benötig? -> löschen durch diagnosis date ersetzen
+TODO: Liste f�r normale benutzer �berarbeiten
 
 TODO: rechte durchsetzten
 TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werde
@@ -58,6 +64,7 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+V 1.0.10
 ++++: Warnung bei doppelten Tasknummern
 ++++: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
 ++++: Konsil speichern
@@ -65,6 +72,8 @@ TODO: Freischaltungs link
 ++++: Task Id vollständig veränderbar
 ++++: Konsil, drucken soll nicht den dialog schlißen
 ++++: Feld für zurückgegebene konsile ausleihe str + boo
+
+V 1.0.9
 ++++: chargen für färbungen
 ++++: Patienten Daten im header menu geht nicht
 ++++: Histouser vor einloggen hinzufügen
