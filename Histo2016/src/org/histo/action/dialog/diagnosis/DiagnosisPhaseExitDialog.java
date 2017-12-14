@@ -1,6 +1,7 @@
 package org.histo.action.dialog.diagnosis;
 
 import org.histo.action.DialogHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.GlobalEditViewHandler;
@@ -76,7 +77,12 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GlobalEditViewHandler globalEditViewHandler;
-	
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
+
 	/**
 	 * Can be set to true if the task should stay in diagnosis phase.
 	 */
@@ -95,15 +101,20 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
-		super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT);
+
+		// small dialog or big with pdf
+		if (userHandlerAction.getCurrentUser().getSettings().isPdfPreviewOnDiagnosisApproval()) {
+			// inits a template for previewing
+			dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(task,
+					new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
+					DocumentType.DIAGNOSIS_REPORT,
+					new AssociatedContact(task, new Person(resourceBundle.get("pdf.address.none"), new Contact())));
+			
+			super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT);
+		} else
+			super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT_SMALL);
 
 		setStayInDiagnosisPhase(false);
-
-		// inits a template for previewing
-		dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(task,
-				new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
-				DocumentType.DIAGNOSIS_REPORT,
-				new AssociatedContact(task, new Person(resourceBundle.get("pdf.address.none"), new Contact())));
 
 		return true;
 	}
@@ -141,17 +152,20 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 					getTask().setFinalizationDate(System.currentTimeMillis());
 					getTask().setFinalized(true);
 
-					// generating final diagnosis report
-					if (dialogHandlerAction.getPrintDialog().getPdfContainer()
-							.getType() != DocumentType.DIAGNOSIS_REPORT) {
-						dialogHandlerAction.getPrintDialog().setDefaultTemplateOfType(DocumentType.DIAGNOSIS_REPORT);
-					}
-
-					dialogHandlerAction.getPrintDialog().getPdfContainer()
-							.setType(DocumentType.DIAGNOSIS_REPORT_COMPLETED);
-
-					pdfDAO.attachPDF(getTask().getPatient(), getTask(),
-							dialogHandlerAction.getPrintDialog().getPdfContainer());
+//					if (userHandlerAction.getCurrentUser().getSettings().isPdfPreviewOnDiagnosisApproval()) {
+//						// generating final diagnosis report
+//						if (dialogHandlerAction.getPrintDialog().getPdfContainer()
+//								.getType() != DocumentType.DIAGNOSIS_REPORT) {
+//							dialogHandlerAction.getPrintDialog()
+//									.setDefaultTemplateOfType(DocumentType.DIAGNOSIS_REPORT);
+//						}
+//
+//						dialogHandlerAction.getPrintDialog().getPdfContainer()
+//								.setType(DocumentType.DIAGNOSIS_REPORT_COMPLETED);
+//
+//						pdfDAO.attachPDF(getTask().getPatient(), getTask(),
+//								dialogHandlerAction.getPrintDialog().getPdfContainer());
+//					}
 
 					genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.end");
 				}

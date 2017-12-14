@@ -54,6 +54,7 @@ public enum Dialog {
 	STAINING_PHASE_EXIT("/pages/dialog/task/staining/stainingPhaseExit", null, 480, 272, false, false, true), // 16:9
 	STAINING_EXIT_STAY_IN_PHASE("/pages/dialog/task/staining/stayInStainingPhaseExit", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_EXIT("/pages/dialog/task/diagnosis/diagnosisPhaseExit", null, 1024, 600, false, false, true), // 16:9
+	DIAGNOSIS_PHASE_EXIT_SMALL("/pages/dialog/task/diagnosis/diagnosisPhaseExitSmall", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_EXIT_STAY_IN_PHASE_DIALOG("/pages/dialog/task/diagnosis/stayInDiagnosisPhaseExit", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_UN_FINALIZE("/pages/dialog/task/diagnosis/unFinalize", null, 480, 272, false, false, true), // 16:9
 	ORGANIZATION_EDIT("/pages/dialog/organization/organizationEdit", null, 858, 484, false, false, true), // 16:9

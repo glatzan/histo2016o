@@ -188,6 +188,14 @@
 	text-overflow: ellipsis;
 }
 
+.newStyleListingTable .columnLongText{
+	white-space: normal !important;
+} 
+
+.newStyleListingTable .columnLongText label{
+	padding-left: 0px !important;
+} 
+
 /* -------------- New DataList Style --------------*/
 .newStyleDataList {
 	width: 100%;
@@ -267,6 +275,10 @@
 }
 
 .contentInputDialog .buttonContainer .left .ui-chkbox-box {
+	margin-left: 0.6em !important;
+}
+
+.contentInputDialog .buttonContainer .left label {
 	margin-left: 0.6em !important;
 }
 

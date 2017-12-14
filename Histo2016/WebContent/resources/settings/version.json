@@ -1,8 +1,26 @@
 [
 	{
+		"version": "1.0.11",
+		"changes": [
+			"<b>Fix:</b> Programm-Gruppen können Benutzer wieder richtig zugeweisen werden",
+			"<b>Change:</b> Beim Einloggen wird Groß/Kleinschreibung des Benutzernamens ignoriert",
+			"<b>Change:</b> Sessiontimout auf 12h gesetzt",
+			"<b>Change:</b> Passwort wird wieder abgefragt, war zur Debugzwecken deaktiviert",
+			"<b>Change:</b> Die Generierung eines Befundberichtes nach Abschließen der Diangose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.",
+			"<b>Fix:</b> Logeinträge werde nicht mehr mehrfach angezeigt",
+			"<b>Fix:</b> Editieren von externen Patienten geht wieder"
+			
+		]
+	},{
 		"version": "1.0.10",
 		"changes": [
-			"<b>Change:</b> Todo"
+			"<b>Added:</b> Warnung wird bei doppelter Tasknummern angezeigt",
+			"<b>Change:</b> Konsile sind nicht mehr bearbeitbar, wenn Auftrag finalisiert wurde",
+			"<b>Fix:</b> Konsile werden richtig gespeichert",
+			"<b>Added:</b> Konsil-Dialog kann aus der Auftragsübersicht, über das Konsil-Icon aufgerufen werden",
+			"<b>Added:</b> Auftragsnummer manuell anpassbar, Programm zählt bei der höchten nummer des laufenden Jahres weiter",
+			"<b>Change:</b> Beim Konsil ausdrucken wird der Konsil-Dialog nicht mehr geschlossen",
+			"<b>Added:</b> Konsile enthalten mehr Felder zum Dokumentieren von versendeten und zurückgekommen Proben"
 		]
 	},
 	{

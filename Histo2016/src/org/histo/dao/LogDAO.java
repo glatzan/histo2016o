@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -17,6 +23,7 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.log.Log;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,14 +36,20 @@ public class LogDAO extends AbstractDAO implements Serializable {
 	private static final long serialVersionUID = -7164924738003274594L;
 
 	public List<Log> getPatientLog(Patient patient) {
-		DetachedCriteria query = DetachedCriteria.forClass(Log.class)
-				.add(Property.forName("patient").eq(patient)).addOrder(Order.desc("id") );
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		List<Log> log = query.getExecutableCriteria(getSession()).list();
-		return log;
+		// Create CriteriaQuery
+		CriteriaQuery<Log> criteria = qb.createQuery(Log.class);
+		Root<Log> logRoot = criteria.from(Log.class);
+		criteria.select(logRoot);
+
+		criteria.where(qb.equal(logRoot.get("patient"), patient));
+		criteria.orderBy(qb.asc(logRoot.get("id")));
+
+		return getSession().createQuery(criteria).getResultList();
 	}
-	
-	
+
 	public void getDiagnosisRevisions(Diagnosis diagnosis) {
 		AuditReader reader = AuditReaderFactory.get(getSession());
 
@@ -70,9 +83,10 @@ public class LogDAO extends AbstractDAO implements Serializable {
 
 		return logs;
 	}
-	
+
 	/**
 	 * Counts all log entries
+	 * 
 	 * @return
 	 */
 	public int countTotalLogs() {
@@ -82,9 +96,10 @@ public class LogDAO extends AbstractDAO implements Serializable {
 
 		return result.intValue();
 	}
-	
+
 	/**
 	 * Returns a pages of log entries
+	 * 
 	 * @param count
 	 * @param page
 	 * @return

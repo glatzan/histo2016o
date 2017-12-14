@@ -46,7 +46,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {
-		String userName = authentication.getName().trim();
+		String userName = authentication.getName().trim().toLowerCase();
 		String password = authentication.getCredentials().toString().trim();
 
 		try {
@@ -91,7 +91,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				logger.info("Physician found " + physician.getPerson().getFullName());
 
 				// if now error was thrown auth was successful
-				// ladpHandler.checkPassword(dn, password);
+				ladpHandler.checkPassword(dn, password);
 
 				logger.info("Login successful " + physician.getPerson().getFullName());
 

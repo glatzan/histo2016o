@@ -29,23 +29,21 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Minor Changes:
 TODO:  -> Auswahl der Diagnose im Druckmenu
-TODO:  -> Generierung der Vorschau nach Diagnose-Beenden optional
-TODO:  -> SessionTimout auf 12h setzten
-TODO:  -> Historie zeigt Einträge mehrfach an
+TODO:  -> Update header menu wenn nachfärbung erstellt wird
 
 Urgent Changes 
 TODO: Favouriten-Listen für Benutzer zugänglich machen
+TODO: Latex Datei für externen Befund
+
+TODO: DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes
+TODO: Finaliz in task, wird dies benötig? -> löschen durch diagnosis date ersetzen
+
 TODO: Datenbankabfragen in globaleidt handler shiften
 TODO: erweiterte Suche 
-TODO: 5: Latex Datei für externen Befund
 
-Changes to come
-TODO: Finaliz in task, wird dies benötig? -> löschen durch diagnosis date ersetzen
+Long-term Changes 
 TODO: Liste f�r normale benutzer �berarbeiten
-
 TODO: rechte durchsetzten
-TODO: Externes editieren von benutzer (contact) muss wieder gehend gemacht werde
-TODO: Update header menu wenn nachfärbung erstellt wird
 TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
 TODO: wenn Task entity gel�scht wird kann es sein das der beende staining phase dialog angezgit wird, geht noch nicht richitg
@@ -54,8 +52,6 @@ TODO: prevent overwriting of data from clinic physicians if changed
 TODO: verbessern der patientenauswahl in patienten liste
 TODO: Archivieren + Dearchivieren
 TODO: Konsil listenabfragen statisch, zur geschwindikeitsverbesserung
-
-weniger wichtig
 TODO: organizsation so verändern wie user + group dialog
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: log in settings rework
@@ -64,14 +60,23 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+V 1.0.11
+++++: Editieren von externen Patienten geht wieder
+++++: Logeinträge werde nicht mehr mehrfach angezeigt
+++++: Die Generierung eines Befundberichtes nach Abschließen der Diangose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.
+++++: Programm-Gruppen können Benutzer wieder richtig zugeweisen werden
+++++: Beim Einloggen wird Groß/Kleinschreibung des Benutzernamens ignoriert
+++++: Sessiontimout auf 12h gesetzt
+++++: Passwort wird wieder abgefragt, war zur Debugzwecken deaktiviert.
+
 V 1.0.10
-++++: Warnung bei doppelten Tasknummern
-++++: Konsile d�rfen nicht mehr bearbeitbar sein, wenn task finalisiert
-++++: Konsil speichern
-++++: Konsil aus der Task Liste direkt öffnen
-++++: Task Id vollständig veränderbar
-++++: Konsil, drucken soll nicht den dialog schlißen
-++++: Feld für zurückgegebene konsile ausleihe str + boo
+++++: Warnung wird bei doppelter Tasknummern angezeigt
+++++: Konsile sind nicht mehr bearbeitbar, wenn Auftrag finalisiert wurde
+++++: Konsile werden richtig gespeichert
+++++: Konsil-Dialog kann aus der Auftragsübersicht, über das Konsil-Icon aufgerufen werden
+++++: Auftragsnummer manuell anpassbar, Programm zählt bei der höchten nummer des laufenden Jahres weiter
+++++: Beim Konsil ausdrucken wird der Konsil-Dialog nicht mehr geschlossen
+++++: Konsile enthalten mehr felder zum Dokumentieren von versendeten und zurückgekommen Proben
 
 V 1.0.9
 ++++: chargen für färbungen

@@ -25,19 +25,22 @@
 				styleClass="smallInput"
 				value="#{userSettingsDialog.user.settings.defaultView}">
 
-				<f:selectItems value="#{userSettingsDialog.generalTab.availableViews}"
-					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
+				<f:selectItems
+					value="#{userSettingsDialog.generalTab.availableViews}" var="page"
+					itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 			</p:selectOneMenu>
 
 			<!-- background color of inputfields -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.inputFieldColor']}" />
-			<p:colorPicker value="#{userSettingsDialog.user.settings.inputFieldColor}" />
+			<p:colorPicker
+				value="#{userSettingsDialog.user.settings.inputFieldColor}" />
 
 			<!-- font color of inputfields -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.inputFieldFontColor']}" />
-			<p:colorPicker value="#{userSettingsDialog.user.settings.inputFieldFontColor}" />
+			<p:colorPicker
+				value="#{userSettingsDialog.user.settings.inputFieldFontColor}" />
 
 		</h:panelGrid>
 
@@ -59,7 +62,8 @@
 				value="#{userSettingsDialog.user.settings.worklistToLoad}">
 
 				<f:selectItems
-					value="#{userSettingsDialog.generalTab.availableWorklistsToLoad}" var="page"
+					value="#{userSettingsDialog.generalTab.availableWorklistsToLoad}"
+					var="page"
 					itemLabel="#{msg['enum.worklistSearchOption.'.concat(page)]}" />
 			</p:selectOneMenu>
 
@@ -113,6 +117,24 @@
 				value="#{userSettingsDialog.user.settings.alternatePatientAddMode}"
 				title="#{msg['dialog.userSettings.general.alternatePatientAddMode.text']}" />
 
+		</h:panelGrid>
+
+		<!-- Separator -->
+		<h:panelGrid columns="1"
+			styleClass="newStyleListingTable newStyleListingTableSeparator">
+			<p:separator style="width:100%" />
+			<h:outputLabel value="#{msg['dialog.userSettings.general.worklist']}" />
+		</h:panelGrid>
+
+		<!-- Diagnosis Settings -->
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer150 , columnAutoWidth">
+			<!-- generate pdf on diagnosis approval -->
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.general.miscellaneous.pdfOnDiagnosisApproval']}" />
+			<p:selectBooleanCheckbox
+				value="#{userSettingsDialog.user.settings.pdfPreviewOnDiagnosisApproval}"
+				title="#{msg['dialog.userSettings.general.miscellaneous.pdfOnDiagnosisApproval.text']}" />
 		</h:panelGrid>
 	</div>
 

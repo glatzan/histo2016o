@@ -129,6 +129,12 @@ public class HistoSettings implements HasID, Cloneable {
 	private String inputFieldFontColor;
 
 	/**
+	 * If true a pdf preview will be generated on diagnosis approval.
+	 */
+	@Column
+	private boolean pdfPreviewOnDiagnosisApproval;
+	
+	/**
 	 * List of available views
 	 */
 	@ElementCollection(fetch = FetchType.EAGER)

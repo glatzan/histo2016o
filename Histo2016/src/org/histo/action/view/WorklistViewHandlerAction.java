@@ -220,6 +220,8 @@ public class WorklistViewHandlerAction {
 
 		logger.debug("Select patient " + globalEditViewHandler.getSelectedPatient().getPerson().getFullName());
 
+		globalEditViewHandler.updateDataOfTask(false);
+		
 		goToNavigation(View.WORKLIST_PATIENT);
 		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}

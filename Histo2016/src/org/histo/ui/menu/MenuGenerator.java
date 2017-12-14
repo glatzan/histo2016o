@@ -78,9 +78,10 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:editPatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-pencil-square-o");
 				item.setDisabled(!patient.isExternalPatient());
+				item.setTitle("tuuut");
 				// TODO comment that patient is not edtiable
 				patientSubMenu.addElement(item);
-
+				
 				// patient upload pdf
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.upload"));
 				item.setOnclick(
@@ -229,7 +230,7 @@ public class MenuGenerator {
 			}
 
 			// finalized
-			{
+			if (!taskIsNull) {
 				DefaultSeparator seperator = new DefaultSeparator();
 				seperator.setRendered(task.isFinalized());
 				taskSubMenu.addElement(seperator);
