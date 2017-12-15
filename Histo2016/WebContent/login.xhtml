@@ -12,39 +12,49 @@
 	<meta http-equiv="X-UA-Compatible" content="EmulateIE8" />
 	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
 <h:body>
 
 	<h:form id="loginForm" prependId="false">
-		<!-- Messages must be global here, to show bad credentials -->
-		<h:messages globalOnly="true" />
 
-		<!-- Id's must not be changed to support spring security check -->
-		<p:panelGrid columns="1" style="margin:auto;" styleClass="noBorders">
-			<h:panelGrid columns="3">
-				<p:outputLabel for="username" value="User:" />
-				<p:inputText id="username" required="true" label="username" />
-				<h:message for="username" display="text" style="color:red" />
+		<div
+			style="height: 100vh; width: 100vw; vertical-align: middle; display: table-cell;">
 
-				<p:outputLabel for="password" value="Password:" />
-				<p:password id="password" label="password" required="true" />
-				<h:message for="password" display="text" style="color:red" />
+			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+				style="margin-left: auto;margin-right: auto; width:auto !important">
+				<h:panelGrid styleClass="newStyleListingTable" columns="2">
 
-				<h:outputLabel for="_spring_security_remember_me"
-					value="Immer eingeloggt: " />
-				<p:selectBooleanCheckbox id="_spring_security_remember_me" />
+					<p:outputLabel for="username" value="#{msg['login.user.name']}:" />
+					<p:inputText id="username" value="#{loginHandler.username}"
+						label="username" />
+
+					<p:outputLabel for="password"
+						value="#{msg['login.user.password']}:" />
+					<p:password id="password" label="password"
+						value="#{loginHandler.password}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid styleClass="newStyleListingTable"
+					style="margin-top:20px;" columns="1"
+					columnClasses="columnHorTextcenter">
+
+
+					<p:commandButton type="submit" id="login"
+						value="#{msg['login.user.button.login']}" style="width:75%"
+						onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()"
+						action="#{loginHandler.login()}" />
+				</h:panelGrid>
 			</h:panelGrid>
-
-			<h:commandButton type="submit" id="login" value="Login"
-				onstart="PF('blockSeach').block()"
-				oncomplete="PF('blockSeach').unblock()"
-				action="#{loginController.doLogin}" style="width:100%" />
-		</p:panelGrid>
+		</div>
 
 		<ui:include src="pages/template/blockUi.xhtml"></ui:include>
-
-
 	</h:form>
+
+	<ui:include src="pages/template/growl.xhtml" />
+
 </h:body>
 </html>

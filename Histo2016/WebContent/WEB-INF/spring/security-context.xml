@@ -28,8 +28,7 @@
 			<frame-options policy="SAMEORIGIN" />
 		</headers>
 
-		<form-login login-page="/login.xhtml"
-			authentication-success-handler-ref="customLoginSuccessHandler" />
+		<form-login login-page="/login.xhtml" />
 
 		<logout logout-url="/spring_logout" logout-success-url="/login.xhtml" />
 
@@ -37,7 +36,7 @@
 
 		<access-denied-handler error-page="/login.xhtml" />
 
-	
+
 
 	</http>
 

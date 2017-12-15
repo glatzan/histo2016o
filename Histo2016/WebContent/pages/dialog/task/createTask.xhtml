@@ -39,20 +39,18 @@
 
 					<!-- Task number -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskNumber']}"></h:outputLabel>
-					<p:inputText
-						value="#{dialogHandlerAction.createTaskDialog.task.taskID}">
-						<p:ajax event="change" process="@form" update="@form"
-							listener="#{dialogHandlerAction.createTaskDialog.onTaskIDManuallyAltered()}" />
-						<p:ajax event="keyup" delay="500" process="@form" update="@form"
-							listener="#{dialogHandlerAction.createTaskDialog.onTaskIDManuallyAltered()}" />
-					</p:inputText>
-
-					<h:outputLabel value=""
-						rendered="#{dialogHandlerAction.createTaskDialog.taskIDisPresentInDatabase}" />
-					<h:outputLabel styleClass="icon-red"
-						value="Auftragsnummer bereits vorhanden"
-						rendered="#{dialogHandlerAction.createTaskDialog.taskIDisPresentInDatabase}" />
-
+					<h:panelGrid columns="2" styleClass="newTableContainer">
+						<p:inputText required="true" maxlength="6" id="taskIDInput"
+							validator="#{dialogHandlerAction.createTaskDialog.validateTaskID}"
+							value="#{dialogHandlerAction.createTaskDialog.task.taskID}"
+							requiredMessage="You must enter an Sale Price"
+							converterMessage="Sale Price must be a number">
+							<p:ajax delay="1000" event="keyup"
+								listener="#{dialogHandlerAction.createTaskDialog.setTaskIdManuallyAltered(true)}"></p:ajax>
+						</p:inputText>
+						<p:message for="taskIDInput" display="icon"
+							style="margin-left:10px" />
+					</h:panelGrid>
 
 					<!-- Task Date -->
 					<h:outputLabel value="#{msg['dialog.createTask.taskEDate']}"></h:outputLabel>
@@ -218,8 +216,8 @@
 
 				<h:panelGrid columns="3" styleClass="newTableContainer left">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['general.create']}"
-						icon="fa fa-check-circle-o">
+					<p:commandButton value="#{msg['general.create']}" update="@form"
+						process="@form" icon="fa fa-check-circle-o">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener
@@ -230,7 +228,8 @@
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
-						icon="fa fa-print" onstart="PF('blockUIWidget').block()"
+						update="@form" process="@form" icon="fa fa-print"
+						onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
@@ -254,7 +253,7 @@
 				<h:panelGrid columns="1" styleClass="newTableContainer right">
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						icon="fa fa-times-circle">
+						immediate="true" icon="fa fa-times-circle">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener

@@ -99,6 +99,11 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 		signature.setRole(physician.getClinicRole());
 		setSignatureTwo(signature);
 	}
+	
+	@Transient
+	public boolean isMalign() {
+		return diagnosisRevisions.stream().anyMatch(p -> p.isMalign());
+	}
 
 	/******** Transient ********/
 

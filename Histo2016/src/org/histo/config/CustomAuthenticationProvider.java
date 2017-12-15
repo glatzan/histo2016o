@@ -2,7 +2,6 @@ package org.histo.config;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -13,7 +12,6 @@ import org.histo.adaptors.LdapHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.dao.TransientDAO;
 import org.histo.model.Contact;
-import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
@@ -43,6 +41,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private TransientDAO transientDAO;
+	
+	@Autowired
+	protected ResourceBundle resourceBundle;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) {
@@ -142,9 +143,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 				return new UsernamePasswordAuthenticationToken(histoUser, password, authorities);
 			} else
-				throw new BadCredentialsException("Username not found.");
+				throw new BadCredentialsException(resourceBundle.get("login.error.text"));
 		} catch (NamingException | IOException | AuthenticationException e) {
-			throw new BadCredentialsException("Username not found.");
+			throw new BadCredentialsException(resourceBundle.get("login.error.text"));
 		}
 
 	}

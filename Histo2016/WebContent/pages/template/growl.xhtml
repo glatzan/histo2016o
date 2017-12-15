@@ -9,9 +9,9 @@
 <ui:composition>
 	<h:form id="growlForm">
 		<p:growl id="globalgrowl" showDetail="true" widgetVar="globalgrowl"
-			for="globalgrowl" autoUpdate="true"/>
+			autoUpdate="true" globalOnly="true" />
 
-<!-- 
+		<!-- 
 		<f:event type="preRenderView"
 			listener="#{mainHandlerAction.showQueueGrowlMessage()}" />-->
 		<!-- 

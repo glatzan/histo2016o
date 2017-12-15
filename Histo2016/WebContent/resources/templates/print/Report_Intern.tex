@@ -146,7 +146,7 @@ $address \\
 						\end{tabular}
 					}\\
 				Station & $!task.ward \\
-				Maligner Tumor & $ \Box$  \\
+				Maligner Tumor & #if($task.getDiagnosisContainer().isMalign()) $\boxtimes$ #else $\Box$ #end \\ 
 				Operateur/Einsender & \mbox{$!task.getPrimarySurgeon()} \\
 				Augenarzt & \mbox{$!task.getPrimaryPrivatePhysician()} 
 			 
@@ -189,10 +189,16 @@ $address \\
 
 \end{tabular}
 \end{center}
+ {
+\noindent
+\footnotesize 
+Dies ist ein technisch validierter Befundbericht, der erst durch eine ärztliche Unterschrift fachlich validiert ist. \\
+}
    \ifthenelse{\pageref{LastPage}>1}
-     {	Dieser Befundbericht umfasst insgesamt \pageref{LastPage} Seiten. }
-     {~	}
+     { \noindent \footnotesize  Dieser Befundbericht umfasst insgesamt \pageref{LastPage} Seiten.  \\}
+      {~	}
      
+
 	
 
 \end{document}

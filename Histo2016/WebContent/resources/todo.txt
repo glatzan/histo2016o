@@ -30,6 +30,34 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 Minor Changes:
 TODO:  -> Auswahl der Diagnose im Druckmenu
 TODO:  -> Update header menu wenn nachfärbung erstellt wird
+TODO:  -> Email bei fehler über customerrorhandler senden
+TODO: Disable loginbutton on click
+
+1.	Vorgeschichte: Enter --> neue Zeile
+2.	Für Befunder neue Schaltfläche: Befundung erledigt: vor Diagnose Beenden (z.B. mit Druckersymbol/Sekräterinsymbol)
+->	Diagnose archivieren 
+->	Auftrag entsperren -> dignose dearchivieren
+->	Jetzige diagnose zu Befundungbeenden
+
+1.	Button befundung beenden unter Unterschrift im Diagnosen view
+2.	Scuhfelder als Solche Kennzeichnen (Lupensymbol) -> (in overlay dialogen, zb. Diagosen view)
+3.	Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
+1.	Privat Regulär: welches ist ausgewählt, das graue oder das weiße?? Evtl. Schrift auch Fett?? Es scheint immer Privat ausgewählt zu sein, obwohl aus dem "MeDoc" die Versicherung übernommen wird. Besser statt Priv/Reguläre dort auch die Versicherung hinschreiben.
+a.	Versicherung aus daten reinschreiben!
+2.	Bei Patient hinzufügen: kann der "Cursor" immer direkt bei PIZ sein? Macht scannen schneller
+a.	70% der fälle funktinert es
+3.	Zimmermann --> Atzrodt
+a.	Aktualliesierien
+4.	Diagnose --> Probe : Warum steht dort Probe??
+a.	Bei einer probe kann dies weg
+5.	PDF Maker als Drucker hinterlegen (zum Testen/Ansehen der Ausdrucke)
+6.	Löcschen/Archivieren (Hover Text unterschiedet sich von dann Schaltfläche)
+a.	Zu löschen ändern (wie dilaog) eingangsbuch
+7.	Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
+8.	Schalflfäche Benachrichtigung im Menü ist anscheindend Funktionslos
+9.	Zahrand zum kontakt bearbeiten (alle) in diagnosen view
+10.	Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
+
 
 Urgent Changes 
 TODO: Favouriten-Listen für Benutzer zugänglich machen
@@ -42,6 +70,8 @@ TODO: Datenbankabfragen in globaleidt handler shiften
 TODO: erweiterte Suche 
 
 Long-term Changes 
+TODO: Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
+TODO: Neuladen der Listen, nachdem das Settingsmenu geschlossen wurde
 TODO: Liste f�r normale benutzer �berarbeiten
 TODO: rechte durchsetzten
 TODO: Versionfehler beim �ffnen von dialogen handeln
@@ -61,6 +91,14 @@ TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert wer
 TODO: Freischaltungs link
 
 V 1.0.11
+++++: Hover-Texte angepasst
+++++: Funktionsoberarzt/ärztin als Auswahl bei Diagnosen-Unterschrift hinzugefügt 
+++++: Auftragsnummer darf maximal 6 Zahlen enthalen, ein neuer Auftrag kann nur noch mit gültiger Auftragsnummer erstellt werden.
+++++: Rechtschreibfehler korrigiert.
+++++: Im Operateurauswahl-Dialog kann der Operateur jetzt auch beim klicken auf den Namen ausgewählt werden.
+++++: Ist keine Vorlage für einen Diangose-Text vorhanden, wird der link zum Kopieren der Vorlage ausgeraut.
+++++: Einlog-Routine überarbeitet, redirect jetzt möglich, Fehlermeldung bei falschen Benutzerdaten.
+++++: Malignität im Befundbericht wird richtig angezeigt, Satz über die Gültigkeit des Berichtes hinzugefügt.
 ++++: Editieren von externen Patienten geht wieder
 ++++: Logeinträge werde nicht mehr mehrfach angezeigt
 ++++: Die Generierung eines Befundberichtes nach Abschließen der Diangose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.

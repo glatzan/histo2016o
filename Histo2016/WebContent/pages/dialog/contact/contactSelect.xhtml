@@ -43,7 +43,7 @@
 						style="width: auto !important"
 						filterBy="#{contact.physician.person.lastName}"
 						filterMatchMode="contains">
-						<h:outputLabel
+						<h:outputText
 							value="#{contact.physician.person.title} #{contact.physician.person.lastName}, #{contact.physician.person.firstName}" />
 					</p:column>
 
@@ -52,7 +52,7 @@
 						style="width:30% !important">
 						<p:repeat value="#{contact.physician.associatedRoles.toArray()}"
 							varStatus="roleCount" var="role">
-							<h:outputLabel value="#{msg['enum.contactRole.'.concat(role)]}"
+							<h:outputText value="#{msg['enum.contactRole.'.concat(role)]}"
 								id="#{roleCount.index}_#{contact.id}_role" />
 							<br />
 						</p:repeat>

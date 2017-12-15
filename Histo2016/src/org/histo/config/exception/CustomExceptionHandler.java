@@ -25,6 +25,7 @@ import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.BadCredentialsException;
 
 /**
  * <!-- <factory> <exception-handler-factory> org.histo.config.exception.
@@ -97,6 +98,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					cause = ((ELException) cause).getCause();
 			}
 
+			boolean hanled = true;
+
 			logger.debug("Global exeption handler - " + cause);
 
 			if (cause != null) {
@@ -139,13 +142,18 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					// TODO implement
 				} else if (cause instanceof AbortProcessingException) {
 					logger.debug("Error aboring all actions!");
+				} else if (cause instanceof BadCredentialsException) {
+					hanled = false;
+					System.out.println("tut2");
+					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("tut"));
 				} else {
 					logger.debug("Other exception!");
 					cause.printStackTrace();
 				}
 			}
 
-			i.remove();
+			if (hanled)
+				i.remove();
 		}
 		// parent hanle
 		getWrapped().handle();

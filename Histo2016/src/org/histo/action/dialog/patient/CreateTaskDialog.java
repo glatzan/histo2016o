@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.persistence.NoResultException;
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
 
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
@@ -46,8 +49,6 @@ import org.histo.util.PDFGenerator;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -188,8 +189,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the name and the amount of samples which should be created with
-	 * the new task.
+	 * Updates the name and the amount of samples which should be created with the
+	 * new task.
 	 */
 	public void updateDialog() {
 
@@ -427,9 +428,19 @@ public class CreateTaskDialog extends AbstractDialog {
 		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
-	public void onTaskIDManuallyAltered() {
-		setTaskIdManuallyAltered(true);
-		setTaskIDisPresentInDatabase(taskDAO.isTaskIDPresentInDatabase(task.getTaskID()));
+	public void validateTaskID(FacesContext context, UIComponent componentToValidate, Object value)
+			throws ValidatorException {
+
+		if (value == null || value.toString().length() != 6) {
+			throw new ValidatorException(
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Auftragsnummer muss sechs Zahlen enthalten."));
+		} else if (!value.toString().matches("[0-9]{6}")) {
+			throw new ValidatorException(
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Auftragsnummer darf nur Zahlen enthalten"));
+		} else if (taskDAO.isTaskIDPresentInDatabase(value.toString())) {
+			throw new ValidatorException(
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Auftragsnummer bereits vorhanden"));
+		}
 	}
 
 	public void onDatabaseVersionConflict() {

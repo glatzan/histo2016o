@@ -123,18 +123,13 @@ public class DiagnosisRevision
 	 */
 	@Transient
 	public boolean isMalign() {
-		for (Diagnosis diagnosis : getDiagnoses()) {
-			if (diagnosis.isMalign())
-				return true;
-		}
-		return false;
+		return diagnoses.stream().anyMatch(p -> p.isMalign());
 	}
 
 	@Override
 	public String toString() {
 		return "ID: " + getId() + " Name: " + getName();
 	}
-
 	/******************************************************** Transient ********************************************************/
 
 	@Id

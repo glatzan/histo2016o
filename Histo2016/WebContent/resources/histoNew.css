@@ -116,6 +116,10 @@
 	padding-top: 0px !important;
 	padding-bottom: 0px !important;
 }
+
+.newStyleListingTable .columnHorTextcenter {
+	text-align: center !important;
+}
 /* -------------- New DataTable Style --------------*/
 /* for scrollable datatables*/
 .newStyleDataTable {

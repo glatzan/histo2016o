@@ -51,8 +51,8 @@
 
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer"
 						style="width:410px">
-						<c:forEach items="#{globalEditViewHandler.selectedTask.samples}" var="sample"
-							varStatus="loopCount">
+						<c:forEach items="#{globalEditViewHandler.selectedTask.samples}"
+							var="sample" varStatus="loopCount">
 
 							<h:panelGrid columns="3"
 								styleClass="defaultListingTableContainer">
@@ -82,7 +82,8 @@
 					<p:selectOneMenu styleClass="smallInput customBackground"
 						tabindex="6"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
-						disabled="#{!taskEditable}" value="#{globalEditViewHandler.selectedTask.eye}">
+						disabled="#{!taskEditable}"
+						value="#{globalEditViewHandler.selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
 							itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
@@ -100,7 +101,8 @@
 					<h:outputLabel value="#{msg['body.diagnosis.story']}" />
 					<h:panelGroup>
 
-						<p:inputTextarea value="#{globalEditViewHandler.selectedTask.caseHistory}"
+						<p:inputTextarea
+							value="#{globalEditViewHandler.selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
 							disabled="#{!taskEditable}" id="caseHistoryInput"
 							style="width:90%" onfocus="PF('caseHistoryOverlayPanel').show();"
@@ -170,7 +172,8 @@
 
 					<!-- Task Number -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskNumber']}" />
-					<p:inputText disabled="true" value="#{globalEditViewHandler.selectedTask.taskID}" />
+					<p:inputText disabled="true"
+						value="#{globalEditViewHandler.selectedTask.taskID}" />
 
 					<!-- insurance -->
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
@@ -189,9 +192,10 @@
 
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
-					<p:selectOneMenu id="wards" value="#{globalEditViewHandler.selectedTask.ward}"
-						editable="true" disabled="#{!taskEditable}"
-						styleClass="customBackground" tabindex="5"
+					<p:selectOneMenu id="wards"
+						value="#{globalEditViewHandler.selectedTask.ward}" editable="true"
+						disabled="#{!taskEditable}" styleClass="customBackground"
+						tabindex="5"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
 						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
@@ -283,13 +287,15 @@
 
 						<!-- copy diagnosis text -->
 						<p:commandLink styleClass="noUnderlineAtLink"
-							style="margin-left:20px;" disabled="#{!taskEditable}"
-							title="#{msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
+							style="margin-left:20px;"
+							disabled="#{!taskEditable or diagnosis.diagnosisPrototype.extendedDiagnosisText eq ''}"
+							title="#{diagnosis.diagnosisPrototype.extendedDiagnosisText eq '' ? msg['body.diagnosis.diagnosis.histologicalRecordPreset.none'] : msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
 							rendered="#{diagnosis.diagnosisPrototype ne null}"
+							process="@this"
 							actionListener="#{diagnosisViewHandlerAction.onCopyHistologicalRecord(diagnosis)}"
 							update="contentForm">
 							<i class="fa fa-hand-o-up"></i>
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn" update="contentForm" />
 						</p:commandLink>
 
 						<!-- malign -->
@@ -340,7 +346,7 @@
 									scrollable="true" scrollHeight="200" rowKey="#{item.id}"
 									selection="#{diagnosis.diagnosisPrototype}"
 									selectionMode="single">
-									<p:column filterBy="#{item.diagnosis.name}"
+									<p:column filterBy="#{item.diagnosis}"
 										filterMatchMode="contains">
 										<h:outputText value="#{item.diagnosis}" />
 									</p:column>

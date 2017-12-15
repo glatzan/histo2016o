@@ -2,6 +2,7 @@ package org.histo.template.mail;
 
 import java.io.StringWriter;
 import java.util.Date;
+import java.util.Properties;
 
 import javax.persistence.Transient;
 
@@ -40,7 +41,12 @@ public class ErrorMail extends MailTemplate {
 
 	public void fillTemplate() {
 		VelocityEngine ve = new VelocityEngine();
-		ve.init();
+		Properties props = new Properties();
+		props.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
+		props.put("runtime.log.logsystem.log4j.category", "velocity");
+		props.put("runtime.log.logsystem.log4j.logger", "velocity");
+
+		ve.init(props);
 		/* create a context and add data */
 		VelocityContext context = new VelocityContext();
 
