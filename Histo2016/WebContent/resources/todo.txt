@@ -39,24 +39,22 @@ TODO: Disable loginbutton on click
 ->	Auftrag entsperren -> dignose dearchivieren
 ->	Jetzige diagnose zu Befundungbeenden
 
+
+
+
+
 1.	Button befundung beenden unter Unterschrift im Diagnosen view
 2.	Scuhfelder als Solche Kennzeichnen (Lupensymbol) -> (in overlay dialogen, zb. Diagosen view)
-3.	Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
-1.	Privat Regulär: welches ist ausgewählt, das graue oder das weiße?? Evtl. Schrift auch Fett?? Es scheint immer Privat ausgewählt zu sein, obwohl aus dem "MeDoc" die Versicherung übernommen wird. Besser statt Priv/Reguläre dort auch die Versicherung hinschreiben.
-a.	Versicherung aus daten reinschreiben!
 2.	Bei Patient hinzufügen: kann der "Cursor" immer direkt bei PIZ sein? Macht scannen schneller
 a.	70% der fälle funktinert es
 3.	Zimmermann --> Atzrodt
 a.	Aktualliesierien
-4.	Diagnose --> Probe : Warum steht dort Probe??
-a.	Bei einer probe kann dies weg
 5.	PDF Maker als Drucker hinterlegen (zum Testen/Ansehen der Ausdrucke)
-6.	Löcschen/Archivieren (Hover Text unterschiedet sich von dann Schaltfläche)
-a.	Zu löschen ändern (wie dilaog) eingangsbuch
 7.	Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
 8.	Schalflfäche Benachrichtigung im Menü ist anscheindend Funktionslos
 9.	Zahrand zum kontakt bearbeiten (alle) in diagnosen view
 10.	Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
+11. Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
 
 
 Urgent Changes 
@@ -90,7 +88,23 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+V 1.0.12
+++++: Probe/Block/Objektträger archivieren wurde in löschen umbenannt
+++++: Aktuelle Versicherung wird nun angezeigt, anstelle von privat/regulär im Diagnosis View
+++++: Auftrags-Nummer kann nachträglich verändert werden
+++++: Recht für Änderung der Auftrags-Nummer eingeführt
+
+SQL:
+Alter table task add insurance character varying;
+Alter table patient drop column privateInsurance; 
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'EDIT_TASK_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'EDIT_TASK_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'EDIT_TASK_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'EDIT_TASK_ID');
+
 V 1.0.11
+++++: Ist nur eine Probe vorhanden, wird kein Name im Diangosen-View mehr angezeigt
+++++: Diagnosen und Proben werden im Diangosen-View wieder richtig angezeigt
 ++++: Hover-Texte angepasst
 ++++: Funktionsoberarzt/ärztin als Auswahl bei Diagnosen-Unterschrift hinzugefügt 
 ++++: Auftragsnummer darf maximal 6 Zahlen enthalen, ein neuer Auftrag kann nur noch mit gültiger Auftragsnummer erstellt werden.

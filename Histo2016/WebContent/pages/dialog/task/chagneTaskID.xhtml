@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.changeTaskID.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel
+					value="#{msg['dialog.changeTaskID.headline']} (#{dialogHandlerAction.changeTaskIDDialog.task.taskID})" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+
+		<div class="dialogContent">
+
+			<h:panelGrid columns="3" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150,">
+
+				<h:outputLabel value="#{msg['dialog.changeTaskID.taskID']}:"></h:outputLabel>
+
+				<p:inputText required="true" maxlength="6" id="taskIDInput"
+					validator="#{dialogHandlerAction.changeTaskIDDialog.validateTaskID}"
+					value="#{dialogHandlerAction.changeTaskIDDialog.task.taskID}">
+				</p:inputText>
+
+				<p:message for="taskIDInput" display="icon" style="margin-left:10px" />
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<p:commandButton value="#{msg['general.save']}" update="@form"
+						process="@form" icon="fa fa-fw fa-check-circle-o">
+						<f:actionListener
+							binding="#{dialogHandlerAction.changeTaskIDDialog.changeTaskID()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.changeTaskIDDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.abort']}" immediate="true"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
+						actionListener="#{dialogHandlerAction.changeTaskIDDialog.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+
+	</h:form>
+</h:body>
+</html>

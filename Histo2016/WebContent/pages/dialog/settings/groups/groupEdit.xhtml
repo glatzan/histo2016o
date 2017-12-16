@@ -311,14 +311,25 @@
 
 					<!-- tasks -->
 					<h:panelGrid columns="2" styleClass="newStyleListingTable"
-						columnClasses="columnMinWidth,columnTextLeft"
+						columnClasses="columnMinWidth columnNoVerticalPadding, columnTextLeft columnNoVerticalPadding"
 						style="margin-top:10px;">
+						<!-- edit task -->
 						<p:selectBooleanCheckbox styleClass="centerCheckbox"
 							style="margin-left:5px;"
 							value="#{dialogHandlerAction.groupEditDialog.permissions['EDIT_TASK'].value}"
 							title="#{msg['enum.histoPermissions.EDIT_TASK.text']}" />
 						<h:outputLabel value=" #{msg['enum.histoPermissions.EDIT_TASK']}"
 							title="#{msg['enum.histoPermissions.EDIT_TASK.text']}" />
+
+						<!-- edit task id -->
+						<p:selectBooleanCheckbox styleClass="centerCheckbox"
+							style="margin-left:15px;"
+							value="#{dialogHandlerAction.groupEditDialog.permissions['EDIT_TASK_ID'].value}"
+							title="#{msg['enum.histoPermissions.EDIT_TASK_ID.text']}" />
+						<h:outputLabel
+							value=" #{msg['enum.histoPermissions.EDIT_TASK_ID']}"
+							title="#{msg['enum.histoPermissions.EDIT_TASK_ID.text']}" />
+
 					</h:panelGrid>
 				</h:panelGrid>
 			</h:panelGrid>

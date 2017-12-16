@@ -101,12 +101,6 @@ public class Patient
 	private List<Task> tasks = new ArrayList<Task>();
 
 	/**
-	 * True if insurance is private
-	 */
-	@Column
-	private boolean privateInsurance = false;
-
-	/**
 	 * True if patient was added as an external patient.
 	 */
 	@Column

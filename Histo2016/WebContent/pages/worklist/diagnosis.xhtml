@@ -27,62 +27,52 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<c:set var="taskEditable" scope="session"
-		value="#{taskStatusHandler.isTaskEditable(globalEditViewHandler.selectedTask)}" />
-
-	<p:panel style="width: 80%"
-		styleClass="collapsedBorders noPadding noBorders">
+	<p:panel style="width: 80%" styleClass="newTableContainer">
 
 		<h:outputLabel value="#{msg['body.diagnosis.headline']}"
 			style="font-size:1.5em;"></h:outputLabel>
 
-
 		<h:panelGrid columns="3" style="margin-top:10px;"
-			styleClass="defaultListingTableTwoLineContainer">
+			styleClass="newTableContainer" columnClasses="columnTop, , columnTop">
 
 			<!-- Left Column -->
-			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable">
+
 				<!-- material -->
-				<h:panelGrid columns="2"
-					styleClass="defaultListingTableFirstColumEnummeration"
-					columnClasses="defaultListingTableColumnTop,">
+				<h:panelGrid columns="1" styleClass="newTableContainer">
+					<c:forEach items="#{globalEditViewHandler.selectedTask.samples}"
+						var="sample" varStatus="loopCount">
 
-					<h:outputLabel value="#{msg['body.diagnosis.material']}" />
+						<h:panelGrid columns="3" styleClass="newStyleListingTable"
+							columnClasses="column75px, ,">
 
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer"
-						style="width:410px">
-						<c:forEach items="#{globalEditViewHandler.selectedTask.samples}"
-							var="sample" varStatus="loopCount">
+							<h:outputLabel
+								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
-							<h:panelGrid columns="3"
-								styleClass="defaultListingTableContainer">
+							<p:inputText value="#{sample.material}"
+								disabled="#{!globalEditViewHandler.selectedTask.editable}"
+								tabindex="1" styleClass="customBackground"
+								style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}" />
 
-								<h:outputLabel
-									value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
+							<p:commandLink tabindex="1"
+								title="#{msg['body.diagnosis.material.text']}"
+								rendered="#{globalEditViewHandler.selectedTask.editable}"
+								style="float: right; margin-right:5px;"
+								actionListener="#{dialogHandlerAction.changeMaterialDialog.initAndPrepareBean(sample)}">
+								<i class="fa fa-fw fa-cog" />
+								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							</p:commandLink>
+						</h:panelGrid>
+					</c:forEach>
+				</h:panelGrid>
+				<!-- material -->
 
-								<p:inputText value="#{sample.material}"
-									disabled="#{!taskEditable}" tabindex="1"
-									styleClass="smallInput customBackground"
-									style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}" />
-
-								<p:commandLink tabindex="1"
-									title="#{msg['body.receiptlog.notification.hint']}"
-									rendered="#{taskEditable}"
-									style="float: right; margin-right:5px;"
-									actionListener="#{dialogHandlerAction.changeMaterialDialog.initAndPrepareBean(sample)}">
-									<i class="fa fa-fw fa-cog" />
-									<p:ajax event="dialogReturn"
-										update="navigationForm contentForm" />
-								</p:commandLink>
-							</h:panelGrid>
-						</c:forEach>
-					</h:panelGrid>
-					<!-- Eye -->
+				<!-- Eye -->
+				<h:panelGrid columns="2" styleClass="newStyleListingTable">
 					<h:outputLabel value="#{msg['body.diagnosis.eye']}" />
-					<p:selectOneMenu styleClass="smallInput customBackground"
-						tabindex="6"
+					<p:selectOneMenu styleClass="customBackground" tabindex="6"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
-						disabled="#{!taskEditable}"
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
 						value="#{globalEditViewHandler.selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
@@ -91,21 +81,21 @@
 						<p:ajax event="change" execute="@this"
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.eye',globalEditViewHandler.selectedTask.eye)}" />
 					</p:selectOneMenu>
-					<!-- Eye -->
+
 				</h:panelGrid>
-				<!-- material -->
+				<!-- Eye -->
 
 				<!-- history -->
-				<h:panelGrid columns="1"
-					styleClass="defaultListingTableFirstColumEnummeration">
+				<h:panelGrid columns="1" styleClass="newStyleListingTable">
 					<h:outputLabel value="#{msg['body.diagnosis.story']}" />
-					<h:panelGroup>
 
+					<h:panelGroup>
 						<p:inputTextarea
 							value="#{globalEditViewHandler.selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
-							disabled="#{!taskEditable}" id="caseHistoryInput"
-							style="width:90%" onfocus="PF('caseHistoryOverlayPanel').show();"
+							disabled="#{!globalEditViewHandler.selectedTask.editable}"
+							id="caseHistoryInput" style="width:90%"
+							onfocus="PF('caseHistoryOverlayPanel').show();"
 							onkeypress="PF('caseHistoryOverlayPanel').hide();"
 							onclick="PF('caseHistoryOverlayPanel').show();">
 							<p:ajax event="change"
@@ -119,8 +109,8 @@
 							showEvent="none">
 							<p:dataTable
 								value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
-								styleClass="smallDatatable highlightedDataTable noBordersAll"
-								scrollable="true" scrollHeight="200" rowKey="#{item.id}"
+								styleClass="newStyleDataTable" scrollable="true"
+								scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
 								selectionMode="single">
 								<p:column filterBy="#{item.value}" filterMatchMode="contains">
@@ -135,21 +125,39 @@
 						</p:overlayPanel>
 					</h:panelGroup>
 				</h:panelGrid>
-
 			</h:panelGrid>
 			<!-- Left Column -->
 
-			<h:panelGroup />
+			<h:panelGroup>
+				<h:outputLabel value="" style="margin-left:40px"></h:outputLabel>
+			</h:panelGroup>
 
 			<!-- Right Column -->
-			<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-				<h:panelGrid columns="2"
-					styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable">
+
+
+				<h:panelGrid columns="2" styleClass="newStyleListingTable">
+
+					<!-- Task Number -->
+					<h:outputLabel value="#{msg['body.diagnosis.taskNumber']}" />
+					<h:panelGrid columns="2" styleClass="newTableContainer">
+						<p:inputText disabled="true"
+							value="#{globalEditViewHandler.selectedTask.taskID}" />
+						<p:commandLink title="#{msg['body.diagnosis.taskNumber.change']}"
+							rendered="#{userHandlerAction.currentUserHasPermission('EDIT_TASK_ID')}"
+							style="margin-left:10px;"
+							actionListener="#{dialogHandlerAction.changeTaskIDDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+							<i class="fa fa-fw fa-cog" />
+							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						</p:commandLink>
+					</h:panelGrid>
+
 					<!-- date of surgery -->
 					<h:outputLabel value="#{msg['body.diagnosis.surgeryDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="2"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
-						styleClass="customBackground" disabled="#{!taskEditable}"
+						styleClass="customBackground"
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
 						value="#{globalEditViewHandler.selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfSugeryAsDate))}" />
@@ -160,7 +168,7 @@
 					<!-- date of receipt -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskEDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="3"
-						disabled="#{!taskEditable}"
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						styleClass="customBackground"
 						value="#{globalEditViewHandler.selectedTask.dateOfReceiptAsDate}">
@@ -170,32 +178,20 @@
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfReceiptAsDate))}" />
 					</p:calendar>
 
-					<!-- Task Number -->
-					<h:outputLabel value="#{msg['body.diagnosis.taskNumber']}" />
-					<p:inputText disabled="true"
-						value="#{globalEditViewHandler.selectedTask.taskID}" />
-
 					<!-- insurance -->
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
-
-					<p:selectOneButton disabled="#{!taskEditable}" tabindex="4"
-						value="#{globalEditViewHandler.selectedPatient.privateInsurance}">
-						<f:selectItem
-							itemLabel="#{msg['body.diagnosis.insurance.private']}"
-							itemValue="#{false}]" />
-						<f:selectItem
-							itemLabel="#{msg['body.diagnosis.insurance.normal']}"
-							itemValue="#{true}" />
-						<p:ajax event="change"
-							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedPatient,'log.patient.task.change.insurance', globalEditViewHandler.selectedPatient.privateInsurance)}" />
-					</p:selectOneButton>
+					<p:inputText
+						value="#{globalEditViewHandler.selectedTask.insurance}">
+						<f:ajax event="change" execute="@this"
+							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.insurance',mainHandlerAction.date(globalEditViewHandler.selectedTask.insurance))}" />
+					</p:inputText>
 
 					<!-- ward -->
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 					<p:selectOneMenu id="wards"
 						value="#{globalEditViewHandler.selectedTask.ward}" editable="true"
-						disabled="#{!taskEditable}" styleClass="customBackground"
-						tabindex="5"
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						styleClass="customBackground" tabindex="5"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
 						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
@@ -218,7 +214,7 @@
 							styleClass="noUnderlineAtLink" tabindex="8"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}"
-							disabled="#{!taskEditable}">
+							disabled="#{!globalEditViewHandler.selectedTask.editable}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -237,7 +233,7 @@
 							styleClass="noUnderlineAtLink" tabindex="9"
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'PRIVATE_PHYSICIAN')}"
-							disabled="#{!taskEditable}">
+							disabled="#{!globalEditViewHandler.selectedTask.editable}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -258,107 +254,118 @@
 			varStatus="varCounterOuter" var="revision">
 
 			<h:panelGrid columns="2"
-				styleClass="defaultListingTableFirstColumEnummeration"
-				columnClasses="defaultListingTableColumnTop,">
+				styleClass="newStyleListingTable #{varCounterOuter.even ? 'newStyleListingTableOddColored' : ''}"
+				columnClasses="columnLabelContainer200 columnTop,">
+
 				<!-- Extended Diagnosis Text -->
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
 				<h:panelGroup id="extendedTextParent">
-					<p:inputTextarea style="width:100%" id="extendedText" rows="15"
-						disabled="#{!taskEditable}" value="#{revision.text}">
-
+					<p:inputTextarea style="width:99%" id="extendedText" rows="15"
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						value="#{revision.text}">
 						<p:ajax event="change" execute="@this"
 							listener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.histologicalRecord', revision.text)}" />
 					</p:inputTextarea>
 
-
 					<p:commandButton style="display:none" id="submitDiagnosisChange"
 						name="submitDiagnosisChange" process="extendedTextParent"></p:commandButton>
 				</h:panelGroup>
+				<!-- Extended Diagnosis Text -->
 
 				<!-- Diagnosis for sample -->
-				<h:outputLabel value="#{msg['body.diagnosis.diagnoses']}"></h:outputLabel>
 				<c:forEach items="#{revision.diagnoses}" varStatus="varCounterInner"
 					var="diagnosis">
-					<h:panelGrid columns="3" styleClass="defaultListingTableContainer"
-						columnClasses="defaultListingTableColumn15,">
+
+					<c:choose>
+						<c:when test="#{varCounterInner.first}">
+							<h:outputLabel value="#{msg['body.diagnosis.diagnoses']}"></h:outputLabel>
+						</c:when>
+						<c:otherwise>
+							<h:outputLabel value="" />
+						</c:otherwise>
+					</c:choose>
+
+					<h:panelGroup>
 						<!-- sample -->
-						<h:outputLabel
-							value="#{msg['body.diagnosis.diagnosis.sample']} #{diagnosis.sample.sampleID}"></h:outputLabel>
+						<c:choose>
+							<c:when test="#{revision.diagnoses.size() ne 1}">
+								<h:outputLabel
+									value="#{msg['body.diagnosis.diagnosis.sample']} #{diagnosis.sample.sampleID}" />
+							</c:when>
+							<c:otherwise>
+								<h:outputLabel value="" />
+							</c:otherwise>
+						</c:choose>
 
 						<!-- copy diagnosis text -->
 						<p:commandLink styleClass="noUnderlineAtLink"
 							style="margin-left:20px;"
-							disabled="#{!taskEditable or diagnosis.diagnosisPrototype.extendedDiagnosisText eq ''}"
+							disabled="#{!globalEditViewHandler.selectedTask.editable or diagnosis.diagnosisPrototype.extendedDiagnosisText eq ''}"
 							title="#{diagnosis.diagnosisPrototype.extendedDiagnosisText eq '' ? msg['body.diagnosis.diagnosis.histologicalRecordPreset.none'] : msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
 							rendered="#{diagnosis.diagnosisPrototype ne null}"
 							process="@this"
 							actionListener="#{diagnosisViewHandlerAction.onCopyHistologicalRecord(diagnosis)}"
 							update="contentForm">
-							<i class="fa fa-hand-o-up"></i>
+							<i class="fa fa-copy"></i>
 							<p:ajax event="dialogReturn" update="contentForm" />
 						</p:commandLink>
 
 						<!-- malign -->
-						<h:panelGrid columns="2" style="float:right;margin-right:20px;"
-							styleClass="verticalAlignMiddleAll">
+						<h:panelGrid columns="2" style="float:right;margin-right:20px;">
 							<h:outputLabel
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
 							<p:selectBooleanCheckbox value="#{diagnosis.malign}"
-								disabled="#{!taskEditable}" style="margin:3px 0px 0px 3px;">
-
+								disabled="#{!globalEditViewHandler.selectedTask.editable}"
+								style="margin:3px 0px 0px 3px;">
 								<f:ajax event="change"
 									listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
 							</p:selectBooleanCheckbox>
 						</h:panelGrid>
-					</h:panelGrid>
+					</h:panelGroup>
+
 
 					<h:outputLabel />
-
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer"
-						style="width:100%" columnClasses="defaultListingTableColumn15,">
-						<h:panelGroup>
-							<!-- diagnosis text -->
-							<p:inputTextarea value="#{diagnosis.diagnosis}"
-								styleClass="keepOverlayFocus"
-								onkeypress="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();"
-								onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
-								onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
-								id="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
-								disabled="#{!taskEditable}" style="width:100%">
-								<p:watermark
-									for="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
-									value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
-								<f:ajax event="change" execute="@this"
-									listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
-							</p:inputTextarea>
-
-							<p:overlayPanel
-								widgetVar="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
-								id="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
-								styleClass="defaultOverlayPanel selectOverlayPanel"
+					<h:panelGroup>
+						<!-- diagnosis text -->
+						<p:inputTextarea value="#{diagnosis.diagnosis}"
+							onkeypress="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();"
+							onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
+							onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
+							id="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
+							disabled="#{!globalEditViewHandler.selectedTask.editable}"
+							style="width:99%">
+							<p:watermark
 								for="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
-								hideEffect="fade" style="width:500px" hideEvent="none"
-								showEvent="none">
-								<p:dataTable
-									value="#{diagnosisViewHandlerAction.diagnosisPresets}"
-									var="item"
-									styleClass="smallDatatable highlightedDataTable noBordersAll"
-									scrollable="true" scrollHeight="200" rowKey="#{item.id}"
-									selection="#{diagnosis.diagnosisPrototype}"
-									selectionMode="single">
-									<p:column filterBy="#{item.diagnosis}"
-										filterMatchMode="contains">
-										<h:outputText value="#{item.diagnosis}" />
-									</p:column>
+								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.watermark']}" />
+							<f:ajax event="change" execute="@this"
+								listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.diagnosis.text',diagnosis.diagnosis)}" />
+						</p:inputTextarea>
 
-									<p:ajax event="rowSelect" update="contentForm"
-										listener="#{diagnosisViewHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}"
-										oncomplete="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();" />
+						<p:overlayPanel
+							widgetVar="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
+							id="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
+							styleClass="defaultOverlayPanel selectOverlayPanel"
+							for="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
+							hideEffect="fade" style="width:500px" hideEvent="none"
+							showEvent="none">
+							<p:dataTable
+								value="#{diagnosisViewHandlerAction.diagnosisPresets}"
+								var="item" styleClass="newStyleDataTable" scrollable="true"
+								scrollHeight="200" rowKey="#{item.id}"
+								selection="#{diagnosis.diagnosisPrototype}"
+								selectionMode="single">
+								<p:column filterBy="#{item.diagnosis}"
+									filterMatchMode="contains">
+									<h:outputText value="#{item.diagnosis}" />
+								</p:column>
 
-								</p:dataTable>
-							</p:overlayPanel>
-						</h:panelGroup>
-					</h:panelGrid>
+								<p:ajax event="rowSelect" update="contentForm"
+									listener="#{diagnosisViewHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}"
+									oncomplete="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();" />
+
+							</p:dataTable>
+						</p:overlayPanel>
+					</h:panelGroup>
 					<!-- Diagnosis for sample -->
 				</c:forEach>
 			</h:panelGrid>
@@ -366,16 +373,16 @@
 
 		<p:separator />
 
-		<h:panelGrid columns="3"
-			styleClass="defaultListingTableTwoLineContainer">
+		<h:panelGrid columns="3" styleClass="newTableContainer"
+			style="width:97%" columnClasses="columnTop, , columnTop">
+
 			<!-- left column -->
-			<h:panelGrid columns="2"
-				styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable">
 				<!-- Date of signature -->
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.date']}"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
-					disabled="#{!taskEditable}"
+					disabled="#{!globalEditViewHandler.selectedTask.editable}"
 					value="#{globalEditViewHandler.selectedTask.diagnosisContainer.signatureDateAsDate}">
 					<p:ajax event="dateSelect"
 						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(globalEditViewHandler.selectedTask.diagnosisContainer.signatureDate))}" />
@@ -387,16 +394,17 @@
 			<h:panelGroup />
 
 			<!-- right column -->
-			<h:panelGrid columns="2"
-				styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				style="float:right; width: 50% !important">
 
 				<!-- physician -->
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician']}" />
 				<h:panelGroup>
-					<p:selectOneMenu disabled="#{!taskEditable}"
-						styleClass="customSerachSelectMenu" style="width:80% !important;"
-						panelStyleClass="customSerachSelectMenuPanel"
+					<p:selectOneMenu
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						style="width:100% !important;"
+						panelStyleClass="iconFixForSelectOneMenu"
 						value="#{diagnosisViewHandlerAction.signatureOne}"
 						converter="#{diagnosisViewHandlerAction.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
@@ -425,13 +433,12 @@
 				</h:panelGroup>
 
 
-				<h:panelGroup />
-
 				<!-- physician role -->
+				<h:panelGroup />
 				<h:panelGroup>
-					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						id="pysicianToSignRole" editable="true"
-						style="width:80% !important;" disabled="#{!taskEditable}"
+					<p:selectOneMenu id="pysicianToSignRole" editable="true"
+						style="width:100% !important;"
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
 						value="#{globalEditViewHandler.selectedTask.diagnosisContainer.signatureOne.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"
@@ -450,15 +457,14 @@
 					</p:commandButton>
 				</h:panelGroup>
 
-
+				<!-- Consultant -->
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant']}" />
-				<!-- Consultant -->
 				<h:panelGroup>
-
-					<p:selectOneMenu disabled="#{!taskEditable}"
-						styleClass="customSerachSelectMenu" style="width:80% !important;"
-						panelStyleClass="customSerachSelectMenuPanel"
+					<p:selectOneMenu
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						style="width:100% !important;"
+						panelStyleClass="iconFixForSelectOneMenu"
 						value="#{diagnosisViewHandlerAction.signatureTwo}"
 						converter="#{diagnosisViewHandlerAction.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
@@ -486,13 +492,13 @@
 					</p:commandButton>
 
 				</h:panelGroup>
+
 				<!-- Consultant role -->
 				<h:panelGroup />
 				<h:panelGroup>
-
-					<p:selectOneMenu styleClass="customSerachSelectMenu"
-						id="consultantToSignRole" editable="true"
-						style="width:80% !important" disabled="#{!taskEditable}"
+					<p:selectOneMenu id="consultantToSignRole" editable="true"
+						style="width:100% !important"
+						disabled="#{!globalEditViewHandler.selectedTask.editable}"
 						value="#{globalEditViewHandler.selectedTask.diagnosisContainer.signatureTwo.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"

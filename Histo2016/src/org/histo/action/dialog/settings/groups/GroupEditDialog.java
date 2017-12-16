@@ -102,10 +102,6 @@ public class GroupEditDialog extends AbstractDialog {
 
 		setPermissions(group.getPermissions());
 
-		for (View view : group.getSettings().getAvailableViews()) {
-			System.out.println(view);
-		}
-		
 		super.initBean(task, Dialog.SETTINGS_GROUP_EDIT);
 		return true;
 	}

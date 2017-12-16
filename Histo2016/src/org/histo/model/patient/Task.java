@@ -135,6 +135,12 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	private String caseHistory = "";
 
 	/**
+	 * Insurance of the patient 
+	 */
+	@Column(columnDefinition = "VARCHAR")
+	private String insurance;
+	
+	/**
 	 * Ward of the patient
 	 */
 	@Column

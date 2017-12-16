@@ -11,9 +11,22 @@
 	vertical-align: top;
 }
 
+.newTableContainer .column75px {
+	width: 75px !important;
+}
+
+.newTableContainer .column100px {
+	width: 100px !important;
+}
+
 .newTableContainer .column25 {
 	width: 25%;
 }
+
+.newTableContainer .columnHorizontalPadding td {
+	padding: 0px 3px !important;
+}
+
 /* -------------- New Pannelgrid Style --------------*/
 .newStyleListingTable {
 	border: none !important;
@@ -57,6 +70,11 @@
 	font-variant: normal !important;
 }
 
+/* ODD table */
+.newStyleListingTableOddColored>tbody>tr>td {
+	background-color: #f2f2f2;
+}
+
 /* -- addintion for seperator table */
 .newStyleListingTableSeparator {
 	margin-bottom: 5px;
@@ -71,6 +89,7 @@
 	font-weight: bold !important;
 	font-variant: normal !important;
 }
+
 /* -------------- New Pannelgridn Column Styles --------------*/
 .newStyleListingTable .columnLabelContainer150 {
 	width: 150px !important;
@@ -119,6 +138,10 @@
 
 .newStyleListingTable .columnHorTextcenter {
 	text-align: center !important;
+}
+
+.newStyleListingTable .columnTop {
+	vertical-align: top;
 }
 /* -------------- New DataTable Style --------------*/
 /* for scrollable datatables*/
@@ -192,13 +215,13 @@
 	text-overflow: ellipsis;
 }
 
-.newStyleListingTable .columnLongText{
+.newStyleListingTable .columnLongText {
 	white-space: normal !important;
-} 
+}
 
-.newStyleListingTable .columnLongText label{
+.newStyleListingTable .columnLongText label {
 	padding-left: 0px !important;
-} 
+}
 
 /* -------------- New DataList Style --------------*/
 .newStyleDataList {
@@ -313,8 +336,7 @@
 	padding: 0px;
 }
 
-.customSerachSelectMenuPanel
-	/* -------------- Tab Dialog Style --------------*/   
+/* -------------- Tab Dialog Style --------------*/
 .tabDialogLayout {
 	padding: 0px !important;
 	margin: 0px !important;

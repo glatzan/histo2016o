@@ -33,6 +33,7 @@ import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
+import org.histo.action.dialog.task.ChangeTaskIDDialog;
 import org.histo.action.dialog.task.CouncilDialogHandler;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -105,13 +106,15 @@ public class DialogHandlerAction {
 	private GroupEditDialog groupEditDialog;
 
 	private UserListDialog userListDialog;
-	
+
 	private PatientLogDialog patientLogDialog;
-	
+
 	private AddSlidesDialog addSlidesDialog;
-	
+
 	private CouncilDialogHandler councilDialogHandler;
-	
+
+	private ChangeTaskIDDialog changeTaskIDDialog;
+
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -340,7 +343,7 @@ public class DialogHandlerAction {
 
 		return favouriteListEditDialog;
 	}
-	
+
 	public UserListDialog getUserListDialog() {
 		if (userListDialog == null) {
 			userListDialog = new UserListDialog();
@@ -364,7 +367,7 @@ public class DialogHandlerAction {
 
 		return addSlidesDialog;
 	}
-	
+
 	public CouncilDialogHandler getCouncilDialogHandler() {
 		if (councilDialogHandler == null) {
 			councilDialogHandler = new CouncilDialogHandler();
@@ -372,5 +375,13 @@ public class DialogHandlerAction {
 
 		return councilDialogHandler;
 	}
-	
+
+	public ChangeTaskIDDialog getChangeTaskIDDialog() {
+		if (changeTaskIDDialog == null) {
+			changeTaskIDDialog = new ChangeTaskIDDialog();
+		}
+
+		return changeTaskIDDialog;
+	}
+
 }

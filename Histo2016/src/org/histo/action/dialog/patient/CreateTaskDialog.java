@@ -258,6 +258,7 @@ public class CreateTaskDialog extends AbstractDialog {
 			getTask().setParent(getPatient());
 			getTask().setCaseHistory("");
 			getTask().setWard("");
+			getTask().setInsurance(patient.getInsurance());
 
 			if (isTaskIdManuallyAltered()) {
 				// TODO check if task id exists
