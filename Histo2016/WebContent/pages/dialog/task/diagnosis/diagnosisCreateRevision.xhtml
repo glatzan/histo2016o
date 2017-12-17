@@ -10,16 +10,18 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.createDiagnosisRevision.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout infoDialog">
+<h:body styleClass="contentInputDialog">
 	<h:form id="dialogContent">
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
-				<h:outputLabel value="#{msg['dialog.createSample.headline']}" />
+				styleClass="newTableContainer">
+				<h:outputLabel
+					value="#{msg['dialog.createDiagnosisRevision.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -28,29 +30,30 @@
 			</h:panelGrid>
 		</div>
 
-		<div class="contentDiv">
-			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
-				columnClasses="defaultListingTableColumnTop,">
+		<div class="dialogContent">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnTop, ">
 				<!-- names -->
 				<h:outputLabel value="#{msg['dialog.createDiagnosisRevision.type']}"></h:outputLabel>
-				<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-					value="#{diagnosisRevisionDialog.newRevisionType}">
+				<p:selectOneMenu id="selectStainingList"
+					value="#{dialogHandlerAction.diagnosisRevisionDialog.newRevisionType}">
 
 					<f:selectItems
-						value="#{diagnosisRevisionDialog.selectableRevisionTypes}"
+						value="#{dialogHandlerAction.diagnosisRevisionDialog.selectableRevisionTypes}"
 						var="type" itemLabel="#{msg['enum.diagnosisType.'.concat(type)]}"
 						itemValue="#{type}" />
 
 					<p:ajax update="@form"
-						listener="#{diagnosisRevisionDialog.updateDiagnosisRevisionType()}"></p:ajax>
+						listener="#{dialogHandlerAction.diagnosisRevisionDialog.updateDiagnosisRevisionType()}"></p:ajax>
 
 				</p:selectOneMenu>
-				
+
 				<!-- names -->
 				<h:outputLabel
 					value="#{msg['dialog.createDiagnosisRevision.diagnoses']}"></h:outputLabel>
 				<p:dataTable var="revision" scrollHeight="200" scrollable="true"
-					value="#{diagnosisRevisionDialog.revisionList}">
+					styleClass="newStyleData"
+					value="#{dialogHandlerAction.diagnosisRevisionDialog.revisionList}">
 					<p:column
 						headerText="#{msg['dialog.createDiagnosisRevision.name.old']}">
 						<h:outputText value="#{revision.revision.name}" />
@@ -62,42 +65,44 @@
 						</f:facet>
 						<p:commandLink
 							title="#{msg['dialog.createDiagnosisRevision.name.copy']}"
-							update="@form" style="margin-left:5px;"
-							actionListener="#{diagnosisRevisionDialog.copyOldNameFromDiagnosisRevision(revision.revision)}">
+							update="@form"
+							actionListener="#{dialogHandlerAction.diagnosisRevisionDialog.copyOldNameFromDiagnosisRevision(revision.revision)}">
 							<i class="fa fa-fw fa-arrow-circle-o-right" />
 						</p:commandLink>
 					</p:column>
 
 					<p:column
 						headerText="#{msg['dialog.createDiagnosisRevision.name.new']}">
-						<p:inputText value="#{revision.name}" style="width:100%"></p:inputText>
+						<p:inputText value="#{revision.name}" style="width:97%"></p:inputText>
 					</p:column>
 				</p:dataTable>
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="2" style="float:right;">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.create']}"
-						icon="fa fa-check-circle-o"
-						styleClass="smallButton buttonRighMarginInListExtended">
+						icon="fa fa-plus-circle">
 						<f:actionListener
-							binding="#{diagnosisRevisionDialog.createDiagnosisRevision()}" />
-						<f:actionListener binding="#{diagnosisRevisionDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.diagnosisRevisionDialog.createDiagnosisRevision()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.diagnosisRevisionDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
-						actionListener="#{diagnosisRevisionDialog.hideDialog()}" />
+						actionListener="#{dialogHandlerAction.diagnosisRevisionDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
-
 	</h:form>
 </h:body>
 </html>

@@ -5,21 +5,20 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.staingingPhaseExit.headline']}" /></title>
+			value="#{msg['dialog.archiveTask.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-
 <h:body styleClass="contentInputDialog">
 	<h:form id="dialogContent">
+
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel value="#{msg['dialog.staingingPhaseExit.headline']}" />
+				<h:outputLabel value="#{msg['dialog.archiveTask.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -31,19 +30,7 @@
 		<div class="dialogContent">
 			<h:panelGrid columns="1" styleClass="newStyleListingTable"
 				columnClasses="columnLongText">
-				<h:outputLabel value="#{msg['dialog.staingingPhaseExit.text']}"></h:outputLabel>
-			</h:panelGrid>
-
-			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				style="margin: 10px 0px 0px 20px">
-				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.stainingPhaseExitDialog.goToDiagnosisPhase}" />
-				<h:outputLabel
-					value="#{msg['dialog.staingingPhaseExit.diagnosisPhase']}" />
-
-				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.stainingPhaseExitDialog.stayInStainingPhase}" />
-				<h:outputLabel value="#{msg['dialog.staingingPhaseExit.stay']}" />
+				<h:outputLabel value="#{msg['dialog.archiveTask.text']}" />
 			</h:panelGrid>
 		</div>
 
@@ -55,22 +42,26 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
-					<!-- Ok button -->
-					<p:commandButton value="#{msg['general.ok']}" id="closeBtn"
-						icon="fa fa-check-circle-o">
+					<!-- Save button -->
+					<p:commandButton
+						value="#{msg['dialog.archiveTask.button.archive']}"
+						icon="fa fa-archive">
 						<f:actionListener
-							binding="#{dialogHandlerAction.stainingPhaseExitDialog.exitPhase()}" />
+							binding="#{dialogHandlerAction.archiveTaskDialog.archiveTask()}"></f:actionListener>
 						<f:actionListener
-							binding="#{dialogHandlerAction.stainingPhaseExitDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.archiveTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
-					<!-- abort -->
-					<p:commandButton value="#{msg['general.abort']}"
-						icon="fa fa-times-circle"
-						actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.hideDialog()}"></p:commandButton>
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						icon="fa fa-times-circle">
+						<f:actionListener
+							binding="#{dialogHandlerAction.archiveTaskDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
+
 
 	</h:form>
 </h:body>

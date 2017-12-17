@@ -330,6 +330,24 @@
 							value=" #{msg['enum.histoPermissions.EDIT_TASK_ID']}"
 							title="#{msg['enum.histoPermissions.EDIT_TASK_ID.text']}" />
 
+						<!-- archive task -->
+						<p:selectBooleanCheckbox styleClass="centerCheckbox"
+							style="margin-left:15px;"
+							value="#{dialogHandlerAction.groupEditDialog.permissions['ARCHIVE_TASK'].value}"
+							title="#{msg['enum.histoPermissions.ARCHIVE_TASK.text']}" />
+						<h:outputLabel
+							value=" #{msg['enum.histoPermissions.ARCHIVE_TASK']}"
+							title="#{msg['enum.histoPermissions.ARCHIVE_TASK.text']}" />
+
+						<!-- restore task -->
+						<p:selectBooleanCheckbox styleClass="centerCheckbox"
+							style="margin-left:15px;"
+							value="#{dialogHandlerAction.groupEditDialog.permissions['RESOTRE_TASK'].value}"
+							title="#{msg['enum.histoPermissions.RESTORE_TASK.text']}" />
+						<h:outputLabel
+							value=" #{msg['enum.histoPermissions.RESTORE_TASK']}"
+							title="#{msg['enum.histoPermissions.RESTORE_TASK.text']}" />
+
 					</h:panelGrid>
 				</h:panelGrid>
 			</h:panelGrid>

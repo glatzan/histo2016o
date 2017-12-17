@@ -25,7 +25,6 @@ public enum Dialog {
 	SLIDE_NAMING("/pages/dialog/task/slideNaming", null,430, 270, false, false, true), 
 	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/task/diagnosisRecordOverwrite", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisCreateRevision", null, 640, 360, false, false, true), // 16:9
 	CONTACTS("/pages/dialog/contact/contacts", null, 1024, 600, false, false, true), // 16:9
 	CONTACTS_NOTIFICATION("/pages/dialog/contact/contactNotification", null, 858, 484, false, false, true), // 16:9
 	QUICK_CONTACTS("/pages/dialog/contact/contactSelect", null, 858, 484, false, false, true), // 16:9
@@ -53,11 +52,11 @@ public enum Dialog {
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
 	MEDIA("/pages/dialog/upload/media", null,  1280, 720,  false, false, true), // 16:9
 	STAINING_PHASE_EXIT("/pages/dialog/task/staining/stainingPhaseExit", null, 480, 272, false, false, true), // 16:9
-	STAINING_EXIT_STAY_IN_PHASE("/pages/dialog/task/staining/stayInStainingPhaseExit", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_EXIT("/pages/dialog/task/diagnosis/diagnosisPhaseExit", null, 1024, 600, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_EXIT_SMALL("/pages/dialog/task/diagnosis/diagnosisPhaseExitSmall", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_EXIT_STAY_IN_PHASE_DIALOG("/pages/dialog/task/diagnosis/stayInDiagnosisPhaseExit", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_UN_FINALIZE("/pages/dialog/task/diagnosis/unFinalize", null, 480, 272, false, false, true), // 16:9
+	TASK_ARCHIVE("/pages/dialog/task/archive/archiveTask", null, 480, 272, false, false, true), // 16:9
+	TASK_RESTORE("/pages/dialog/task/archive/restoreTask", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosis/diagnosisCreateRevision", null, 640, 360, false, false, true), // 16:9
 	ORGANIZATION_EDIT("/pages/dialog/organization/organizationEdit", null, 858, 484, false, false, true), // 16:9
 	ORGANIZATION_LIST("/pages/dialog/organization/organizationList", null, 858, 484, false, false, true); // 16:9
 	

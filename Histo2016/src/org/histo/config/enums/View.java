@@ -7,7 +7,7 @@ package org.histo.config.enums;
  */
 public enum View {
 
-	LOGIN("/pages/login.xhtml"), 
+	LOGIN("/login.xhtml"), 
 	GUEST("/pages/guest.xhtml"),
 	SCIENTIST("/pages/scientist.xhtml"),
 	USERLIST("/pages/userList.xhtml"),

@@ -177,12 +177,6 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	private long finalizationDate = 0;
 
 	/**
-	 * False if the task can't be edited
-	 */
-	@Column
-	private boolean editable = true;
-
-	/**
 	 * True if the task can't is completed
 	 */
 	@Column

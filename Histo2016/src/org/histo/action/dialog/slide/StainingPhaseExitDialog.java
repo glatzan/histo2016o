@@ -49,7 +49,7 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private SlideManipulationHandler slideManipulationHandler;
-	
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -59,6 +59,11 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	 * Can be set to true if the task should stay in diagnosis phase.
 	 */
 	private boolean stayInStainingPhase;
+
+	/**
+	 * If true the task will be shifted into diagnosis phase
+	 */
+	private boolean goToDiagnosisPhase;
 
 	/**
 	 * Initializes the bean and shows the dialog
@@ -78,6 +83,14 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	public void initBean(Task task) {
 		try {
 			taskDAO.initializeTask(task, false);
+
+			if (task.isListedInFavouriteList(PredefinedFavouriteList.NotificationList))
+				this.goToDiagnosisPhase = false;
+			else
+				this.goToDiagnosisPhase = true;
+
+			stayInStainingPhase = false;
+
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
@@ -95,16 +108,19 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 					genericDAO.reattach(task.getPatient());
-					
+
 					boolean changed = slideManipulationHandler.setStainingCompletedForAllSlides(task, true);
 
 					task.setStainingCompletionDate(System.currentTimeMillis());
 
 					// removing from staining or restaing list
-					favouriteListDAO.removeTaskFromList(task, new PredefinedFavouriteList[] {
-							PredefinedFavouriteList.StainingList, PredefinedFavouriteList.ReStainingList });
+					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
+							PredefinedFavouriteList.ReStainingList);
 
-					favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+					if (goToDiagnosisPhase) {
+						logger.debug("Adding Task to diagnosis list");
+						favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+					}
 
 					if (stayInStainingPhase) {
 						logger.debug("Task should stay in staining phase");
@@ -117,7 +133,7 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
-		
+
 		globalEditViewHandler.updateDataOfTask(false);
 	}
 }

@@ -275,12 +275,18 @@
 							</p:commandLink>
 
 							<!-- Pendings completed -->
-							<h:panelGroup rendered="#{task.taskStatus.finalized}">
+							<h:panelGroup rendered="#{task.taskStatus.finalizeable}">
 								<i style="margin-left: 5px;"
 									class="fa fa-check-circle icon-green"
 									title="#{msg['body.worklist.navigation.activtasks.pendencies']}" />
 							</h:panelGroup>
 
+							<!-- archived -->
+							<h:panelGroup rendered="#{task.finalized}">
+								<i style="margin-left: 5px;"
+									class="fa fa-archive"
+									title="#{msg['body.worklist.navigation.activtasks.archived']}" />
+							</h:panelGroup>
 
 							<br />
 						</p:repeat>

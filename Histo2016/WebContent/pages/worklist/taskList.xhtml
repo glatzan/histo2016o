@@ -57,7 +57,7 @@
 					</f:facet>
 					<ui:fragment rendered="#{task.stainingCompletionDate ne 0}">
 						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
-							title="" />
+							title="#{msg['body.taskList.table.staining.text']}" />
 					</ui:fragment>
 				</p:column>
 
@@ -68,7 +68,7 @@
 					</f:facet>
 					<ui:fragment rendered="#{task.diagnosisCompletionDate ne 0}">
 						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
-							title="" />
+							title="#{msg['body.taskList.table.diagnosis.text']}" />
 					</ui:fragment>
 				</p:column>
 
@@ -79,9 +79,21 @@
 					</f:facet>
 					<ui:fragment rendered="#{task.notificationCompletionDate ne 0}">
 						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
-							title="" />
+							title="#{msg['body.taskList.table.notification.text']}" />
 					</ui:fragment>
 				</p:column>
+
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-archive"
+							title="#{msg['body.taskList.table.archived']}"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.finalized}">
+						<i style="margin-left: 3px;" class="fa fa-archive icon-green" 
+							title="#{msg['body.taskList.table.archived']}" />
+					</ui:fragment>
+				</p:column>
+
 				<p:column style="width:10px">
 					<f:facet name="header">
 						<i class="fa fa-exclamation"
@@ -92,6 +104,7 @@
 							title="" />
 					</ui:fragment>
 				</p:column>
+
 
 				<p:column headerText="" style="width:40px;">
 					<p:commandLink disabled="#{task.diagnosisCompletionDate eq 0}"

@@ -135,17 +135,9 @@
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Staining List,  remove from  list stay in list -->
-			<p:commandButton id="stainingPhaseForceExitStayInPhase"
-				style="display:none"
-				actionListener="#{dialogHandlerAction.stainingExitStayInPhaseDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
-			</p:commandButton>
-
 			<!-- Diagnosis List, new diagnosis revision -->
 			<p:commandButton id="newDiagnosisRevision" style="display:none"
-				actionListener="#{diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{dialogHandlerAction.diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
@@ -155,20 +147,6 @@
 				onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
 				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
-			</p:commandButton>
-
-			<!-- Diagnosis List, force leave diagnosis phase, if still in diagnosis phase after diagnosis completion -->
-			<p:commandButton id="diagnosisExitStayInPhase" style="display:none"
-				actionListener="#{dialogHandlerAction.diagnosisExitStayInPhaseDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
-			</p:commandButton>
-
-			<!-- Un finalize Diagnosis -->
-			<p:commandButton id="diagnosisPhaseUnFinalize" style="display:none"
-				actionListener="#{dialogHandlerAction.diagnosisUnFinalizeDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
@@ -189,19 +167,25 @@
 			</p:commandButton>
 
 			<!-- Notification button -->
-			<p:commandButton id="notificationContactBtn" style="display:none"
-				actionListener="#{notificationHandlerAction.showinfoDialog(globalEditViewHandler.selectedTask)}">
-				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm"
-					listener="#{mainHandlerAction.processQueues()}" />
-			</p:commandButton>
-
-			<!-- MedicalFindings button -->
 			<p:commandButton id="medicalFindingsContactBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
+			</p:commandButton>
+
+			<!-- Archive Task -->
+			<p:commandButton id="archiveTaskBtn" style="display:none"
+				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, true)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandButton>
+
+			<!-- restore Task -->
+			<p:commandButton id="restoreTaskBtn" style="display:none"
+				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, false)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Favourite-Lists button -->
@@ -292,32 +276,10 @@
 				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 			</p:commandButton>
 
-			<!-- show only button for print dialog, workaround for closing and showing dialogs -->
-			<p:commandButton id="printBtnShowOnly" style="display:none"
-				actionListener="#{mainHandlerAction.showDialog('PRINT')}">
-				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.processQueues()}" />
-			</p:commandButton>
-
-			<!-- show only button for council dialog, workaround for closing and showing dialogs -->
-			<p:commandButton id="councilBtnShowOnly" style="display:none"
-				actionListener="#{mainHandlerAction.showDialog('COUNCIL')}">
-				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.processQueues()}" />
-			</p:commandButton>
-
-			<!-- show only button for notification dialog, workaround for closing and showing dialogs -->
-			<p:commandButton id="notificationBtnShowOnly" style="display:none"
-				actionListener="#{notificationHandlerAction.showinfoDialog(notificationHandlerAction.tmpTask, true)}">
-				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.processQueues()}" />
-			</p:commandButton>
-
 			<!-- update all -->
 			<p:commandButton id="updateAllContent" style="display:none"
 				actionListener="#{mainHandlerAction.showQueueGrowlMessage()}"
 				update="navigationForm contentForm headerForm growlForm:globalgrowl" />
-
 
 			<!-- Function for clicking on the dialogs -->
 			<script type="text/javascript">

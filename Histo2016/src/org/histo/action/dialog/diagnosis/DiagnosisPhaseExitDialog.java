@@ -88,6 +88,11 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	 */
 	private boolean stayInDiagnosisPhase;
 
+	/**
+	 * If true the task will be shifted to the notification phase
+	 */
+	private boolean goToNotificationPhase;
+
 	public void initAndPrepareBean(Task task) {
 		if (initBean(task))
 			prepareDialog();
@@ -96,6 +101,10 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	public boolean initBean(Task task) {
 		try {
 			taskDAO.initializeTask(task, false);
+
+			this.goToNotificationPhase = true;
+			this.stayInDiagnosisPhase = false;
+
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
@@ -109,7 +118,7 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 					new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
 					DocumentType.DIAGNOSIS_REPORT,
 					new AssociatedContact(task, new Person(resourceBundle.get("pdf.address.none"), new Contact())));
-			
+
 			super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT);
 		} else
 			super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT_SMALL);
@@ -128,44 +137,21 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 							getTask().getDiagnosisContainer().getDiagnosisRevisions(), true);
 
 					// adding to notification phase
-					favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
+					if (goToNotificationPhase)
+						favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
 
-					// removing from diagnosis list
-					if (getTask().isListedInFavouriteList(PredefinedFavouriteList.DiagnosisList))
-						favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.DiagnosisList);
-
-					// removing from REdiagnosis list
-					if (getTask().isListedInFavouriteList(PredefinedFavouriteList.ReDiagnosisList))
-						favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.ReDiagnosisList);
+					// removing from diagnosis and rediagnosis list
+					favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.DiagnosisList,
+							PredefinedFavouriteList.ReDiagnosisList);
 
 					// adding to stay in diagnosis phase if selected
-					if (isStayInDiagnosisPhase()
-							&& !getTask().isListedInFavouriteList(PredefinedFavouriteList.StayInDiagnosisList))
+					if (isStayInDiagnosisPhase())
 						favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
-					else if (getTask().isListedInFavouriteList(PredefinedFavouriteList.StayInDiagnosisList))
+					else
 						// removing from stay in diagnosis list
 						favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
 
 					getTask().setDiagnosisCompletionDate(System.currentTimeMillis());
-
-					// finalizing task
-					getTask().setFinalizationDate(System.currentTimeMillis());
-					getTask().setFinalized(true);
-
-//					if (userHandlerAction.getCurrentUser().getSettings().isPdfPreviewOnDiagnosisApproval()) {
-//						// generating final diagnosis report
-//						if (dialogHandlerAction.getPrintDialog().getPdfContainer()
-//								.getType() != DocumentType.DIAGNOSIS_REPORT) {
-//							dialogHandlerAction.getPrintDialog()
-//									.setDefaultTemplateOfType(DocumentType.DIAGNOSIS_REPORT);
-//						}
-//
-//						dialogHandlerAction.getPrintDialog().getPdfContainer()
-//								.setType(DocumentType.DIAGNOSIS_REPORT_COMPLETED);
-//
-//						pdfDAO.attachPDF(getTask().getPatient(), getTask(),
-//								dialogHandlerAction.getPrintDialog().getPdfContainer());
-//					}
 
 					genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.end");
 				}
@@ -176,14 +162,5 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 		}
 
 		globalEditViewHandler.updateDataOfTask(false);
-	}
-
-	// ************************ Getter/Setter ************************
-	public boolean isStayInDiagnosisPhase() {
-		return stayInDiagnosisPhase;
-	}
-
-	public void setStayInDiagnosisPhase(boolean stayInDiagnosisPhase) {
-		this.stayInDiagnosisPhase = stayInDiagnosisPhase;
 	}
 }

@@ -5,11 +5,12 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.model.dto.FavouriteListMenuItem;
-import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.model.user.HistoPermissions;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;
@@ -131,13 +132,12 @@ public class MenuGenerator {
 				item.setDisabled(!taskIsEditable);
 				stainingSubMenu.addElement(item);
 
+				// ***************************************************
 				DefaultSeparator seperator = new DefaultSeparator();
-				seperator.setRendered(task.getTaskStatus().isStainingNeeded()
-						|| task.getTaskStatus().isReStainingNeeded() || task.getTaskStatus().isStayInStainingList());
+				seperator.setRendered(task.getTaskStatus().isEditable());
 				stainingSubMenu.addElement(seperator);
 
-				// leave staining phase and set all stainings to
-				// completed
+				// leave staining phase regularly
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.leave"));
 				item.setOnclick(
 						"$('#headerForm\\\\:stainingPhaseExit').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
@@ -146,14 +146,24 @@ public class MenuGenerator {
 				item.setDisabled(!taskIsEditable);
 				stainingSubMenu.addElement(item);
 
-				// Staining, end staining phase if all staining tasks
-				// have been completed
+				// Remove from staining phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.stayInPhase.leave"));
-				item.setOnclick(
-						"$('#headerForm\\\\:stainingPhaseForceExitStayInPhase').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setCommand(
+						"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
+								+ PredefinedFavouriteList.StayInStainingList.getId() + ")}");
 				item.setIcon("fa fa-image");
 				item.setRendered(task.getTaskStatus().isStayInStainingList());
+				item.setUpdate("navigationForm contentForm headerForm");
+				stainingSubMenu.addElement(item);
 
+				// Add to stay in staining phase
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.stayInPhase.enter"));
+				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
+						+ PredefinedFavouriteList.StayInStainingList.getId() + ")}");
+				item.setIcon("fa fa-image");
+				item.setRendered(!(task.getTaskStatus().isStainingNeeded() || task.getTaskStatus().isReStainingNeeded()
+						|| task.getTaskStatus().isStayInStainingList()) && task.getTaskStatus().isEditable());
+				item.setUpdate("navigationForm contentForm headerForm");
 				stainingSubMenu.addElement(item);
 			}
 
@@ -169,8 +179,7 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:newDiagnosisRevision').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-pencil-square-o");
-				item.setDisabled(!taskIsEditable
-						&& !(task.getTaskStatus().isDiagnosisNeeded() || task.getTaskStatus().isReDiagnosisNeeded()));
+				item.setDisabled(!taskIsEditable);
 				diagnosisSubMenu.addElement(item);
 
 				// council
@@ -180,9 +189,9 @@ public class MenuGenerator {
 				item.setIcon("fa fa-comment-o");
 				diagnosisSubMenu.addElement(item);
 
+				// ***************************************************
 				DefaultSeparator seperator = new DefaultSeparator();
-				seperator.setRendered(task.getTaskStatus().isDiagnosisNeeded()
-						|| task.getTaskStatus().isReDiagnosisNeeded() || task.getTaskStatus().isStayInDiagnosisList());
+				seperator.setRendered(task.getTaskStatus().isEditable());
 				diagnosisSubMenu.addElement(seperator);
 
 				// Leave diagnosis phase if in phase an not complete
@@ -200,12 +209,24 @@ public class MenuGenerator {
 
 				// Leave phase if stay in phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.diagnosisPhase.force.leave"));
-				item.setOnclick(
-						"$('#headerForm\\\\:diagnosisExitStayInPhase').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setCommand(
+						"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
+								+ PredefinedFavouriteList.StayInDiagnosisList.getId() + ")}");
 				item.setRendered(task.getTaskStatus().isStayInDiagnosisList());
+				item.setUpdate("navigationForm contentForm headerForm");
 				item.setIcon("fa fa-eye-slash");
 				diagnosisSubMenu.addElement(item);
 
+				// enter stay in phase
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.diagnosisPhase.force.enter"));
+				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
+						+ PredefinedFavouriteList.StayInDiagnosisList.getId() + ")}");
+				item.setRendered(
+						!(task.getTaskStatus().isDiagnosisNeeded() || task.getTaskStatus().isReDiagnosisNeeded()
+								|| task.getTaskStatus().isStayInDiagnosisList()) && task.getTaskStatus().isEditable());
+				item.setUpdate("navigationForm contentForm headerForm");
+				item.setIcon("fa fa-eye-slash");
+				diagnosisSubMenu.addElement(item);
 			}
 
 			// notification submenu
@@ -229,7 +250,9 @@ public class MenuGenerator {
 				item.setIcon("fa fa-print");
 				notificationSubMenu.addElement(item);
 
+				// ***************************************************
 				DefaultSeparator seperator = new DefaultSeparator();
+				seperator.setRendered(task.getTaskStatus().isEditable());
 				notificationSubMenu.addElement(seperator);
 
 				// report
@@ -237,13 +260,30 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:medicalFindingsContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-volume-up");
+				item.setRendered(
+						task.getTaskStatus().isNotificationNeeded() || task.getTaskStatus().isStayInNotificationList());
 				notificationSubMenu.addElement(item);
 
-				// remove from notification phase
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.end"));
-				item.setOnclick(
-						"$('#headerForm\\\\:medicalFindingsContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				// remove from notification phase without report
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.force.leave"));
+				item.setCommand(
+						"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
+								+ PredefinedFavouriteList.StayInNotificationList.getId() + " , "
+								+ PredefinedFavouriteList.NotificationList.getId() + ")}");
+				item.setUpdate("navigationForm contentForm headerForm");
 				item.setIcon("fa fa-volume-off");
+				item.setRendered(
+						task.getTaskStatus().isNotificationNeeded() || task.getTaskStatus().isStayInNotificationList());
+				notificationSubMenu.addElement(item);
+
+				// add to notification stay in phase
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.force.enter"));
+				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
+						+ PredefinedFavouriteList.StayInNotificationList.getId() + ")}");
+				item.setUpdate("navigationForm contentForm headerForm");
+				item.setIcon("fa fa-volume-off");
+				item.setRendered(!(task.getTaskStatus().isNotificationNeeded()
+						|| task.getTaskStatus().isStayInNotificationList()) && task.getTaskStatus().isEditable());
 				notificationSubMenu.addElement(item);
 
 			}
@@ -251,30 +291,24 @@ public class MenuGenerator {
 			// finalized
 			if (!taskIsNull) {
 				DefaultSeparator seperator = new DefaultSeparator();
+				seperator.setRendered(userHandlerAction.currentUserHasPermission(HistoPermissions.ARCHIVE_TASK,
+						HistoPermissions.RESOTRE_TASK));
 				taskSubMenu.addElement(seperator);
 
-				// // unfinalize task
-				// item = new
-				// DefaultMenuItem(resourceBundle.get("header.menu.task.sample.unFinalize"));
-				// item.setOnclick(
-				// "$('#headerForm\\\\:diagnosisPhaseUnFinalize').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return
-				// false;");
-				// item.setIcon("fa fa-eye");
-				// item.setRendered(task.isFinalized());
-				// taskSubMenu.addElement(item);
-				//
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.archive"));
 				item.setOnclick(
-						"$('#headerForm\\\\:medicalFindingsContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+						"$('#headerForm\\\\:archiveTaskBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-archive");
-				item.setRendered(!task.isFinalized());
+				item.setRendered(!task.isFinalized()
+						&& userHandlerAction.currentUserHasPermission(HistoPermissions.ARCHIVE_TASK));
 				taskSubMenu.addElement(item);
 
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.dearchive"));
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.restore"));
 				item.setOnclick(
-						"$('#headerForm\\\\:medicalFindingsContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-				item.setIcon("fa fa-archive");
-				item.setRendered(task.isFinalized());
+						"$('#headerForm\\\\:restoreTaskBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setIcon("fa fa-dropbox");
+				item.setRendered(task.isFinalized()
+						&& userHandlerAction.currentUserHasPermission(HistoPermissions.RESOTRE_TASK));
 				taskSubMenu.addElement(item);
 			}
 
@@ -311,9 +345,10 @@ public class MenuGenerator {
 						item.setUpdate("navigationForm contentForm headerForm");
 						favouriteSubMenu.addElement(item);
 					}
-				}else {
+				} else {
 					item = new DefaultMenuItem("Keine F. Listen");
 					item.setIcon("fa fa-list-alt");
+					item.setDisabled(true);
 					taskSubMenu.addElement(item);
 				}
 

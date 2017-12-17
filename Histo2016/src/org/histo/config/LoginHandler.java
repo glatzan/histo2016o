@@ -12,6 +12,7 @@ import org.histo.config.enums.View;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.model.user.HistoGroup.AuthRole;
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -51,6 +52,9 @@ public class LoginHandler {
 
 	public String login() {
 		try {
+
+			System.out.println("asd");
+
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(this.username, this.password));
 
@@ -61,20 +65,25 @@ public class LoginHandler {
 
 			return determineTargetUrl(authentication) + "?faces-redirect=true";
 		} catch (BadCredentialsException ex) {
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(resourceBundle.get("login.error"), ex.getMessage()));
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(resourceBundle.get("login.error"), ex.getMessage()));
 
 			logger.debug("Login failed");
 
 			// deleting password
 			this.password = null;
 
+			// disable the button if something went wrong
+			RequestContext.getCurrentInstance().execute("blockForLogin(false)");
+
 			return View.LOGIN.getPath();
 		}
 	}
 
 	/**
-	 * Checking if user should be redirected to a given page, if not the user will
-	 * be redirected to the default pages (determined by the group settings)
+	 * Checking if user should be redirected to a given page, if not the user
+	 * will be redirected to the default pages (determined by the group
+	 * settings)
 	 * 
 	 * @param authentication
 	 * @return

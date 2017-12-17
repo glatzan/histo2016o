@@ -109,12 +109,12 @@ public class NotificationDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
-	
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
-	
+
 	private int activeIndex = 0;
 
 	private MailTab mailTab;
@@ -341,7 +341,7 @@ public class NotificationDialog extends AbstractDialog {
 							case LETTER:
 								break;
 							default:
-								// do nothing for e.g. print 
+								// do nothing for e.g. print
 								break;
 							}
 						} else {
@@ -1157,9 +1157,9 @@ public class NotificationDialog extends AbstractDialog {
 				logger.debug("Saving progress, completed");
 
 				// removing from diagnosis list
-				if (getTask().isListedInFavouriteList(PredefinedFavouriteList.NotificationList))
-					favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.NotificationList);
-				
+				favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.NotificationList,
+						PredefinedFavouriteList.StayInNotificationList);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

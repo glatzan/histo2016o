@@ -254,7 +254,7 @@ public class FavouriteListDAO extends AbstractDAO {
 			logger.debug("Task (" + task.getTaskID() + ") alread contains list (" + favouriteList.getName() + ")");
 	}
 
-	public void removeTaskFromList(Task task, PredefinedFavouriteList[] predefinedFavouriteLists)
+	public void removeTaskFromList(Task task, PredefinedFavouriteList... predefinedFavouriteLists)
 			throws CustomDatabaseInconsistentVersionException {
 		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
 			removeTaskFromList(task, predefinedFavouriteList);
@@ -267,10 +267,12 @@ public class FavouriteListDAO extends AbstractDAO {
 		removeTaskFromList(task, predefinedFavouriteList.getId());
 	}
 
-	public void removeTaskFromList(Task task, long id) throws CustomDatabaseInconsistentVersionException {
-		if (task.isListedInFavouriteList(id)) {
-			reattach(task);
-			removeTaskFromList(task, getFavouriteList(id, true, false));
+	public void removeTaskFromList(Task task, long... id) throws CustomDatabaseInconsistentVersionException {
+		for (long l : id) {
+			if (task.isListedInFavouriteList(l)) {
+				reattach(task);
+				removeTaskFromList(task, getFavouriteList(l, true, false));
+			}
 		}
 	}
 

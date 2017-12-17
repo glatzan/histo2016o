@@ -220,7 +220,7 @@ public class WorklistViewHandlerAction {
 
 		logger.debug("Select patient " + globalEditViewHandler.getSelectedPatient().getPerson().getFullName());
 
-		globalEditViewHandler.updateDataOfTask(false);
+		globalEditViewHandler.updateMenuModel(false);
 		
 		goToNavigation(View.WORKLIST_PATIENT);
 		logger.info("end -> " + (System.currentTimeMillis() - test));
@@ -289,8 +289,9 @@ public class WorklistViewHandlerAction {
 		// replacing patient, generating task status
 		getWorklist().addPatient(task.getPatient());
 
-		globalEditViewHandler.updateDataOfTask(true);
-
+		// generating menu
+		globalEditViewHandler.updateMenuModel(false);
+		
 		task.setActive(true);
 		
 		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {

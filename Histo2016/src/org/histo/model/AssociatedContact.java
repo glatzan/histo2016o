@@ -3,6 +3,7 @@ package org.histo.model;
 import static javax.persistence.CascadeType.ALL;
 import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,7 +71,7 @@ public class AssociatedContact implements LogAble, HasID {
 	@OrderColumn(name = "position")
 	@LazyCollection(FALSE)
 	@OneToMany(mappedBy = "contact", cascade = ALL)
-	private List<AssociatedContactNotification> notifications;
+	private List<AssociatedContactNotification> notifications = new ArrayList<AssociatedContactNotification>();
 
 	public AssociatedContact() {
 	}

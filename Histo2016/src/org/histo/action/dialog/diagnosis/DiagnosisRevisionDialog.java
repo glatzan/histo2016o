@@ -5,10 +5,13 @@ import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.DiagnosisRevision;
@@ -17,25 +20,44 @@ import org.histo.ui.RevisionHolder;
 import org.histo.util.StreamUtils;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Component
-@Scope(value = "session")
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Getter
+@Setter
 public class DiagnosisRevisionDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
-	private PatientDao patientDao;
-
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListDAO favouriteListDAO;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	/**
 	 * Type of the new revision
 	 */
@@ -124,34 +146,13 @@ public class DiagnosisRevisionDialog extends AbstractDialog {
 					}
 				}
 			}
+			
+			// adding the task to the diagnosis list
+			favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+			globalEditViewHandler.updateDataOfTask(false);
+			
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
-
-	// ************************ Getter/Setter ************************
-	public DiagnosisRevisionType getNewRevisionType() {
-		return newRevisionType;
-	}
-
-	public void setNewRevisionType(DiagnosisRevisionType newRevisionType) {
-		this.newRevisionType = newRevisionType;
-	}
-
-	public DiagnosisRevisionType[] getSelectableRevisionTypes() {
-		return selectableRevisionTypes;
-	}
-
-	public void setSelectableRevisionTypes(DiagnosisRevisionType[] selectableRevisionTypes) {
-		this.selectableRevisionTypes = selectableRevisionTypes;
-	}
-
-	public List<RevisionHolder> getRevisionList() {
-		return revisionList;
-	}
-
-	public void setRevisionList(List<RevisionHolder> revisionList) {
-		this.revisionList = revisionList;
-	}
-
 }

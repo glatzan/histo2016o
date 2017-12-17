@@ -20,7 +20,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Configurable(preConstruction=true)
+@Configurable(preConstruction = true)
 public class TaskStatus {
 
 	@Autowired
@@ -47,6 +47,8 @@ public class TaskStatus {
 	private boolean councilCompleted;
 
 	private boolean finalized;
+
+	private boolean finalizeable;
 
 	private boolean editable;
 
@@ -76,6 +78,9 @@ public class TaskStatus {
 
 		this.editable = isTaksEditable();
 
+		this.finalizeable = !(this.stainingNeeded || this.reStainingNeeded || this.stayInStainingList
+				|| this.diagnosisNeeded || this.reDiagnosisNeeded || this.stayInDiagnosisList || this.notificationNeeded
+				|| this.stayInNotificationList || task.isFinalized());
 	}
 
 	public boolean isTaksEditable() {

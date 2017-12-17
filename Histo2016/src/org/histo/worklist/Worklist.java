@@ -90,7 +90,7 @@ public class Worklist {
 
 	public Worklist(String name, WorklistSearch worklistSearch, boolean showNoneActiveTasks,
 			WorklistSortOrder worklistSortOrder, boolean autoUpdate) {
-		this(name, worklistSearch,showNoneActiveTasks, worklistSortOrder,autoUpdate, false);
+		this(name, worklistSearch, showNoneActiveTasks, worklistSortOrder, autoUpdate, false);
 	}
 
 	public Worklist(String name, WorklistSearch worklistSearch, boolean showNoneActiveTasks,
@@ -119,10 +119,10 @@ public class Worklist {
 	public void addPatient(Patient patient) {
 		if (containsPatient(patient))
 			replacePatient(patient);
-		else
+		else {
 			getItems().add(patient);
-
-		generateTaskStatus(patient);
+			generateTaskStatus(patient);
+		}
 	}
 
 	public boolean replacePatient(Patient patient) {

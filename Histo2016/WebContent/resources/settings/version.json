@@ -1,14 +1,35 @@
 [
 	{
+		"version": "1.0.12",
+		"changes": [
+			"<b>Added:</b> Recht für Änderung der Auftrags-Nummer eingeführt",
+			"<b>Added:</b> Auftrags-Nummer kann nachträglich verändert werden",
+			"<b>Change:</b> Aktuelle Versicherung wird nun angezeigt, anstelle von privat/regulär im Diagnosis View",
+			"<b>Change:</b> Probe/Block/Objektträger archivieren wurde in löschen umbenanntn",
+			"<b>Change:</b> Login-Button wird gesperrt sobald ein Login erfolgt",
+			"<b>Added:</b> Auftrag kann archviert/dearchviert werden, entsprechende Rechte eingeführt.",
+			"<b>Change:</b> Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und ensprechende Köpfe für die einzelen Phase im Menu eingebaut."
+		]
+	},{
 		"version": "1.0.11",
 		"changes": [
-			"<b>Fix:</b> Programm-Gruppen k�nnen Benutzer wieder richtig zugeweisen werden",
-			"<b>Change:</b> Beim Einloggen wird Gro�/Kleinschreibung des Benutzernamens ignoriert",
+			"<b>Fix:</b> Programm-Gruppen können Benutzer wieder richtig zugeweisen werden",
+			"<b>Change:</b> Beim Einloggen wird Groß/Kleinschreibung des Benutzernamens ignoriert",
 			"<b>Change:</b> Sessiontimout auf 12h gesetzt",
 			"<b>Change:</b> Passwort wird wieder abgefragt, war zur Debugzwecken deaktiviert",
-			"<b>Change:</b> Die Generierung eines Befundberichtes nach Abschlie�en der Diangose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.",
-			"<b>Fix:</b> Logeintr�ge werde nicht mehr mehrfach angezeigt",
-			"<b>Fix:</b> Editieren von externen Patienten geht wieder"
+			"<b>Change:</b> Die Generierung eines Befundberichtes nach Abschließen der Diangose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.",
+			"<b>Fix:</b> Logeinträge werde nicht mehr mehrfach angezeigt",
+			"<b>Fix:</b> Editieren von externen Patienten geht wieder",
+			"<b>Fix:</b> Malignität im Befundbericht wird richtig angezeigt, Satz über die Gültigkeit des Berichtes hinzugefügt. ",
+			"<b>Change:</b> Einlog-Routine überarbeitet, redirect jetzt möglich, Fehlermeldung bei falschen Benutzerdaten.",
+			"<b>Change:</b> Ist keine Vorlage für einen Diangose-Text vorhanden, wird der link zum Kopieren der Vorlage ausgeraut.",
+			"<b>Change:</b> Im Operateurauswahl-Dialog kann der Operateur jetzt auch beim klicken auf den Namen ausgewählt werden.",
+			"<b>Fix:</b> Rechtschreibfehler korrigiert.",
+			"<b>Change:</b> Auftragsnummer darf maximal 6 Zahlen enthalen, ein neuer Auftrag kann nur noch mit gültiger Auftragsnummer erstellt werden.",
+			"<b>Added:</b> Funktionsoberarzt/ärztin als Auswahl bei Diagnosen-Unterschrift hinzugefügt",
+			"<b>Fix:</b> Hover-Texte angepasst",
+			"<b>Fix:</b> Diagnosen und Proben werden im Diangosen-View wieder richtig angezeigt",
+			"<b>Change:</b> Ist nur eine Probe vorhanden, wird kein Name im Diangosen-View mehr angezeigt"
 			
 		]
 	},{
@@ -17,10 +38,10 @@
 			"<b>Added:</b> Warnung wird bei doppelter Tasknummern angezeigt",
 			"<b>Change:</b> Konsile sind nicht mehr bearbeitbar, wenn Auftrag finalisiert wurde",
 			"<b>Fix:</b> Konsile werden richtig gespeichert",
-			"<b>Added:</b> Konsil-Dialog kann aus der Auftrags�bersicht, �ber das Konsil-Icon aufgerufen werden",
-			"<b>Added:</b> Auftragsnummer manuell anpassbar, Programm z�hlt bei der h�chten nummer des laufenden Jahres weiter",
+			"<b>Added:</b> Konsil-Dialog kann aus der Auftrags�bersicht, �ber das Konsil-Icon aufgerufen werden",
+			"<b>Added:</b> Auftragsnummer manuell anpassbar, Programm z�hlt bei der h�chten nummer des laufenden Jahres weiter",
 			"<b>Change:</b> Beim Konsil ausdrucken wird der Konsil-Dialog nicht mehr geschlossen",
-			"<b>Added:</b> Konsile enthalten mehr Felder zum Dokumentieren von versendeten und zur�ckgekommen Proben"
+			"<b>Added:</b> Konsile enthalten mehr Felder zum Dokumentieren von versendeten und zur�ckgekommen Proben"
 		]
 	},
 	{

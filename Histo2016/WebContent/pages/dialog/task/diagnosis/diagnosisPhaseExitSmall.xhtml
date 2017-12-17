@@ -27,8 +27,21 @@
 		</div>
 
 		<div class="dialogContent">
-			<h:panelGrid columns="1" styleClass="newStyleListingTable" columnClasses="columnLongText">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+				columnClasses="columnLongText">
 				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.text']}"></h:outputLabel>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				style="margin: 10px 0px 0px 20px">
+				<p:selectBooleanCheckbox
+					value="#{dialogHandlerAction.diagnosisPhaseExitDialog.goToNotificationPhase}" />
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseExit.button.notificationPhase']}" />
+
+				<p:selectBooleanCheckbox
+					value="#{dialogHandlerAction.diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
+				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.button.stay']}" />
 			</h:panelGrid>
 		</div>
 
@@ -37,11 +50,6 @@
 				styleClass="newTableContainer">
 
 				<h:panelGrid columns="2" styleClass="newTableContainer left">
-					<!-- archived -->
-					<p:selectBooleanCheckbox
-						value="#{dialogHandlerAction.diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
-					<h:outputLabel 
-						value="#{msg['dialog.diagnosisPhaseExit.button.stay']}" />
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">

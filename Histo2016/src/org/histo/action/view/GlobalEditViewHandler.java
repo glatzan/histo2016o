@@ -6,6 +6,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.View;
@@ -92,6 +93,10 @@ public class GlobalEditViewHandler {
 		if (selectedTask != null)
 			selectedTask.generateTaskStatus();
 		
+		updateMenuModel(updateFavouriteLists);
+	}
+	
+	public void updateMenuModel(boolean updateFavouriteLists) {
 		setTaskMenuModel((new MenuGenerator()).generateEditMenu(selectedPatient, selectedTask));
 	}
 
@@ -104,9 +109,9 @@ public class GlobalEditViewHandler {
 		}
 	}
 
-	public void removeTaskFromFavouriteList(Task task, long id) {
+	public void removeTaskFromFavouriteList(Task task, Long... ids) {
 		try {
-			favouriteListDAO.removeTaskFromList(task, id);
+			favouriteListDAO.removeTaskFromList(task, ArrayUtils.toPrimitive(ids));
 			updateDataOfTask(true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.onVersionConflictPatient(task.getPatient(), true);

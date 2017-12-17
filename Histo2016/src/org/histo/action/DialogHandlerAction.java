@@ -1,9 +1,8 @@
 package org.histo.action;
 
 import org.histo.action.dialog.WorklistSearchDialog;
-import org.histo.action.dialog.diagnosis.DiagnosisExitStayInPhaseDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
-import org.histo.action.dialog.diagnosis.DiagnosisUnFinalizeDialog;
+import org.histo.action.dialog.diagnosis.DiagnosisRevisionDialog;
 import org.histo.action.dialog.favouriteLists.AddTaskToFavouriteListDialog;
 import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
 import org.histo.action.dialog.media.MediaDialog;
@@ -30,8 +29,8 @@ import org.histo.action.dialog.settings.staining.StainingEditDialog;
 import org.histo.action.dialog.settings.users.UserListDialog;
 import org.histo.action.dialog.slide.AddSlidesDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
-import org.histo.action.dialog.slide.StainingExitStayInPhaseDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
+import org.histo.action.dialog.task.ArchiveTaskDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.histo.action.dialog.task.ChangeTaskIDDialog;
 import org.histo.action.dialog.task.CouncilDialogHandler;
@@ -44,7 +43,7 @@ import lombok.Setter;
 @Scope(value = "session")
 @Setter
 public class DialogHandlerAction {
-
+	
 	private OrganizationListDialog organizationListDialog;
 
 	private WorklistSearchDialog worklistSearchDialog;
@@ -85,13 +84,9 @@ public class DialogHandlerAction {
 
 	private DiagnosisPhaseExitDialog diagnosisPhaseExitDialog;
 
-	private DiagnosisExitStayInPhaseDialog diagnosisExitStayInPhaseDialog;
-
-	private DiagnosisUnFinalizeDialog diagnosisUnFinalizeDialog;
+	private ArchiveTaskDialog archiveTaskDialog;
 
 	private StainingPhaseExitDialog stainingPhaseExitDialog;
-
-	private StainingExitStayInPhaseDialog stainingExitStayInPhaseDialog;
 
 	private PhysicianSearchDialog physicianSearchDialog;
 
@@ -115,6 +110,8 @@ public class DialogHandlerAction {
 
 	private ChangeTaskIDDialog changeTaskIDDialog;
 
+	private DiagnosisRevisionDialog diagnosisRevisionDialog;
+	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -248,14 +245,6 @@ public class DialogHandlerAction {
 		return diagnosisPhaseExitDialog;
 	}
 
-	public DiagnosisExitStayInPhaseDialog getDiagnosisExitStayInPhaseDialog() {
-		if (diagnosisExitStayInPhaseDialog == null) {
-			diagnosisExitStayInPhaseDialog = new DiagnosisExitStayInPhaseDialog();
-		}
-
-		return diagnosisExitStayInPhaseDialog;
-	}
-
 	public StainingPhaseExitDialog getStainingPhaseExitDialog() {
 		if (stainingPhaseExitDialog == null) {
 			stainingPhaseExitDialog = new StainingPhaseExitDialog();
@@ -264,20 +253,12 @@ public class DialogHandlerAction {
 		return stainingPhaseExitDialog;
 	}
 
-	public StainingExitStayInPhaseDialog getStainingExitStayInPhaseDialog() {
-		if (stainingExitStayInPhaseDialog == null) {
-			stainingExitStayInPhaseDialog = new StainingExitStayInPhaseDialog();
+	public ArchiveTaskDialog getArchiveTaskDialog() {
+		if (archiveTaskDialog == null) {
+			archiveTaskDialog = new ArchiveTaskDialog();
 		}
 
-		return stainingExitStayInPhaseDialog;
-	}
-
-	public DiagnosisUnFinalizeDialog getDiagnosisUnFinalizeDialog() {
-		if (diagnosisUnFinalizeDialog == null) {
-			diagnosisUnFinalizeDialog = new DiagnosisUnFinalizeDialog();
-		}
-
-		return diagnosisUnFinalizeDialog;
+		return archiveTaskDialog;
 	}
 
 	public AddTaskToFavouriteListDialog getAddTaskToFavouriteListDialog() {
@@ -384,4 +365,11 @@ public class DialogHandlerAction {
 		return changeTaskIDDialog;
 	}
 
+	public DiagnosisRevisionDialog getDiagnosisRevisionDialog() {
+		if(diagnosisRevisionDialog == null) {
+			diagnosisRevisionDialog = new DiagnosisRevisionDialog();
+		}
+		
+		return diagnosisRevisionDialog;
+	}
 }

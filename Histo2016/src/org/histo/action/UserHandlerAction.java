@@ -108,7 +108,7 @@ public class UserHandlerAction implements Serializable {
 	 * @param role
 	 * @return
 	 */
-	public boolean currentUserHasPermission(HistoPermissions permissions) {
+	public boolean currentUserHasPermission(HistoPermissions... permissions) {
 		return userHasPermission(getCurrentUser(), permissions);
 	}
 
@@ -119,8 +119,13 @@ public class UserHandlerAction implements Serializable {
 	 * @param role
 	 * @return
 	 */
-	public boolean userHasPermission(HistoUser user, HistoPermissions role) {
-		return user.getGroup().getPermissions().stream().anyMatch(p -> p == role);
+	public boolean userHasPermission(HistoUser user, HistoPermissions... role) {
+		return user.getGroup().getPermissions().stream().anyMatch(p -> {
+			for (int i = 0; i < role.length; i++)
+				if (p == role[i])
+					return true;
+			return false;
+		});
 	}
 
 	/**

@@ -2,12 +2,21 @@
 -> plink windows set PATH=C:\path\to\putty\directory;%PATH%
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
 
-	<!-- Staining, add to staining phase, if all staining tasks have been completed-->
-					<p:menuitem
-						value="#{msg['header.menu.task.sample.stainingPhase.force.enter']}"
-						disabled="#{!taskEditable}" icon="fa fa-fw fa-image"
-						onclick="$('#headerForm\\:stainingPhaseForceEnter').click();$('#headerForm\\:tieredOptions').hide();return false;"
-						rendered="#{taskIsNotNull and !selectedTask.isListedInFavouriteList('StainingList', 'ReStainingList','StayInStainingList')}" />
+// generierung befundbericht final
+//					if (userHandlerAction.getCurrentUser().getSettings().isPdfPreviewOnDiagnosisApproval()) {
+//						// generating final diagnosis report
+//						if (dialogHandlerAction.getPrintDialog().getPdfContainer()
+//								.getType() != DocumentType.DIAGNOSIS_REPORT) {
+//							dialogHandlerAction.getPrintDialog()
+//									.setDefaultTemplateOfType(DocumentType.DIAGNOSIS_REPORT);
+//						}
+//
+//						dialogHandlerAction.getPrintDialog().getPdfContainer()
+//								.setType(DocumentType.DIAGNOSIS_REPORT_COMPLETED);
+//
+//						pdfDAO.attachPDF(getTask().getPatient(), getTask(),
+//								dialogHandlerAction.getPrintDialog().getPdfContainer());
+//					}
 
 helper getPrinterForIP => sub { my ($self, $ip)=@_;
     my $room = Mojo::UserAgent->new->get('http://10.210.21.11:3009/DB/PLS/ip2room/ip/'.$ip)->res->json->[0]->{aufruftext};
@@ -23,7 +32,6 @@ left join favouritelist_histouser hideList on hideList.favouritelist_id = flist.
 
 where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.hidelistforuser_id IS NULL or hideList.hidelistforuser_id != 1) GROUP BY flist.id 
 
-
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
@@ -31,41 +39,32 @@ Minor Changes:
 TODO:  -> Auswahl der Diagnose im Druckmenu
 TODO:  -> Update header menu wenn nachfärbung erstellt wird
 TODO:  -> Email bei fehler über customerrorhandler senden
-TODO: Disable loginbutton on click
+
+
+10.	Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
+3.	Zimmermann --> Atzrodt
+a.	Aktualliesierien
+8.	Schalflfäche Benachrichtigung im Menü ist anscheindend Funktionslos
 
 1.	Vorgeschichte: Enter --> neue Zeile
-2.	Für Befunder neue Schaltfläche: Befundung erledigt: vor Diagnose Beenden (z.B. mit Druckersymbol/Sekräterinsymbol)
-->	Diagnose archivieren 
-->	Auftrag entsperren -> dignose dearchivieren
-->	Jetzige diagnose zu Befundungbeenden
-
-
-
-
-
 1.	Button befundung beenden unter Unterschrift im Diagnosen view
 2.	Scuhfelder als Solche Kennzeichnen (Lupensymbol) -> (in overlay dialogen, zb. Diagosen view)
 2.	Bei Patient hinzufügen: kann der "Cursor" immer direkt bei PIZ sein? Macht scannen schneller
 a.	70% der fälle funktinert es
-3.	Zimmermann --> Atzrodt
-a.	Aktualliesierien
 5.	PDF Maker als Drucker hinterlegen (zum Testen/Ansehen der Ausdrucke)
 7.	Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
-8.	Schalflfäche Benachrichtigung im Menü ist anscheindend Funktionslos
 9.	Zahrand zum kontakt bearbeiten (alle) in diagnosen view
-10.	Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
 11. Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
 
 
 Urgent Changes 
 TODO: Favouriten-Listen für Benutzer zugänglich machen
 TODO: Latex Datei für externen Befund
+TODO: erweiterte Suche 
 
 TODO: DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes
-TODO: Finaliz in task, wird dies benötig? -> löschen durch diagnosis date ersetzen
-
 TODO: Datenbankabfragen in globaleidt handler shiften
-TODO: erweiterte Suche 
+
 
 Long-term Changes 
 TODO: Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
@@ -89,6 +88,9 @@ TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert wer
 TODO: Freischaltungs link
 
 V 1.0.12
+++++: Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und ensprechende Köpfe für die einzelen Phase im Menu eingebaut.
+++++: Auftrag kann archviert/dearchviert werden, entsprechende Rechte eingeführt.
+++++: Login-Button wird gesperrt sobald ein Login erfolgt
 ++++: Probe/Block/Objektträger archivieren wurde in löschen umbenannt
 ++++: Aktuelle Versicherung wird nun angezeigt, anstelle von privat/regulär im Diagnosis View
 ++++: Auftrags-Nummer kann nachträglich verändert werden
@@ -96,11 +98,19 @@ V 1.0.12
 
 SQL:
 Alter table task add insurance character varying;
+Alter table task drop column editable; 
 Alter table patient drop column privateInsurance; 
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'EDIT_TASK_ID');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'EDIT_TASK_ID');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'EDIT_TASK_ID');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'EDIT_TASK_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ARCHIVE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ARCHIVE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ARCHIVE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ARCHIVE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'RESOTRE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'RESOTRE_TASK');
+
 
 V 1.0.11
 ++++: Ist nur eine Probe vorhanden, wird kein Name im Diangosen-View mehr angezeigt

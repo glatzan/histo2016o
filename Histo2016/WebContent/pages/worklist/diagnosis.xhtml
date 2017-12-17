@@ -50,13 +50,13 @@
 								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
 							<p:inputText value="#{sample.material}"
-								disabled="#{!globalEditViewHandler.selectedTask.editable}"
+								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 								tabindex="1" styleClass="customBackground"
 								style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}" />
 
 							<p:commandLink tabindex="1"
 								title="#{msg['body.diagnosis.material.text']}"
-								rendered="#{globalEditViewHandler.selectedTask.editable}"
+								rendered="#{globalEditViewHandler.selectedTask.taskStatus.editable}"
 								style="float: right; margin-right:5px;"
 								actionListener="#{dialogHandlerAction.changeMaterialDialog.initAndPrepareBean(sample)}">
 								<i class="fa fa-fw fa-cog" />
@@ -72,7 +72,7 @@
 					<h:outputLabel value="#{msg['body.diagnosis.eye']}" />
 					<p:selectOneMenu styleClass="customBackground" tabindex="6"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{globalEditViewHandler.selectedTask.eye}">
 
 						<f:selectItems value="#{enumProvider.eyes}" var="eye"
@@ -93,7 +93,7 @@
 						<p:inputTextarea
 							value="#{globalEditViewHandler.selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
-							disabled="#{!globalEditViewHandler.selectedTask.editable}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							id="caseHistoryInput" style="width:90%"
 							onfocus="PF('caseHistoryOverlayPanel').show();"
 							onkeypress="PF('caseHistoryOverlayPanel').hide();"
@@ -146,6 +146,7 @@
 						<p:commandLink title="#{msg['body.diagnosis.taskNumber.change']}"
 							rendered="#{userHandlerAction.currentUserHasPermission('EDIT_TASK_ID')}"
 							style="margin-left:10px;"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							actionListener="#{dialogHandlerAction.changeTaskIDDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
@@ -157,7 +158,7 @@
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="2"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						styleClass="customBackground"
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{globalEditViewHandler.selectedTask.dateOfSugeryAsDate}">
 						<p:ajax event="dateSelect"
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dateOfSurgery',mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfSugeryAsDate))}" />
@@ -168,7 +169,7 @@
 					<!-- date of receipt -->
 					<h:outputLabel value="#{msg['body.diagnosis.taskEDate']}" />
 					<p:calendar pattern="dd.MM.yyyy" mask="true" tabindex="3"
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
 						styleClass="customBackground"
 						value="#{globalEditViewHandler.selectedTask.dateOfReceiptAsDate}">
@@ -181,6 +182,7 @@
 					<!-- insurance -->
 					<h:outputLabel value="#{msg['body.diagnosis.insurance']}" />
 					<p:inputText
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{globalEditViewHandler.selectedTask.insurance}">
 						<f:ajax event="change" execute="@this"
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.insurance',mainHandlerAction.date(globalEditViewHandler.selectedTask.insurance))}" />
@@ -190,7 +192,7 @@
 					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
 					<p:selectOneMenu id="wards"
 						value="#{globalEditViewHandler.selectedTask.ward}" editable="true"
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						styleClass="customBackground" tabindex="5"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
@@ -214,7 +216,7 @@
 							styleClass="noUnderlineAtLink" tabindex="8"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}"
-							disabled="#{!globalEditViewHandler.selectedTask.editable}">
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -233,7 +235,7 @@
 							styleClass="noUnderlineAtLink" tabindex="9"
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'PRIVATE_PHYSICIAN')}"
-							disabled="#{!globalEditViewHandler.selectedTask.editable}">
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 							<i class="fa fa-fw fa-eye" />
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 						</p:commandLink>
@@ -261,7 +263,7 @@
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
 				<h:panelGroup id="extendedTextParent">
 					<p:inputTextarea style="width:99%" id="extendedText" rows="15"
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{revision.text}">
 						<p:ajax event="change" execute="@this"
 							listener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.histologicalRecord', revision.text)}" />
@@ -300,7 +302,7 @@
 						<!-- copy diagnosis text -->
 						<p:commandLink styleClass="noUnderlineAtLink"
 							style="margin-left:20px;"
-							disabled="#{!globalEditViewHandler.selectedTask.editable or diagnosis.diagnosisPrototype.extendedDiagnosisText eq ''}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable or diagnosis.diagnosisPrototype.extendedDiagnosisText eq ''}"
 							title="#{diagnosis.diagnosisPrototype.extendedDiagnosisText eq '' ? msg['body.diagnosis.diagnosis.histologicalRecordPreset.none'] : msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
 							rendered="#{diagnosis.diagnosisPrototype ne null}"
 							process="@this"
@@ -315,7 +317,7 @@
 							<h:outputLabel
 								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
 							<p:selectBooleanCheckbox value="#{diagnosis.malign}"
-								disabled="#{!globalEditViewHandler.selectedTask.editable}"
+								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 								style="margin:3px 0px 0px 3px;">
 								<f:ajax event="change"
 									listener="#{diagnosisViewHandlerAction.onDataChange(diagnosis,'log.patient.task.sample.diagnosis.changed.malign',diagnosis.malign)}" />
@@ -332,7 +334,7 @@
 							onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
 							onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
 							id="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
-							disabled="#{!globalEditViewHandler.selectedTask.editable}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							style="width:99%">
 							<p:watermark
 								for="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
@@ -382,7 +384,7 @@
 				<h:outputLabel
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.date']}"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
-					disabled="#{!globalEditViewHandler.selectedTask.editable}"
+					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 					value="#{globalEditViewHandler.selectedTask.diagnosisContainer.signatureDateAsDate}">
 					<p:ajax event="dateSelect"
 						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask.diagnosisContainer,'log.patient.task.diagnosisContainer.signautre.date',mainHandlerAction.date(globalEditViewHandler.selectedTask.diagnosisContainer.signatureDate))}" />
@@ -402,7 +404,7 @@
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician']}" />
 				<h:panelGroup>
 					<p:selectOneMenu
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						style="width:100% !important;"
 						panelStyleClass="iconFixForSelectOneMenu"
 						value="#{diagnosisViewHandlerAction.signatureOne}"
@@ -438,7 +440,7 @@
 				<h:panelGroup>
 					<p:selectOneMenu id="pysicianToSignRole" editable="true"
 						style="width:100% !important;"
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{globalEditViewHandler.selectedTask.diagnosisContainer.signatureOne.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"
@@ -462,7 +464,7 @@
 					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant']}" />
 				<h:panelGroup>
 					<p:selectOneMenu
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						style="width:100% !important;"
 						panelStyleClass="iconFixForSelectOneMenu"
 						value="#{diagnosisViewHandlerAction.signatureTwo}"
@@ -498,7 +500,7 @@
 				<h:panelGroup>
 					<p:selectOneMenu id="consultantToSignRole" editable="true"
 						style="width:100% !important"
-						disabled="#{!globalEditViewHandler.selectedTask.editable}"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{globalEditViewHandler.selectedTask.diagnosisContainer.signatureTwo.role}">
 						<f:selectItems value="#{enumProvider.signatureRoles}"
 							var="signatureRole"

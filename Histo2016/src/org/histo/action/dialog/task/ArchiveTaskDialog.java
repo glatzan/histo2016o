@@ -1,7 +1,8 @@
-package org.histo.action.dialog.diagnosis;
+package org.histo.action.dialog.task;
+
+import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
@@ -18,21 +19,15 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-
 @Configurable
 @Getter
 @Setter
-public class DiagnosisExitStayInPhaseDialog extends AbstractDialog {
-	
+public class ArchiveTaskDialog extends AbstractDialog {
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -42,7 +37,7 @@ public class DiagnosisExitStayInPhaseDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
+	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -53,13 +48,18 @@ public class DiagnosisExitStayInPhaseDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GlobalEditViewHandler globalEditViewHandler;
-	
-	public void initAndPrepareBean(Task task) {
-		initBean(task, Dialog.DIAGNOSIS_EXIT_STAY_IN_PHASE_DIALOG);
-		prepareDialog();
+
+	/**
+	 * If true the archive dialog is shown, otherwise the restore dialog
+	 */
+	private boolean archive;
+
+	public void initAndPrepareBean(Task task, boolean archive) {
+		if (initBean(task, archive))
+			prepareDialog();
 	}
 
-	public void initBean(Task task, Dialog dialog) {
+	public boolean initBean(Task task, boolean archive) {
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -68,17 +68,48 @@ public class DiagnosisExitStayInPhaseDialog extends AbstractDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
-		super.initBean(task, dialog);
+		this.archive = archive;
+
+		if (archive)
+			super.initBean(task, Dialog.TASK_ARCHIVE);
+		else
+			super.initBean(task, Dialog.TASK_RESTORE);
+
+		return true;
 	}
 
-	public void exitPhase() {
+	public void archiveTask() {
 		try {
-			favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
-			
-		} catch (CustomDatabaseInconsistentVersionException e) {
+
+			// remove from all system lists
+			favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.values());
+
+			// finalizing task
+			getTask().setFinalizationDate(System.currentTimeMillis());
+			getTask().setFinalized(true);
+
+			patientDao.save(getTask(), "log.patient.task.change.diagnosisPhase.archive", new Object[] { getTask() });
+
+		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
-		
+
+		globalEditViewHandler.updateDataOfTask(false);
+	}
+
+	public void restoreTask() {
+		try {
+
+			// finalizing task
+			getTask().setFinalizationDate(0);
+			getTask().setFinalized(false);
+
+			patientDao.save(getTask(), "log.patient.task.change.diagnosisPhase.dearchive", new Object[] { getTask() });
+
+		} catch (Exception e) {
+			onDatabaseVersionConflict();
+		}
+
 		globalEditViewHandler.updateDataOfTask(false);
 	}
 }

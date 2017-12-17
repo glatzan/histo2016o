@@ -40,6 +40,8 @@
 	<!-- **************************************** Icons button -->
 	<!-- select fa-check-circle-o -->
 	<!-- save fa-check-circle-o -->
+	<!-- create fa-plus-circle -->
+	<!-- abort fa-times-circle -->
 
 	<!-- edit -->
 	<p:commandLink title="#{msg['dialog.settings.material.edit']}"
@@ -57,5 +59,22 @@
 		partialSubmit="true">
 		<i class="fa fa-fw fa-times-circle" />
 	</p:commandLink>
+
+
+
+	<!-- close dialog an open as queque -->
+	<!-- show only button for print dialog, workaround for closing and showing dialogs -->
+	<p:commandButton id="printBtnShowOnly" style="display:none"
+		actionListener="#{mainHandlerAction.showDialog('PRINT')}">
+		<p:ajax event="dialogReturn" update="contentForm"
+			listener="#{mainHandlerAction.processQueues()}" />
+	</p:commandButton>
+
+	<!-- show only button for council dialog, workaround for closing and showing dialogs -->
+	<p:commandButton id="councilBtnShowOnly" style="display:none"
+		actionListener="#{mainHandlerAction.showDialog('COUNCIL')}">
+		<p:ajax event="dialogReturn" update="contentForm"
+			listener="#{mainHandlerAction.processQueues()}" />
+	</p:commandButton>
 </h:body>
 </html>
