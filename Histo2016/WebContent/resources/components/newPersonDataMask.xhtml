@@ -142,6 +142,12 @@
 				value="#{msg['component.personDataMask.miscellaneous.mobile']}" />
 			<p:inputText value="#{cc.attrs.person.contact.phone}" name="phone"
 				autocomplete="tel" disabled="#{cc.attrs.disabled}" />
+
+
+			<h:outputLabel
+				value="#{msg['component.personDataMask.miscellaneous.update']}"></h:outputLabel>
+			<p:selectBooleanCheckbox value="#{cc.attrs.person.autoUpdate}"
+				title="#{msg['component.personDataMask.miscellaneous.update.text']}" />
 		</h:panelGrid>
 
 		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"

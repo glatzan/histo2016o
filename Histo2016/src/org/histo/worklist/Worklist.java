@@ -160,6 +160,7 @@ public class Worklist {
 	}
 
 	public void generateTaskStatus(Patient patient) {
+		System.out.println("asd" + patient.getTasks());
 		if (patient.getTasks() != null)
 			for (Task task : patient.getTasks()) {
 				task.generateTaskStatus();

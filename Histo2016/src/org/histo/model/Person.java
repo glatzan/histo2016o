@@ -91,7 +91,7 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 	 * If true the persons data will no be updated with backend data
 	 */
 	@Column
-	private boolean doNotUpdate;
+	private boolean autoUpdate;
 
 	@ManyToMany()
 	@LazyCollection(FALSE)

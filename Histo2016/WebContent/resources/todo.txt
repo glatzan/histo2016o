@@ -36,6 +36,8 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Minor Changes:
+-> fix selecting bug from taskList (reload whole patient object initialized)
+
 TODO:  -> Auswahl der Diagnose im Druckmenu
 TODO:  -> Update header menu wenn nachfärbung erstellt wird
 TODO:  -> Email bei fehler über customerrorhandler senden
@@ -91,15 +93,23 @@ TODO: Freischaltungs link
 
 
 V 1.0.13
+++++: Beim erstellen eines Auftrags werden Aufklärungen nicht mehr aus einer Vorherigen Auftragserstellung übernommen.
 ++++: Benachrichtigungs-Dialog kann wieder über das Menu geöffnet werden
 ++++: Material kann manuell beim Erstellen eines Auftrages eingegeben werden
 ++++: Fehler beim suchen nach Patienten ohne Auftrag behoben
 
 SQL:
-Alter table person add doNotUpdate boolean;
+Alter table person add autoUpdate boolean;
+update person set autoUpdate = false
 Alter table person_aud add doNotUpdate boolean;
 Alter table physician drop column manuallyAltered; 
 Alter table physician_aud drop column manuallyAltered; 
+alter table patient_pdfcontainer drop constraint uk_c7n1md70xsclk1c5w9yiaucl9
+alter table task_pdfcontainer drop constraint uk_rp12j1tw0yxecu9bt0b0ym72t
+alter table biobank_pdfcontainer drop constraint uk_8gmung1gnute185q5scwax2kk
+alter table council_pdfcontainer drop constraint uk_8gmung1gnute185q5scwax2kk
+
+
 
 Alter table task_aud drop column editable; 
 Alter table patient_aud  drop column privateInsurance;

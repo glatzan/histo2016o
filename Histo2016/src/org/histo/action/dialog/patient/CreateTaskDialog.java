@@ -186,6 +186,9 @@ public class CreateTaskDialog extends AbstractDialog {
 		getBioBank().setInformedConsentType(InformedConsentType.NONE);
 		getBioBank().setTask(getTask());
 
+		//resetting selected container
+		dialogHandlerAction.getMediaDialog().setSelectedPdfContainer(null);
+		
 		setMoveInformedConsent(false);
 	}
 
