@@ -147,7 +147,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	@SuppressWarnings({ "unchecked", "deprecation" })
 	public List<Task> getTasks(int count, int page) {
 		Criteria criteria = getSession().createCriteria(Task.class);
-		criteria.addOrder(Order.desc("id"));
+		criteria.addOrder(Order.desc("taskID"));
 		criteria.setFirstResult(page * count);
 		criteria.setMaxResults(count);
 

@@ -80,4 +80,8 @@ public class MailTemplate extends Template {
 	public void fillTemplate() {
 
 	}
+	
+//	public static final getVelocityEngine() {
+//		
+//	}
 }

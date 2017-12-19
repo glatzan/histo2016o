@@ -13,6 +13,7 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.MailTemplate;
+import org.histo.util.VelocityNoOutputLogger;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,29 +42,22 @@ public class DiagnosisReportMail extends MailTemplate {
 	}
 
 	public void fillTemplate() {
-		VelocityEngine ve = new VelocityEngine();
-		Properties props = new Properties();
-		props.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
-		props.put("runtime.log.logsystem.log4j.category", "velocity");
-		props.put("runtime.log.logsystem.log4j.logger", "velocity");
+		Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new VelocityNoOutputLogger());
+		Velocity.init();
 
-		ve.init(props);
-		
 		/* create a context and add data */
 		VelocityContext context = new VelocityContext();
 
-		
 		context.put("date", new DateTool());
-		
+
 		if (patient != null)
 			context.put("patient", patient);
-		
+
 		if (task != null)
 			context.put("task", task);
-		
+
 		if (contact != null)
 			context.put("contact", contact);
-	
 
 		/* now render the template into a StringWriter */
 		StringWriter writer = new StringWriter();

@@ -112,8 +112,8 @@ public class WorklistSimpleSearch extends WorklistSearch {
 	}
 
 	/**
-	 * Returns false if any pre configured list is selected. All Filter options
-	 * will be disabled
+	 * Returns false if any pre configured list is selected. All Filter options will
+	 * be disabled
 	 * 
 	 * @return
 	 */
@@ -173,7 +173,7 @@ public class WorklistSimpleSearch extends WorklistSearch {
 			// getting new stainigs
 			if (isNewPatients()) {
 				result.addAll(patientDao.getPatientWithoutTasks(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-						TimeUtil.setDayEnding(cal).getTimeInMillis()));
+						TimeUtil.setDayEnding(cal).getTimeInMillis(), true));
 			}
 
 			if (getSelectedLists() != null && getSelectedLists().length > 0) {

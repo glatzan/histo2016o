@@ -18,6 +18,18 @@
 	<h:form enctype="multipart/form-data" id="dialogContent">
 
 
+		<script type="text/javascript">
+			function disableButton(btn, disable) {
+				if (disable)
+					PF(btn).disable();
+				else
+					PF(btn).enable();
+			}
+		</script>
+
+
+
+
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
@@ -171,40 +183,51 @@
 						<p:spinner styleClass="numberFixForSpinner"
 							value="#{dialogHandlerAction.createTaskDialog.sampleCount}"
 							min="1" max="5">
-							<p:ajax update="sampleMaterial autoNomenclature" process="@this"
-								event="change"
+							<p:ajax update="@form" process="@this" event="change"
 								listener="#{dialogHandlerAction.createTaskDialog.updateDialog()}"></p:ajax>
 						</p:spinner>
 
 
-					</h:panelGrid>
+						<c:forEach var="sample" varStatus="sampleIndex"
+							items="#{dialogHandlerAction.createTaskDialog.task.samples}">
 
-					<p:dataTable var="sample" id="sampleMaterial"
-						styleClass="newStyleDataList"
-						value="#{dialogHandlerAction.createTaskDialog.task.samples}">
-						<p:column style="width: 40px;">
-							<ul style="margin: 0px;">
-								<LI style="margin: 0px;" />
-							</ul>
-						</p:column>
-
-						<p:column style="width: 62px;">
-							<h:outputLabel
+							<h:outputLabel style="margin-left:10px"
 								value="#{msg['dialog.createTask.task']} #{sample.sampleID}"></h:outputLabel>
-						</p:column>
-						<p:column>
-							<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-								style="margin-left:30px;"
-								converter="#{dialogHandlerAction.createTaskDialog.materialListTransformer}"
-								value="#{sample.materilaPreset}">
-								<f:selectItems
-									value="#{dialogHandlerAction.createTaskDialog.materialList}"
-									var="materialSelect" itemLabel="#{materialSelect.name}"
-									itemValue="#{materialSelect}">
-								</f:selectItems>
-							</p:selectOneMenu>
-						</p:column>
-					</p:dataTable>
+
+							<h:panelGroup>
+								<!-- material text -->
+								<p:inputText value="#{sample.material}"
+									onkeypress="PF('materialOverlayPanel#{sampleIndex.index}').hide();"
+									onclick="PF('materialOverlayPanel#{sampleIndex.index}').show();"
+									onfocus="PF('materialOverlayPanel#{sampleIndex.index}').show();"
+									id="materialName#{sampleIndex.index}" style="width:99%">
+								</p:inputText>
+
+								<p:overlayPanel
+									widgetVar="materialOverlayPanel#{sampleIndex.index}"
+									id="materialOverlayPanel#{sampleIndex.index}"
+									styleClass="defaultOverlayPanel selectOverlayPanel"
+									for="materialName#{sampleIndex.index}" hideEffect="fade"
+									hideEvent="none" showEvent="none">
+									<p:dataTable
+										value="#{dialogHandlerAction.createTaskDialog.materialList}"
+										var="item" styleClass="newStyleDataTable" scrollable="true"
+										scrollHeight="200" rowKey="#{item.id}"
+										selection="#{sample.materilaPreset}" selectionMode="single">
+										<p:column>
+											<h:outputText value="#{item.name}" />
+										</p:column>
+
+										<p:ajax event="rowSelect" update="@form"
+											listener="#{dialogHandlerAction.createTaskDialog.onMaterialPresetChange(sample)}"
+											oncomplete="PF('materialOverlayPanel#{sampleIndex.index}').hide();" />
+
+									</p:dataTable>
+								</p:overlayPanel>
+							</h:panelGroup>
+						</c:forEach>
+
+					</h:panelGrid>
 				</h:panelGrid>
 				<!-- Right column -->
 			</h:panelGrid>
@@ -217,7 +240,7 @@
 				<h:panelGrid columns="3" styleClass="newTableContainer left">
 					<!-- confirm -->
 					<p:commandButton value="#{msg['general.create']}" update="@form"
-						process="@form" icon="fa fa-check-circle-o">
+						widgetVar="confirmBtn" process="@form" icon="fa fa-check-circle-o">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener
@@ -228,8 +251,8 @@
 
 					<!-- print ureport -->
 					<p:commandButton value="#{msg['dialog.createTask.print.UReport']}"
-						update="@form" process="@form" icon="fa fa-print"
-						onstart="PF('blockUIWidget').block()"
+						widgetVar="confirmAndPrintBtn" update="@form" process="@form"
+						icon="fa fa-print" onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
@@ -253,7 +276,7 @@
 				<h:panelGrid columns="1" styleClass="newTableContainer right">
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						immediate="true" icon="fa fa-times-circle">
+						widgetVar="abortBtn" immediate="true" icon="fa fa-times-circle">
 						<f:param name="submittedRequestID"
 							value="#{dialogHandlerAction.createTaskDialog.uniqueRequestID.uniqueRequestID}" />
 						<f:actionListener

@@ -39,30 +39,32 @@ Minor Changes:
 TODO:  -> Auswahl der Diagnose im Druckmenu
 TODO:  -> Update header menu wenn nachfärbung erstellt wird
 TODO:  -> Email bei fehler über customerrorhandler senden
+1.	Schalflfäche Benachrichtigung im Menü ist anscheindend Funktionslos
+-> https://stackoverflow.com/questions/19443366/how-to-disable-velocity-logs
+2.	Zimmermann --> Atzrodt
+	a.	Aktualliesierien
+3.	Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
+4.	Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
+5.	Button befundung beenden unter Unterschrift im Diagnosen view
+6.	Vorgeschichte: Enter --> neue Zeile
 
+-> Crreate Task material auswahl css
 
-10.	Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
-3.	Zimmermann --> Atzrodt
-a.	Aktualliesierien
-8.	Schalflfäche Benachrichtigung im Menü ist anscheindend Funktionslos
-
-1.	Vorgeschichte: Enter --> neue Zeile
-1.	Button befundung beenden unter Unterschrift im Diagnosen view
-2.	Scuhfelder als Solche Kennzeichnen (Lupensymbol) -> (in overlay dialogen, zb. Diagosen view)
-2.	Bei Patient hinzufügen: kann der "Cursor" immer direkt bei PIZ sein? Macht scannen schneller
-a.	70% der fälle funktinert es
-5.	PDF Maker als Drucker hinterlegen (zum Testen/Ansehen der Ausdrucke)
-7.	Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
-9.	Zahrand zum kontakt bearbeiten (alle) in diagnosen view
-11. Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
+Graphic Changes
+->	Scuhfelder als Solche Kennzeichnen (Lupensymbol) -> (in overlay dialogen, zb. Diagosen view)
+->	Bei Patient hinzufügen: kann der "Cursor" immer direkt bei PIZ sein? Macht scannen schneller
+	a.	70% der fälle funktinert es
+->	PDF Maker als Drucker hinterlegen (zum Testen/Ansehen der Ausdrucke)
+->	Zahrand zum kontakt bearbeiten (alle) in diagnosen view
+-> Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
 
 
 Urgent Changes 
 TODO: Favouriten-Listen für Benutzer zugänglich machen
 TODO: Latex Datei für externen Befund
-TODO: erweiterte Suche 
-
 TODO: DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes
+TODO: Erweiterte Suche 
+-> sci fi /(für science finder)
 TODO: Datenbankabfragen in globaleidt handler shiften
 
 
@@ -87,7 +89,23 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+
+V 1.0.13
+++++: Benachrichtigungs-Dialog kann wieder über das Menu geöffnet werden
+++++: Material kann manuell beim Erstellen eines Auftrages eingegeben werden
+++++: Fehler beim suchen nach Patienten ohne Auftrag behoben
+
+SQL:
+Alter table person add doNotUpdate boolean;
+Alter table person_aud add doNotUpdate boolean;
+Alter table physician drop column manuallyAltered; 
+Alter table physician_aud drop column manuallyAltered; 
+
+Alter table task_aud drop column editable; 
+Alter table patient_aud  drop column privateInsurance;
+
 V 1.0.12
+++++: Aufträge werden in der Auftragsübersicht entsprechend ihrer Auftragsnummer sortiert, nicht mehr entsprechend ihrer internen ID.
 ++++: Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und ensprechende Köpfe für die einzelen Phase im Menu eingebaut.
 ++++: Auftrag kann archviert/dearchviert werden, entsprechende Rechte eingeführt.
 ++++: Login-Button wird gesperrt sobald ein Login erfolgt
@@ -98,8 +116,12 @@ V 1.0.12
 
 SQL:
 Alter table task add insurance character varying;
+Alter table task_aud  add insurance character varying;
 Alter table task drop column editable; 
+Alter table task_aud drop column editable; 
 Alter table patient drop column privateInsurance; 
+Alter table patient_aud  drop column privateInsurance;
+
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'EDIT_TASK_ID');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'EDIT_TASK_ID');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'EDIT_TASK_ID');

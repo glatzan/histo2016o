@@ -36,6 +36,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Signature;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
@@ -210,8 +211,11 @@ public class CreateTaskDialog extends AbstractDialog {
 				logger.debug("New Task: Samplecount > samples, adding new samples");
 				// adding samples if count is bigger then the current sample
 				// count
-				while (getSampleCount() > task.getSamples().size())
-					new Sample(task, !getMaterialList().isEmpty() ? getMaterialList().get(0) : null);
+				while (getSampleCount() > task.getSamples().size()) {
+					Sample s = new Sample(task, !getMaterialList().isEmpty() ? getMaterialList().get(0) : null);
+					// set name of material for changing it manually
+					s.setMaterial(!getMaterialList().isEmpty() ? getMaterialList().get(0).getName() : null);
+				}
 			} else if (getSampleCount() < task.getSamples().size()) {
 				logger.debug("New Task: Samplecount > samples, removing sample");
 				// removing samples if count is less then current sample count
@@ -288,9 +292,6 @@ public class CreateTaskDialog extends AbstractDialog {
 					getTask().getTaskID());
 
 			for (Sample sample : getTask().getSamples()) {
-				// set name of material for changing it manually
-				sample.setMaterial(sample.getMaterilaPreset().getName());
-
 				// saving samples
 				genericDAO.savePatientData(sample, "log.patient.task.sample.new", sample.getSampleID());
 				// creating needed blocks
@@ -442,6 +443,10 @@ public class CreateTaskDialog extends AbstractDialog {
 			throw new ValidatorException(
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Auftragsnummer bereits vorhanden"));
 		}
+	}
+
+	public void onMaterialPresetChange(Sample sample) {
+		sample.setMaterial(sample.getMaterilaPreset() != null ? sample.getMaterilaPreset().getName() : "");
 	}
 
 	public void onDatabaseVersionConflict() {

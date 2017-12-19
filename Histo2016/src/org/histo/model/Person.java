@@ -87,6 +87,12 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 	@OneToOne(cascade = CascadeType.ALL)
 	private Contact contact;
 
+	/**
+	 * If true the persons data will no be updated with backend data
+	 */
+	@Column
+	private boolean doNotUpdate;
+
 	@ManyToMany()
 	@LazyCollection(FALSE)
 	@JoinTable(name = "person_organization", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "organization_id"))
@@ -136,7 +142,7 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 
 		if (getFirstName() != null && !getFirstName().isEmpty())
 			result.append(getFirstName() + " ");
-		
+
 		if (getLastName() != null && !getLastName().isEmpty())
 			result.append(getLastName() + " ");
 

@@ -74,12 +74,6 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	private String uid;
 
 	/**
-	 * True if clinic employee
-	 */
-	@Column
-	private boolean manuallyAltered;
-
-	/**
 	 * List of all contactRoles
 	 */
 

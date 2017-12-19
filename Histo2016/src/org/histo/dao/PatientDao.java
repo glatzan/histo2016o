@@ -5,6 +5,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -18,6 +25,7 @@ import org.histo.config.enums.Eye;
 import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Person;
+import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.util.TimeUtil;
@@ -55,10 +63,10 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	public Patient getPatient(long id, boolean initialize) {
-		
+
 		Patient patient = get(Patient.class, id);
 		getSession().refresh(patient);
-		
+
 		if (initialize) {
 			Hibernate.initialize(patient.getTasks());
 			Hibernate.initialize(patient.getAttachedPdfs());
@@ -141,21 +149,45 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return query.getExecutableCriteria(getSession()).list();
 	}
 
-	/**
-	 * Returns a list without of patients without tasks between the two given dates.
-	 * 
-	 * @param fromDate
-	 * @param toDate
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Patient> getPatientWithoutTasks(long fromDate, long toDate) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-		query.add(Restrictions.ge("patient.creationDate", fromDate))
-				.add(Restrictions.le("patient.creationDate", toDate));
-		query.add(Restrictions.isEmpty("patient.tasks"));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return query.getExecutableCriteria(getSession()).list();
+//	/**
+//	 * Returns a list without of patients without tasks between the two given dates.
+//	 * 
+//	 * @param fromDate
+//	 * @param toDate
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	public List<Patient> getPatientWithoutTasks(long fromDate, long toDate) {
+//		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+//		query.add(Restrictions.ge("patient.creationDate", fromDate))
+//				.add(Restrictions.le("patient.creationDate", toDate));
+//		query.add(Restrictions.isEmpty("patient.tasks"));
+//		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+//		return query.getExecutableCriteria(getSession()).list();
+//	}
+
+	public List<Patient> getPatientWithoutTasks(long fromDate, long toDate, boolean initTasks) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Patient> criteria = qb.createQuery(Patient.class);
+		Root<Patient> root = criteria.from(Patient.class);
+		criteria.select(root);
+
+		if (initTasks)
+			root.fetch("tasks", JoinType.LEFT);
+
+		Predicate and = qb.and(qb.ge(root.get("creationDate"), fromDate),
+				qb.le(root.get("creationDate"), toDate), qb.isEmpty(root.get("tasks")));
+
+		criteria.where(and);
+
+		criteria.distinct(true);
+
+		List<Patient> patients = getSession().createQuery(criteria).getResultList();
+
+		System.out.println(patients.size());
+		return patients;
 	}
 
 	/**
@@ -432,6 +464,5 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		return result;
 	}
-
 
 }
