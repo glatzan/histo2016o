@@ -42,8 +42,7 @@ public class DiagnosisReportMail extends MailTemplate {
 	}
 
 	public void fillTemplate() {
-		Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new VelocityNoOutputLogger());
-		Velocity.init();
+		initVelocity();
 
 		/* create a context and add data */
 		VelocityContext context = new VelocityContext();

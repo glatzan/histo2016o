@@ -106,8 +106,8 @@ public class PrintDialog extends AbstractDialog {
 	private List<ContactContainer> contactList;
 
 	/**
-	 * The associatedContact rendered, the first one will always be rendered, if
-	 * not changed, no rendering necessary
+	 * The associatedContact rendered, the first one will always be rendered, if not
+	 * changed, no rendering necessary
 	 */
 	private ContactContainer renderedContact;
 
@@ -170,6 +170,9 @@ public class PrintDialog extends AbstractDialog {
 
 		getContactList().add(new ContactContainer(task,
 				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+		getContactList().add(
+				new ContactContainer(task, new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()),
+						ContactRole.NONE, true, true));
 
 		setRenderedContact(null);
 
@@ -180,8 +183,11 @@ public class PrintDialog extends AbstractDialog {
 		setSavePDF(true);
 
 		setSingleAddressSelectMode(false);
+		
+		setAutoRefresh(false);
+		
 		// rendering the template
-		onChangePrintTemplate();
+		onChangePrintTemplate(true);
 	}
 
 	public void initAndPrepareBeanForCouncil(Task task, Council council) {
@@ -218,6 +224,8 @@ public class PrintDialog extends AbstractDialog {
 
 		setSingleAddressSelectMode(false);
 
+		setAutoRefresh(true);
+		
 		onChangePrintTemplate();
 	}
 
@@ -246,7 +254,9 @@ public class PrintDialog extends AbstractDialog {
 		setFaxMode(false);
 
 		setSingleAddressSelectMode(false);
-
+		
+		setAutoRefresh(true);
+		
 		// rendering the template
 		onChangePrintTemplate();
 	}
@@ -273,6 +283,7 @@ public class PrintDialog extends AbstractDialog {
 					new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
 
 		setSelectMode(true);
+		setAutoRefresh(true);
 
 		// rendering the template
 		onChangePrintTemplate();
@@ -304,8 +315,7 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the pdf content if a associatedContact was chosen for the first
-	 * time
+	 * Updates the pdf content if a associatedContact was chosen for the first time
 	 */
 	public void onChooseContact(ContactContainer container) {
 
@@ -413,8 +423,14 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void onChangePrintTemplate() {
-		setPdfContainer(generatePDFFromTemplate());
-		setRenderPdf(getPdfContainer() == null ? false : true);
+		onChangePrintTemplate(false);
+	}
+
+	public void onChangePrintTemplate(boolean force) {
+		if (autoRefresh || force) {
+			setPdfContainer(generatePDFFromTemplate());
+			setRenderPdf(getPdfContainer() == null ? false : true);
+		}
 	}
 
 	private PDFContainer generatePDFFromTemplate() {
@@ -506,7 +522,8 @@ public class PrintDialog extends AbstractDialog {
 						savePdf(getTask(), getPdfContainer());
 
 					for (int i = 0; i < contactChooser.getCopies(); i++) {
-						userHandlerAction.getSelectedPrinter().print(getPdfContainer(), getSelectedTemplate().getAttributes());
+						userHandlerAction.getSelectedPrinter().print(getPdfContainer(),
+								getSelectedTemplate().getAttributes());
 					}
 				} else {
 					// setting other associatedContact then selected
@@ -515,7 +532,8 @@ public class PrintDialog extends AbstractDialog {
 					// render all other pdfs
 					PDFContainer otherAddress = generatePDFFromTemplate();
 					for (int i = 0; i < contactChooser.getCopies(); i++) {
-						userHandlerAction.getSelectedPrinter().print(otherAddress, getSelectedTemplate().getAttributes());
+						userHandlerAction.getSelectedPrinter().print(otherAddress,
+								getSelectedTemplate().getAttributes());
 					}
 					// settings the old selected associatedContact as
 					// selected associatedContact

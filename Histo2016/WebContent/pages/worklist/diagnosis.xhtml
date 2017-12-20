@@ -185,7 +185,7 @@
 						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{globalEditViewHandler.selectedTask.insurance}">
 						<f:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.insurance',mainHandlerAction.date(globalEditViewHandler.selectedTask.insurance))}" />
+							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.insurance',globalEditViewHandler.selectedTask.insurance)}" />
 					</p:inputText>
 
 					<!-- ward -->
@@ -255,9 +255,8 @@
 			items="#{globalEditViewHandler.selectedTask.diagnosisContainer.diagnosisRevisions}"
 			varStatus="varCounterOuter" var="revision">
 
-			<h:panelGrid columns="2"
-				styleClass="newStyleListingTable #{varCounterOuter.even ? 'newStyleListingTableOddColored' : ''}"
-				columnClasses="columnLabelContainer200 columnTop,">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable }"
+				columnClasses="columnLabelContainer200 columnTop #{varCounterOuter.even ? '' : 'oddColumnColored' }, #{varCounterOuter.even ? '' : 'oddColumnColored'}">
 
 				<!-- Extended Diagnosis Text -->
 				<h:outputLabel value="#{revision.name}"></h:outputLabel>
@@ -521,6 +520,16 @@
 
 				</h:panelGroup>
 			</h:panelGrid>
+
+			<p:commandButton id="diagnosisPhaseExit" value="Diangose beenden"
+				icon="fa fa-eye-slash" onstart="PF('blockUIWidget').block()"
+				oncomplete="PF('blockUIWidget').unblock()"
+				rendered="#{globalEditViewHandler.selectedTask.taskStatus.diagnosisNeeded or globalEditViewHandler.selectedTask.taskStatus.reDiagnosisNeeded}"
+				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandButton>
 		</h:panelGrid>
 	</p:panel>
 

@@ -350,7 +350,7 @@ public class TaskManipulationHandler {
 		slide.setParent(block);
 
 		// setting unique slide number
-		slide.setUniqueIDinBlock(block.getNextSlideNumber());
+		slide.setUniqueIDinTask(block.getTask().getNextSlideNumber());
 
 		block.getSlides().add(slide);
 

@@ -29,13 +29,8 @@ public class SuccessUnlockMail extends MailTemplate {
 	}
 	
 	public void fillTemplate() {
-		VelocityEngine ve = new VelocityEngine();
-		Properties props = new Properties();
-		props.put("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.SimpleLog4JLogSystem");
-		props.put("runtime.log.logsystem.log4j.category", "velocity");
-		props.put("runtime.log.logsystem.log4j.logger", "velocity");
-
-		ve.init(props);
+		initVelocity();
+		
 		
 		/* create a context and add data */
 		VelocityContext context = new VelocityContext();

@@ -45,7 +45,7 @@ public class SearchHandler {
 		// patient, piz search is more specific
 		if (!patient.getPiz().isEmpty()) {
 			Patient clinicPatient;
-			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(patient.getPiz());
 			patient.copyIntoObject(clinicPatient);
 		}
 
@@ -97,7 +97,7 @@ public class SearchHandler {
 		if (piz != null && piz.matches("^[0-9]{8}$")) {
 			Patient patient = patientDao.searchForPatientByPiz(piz);
 			Patient clinicPatient;
-			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson("/" + piz);
+			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(piz);
 			if (patient != null) {
 				if (patient.copyIntoObject(clinicPatient))
 					genericDAO.savePatientData(patient, "log.patient.search.update");
@@ -130,7 +130,7 @@ public class SearchHandler {
 		for (Patient patient : patients) {
 			Patient clinicPatient;
 
-			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson("/" + patient.getPiz());
+			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(patient.getPiz());
 			if (patient.copyIntoObject(clinicPatient))
 				genericDAO.savePatientData(patient, "log.patient.search.update");
 

@@ -361,30 +361,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return null;
 	}
 
-	/**
-	 * Searches for an slideID and returns the patient whom the slide belongs to
-	 * 
-	 * @param slideID
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public Patient getPatientBySlidID(String slideID) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-
-		query.createAlias("patient.tasks", "_tasks");
-		query.createAlias("_tasks.samples", "_samples");
-		query.createAlias("_samples.blocks", "_blocks");
-		query.createAlias("_blocks.slides", "_slides");
-		query.add(Restrictions.eq("_slides.slideID", slideID));
-
-		List<Patient> result = query.getExecutableCriteria(getSession()).list();
-
-		if (result.size() == 1)
-			return result.get(0);
-
-		return null;
-	}
-
 	public List<Patient> getPatientByCriteria(ExtendedSearchData extendedSearchData) {
 		logger.debug("test");
 

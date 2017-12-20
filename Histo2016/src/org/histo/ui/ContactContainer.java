@@ -16,6 +16,7 @@ import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
 import org.histo.util.latex.TextToLatexConverter;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,15 +38,25 @@ public class ContactContainer {
 	private List<OrganizationChooser> organizazionsChoosers;
 
 	private String customAddress;
+	
+	private boolean emptyAddress;
 
 	public ContactContainer(Task task, Person person, ContactRole role) {
-		this(new AssociatedContact(task, person, role));
+		this(new AssociatedContact(task, person, role), false, false);
+	}
+
+	public ContactContainer(Task task, Person person, ContactRole role, boolean selected, boolean emptyAddress) {
+		this(new AssociatedContact(task, person, role), selected, emptyAddress);
 	}
 
 	public ContactContainer(AssociatedContact associatedContact) {
+		this(associatedContact, false, false);
+	}
+
+	public ContactContainer(AssociatedContact associatedContact, boolean selected, boolean emptyAddress) {
 		this.contact = associatedContact;
 		this.copies = 1;
-		this.selected = false;
+		this.selected = selected;
 		this.organizazionsChoosers = new ArrayList<OrganizationChooser>();
 
 		if (associatedContact.getPerson().getOrganizsations() != null)
@@ -53,7 +64,12 @@ public class ContactContainer {
 				this.organizazionsChoosers.add(new OrganizationChooser(this, organization));
 			}
 
-		generateAddress();
+		this.emptyAddress = emptyAddress;
+		
+		if (emptyAddress) {
+			setCustomAddress(" ");
+		} else
+			generateAddress();
 	}
 
 	public OrganizationChooser getSelectedOrganization() {
@@ -100,7 +116,7 @@ public class ContactContainer {
 	public static List<ContactContainer> factory(List<AssociatedContact> associatedContacts) {
 		ArrayList<ContactContainer> result = new ArrayList<ContactContainer>();
 		for (AssociatedContact associatedContact : associatedContacts) {
-			result.add(new ContactContainer(associatedContact));
+			result.add(new ContactContainer(associatedContact, false, false));
 		}
 		return result;
 	}

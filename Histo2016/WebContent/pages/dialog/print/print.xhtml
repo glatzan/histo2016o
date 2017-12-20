@@ -11,15 +11,17 @@
 <h:head>
 	<title><h:outputFormat value="#{msg['dialog.print.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
 
-<h:body styleClass="defaultDialogLayout bigDialog">
+<h:body styleClass="contentInputDialog">
+
 	<h:form id="dialogContent">
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.print.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -29,22 +31,22 @@
 			</h:panelGrid>
 		</div>
 
-		<div class="contentDiv">
-			<h:panelGrid columns="3" styleClass="defaultListingTable"
-				columnClasses="defaultListingTableColumnTop defaultListingTableColumn30, defaultListingTableColumn2, ">
+
+		<div class="dialogContent">
+			<h:panelGrid columns="3" styleClass="newTableContainer"
+				style="width: 100%" columnClasses="column30 columnTop, column2, ">
 				<!-- left column -->
 
-				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<h:panelGrid columns="2" styleClass="defaultListingTable"
-						columnClasses="defaultListingTableColumn20," id="navigation">
+				<h:panelGrid columns="1" styleClass="newTableContainer">
 
+					<h:panelGrid columns="2" styleClass="newStyleListingTable"
+						id="navigation">
 						<!-- document type -->
 						<h:outputLabel value="#{msg['dialog.print.document']}" />
 						<p:selectOneMenu
 							value="#{dialogHandlerAction.printDialog.selectedTemplate}"
 							style="width:90% !important;"
-							converter="#{dialogHandlerAction.printDialog.templateTransformer}"
-							styleClass="customSerachSelectMenu">
+							converter="#{dialogHandlerAction.printDialog.templateTransformer}">
 							<f:selectItems
 								value="#{dialogHandlerAction.printDialog.templateList}"
 								var="template" itemLabel="#{template.name}"
@@ -59,15 +61,15 @@
 					</h:panelGrid>
 
 					<!-- to -->
-					<h:panelGrid columns="1" styleClass="defaultListingTable"
-						style="margin-top:20px;" id="addressTable">
+					<h:panelGrid columns="1" styleClass="newStyleListingTable"
+						style="margin-top:10px;" id="addressTable">
+
 						<h:outputLabel value="#{msg['dialog.print.addresses']}" />
 
-						<p:panelGrid styleClass="smallDatatable highlightedDataTable"
-							style="width:100%">
+						<p:panelGrid styleClass="newStyleListingTable" style="width:100%">
 							<f:facet name="header">
 								<p:row>
-									<p:column style="width:18px;">
+									<p:column style="width:15px;">
 										<h:outputLabel value="#"></h:outputLabel>
 									</p:column>
 									<p:column style="width:30px;">
@@ -83,11 +85,11 @@
 								items="#{dialogHandlerAction.printDialog.contactList}"
 								var="chooser">
 								<p:row
-									styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'ui-datatable-odd' : ''}">
+									styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'oddColumnColoredTr' : ''}">
 									<!-- select -->
-									<p:column>
+									<p:column style="width:15px;" styleClass="columnTextCenter">
 										<p:selectBooleanCheckbox value="#{chooser.selected}"
-											styleClass="smallCheckbox">
+											styleClass="centerCheckbox">
 											<p:ajax event="change" process="@form" update="addressTable"
 												onstart="PF('blockUIWidget').block()"
 												oncomplete="PF('blockUIWidget').unblock()"
@@ -96,13 +98,14 @@
 									</p:column>
 
 									<!-- count -->
-									<p:column>
-										<p:spinner value="#{chooser.copies}" styleClass="miniSpinner"
-											disabled="#{!chooser.selected}" min="1" max="9"></p:spinner>
+									<p:column style="width:30px;" styleClass="columnTextCenter">
+										<p:spinner value="#{chooser.copies}"
+											styleClass="oneNumberSpinner" disabled="#{!chooser.selected}"
+											min="1" max="9"></p:spinner>
 									</p:column>
 
 									<!-- role -->
-									<p:column>
+									<p:column style="width:80px;">
 										<h:outputLabel rendered="#{chooser.contact.role ne 'NONE'}"
 											value="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}"
 											title="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}">
@@ -123,16 +126,17 @@
 
 										<p:overlayPanel for="editAddress#{outer.index}"
 											widgetVar="editAddressOver#{outer.index}"
+											rendered="#{!chooser.emptyAddress}"
 											id="editAddressOver#{outer.index}" showEvent="mouseover"
 											hideEvent="mouseout" onShow="updateOverlay#{outer.index}();">
 
 											<h:outputText value="#{chooser.customAddress}"
-												styleClass="preformatted" />
+												styleClass="lableLineBreak" />
 										</p:overlayPanel>
 									</p:column>
 
-									<p:column>
-										<p:commandLink
+									<p:column style="width:15px">
+										<p:commandLink rendered="#{!chooser.emptyAddress}"
 											title="#{msg['dialog.print.individualAddress']}"
 											actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task,chooser)}">
 											<i class="fa fa-gear" style="margin-left: 2px" />
@@ -149,15 +153,15 @@
 								<c:forEach varStatus="inner"
 									items="#{chooser.organizazionsChoosers}" var="organizazion">
 									<p:row
-										styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'ui-datatable-odd' : ''}"
+										styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'oddColumnColoredTr' : ''}"
 										style="border-left: none; border-top: none; border-bottom: none">
 										<p:column
 											style="border-left: none; border-bottom: none;  border-top: none; background-color: inherit !important;">
 										</p:column>
 										<p:column
-											style="text-align: center; border: 1px solid #aaaaaa;">
+											style="text-align: center; border-left: 1px solid #aaaaaa !important;">
 											<p:selectBooleanCheckbox value="#{organizazion.selected}"
-												styleClass="smallCheckbox">
+												styleClass="centerCheckbox">
 												<p:ajax event="change" process="@form" update="addressTable"
 													onstart="PF('blockUIWidget').block()"
 													oncomplete="PF('blockUIWidget').unblock()"
@@ -174,21 +178,32 @@
 						</p:panelGrid>
 					</h:panelGrid>
 
-					<!-- save file -->
-					<h:panelGrid columns="2" styleClass="defaultListingTable"
-						columnClasses="defaultListingTableColumn40, ">
+
+					<h:panelGrid columns="2" styleClass="newStyleListingTable"
+						columnClasses="columnMinWidth, columnAutoWidth">
+						<!-- save file -->
 						<h:outputLabel value="#{msg['dialog.print.save']}" />
-						<p:selectBooleanCheckbox styleClass="smallCheckbox"
+						<p:selectBooleanCheckbox
 							value="#{dialogHandlerAction.printDialog.savePDF}"
 							title="#{msg['dialog.print.save.text']}" />
+
+						<!-- auto update -->
+						<h:outputLabel value="#{msg['dialog.print.autoRefresh']}" />
+						<p:selectBooleanCheckbox
+							value="#{dialogHandlerAction.printDialog.autoRefresh}"
+							title="#{msg['dialog.print.autoRefresh.text']}">
+							<p:ajax update="@form" event="change"
+								onstart="PF('blockUIWidget').block()"
+								oncomplete="PF('blockUIWidget').unblock()"
+								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"></p:ajax>
+						</p:selectBooleanCheckbox>
 					</h:panelGrid>
 				</h:panelGrid>
 
 				<h:panelGroup />
 
 				<!-- right column -->
-				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-
+				<h:panelGrid columns="1" styleClass="newStyleListingTable">
 					<h:panelGroup id="pdfRender">
 						<p:media player="pdf"
 							value="#{dialogHandlerAction.printDialog.pdfContent}"
@@ -200,15 +215,16 @@
 			</h:panelGrid>
 		</div>
 
-		<div class="buttonContainer" style="width: 100% !important">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
 
-				<h:panelGrid columns="4" style="float:right;">
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				</h:panelGrid>
 
+				<h:panelGrid columns="4" styleClass="newTableContainer right">
 					<p:commandButton value="#{msg['dialog.print.button.fax']}"
 						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
-						styleClass="smallButton buttonRighMarginInListExtended"
 						rendered="#{dialogHandlerAction.printDialog.faxMode}"
 						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
 
@@ -217,16 +233,14 @@
 						<!-- print -->
 						<p:commandButton value="#{msg['dialog.print.button.print']}"
 							icon="fa fa-print"
-							styleClass="smallButton buttonRighMarginInListExtended"
 							title="#{msg['dialog.print.button.print.text']}"
 							onstart="PF('blockUIWidget').block()"
 							oncomplete="PF('blockUIWidget').unblock()"
 							actionListener="#{dialogHandlerAction.printDialog.onPrintNewPdf()}"></p:commandButton>
 
 						<!-- select printer -->
-						<p:selectOneMenu styleClass="customSerachSelectMenu"
-							title="#{msg['dialog.print.selectPrinter']}"
-							panelStyleClass="customSerachSelectMenuPanel"
+						<p:selectOneMenu title="#{msg['dialog.print.selectPrinter']}"
+							panelStyleClass="iconFixForSelectOneMenu"
 							converter="#{globalSettings.printerListTransformer}"
 							value="#{userHandlerAction.selectedPrinter}" filter="true"
 							filterMatchMode="contains" style="margin-right:10px">
@@ -240,14 +254,12 @@
 					<p:commandButton value="#{msg['dialog.print.button.select']}"
 						icon="fa fa-print"
 						rendered="#{dialogHandlerAction.printDialog.selectMode}"
-						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}"></p:commandButton>
 
 					<!-- download -->
 					<p:commandButton value="#{msg['dialog.print.button.open']}"
 						icon="fa fa-download" ajax="false"
 						title="#{msg['dialog.print.button.open.text']}"
-						styleClass="smallButton buttonRighMarginInListExtended"
 						actionListener="#{dialogHandlerAction.printDialog.onDownloadPdf}">
 						<p:fileDownload
 							value="#{dialogHandlerAction.printDialog.pdfContent}" />
@@ -255,7 +267,6 @@
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle">
 						<f:actionListener
 							binding="#{dialogHandlerAction.printDialog.resetPDF()}" />
@@ -265,6 +276,7 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
+
 		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>

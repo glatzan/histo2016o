@@ -3,7 +3,6 @@ package org.histo.action;
 import org.histo.action.dialog.WorklistSearchDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisRevisionDialog;
-import org.histo.action.dialog.favouriteLists.AddTaskToFavouriteListDialog;
 import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.dialog.notification.ContactDialog;
@@ -77,8 +76,6 @@ public class DialogHandlerAction {
 	private FavouriteListsDialog favouriteListsDialog;
 
 	private FavouriteListEditDialog favouriteListEditDialog;
-
-	private AddTaskToFavouriteListDialog addTaskToFavouriteListDialog;
 
 	private SlideOverviewDialog slideOverviewDialog;
 
@@ -259,14 +256,6 @@ public class DialogHandlerAction {
 		}
 
 		return archiveTaskDialog;
-	}
-
-	public AddTaskToFavouriteListDialog getAddTaskToFavouriteListDialog() {
-		if (addTaskToFavouriteListDialog == null) {
-			addTaskToFavouriteListDialog = new AddTaskToFavouriteListDialog();
-		}
-
-		return addTaskToFavouriteListDialog;
 	}
 
 	public PhysicianSearchDialog getPhysicianSearchDialog() {

@@ -159,21 +159,31 @@ public class WorklistViewHandlerAction {
 			taskViewHandlerAction.initBean();
 			break;
 		case WORKLIST_PATIENT:
+			// if selected patient show patient
 			if (globalEditViewHandler.getSelectedPatient() != null)
 				setCurrentView(view);
-			else
-				goToNavigation(View.WORKLIST_TASKS);
+			else if (!getWorklist().isEmpty()) {
+				// if patient in worklist show first patient
+				setCurrentView(view);
+				onSelectPatient(getWorklist().getItems().get(0));
+			} else
+				// show blank page
+				goToNavigation(View.WORKLIST_BLANK);
 			break;
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
 			setLastTaskView(view);
 			if (globalEditViewHandler.getSelectedPatient() != null && globalEditViewHandler.getSelectedTask() != null)
 				setCurrentView(view);
-			else
-				goToNavigation(View.WORKLIST_TASKS);
+			else if (!getWorklist().isEmpty()) {
+				setCurrentView(view);
+				selectPreviouseTask();
+				return;
+			}else
+				goToNavigation(View.WORKLIST_BLANK);
 			break;
 		default:
-			goToNavigation(View.WORKLIST_TASKS);
+			setCurrentView(View.WORKLIST_BLANK);
 		}
 
 	}
@@ -229,11 +239,16 @@ public class WorklistViewHandlerAction {
 	public void onDeselectPatient() {
 		globalEditViewHandler.setSelectedPatient(null);
 		globalEditViewHandler.setSelectedTask(null);
-		goToNavigation(View.WORKLIST_TASKS);
+		goToNavigation(View.WORKLIST_BLANK);
 	}
 
 	public void onSelectTaskAndPatient(Task task) {
 		onSelectTaskAndPatient(task, true);
+	}
+
+	public void onSelectTaskAndPatient(long taskID) {
+		Task task = taskDAO.getTaskAndPatientInitialized(taskID);
+		onSelectTaskAndPatient(task, false);
 	}
 
 	/**
@@ -246,7 +261,7 @@ public class WorklistViewHandlerAction {
 		logger.info("start - > 0");
 		if (task == null) {
 			logger.debug("Deselecting task");
-			goToNavigation(View.WORKLIST_TASKS);
+			goToNavigation(View.WORKLIST_BLANK);
 			return;
 		}
 
@@ -288,12 +303,8 @@ public class WorklistViewHandlerAction {
 
 		// replacing patient, generating task status
 		getWorklist().addPatient(task.getPatient());
+		getWorklist().sortWordklist();
 
-		System.out.println(task.hashCode());
-
-		for (Task task1 : task.getPatient().getTasks()) {
-			System.out.println("-- " + task1.hashCode());
-		}
 		// generating menu
 		globalEditViewHandler.updateMenuModel(false);
 
@@ -352,11 +363,18 @@ public class WorklistViewHandlerAction {
 			setWorklist(new Worklist("", new WorklistSearch()));
 	}
 
+	public void clearWorklist(Worklist worklist) {
+		worklist.clear();
+		if (getWorklist() == worklist)
+			onDeselectPatient();
+	}
+
 	public void addTaskToWorklist(Task task) {
 
 		if (getWorklist().containsPatient(task.getPatient())) {
 			logger.debug("Showning task " + task.getTaskID());
-			onSelectTaskAndPatient(task);
+			// reloading task and patient from database
+			onSelectTaskAndPatient(task.getId());
 		} else {
 			logger.debug("Adding task " + task.getTaskID() + " to worklist");
 			addPatientToWorkList(task.getPatient(), false);
@@ -365,9 +383,9 @@ public class WorklistViewHandlerAction {
 	}
 
 	/**
-	 * Adds a patient to the worklist. If already added it is check if the
-	 * patient should be selected. If so the patient will be selected. The
-	 * patient isn't added twice.
+	 * Adds a patient to the worklist. If already added it is check if the patient
+	 * should be selected. If so the patient will be selected. The patient isn't
+	 * added twice.
 	 * 
 	 * @param patient
 	 * @param asSelectedPatient
@@ -420,7 +438,7 @@ public class WorklistViewHandlerAction {
 		if (reload)
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 
-		onVersionConflictPatient(task.getParent(), false);
+		// onVersionConflictPatient(task.getParent(), false);
 		onSelectTaskAndPatient(task, false);
 	}
 

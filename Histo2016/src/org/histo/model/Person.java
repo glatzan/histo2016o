@@ -88,10 +88,10 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 	private Contact contact;
 
 	/**
-	 * If true the persons data will no be updated with backend data
+	 * If true the persons data will no be updated with backend data, default true
 	 */
 	@Column
-	private boolean autoUpdate;
+	private boolean autoUpdate = true;
 
 	@ManyToMany()
 	@LazyCollection(FALSE)

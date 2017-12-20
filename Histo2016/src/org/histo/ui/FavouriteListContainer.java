@@ -36,7 +36,7 @@ public class FavouriteListContainer {
 	public FavouriteListContainer(FavouriteList favouriteList, HistoUser currentUser) {
 		this.favouriteList = favouriteList;
 
-		if (favouriteList.getOwner().equals(currentUser)) {
+		if (favouriteList.getOwner() != null && favouriteList.getOwner().equals(currentUser)) {
 			this.editable = true;
 			this.readable = true;
 			this.admin = true;
@@ -59,7 +59,7 @@ public class FavouriteListContainer {
 
 		// only updating if not already true
 		for (FavouritePermissionsGroup group : favouriteList.getGroups()) {
-			if (group.getGroup().equals(currentUser)) {
+			if (group.getGroup().equals(currentUser.getGroup())) {
 				this.admin = this.admin ? true : group.isAdmin();
 				this.editable = this.editable ? true : group.isEditable();
 				this.readable = this.readable ? true : group.isReadable();

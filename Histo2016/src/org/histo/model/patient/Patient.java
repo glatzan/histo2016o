@@ -158,65 +158,69 @@ public class Patient
 			setInsurance(getInsurance());
 		}
 
-		if (HistoUtil.isStringDifferent(getPerson().getTitle(), patient.getPerson().getTitle())) {
-			change = true;
-			getPerson().setTitle(patient.getPerson().getTitle());
-		}
+		// update person data if update is true
+		
+		if (getPerson().isAutoUpdate()) {
+			if (HistoUtil.isStringDifferent(getPerson().getTitle(), patient.getPerson().getTitle())) {
+				change = true;
+				getPerson().setTitle(patient.getPerson().getTitle());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getLastName(), patient.getPerson().getLastName())) {
-			change = true;
-			getPerson().setLastName(patient.getPerson().getLastName());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getLastName(), patient.getPerson().getLastName())) {
+				change = true;
+				getPerson().setLastName(patient.getPerson().getLastName());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getFirstName(), patient.getPerson().getFirstName())) {
-			change = true;
-			getPerson().setFirstName(patient.getPerson().getFirstName());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getFirstName(), patient.getPerson().getFirstName())) {
+				change = true;
+				getPerson().setFirstName(patient.getPerson().getFirstName());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getBirthday(), patient.getPerson().getBirthday())) {
-			change = true;
-			getPerson().setBirthday(patient.getPerson().getBirthday());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getBirthday(), patient.getPerson().getBirthday())) {
+				change = true;
+				getPerson().setBirthday(patient.getPerson().getBirthday());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getContact().getTown(),
-				patient.getPerson().getContact().getTown())) {
-			change = true;
-			getPerson().getContact().setTown(patient.getPerson().getContact().getTown());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getContact().getTown(),
+					patient.getPerson().getContact().getTown())) {
+				change = true;
+				getPerson().getContact().setTown(patient.getPerson().getContact().getTown());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getContact().getCountry(),
-				patient.getPerson().getContact().getCountry())) {
-			change = true;
-			getPerson().getContact().setCountry(patient.getPerson().getContact().getCountry());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getContact().getCountry(),
+					patient.getPerson().getContact().getCountry())) {
+				change = true;
+				getPerson().getContact().setCountry(patient.getPerson().getContact().getCountry());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getContact().getPostcode(),
-				patient.getPerson().getContact().getPostcode())) {
-			change = true;
-			getPerson().getContact().setPostcode(patient.getPerson().getContact().getPostcode());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getContact().getPostcode(),
+					patient.getPerson().getContact().getPostcode())) {
+				change = true;
+				getPerson().getContact().setPostcode(patient.getPerson().getContact().getPostcode());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getContact().getStreet(),
-				patient.getPerson().getContact().getStreet())) {
-			change = true;
-			getPerson().getContact().setStreet(patient.getPerson().getContact().getStreet());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getContact().getStreet(),
+					patient.getPerson().getContact().getStreet())) {
+				change = true;
+				getPerson().getContact().setStreet(patient.getPerson().getContact().getStreet());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getContact().getPhone(),
-				patient.getPerson().getContact().getPhone())) {
-			change = true;
-			getPerson().getContact().setPhone(patient.getPerson().getContact().getPhone());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getContact().getPhone(),
+					patient.getPerson().getContact().getPhone())) {
+				change = true;
+				getPerson().getContact().setPhone(patient.getPerson().getContact().getPhone());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getGender(), patient.getPerson().getGender())) {
-			change = true;
-			getPerson().setGender(patient.getPerson().getGender());
-		}
+			if (HistoUtil.isStringDifferent(getPerson().getGender(), patient.getPerson().getGender())) {
+				change = true;
+				getPerson().setGender(patient.getPerson().getGender());
+			}
 
-		if (HistoUtil.isStringDifferent(getPerson().getContact().getEmail(),
-				patient.getPerson().getContact().getEmail())) {
-			change = true;
-			getPerson().getContact().setEmail(patient.getPerson().getContact().getEmail());
+			if (HistoUtil.isStringDifferent(getPerson().getContact().getEmail(),
+					patient.getPerson().getContact().getEmail())) {
+				change = true;
+				getPerson().getContact().setEmail(patient.getPerson().getContact().getEmail());
+			}
 		}
 
 		return change;

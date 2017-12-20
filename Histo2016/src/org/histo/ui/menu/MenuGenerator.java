@@ -94,8 +94,13 @@ public class MenuGenerator {
 
 		// task menu
 		if (patient != null) {
-
+			
 			boolean taskIsNull = task == null;
+			
+			if(!taskIsNull && task.getTaskStatus() == null) {
+				task.generateTaskStatus();
+			}
+			
 			boolean taskIsEditable = taskIsNull ? false : task.getTaskStatus().isEditable();
 
 			DefaultSubMenu taskSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.task"));
@@ -159,7 +164,7 @@ public class MenuGenerator {
 				// Add to stay in staining phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.stayInPhase.enter"));
 				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
-						+ PredefinedFavouriteList.StayInStainingList.getId() + ")}");
+						+ PredefinedFavouriteList.StainingList.getId() + ")}");
 				item.setIcon("fa fa-image");
 				item.setRendered(!(task.getTaskStatus().isStainingNeeded() || task.getTaskStatus().isReStainingNeeded()
 						|| task.getTaskStatus().isStayInStainingList()) && task.getTaskStatus().isEditable());
@@ -220,7 +225,7 @@ public class MenuGenerator {
 				// enter stay in phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.diagnosisPhase.force.enter"));
 				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
-						+ PredefinedFavouriteList.StayInDiagnosisList.getId() + ")}");
+						+ PredefinedFavouriteList.DiagnosisList.getId() + ")}");
 				item.setRendered(
 						!(task.getTaskStatus().isDiagnosisNeeded() || task.getTaskStatus().isReDiagnosisNeeded()
 								|| task.getTaskStatus().isStayInDiagnosisList()) && task.getTaskStatus().isEditable());
@@ -260,8 +265,7 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:medicalFindingsContactBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-volume-up");
-				item.setRendered(
-						task.getTaskStatus().isNotificationNeeded() || task.getTaskStatus().isStayInNotificationList());
+				item.setRendered(!task.getTaskStatus().isFinalized());
 				notificationSubMenu.addElement(item);
 
 				// remove from notification phase without report
@@ -279,7 +283,7 @@ public class MenuGenerator {
 				// add to notification stay in phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.force.enter"));
 				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
-						+ PredefinedFavouriteList.StayInNotificationList.getId() + ")}");
+						+ PredefinedFavouriteList.NotificationList.getId() + ")}");
 				item.setUpdate("navigationForm contentForm headerForm");
 				item.setIcon("fa fa-volume-off");
 				item.setRendered(!(task.getTaskStatus().isNotificationNeeded()

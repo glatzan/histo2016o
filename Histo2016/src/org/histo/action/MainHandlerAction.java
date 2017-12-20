@@ -172,6 +172,7 @@ public class MainHandlerAction {
 		for (FacesMessage facesMessage : getQueueGrowlMessages()) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage("globalgrowl", facesMessage);
+			logger.debug("Adding message to growl " + facesMessage); 
 		}
 
 		getQueueGrowlMessages().clear();
@@ -183,6 +184,7 @@ public class MainHandlerAction {
 
 	public void addQueueGrowlMessage(String headline, String message, FacesMessage.Severity servertiy) {
 		getQueueGrowlMessages().add(new FacesMessage(servertiy, headline, message));
+		showQueueGrowlMessage();
 	}
 
 	/********************************************************

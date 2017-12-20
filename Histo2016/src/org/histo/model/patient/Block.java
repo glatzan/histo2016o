@@ -68,18 +68,8 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 	 */
 	private long creationDate;
 
-	/**
-	 * Unique slide counter is increased for every added slide;
-	 */
-	private int uniqueSlideCounter = 0;
-
 	public void removeStaining(Slide staining) {
 		getSlides().remove(staining);
-	}
-
-	@Transient
-	public int getNextSlideNumber() {
-		return ++uniqueSlideCounter;
 	}
 
 	@Transient
@@ -159,14 +149,6 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 
 	public void setCreationDate(long creationDate) {
 		this.creationDate = creationDate;
-	}
-
-	public int getUniqueSlideCounter() {
-		return uniqueSlideCounter;
-	}
-
-	public void setUniqueSlideCounter(int uniqueSlideCounter) {
-		this.uniqueSlideCounter = uniqueSlideCounter;
 	}
 
 	public boolean isIdManuallyAltered() {

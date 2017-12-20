@@ -9,6 +9,9 @@ import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
@@ -23,6 +26,10 @@ import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
 import org.histo.model.favouriteList.FavouriteList;
+import org.histo.model.favouriteList.FavouritePermissionsGroup;
+import org.histo.model.favouriteList.FavouritePermissionsUser;
+import org.histo.model.patient.Block;
+import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
 import org.histo.util.TimeUtil;
@@ -31,6 +38,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javassist.tools.reflect.Sample;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -100,8 +108,8 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 	public Task initializeTaskAndPatient(Task task) throws CustomDatabaseInconsistentVersionException {
-		reattach(task.getPatient());
 		reattach(task);
+		reattach(task.getPatient());
 
 		Hibernate.initialize(task.getCouncils());
 		Hibernate.initialize(task.getDiagnosisContainer());
@@ -158,10 +166,17 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 	/**
 	 * Returns true if task exsists in database
+	 * 
 	 * @param taskID
 	 * @return
 	 */
 	public boolean isTaskIDPresentInDatabase(String taskID) {
+		if (getTaskByTaskID(taskID) != null)
+			return true;
+		return false;
+	}
+
+	public Task getTaskByTaskID(String taskID) {
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
 		// Create CriteriaQuery
@@ -174,7 +189,28 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 		List<Task> task = getSession().createQuery(criteria).getResultList();
 
-		return task.size() > 0;
+		return task.size() > 0 ? task.get(0) : null;
+	}
+
+	public Task getTaskBySlideID(String taskID, int uniqueSlideIDInBlock) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Task> criteria = qb.createQuery(Task.class);
+		Root<Task> root = criteria.from(Task.class);
+		criteria.select(root);
+
+		Join<Task, Sample> sampleQuery = root.join("samples", JoinType.LEFT);
+		Join<Sample, Block> blockQuery = sampleQuery.join("blocks", JoinType.LEFT);
+		Join<Block, Slide> slideQuery = blockQuery.join("slides", JoinType.LEFT);
+
+		criteria.where(qb.and(qb.like(root.get("taskID"), taskID),
+				qb.equal(slideQuery.get("uniqueIDinTask"), uniqueSlideIDInBlock)));
+		criteria.distinct(true);
+
+		List<Task> task = getSession().createQuery(criteria).getResultList();
+
+		return task.size() > 0 ? task.get(0) : null;
 	}
 
 	/**
@@ -216,5 +252,3 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	}
 
 }
-// DetachedCriteria maxID = DetachedCriteria.forClass(Task.class);
-// maxID.setProjection(Projections.max("id"));

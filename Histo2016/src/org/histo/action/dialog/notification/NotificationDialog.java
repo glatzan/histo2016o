@@ -456,7 +456,7 @@ public class NotificationDialog extends AbstractDialog {
 
 				setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-				setSelectedTemplate(null);
+				setSelectedTemplate(DocumentTemplate.getDefaultTemplate(subSelect, DocumentType.DIAGNOSIS_REPORT));
 
 				DiagnosisReportMail mail = MailTemplate.getDefaultTemplate(DiagnosisReportMail.class);
 				mail.prepareTemplate(task.getPatient(), task, null);
@@ -645,6 +645,8 @@ public class NotificationDialog extends AbstractDialog {
 
 		private Locale locale;
 
+		private int printCount;
+
 		private List<ContactHolder> currentMailHolders;
 		private boolean failedMailHolders;
 		private List<ContactHolder> currentFaxHolders;
@@ -658,6 +660,7 @@ public class NotificationDialog extends AbstractDialog {
 			setTabName("SendTab");
 			setName("dialog.notification.tab.send");
 			setViewID("sendTab");
+			setPrintCount(2);
 		}
 
 		@Override
@@ -822,8 +825,8 @@ public class NotificationDialog extends AbstractDialog {
 					logger.debug("Mail is used");
 
 					DiagnosisReportMail mail = mailTab.getMail();
-					mail.setSubject(mail.getSubject());
-					mail.setBody(mail.getBody());
+					mail.setSubject(mailTab.getMailSubject());
+					mail.setBody(mailTab.getMailBody());
 
 					for (ContactHolder holder : mailTab.getHolders()) {
 
@@ -1086,6 +1089,16 @@ public class NotificationDialog extends AbstractDialog {
 						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.NOTIFICATION_SEND_REPORT));
 
 				progressStepText("dialog.notification.sendProcess.sendReport.generating");
+
+				DocumentTemplate blankReport = DocumentTemplate
+						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT));
+
+				((TemplateDiagnosisReport) blankReport).initData(getTask().getPatient(), getTask(), "");
+				PDFContainer report = blankReport.generatePDF(new PDFGenerator());
+
+				for (int i = 0; i < printCount; i++) {
+					userHandlerAction.getSelectedPrinter().print(report, blankReport.getAttributes());
+				}
 
 				if (sendreportTemplate != null) {
 					TemplateSendReport template = (TemplateSendReport) sendreportTemplate;

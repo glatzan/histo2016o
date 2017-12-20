@@ -1,6 +1,6 @@
 {
 	"generalSettings": {
-		"offline": true,
+		"offline": false,
 		"workingDirectory": "classpath:templates/print",
 		"phoneRegex": "^\\s*(?:[\\+#]?(\\d{1,3}))?([-. ()\/\\\\]*(\\d*))*?\\s*$",
 		"defaultDocuments": {
@@ -61,6 +61,7 @@
 	},
 	"clinicBackend": {
 		"baseUrl": "http://auginfo/piz",
+		"patientByPiz": "/$piz",
 		"userAgent": "Mozilla/5.0"
 	},
 	"mail": {

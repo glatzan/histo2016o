@@ -36,21 +36,14 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Minor Changes:
--> fix selecting bug from taskList (reload whole patient object initialized)
-
 TODO:  -> Auswahl der Diagnose im Druckmenu
 TODO:  -> Update header menu wenn nachfärbung erstellt wird
-TODO:  -> Email bei fehler über customerrorhandler senden
-1.	Schalflfäche Benachrichtigung im Menü ist anscheindend Funktionslos
--> https://stackoverflow.com/questions/19443366/how-to-disable-velocity-logs
 2.	Zimmermann --> Atzrodt
 	a.	Aktualliesierien
 3.	Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
 4.	Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
-5.	Button befundung beenden unter Unterschrift im Diagnosen view
 6.	Vorgeschichte: Enter --> neue Zeile
-
--> Crreate Task material auswahl css
+-> Crreate Task material auswahl css 
 
 Graphic Changes
 ->	Scuhfelder als Solche Kennzeichnen (Lupensymbol) -> (in overlay dialogen, zb. Diagosen view)
@@ -92,7 +85,29 @@ TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert wer
 TODO: Freischaltungs link
 
 
+v 1.0.14
+++++: Kopf zum leeren der Arbeitsliste hinzugefügt
+++++: Das Menu wird bei Verwendung der Navigations-Pfeile richtige geupdated 
+++++: Nach hinzufügen oder Suchen eines Patienten/Auftrages/Objektträger-ID wird die Arbeitsliste neu sortiert
+++++: Befund kann jetzt via Button in der Befundungsansicht abgeschlossen werden
+++++: Hintergrundfärbung der Diagnosen-Tabelle umgedreht 
+++++: Schnell-Suche funktioniert wieder wie erwartet.
+++++: Zähler für Objektträger in Auftrag verlegt
+
+SQL:
+alter table task add slidecounter integer;
+alter table task_aud add slidecounter integer;
+update task set slidecounter = 0;
+
+Alter table block drop column uniqueSlideCounter; 
+Alter table block_aud drop column uniqueSlideCounter; 
+ALTER TABLE slide RENAME COLUMN uniqueidinblock TO uniqueidintask;
+ALTER TABLE slide_aud RENAME COLUMN uniqueidinblock TO uniqueidintask;
+
 V 1.0.13
+++++: Graphische Anpassungen am Druck-Dialog, leere Adress-Option 
+++++: Wird ein Auftrag aus der Auftragsliste geladen, kam es bisher zu einem Fehler, dieser wurde behoben.
+++++: Befundbreichte werden nach der Benachrichtigung ausgedruckt, Feld für die Anzahl hinzugefügt
 ++++: Beim erstellen eines Auftrags werden Aufklärungen nicht mehr aus einer Vorherigen Auftragserstellung übernommen.
 ++++: Benachrichtigungs-Dialog kann wieder über das Menu geöffnet werden
 ++++: Material kann manuell beim Erstellen eines Auftrages eingegeben werden
@@ -100,19 +115,17 @@ V 1.0.13
 
 SQL:
 Alter table person add autoUpdate boolean;
-update person set autoUpdate = false
-Alter table person_aud add doNotUpdate boolean;
+update person set autoUpdate = false;
+Alter table person_aud add autoUpdate boolean;
 Alter table physician drop column manuallyAltered; 
 Alter table physician_aud drop column manuallyAltered; 
-alter table patient_pdfcontainer drop constraint uk_c7n1md70xsclk1c5w9yiaucl9
-alter table task_pdfcontainer drop constraint uk_rp12j1tw0yxecu9bt0b0ym72t
-alter table biobank_pdfcontainer drop constraint uk_8gmung1gnute185q5scwax2kk
-alter table council_pdfcontainer drop constraint uk_8gmung1gnute185q5scwax2kk
+alter table patient_pdfcontainer drop constraint uk_c7n1md70xsclk1c5w9yiaucl9;
+alter table task_pdfcontainer drop constraint uk_rp12j1tw0yxecu9bt0b0ym72t;
+alter table biobank_pdfcontainer drop constraint uk_8gmung1gnute185q5scwax2kk;
+alter table council_pdfcontainer drop constraint uk_6ux59funlxk7rbbi0ejs7ir7w;
 
 
 
-Alter table task_aud drop column editable; 
-Alter table patient_aud  drop column privateInsurance;
 
 V 1.0.12
 ++++: Aufträge werden in der Auftragsübersicht entsprechend ihrer Auftragsnummer sortiert, nicht mehr entsprechend ihrer internen ID.

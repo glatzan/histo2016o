@@ -38,7 +38,7 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 
 	private long version;
 
-	private int uniqueIDinBlock;
+	private int uniqueIDinTask;
 
 	private String slideID = "";
 
@@ -195,12 +195,12 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 		this.commentary = commentary;
 	}
 
-	public int getUniqueIDinBlock() {
-		return uniqueIDinBlock;
+	public int getUniqueIDinTask() {
+		return uniqueIDinTask;
 	}
 
-	public void setUniqueIDinBlock(int uniqueIDinBlock) {
-		this.uniqueIDinBlock = uniqueIDinBlock;
+	public void setUniqueIDinTask(int uniqueIDinTask) {
+		this.uniqueIDinTask = uniqueIDinTask;
 	}
 
 	public boolean isIdManuallyAltered() {

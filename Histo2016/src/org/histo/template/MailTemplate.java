@@ -6,9 +6,11 @@ import java.util.List;
 
 import javax.persistence.Transient;
 
+import org.apache.velocity.app.Velocity;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.model.PDFContainer;
 import org.histo.util.StreamUtils;
+import org.histo.util.VelocityNoOutputLogger;
 import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;
@@ -80,8 +82,9 @@ public class MailTemplate extends Template {
 	public void fillTemplate() {
 
 	}
-	
-//	public static final getVelocityEngine() {
-//		
-//	}
+
+	public static final void initVelocity() {
+		Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new VelocityNoOutputLogger());
+		Velocity.init();
+	}
 }

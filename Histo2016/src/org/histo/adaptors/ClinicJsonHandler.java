@@ -18,6 +18,9 @@ import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 
+import lombok.Getter;
+import lombok.Setter;
+
 //{
 // "vorname":"Andreas",
 // "mode":null,
@@ -70,14 +73,26 @@ import org.primefaces.json.JSONObject;
 //
 //}
 
+@Getter
+@Setter
 public class ClinicJsonHandler implements GsonAble {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	/**
+	 * Loaded from json
+	 */
 	private String baseUrl;
 
+	/**
+	 * Loaded from json
+	 */
 	private String userAgent;
 
+	/**
+	 * Loaded from json (/$piz)
+	 */
+	private String patientByPiz;
 	/**
 	 * Creates a list of patients fetched from the clinic backend. If there is
 	 * no data returned due to to many results an error will be thrown.
@@ -93,6 +108,7 @@ public class ClinicJsonHandler implements GsonAble {
 		return createPatientsFromClinicJson(result);
 	}
 
+	
 	/**
 	 * Creates a patient object from data fechted from the clinic backend.
 	 * 
@@ -102,9 +118,25 @@ public class ClinicJsonHandler implements GsonAble {
 	 * @throws CustomExceptionToManyEntries 
 	 * @throws JSONException 
 	 */
-	public Patient getPatientFromClinicJson(String url) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
-		String result = requestJsonData(baseUrl + url);
+	public Patient getPatientFromClinicJson(String piz) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+		String result = requestJsonData(baseUrl + patientByPiz.replace("$piz", piz));
 		return createPatientFromClinicJson(result);
+	}
+	
+	
+	/**
+	 * Updates a given patient with data from the backend
+	 * @param patient
+	 * @return
+	 * @throws JSONException
+	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion
+	 */
+	public boolean updatePatientFromClinicJson(Patient patient) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+		Patient update = getPatientFromClinicJson(patient.getPiz());
+		if(update != null)
+			return patient.copyIntoObject(update);
+		return false;
 	}
 
 	/**
@@ -203,28 +235,4 @@ public class ClinicJsonHandler implements GsonAble {
 		logger.debug("Fetch string from clinic: " + response.toString());
 		return response.toString();
 	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	public String getUserAgent() {
-		return userAgent;
-	}
-
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
-
-	public String getBaseUrl() {
-		return baseUrl;
-	}
-
-	public void setBaseUrl(String baseUrl) {
-		this.baseUrl = baseUrl;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
 }

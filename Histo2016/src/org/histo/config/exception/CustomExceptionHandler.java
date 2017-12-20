@@ -1,5 +1,6 @@
 package org.histo.config.exception;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -16,11 +17,14 @@ import javax.faces.event.ExceptionQueuedEventContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.MainHandlerAction;
+import org.histo.action.UserHandlerAction;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.template.mail.ErrorMail;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -61,6 +65,14 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 	@Autowired
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
+
+	@Autowired
+	@Lazy
+	private GlobalSettings globalSettings;
+
+	@Autowired
+	@Lazy
+	private UserHandlerAction userHandlerAction;
 
 	private ExceptionHandler wrapped;
 
@@ -144,12 +156,16 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					logger.debug("Error aboring all actions!");
 				} else if (cause instanceof BadCredentialsException) {
 					hanled = false;
-					System.out.println("tut2");
-					FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("tut"));
 				} else {
 					logger.debug("Other exception!");
 					cause.printStackTrace();
 				}
+
+//				ErrorMail mail = new ErrorMail();
+//				mail.prepareTemplate(userHandlerAction.getCurrentUser(), "Ehandler " + cause.getMessage(),
+//						new Date(System.currentTimeMillis()));
+//				mail.fillTemplate();
+//				globalSettings.getMailHandler().sendErrorMail(mail);
 			}
 
 			if (hanled)

@@ -184,6 +184,11 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	private boolean finalized;
 
 	/**
+	 * Unique slide counter is increased for every added slide;
+	 */
+	private int slideCounter = 0;
+	
+	/**
 	 * Liste aller Personen die �ber die Diangose informiert werden sollen.
 	 */
 	// TODO fetch lazy
@@ -472,6 +477,11 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 		if (getContacts() != null)
 			return getContacts().stream().anyMatch(p -> p.equals(associatedContact));
 		return false;
+	}
+	
+	@Transient
+	public int getNextSlideNumber() {
+		return ++slideCounter;
 	}
 
 	/********************************************************

@@ -148,7 +148,7 @@ public class AddSlidesDialog extends AbstractDialog {
 			// updating statining list
 			block.getTask().generateSlideGuiList();
 
-			genericDAO.savePatientData(getBlock(), "log.patient.task.sample.block.update",
+			genericDAO.savePatientData(getBlock().getTask(), "log.patient.task.sample.block.update",
 					block.toString());
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
