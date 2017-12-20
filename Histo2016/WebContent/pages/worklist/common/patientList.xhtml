@@ -160,7 +160,7 @@
 						value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
 						<p:commandLink partialSubmit="true" process="@this"
 							actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
-							update="navigationForm contentForm headerForm"
+							update="@(form :not(.patientNavigationScroll))"
 							styleClass="noUnderlineAtLink">
 
 							<h:outputLabel value="#{task.taskID}"

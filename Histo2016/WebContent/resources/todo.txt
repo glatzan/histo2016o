@@ -36,6 +36,8 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Minor Changes:
+https://stackoverflow.com/questions/21279919/how-to-prevent-scrollbar-re-positioning-on-update-form
+
 TODO:  -> Auswahl der Diagnose im Druckmenu
 TODO:  -> Update header menu wenn nachfärbung erstellt wird
 2.	Zimmermann --> Atzrodt
@@ -86,6 +88,7 @@ TODO: Freischaltungs link
 
 
 v 1.0.14
+++++: Arbeitsliste grafisch und funktionell verbesser, scrollen ist jetzt möglich
 ++++: Kopf zum leeren der Arbeitsliste hinzugefügt
 ++++: Das Menu wird bei Verwendung der Navigations-Pfeile richtige geupdated 
 ++++: Nach hinzufügen oder Suchen eines Patienten/Auftrages/Objektträger-ID wird die Arbeitsliste neu sortiert
