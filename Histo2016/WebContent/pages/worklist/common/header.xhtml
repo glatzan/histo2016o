@@ -40,7 +40,7 @@
 
 			<p:selectOneMenu style="margin-top:1px;"
 				title="#{msg['body.worklist.header.view']}"
-				value="#{worklistViewHandlerAction.currentView}">
+				value="#{globalEditViewHandler.currentView}">
 
 				<f:selectItems value="#{globalEditViewHandler.navigationPages}"
 					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
@@ -52,7 +52,7 @@
 
 			<p:commandButton id="changeView"
 				update="navigationForm contentForm navigationForm"
-				actionListener="#{worklistViewHandlerAction.goToNavigation()}"
+				actionListener="#{worklistViewHandlerAction.goToNavigation(globalEditViewHandler.currentView)}"
 				style="display:none" />
 
 		</h:panelGrid>

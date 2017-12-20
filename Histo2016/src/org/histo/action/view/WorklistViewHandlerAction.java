@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.persistence.criteria.Predicate;
 
 import org.apache.log4j.Logger;
+import org.hibernate.envers.internal.reader.FirstLevelCache;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
@@ -90,20 +91,6 @@ public class WorklistViewHandlerAction {
 	private TaskViewHandlerAction taskViewHandlerAction;
 
 	/**
-	 * View
-	 */
-	@Getter
-	@Setter
-	private View currentView;
-
-	/**
-	 * Saves the last task view diagnosis view or receiptlog view
-	 */
-	@Getter
-	@Setter
-	private View lastTaskView;
-
-	/**
 	 * Containing all worklists
 	 */
 	@Getter
@@ -126,8 +113,6 @@ public class WorklistViewHandlerAction {
 		// preparing worklistSearchDialog for creating a worklist
 		dialogHandlerAction.getWorklistSearchDialog().initBean();
 
-		setCurrentView(View.WORKLIST_TASKS);
-
 		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings()
 				.getWorklistToLoad();
 
@@ -145,54 +130,64 @@ public class WorklistViewHandlerAction {
 			addWorklist(new Worklist("Default", new WorklistSearch()), true);
 		}
 
-		setLastTaskView(userHandlerAction.getCurrentUser().getSettings().getDefaultView());
-	}
-
-	public void goToNavigation() {
-		goToNavigation(getCurrentView());
+		goToNavigation(View.WORKLIST_TASKS);
+		globalEditViewHandler.setLastDefaultView(userHandlerAction.getCurrentUser().getSettings().getDefaultView());
 	}
 
 	public void goToNavigation(View view) {
 		switch (view) {
 		case WORKLIST_TASKS:
-			setCurrentView(view);
 			taskViewHandlerAction.initBean();
+			changeView(View.WORKLIST_TASKS);
 			break;
 		case WORKLIST_PATIENT:
-			// if selected patient show patient
+			// show patient if selected
 			if (globalEditViewHandler.getSelectedPatient() != null)
-				setCurrentView(view);
-			else if (!getWorklist().isEmpty()) {
-				// if patient in worklist show first patient
-				setCurrentView(view);
-				onSelectPatient(getWorklist().getItems().get(0));
-			} else
-				// show blank page
-				goToNavigation(View.WORKLIST_BLANK);
+				changeView(View.WORKLIST_PATIENT);
+			else {
+				// get first patient in worklist, show him
+				Patient first = worklist.getFirstPatient();
+				if (first != null)
+					onSelectPatient(first);
+				else
+					// change view to blank
+					changeView(View.WORKLIST_BLANK);
+			}
 			break;
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
-			setLastTaskView(view);
+			// if task is select change view
 			if (globalEditViewHandler.getSelectedPatient() != null && globalEditViewHandler.getSelectedTask() != null)
-				setCurrentView(view);
-			else if (!getWorklist().isEmpty()) {
-				setCurrentView(view);
-				selectPreviouseTask();
-				return;
-			}else
-				goToNavigation(View.WORKLIST_BLANK);
+				changeView(view);
+			else {
+
+				globalEditViewHandler.setLastDefaultView(view);
+
+				Task first = worklist.getFirstActiveTask();
+
+				// select the task
+				if (first != null) {
+					onSelectTaskAndPatient(first);
+				} else {
+					// change view to blank
+					changeView(View.WORKLIST_BLANK);
+				}
+			}
 			break;
 		default:
-			setCurrentView(View.WORKLIST_BLANK);
+			changeView(View.WORKLIST_BLANK);
 		}
 
 	}
 
-	public String getCenterView() {
-		if (getCurrentView() != null)
-			return getCurrentView().getPath();
-		else
-			return View.WORKLIST_BLANK.getPath();
+	public void changeView(View view) {
+		globalEditViewHandler.setCurrentView(view);
+
+		if (view != View.WORKLIST_BLANK)
+			globalEditViewHandler.setSelectedView(view);
+
+		if (view == View.WORKLIST_DIAGNOSIS || view == View.WORKLIST_RECEIPTLOG)
+			globalEditViewHandler.setLastDefaultView(view);
 	}
 
 	public void onSelectPatient(Patient patient) {
@@ -206,7 +201,7 @@ public class WorklistViewHandlerAction {
 		if (patient == null) {
 			logger.debug("Deselecting patient");
 			globalEditViewHandler.setSelectedPatient(null);
-			goToNavigation(View.WORKLIST_TASKS);
+			changeView(View.WORKLIST_BLANK);
 			return;
 		}
 
@@ -232,14 +227,14 @@ public class WorklistViewHandlerAction {
 
 		globalEditViewHandler.updateMenuModel(false);
 
-		goToNavigation(View.WORKLIST_PATIENT);
+		changeView(View.WORKLIST_PATIENT);
 		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
 	public void onDeselectPatient() {
 		globalEditViewHandler.setSelectedPatient(null);
 		globalEditViewHandler.setSelectedTask(null);
-		goToNavigation(View.WORKLIST_BLANK);
+		changeView(View.WORKLIST_BLANK);
 	}
 
 	public void onSelectTaskAndPatient(Task task) {
@@ -261,7 +256,7 @@ public class WorklistViewHandlerAction {
 		logger.info("start - > 0");
 		if (task == null) {
 			logger.debug("Deselecting task");
-			goToNavigation(View.WORKLIST_BLANK);
+			changeView(View.WORKLIST_BLANK);
 			return;
 		}
 
@@ -310,8 +305,9 @@ public class WorklistViewHandlerAction {
 
 		task.setActive(true);
 
-		if (getCurrentView() != View.WORKLIST_RECEIPTLOG && getCurrentView() != View.WORKLIST_DIAGNOSIS) {
-			setCurrentView(getLastTaskView());
+		if (globalEditViewHandler.getCurrentView() != View.WORKLIST_RECEIPTLOG
+				&& globalEditViewHandler.getCurrentView() != View.WORKLIST_DIAGNOSIS) {
+			changeView(globalEditViewHandler.getLastDefaultView());
 		}
 
 		logger.info("end -> " + (System.currentTimeMillis() - test));
@@ -325,7 +321,7 @@ public class WorklistViewHandlerAction {
 	 */
 	public void onDeselectTask() {
 		globalEditViewHandler.setSelectedTask(null);
-		setCurrentView(View.WORKLIST_PATIENT);
+		changeView(View.WORKLIST_PATIENT);
 	}
 
 	public void addWorklist(WorklistSearch worklistSearch, String name, boolean selected) {
@@ -383,9 +379,9 @@ public class WorklistViewHandlerAction {
 	}
 
 	/**
-	 * Adds a patient to the worklist. If already added it is check if the patient
-	 * should be selected. If so the patient will be selected. The patient isn't
-	 * added twice.
+	 * Adds a patient to the worklist. If already added it is check if the
+	 * patient should be selected. If so the patient will be selected. The
+	 * patient isn't added twice.
 	 * 
 	 * @param patient
 	 * @param asSelectedPatient

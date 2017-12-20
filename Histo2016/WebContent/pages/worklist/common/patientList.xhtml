@@ -64,253 +64,230 @@
 
 	</h:panelGrid>
 
+	<h:panelGrid columns="2" styleClass="patientNavigationHeader">
+		<h:outputLabel value="#{msg['body.worklist.navigation.headline']}" />
+
+		<h:panelGroup styleClass="buttonContainer">
+			<!-- Button UP -->
+			<p:commandLink title="#{msg['body.worklist.navigation.button.up']}"
+				actionListener="#{worklistViewHandlerAction.selectNextTask()}"
+				update="navigationForm contentForm headerForm">
+				<i class="fa fa-arrow-circle-up"></i>
+			</p:commandLink>
+
+			<!-- Button Down -->
+			<p:commandLink title="#{msg['body.worklist.navigation.button.down']}"
+				actionListener="#{worklistViewHandlerAction.selectPreviouseTask()}"
+				update="navigationForm contentForm headerForm">
+				<i class="fa fa-arrow-circle-down"></i>
+			</p:commandLink>
+
+			<!-- Button Sort -->
+			<p:commandLink title="#{msg['body.worklist.navigation.button.sort']}"
+				actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSorting()}">
+				<i class="fa fa-th-list"></i>
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandLink>
+
+			<!-- Worklist settings -->
+			<p:commandLink
+				title="#{msg['body.worklist.navigation.button.settings']}"
+				actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSettings()}">
+				<i class="fa fa-wrench"></i>
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandLink>
+
+			<!-- Worklist change -->
+			<p:commandLink partialSubmit="true" process="@this"
+				title="#{msg['body.worklist.navigation.button.changelist']}"
+				actionListener="#{dialogHandlerAction.worklistSearchDialog.initAndPrepareBean()}">
+				<i class="fa fa-search"></i>
+				<p:ajax event="dialogReturn"
+					update="navigationForm contentForm headerForm" />
+			</p:commandLink>
+			<!-- Worklist clear -->
+			<p:commandLink partialSubmit="true" process="@this"
+				title="#{msg['body.worklist.navigation.button.changelist']}"
+				actionListener="#{worklistViewHandlerAction.clearWorklist(worklistViewHandlerAction.worklist)}"
+				update="navigationForm contentForm headerForm">
+				<i class="fa fa-times-circle-o"></i>
+			</p:commandLink>
+		</h:panelGroup>
+
+	</h:panelGrid>
+
 	<!-- Nav Table -->
-	<p:dataTable var="patient" id="patientList"
-		value="#{worklistViewHandlerAction.worklist.items}"
-		selectionMode="single" rowIndexVar="rowIdx"
-		selection="#{globalEditViewHandler.selectedPatient}"
-		rowKey="#{patient.id}" styleClass="navigationDataTable">
+	<p:scrollPanel styleClass="patientNavigationScroll"
+		id="patientNavigationScroll">
 
-		<p:ajax event="rowSelect"
-			update=":navigationForm :contentForm :headerForm"
-			listener="#{worklistViewHandlerAction.onSelectPatient(globalEditViewHandler.selectedPatient)}" />
+		<p:dataTable var="patient" id="patientList"
+			value="#{worklistViewHandlerAction.worklist.items}"
+			selectionMode="single" rowIndexVar="rowIdx"
+			selection="#{globalEditViewHandler.selectedPatient}"
+			rowKey="#{patient.id}" styleClass="patientNavigationTable">
 
-		<p:column>
-			<!-- Header -->
-			<f:facet name="header">
-				<h:panelGroup layout="block">
-					<h:outputLabel value="#{msg['body.worklist.navigation.headline']}"
-						style="float:left;"></h:outputLabel>
-					<h:panelGroup style="float: right">
-						<!-- Button UP -->
-						<p:commandLink
-							title="#{msg['body.worklist.navigation.button.up']}"
-							actionListener="#{worklistViewHandlerAction.selectNextTask()}"
-							update="navigationForm contentForm headerForm">
-							<i class="fa fa-arrow-circle-up"></i>
-						</p:commandLink>
+			<p:ajax event="rowSelect"
+				update=":navigationForm :contentForm :headerForm"
+				listener="#{worklistViewHandlerAction.onSelectPatient(globalEditViewHandler.selectedPatient)}" />
 
-						<!-- Button Down -->
-						<p:commandLink
-							title="#{msg['body.worklist.navigation.button.down']}"
-							actionListener="#{worklistViewHandlerAction.selectPreviouseTask()}"
-							update="navigationForm contentForm headerForm">
-							<i class="fa fa-arrow-circle-down"></i>
-						</p:commandLink>
+			<p:column>
+				<!-- Header -->
+				<h:panelGrid styleClass="newStyleListingTable" columns="2">
 
-						<!-- Button Sort -->
-						<p:commandLink
-							title="#{msg['body.worklist.navigation.button.sort']}"
-							actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSorting()}">
-							<i class="fa fa-th-list"></i>
-							<p:ajax event="dialogReturn"
-								update="navigationForm contentForm headerForm" />
-						</p:commandLink>
+					<h:outputText
+						value="#{patient.person.lastName}, #{patient.person.firstName}" />
+					<h:outputText
+						value="PIZ: #{patient.piz ne 0 ? patient.piz : 'none'}" />
 
-						<!-- Worklist settings -->
-						<p:commandLink
-							title="#{msg['body.worklist.navigation.button.settings']}"
-							actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSettings()}">
-							<i class="fa fa-wrench"></i>
-							<p:ajax event="dialogReturn"
-								update="navigationForm contentForm headerForm" />
-						</p:commandLink>
+					<h:outputText value="#{patient.person.birthday}"
+						rendered="#{patient.person.birthday ne null}">
+						<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+					</h:outputText>
+					<h:outputLabel rendered="#{patient.person.birthday eq null}"
+						value="" />
+					<h:outputLabel value="" />
+				</h:panelGrid>
 
-						<!-- Worklist change -->
+				<!-- tasks -->
+				<h:panelGrid styleClass="newStyleListingTable" columns="2"
+					columnClasses="columnTop,">
+					<h:outputLabel
+						value="#{msg['body.worklist.navigation.activtasks']}" />
+					<!-- task list -->
+					<p:repeat var="task"
+						value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
 						<p:commandLink partialSubmit="true" process="@this"
-							title="#{msg['body.worklist.navigation.button.changelist']}"
-							actionListener="#{dialogHandlerAction.worklistSearchDialog.initAndPrepareBean()}">
-							<i class="fa fa-search"></i>
-							<p:ajax event="dialogReturn"
-								update="navigationForm contentForm headerForm" />
-						</p:commandLink>
-						<!-- Worklist clear -->
-						<p:commandLink partialSubmit="true" process="@this"
-							title="#{msg['body.worklist.navigation.button.changelist']}"
-							actionListener="#{worklistViewHandlerAction.clearWorklist(worklistViewHandlerAction.worklist)}"
-							update="navigationForm contentForm headerForm">
-							<i class="fa fa-times-circle-o"></i>
-						</p:commandLink>
-					</h:panelGroup>
-				</h:panelGroup>
-			</f:facet>
+							actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
+							update="navigationForm contentForm headerForm"
+							styleClass="noUnderlineAtLink">
 
-			<!-- Data -->
-			<p:panelGrid styleClass="contentTable noBordersAll">
+							<h:outputLabel value="#{task.taskID}"
+								style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
 
-				<p:row>
-					<p:column>
-						<h:outputText
-							value="#{patient.person.lastName}, #{patient.person.firstName}" />
-					</p:column>
-					<p:column>
-						<h:outputText
-							value="PIZ: #{patient.piz ne 0 ? patient.piz : 'none'}" />
-					</p:column>
-				</p:row>
-				<p:row>
-					<p:column>
-						<h:outputText value="#{patient.person.birthday}"
-							rendered="#{patient.person.birthday ne null}">
-							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-						</h:outputText>
-					</p:column>
-					<p:column>
-					</p:column>
-				</p:row>
+							<!-- priority -->
+							<h:panelGroup rendered="#{task.taskPriority ne 'NONE'}">
+								<i style="margin-left: 5px;"
+									class="fa fa-exclamation #{task.taskPriority eq 'HIGH' ? 'icon-orange' : 'icon-red'}"
+									title="#{msg['body.worklist.navigation.activtasks.new']}" />
+							</h:panelGroup>
 
-				<!-- Active Tasks -->
-				<p:row>
-					<p:column style="vertical-align: top !important;">
-						<h:outputLabel
-							value="#{msg['body.worklist.navigation.activtasks']}" />
-					</p:column>
-					<p:column>
-						<!-- no tasks -->
-						<h:outputLabel
-							rendered="#{!patient.hasActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}"
-							value="#{msg['body.worklist.navigation.activtasks.none']}"></h:outputLabel>
-
-						<!-- task list -->
-						<p:repeat var="task"
-							value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
-							<p:commandLink partialSubmit="true" process="@this"
-								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
-								update="navigationForm contentForm headerForm"
-								styleClass="noUnderlineAtLink">
-
-								<h:outputLabel value="#{task.taskID}"
-									style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
-
-								<!-- priority -->
-								<h:panelGroup rendered="#{task.taskPriority ne 'NONE'}">
-									<i style="margin-left: 5px;"
-										class="fa fa-exclamation #{task.taskPriority eq 'HIGH' ? 'icon-orange' : 'icon-red'}"
-										title="#{msg['body.worklist.navigation.activtasks.new']}" />
-								</h:panelGroup>
-
-								<!-- staining needed -->
-								<h:panelGroup>
-									<!--  
+							<!-- staining needed -->
+							<h:panelGroup>
+								<!--  
 									<ui:fragment rendered="#{task.active}">
 										<i style="margin-left: 5px;" class="fa fa-ship icon-purple" />
 									</ui:fragment>-->
 
-									<!-- staining needed = green -->
-									<ui:fragment rendered="#{task.taskStatus.stainingNeeded}">
-										<i style="margin-left: 5px;" class="fa fa-image icon-green"
-											title="#{msg['body.worklist.navigation.activtasks.staining']}" />
-									</ui:fragment>
-
-									<!-- re-staining needed = orange -->
-									<ui:fragment rendered="#{task.taskStatus.reStainingNeeded}">
-										<i style="margin-left: 5px;" class="fa fa-image icon-orange"
-											title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
-									</ui:fragment>
-
-									<!--  no staining needed = purple -->
-									<ui:fragment rendered="#{task.taskStatus.stayInStainingList}">
-										<i style="margin-left: 5px;" class="fa fa-image icon-purple"
-											title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
-									</ui:fragment>
-
-
-									<!-- diagnosis needed -->
-									<!-- diagnosis needed = green -->
-									<ui:fragment rendered="#{task.taskStatus.diagnosisNeeded}">
-										<i style="margin-left: 5px;" class="fa fa-eye icon-green"
-											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
-									</ui:fragment>
-
-									<!-- re-diagnosis needed = orange -->
-									<ui:fragment rendered="#{task.taskStatus.reDiagnosisNeeded}">
-										<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
-											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
-									</ui:fragment>
-
-									<!-- no diagnosis needed = purple -->
-									<ui:fragment rendered="#{task.taskStatus.stayInDiagnosisList}">
-										<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
-											title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
-									</ui:fragment>
-
-									<!-- notification needed -->
-									<!-- notification need = green -->
-									<ui:fragment rendered="#{task.taskStatus.notificationNeeded}">
-										<i style="margin-left: 5px;"
-											class="fa fa-volume-up icon-green"
-											title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
-									</ui:fragment>
-
-									<!-- stay in phase = purple -->
-									<ui:fragment
-										rendered="#{task.taskStatus.stayInNotificationList}">
-										<i style="margin-left: 5px;"
-											class="fa fa-volume-up icon-purple"
-											title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
-									</ui:fragment>
-								</h:panelGroup>
-							</p:commandLink>
-
-							<p:commandLink partialSubmit="true" process="@this"
-								actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(task)}"
-								update="navigationForm contentForm headerForm"
-								styleClass="noUnderlineAtLink">
-								<!-- council lending mta -->
-								<ui:fragment rendered="#{task.taskStatus.councilLendingMTA}">
-									<i style="margin-left: 5px;"
-										class="fa  fa-stethoscope icon-orange"
-										title="#{msg['body.worklist.navigation.activtasks.councilLendingMTA']}" />
+								<!-- staining needed = green -->
+								<ui:fragment rendered="#{task.taskStatus.stainingNeeded}">
+									<i style="margin-left: 5px;" class="fa fa-image icon-green"
+										title="#{msg['body.worklist.navigation.activtasks.staining']}" />
 								</ui:fragment>
-								<!-- council lending secretary -->
+
+								<!-- re-staining needed = orange -->
+								<ui:fragment rendered="#{task.taskStatus.reStainingNeeded}">
+									<i style="margin-left: 5px;" class="fa fa-image icon-orange"
+										title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
+								</ui:fragment>
+
+								<!--  no staining needed = purple -->
+								<ui:fragment rendered="#{task.taskStatus.stayInStainingList}">
+									<i style="margin-left: 5px;" class="fa fa-image icon-purple"
+										title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
+								</ui:fragment>
+
+
+								<!-- diagnosis needed -->
+								<!-- diagnosis needed = green -->
+								<ui:fragment rendered="#{task.taskStatus.diagnosisNeeded}">
+									<i style="margin-left: 5px;" class="fa fa-eye icon-green"
+										title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
+								</ui:fragment>
+
+								<!-- re-diagnosis needed = orange -->
+								<ui:fragment rendered="#{task.taskStatus.reDiagnosisNeeded}">
+									<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
+										title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+								</ui:fragment>
+
+								<!-- no diagnosis needed = purple -->
+								<ui:fragment rendered="#{task.taskStatus.stayInDiagnosisList}">
+									<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
+										title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
+								</ui:fragment>
+
+								<!-- notification needed -->
+								<!-- notification need = green -->
+								<ui:fragment rendered="#{task.taskStatus.notificationNeeded}">
+									<i style="margin-left: 5px;" class="fa fa-volume-up icon-green"
+										title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
+								</ui:fragment>
+
+								<!-- stay in phase = purple -->
 								<ui:fragment
-									rendered="#{task.taskStatus.councilLendingSecretary}">
+									rendered="#{task.taskStatus.stayInNotificationList}">
 									<i style="margin-left: 5px;"
-										class="fa  fa-stethoscope icon-orange"
-										title="#{msg['body.worklist.navigation.activtasks.councilLendingSecretary']}" />
+										class="fa fa-volume-up icon-purple"
+										title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 								</ui:fragment>
-								<!-- council pending -->
-								<ui:fragment rendered="#{task.taskStatus.councilPending}">
-									<i style="margin-left: 5px;"
-										class="fa  fa-stethoscope icon-red"
-										title="#{msg['body.worklist.navigation.activtasks.councilPending']}" />
-								</ui:fragment>
-								<!-- council completed -->
-								<ui:fragment rendered="#{task.taskStatus.councilCompleted}">
-									<i style="margin-left: 5px;"
-										class="fa  fa-stethoscope icon-purple"
-										title="#{msg['body.worklist.navigation.activtasks.councilCompleted']}" />
-								</ui:fragment>
-							</p:commandLink>
+							</h:panelGroup>
+						</p:commandLink>
 
-							<!-- Pendings completed -->
-							<h:panelGroup rendered="#{task.taskStatus.finalizeable}">
+						<p:commandLink partialSubmit="true" process="@this"
+							actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(task)}"
+							update="navigationForm contentForm headerForm"
+							styleClass="noUnderlineAtLink">
+							<!-- council lending mta -->
+							<ui:fragment rendered="#{task.taskStatus.councilLendingMTA}">
 								<i style="margin-left: 5px;"
-									class="fa fa-check-circle icon-green"
-									title="#{msg['body.worklist.navigation.activtasks.pendencies']}" />
-							</h:panelGroup>
+									class="fa  fa-stethoscope icon-orange"
+									title="#{msg['body.worklist.navigation.activtasks.councilLendingMTA']}" />
+							</ui:fragment>
+							<!-- council lending secretary -->
+							<ui:fragment
+								rendered="#{task.taskStatus.councilLendingSecretary}">
+								<i style="margin-left: 5px;"
+									class="fa  fa-stethoscope icon-orange"
+									title="#{msg['body.worklist.navigation.activtasks.councilLendingSecretary']}" />
+							</ui:fragment>
+							<!-- council pending -->
+							<ui:fragment rendered="#{task.taskStatus.councilPending}">
+								<i style="margin-left: 5px;" class="fa  fa-stethoscope icon-red"
+									title="#{msg['body.worklist.navigation.activtasks.councilPending']}" />
+							</ui:fragment>
+							<!-- council completed -->
+							<ui:fragment rendered="#{task.taskStatus.councilCompleted}">
+								<i style="margin-left: 5px;"
+									class="fa  fa-stethoscope icon-purple"
+									title="#{msg['body.worklist.navigation.activtasks.councilCompleted']}" />
+							</ui:fragment>
+						</p:commandLink>
 
-							<!-- archived -->
-							<h:panelGroup rendered="#{task.finalized}">
-								<i style="margin-left: 5px;" class="fa fa-archive"
-									title="#{msg['body.worklist.navigation.activtasks.archived']}" />
-							</h:panelGroup>
+						<!-- Pendings completed -->
+						<h:panelGroup rendered="#{task.taskStatus.finalizeable}">
+							<i style="margin-left: 5px;"
+								class="fa fa-check-circle icon-green"
+								title="#{msg['body.worklist.navigation.activtasks.pendencies']}" />
+						</h:panelGroup>
 
-							<br />
-						</p:repeat>
+						<!-- archived -->
+						<h:panelGroup rendered="#{task.finalized}">
+							<i style="margin-left: 5px;" class="fa fa-archive"
+								title="#{msg['body.worklist.navigation.activtasks.archived']}" />
+						</h:panelGroup>
 
-					</p:column>
-				</p:row>
+						<br />
+					</p:repeat>
 
-				<!-- Non active Tasks -->
-				<p:row
-					rendered="#{patient.hasNoneActiveTasks() and worklistViewHandlerAction.worklist.showNoneActiveTasks}">
-					<p:column style="vertical-align: top !important;">
-						<h:outputLabel value="#{msg['body.worklist.navigation.tasks']}" />
-					</p:column>
-					<p:column>
-						<!-- task list -->
-						<p:repeat var="task" value="#{patient.getNoneActiveTasks()}">
+					<h:outputLabel value="#{msg['body.worklist.navigation.tasks']}"
+						rendered="#{patient.hasNoneActiveTasks() and worklistViewHandlerAction.worklist.showNoneActiveTasks}" />
+					<h:panelGroup
+						rendered="#{patient.hasNoneActiveTasks() and worklistViewHandlerAction.worklist.showNoneActiveTasks}">
+						<p:repeat var="
+						task"
+							value="#{patient.getNoneActiveTasks()}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
 								update="navigationForm contentForm headerForm"
@@ -320,13 +297,19 @@
 							</p:commandLink>
 							<br />
 						</p:repeat>
+					</h:panelGroup>
+				</h:panelGrid>
+			</p:column>
 
-					</p:column>
-				</p:row>
-			</p:panelGrid>
-		</p:column>
+		</p:dataTable>
+	</p:scrollPanel>
 
-	</p:dataTable>
+	<!-- scrollspeed of scrollpane -->
+	<script type="text/javascript">
+     $(document).ready(function () {
+        $("#navigationForm\\:patientNavigationScroll").jScrollPane({mouseWheelSpeed: 100});
+     });
+	</script>
 
 	<p:contextMenu for="patientList">
 		<p:menuitem value="Entfernen" icon="ui-icon-close"

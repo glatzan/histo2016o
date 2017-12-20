@@ -51,9 +51,6 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 	private static final long serialVersionUID = 7999598227641226109L;
 
 	@Autowired
-	private GenericDAO genericDAO;
-
-	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;

@@ -101,6 +101,22 @@ public class GlobalEditViewHandler {
 	 * View options, dynamically generated depending on the users role
 	 */
 	private List<View> navigationPages;
+
+	/**
+	 * Selected View in the menu
+	 */
+	private View selectedView;
+	
+	/**
+	 * Current view which is displayed
+	 */
+	private View currentView;
+
+	/**
+	 * Can be Diagnosis or Receiptlog
+	 */
+	private View lastDefaultView;
+
 	// ************************ Patient ************************
 
 	// ************************ Search ************************
@@ -142,6 +158,13 @@ public class GlobalEditViewHandler {
 		updateDataOfTask(false);
 	}
 
+	public String getCenterView() {
+		if (getCurrentView() != null)
+			return getCurrentView().getPath();
+		else
+			return View.WORKLIST_BLANK.getPath();
+	}
+	
 	public void updateDataOfTask(boolean updateFavouriteLists) {
 		if (selectedTask != null)
 			selectedTask.generateTaskStatus();

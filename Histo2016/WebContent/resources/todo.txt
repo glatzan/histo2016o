@@ -124,9 +124,6 @@ alter table task_pdfcontainer drop constraint uk_rp12j1tw0yxecu9bt0b0ym72t;
 alter table biobank_pdfcontainer drop constraint uk_8gmung1gnute185q5scwax2kk;
 alter table council_pdfcontainer drop constraint uk_6ux59funlxk7rbbi0ejs7ir7w;
 
-
-
-
 V 1.0.12
 ++++: Aufträge werden in der Auftragsübersicht entsprechend ihrer Auftragsnummer sortiert, nicht mehr entsprechend ihrer internen ID.
 ++++: Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und ensprechende Köpfe für die einzelen Phase im Menu eingebaut.

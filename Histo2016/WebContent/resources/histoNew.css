@@ -353,6 +353,122 @@
 	padding: 0px;
 }
 
+/* -------------- patient navigation table --------------*/
+/* Search container */
+.patientNavigationHeader {
+	width: 100%;
+	border-top: 1px solid #d3d3d3 !important;
+	border-bottom: 1px solid #d3d3d3 !important;
+	border-right: 1px solid #d3d3d3 !important;
+	text-align: left;
+	background: #e6e6e6
+		url("/Histo16/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness")
+		50% 50% repeat-x;
+}
+
+/* header tds */
+.patientNavigationHeader>tbody>tr>td {
+	height: 19px !important;
+	color: #555555;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	padding-left: 15px;
+	font-size: 1.0em !important;
+}
+
+.patientNavigationHeader .buttonContainer {
+	margin-right: 10px;
+	float: right;
+}
+
+.patientNavigationHeader .buttonContainer a {
+	text-decoration: none !important;
+	color: #555555;
+}
+
+/* Search field in search container */
+.navigation .searchContainer .seachFiled {
+	width: 95%;
+	margin: 3px 0px 3px 3px;
+}
+
+/* scrollpanel style */
+.patientNavigationScroll {
+	height: calc(100vh - 60px);
+	border-left: none !important;
+	border-top: none !important;
+	border-bottom: none !important;
+	border-spacing: 0px !important;
+}
+
+/* scrollpanel body with*/
+.patientNavigationScroll .ui-scrollpanel-content {
+	width: calc(100% - 5px) !important;
+}
+
+/*scrollpanel bar*/
+.patientNavigationScroll .ui-scrollpanel-vbar {
+	width: 5px;
+}
+
+/* background of the bar*/
+.patientNavigationScroll .ui-scrollpanel-track {
+	background: none;
+}
+
+/* background of the bars drag*/
+.patientNavigationScroll .ui-scrollpanel-track .ui-scrollpanel-drag {
+	background: #555555;
+	border-radius: 5px;
+}
+
+.patientNavigationTable {
+	
+}
+
+.patientNavigationTable .ui-datatable-tablewrapper>table>thead {
+	display: none;
+}
+
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr {
+	border-left: none;
+}
+
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr>td {
+	padding: 0px !important;
+	border-left: none;
+}
+
+/* change background on mouse over*/
+.patientNavigationTable .ui-state-hover {
+	background: #e6e6e6 !important;
+}
+
+.patientNavigationTable .ui-state-highlight{
+	background: #fcf1b8 !important;
+}
+
+
+.patientNavigation .contentTable td {
+	border: 0px !important;
+	padding: 2px 0px !important;
+}
+
+.patientNavigation .contentTable tr {
+	background: none;
+}
+
+.patientNavigation th, .navigationDataTable  td {
+	padding: 4px 14px !important;
+}
+
+.patientNavigation .ui-state-hover {
+	background: #e6e6e6 !important;
+}
+
+.patientNavigation .contentTable .info {
+	font-size: 0.7em;
+}
+
 /* -------------- Tab Dialog Style --------------*/
 .tabDialogLayout {
 	padding: 0px !important;
@@ -516,7 +632,6 @@
 .oneNumberSpinner {
 	padding-left: 0px !important;
 	padding-right: 15px !important;
-	
 }
 
 .oneNumberSpinner input {

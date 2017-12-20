@@ -155,6 +155,34 @@ public class Worklist {
 		return getItems().stream().anyMatch(p -> p.equals(patient));
 	}
 
+	/**
+	 * Returns the patient of the worklist
+	 * 
+	 * @return
+	 */
+	public Patient getFirstPatient() {
+		if (isEmpty())
+			return null;
+		return items.get(0);
+	}
+
+	/**
+	 * Returns the first Active task, otherwise null
+	 * 
+	 * @return
+	 */
+	public Task getFirstActiveTask() {
+		if (isEmpty())
+			return null;
+
+		for (Patient patient : items) {
+			if (!patient.getActiveTasks(isShowActiveTasksExplicit()).isEmpty())
+				return patient.getActiveTasks(isShowActiveTasksExplicit()).get(0);
+		}
+
+		return null;
+	}
+
 	public void sortWordklist() {
 		sortWordklist(getWorklistSortOrder(), isSortAscending());
 	}
@@ -166,7 +194,7 @@ public class Worklist {
 				task.generateTaskStatus();
 			}
 	}
-	
+
 	public void clear() {
 		getItems().clear();
 	}
