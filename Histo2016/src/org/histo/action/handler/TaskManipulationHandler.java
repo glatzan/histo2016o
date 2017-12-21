@@ -21,6 +21,9 @@ import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -39,6 +42,11 @@ public class TaskManipulationHandler {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TransactionTemplate transactionTemplate;
 
 	/********************************************************
 	 * Diagnosis Info
@@ -121,7 +129,8 @@ public class TaskManipulationHandler {
 
 		diagnosis.getParent().getDiagnoses().remove(diagnosis);
 
-		genericDAO.deletePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.remov", diagnosis.toString());
+		genericDAO.deletePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.remov",
+				diagnosis.toString());
 
 		return diagnosis;
 	}
@@ -190,8 +199,8 @@ public class TaskManipulationHandler {
 	}
 
 	/**
-	 * Updates a diagnosisRevision with a sample list. Used for adding and removing
-	 * samples after initial revision creation.
+	 * Updates a diagnosisRevision with a sample list. Used for adding and
+	 * removing samples after initial revision creation.
 	 * 
 	 * @param diagnosisRevision
 	 * @param samples
@@ -256,8 +265,8 @@ public class TaskManipulationHandler {
 	 * Sample Manipulation
 	 ********************************************************/
 	/**
-	 * Creates a new sample and adds this sample to the given task. Creates a new
-	 * diagnosis and a new block with slides as well.
+	 * Creates a new sample and adds this sample to the given task. Creates a
+	 * new diagnosis and a new block with slides as well.
 	 * 
 	 * @param task
 	 */
@@ -284,8 +293,8 @@ public class TaskManipulationHandler {
 	 ********************************************************/
 
 	/**
-	 * Creates a new block for the given sample. Adds all slides from the material
-	 * preset to the block.
+	 * Creates a new block for the given sample. Adds all slides from the
+	 * material preset to the block.
 	 * 
 	 * @param sample
 	 * @param material
@@ -318,8 +327,8 @@ public class TaskManipulationHandler {
 	 * Staining Manipulation
 	 ********************************************************/
 	/**
-	 * Adds a new staining to a block. Needs the sample an the patient for logging.
-	 * Commentary will be null.
+	 * Adds a new staining to a block. Needs the sample an the patient for
+	 * logging. Commentary will be null.
 	 * 
 	 * @param prototype
 	 * @param sample
@@ -331,8 +340,8 @@ public class TaskManipulationHandler {
 	}
 
 	/**
-	 * Adds a new staining to a block. Needs the sample an the patient for logging.
-	 * Commentary the given string.
+	 * Adds a new staining to a block. Needs the sample an the patient for
+	 * logging. Commentary the given string.
 	 * 
 	 * @param prototype
 	 * @param sample
@@ -343,26 +352,43 @@ public class TaskManipulationHandler {
 	public void createSlide(StainingPrototype prototype, Block block, String commentary, boolean reStaining) {
 		logger.debug("Creating new slide " + prototype.getName());
 
-		Slide slide = new Slide();
+		try {
 
-		slide.setCreationDate(System.currentTimeMillis());
-		slide.setSlidePrototype(prototype);
-		slide.setParent(block);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		// setting unique slide number
-		slide.setUniqueIDinTask(block.getTask().getNextSlideNumber());
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					Slide slide = new Slide();
 
-		block.getSlides().add(slide);
+					slide.setCreationDate(System.currentTimeMillis());
+					slide.setSlidePrototype(prototype);
+					slide.setParent(block);
 
-		slide.updateNameOfSlide(block.getTask().isUseAutoNomenclature(), false);
+					// setting unique slide number
+					slide.setUniqueIDinTask(block.getTask().getNextSlideNumber());
 
-		if (commentary != null && !commentary.isEmpty())
-			slide.setCommentary(commentary);
+					block.getSlides().add(slide);
 
-		slide.setReStaining(reStaining);
+					slide.updateNameOfSlide(block.getTask().isUseAutoNomenclature(), false);
 
-		genericDAO.savePatientData(slide, "log.patient.task.sample.block.slide.new", slide.toString());
+					if (commentary != null && !commentary.isEmpty())
+						slide.setCommentary(commentary);
 
+					slide.setReStaining(reStaining);
+
+					genericDAO.savePatientData(slide, "log.patient.task.sample.block.slide.new", slide.toString());
+
+					slide.getTask().setStainingCompletionDate(0);
+
+					genericDAO.savePatientData(slide.getTask(), "log.patient.task.sample.block.slide.new",
+							slide.toString());
+
+				}
+			});
+
+		} catch (Exception e) {
+			// TODO add text
+			throw new CustomDatabaseInconsistentVersionException("");
+		}
 	}
 
 	/********************************************************

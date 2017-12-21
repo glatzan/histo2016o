@@ -50,6 +50,8 @@ import org.histo.util.PDFGenerator;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -186,15 +188,15 @@ public class CreateTaskDialog extends AbstractDialog {
 		getBioBank().setInformedConsentType(InformedConsentType.NONE);
 		getBioBank().setTask(getTask());
 
-		//resetting selected container
+		// resetting selected container
 		dialogHandlerAction.getMediaDialog().setSelectedPdfContainer(null);
-		
+
 		setMoveInformedConsent(false);
 	}
 
 	/**
-	 * Updates the name and the amount of samples which should be created with the
-	 * new task.
+	 * Updates the name and the amount of samples which should be created with
+	 * the new task.
 	 */
 	public void updateDialog() {
 
@@ -244,111 +246,108 @@ public class CreateTaskDialog extends AbstractDialog {
 		uniqueRequestID.checkUniqueRequestID(true);
 
 		try {
-			//
-			// transactionTemplate.execute(new
-			// TransactionCallbackWithoutResult() {
-			//
-			// public void doInTransactionWithoutResult(TransactionStatus
-			// transactionStatus) {
 
-			genericDAO.reattach(getPatient());
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-			if (getPatient().getTasks() == null) {
-				getPatient().setTasks(new ArrayList<>());
-			}
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-			logger.debug("Creating new Task");
+					genericDAO.reattach(getPatient());
 
-			getPatient().getTasks().add(0, getTask());
-			// sets the new task as the selected task
+					if (getPatient().getTasks() == null) {
+						getPatient().setTasks(new ArrayList<>());
+					}
 
-			getTask().setParent(getPatient());
-			getTask().setCaseHistory("");
-			getTask().setWard("");
-			getTask().setInsurance(patient.getInsurance());
+					logger.debug("Creating new Task");
 
-			if (isTaskIdManuallyAltered()) {
-				// TODO check if task id exists
-			} else {
-				// renewing taskID, if somebody has created an other
-				// task in the meanwhile
-				getTask().setTaskID(getNewTaskID());
-			}
+					getPatient().getTasks().add(0, getTask());
+					// sets the new task as the selected task
 
-			getTask().setCouncils(new ArrayList<Council>());
+					getTask().setParent(getPatient());
+					getTask().setCaseHistory("");
+					getTask().setWard("");
+					getTask().setInsurance(patient.getInsurance());
 
-			getTask().setFavouriteLists(new ArrayList<FavouriteList>());
+					if (isTaskIdManuallyAltered()) {
+						// TODO check if task id exists
+					} else {
+						// renewing taskID, if somebody has created an other
+						// task in the meanwhile
+						getTask().setTaskID(getNewTaskID());
+					}
 
-			// saving task
-			genericDAO.savePatientData(getTask(), "log.patient.task.new", getTask().getTaskID());
+					getTask().setCouncils(new ArrayList<Council>());
 
-			DiagnosisContainer diagnosisContainer = new DiagnosisContainer(getTask());
-			getTask().setDiagnosisContainer(diagnosisContainer);
-			diagnosisContainer.setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
+					getTask().setFavouriteLists(new ArrayList<FavouriteList>());
 
-			// setting signature
-			diagnosisContainer.setSignatureOne(new Signature());
-			diagnosisContainer.setSignatureTwo(new Signature());
+					// saving task
+					genericDAO.savePatientData(getTask(), "log.patient.task.new", getTask().getTaskID());
 
-			// saving diagnosis container
-			genericDAO.savePatientData(diagnosisContainer, "log.patient.task.diagnosisContainer.new",
-					getTask().getTaskID());
+					DiagnosisContainer diagnosisContainer = new DiagnosisContainer(getTask());
+					getTask().setDiagnosisContainer(diagnosisContainer);
+					diagnosisContainer.setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
 
-			for (Sample sample : getTask().getSamples()) {
-				// saving samples
-				genericDAO.savePatientData(sample, "log.patient.task.sample.new", sample.getSampleID());
-				// creating needed blocks
-				taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
+					// setting signature
+					diagnosisContainer.setSignatureOne(new Signature());
+					diagnosisContainer.setSignatureTwo(new Signature());
 
-			}
+					// saving diagnosis container
+					genericDAO.savePatientData(diagnosisContainer, "log.patient.task.diagnosisContainer.new",
+							getTask().getTaskID());
 
-			logger.debug("Creating diagnosis");
-			// creating standard diagnoses
-			taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(),
-					DiagnosisRevisionType.DIAGNOSIS);
-			// generating gui list
-			getTask().generateSlideGuiList();
+					for (Sample sample : getTask().getSamples()) {
+						// saving samples
+						genericDAO.savePatientData(sample, "log.patient.task.sample.new", sample.getSampleID());
+						// creating needed blocks
+						taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
 
-			// creating bioBank for Task
-			bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
+					}
 
-			PDFContainer selectedPDF = dialogHandlerAction.getMediaDialog().getSelectedPdfContainer();
+					logger.debug("Creating diagnosis");
+					// creating standard diagnoses
+					taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(),
+							DiagnosisRevisionType.DIAGNOSIS);
+					// generating gui list
+					getTask().generateSlideGuiList();
 
-			if (selectedPDF != null) {
-				// attaching pdf to biobank
-				bioBank.getAttachedPdfs().add(selectedPDF);
+					// creating bioBank for Task
+					bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());
 
-				genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.pdf.attached",
-						selectedPDF.getName());
+					PDFContainer selectedPDF = dialogHandlerAction.getMediaDialog().getSelectedPdfContainer();
 
-				// and task
-				getTask().setAttachedPdfs(new ArrayList<PDFContainer>());
-				getTask().getAttachedPdfs().add(selectedPDF);
+					if (selectedPDF != null) {
+						// attaching pdf to biobank
+						bioBank.getAttachedPdfs().add(selectedPDF);
 
-				genericDAO.savePatientData(getTask(), "log.patient.pdf.attached");
+						genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.pdf.attached",
+								selectedPDF.getName());
 
-				if (isMoveInformedConsent()) {
-					patient.getAttachedPdfs().remove(selectedPDF);
-					genericDAO.savePatientData(getPatient(), "log.patient.pdf.removed", selectedPDF.getName());
+						// and task
+						getTask().setAttachedPdfs(new ArrayList<PDFContainer>());
+						getTask().getAttachedPdfs().add(selectedPDF);
+
+						genericDAO.savePatientData(getTask(), "log.patient.pdf.attached");
+
+						if (isMoveInformedConsent()) {
+							patient.getAttachedPdfs().remove(selectedPDF);
+							genericDAO.savePatientData(getPatient(), "log.patient.pdf.removed", selectedPDF.getName());
+						}
+					} else {
+						genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.save");
+					}
+
+					// adding patient to the contact list
+					contactDAO.addAssociatedContact(task, getPatient().getPerson(), ContactRole.PATIENT);
+
+					genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
+
+					FavouriteList f = favouriteListDAO.getFavouriteList(PredefinedFavouriteList.StainingList.getId(),
+							true, false);
+
+					favouriteListDAO.addTaskToList(getTask(), f);
+
+					genericDAO.save(task.getPatient());
 				}
-			} else {
-				genericDAO.savePatientData(bioBank, getTask(), "log.patient.bioBank.save");
-			}
-
-			// adding patient to the contact list
-			contactDAO.addAssociatedContact(task, getPatient().getPerson(), ContactRole.PATIENT);
-
-			genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
-
-			FavouriteList f = favouriteListDAO.getFavouriteList(PredefinedFavouriteList.StainingList.getId(), true,
-					false);
-
-			favouriteListDAO.addTaskToList(getTask(), f);
-
-			genericDAO.save(task.getPatient());
-			// }
-			// }
-			// });
+			});
 
 			genericDAO.lockParent(task);
 

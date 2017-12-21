@@ -136,6 +136,8 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 					taskManipulationHandler.finalizeAllDiangosisRevisions(
 							getTask().getDiagnosisContainer().getDiagnosisRevisions(), true);
 
+					getTask().getDiagnosisContainer().setSignatureDate(System.currentTimeMillis());
+					
 					// adding to notification phase
 					if (goToNotificationPhase)
 						favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
