@@ -9,7 +9,7 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<p:poll interval="#{worklistViewHandlerAction.worklist.udpateInterval}"
-		update=":navigationForm"
+		update=":navigationForm:patientList"
 		rendered="#{worklistViewHandlerAction.worklist.autoUpdate}"
 		stop="#{!worklistViewHandlerAction.worklist.autoUpdate}"
 		listener="#{worklistViewHandlerAction.updateCurrentWorklist()}" />
@@ -56,10 +56,10 @@
 
 		<p:commandButton id="submitQuickSearchBtn"
 			actionListener="#{globalEditViewHandler.quickSearch()}"
-			update="navigationForm contentForm headerForm"
+			update="navigationForm:patientList contentForm headerForm"
 			icon="fa fa-mail-forward">
 			<p:ajax event="dialogReturn"
-				update="navigationForm contentForm :headerForm" />
+				update="navigationForm:patientList contentForm :headerForm" />
 		</p:commandButton>
 
 	</h:panelGrid>
@@ -71,14 +71,14 @@
 			<!-- Button UP -->
 			<p:commandLink title="#{msg['body.worklist.navigation.button.up']}"
 				actionListener="#{worklistViewHandlerAction.selectNextTask()}"
-				update="navigationForm contentForm headerForm">
+				update="navigationForm:patientList contentForm headerForm">
 				<i class="fa fa-arrow-circle-up"></i>
 			</p:commandLink>
 
 			<!-- Button Down -->
 			<p:commandLink title="#{msg['body.worklist.navigation.button.down']}"
 				actionListener="#{worklistViewHandlerAction.selectPreviouseTask()}"
-				update="navigationForm contentForm headerForm">
+				update="navigationForm:patientList contentForm headerForm">
 				<i class="fa fa-arrow-circle-down"></i>
 			</p:commandLink>
 
@@ -87,7 +87,7 @@
 				actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSorting()}">
 				<i class="fa fa-th-list"></i>
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandLink>
 
 			<!-- Worklist settings -->
@@ -96,7 +96,7 @@
 				actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSettings()}">
 				<i class="fa fa-wrench"></i>
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandLink>
 
 			<!-- Worklist change -->
@@ -107,11 +107,12 @@
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandLink>
+			
 			<!-- Worklist clear -->
 			<p:commandLink partialSubmit="true" process="@this"
 				title="#{msg['body.worklist.navigation.button.changelist']}"
 				actionListener="#{worklistViewHandlerAction.clearWorklist(worklistViewHandlerAction.worklist)}"
-				update="navigationForm contentForm headerForm">
+				update="navigationForm:patientList contentForm headerForm">
 				<i class="fa fa-times-circle-o"></i>
 			</p:commandLink>
 		</h:panelGroup>
@@ -129,22 +130,23 @@
 			rowKey="#{patient.id}" styleClass="patientNavigationTable">
 
 			<p:ajax event="rowSelect"
-				update=":navigationForm :contentForm :headerForm"
+				update=":navigationForm:patientList :contentForm :headerForm"
 				listener="#{worklistViewHandlerAction.onSelectPatient(globalEditViewHandler.selectedPatient)}" />
 
 			<p:column>
 				<!-- Header -->
-				<h:panelGrid styleClass="newStyleListingTable" columns="2">
+				<h:panelGrid styleClass="newStyleListingTable" columns="2"
+					columnClasses="columnLabelContainer150,">
 
-					<h:outputText
+					<h:outputLabel
 						value="#{patient.person.lastName}, #{patient.person.firstName}" />
-					<h:outputText
+					<h:outputLabel
 						value="PIZ: #{patient.piz ne 0 ? patient.piz : 'none'}" />
 
-					<h:outputText value="#{patient.person.birthday}"
+					<h:outputLabel value="#{patient.person.birthday}"
 						rendered="#{patient.person.birthday ne null}">
 						<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-					</h:outputText>
+					</h:outputLabel>
 					<h:outputLabel rendered="#{patient.person.birthday eq null}"
 						value="" />
 					<h:outputLabel value="" />
@@ -152,19 +154,20 @@
 
 				<!-- tasks -->
 				<h:panelGrid styleClass="newStyleListingTable" columns="2"
-					columnClasses="columnTop,">
+					columnClasses="columnTop columnLabelContainer150,">
 					<h:outputLabel
-						value="#{msg['body.worklist.navigation.activtasks']}" />
+						value="#{msg['body.worklist.navigation.activtasks']}"
+						style="font-size: 1.2em !important" />
 					<!-- task list -->
 					<p:repeat var="task"
 						value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
 						<p:commandLink partialSubmit="true" process="@this"
 							actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
-							update="@(form :not(.patientNavigationScroll))"
+							update="headerForm contentForm navigationForm:patientList"
 							styleClass="noUnderlineAtLink">
 
 							<h:outputLabel value="#{task.taskID}"
-								style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
+								style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;font-weight:bold' : ''};font-size: 1.2em !important" />
 
 							<!-- priority -->
 							<h:panelGroup rendered="#{task.taskPriority ne 'NONE'}">
@@ -237,7 +240,7 @@
 
 						<p:commandLink partialSubmit="true" process="@this"
 							actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(task)}"
-							update="navigationForm contentForm headerForm"
+							update="navigationForm:patientList contentForm headerForm"
 							styleClass="noUnderlineAtLink">
 							<!-- council lending mta -->
 							<ui:fragment rendered="#{task.taskStatus.councilLendingMTA}">
@@ -283,14 +286,13 @@
 
 					<h:outputLabel value="#{msg['body.worklist.navigation.tasks']}"
 						rendered="#{patient.hasNoneActiveTasks() and worklistViewHandlerAction.worklist.showNoneActiveTasks}" />
+
 					<h:panelGroup
 						rendered="#{patient.hasNoneActiveTasks() and worklistViewHandlerAction.worklist.showNoneActiveTasks}">
-						<p:repeat var="
-						task"
-							value="#{patient.getNoneActiveTasks()}">
+						<p:repeat var="task" value="#{patient.getNoneActiveTasks()}">
 							<p:commandLink
 								actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
-								update="navigationForm contentForm headerForm"
+								update="navigationForm:patientList contentForm headerForm"
 								styleClass="noUnderlineAtLink">
 								<h:outputLabel value="#{task.taskID}"
 									style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;' : ''}" />
@@ -314,6 +316,6 @@
 	<p:contextMenu for="patientList">
 		<p:menuitem value="Entfernen" icon="ui-icon-close"
 			actionListener="#{worklistViewHandlerAction.removeFromWorklist(globalEditViewHandler.selectedPatient)}"
-			update="navigationForm contentForm" />
+			update="navigationForm:patientList contentForm headerForm" />
 	</p:contextMenu>
 </ui:composition>

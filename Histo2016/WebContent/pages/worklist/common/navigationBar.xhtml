@@ -13,7 +13,7 @@
 			rendered="#{globalEditViewHandler.selectedPatient ne null}">
 
 			<!-- Name -->
-			<h:commandLink update="navigationForm contentForm"
+			<h:commandLink update="navigationForm:patientList contentForm headerForm"
 				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
 				<h:outputFormat value="#{msg['bodyNavigationOverview']}"
 					styleClass="navigationText">

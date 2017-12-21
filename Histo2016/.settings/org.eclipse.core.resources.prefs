@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//WebContent/resources/messages/messages.properties=UTF-8
+encoding//WebContent/resources/settings/version.json=UTF-8
 encoding//WebContent/resources/templates/print/Report.tex=UTF-8
 encoding//WebContent/resources/templates/print/Report_Intern_test.tex=UTF-8
 encoding/<project>=UTF-8

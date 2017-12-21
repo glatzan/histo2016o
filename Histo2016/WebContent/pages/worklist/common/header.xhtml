@@ -35,7 +35,7 @@
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<p:selectOneMenu style="margin-top:1px;"
@@ -51,7 +51,7 @@
 			</p:selectOneMenu>
 
 			<p:commandButton id="changeView"
-				update="navigationForm contentForm navigationForm"
+				update="navigationForm:patientList contentForm headerForm"
 				actionListener="#{worklistViewHandlerAction.goToNavigation(globalEditViewHandler.currentView)}"
 				style="display:none" />
 
@@ -85,7 +85,7 @@
 
 			<!-- Show Overview -->
 			<p:commandButton id="showPatientOverview" style="display:none"
-				update="navigationForm contentForm headerForm"
+				update="navigationForm:patientList contentForm headerForm"
 				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
 			</p:commandButton>
 
@@ -99,7 +99,7 @@
 			<!-- Edit Patient data -->
 			<p:commandButton id="editPatientData" style="display:none"
 				actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- *************** Patient Menu *************** -->
@@ -111,35 +111,35 @@
 			<p:commandButton id="newTaskBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining List, New Sample -->
 			<p:commandButton id="newSampleBtn" style="display:none"
 				actionListener="#{createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining overview -->
 			<p:commandButton id="stainingOverview" style="display:none"
 				actionListener="#{dialogHandlerAction.slideOverviewDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Staining List, leave phase an set all stainigs to performed -->
 			<p:commandButton id="stainingPhaseExit" style="display:none"
 				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Diagnosis List, new diagnosis revision -->
 			<p:commandButton id="newDiagnosisRevision" style="display:none"
 				actionListener="#{dialogHandlerAction.diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Diagnosis List, leave diagnosis phase after completion -->
@@ -148,14 +148,14 @@
 				oncomplete="PF('blockUIWidget').unblock()"
 				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Council button -->
 			<p:commandButton id="councilBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm"
+					update="navigationForm:patientList contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
@@ -163,14 +163,14 @@
 			<p:commandButton id="editContactBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Notification button -->
 			<p:commandButton id="medicalFindingsContactBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm"
+					update="navigationForm:patientList contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
@@ -178,21 +178,21 @@
 			<p:commandButton id="archiveTaskBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, true)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- restore Task -->
 			<p:commandButton id="restoreTaskBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, false)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Favourite-Lists button -->
 			<p:commandButton id="favouriteListsBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.favouriteListsDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm"
+					update="navigationForm:patientList contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
@@ -200,7 +200,7 @@
 			<p:commandButton id="bioBankBtn" style="display:none"
 				actionListener="#{bioBankDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm"
+					update="navigationForm:patientList contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
@@ -210,7 +210,7 @@
 				oncomplete="PF('blockUIWidget').unblock()"
 				actionListener="#{dialogHandlerAction.printDialog.initAndPrepareBeanForPrinting(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
-					update="navigationForm contentForm headerForm"
+					update="navigationForm:patientList contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
 
@@ -261,25 +261,25 @@
 			<p:commandButton id="settingsDialogBtn" style="display:none"
 				partialSubmit="true" process="@this"
 				actionListener="#{settingsDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- userSettings button -->
 			<p:commandButton id="userSettingsDialogBtn" style="display:none"
 				actionListener="#{userSettingsDialog.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- Info button -->
 			<p:commandButton id="infoDialogBtn" style="display:none"
 				actionListener="#{programmVersionDialog.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- update all -->
 			<p:commandButton id="updateAllContent" style="display:none"
 				actionListener="#{mainHandlerAction.showQueueGrowlMessage()}"
-				update="navigationForm contentForm headerForm growlForm:globalgrowl" />
+				update="navigationForm:patientList contentForm headerForm growlForm:globalgrowl" />
 
 			<!-- Function for clicking on the dialogs -->
 			<script type="text/javascript">

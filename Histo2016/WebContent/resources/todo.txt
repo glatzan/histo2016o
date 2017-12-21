@@ -88,7 +88,7 @@ TODO: Freischaltungs link
 
 
 v 1.0.14
-++++: Arbeitsliste grafisch und funktionell verbesser, scrollen ist jetzt möglich
+++++: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich
 ++++: Kopf zum leeren der Arbeitsliste hinzugefügt
 ++++: Das Menu wird bei Verwendung der Navigations-Pfeile richtige geupdated 
 ++++: Nach hinzufügen oder Suchen eines Patienten/Auftrages/Objektträger-ID wird die Arbeitsliste neu sortiert
@@ -101,7 +101,6 @@ SQL:
 alter table task add slidecounter integer;
 alter table task_aud add slidecounter integer;
 update task set slidecounter = 0;
-
 Alter table block drop column uniqueSlideCounter; 
 Alter table block_aud drop column uniqueSlideCounter; 
 ALTER TABLE slide RENAME COLUMN uniqueidinblock TO uniqueidintask;
@@ -110,11 +109,11 @@ ALTER TABLE slide_aud RENAME COLUMN uniqueidinblock TO uniqueidintask;
 V 1.0.13
 ++++: Graphische Anpassungen am Druck-Dialog, leere Adress-Option 
 ++++: Wird ein Auftrag aus der Auftragsliste geladen, kam es bisher zu einem Fehler, dieser wurde behoben.
-++++: Befundbreichte werden nach der Benachrichtigung ausgedruckt, Feld für die Anzahl hinzugefügt
-++++: Beim erstellen eines Auftrags werden Aufklärungen nicht mehr aus einer Vorherigen Auftragserstellung übernommen.
+++++: Befundberichte werden nach der Benachrichtigung ausgedruckt, Feld für die Anzahl hinzugefügt
+++++: Beim Erstellen eines Auftrags werden Aufklärungen nicht mehr aus einer Vorherigen Auftragserstellung übernommen.
 ++++: Benachrichtigungs-Dialog kann wieder über das Menu geöffnet werden
 ++++: Material kann manuell beim Erstellen eines Auftrages eingegeben werden
-++++: Fehler beim suchen nach Patienten ohne Auftrag behoben
+++++: Fehler beim Suchen nach Patienten ohne Auftrag behoben
 
 SQL:
 Alter table person add autoUpdate boolean;
@@ -129,8 +128,8 @@ alter table council_pdfcontainer drop constraint uk_6ux59funlxk7rbbi0ejs7ir7w;
 
 V 1.0.12
 ++++: Aufträge werden in der Auftragsübersicht entsprechend ihrer Auftragsnummer sortiert, nicht mehr entsprechend ihrer internen ID.
-++++: Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und ensprechende Köpfe für die einzelen Phase im Menu eingebaut.
-++++: Auftrag kann archviert/dearchviert werden, entsprechende Rechte eingeführt.
+++++: Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und entsprechende Köpfe für die einzelne Phase im Menu eingebaut.
+++++: Auftrag kann archiviert/dearchiviert werden, entsprechende Rechte eingeführt.
 ++++: Login-Button wird gesperrt sobald ein Login erfolgt
 ++++: Probe/Block/Objektträger archivieren wurde in löschen umbenannt
 ++++: Aktuelle Versicherung wird nun angezeigt, anstelle von privat/regulär im Diagnosis View
@@ -144,7 +143,6 @@ Alter table task drop column editable;
 Alter table task_aud drop column editable; 
 Alter table patient drop column privateInsurance; 
 Alter table patient_aud  drop column privateInsurance;
-
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'EDIT_TASK_ID');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'EDIT_TASK_ID');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'EDIT_TASK_ID');
@@ -158,20 +156,20 @@ INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'RESO
 
 
 V 1.0.11
-++++: Ist nur eine Probe vorhanden, wird kein Name im Diangosen-View mehr angezeigt
-++++: Diagnosen und Proben werden im Diangosen-View wieder richtig angezeigt
+++++: Ist nur eine Probe vorhanden, wird kein Name im Diagnosen-View mehr angezeigt
+++++: Diagnosen und Proben werden im Diagnosen-View wieder richtig angezeigt
 ++++: Hover-Texte angepasst
-++++: Funktionsoberarzt/ärztin als Auswahl bei Diagnosen-Unterschrift hinzugefügt 
-++++: Auftragsnummer darf maximal 6 Zahlen enthalen, ein neuer Auftrag kann nur noch mit gültiger Auftragsnummer erstellt werden.
+++++: Funktionsoberarzt/Ärztin als Auswahl bei Diagnosen-Unterschrift hinzugefügt 
+++++: Auftragsnummer darf maximal 6 Zahlen enthalten, ein neuer Auftrag kann nur noch mit gültiger Auftragsnummer erstellt werden.
 ++++: Rechtschreibfehler korrigiert.
-++++: Im Operateurauswahl-Dialog kann der Operateur jetzt auch beim klicken auf den Namen ausgewählt werden.
-++++: Ist keine Vorlage für einen Diangose-Text vorhanden, wird der link zum Kopieren der Vorlage ausgeraut.
-++++: Einlog-Routine überarbeitet, redirect jetzt möglich, Fehlermeldung bei falschen Benutzerdaten.
+++++: Im Operateurauswahl-Dialog kann der Operateur jetzt auch beim Klicken auf den Namen ausgewählt werden.
+++++: Ist keine Vorlage für einen Diagnose-Text vorhanden, wird der link zum Kopieren der Vorlage ausgeraut.
+++++: Einlog-Routine überarbeitet, Redirect jetzt möglich, Fehlermeldung bei falschen Benutzerdaten.
 ++++: Malignität im Befundbericht wird richtig angezeigt, Satz über die Gültigkeit des Berichtes hinzugefügt.
 ++++: Editieren von externen Patienten geht wieder
 ++++: Logeinträge werde nicht mehr mehrfach angezeigt
-++++: Die Generierung eines Befundberichtes nach Abschließen der Diangose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.
-++++: Programm-Gruppen können Benutzer wieder richtig zugeweisen werden
+++++: Die Generierung eines Befundberichtes nach Abschließen der Diagnose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.
+++++: Programm-Gruppen können Benutzer wieder richtig zugewiesen werden
 ++++: Beim Einloggen wird Groß/Kleinschreibung des Benutzernamens ignoriert
 ++++: Sessiontimout auf 12h gesetzt
 ++++: Passwort wird wieder abgefragt, war zur Debugzwecken deaktiviert.

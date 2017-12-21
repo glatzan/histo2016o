@@ -104,6 +104,10 @@
 }
 
 /* -------------- New Pannelgridn Column Styles --------------*/
+.newStyleListingTable .columnLabelContainer100 {
+	width: 100px !important;
+}
+
 .newStyleListingTable .columnLabelContainer150 {
 	width: 150px !important;
 }
@@ -396,7 +400,7 @@
 
 /* scrollpanel body with*/
 .patientNavigationScroll .ui-scrollpanel-content {
-	width: calc(100% - 5px) !important;
+	width: 100% !important;
 }
 
 /*scrollpanel bar*/
@@ -423,13 +427,23 @@
 	display: none;
 }
 
-.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr {
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody, .patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr {
 	border-left: none;
+	border-right: none;
+}
+
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody{
+		border-top:none;
+}
+
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr:first-of-type, .patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr:first-of-type>td{
+	border-top:none;
 }
 
 .patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr>td {
 	padding: 0px !important;
 	border-left: none;
+	border-right: none;
 }
 
 /* change background on mouse over*/
@@ -439,28 +453,6 @@
 
 .patientNavigationTable .ui-state-highlight{
 	background: #fcf1b8 !important;
-}
-
-
-.patientNavigation .contentTable td {
-	border: 0px !important;
-	padding: 2px 0px !important;
-}
-
-.patientNavigation .contentTable tr {
-	background: none;
-}
-
-.patientNavigation th, .navigationDataTable  td {
-	padding: 4px 14px !important;
-}
-
-.patientNavigation .ui-state-hover {
-	background: #e6e6e6 !important;
-}
-
-.patientNavigation .contentTable .info {
-	font-size: 0.7em;
 }
 
 /* -------------- Tab Dialog Style --------------*/

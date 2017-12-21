@@ -1,5 +1,28 @@
 [
 	{
+		"version": "1.0.14",
+		"changes": [
+			"<b>Change:</b> Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich.",
+			"<b>Added:</b> Kopf zum leeren der Arbeitsliste hinzugefügt.",
+			"<b>Fix:</b> Das Menu wird bei Verwendung der Navigations-Pfeile richtige geupdated ",
+			"<b>Change:</b> Nach hinzufügen oder Suchen eines Patienten/Auftrages/Objektträger-ID wird die Arbeitsliste neu sortiert.",
+			"<b>Added:</b> Befund kann jetzt via Button in der Befundungsansicht abgeschlossen werden.",
+			"<b>Change:</b> Hintergrundfärbung der Diagnosen-Tabelle umgedreht .",
+			"<b>Fix:</b> Schnell-Suche funktioniert wieder wie erwartet.",
+			"<b>Change:</b> Zähler für Objektträger in Auftrag verlegt."
+		]
+	},{
+		"version": "1.0.13",
+		"changes": [
+			"<b>Change:</b> Graphische Anpassungen am Druck-Dialog, leere Adress-Option ",
+			"<b>Fix:</b> Wird ein Auftrag aus der Auftragsliste geladen, kam es bisher zu einem Fehler, dieser wurde behoben.",
+			"<b>Change:</b> Befundberichte werden nach der Benachrichtigung ausgedruckt, Feld für die Anzahl hinzugefügt",
+			"<b>Fix:</b> Beim Erstellen eines Auftrags werden Aufklärungen nicht mehr aus einer Vorherigen Auftragserstellung übernommen.",
+			"<b>Fix:</b> Benachrichtigungs-Dialog kann wieder über das Menu geöffnet werden.",
+			"<b>Added:</b> Material kann manuell beim Erstellen eines Auftrages eingegeben werden.",
+			"<b>Fix:</b> Fehler beim Suchen nach Patienten ohne Auftrag behoben."
+		]
+	},{
 		"version": "1.0.12",
 		"changes": [
 			"<b>Added:</b> Recht für Änderung der Auftrags-Nummer eingeführt",
@@ -8,7 +31,8 @@
 			"<b>Change:</b> Probe/Block/Objektträger archivieren wurde in löschen umbenanntn",
 			"<b>Change:</b> Login-Button wird gesperrt sobald ein Login erfolgt",
 			"<b>Added:</b> Auftrag kann archviert/dearchviert werden, entsprechende Rechte eingeführt.",
-			"<b>Change:</b> Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und ensprechende Köpfe für die einzelen Phase im Menu eingebaut."
+			"<b>Change:</b> Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und ensprechende Köpfe für die einzelen Phase im Menu eingebaut.",
+			"<b>Change:</b> Aufträge werden in der Auftragsübersicht entsprechend ihrer Auftragsnummer sortiert, nicht mehr entsprechend ihrer internen ID."
 		]
 	},{
 		"version": "1.0.11",
