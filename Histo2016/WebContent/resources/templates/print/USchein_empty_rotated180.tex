@@ -1,0 +1,73 @@
+\documentclass{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+%\usepackage[left=1.5cm,right=1.5cm,top=3cm,bottom=2cm]{geometry}
+\usepackage[absolute, overlay]{textpos}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{everypage}
+\usepackage{helvet}
+\usepackage{setspace}
+\usepackage[rotate]{crop}
+\usepackage{wallpaper}
+
+\usepackage{array}
+
+% font
+\renewcommand{\familydefault}{\sfdefault}
+
+%deactive pagenumbering%
+\pagenumbering{gobble}
+
+
+\begin{document}
+
+
+%\ThisCenterWallPaper{1}{U-Schein-neu-Vorlage-1-1.pdf}
+ \input{code128.tex}
+ 
+\baselineskip10pt
+
+% textblog
+\textblockorigin{0in}{0in}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+
+% pat block
+{
+\scriptsize
+\begin{textblock}{100}(20, 15) 
+\noindent $!patient.person.fullName\\
+$!patient.person.street\\
+$!patient.person.postcode $!patient.person.town\\
+\X=.35mm        
+\barheight=1cm 
+\code{#if($patient.piz == "") 0 #else $!patient.piz #end}\\
+$!patient.piz\\
+\end{textblock}
+}
+
+%taskNumber
+{
+\huge
+\begin{textblock}{140}(175,134) 
+\noindent 
+\X=.35mm        
+\barheight=0.5cm 
+\code{$!task.taskID}\\
+$!task.taskID
+\end{textblock}
+}
+
+%taskNumber
+{
+\large
+\begin{textblock}{140}(125,144) 
+\noindent 
+$date.format('dd.MM.yyyy', $!task.dateOfReceiptAsDate)
+\end{textblock}
+}
+
+\end{document}
+
+

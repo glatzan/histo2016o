@@ -55,7 +55,7 @@
 							<p:ajax update="@form" event="change"
 								onstart="PF('blockUIWidget').block()"
 								oncomplete="PF('blockUIWidget').unblock()"
-								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"></p:ajax>
+								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate(true)}"></p:ajax>
 						</p:selectOneMenu>
 
 					</h:panelGrid>

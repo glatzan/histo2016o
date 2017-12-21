@@ -54,6 +54,12 @@
 				</h:panelGrid>
 
 				<h:panelGrid styleClass="newStyleListingTable"
+					rendered="#{globalSettings.programSettings.offline}" style="margin-top:20px;"
+					columns="1" columnClasses="columnHorTextcenter">
+					<h:outputText value="#{msg['login.user.offlineMode']}"
+						style="color:red;" />
+				</h:panelGrid>
+				<h:panelGrid styleClass="newStyleListingTable"
 					style="margin-top:20px;" columns="1"
 					columnClasses="columnHorTextcenter">
 

@@ -38,7 +38,6 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 Minor Changes:
 https://stackoverflow.com/questions/21279919/how-to-prevent-scrollbar-re-positioning-on-update-form
 
-Wir haben heute bei mir am Rechner erfolgreich getestet. Es hat alles super geklappt. 
 Ein paar Sachen sind uns aufgefallen:
 Das Datum unten auf dem Ausdruck ist nicht aktuell. Heute wurde der 19.12. aufgedruckt. 
 Ein Brief kam zweiseitig (171938). Können wir daran etwas ändern?
@@ -103,6 +102,10 @@ TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 
+
+v 1.0.15
+++++: Brief ohne Klinik-Logo kann gedruckt werden
+++++: Befundbericht bedrucken um 180 gedredt, geht wieder
 
 v 1.0.14
 ++++: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich

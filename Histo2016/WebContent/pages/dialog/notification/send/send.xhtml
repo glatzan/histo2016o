@@ -15,7 +15,7 @@
 			</f:facet>
 		</p:panel>
 
-		<p:scrollPanel style="width:100%;height:450px">
+		<p:scrollPanel style="width:100%;height:410px">
 
 			<!-- ****************************** email ****************************** -->
 			<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
@@ -259,6 +259,35 @@
 			</p:panelGrid>
 		</p:scrollPanel>
 
+		<p:panelGrid columns="4" styleClass="defaultListingTableContainer"
+			style="width:auto;margin-bottom:20px">
+			<h:outputText value="Zusätliche Ausdrucke" />
+
+			<p:selectOneMenu value="#{tab.selectedTemplate}"
+				style="margin-left:10px;" converter="#{tab.templateTransformer}"
+				styleClass="customSerachSelectMenu">
+
+				<f:selectItem itemValue="#{null}"
+					itemLabel="#{msg['dialog.notification.tab.mail.pdfTemplate.none']}"></f:selectItem>
+
+				<f:selectItems value="#{tab.templateList}" var="template"
+					itemLabel="#{template.name}" itemValue="#{template}" />
+
+				<p:ajax update="@this" event="change" process="@this"
+					partialSubmit="true" />
+			</p:selectOneMenu>
+
+			<!-- print -->
+			<h:outputLabel value="#{msg['dialog.notification.tab.send.count']} "
+				style="margin-left:10px"
+				title="#{msg['dialog.notification.tab.send.count']}" />
+
+			<p:spinner style="margin-left:10px;"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.printCount}"
+				styleClass="miniSpinner" min="0" max="9"></p:spinner>
+
+		</p:panelGrid>
+
 		<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
 			style="width:100%;">
 
@@ -280,7 +309,7 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
 
-			<h:panelGrid columns="4">
+			<h:panelGrid columns="2">
 
 				<!-- print -->
 				<h:outputLabel value="#{msg['dialog.notification.tab.send.print']} "
@@ -300,14 +329,6 @@
 						partialSubmit="true" update=":adminForm:tabview:faxTab"></p:ajax>
 				</p:selectOneMenu>
 
-				<!-- print -->
-				<h:outputLabel value="#{msg['dialog.notification.tab.send.count']} "
-					style="margin-left:10px"
-					title="#{msg['dialog.notification.tab.send.count']}" />
-
-				<p:spinner
-					value="#{dialogHandlerAction.notificationDialog.sendTab.printCount}"
-					styleClass="miniSpinner" min="0" max="9"></p:spinner>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" style="float:right;">

@@ -709,6 +709,15 @@ public class NotificationDialog extends AbstractDialog {
 
 				setActiveIndex(sendTab.isNotificationCompleted() ? 4 : 0);
 
+				DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+						DocumentType.DIAGNOSIS_REPORT_EXTERN);
+
+				setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+
+				setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+
+				setSelectedTemplate(DocumentTemplate.getTemplateByID(subSelect, 11));
+				
 				setInitialized(true);
 			}
 
