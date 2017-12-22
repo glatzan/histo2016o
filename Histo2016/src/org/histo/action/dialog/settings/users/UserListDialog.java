@@ -8,7 +8,6 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.UserDAO;
-import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.ui.transformer.DefaultTransformer;

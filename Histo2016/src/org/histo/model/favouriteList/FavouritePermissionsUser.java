@@ -1,8 +1,6 @@
 package org.histo.model.favouriteList;
 
 import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.DynamicUpdate;

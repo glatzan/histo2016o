@@ -22,7 +22,6 @@ import org.histo.model.transitory.settings.ProgramSettings;
 import org.histo.model.transitory.settings.Version;
 import org.histo.model.transitory.settings.VersionContainer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.StreamUtils;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

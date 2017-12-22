@@ -7,7 +7,6 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.histo.ui.StainingTableChooser;
-import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.addPatient.search']}" />
+	</p:outputPanel>
+
+	<p:outputPanel styleClass="bodyPannel">
+
+		<h:panelGrid styleClass="newStyleListingTable" columns="5">
+
+			<h:outputLabel value="#{msg['dialog.addPatient.search.person']}"
+				styleClass="headline" />
+
+			<!-- piz -->
+			<p:outputLabel value="#{msg['dialog.addPatient.search.piz']}" />
+			<h:panelGroup>
+				<p:focus for="pizInput" />
+				<p:inputMask
+					value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientPiz}"
+					id="pizInput" tabindex="1" mask="99999999">
+					<p:ajax process="@form" update="patientList toManyMatches"
+						delay="500" event="keyup"
+						listener="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
+				</p:inputMask>
+			</h:panelGroup>
+
+			<!-- Name -->
+			<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
+			<p:inputText
+				value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientName}"
+				tabindex="2">
+				<p:ajax process="@form" update="patientList toManyMatches"
+					delay="500" event="keyup"
+					listener="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
+			</p:inputText>
+
+			<h:outputLabel value="" />
+
+			<!-- Birthday -->
+			<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
+			<p:calendar
+				value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientBirthday}"
+				tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
+				<p:ajax process="@form" update="patientList toManyMatches"
+					delay="500" event="keyup"
+					listener="#{dialogHandlerAction.addPatientDialogHandler.sclinicSearchTab.earchForClinicPatienes()}" />
+			</p:calendar>
+
+			<!-- Surname -->
+			<p:outputLabel value="#{msg['dialog.addPatient.search.firstName']}" />
+			<p:inputText tabindex="3"
+				value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientSurname}">
+				<p:ajax process="@form" update="patientList toManyMatches"
+					delay="500" event="keyup"
+					listener="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
+
+			</p:inputText>
+
+		</h:panelGrid>
+
+
+		<p:dataTable var="patientList" id="patientList" scrollHeight="370"
+			styleClass="newStyleListingTable" scrollable="true"
+			style="margin-top: 20px;" selectionMode="single"
+			rowKey="#{patientList.id}"
+			selection="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem}"
+			value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientList}">
+
+			<!-- Name -->
+			<p:column headerText="#{msg['dialog.addPatient.search.name']}"
+				sortBy="#{patientList.listItem.person.lastName}">
+				<h:outputText value="#{patientList.listItem.person.lastName}" />
+			</p:column>
+
+			<!-- Surname -->
+			<p:column headerText="#{msg['dialog.addPatient.search.firstName']}"
+				sortBy="#{patientList.listItem.person.firstName}">
+				<h:outputText value="#{patientList.listItem.person.firstName}" />
+			</p:column>
+
+			<!-- Birthday -->
+			<p:column
+				headerText="#{msg['dialog.addPatient.search.birthday.short']}"
+				sortBy="#{patientList.listItem.person.birthday}">
+				<h:outputText
+					rendered="#{patientList.listItem.person.birthday ne null}"
+					value="#{patientList.listItem.person.birthday}">
+					<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+				</h:outputText>
+			</p:column>
+
+			<!-- gender -->
+			<p:column sortBy="#{patientList.listItem.person.gender}">
+				<f:facet name="header">
+					<h:outputText value="#{msg['dialog.addPatient.search.gender']}"
+						title="#{msg['dialog.addPatient.search.gender.info']}" />
+				</f:facet>
+				<h:outputText
+					value="#{patientList.listItem.person.gender eq 'FEMALE' ? msg['dialog.addPatient.search.gender.female'] : msg['dialog.addPatient.search.gender.male']}" />
+			</p:column>
+
+			<!-- databse -->
+			<p:column sortBy="#{patientList.listItem.inDatabase}">
+				<f:facet name="header">
+					<h:outputText value="#{msg['dialog.addPatient.search.database']}"
+						title="#{msg['dialog.addPatient.search.database.info']}" />
+				</f:facet>
+
+				<ui:fragment rendered="#{patientList.listItem.inDatabase}">
+					<i class="fa fa-fw fa-check-circle icon-green"
+						title="#{msg['dialog.addPatient.search.database.clinic']}" />
+				</ui:fragment>
+
+				<ui:fragment rendered="#{!patientList.listItem.inDatabase}">
+					<i class="fa fa-fw fa-times-circle icon-red"
+						title="#{msg['dialog.addPatient.search.database.histo']}" />
+				</ui:fragment>
+			</p:column>
+
+			<!-- piz -->
+			<p:column headerText="#{msg['dialog.addPatient.search.piz']}"
+				sortBy="#{patientList.listItem.piz}">
+				<h:outputText value="#{patientList.listItem.piz}" />
+			</p:column>
+
+			<p:ajax event="rowDblselect"
+				oncomplete="sumbitOnDblSelect();return false;" />
+
+		</p:dataTable>
+
+		<p:remoteCommand name="sumbitOnDblSelect">
+			<f:actionListener
+				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient(true)}" />
+			<f:actionListener
+				binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+		</p:remoteCommand>
+
+		<p:commandButton name="submitOnUniqueItem" id="submitOnUniqueItem"
+			style="display:none">
+			<f:actionListener
+				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchAndAddUniqueItem(true)}" />
+		</p:commandButton>
+
+		<p:defaultCommand target="submitOnUniqueItem" />
+	</p:outputPanel>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+				<h:outputLabel value="#{msg['dialog.addPatient.toManyResults']}"
+					id="toManyMatches" style="color:red"
+					rendered="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.toManyMatchesInClinicDatabase}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<!-- Add button -->
+				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
+					widgetVar="clinicSearchBtn" id="submitAddButton"
+					disabled="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem eq null}"
+					icon="fa fa-fw fa-user-plus"
+					onclick="disableButton(true, 'clinicSearchBtn', 'closeBtn')"
+					partialSubmit="true" process="@form">
+					<f:actionListener
+						binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient(true)}" />
+					<f:actionListener
+						binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+				</p:commandButton>
+
+				<!-- Close Button -->
+				<p:commandButton value="#{msg['general.close']}" immediate="true"
+					widgetVar="closeBtn" icon="fa fa-times-circle"
+					actionListener="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+</ui:composition>

@@ -5,35 +5,24 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
-import javax.persistence.criteria.Predicate;
 
 import org.apache.log4j.Logger;
-import org.hibernate.envers.internal.reader.FirstLevelCache;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.View;
-import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
-import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.ui.FavouriteListContainer;
-import org.histo.ui.menu.MenuGenerator;
 import org.histo.util.StreamUtils;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearch;
+import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 import org.primefaces.context.RequestContext;
-import org.primefaces.model.menu.DefaultMenuItem;
-import org.primefaces.model.menu.DefaultMenuModel;
-import org.primefaces.model.menu.DefaultSeparator;
-import org.primefaces.model.menu.DefaultSubMenu;
-import org.primefaces.model.menu.MenuModel;
 import org.primefaces.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -113,7 +102,7 @@ public class WorklistViewHandlerAction {
 		// preparing worklistSearchDialog for creating a worklist
 		dialogHandlerAction.getWorklistSearchDialog().initBean();
 
-		WorklistSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings()
+		SimpleSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings()
 				.getWorklistToLoad();
 
 		if (defaultWorklistToLoad != null) {

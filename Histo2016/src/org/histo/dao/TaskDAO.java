@@ -2,8 +2,6 @@ package org.histo.dao;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -11,7 +9,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
@@ -25,13 +22,9 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Council;
-import org.histo.model.favouriteList.FavouriteList;
-import org.histo.model.favouriteList.FavouritePermissionsGroup;
-import org.histo.model.favouriteList.FavouritePermissionsUser;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.user.HistoUser;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

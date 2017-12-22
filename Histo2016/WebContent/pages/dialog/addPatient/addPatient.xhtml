@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -7,28 +6,29 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-<f:view contentType="text/html" encoding="UTF-8" />
+
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.worklistsearch.headline']}">
+			value="#{msg['dialog.addPatient.headline']}">
 		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
+
 <h:body styleClass="tabDialog">
 	<h:form id="adminForm">
 
 		<h:outputScript library="scripts" name="disableButtons.js" />
-		
+
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel value="#{msg['dialog.userSettings.headline']}" />
+				<h:outputLabel value="#{msg['dialog.addPatient.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					immediate="true" styleClass="noUnderlineAtLink">
 					<f:actionListener
-						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
+						binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
 					<i class="fa fa-fw fa-times icon-grey" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -37,19 +37,21 @@
 		<h:panelGrid columns="2" styleClass="newTableContainer contentTable"
 			columnClasses="column200px columnTop,columnTop">
 			<p:outputPanel id="navigationTable" styleClass="navigationTable">
-				<c:forEach items="#{dialogHandlerAction.worklistSearchDialog.tabs}"
+				<c:forEach
+					items="#{dialogHandlerAction.addPatientDialogHandler.tabs}"
 					var="tab" varStatus="loop">
-					<p:commandButton value="#{msg[tab.name]}"
-						styleClass="#{tab eq dialogHandlerAction.worklistSearchDialog.selectedTab ? 'selectedButton' : ''}"
-						actionListener="#{dialogHandlerAction.worklistSearchDialog.onTabChange(tab)}"
+					<p:commandButton value="#{msg[tab.name]}" immediate="true"
+						styleClass="#{tab eq dialogHandlerAction.addPatientDialogHandler.selectedTab ? 'selectedButton' : ''}"
+						actionListener="#{dialogHandlerAction.addPatientDialogHandler.onTabChange(tab)}"
 						update="navigationTable dialogContent" />
 				</c:forEach>
 			</p:outputPanel>
 			<p:outputPanel id="dialogContent" styleClass="dialogContent">
 				<ui:include
-					src="#{dialogHandlerAction.worklistSearchDialog.selectedTab.centerInclude}" />
+					src="#{dialogHandlerAction.addPatientDialogHandler.selectedTab.centerInclude}" />
 			</p:outputPanel>
 		</h:panelGrid>
 	</h:form>
 </h:body>
 </html>
+

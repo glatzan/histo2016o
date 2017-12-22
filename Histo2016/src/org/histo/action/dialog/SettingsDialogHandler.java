@@ -1,19 +1,11 @@
 package org.histo.action.dialog;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-
 import org.apache.log4j.Logger;
-import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.handler.GlobalSettings;
-import org.histo.adaptors.LdapHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -30,14 +22,11 @@ import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Organization;
-import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.favouriteList.FavouriteList;
-import org.histo.model.favouriteList.FavouriteListItem;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.log.Log;
-import org.histo.model.patient.Patient;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.ui.ListChooser;

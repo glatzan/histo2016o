@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +16,6 @@ import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.View;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;

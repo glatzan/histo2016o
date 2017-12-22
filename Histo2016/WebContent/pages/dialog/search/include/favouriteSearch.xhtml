@@ -8,14 +8,14 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.worklistsearch.simple']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.worklistsearch.favouriteList.headline']}" />
+	</p:outputPanel>
 
-		<p:panelGrid columns="1" id="favouriteContent"
+	<p:outputPanel styleClass="bodyPannel">
+		<h:panelGrid columns="1" id="favouriteContent"
 			styleClass="newStyleListingTable">
-
 
 			<p:dataTable var="favouriteListContainer" style="width:100%;"
 				sortBy="#{favouriteListContainer.type}" scrollable="true"
@@ -59,19 +59,22 @@
 						<i class="fa fa-fw fa-search" />
 					</p:commandLink>
 				</p:column>
-
-
-
 			</p:dataTable>
-
-		</p:panelGrid>
-	</div>
+		</h:panelGrid>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
-				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
+				<p:commandButton value="#{msg['general.select']}"
+					icon="fa fa-search" widgetVar="serachBtn"
+					disabled="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectedContainer eq null}"
+					onclick="disableButton(true, 'serachBtn', 'closeBtn')"
 					process="@form">
 					<f:actionListener
 						binding="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectAsWorklist()}" />
@@ -79,8 +82,8 @@
 						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
 				</p:commandButton>
 
-				<p:commandButton value="#{msg['general.close']}"
-					icon="fa fa-times-circle">
+				<p:commandButton value="#{msg['general.close']}" immediate="true"
+					widgetVar="closeBtn" icon="fa fa-times-circle">
 					<f:actionListener
 						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
 				</p:commandButton>

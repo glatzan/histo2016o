@@ -12,7 +12,6 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
@@ -21,8 +20,6 @@ import org.histo.util.StreamUtils;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;

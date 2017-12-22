@@ -38,7 +38,6 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 Minor Changes:
 
 -> Zimmermann --> Atzrodt, Aktualliesierien button
--> Zeitauswahl geht zumteil nicht richtig in arbeitsliste erstellen
 -> Ärzte aus klinikbakcend übernehmen
 
 -> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
@@ -65,7 +64,6 @@ TODO: Favouriten-Listen für Benutzer zugänglich machen
 TODO: Latex Datei für externen Befund
 TODO: DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes
 TODO: Erweiterte Suche 
--> sci fi /(für science finder)
 TODO: Datenbankabfragen in globaleidt handler shiften
 
 
@@ -92,6 +90,9 @@ TODO: Freischaltungs link
 
 
 v 1.0.15
+++++: Schnell-Suche funktioniert jetzt auch richtig mit Namen (Nachame; oder Nachname, Vorname) 
+++++: Dialog zum hinzufügen von Patienten überarbeitet und erweitert.
+++++: Suchfunktion für die Arbeitsliste überarbeitet und erweitert.
 ++++: Brief ohne Klinik-Logo kann gedruckt werden
 ++++: Befundbericht bedrucken um 180 gedredt, geht wieder
 ++++: Beim Erstellen neuer Färbungen wird in der Auftragsübersicht der Auftrag nicht mehr als "Färbung abgeschlossen" angezeigt

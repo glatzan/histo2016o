@@ -3,8 +3,6 @@ package org.histo.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.Transient;
-
 public class HistoUtil {
 
 	/**

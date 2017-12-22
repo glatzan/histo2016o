@@ -7,20 +7,15 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
-import org.histo.model.patient.Slide;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSendReport;
 import org.histo.template.documents.TemplateSlideLable;
-import org.histo.util.HistoUtil;
 
 import com.google.gson.annotations.Expose;
 

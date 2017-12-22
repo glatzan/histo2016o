@@ -1,7 +1,6 @@
 package org.histo.template.documents;
 
 import org.apache.velocity.tools.generic.DateTool;
-import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;

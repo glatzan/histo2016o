@@ -8,7 +8,6 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.GenericDAO;
 import org.histo.dao.SettingsDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.StainingPrototypeDetails;
@@ -21,7 +20,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import sun.net.www.content.text.Generic;
 
 @Configurable
 @Getter

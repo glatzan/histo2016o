@@ -13,7 +13,6 @@ import org.histo.config.enums.TaskPriority;
 import org.histo.model.ListItem;
 import org.histo.model.StainingPrototype;
 import org.histo.model.user.HistoGroup;
-import org.histo.model.user.HistoPermissions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

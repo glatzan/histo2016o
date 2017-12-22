@@ -9,11 +9,7 @@ import javax.persistence.criteria.Root;
 
 import org.hibernate.Hibernate;
 import org.histo.config.enums.ContactRole;
-import org.histo.model.Contact;
-import org.histo.model.Organization;
-import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.StainingPrototype;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,10 +4,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.histo.action.DialogHandlerAction;
@@ -26,17 +24,13 @@ import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.Council;
 import org.histo.model.ListItem;
-import org.histo.model.MaterialPreset;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.interfaces.HasDataList;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;

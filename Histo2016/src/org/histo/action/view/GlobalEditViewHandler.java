@@ -20,15 +20,11 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
-import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.ui.StainingTableChooser;
 import org.histo.ui.menu.MenuGenerator;
-import org.histo.ui.task.TaskStatus;
 import org.primefaces.model.menu.MenuModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.PayloadApplicationEvent;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -286,11 +282,11 @@ public class GlobalEditViewHandler {
 					String[] arr = quickSerach.split("[, ]");
 
 					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[0], arr[1], "",
-							new Date());
+							null);
 
 				} else if (quickSerach.matches("^[\\p{Alpha}\\-]+")) {
 					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(quickSerach, "", "",
-							new Date());
+							null);
 				} else {
 
 				}

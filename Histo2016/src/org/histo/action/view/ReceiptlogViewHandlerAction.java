@@ -1,6 +1,5 @@
 package org.histo.action.view;
 
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -11,7 +10,6 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.SettingsDialogHandler;
-import org.histo.action.dialog.slide.StainingPhaseExitDialog;
 import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.enums.DocumentType;
@@ -23,7 +21,6 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.ListItem;
-import org.histo.model.interfaces.IdManuallyAltered;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;

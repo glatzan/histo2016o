@@ -19,8 +19,16 @@
 	width: 100px !important;
 }
 
+.newTableContainer .column200px {
+	width: 200px !important;
+}
+
 .newTableContainer .column2 {
 	width: 5% !important;
+}
+
+.newTableContainer .column20 {
+	width: 20%;
 }
 
 .newTableContainer .column25 {
@@ -60,6 +68,11 @@
 	font-variant: normal !important;
 }
 
+.newStyleListingTable label.headline {
+	font-size: 14px !important;
+	font-weight: bold;
+}
+
 .newStyleListingTable .ui-radiobutton {
 	padding: 4px !important;
 }
@@ -95,7 +108,7 @@
 
 .newStyleListingTableSeparator label {
 	padding: 4px !important;
-	font-size: 15px !important;
+	font-size: 14px !important;
 	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
 	box-shadow: none !important;
 	font-style: normal !important;
@@ -427,17 +440,20 @@
 	display: none;
 }
 
-.patientNavigationTable .ui-datatable-tablewrapper>table>tbody, .patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr {
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody,
+	.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr {
 	border-left: none;
 	border-right: none;
 }
 
-.patientNavigationTable .ui-datatable-tablewrapper>table>tbody{
-		border-top:none;
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody {
+	border-top: none;
 }
 
-.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr:first-of-type, .patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr:first-of-type>td{
-	border-top:none;
+.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr:first-of-type,
+	.patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr:first-of-type>td
+	{
+	border-top: none;
 }
 
 .patientNavigationTable .ui-datatable-tablewrapper>table>tbody>tr>td {
@@ -451,11 +467,167 @@
 	background: #e6e6e6 !important;
 }
 
-.patientNavigationTable .ui-state-highlight{
+.patientNavigationTable .ui-state-highlight {
 	background: #fcf1b8 !important;
 }
 
 /* -------------- Tab Dialog Style --------------*/
+.tabDialog {
+	padding: 0px !important;
+	margin: 0px !important;
+	overflow-x: hidden;
+	height: 100vh;
+}
+
+/* Dialog header */
+.tabDialog .dialogHeader {
+	padding: 0px 10px;
+	display: flex;
+	font-size: 1.0em;
+	align-items: center;
+	justify-content: center;
+	height: 33px;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	background: #cccccc
+		url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)
+		50% 50% repeat-x;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+}
+
+/* main table*/
+.tabDialog .contentTable {
+	width: 100%;
+	height: calc(100vh - 33px);
+}
+
+/* Nacigation Table*/
+.tabDialog .contentTable .navigationTable {
+	width: 97%
+}
+
+.tabDialog .contentTable .navigationTable button:first-of-type {
+	margin-top: 1px !important;
+}
+
+/* navigation table button style*/
+.tabDialog .contentTable .navigationTable button {
+	border: 1px solid #a8a8a8;
+	border-radius: 3px;
+	width: 100%;
+	margin-left: 1px !important;
+	border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+	border-top-left-radius: 0px;
+}
+
+/* navigation table removing blue border on click*/
+.tabDialog .contentTable .navigationTable button:focus {
+	outline: none !important;
+}
+
+/* navigation table shifting text to the left*/
+.tabDialog .contentTable .navigationTable button span {
+	float: left;
+}
+
+/* navigation table selected button background*/
+.tabDialog .contentTable .navigationTable .selectedButton {
+	background: #ffffff !important;
+}
+
+/* size and layout of the contant table*/
+.tabDialog .contentTable .dialogContent {
+	height: calc(100vh - 33px);
+	width: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: relative;
+}
+
+/* header panel style*/
+.tabDialog .contentTable .dialogContent .headerPannel {
+	padding: 4px;
+	margin-top: 1px;
+	background: #cccccc
+		url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)
+		50% 50% repeat-x;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	align-items: center;
+	justify-content: center;
+	width: calc(100% - 10px);
+	display: block;
+	border: 1px solid #a8a8a8;
+	border-radius: 3px;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+/* body pannel*/
+.tabDialog .contentTable .dialogContent .bodyPannel{
+	width: calc(100% - 10px);
+	display: block;
+}
+
+/* button container at the bottom*/
+.tabDialog .contentTable .dialogContent .buttonContainer {
+	position: absolute;
+	bottom: 0.2em !important;
+	width: 100%;
+}
+
+/* small buttons */
+.tabDialog .contentTable .dialogContent .buttonContainer .ui-button-text
+	{
+	padding-top: 0.2em !important;
+	padding-bottom: 0.2em !important;
+}
+
+/* left table*/
+.tabDialog .contentTable .dialogContent .buttonContainer .left {
+	margin-left: 0px;
+}
+
+/* button margin for left buttons*/
+.tabDialog .contentTable .dialogContent .buttonContainer .left button {
+	margin-left: 0.3em !important;
+}
+
+.tabDialog .contentTable .dialogContent .buttonContainer .left .ui-chkbox-box
+	{
+	margin-left: 0.3em !important;
+}
+
+.tabDialog .contentTable .dialogContent .buttonContainer .left label {
+	margin-left: 0.3em !important;
+}
+
+/* style of the popup menu*/
+.tabDialog .contentTable .dialogContent .buttonContainer .left .ui-selectonemenu
+	{
+	margin-left: 0.3em !important;
+}
+
+/* style of the popup menu*/
+.tabDialog .contentTable .dialogContent .buttonContainer .left .ui-selectonemenu .ui-selectonemenu-label
+	{
+	padding: 0.2em !important;
+}
+
+/* right table */
+.tabDialog .contentTable .dialogContent .buttonContainer .right {
+	margin-right: 0px;
+	float: right;
+}
+
+/* button margin for right buttons*/
+.tabDialog .contentTable .dialogContent .buttonContainer .right button {
+	margin-right: 0.3em !important;
+}
+
+/* OLD REMOVE*/
 .tabDialogLayout {
 	padding: 0px !important;
 	margin: 0px !important;

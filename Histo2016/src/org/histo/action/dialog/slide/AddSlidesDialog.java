@@ -12,17 +12,13 @@ import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.ui.ListChooser;
-import org.histo.ui.StainingTableChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;

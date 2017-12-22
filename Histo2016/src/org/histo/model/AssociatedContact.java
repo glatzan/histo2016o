@@ -33,7 +33,6 @@ import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.patient.Task;
-import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;

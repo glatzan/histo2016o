@@ -1,7 +1,6 @@
 package org.histo.model.user;
 
 import java.beans.Transient;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,18 +12,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
-import org.histo.config.enums.View;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.HasID;
 import org.springframework.security.core.GrantedAuthority;

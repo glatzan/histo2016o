@@ -8,26 +8,36 @@
 	xmlns:p="http://primefaces.org/ui">
 
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.worklistsearch.simple']}"
-			styleClass="contentPannel" />
-	</div>
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.worklistsearch.scifi.headline']}" />
+	</p:outputPanel>
 
-	<div class="bottomDiv">
-		<h:panelGrid columns="1" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="2" style="float:right;">
-				<p:commandButton value="#{msg['dialog.worklistsearch.create']}"
+	<p:outputPanel styleClass="bodyPannel">
+	</p:outputPanel>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<p:commandButton value="#{msg['general.select']}"
+					icon="fa fa-search" widgetVar="serachBtn" disabled="true"
+					onclick="disableButton(true, 'serachBtn', 'closeBtn')"
 					process="@form">
 					<f:actionListener
-						binding="#{worklistViewHandlerAction.addWorklist(dialogHandlerAction.worklistSearchDialog.worklistSearchBasic,'Default',true)}" />
+						binding="#{dialogHandlerAction.worklistSearchDialog.simpleSearchTab.selectAsWorklist()}" />
 					<f:actionListener
 						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
 				</p:commandButton>
-				<p:commandButton value="#{msg['general.abort']}"
-					actionListener="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}"
-					style="margin-left:20px;"></p:commandButton>
+
+				<p:commandButton value="#{msg['general.close']}" immediate="true"
+					widgetVar="closeBtn" icon="fa fa-times-circle">
+					<f:actionListener
+						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
+				</p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

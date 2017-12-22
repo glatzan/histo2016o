@@ -1,10 +1,8 @@
 package org.histo.dao;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
@@ -16,36 +14,21 @@ import javax.persistence.criteria.Root;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.query.NativeQuery;
-import org.hibernate.transform.Transformers;
-import org.histo.config.enums.Eye;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.enums.TaskPriority;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.model.Accounting;
-import org.histo.model.AssociatedContact;
-import org.histo.model.Council;
-import org.histo.model.PDFContainer;
-import org.histo.model.Physician;
 import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
 import org.histo.model.favouriteList.FavouritePermissionsGroup;
 import org.histo.model.favouriteList.FavouritePermissionsUser;
-import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
-import org.histo.ui.StainingTableChooser;
-import org.histo.ui.task.TaskStatus;
 import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.Getter;
 
 @Component
 @Transactional

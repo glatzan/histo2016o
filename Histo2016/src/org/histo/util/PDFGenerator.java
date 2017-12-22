@@ -10,12 +10,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.log4j.Logger;
-import org.histo.action.dialog.notification.NotificationDialog.AbstractTab.ContactHolder;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;

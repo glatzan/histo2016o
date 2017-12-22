@@ -1,7 +1,6 @@
 package org.histo.model;
 
 import java.util.Date;
-import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,13 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.model.interfaces.HasID;
-import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
 import lombok.Setter;

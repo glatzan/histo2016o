@@ -87,7 +87,7 @@
 				actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSorting()}">
 				<i class="fa fa-th-list"></i>
 				<p:ajax event="dialogReturn"
-					update="navigationForm:patientList contentForm headerForm" />
+					update="navigationForm contentForm headerForm" />
 			</p:commandLink>
 
 			<!-- Worklist settings -->
@@ -96,7 +96,7 @@
 				actionListener="#{worklistSettingsDialog.initAndPrepareBeanForSettings()}">
 				<i class="fa fa-wrench"></i>
 				<p:ajax event="dialogReturn"
-					update="navigationForm:patientList contentForm headerForm" />
+					update="navigationForm contentForm headerForm" />
 			</p:commandLink>
 
 			<!-- Worklist change -->
@@ -112,7 +112,7 @@
 			<p:commandLink partialSubmit="true" process="@this"
 				title="#{msg['body.worklist.navigation.button.changelist']}"
 				actionListener="#{worklistViewHandlerAction.clearWorklist(worklistViewHandlerAction.worklist)}"
-				update="navigationForm:patientList contentForm headerForm">
+				update="navigationForm contentForm headerForm">
 				<i class="fa fa-times-circle-o"></i>
 			</p:commandLink>
 		</h:panelGroup>

@@ -1,6 +1,5 @@
 package org.histo.config.exception;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -24,7 +23,6 @@ import org.histo.config.ResourceBundle;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.template.mail.ErrorMail;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

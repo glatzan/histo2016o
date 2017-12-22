@@ -8,14 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
 
-import org.apache.log4j.Logger;
+import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Month;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.enums.WorklistSearchFilter;
-import org.histo.config.enums.WorklistSearchOption;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
@@ -23,67 +19,55 @@ import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 @Configurable
+@Getter
+@Setter
 public class WorklistSimpleSearch extends WorklistSearch {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
-	@Getter
-	@Setter
 	private PredefinedFavouriteList[] lists;
 
-	@Getter
-	@Setter
 	private PredefinedFavouriteList[] selectedLists;
 
-	@Getter
-	@Setter
 	private boolean newPatients;
 
-	@Getter
-	@Setter
 	private Date day;
 
-	@Getter
-	@Setter
 	private Date searchFrom;
 
-	@Getter
-	@Setter
 	private Date searchTo;
 
-	@Getter
-	@Setter
 	private Month searchMonth;
 
-	@Getter
-	@Setter
 	private int year;
 
-	@Getter
-	@Setter
 	private Map<String, Integer> years;
 
-	@Getter
-	@Setter
-	private WorklistSearchFilter filterIndex;
+	private SimpleTimeSearchFilter filterIndex;
 
-	@Getter
-	@Setter
-	private WorklistSearchOption searchIndex;
+	private SimpleSearchOption searchIndex;
 
 	public WorklistSimpleSearch() {
 		setLists(PredefinedFavouriteList.values());
 
-		setSearchIndex(WorklistSearchOption.STAINING_LIST);
-		setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
+		if (getSearchIndex() == null)
+			setSearchIndex(SimpleSearchOption.STAINING_LIST);
+
+		if (getFilterIndex() == null)
+			setFilterIndex(SimpleTimeSearchFilter.ADDED_TO_WORKLIST);
 
 		// date for day
 		setDay(new Date(System.currentTimeMillis()));
@@ -106,14 +90,12 @@ public class WorklistSimpleSearch extends WorklistSearch {
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		setSearchFrom(cal.getTime());
 
-		setFilterIndex(WorklistSearchFilter.ADDED_TO_WORKLIST);
-
 		updateSearchIndex();
 	}
 
 	/**
-	 * Returns false if any pre configured list is selected. All Filter options will
-	 * be disabled
+	 * Returns false if any pre configured list is selected. All Filter options
+	 * will be disabled
 	 * 
 	 * @return
 	 */
@@ -122,6 +104,7 @@ public class WorklistSimpleSearch extends WorklistSearch {
 		case STAINING_LIST:
 		case NOTIFICATION_LIST:
 		case DIAGNOSIS_LIST:
+		case CUSTOM_LIST:
 			return false;
 		default:
 			return true;
@@ -167,6 +150,7 @@ public class WorklistSimpleSearch extends WorklistSearch {
 		case STAINING_LIST:
 		case DIAGNOSIS_LIST:
 		case NOTIFICATION_LIST:
+		case CUSTOM_LIST:
 
 			logger.debug("Staining list selected");
 
@@ -185,44 +169,49 @@ public class WorklistSimpleSearch extends WorklistSearch {
 			break;
 		case TODAY:
 			logger.debug("Today selected");
-			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-					TimeUtil.setDayEnding(cal).getTimeInMillis(), getFilterIndex()));
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
+					TimeUtil.setDayEnding(cal).getTimeInMillis()));
 			break;
 		case YESTERDAY:
 			logger.debug("Yesterdy selected");
 			cal.add(Calendar.DAY_OF_MONTH, -1);
-			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-					TimeUtil.setDayEnding(cal).getTimeInMillis(), getFilterIndex()));
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
+					TimeUtil.setDayEnding(cal).getTimeInMillis()));
 			break;
 		case CURRENTWEEK:
 			logger.debug("Current week selected");
-			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
-					TimeUtil.setWeekEnding(cal).getTimeInMillis(), getFilterIndex()));
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
+					TimeUtil.setWeekEnding(cal).getTimeInMillis()));
 			break;
 		case LASTWEEK:
 			logger.debug("Last week selected");
 			cal.add(Calendar.WEEK_OF_YEAR, -1);
-			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
-					TimeUtil.setWeekEnding(cal).getTimeInMillis(), getFilterIndex()));
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setWeekBeginning(cal).getTimeInMillis(),
+					TimeUtil.setWeekEnding(cal).getTimeInMillis()));
+			break;
+		case CURRENTMONTH:
+			logger.debug("Current month selected");
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
+					TimeUtil.setMonthEnding(cal).getTimeInMillis()));
 			break;
 		case LASTMONTH:
-			logger.debug("Last month selected");
-			cal.add(Calendar.MONDAY, -1);
-			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
-					TimeUtil.setMonthEnding(cal).getTimeInMillis(), getFilterIndex()));
+			cal.add(Calendar.MONTH, -1);
+			logger.debug("Last month selected " + cal);
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
+					TimeUtil.setMonthEnding(cal).getTimeInMillis()));
 			break;
 		case DAY:
 			logger.debug("Day selected");
 			cal.setTime(getDay());
-			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-					TimeUtil.setDayEnding(cal).getTimeInMillis(), getFilterIndex()));
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
+					TimeUtil.setDayEnding(cal).getTimeInMillis()));
 			break;
 		case MONTH:
 			logger.debug("Month selected");
 			cal.set(Calendar.MONTH, getSearchMonth().getNumber());
 			cal.set(Calendar.YEAR, getYear());
-			result.addAll(patientDao.getWorklistDynamicallyByType(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
-					TimeUtil.setMonthEnding(cal).getTimeInMillis(), getFilterIndex()));
+			result.addAll(getWorklistByTimeSearchFilter(TimeUtil.setMonthBeginning(cal).getTimeInMillis(),
+					TimeUtil.setMonthEnding(cal).getTimeInMillis()));
 			break;
 		case TIME:
 			logger.debug("Time selected");
@@ -230,13 +219,70 @@ public class WorklistSimpleSearch extends WorklistSearch {
 			long fromTime = TimeUtil.setDayBeginning(cal).getTimeInMillis();
 			cal.setTime(getSearchTo());
 			long toTime = TimeUtil.setDayEnding(cal).getTimeInMillis();
-			result.addAll(patientDao.getWorklistDynamicallyByType(fromTime, toTime, getFilterIndex()));
+			result.addAll(getWorklistByTimeSearchFilter(fromTime, toTime));
 			break;
 		default:
 			break;
 		}
 
 		return result;
+	}
+
+	public List<Patient> getWorklistByTimeSearchFilter(long fromDate, long toDate) {
+		switch (getFilterIndex()) {
+		case ADDED_TO_WORKLIST:
+			logger.debug("Searching for add date from "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
+			return patientDao.getPatientByAddDateToDatabaseDate(fromDate, toDate, true);
+		case TASK_CREATION:
+			logger.debug("Searching for task creation date from "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
+			return patientDao.getPatientByTaskCreationDate(fromDate, toDate, true);
+		case STAINING_COMPLETED:
+			logger.debug("Searching for staining completed "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
+			return patientDao.getPatientByStainingsCompletionDate(fromDate, toDate, true);
+		case DIAGNOSIS_COMPLETED:
+			logger.debug("Searching for diagnosis completed "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
+			return patientDao.getPatientByDiagnosisCompletionDate(fromDate, toDate, true);
+		case NOTIFICATION_COMPLETED:
+			logger.debug("Searching for notification completed "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
+			return patientDao.getPatientByNotificationCompletionDate(fromDate, toDate, true);
+		case FINALIZED:
+			logger.debug("Searching for finalized completed "
+					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
+					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
+			return patientDao.getPatientByFinalizedTaskDate(fromDate, toDate, true);
+		default:
+			return null;
+		}
+	}
+
+	/**
+	 * List with seach options
+	 * 
+	 * @author andi
+	 *
+	 */
+	public enum SimpleSearchOption {
+		STAINING_LIST, DIAGNOSIS_LIST, NOTIFICATION_LIST, CUSTOM_LIST, EMTY_LIST, TODAY, YESTERDAY, CURRENTWEEK, LASTWEEK, CURRENTMONTH, LASTMONTH, DAY, MONTH, TIME,;
+	}
+
+	/**
+	 * Filter options when time is selected
+	 * 
+	 * @author andi
+	 *
+	 */
+	public enum SimpleTimeSearchFilter {
+		ADDED_TO_WORKLIST, TASK_CREATION, STAINING_COMPLETED, DIAGNOSIS_COMPLETED, NOTIFICATION_COMPLETED, FINALIZED;
 	}
 
 }

@@ -1,18 +1,6 @@
 package org.histo.action.dialog;
 
-import javax.faces.event.AbortProcessingException;
-
-import org.apache.log4j.Logger;
-import org.histo.action.MainHandlerAction;
-import org.histo.action.dialog.SettingsDialogHandler.AbstractSettingsTab;
-import org.histo.config.ResourceBundle;
-import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomNotUniqueReqest;
-import org.histo.dao.GenericDAO;
-import org.histo.model.patient.Task;
-import org.histo.util.UniqueRequestID;
 import org.primefaces.event.TabChangeEvent;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,15 +11,29 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 
 	protected AbstractTab[] tabs;
 
+	//TODO  DELETE if all dialogs are converted to the new system
 	protected int activeIndex = 0;
 
+	protected AbstractTab selectedTab;
+	
+	public void onTabChange() {
+		TabChangeEvent e = null;
+		this.onTabChange(e);
+	}
+	
+	//TODO DELETE if all dialogs are converted to the new system
 	public void onTabChange(TabChangeEvent event) {
 		if (getActiveIndex() >= 0 && getActiveIndex() < getTabs().length) {
 			logger.debug("Updating Tab with index " + getActiveIndex());
 			getTabs()[getActiveIndex()].updateData();
 		}
 	}
-
+	
+	public void onTabChange(AbstractTab tab) {
+		setSelectedTab(tab);
+		tab.updateData();
+	}
+	
 	@Getter
 	@Setter
 	public abstract class AbstractTab {

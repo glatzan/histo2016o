@@ -1,6 +1,5 @@
 package org.histo.worklist.search;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.dao.FavouriteListDAO;

@@ -1,35 +1,26 @@
-package org.histo.action.dialog;
+package org.histo.action.dialog.worklist;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
-import org.histo.action.dialog.UserSettingsDialog.FavouriteListTab;
-import org.histo.action.dialog.UserSettingsDialog.GeneralTab;
-import org.histo.action.dialog.UserSettingsDialog.PrinterTab;
+import org.histo.action.dialog.AbstractTabDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
-import org.histo.config.enums.WorklistSearchFilter;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
-import org.histo.model.DiagnosisPreset;
-import org.histo.model.ListItem;
-import org.histo.model.MaterialPreset;
 import org.histo.model.Person;
-import org.histo.model.Physician;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.ui.FavouriteListContainer;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistFavouriteSearch;
 import org.histo.worklist.search.WorklistSimpleSearch;
+import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Lazy;
@@ -77,7 +68,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 	private SimpleSearchTab simpleSearchTab;
 	private FavouriteSearchTab favouriteSearchTab;
 	private ExtendedSearchTab extendedSearchTab;
-
+	
 	public WorklistSearchDialog() {
 		setSimpleSearchTab(new SimpleSearchTab());
 		setFavouriteSearchTab(new FavouriteSearchTab());
@@ -85,7 +76,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 
 		tabs = new AbstractTab[] { simpleSearchTab, favouriteSearchTab, extendedSearchTab };
 	}
-
+	
 	public void initAndPrepareBean() {
 		initBean();
 		prepareDialog();
@@ -97,10 +88,8 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].initTab();
 		}
-
-		if (activeIndex >= 0 && activeIndex < getTabs().length) {
-			onTabChange(null);
-		}
+		
+		onTabChange(tabs[0]);
 
 		return true;
 	}
@@ -127,6 +116,10 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		public void updateData() {
 		}
 
+		public void onChangeWorklistSelection() {
+			worklistSearch.setSearchIndex(SimpleSearchOption.CUSTOM_LIST);
+		}
+		
 		public void selectAsWorklist() {
 			Worklist worklist = new Worklist("Default", worklistSearch,
 					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
@@ -191,7 +184,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 
 		public ExtendedSearchTab() {
 			setTabName("ExtendedSearchTab");
-			setName("dialog.worklistsearch.extended");
+			setName("dialog.worklistsearch.scifi");
 			setViewID("extendedSearch");
 			setCenterInclude("include/extendedSearch.xhtml");
 		}

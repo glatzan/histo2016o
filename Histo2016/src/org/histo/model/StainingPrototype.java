@@ -11,12 +11,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.interfaces.LogAble;

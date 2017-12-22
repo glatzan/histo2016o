@@ -2,9 +2,7 @@ package org.histo.model.user;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -24,11 +22,10 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.View;
-import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.model.interfaces.HasID;
+import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -83,7 +80,7 @@ public class HistoSettings implements HasID, Cloneable {
 	 * Default worklist to load, staining, diagnosis, notification, none
 	 */
 	@Enumerated(EnumType.ORDINAL)
-	private WorklistSearchOption worklistToLoad;
+	private SimpleSearchOption worklistToLoad;
 
 	/**
 	 * Default sortorder of worklist

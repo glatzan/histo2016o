@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.annotations.Type;
-import org.histo.model.StainingPrototype.StainingType;
 import org.histo.model.interfaces.HasID;
 
 import lombok.Getter;

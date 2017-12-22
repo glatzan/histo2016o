@@ -1,13 +1,11 @@
 package org.histo.template.mail;
 
 import java.io.StringWriter;
-import java.util.Properties;
 
 import javax.persistence.Transient;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
 import org.histo.model.user.HistoUser;
 import org.histo.template.MailTemplate;
 

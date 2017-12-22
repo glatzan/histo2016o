@@ -6,15 +6,12 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Subquery;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Property;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
@@ -23,7 +20,6 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.log.Log;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Task;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

@@ -8,14 +8,12 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
-import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.model.favouriteList.FavouriteList;
-import org.histo.model.favouriteList.FavouritePermissionsGroup;
-import org.histo.model.favouriteList.FavouritePermissionsUser;
 import org.histo.model.user.HistoUser;
 import org.histo.ui.FavouriteListContainer;
+import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -74,7 +72,7 @@ public class UserSettingsDialog extends AbstractTabDialog {
 		}
 
 		if (activeIndex >= 0 && activeIndex < getTabs().length) {
-			onTabChange(null);
+			onTabChange();
 		}
 
 		return true;
@@ -102,7 +100,7 @@ public class UserSettingsDialog extends AbstractTabDialog {
 
 		private List<View> availableViews;
 
-		private List<WorklistSearchOption> availableWorklistsToLoad;
+		private List<SimpleSearchOption> availableWorklistsToLoad;
 
 		public GeneralTab() {
 			setTabName("GeneralTab");
@@ -116,11 +114,11 @@ public class UserSettingsDialog extends AbstractTabDialog {
 			setAvailableViews(
 					new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
 
-			setAvailableWorklistsToLoad(new ArrayList<WorklistSearchOption>());
-			getAvailableWorklistsToLoad().add(WorklistSearchOption.DIAGNOSIS_LIST);
-			getAvailableWorklistsToLoad().add(WorklistSearchOption.STAINING_LIST);
-			getAvailableWorklistsToLoad().add(WorklistSearchOption.NOTIFICATION_LIST);
-			getAvailableWorklistsToLoad().add(WorklistSearchOption.EMTY);
+			setAvailableWorklistsToLoad(new ArrayList<SimpleSearchOption>());
+			getAvailableWorklistsToLoad().add(SimpleSearchOption.DIAGNOSIS_LIST);
+			getAvailableWorklistsToLoad().add(SimpleSearchOption.STAINING_LIST);
+			getAvailableWorklistsToLoad().add(SimpleSearchOption.NOTIFICATION_LIST);
+			getAvailableWorklistsToLoad().add(SimpleSearchOption.EMTY_LIST);
 
 			return true;
 		}

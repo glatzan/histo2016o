@@ -36,7 +36,6 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Signature;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.interfaces.HasDataList;
-import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;

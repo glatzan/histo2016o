@@ -11,18 +11,15 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
-import org.histo.config.enums.WorklistSearchOption;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.SettingsDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoSettings;
+import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -55,7 +52,7 @@ public class GroupEditDialog extends AbstractDialog {
 
 	private View[] allViews;
 
-	private List<WorklistSearchOption> availableWorklistsToLoad;
+	private List<SimpleSearchOption> availableWorklistsToLoad;
 
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -94,11 +91,11 @@ public class GroupEditDialog extends AbstractDialog {
 		setAllViews(
 				new View[] { View.GUEST, View.USERLIST, View.WORKLIST_TASKS , View.WORKLIST_PATIENT,  View.WORKLIST_DIAGNOSIS, View.WORKLIST_RECEIPTLOG});
 
-		setAvailableWorklistsToLoad(new ArrayList<WorklistSearchOption>());
-		getAvailableWorklistsToLoad().add(WorklistSearchOption.DIAGNOSIS_LIST);
-		getAvailableWorklistsToLoad().add(WorklistSearchOption.STAINING_LIST);
-		getAvailableWorklistsToLoad().add(WorklistSearchOption.NOTIFICATION_LIST);
-		getAvailableWorklistsToLoad().add(WorklistSearchOption.EMTY);
+		setAvailableWorklistsToLoad(new ArrayList<SimpleSearchOption>());
+		getAvailableWorklistsToLoad().add(SimpleSearchOption.DIAGNOSIS_LIST);
+		getAvailableWorklistsToLoad().add(SimpleSearchOption.STAINING_LIST);
+		getAvailableWorklistsToLoad().add(SimpleSearchOption.NOTIFICATION_LIST);
+		getAvailableWorklistsToLoad().add(SimpleSearchOption.EMTY_LIST);
 
 		setPermissions(group.getPermissions());
 

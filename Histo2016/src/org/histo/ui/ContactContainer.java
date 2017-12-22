@@ -4,19 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.Column;
-import javax.persistence.Transient;
-
 import org.apache.log4j.Logger;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContact;
-import org.histo.model.AssociatedContactNotification;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
-import org.histo.util.latex.TextToLatexConverter;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 import lombok.Getter;
 import lombok.Setter;

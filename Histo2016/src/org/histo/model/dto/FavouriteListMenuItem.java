@@ -2,7 +2,6 @@ package org.histo.model.dto;
 
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQuery;

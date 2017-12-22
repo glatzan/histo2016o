@@ -1,6 +1,5 @@
 package org.histo.action;
 
-import org.histo.action.dialog.WorklistSearchDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisRevisionDialog;
 import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
@@ -33,6 +32,7 @@ import org.histo.action.dialog.task.ArchiveTaskDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.histo.action.dialog.task.ChangeTaskIDDialog;
 import org.histo.action.dialog.task.CouncilDialogHandler;
+import org.histo.action.dialog.worklist.WorklistSearchDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

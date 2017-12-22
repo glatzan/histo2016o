@@ -1,7 +1,5 @@
 package org.histo.action.dialog.task;
 
-import java.util.List;
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;

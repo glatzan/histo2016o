@@ -22,17 +22,13 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.log4j.Logger;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
-import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.Eye;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
@@ -180,7 +176,6 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	 * True if the task can't is completed
 	 */
 	@Column
-	// TODO is this needeD?
 	private boolean finalized;
 
 	/**

@@ -2,8 +2,6 @@ package org.histo.action.view;
 
 import java.util.List;
 
-import javax.faces.event.ActionEvent;
-
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -17,7 +15,6 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.Physician;
-import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
