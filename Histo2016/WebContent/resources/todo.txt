@@ -96,6 +96,7 @@ v 1.0.15
 ++++: Befundbericht bedrucken um 180 gedredt, geht wieder
 ++++: Beim Erstellen neuer Färbungen wird in der Auftragsübersicht der Auftrag nicht mehr als "Färbung abgeschlossen" angezeigt
 ++++: Datum der Unterschirft wird aktualisiert, sobald die Befundung beendet wird
+++++: Patienten-Daten werden wieder richtig angezeigt
 
 v 1.0.14
 ++++: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich

@@ -1094,20 +1094,20 @@ public class NotificationDialog extends AbstractDialog {
 					progressStep();
 				}
 
+				
+				if (getSelectedTemplate() != null) {
+					((TemplateDiagnosisReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask(), "");
+					PDFContainer report = getSelectedTemplate().generatePDF(new PDFGenerator());
+					for (int i = 0; i < printCount; i++) {
+						userHandlerAction.getSelectedPrinter().print(report, getSelectedTemplate().getAttributes());
+					}
+				}
+
+				
 				DocumentTemplate sendreportTemplate = DocumentTemplate
 						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.NOTIFICATION_SEND_REPORT));
 
 				progressStepText("dialog.notification.sendProcess.sendReport.generating");
-
-				DocumentTemplate blankReport = DocumentTemplate
-						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT));
-
-				((TemplateDiagnosisReport) blankReport).initData(getTask().getPatient(), getTask(), "");
-				PDFContainer report = blankReport.generatePDF(new PDFGenerator());
-
-				for (int i = 0; i < printCount; i++) {
-					userHandlerAction.getSelectedPrinter().print(report, blankReport.getAttributes());
-				}
 
 				if (sendreportTemplate != null) {
 					TemplateSendReport template = (TemplateSendReport) sendreportTemplate;

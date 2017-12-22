@@ -61,8 +61,9 @@
 \scriptsize
 \begin{textblock}{100}(19, 8) 
 \noindent $!patient.person.fullName\\
-$!patient.person.street\\
-$!patient.person.postcode $!patient.person.town\\
+$date.format('dd.MM.yyyy', $!patient.person.birthday)\\
+$!patient.person.contact.street \\
+$!patient.person.contact.postcode $!patient.person.contact.town\\
 \X=.35mm        
 \barheight=1cm 
 \code{#if($patient.piz == "") 0 #else $!patient.piz #end}\\
