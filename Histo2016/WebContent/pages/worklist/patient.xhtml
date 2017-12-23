@@ -22,8 +22,7 @@
 
 				<!-- piz -->
 				<h:outputLabel value="#{msg['body.worklist.patient.piz']}" />
-				<h:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.piz}" />
+				<h:outputLabel value="#{globalEditViewHandler.selectedPatient.piz}" />
 
 				<!-- name -->
 				<h:outputLabel value="#{msg['body.worklist.patient.name']}" />
@@ -77,8 +76,10 @@
 
 				<!-- birthday -->
 				<p:outputLabel value="#{msg['body.worklist.patient.birthday']}" />
-				<p:outputLabel
-					value="#{ globalEditViewHandler.selectedPatient.person.birthday ne null ? mainHandlerAction.date(globalEditViewHandler.selectedPatient.person.birthday) : ''}" />
+				<h:outputLabel
+					value="#{globalEditViewHandler.selectedPatient.person.birthday}">
+					<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+				</h:outputLabel>
 
 				<!-- town -->
 				<p:outputLabel value="#{msg['body.worklist.patient.town']}" />
@@ -98,8 +99,7 @@
 			selectionMode="single"
 			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
 			rendered="#{globalEditViewHandler.selectedPatient != null}"
-			selection="#{globalEditViewHandler.selectedTask}"
-			rowKey="#{task.id}">
+			selection="#{globalEditViewHandler.selectedTask}" rowKey="#{task.id}">
 
 			<p:ajax event="rowSelect"
 				update=":contentForm, :headerForm, :navigationForm"

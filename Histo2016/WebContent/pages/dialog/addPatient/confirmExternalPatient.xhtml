@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.confirmExternalPatientDialog.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+
+	<h:form id="dialogContent">
+
+		<h:outputScript library="scripts" name="disableButtons.js" />
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent">
+			<h:panelGrid columns="3" styleClass="newStyleListingTable">
+
+				<h:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.person']}"
+					styleClass="headline"></h:outputLabel>
+				<h:outputLabel value="" />
+				<h:outputLabel value="" />
+
+				<!-- name -->
+				<h:outputLabel value="" />
+				<h:outputLabel
+					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.fullName}"></h:outputLabel>
+				<!-- birthday -->
+				<h:panelGroup>
+					<p:outputLabel
+						value="#{msg['dialog.confirmExternalPatientDialog.birthday']}" />
+					<h:outputLabel
+						value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.birthday}">
+						<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+					</h:outputLabel>
+				</h:panelGroup>
+
+				<!-- gender -->
+				<h:outputLabel value="" />
+				<h:outputLabel value="" />
+				<h:panelGroup>
+					<h:outputLabel
+						value="#{msg['dialog.confirmExternalPatientDialog.gender']}" />
+					<h:outputLabel
+						value="#{msg['enum.gender.'.concat(dialogHandlerAction.confirmExternalPatientDialog.patient.person.gender)]}" />
+				</h:panelGroup>
+
+				<h:outputLabel value=" " />
+				<h:outputLabel value=" " />
+				<h:outputLabel value=" " />
+
+				<!-- address -->
+				<h:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.address']} "
+					styleClass="headline"></h:outputLabel>
+				<h:outputLabel value="" />
+				<h:outputLabel value="" />
+
+				<!-- street -->
+				<h:outputLabel value="" />
+				<h:outputLabel
+					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.street}" />
+				<!-- postcode -->
+				<p:outputLabel
+					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.postcode} #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.town}" />
+
+				<h:outputLabel value=" " />
+				<h:outputLabel value=" " />
+				<h:outputLabel value=" " />
+
+				<h:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.other']} "
+					styleClass="headline"></h:outputLabel>
+				<h:outputLabel value="" />
+				<h:outputLabel value="" />
+
+				<h:outputLabel value="" />
+				<!-- phone -->
+				<p:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.other.phone']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.phone}" />
+				<!-- fax -->
+				<p:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.other.fax']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.fax}" />
+
+				<h:outputLabel value="" />
+				<!-- mobile -->
+				<p:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.other.mobile']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.mobile}" />
+				<!-- email -->
+				<p:outputLabel
+					value="#{msg['dialog.confirmExternalPatientDialog.other.email']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.email}" />
+
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float:right;">
+					<p:commandButton widgetVar="createPatientBtn"
+						onclick="disableButton(true, 'createPatientBtn', 'closeBtn')"
+						value="#{msg['dialog.confirmExternalPatientDialog.button.addPatient']}"
+						icon="fa fa-fw fa-user-plus">
+						<f:actionListener
+							binding="#{dialogHandlerAction.confirmExternalPatientDialog.createExternalPatient()}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.close']}"
+						widgetVar="closeBtn" partialSubmit="true"
+						icon="fa fa-fw fa-times-circle" id="closeBtn" process="@this"
+						actionListener="#{dialogHandlerAction.confirmExternalPatientDialog.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

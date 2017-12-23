@@ -57,6 +57,9 @@
 				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.gender}">
 				<f:selectItem
 					itemLabel="#{msg['component.personDataMask.gender.select']}"
+					itemValue="#{null}" />
+				<f:selectItem
+					itemLabel="#{msg['component.personDataMask.gender.unknown']}"
 					itemValue="UNKNOWN" />
 				<f:selectItem
 					itemLabel="#{msg['component.personDataMask.gender.male']}"
@@ -166,12 +169,12 @@
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<!-- Add button -->
 				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
-					widgetVar="addExternalPatient" update="@form"
-					process="@form" icon="fa fa-fw fa-user-plus" partialSubmit="true">
+					widgetVar="addExternalPatient" update="@form" process="@form"
+					icon="fa fa-fw fa-user-plus" partialSubmit="true">
 					<f:actionListener
-						binding="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.addExternalPatient(true)}" />
-					<f:actionListener
-						binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+						binding="#{dialogHandlerAction.confirmExternalPatientDialog.initAndPrepareBean(dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient)}" />
+					<p:ajax event="dialogReturn" update="@form"
+						listener="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.onConfirmExternalPatientDialog}" />
 				</p:commandButton>
 
 				<!-- Close Button -->

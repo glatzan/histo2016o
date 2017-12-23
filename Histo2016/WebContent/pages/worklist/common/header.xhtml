@@ -35,7 +35,7 @@
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
+				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<p:selectOneMenu style="margin-top:1px;"

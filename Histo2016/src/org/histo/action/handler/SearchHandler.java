@@ -63,24 +63,6 @@ public class SearchHandler {
 	}
 
 	/**
-	 * Adds an external Patient to the database.
-	 * 
-	 * @param patient
-	 * @throws CustomDatabaseInconsistentVersionException
-	 */
-	public void addExternalPatient(Patient patient) throws CustomDatabaseInconsistentVersionException {
-		// create new external patient
-		if (patient.getId() == 0) {
-			patient.setExternalPatient(true);
-			patient.setInDatabase(true);
-			patient.setCreationDate(System.currentTimeMillis());
-			genericDAO.savePatientData(patient, "log.patient.extern.new");
-		} else {
-			genericDAO.savePatientData(patient, "log.patient.edit");
-		}
-	}
-
-	/**
 	 * Searches in clinic and histo database, updates the histo database patient
 	 * if found.
 	 * 

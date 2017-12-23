@@ -18,6 +18,7 @@ import org.histo.model.Person;
 import org.histo.model.patient.Patient;
 import org.histo.ui.ListChooser;
 import org.histo.worklist.search.WorklistSimpleSearch;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -224,22 +225,44 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 
 		public boolean initTab() {
 			setPatient(new Patient(new Person(new Contact())));
+			getPatient().getPerson().setGender(null);
+
 			return true;
 		}
 
 		public void updateData() {
 		}
 
-		public void addExternalPatient(boolean addToWorklist) {
-			try {
-				if (getPatient() != null) {
-					searchHandler.addExternalPatient(getPatient());
-					if (addToWorklist)
-						worklistViewHandlerAction.addPatientToWorkList(getPatient(), true);
-				}
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				// TODO: reload patient?
-				onDatabaseVersionConflict();
+		/**
+		 * Adds a patient to the database
+		 * 
+		 * @param patient
+		 * @param addToWorklist
+		 */
+		public void addExternalPatient(Patient patient, boolean addToWorklist) {
+			if (patient == null)
+				return;
+
+			if (patient.getId() == 0) {
+				patient.setExternalPatient(true);
+				patient.setInDatabase(true);
+				patient.setCreationDate(System.currentTimeMillis());
+				genericDAO.savePatientData(patient, "log.patient.extern.new");
+			} else {
+				genericDAO.savePatientData(patient, "log.patient.edit");
+			}
+
+			if (addToWorklist)
+				worklistViewHandlerAction.addPatientToWorkList(getPatient(), true);
+		}
+		
+		/**
+		 * Closes the dialog if patient was added
+		 * @param event
+		 */
+		public void onConfirmExternalPatientDialog(SelectEvent event) {
+			if(event.getObject() instanceof Boolean && ((Boolean)event.getObject()).booleanValue()) {
+				hideDialog();
 			}
 		}
 	}

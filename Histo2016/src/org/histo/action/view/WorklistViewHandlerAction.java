@@ -124,8 +124,10 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void goToNavigation(View view) {
+		System.out.println(view);
 		switch (view) {
 		case WORKLIST_TASKS:
+			System.out.println("dasd");
 			taskViewHandlerAction.initBean();
 			changeView(View.WORKLIST_TASKS);
 			break;

@@ -14,15 +14,20 @@ import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
+import org.histo.model.DiagnosisPreset;
+import org.histo.model.ListItem;
+import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.ui.menu.MenuGenerator;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.model.menu.MenuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -154,6 +159,18 @@ public class GlobalEditViewHandler {
 		updateDataOfTask(false);
 	}
 
+	public void loadGuiData() {
+//		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
+//		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
+//		
+//		setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
+//		
+//		setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
+//		
+//		setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
+//		setDiagnosisPresetsTransformer(new DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
+	}
+	
 	public String getCenterView() {
 		if (getCurrentView() != null)
 			return getCurrentView().getPath();

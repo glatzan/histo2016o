@@ -289,6 +289,8 @@
 	padding: 0px !important;
 	border: 0px !important;
 	overflow: hidden;
+	height: 100vh;
+	position: relative;
 }
 
 /* Dialog header */
@@ -308,15 +310,16 @@
 }
 
 .contentInputDialog .dialogContent {
-	padding: 5px;
+	padding: 2px;
 	padding-bottom: 0.5em;
+	height: calc(100vh - 73px);
+	width: clac(100% - 4px);
 }
 
 .contentInputDialog .buttonContainer {
-	position: absolute !important;
-	bottom: 0.5em !important;
-	vertical-align: bottom !important;
 	width: 100%;
+	position: absolute;
+	bottom: 0.2em !important;
 }
 
 /* small buttons */
@@ -566,7 +569,7 @@
 }
 
 /* body pannel*/
-.tabDialog .contentTable .dialogContent .bodyPannel{
+.tabDialog .contentTable .dialogContent .bodyPannel {
 	width: calc(100% - 10px);
 	display: block;
 }

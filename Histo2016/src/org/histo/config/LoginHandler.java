@@ -52,8 +52,6 @@ public class LoginHandler {
 	public String login() {
 		try {
 
-			System.out.println("asd");
-
 			Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(this.username, this.password));
 

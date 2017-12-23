@@ -9,6 +9,7 @@ import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.notification.NotificationDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
+import org.histo.action.dialog.patient.ConfirmExternalPatientDialog;
 import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.DeleteTaskDialog;
 import org.histo.action.dialog.patient.EditPatientDialog;
@@ -42,7 +43,7 @@ import lombok.Setter;
 @Scope(value = "session")
 @Setter
 public class DialogHandlerAction {
-	
+
 	private OrganizationListDialog organizationListDialog;
 
 	private WorklistSearchDialog worklistSearchDialog;
@@ -108,7 +109,9 @@ public class DialogHandlerAction {
 	private ChangeTaskIDDialog changeTaskIDDialog;
 
 	private DiagnosisRevisionDialog diagnosisRevisionDialog;
-	
+
+	private ConfirmExternalPatientDialog confirmExternalPatientDialog;
+
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -355,10 +358,19 @@ public class DialogHandlerAction {
 	}
 
 	public DiagnosisRevisionDialog getDiagnosisRevisionDialog() {
-		if(diagnosisRevisionDialog == null) {
+		if (diagnosisRevisionDialog == null) {
 			diagnosisRevisionDialog = new DiagnosisRevisionDialog();
 		}
-		
+
 		return diagnosisRevisionDialog;
 	}
+
+	public ConfirmExternalPatientDialog getConfirmExternalPatientDialog() {
+		if (confirmExternalPatientDialog == null) {
+			confirmExternalPatientDialog = new ConfirmExternalPatientDialog();
+		}
+
+		return confirmExternalPatientDialog;
+	}
+
 }
