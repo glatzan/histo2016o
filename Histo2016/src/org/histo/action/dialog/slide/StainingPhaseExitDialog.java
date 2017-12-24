@@ -1,8 +1,8 @@
 package org.histo.action.dialog.slide;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.view.GlobalEditViewHandler;
+import org.histo.action.view.TaskHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;
@@ -10,6 +10,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
+import org.histo.service.SampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
@@ -43,17 +44,12 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private TransactionTemplate transactionTemplate;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private SlideManipulationHandler slideManipulationHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private GlobalEditViewHandler globalEditViewHandler;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SampleService sampleService;
 
 	/**
 	 * Can be set to true if the task should stay in diagnosis phase.
@@ -101,37 +97,17 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	}
 
 	public void exitPhase() {
-		try {
+		// ending staining pahse
+		sampleService.endStainingPhase(task);
 
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+		if (goToDiagnosisPhase) {
+			logger.debug("Adding Task to diagnosis list");
+			favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+		}
 
-				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-					genericDAO.reattach(task.getPatient());
-
-					boolean changed = slideManipulationHandler.setStainingCompletedForAllSlides(task, true);
-
-					task.setStainingCompletionDate(System.currentTimeMillis());
-
-					// removing from staining or restaing list
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
-							PredefinedFavouriteList.ReStainingList);
-
-					if (goToDiagnosisPhase) {
-						logger.debug("Adding Task to diagnosis list");
-						favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
-					}
-
-					if (stayInStainingPhase) {
-						logger.debug("Task should stay in staining phase");
-						favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInStainingList);
-					}
-
-					genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.end");
-				}
-			});
-		} catch (Exception e) {
-			onDatabaseVersionConflict();
+		if (stayInStainingPhase) {
+			logger.debug("Task should stay in staining phase");
+			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInStainingList);
 		}
 
 		globalEditViewHandler.updateDataOfTask(false);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.model.interfaces.IdManuallyAltered;
+import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
@@ -14,7 +15,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StainingTableChooser<T extends IdManuallyAltered> {
+public class StainingTableChooser<T extends IdManuallyAltered & PatientRollbackAble<?>> {
 
 	protected static Logger logger = Logger.getLogger("org.histo");
 

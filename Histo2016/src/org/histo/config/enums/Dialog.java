@@ -1,7 +1,6 @@
 package org.histo.config.enums;
 
 /**
- * mainHandlerAction.showDialog(enumProvider.getDialog('WORKLIST_ORDER'))
  * @author andi
  *
  */
@@ -16,7 +15,7 @@ public enum Dialog {
 	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_LOG("/pages/dialog/history/patientLog", null,  1024, 600, false, false, true),// 16:9
 	TASK_CREATE("/pages/dialog/task/createTask", null, 858, 484, false, false, true), // 16:9
-	TASK_DELETE("/pages/dialog/task/deleteTask", null, 480, 272, false, false, true), // 16:9
+	TASK_DELETE("/pages/dialog/task/delete/deleteTask", null, 480, 272, false, false, true), // 16:9
 	TASK_CHANGE_ID("/pages/dialog/task/chagneTaskID", null, 480, 272, false, false, true), // 16:9
 	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9
 	BIO_BANK("/pages/dialog/biobank/biobank", null, 858, 484, false, false, true), // 16:9
@@ -49,7 +48,7 @@ public enum Dialog {
 	INFO("/pages/dialog/info/info", null,  1024, 600, false, false, true), //  16:9
 	UPLOAD("/pages/dialog/upload/upload", null,  640, 360, false, false, true),//  16:9
 	SELECT_MATERIAL("/pages/dialog/task/selectMaterial", null, 640, 360, false, false, true), // 16:9
-	DELETE_TREE_ENTITY("/pages/dialog/task/deleteTreeEntity", null,  480, 272, false, false, true), //  16:9
+	DELETE_TREE_ENTITY("/pages/dialog/task/delete/deleteTaskChild", null,  480, 272, false, false, true), //  16:9
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
 	MEDIA("/pages/dialog/upload/media", null,  1280, 720,  false, false, true), // 16:9
 	STAINING_PHASE_EXIT("/pages/dialog/task/staining/stainingPhaseExit", null, 480, 272, false, false, true), // 16:9

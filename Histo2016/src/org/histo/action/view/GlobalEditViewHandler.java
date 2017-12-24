@@ -15,6 +15,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
+import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
@@ -107,7 +108,7 @@ public class GlobalEditViewHandler {
 	 * Selected View in the menu
 	 */
 	private View selectedView;
-	
+
 	/**
 	 * Current view which is displayed
 	 */
@@ -160,24 +161,31 @@ public class GlobalEditViewHandler {
 	}
 
 	public void loadGuiData() {
-//		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
-//		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
-//		
-//		setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
-//		
-//		setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
-//		
-//		setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
-//		setDiagnosisPresetsTransformer(new DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
+		// setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE,
+		// false));
+		// setPhysiciansToSignListTransformer(new
+		// DefaultTransformer<Physician>(getPhysiciansToSignList()));
+		//
+		// setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
+		//
+		// setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
+		//
+		// setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
+		// setDiagnosisPresetsTransformer(new
+		// DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
 	}
-	
+
+	public void prepareForTask() {
+		
+	}
+
 	public String getCenterView() {
 		if (getCurrentView() != null)
 			return getCurrentView().getPath();
 		else
 			return View.WORKLIST_BLANK.getPath();
 	}
-	
+
 	public void updateDataOfTask(boolean updateFavouriteLists) {
 		if (selectedTask != null)
 			selectedTask.generateTaskStatus();

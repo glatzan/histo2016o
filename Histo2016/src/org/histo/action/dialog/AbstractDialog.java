@@ -1,5 +1,7 @@
 package org.histo.action.dialog;
 
+import java.util.HashMap;
+
 import javax.faces.event.AbortProcessingException;
 
 import org.apache.log4j.Logger;
@@ -10,6 +12,7 @@ import org.histo.config.exception.CustomNotUniqueReqest;
 import org.histo.dao.GenericDAO;
 import org.histo.model.patient.Task;
 import org.histo.util.UniqueRequestID;
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.Getter;
@@ -61,7 +64,34 @@ public abstract class AbstractDialog {
 	 * Method for displaying the associated dialog.
 	 */
 	public void prepareDialog() {
-		mainHandlerAction.showDialog(dilaog);
+		HashMap<String, Object> options = new HashMap<String, Object>();
+
+		if (getDilaog().getWidth() != 0) {
+			options.put("width", getDilaog().getWidth());
+			options.put("contentWidth", getDilaog().getWidth());
+		} else
+			options.put("width", "auto");
+
+		if (getDilaog().getHeight() != 0) {
+			options.put("contentHeight", getDilaog().getHeight());
+			options.put("height", getDilaog().getHeight());
+		} else
+			options.put("height", "auto");
+
+		if (getDilaog().isUseOptions()) {
+			options.put("resizable", getDilaog().isResizeable());
+			options.put("draggable", getDilaog().isDraggable());
+			options.put("modal", getDilaog().isModal());
+		}
+
+		options.put("closable", false);
+
+		if (getDilaog().getHeader() != null)
+			options.put("headerElement", "dialogForm:header");
+
+		RequestContext.getCurrentInstance().openDialog(getDilaog().getPath(), options, null);
+
+		logger.debug("Showing Dialog: " + getDilaog());
 	}
 
 	/**
@@ -70,11 +100,12 @@ public abstract class AbstractDialog {
 	 * @throws CustomNotUniqueReqest
 	 */
 	public void hideDialog() {
-		mainHandlerAction.hideDialog(dilaog);
+		hideDialog(null);
 	}
 
 	public void hideDialog(Object returnValue) {
-		mainHandlerAction.hideDialog(dilaog, returnValue);
+		logger.debug("Hiding Dialog: " + getDilaog());
+		RequestContext.getCurrentInstance().closeDialog(returnValue);
 	}
 
 	public void onDatabaseVersionConflict() {

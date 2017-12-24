@@ -30,42 +30,60 @@ import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.util.TaskUtil;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "block_sequencegenerator", sequenceName = "block_sequence")
-public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+@Getter
+@Setter
+public class Block
+		implements LogAble, DeleteAble, Parent<Sample>, PatientRollbackAble<Sample>, IdManuallyAltered, HasID {
 
+	@Id
+	@GeneratedValue(generator = "block_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	@Version
 	private long version;
 
 	/**
 	 * Parent of this block
 	 */
+	@ManyToOne
 	private Sample parent;
 
 	/**
 	 * ID in block
 	 */
+	@Column
 	private String blockID = "";
 
 	/**
 	 * True if the user has manually altered the sample ID
 	 */
+	@Column
 	private boolean idManuallyAltered;
 
 	/**
 	 * staining array
 	 */
-	private List<Slide> slides;
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "parent")
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("creationDate ASC, id ASC")
+	private List<Slide> slides = new ArrayList<Slide>();
 
 	/**
 	 * Date of sample creation
 	 */
+	@Column
 	private long creationDate;
 
+	@Transient
 	public void removeStaining(Slide staining) {
 		getSlides().remove(staining);
 	}
@@ -73,8 +91,16 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 	@Transient
 	public boolean updateNameOfBlock(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
 		if (!isIdManuallyAltered() || (ignoreManuallyNamedItems && isIdManuallyAltered())) {
-			if (useAutoNomenclature && parent.getBlocks().size() > 1) {
-				String name = TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this));
+			if (useAutoNomenclature) {
+				String name;
+
+				if (parent.getBlocks().size() > 1) {
+					name = TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this));
+				} else {
+					// no block name
+					name = "";
+				}
+
 				if (getBlockID() == null || !getBlockID().equals(name)) {
 					setBlockID(name);
 					setIdManuallyAltered(false);
@@ -87,6 +113,11 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 	}
 
 	@Transient
+	public void updateAllNames() {
+		updateAllNames(getTask().isUseAutoNomenclature(), false);
+	}
+
+	@Transient
 	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
 		updateNameOfBlock(useAutoNomenclature, ignoreManuallyNamedItems);
 		getSlides().stream().forEach(p -> p.updateNameOfSlide(useAutoNomenclature, ignoreManuallyNamedItems));
@@ -94,90 +125,16 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 
 	@Override
 	public String toString() {
-		return "ID: " + getId() + " BlockID: " + getBlockID();
+		return "Block: " + getBlockID() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	@Id
-	@GeneratedValue(generator = "block_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "parent")
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("creationDate ASC, id ASC")
-	public List<Slide> getSlides() {
-		if (slides == null)
-			slides = new ArrayList<>();
-		return slides;
-	}
-
-	public void setSlides(List<Slide> slides) {
-		this.slides = slides;
-	}
-
-	public String getBlockID() {
-		return blockID;
-	}
-
-	public void setBlockID(String blockID) {
-		this.blockID = blockID;
-	}
-
-	public long getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public boolean isIdManuallyAltered() {
-		return idManuallyAltered;
-	}
-
-	public void setIdManuallyAltered(boolean idManuallyAltered) {
-		this.idManuallyAltered = idManuallyAltered;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
 
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
-	@ManyToOne
-	public Sample getParent() {
-		return parent;
-	}
-
-	public void setParent(Sample parent) {
-		this.parent = parent;
-	}
-
 	/**
 	 * �berschreibt Methode aus dem Interface StainingTreeParent
 	 */
 	@Transient
-	@Override
 	public Patient getPatient() {
 		return getParent().getPatient();
 	}
@@ -220,17 +177,5 @@ public class Block implements Parent<Sample>, LogAble, DeleteAble, PatientRollba
 
 	/********************************************************
 	 * Interface Delete Able
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return getParent().getLogPath() + ", Block-ID: " + getBlockID() + " (" + getId() + ")";
-	}
-	/********************************************************
-	 * Interface PatientRollbackAble
 	 ********************************************************/
 }

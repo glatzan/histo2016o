@@ -25,54 +25,74 @@ import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.util.TaskUtil;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "slide_sequencegenerator", sequenceName = "slide_sequence")
-public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+@Getter
+@Setter
+public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbackAble<Block>, IdManuallyAltered, HasID {
 
+	@Id
+	@GeneratedValue(generator = "slide_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	@Version
 	private long version;
 
+	@Column
 	private int uniqueIDinTask;
 
+	@Column
 	private String slideID = "";
 
+	@Column
 	private boolean idManuallyAltered;
 
+	@Column
 	private long creationDate;
 
+	@Column
 	private long completionDate;
-
+	
+	@Column
 	private boolean stainingCompleted;
 
+	@Column
 	private boolean reStaining;
-
+	
+	@Column(columnDefinition = "VARCHAR")
 	private String commentary = "";
 
+	@OneToOne
+	@NotAudited
 	private StainingPrototype slidePrototype;
 
-	/**
-	 * Eltern Block des Stainings
-	 */
+	@ManyToOne
 	private Block parent;
 
 	@Transient
-	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
-		updateNameOfSlide(useAutoNomenclature,ignoreManuallyNamedItems);
+	public void updateAllNames() {
+		updateNameOfSlide(getTask().isUseAutoNomenclature(), false);
 	}
 	
+	@Transient
+	public void updateAllNames(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
+		updateNameOfSlide(useAutoNomenclature, ignoreManuallyNamedItems);
+	}
+
 	@Transient
 	public boolean updateNameOfSlide(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
 		if (!isIdManuallyAltered() || (isIdManuallyAltered() && ignoreManuallyNamedItems)) {
 			StringBuilder name = new StringBuilder();
 
 			if (useAutoNomenclature) {
-				
-				System.out.println(parent.getParent().getSampleID() + " ");
-				
+
 				// generating block id
 				name.append(parent.getParent().getSampleID());
 				name.append(parent.getBlockID());
@@ -92,6 +112,7 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 					return true;
 				}
 			} else if (getSlideID() == null || getSlideID().isEmpty()) {
+				// only setting the staining and the number of the stating
 				name.append(slidePrototype.getName());
 
 				int stainingsInBlock = TaskUtil.getNumerOfSameStainings(this);
@@ -111,115 +132,13 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 	@Override
 	@Transient
 	public String toString() {
-		return "ID: " + getId() + ", Slide ID: " + getSlideID();
+		return "Slide: " + getSlideID() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
 
-	@Id
-	@GeneratedValue(generator = "slide_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	public boolean isStainingCompleted() {
-		return stainingCompleted;
-	}
-
-	public void setStainingCompleted(boolean stainingCompleted) {
-		this.stainingCompleted = stainingCompleted;
-	}
-
-	@OneToOne
-	@NotAudited
-	public StainingPrototype getSlidePrototype() {
-		return slidePrototype;
-	}
-
-	public void setSlidePrototype(StainingPrototype slidePrototype) {
-		this.slidePrototype = slidePrototype;
-	}
-
-	public long getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public long getCompletionDate() {
-		return completionDate;
-	}
-
-	public void setCompletionDate(long completionDate) {
-		this.completionDate = completionDate;
-	}
-
-	public String getSlideID() {
-		return slideID;
-	}
-
-	public void setSlideID(String slideID) {
-		this.slideID = slideID;
-	}
-
-	public boolean isReStaining() {
-		return reStaining;
-	}
-
-	public void setReStaining(boolean reStaining) {
-		this.reStaining = reStaining;
-	}
-
-	@Type(type = "text")
-	public String getCommentary() {
-		return commentary;
-	}
-
-	public void setCommentary(String commentary) {
-		this.commentary = commentary;
-	}
-
-	public int getUniqueIDinTask() {
-		return uniqueIDinTask;
-	}
-
-	public void setUniqueIDinTask(int uniqueIDinTask) {
-		this.uniqueIDinTask = uniqueIDinTask;
-	}
-
-	public boolean isIdManuallyAltered() {
-		return idManuallyAltered;
-	}
-
-	public void setIdManuallyAltered(boolean idManuallyAltered) {
-		this.idManuallyAltered = idManuallyAltered;
-	}
 
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
-	@ManyToOne
-	public Block getParent() {
-		return parent;
-	}
-
-	public void setParent(Block parent) {
-		this.parent = parent;
-	}
 
 	/**
 	 * �berschreibt Methode aus dem Interface StainingTreeParent
@@ -268,18 +187,5 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 
 	/********************************************************
 	 * Interface Delete Able
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return getParent().getLogPath() + ", Slide-ID: " + getSlideID() + " (" + getId() + ")";
-	}
-
-	/********************************************************
-	 * Interface PatientRollbackAble
 	 ********************************************************/
 }

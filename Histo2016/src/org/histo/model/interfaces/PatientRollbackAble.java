@@ -2,9 +2,13 @@ package org.histo.model.interfaces;
 
 import org.histo.model.patient.Patient;
 
-public interface PatientRollbackAble extends HasID {
+public interface PatientRollbackAble<T extends PatientRollbackAble<?>> extends HasID {
 
 	public Patient getPatient();
+	
+	public T getParent();
+
+	public void setParent(T parent);
 
 	/**
 	 * Returns a hierarchical path for logging the object
@@ -12,6 +16,6 @@ public interface PatientRollbackAble extends HasID {
 	 * @return
 	 */
 	public default String getLogPath() {
-		return "";
+		return getParent().getLogPath() + " / " + toString();
 	}
 }

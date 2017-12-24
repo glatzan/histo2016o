@@ -10,7 +10,6 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.SettingsDialogHandler;
-import org.histo.action.handler.SlideManipulationHandler;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
@@ -23,6 +22,7 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.ListItem;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateSlideLable;
 import org.histo.ui.StainingTableChooser;
@@ -61,21 +61,6 @@ public class ReceiptlogViewHandlerAction {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private SlideManipulationHandler slideManipulationHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private FavouriteListDAO favouriteListDAO;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private SettingsDialogHandler settingsDialogHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
 	@Autowired
@@ -94,6 +79,21 @@ public class ReceiptlogViewHandlerAction {
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TaskHandlerAction taskHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SampleService sampleService;
+
 	/**
 	 * This variable is used to save the selected action, which should be
 	 * executed upon all selected slides
@@ -110,26 +110,29 @@ public class ReceiptlogViewHandlerAction {
 	 * task). It is used to edit the names of the entities by an overlaypannel
 	 */
 	private StainingTableChooser<?> selectedStainingTableChooser;
-	
+
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize ReceiptlogViewHandlerAction for task");
 		// generating guilist for display
 		task.generateSlideGuiList();
 
-		// Setzte action to none
-		setActionOnMany(StainingListAction.NONE);
-
 		if (getSlideCommentary() == null)
 			setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
+
+		setActionOnMany(StainingListAction.NONE);
 	}
 
 	public List<String> getTest(String query) {
 		return slideCommentary.stream().map(p -> p.getValue()).collect(Collectors.toList());
 	}
 
-	public void performActionOnMany(Task task) {
-		performActionOnMany(task, getActionOnMany());
-		setActionOnMany(StainingListAction.NONE);
+	/**
+	 * Executes an action on all selected slides
+	 * 
+	 * @param task
+	 */
+	public void performActionOnManyTaskChildren(Task task) {
+		performActionOnManyTaskChildren(task, getActionOnMany());
 	}
 
 	/**
@@ -138,7 +141,7 @@ public class ReceiptlogViewHandlerAction {
 	 * @param list
 	 * @param action
 	 */
-	public void performActionOnMany(Task task, StainingListAction action) {
+	public void performActionOnManyTaskChildren(Task task, StainingListAction action) {
 		try {
 			List<StainingTableChooser<?>> list = task.getStainingTableRows();
 
@@ -160,19 +163,25 @@ public class ReceiptlogViewHandlerAction {
 			case PERFORMED:
 				logger.debug("Setting staining status of selected slides to perforemd!");
 
-				boolean changed = slideManipulationHandler.setStainingCompletedForSelectedSlides(list, true);
+				sampleService
+						.setStainingCompletedForSlides(list.stream().filter(p -> p.isChoosen() && p.isStainingType())
+								.map(p -> (Slide) p.getEntity()).collect(Collectors.toList()), true);
 
 				// shows dialog for informing the user that all stainings are
 				// performed
-				checkStainingPhase(task, changed);
+				if (sampleService.updateStaingPhase(task))
+					dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(task);
 
 				break;
 			case NOT_PERFORMED:
 				logger.debug("Setting staining status of selected slides to not perforemd!");
 
-				changed = slideManipulationHandler.setStainingCompletedForSelectedSlides(list, false);
+				sampleService
+						.setStainingCompletedForSlides(list.stream().filter(p -> p.isChoosen() && p.isStainingType())
+								.map(p -> (Slide) p.getEntity()).collect(Collectors.toList()), false);
 
-				checkStainingPhase(task, changed);
+				if (sampleService.updateStaingPhase(task))
+					dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(task);
 
 				break;
 			case ARCHIVE:
@@ -228,55 +237,6 @@ public class ReceiptlogViewHandlerAction {
 
 		setActionOnMany(StainingListAction.NONE);
 
-	}
-
-	/**
-	 * Used from external button to end staing phase
-	 * 
-	 * @param task
-	 */
-	public void performStainingsAndCheckStainingPhase(Task task) {
-		try {
-			boolean changed = slideManipulationHandler.setStainingCompletedForAllSlides(task, true);
-			checkStainingPhase(task, changed);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// catching database version inconsistencies
-			worklistViewHandlerAction.onVersionConflictTask();
-		}
-	}
-
-	/**
-	 * If all staings are completed an dialog will be shown, to end staing phase
-	 * 
-	 * @param task
-	 * @param changed
-	 * @throws CustomDatabaseInconsistentVersionException
-	 */
-	public void checkStainingPhase(Task task, boolean changed) throws CustomDatabaseInconsistentVersionException {
-		if (changed) {
-			// removing from staining list and showing the dialog for ending
-			// staining phase
-			if (taskStatusHandler.isStainingCompleted(task)) {
-				logger.trace("Staining phase completed removing from staing list, adding to diagnosisList");
-				dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(task);
-			} else {
-				// reentering the staining phase, adding task to staining or
-				// restaining list
-				logger.trace("Enter staining phase, adding to staingin list");
-
-				task.setStainingCompletionDate(0);
-				genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.reentered");
-
-				if (taskStatusHandler.isReStainingFlag(task)) {
-					logger.debug("Adding to restaining list, if not in list");
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList);
-					favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.ReStainingList);
-				} else {
-					logger.debug("Adding to staining list, if not in list");
-					favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.StainingList);
-				}
-			}
-		}
 	}
 
 	/**

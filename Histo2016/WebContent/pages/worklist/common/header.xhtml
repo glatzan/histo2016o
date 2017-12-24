@@ -116,7 +116,7 @@
 
 			<!-- Staining List, New Sample -->
 			<p:commandButton id="newSampleBtn" style="display:none"
-				actionListener="#{createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{dialogHandlerAction.createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>

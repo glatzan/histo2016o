@@ -8,7 +8,10 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.createSample.headline']}" /></title>
+			value="#{msg['dialog.deleteTreeEntity.text']}" escape="false">
+			<f:param
+				value="#{dialogHandlerAction.deleteTaskEntityDialog.toDelete.textIdentifier}" />
+		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
@@ -20,7 +23,11 @@
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel value="#{msg['dialog.createSample.headline']}" />
+				<h:outputFormat value="#{msg['dialog.deleteTreeEntity.headline']}"
+					escape="false">
+					<f:param
+						value="#{dialogHandlerAction.deleteTaskEntityDialog.toDelete.textIdentifier}" />
+				</h:outputFormat>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -30,22 +37,13 @@
 		</div>
 
 		<div class="dialogContent">
-			<h:panelGrid columns="2" styleClass="newStyleListingTable">
-				<!-- material -->
-				<h:outputLabel value="#{msg['dialog.createSample.material']}"></h:outputLabel>
-				<p:selectOneMenu id="selectStainingList" styleClass="smallInput"
-					converter="#{dialogHandlerAction.createSampleDialog.materialTransformer}"
-					value="#{dialogHandlerAction.createSampleDialog.selectedMaterial}">
-					<f:selectItems value="#{dialogHandlerAction.createSampleDialog.materials}"
-						var="material" itemLabel="#{material.name}"
-						itemValue="#{material}">
-					</f:selectItems>
-				</p:selectOneMenu>
-
-				<!-- Autonomeclature -->
-				<h:outputLabel value="#{msg['dialog.createSample.autoNomeclature']}"></h:outputLabel>
-				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.createSampleDialog.task.useAutoNomenclature}" />
+			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+				columnClasses="columnLongText">
+				<h:outputFormat value="#{msg['dialog.deleteTreeEntity.text']}"
+					escape="false">
+					<f:param
+						value="#{dialogHandlerAction.deleteTaskEntityDialog.toDelete.textIdentifier}" />
+				</h:outputFormat>
 			</h:panelGrid>
 		</div>
 
@@ -58,22 +56,22 @@
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- confirm -->
-					<p:commandButton value="#{msg['general.create']}"
-						icon="fa fa-check-circle-o">
+					<p:commandButton value="#{msg['general.delete']}"
+						icon="fa fa-trash-o">
 						<f:actionListener
-							binding="#{dialogHandlerAction.createSampleDialog.createNewSample()}" />
-						<f:actionListener binding="#{dialogHandlerAction.createSampleDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.deleteTaskEntityDialog.deleteTaskEntity()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.deleteTaskEntityDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						icon="fa fa-times-circle"
-						actionListener="#{dialogHandlerAction.createSampleDialog.hideDialog()}" />
+						actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
-
-
 	</h:form>
 </h:body>
 </html>
+

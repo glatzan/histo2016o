@@ -41,6 +41,8 @@ import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
+import org.histo.service.DiagnosisService;
+import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateUReport;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -117,6 +119,16 @@ public class CreateTaskDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SampleService sampleService;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DiagnosisService diagnosisService;
+
 	private Patient patient;
 
 	private List<MaterialPreset> materialList;
@@ -179,9 +191,14 @@ public class CreateTaskDialog extends AbstractDialog {
 		setTaskIdManuallyAltered(false);
 		setTaskIDisPresentInDatabase(false);
 
-		// creates a new sample, is automatically added to the task
-		new Sample(getTask(), !getMaterialList().isEmpty() ? getMaterialList().get(0) : null);
-
+		Sample newSample = new Sample();
+		newSample.setCreationDate(System.currentTimeMillis());
+		newSample.setParent(getTask());
+		newSample.setMaterilaPreset(getMaterialList().get(0));
+		newSample.setMaterial(getMaterialList().get(0).getName());
+		getTask().getSamples().add(newSample);
+		getTask().updateAllNames();
+		
 		// setting biobank
 		setBioBank(new BioBank());
 		getBioBank().setInformedConsentType(InformedConsentType.NONE);
@@ -216,9 +233,13 @@ public class CreateTaskDialog extends AbstractDialog {
 				// adding samples if count is bigger then the current sample
 				// count
 				while (getSampleCount() > task.getSamples().size()) {
-					Sample s = new Sample(task, !getMaterialList().isEmpty() ? getMaterialList().get(0) : null);
-					// set name of material for changing it manually
-					s.setMaterial(!getMaterialList().isEmpty() ? getMaterialList().get(0).getName() : null);
+					Sample newSample = new Sample();
+					newSample.setCreationDate(System.currentTimeMillis());
+					newSample.setParent(getTask());
+					newSample.setMaterilaPreset(getMaterialList().get(0));
+					newSample.setMaterial(getMaterialList().get(0).getName());
+					getTask().getSamples().add(newSample);
+					getTask().updateAllNames();
 				}
 			} else if (getSampleCount() < task.getSamples().size()) {
 				logger.debug("New Task: Samplecount > samples, removing sample");
@@ -297,13 +318,13 @@ public class CreateTaskDialog extends AbstractDialog {
 						// saving samples
 						genericDAO.savePatientData(sample, "log.patient.task.sample.new", sample.getSampleID());
 						// creating needed blocks
-						taskManipulationHandler.createNewBlock(sample, task.isUseAutoNomenclature());
+						sampleService.createBlock(sample);
 
 					}
 
 					logger.debug("Creating diagnosis");
 					// creating standard diagnoses
-					taskManipulationHandler.createDiagnosisRevision(getTask().getDiagnosisContainer(),
+					diagnosisService.createDiagnosisRevision(getTask().getDiagnosisContainer(),
 							DiagnosisRevisionType.DIAGNOSIS);
 					// generating gui list
 					getTask().generateSlideGuiList();

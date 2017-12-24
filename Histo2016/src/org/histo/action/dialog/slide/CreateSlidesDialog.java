@@ -16,6 +16,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
+import org.histo.service.SampleService;
 import org.histo.ui.ListChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class AddSlidesDialog extends AbstractDialog {
+public class CreateSlidesDialog extends AbstractDialog {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -42,7 +43,7 @@ public class AddSlidesDialog extends AbstractDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
+	private SampleService sampleService;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -63,7 +64,7 @@ public class AddSlidesDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GlobalEditViewHandler globalEditViewHandler;
-	
+
 	private Block block;
 
 	private String commentary;
@@ -99,6 +100,7 @@ public class AddSlidesDialog extends AbstractDialog {
 		}
 
 		setCommentary("");
+
 		setRestaining(taskStatusHandler.isReStainingFlag(block.getParent()));
 
 		setStainingListChooser(new ArrayList<ListChooser<StainingPrototype>>());
@@ -113,43 +115,23 @@ public class AddSlidesDialog extends AbstractDialog {
 
 	public void addSlides() {
 		try {
-			// checks if anything is selected, otherwise the dialog will be
-			// closed
-			boolean slideChoosen = false;
-			for (ListChooser<StainingPrototype> slide : getStainingListChooser()) {
-				if (slide.isChoosen()) {
-					slideChoosen = true;
-					break;
-				}
+			// getting all slides to add
+			List<StainingPrototype> slidesToAdd = stainingListChooser.stream().filter(p -> p.isChoosen())
+					.map(p -> p.getListItem()).collect(Collectors.toList());
+			if (!slidesToAdd.isEmpty()) {
+				sampleService.createSlidesForSample(slidesToAdd, block, commentary, restaining);
+				// updating statining list
+				block.getTask().generateSlideGuiList();
 			}
 
-			if (!slideChoosen) {
-				return;
-			}
-
-			// if chosen a new slide will be created
-			for (ListChooser<StainingPrototype> slide : getStainingListChooser()) {
-				if (slide.isChoosen()) {
-					taskManipulationHandler.createSlide(slide.getListItem(), getBlock(), getCommentary(),
-							isRestaining());
-				}
-			}
-
-			// checking if the object need to be added to the staining list
-			// again
-			// something was added, so a change occured
-
-			receiptlogViewHandlerAction.checkStainingPhase(block.getTask(), true);
-
-			// updating statining list
-			block.getTask().generateSlideGuiList();
-
-			genericDAO.savePatientData(getBlock().getTask(), "log.patient.task.sample.block.update",
-					block.toString());
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
-		
+
 		globalEditViewHandler.updateDataOfTask(false);
+	}
+
+	public boolean isStainingSelected() {
+		return stainingListChooser.stream().anyMatch(p -> p.isChoosen());
 	}
 }

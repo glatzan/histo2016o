@@ -2,6 +2,9 @@ package org.histo.ui.task;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.config.enums.PredefinedFavouriteList;
+import org.histo.model.patient.Block;
+import org.histo.model.patient.Patient;
+import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +105,38 @@ public class TaskStatus {
 		// TODO: Blocking
 
 		return true;
+	}
+
+	public static boolean checkIfStainingCompleted(Patient patient) {
+		return patient.getTasks().stream().allMatch(p -> checkIfStainingCompleted(p));
+	}
+
+	public static boolean checkIfStainingCompleted(Task task) {
+		return task.getSamples().stream().allMatch(p -> checkIfStainingCompleted(p));
+	}
+
+	public static boolean checkIfStainingCompleted(Sample sample) {
+		return sample.getBlocks().stream().allMatch(p -> checkIfStainingCompleted(p));
+	}
+
+	public static boolean checkIfStainingCompleted(Block block) {
+		return block.getSlides().stream().allMatch(p -> p.isStainingCompleted());
+	}
+
+	public static boolean checkIfReStainingFlag(Patient patient) {
+		return patient.getTasks().stream().anyMatch(p -> checkIfReStainingFlag(p));
+	}
+
+	public static boolean checkIfReStainingFlag(Task task) {
+		return task.getSamples().stream().anyMatch(p -> checkIfReStainingFlag(p));
+	}
+
+	public static boolean checkIfReStainingFlag(Sample sample) {
+		return sample.getBlocks().stream().anyMatch(p -> checkIfReStainingFlag(p));
+	}
+
+	public static boolean checkIfReStainingFlag(Block block) {
+		return block.getSlides().stream().anyMatch(p -> p.isReStaining());
 	}
 
 }

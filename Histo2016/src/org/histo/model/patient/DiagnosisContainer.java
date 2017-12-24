@@ -28,35 +28,50 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisContainer_sequencegenerator", sequenceName = "diagnosisContainer_sequence")
-public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbackAble, HasID {
+@Getter
+@Setter
+public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbackAble<Task>, HasID {
 
+	@Id
+	@GeneratedValue(generator = "diagnosisContainer_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	@ManyToOne(targetEntity = Task.class)
 	private Task parent;
 
 	/**
 	 * List of diagnosis revisions
 	 */
+	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("sequenceNumber ASC")
 	private List<DiagnosisRevision> diagnosisRevisions;
 
 	/**
 	 * Selected physician to sign the report
 	 */
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Signature signatureOne;
 
 	/**
 	 * Selected consultant to sign the report
 	 */
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Signature signatureTwo;
 
 	/**
 	 * Date of the signature
 	 */
+	@Column
 	private long signatureDate;
 
 	public DiagnosisContainer() {
@@ -64,6 +79,12 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 
 	public DiagnosisContainer(Task parent) {
 		this.parent = parent;
+	}
+	
+
+	@Override
+	public String toString() {
+		return "Diagnosis-Container";
 	}
 
 	/******** Transient ********/
@@ -97,7 +118,7 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 		signature.setRole(physician.getClinicRole());
 		setSignatureTwo(signature);
 	}
-	
+
 	@Transient
 	public boolean isMalign() {
 		return diagnosisRevisions.stream().anyMatch(p -> p.isMalign());
@@ -105,68 +126,8 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 
 	/******** Transient ********/
 
-	/******** Interface Parent ********/
-	@Id
-	@GeneratedValue(generator = "diagnosisContainer_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("sequenceNumber ASC")
-	public List<DiagnosisRevision> getDiagnosisRevisions() {
-		return diagnosisRevisions;
-	}
-
-	public void setDiagnosisRevisions(List<DiagnosisRevision> diagnosisRevisions) {
-		this.diagnosisRevisions = diagnosisRevisions;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	public Signature getSignatureOne() {
-		return signatureOne;
-	}
-
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	public Signature getSignatureTwo() {
-		return signatureTwo;
-	}
-
-	public long getSignatureDate() {
-		return signatureDate;
-	}
-
-	public void setSignatureOne(Signature signatureOne) {
-		this.signatureOne = signatureOne;
-	}
-
-	public void setSignatureTwo(Signature signatureTwo) {
-		this.signatureTwo = signatureTwo;
-	}
-
-	public void setSignatureDate(long signatureDate) {
-		this.signatureDate = signatureDate;
-	}
 
 	/******** Interface Parent ********/
-	/**
-	 * Overwrites method from parent interface
-	 */
-	@ManyToOne(targetEntity = Task.class)
-	public Task getParent() {
-		return parent;
-	}
-
-	public void setParent(Task parent) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Overwrites method from parent interface
 	 */
@@ -186,18 +147,4 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 	}
 
 	/******** Interface Parent ********/
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return getParent().getLogPath();
-	}
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-
 }

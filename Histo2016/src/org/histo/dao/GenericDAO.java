@@ -66,25 +66,30 @@ public class GenericDAO extends AbstractDAO {
 				.setProjection(Projections.rowCount()).uniqueResult()).intValue();
 	}
 
-	public <C extends HasID & PatientRollbackAble> C savePatientData(C object)
+	public <C extends HasID & PatientRollbackAble<?>> C savePatientData(C object)
 			throws CustomDatabaseInconsistentVersionException {
 		return savePatientData(object, object, null);
 	}
 
-	public <C extends HasID & PatientRollbackAble> C savePatientData(C object, String resourcesKey,
+	public <C extends HasID & PatientRollbackAble<?>> C savePatientData(C object, String resourcesKey,
 			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
 		return savePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
-	public <C extends HasID> C savePatientData(C object, PatientRollbackAble hasPatient, String resourcesKey,
+	public <C extends HasID> C savePatientData(C object, PatientRollbackAble<?> hasPatient, String resourcesKey,
 			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
 
+		Object[] keyArr = new Object[resourcesKeyInsert.length + 1];
+		keyArr[0] = hasPatient.getLogPath();
+		for (int i = 0; i < resourcesKeyInsert.length; i++) {
+			keyArr[i + 1] = resourcesKeyInsert[i];
+		}
+
 		// if failed false will be returned
-		return save(object, resourcesKey, new Object[] { hasPatient.getLogPath(), resourcesKeyInsert },
-				hasPatient.getPatient());
+		return save(object, resourcesKey, keyArr, hasPatient.getPatient());
 	}
 
-	public <C extends HasID & PatientRollbackAble> C deletePatientData(C object, String resourcesKey,
+	public <C extends HasID & PatientRollbackAble<?>> C deletePatientData(C object, String resourcesKey,
 			String... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
 		return deletePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}

@@ -31,69 +31,90 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
+@Getter
+@Setter
 public class DiagnosisRevision
-		implements Parent<DiagnosisContainer>, DeleteAble, LogAble, PatientRollbackAble, HasID {
+		implements Parent<DiagnosisContainer>, DeleteAble, LogAble, PatientRollbackAble<DiagnosisContainer>, HasID {
 
+	@Id
+	@GeneratedValue(generator = "diagnosisRevision_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
 	/**
 	 * Name of this revision
 	 */
+	@Column
 	private String name;
 
 	/**
 	 * Version
 	 */
+	@Version
 	private long version;
 
 	/**
 	 * Parent of the Diagnosis
 	 */
+	@ManyToOne
 	private DiagnosisContainer parent;
 
 	/**
 	 * Number of the revision in the revision sequence
 	 */
+	@Column
 	private int sequenceNumber;
 
 	/**
 	 * Type of the revison @see {@link DiagnosisRevisionType}
 	 */
+	@Enumerated(EnumType.STRING)
 	private DiagnosisRevisionType type;
 
 	/**
 	 * Date of diagnosis creation.
 	 */
+	@Column
 	private long creationDate;
 
 	/**
 	 * Date of diagnosis finalization.
 	 */
+	@Column
 	private long compleationDate;
 
 	/**
 	 * True if finalized.
 	 */
+	@Column
 	private boolean diagnosisCompleted;
 
 	/**
 	 * 
 	 */
+	@Column
 	private boolean reDiagnosis;
 
 	/**
 	 * All diagnoses
 	 */
-	private List<Diagnosis> diagnoses;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("sample.id ASC")
+	private List<Diagnosis> diagnoses = new ArrayList<>();
 
 	/**
 	 * Text containing the histological record for all samples.
 	 */
+	@Column(columnDefinition = "text")
 	private String text = "";
 
 	/**
@@ -107,7 +128,9 @@ public class DiagnosisRevision
 		this.type = type;
 	}
 
-	/******************************************************** Transient ********************************************************/
+	/********************************************************
+	 * Transient
+	 ********************************************************/
 
 	@Transient
 	public Diagnosis getLastRelevantDiagnosis() {
@@ -126,121 +149,13 @@ public class DiagnosisRevision
 
 	@Override
 	public String toString() {
-		return "ID: " + getId() + " Name: " + getName();
-	}
-	/******************************************************** Transient ********************************************************/
-
-	@Id
-	@GeneratedValue(generator = "diagnosisRevision_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
+		return "Diagnosis-Revision: " + getName() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getText() {
-		return text;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("sample.id ASC")
-	public List<Diagnosis> getDiagnoses() {
-		if (diagnoses == null)
-			diagnoses = new ArrayList<>();
-		return diagnoses;
-	}
-
-	@Enumerated(EnumType.STRING)
-	public DiagnosisRevisionType getType() {
-		return type;
-	}
-
-	public void setType(DiagnosisRevisionType type) {
-		this.type = type;
-	}
-
-	public void setDiagnoses(List<Diagnosis> diagnoses) {
-		this.diagnoses = diagnoses;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public int getSequenceNumber() {
-		return sequenceNumber;
-	}
-
-	public void setSequenceNumber(int sequenceNumber) {
-		this.sequenceNumber = sequenceNumber;
-	}
-
-	public long getCreationDate() {
-		return creationDate;
-	}
-
-	public long getCompleationDate() {
-		return compleationDate;
-	}
-
-	public boolean isDiagnosisCompleted() {
-		return diagnosisCompleted;
-	}
-
-	public boolean isReDiagnosis() {
-		return reDiagnosis;
-	}
-
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	public void setCompleationDate(long compleationDate) {
-		this.compleationDate = compleationDate;
-	}
-
-	public void setDiagnosisCompleted(boolean diagnosisCompleted) {
-		this.diagnosisCompleted = diagnosisCompleted;
-	}
-
-	public void setReDiagnosis(boolean reDiagnosis) {
-		this.reDiagnosis = reDiagnosis;
-	}
 
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
-	@ManyToOne
-	public DiagnosisContainer getParent() {
-		return parent;
-	}
-
-	public void setParent(DiagnosisContainer parent) {
-		this.parent = parent;
-	}
-
 	/**
 	 * �berschreibt Methode aus dem Interface StainingTreeParent
 	 */
@@ -287,17 +202,4 @@ public class DiagnosisRevision
 	/********************************************************
 	 * Interface Delete Able
 	 ********************************************************/
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return getParent().getLogPath() + ", Revision-ID: " + getName() + " (" + getId() + ")";
-	}
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-
 }

@@ -26,13 +26,15 @@ import org.histo.action.dialog.settings.physician.PhysicianEditDialog;
 import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
 import org.histo.action.dialog.settings.staining.StainingEditDialog;
 import org.histo.action.dialog.settings.users.UserListDialog;
-import org.histo.action.dialog.slide.AddSlidesDialog;
+import org.histo.action.dialog.slide.CreateSlidesDialog;
 import org.histo.action.dialog.slide.SlideOverviewDialog;
 import org.histo.action.dialog.slide.StainingPhaseExitDialog;
 import org.histo.action.dialog.task.ArchiveTaskDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.histo.action.dialog.task.ChangeTaskIDDialog;
 import org.histo.action.dialog.task.CouncilDialogHandler;
+import org.histo.action.dialog.task.CreateSampleDialog;
+import org.histo.action.dialog.task.DeleteTaskEntityDialog;
 import org.histo.action.dialog.worklist.WorklistSearchDialog;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -102,7 +104,7 @@ public class DialogHandlerAction {
 
 	private PatientLogDialog patientLogDialog;
 
-	private AddSlidesDialog addSlidesDialog;
+	private CreateSlidesDialog createSlidesDialog;
 
 	private CouncilDialogHandler councilDialogHandler;
 
@@ -112,6 +114,10 @@ public class DialogHandlerAction {
 
 	private ConfirmExternalPatientDialog confirmExternalPatientDialog;
 
+	private DeleteTaskEntityDialog deleteTaskEntityDialog;
+	
+	private CreateSampleDialog createSampleDialog;
+	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
 			organizationListDialog = new OrganizationListDialog();
@@ -333,12 +339,12 @@ public class DialogHandlerAction {
 		return patientLogDialog;
 	}
 
-	public AddSlidesDialog getAddSlidesDialog() {
-		if (addSlidesDialog == null) {
-			addSlidesDialog = new AddSlidesDialog();
+	public CreateSlidesDialog getCreateSlidesDialog() {
+		if (createSlidesDialog == null) {
+			createSlidesDialog = new CreateSlidesDialog();
 		}
 
-		return addSlidesDialog;
+		return createSlidesDialog;
 	}
 
 	public CouncilDialogHandler getCouncilDialogHandler() {
@@ -372,5 +378,23 @@ public class DialogHandlerAction {
 
 		return confirmExternalPatientDialog;
 	}
+	
+	public DeleteTaskEntityDialog getDeleteTaskEntityDialog() {
+		if (deleteTaskEntityDialog == null) {
+			deleteTaskEntityDialog = new DeleteTaskEntityDialog();
+		}
 
+		return deleteTaskEntityDialog;
+	}
+	
+	public CreateSampleDialog getCreateSampleDialog() {
+		if (createSampleDialog == null) {
+			createSampleDialog = new CreateSampleDialog();
+		}
+
+		return createSampleDialog;
+	}
+	
+	
+	
 }

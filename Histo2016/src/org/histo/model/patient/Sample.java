@@ -34,46 +34,63 @@ import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.util.TaskUtil;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Audited
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "sample_sequencegenerator", sequenceName = "sample_sequence")
-public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbackAble, IdManuallyAltered, HasID {
+@Getter
+@Setter
+public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbackAble<Task>, IdManuallyAltered, HasID {
 
+	@Id
+	@GeneratedValue(generator = "sample_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	@Version
 	private long version;
 
 	/**
 	 * Parent of this sample.
 	 */
+	@ManyToOne(targetEntity = Task.class)
 	private Task parent;
 
 	/**
 	 * Sample ID as string
 	 */
+	@Column
 	private String sampleID = "";
 
 	/**
 	 * True if the user has manually altered the sample ID
 	 */
+	@Column
 	private boolean idManuallyAltered;
 
 	/**
 	 * Date of sample creation
 	 */
+	@Column
 	private long creationDate = 0;
 
 	/**
 	 * If true the not completed stainings are restainings.
 	 */
+	@Column
 	private boolean reStainingPhase = false;
 
 	/**
 	 * blocks array
 	 */
-	private List<Block> blocks;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("blockID ASC")
+	private List<Block> blocks = new ArrayList<Block>();
 
 	/**
 	 * Material name is first initialized with the name of the typeOfMaterial.
@@ -84,34 +101,11 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	/**
 	 * Material object, containing preset for staining
 	 */
+	@OneToOne
+	@NotAudited
 	private MaterialPreset materilaPreset;
 
 	public Sample() {
-	}
-
-	/**
-	 * Constructor for adding this sample to a task.
-	 * 
-	 * @param task
-	 */
-	public Sample(Task task) {
-		this(task, null);
-	}
-
-	/**
-	 * Constructor for adding this sample to a task and set the material as
-	 * well.
-	 * 
-	 * @param task
-	 */
-	public Sample(Task task, MaterialPreset material) {
-		setCreationDate(System.currentTimeMillis());
-		setParent(task);
-		setMaterilaPreset(material);
-		setMaterial(material == null ? "" : material.getName());
-		task.getSamples().add(this);
-
-		updateNameOfSample(task.isUseAutoNomenclature(), false);
 	}
 
 	/**
@@ -137,6 +131,11 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 
 		return false;
 	}
+	
+	@Transient
+	public void updateAllNames() {
+		updateAllNames(getTask().isUseAutoNomenclature(), false);
+	}
 
 	/**
 	 * Updates the name of all block children
@@ -152,118 +151,13 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	@Override
 	@Transient
 	public String toString() {
-		return "ID: " + getId() + ", Sample ID: " + getSampleID();
+		return "Sample: " + getSampleID() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
 
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	@Id
-	@GeneratedValue(generator = "sample_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "parent", fetch = FetchType.EAGER)
-	@Fetch(value = FetchMode.SUBSELECT)
-	@OrderBy("blockID ASC")
-	public List<Block> getBlocks() {
-		if (blocks == null)
-			blocks = new ArrayList<Block>();
-		return blocks;
-	}
-
-	public void setBlocks(List<Block> blocks) {
-		this.blocks = blocks;
-	}
-
-	@Basic
-	public String getSampleID() {
-		return sampleID;
-	}
-
-	public void setSampleID(String sampleID) {
-		this.sampleID = sampleID;
-	}
-
-	public long getCreationDate() {
-		return creationDate;
-	}
-
-	public void setCreationDate(long creationDate) {
-		this.creationDate = creationDate;
-	}
-
-	@Basic
-	public boolean isReStainingPhase() {
-		return reStainingPhase;
-	}
-
-	public void setReStainingPhase(boolean reStainingPhase) {
-		this.reStainingPhase = reStainingPhase;
-	}
-
-	@Basic
-	public String getMaterial() {
-		return material;
-	}
-
-	public void setMaterial(String material) {
-		this.material = material;
-	}
-
-	@OneToOne
-	@NotAudited
-	public MaterialPreset getMaterilaPreset() {
-		return materilaPreset;
-	}
-
-	public void setMaterilaPreset(MaterialPreset materilaPreset) {
-		this.materilaPreset = materilaPreset;
-	}
-
-	public boolean isIdManuallyAltered() {
-		return idManuallyAltered;
-	}
-
-	public void setIdManuallyAltered(boolean idManuallyAltered) {
-		this.idManuallyAltered = idManuallyAltered;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-
-	/******************************************************** Transient ********************************************************/
-
-	/******************************************************** Transient ********************************************************/
 
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
-	@ManyToOne(targetEntity = Task.class)
-	public Task getParent() {
-		return parent;
-	}
-
-	public void setParent(Task parent) {
-		this.parent = parent;
-	}
-
 	/**
 	 * �berschreibt Methode aus dem Interface StainingTreeParent
 	 */
@@ -311,17 +205,5 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 
 	/********************************************************
 	 * Interface Delete Able
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return getParent().getLogPath() + ", Sample-ID: " + getSampleID() + " (" + getId() + ")";
-	}
-	/********************************************************
-	 * Interface PatientRollbackAble
 	 ********************************************************/
 }

@@ -126,6 +126,8 @@
 						icon="fa fa-fw fa-user-plus">
 						<f:actionListener
 							binding="#{dialogHandlerAction.confirmExternalPatientDialog.createExternalPatient()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.confirmExternalPatientDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.close']}"

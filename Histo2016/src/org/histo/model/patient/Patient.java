@@ -53,8 +53,8 @@ import lombok.Setter;
 @SequenceGenerator(name = "patient_sequencegenerator", sequenceName = "patient_sequence")
 @Getter
 @Setter
-public class Patient
-		implements Parent<Patient>, CreationDate, LogAble, ArchivAble, PatientRollbackAble, HasDataList, HasID {
+public class Patient implements Parent<Patient>, CreationDate, LogAble, ArchivAble, PatientRollbackAble<Patient>,
+		HasDataList, HasID {
 
 	@Id
 	@GeneratedValue(generator = "patient_sequencegenerator")
@@ -136,8 +136,8 @@ public class Patient
 	 ********************************************************/
 
 	/**
-	 * Updates the patient data with a given patient dummy. Returns true if data are
-	 * changed. Returns true if data were changed
+	 * Updates the patient data with a given patient dummy. Returns true if data
+	 * are changed. Returns true if data were changed
 	 * 
 	 * @param patient
 	 */
@@ -156,7 +156,7 @@ public class Patient
 		}
 
 		// update person data if update is true
-		
+
 		if (getPerson().isAutoUpdate()) {
 			if (HistoUtil.isStringDifferent(getPerson().getTitle(), patient.getPerson().getTitle())) {
 				change = true;
@@ -236,14 +236,16 @@ public class Patient
 	}
 
 	/**
-	 * Updates the patient object with a given json array from the clinic backend
+	 * Updates the patient object with a given json array from the clinic
+	 * backend
 	 *
 	 * { "vorname":"Test", "mode":"W", "status":null, "piz":"25201957",
 	 * "sonderinfo":"", "iknr":"00190", "kvnr":null, "titel":"Prof. Dr. med.",
 	 * "versichertenstatus":" ", "tel":"12-4085", "anschrift": "Gillenweg 4",
 	 * "wop":null, "plz":"79110", "name":"Test", "geburtsdatum":"1972-08-22",
 	 * "gueltig_bis":null, "krankenkasse":"Wissenschaftliche Unters.",
-	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg", "status2":null }
+	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg",
+	 * "status2":null }
 	 * 
 	 * @param patient
 	 * @param json
@@ -296,8 +298,7 @@ public class Patient
 	@Override
 	@Transient
 	public String toString() {
-		return "ID: " + getId() + ", Name: " + getPerson().getFullName() + ", PIZ: "
-				+ (getPiz() == null ? "extern" : getPiz());
+		return "Patient: " + getPerson().getFullName() + ", " + getPiz() + (getId() != 0 ? " , ID: " + getId() : "");
 	}
 
 	@Override
@@ -404,23 +405,13 @@ public class Patient
 	 * Interface StainingTreeParent
 	 ********************************************************/
 
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return "Patient-Name: " + getPerson().getFullName() + " (" + getId() + ")";
-	}
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-
 	@Override
 	@Transient
 	public String getDatalistIdentifier() {
 		return "interface.hasDataList.patient";
 	}
 
+	public String getLogPath() {
+		return toString();
+	}
 }

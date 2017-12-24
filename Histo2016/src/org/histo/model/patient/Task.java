@@ -58,7 +58,7 @@ import lombok.Setter;
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 @Getter
 @Setter
-public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasDataList, HasID, RootAware<Patient> {
+public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patient>, HasDataList, HasID, RootAware<Patient> {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -340,6 +340,8 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	 */
 	@Transient
 	public final void generateSlideGuiList(boolean showArchived) {
+		logger.debug("Generating new List for receiptlog");
+		
 		if (getStainingTableRows() == null)
 			setStainingTableRows(new ArrayList<>());
 		else
@@ -417,7 +419,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 	@Override
 	@Transient
 	public String toString() {
-		return "ID: " + getId() + ", Task ID: " + getTaskID();
+		return "Task: " + getTaskID() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
 
 	@Transient
@@ -574,19 +576,6 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble, HasD
 
 	/********************************************************
 	 * Interface Parent
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return "Task-ID: " + getTaskID() + " (" + getId() + ")";
-	}
-
-	/********************************************************
-	 * Interface PatientRollbackAble
 	 ********************************************************/
 
 	@Override

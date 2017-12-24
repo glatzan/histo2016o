@@ -1,6 +1,5 @@
 package org.histo.action.dialog.task;
 
-
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
@@ -9,41 +8,66 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.interfaces.DeleteAble;
+import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.service.SampleService;
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Configurable;
 
-@Component
-@Scope(value = "session")
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Getter
+@Setter
 public class DeleteTaskEntityDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskManipulationHandler taskManipulationHandler;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SampleService sampleService;
 
 	/**
 	 * Temporary save for a task tree entity (sample, slide, block)
 	 */
 	private DeleteAble toDelete;
 
+	/**
+	 * True if the staining phase has ended after deleting an entity
+	 */
+	private boolean StainingPhaseEnded;
+
 	public void initAndPrepareBean(Task task, DeleteAble deleteAble) {
-		if (initBean(task,deleteAble))
+		if (initBean(task, deleteAble))
 			prepareDialog();
 	}
 
-	public boolean initBean(Task task,DeleteAble deleteAble) {
+	public boolean initBean(Task task, DeleteAble deleteAble) {
 		try {
 			taskDAO.initializeTask(task, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -54,91 +78,38 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 		}
 		super.initBean(task, Dialog.DELETE_TREE_ENTITY);
 		setToDelete(deleteAble);
-		
+
 		return true;
 	}
 
+	/**
+	 * Deletes samples, slides and blocks
+	 */
 	public void deleteTaskEntity() {
 		try {
+			Parent<?> p = null;
+
 			if (toDelete instanceof Slide) {
-				Slide toDeleteSlide = (Slide) toDelete;
-
-				logger.info("Deleting slide " + toDeleteSlide.getSlideID());
-
-				Block parent = toDeleteSlide.getParent();
-
-				parent.getSlides().remove(toDeleteSlide);
-
-				parent.updateAllNames(parent.getParent().getParent().isUseAutoNomenclature(), false);
-
-				genericDAO.savePatientData(parent, "log.patient.task.sample.block.update",
-						parent.toString());
-
-				genericDAO.deletePatientData(toDeleteSlide,
-						"log.patient.task.sample.block.slide.delete", toDeleteSlide.toString());
-
-				// checking if staining flag of the task object has to be false
-				receiptlogViewHandlerAction.checkStainingPhase(parent.getParent().getParent(), true);
-				// generating gui list
-				parent.getParent().getParent().generateSlideGuiList();
-
+				setStainingPhaseEnded(sampleService.deleteSlide((Slide) (p = (Slide) toDelete)));
 			} else if (toDelete instanceof Block) {
-				Block toDeleteBlock = (Block) toDelete;
-				logger.info("Deleting block " + toDeleteBlock.getBlockID());
-
-				Sample parent = toDeleteBlock.getParent();
-
-				parent.getBlocks().remove(toDeleteBlock);
-
-				parent.updateAllNames(parent.getParent().isUseAutoNomenclature(), false);
-
-				genericDAO.savePatientData(parent, "log.patient.task.sample.update",
-						parent.toString());
-
-				genericDAO.deletePatientData(toDeleteBlock, "log.patient.task.sample.block.delete",
-						toDeleteBlock.toString());
-
-				// checking if staining flag of the task object has to be false
-				receiptlogViewHandlerAction.checkStainingPhase(parent.getParent(), true);
-				// generating gui list
-				parent.getParent().generateSlideGuiList();
-
+				setStainingPhaseEnded(sampleService.deleteBlock((Block) (p = (Block) toDelete)));
 			} else if (toDelete instanceof Sample) {
-				Sample toDeleteSample = (Sample) toDelete;
-				logger.info("Deleting sample " + toDeleteSample.getSampleID());
-
-				Task parent = toDeleteSample.getParent();
-
-				parent.getSamples().remove(toDeleteSample);
-
-				taskManipulationHandler.updateDiagnosisContainerToSampleCount(parent.getDiagnosisContainer(),
-						parent.getSamples());
-
-				parent.updateAllNames();
-
-				genericDAO.savePatientData(parent, "log.patient.task.update", parent.toString());
-
-				genericDAO.deletePatientData(toDeleteSample, "log.patient.task.sample.delete",
-						toDeleteSample.toString());
-
-				// checking if staining flag of the task object has to be false
-				receiptlogViewHandlerAction.checkStainingPhase(parent, true);
-				// generating gui list
-				parent.generateSlideGuiList();
+				setStainingPhaseEnded(sampleService.deleteSample((Sample) (p = (Sample) toDelete)));
+			} else {
+				return;
 			}
+
+			p.getTask().generateSlideGuiList();
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
 
-	// ************************ Getter/Setter ************************
-	public DeleteAble getToDelete() {
-		return toDelete;
+	/**
+	 * Custom close handler, if staining phase has ended return true
+	 */
+	public void hideDialog() {
+		RequestContext.getCurrentInstance().closeDialog(new Boolean(isStainingPhaseEnded()));
 	}
-
-	public void setToDelete(DeleteAble toDelete) {
-		this.toDelete = toDelete;
-	}
-
 }

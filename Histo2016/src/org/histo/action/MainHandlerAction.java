@@ -98,56 +98,6 @@ public class MainHandlerAction {
 		}
 	}
 
-	/**
-	 * Shows a dialog using the primefaces dialog framework
-	 * 
-	 * @param dialog
-	 */
-	public void showDialog(Dialog dialog) {
-		HashMap<String, Object> options = new HashMap<String, Object>();
-
-		if (dialog.getWidth() != 0) {
-			options.put("width", dialog.getWidth());
-			options.put("contentWidth", dialog.getWidth());
-		} else
-			options.put("width", "auto");
-
-		if (dialog.getHeight() != 0) {
-			options.put("contentHeight", dialog.getHeight());
-			options.put("height", dialog.getHeight());
-		} else
-			options.put("height", "auto");
-
-		if (dialog.isUseOptions()) {
-			options.put("resizable", dialog.isResizeable());
-			options.put("draggable", dialog.isDraggable());
-			options.put("modal", dialog.isModal());
-		}
-
-		options.put("closable", false);
-
-		if (dialog.getHeader() != null)
-			options.put("headerElement", "dialogForm:header");
-
-		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
-
-		logger.debug("Showing Dialog: " + dialog);
-	}
-
-	/**
-	 * Closes a dialog using primefaces dialog framework
-	 * 
-	 * @param dialog
-	 */
-	public void hideDialog(Dialog dialog) {
-		hideDialog(dialog, null);
-	}
-
-	public void hideDialog(Dialog dialog, Object obj) {
-		logger.debug("Hiding Dialog: " + dialog);
-		RequestContext.getCurrentInstance().closeDialog(obj);
-	}
-
 	/********************************************************
 	 * Dialog
 	 ********************************************************/

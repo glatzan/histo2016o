@@ -12,6 +12,7 @@ import org.histo.model.patient.Task;
  * @param <T>
  */
 public interface Parent<T> {
+
 	public Patient getPatient();
 
 	public default Task getTask() {

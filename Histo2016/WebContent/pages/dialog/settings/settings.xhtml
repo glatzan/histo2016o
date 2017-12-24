@@ -24,7 +24,7 @@
 				<h:outputLabel value="#{msg['dialog.settings.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					actionListener="#{mainHandlerAction.hideDialog('SETTINGS')}">
+					actionListener="#{settingsDialogHandler.hideDialog()}">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>

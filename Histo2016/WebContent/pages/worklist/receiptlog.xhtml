@@ -174,8 +174,7 @@
 								style="margin-left:10px;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
 								styleClass="smallInput customBackground" />
 
-							<p:commandLink
-								title="#{msg['body.receiptlog.material.text']}"
+							<p:commandLink title="#{msg['body.receiptlog.material.text']}"
 								disabled="#{!taskEditable}"
 								actionListener="#{dialogHandlerAction.changeMaterialDialog.initAndPrepareBean(sample)}">
 								<i class="fa fa-fw fa-cog" />
@@ -461,16 +460,17 @@
 						<p:commandLink title="#{msg['body.statiningView.newBlock']}"
 							styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
 							update="navigationForm contentForm"
-							actionListener="#{diagnosisViewHandlerAction.createNewBlock(stainingRow.entity)}">
+							actionListener="#{taskHandlerAction.createNewBlock(stainingRow.entity)}">
 							<i class="fa fa-fw fa-th-large"></i>
 						</p:commandLink>
 						<!-- ********** Delete Button ********** -->
 						<p:commandLink styleClass="noUnderlineAtLink"
 							title="#{msg['body.statiningView.archiveSample']}"
 							disabled="#{!taskEditable}"
-							actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
 							<i class="fa fa-fw fa-times-circle"></i>
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm contentForm headerForm" />
 						</p:commandLink>
 					</h:panelGroup>
 
@@ -480,17 +480,19 @@
 						<!-- ********** New Staining Button ********** -->
 						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
 							styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
-							actionListener="#{dialogHandlerAction.addSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
+							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
 							<i class="fa fa-fw fa-paint-brush"></i>
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm contentForm headerForm" />
 						</p:commandLink>
 						<!-- ********** Delete Button ********** -->
 						<p:commandLink styleClass="noUnderlineAtLink"
 							disabled="#{!taskEditable}"
 							title="#{msg['body.statiningView.archiveBlock']}"
-							actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
 							<i class="fa fa-fw fa-times-circle"></i>
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm contentForm headerForm" />
 						</p:commandLink>
 					</h:panelGroup>
 
@@ -514,9 +516,10 @@
 						<p:commandLink styleClass="noUnderlineAtLink"
 							disabled="#{!taskEditable}"
 							title="#{msg['body.statiningView.archiveStaining']}"
-							actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
 							<i class="fa fa-fw fa-times-circle" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm contentForm headerForm" />
 						</p:commandLink>
 					</h:panelGroup>
 				</p:column>
@@ -534,13 +537,19 @@
 				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}"
 				name="saveNameChange" update="navigationForm contentForm" />
 
-			<h:panelGrid columns="5" style="margin-top:10px;">
+			<h:panelGrid columns="6" style="margin-top:10px;">
+
+				<p:commandButton value="#{msg['body.statiningView.stainingPhaseEnd']}" icon="fa fa-fw fa-image"
+					actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+					<p:ajax event="dialogReturn"
+						update="navigationForm:patientList contentForm headerForm" />
+				</p:commandButton>
 
 				<!-- New sample -->
 				<p:commandButton icon="fa fa-fw fa-plus-circle"
 					styleClass="taskButton" disabled="#{!taskEditable}"
 					value="#{msg['body.statiningView.newSample']}"
-					actionListener="#{createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+					actionListener="#{dialogHandlerAction.createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 				</p:commandButton>
 
@@ -566,7 +575,7 @@
 					<p:commandButton id="changeZone" widgetVar="performOnMay"
 						style="display:none;"
 						update="navigationForm contentForm headerForm"
-						actionListener="#{receiptlogViewHandlerAction.performActionOnMany(globalEditViewHandler.selectedTask)}">
+						actionListener="#{receiptlogViewHandlerAction.performActionOnManyTaskChildren(globalEditViewHandler.selectedTask)}">
 						<p:ajax event="dialogReturn"
 							update="navigationForm contentForm headerForm" />
 					</p:commandButton>

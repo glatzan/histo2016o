@@ -20,6 +20,7 @@ import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
+import org.histo.service.SampleService;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +78,11 @@ public class DiagnosisViewHandlerAction {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ContactDAO contactDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private SampleService sampleService;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -157,36 +163,6 @@ public class DiagnosisViewHandlerAction {
 		setDiagnosisPresetsTransformer(new DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
 	}
 
-	/**
-	 * Creates a block by using the gui
-	 * 
-	 * @param sample
-	 */
-	public void createNewBlock(Sample sample) {
-		try {
-
-			taskManipulationHandler.createNewBlock(sample, false);
-
-			// updates the name of all other samples
-			for (Block block : sample.getBlocks()) {
-				block.updateAllNames(sample.getParent().isUseAutoNomenclature(), false);
-			}
-
-			// checking if staining flag of the task object has to be false
-			receiptlogViewHandlerAction.checkStainingPhase(sample.getTask(), true);
-
-			// generating gui list
-			sample.getParent().generateSlideGuiList();
-
-			// saving patient
-			genericDAO.savePatientData(sample, "log.patient.task.sample.update", sample.toString());
-
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			// catching database version inconsistencies
-			worklistViewHandlerAction.onVersionConflictTask();
-		}
-	}
-
 	public void onCopyHistologicalRecord(Diagnosis diagnosis) {
 		try {
 			// setting diagnosistext if no text is set
@@ -235,11 +211,11 @@ public class DiagnosisViewHandlerAction {
 
 	}
 
-	public void onDataChange(PatientRollbackAble toSave, String resourcesKey) {
+	public void onDataChange(PatientRollbackAble<?> toSave, String resourcesKey) {
 		onDataChange(toSave, resourcesKey, new Object[0]);
 	}
 
-	public void onDataChange(PatientRollbackAble toSave, String resourcesKey, Object... arr) {
+	public void onDataChange(PatientRollbackAble<?> toSave, String resourcesKey, Object... arr) {
 		genericDAO.savePatientData(toSave, toSave, resourcesKey, arr);
 	}
 

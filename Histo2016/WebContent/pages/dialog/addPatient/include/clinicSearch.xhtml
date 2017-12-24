@@ -142,13 +142,13 @@
 				binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
 		</p:remoteCommand>
 
-		<p:commandButton name="submitOnUniqueItem" id="submitOnUniqueItem"
+		<p:commandButton name="onQuickSubmit" id="onQuickSubmit"
 			style="display:none">
 			<f:actionListener
-				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchAndAddUniqueItem(true)}" />
+				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.onQuickSubmit()}" />
 		</p:commandButton>
 
-		<p:defaultCommand target="submitOnUniqueItem" />
+		<p:defaultCommand target="onQuickSubmit" />
 	</p:outputPanel>
 
 	<div class="buttonContainer">

@@ -24,6 +24,9 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Diagnose NAchbefundung Revision
  * 
@@ -35,45 +38,59 @@ import org.histo.model.interfaces.PatientRollbackAble;
 @SelectBeforeUpdate(true)
 @DynamicUpdate(true)
 @SequenceGenerator(name = "diagnosis_sequencegenerator", sequenceName = "diagnosis_sequence")
-public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, DeleteAble, PatientRollbackAble, HasID {
+@Getter
+@Setter
+public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, DeleteAble, PatientRollbackAble<DiagnosisRevision>, HasID {
 
+	@Id
+	@GeneratedValue(generator = "diagnosis_sequencegenerator")
+	@Column(unique = true, nullable = false)
 	private long id;
 
+	@Version
 	private long version;
 
 	/**
 	 * Parent of the diagnosis, sample bject
 	 */
+	@ManyToOne
 	private DiagnosisRevision parent;
 
 	/**
 	 * Name of the diagnosis.
 	 */
+	@Column
 	private String name = "";
 
 	/**
 	 * Diagnosis as short string.
 	 */
+	@Column(columnDefinition = "text")
 	private String diagnosis = "";
 
 	/**
 	 * True if finding is malign.
 	 */
+	@Column
 	private boolean malign;
 
 	/**
 	 * ICD10 Number of this diagnosis
 	 */
+	@Column
 	private String icd10 = "";
 
 	/**
 	 * Protoype used for this diagnosis.
 	 */
-	private DiagnosisPreset diagnosisPreset;
+	@OneToOne
+	@NotAudited
+	private DiagnosisPreset diagnosisPrototype;
 
 	/**
 	 * Associated sample
 	 */
+	@OneToOne
 	private Sample sample;
 
 	/**
@@ -84,106 +101,12 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 
 	@Override
 	public String toString() {
-		return "ID: " + getId() + ", Name: " + getName();
+		return "Diagnosis: " + getName() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	@Id
-	@GeneratedValue(generator = "diagnosis_sequencegenerator")
-	@Column(unique = true, nullable = false)
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	@Version
-	public long getVersion() {
-		return version;
-	}
-
-	public void setVersion(long version) {
-		this.version = version;
-	}
-
-	@Column(columnDefinition = "text")
-	public String getDiagnosis() {
-		return diagnosis;
-	}
-
-	public void setDiagnosis(String diagnosis) {
-		this.diagnosis = diagnosis;
-	}
-
-	@Basic
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Basic
-	public boolean isMalign() {
-		return malign;
-	}
-
-	public void setMalign(boolean malign) {
-		this.malign = malign;
-	}
-
-	public String getIcd10() {
-		return icd10;
-	}
-
-	public void setIcd10(String icd10) {
-		this.icd10 = icd10;
-	}
-
-	@OneToOne
-	@NotAudited
-	public DiagnosisPreset getDiagnosisPrototype() {
-		return diagnosisPreset;
-	}
-
-	public void setDiagnosisPrototype(DiagnosisPreset diagnosisPreset) {
-		this.diagnosisPreset = diagnosisPreset;
-	}
-
-	@OneToOne
-	public Sample getSample() {
-		return sample;
-	}
-
-	public void setSample(Sample sample) {
-		this.sample = sample;
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
 
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
-	/**
-	 * Returns the parent of this diagnosis. Overwrites method from
-	 * StainingTreeParent.
-	 */
-	@ManyToOne
-	public DiagnosisRevision getParent() {
-		return parent;
-	}
-
-	public void setParent(DiagnosisRevision parent) {
-		this.parent = parent;
-	}
-
 	/**
 	 * Returns the patient of this diagnosis. Overwrites method from
 	 * StainingTreeParent.
@@ -250,17 +173,5 @@ public class Diagnosis implements Parent<DiagnosisRevision>, GsonAble, LogAble, 
 
 	/********************************************************
 	 * Transient
-	 ********************************************************/
-
-	/********************************************************
-	 * Interface PatientRollbackAble
-	 ********************************************************/
-	@Override
-	@Transient
-	public String getLogPath() {
-		return getParent().getLogPath() + ", Diagnosis-Name: " + getDiagnosis() + " (" + getId() + ")";
-	}
-	/********************************************************
-	 * Interface PatientRollbackAble
 	 ********************************************************/
 }

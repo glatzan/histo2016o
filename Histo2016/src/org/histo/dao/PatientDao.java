@@ -73,25 +73,32 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Returns a list of useres with the given piz. At least 6 numbers of the
+	 * Returns a list of patients with the given piz. At least 6 numbers of the
 	 * piz are needed.
 	 * 
 	 * @param piz
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Patient> searchForPatientsByPiz(String piz) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Patient> criteria = qb.createQuery(Patient.class);
+		Root<Patient> root = criteria.from(Patient.class);
+		criteria.select(root);
 
 		String regex = "";
 		if (piz.length() != 8) {
 			regex = "[0-9]{" + (8 - piz.length()) + "}";
 		}
 
-		query.add(Restrictions.like("piz", piz + regex));
+		criteria.where(qb.like(root.get("piz"), piz + regex));
 
-		List<Patient> result = query.getExecutableCriteria(getSession()).list();
-		return result;
+		criteria.distinct(true);
+
+		List<Patient> patients = getSession().createQuery(criteria).getResultList();
+
+		return patients;
 	}
 
 	/**

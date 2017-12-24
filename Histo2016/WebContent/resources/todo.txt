@@ -37,6 +37,7 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Testen:
 -> ADD Patient Dialog
+--> Test piz range from 6-8
 
 Next Changes:
 -> Laden der Auftragsliste beim einloggen

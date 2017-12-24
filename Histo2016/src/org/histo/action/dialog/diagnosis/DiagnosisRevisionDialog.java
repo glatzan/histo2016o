@@ -15,6 +15,7 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
+import org.histo.service.DiagnosisService;
 import org.histo.ui.RevisionHolder;
 import org.histo.util.StreamUtils;
 import org.histo.util.TaskUtil;
@@ -54,7 +55,11 @@ public class DiagnosisRevisionDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GlobalEditViewHandler globalEditViewHandler;
-	
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DiagnosisService diagnosisService;
 	/**
 	 * Type of the new revision
 	 */
@@ -133,7 +138,7 @@ public class DiagnosisRevisionDialog extends AbstractDialog {
 
 					// new revision
 					if (revisionHolder.getRevision().getId() == 0) {
-						taskManipulationHandler.addDiagnosisRevision(revisionHolder.getRevision().getParent(),
+						diagnosisService.addDiagnosisRevision(revisionHolder.getRevision().getParent(),
 								revisionHolder.getRevision());
 					} else {
 						// update revision

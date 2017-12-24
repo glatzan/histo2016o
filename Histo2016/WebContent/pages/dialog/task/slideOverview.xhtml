@@ -185,7 +185,7 @@
 						<!-- ********** New Staining Button ********** -->
 						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
 							styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
-							actionListener="#{dialogHandlerAction.addSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
+							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
 							<i class="fa fa-fw fa-paint-brush"></i>
 							<p:ajax event="dialogReturn" update="dialogContent" />
 						</p:commandLink>
@@ -198,7 +198,7 @@
 						<p:commandLink styleClass="noUnderlineAtLink"
 							disabled="#{!taskEditable or true}"
 							title="#{msg['body.statiningView.archiveStaining']}"
-							actionListener="#{deleteTaskEntityDialog.initAndPrepareBean(stainingRow.staining.task,stainingRow.staining)}">
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.staining.task,stainingRow.staining)}">
 							<i class="fa fa-fw fa-times-circle" />
 						</p:commandLink>
 					</h:panelGroup>
