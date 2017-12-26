@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -21,12 +22,19 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
+import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
+import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
+import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
+import org.histo.model.patient.Block;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Sample;
+import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.ui.StainingTableChooser;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.model.menu.MenuModel;
@@ -95,6 +103,16 @@ public class GlobalEditViewHandler {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
+	private UtilDAO utilDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PhysicianDAO physicianDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
@@ -130,6 +148,43 @@ public class GlobalEditViewHandler {
 	private boolean searchWorklist;
 	// ************************ Search ************************
 
+	// ************************ dynamic lists ************************
+	/**
+	 * Contains all available case histories
+	 */
+	private List<ListItem> slideCommentary;
+
+	/**
+	 * List of all diagnosis presets
+	 */
+	private List<DiagnosisPreset> diagnosisPresets;
+
+	/**
+	 * List of physicians which have the role signature
+	 */
+	private List<Physician> physiciansToSignList;
+
+	/**
+	 * Transfomer for physiciansToSign
+	 */
+	private DefaultTransformer<Physician> physiciansToSignListTransformer;
+
+	/**
+	 * List of available materials
+	 */
+	private List<MaterialPreset> materialList;
+
+	/**
+	 * Contains all available case histories
+	 */
+	private List<ListItem> caseHistoryList;
+
+	/**
+	 * Contains all available wards
+	 */
+	private List<ListItem> wardList;
+	// ************************ dynamic lists ************************
+
 	/**
 	 * Currently selectedTask
 	 */
@@ -161,22 +216,21 @@ public class GlobalEditViewHandler {
 	}
 
 	public void loadGuiData() {
-		// setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE,
-		// false));
-		// setPhysiciansToSignListTransformer(new
-		// DefaultTransformer<Physician>(getPhysiciansToSignList()));
-		//
-		// setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
-		//
-		// setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
-		//
-		// setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
-		// setDiagnosisPresetsTransformer(new
-		// DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
+
+		setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
+		setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
+		setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
+
+		setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
+
+		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
+		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
+		
+		setMaterialList(utilDAO.getAllMaterialPresets(true));
 	}
 
 	public void prepareForTask() {
-		
+
 	}
 
 	public String getCenterView() {
@@ -197,6 +251,7 @@ public class GlobalEditViewHandler {
 		setTaskMenuModel((new MenuGenerator()).generateEditMenu(selectedPatient, selectedTask));
 	}
 
+	
 	public void addTaskToFavouriteList(Task task, long id) {
 		try {
 			favouriteListDAO.addTaskToList(task, id);

@@ -38,12 +38,6 @@ import lombok.Setter;
 public class DiagnosisViewHandlerAction {
 
 	private static Logger logger = Logger.getLogger("org.histo");
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private PhysicianDAO physicianDAO;
-
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -90,26 +84,6 @@ public class DiagnosisViewHandlerAction {
 	private FavouriteListDAO favouriteListDAO;
 
 	/**
-	 * List of all diagnosis presets
-	 */
-	private List<DiagnosisPreset> diagnosisPresets;
-
-	/**
-	 * Transfomer for diagnosis prests
-	 */
-	private DefaultTransformer<DiagnosisPreset> diagnosisPresetsTransformer;
-
-	/**
-	 * List of physicians which have the role signature
-	 */
-	private List<Physician> physiciansToSignList;
-
-	/**
-	 * Transfomer for physiciansToSign
-	 */
-	private DefaultTransformer<Physician> physiciansToSignListTransformer;
-
-	/**
 	 * Selected physician to sign the report
 	 */
 	private Physician signatureOne;
@@ -120,26 +94,12 @@ public class DiagnosisViewHandlerAction {
 	private Physician signatureTwo;
 
 	/**
-	 * Contains all available case histories
-	 */
-	private List<ListItem> caseHistoryList;
-
-	/**
-	 * Contains all available wards
-	 */
-	private List<ListItem> wardList;
-
-	/**
 	 * selected List item form caseHistory list
 	 */
 	private ListItem selectedCaseHistoryItem;
 
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize DiagnosisViewHandlerAction for task");
-
-		if (getPhysiciansToSignList() == null)
-			setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
-		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
 
 		if (task.getDiagnosisContainer().getSignatureDate() == 0) {
 			task.getDiagnosisContainer().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
@@ -149,18 +109,9 @@ public class DiagnosisViewHandlerAction {
 			}
 		}
 
-		// loading lists
-		if (getCaseHistoryList() == null)
-			setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
-		if (getWardList() == null)
-			setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
-
 		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
 		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());
-
-		if (getDiagnosisPresets() == null)
-			setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
-		setDiagnosisPresetsTransformer(new DefaultTransformer<DiagnosisPreset>(getDiagnosisPresets()));
+		
 	}
 
 	public void onCopyHistologicalRecord(Diagnosis diagnosis) {

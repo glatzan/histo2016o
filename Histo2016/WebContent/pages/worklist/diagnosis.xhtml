@@ -108,7 +108,7 @@
 							hideEffect="fade" style="width:500px" hideEvent="none"
 							showEvent="none">
 							<p:dataTable
-								value="#{diagnosisViewHandlerAction.caseHistoryList}" var="item"
+								value="#{globalEditViewHandler.caseHistoryList}" var="item"
 								styleClass="newStyleDataTable" scrollable="true"
 								scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
@@ -196,7 +196,7 @@
 						styleClass="customBackground" tabindex="5"
 						style="background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
-						<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
+						<f:selectItems value="#{globalEditViewHandler.wardList}"
 							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 						<p:ajax event="change" execute="@this"
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.ward', globalEditViewHandler.selectedTask.ward)}" />
@@ -350,7 +350,7 @@
 							hideEffect="fade" style="width:500px" hideEvent="none"
 							showEvent="none">
 							<p:dataTable
-								value="#{diagnosisViewHandlerAction.diagnosisPresets}"
+								value="#{globalEditViewHandler.diagnosisPresets}"
 								var="item" styleClass="newStyleDataTable" scrollable="true"
 								scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosis.diagnosisPrototype}"
@@ -407,7 +407,7 @@
 						style="width:100% !important;"
 						panelStyleClass="iconFixForSelectOneMenu"
 						value="#{diagnosisViewHandlerAction.signatureOne}"
-						converter="#{diagnosisViewHandlerAction.physiciansToSignListTransformer}"
+						converter="#{globalEditViewHandler.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
 
 						<f:selectItem
@@ -415,7 +415,7 @@
 							itemValue="#{null}" />
 
 						<f:selectItems
-							value="#{diagnosisViewHandlerAction.physiciansToSignList}"
+							value="#{globalEditViewHandler.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 
@@ -467,14 +467,14 @@
 						style="width:100% !important;"
 						panelStyleClass="iconFixForSelectOneMenu"
 						value="#{diagnosisViewHandlerAction.signatureTwo}"
-						converter="#{diagnosisViewHandlerAction.physiciansToSignListTransformer}"
+						converter="#{globalEditViewHandler.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
 						<f:selectItem
 							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant.select']}"
 							itemValue="#{null}" />
 
 						<f:selectItems
-							value="#{diagnosisViewHandlerAction.physiciansToSignList}"
+							value="#{globalEditViewHandler.physiciansToSignList}"
 							var="physician" itemLabel="#{physician.person.fullName}"
 							itemValue="#{physician}" />
 

@@ -237,12 +237,6 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 	 * Transient Variables
 	 ********************************************************/
 	/**
-	 * Currently selected task in table form, transient, used for gui
-	 */
-	@Transient
-	private ArrayList<StainingTableChooser<?>> stainingTableRows;
-
-	/**
 	 * If set to true, this task is shown in the navigation column on the left
 	 * hand side, however there are actions to perform or not.
 	 */
@@ -325,55 +319,6 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 	 * to select the slides by clicking on a checkbox. Archived elements will
 	 * not be shown if showArchived is false.
 	 */
-	@Transient
-	public final void generateSlideGuiList() {
-		generateSlideGuiList(false);
-	}
-
-	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
-	 * 
-	 * @param showArchived
-	 */
-	@Transient
-	public final void generateSlideGuiList(boolean showArchived) {
-		logger.debug("Generating new List for receiptlog");
-		
-		if (getStainingTableRows() == null)
-			setStainingTableRows(new ArrayList<>());
-		else
-			getStainingTableRows().clear();
-
-		boolean even = false;
-
-		for (Sample sample : getSamples()) {
-			// skips archived tasks
-
-			StainingTableChooser<Sample> sampleChooser = new StainingTableChooser<Sample>(sample, even);
-			getStainingTableRows().add(sampleChooser);
-
-			for (Block block : sample.getBlocks()) {
-				// skips archived blocks
-
-				StainingTableChooser<Block> blockChooser = new StainingTableChooser<Block>(block, even);
-				getStainingTableRows().add(blockChooser);
-				sampleChooser.addChild(blockChooser);
-
-				for (Slide staining : block.getSlides()) {
-					// skips archived sliedes
-
-					StainingTableChooser<Slide> stainingChooser = new StainingTableChooser<Slide>(staining, even);
-					getStainingTableRows().add(stainingChooser);
-					blockChooser.addChild(stainingChooser);
-				}
-			}
-
-			even = !even;
-		}
-	}
 
 	@Transient
 	public void generateTaskStatus() {

@@ -133,8 +133,6 @@ public class CreateTaskDialog extends AbstractDialog {
 
 	private List<MaterialPreset> materialList;
 
-	private DefaultTransformer<MaterialPreset> materialListTransformer;
-
 	private int sampleCount;
 
 	private boolean autoNomenclatureChangedManually;
@@ -175,7 +173,6 @@ public class CreateTaskDialog extends AbstractDialog {
 
 		// setting material list
 		setMaterialList(utilDAO.getAllMaterialPresets(true));
-		setMaterialListTransformer(new DefaultTransformer<>(getMaterialList()));
 
 		getTask().setTaskID(getNewTaskID());
 		getTask().setTaskPriority(TaskPriority.NONE);

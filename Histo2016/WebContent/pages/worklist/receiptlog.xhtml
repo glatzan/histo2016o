@@ -86,7 +86,7 @@
 					style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
 					styleClass="smallInput customBackground" editable="true"
 					disabled="#{!taskEditable}">
-					<f:selectItems value="#{diagnosisViewHandlerAction.wardList}"
+					<f:selectItems value="#{globalEditViewHandler.wardList}"
 						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
 					<p:ajax event="change" execute="@this"
 						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.ward', globalEditViewHandler.selectedTask.ward)}" />
@@ -123,7 +123,7 @@
 						styleClass="defaultOverlayPanel" for="caseHistoryInput"
 						widgetVar="caseHistoryOverlayPanel" hideEffect="fade"
 						style="width:500px" hideEvent="none" showEvent="none">
-						<p:dataTable value="#{diagnosisViewHandlerAction.caseHistoryList}"
+						<p:dataTable value="#{globalEditViewHandler.caseHistoryList}"
 							var="item"
 							styleClass="smallDatatable highlightedDataTable noBordersAll"
 							scrollable="true" scrollHeight="200" rowKey="#{item.id}"
@@ -383,7 +383,7 @@
 							disabled="#{!taskEditable}">
 
 							<f:selectItems
-								value="#{receiptlogViewHandlerAction.slideCommentary}"
+								value="#{globalEditViewHandler.slideCommentary}"
 								var="commentary" itemLabel="#{commentary.value}"
 								itemValue="#{commentary.value}" />
 
