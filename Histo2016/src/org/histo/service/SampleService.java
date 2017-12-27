@@ -70,8 +70,8 @@ public class SampleService {
 	}
 
 	/**
-	 * Creates a new sample and adds this sample to the given task. Creates a
-	 * new diagnosis and a new block with slides as well.
+	 * Creates a new sample and adds this sample to the given task. Creates a new
+	 * diagnosis and a new block with slides as well.
 	 * 
 	 * @param task
 	 */
@@ -125,8 +125,7 @@ public class SampleService {
 	}
 
 	/**
-	 * Creates a block for a sample, check the staining phase, and updates all
-	 * names
+	 * Creates a block for a sample, check the staining phase, and updates all names
 	 * 
 	 * @param sample
 	 */
@@ -293,8 +292,8 @@ public class SampleService {
 	}
 
 	/**
-	 * Updates the status of the stating phase, if the phase has ended, true
-	 * will be returned.
+	 * Updates the status of the stating phase, if the phase has ended, true will be
+	 * returned.
 	 * 
 	 * @param task
 	 * @throws CustomDatabaseInconsistentVersionException
@@ -371,37 +370,63 @@ public class SampleService {
 	 * Ends the staining phase, removes the task from the staining lists, sets
 	 * staining completion date to current time
 	 * 
+	 * Error-Handling via global Error-Handler
+	 * 
 	 * @param task
 	 */
 	public void endStainingPhase(Task task) {
-		setStainingCompletedForSlides(task, true);
+		try {
 
-		task.setStainingCompletionDate(System.currentTimeMillis());
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.end");
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
-		favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
-				PredefinedFavouriteList.ReStainingList);
+					setStainingCompletedForSlides(task, true);
+
+					task.setStainingCompletionDate(System.currentTimeMillis());
+
+					genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.end");
+
+					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
+							PredefinedFavouriteList.ReStainingList);
+				}
+			});
+		} catch (Exception e) {
+			throw new CustomDatabaseInconsistentVersionException(task);
+		}
 	}
 
 	/**
-	 * Start the staining phase, adds the task to the staining or restaining
-	 * phase, set staining completion date to 0
+	 * Start the staining phase, adds the task to the staining or restaining phase,
+	 * set staining completion date to 0
+	 * 
+	 * Error-Handling via global Error-Handler
 	 * 
 	 * @param task
 	 */
 	public void startStainingPhase(Task task) {
-		task.setStainingCompletionDate(0);
+		try {
 
-		genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.reentered");
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		if (!task.isListedInFavouriteList(PredefinedFavouriteList.StainingList,
-				PredefinedFavouriteList.ReStainingList)) {
-			if (TaskStatus.checkIfReStainingFlag(task)) {
-				favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList);
-				favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.ReStainingList);
-			}else
-				favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.StainingList);
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+					task.setStainingCompletionDate(0);
+
+					genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.reentered");
+
+					if (!task.isListedInFavouriteList(PredefinedFavouriteList.StainingList,
+							PredefinedFavouriteList.ReStainingList)) {
+						if (TaskStatus.checkIfReStainingFlag(task)) {
+							favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList);
+							favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.ReStainingList);
+						} else
+							favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.StainingList);
+					}
+				}
+			});
+		} catch (Exception e) {
+			throw new CustomDatabaseInconsistentVersionException(task);
 		}
 	}
 }

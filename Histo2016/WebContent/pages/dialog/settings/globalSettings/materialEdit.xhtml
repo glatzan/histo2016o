@@ -7,91 +7,91 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.material']} / #{settingsDialogHandler.getTab('MaterialTab').newMaterial ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']}"
-			styleClass="contentPannel" />
 
-		<p:panelGrid columns="2"
-			columnClasses="defaultListingTableColumnTop, "
-			styleClass="noBordersAll collapsedBordersAll " style="width:100%">
-			<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
-			<p:inputText style="width:390px"
-				value="#{settingsDialogHandler.getTab('MaterialTab').editMaterial.name}" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.settings.material']} / #{settingsDialogHandler.materialTab.newMaterial ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']}" />
+	</p:outputPanel>
 
-			<h:outputLabel
-				value="#{msg['dialog.settings.material.new.commentary']}"></h:outputLabel>
-			<p:inputTextarea rows="3" style="width:390px"
-				value="#{settingsDialogHandler.getTab('MaterialTab').editMaterial.commentary}" />
+	<p:panelGrid columns="2" columnClasses="defaultListingTableColumnTop, "
+		styleClass="noBordersAll collapsedBordersAll " style="width:100%">
+		<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
+		<p:inputText style="width:390px"
+			value="#{settingsDialogHandler.materialTab.editMaterial.name}" />
 
-			<h:outputLabel
-				value="#{msg['dialog.settings.material.new.stainings']}"></h:outputLabel>
+		<h:outputLabel
+			value="#{msg['dialog.settings.material.new.commentary']}"></h:outputLabel>
+		<p:inputTextarea rows="3" style="width:390px"
+			value="#{settingsDialogHandler.materialTab.editMaterial.commentary}" />
 
-			<p:dataTable var="staining" style="width:400px" scrollable="true"
-				scrollHeight="150" styleClass="highlightedDataTable"
-				value="#{settingsDialogHandler.getTab('MaterialTab').editMaterial.stainingPrototypes}">
+		<h:outputLabel
+			value="#{msg['dialog.settings.material.new.stainings']}"></h:outputLabel>
 
-				<p:column
-					headerText="#{msg['dialog.settings.material.new.stainings.name']}"
-					sortBy="#{staining.name}" style="width:30%">
-					<h:outputText value="#{staining.name}" />
-				</p:column>
+		<p:dataTable var="staining" style="width:400px" scrollable="true"
+			scrollHeight="150" styleClass="highlightedDataTable"
+			value="#{settingsDialogHandler.materialTab.editMaterial.stainingPrototypes}">
 
-				<p:column
-					headerText="#{msg['dialog.settings.material.new.stainings.type']}"
-					sortBy="#{staining.type}">
-					<h:outputText value="#{msg['enum.stainingType.'.concat(staining.type)]}" />
-				</p:column>
+			<p:column
+				headerText="#{msg['dialog.settings.material.new.stainings.name']}"
+				sortBy="#{staining.name}" style="width:30%">
+				<h:outputText value="#{staining.name}" />
+			</p:column>
 
-				<p:column style="width:10%; text-align:center;">
-					<p:commandLink title="#{msg['general.remove']}"
-						actionListener="#{settingsDialogHandler.getTab('MaterialTab').removeStainingFromStainingList(staining)}"
-						update="@form">
-						<i class="fa fa-trash-o" />
-					</p:commandLink>
-				</p:column>
+			<p:column
+				headerText="#{msg['dialog.settings.material.new.stainings.type']}"
+				sortBy="#{staining.type}">
+				<h:outputText
+					value="#{msg['enum.stainingType.'.concat(staining.type)]}" />
+			</p:column>
 
-			</p:dataTable>
+			<p:column style="width:10%; text-align:center;">
+				<p:commandLink title="#{msg['general.remove']}"
+					actionListener="#{settingsDialogHandler.materialTab.removeStainingFromStainingList(staining)}"
+					update="@form">
+					<i class="fa fa-trash-o" />
+				</p:commandLink>
+			</p:column>
 
-		</p:panelGrid>
-	</div>
+		</p:dataTable>
 
-	<div class="bottomDiv">
-		<h:panelGrid columns="1" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="4" style="float:right;">
+	</p:panelGrid>
+
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="4" styleClass="newTableContainer right">
 				<!-- save -->
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-fw fa-floppy-o"
-					styleClass="smallButton buttonRighMarginInList"
-					update=":adminForm:tabview:material"
-					process=":adminForm:tabview:material" partialSubmit="true">
+					icon="fa fa-fw fa-floppy-o" update="@form" process="@form"
+					partialSubmit="true">
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('MaterialTab').saveMaterial()}" />
+						binding="#{settingsDialogHandler.materialTab.saveMaterial()}" />
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('MaterialTab').discardMaterial()}" />
+						binding="#{settingsDialogHandler.materialTab.discardMaterial()}" />
 				</p:commandButton>
 
 				<p:commandButton
 					value="#{msg['dialog.settings.material.new.stainings.add']}"
-					icon="fa fa-fw fa-plus-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					partialSubmit="true" process=":adminForm:tabview:material"
-					actionListener="#{settingsDialogHandler.getTab('MaterialTab').prepareAddStainingToMaterial()}"
-					update=":adminForm:tabview:material" />
+					icon="fa fa-fw fa-plus-circle" partialSubmit="true" process="@form"
+					actionListener="#{settingsDialogHandler.materialTab.prepareAddStainingToMaterial()}"
+					update="@form" />
 
 				<p:commandButton value="#{msg['general.abort']}"
-					icon="fa fa-fw fa-times-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					partialSubmit="true" process="@this"
-					actionListener="#{settingsDialogHandler.getTab('MaterialTab').discardMaterial()}"
-					update=":adminForm:tabview:material" />
+					icon="fa fa-fw fa-times-circle" partialSubmit="true"
+					process="@this"
+					actionListener="#{settingsDialogHandler.materialTab.discardMaterial()}"
+					update="@form" />
 
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 </ui:composition>

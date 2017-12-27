@@ -121,14 +121,13 @@ public class CreateSlidesDialog extends AbstractDialog {
 			if (!slidesToAdd.isEmpty()) {
 				sampleService.createSlidesForSample(slidesToAdd, block, commentary, restaining);
 				// updating statining list
-				block.getTask().generateSlideGuiList();
 			}
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 
-		globalEditViewHandler.updateDataOfTask(false);
+		globalEditViewHandler.updateDataOfTask(true, false, true, true);
 	}
 
 	public boolean isStainingSelected() {

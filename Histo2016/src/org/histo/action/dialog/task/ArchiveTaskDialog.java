@@ -92,7 +92,7 @@ public class ArchiveTaskDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 
-		globalEditViewHandler.updateDataOfTask(false);
+		globalEditViewHandler.updateDataOfTask(true, false, true, false);
 	}
 
 	public void restoreTask() {
@@ -108,6 +108,6 @@ public class ArchiveTaskDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 
-		globalEditViewHandler.updateDataOfTask(false);
+		globalEditViewHandler.updateDataOfTask(true, false, true, false);
 	}
 }

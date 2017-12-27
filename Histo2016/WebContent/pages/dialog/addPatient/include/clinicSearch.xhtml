@@ -67,7 +67,7 @@
 
 
 		<p:dataTable var="patientList" id="patientList" scrollHeight="370"
-			styleClass="newStyleListingTable" scrollable="true"
+			styleClass="newStyleDataTable" scrollable="true"
 			style="margin-top: 20px;" selectionMode="single"
 			rowKey="#{patientList.id}"
 			selection="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem}"
@@ -130,6 +130,9 @@
 				<h:outputText value="#{patientList.listItem.piz}" />
 			</p:column>
 
+			<p:ajax event="rowSelect" update="@form" />
+
+
 			<p:ajax event="rowDblselect"
 				oncomplete="sumbitOnDblSelect();return false;" />
 
@@ -137,7 +140,7 @@
 
 		<p:remoteCommand name="sumbitOnDblSelect">
 			<f:actionListener
-				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient(true)}" />
+				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient()}" />
 			<f:actionListener
 				binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
 		</p:remoteCommand>
@@ -170,7 +173,7 @@
 					onclick="disableButton(true, 'clinicSearchBtn', 'closeBtn')"
 					partialSubmit="true" process="@form">
 					<f:actionListener
-						binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient(true)}" />
+						binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient()}" />
 					<f:actionListener
 						binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
 				</p:commandButton>

@@ -58,7 +58,8 @@ import lombok.Setter;
 @SequenceGenerator(name = "task_sequencegenerator", sequenceName = "task_sequence")
 @Getter
 @Setter
-public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patient>, HasDataList, HasID, RootAware<Patient> {
+public class Task
+		implements Parent<Patient>, LogAble, PatientRollbackAble<Patient>, HasDataList, HasID, RootAware<Patient> {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -131,11 +132,11 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 	private String caseHistory = "";
 
 	/**
-	 * Insurance of the patient 
+	 * Insurance of the patient
 	 */
 	@Column(columnDefinition = "VARCHAR")
 	private String insurance;
-	
+
 	/**
 	 * Ward of the patient
 	 */
@@ -182,7 +183,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 	 * Unique slide counter is increased for every added slide;
 	 */
 	private int slideCounter = 0;
-	
+
 	/**
 	 * Liste aller Personen die �ber die Diangose informiert werden sollen.
 	 */
@@ -237,8 +238,8 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 	 * Transient Variables
 	 ********************************************************/
 	/**
-	 * If set to true, this task is shown in the navigation column on the left
-	 * hand side, however there are actions to perform or not.
+	 * If set to true, this task is shown in the navigation column on the left hand
+	 * side, however there are actions to perform or not.
 	 */
 	@Transient
 	private boolean active;
@@ -314,14 +315,15 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 	}
 
 	/**
-	 * Creates linear list of all slides of the given task. The
-	 * StainingTableChosser is used as holder class in order to offer an option
-	 * to select the slides by clicking on a checkbox. Archived elements will
-	 * not be shown if showArchived is false.
+	 * Creates linear list of all slides of the given task. The StainingTableChosser
+	 * is used as holder class in order to offer an option to select the slides by
+	 * clicking on a checkbox. Archived elements will not be shown if showArchived
+	 * is false.
 	 */
 
 	@Transient
 	public void generateTaskStatus() {
+		logger.debug("Generating taskstatus for " + getTaskID() + " " + hashCode());
 		if (getTaskStatus() == null)
 			setTaskStatus(new TaskStatus(this));
 		else
@@ -374,8 +376,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 
 	/**
 	 * Returns true if the task is marked as active or an action is pending. If
-	 * activeOnly is true only the active attribute of the task will be
-	 * evaluated.
+	 * activeOnly is true only the active attribute of the task will be evaluated.
 	 * 
 	 * @param task
 	 * @return
@@ -420,7 +421,7 @@ public class Task implements Parent<Patient>, LogAble, PatientRollbackAble<Patie
 			return getContacts().stream().anyMatch(p -> p.equals(associatedContact));
 		return false;
 	}
-	
+
 	@Transient
 	public int getNextSlideNumber() {
 		return ++slideCounter;

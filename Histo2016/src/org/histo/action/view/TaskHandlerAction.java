@@ -81,6 +81,11 @@ public class TaskHandlerAction {
 	@Setter(AccessLevel.NONE)
 	private MainHandlerAction mainHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ReceiptlogViewHandlerAction receiptlogiewHandlerAction;
+
 	/**
 	 * Creates a block by using the gui
 	 * 
@@ -90,7 +95,7 @@ public class TaskHandlerAction {
 		try {
 			sampleService.createBlockForSample(sample);
 			// generating gui list
-			sample.getParent().generateSlideGuiList();
+			globalEditViewHandler.updateDataOfTask(true, false, true, true);
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
@@ -98,5 +103,19 @@ public class TaskHandlerAction {
 		}
 	}
 
-	
+	/**
+	 * Starts the staining phase
+	 * 
+	 * @param task
+	 */
+	public void startStainingPhase(Task task) {
+		sampleService.startStainingPhase(task);
+		// generating gui list
+		globalEditViewHandler.updateDataOfTask(true, false, true, true);
+	}
+
+	public void testMemo() {
+		mainHandlerAction.sendGrowlMessages("test", "test");
+	}
+
 }

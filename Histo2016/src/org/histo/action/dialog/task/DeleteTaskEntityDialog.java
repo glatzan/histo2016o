@@ -2,6 +2,7 @@ package org.histo.action.dialog.task;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
@@ -52,6 +53,11 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private SampleService sampleService;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	/**
 	 * Temporary save for a task tree entity (sample, slide, block)
 	 */
@@ -99,7 +105,7 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 				return;
 			}
 
-			p.getTask().generateSlideGuiList();
+			globalEditViewHandler.updateDataOfTask(true, false, true, true);
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

@@ -7,37 +7,37 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.diagnosis.editTemplate.headline']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.settings.diagnosis.editTemplate.headline']}" />
+	</p:outputPanel>
 
-		<p:panelGrid columns="1" styleClass="noBordersAll collapsedBordersAll"
-			style="width:100%">
-			<p:editor
-				value="#{settingsDialogHandler.getTab('DiagnosisTab').selectedDiagnosisPreset.extendedDiagnosisText}">
-			</p:editor>
-		</p:panelGrid>
-	</div>
+	<p:panelGrid columns="1" styleClass="noBordersAll collapsedBordersAll"
+		style="width:100%">
+		<p:editor
+			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.extendedDiagnosisText}">
+		</p:editor>
+	</p:panelGrid>
 
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
 
-	<div class="bottomDiv">
-		<h:panelGrid columns="1" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="2" style="float:right;">
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="4" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.ok']}"
-					icon="fa fa-fw fa-floppy-o"
-					styleClass="smallButton buttonRighMarginInList"
-					process=":adminForm:tabview:diagnoses" partialSubmit="true"
-					update=":adminForm:tabview:diagnoses"
-					actionListener="#{settingsDialogHandler.getTab('DiagnosisTab').discardEditDiagnosisPresetTemplate()}" />
+					icon="fa fa-fw fa-floppy-o" process="@form"
+					partialSubmit="true" update="@form"
+					actionListener="#{settingsDialogHandler.diagnosisTab.discardEditDiagnosisPresetTemplate()}" />
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 
 </ui:composition>

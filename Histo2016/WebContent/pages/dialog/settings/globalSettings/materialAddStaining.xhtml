@@ -6,56 +6,58 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.material']} / #{settingsDialogHandler.getTab('MaterialTab').newMaterial ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']} / #{msg['dialog.settings.material.new.stainings.add.headline']}"
-			styleClass="contentPannel" />
-		<p:dataTable var="staining"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			style="width:100%" scrollable="true" scrollHeight="460"
-			value="#{settingsDialogHandler.getTab('MaterialTab').stainingListChooserForMaterial}">
-			<p:column
-				headerText="#{msg['dialog.settings.material.new.stainings.add.staining']}">
-				<h:outputLabel value="#{staining.listItem.name}" />
-			</p:column>
-			<p:column
-				headerText="#{msg['dialog.settings.material.new.stainings.add.add']}"
-				style="width:20%;text-align:center;">
-				<p:selectBooleanCheckbox value="#{staining.choosen}" />
-			</p:column>
-		</p:dataTable>
-	</div>
 
-	<div class="bottomDiv">
-		<h:panelGrid columns="1" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="4" style="float:right;">
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.settings.material']} / #{settingsDialogHandler.materialTab.newMaterial ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']} / #{msg['dialog.settings.material.new.stainings.add.headline']}" />
+	</p:outputPanel>
+
+	<p:dataTable var="staining"
+		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+		style="width:100%" scrollable="true" scrollHeight="460"
+		value="#{settingsDialogHandler.materialTab.stainingListChooserForMaterial}">
+		<p:column
+			headerText="#{msg['dialog.settings.material.new.stainings.add.staining']}">
+			<h:outputLabel value="#{staining.listItem.name}" />
+		</p:column>
+		<p:column
+			headerText="#{msg['dialog.settings.material.new.stainings.add.add']}"
+			style="width:20%;text-align:center;">
+			<p:selectBooleanCheckbox value="#{staining.choosen}" />
+		</p:column>
+	</p:dataTable>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
 				<p:commandButton
 					value="#{msg['dialog.settings.material.new.stainings.add.add']}"
-					icon="fa fa-fw fa-plus-circle" partialSubmit="true"
-					process=":adminForm:tabview:material"
-					styleClass="smallButton buttonRighMarginInList"
-					update=":adminForm:tabview:material">
+					icon="fa fa-fw fa-plus-circle" partialSubmit="true" process="@form"
+					update="@form">
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('MaterialTab').addStainingToMaterial()}" />
+						binding="#{settingsDialogHandler.materialTab.addStainingToMaterial()}" />
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('MaterialTab').discardAddStainingToMaterial()}" />
+						binding="#{settingsDialogHandler.materialTab.discardAddStainingToMaterial()}" />
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.abort']}"
-					icon="fa fa-fw fa-times-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					partialSubmit="true" process="@this"
-					actionListener="#{settingsDialogHandler.getTab('MaterialTab').discardAddStainingToMaterial()}"
-					update=":adminForm:tabview:material" />
+					icon="fa fa-fw fa-times-circle" partialSubmit="true"
+					process="@this"
+					actionListener="#{settingsDialogHandler.materialTab.discardAddStainingToMaterial()}"
+					update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 
 </ui:composition>

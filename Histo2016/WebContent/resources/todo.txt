@@ -35,17 +35,19 @@ where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.h
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
+
+-> Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
+-> Zimmermann --> Atzrodt, Aktualliesierien button (feld für username ändern)
+-> Neuladen der Listen, nachdem das Settingsmenu geschlossen wurde
+
 Testen:
--> ADD Patient Dialog
 --> Test piz range from 6-8
 
 Next Changes:
--> Laden der Auftragsliste beim einloggen
+-> slide overview dialog!
 
--> Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
--> Zimmermann --> Atzrodt, Aktualliesierien button
+-> Laden der Auftragsliste beim einloggen
 -> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
--> Neuladen der Listen, nachdem das Settingsmenu geschlossen wurde
 
 -> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
 -> finalizeAllDiangosisRevisions (taskManipulationHandler) löschen (diangosis filanized wird nicht mehr gebraucht)
@@ -60,6 +62,7 @@ Next Changes:
 -> Vorgeschichte: Enter --> neue Zeile
  
 Urgent Changes 
+TODO: Methoden in SampleServie in eine Transaction setzten (für loggin logstring per transaction)
 TODO: Biobankeinwilligung beide Seiten (2 pdf-Dateien) auf einmal hochladen
 TODO: Externe Proben: PIZ anlegen?
 TODO: Augenarzt auswählen
@@ -70,6 +73,7 @@ TODO: Erweiterte Suche
 TODO: Datenbankabfragen in globaleidt handler shiften
 
 Long-term Changes 
+TODO: Settings-Dialog überarbeiten tabellen und datatables auf neuen style ändern
 TODO: Nach 3 monaten soll dearchiviertung nicht mehr möglich sein
 TODO: Liste f�r normale benutzer �berarbeiten
 TODO: rechte durchsetzten
@@ -96,6 +100,7 @@ Graphic Changes
 -> Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
 
 v 1.0.15
+++++: Globale Anzeige von Fehlern/Infos funktioniert wieder richtig
 ++++: Dialog zum hinzufügen von Patienten auf anlegen von Klinik-Patienten vorbereitet
 ++++: Im Dialog zum hinzufügen von Patienten erscheint der Cursor jetzt zuverlässig im PIZ-Feld 
 ++++: Neues Layout für Tab-Dialoge

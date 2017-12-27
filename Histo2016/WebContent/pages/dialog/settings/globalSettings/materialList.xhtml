@@ -7,67 +7,61 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.material']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.settings.material']}" />
+	</p:outputPanel>
 
-		<p:dataTable var="stainingList" style="width:100%;" scrollable="true"
-			scrollHeight="460" draggableRows="true"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			value="#{settingsDialogHandler.getTab('MaterialTab').allMaterialList}">
+	<p:dataTable var="stainingList" style="width:100%;" scrollable="true"
+		scrollHeight="460" draggableRows="true"
+		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+		value="#{settingsDialogHandler.materialTab.allMaterialList}">
 
-			<p:column headerText="#{msg['dialog.settings.material.name']}"
-				sortBy="#{stainingList.name}" style="width:20%">
-				<h:outputText value="#{stainingList.name}" />
-			</p:column>
+		<p:column headerText="#{msg['dialog.settings.material.name']}"
+			sortBy="#{stainingList.name}" style="width:20%">
+			<h:outputText value="#{stainingList.name}" />
+		</p:column>
 
-			<p:column headerText="#{msg['dialog.settings.material.commentary']}"
-				style="width:53%">
-				<h:outputText value="#{stainingList.commentary}" />
-			</p:column>
+		<p:column headerText="#{msg['dialog.settings.material.commentary']}"
+			style="width:53%">
+			<h:outputText value="#{stainingList.commentary}" />
+		</p:column>
 
-			<p:column style="width:7%; text-align:center;">
-				<f:facet name="header">
-					<i class="fa fa-cog" />
-				</f:facet>
-				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-					actionListener="#{settingsDialogHandler.getTab('MaterialTab').prepareEditMaterial(stainingList)}"
-					update="@form">
-					<i class="fa fa-fw fa-cog" />
-				</p:commandLink>
-			</p:column>
+		<p:column style="width:7%; text-align:center;">
+			<f:facet name="header">
+				<i class="fa fa-cog" />
+			</f:facet>
+			<p:commandLink title="#{msg['dialog.settings.material.edit']}"
+				actionListener="#{settingsDialogHandler.materialTab.prepareEditMaterial(stainingList)}"
+				update="@form">
+				<i class="fa fa-fw fa-cog" />
+			</p:commandLink>
+		</p:column>
 
-			<p:ajax event="rowReorder"
-				listener="#{settingsDialogHandler.getTab('MaterialTab').onReorderList}" />
+		<p:ajax event="rowReorder"
+			listener="#{settingsDialogHandler.materialTab.onReorderList}" />
 
-		</p:dataTable>
-	</div>
+	</p:dataTable>
 
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1">
-				<h:panelGrid columns="2" style="margin-left: 20px;">
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
-					<h:outputLabel value="#{msg['dialog.settings.material.archived']}"
-						style="margin-left:5px;"></h:outputLabel>
-				</h:panelGrid>
+			<h:panelGrid columns="2" styleClass="newTableContainer left">
+				<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
+				<h:outputLabel value="#{msg['dialog.settings.material.archived']}"
+					style="margin-left:5px;"></h:outputLabel>
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" style="float:right;">
+			<h:panelGrid columns="4" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['dialog.settings.material.new']}"
 					icon="fa fa-fw fa-plus-circle"
-					styleClass="smallButton buttonRighMarginInList"
-					actionListener="#{settingsDialogHandler.getTab('MaterialTab').prepareNewMaterial()}"
-					process=":adminForm:tabview:material" partialSubmit="true"
-					update=":adminForm:tabview:material"></p:commandButton>
+					actionListener="#{settingsDialogHandler.materialTab.prepareNewMaterial()}"
+					process="@form" partialSubmit="true" update="@form"></p:commandButton>
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 </ui:composition>

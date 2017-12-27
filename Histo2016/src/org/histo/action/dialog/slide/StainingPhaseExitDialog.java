@@ -110,6 +110,6 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 			favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInStainingList);
 		}
 
-		globalEditViewHandler.updateDataOfTask(false);
+		globalEditViewHandler.updateDataOfTask(true, false, true, true);
 	}
 }

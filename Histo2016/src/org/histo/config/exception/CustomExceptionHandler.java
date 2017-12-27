@@ -147,8 +147,6 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					RequestContext.getCurrentInstance()
 							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
 
-					System.out.println("Versionfehler!");
-
 					// TODO implement
 				} else if (cause instanceof AbortProcessingException) {
 					logger.debug("Error aboring all actions!");

@@ -323,8 +323,6 @@ public class CreateTaskDialog extends AbstractDialog {
 					// creating standard diagnoses
 					diagnosisService.createDiagnosisRevision(getTask().getDiagnosisContainer(),
 							DiagnosisRevisionType.DIAGNOSIS);
-					// generating gui list
-					getTask().generateSlideGuiList();
 
 					// creating bioBank for Task
 					bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());

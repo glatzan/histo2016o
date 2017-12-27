@@ -7,92 +7,81 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.log.headline']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.settings.log.headline']}" />
+	</p:outputPanel>
 
-		<p:dataTable var="log" style="width:100%;" scrollable="true"
-			scrollHeight="440"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			value="#{settingsDialogHandler.getTab('LogTab').logs}">
+	<p:dataTable var="log" style="width:100%;" scrollable="true"
+		scrollHeight="440"
+		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+		value="#{settingsDialogHandler.logTab.logs}">
 
-			<p:column width="90"
-				headerText="#{msg['dialog.settings.log.list.date']}">
+		<p:column width="90"
+			headerText="#{msg['dialog.settings.log.list.date']}">
 
-				<h:outputLabel value="#{log.timestamp}">
-					<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
-				</h:outputLabel>
-			</p:column>
+			<h:outputLabel value="#{log.timestamp}">
+				<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
+			</h:outputLabel>
+		</p:column>
 
-			<p:column width="110"
-				headerText="#{msg['dialog.settings.log.list.user']}">
-				<h:outputText value="#{log.userAcc.username}" />
-			</p:column>
+		<p:column width="110"
+			headerText="#{msg['dialog.settings.log.list.user']}">
+			<h:outputText value="#{log.userAcc.username}" />
+		</p:column>
 
-			<p:column width="110"
-				headerText="#{msg['dialog.settings.log.list.patient']}">
-				<h:outputText value="#{log.patient.person.fullName}" />
-			</p:column>
+		<p:column width="110"
+			headerText="#{msg['dialog.settings.log.list.patient']}">
+			<h:outputText value="#{log.patient.person.fullName}" />
+		</p:column>
 
-			<p:column headerText="#{msg['dialog.settings.log.list.message']}">
+		<p:column headerText="#{msg['dialog.settings.log.list.message']}">
 
-				<h:outputLabel value="#{log.logString}" title="#{log.logString}">
-					<f:converter converterId="org.histo.ui.TruncateConverter" />
-					<f:attribute name="truncateAt" value="75" />
-					<f:attribute name="continuationMark" value="..." />
-				</h:outputLabel>
-			</p:column>
+			<h:outputLabel value="#{log.logString}" title="#{log.logString}">
+				<f:converter converterId="org.histo.ui.TruncateConverter" />
+				<f:attribute name="truncateAt" value="75" />
+				<f:attribute name="continuationMark" value="..." />
+			</h:outputLabel>
+		</p:column>
 
-		</p:dataTable>
-	</div>
+	</p:dataTable>
 
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="2">
-				<h:panelGrid columns="2">
-					<h:outputLabel value="#{msg['body.taskList.perPage']}" />
-					<p:selectOneMenu
-						value="#{settingsDialogHandler.getTab('LogTab').logsPerPull}"
-						styleClass="smallInput">
-						<f:selectItem itemLabel="50" itemValue="50" />
-						<f:selectItem itemLabel="100" itemValue="100" />
-						<f:selectItem itemLabel="200" itemValue="200" />
+			<h:panelGrid columns="5" styleClass="newTableContainer left">
+				<h:outputLabel value="#{msg['body.taskList.perPage']}" />
+				<p:selectOneMenu value="#{settingsDialogHandler.logTab.logsPerPull}">
+					<f:selectItem itemLabel="50" itemValue="50" />
+					<f:selectItem itemLabel="100" itemValue="100" />
+					<f:selectItem itemLabel="200" itemValue="200" />
 
-						<p:ajax event="change" process="@this"
-							update=":adminForm:tabview:logs" partialSubmit="true"
-							listener="#{settingsDialogHandler.getTab('LogTab').updateData()}"></p:ajax>
-					</p:selectOneMenu>
-				</h:panelGrid>
+					<p:ajax event="change" process="@this" update="@form"
+						partialSubmit="true"
+						listener="#{settingsDialogHandler.logTab.updateData()}"></p:ajax>
 
-				<h:panelGrid columns="4" styleClass="buttonLeftMarginInList">
-					<h:outputLabel value="#{msg['body.taskList.page']}" />
+				</p:selectOneMenu>
 
-					<p:spinner size="1" styleClass="smallSpinner"
-						value="#{settingsDialogHandler.getTab('LogTab').selectedLogPage}"
-						min="1"
-						max="#{settingsDialogHandler.getTab('LogTab').maxLogPages}">
-						<p:ajax event="change" process="@this"
-							update=":adminForm:tabview:logs" partialSubmit="true"
-							listener="#{settingsDialogHandler.getTab('LogTab').updateData()}" />
-					</p:spinner>
+				<h:outputLabel value="#{msg['body.taskList.page']}" />
 
-					<h:outputLabel
-						value="von #{settingsDialogHandler.getTab('LogTab').maxLogPages} Seiten"
-						styleClass="buttonLeftMarginInList" />
+				<p:spinner size="1" styleClass="smallSpinner"
+					value="#{settingsDialogHandler.logTab.selectedLogPage}" min="1"
+					max="#{settingsDialogHandler.logTab.maxLogPages}">
+					<p:ajax event="change" process="@this" update="@form"
+						partialSubmit="true"
+						listener="#{settingsDialogHandler.logTab.updateData()}" />
+				</p:spinner>
 
-				</h:panelGrid>
+				<h:outputLabel
+					value="von #{settingsDialogHandler.logTab.maxLogPages} Seiten" />
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" style="float:right;">
-
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 </ui:composition>

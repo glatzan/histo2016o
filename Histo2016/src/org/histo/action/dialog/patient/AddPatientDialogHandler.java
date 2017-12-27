@@ -123,6 +123,10 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 			setCenterInclude("include/clinicSearch.xhtml");
 		}
 
+		public boolean initTab() {
+			return initTab("", "", "", null);
+		}
+		
 		public boolean initTab(String name, String surename, String piz, Date date) {
 			setPatientBirthday(date);
 			setPatientName(name);

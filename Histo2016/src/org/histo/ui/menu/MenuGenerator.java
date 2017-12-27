@@ -94,13 +94,13 @@ public class MenuGenerator {
 
 		// task menu
 		if (patient != null) {
-			
+
 			boolean taskIsNull = task == null;
-			
-			if(!taskIsNull && task.getTaskStatus() == null) {
+
+			if (!taskIsNull && task.getTaskStatus() == null) {
 				task.generateTaskStatus();
 			}
-			
+
 			boolean taskIsEditable = taskIsNull ? false : task.getTaskStatus().isEditable();
 
 			DefaultSubMenu taskSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.task"));
@@ -163,8 +163,7 @@ public class MenuGenerator {
 
 				// Add to stay in staining phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.stayInPhase.enter"));
-				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
-						+ PredefinedFavouriteList.StainingList.getId() + ")}");
+				item.setCommand("#{taskHandlerAction.startStainingPhase(globalEditViewHandler.selectedTask)}");
 				item.setIcon("fa fa-image");
 				item.setRendered(!(task.getTaskStatus().isStainingNeeded() || task.getTaskStatus().isReStainingNeeded()
 						|| task.getTaskStatus().isStayInStainingList()) && task.getTaskStatus().isEditable());
@@ -208,9 +207,6 @@ public class MenuGenerator {
 						task.getTaskStatus().isDiagnosisNeeded() || task.getTaskStatus().isReDiagnosisNeeded());
 				item.setDisabled(!taskIsEditable);
 				diagnosisSubMenu.addElement(item);
-
-				logger.debug(
-						task.getTaskStatus().isDiagnosisNeeded() + " " + task.getTaskStatus().isReDiagnosisNeeded());
 
 				// Leave phase if stay in phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.diagnosisPhase.force.leave"));
@@ -363,6 +359,12 @@ public class MenuGenerator {
 			item.setIcon("fa fa-dollar");
 
 			item.setDisabled(true);
+			taskSubMenu.addElement(item);
+
+			// test
+			item = new DefaultMenuItem("Test");
+			item.setIcon("fa fa-dollar");
+			item.setCommand("#{taskHandlerAction.testMemo()}");
 			taskSubMenu.addElement(item);
 
 			// biobank

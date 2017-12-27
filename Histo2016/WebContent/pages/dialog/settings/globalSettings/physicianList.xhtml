@@ -6,101 +6,104 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-	<div class="contentDiv">
 
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.person.list.headline']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.settings.person.list.headline']}" />
+	</p:outputPanel>
 
-		<p:dataTable var="physician" id="physician" style="width:100%;"
-			scrollable="true" scrollHeight="440"
-			value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').physicianList}"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
+	<p:dataTable var="physician" id="physician" style="width:100%;"
+		scrollable="true" scrollHeight="440"
+		value="#{settingsDialogHandler.physicianSettingsTab.physicianList}"
+		styleClass="newStyleDataTable">
 
-			<!-- title -->
-			<p:column sortBy="#{physician.person.title}"
-				headerText="#{msg['dialog.settings.person.list.title']}"
-				style="width:15%">
-				<h:outputText value="#{physician.person.title}" />
-			</p:column>
+		<!-- title -->
+		<p:column sortBy="#{physician.person.title}"
+			headerText="#{msg['dialog.settings.person.list.title']}"
+			style="width:15%">
+			<h:outputText value="#{physician.person.title}" />
+		</p:column>
 
-			<!-- Name -->
-			<p:column sortBy="#{physician.person.lastName}"
-				filterBy="#{physician.person.lastName}" filterMatchMode="contains"
-				headerText="#{msg['dialog.settings.person.list.name']}"
-				style="width:20%">
-				<h:outputText value="#{physician.person.lastName}" />
-			</p:column>
+		<!-- Name -->
+		<p:column sortBy="#{physician.person.lastName}"
+			filterBy="#{physician.person.lastName}" filterMatchMode="contains"
+			headerText="#{msg['dialog.settings.person.list.name']}"
+			style="width:20%">
+			<h:outputText value="#{physician.person.lastName}" />
+		</p:column>
 
-			<!-- Vorname -->
-			<p:column
-				headerText="#{msg['dialog.settings.person.list.firstName']}"
-				style="width:20%">
-				<h:outputText value="#{physician.person.firstName}" />
-			</p:column>
+		<!-- Vorname -->
+		<p:column headerText="#{msg['dialog.settings.person.list.firstName']}"
+			style="width:20%">
+			<h:outputText value="#{physician.person.firstName}" />
+		</p:column>
 
-			<!-- Role -->
-			<p:column headerText="#{msg['dialog.settings.person.list.role']}"
-				style="text-align:left;">
-				<p:repeat value="#{physician.associatedRolesAsArray}"
-					var="associatedRoles">
-					<h:outputLabel
-						value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
-					<br />
-				</p:repeat>
-			</p:column>
+		<!-- Role -->
+		<p:column headerText="#{msg['dialog.settings.person.list.role']}"
+			style="text-align:left;">
+			<p:repeat value="#{physician.associatedRolesAsArray}"
+				var="associatedRoles">
+				<h:outputLabel
+					value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
+				<br />
+			</p:repeat>
+		</p:column>
 
-			<!-- clinical employee -->
-			<p:column headerText="#{msg['dialog.settings.person.list.employee']}"
-				style="text-align:center;">
-				<h:panelGroup rendered="#{physician.clinicEmployee}">
-					<i class="fa fa-fw fa-check-circle icon-green" />
-				</h:panelGroup>
-			</p:column>
+		<!-- clinical employee -->
+		<p:column headerText="#{msg['dialog.settings.person.list.employee']}"
+			style="text-align:center;">
+			<h:panelGroup rendered="#{physician.clinicEmployee}">
+				<i class="fa fa-fw fa-check-circle icon-green" />
+			</h:panelGroup>
+		</p:column>
 
-			<!-- Optionen -->
-			<p:column style="width:10%; text-align:center;">
-				<f:facet name="header">
-					<i class="fa fa-cog"
-						title="#{msg['dialog.settings.person.list.options']}" />
-				</f:facet>
+		<!-- Optionen -->
+		<p:column style="width:10%; text-align:center;">
+			<f:facet name="header">
+				<i class="fa fa-cog"
+					title="#{msg['dialog.settings.person.list.options']}" />
+			</f:facet>
 
-				<!-- Edit -->
-				<p:commandLink styleClass="noUnderlineAtLink"
-					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(physician)}"
-					partialSubmit="true" process="@this">
-					<i class="fa fa-fw fa-cog" />
-					<p:ajax event="dialogReturn"
-						listener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').updateData()}"
-						update=":adminForm:tabview:persons" />
-				</p:commandLink>
+			<!-- Edit -->
+			<p:commandLink styleClass="noUnderlineAtLink"
+				title="#{msg['dialog.settings.person.list.options.edit']}"
+				actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(physician)}"
+				partialSubmit="true" process="@this">
+				<i class="fa fa-fw fa-cog" />
+				<p:ajax event="dialogReturn"
+					listener="#{settingsDialogHandler.physicianSettingsTab.updateData()}"
+					update="@form" />
+			</p:commandLink>
 
-				<!-- archive -->
-				<p:commandLink styleClass="noUnderlineAtLink"
-					title="#{physician.archived ? msg['dialog.settings.person.list.options.archive.undo'] :  msg['dialog.settings.person.list.options.archive']}"
-					actionListener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').archivePhysician(physician, !physician.archived)}"
-					update=":adminForm:tabview:persons" partialSubmit="true"
-					process="@this">
-					<i class="fa fa-fw #{physician.archived ? 'fa-user' : 'fa-times' }" />
-				</p:commandLink>
-			</p:column>
-		</p:dataTable>
-	</div>
+			<!-- refresh -->
+			<p:commandLink styleClass="noUnderlineAtLink"
+				title="Update"
+				actionListener="#{physicianService.updatePhysicianDataFromLdap(physician)}"
+				update="@form" partialSubmit="true" process="@this">
+				<i class="fa fa-fw fa-undo " />
+			</p:commandLink>
+			
+			<!-- archive -->
+			<p:commandLink styleClass="noUnderlineAtLink"
+				title="#{physician.archived ? msg['dialog.settings.person.list.options.archive.undo'] :  msg['dialog.settings.person.list.options.archive']}"
+				actionListener="#{settingsDialogHandler.physicianSettingsTab.archivePhysician(physician, !physician.archived)}"
+				update="@form" partialSubmit="true" process="@this">
+				<i class="fa fa-fw #{physician.archived ? 'fa-user' : 'fa-times' }" />
+			</p:commandLink>
+		</p:column>
+	</p:dataTable>
 
-	<div class="bottomDiv">
+
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="3">
-
+			<h:panelGrid columns="3" styleClass="newTableContainer left">
 				<!-- archived -->
 				<p:selectBooleanCheckbox styleClass="smallCheckbox"
-					value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').showArchivedPhysicians}">
+					value="#{settingsDialogHandler.physicianSettingsTab.showArchivedPhysicians}">
 					<p:ajax
-						listener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').updateData()}"
-						partialSubmit="true" process="@this"
-						update=":adminForm:tabview:persons" />
+						listener="#{settingsDialogHandler.physicianSettingsTab.updateData()}"
+						partialSubmit="true" process="@this" update="@form" />
 				</p:selectBooleanCheckbox>
 
 				<h:outputLabel
@@ -112,42 +115,38 @@
 						id="roleSelect"
 						panelStyleClass="customSelectCheckboxMenuContactDialogPannel"
 						label="#{msg['dialog.settings.person.list.show.roles']}"
-						value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').showPhysicianRoles}"
+						value="#{settingsDialogHandler.physicianSettingsTab.showPhysicianRoles}"
 						onHide="executeOnOnhide();">
 						<f:selectItems var="role"
-							value="#{settingsDialogHandler.getTab('PhysicianSettingsTab').allRoles}"
+							value="#{settingsDialogHandler.physicianSettingsTab.allRoles}"
 							itemValue="#{role}"
 							itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
 					</p:selectCheckboxMenu>
 
-					<p:remoteCommand name="executeOnOnhide"
-						update=":adminForm:tabview:persons" partialSubmit="true"
-						process="@this roleSelect"
-						actionListener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').updateData()}" />
+					<p:remoteCommand name="executeOnOnhide" update="@form"
+						partialSubmit="true" process="@this roleSelect"
+						actionListener="#{settingsDialogHandler.physicianSettingsTab.updateData()}" />
 
 				</h:panelGroup>
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" style="float:right;">
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['dialog.settings.user.button.add']}"
-					icon="fa fa-fw fa-plus-circle"
-					styleClass="smallButton buttonRighMarginInList" process="@this"
-					partialSubmit="true"
+					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
 					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean(true)}">
 					<p:ajax event="dialogReturn"
-						listener="#{settingsDialogHandler.getTab('PhysicianSettingsTab').addPhysician(dialogHandlerAction.physicianSearchDialog.physician)}"
-						update=":adminForm:tabview:histoUser" />
+						listener="#{settingsDialogHandler.physicianSettingsTab.addPhysician(dialogHandlerAction.physicianSearchDialog.physician)}"
+						update="@form" />
 				</p:commandButton>
 
 
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
-
 			</h:panelGrid>
-
 		</h:panelGrid>
 	</div>
+
+
 </ui:composition>

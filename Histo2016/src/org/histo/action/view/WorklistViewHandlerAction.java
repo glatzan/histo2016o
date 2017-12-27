@@ -216,8 +216,8 @@ public class WorklistViewHandlerAction {
 
 		logger.debug("Select patient " + globalEditViewHandler.getSelectedPatient().getPerson().getFullName());
 
-		globalEditViewHandler.updateMenuModel(false);
-
+		globalEditViewHandler.updateDataOfTask(true, false, false, false);
+		
 		changeView(View.WORKLIST_PATIENT);
 		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
@@ -291,8 +291,8 @@ public class WorklistViewHandlerAction {
 		getWorklist().addPatient(task.getPatient());
 		getWorklist().sortWordklist();
 
-		// generating menu
-		globalEditViewHandler.updateMenuModel(false);
+		// generating task data, taskstatus is generated previously
+		globalEditViewHandler.updateDataOfTask(true, false, false, true);
 
 		task.setActive(true);
 

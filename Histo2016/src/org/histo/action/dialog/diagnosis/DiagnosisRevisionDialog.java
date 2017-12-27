@@ -151,7 +151,7 @@ public class DiagnosisRevisionDialog extends AbstractDialog {
 			
 			// adding the task to the diagnosis list
 			favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
-			globalEditViewHandler.updateDataOfTask(false);
+			globalEditViewHandler.updateDataOfTask(true, false, true, false);
 			
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

@@ -137,7 +137,7 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 							getTask().getDiagnosisContainer().getDiagnosisRevisions(), true);
 
 					getTask().getDiagnosisContainer().setSignatureDate(System.currentTimeMillis());
-					
+
 					// adding to notification phase
 					if (goToNotificationPhase)
 						favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
@@ -163,6 +163,6 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 
-		globalEditViewHandler.updateDataOfTask(false);
+		globalEditViewHandler.updateDataOfTask(true, false, true, false);
 	}
 }

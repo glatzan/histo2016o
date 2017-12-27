@@ -1,4 +1,4 @@
-package org.histo.action.dialog;
+package org.histo.action.dialog.settings;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,6 +6,12 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
+import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.AbstractTabDialog;
+import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
+import org.histo.action.dialog.worklist.WorklistSearchDialog.ExtendedSearchTab;
+import org.histo.action.dialog.worklist.WorklistSearchDialog.FavouriteSearchTab;
+import org.histo.action.dialog.worklist.WorklistSearchDialog.SimpleSearchTab;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -37,12 +43,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
 @Component
 @Scope(value = "session")
-public class SettingsDialogHandler extends AbstractDialog {
+@Getter
+@Setter
+public class SettingsDialogHandler extends AbstractTabDialog {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -51,52 +60,78 @@ public class SettingsDialogHandler extends AbstractDialog {
 	public static final int DIAGNOSIS_TEXT_TEMPLATE = 2;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UserDAO userDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UtilDAO utilDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private PhysicianDAO physicianDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private ResourceBundle resourceBundle;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private OrganizationDAO organizationDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private LogDAO logDAO;
 
-	/**
-	 * Tabindex of settings dialog
-	 */
-	@Getter
-	@Setter
-	private int activeSettingsIndex = 0;
+	private HistoUserTab histoUserTab;
+	private DiagnosisTab diagnosisTab;
+	private MaterialTab materialTab;
+	private StainingTab stainingTab;
+	private StaticListTab staticListTab;
+	private FavouriteListTab favouriteListTab;
+	private PhysicianSettingsTab physicianSettingsTab;
+	private OrganizationTab organizationTab;
+	private LogTab logTab;
 
-	@Getter
-	@Setter
-	public AbstractSettingsTab[] tabs = new AbstractSettingsTab[] { new HistoUserTab(), new DiagnosisTab(),
-			new MaterialTab(), new StainingTab(), new StaticListTab(), new FavouriteListTab(),
-			new PhysicianSettingsTab(), new OrganizationTab(), new LogTab() };
+	public SettingsDialogHandler() {
+		setHistoUserTab(new HistoUserTab());
+		setDiagnosisTab(new DiagnosisTab());
+		setMaterialTab(new MaterialTab());
+		setStainingTab(new StainingTab());
+		setStaticListTab(new StaticListTab());
+		setFavouriteListTab(new FavouriteListTab());
+		setPhysicianSettingsTab(new PhysicianSettingsTab());
+		setOrganizationTab(new OrganizationTab());
+		setLogTab(new LogTab());
 
-	/********************************************************
-	 * General
-	 ********************************************************/
+		tabs = new AbstractTab[] { histoUserTab, diagnosisTab, materialTab, stainingTab, staticListTab,
+				favouriteListTab, physicianSettingsTab, organizationTab, logTab };
+	}
 
 	public void initAndPrepareBean() {
-		if (initBean(getActiveSettingsIndex()))
-			prepareDialog();
+		initBean(null);
+		prepareDialog();
 	}
 
 	public void initAndPrepareBean(String tabName) {
@@ -105,81 +140,43 @@ public class SettingsDialogHandler extends AbstractDialog {
 	}
 
 	public boolean initBean(String tabName) {
-		int tabNumber = 0;
+		super.initBean(null, Dialog.SETTINGS);
 
-		for (int i = 0; i < tabs.length; i++)
-			if (tabs[i].getTabName().equals(tabName)) {
-				tabNumber = i;
-				break;
-			}
+		AbstractTab foundTab = null;
 
-		return initBean(tabNumber);
-	}
-
-	public boolean initBean(int activeTab) {
-
-		if (activeTab >= 0 && activeTab < getTabs().length) {
-			setActiveSettingsIndex(activeTab);
-
-			onSettingsTabChange(null);
-		} else {
-			return false;
+		for (int i = 0; i < tabs.length; i++) {
+			tabs[i].initTab();
+			if (tabs[i].getTabName().equals(tabName))
+				foundTab = tabs[i];
 		}
 
-		super.initBean(task, Dialog.SETTINGS);
+		if (tabName == null || foundTab == null)
+			onTabChange(tabs[0]);
+		else {
+			onTabChange(foundTab);
+		}
 
 		return true;
-	}
-
-	public void onSettingsTabChange(TabChangeEvent event) {
-		if (getActiveSettingsIndex() >= 0 && getActiveSettingsIndex() < getTabs().length) {
-			logger.debug("Updating Tab with index " + getActiveSettingsIndex());
-			getTabs()[getActiveSettingsIndex()].updateData();
-		}
-	}
-
-	public AbstractSettingsTab getTab(String tabName) {
-		for (AbstractSettingsTab abstractSettingsTab : tabs) {
-			if (abstractSettingsTab.getTabName().equals(tabName))
-				return abstractSettingsTab;
-		}
-
-		return null;
 	}
 
 	/********************************************************
 	 * General
 	 ********************************************************/
-
 	@Getter
 	@Setter
-	public abstract class AbstractSettingsTab {
-
-		public abstract String getCenterView();
-
-		public abstract void updateData();
-
-		protected String name;
-
-		protected String viewID;
-
-		protected String tabName;
-	}
-
-	@Getter
-	@Setter
-	public class HistoUserTab extends AbstractSettingsTab {
+	public class HistoUserTab extends AbstractTab {
 
 		private List<HistoUser> users;
 
 		private List<HistoGroup> groups;
-		
+
 		private DefaultTransformer<HistoGroup> groupTransformer;
-		
+
 		public HistoUserTab() {
 			setTabName("HistoUserTab");
 			setName("dialog.settings.user");
 			setViewID("histoUser");
+			setCenterInclude("globalSettings/userList.xhtml");
 		}
 
 		public void updateData() {
@@ -194,11 +191,6 @@ public class SettingsDialogHandler extends AbstractDialog {
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
-		}
-
-		@Override
-		public String getCenterView() {
-			return "globalSettings/userList.xhtml";
 		}
 
 		public void addHistoUser(Physician physician) {
@@ -220,7 +212,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class DiagnosisTab extends AbstractSettingsTab {
+	public class DiagnosisTab extends AbstractTab {
 
 		private DiagnosisPage page;
 
@@ -347,7 +339,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		@Override
-		public String getCenterView() {
+		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
 				return "globalSettings/diagnosisEdit.xhtml";
@@ -365,7 +357,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class MaterialTab extends AbstractSettingsTab {
+	public class MaterialTab extends AbstractTab {
 
 		public MaterialPage page;
 
@@ -377,8 +369,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 		private MaterialPreset editMaterial;
 
 		/**
-		 * List for selecting staining, this list contains all stainings. They
-		 * can be choosen and added to the material
+		 * List for selecting staining, this list contains all stainings. They can be
+		 * choosen and added to the material
 		 */
 		private List<ListChooser<StainingPrototype>> stainingListChooserForMaterial;
 
@@ -524,7 +516,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		@Override
-		public String getCenterView() {
+		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
 				return "globalSettings/materialEdit.xhtml";
@@ -538,7 +530,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class StainingTab extends AbstractSettingsTab {
+	public class StainingTab extends AbstractTab {
 
 		/**
 		 * A List with all staings
@@ -556,6 +548,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setTabName("StainingTab");
 			setName("dialog.settings.stainings");
 			setViewID("staining");
+			setCenterInclude("globalSettings/stainingsList.xhtml");
 		}
 
 		@Override
@@ -580,11 +573,6 @@ public class SettingsDialogHandler extends AbstractDialog {
 			}
 		}
 
-		@Override
-		public String getCenterView() {
-			return "globalSettings/stainingsList.xhtml";
-		}
-
 	}
 
 	public enum StaticListPage {
@@ -593,7 +581,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class StaticListTab extends AbstractSettingsTab {
+	public class StaticListTab extends AbstractTab {
 
 		private StaticListPage page;
 
@@ -723,7 +711,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		@Override
-		public String getCenterView() {
+		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
 				return "globalSettings/staticListsEdit.xhtml";
@@ -736,7 +724,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class PhysicianSettingsTab extends AbstractSettingsTab {
+	public class PhysicianSettingsTab extends AbstractTab {
 
 		/**
 		 * True if archived physicians should be display
@@ -759,6 +747,8 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setTabName("PhysicianSettingsTab");
 			setName("dialog.settings.persons");
 			setViewID("persons");
+			setCenterInclude("globalSettings/physicianList.xhtml");
+
 			setShowArchivedPhysicians(false);
 			setAllRoles(Arrays.asList(ContactRole.values()));
 
@@ -802,16 +792,11 @@ public class SettingsDialogHandler extends AbstractDialog {
 			}
 		}
 
-		@Override
-		public String getCenterView() {
-			return "globalSettings/physicianList.xhtml";
-		}
-
 	}
 
 	@Getter
 	@Setter
-	public class FavouriteListTab extends AbstractSettingsTab {
+	public class FavouriteListTab extends AbstractTab {
 
 		/**
 		 * Array containing all favourite listis
@@ -822,17 +807,13 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setTabName("FavouriteListTab");
 			setName("dialog.settings.favouriteList");
 			setViewID("favouriteLists");
+			setCenterInclude("globalSettings/favouriteList.xhtml");
 		}
 
 		@Override
 		public void updateData() {
 			setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
 
-		}
-
-		@Override
-		public String getCenterView() {
-			return "globalSettings/favouriteList.xhtml";
 		}
 
 	}
@@ -843,7 +824,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class OrganizationTab extends AbstractSettingsTab {
+	public class OrganizationTab extends AbstractTab {
 
 		private OrganizationTabPage page;
 
@@ -864,8 +845,10 @@ public class SettingsDialogHandler extends AbstractDialog {
 		public void updateData() {
 			switch (getPage()) {
 			case EDIT:
-				setSelectedOrganization(organizationDAO.get(Organization.class, getSelectedOrganization().getId()));
-				organizationDAO.initializeOrganization(getSelectedOrganization());
+				if (getSelectedOrganization().getId() != 0) {
+					setSelectedOrganization(organizationDAO.get(Organization.class, getSelectedOrganization().getId()));
+					organizationDAO.initializeOrganization(getSelectedOrganization());
+				}
 				break;
 			default:
 				setOrganizations(organizationDAO.getOrganizations());
@@ -904,7 +887,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 		}
 
 		@Override
-		public String getCenterView() {
+		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
 				return "globalSettings/organizationEdit.xhtml";
@@ -917,7 +900,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 
 	@Getter
 	@Setter
-	public class LogTab extends AbstractSettingsTab {
+	public class LogTab extends AbstractTab {
 
 		private int logsPerPull;
 
@@ -931,6 +914,7 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setTabName("LogTab");
 			setName("dialog.settings.log");
 			setViewID("logs");
+			setCenterInclude("globalSettings/log.xhtml");
 
 			setLogsPerPull(50);
 			setSelectedLogPage(1);
@@ -946,25 +930,14 @@ public class SettingsDialogHandler extends AbstractDialog {
 			setLogs(logDAO.getLogs(getLogsPerPull(), getSelectedLogPage() - 1));
 		}
 
-		@Override
-		public String getCenterView() {
-			// TODO Auto-generated method stub
-			return "globalSettings/log.xhtml";
-		}
 	}
 
-	public class AdminTab extends AbstractSettingsTab {
+	public class AdminTab extends AbstractTab {
 
 		public AdminTab() {
 			setTabName("AdminTab");
 			setName("dialog.settings.admin");
 			setViewID("admin");
-		}
-
-		@Override
-		public String getCenterView() {
-			// TODO Auto-generated method stub
-			return null;
 		}
 
 		@Override

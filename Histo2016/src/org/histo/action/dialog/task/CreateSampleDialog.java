@@ -3,6 +3,8 @@ package org.histo.action.dialog.task;
 import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.view.GlobalEditViewHandler;
+import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -44,6 +46,11 @@ public class CreateSampleDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	private List<MaterialPreset> materials;
 
 	private DefaultTransformer<MaterialPreset> materialTransformer;
@@ -79,7 +86,7 @@ public class CreateSampleDialog extends AbstractDialog {
 		try {
 			sampleService.createSampleForTask(getTask(), getSelectedMaterial());
 			// generating gui list
-			task.generateSlideGuiList();
+			globalEditViewHandler.updateDataOfTask(true, false, true, true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

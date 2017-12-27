@@ -7,83 +7,77 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.settings.diagnosis.list.headline']}"
-			styleClass="contentPannel" />
-
-		<p:dataTable var="diagnosisPreset" style="width:100%;"
-			scrollable="true" scrollHeight="460" draggableRows="true"
-			value="#{settingsDialogHandler.getTab('DiagnosisTab').diagnosisPresets}"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
-
-			<p:column sortBy="#{diagnosisPreset.diagnosisText}"
-				headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
-				style="width:40%">
-				<h:outputText value="#{diagnosisPreset.diagnosis}" />
-			</p:column>
-
-			<p:column sortBy="#{diagnosisPreset.name}"
-				headerText="#{msg['dialog.settings.diagnosis.list.category']}"
-				style="width:auto">
-				<h:outputText value="#{diagnosisPreset.category}" />
-			</p:column>
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.settings.diagnosis.list.headline']}" />
+	</p:outputPanel>
 
 
-			<p:column
-				headerText="#{msg['dialog.settings.diagnosis.list.commentary']}"
-				style="width:20%">
-				<h:outputLabel value="#{diagnosisPreset.commentary}">
-					<f:converter converterId="org.histo.ui.TruncateConverter"
-						truncateAt="40" />
-					<f:attribute name="truncateAt" value="40" />
-					<f:attribute name="continuationMark" value="..." />
-				</h:outputLabel>
-			</p:column>
+	<p:dataTable var="diagnosisPreset" style="width:100%;"
+		scrollable="true" scrollHeight="460" draggableRows="true"
+		value="#{settingsDialogHandler.diagnosisTab.diagnosisPresets}"
+		styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
 
-			<p:column style="width:7%; text-align:center;">
-				<f:facet name="header">
-					<i class="fa fa-cog"
-						title="#{msg['dialog.settings.diagnosis.list.options']}" />
-				</f:facet>
-				<p:commandLink
-					title="#{msg[dialog.settings.diagnosis.list.options.edit]}"
-					actionListener="#{settingsDialogHandler.getTab('DiagnosisTab').prepareEditDiagnosisPreset(diagnosisPreset)}"
-					update=":adminForm:tabview:diagnoses" partialSubmit="true"
-					process="@this">
-					<i class="fa fa-fw fa-cog" />
-				</p:commandLink>
-			</p:column>
+		<p:column sortBy="#{diagnosisPreset.diagnosisText}"
+			headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
+			style="width:40%">
+			<h:outputText value="#{diagnosisPreset.diagnosis}" />
+		</p:column>
 
-			<p:ajax event="rowReorder" update=":adminForm:tabview:diagnoses"
-				process=":adminForm:tabview:diagnoses" partialSubmit="true"
-				listener="#{settingsDialogHandler.getTab('DiagnosisTab').onReorderList}" />
-		</p:dataTable>
-	</div>
+		<p:column sortBy="#{diagnosisPreset.name}"
+			headerText="#{msg['dialog.settings.diagnosis.list.category']}"
+			style="width:auto">
+			<h:outputText value="#{diagnosisPreset.category}" />
+		</p:column>
 
-	<div class="bottomDiv">
+
+		<p:column
+			headerText="#{msg['dialog.settings.diagnosis.list.commentary']}"
+			style="width:20%">
+			<h:outputLabel value="#{diagnosisPreset.commentary}">
+				<f:converter converterId="org.histo.ui.TruncateConverter"
+					truncateAt="40" />
+				<f:attribute name="truncateAt" value="40" />
+				<f:attribute name="continuationMark" value="..." />
+			</h:outputLabel>
+		</p:column>
+
+		<p:column style="width:7%; text-align:center;">
+			<f:facet name="header">
+				<i class="fa fa-cog"
+					title="#{msg['dialog.settings.diagnosis.list.options']}" />
+			</f:facet>
+			<p:commandLink
+				title="#{msg[dialog.settings.diagnosis.list.options.edit]}"
+				actionListener="#{settingsDialogHandler.diagnosisTab.prepareEditDiagnosisPreset(diagnosisPreset)}"
+				update="@form" partialSubmit="true" process="@this">
+				<i class="fa fa-fw fa-cog" />
+			</p:commandLink>
+		</p:column>
+
+		<p:ajax event="rowReorder" update="@form" process="@form"
+			partialSubmit="true"
+			listener="#{settingsDialogHandler.diagnosisTab.onReorderList}" />
+	</p:dataTable>
+
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1">
-				<h:panelGrid columns="2" style="margin-left: 20px;">
-					<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
-					<h:outputLabel style="margin-left:5px;"
-						value="#{msg['dialog.settings.diagnosis.list.checkbox.archived']}"></h:outputLabel>
-				</h:panelGrid>
+			<h:panelGrid columns="2" styleClass="newTableContainer left">
+				<p:selectBooleanCheckbox styleClass="smallCheckbox"></p:selectBooleanCheckbox>
+				<h:outputLabel style="margin-left:5px;"
+					value="#{msg['dialog.settings.diagnosis.list.checkbox.archived']}"></h:outputLabel>
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" style="float:right;">
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton
 					value="#{msg['dialog.settings.diagnosis.list.button.new']}"
-					icon="fa fa-fw fa-plus-circle"
-					styleClass="smallButton buttonRighMarginInList" process="@this"
-					partialSubmit="true"
-					actionListener="#{settingsDialogHandler.getTab('DiagnosisTab').prepareNewDiagnosisPreset()}"
-					update=":adminForm:tabview:diagnoses"></p:commandButton>
+					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
+					actionListener="#{settingsDialogHandler.diagnosisTab.prepareNewDiagnosisPreset()}"
+					update="@form"></p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>

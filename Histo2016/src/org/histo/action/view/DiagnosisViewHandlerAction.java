@@ -166,6 +166,12 @@ public class DiagnosisViewHandlerAction {
 		onDataChange(toSave, resourcesKey, new Object[0]);
 	}
 
+	/**
+	 * Saves dynamically changed data of the views. Error-handling is done via global error Handler.
+	 * @param toSave
+	 * @param resourcesKey
+	 * @param arr
+	 */
 	public void onDataChange(PatientRollbackAble<?> toSave, String resourcesKey, Object... arr) {
 		genericDAO.savePatientData(toSave, toSave, resourcesKey, arr);
 	}

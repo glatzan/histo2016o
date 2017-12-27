@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.SettingsDialogHandler;
+import org.histo.action.dialog.settings.SettingsDialogHandler;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
@@ -76,11 +76,6 @@ public class ReceiptlogViewHandlerAction {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private GlobalEditViewHandler globalEditViewHandler;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
 	private SampleService sampleService;
 
 	/**
@@ -104,14 +99,7 @@ public class ReceiptlogViewHandlerAction {
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize ReceiptlogViewHandlerAction for task");
 		// generating guilist for display
-		generateSlideGuiList();
-
 		setActionOnMany(StainingListAction.NONE);
-	}
-
-	@Transient
-	public final void generateSlideGuiList() {
-		generateSlideGuiList(false);
 	}
 
 	/**
@@ -122,8 +110,7 @@ public class ReceiptlogViewHandlerAction {
 	 * 
 	 * @param showArchived
 	 */
-	@Transient
-	public final void generateSlideGuiList(boolean showArchived) {
+	public final void generateSlideGuiList(Task task, boolean showArchived) {
 		logger.debug("Generating new List for receiptlog");
 		
 		if (getStainingTableRows() == null)
@@ -133,7 +120,7 @@ public class ReceiptlogViewHandlerAction {
 
 		boolean even = false;
 
-		for (Sample sample : getSamples()) {
+		for (Sample sample : task.getSamples()) {
 			// skips archived tasks
 
 			StainingTableChooser<Sample> sampleChooser = new StainingTableChooser<Sample>(sample, even);
@@ -175,7 +162,7 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void performActionOnManyTaskChildren(Task task, StainingListAction action) {
 		try {
-			List<StainingTableChooser<?>> list = task.getStainingTableRows();
+			List<StainingTableChooser<?>> list = getStainingTableRows();
 
 			// at least one thing has to bee selected
 			boolean atLeastOnechoosen = false;

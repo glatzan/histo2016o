@@ -289,7 +289,7 @@
 
 			<!-- ******************************** Slides ******************************** -->
 			<p:dataTable var="stainingRow" styleClass="stainingTable"
-				value="#{globalEditViewHandler.selectedTask.stainingTableRows}"
+				value="#{receiptlogViewHandlerAction.stainingTableRows}"
 				rowIndexVar="index">
 
 				<!-- sample -->
@@ -556,7 +556,7 @@
 				<p:commandButton icon="fa fa-fw fa-check-circle"
 					disabled="#{!taskEditable}" update="contentForm"
 					value="#{msg['body.statiningView.chooseAll']}"
-					actionListener="#{receiptlogViewHandlerAction.setListAsChoosen(globalEditViewHandler.selectedTask.stainingTableRows,true)}" />
+					actionListener="#{receiptlogViewHandlerAction.setListAsChoosen(receiptlogViewHandlerAction.stainingTableRows,true)}" />
 
 				<h:outputLabel value="#{msg['body.statiningView.choosenElements']}"
 					style="margin-left:20px;"></h:outputLabel>

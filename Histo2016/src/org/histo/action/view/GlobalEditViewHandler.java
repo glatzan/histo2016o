@@ -116,6 +116,11 @@ public class GlobalEditViewHandler {
 	@Lazy
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	@Lazy
+	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
 	// ************************ Navigation ************************
 	/**
 	 * View options, dynamically generated depending on the users role
@@ -212,7 +217,7 @@ public class GlobalEditViewHandler {
 		// settings views
 		setNavigationPages(new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
 
-		updateDataOfTask(false);
+		updateDataOfTask(true, true, true, true);
 	}
 
 	public void loadGuiData() {
@@ -225,7 +230,7 @@ public class GlobalEditViewHandler {
 
 		setPhysiciansToSignList(physicianDAO.getPhysicians(ContactRole.SIGNATURE, false));
 		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
-		
+
 		setMaterialList(utilDAO.getAllMaterialPresets(true));
 	}
 
@@ -240,22 +245,43 @@ public class GlobalEditViewHandler {
 			return View.WORKLIST_BLANK.getPath();
 	}
 
-	public void updateDataOfTask(boolean updateFavouriteLists) {
-		if (selectedTask != null)
+	public void updateDataOfTask() {
+		updateDataOfTask(true, false, true, true);
+	}
+
+	/**
+	 * Updates essencial task data, menuModel= Menu for Task, TaskStatus = Task
+	 * infos (patientmenu), SlideguiList = receiptlog
+	 * 
+	 * @param updateMenuModel
+	 * @param updateFavouriteLists
+	 * @param updateTaskStatus
+	 * @param updateSlideGuiList
+	 */
+	public void updateDataOfTask(boolean updateMenuModel, boolean updateFavouriteLists, boolean updateTaskStatus,
+			boolean updateSlideGuiList) {
+
+		logger.debug("Updating Task Data + (menuModel = " + updateMenuModel + " ,TaskStatus = " + updateTaskStatus
+				+ " , SlideGuiList = " + updateSlideGuiList + ")");
+		
+		if (selectedTask != null && updateTaskStatus)
 			selectedTask.generateTaskStatus();
 
-		updateMenuModel(updateFavouriteLists);
+		if (updateMenuModel)
+			updateMenuModel(updateFavouriteLists);
+
+		if (selectedTask != null && updateSlideGuiList)
+			receiptlogViewHandlerAction.generateSlideGuiList(getSelectedTask(), false);
 	}
 
 	public void updateMenuModel(boolean updateFavouriteLists) {
 		setTaskMenuModel((new MenuGenerator()).generateEditMenu(selectedPatient, selectedTask));
 	}
 
-	
 	public void addTaskToFavouriteList(Task task, long id) {
 		try {
 			favouriteListDAO.addTaskToList(task, id);
-			updateDataOfTask(true);
+			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.onVersionConflictPatient(task.getPatient(), true);
 		}
@@ -264,7 +290,7 @@ public class GlobalEditViewHandler {
 	public void removeTaskFromFavouriteList(Task task, Long... ids) {
 		try {
 			favouriteListDAO.removeTaskFromList(task, ArrayUtils.toPrimitive(ids));
-			updateDataOfTask(true);
+			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.onVersionConflictPatient(task.getPatient(), true);
 		}

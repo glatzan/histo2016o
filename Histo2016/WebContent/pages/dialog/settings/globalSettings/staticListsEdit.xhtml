@@ -7,46 +7,48 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{settingsDialogHandler.getTab('StaticListTab').newListItem ? msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.getTab('StaticListTab').selectedStaticList)]) : msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.getTab('StaticListTab').selectedStaticList)])}"
-			styleClass="contentPannel" />
-		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
-			style="width:100%">
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{settingsDialogHandler.staticListTab.newListItem ? msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.staticListTab.selectedStaticList)]) : msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.staticListTab.selectedStaticList)])}" />
+	</p:outputPanel>
 
-			<h:outputLabel value="#{msg['dialog.settings.list.new.name']}"></h:outputLabel>
-			<p:inputText
-				value="#{settingsDialogHandler.getTab('StaticListTab').editListItem.value}"></p:inputText>
-		</p:panelGrid>
-	</div>
+	<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+		style="width:100%">
 
-	<div class="bottomDiv">
-		<h:panelGrid columns="3" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-			<h:panelGrid columns="3" style="float:right;">
+		<h:outputLabel value="#{msg['dialog.settings.list.new.name']}"></h:outputLabel>
+		<p:inputText
+			value="#{settingsDialogHandler.staticListTab.editListItem.value}"></p:inputText>
+	</p:panelGrid>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-fw fa-floppy-o"
-					styleClass="smallButton buttonRighMarginInList"
-					process=":adminForm:tabview:staticLists" partialSubmit="true"
-					update=":adminForm:tabview:staticLists">
+					icon="fa fa-fw fa-floppy-o" process="@form" partialSubmit="true"
+					update="@form">
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('StaticListTab').saveListItem()}" />
+						binding="#{settingsDialogHandler.staticListTab.saveListItem()}" />
 					<f:actionListener
-						binding="#{settingsDialogHandler.getTab('StaticListTab').discardListItem()}" />
+						binding="#{settingsDialogHandler.staticListTab.discardListItem()}" />
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.abort']}"
-					icon="fa fa-fw fa-times-circle"
-					styleClass="smallButton buttonRighMarginInList" process="@this"
+					icon="fa fa-fw fa-times-circle" process="@this"
 					partialSubmit="true"
-					actionListener="#{settingsDialogHandler.getTab('StaticListTab').discardListItem()}"
-					update=":adminForm:tabview:staticLists" />
+					actionListener="#{settingsDialogHandler.staticListTab.discardListItem()}"
+					update="@form" />
 
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"
 					actionListener="#{settingsDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
+
 </ui:composition>

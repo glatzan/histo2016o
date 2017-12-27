@@ -35,6 +35,11 @@ public class MainHandlerAction {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
+	/**
+	 * ID of the global info growl
+	 */
+	private static final String GLOBAL_GROWL_ID = null;
+
 	@Autowired
 	@Lazy
 	private UserHandlerAction userHandlerAction;
@@ -42,10 +47,6 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Navigation
 	 ********************************************************/
-
-	@Getter
-	@Setter
-	private String queueDialog;
 
 	@Getter
 	@Setter
@@ -80,27 +81,10 @@ public class MainHandlerAction {
 	 * Session
 	 ********************************************************/
 
-	/********************************************************
-	 * Dialog
-	 ********************************************************/
-
 	public void processQueues() {
 		showQueueGrowlMessage();
-		showQueueDialog();
 	}
 
-	public void showQueueDialog() {
-		logger.trace("Showing Dialog from queue called");
-		if (getQueueDialog() != null) {
-			logger.debug("Showing Dialog from queue: " + getQueueDialog());
-			RequestContext.getCurrentInstance().execute("clickButtonFromBean('" + getQueueDialog() + "')");
-			setQueueDialog(null);
-		}
-	}
-
-	/********************************************************
-	 * Dialog
-	 ********************************************************/
 	public void sendGrowlMessages(CustomUserNotificationExcepetion e) {
 		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
 	}
@@ -110,17 +94,19 @@ public class MainHandlerAction {
 	}
 
 	public void sendGrowlMessages(String headline, String message, FacesMessage.Severity servertiy) {
+		sendGrowlMessages(new FacesMessage(servertiy, headline, message));
+	}
+
+	public void sendGrowlMessages(FacesMessage message) {
 		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage("globalgrowl", new FacesMessage(servertiy, headline, message));
-		logger.debug("Growl Messagen (" + servertiy + "): " + headline + " " + message);
+		context.addMessage(GLOBAL_GROWL_ID,message);
+		logger.debug("Growl Messagen (" + message.getSeverity() + "): " + message.getSummary() + " " + message.getDetail());
 	}
 
 	public void showQueueGrowlMessage() {
 
 		for (FacesMessage facesMessage : getQueueGrowlMessages()) {
-			FacesContext context = FacesContext.getCurrentInstance();
-			context.addMessage("globalgrowl", facesMessage);
-			logger.debug("Adding message to growl " + facesMessage); 
+			sendGrowlMessages(facesMessage);
 		}
 
 		getQueueGrowlMessages().clear();
@@ -132,7 +118,7 @@ public class MainHandlerAction {
 
 	public void addQueueGrowlMessage(String headline, String message, FacesMessage.Severity servertiy) {
 		getQueueGrowlMessages().add(new FacesMessage(servertiy, headline, message));
-		showQueueGrowlMessage();
+		// showQueueGrowlMessage();
 	}
 
 	/********************************************************
