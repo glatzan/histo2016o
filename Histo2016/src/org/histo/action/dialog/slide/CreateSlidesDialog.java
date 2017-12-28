@@ -18,6 +18,7 @@ import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.service.SampleService;
 import org.histo.ui.ListChooser;
+import org.histo.ui.task.TaskStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -101,7 +102,7 @@ public class CreateSlidesDialog extends AbstractDialog {
 
 		setCommentary("");
 
-		setRestaining(taskStatusHandler.isReStainingFlag(block.getParent()));
+		setRestaining(TaskStatus.checkIfReStainingFlag(block.getParent()));
 
 		setStainingListChooser(new ArrayList<ListChooser<StainingPrototype>>());
 

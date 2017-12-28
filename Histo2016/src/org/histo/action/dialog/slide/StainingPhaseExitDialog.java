@@ -1,8 +1,8 @@
 package org.histo.action.dialog.slide;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.handler.TaskHandlerAction;
 import org.histo.action.view.GlobalEditViewHandler;
-import org.histo.action.view.TaskHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.PredefinedFavouriteList;

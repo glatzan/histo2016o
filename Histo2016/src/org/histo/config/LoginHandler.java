@@ -8,12 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.View;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoUser;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -44,6 +46,12 @@ public class LoginHandler {
 	@Setter(AccessLevel.NONE)
 	@Getter(AccessLevel.NONE)
 	private ResourceBundle resourceBundle;
+	
+	@Autowired
+	@Setter(AccessLevel.NONE)
+	@Getter(AccessLevel.NONE)
+	@Lazy
+	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	private String username;
 
@@ -113,8 +121,11 @@ public class LoginHandler {
 			if (group.getAuthRole() == AuthRole.ROLE_NONEAUTH)
 				// no role, should never happen
 				return View.LOGIN.getPath();
-			else
-				return user.getSettings().getDefaultView().getRootPath();
+			else {
+				// alway init worklist! 
+				worklistViewHandlerAction.initBean();
+				return user.getSettings().getStartView().getRootPath();
+			}
 		}
 
 		return View.LOGIN.getPath();

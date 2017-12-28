@@ -35,7 +35,7 @@ where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.h
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
-
+-> Liste f�r normale benutzer �berarbeiten
 -> Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
 -> Zimmermann --> Atzrodt, Aktualliesierien button (feld für username ändern)
 -> Neuladen der Listen, nachdem das Settingsmenu geschlossen wurde
@@ -46,7 +46,6 @@ Testen:
 Next Changes:
 -> slide overview dialog!
 
--> Laden der Auftragsliste beim einloggen
 -> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
 
 -> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
@@ -75,7 +74,6 @@ TODO: Datenbankabfragen in globaleidt handler shiften
 Long-term Changes 
 TODO: Settings-Dialog überarbeiten tabellen und datatables auf neuen style ändern
 TODO: Nach 3 monaten soll dearchiviertung nicht mehr möglich sein
-TODO: Liste f�r normale benutzer �berarbeiten
 TODO: rechte durchsetzten
 TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
@@ -100,6 +98,9 @@ Graphic Changes
 -> Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
 
 v 1.0.15
+++++: Rechte zum löschen von Auftragen und hochladen von PDFs für Patienten implementiert.
+++++: Rechte zum editieren und hinzufügen von Patienten implementiert.
+++++: Auftragsliste wird beim einloggen korrekt geladen.
 ++++: Globale Anzeige von Fehlern/Infos funktioniert wieder richtig
 ++++: Dialog zum hinzufügen von Patienten auf anlegen von Klinik-Patienten vorbereitet
 ++++: Im Dialog zum hinzufügen von Patienten erscheint der Cursor jetzt zuverlässig im PIZ-Feld 
@@ -112,6 +113,45 @@ v 1.0.15
 ++++: Beim Erstellen neuer Färbungen wird in der Auftragsübersicht der Auftrag nicht mehr als "Färbung abgeschlossen" angezeigt
 ++++: Datum der Unterschirft wird aktualisiert, sobald die Befundung beendet wird
 ++++: Patienten-Daten werden wieder richtig angezeigt
+
+SQL:
+alter table histosettings add startview integer;
+alter table histosettings add startview integer;
+alter table histosettings ALTER COLUMN defaultview TYPE character varying(255);
+alter table histosettings ALTER COLUMN startview TYPE character varying(255);
+update histosettings set startview = 'WORKLIST_TASKS';
+update histosettings set defaultview = 'WORKLIST_DIAGNOSIS' where defaultview = '9';
+update histosettings set defaultview = 'WORKLIST_RECEIPTLOG' where defaultview = '8';
+update histosettings set defaultview = 'WORKLIST_TASKS' where defaultview = '6';
+update histosettings set defaultview = 'GUEST' where defaultview = '1';
+update histosettings set defaultview = 'WORKLIST_REPORT' where defaultview = '3';
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ADD_NEW_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ADD_CLINIC_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ADD_EDIT_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ADD_NEW_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ADD_CLINIC_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ADD_EDIT_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ADD_NEW_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ADD_CLINIC_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ADD_EDIT_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ADD_NEW_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ADD_CLINIC_PATIENT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ADD_EDIT_PATIENT');
+update histogroup_permissions set permissions = 'RESTORE_TASK' where permissions = 'RESOTRE_TASK';
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'UPLOAD_PATIENT_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'DELETE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'DELETE_EDITED_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'NEW_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'UPLOAD_PATIENT_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'DELETE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'DELETE_EDITED_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'NEW_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'UPLOAD_PATIENT_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'DELETE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'NEW_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'UPLOAD_PATIENT_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'DELETE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'NEW_TASK');
 
 v 1.0.14
 ++++: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich
@@ -177,8 +217,8 @@ INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ARCH
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ARCHIVE_TASK');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ARCHIVE_TASK');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ARCHIVE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'RESOTRE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'RESOTRE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'RESTORE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'RESTORE_TASK');
 
 
 V 1.0.11

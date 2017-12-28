@@ -192,6 +192,7 @@
 				<f:facet name="header">
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="taskList"
+							rendered="#{userHandlerAction.currentUserHasPermission('NEW_TASK')}"
 							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 							<p:ajax event="dialogReturn"
 								update="navigationForm contentForm headerForm"
@@ -201,6 +202,7 @@
 					</h:panelGrid>
 				</f:facet>
 				<p:commandLink
+					rendered="#{userHandlerAction.currentUserHasPermission('DELETE_TASK', 'DELETE_EDITED_TASK')}"
 					actionListener="#{dialogHandlerAction.deleteTaskDialog.initAndPrepareBean(task)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm"
 						listener="#{mainHandlerAction.processQueues()}" />
@@ -251,6 +253,7 @@
 				<f:facet name="header">
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="upload"
+							rendered="#{userHandlerAction.currentUserHasPermission('UPLOAD_PATIENT_DATA')}"
 							actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
 							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 							<i class="fa fa-plus"></i>
@@ -258,6 +261,7 @@
 					</h:panelGrid>
 				</f:facet>
 				<p:commandLink
+					rendered="#{userHandlerAction.currentUserHasPermission('UPLOAD_PATIENT_DATA')}"	
 					actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					<i class="fa fa-search"></i>

@@ -1,4 +1,4 @@
-package org.histo.action.view;
+package org.histo.action.handler;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +9,9 @@ import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
+import org.histo.action.view.GlobalEditViewHandler;
+import org.histo.action.view.ReceiptlogViewHandlerAction;
+import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StainingListAction;

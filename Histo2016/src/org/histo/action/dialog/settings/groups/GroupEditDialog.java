@@ -89,7 +89,7 @@ public class GroupEditDialog extends AbstractDialog {
 		setNewGroup(group.getId() == 0 ? true : false);
 
 		setAllViews(
-				new View[] { View.GUEST, View.USERLIST, View.WORKLIST_TASKS , View.WORKLIST_PATIENT,  View.WORKLIST_DIAGNOSIS, View.WORKLIST_RECEIPTLOG});
+				new View[] { View.GUEST, View.USERLIST, View.WORKLIST_TASKS , View.WORKLIST_PATIENT,  View.WORKLIST_DIAGNOSIS, View.WORKLIST_RECEIPTLOG, View.WORKLIST_REPORT});
 
 		setAvailableWorklistsToLoad(new ArrayList<SimpleSearchOption>());
 		getAvailableWorklistsToLoad().add(SimpleSearchOption.DIAGNOSIS_LIST);

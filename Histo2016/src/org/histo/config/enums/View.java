@@ -16,7 +16,8 @@ public enum View {
 	WORKLIST_TASKS("/pages/worklist/taskList.xhtml", WORKLIST),
 	WORKLIST_PATIENT("/pages/worklist/patient.xhtml", WORKLIST),
 	WORKLIST_RECEIPTLOG("/pages/worklist/receiptlog.xhtml", WORKLIST),
-	WORKLIST_DIAGNOSIS("/pages/worklist/diagnosis.xhtml", WORKLIST);
+	WORKLIST_DIAGNOSIS("/pages/worklist/diagnosis.xhtml", WORKLIST),
+	WORKLIST_REPORT("/pages/worklist/report.xhtml", WORKLIST);
 
 	private final String path;
 

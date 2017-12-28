@@ -73,8 +73,14 @@ public class HistoSettings implements HasID, Cloneable {
 	/**
 	 * Page which should be shown as default page
 	 */
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private View defaultView;
+	
+	/**
+	 * Page which will be shown on startup
+	 */
+	@Enumerated(EnumType.STRING)
+	private View startView;
 
 	/**
 	 * Default worklist to load, staining, diagnosis, notification, none

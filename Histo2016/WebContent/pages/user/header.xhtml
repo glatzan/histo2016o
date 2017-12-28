@@ -15,9 +15,6 @@
 	<c:set var="selectedTask"
 		value="#{globalEditViewHandler.selectedTask}" />
 
-	<c:set var="taskEditable" scope="request"
-		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
-
 	<c:set var="patientIsNotNull" scope="request"
 		value="#{selectedPatient ne null}" />
 

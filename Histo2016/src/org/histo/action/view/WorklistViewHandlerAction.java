@@ -78,6 +78,10 @@ public class WorklistViewHandlerAction {
 	@Autowired
 	@Lazy
 	private TaskViewHandlerAction taskViewHandlerAction;
+	
+	@Autowired
+	@Lazy
+	private ReportViewHandlerAction reportViewHandlerAction;
 
 	/**
 	 * Containing all worklists
@@ -92,7 +96,9 @@ public class WorklistViewHandlerAction {
 	@Getter
 	private Worklist worklist;
 
-	@PostConstruct
+	/**
+	 * Init method is called via login-handler
+	 */
 	public void initBean() {
 		logger.debug("PostConstruct Init worklist");
 
@@ -102,8 +108,7 @@ public class WorklistViewHandlerAction {
 		// preparing worklistSearchDialog for creating a worklist
 		dialogHandlerAction.getWorklistSearchDialog().initBean();
 
-		SimpleSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings()
-				.getWorklistToLoad();
+		SimpleSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings().getWorklistToLoad();
 
 		if (defaultWorklistToLoad != null) {
 			dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch()
@@ -119,15 +124,16 @@ public class WorklistViewHandlerAction {
 			addWorklist(new Worklist("Default", new WorklistSearch()), true);
 		}
 
-		goToNavigation(View.WORKLIST_TASKS);
+		// setting start view
+		goToNavigation(userHandlerAction.getCurrentUser().getSettings().getStartView());
+
+		// setting default subview
 		globalEditViewHandler.setLastDefaultView(userHandlerAction.getCurrentUser().getSettings().getDefaultView());
 	}
 
 	public void goToNavigation(View view) {
-		System.out.println(view);
 		switch (view) {
 		case WORKLIST_TASKS:
-			System.out.println("dasd");
 			taskViewHandlerAction.initBean();
 			changeView(View.WORKLIST_TASKS);
 			break;
@@ -147,6 +153,7 @@ public class WorklistViewHandlerAction {
 			break;
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
+		case WORKLIST_REPORT:
 			// if task is select change view
 			if (globalEditViewHandler.getSelectedPatient() != null && globalEditViewHandler.getSelectedTask() != null)
 				changeView(view);
@@ -217,7 +224,7 @@ public class WorklistViewHandlerAction {
 		logger.debug("Select patient " + globalEditViewHandler.getSelectedPatient().getPerson().getFullName());
 
 		globalEditViewHandler.updateDataOfTask(true, false, false, false);
-		
+
 		changeView(View.WORKLIST_PATIENT);
 		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
@@ -283,9 +290,10 @@ public class WorklistViewHandlerAction {
 		globalEditViewHandler.setSelectedPatient(task.getPatient());
 		globalEditViewHandler.setSelectedTask(task);
 
-		// init all available materials
 		receiptlogViewHandlerAction.prepareForTask(task);
 		diagnosisViewHandlerAction.prepareForTask(task);
+	
+		reportViewHandlerAction.prepareForTask(task);
 
 		// replacing patient, generating task status
 		getWorklist().addPatient(task.getPatient());
@@ -296,12 +304,17 @@ public class WorklistViewHandlerAction {
 
 		task.setActive(true);
 
+		logger.debug("Current view is " + globalEditViewHandler.getCurrentView());
+
 		if (globalEditViewHandler.getCurrentView() != View.WORKLIST_RECEIPTLOG
-				&& globalEditViewHandler.getCurrentView() != View.WORKLIST_DIAGNOSIS) {
+				&& globalEditViewHandler.getCurrentView() != View.WORKLIST_DIAGNOSIS
+				&& globalEditViewHandler.getCurrentView() != View.WORKLIST_REPORT) {
+
+			logger.debug("Setting subview " + globalEditViewHandler.getLastDefaultView());
 			changeView(globalEditViewHandler.getLastDefaultView());
 		}
 
-		logger.info("end -> " + (System.currentTimeMillis() - test));
+		logger.info("Request processed in -> " + (System.currentTimeMillis() - test));
 	}
 
 	/**
@@ -370,9 +383,9 @@ public class WorklistViewHandlerAction {
 	}
 
 	/**
-	 * Adds a patient to the worklist. If already added it is check if the
-	 * patient should be selected. If so the patient will be selected. The
-	 * patient isn't added twice.
+	 * Adds a patient to the worklist. If already added it is check if the patient
+	 * should be selected. If so the patient will be selected. The patient isn't
+	 * added twice.
 	 * 
 	 * @param patient
 	 * @param asSelectedPatient

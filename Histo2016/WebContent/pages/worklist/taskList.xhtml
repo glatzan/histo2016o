@@ -104,15 +104,6 @@
 							title="" />
 					</ui:fragment>
 				</p:column>
-
-
-				<p:column headerText="" style="width:40px;">
-					<p:commandLink disabled="#{task.diagnosisCompletionDate eq 0}"
-						actionListener="#{settingsDialogHandler.prepareEditStaining(staining)}"
-						update="@form" styleClass="noUnderlineAtLink">
-						<i class="fa fa-search" />
-					</p:commandLink>
-				</p:column>
 			</p:dataTable>
 		</h:panelGrid>
 

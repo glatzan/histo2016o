@@ -12,6 +12,7 @@ import org.histo.model.AssociatedContactNotification;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
 import org.histo.util.StreamUtils;
+import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -93,7 +94,7 @@ public class TaskViewHandlerAction {
 
 		onChangeSelectionCriteria();
 	}
-
+	
 	public void onChangeSelectionCriteria() {
 		logger.debug("Reloading task lists");
 		setTaskList(taskDAO.getTasks(getTaskPerPull(), getPage() - 1));
@@ -119,17 +120,6 @@ public class TaskViewHandlerAction {
 				// do nothing
 			}
 		}
-	}
-
-	/********************************************************
-	 * Getter/Setter
-	 ********************************************************/
-	public List<Task> getTaskList() {
-		// TODO move to action not getter
-//		if (taskList == null)
-//			initBean();
-
-		return taskList;
 	}
 
 }

@@ -548,6 +548,7 @@ ul.ui-menu-child {
 /* Body no padding */
 .content .body {
 	padding: 0px !important;
+	height: calc( 100vh - 33px ) !important;
 }
 
 /* navigation background */

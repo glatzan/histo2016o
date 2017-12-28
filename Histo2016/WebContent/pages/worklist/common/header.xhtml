@@ -14,9 +14,6 @@
 
 	<c:set var="selectedTask" value="#{globalEditViewHandler.selectedTask}" />
 
-	<c:set var="taskEditable" scope="session"
-		value="#{taskStatusHandler.isTaskEditable(selectedTask)}" />
-
 	<c:set var="patientIsNotNull" scope="request"
 		value="#{selectedPatient ne null}" />
 
@@ -26,42 +23,45 @@
 	<h:panelGrid columns="2"
 		styleClass="noBordersAll collapsedBordersAll noPaddingAll"
 		style="width:100%">
-		<h:panelGrid columns="4">
 
-			<p:selectBooleanCheckbox value="" disabled="true" />
-			<h:outputLabel value="#{msg['body.worklist.header.filter']}" />
+		<h:panelGrid columns="3">
 
 			<p:commandButton
+				rendered="#{userHandlerAction.currentUserHasPermission('ADD_EDIT_PATIENT')}"
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm headerForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
-			<p:selectOneMenu style="margin-top:1px;"
-				title="#{msg['body.worklist.header.view']}"
-				value="#{globalEditViewHandler.currentView}">
+			<h:outputLabel value="#{msg['header.view']}" style="margin-left:10px; font-size:14px;font-weight:bold"></h:outputLabel>
 
-				<f:selectItems value="#{globalEditViewHandler.navigationPages}"
-					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
+			<h:panelGroup>
+				<p:selectOneMenu style="margin-left:10px; margin-top:1px;" title="#{msg['body.worklist.header.view']}"
+					value="#{globalEditViewHandler.currentView}">
 
-				<p:ajax event="change" process="@this"
-					oncomplete="$('#headerForm\\:changeView').click();"></p:ajax>
+					<f:selectItems value="#{globalEditViewHandler.navigationPages}"
+						var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
 
-			</p:selectOneMenu>
+					<p:ajax event="change" process="@this"
+						oncomplete="$('#headerForm\\:changeView').click();"></p:ajax>
 
-			<p:commandButton id="changeView"
-				update="navigationForm:patientList contentForm headerForm"
-				actionListener="#{worklistViewHandlerAction.goToNavigation(globalEditViewHandler.currentView)}"
-				style="display:none" />
+				</p:selectOneMenu>
 
+				<p:commandButton id="changeView"
+					update="navigationForm:patientList contentForm headerForm"
+					actionListener="#{worklistViewHandlerAction.goToNavigation(globalEditViewHandler.currentView)}"
+					style="display:none" />
+
+			</h:panelGroup>
 		</h:panelGrid>
 
 		<!-- Buttons on the right -->
 		<h:panelGroup styleClass="headerRight" layout="block">
 
 			<!-- Current Version -->
-			<p:commandLink value="Version : #{globalSettings.currentVersion}"
+			<p:commandLink value="#{msg['header.version']} : #{globalSettings.currentVersion}"
 				styleClass="noUnderlineAtLink buttonRighMarginInListExtended icon-grey"
 				actionListener="#{programmVersionDialog.initAndPrepareBean()}"></p:commandLink>
 
@@ -99,7 +99,8 @@
 			<!-- Edit Patient data -->
 			<p:commandButton id="editPatientData" style="display:none"
 				actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
-				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- *************** Patient Menu *************** -->
@@ -261,19 +262,22 @@
 			<p:commandButton id="settingsDialogBtn" style="display:none"
 				partialSubmit="true" process="@this"
 				actionListener="#{settingsDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- userSettings button -->
 			<p:commandButton id="userSettingsDialogBtn" style="display:none"
 				actionListener="#{userSettingsDialog.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- Info button -->
 			<p:commandButton id="infoDialogBtn" style="display:none"
 				actionListener="#{programmVersionDialog.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- update all -->
