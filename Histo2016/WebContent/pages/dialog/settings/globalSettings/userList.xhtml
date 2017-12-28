@@ -78,7 +78,7 @@
 			<h:panelGrid columns="1" styleClass="newTableContainer left">
 			</h:panelGrid>
 
-			<h:panelGrid columns="3" styleClass="newTableContainer right">
+			<h:panelGrid columns="4" styleClass="newTableContainer right">
 				<p:commandButton
 					rendered="#{userHandlerAction.currentUserHasPermission('EDIT_GROUP_SETTINGS')}"
 					value="#{msg['dialog.settings.user.button.groups']}"
@@ -96,6 +96,11 @@
 					<p:ajax event="dialogReturn"
 						listener="#{settingsDialogHandler.histoUserTab.addHistoUser(dialogHandlerAction.physicianSearchDialog.physician)}"
 						update="@form" />
+				</p:commandButton>
+
+				<p:commandButton value="test" icon="fa fa-fw fa-plus-circle"
+					process="@this" partialSubmit="true"
+					actionListener="#{mainHandlerAction.addQueueGrowlMessage('','')}">
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"

@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerRepository;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
@@ -38,7 +39,7 @@ public class MainHandlerAction {
 	/**
 	 * ID of the global info growl
 	 */
-	private static final String GLOBAL_GROWL_ID = null;
+	private static final String GLOBAL_GROWL_ID = "globalGrowl";
 
 	@Autowired
 	@Lazy
@@ -99,17 +100,21 @@ public class MainHandlerAction {
 
 	public void sendGrowlMessages(FacesMessage message) {
 		FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(GLOBAL_GROWL_ID,message);
-		logger.debug("Growl Messagen (" + message.getSeverity() + "): " + message.getSummary() + " " + message.getDetail());
+		context.addMessage(GLOBAL_GROWL_ID, message);
+		logger.debug("Growl (" + GLOBAL_GROWL_ID + ") Messagen (" + message.getSeverity() + "): " + message.getSummary()
+				+ " " + message.getDetail());
 	}
 
 	public void showQueueGrowlMessage() {
-
 		for (FacesMessage facesMessage : getQueueGrowlMessages()) {
 			sendGrowlMessages(facesMessage);
 		}
 
-		getQueueGrowlMessages().clear();
+		if (!getQueueGrowlMessages().isEmpty()) {
+			logger.debug("Growl update");
+			getQueueGrowlMessages().clear();
+			RequestContext.getCurrentInstance().update("growlForm:globalgrowl");
+		}
 	}
 
 	public void addQueueGrowlMessage(String headline, String message) {
