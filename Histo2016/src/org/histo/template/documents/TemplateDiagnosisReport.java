@@ -7,6 +7,7 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.HistoUtil;
 import org.histo.util.PDFGenerator;
+import org.histo.util.interfaces.PDFNonBlockingReturnHandler;
 import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
@@ -28,8 +29,19 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 		this.toSendAddress = toSendAddress;
 	}
 
+	public void generatePDFNoneBlocking(PDFGenerator generator, PDFNonBlockingReturnHandler returnHandler) {
+		generator.openNewPDf(this);
+		prepareTemplate(generator);
+		generator.generatePDFNonBlocking(returnHandler);
+	}
+
 	public PDFContainer generatePDF(PDFGenerator generator) {
 		generator.openNewPDf(this);
+		prepareTemplate(generator);
+		return generator.generatePDF();
+	}
+
+	public void prepareTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
 		generator.getConverter().replace("address",
@@ -38,7 +50,6 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 		generator.getConverter().replace("subject", "");
 		generator.getConverter().replace("date", new DateTool());
 		generator.getConverter().replace("latexTextConverter", new TextToLatexConverter());
-		
-		return generator.generatePDF();
+
 	}
 }

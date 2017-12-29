@@ -11,6 +11,7 @@
 
 <f:view contentType="text/html" encoding="UTF-8" />
 <h:body>
+
 	<ui:composition template="template/layout.xhtml">
 		<!-- Header -->
 		<ui:define name="header">
@@ -24,6 +25,41 @@
 
 		<ui:define name="content">
 			<ui:include src="#{globalEditViewHandler.getCenterView()}"></ui:include>
+		</ui:define>
+
+		<ui:define name="globalInclude">
+			<h:form id="globalCommandsForm">
+				<!-- update all, for resize update -->
+				<p:remoteCommand name="refreshOnResize"
+					update="navigationForm contentForm headerForm growlForm" />
+
+				<!-- update conten, btn because of click event -->
+				<p:commandButton id="refreshContentBtn" style="display:none"
+					update="navigationForm:patientList contentForm headerForm growlForm:globalgrowl" />
+
+			</h:form>
+
+			<!-- function for refreshing ui on resize -->
+			<script type="text/javascript">
+				var resizeTimeout;
+
+				window.onresize = function(event) {
+					clearTimeout(resizeTimeout);
+					resizeTimeout = setTimeout(refreshOnResize, 500);
+				}
+			</script>
+
+			<!-- Function for clicking on pf buttons -->
+			<script type="text/javascript">
+				// funktion is triggert by the backend to show a dialog, workaround
+				function clickButtonFromBean(btn) {
+					$(btn).click();
+				}
+
+				function executeFunctionFromBean(btn) {
+					btn();
+				}
+			</script>
 		</ui:define>
 	</ui:composition>
 </h:body>

@@ -43,7 +43,7 @@
 				title="#{msg['dialog.settings.person.list.options.edit']}"
 				actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteList, true)}"
 				process="@this" partialSubmit="true"
-				disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_FAVOURITE_LIST_SETTINGS')}">
+				disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_FAVOURITE')}">
 				<p:ajax event="dialogReturn"
 					listener="#{settingsDialogHandler.favouriteListTab.updateData()}"
 					update="@form" />

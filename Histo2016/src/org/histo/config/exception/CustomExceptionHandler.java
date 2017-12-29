@@ -145,7 +145,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 							resourceBundle.get("growl.version.error.text"));
 
 					RequestContext.getCurrentInstance()
-							.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+							.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
 
 					// TODO implement
 				} else if (cause instanceof AbortProcessingException) {
@@ -157,11 +157,12 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					cause.printStackTrace();
 				}
 
-//				ErrorMail mail = new ErrorMail();
-//				mail.prepareTemplate(userHandlerAction.getCurrentUser(), "Ehandler " + cause.getMessage(),
-//						new Date(System.currentTimeMillis()));
-//				mail.fillTemplate();
-//				globalSettings.getMailHandler().sendErrorMail(mail);
+				// ErrorMail mail = new ErrorMail();
+				// mail.prepareTemplate(userHandlerAction.getCurrentUser(), "Ehandler " +
+				// cause.getMessage(),
+				// new Date(System.currentTimeMillis()));
+				// mail.fillTemplate();
+				// globalSettings.getMailHandler().sendErrorMail(mail);
 			}
 
 			if (hanled)

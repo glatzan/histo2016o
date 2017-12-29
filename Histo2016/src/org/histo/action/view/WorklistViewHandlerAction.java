@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
+import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.View;
@@ -28,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import java.lang.reflect.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -78,7 +80,7 @@ public class WorklistViewHandlerAction {
 	@Autowired
 	@Lazy
 	private TaskViewHandlerAction taskViewHandlerAction;
-	
+
 	@Autowired
 	@Lazy
 	private ReportViewHandlerAction reportViewHandlerAction;
@@ -110,7 +112,8 @@ public class WorklistViewHandlerAction {
 
 		SimpleSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings().getWorklistToLoad();
 
-		if (defaultWorklistToLoad != null) {
+		// if a default to load was provided
+		if (defaultWorklistToLoad != null && defaultWorklistToLoad != SimpleSearchOption.EMTY_LIST) {
 			dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch()
 					.setSearchIndex(defaultWorklistToLoad);
 			dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch().updateSearchIndex();
@@ -132,6 +135,9 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void goToNavigation(View view) {
+
+		logger.debug("Navigation goto: " + view);
+
 		switch (view) {
 		case WORKLIST_TASKS:
 			taskViewHandlerAction.initBean();
@@ -148,27 +154,27 @@ public class WorklistViewHandlerAction {
 					onSelectPatient(first);
 				else
 					// change view to blank
-					changeView(View.WORKLIST_BLANK);
+					changeView(View.WORKLIST_PATIENT, View.WORKLIST_NOTHING_SELECTED);
 			}
 			break;
 		case WORKLIST_RECEIPTLOG:
 		case WORKLIST_DIAGNOSIS:
 		case WORKLIST_REPORT:
 			// if task is select change view
-			if (globalEditViewHandler.getSelectedPatient() != null && globalEditViewHandler.getSelectedTask() != null)
+			if (globalEditViewHandler.getSelectedPatient() != null && globalEditViewHandler.getSelectedTask() != null) {
 				changeView(view);
-			else {
-
-				globalEditViewHandler.setLastDefaultView(view);
+				onSelectTaskAndPatient(globalEditViewHandler.getSelectedTask());
+			} else {
 
 				Task first = worklist.getFirstActiveTask();
 
 				// select the task
 				if (first != null) {
+					changeView(view);
 					onSelectTaskAndPatient(first);
 				} else {
 					// change view to blank
-					changeView(View.WORKLIST_BLANK);
+					changeView(view, View.WORKLIST_NOTHING_SELECTED);
 				}
 			}
 			break;
@@ -179,13 +185,20 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void changeView(View view) {
-		globalEditViewHandler.setCurrentView(view);
+		changeView(view, view);
+	}
 
-		if (view != View.WORKLIST_BLANK)
-			globalEditViewHandler.setSelectedView(view);
+	public void changeView(View currentView, View displayView) {
+		logger.debug("Changing view to " + currentView + " display view (" + displayView + ")");
 
-		if (view == View.WORKLIST_DIAGNOSIS || view == View.WORKLIST_RECEIPTLOG)
-			globalEditViewHandler.setLastDefaultView(view);
+		globalEditViewHandler.setCurrentView(currentView);
+
+		globalEditViewHandler.setDisplayView(displayView);
+
+		if (currentView.isLastSubviewAble()) {
+			logger.debug("Setting last default view to " + currentView);
+			globalEditViewHandler.setLastDefaultView(currentView);
+		}
 	}
 
 	public void onSelectPatient(Patient patient) {
@@ -193,6 +206,16 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void onSelectPatient(Patient patient, boolean reload) {
+	
+		 try {
+	            Class c = MediaDialog.class;
+	            Method[] m = c.getDeclaredMethods();
+	            for (int i = 0; i < m.length; i++)
+	            System.out.println(m[i].toString());
+	        } catch (Throwable e) {
+	            System.err.println(e);
+	        }
+		
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
 
@@ -226,6 +249,7 @@ public class WorklistViewHandlerAction {
 		globalEditViewHandler.updateDataOfTask(true, false, false, false);
 
 		changeView(View.WORKLIST_PATIENT);
+
 		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
@@ -281,7 +305,7 @@ public class WorklistViewHandlerAction {
 								resourceBundle.get("growl.version.error.text"));
 
 						RequestContext.getCurrentInstance()
-								.execute("clickButtonFromBean('#headerForm\\\\:updateAllContent')");
+								.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
 					}
 				}
 			}
@@ -292,8 +316,11 @@ public class WorklistViewHandlerAction {
 
 		receiptlogViewHandlerAction.prepareForTask(task);
 		diagnosisViewHandlerAction.prepareForTask(task);
-	
-		reportViewHandlerAction.prepareForTask(task);
+
+		if (globalEditViewHandler.getCurrentView() == View.WORKLIST_REPORT
+				|| (!globalEditViewHandler.getCurrentView().isLastSubviewAble()
+						&& globalEditViewHandler.getLastDefaultView() == View.WORKLIST_REPORT))
+			reportViewHandlerAction.prepareForTask(task);
 
 		// replacing patient, generating task status
 		getWorklist().addPatient(task.getPatient());
@@ -304,12 +331,8 @@ public class WorklistViewHandlerAction {
 
 		task.setActive(true);
 
-		logger.debug("Current view is " + globalEditViewHandler.getCurrentView());
-
-		if (globalEditViewHandler.getCurrentView() != View.WORKLIST_RECEIPTLOG
-				&& globalEditViewHandler.getCurrentView() != View.WORKLIST_DIAGNOSIS
-				&& globalEditViewHandler.getCurrentView() != View.WORKLIST_REPORT) {
-
+		// change if is subview (diagnosis, receipt log or report view)
+		if (!globalEditViewHandler.getCurrentView().isLastSubviewAble()) {
 			logger.debug("Setting subview " + globalEditViewHandler.getLastDefaultView());
 			changeView(globalEditViewHandler.getLastDefaultView());
 		}

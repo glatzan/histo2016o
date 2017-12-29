@@ -27,7 +27,7 @@
 		<h:panelGrid columns="3">
 
 			<p:commandButton
-				rendered="#{userHandlerAction.currentUserHasPermission('ADD_EDIT_PATIENT')}"
+				rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT')}"
 				value="#{msg['body.worklist.header.button.addPatient']}"
 				styleClass="buttonMarginLeft"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
@@ -241,7 +241,7 @@
 
 				<!-- settings button -->
 				<p:menuitem value="#{msg['body.worklist.header.button.settings']}"
-					rendered="#{userHandlerAction.currentUserHasPermission('SHOW_SETTINGS_DIALOG')}"
+					rendered="#{userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS')}"
 					onclick="$('#headerForm\\:settingsDialogBtn').click();$('#headerForm\\:tiredMenu').hide();return false;" />
 
 				<!-- notification -->
@@ -280,18 +280,6 @@
 					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
-			<!-- update all -->
-			<p:commandButton id="updateAllContent" style="display:none"
-				actionListener="#{mainHandlerAction.processQueues()}"
-				update="navigationForm:patientList contentForm headerForm growlForm:globalgrowl" />
-
-			<!-- Function for clicking on the dialogs -->
-			<script type="text/javascript">
-				// funktion is triggert by the backend to show a dialog, workaround
-				function clickButtonFromBean(btn) {
-					$(btn).click();
-				}
-			</script>
 		</h:panelGroup>
 	</h:panelGrid>
 </ui:composition>

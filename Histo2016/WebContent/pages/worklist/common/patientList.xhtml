@@ -100,7 +100,7 @@
 			</p:commandLink>
 
 			<!-- Worklist change -->
-			<p:commandLink partialSubmit="true" process="@this"
+			<p:commandLink partialSubmit="true" process="@this" rendered="userHandlerAction.currentUserHasPermission('WORKLIST')}"
 				title="#{msg['body.worklist.navigation.button.changelist']}"
 				actionListener="#{dialogHandlerAction.worklistSearchDialog.initAndPrepareBean()}">
 				<i class="fa fa-search"></i>

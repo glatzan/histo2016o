@@ -144,7 +144,7 @@
 						<p:inputText disabled="true"
 							value="#{globalEditViewHandler.selectedTask.taskID}" />
 						<p:commandLink title="#{msg['body.diagnosis.taskNumber.change']}"
-							rendered="#{userHandlerAction.currentUserHasPermission('EDIT_TASK_ID')}"
+							rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ID')}"
 							style="margin-left:10px;"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							actionListener="#{dialogHandlerAction.changeTaskIDDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">

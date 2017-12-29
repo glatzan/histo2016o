@@ -28,7 +28,7 @@ public class TaskStatusHandler {
 			return false;
 
 		// users and guest can't edit anything
-		if (!userHandlerAction.currentUserHasPermission(HistoPermissions.EDIT_TASK)) {
+		if (!userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT)) {
 			logger.debug("Task not editable, user has no permission");
 			return false;
 		}

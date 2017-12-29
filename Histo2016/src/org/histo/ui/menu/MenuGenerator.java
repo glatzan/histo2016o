@@ -51,7 +51,7 @@ public class MenuGenerator {
 		// patient menu
 		{
 
-			boolean add_edit_patient = userHandlerAction.currentUserHasPermission(HistoPermissions.ADD_EDIT_PATIENT);
+			boolean PATIENT_EDIT = userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT);
 
 			// patient menu
 			DefaultSubMenu patientSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.patient"));
@@ -62,12 +62,12 @@ public class MenuGenerator {
 			item.setOnclick(
 					"$('#headerForm\\\\:addPatientButton').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 			item.setIcon("fa fa-user");
-			item.setRendered(add_edit_patient);
+			item.setRendered(PATIENT_EDIT);
 			patientSubMenu.addElement(item);
 
 			// separator
 			DefaultSeparator seperator = new DefaultSeparator();
-			seperator.setRendered(add_edit_patient);
+			seperator.setRendered(PATIENT_EDIT);
 			patientSubMenu.addElement(seperator);
 
 			// patient overview
@@ -78,7 +78,7 @@ public class MenuGenerator {
 			item.setDisabled(patient == null);
 			patientSubMenu.addElement(item);
 
-			if (patient != null && add_edit_patient) {
+			if (patient != null && PATIENT_EDIT) {
 
 				// patient edit data, disabled if not external patient
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.edit"));
@@ -100,7 +100,7 @@ public class MenuGenerator {
 		}
 
 		// task menu
-		if (patient != null && userHandlerAction.currentUserHasPermission(HistoPermissions.EDIT_TASK)) {
+		if (patient != null && userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT)) {
 
 			boolean taskIsNull = task == null;
 
@@ -118,7 +118,7 @@ public class MenuGenerator {
 			item.setOnclick(
 					"$('#headerForm\\\\:newTaskBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 			item.setIcon("fa fa-file");
-			item.setRendered(userHandlerAction.currentUserHasPermission(HistoPermissions.NEW_TASK));
+			item.setRendered(userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_NEW));
 			taskSubMenu.addElement(item);
 
 			// new sample, if task is not null
@@ -299,8 +299,8 @@ public class MenuGenerator {
 			// finalized
 			if (!taskIsNull) {
 				DefaultSeparator seperator = new DefaultSeparator();
-				seperator.setRendered(userHandlerAction.currentUserHasPermission(HistoPermissions.ARCHIVE_TASK,
-						HistoPermissions.RESTORE_TASK));
+				seperator.setRendered(userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_ARCHIVE,
+						HistoPermissions.TASK_EDIT_RESTORE));
 				taskSubMenu.addElement(seperator);
 
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.archive"));
@@ -308,7 +308,7 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:archiveTaskBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-archive");
 				item.setRendered(!task.isFinalized()
-						&& userHandlerAction.currentUserHasPermission(HistoPermissions.ARCHIVE_TASK));
+						&& userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_ARCHIVE));
 				taskSubMenu.addElement(item);
 
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.restore"));
@@ -316,7 +316,7 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:restoreTaskBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-dropbox");
 				item.setRendered(task.isFinalized()
-						&& userHandlerAction.currentUserHasPermission(HistoPermissions.RESTORE_TASK));
+						&& userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_RESTORE));
 				taskSubMenu.addElement(item);
 			}
 

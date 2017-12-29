@@ -10,13 +10,28 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<p:panel style="width: 70%"
+	<p:panel style="width: 70%" id="test"
 		styleClass="collapsedBorders noPadding noBorders">
 
 		<h:outputLabel rendered="#{reportViewHandlerAction.taskNoCompleted}"
 			value="Auftrag nicht abgeschlossen keine Befung vorhanden!"
 			style="font-size:1.5em;"></h:outputLabel>
+
+		<h:outputLabel
+			rendered="#{reportViewHandlerAction.renderReport.get()}"
+			value="Befund gerendert!" id="renderReport" style="font-size:1.5em;"></h:outputLabel>
+
+		<p:media player="pdf"
+			rendered="#{reportViewHandlerAction.renderReport.get()}"
+			style="height:calc( 100vh - 200px )"
+			value="#{reportViewHandlerAction.pdfContent}" width="100%"></p:media>
+
+
+		<p:poll interval="1" update="test"
+			stop="#{reportViewHandlerAction.stopPoll}"
+			listener="#{reportViewHandlerAction.test()}" autoStart="#{reportViewHandlerAction.autoStartPoll}" />
+
 	</p:panel>
-	
-	
+
+
 </ui:composition>

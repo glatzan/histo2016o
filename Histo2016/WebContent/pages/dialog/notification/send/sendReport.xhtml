@@ -13,7 +13,7 @@
 				<h:outputLabel
 					value="#{msg['dialog.notification.tab.sendReport.headline']} " />
 				<h:outputText
-					value="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer.creationDate}">
+					value="#{dialogHandlerAction.mediaDialog.PDFContainerToRender.creationDate}">
 					<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
 				</h:outputText>
 			</f:facet>
@@ -32,7 +32,7 @@
 				<p:selectOneMenu styleClass="smallInput"
 					converter="#{dialogHandlerAction.notificationDialog.sendReportTab.sendReportConverter}"
 					title="#{msg['body.worklist.header.view']}"
-					value="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer}">
+					value="#{dialogHandlerAction.mediaDialog.PDFContainerToRender}">
 
 					<f:selectItems
 						value="#{dialogHandlerAction.mediaDialog.selectedDatalist.attachedPdfs}"
@@ -58,7 +58,7 @@
 				<p:commandButton
 					value="#{msg['dialog.notification.tab.sendReport.button.download']}"
 					icon="fa fa-download" ajax="false"
-					disabled="#{dialogHandlerAction.mediaDialog.temporaryPdfContainer eq null}"
+					disabled="#{dialogHandlerAction.mediaDialog.PDFContainerToRender eq null}"
 					title="#{msg['dialog.notification.tab.sendReport.button.download.text']}"
 					styleClass="smallButton buttonRighMarginInList">
 					<p:fileDownload

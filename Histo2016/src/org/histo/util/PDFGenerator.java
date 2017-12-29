@@ -16,8 +16,10 @@ import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.interfaces.PDFNonBlockingReturnHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -44,6 +46,11 @@ public class PDFGenerator {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ThreadPoolTaskExecutor taskExecutor;
 
 	private File workingDirectory;
 	private File output;
@@ -79,6 +86,11 @@ public class PDFGenerator {
 		return converter;
 	}
 
+	/**
+	 * Generates a new PDF in a blocking way
+	 * 
+	 * @return
+	 */
 	public PDFContainer generatePDF() {
 		long test1 = System.currentTimeMillis();
 
@@ -110,6 +122,24 @@ public class PDFGenerator {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * Generates a PDF in a non blocking way (new thread), needs a return handler.
+	 * 
+	 * @param returnHandler
+	 */
+	public void generatePDFNonBlocking(PDFNonBlockingReturnHandler returnHandler) {
+		taskExecutor.execute(new Thread() {
+			public void run() {
+				logger.debug("Stargin PDF Generation in new Thread");
+				PDFContainer returnPDF = generatePDF();
+
+				returnHandler.setPDFContent(returnPDF);
+				returnHandler.setPDFGenerationStatus(true);
+				logger.debug("PDF Generation completed, thread ended");
+			}
+		});
 	}
 
 	private static byte[] readContentIntoByteArray(File file) {

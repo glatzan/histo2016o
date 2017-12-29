@@ -39,6 +39,7 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 -> Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
 -> Zimmermann --> Atzrodt, Aktualliesierien button (feld für username ändern)
 -> Neuladen der Listen, nachdem das Settingsmenu geschlossen wurde
+-> printdialog mit neumen interfaces ausrüsten und testen 
 
 Testen:
 --> Test piz range from 6-8
@@ -51,7 +52,7 @@ Next Changes:
 -> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
 -> finalizeAllDiangosisRevisions (taskManipulationHandler) löschen (diangosis filanized wird nicht mehr gebraucht)
 
--> Auswahl der Diagnose im Druckmenu
+-> Auswahl der Diagnose im Druckmenu 
 -> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
 -> Create Task material auswahl css
 
@@ -59,6 +60,7 @@ Next Changes:
 -> versehendlich ausgeführte benachrichtigungen, markieren
 
 -> Vorgeschichte: Enter --> neue Zeile
+-> Auswahl der standard worklists begrenzen uns einstellbar machen 
  
 Urgent Changes 
 TODO: Methoden in SampleServie in eine Transaction setzten (für loggin logstring per transaction)
@@ -98,6 +100,8 @@ Graphic Changes
 -> Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
 
 v 1.0.15
+++++: GUI wird neu berechnet, sobald das Browser-Fenster in der Größe geändert wurde
+++++: Benennung der Rechte vereinheitlicht
 ++++: Rechte zum löschen von Auftragen und hochladen von PDFs für Patienten implementiert.
 ++++: Rechte zum editieren und hinzufügen von Patienten implementiert.
 ++++: Auftragsliste wird beim einloggen korrekt geladen.
@@ -116,7 +120,6 @@ v 1.0.15
 
 SQL:
 alter table histosettings add startview integer;
-alter table histosettings add startview integer;
 alter table histosettings ALTER COLUMN defaultview TYPE character varying(255);
 alter table histosettings ALTER COLUMN startview TYPE character varying(255);
 update histosettings set startview = 'WORKLIST_TASKS';
@@ -125,33 +128,55 @@ update histosettings set defaultview = 'WORKLIST_RECEIPTLOG' where defaultview =
 update histosettings set defaultview = 'WORKLIST_TASKS' where defaultview = '6';
 update histosettings set defaultview = 'GUEST' where defaultview = '1';
 update histosettings set defaultview = 'WORKLIST_REPORT' where defaultview = '3';
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ADD_NEW_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ADD_CLINIC_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ADD_EDIT_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ADD_NEW_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ADD_CLINIC_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ADD_EDIT_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ADD_NEW_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ADD_CLINIC_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ADD_EDIT_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ADD_NEW_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ADD_CLINIC_PATIENT');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ADD_EDIT_PATIENT');
-update histogroup_permissions set permissions = 'RESTORE_TASK' where permissions = 'RESOTRE_TASK';
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'UPLOAD_PATIENT_DATA');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'DELETE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'DELETE_EDITED_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'NEW_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'UPLOAD_PATIENT_DATA');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'DELETE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'DELETE_EDITED_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'NEW_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'UPLOAD_PATIENT_DATA');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'DELETE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'NEW_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'UPLOAD_PATIENT_DATA');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'DELETE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'NEW_TASK');
+update histosettings set defaultview = 'WORKLIST_REPORT' where id = 8;
+update histosettings_availableviews set availableviews = 'WORKLIST_REPORT' where availableviews = 'USERLIST';
+update histosettings_availableviews set position = 2 where histosettings_id = 8 and availableviews = 'WORKLIST_REPORT';
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) VALUES (8, 'WORKLIST_TASKS',0);
+INSERT INTO histosettings_availableviews (histosettings_id, availableviews, position) VALUES (8, 'WORKLIST_PATIENT',1);
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS' where permissions = 'SHOW_SETTINGS_DIALOG';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_USER' where permissions = 'EDIT_USER_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_GROUP' where permissions = 'EDIT_GROUP_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_DIAGNOSES' where permissions = 'EDIT_DIAGNOSES_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_MATERIAL' where permissions = 'EDIT_MATERIAL_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_STAINING' where permissions = 'EDIT_STAINING_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_LISTS' where permissions = 'EDIT_ITEM_LISTS_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_FAVOURITE' where permissions = 'EDIT_FAVOURITE_LIST_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_PHYSICIAN' where permissions = 'EDIT_PHYSICIANS_SETTINGS';
+update histogroup_permissions set permissions = 'PROGRAM_SETTINGS_ORGANIZAZIONS' where permissions = 'EDIT_ORGANIZATIONS_SETTINGS';
+update histogroup_permissions set permissions = 'TASK_EDIT' where permissions = 'EDIT_TASK';
+update histogroup_permissions set permissions = 'TASK_EDIT_ID' where permissions = 'EDIT_TASK_ID';
+update histogroup_permissions set permissions = 'TASK_EDIT_ARCHIVE' where permissions = 'ARCHIVE_TASK';
+update histogroup_permissions set permissions = 'TASK_EDIT_RESTORE' where permissions = 'RESOTRE_TASK';
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'PATIENT_EDIT_ADD_EXTERN');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'PATIENT_EDIT_ADD_CLINIC');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'PATIENT_EDIT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'PATIENT_EDIT_ADD_EXTERN');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'PATIENT_EDIT_ADD_CLINIC');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'PATIENT_EDIT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'PATIENT_EDIT_ADD_EXTERN');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'PATIENT_EDIT_ADD_CLINIC');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'PATIENT_EDIT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'PATIENT_EDIT_ADD_EXTERN');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'PATIENT_EDIT_ADD_CLINIC');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'PATIENT_EDIT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'PATIENT_EDIT_UPLOAD_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK_EDIT_DELETE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK_EDIT_DELETE_EDITED');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK_EDIT_NEW');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'PATIENT_EDIT_UPLOAD_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'TASK_EDIT_DELETE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'TASK_EDIT_DELETE_EDITED');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'TASK_EDIT_NEW');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'PATIENT_EDIT_UPLOAD_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'TASK_EDIT_DELETE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'TASK_EDIT_NEW');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'PATIENT_EDIT_UPLOAD_DATA');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'TASK_EDIT_DELETE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'TASK_EDIT_NEW');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'WORKLIST');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'WORKLIST');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'WORKLIST');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'WORKLIST');
 
 v 1.0.14
 ++++: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich
@@ -209,16 +234,16 @@ Alter table task drop column editable;
 Alter table task_aud drop column editable; 
 Alter table patient drop column privateInsurance; 
 Alter table patient_aud  drop column privateInsurance;
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'EDIT_TASK_ID');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'EDIT_TASK_ID');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'EDIT_TASK_ID');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'EDIT_TASK_ID');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'ARCHIVE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'ARCHIVE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'ARCHIVE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'ARCHIVE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'RESTORE_TASK');
-INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'RESTORE_TASK');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'TASK_EDIT_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'TASK_EDIT_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'TASK_EDIT_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK_EDIT_ID');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'TASK_EDIT_ARCHIVE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'TASK_EDIT_ARCHIVE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'TASK_EDIT_ARCHIVE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK_EDIT_ARCHIVE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'TASK_EDIT_RESTORE');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK_EDIT_RESTORE');
 
 
 V 1.0.11

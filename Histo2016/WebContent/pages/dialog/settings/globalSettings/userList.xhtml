@@ -40,7 +40,7 @@
 				title="#{msg['body.worklist.header.view']}" value="#{user.group}"
 				styleClass="smallerInput"
 				converter="#{settingsDialogHandler.histoUserTab.groupTransformer}"
-				disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}">
+				disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_USER')}">
 
 				<p:ajax event="change" execute="histoUser" partialSubmit="true"
 					listener="#{settingsDialogHandler.histoUserTab.onChangeUserGroup(user)}"></p:ajax>
@@ -61,7 +61,7 @@
 			<p:commandLink styleClass="noUnderlineAtLink"
 				title="#{msg['dialog.settings.person.list.options.edit']}"
 				execute="@this" partialSubmit="true"
-				disabled="#{!userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}"
+				disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_USER')}"
 				actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(user.physician)}">
 				<i class="fa fa-fw fa-cog" />
 				<p:ajax event="dialogReturn"
@@ -80,7 +80,7 @@
 
 			<h:panelGrid columns="4" styleClass="newTableContainer right">
 				<p:commandButton
-					rendered="#{userHandlerAction.currentUserHasPermission('EDIT_GROUP_SETTINGS')}"
+					rendered="#{userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_GROUP')}"
 					value="#{msg['dialog.settings.user.button.groups']}"
 					icon="fa fa-fw fa-cog" process="@this" partialSubmit="true"
 					actionListener="#{dialogHandlerAction.groupListDialog.initAndPrepareBean()}">
@@ -90,7 +90,7 @@
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['dialog.settings.user.button.add']}"
-					rendered="#{userHandlerAction.currentUserHasPermission('EDIT_USER_SETTINGS')}"
+					rendered="#{userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_USER')}"
 					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
 					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean()}">
 					<p:ajax event="dialogReturn"

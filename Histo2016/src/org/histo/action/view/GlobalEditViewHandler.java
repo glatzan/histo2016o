@@ -130,7 +130,7 @@ public class GlobalEditViewHandler {
 	/**
 	 * Selected View in the menu
 	 */
-	private View selectedView;
+	private View displayView;
 
 	/**
 	 * Current view which is displayed
@@ -239,8 +239,8 @@ public class GlobalEditViewHandler {
 	}
 
 	public String getCenterView() {
-		if (getCurrentView() != null)
-			return getCurrentView().getPath();
+		if (getDisplayView() != null)
+			return getDisplayView().getPath();
 		else
 			return View.WORKLIST_BLANK.getPath();
 	}

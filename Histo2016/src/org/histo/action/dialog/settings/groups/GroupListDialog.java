@@ -83,7 +83,6 @@ public class GroupListDialog extends AbstractDialog {
 
 	public void updateData() {
 		setGroups(userDAO.getGroups(showArchived));
-		setSelectedGroup(null);
 	}
 
 	public void onRowDblSelect() {
@@ -92,7 +91,7 @@ public class GroupListDialog extends AbstractDialog {
 			selectGroupAndHide();
 		} else {
 			logger.debug("Edit Mode: showing edit dialog");
-			if (userHandlerAction.currentUserHasPermission(HistoPermissions.EDIT_GROUP_SETTINGS)
+			if (userHandlerAction.currentUserHasPermission(HistoPermissions.PROGRAM_SETTINGS_GROUP)
 					&& selectedGroup != null)
 				dialogHandlerAction.getGroupEditDialog().initAndPrepareBean(selectedGroup);
 		}

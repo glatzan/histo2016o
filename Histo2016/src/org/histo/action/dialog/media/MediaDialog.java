@@ -1,10 +1,6 @@
 package org.histo.action.dialog.media;
 
-import java.io.ByteArrayInputStream;
 import java.util.List;
-
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.AbstractDialog;
@@ -15,9 +11,9 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
+import org.histo.ui.interfaces.PdfGuiProvider;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
-import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -29,7 +25,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class MediaDialog extends AbstractDialog {
+public class MediaDialog extends AbstractDialog implements PdfGuiProvider {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -76,7 +72,7 @@ public class MediaDialog extends AbstractDialog {
 	/**
 	 * Used for showing pdf in a dialog
 	 */
-	private PDFContainer temporaryPdfContainer;
+	private PDFContainer pDFContainerToRender;
 
 	/**
 	 * Selected container, will not be set to null after dialog was closed
@@ -120,8 +116,8 @@ public class MediaDialog extends AbstractDialog {
 	private boolean showAutoMoveOption;
 
 	/**
-	 * If advance copy mode is enabled, the selected file will be copied to
-	 * these lists
+	 * If advance copy mode is enabled, the selected file will be copied to these
+	 * lists
 	 */
 	private HasDataList[] autoCopyModeTargetLists;
 
@@ -192,7 +188,7 @@ public class MediaDialog extends AbstractDialog {
 		if (mediaToDisplay == null && selectedDataList.getAttachedPdfs().size() > 0)
 			mediaToDisplay = selectedDataList.getAttachedPdfs().get(0);
 
-		setTemporaryPdfContainer(mediaToDisplay);
+		setPDFContainerToRender(mediaToDisplay);
 
 		super.initBean(null, Dialog.MEDIA);
 
@@ -231,7 +227,7 @@ public class MediaDialog extends AbstractDialog {
 
 		setSelectedDatalist(getDataLists()[0]);
 
-		setTemporaryPdfContainer(selectedPDf);
+		setPDFContainerToRender(selectedPDf);
 		return true;
 	}
 
@@ -281,19 +277,6 @@ public class MediaDialog extends AbstractDialog {
 		setAutoMove(false);
 	}
 
-	public StreamedContent getPdfContent() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE || getTemporaryPdfContainer() == null) {
-			// So, we're rendering the HTML. Return a stub StreamedContent so
-			// that it will generate right URL.
-			return new DefaultStreamedContent();
-		} else {
-			System.out.println("calling");
-			return new DefaultStreamedContent(new ByteArrayInputStream(getTemporaryPdfContainer().getData()),
-					"application/pdf", getTemporaryPdfContainer().getName());
-		}
-	}
-
 	public boolean hasMoreDatalists() {
 		if (getDataLists().length > 1)
 			return true;
@@ -301,7 +284,7 @@ public class MediaDialog extends AbstractDialog {
 	}
 
 	public void onSelectData() {
-		setSelectedPdfContainer(getTemporaryPdfContainer());
+		setSelectedPdfContainer(getPDFContainerToRender());
 
 		try {
 			if (isAutoCopy() && getAutoCopyModeTargetLists() != null && getAutoCopyModeTargetLists().length > 0) {
@@ -384,5 +367,9 @@ public class MediaDialog extends AbstractDialog {
 
 		} catch (IllegalStateException e) {
 		}
+	}
+
+	public StreamedContent getPdfContent() {
+		return PdfGuiProvider.super.getPdfContent();
 	}
 }
