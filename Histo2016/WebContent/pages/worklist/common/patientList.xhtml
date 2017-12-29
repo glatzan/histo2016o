@@ -100,14 +100,15 @@
 			</p:commandLink>
 
 			<!-- Worklist change -->
-			<p:commandLink partialSubmit="true" process="@this" rendered="userHandlerAction.currentUserHasPermission('WORKLIST')}"
+			<p:commandLink partialSubmit="true" process="@this"
+				rendered="userHandlerAction.currentUserHasPermission('WORKLIST')}"
 				title="#{msg['body.worklist.navigation.button.changelist']}"
 				actionListener="#{dialogHandlerAction.worklistSearchDialog.initAndPrepareBean()}">
 				<i class="fa fa-search"></i>
 				<p:ajax event="dialogReturn"
 					update="navigationForm contentForm headerForm" />
 			</p:commandLink>
-			
+
 			<!-- Worklist clear -->
 			<p:commandLink partialSubmit="true" process="@this"
 				title="#{msg['body.worklist.navigation.button.changelist']}"
@@ -156,8 +157,7 @@
 				<h:panelGrid styleClass="newStyleListingTable" columns="2"
 					columnClasses="columnTop columnLabelContainer150,">
 					<h:outputLabel
-						value="#{msg['body.worklist.navigation.activtasks']}"
-						style="font-size: 1.2em !important" />
+						value="#{msg['body.worklist.navigation.activtasks']}" />
 					<!-- task list -->
 					<p:repeat var="task"
 						value="#{patient.getActiveTasks(worklistViewHandlerAction.worklist.showActiveTasksExplicit)}">
@@ -167,7 +167,7 @@
 							styleClass="noUnderlineAtLink">
 
 							<h:outputLabel value="#{task.taskID}"
-								style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;font-weight:bold' : ''};font-size: 1.2em !important" />
+								style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;font-weight:bold' : ''};" />
 
 							<!-- priority -->
 							<h:panelGroup rendered="#{task.taskPriority ne 'NONE'}">

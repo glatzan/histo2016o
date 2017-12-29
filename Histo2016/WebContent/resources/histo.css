@@ -551,36 +551,6 @@ ul.ui-menu-child {
 	height: calc( 100vh - 33px ) !important;
 }
 
-/* navigation background */
-.content .body .navigation {
-	width: 100%;
-	border: 1px solid #d3d3d3;
-	border-left: 0px;
-	border-right: 0px;
-	background: #e6e6e6
-		url("/Histo16/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness")
-		50% 50% repeat-x;
-}
-
-/* navigation hight*/
-.content .body .navigation td {
-	padding-left: 5px !important;
-	height: 19px !important;
-}
-
-/* remove underline from navigation*/
-.content .body .navigation a:-webkit-any-link {
-	text-decoration: none !important;
-}
-
-/* naigation text*/
-.content .body .navigation .navigationText {
-	font-size: 1.1em !important;
-	font-family: Verdana, Arial, sans-serif;
-	color: #555555;
-	font-weight: bold;
-}
-
 /* contentHolder settings*/
 .content .body .contentHolder {
 	padding: 0px;

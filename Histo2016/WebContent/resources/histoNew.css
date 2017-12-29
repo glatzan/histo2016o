@@ -11,6 +11,14 @@
 	vertical-align: top;
 }
 
+.newTableContainer .columnMiddle {
+	vertical-align: middle;
+}
+
+.newTableContainer .columnTextCenter {
+	text-align: center;
+}
+
 .newTableContainer .column75px {
 	width: 75px !important;
 }
@@ -62,7 +70,7 @@
 .newStyleListingTable label {
 	padding: 4px !important;
 	font-size: 12px !important;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none !important;
 	font-style: normal !important;
 	font-variant: normal !important;
@@ -85,7 +93,7 @@
 .newStyleListingTable input, .newStyleListingTable textarea {
 	padding: 4px !important;
 	font-size: 12px !important;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none !important;
 	font-style: normal !important;
 	font-variant: normal !important;
@@ -109,7 +117,7 @@
 .newStyleListingTableSeparator label {
 	padding: 4px !important;
 	font-size: 14px !important;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none !important;
 	font-style: normal !important;
 	font-weight: bold !important;
@@ -184,13 +192,19 @@
 	white-space: normal;
 }
 
-.newStyleDataTable td {
+.newStyleDataTable .ui-datatable-tablewrapper>table>tbody,
+	.newStyleDataTable .ui-datatable-tablewrapper>table>tbody>tr {
+	border: none !important;
+	border-spacing: 0px !important;
+}
+
+.newStyleDataTable .ui-datatable-tablewrapper>table>tbody>tr>td {
 	padding-top: 3px !important;
 	padding-bottom: 3px !important;
 	border: none !important;
 	border-spacing: 0px !important;
 	font-size: 12px;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none;
 	font-style: normal;
 	font-variant: normal;
@@ -200,7 +214,7 @@
 .newStyleDataTable label, .newStyleDataTable .ui-datatable-scrollable-header .ui-column-title
 	{
 	font-size: 12px;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none;
 	font-style: normal;
 	font-variant: normal;
@@ -229,31 +243,29 @@
 	background-color: #fcf1b8;
 }
 
+/* !important is needed sometimes */
+.newStyleDataTable ::-webkit-scrollbar {
+	width: 12px !important;
+}
 
- /* !important is needed sometimes */
- .newStyleDataTable ::-webkit-scrollbar {
-    width: 12px !important;
- }
-
- /* Track */
+/* Track */
 .newStyleDataTable ::-webkit-scrollbar-track {
-   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3) !important; 
-   -webkit-border-radius: 10px !important;
-   border-radius: 10px !important;
- }
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3) !important;
+	-webkit-border-radius: 10px !important;
+	border-radius: 10px !important;
+}
 
- /* Handle */
- .newStyleDataTable ::-webkit-scrollbar-thumb {
-   -webkit-border-radius: 10px !important;
-   border-radius: 10px !important;
-   background: rgba(255,0,0,0.8) !important; 
-   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5) !important; 
- }
+/* Handle */
+.newStyleDataTable ::-webkit-scrollbar-thumb {
+	-webkit-border-radius: 10px !important;
+	border-radius: 10px !important;
+	background: rgba(255, 0, 0, 0.8) !important;
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5) !important;
+}
+
 .newStyleDataTable  ::-webkit-scrollbar-thumb:window-inactive {
-   background: rgba(255,0,0,0.4) !important; 
- }
-
-
+	background: rgba(255, 0, 0, 0.4) !important;
+}
 
 /* option column, no underline*/
 .newStyleDataTable .optionsColumn a {
@@ -303,7 +315,7 @@
 	border: none !important;
 	border-spacing: 0px !important;
 	font-size: 12px;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none;
 	font-style: normal;
 	font-variant: normal;
@@ -399,6 +411,39 @@
 	padding: 0px;
 }
 
+
+/* -------------- breadCrumbs navigation --------------*/
+/* navigation background */
+.breadCrumbsNavigation {
+	width: 100%;
+	border: 1px solid #d3d3d3;
+	border-left: 0px;
+	border-right: 0px;
+	background: #e6e6e6
+		url("/Histo16/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness")
+		50% 50% repeat-x;
+}
+
+/* navigation hight*/
+.breadCrumbsNavigation td {
+	padding-left: 5px !important;
+	height: 19px !important;
+}
+
+/* remove underline from navigation*/
+.breadCrumbsNavigation a:-webkit-any-link {
+	text-decoration: none !important;
+}
+
+/* naigation text*/
+.breadCrumbsNavigation td, .breadCrumbsNavigation label, .breadCrumbsNavigation a {
+	font-size: 1.1em !important;
+	font-family: Verdana, Arial, sans-serif;
+	color: #555555;
+	font-weight: bold;
+}
+
+
 /* -------------- patient navigation table --------------*/
 /* Search container */
 .patientNavigationHeader {
@@ -417,8 +462,9 @@
 	height: 19px !important;
 	color: #555555;
 	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
-	padding-left: 15px;
-	font-size: 1.0em !important;
+	padding-left: 5px;
+	font-size: 1.1em !important;
+	font-weight: bold;
 }
 
 .patientNavigationHeader .buttonContainer {
@@ -459,10 +505,6 @@
 .patientNavigationScroll .ui-scrollpanel-track .ui-scrollpanel-drag {
 	background: #555555;
 	border-radius: 5px;
-}
-
-.patientNavigationTable {
-	
 }
 
 .patientNavigationTable .ui-datatable-tablewrapper>table>thead {
@@ -656,123 +698,6 @@
 	margin-right: 0.3em !important;
 }
 
-/* OLD REMOVE*/
-.tabDialogLayout {
-	padding: 0px !important;
-	margin: 0px !important;
-	overflow-x: hidden;
-}
-
-/* Dialog header */
-.tabDialogLayout .dialogHeader {
-	padding: 8px 10px;
-	font-weight: bold;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
-	background: #cccccc
-		url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)
-		50% 50% repeat-x;
-}
-
-.tabDialogLayout .dialogHeader, .contentInputDialog .dialogHeader a:-webkit-any-link
-	{
-	color: #555555;
-	font-size: 15px;
-}
-
-/* Dialog content */
-/* tab view hight + width*/
-.tabDialogLayout .tabView {
-	width: 100%;
-	height: 564px;
-}
-
-.tabDialogLayout .ui-tabs, .tabDialogLayout .tabView .ui-panel-content,
-	.tabDialogLayout .tabView  .ui-widget-content {
-	padding: 0px !important;
-	border: 0px !important;
-	border-collapse: collapse;
-}
-
-/* Layout in the tabview center tab, center div*/
-.tabDialogLayout .tabView .contentDiv {
-	padding: 1px 1px 1px 0px !important;
-	height: 530px;
-	overflow-x: hidden;
-	overflow-y: auto;
-}
-
-/* Layout in the tabview center tab, bottom div*/
-.tabDialogLayout .tabView .buttonContainer {
-	padding: 1px 1px 1px 0px !important;
-	height: 30px;
-	position: absolute !important;
-	bottom: 1px !important;
-	vertical-align: bottom !important;
-	width: 787px;
-}
-
-/* small buttons */
-.tabDialogLayout .tabView .buttonContainer .ui-button-text {
-	padding-top: 0.2em !important;
-	padding-bottom: 0.2em !important;
-}
-
-/* left table*/
-.tabDialogLayout .tabView .buttonContainer .left {
-	margin-left: 0px;
-}
-
-/* button margin for left buttons*/
-.tabDialogLayout .tabView .buttonContainer .left button {
-	margin-left: 0.6em !important;
-}
-
-.tabDialogLayout .tabView .buttonContainer .left .ui-chkbox-box {
-	margin-left: 0.6em !important;
-}
-
-/* right table */
-.tabDialogLayout .tabView .buttonContainer .right {
-	margin-right: 0px;
-	float: right;
-}
-
-/* button margin for right buttons*/
-.tabDialogLayout .tabView .buttonContainer .right button {
-	margin-right: 0.6em !important;
-}
-
-/* Background Color tab view on the left sinde */
-.tabDialogLayout .tabView .ui-tabs-nav {
-	background: none;
-	width: 22% !important;
-}
-
-/* Tabs on the left side style */
-.tabDialogLayout .tabView .ui-tabs-nav li {
-	border: 1px solid #a8a8a8 !important;
-	border-radius: 3px !important;
-	float: left !important;
-	width: 100% !important;
-	margin-left: 1px !important;
-}
-
-/* withd of the tab content on the right*/
-.tabDialogLayout .tabView .ui-tabs-panels {
-	width: 77% !important;
-	min-width: 780px;
-}
-
-/* Content Pannel on the right side, header style*/
-.tabDialogLayout .tabView .ui-tabs-panels .contentPannel .ui-widget-header
-	{
-	padding: 4px 0px 4px 10px !important;
-	font-weight: bold !important;
-	color: #4f4f4f !important;
-	text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.7) !important;
-	margin-bottom: 1px;
-}
-
 /* -------------- components --------------*/
 /* selectCheckboxMenu */
 .selectCheckboxMenu .ui-inputfield {
@@ -790,7 +715,7 @@
 	padding-top: 0.2em !important;
 	padding-bottom: 0.2em !important;
 	font-size: 12px;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none;
 	font-style: normal;
 	font-variant: normal;
@@ -830,11 +755,32 @@
 .standardFont, .standardFont label {
 	padding: 4px;
 	font-size: 12px;
-	font-family: Arial, "Trebuchet MS", Verdana, sans-serif;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none;
 	font-style: normal;
 	font-variant: normal;
 }
+
+.bigFont, .bigFont label {
+	font-size: 1.1em !important;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	color: #555555;
+}
+
+.hugeFont, .hugeFont label {
+	font-size: 1.5em !important;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: bold;
+	color: #555555;
+}
+
 
 .icon-green {
 	color: green;

@@ -7,40 +7,38 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
-	<!-- Navigation Bar -->
-	<h:panelGrid columns="2" styleClass="navigation">
+
+	<!-- navigation -->
+	<h:panelGrid columns="2" styleClass="breadCrumbsNavigation">
 		<h:panelGroup
 			rendered="#{globalEditViewHandler.selectedPatient ne null}">
 
 			<!-- Name -->
-			<h:commandLink update="navigationForm:patientList contentForm headerForm"
+			<h:commandLink
+				update="navigationForm:patientList contentForm headerForm"
 				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
-				<h:outputFormat value="#{msg['bodyNavigationOverview']}"
-					styleClass="navigationText">
+				<h:outputFormat value="#{msg['bodyNavigationOverview']}">
 					<f:param
 						value="#{globalEditViewHandler.selectedPatient.person.lastName}" />
 					<f:param
 						value="#{globalEditViewHandler.selectedPatient.person.firstName}" />
 					<f:param value="#{globalEditViewHandler.selectedPatient.piz}" />
 				</h:outputFormat>
-			</h:commandLink>
+			</h:commandLink>	
 
 			<!-- Auftrag -->
 			<h:commandLink
 				rendered="#{globalEditViewHandler.selectedPatient ne null and globalEditViewHandler.selectedTask ne null}"
 				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
-				<h:outputFormat value="#{msg['bodyNavigationTask']}"
-					styleClass="navigationText">
+				<h:outputFormat value="#{msg['bodyNavigationTask']}">
 					<f:param
 						value="#{mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfReceiptAsDate)}" />
-					<f:param
-						value="#{globalEditViewHandler.selectedTask.taskID}" />
+					<f:param value="#{globalEditViewHandler.selectedTask.taskID}" />
 				</h:outputFormat>
 			</h:commandLink>
 
 		</h:panelGroup>
 	</h:panelGrid>
-	
-	
 	<!-- Navigation Bar -->
+
 </ui:composition>

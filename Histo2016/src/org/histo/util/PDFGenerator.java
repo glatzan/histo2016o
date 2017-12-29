@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -126,20 +127,26 @@ public class PDFGenerator {
 
 	/**
 	 * Generates a PDF in a non blocking way (new thread), needs a return handler.
+	 * Returns a unique task id.
 	 * 
 	 * @param returnHandler
 	 */
-	public void generatePDFNonBlocking(PDFNonBlockingReturnHandler returnHandler) {
+	public String generatePDFNonBlocking(PDFNonBlockingReturnHandler returnHandler) {
+		
+		String uuid = UUID.randomUUID().toString();
+		
 		taskExecutor.execute(new Thread() {
 			public void run() {
 				logger.debug("Stargin PDF Generation in new Thread");
 				PDFContainer returnPDF = generatePDF();
-
-				returnHandler.setPDFContent(returnPDF);
-				returnHandler.setPDFGenerationStatus(true);
+				
+				returnHandler.setPDFContent(returnPDF, uuid);
+				
 				logger.debug("PDF Generation completed, thread ended");
 			}
 		});
+		
+		return uuid;
 	}
 
 	private static byte[] readContentIntoByteArray(File file) {

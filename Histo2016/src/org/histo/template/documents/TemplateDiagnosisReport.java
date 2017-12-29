@@ -29,10 +29,10 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 		this.toSendAddress = toSendAddress;
 	}
 
-	public void generatePDFNoneBlocking(PDFGenerator generator, PDFNonBlockingReturnHandler returnHandler) {
+	public String generatePDFNoneBlocking(PDFGenerator generator, PDFNonBlockingReturnHandler returnHandler) {
 		generator.openNewPDf(this);
 		prepareTemplate(generator);
-		generator.generatePDFNonBlocking(returnHandler);
+		return generator.generatePDFNonBlocking(returnHandler);
 	}
 
 	public PDFContainer generatePDF(PDFGenerator generator) {

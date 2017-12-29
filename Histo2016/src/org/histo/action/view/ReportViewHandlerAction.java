@@ -41,88 +41,98 @@ public class ReportViewHandlerAction implements PDFNonBlockingReturnHandler, Pdf
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
-	
-	private boolean taskNoCompleted;
+
+	/**
+	 * True if diagnosis completed, report will be rendered
+	 */
+	private boolean diagnosisCompleted;
 
 	/**
 	 * If true the poll element at the view page will start
 	 */
 	private boolean stopPoll;
+
+	/**
+	 * If true the poll element will start
+	 */
 	private boolean autoStartPoll;
-	
-	private AtomicBoolean renderReport = new AtomicBoolean(false);
-	
+
+	/**
+	 * If true the pdf will be rendered
+	 */
+	private AtomicBoolean renderPDF = new AtomicBoolean(false);
+
+	/**
+	 * pdf container
+	 */
 	private PDFContainer PDFContainerToRender;
+
+	/**
+	 * Thread id of the last pdf generating thread
+	 */
+	private String currentTaskUuid;
 
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize ReportViewHandlerAction for task");
 
-		renderReport.set(false);
+		getRenderPDF().set(false);
 		setAutoStartPoll(false);
 		setStopPoll(true);
 
-		if (task.getDiagnosisCompletionDate() == 0)
-			setTaskNoCompleted(true);
+		if (task.getDiagnosisCompletionDate() == 0) {
+			setDiagnosisCompleted(false);
+		} else {
+			setDiagnosisCompleted(true);
 
-		PDFContainer c = PDFUtil.getLastPDFofType(task, DocumentType.DIAGNOSIS_REPORT_COMPLETED);
+			PDFContainer c = PDFUtil.getLastPDFofType(task, DocumentType.DIAGNOSIS_REPORT_COMPLETED);
 
-		if (c == null) {
-			
-			
-			setAutoStartPoll(true);
-			setStopPoll(false);
-			
-			DocumentTemplate diagnosisTemplate = DocumentTemplate
-					.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT));
+			if (c == null) {
 
-			if (diagnosisTemplate != null) {
-				TemplateDiagnosisReport template = (TemplateDiagnosisReport) diagnosisTemplate;
+				setAutoStartPoll(true);
+				setStopPoll(false);
 
-				template.initData(task.getPatient(), task, "");
+				DocumentTemplate diagnosisTemplate = DocumentTemplate
+						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT));
 
-				template.generatePDFNoneBlocking(new PDFGenerator(), this);
+				if (diagnosisTemplate != null) {
+					TemplateDiagnosisReport template = (TemplateDiagnosisReport) diagnosisTemplate;
+
+					template.initData(task.getPatient(), task, "");
+
+					currentTaskUuid = template.generatePDFNoneBlocking(new PDFGenerator(), this);
+				}
 			}
 		}
 
 	}
 
-	public StreamedContent getPdfContent() {
-		System.out.println("hallo getting" + getPDFContainerToRender());
-		FacesContext context = FacesContext.getCurrentInstance();
-		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE || getPDFContainerToRender() == null) {
-			// So, we're rendering the HTML. Return a stub StreamedContent so
-			// that it will generate right URL.
-			return new DefaultStreamedContent();
+	@Override
+	@Synchronized
+	public void setPDFContent(PDFContainer container, String uuid) {
+		if (getCurrentTaskUuid().equals(uuid)) {
+			setPDFContainerToRender(container);
+			getRenderPDF().set(true);
+			setStopPoll(true);
+			setAutoStartPoll(false);
 		} else {
-			return new DefaultStreamedContent(new ByteArrayInputStream(getPDFContainerToRender().getData()), "application/pdf",
-					getPDFContainerToRender().getName());
+			logger.debug("More then one Thread! Old Thread");
 		}
-	}
-	
-	@Override
-	public void setPDFContent(PDFContainer container) {
-		setPDFContainerToRender(container);
-		logger.debug("Container set");
 
 	}
 
-	@Override
-	public void setPDFGenerationStatus(boolean status) {
-		System.out.println("thread finished " + status);
-		renderReport.set(status);
-		setStopPoll(true);
-		setAutoStartPoll(false);
+	public StreamedContent getPdfContent() {
+		return PdfGuiProvider.super.getPdfContent();
 	}
-	
+
 	public void test() {
 		System.out.println("test");
 	}
-	
+
 	@Synchronized
 	public PDFContainer getPDFContainerToRender() {
 		return PDFContainerToRender;
 	}
-	
+
 	public void setPDFContainerToRender(PDFContainer container) {
 		this.PDFContainerToRender = container;
 	}

@@ -10,15 +10,14 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<p:panel style="width: 60%"
-		rendered="#{globalEditViewHandler.selectedPatient ne null}"
-		styleClass="collapsedBorders noPadding noBorders">
+	<p:panel style="width: 80%" styleClass="newTableContainer"
+		rendered="#{globalEditViewHandler.selectedPatient ne null}">
 
-		<h:panelGrid columns="3"
-			styleClass="defaultListingTableTwoLineContainer">
+		<h:panelGrid columns="3" styleClass="newTableContainer"
+			columnClasses="columnTop, column200px ,columnTop">
 			<!-- left column -->
-			<h:panelGrid columns="2"
-				styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150,">
 
 				<!-- piz -->
 				<h:outputLabel value="#{msg['body.worklist.patient.piz']}" />
@@ -63,8 +62,8 @@
 			<h:panelGroup />
 
 			<!-- right column -->
-			<h:panelGrid columns="2"
-				styleClass="defaultListingTableFirstColumEnummeration">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150,">
 
 				<h:outputLabel value="" />
 				<h:outputLabel value="" />
@@ -96,8 +95,7 @@
 
 		<p:dataTable var="task" style="margin-top:20px;" id="taskList"
 			value="#{globalEditViewHandler.selectedPatient.tasks}"
-			selectionMode="single"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			selectionMode="single" styleClass="newStyleDataTable"
 			rendered="#{globalEditViewHandler.selectedPatient != null}"
 			selection="#{globalEditViewHandler.selectedTask}" rowKey="#{task.id}">
 
@@ -216,7 +214,7 @@
 		<p:dataTable var="attachedPdf" style="margin-top:50px;"
 			id="attachedPdfList"
 			value="#{globalEditViewHandler.selectedPatient.attachedPdfs}"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			styleClass="newStyleDataTable"
 			rendered="#{globalEditViewHandler.selectedPatient != null}">
 
 
@@ -261,7 +259,7 @@
 					</h:panelGrid>
 				</f:facet>
 				<p:commandLink
-					rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"	
+					rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
 					actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
 					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
 					<i class="fa fa-search"></i>

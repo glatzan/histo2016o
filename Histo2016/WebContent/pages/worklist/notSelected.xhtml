@@ -8,10 +8,17 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<ui:include src="common/navigationBar.xhtml"></ui:include>
+	<!-- navigation -->
+	<h:panelGrid columns="2" styleClass="breadCrumbsNavigation">
+		<h:outputLabel value="#{msg['body.worklist.notSelected.headline']}" />
+	</h:panelGrid>
 
-	<p:panel style="width:100%;"
-		styleClass=" collapsedBorders noPadding noBorders">
-		keine Daten ausgewählt
-	</p:panel>
+	<h:panelGrid columns="1" id="pollTable" styleClass="newTableContainer"
+		style="width: 100% !important;height: calc( 100vh - 200px )!important;"
+		columnClasses="columnMiddle columnTextCenter">
+
+		<h:outputLabel styleClass="hugeFont"
+			value="#{msg['body.worklist.notSelected.text']}"></h:outputLabel>
+	</h:panelGrid>
+
 </ui:composition>

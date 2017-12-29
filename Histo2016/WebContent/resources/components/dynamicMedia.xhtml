@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:composite="http://java.sun.com/jsf/composite">
+
+<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+
+<composite:interface>
+	<composite:attribute name="stopPoll" required="true" />
+	<composite:attribute name="autoStartPoll" required="true" />
+	<composite:attribute name="mediaAvailable" required="true" />
+	<composite:attribute name="width" default="auto" />
+	<composite:attribute name="height" default="auto" />
+	
+	<composite:attribute name="rendered" default="true" />
+</composite:interface>
+
+<composite:implementation>
+
+	<h:panelGrid columns="1" id="pollTable" styleClass="newTableContainer" rendered="#{cc.attrs.rendered}"
+		style="width: #{cc.attrs.width} !important;height:#{cc.attrs.height} !important;"
+		columnClasses="columnMiddle">
+
+		<h:panelGrid columns="2" rendered="#{!cc.attrs.mediaAvailable}"
+			styleClass="newStyleListingTable"
+			style="width:auto !important;margin:auto;">
+			<h:graphicImage value="/resources/gfx/ajax-loader1.gif"
+				style="margin-right: 12px; vertical-align: middle;" />
+			<h:outputText value="#{msg['component.dynamicMedia.loading']}"
+				style="white-space: nowrap;" />
+		</h:panelGrid>
+
+		<p:media player="pdf" rendered="#{cc.attrs.mediaAvailable}"
+			style="height:#{cc.attrs.height}; width: #{cc.attrs.width}"
+			value="#{reportViewHandlerAction.pdfContent}" width="100%"></p:media>
+
+		<p:poll interval="1" update="pollTable" stop="#{cc.attrs.stopPoll}"
+			listener="#{reportViewHandlerAction.test()}"
+			autoStart="#{cc.attrs.autoStartPoll}" />
+	</h:panelGrid>
+
+</composite:implementation>
+</html>
