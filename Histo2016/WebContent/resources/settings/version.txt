@@ -1,7 +1,7 @@
 -> UTF 8 Tomcat: -Dfile.encoding=UTF8
 -> plink windows set PATH=C:\path\to\putty\directory;%PATH%
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
-
+-> Session Refresh: http://stackoverflow.com/questions/3642919/javax-faces-application-viewexpiredexception-view-could-not-be-restored
 // generierung befundbericht final
 //					if (userHandlerAction.getCurrentUser().getSettings().isPdfPreviewOnDiagnosisApproval()) {
 //						// generating final diagnosis report
@@ -99,25 +99,31 @@ Graphic Changes
 -> Zahrand zum kontakt bearbeiten (alle) in diagnosen view
 -> Auftrag hinzufügen (man muss Pixelgenau auf das + Clicken, schaltfläche geht nicht)
 
-v 1.0.15
-++++: Benutzeransicht überarbeitet und verbessert
-++++: GUI wird neu berechnet, sobald das Browser-Fenster in der Größe geändert wurde
-++++: Benennung der Rechte vereinheitlicht
-++++: Rechte zum löschen von Auftragen und hochladen von PDFs für Patienten implementiert.
-++++: Rechte zum editieren und hinzufügen von Patienten implementiert.
-++++: Auftragsliste wird beim einloggen korrekt geladen.
-++++: Globale Anzeige von Fehlern/Infos funktioniert wieder richtig
-++++: Dialog zum hinzufügen von Patienten auf anlegen von Klinik-Patienten vorbereitet
-++++: Im Dialog zum hinzufügen von Patienten erscheint der Cursor jetzt zuverlässig im PIZ-Feld 
-++++: Neues Layout für Tab-Dialoge
-++++: Schnell-Suche funktioniert jetzt auch richtig mit Namen (Nachame; oder Nachname, Vorname) 
-++++: Dialog zum hinzufügen von Patienten überarbeitet und erweitert.
-++++: Suchfunktion für die Arbeitsliste überarbeitet und erweitert.
-++++: Brief ohne Klinik-Logo kann gedruckt werden
-++++: Befundbericht bedrucken um 180 gedredt, geht wieder
-++++: Beim Erstellen neuer Färbungen wird in der Auftragsübersicht der Auftrag nicht mehr als "Färbung abgeschlossen" angezeigt
-++++: Datum der Unterschirft wird aktualisiert, sobald die Befundung beendet wird
-++++: Patienten-Daten werden wieder richtig angezeigt
+! = fix
+* = change
++ = added
+- = removed
+	
++v 1.0.15
++++*: Info-Dialog auf neues Layout geändert, Versionsanzeige intern geändert.
++++*: Benutzeransicht überarbeitet und verbessert.
++++*: GUI wird neu berechnet, sobald das Browser-Fenster in der Größe geändert wurde.
++++*: Benennung der Rechte vereinheitlicht.
+++++: Rechte zum Löschen von Auftragen und hochladen von PDFs für Patienten implementiert.
+++++: Rechte zum Editieren und Hinzufügen von Patienten implementiert.
++++!: Auftragsliste wird beim Einloggen korrekt geladen.
++++!: Globale Anzeige von Fehlern/Infos funktioniert wieder richtig.
+++++: Dialog zum Hinzufügen von Patienten auf anlegen von Klinik-Patienten vorbereitet.
++++!: Im Dialog zum Hinzufügen von Patienten erscheint der Cursor jetzt zuverlässig im PIZ-Feld .
++++*: Neues Layout für Tab-Dialoge.
++++!: Schnell-Suche funktioniert jetzt auch richtig mit Namen (Nachame; oder Nachname, Vorname).
++++*: Dialog zum Hinzufügen von Patienten überarbeitet und erweitert.
++++*: Suchfunktion für die Arbeitsliste überarbeitet und erweitert.
+++++: Brief ohne Klinik-Logo kann gedruckt werden.
++++!: Befundbericht bedrucken um 180 gedreht, geht wieder.
++++!: Beim Erstellen neuer Färbungen wird in der Auftragsübersicht der Auftrag nicht mehr als "Färbung abgeschlossen" angezeigt.
++++*: Datum der Unterschrift wird aktualisiert, sobald die Befundung beendet wird.
++++!: Patienten-Daten werden wieder richtig angezeigt.
 
 SQL:
 alter table histosettings add startview integer;
@@ -179,15 +185,15 @@ INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'WORK
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'WORKLIST');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'WORKLIST');
 
-v 1.0.14
-++++: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich
-++++: Kopf zum leeren der Arbeitsliste hinzugefügt
-++++: Das Menu wird bei Verwendung der Navigations-Pfeile richtige geupdated 
-++++: Nach hinzufügen oder Suchen eines Patienten/Auftrages/Objektträger-ID wird die Arbeitsliste neu sortiert
-++++: Befund kann jetzt via Button in der Befundungsansicht abgeschlossen werden
-++++: Hintergrundfärbung der Diagnosen-Tabelle umgedreht 
-++++: Schnell-Suche funktioniert wieder wie erwartet.
-++++: Zähler für Objektträger in Auftrag verlegt
++v 1.0.14
++++*: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich.
+++++: Kopf zum leeren der Arbeitsliste hinzugefügt.
++++!: Das Menu wird bei Verwendung der Navigations-Pfeile richtige aktualisiert.
++++*: Nach hinzufügen oder Suchen eines Patienten/Auftrages/Objektträger-ID wird die Arbeitsliste neu sortiert.
+++++: Befund kann jetzt via Button in der Befundungsansicht abgeschlossen werden.
++++*: Hintergrundfärbung der Diagnosen-Tabelle umgedreht.
++++!: Schnell-Suche funktioniert wieder wie erwartet.
++++*: Zähler für Objektträger in Auftrag verlegt.
 
 SQL:
 alter table task add slidecounter integer;
@@ -198,14 +204,14 @@ Alter table block_aud drop column uniqueSlideCounter;
 ALTER TABLE slide RENAME COLUMN uniqueidinblock TO uniqueidintask;
 ALTER TABLE slide_aud RENAME COLUMN uniqueidinblock TO uniqueidintask;
 
-V 1.0.13
-++++: Graphische Anpassungen am Druck-Dialog, leere Adress-Option 
-++++: Wird ein Auftrag aus der Auftragsliste geladen, kam es bisher zu einem Fehler, dieser wurde behoben.
-++++: Befundberichte werden nach der Benachrichtigung ausgedruckt, Feld für die Anzahl hinzugefügt
-++++: Beim Erstellen eines Auftrags werden Aufklärungen nicht mehr aus einer Vorherigen Auftragserstellung übernommen.
-++++: Benachrichtigungs-Dialog kann wieder über das Menu geöffnet werden
-++++: Material kann manuell beim Erstellen eines Auftrages eingegeben werden
-++++: Fehler beim Suchen nach Patienten ohne Auftrag behoben
++v 1.0.13
++++*: Grafische Anpassungen am Druck-Dialog, leere Adress-Option hinzugefügt.
++++!: Wird ein Auftrag aus der Auftragsliste geladen, kam es bisher zu einem Fehler, dieser wurde behoben.
++++*: Befundberichte werden nach der Benachrichtigung ausgedruckt, Feld für die Anzahl hinzugefügt.
++++!: Beim Erstellen eines Auftrags werden Aufklärungen nicht mehr aus einer Vorherigen Auftragserstellung übernommen.
++++!: Benachrichtigungs-Dialog kann wieder über das Menu geöffnet werden.
+++++: Material kann manuell beim Erstellen eines Auftrages eingegeben werden.
++++!: Fehler beim Suchen nach Patienten ohne Auftrag behoben.
 
 SQL:
 Alter table person add autoUpdate boolean;
@@ -218,13 +224,13 @@ alter table task_pdfcontainer drop constraint uk_rp12j1tw0yxecu9bt0b0ym72t;
 alter table biobank_pdfcontainer drop constraint uk_8gmung1gnute185q5scwax2kk;
 alter table council_pdfcontainer drop constraint uk_6ux59funlxk7rbbi0ejs7ir7w;
 
-V 1.0.12
-++++: Aufträge werden in der Auftragsübersicht entsprechend ihrer Auftragsnummer sortiert, nicht mehr entsprechend ihrer internen ID.
-++++: Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und entsprechende Köpfe für die einzelne Phase im Menu eingebaut.
++v 1.0.12
++++*: Aufträge werden in der Auftragsübersicht entsprechend ihrer Auftragsnummer sortiert, nicht mehr entsprechend ihrer internen ID.
++++*: Färbe-, Befundungs- und Benachrichtiguns-Prozess angepasst und entsprechende Köpfe für die einzelne Phase im Menu eingebaut.
 ++++: Auftrag kann archiviert/dearchiviert werden, entsprechende Rechte eingeführt.
-++++: Login-Button wird gesperrt sobald ein Login erfolgt
-++++: Probe/Block/Objektträger archivieren wurde in löschen umbenannt
-++++: Aktuelle Versicherung wird nun angezeigt, anstelle von privat/regulär im Diagnosis View
++++*: Login-Button wird gesperrt sobald ein Login erfolgt
++++*: Probe/Block/Objektträger archivieren wurde in löschen umbenannt
++++*: Aktuelle Versicherung wird nun angezeigt, anstelle von privat/regulär im Diagnosis View
 ++++: Auftrags-Nummer kann nachträglich verändert werden
 ++++: Recht für Änderung der Auftrags-Nummer eingeführt
 
@@ -246,111 +252,103 @@ INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'TASK_EDIT_RESTORE');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'TASK_EDIT_RESTORE');
 
-
-V 1.0.11
-++++: Ist nur eine Probe vorhanden, wird kein Name im Diagnosen-View mehr angezeigt
-++++: Diagnosen und Proben werden im Diagnosen-View wieder richtig angezeigt
-++++: Hover-Texte angepasst
++v 1.0.11
++++*: Ist nur eine Probe vorhanden, wird kein Name im Diagnosen-View mehr angezeigt.
++++!: Diagnosen und Proben werden im Diagnosen-View wieder richtig angezeigt.
++++!: Hover-Texte angepasst.
 ++++: Funktionsoberarzt/Ärztin als Auswahl bei Diagnosen-Unterschrift hinzugefügt 
-++++: Auftragsnummer darf maximal 6 Zahlen enthalten, ein neuer Auftrag kann nur noch mit gültiger Auftragsnummer erstellt werden.
-++++: Rechtschreibfehler korrigiert.
-++++: Im Operateurauswahl-Dialog kann der Operateur jetzt auch beim Klicken auf den Namen ausgewählt werden.
-++++: Ist keine Vorlage für einen Diagnose-Text vorhanden, wird der link zum Kopieren der Vorlage ausgeraut.
-++++: Einlog-Routine überarbeitet, Redirect jetzt möglich, Fehlermeldung bei falschen Benutzerdaten.
-++++: Malignität im Befundbericht wird richtig angezeigt, Satz über die Gültigkeit des Berichtes hinzugefügt.
-++++: Editieren von externen Patienten geht wieder
-++++: Logeinträge werde nicht mehr mehrfach angezeigt
-++++: Die Generierung eines Befundberichtes nach Abschließen der Diagnose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.
-++++: Programm-Gruppen können Benutzer wieder richtig zugewiesen werden
-++++: Beim Einloggen wird Groß/Kleinschreibung des Benutzernamens ignoriert
-++++: Sessiontimout auf 12h gesetzt
-++++: Passwort wird wieder abgefragt, war zur Debugzwecken deaktiviert.
++++*: Auftragsnummer darf maximal 6 Zahlen enthalten, ein neuer Auftrag kann nur noch mit gültiger Auftragsnummer erstellt werden.
++++!: Rechtschreibfehler korrigiert.
++++*: Im Operateurauswahl-Dialog kann der Operateur jetzt auch beim Klicken auf den Namen ausgewählt werden.
++++*: Ist keine Vorlage für einen Diagnose-Text vorhanden, wird der link zum Kopieren der Vorlage ausgeraut.
++++*: Einlog-Routine überarbeitet, Redirect jetzt möglich, Fehlermeldung bei falschen Benutzerdaten.
++++!: Malignität im Befundbericht wird richtig angezeigt, Satz über die Gültigkeit des Berichtes hinzugefügt.
++++!: Editieren von externen Patienten geht wieder.
++++!: Logeinträge werde nicht mehr mehrfach angezeigt.
++++*: Die Generierung eines Befundberichtes nach Abschließen der Diagnose ist jetzt optional, kann unter Benutzereistellung aktiviert werden.
++++!: Programm-Gruppen können Benutzer wieder richtig zugewiesen werden.
++++*: Beim Einloggen wird Groß/Kleinschreibung des Benutzernamens ignoriert.
++++*: Sessiontimout auf 12h gesetzt.
++++*: Passwort wird wieder abgefragt, war zur Debugzwecken deaktiviert.
 
-V 1.0.10
-++++: Warnung wird bei doppelter Tasknummern angezeigt
-++++: Konsile sind nicht mehr bearbeitbar, wenn Auftrag finalisiert wurde
-++++: Konsile werden richtig gespeichert
-++++: Konsil-Dialog kann aus der Auftragsübersicht, über das Konsil-Icon aufgerufen werden
-++++: Auftragsnummer manuell anpassbar, Programm zählt bei der höchten nummer des laufenden Jahres weiter
-++++: Beim Konsil ausdrucken wird der Konsil-Dialog nicht mehr geschlossen
-++++: Konsile enthalten mehr felder zum Dokumentieren von versendeten und zurückgekommen Proben
++v 1.0.10
+++++: Warnung wird bei doppelter Tasknummern angezeigt.
++++*: Konsile sind nicht mehr bearbeitbar, wenn Auftrag finalisiert wurde.
++++!: Konsile werden richtig gespeichert.
+++++: Konsil-Dialog kann aus der Auftragsübersicht, über das Konsil-Icon aufgerufen werden.
+++++: Auftragsnummer manuell anpassbar, Programm zählt bei der höchsten Nummer des laufenden Jahres weiter.
++++*: Beim Konsil ausdrucken wird der Konsil-Dialog nicht mehr geschlossen.
+++++: Konsile enthalten mehr Felder zum Dokumentieren von versendeten und zurückgekommen Proben.
 
-V 1.0.9
-++++: chargen für färbungen
-++++: Patienten Daten im header menu geht nicht
-++++: Histouser vor einloggen hinzufügen
-++++: Bennung von Proben usw verbieten, wenn task nicht editiertbar
-++++: Schnelle Nachf�rbug Dialog
-++++: Phasen + Phasen Buttons im Menu überprüfen
-++++: batches gui für färbungen
-++++: Briefliste in diagnose muss bei diagnose Änderugnen übernommen werden -< updateNotificationOnDiagnosisChange
-++++: Notification! ->  save sendreport, 
-++++: associated contact und associated contact notification haben beide ein custom addres field, von associated contact diese entfernen
-++++: reperform send, send report latex
-++++: Labelprinten überprüfen ob richtig geht
-++++: Ldap, Fax überprüfen ob richtig gehen
-++++: Global settings thread save -> LDAP HANDLER, LabelPrinter (stateless machen)
-++++: Contact Dialog geht nicht
-++++: 6: Contact Dialog mit neuem view �berarbeiten
-++++: Personen m�ssen auch den Organisationen hinzuge�gt werden
-++++: standard organisation + konsilare von claudia übernehmen, 
-++++: versionsfehler besser handlen, refresh der seite
-++++: Bilder für Konsilanzeige einabauen
-++++: Diagnosen müssen default brieffelder bekommen
-++++: Seach QUick add feld geht gerade nicht richtig
-++++: Überprüfen ob organisationen beim ersten einloggen automatisch gestzt werden
-++++: Versionkonflik beim löschen von organisationen
-++++: Sort Optionen f�r worklist arbeitet nicht richtig / anzeige selected task verbessern
-++++: Emailbenachrichtigung wenn externes Konsil hochgeladen wird status konsil ausstehend, erledigt als boolean feld
-++++: benutzer settings
-++++: Geschlecht von ldap rausfinden
-++++: favouriten
-++++: Bl�cke nomeklatur �berpr�fen
-++++: einspeisen von operateueren abgleichen, geht zumteil nicht richtig
-++++: Drucker werde gerade nicht richtig eigelsen
-++++: PDF generation, wenn keien Untersucher ausgew�hlt sind geht nicht
-++++: Autonomekature f�r Bl�cke arbeitet nicht + nicht �berschreiben von manuell umbenannte diagnosen
-++++: Diangose text speichern, geht zurzeit nicht
-++++: Konsile gehen nicht
-++++: Biobank
-++++: Settings Personen: Es m�ssen Haus�rzte angezeigt werden k�nnen (werden bisher nur operateure, augen�rtze/ andere
-++++: Arzt muss als untersucher markiert werden f�r unterschriften
-++++: notification search
-++++: Kontakte, testen ob primarycontact aktuallisiert wird
-++++: Sendefunktion testen!
-++++: anzeige des status
-++++: Diangose beenden, auswahl der templates
-++++: Auswahl der Operatuere/Einsender im diagnsoe bildschirm vereinfachen
-++++: Benachrichtigung �berarbeiten
-++++: DiagnosenPrest Namen feld in category umbenennen
-++++: Diagnosen Kategory, im erstellungs dialog
-++++: Manuellen Phasenwechsel zug�nglich machen 
-++++: boolean felder von task �berarbeiten
-++++: Kopf f�r mehrer Diangose einabuen, Histologischer Befund als normalbefund, �ndern zu vorl�ufiger befund, Konsilbefund, nachbefund
-++++: urgent: status und info dialog
-++++: check patient fetch from jason form clinik -> zu viele patienten
-++++: wenn kein patient gefunden, darf dieser nicht ausgew�hlt werden k�nnen
-++++: print dialog auswahl der �rtze geht nicht
-++++: UREPORT Printing from create dialog
-++++: Multible councils
-++++: Diagnose page
-++++: edit page patient external
-++++: Logout warn
-++++: status display (in navigation)
-++++: Edit external patient from menu bar
-++++: Priorisierung
-++++: fullName propertie of physician move to person
-++++: Print-Dialog und auswahl von Files in patientenmaske
++v 1.0.9
++++*: Gruppenrichtlinien.
++++*: Geschwindigkeit des Programmes deutlich gesteigert.
+++++: Favouritenlisten für Benutzer.
+++++: Favouritenlisten können freigegeben werden (Benutzer, Gruppe, Global).
+++++: Umgedrehter Eingangsbogen, Dokument-Vorlagen können nun Attribute zugewiesen werden.
+			
++v 1.0.8
++++!: Kopieren der vorgefertigten Diagnose-Text funktioniert wieder.
+++++: Faxen ist über den Druck-Dialog möglich.
+++++: Löschen von Aufträgen, die noch nicht bearbeitet wurden, ist möglich.
++++*: Es können keine doppelten Auftragsnummern mehr angelegt werden.
++++*: Versionsverwaltung verbessert.
++++!: Rechtschreibkorrekturen.
++++!: Konsile können wieder gedruckt werden.
++++!: Diagnose-Benachrichtigungs-Dialog funktioniert wieder und wurde überarbeitet.
++++!: Nach und Vorname werden in der richtigen Reinfolge angezeigt.
++++*: Eingabefeld der Vorgeschichte vergrößert.
++++*: Befundbericht überarbeitet und angepasst.
++++*: Etikettendrucken ist nun Thread-Save.
++++*: LDAP-Requests sind nun Thread-Save.
++++!: Kontakt-Dialog verursacht keine Fehler mehr beim Suchen nach Personen.
+++++: Fehlermeldung, falls Drucker nicht erreichbar ist.
+++++: Dialog für schnelle Nachfärbungen implementiert.
+++++: Aufträge können gelöscht werden, wenn sie noch nicht bearbeitet wurden.
+++++: Benutzer können vor dem ersten Login freigeschaltet werden.
+++++: Chargen für Färbungen können angelegt werden.
 
-http://stackoverflow.com/questions/6149919/is-it-safe-to-start-a-new-thread-in-a-jsf-managed-bean
-Session Refresh: http://stackoverflow.com/questions/3642919/javax-faces-application-viewexpiredexception-view-could-not-be-restored
++v 1.0.4 - 1.0.7
++++!: Viel Bug-Fixes, interne Verbesserungen
 
++v 1.0.3
++++*: Patienten hinzufügen funktioniert jetzt mit Barcode-Scanner.
++++*: Konsile-Dialog überarbeitet, Konsile werden jetzt je nach Status in Favoritenlisten eingeteilt.
++++!: Sortierung der Arbeitsliste überarbeitet.
++++*: Navigationsknöpfe der Arbeitsliste überarbeitet.
++++!: Benennung von Blöcken funktioniert wieder richtig.
 
++v 1.0.2
+++++: Erweiterte Suche funktionsfähig.
 
++v 1.0.1
++++*: Session-Timeout hochgesetzt.
 
++v 1.0.0
++++: Erste Veröffentlichung.
 
-
-
-
-
-
++v 0.0.9 & pre
++++*: Patienten-Daten im Navigations-Menu werden wieder richtig angezeigt.
+++++: Änderungen am Auftrag werden verboten, sobald dieser nicht mehr bearbeitbar ist.
+++++: Dialog für schnelleres Nachfärben
+++++: Sende-Report wird erstellt, sobald die Benachrichtigung abgeschlossen wurde.
++++*: Doppelte Adressfelder entfernt (intern).
+++++: Erneuest durchführen der Benachrichtigung möglich.
++++!: Etiketten drucken funktioniert wieder richtig.
+++++: Faxen funktioniert auf Windows.
+++++: GlobaleSettings eingeführt, jetzt Thread-Save (intern).
++++!: Kontakt-Dialog geht wieder richtig. Wurde mit neuem Layout überarbeitet
+++++: Personen können Organisationen hinzugefügt werden.
+++++: Organisationen eingeführt. Werden beim ersten Einloggen erstellt, falls dem Programm noch nicht bekannt.
+++++: Versionsfehler (Datenbank Version) werden dem Benutzer angezeigt.
++++*: Konsil-Status wird in der Patientenübersicht angezeigt.
++++*: Schnell-Suche verbessert.
++++!: Versionskonflikt beim Löschen von Organisationen behoben.
++++!: Arbeitsliste kann wieder richtig sortiert werden.
+++++: Individuelle Benutzereinstellungen.
+++++: Geschlecht wird jetzt zuverlässig aus dem LDAP ausgelesen.
+++++: Favouritenlisten implementiert.
++++!: Block-Benennung geht wieder richtig.
+++++: Biobank hinzugefügt.
+++++: Rollen für Ärzte hinzugefügt.
++++: .....

@@ -13,163 +13,166 @@
 			value="#{settingsDialogHandler.organizationTab.newOrganization ? msg['dialog.settings.organization.edit.headline.new'] : msg['dialog.settings.organization.edit.headline.edit']}" />
 	</p:outputPanel>
 
+	<p:outputPanel styleClass="bodyPannelFull">
 
-	<h:panelGrid columns="3"
-		columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
-		styleClass="defaultListingTableFirstColumEnummeration">
+		<h:panelGrid columns="3"
+			columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
+			styleClass="defaultListingTableFirstColumEnummeration">
 
-		<!-- Organization -->
-		<h:panelGrid columns="1">
-			<h:outputLabel
-				value="#{msg['dialog.settings.organization.edit.organization']}" />
+			<!-- Organization -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.organization']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- name -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.name']}" />
+				<p:inputText id="organizationName"
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.name}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- clinic -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.clinicIntern']}" />
+				<p:selectBooleanCheckbox id="organizationIntern"
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.intern}" />
+
+			</h:panelGrid>
+
+
+			<!-- ****************** Adress ****************** -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- street -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.street']}" />
+				<p:inputText id="_street" name="street-address"
+					autocomplete="street-address"
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.street}" />
+
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.building']}" />
+				<p:inputText id="_building" name="building-address"
+					autocomplete="building-address"
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.building}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- Town -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.town']}" />
+				<p:inputText id="_town" name="city" autocomplete="address-level2"
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.town}" />
+
+				<!-- Postcode -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.postCode']}" />
+				<p:inputText style="width:75px;"
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.postcode}"
+					name="postal-code" autocomplete="postal-code" />
+			</h:panelGrid>
+			<!-- ****************** Adress ****************** -->
+
+			<!-- ****************** Contact ****************** -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.miscellaneous']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- phone -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.phone']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.phone}"
+					name="phone" autocomplete="tel" />
+				<!-- mobile -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.mobile']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.phone}"
+					name="phone" autocomplete="tel" />
+
+				<!-- homepage -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.homepage']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.homepage}"
+					name="homepage" autocomplete="homepage" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				columnClasses="defaultListingTableColumn30,">
+				<!-- fax -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.fax']}" />
+				<p:inputText
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.fax}"
+					name="fax" autocomplete="fax" />
+				<!-- mail -->
+				<p:outputLabel
+					value="#{msg['dialog.settings.organization.edit.adress.email']}" />
+				<p:inputText id="_email" name="mail" autocomplete="mail"
+					value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.email}" />
+			</h:panelGrid>
+			<!-- ****************** Contact ****************** -->
 		</h:panelGrid>
+		<h:panelGrid columns="2"
+			columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop"
+			styleClass="defaultListingTableFirstColumEnummeration">
 
-		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-			columnClasses="defaultListingTableColumn30,">
-			<!-- name -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.name']}" />
-			<p:inputText id="organizationName"
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.name}" />
+			<!-- commentary -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.note']}" />
+			</h:panelGrid>
+
+			<p:inputTextarea id="organizationNote" style="width:85%"
+				value="#{settingsDialogHandler.organizationTab.selectedOrganization.note}" />
+
+
+			<!-- persons -->
+			<h:panelGrid columns="1">
+				<h:outputLabel
+					value="#{msg['dialog.settings.organization.edit.persons']}" />
+			</h:panelGrid>
+
+			<p:dataTable id="userTable"
+				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+				value="#{settingsDialogHandler.organizationTab.selectedOrganization.persons}"
+				var="person" style="width:600px" scrollable="true"
+				scrollHeight="150">
+				<p:column
+					headerText="#{msg['dialog.settings.organization.edit.persons.name']}">
+					<h:outputLabel value="#{person.fullName}" />
+
+				</p:column>
+
+				<p:column headerText="#" style="width:15px">
+					<p:commandLink update="@form" process="@this" partialSubmit="true"
+						title="#{msg['dialog.settings.organization.edit.persons.remove']}">
+						<i class="fa fa-remove" style="margin-left: 8px" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.organizationListDialog.removeOrganizationFromPerson(person, settingsDialogHandler.organizationTab.selectedOrganization)}" />
+						<f:actionListener
+							binding="#{settingsDialogHandler.organizationTab.updateData()}" />
+					</p:commandLink>
+				</p:column>
+			</p:dataTable>
 		</h:panelGrid>
-
-		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-			columnClasses="defaultListingTableColumn30,">
-			<!-- clinic -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.clinicIntern']}" />
-			<p:selectBooleanCheckbox id="organizationIntern"
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.intern}" />
-
-		</h:panelGrid>
-
-
-		<!-- ****************** Adress ****************** -->
-		<h:panelGrid columns="1">
-			<h:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress']}" />
-		</h:panelGrid>
-
-		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-			columnClasses="defaultListingTableColumn30,">
-			<!-- street -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.street']}" />
-			<p:inputText id="_street" name="street-address"
-				autocomplete="street-address"
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.street}" />
-
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.building']}" />
-			<p:inputText id="_building" name="building-address"
-				autocomplete="building-address"
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.building}" />
-		</h:panelGrid>
-
-		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-			columnClasses="defaultListingTableColumn30,">
-			<!-- Town -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.town']}" />
-			<p:inputText id="_town" name="city" autocomplete="address-level2"
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.town}" />
-
-			<!-- Postcode -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.postCode']}" />
-			<p:inputText style="width:75px;"
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.postcode}"
-				name="postal-code" autocomplete="postal-code" />
-		</h:panelGrid>
-		<!-- ****************** Adress ****************** -->
-
-		<!-- ****************** Contact ****************** -->
-		<h:panelGrid columns="1">
-			<h:outputLabel
-				value="#{msg['dialog.settings.organization.edit.miscellaneous']}" />
-		</h:panelGrid>
-
-		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-			columnClasses="defaultListingTableColumn30,">
-			<!-- phone -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.phone']}" />
-			<p:inputText
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.phone}"
-				name="phone" autocomplete="tel" />
-			<!-- mobile -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.mobile']}" />
-			<p:inputText
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.phone}"
-				name="phone" autocomplete="tel" />
-
-			<!-- homepage -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.homepage']}" />
-			<p:inputText
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.homepage}"
-				name="homepage" autocomplete="homepage" />
-		</h:panelGrid>
-
-		<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-			columnClasses="defaultListingTableColumn30,">
-			<!-- fax -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.fax']}" />
-			<p:inputText
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.fax}"
-				name="fax" autocomplete="fax" />
-			<!-- mail -->
-			<p:outputLabel
-				value="#{msg['dialog.settings.organization.edit.adress.email']}" />
-			<p:inputText id="_email" name="mail" autocomplete="mail"
-				value="#{settingsDialogHandler.organizationTab.selectedOrganization.contact.email}" />
-		</h:panelGrid>
-		<!-- ****************** Contact ****************** -->
-	</h:panelGrid>
-	<h:panelGrid columns="2"
-		columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop"
-		styleClass="defaultListingTableFirstColumEnummeration">
-
-		<!-- commentary -->
-		<h:panelGrid columns="1">
-			<h:outputLabel
-				value="#{msg['dialog.settings.organization.edit.note']}" />
-		</h:panelGrid>
-
-		<p:inputTextarea id="organizationNote" style="width:85%"
-			value="#{settingsDialogHandler.organizationTab.selectedOrganization.note}" />
-
-
-		<!-- persons -->
-		<h:panelGrid columns="1">
-			<h:outputLabel
-				value="#{msg['dialog.settings.organization.edit.persons']}" />
-		</h:panelGrid>
-
-		<p:dataTable id="userTable"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			value="#{settingsDialogHandler.organizationTab.selectedOrganization.persons}"
-			var="person" style="width:600px" scrollable="true" scrollHeight="150">
-			<p:column
-				headerText="#{msg['dialog.settings.organization.edit.persons.name']}">
-				<h:outputLabel value="#{person.fullName}" />
-
-			</p:column>
-
-			<p:column headerText="#" style="width:15px">
-				<p:commandLink update="@form" process="@this" partialSubmit="true"
-					title="#{msg['dialog.settings.organization.edit.persons.remove']}">
-					<i class="fa fa-remove" style="margin-left: 8px" />
-					<f:actionListener
-						binding="#{dialogHandlerAction.organizationListDialog.removeOrganizationFromPerson(person, settingsDialogHandler.organizationTab.selectedOrganization)}" />
-					<f:actionListener
-						binding="#{settingsDialogHandler.organizationTab.updateData()}" />
-				</p:commandLink>
-			</p:column>
-		</p:dataTable>
-	</h:panelGrid>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"

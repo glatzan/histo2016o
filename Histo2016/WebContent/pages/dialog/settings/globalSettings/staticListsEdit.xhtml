@@ -12,14 +12,18 @@
 			value="#{settingsDialogHandler.staticListTab.newListItem ? msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.staticListTab.selectedStaticList)]) : msg['dialog.settings.list.new.headline'].concat( msg['enum.staticList.'.concat(settingsDialogHandler.staticListTab.selectedStaticList)])}" />
 	</p:outputPanel>
 
-	<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
-		style="width:100%">
+	<p:outputPanel styleClass="bodyPannelFull">
 
-		<h:outputLabel value="#{msg['dialog.settings.list.new.name']}"></h:outputLabel>
-		<p:inputText
-			value="#{settingsDialogHandler.staticListTab.editListItem.value}"></p:inputText>
-	</p:panelGrid>
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
 
+			<h:outputLabel value="#{msg['dialog.settings.list.new.name']}"></h:outputLabel>
+			<p:inputText
+				value="#{settingsDialogHandler.staticListTab.editListItem.value}"></p:inputText>
+		</p:panelGrid>
+
+	</p:outputPanel>
+	
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">

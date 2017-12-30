@@ -11,87 +11,89 @@
 		<h:outputLabel value="#{msg['dialog.settings.person.list.headline']}" />
 	</p:outputPanel>
 
-	<p:dataTable var="physician" id="physician" style="width:100%;"
-		scrollable="true" scrollHeight="440"
-		value="#{settingsDialogHandler.physicianSettingsTab.physicianList}"
-		styleClass="newStyleDataTable">
+	<p:outputPanel styleClass="bodyPannelFull">
 
-		<!-- title -->
-		<p:column sortBy="#{physician.person.title}"
-			headerText="#{msg['dialog.settings.person.list.title']}"
-			style="width:15%">
-			<h:outputText value="#{physician.person.title}" />
-		</p:column>
+		<p:dataTable var="physician" id="physician" style="width:100%;"
+			scrollable="true" scrollHeight="440"
+			value="#{settingsDialogHandler.physicianSettingsTab.physicianList}"
+			styleClass="newStyleDataTable">
 
-		<!-- Name -->
-		<p:column sortBy="#{physician.person.lastName}"
-			filterBy="#{physician.person.lastName}" filterMatchMode="contains"
-			headerText="#{msg['dialog.settings.person.list.name']}"
-			style="width:20%">
-			<h:outputText value="#{physician.person.lastName}" />
-		</p:column>
+			<!-- title -->
+			<p:column sortBy="#{physician.person.title}"
+				headerText="#{msg['dialog.settings.person.list.title']}"
+				style="width:15%">
+				<h:outputText value="#{physician.person.title}" />
+			</p:column>
 
-		<!-- Vorname -->
-		<p:column headerText="#{msg['dialog.settings.person.list.firstName']}"
-			style="width:20%">
-			<h:outputText value="#{physician.person.firstName}" />
-		</p:column>
+			<!-- Name -->
+			<p:column sortBy="#{physician.person.lastName}"
+				filterBy="#{physician.person.lastName}" filterMatchMode="contains"
+				headerText="#{msg['dialog.settings.person.list.name']}"
+				style="width:20%">
+				<h:outputText value="#{physician.person.lastName}" />
+			</p:column>
 
-		<!-- Role -->
-		<p:column headerText="#{msg['dialog.settings.person.list.role']}"
-			style="text-align:left;">
-			<p:repeat value="#{physician.associatedRolesAsArray}"
-				var="associatedRoles">
-				<h:outputLabel
-					value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
-				<br />
-			</p:repeat>
-		</p:column>
+			<!-- Vorname -->
+			<p:column
+				headerText="#{msg['dialog.settings.person.list.firstName']}"
+				style="width:20%">
+				<h:outputText value="#{physician.person.firstName}" />
+			</p:column>
 
-		<!-- clinical employee -->
-		<p:column headerText="#{msg['dialog.settings.person.list.employee']}"
-			style="text-align:center;">
-			<h:panelGroup rendered="#{physician.clinicEmployee}">
-				<i class="fa fa-fw fa-check-circle icon-green" />
-			</h:panelGroup>
-		</p:column>
+			<!-- Role -->
+			<p:column headerText="#{msg['dialog.settings.person.list.role']}"
+				style="text-align:left;">
+				<p:repeat value="#{physician.associatedRolesAsArray}"
+					var="associatedRoles">
+					<h:outputLabel
+						value="#{msg['enum.contactRole.'.concat(associatedRoles)]}" />
+					<br />
+				</p:repeat>
+			</p:column>
 
-		<!-- Optionen -->
-		<p:column style="width:10%; text-align:center;">
-			<f:facet name="header">
-				<i class="fa fa-cog"
-					title="#{msg['dialog.settings.person.list.options']}" />
-			</f:facet>
+			<!-- clinical employee -->
+			<p:column headerText="#{msg['dialog.settings.person.list.employee']}"
+				style="text-align:center;">
+				<h:panelGroup rendered="#{physician.clinicEmployee}">
+					<i class="fa fa-fw fa-check-circle icon-green" />
+				</h:panelGroup>
+			</p:column>
 
-			<!-- Edit -->
-			<p:commandLink styleClass="noUnderlineAtLink"
-				title="#{msg['dialog.settings.person.list.options.edit']}"
-				actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(physician)}"
-				partialSubmit="true" process="@this">
-				<i class="fa fa-fw fa-cog" />
-				<p:ajax event="dialogReturn"
-					listener="#{settingsDialogHandler.physicianSettingsTab.updateData()}"
-					update="@form" />
-			</p:commandLink>
+			<!-- Optionen -->
+			<p:column style="width:10%; text-align:center;">
+				<f:facet name="header">
+					<i class="fa fa-cog"
+						title="#{msg['dialog.settings.person.list.options']}" />
+				</f:facet>
 
-			<!-- refresh -->
-			<p:commandLink styleClass="noUnderlineAtLink"
-				title="Update"
-				actionListener="#{physicianService.updatePhysicianDataFromLdap(physician)}"
-				update="@form" partialSubmit="true" process="@this">
-				<i class="fa fa-fw fa-undo " />
-			</p:commandLink>
-			
-			<!-- archive -->
-			<p:commandLink styleClass="noUnderlineAtLink"
-				title="#{physician.archived ? msg['dialog.settings.person.list.options.archive.undo'] :  msg['dialog.settings.person.list.options.archive']}"
-				actionListener="#{settingsDialogHandler.physicianSettingsTab.archivePhysician(physician, !physician.archived)}"
-				update="@form" partialSubmit="true" process="@this">
-				<i class="fa fa-fw #{physician.archived ? 'fa-user' : 'fa-times' }" />
-			</p:commandLink>
-		</p:column>
-	</p:dataTable>
+				<!-- Edit -->
+				<p:commandLink styleClass="noUnderlineAtLink"
+					title="#{msg['dialog.settings.person.list.options.edit']}"
+					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(physician)}"
+					partialSubmit="true" process="@this">
+					<i class="fa fa-fw fa-cog" />
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.physicianSettingsTab.updateData()}"
+						update="@form" />
+				</p:commandLink>
 
+				<!-- refresh -->
+				<p:commandLink styleClass="noUnderlineAtLink" title="Update"
+					actionListener="#{physicianService.updatePhysicianDataFromLdap(physician)}"
+					update="@form" partialSubmit="true" process="@this">
+					<i class="fa fa-fw fa-undo " />
+				</p:commandLink>
+
+				<!-- archive -->
+				<p:commandLink styleClass="noUnderlineAtLink"
+					title="#{physician.archived ? msg['dialog.settings.person.list.options.archive.undo'] :  msg['dialog.settings.person.list.options.archive']}"
+					actionListener="#{settingsDialogHandler.physicianSettingsTab.archivePhysician(physician, !physician.archived)}"
+					update="@form" partialSubmit="true" process="@this">
+					<i class="fa fa-fw #{physician.archived ? 'fa-user' : 'fa-times' }" />
+				</p:commandLink>
+			</p:column>
+		</p:dataTable>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"

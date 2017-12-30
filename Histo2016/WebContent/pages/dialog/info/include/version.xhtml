@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.info.version.headline']}" />
+	</p:outputPanel>
+
+	<p:outputPanel styleClass="bodyPannelScroll">
+		<ui:repeat var="info"
+			value="#{programmVersionDialog.versionTab.versionInfo}"
+			varStatus="versionCount">
+			<h:outputLabel style="margin-left:5px;" styleClass="bigFont"
+				value="#{msg['dialog.info.version']} #{info.version}" />
+
+			<ul style="margin: 0px; margin-bottom: 10px;">
+				<ui:repeat var="text" value="#{info.changes}" varStatus="status">
+					<li><h:outputLabel escape="false" value="#{text}" /></li>
+				</ui:repeat>
+			</ul>
+		</ui:repeat>
+	</p:outputPanel>
+
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="newTableContainer right">
+				<p:commandButton value="#{msg['general.close']}"
+					icon="fa fa-times-circle"
+					actionListener="#{programmVersionDialog.hideDialog()}" />
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("#adminForm\\:bodyScrollPannel").jScrollPane({
+				mouseWheelSpeed : 100
+			});
+		});
+	</script>
+</ui:composition>

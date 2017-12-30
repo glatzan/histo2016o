@@ -11,37 +11,40 @@
 		<h:outputLabel value="#{msg['dialog.settings.material']}" />
 	</p:outputPanel>
 
-	<p:dataTable var="stainingList" style="width:100%;" scrollable="true"
-		scrollHeight="460" draggableRows="true"
-		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-		value="#{settingsDialogHandler.materialTab.allMaterialList}">
+	<p:outputPanel styleClass="bodyPannelFull">
 
-		<p:column headerText="#{msg['dialog.settings.material.name']}"
-			sortBy="#{stainingList.name}" style="width:20%">
-			<h:outputText value="#{stainingList.name}" />
-		</p:column>
+		<p:dataTable var="stainingList" style="width:100%;" scrollable="true"
+			scrollHeight="460" draggableRows="true"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			value="#{settingsDialogHandler.materialTab.allMaterialList}">
 
-		<p:column headerText="#{msg['dialog.settings.material.commentary']}"
-			style="width:53%">
-			<h:outputText value="#{stainingList.commentary}" />
-		</p:column>
+			<p:column headerText="#{msg['dialog.settings.material.name']}"
+				sortBy="#{stainingList.name}" style="width:20%">
+				<h:outputText value="#{stainingList.name}" />
+			</p:column>
 
-		<p:column style="width:7%; text-align:center;">
-			<f:facet name="header">
-				<i class="fa fa-cog" />
-			</f:facet>
-			<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-				actionListener="#{settingsDialogHandler.materialTab.prepareEditMaterial(stainingList)}"
-				update="@form">
-				<i class="fa fa-fw fa-cog" />
-			</p:commandLink>
-		</p:column>
+			<p:column headerText="#{msg['dialog.settings.material.commentary']}"
+				style="width:53%">
+				<h:outputText value="#{stainingList.commentary}" />
+			</p:column>
 
-		<p:ajax event="rowReorder"
-			listener="#{settingsDialogHandler.materialTab.onReorderList}" />
+			<p:column style="width:7%; text-align:center;">
+				<f:facet name="header">
+					<i class="fa fa-cog" />
+				</f:facet>
+				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
+					actionListener="#{settingsDialogHandler.materialTab.prepareEditMaterial(stainingList)}"
+					update="@form">
+					<i class="fa fa-fw fa-cog" />
+				</p:commandLink>
+			</p:column>
 
-	</p:dataTable>
+			<p:ajax event="rowReorder"
+				listener="#{settingsDialogHandler.materialTab.onReorderList}" />
 
+		</p:dataTable>
+	</p:outputPanel>
+	
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">

@@ -44,12 +44,12 @@ public class ErrorMail extends MailTemplate {
 		VelocityContext context = new VelocityContext();
 
 		context.put("histoUser", histoUser);
-		context.put("errorContent", errorContent);
+		context.put("bodyText", errorContent);
 		context.put("currentDate", currentDate);
 
 		/* now render the template into a StringWriter */
 		StringWriter writer = new StringWriter();
-
+System.out.println(getSubject());
 		Velocity.evaluate(context, writer, "mystring", getSubject());
 		setSubject(writer.toString());
 

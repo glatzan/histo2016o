@@ -11,44 +11,47 @@
 		<h:outputLabel value="#{msg['dialog.settings.stainings']}" />
 	</p:outputPanel>
 
-	<p:dataTable var="staining" style="width:100%;" scrollable="true"
-		scrollHeight="460" draggableRows="true"
-		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-		value="#{settingsDialogHandler.stainingTab.allStainingsList}">
+	<p:outputPanel styleClass="bodyPannelFull">
 
-		<p:column headerText="#{msg['dialog.settings.stainings.staining']}"
-			sortBy="#{staining.name}" style="width:20%">
-			<h:outputText value="#{staining.name}" />
-		</p:column>
+		<p:dataTable var="staining" style="width:100%;" scrollable="true"
+			scrollHeight="460" draggableRows="true"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			value="#{settingsDialogHandler.stainingTab.allStainingsList}">
 
-		<p:column headerText="#{msg['dialog.settings.stainings.type']}"
-			sortBy="#{staining.type}" style="width:20%">
-			<h:outputText
-				value="#{msg['enum.stainingType.'.concat(staining.type)]}" />
-		</p:column>
+			<p:column headerText="#{msg['dialog.settings.stainings.staining']}"
+				sortBy="#{staining.name}" style="width:20%">
+				<h:outputText value="#{staining.name}" />
+			</p:column>
 
-		<p:column headerText="#{msg['dialog.settings.stainings.commentary']}"
-			style="width:50%">
-			<h:outputText value="#{staining.commentary}" />
-		</p:column>
-		<p:column style="width:10%; text-align:center;">
-			<f:facet name="header">
-				<i class="fa fa-cog" />
-			</f:facet>
-			<p:commandLink title="#{msg['dialog.settings.stainings.edit']}"
-				partialSubmit="true" process="@this"
-				actionListener="#{dialogHandlerAction.stainingEditDialog.initAndPrepareBean(staining)}"
-				styleClass="noUnderlineAtLink">
-				<i class="fa fa-cog" />
+			<p:column headerText="#{msg['dialog.settings.stainings.type']}"
+				sortBy="#{staining.type}" style="width:20%">
+				<h:outputText
+					value="#{msg['enum.stainingType.'.concat(staining.type)]}" />
+			</p:column>
 
-				<p:ajax event="dialogReturn" update="@form"
-					listener="#{settingsDialogHandler.stainingTab.updateData()}" />
-			</p:commandLink>
-		</p:column>
-		<p:ajax event="rowReorder"
-			listener="#{settingsDialogHandler.stainingTab.onReorderList}" />
-	</p:dataTable>
+			<p:column headerText="#{msg['dialog.settings.stainings.commentary']}"
+				style="width:50%">
+				<h:outputText value="#{staining.commentary}" />
+			</p:column>
+			<p:column style="width:10%; text-align:center;">
+				<f:facet name="header">
+					<i class="fa fa-cog" />
+				</f:facet>
+				<p:commandLink title="#{msg['dialog.settings.stainings.edit']}"
+					partialSubmit="true" process="@this"
+					actionListener="#{dialogHandlerAction.stainingEditDialog.initAndPrepareBean(staining)}"
+					styleClass="noUnderlineAtLink">
+					<i class="fa fa-cog" />
 
+					<p:ajax event="dialogReturn" update="@form"
+						listener="#{settingsDialogHandler.stainingTab.updateData()}" />
+				</p:commandLink>
+			</p:column>
+			<p:ajax event="rowReorder"
+				listener="#{settingsDialogHandler.stainingTab.onReorderList}" />
+		</p:dataTable>
+	</p:outputPanel>
+	
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">

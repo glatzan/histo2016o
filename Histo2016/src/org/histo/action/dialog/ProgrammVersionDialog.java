@@ -1,6 +1,7 @@
 package org.histo.action.dialog;
 
 import java.util.Date;
+import java.util.List;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
@@ -10,80 +11,146 @@ import org.histo.config.enums.Dialog;
 import org.histo.model.transitory.settings.Version;
 import org.histo.template.mail.ErrorMail;
 import org.histo.util.TimeUtil;
+import org.histo.worklist.search.WorklistSimpleSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
 @Scope(value = "session")
-public class ProgrammVersionDialog extends AbstractDialog {
+@Getter
+@Setter
+public class ProgrammVersionDialog extends AbstractTabDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
 
-	private Version[] versionInfo;
+	private VersionTab versionTab;
+	private ErrorTab errorTab;
+	private AboutTab aboutTab;
 
-	private String errorMessage;
+	public ProgrammVersionDialog() {
+		setVersionTab(new VersionTab());
+		setErrorTab(new ErrorTab());
+		setAboutTab(new AboutTab());
 
-	private Date errorDate;
+		tabs = new AbstractTab[] { versionTab, errorTab, aboutTab };
+	}
 
 	public void initAndPrepareBean() {
-		if (initBean())
-			prepareDialog();
+		initBean();
+		prepareDialog();
 	}
 
 	public boolean initBean() {
 		super.initBean(null, Dialog.INFO);
-		logger.trace("Preparing Info Dialog");
-		setVersionInfo(Version.factroy(GlobalSettings.VERSIONS_INFO));
-		setErrorDate(new Date(System.currentTimeMillis()));
-		setErrorMessage("");
+
+		for (int i = 0; i < tabs.length; i++) {
+			tabs[i].initTab();
+		}
+
+		onTabChange(tabs[0]);
+
 		return true;
 	}
 
-	public void sendErrorMessage(Date dateOfError, String errorMessage) {
-		// TODO rewrite if email system is updated
-		logger.debug("Sending Error DiagnosisRevision Date + "
-				+ TimeUtil.formatDate(dateOfError, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " Message: "
-				+ errorMessage);
+	@Getter
+	@Setter
+	public class VersionTab extends AbstractTab {
 
-		if (errorMessage != null && !errorMessage.isEmpty() && errorMessage != null) {
+		private List<Version> versionInfo;
 
-			ErrorMail mail = MailHandler.getDefaultTemplate(ErrorMail.class);
-			mail.prepareTemplate(userHandlerAction.getCurrentUser(), errorMessage,
-					new Date(System.currentTimeMillis()));
-			mail.fillTemplate();
-
-			globalSettings.getMailHandler().sendAdminMail(mail);
+		public VersionTab() {
+			setTabName("VersionTab");
+			setName("dialog.info.version.headline");
+			setViewID("versionTab");
+			setCenterInclude("include/version.xhtml");
 		}
+
+		public boolean initTab() {
+			setVersionInfo(Version.factroy(GlobalSettings.VERSIONS_INFO));
+			return true;
+		}
+
+		@Override
+		public void updateData() {
+		}
+
 	}
 
-	// ************************ Getter/Setter ************************
-	public Version[] getVersionInfo() {
-		return versionInfo;
+	@Getter
+	@Setter
+	public class ErrorTab extends AbstractTab {
+
+		private String errorMessage;
+
+		private Date errorDate;
+
+		public ErrorTab() {
+			setTabName("ErrorTab");
+			setName("dialog.info.error.headline");
+			setViewID("errorTab");
+			setCenterInclude("include/error.xhtml");
+		}
+
+		public boolean initTab() {
+			setErrorDate(new Date(System.currentTimeMillis()));
+			setErrorMessage("");
+			return true;
+		}
+
+		@Override
+		public void updateData() {
+		}
+
+		public void sendErrorMessage() {
+			// TODO rewrite if email system is updated
+			logger.debug("Sending Error DiagnosisRevision Date + "
+					+ TimeUtil.formatDate(errorDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " Message: "
+					+ errorMessage);
+
+			if (errorMessage != null && !errorMessage.isEmpty() && errorMessage != null) {
+
+				ErrorMail mail = MailHandler.getDefaultTemplate(ErrorMail.class);
+				mail.prepareTemplate(userHandlerAction.getCurrentUser(), errorMessage,
+						new Date(System.currentTimeMillis()));
+				mail.fillTemplate();
+
+				globalSettings.getMailHandler().sendAdminMail(mail);
+				
+				initTab();
+				
+				mainHandlerAction.addQueueGrowlMessageAsResource("growl.mail.sendErrorMail", "growl.mail.sendErrorMail.text");
+			}
+		}
+
 	}
 
-	public void setVersionInfo(Version[] versionInfo) {
-		this.versionInfo = versionInfo;
-	}
+	@Getter
+	@Setter
+	public class AboutTab extends AbstractTab {
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+		public AboutTab() {
+			setTabName("AboutTab");
+			setName("dialog.info.about.headline");
+			setViewID("aboutTab");
+			setCenterInclude("include/about.xhtml");
+		}
 
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
+		@Override
+		public void updateData() {
+		}
 
-	public Date getErrorDate() {
-		return errorDate;
 	}
-
-	public void setErrorDate(Date errorDate) {
-		this.errorDate = errorDate;
-	}
-
 }

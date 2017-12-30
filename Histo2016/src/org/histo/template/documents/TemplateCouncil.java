@@ -31,10 +31,8 @@ public class TemplateCouncil extends DocumentTemplate {
 		this.council = council;
 		this.toSendAddress = toSendAddress;
 	}
-
-	public PDFContainer generatePDF(PDFGenerator generator) {
-		generator.openNewPDf(this);
-
+	
+	public void fillTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
 		generator.getConverter().replace("council", council);
@@ -42,8 +40,6 @@ public class TemplateCouncil extends DocumentTemplate {
 				HistoUtil.isNotNullOrEmpty(toSendAddress) ? (new TextToLatexConverter()).convertToTex(toSendAddress)
 						: " ");
 		generator.getConverter().replace("date", new DateTool());
-
-		return generator.generatePDF();
 	}
 
 }

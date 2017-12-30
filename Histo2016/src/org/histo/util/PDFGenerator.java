@@ -17,7 +17,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.interfaces.FileHandlerUtil;
-import org.histo.util.interfaces.PDFNonBlockingReturnHandler;
+import org.histo.util.interfaces.LazyPDFReturnHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -131,7 +131,7 @@ public class PDFGenerator {
 	 * 
 	 * @param returnHandler
 	 */
-	public String generatePDFNonBlocking(PDFNonBlockingReturnHandler returnHandler) {
+	public String generatePDFNonBlocking(LazyPDFReturnHandler returnHandler) {
 		
 		String uuid = UUID.randomUUID().toString();
 		
@@ -139,9 +139,7 @@ public class PDFGenerator {
 			public void run() {
 				logger.debug("Stargin PDF Generation in new Thread");
 				PDFContainer returnPDF = generatePDF();
-				
-				returnHandler.setPDFContent(returnPDF, uuid);
-				
+				returnHandler.returnPDFContent(returnPDF, uuid);
 				logger.debug("PDF Generation completed, thread ended");
 			}
 		});

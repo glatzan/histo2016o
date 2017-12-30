@@ -55,7 +55,7 @@ public class GlobalSettings {
 	public static final String SETTINGS_LABLE_PRINTERS = "labelPrinters";
 	public static final String SETTINGS_CLINIC_BACKEND = "clinicBackend";
 
-	public static final String VERSIONS_INFO = "classpath:settings/version.json";
+	public static final String VERSIONS_INFO = "classpath:settings/version.txt";
 	public static final String MAIL_TEMPLATES = "classpath:settings/mailTemplates.json";
 	public static final String PRINT_TEMPLATES = "classpath:settings/printTempaltes.json";
 	/**
@@ -155,10 +155,10 @@ public class GlobalSettings {
 
 		clinicJsonHandler = gson.fromJson(o.get(SETTINGS_CLINIC_BACKEND), ClinicJsonHandler.class);
 
-		Version[] versions = Version.factroy(VERSIONS_INFO);
+		List<Version> versions = Version.factroy(VERSIONS_INFO);
 		// setting current version
-		if (versions != null && versions.length > 0) {
-			setCurrentVersion(versions[0].getVersion());
+		if (versions != null && versions.size() > 0) {
+			setCurrentVersion(versions.get(0).getVersion());
 		}
 
 	}

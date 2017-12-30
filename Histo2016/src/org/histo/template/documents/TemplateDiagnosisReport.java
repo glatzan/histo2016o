@@ -7,7 +7,7 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.HistoUtil;
 import org.histo.util.PDFGenerator;
-import org.histo.util.interfaces.PDFNonBlockingReturnHandler;
+import org.histo.util.interfaces.LazyPDFReturnHandler;
 import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;
@@ -29,19 +29,7 @@ public class TemplateDiagnosisReport extends DocumentTemplate {
 		this.toSendAddress = toSendAddress;
 	}
 
-	public String generatePDFNoneBlocking(PDFGenerator generator, PDFNonBlockingReturnHandler returnHandler) {
-		generator.openNewPDf(this);
-		prepareTemplate(generator);
-		return generator.generatePDFNonBlocking(returnHandler);
-	}
-
-	public PDFContainer generatePDF(PDFGenerator generator) {
-		generator.openNewPDf(this);
-		prepareTemplate(generator);
-		return generator.generatePDF();
-	}
-
-	public void prepareTemplate(PDFGenerator generator) {
+	public void fillTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
 		generator.getConverter().replace("address",

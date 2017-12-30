@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerRepository;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
@@ -44,6 +45,9 @@ public class MainHandlerAction {
 	@Autowired
 	@Lazy
 	private UserHandlerAction userHandlerAction;
+
+	@Autowired
+	protected ResourceBundle resourceBundle;
 
 	/********************************************************
 	 * Navigation
@@ -115,6 +119,10 @@ public class MainHandlerAction {
 			getQueueGrowlMessages().clear();
 			RequestContext.getCurrentInstance().update("growlForm:globalgrowl");
 		}
+	}
+
+	public void addQueueGrowlMessageAsResource(String headline, String message) {
+		addQueueGrowlMessage(resourceBundle.get(headline), resourceBundle.get(message), FacesMessage.SEVERITY_INFO);
 	}
 
 	public void addQueueGrowlMessage(String headline, String message) {

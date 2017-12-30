@@ -15,10 +15,11 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateDiagnosisReport;
 import org.histo.template.documents.TemplateSendReport;
-import org.histo.ui.interfaces.PdfGuiProvider;
+import org.histo.ui.LazyPDFGuiManager;
+import org.histo.ui.interfaces.PdfStreamProvider;
 import org.histo.util.PDFGenerator;
 import org.histo.util.PDFUtil;
-import org.histo.util.interfaces.PDFNonBlockingReturnHandler;
+import org.histo.util.interfaces.LazyPDFReturnHandler;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ import lombok.Synchronized;
 @Scope("session")
 @Getter
 @Setter
-public class ReportViewHandlerAction implements PDFNonBlockingReturnHandler, PdfGuiProvider {
+public class ReportViewHandlerAction {
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	@Autowired
@@ -43,54 +44,24 @@ public class ReportViewHandlerAction implements PDFNonBlockingReturnHandler, Pdf
 	private DialogHandlerAction dialogHandlerAction;
 
 	/**
-	 * True if diagnosis completed, report will be rendered
+	 * Manager for rendering the pdf lazy style
 	 */
-	private boolean diagnosisCompleted;
-
-	/**
-	 * If true the poll element at the view page will start
-	 */
-	private boolean stopPoll;
-
-	/**
-	 * If true the poll element will start
-	 */
-	private boolean autoStartPoll;
-
-	/**
-	 * If true the pdf will be rendered
-	 */
-	private AtomicBoolean renderPDF = new AtomicBoolean(false);
-
-	/**
-	 * pdf container
-	 */
-	private PDFContainer PDFContainerToRender;
-
-	/**
-	 * Thread id of the last pdf generating thread
-	 */
-	private String currentTaskUuid;
+	private LazyPDFGuiManager guiManager = new LazyPDFGuiManager();
 
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize ReportViewHandlerAction for task");
 
-		getRenderPDF().set(false);
-		setAutoStartPoll(false);
-		setStopPoll(true);
+		guiManager.reset();
 
 		if (task.getDiagnosisCompletionDate() == 0) {
-			setDiagnosisCompleted(false);
+			guiManager.setRenderComponent(false);
 		} else {
-			setDiagnosisCompleted(true);
+			guiManager.setRenderComponent(true);
 
 			PDFContainer c = PDFUtil.getLastPDFofType(task, DocumentType.DIAGNOSIS_REPORT_COMPLETED);
 
 			if (c == null) {
-
-				setAutoStartPoll(true);
-				setStopPoll(false);
-
+				// no document found, rendering diagnosis report in background thread
 				DocumentTemplate diagnosisTemplate = DocumentTemplate
 						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT));
 
@@ -99,41 +70,17 @@ public class ReportViewHandlerAction implements PDFNonBlockingReturnHandler, Pdf
 
 					template.initData(task.getPatient(), task, "");
 
-					currentTaskUuid = template.generatePDFNoneBlocking(new PDFGenerator(), this);
+					guiManager.startRendering(template);
 				}
+			}else {
+				// document found, render it
+				
 			}
 		}
 
 	}
 
-	@Override
-	@Synchronized
-	public void setPDFContent(PDFContainer container, String uuid) {
-		if (getCurrentTaskUuid().equals(uuid)) {
-			setPDFContainerToRender(container);
-			getRenderPDF().set(true);
-			setStopPoll(true);
-			setAutoStartPoll(false);
-		} else {
-			logger.debug("More then one Thread! Old Thread");
-		}
-
-	}
-
-	public StreamedContent getPdfContent() {
-		return PdfGuiProvider.super.getPdfContent();
-	}
-
 	public void test() {
 		System.out.println("test");
-	}
-
-	@Synchronized
-	public PDFContainer getPDFContainerToRender() {
-		return PDFContainerToRender;
-	}
-
-	public void setPDFContainerToRender(PDFContainer container) {
-		this.PDFContainerToRender = container;
 	}
 }

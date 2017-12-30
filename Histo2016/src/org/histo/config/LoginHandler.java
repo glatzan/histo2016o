@@ -105,6 +105,8 @@ public class LoginHandler {
 
 			if (savedRequest != null) {
 				try {
+					// TODO check if path is allowed!
+					worklistViewHandlerAction.initBean();
 					URL url = new URL(savedRequest.getRedirectUrl());
 					return url.getFile().substring(request.getContextPath().length());
 				} catch (Exception e) {

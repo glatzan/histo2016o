@@ -12,60 +12,63 @@
 			value="#{settingsDialogHandler.diagnosisTab.newDiagnosisPreset eq null ? msg['dialog.settings.diagnosis.edit.headline.new'] : msg['dialog.settings.diagnosis.edit.headline.edit']}" />
 	</p:outputPanel>
 
+	<p:outputPanel styleClass="bodyPannelFull">
 
-	<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
-		style="width:100%">
-		<!-- category -->
-		<h:outputLabel
-			value="#{msg['dialog.settings.diagnosis.edit.category']}" />
-		<p:inputText
-			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.category}"
-			id="diagnosisName">
-			<p:watermark for="diagnosisName"
-				value="#{msg['dialog.settings.diagnosis.edit.category.watermark']}" />
-		</p:inputText>
+		<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+			<!-- category -->
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.category']}" />
+			<p:inputText
+				value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.category}"
+				id="diagnosisName">
+				<p:watermark for="diagnosisName"
+					value="#{msg['dialog.settings.diagnosis.edit.category.watermark']}" />
+			</p:inputText>
 
-		<!-- text -->
-		<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
-		<p:inputTextarea id="diagnosisText"
-			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.diagnosis}">
-			<p:watermark for="diagnosisText"
-				value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
-		</p:inputTextarea>
+			<!-- text -->
+			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.text']}" />
+			<p:inputTextarea id="diagnosisText"
+				value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.diagnosis}">
+				<p:watermark for="diagnosisText"
+					value="#{msg['dialog.settings.diagnosis.edit.text.watermark']}" />
+			</p:inputTextarea>
 
-		<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.icd10']}" />
-		<p:inputText
-			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.icd10}"
-			id="diagnosisICD">
-			<p:watermark for="diagnosisICD"
-				value="#{msg['dialog.settings.diagnosis.edit.icd10.watermark']}" />
-		</p:inputText>
+			<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.icd10']}" />
+			<p:inputText
+				value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.icd10}"
+				id="diagnosisICD">
+				<p:watermark for="diagnosisICD"
+					value="#{msg['dialog.settings.diagnosis.edit.icd10.watermark']}" />
+			</p:inputText>
 
-		<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.malign']}" />
-		<p:selectBooleanCheckbox
-			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.malign}" />
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.malign']}" />
+			<p:selectBooleanCheckbox
+				value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.malign}" />
 
-		<h:outputLabel
-			value="#{msg['dialog.settings.diagnosis.edit.commentary']}" />
-		<p:inputTextarea id="diagnosisCommentary"
-			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.commentary}">
-			<p:watermark for="diagnosisCommentary"
-				value="#{msg['dialog.settings.diagnosis.edit.commentary.watermark']}" />
-		</p:inputTextarea>
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.commentary']}" />
+			<p:inputTextarea id="diagnosisCommentary"
+				value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.commentary}">
+				<p:watermark for="diagnosisCommentary"
+					value="#{msg['dialog.settings.diagnosis.edit.commentary.watermark']}" />
+			</p:inputTextarea>
 
-		<h:outputLabel value="#{msg['dialog.settings.diagnosis.edit.letter']}" />
-		<p:selectCheckboxMenu updateLabel="true"
-			styleClass="customSelectCheckboxMenu"
-			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.diagnosisReportAsLetterAsArray}"
-			multiple="true">
-			<f:selectItems var="role"
-				value="#{settingsDialogHandler.diagnosisTab.allRoles}"
-				itemValue="#{role}"
-				itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
-		</p:selectCheckboxMenu>
+			<h:outputLabel
+				value="#{msg['dialog.settings.diagnosis.edit.letter']}" />
+			<p:selectCheckboxMenu updateLabel="true"
+				styleClass="customSelectCheckboxMenu"
+				value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.diagnosisReportAsLetterAsArray}"
+				multiple="true">
+				<f:selectItems var="role"
+					value="#{settingsDialogHandler.diagnosisTab.allRoles}"
+					itemValue="#{role}"
+					itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+			</p:selectCheckboxMenu>
 
-	</p:panelGrid>
-
+		</p:panelGrid>
+	</p:outputPanel>
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">

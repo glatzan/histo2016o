@@ -13,44 +13,46 @@
 			value="#{msg['dialog.settings.favouriteList.list.headline']}" />
 	</p:outputPanel>
 
+	<p:outputPanel styleClass="bodyPannelFull">
 
-	<p:dataTable var="favouriteList" style="width:100%;" scrollable="true"
-		scrollHeight="460"
-		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-		value="#{settingsDialogHandler.favouriteListTab.favouriteLists}">
+		<p:dataTable var="favouriteList" style="width:100%;" scrollable="true"
+			scrollHeight="460"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			value="#{settingsDialogHandler.favouriteListTab.favouriteLists}">
 
-		<p:column
-			headerText="#{msg['dialog.settings.favouriteList.list.name']}"
-			sortBy="#{favouriteList.name}">
-			<h:outputText value="#{favouriteList.name}" />
-		</p:column>
+			<p:column
+				headerText="#{msg['dialog.settings.favouriteList.list.name']}"
+				sortBy="#{favouriteList.name}">
+				<h:outputText value="#{favouriteList.name}" />
+			</p:column>
 
-		<p:column
-			headerText="#{msg['dialog.settings.favouriteList.list.systemList']}"
-			style="text-align:center;width:20%">
-			<h:panelGroup rendered="#{favouriteList.defaultList}">
-				<i class="fa fa-fw fa-check-circle icon-green" />
-			</h:panelGroup>
-		</p:column>
+			<p:column
+				headerText="#{msg['dialog.settings.favouriteList.list.systemList']}"
+				style="text-align:center;width:20%">
+				<h:panelGroup rendered="#{favouriteList.defaultList}">
+					<i class="fa fa-fw fa-check-circle icon-green" />
+				</h:panelGroup>
+			</p:column>
 
-		<p:column style="width:5%; text-align:center;">
-			<f:facet name="header">
-				<i class="fa fa-cog"
-					title="#{msg['dialog.settings.person.list.options']}" />
-			</f:facet>
-			<!-- Edit -->
-			<p:commandLink styleClass="noUnderlineAtLink"
-				title="#{msg['dialog.settings.person.list.options.edit']}"
-				actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteList, true)}"
-				process="@this" partialSubmit="true"
-				disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_FAVOURITE')}">
-				<p:ajax event="dialogReturn"
-					listener="#{settingsDialogHandler.favouriteListTab.updateData()}"
-					update="@form" />
-				<i class="fa fa-fw fa-cog" />
-			</p:commandLink>
-		</p:column>
-	</p:dataTable>
+			<p:column style="width:5%; text-align:center;">
+				<f:facet name="header">
+					<i class="fa fa-cog"
+						title="#{msg['dialog.settings.person.list.options']}" />
+				</f:facet>
+				<!-- Edit -->
+				<p:commandLink styleClass="noUnderlineAtLink"
+					title="#{msg['dialog.settings.person.list.options.edit']}"
+					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteList, true)}"
+					process="@this" partialSubmit="true"
+					disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_FAVOURITE')}">
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.favouriteListTab.updateData()}"
+						update="@form" />
+					<i class="fa fa-fw fa-cog" />
+				</p:commandLink>
+			</p:column>
+		</p:dataTable>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"

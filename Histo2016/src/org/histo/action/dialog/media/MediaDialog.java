@@ -11,7 +11,7 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
-import org.histo.ui.interfaces.PdfGuiProvider;
+import org.histo.ui.interfaces.PdfStreamProvider;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
 import org.primefaces.model.StreamedContent;
@@ -25,7 +25,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class MediaDialog extends AbstractDialog implements PdfGuiProvider {
+public class MediaDialog extends AbstractDialog implements PdfStreamProvider {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
@@ -370,6 +370,6 @@ public class MediaDialog extends AbstractDialog implements PdfGuiProvider {
 	}
 
 	public StreamedContent getPdfContent() {
-		return PdfGuiProvider.super.getPdfContent();
+		return PdfStreamProvider.super.getPdfContent();
 	}
 }

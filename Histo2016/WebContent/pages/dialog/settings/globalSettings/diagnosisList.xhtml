@@ -12,53 +12,55 @@
 			value="#{msg['dialog.settings.diagnosis.list.headline']}" />
 	</p:outputPanel>
 
+	<p:outputPanel styleClass="bodyPannelFull">
 
-	<p:dataTable var="diagnosisPreset" style="width:100%;"
-		scrollable="true" scrollHeight="460" draggableRows="true"
-		value="#{settingsDialogHandler.diagnosisTab.diagnosisPresets}"
-		styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
+		<p:dataTable var="diagnosisPreset" style="width:100%;"
+			scrollable="true" scrollHeight="460" draggableRows="true"
+			value="#{settingsDialogHandler.diagnosisTab.diagnosisPresets}"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll">
 
-		<p:column sortBy="#{diagnosisPreset.diagnosisText}"
-			headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
-			style="width:40%">
-			<h:outputText value="#{diagnosisPreset.diagnosis}" />
-		</p:column>
+			<p:column sortBy="#{diagnosisPreset.diagnosisText}"
+				headerText="#{msg['dialog.settings.diagnosis.list.diagnosis']}"
+				style="width:40%">
+				<h:outputText value="#{diagnosisPreset.diagnosis}" />
+			</p:column>
 
-		<p:column sortBy="#{diagnosisPreset.name}"
-			headerText="#{msg['dialog.settings.diagnosis.list.category']}"
-			style="width:auto">
-			<h:outputText value="#{diagnosisPreset.category}" />
-		</p:column>
+			<p:column sortBy="#{diagnosisPreset.name}"
+				headerText="#{msg['dialog.settings.diagnosis.list.category']}"
+				style="width:auto">
+				<h:outputText value="#{diagnosisPreset.category}" />
+			</p:column>
 
 
-		<p:column
-			headerText="#{msg['dialog.settings.diagnosis.list.commentary']}"
-			style="width:20%">
-			<h:outputLabel value="#{diagnosisPreset.commentary}">
-				<f:converter converterId="org.histo.ui.TruncateConverter"
-					truncateAt="40" />
-				<f:attribute name="truncateAt" value="40" />
-				<f:attribute name="continuationMark" value="..." />
-			</h:outputLabel>
-		</p:column>
+			<p:column
+				headerText="#{msg['dialog.settings.diagnosis.list.commentary']}"
+				style="width:20%">
+				<h:outputLabel value="#{diagnosisPreset.commentary}">
+					<f:converter converterId="org.histo.ui.TruncateConverter"
+						truncateAt="40" />
+					<f:attribute name="truncateAt" value="40" />
+					<f:attribute name="continuationMark" value="..." />
+				</h:outputLabel>
+			</p:column>
 
-		<p:column style="width:7%; text-align:center;">
-			<f:facet name="header">
-				<i class="fa fa-cog"
-					title="#{msg['dialog.settings.diagnosis.list.options']}" />
-			</f:facet>
-			<p:commandLink
-				title="#{msg[dialog.settings.diagnosis.list.options.edit]}"
-				actionListener="#{settingsDialogHandler.diagnosisTab.prepareEditDiagnosisPreset(diagnosisPreset)}"
-				update="@form" partialSubmit="true" process="@this">
-				<i class="fa fa-fw fa-cog" />
-			</p:commandLink>
-		</p:column>
+			<p:column style="width:7%; text-align:center;">
+				<f:facet name="header">
+					<i class="fa fa-cog"
+						title="#{msg['dialog.settings.diagnosis.list.options']}" />
+				</f:facet>
+				<p:commandLink
+					title="#{msg[dialog.settings.diagnosis.list.options.edit]}"
+					actionListener="#{settingsDialogHandler.diagnosisTab.prepareEditDiagnosisPreset(diagnosisPreset)}"
+					update="@form" partialSubmit="true" process="@this">
+					<i class="fa fa-fw fa-cog" />
+				</p:commandLink>
+			</p:column>
 
-		<p:ajax event="rowReorder" update="@form" process="@form"
-			partialSubmit="true"
-			listener="#{settingsDialogHandler.diagnosisTab.onReorderList}" />
-	</p:dataTable>
+			<p:ajax event="rowReorder" update="@form" process="@form"
+				partialSubmit="true"
+				listener="#{settingsDialogHandler.diagnosisTab.onReorderList}" />
+		</p:dataTable>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"

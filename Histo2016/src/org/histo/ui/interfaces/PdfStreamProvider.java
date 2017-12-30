@@ -9,7 +9,13 @@ import org.histo.model.PDFContainer;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
-public interface PdfGuiProvider {
+/**
+ * Interface for handling pdf streams for primefaces
+ * 
+ * @author andi
+ *
+ */
+public interface PdfStreamProvider {
 
 	/**
 	 * PDF to render
@@ -17,24 +23,6 @@ public interface PdfGuiProvider {
 	 * @return
 	 */
 	public PDFContainer getPDFContainerToRender();
-
-	/**
-	 * Determines if the waiting poll should start
-	 * 
-	 * @return
-	 */
-	public default boolean isAutoStartPoll() {
-		return false;
-	}
-
-	/**
-	 * Determines if the waiting poll should be stooped
-	 * 
-	 * @return
-	 */
-	public default boolean isStopPoll() {
-		return false;
-	}
 
 	/**
 	 * Content-Stream for rendering by gui

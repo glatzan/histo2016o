@@ -65,7 +65,6 @@ public class MailHandler implements GsonAble {
 		List<T> result = new ArrayList<T>();
 
 		for (MailTemplate mailTemplate : jsonArray) {
-			System.out.println(mailTemplate.getTemplateName() + " " + mailType.getName());
 			if (mailTemplate.getTemplateName().equals(mailType.getName())) {
 				result.add((T)mailTemplate);
 			}

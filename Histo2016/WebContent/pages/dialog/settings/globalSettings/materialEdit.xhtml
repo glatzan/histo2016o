@@ -12,50 +12,52 @@
 		<h:outputLabel
 			value="#{msg['dialog.settings.material']} / #{settingsDialogHandler.materialTab.newMaterial ? msg['dialog.settings.material.new.new'] : msg['dialog.settings.material.new.edit']}" />
 	</p:outputPanel>
+	<p:outputPanel styleClass="bodyPannelFull">
 
-	<p:panelGrid columns="2" columnClasses="defaultListingTableColumnTop, "
-		styleClass="noBordersAll collapsedBordersAll " style="width:100%">
-		<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
-		<p:inputText style="width:390px"
-			value="#{settingsDialogHandler.materialTab.editMaterial.name}" />
+		<p:panelGrid columns="2"
+			columnClasses="defaultListingTableColumnTop, "
+			styleClass="noBordersAll collapsedBordersAll " style="width:100%">
+			<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
+			<p:inputText style="width:390px"
+				value="#{settingsDialogHandler.materialTab.editMaterial.name}" />
 
-		<h:outputLabel
-			value="#{msg['dialog.settings.material.new.commentary']}"></h:outputLabel>
-		<p:inputTextarea rows="3" style="width:390px"
-			value="#{settingsDialogHandler.materialTab.editMaterial.commentary}" />
+			<h:outputLabel
+				value="#{msg['dialog.settings.material.new.commentary']}"></h:outputLabel>
+			<p:inputTextarea rows="3" style="width:390px"
+				value="#{settingsDialogHandler.materialTab.editMaterial.commentary}" />
 
-		<h:outputLabel
-			value="#{msg['dialog.settings.material.new.stainings']}"></h:outputLabel>
+			<h:outputLabel
+				value="#{msg['dialog.settings.material.new.stainings']}"></h:outputLabel>
 
-		<p:dataTable var="staining" style="width:400px" scrollable="true"
-			scrollHeight="150" styleClass="highlightedDataTable"
-			value="#{settingsDialogHandler.materialTab.editMaterial.stainingPrototypes}">
+			<p:dataTable var="staining" style="width:400px" scrollable="true"
+				scrollHeight="150" styleClass="highlightedDataTable"
+				value="#{settingsDialogHandler.materialTab.editMaterial.stainingPrototypes}">
 
-			<p:column
-				headerText="#{msg['dialog.settings.material.new.stainings.name']}"
-				sortBy="#{staining.name}" style="width:30%">
-				<h:outputText value="#{staining.name}" />
-			</p:column>
+				<p:column
+					headerText="#{msg['dialog.settings.material.new.stainings.name']}"
+					sortBy="#{staining.name}" style="width:30%">
+					<h:outputText value="#{staining.name}" />
+				</p:column>
 
-			<p:column
-				headerText="#{msg['dialog.settings.material.new.stainings.type']}"
-				sortBy="#{staining.type}">
-				<h:outputText
-					value="#{msg['enum.stainingType.'.concat(staining.type)]}" />
-			</p:column>
+				<p:column
+					headerText="#{msg['dialog.settings.material.new.stainings.type']}"
+					sortBy="#{staining.type}">
+					<h:outputText
+						value="#{msg['enum.stainingType.'.concat(staining.type)]}" />
+				</p:column>
 
-			<p:column style="width:10%; text-align:center;">
-				<p:commandLink title="#{msg['general.remove']}"
-					actionListener="#{settingsDialogHandler.materialTab.removeStainingFromStainingList(staining)}"
-					update="@form">
-					<i class="fa fa-trash-o" />
-				</p:commandLink>
-			</p:column>
+				<p:column style="width:10%; text-align:center;">
+					<p:commandLink title="#{msg['general.remove']}"
+						actionListener="#{settingsDialogHandler.materialTab.removeStainingFromStainingList(staining)}"
+						update="@form">
+						<i class="fa fa-trash-o" />
+					</p:commandLink>
+				</p:column>
 
-		</p:dataTable>
+			</p:dataTable>
 
-	</p:panelGrid>
-
+		</p:panelGrid>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"

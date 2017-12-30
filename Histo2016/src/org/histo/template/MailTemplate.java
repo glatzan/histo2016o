@@ -71,8 +71,11 @@ public class MailTemplate extends Template {
 
 		String[] arr = file.split("\r\n", 2);
 
-		if (arr.length != 2)
+		if (arr.length != 2) {
+			subject = "Template not found";
+			body="";
 			return;
+		}
 
 		subject = arr[0].replaceAll("Subject: ", "");
 		body = arr[1].replaceAll("Body: ", "");

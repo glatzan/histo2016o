@@ -411,7 +411,6 @@
 	padding: 0px;
 }
 
-
 /* -------------- breadCrumbs navigation --------------*/
 /* navigation background */
 .breadCrumbsNavigation {
@@ -436,13 +435,13 @@
 }
 
 /* naigation text*/
-.breadCrumbsNavigation td, .breadCrumbsNavigation label, .breadCrumbsNavigation a {
+.breadCrumbsNavigation td, .breadCrumbsNavigation label,
+	.breadCrumbsNavigation a {
 	font-size: 1.1em !important;
 	font-family: Verdana, Arial, sans-serif;
 	color: #555555;
 	font-weight: bold;
 }
-
 
 /* -------------- patient navigation table --------------*/
 /* Search container */
@@ -642,6 +641,20 @@
 	display: block;
 }
 
+/* body pannel, max width*/
+.tabDialog .contentTable .dialogContent .bodyPannelFull {
+	width: 100%;
+	display: block;
+}
+
+/* body pannel scrollable*/
+.tabDialog .contentTable .dialogContent .bodyPannelScroll {
+	width: 100%;
+	height: calc(100vh - 110px);
+	display: block;
+	overflow-y: scroll;
+}
+
 /* button container at the bottom*/
 .tabDialog .contentTable .dialogContent .buttonContainer {
 	position: absolute;
@@ -780,7 +793,6 @@
 	font-weight: bold;
 	color: #555555;
 }
-
 
 .icon-green {
 	color: green;

@@ -17,23 +17,25 @@
 	</h:panelGrid>
 
 	<p:panel style="width: 80%" styleClass="newTableContainer">
+		<h:panelGrid columns="1" id="pollUpdateTable"
+			styleClass="newTableContainer"
+			style="width: 100% !important;height: calc( 100vh - 200px )!important;">
 
-		<h:panelGrid columns="1" id="pollTable" styleClass="newTableContainer"
-			rendered="#{!reportViewHandlerAction.diagnosisCompleted}"
-			style="width: 100% !important;height: calc( 100vh - 200px )!important;"
-			columnClasses="columnMiddle columnTextCenter">
+			<h:panelGrid columns="1"
+				rendered="#{!reportViewHandlerAction.guiManager.renderComponent}"
+				style="width: 100% !important;height: calc( 100vh - 200px )!important;"
+				columnClasses="columnMiddle columnTextCenter">
 
-			<h:outputLabel styleClass="hugeFont"
-				value="#{msg['body.worklist.report.noDiagnosis']}"></h:outputLabel>
+				<h:outputLabel styleClass="hugeFont"
+					value="#{msg['body.worklist.report.noDiagnosis']}"></h:outputLabel>
+			</h:panelGrid>
+
+			<histo:dynamicMedia height="calc( 100vh - 100px )" width="100%"
+				update="contentForm:pollUpdateTable"
+				pdfContent="#{reportViewHandlerAction.guiManager.pdfContent}"
+				guiManager="#{reportViewHandlerAction.guiManager}" />
+
 		</h:panelGrid>
-
-		<histo:dynamicMedia height="calc( 100vh - 100px )" width="100%"
-			mediaAvailable="#{reportViewHandlerAction.renderPDF.get()}"
-			stopPoll="#{reportViewHandlerAction.stopPoll}"
-			rendered="#{reportViewHandlerAction.diagnosisCompleted}"
-			autoStartPoll="#{reportViewHandlerAction.autoStartPoll}">
-		</histo:dynamicMedia>
-
 	</p:panel>
 
 </ui:composition>

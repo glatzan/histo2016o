@@ -11,13 +11,15 @@
 		<h:outputLabel
 			value="#{msg['dialog.settings.diagnosis.editTemplate.headline']}" />
 	</p:outputPanel>
-
-	<p:panelGrid columns="1" styleClass="noBordersAll collapsedBordersAll"
-		style="width:100%">
-		<p:editor
-			value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.extendedDiagnosisText}">
-		</p:editor>
-	</p:panelGrid>
+	
+	<p:outputPanel styleClass="bodyPannelFull">
+		<p:panelGrid columns="1" styleClass="noBordersAll collapsedBordersAll"
+			style="width:100%">
+			<p:editor
+				value="#{settingsDialogHandler.diagnosisTab.selectedDiagnosisPreset.extendedDiagnosisText}">
+			</p:editor>
+		</p:panelGrid>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
@@ -28,8 +30,8 @@
 
 			<h:panelGrid columns="4" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.ok']}"
-					icon="fa fa-fw fa-floppy-o" process="@form"
-					partialSubmit="true" update="@form"
+					icon="fa fa-fw fa-floppy-o" process="@form" partialSubmit="true"
+					update="@form"
 					actionListener="#{settingsDialogHandler.diagnosisTab.discardEditDiagnosisPresetTemplate()}" />
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"

@@ -12,6 +12,7 @@ import org.histo.model.PDFContainer;
 import org.histo.util.HistoUtil;
 import org.histo.util.PDFGenerator;
 import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.interfaces.LazyPDFReturnHandler;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -133,8 +134,20 @@ public class DocumentTemplate extends Template {
 			setFile2Content(FileHandlerUtil.getContentOfFile(getContent2()));
 	}
 
+	public String generatePDFNoneBlocking(PDFGenerator generator, LazyPDFReturnHandler returnHandler) {
+		generator.openNewPDf(this);
+		fillTemplate(generator);
+		return generator.generatePDFNonBlocking(returnHandler);
+	}
+
 	public PDFContainer generatePDF(PDFGenerator generator) {
-		return null;
+		generator.openNewPDf(this);
+		fillTemplate(generator);
+		return generator.generatePDF();
+	}
+	
+	public void fillTemplate(PDFGenerator generator) {
+		
 	}
 
 	@Transient

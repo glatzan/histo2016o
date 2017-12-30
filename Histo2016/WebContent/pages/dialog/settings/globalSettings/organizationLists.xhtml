@@ -12,41 +12,44 @@
 			value="#{msg['dialog.settings.favouriteList.list.headline']}" />
 	</p:outputPanel>
 
-	<p:dataTable var="organization" style="width:100%;" scrollable="true"
-		scrollHeight="440"
-		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-		value="#{settingsDialogHandler.organizationTab.organizations}">
+	<p:outputPanel styleClass="bodyPannelFull">
 
-		<p:column
-			headerText="#{msg['dialog.settings.organization.list.name']}"
-			sortBy="#{organization.name}" filterBy="#{organization.name}">
-			<h:outputText value="#{organization.name}" />
-		</p:column>
+		<p:dataTable var="organization" style="width:100%;" scrollable="true"
+			scrollHeight="440"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			value="#{settingsDialogHandler.organizationTab.organizations}">
 
-		<p:column
-			headerText="#{msg['dialog.settings.organization.list.note']}">
-			<h:outputLabel value="#{organization.note}">
-				<f:converter converterId="org.histo.ui.TruncateConverter" />
-				<f:attribute name="truncateAt" value="25" />
-				<f:attribute name="continuationMark" value="..." />
-			</h:outputLabel>
-		</p:column>
+			<p:column
+				headerText="#{msg['dialog.settings.organization.list.name']}"
+				sortBy="#{organization.name}" filterBy="#{organization.name}">
+				<h:outputText value="#{organization.name}" />
+			</p:column>
 
-		<p:column style="width:15px">
-			<ui:fragment rendered="#{organization.intern}">
-				<i class="fa fa-fw fa-check-circle icon-green"
-					title="#{msg['dialog.settings.organization.list.clinicIntern']}" />
-			</ui:fragment>
-		</p:column>
+			<p:column
+				headerText="#{msg['dialog.settings.organization.list.note']}">
+				<h:outputLabel value="#{organization.note}">
+					<f:converter converterId="org.histo.ui.TruncateConverter" />
+					<f:attribute name="truncateAt" value="25" />
+					<f:attribute name="continuationMark" value="..." />
+				</h:outputLabel>
+			</p:column>
 
-		<p:column style="width:15px">
-			<p:commandLink partialSubmit="true" process="@this" update="@form"
-				actionListener="#{settingsDialogHandler.organizationTab.prepareEditOrganization(organization)}">
-				<i class="fa fa-cog"
-					title="#{msg['dialog.settings.organization.list.edit']}" />
-			</p:commandLink>
-		</p:column>
-	</p:dataTable>
+			<p:column style="width:15px">
+				<ui:fragment rendered="#{organization.intern}">
+					<i class="fa fa-fw fa-check-circle icon-green"
+						title="#{msg['dialog.settings.organization.list.clinicIntern']}" />
+				</ui:fragment>
+			</p:column>
+
+			<p:column style="width:15px">
+				<p:commandLink partialSubmit="true" process="@this" update="@form"
+					actionListener="#{settingsDialogHandler.organizationTab.prepareEditOrganization(organization)}">
+					<i class="fa fa-cog"
+						title="#{msg['dialog.settings.organization.list.edit']}" />
+				</p:commandLink>
+			</p:column>
+		</p:dataTable>
+	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"

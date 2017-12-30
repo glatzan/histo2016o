@@ -11,37 +11,38 @@
 <h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 
 <composite:interface>
-	<composite:attribute name="stopPoll" required="true" />
-	<composite:attribute name="autoStartPoll" required="true" />
-	<composite:attribute name="mediaAvailable" required="true" />
+	<composite:attribute name="guiManager" required="true" />
+	<composite:attribute name="pdfContent" required="true" />
 	<composite:attribute name="width" default="auto" />
 	<composite:attribute name="height" default="auto" />
-	
-	<composite:attribute name="rendered" default="true" />
+	<composite:attribute name="update" default="" />
 </composite:interface>
 
 <composite:implementation>
 
-	<h:panelGrid columns="1" id="pollTable" styleClass="newTableContainer" rendered="#{cc.attrs.rendered}"
+	<h:panelGrid columns="1" id="pollTable" styleClass="newTableContainer"
+		rendered="#{cc.attrs.guiManager.renderComponent}"
 		style="width: #{cc.attrs.width} !important;height:#{cc.attrs.height} !important;"
 		columnClasses="columnMiddle">
 
-		<h:panelGrid columns="2" rendered="#{!cc.attrs.mediaAvailable}"
+		<h:panelGrid columns="2"
+			rendered="#{!cc.attrs.guiManager.renderPDF.get()}"
 			styleClass="newStyleListingTable"
 			style="width:auto !important;margin:auto;">
 			<h:graphicImage value="/resources/gfx/ajax-loader1.gif"
 				style="margin-right: 12px; vertical-align: middle;" />
 			<h:outputText value="#{msg['component.dynamicMedia.loading']}"
-				style="white-space: nowrap;" />
+				style="white-space: nowrap;" styleClass="hugeFont"/>
 		</h:panelGrid>
 
-		<p:media player="pdf" rendered="#{cc.attrs.mediaAvailable}"
+		<p:media player="pdf" rendered="#{cc.attrs.guiManager.renderPDF.get()}"
 			style="height:#{cc.attrs.height}; width: #{cc.attrs.width}"
-			value="#{reportViewHandlerAction.pdfContent}" width="100%"></p:media>
+			value="#{cc.attrs.pdfContent}" />
 
-		<p:poll interval="1" update="pollTable" stop="#{cc.attrs.stopPoll}"
+		<p:poll interval="1" update="#{cc.attrs.update}"
+			stop="#{cc.attrs.guiManager.stopPoll.get()}"
 			listener="#{reportViewHandlerAction.test()}"
-			autoStart="#{cc.attrs.autoStartPoll}" />
+			autoStart="#{cc.attrs.guiManager.autoStartPoll.get()}" />
 	</h:panelGrid>
 
 </composite:implementation>

@@ -11,67 +11,69 @@
 		<h:outputLabel value="#{msg['dialog.settings.staticLists']}" />
 	</p:outputPanel>
 
-	<p:panelGrid columns="2" styleClass="noBordersAll collapsedBordersAll "
-		style="width:100%">
-		<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
+	<p:outputPanel styleClass="bodyPannelFull">
+		<p:panelGrid columns="2"
+			styleClass="noBordersAll collapsedBordersAll " style="width:100%">
+			<h:outputLabel value="#{msg['dialog.settings.material.new.name']}"></h:outputLabel>
 
-		<p:selectOneMenu style="margin-top:1px;"
-			title="#{msg['body.worklist.header.view']}"
-			value="#{settingsDialogHandler.staticListTab.selectedStaticList}"
-			styleClass="smallerInput">
-			<f:selectItems value="#{enumProvider.staticLists}" var="staticList"
-				itemValue="#{staticList}"
-				itemLabel="#{msg['enum.staticList.'.concat(staticList)]}" />
+			<p:selectOneMenu style="margin-top:1px;"
+				title="#{msg['body.worklist.header.view']}"
+				value="#{settingsDialogHandler.staticListTab.selectedStaticList}"
+				styleClass="smallerInput">
+				<f:selectItems value="#{enumProvider.staticLists}" var="staticList"
+					itemValue="#{staticList}"
+					itemLabel="#{msg['enum.staticList.'.concat(staticList)]}" />
 
-			<p:ajax event="change" process="@form" partialSubmit="true"
-				listener="#{settingsDialogHandler.staticListTab.loadStaticList()}"
-				update="@form"></p:ajax>
-		</p:selectOneMenu>
-	</p:panelGrid>
+				<p:ajax event="change" process="@form" partialSubmit="true"
+					listener="#{settingsDialogHandler.staticListTab.loadStaticList()}"
+					update="@form"></p:ajax>
+			</p:selectOneMenu>
+		</p:panelGrid>
 
-	<p:dataTable var="item" style="width:100%;" scrollable="true"
-		scrollHeight="430" draggableRows="true"
-		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-		value="#{settingsDialogHandler.staticListTab.staticListContent}">
 
-		<p:column headerText="#{msg['dialog.settings.material.name']}"
-			sortBy="#{item.value}" style="width:20%">
-			<h:outputText value="#{item.value}" />
-		</p:column>
+		<p:dataTable var="item" style="width:100%;" scrollable="true"
+			scrollHeight="430" draggableRows="true"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			value="#{settingsDialogHandler.staticListTab.staticListContent}">
 
-		<p:column style="width:7%; text-align:center;">
-			<f:facet name="header">
-				<i class="fa fa-cog" />
-			</f:facet>
+			<p:column headerText="#{msg['dialog.settings.material.name']}"
+				sortBy="#{item.value}" style="width:20%">
+				<h:outputText value="#{item.value}" />
+			</p:column>
 
-			<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-				actionListener="#{settingsDialogHandler.staticListTab.prepareEditListItem(item)}"
-				styleClass="noUnderlineAtLink" update="@form" process="@this"
-				partialSubmit="true">
-				<i class="fa fa-fw fa-cog" />
-			</p:commandLink>
+			<p:column style="width:7%; text-align:center;">
+				<f:facet name="header">
+					<i class="fa fa-cog" />
+				</f:facet>
 
-			<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-				rendered="#{!item.archived}" styleClass="noUnderlineAtLink"
-				actionListener="#{settingsDialogHandler.staticListTab.archiveListItem(item, true)}"
-				update="@form" process="@this" partialSubmit="true">
-				<i class="fa fa-fw fa-times" />
-			</p:commandLink>
+				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
+					actionListener="#{settingsDialogHandler.staticListTab.prepareEditListItem(item)}"
+					styleClass="noUnderlineAtLink" update="@form" process="@this"
+					partialSubmit="true">
+					<i class="fa fa-fw fa-cog" />
+				</p:commandLink>
 
-			<p:commandLink title="#{msg['dialog.settings.material.edit']}"
-				rendered="#{item.archived}" styleClass="noUnderlineAtLink"
-				actionListener="#{settingsDialogHandler.staticListTab.archiveListItem(item, false)}"
-				update="@form" process="@this" partialSubmit="true">
-				<i class="fa fa-fw fa-check" />
-			</p:commandLink>
+				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
+					rendered="#{!item.archived}" styleClass="noUnderlineAtLink"
+					actionListener="#{settingsDialogHandler.staticListTab.archiveListItem(item, true)}"
+					update="@form" process="@this" partialSubmit="true">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
 
-		</p:column>
+				<p:commandLink title="#{msg['dialog.settings.material.edit']}"
+					rendered="#{item.archived}" styleClass="noUnderlineAtLink"
+					actionListener="#{settingsDialogHandler.staticListTab.archiveListItem(item, false)}"
+					update="@form" process="@this" partialSubmit="true">
+					<i class="fa fa-fw fa-check" />
+				</p:commandLink>
 
-		<p:ajax event="rowReorder"
-			listener="#{settingsDialogHandler.staticListTab.onReorderList}" />
+			</p:column>
 
-	</p:dataTable>
+			<p:ajax event="rowReorder"
+				listener="#{settingsDialogHandler.staticListTab.onReorderList}" />
 
+		</p:dataTable>
+	</p:outputPanel>
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">

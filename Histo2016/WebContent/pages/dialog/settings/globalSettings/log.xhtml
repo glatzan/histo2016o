@@ -10,41 +10,42 @@
 	<p:outputPanel styleClass="headerPannel">
 		<h:outputLabel value="#{msg['dialog.settings.log.headline']}" />
 	</p:outputPanel>
+	<p:outputPanel styleClass="bodyPannelFull">
 
-	<p:dataTable var="log" style="width:100%;" scrollable="true"
-		scrollHeight="440"
-		styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-		value="#{settingsDialogHandler.logTab.logs}">
+		<p:dataTable var="log" style="width:100%;" scrollable="true"
+			scrollHeight="440"
+			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			value="#{settingsDialogHandler.logTab.logs}">
 
-		<p:column width="90"
-			headerText="#{msg['dialog.settings.log.list.date']}">
+			<p:column width="90"
+				headerText="#{msg['dialog.settings.log.list.date']}">
 
-			<h:outputLabel value="#{log.timestamp}">
-				<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
-			</h:outputLabel>
-		</p:column>
+				<h:outputLabel value="#{log.timestamp}">
+					<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
+				</h:outputLabel>
+			</p:column>
 
-		<p:column width="110"
-			headerText="#{msg['dialog.settings.log.list.user']}">
-			<h:outputText value="#{log.userAcc.username}" />
-		</p:column>
+			<p:column width="110"
+				headerText="#{msg['dialog.settings.log.list.user']}">
+				<h:outputText value="#{log.userAcc.username}" />
+			</p:column>
 
-		<p:column width="110"
-			headerText="#{msg['dialog.settings.log.list.patient']}">
-			<h:outputText value="#{log.patient.person.fullName}" />
-		</p:column>
+			<p:column width="110"
+				headerText="#{msg['dialog.settings.log.list.patient']}">
+				<h:outputText value="#{log.patient.person.fullName}" />
+			</p:column>
 
-		<p:column headerText="#{msg['dialog.settings.log.list.message']}">
+			<p:column headerText="#{msg['dialog.settings.log.list.message']}">
 
-			<h:outputLabel value="#{log.logString}" title="#{log.logString}">
-				<f:converter converterId="org.histo.ui.TruncateConverter" />
-				<f:attribute name="truncateAt" value="75" />
-				<f:attribute name="continuationMark" value="..." />
-			</h:outputLabel>
-		</p:column>
+				<h:outputLabel value="#{log.logString}" title="#{log.logString}">
+					<f:converter converterId="org.histo.ui.TruncateConverter" />
+					<f:attribute name="truncateAt" value="75" />
+					<f:attribute name="continuationMark" value="..." />
+				</h:outputLabel>
+			</p:column>
 
-	</p:dataTable>
-
+		</p:dataTable>
+	</p:outputPanel>
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
