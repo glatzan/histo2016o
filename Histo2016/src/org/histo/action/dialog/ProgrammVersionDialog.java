@@ -54,15 +54,7 @@ public class ProgrammVersionDialog extends AbstractTabDialog {
 	}
 
 	public boolean initBean() {
-		super.initBean(null, Dialog.INFO);
-
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].initTab();
-		}
-
-		onTabChange(tabs[0]);
-
-		return true;
+		return super.initBean(Dialog.INFO);
 	}
 
 	@Getter
@@ -81,10 +73,6 @@ public class ProgrammVersionDialog extends AbstractTabDialog {
 		public boolean initTab() {
 			setVersionInfo(Version.factroy(GlobalSettings.VERSIONS_INFO));
 			return true;
-		}
-
-		@Override
-		public void updateData() {
 		}
 
 	}
@@ -108,10 +96,6 @@ public class ProgrammVersionDialog extends AbstractTabDialog {
 			setErrorDate(new Date(System.currentTimeMillis()));
 			setErrorMessage("");
 			return true;
-		}
-
-		@Override
-		public void updateData() {
 		}
 
 		public void sendErrorMessage() {
@@ -146,10 +130,6 @@ public class ProgrammVersionDialog extends AbstractTabDialog {
 			setName("dialog.info.about.headline");
 			setViewID("aboutTab");
 			setCenterInclude("include/about.xhtml");
-		}
-
-		@Override
-		public void updateData() {
 		}
 
 	}

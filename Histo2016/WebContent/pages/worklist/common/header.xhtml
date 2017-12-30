@@ -26,19 +26,12 @@
 
 		<h:panelGrid columns="3">
 
-			<p:commandButton
-				rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT')}"
-				value="#{msg['body.worklist.header.button.addPatient']}"
-				styleClass="buttonMarginLeft"
-				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn"
-					update="navigationForm:patientList contentForm headerForm" />
-			</p:commandButton>
-
-			<h:outputLabel value="#{msg['header.view']}" style="margin-left:5px;" styleClass="bigFont"></h:outputLabel>
+			<h:outputLabel value="#{msg['header.view']}" style="margin-left:5px;"
+				styleClass="bigFont"></h:outputLabel>
 
 			<h:panelGroup>
-				<p:selectOneMenu style="margin-left:10px; margin-top:1px;" title="#{msg['body.worklist.header.view']}"
+				<p:selectOneMenu style="margin-left:10px; margin-top:1px;"
+					title="#{msg['body.worklist.header.view']}"
 					value="#{globalEditViewHandler.currentView}">
 
 					<f:selectItems value="#{globalEditViewHandler.navigationPages}"
@@ -55,15 +48,25 @@
 					style="display:none" />
 
 			</h:panelGroup>
+
+			<p:commandButton
+				value="#{msg['body.worklist.header.button.searchForOrAddPatient']}"
+				styleClass="buttonMarginLeft"
+				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm headerForm" />
+			</p:commandButton>
+
 		</h:panelGrid>
 
 		<!-- Buttons on the right -->
 		<h:panelGroup styleClass="headerRight" layout="block">
 
 			<!-- Current Version -->
-			<p:commandLink value="#{msg['header.version']} : #{globalSettings.currentVersion}"
+			<p:commandLink
+				value="#{msg['header.version']} : #{globalSettings.currentVersion}"
 				styleClass="noUnderlineAtLink buttonRighMarginInListExtended icon-grey"
-				actionListener="#{programmVersionDialog.initAndPrepareBean()}"></p:commandLink>
+				actionListener="#{dialogHandlerAction.programmVersionDialog.initAndPrepareBean()}"></p:commandLink>
 
 			<!-- button edit -->
 			<p:commandButton id="taskMenuButton"
@@ -275,7 +278,7 @@
 
 			<!-- Info button -->
 			<p:commandButton id="infoDialogBtn" style="display:none"
-				actionListener="#{programmVersionDialog.initAndPrepareBean()}">
+				actionListener="#{dialogHandlerAction.programmVersionDialog.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm:patientList contentForm" />
 			</p:commandButton>

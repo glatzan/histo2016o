@@ -39,7 +39,7 @@
 			<p:outputPanel id="navigationTable" styleClass="navigationTable">
 				<c:forEach items="#{settingsDialogHandler.tabs}"
 					var="tab" varStatus="loop">
-					<p:commandButton value="#{msg[tab.name]}"
+					<p:commandButton value="#{msg[tab.name]}" disabled="#{tab.disabled}"
 						styleClass="#{tab eq settingsDialogHandler.selectedTab ? 'selectedButton' : ''}"
 						actionListener="#{settingsDialogHandler.onTabChange(tab)}"
 						update="navigationTable dialogContent" />

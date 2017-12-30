@@ -1,5 +1,7 @@
 package org.histo.action.dialog;
 
+import org.histo.config.enums.Dialog;
+import org.histo.model.patient.Task;
 import org.primefaces.event.TabChangeEvent;
 
 import lombok.Getter;
@@ -11,34 +13,32 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 
 	protected AbstractTab[] tabs;
 
-	//TODO  DELETE if all dialogs are converted to the new system
-	protected int activeIndex = 0;
-
 	protected AbstractTab selectedTab;
-	
-	public void onTabChange() {
-		TabChangeEvent e = null;
-		this.onTabChange(e);
-	}
-	
-	//TODO DELETE if all dialogs are converted to the new system
-	public void onTabChange(TabChangeEvent event) {
-		if (getActiveIndex() >= 0 && getActiveIndex() < getTabs().length) {
-			logger.debug("Updating Tab with index " + getActiveIndex());
-			getTabs()[getActiveIndex()].updateData();
+
+	public boolean initBean(Dialog dialog) {
+		super.initBean(null, dialog);
+
+		for (int i = 0; i < tabs.length; i++) {
+			tabs[i].initTab();
 		}
+
+		onTabChange(tabs[0]);
+
+		return true;
 	}
-	
+
 	public void onTabChange(AbstractTab tab) {
 		setSelectedTab(tab);
 		tab.updateData();
 	}
-	
+
 	@Getter
 	@Setter
 	public abstract class AbstractTab {
 
-		public abstract void updateData();
+		public void updateData() {
+			return;
+		}
 
 		public boolean initTab() {
 			return false;
@@ -51,6 +51,8 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 		protected String tabName;
 
 		protected String centerInclude;
+		
+		protected boolean disabled;
 	}
 
 }

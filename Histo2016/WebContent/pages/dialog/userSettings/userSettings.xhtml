@@ -6,52 +6,47 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.userSettings.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+			value="#{msg['dialog.userSettings.headline']}">
+		</h:outputFormat></title>
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-
-<h:body styleClass="tabDialogLayout">
+<h:body styleClass="tabDialog">
 	<h:form id="adminForm">
 
+		<h:outputScript library="scripts" name="disableButtons.js" />
+		
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.userSettings.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
-					styleClass="noUnderlineAtLink">
+					immediate="true" styleClass="noUnderlineAtLink">
 					<f:actionListener
-						binding="#{userSettingsDialog.resetUserSettings()}" />
-					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
+						binding="#{userSettingsDialog.hideDialog()}" />
 					<i class="fa fa-fw fa-times icon-grey" />
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
 
-		<p:tabView orientation="left" id="tabview"
-			activeIndex="#{userSettingsDialog.activeIndex}"
-			styleClass="tabView">
-
-			<p:ajax event="tabChange"
-				listener="#{userSettingsDialog.onTabChange}" update="@form" />
-
-			<c:forEach items="#{userSettingsDialog.tabs}" var="tab"
-				varStatus="loop">
-
-				<p:tab title="#{msg[tab.name]}">
-					<h:panelGroup id="#{tab.viewID}">
-						<ui:include src="#{tab.centerInclude}" />
-					</h:panelGroup>
-				</p:tab>
-
-			</c:forEach>
-
-		</p:tabView>
-
+		<h:panelGrid columns="2" styleClass="newTableContainer contentTable"
+			columnClasses="column200px columnTop,columnTop">
+			<p:outputPanel id="navigationTable" styleClass="navigationTable">
+				<c:forEach items="#{userSettingsDialog.tabs}"
+					var="tab" varStatus="loop">
+					<p:commandButton value="#{msg[tab.name]}" disabled="#{tab.disabled}"
+						styleClass="#{tab eq userSettingsDialog.selectedTab ? 'selectedButton' : ''}"
+						actionListener="#{userSettingsDialog.onTabChange(tab)}"
+						update="navigationTable dialogContent" />
+				</c:forEach>
+			</p:outputPanel>
+			<p:outputPanel id="dialogContent" styleClass="dialogContent">
+				<ui:include
+					src="#{userSettingsDialog.selectedTab.centerInclude}" />
+			</p:outputPanel>
+		</h:panelGrid>
 	</h:form>
 </h:body>
 </html>

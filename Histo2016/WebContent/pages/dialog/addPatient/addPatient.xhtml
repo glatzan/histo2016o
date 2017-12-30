@@ -40,7 +40,7 @@
 				<c:forEach
 					items="#{dialogHandlerAction.addPatientDialogHandler.tabs}"
 					var="tab" varStatus="loop">
-					<p:commandButton value="#{msg[tab.name]}" immediate="true"
+					<p:commandButton value="#{msg[tab.name]}" immediate="true" disabled="#{tab.disabled}"
 						styleClass="#{tab eq dialogHandlerAction.addPatientDialogHandler.selectedTab ? 'selectedButton' : ''}"
 						actionListener="#{dialogHandlerAction.addPatientDialogHandler.onTabChange(tab)}"
 						update="navigationTable dialogContent" />

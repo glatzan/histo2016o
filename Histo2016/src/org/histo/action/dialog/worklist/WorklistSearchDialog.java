@@ -16,6 +16,7 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.Person;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
+import org.histo.model.user.HistoPermissions;
 import org.histo.ui.FavouriteListContainer;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistFavouriteSearch;
@@ -83,17 +84,9 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 	}
 
 	public boolean initBean() {
-		super.initBean(null, Dialog.WORKLIST_SEARCH);
-
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].initTab();
-		}
-		
-		onTabChange(tabs[0]);
-
-		return true;
+		return super.initBean(Dialog.WORKLIST_SEARCH);
 	}
-
+	
 	@Getter
 	@Setter
 	public class SimpleSearchTab extends AbstractTab {
@@ -110,10 +103,6 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		public boolean initTab() {
 			setWorklistSearch(new WorklistSimpleSearch());
 			return true;
-		}
-
-		@Override
-		public void updateData() {
 		}
 
 		public void onChangeWorklistSelection() {

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.groupEdit.tab.settings.headline']}" />
+	</p:outputPanel>
+
+	<p:outputPanel styleClass="bodyPannel">
+
+		<!-- Separator -->
+		<h:panelGrid columns="1" styleClass="newStyleListingTable ">
+			<h:outputLabel value="#{msg['dialog.groupEdit.tab.settings.view']}"
+				styleClass="bigFont" />
+		</h:panelGrid>
+
+		<!-- Available views -->
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer150 , columnAutoWidth">
+			<!-- Available views -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.view.masks']}" />
+			<p:selectCheckboxMenu updateLabel="true" multiple="true"
+				label="#{msg['dialog.groupEdit.tab.settings.view.masks.text']}"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.availableViewsAsArray}">
+				<f:selectItems var="allView"
+					value="#{dialogHandlerAction.groupEditDialog.generalTab.allViews}"
+					itemValue="#{allView}"
+					itemLabel="#{msg['enum.pages.'.concat(allView)]}" />
+				<p:ajax partialSubmit="true" update=":adminForm:standardViewInput"
+					process="@this" />
+			</p:selectCheckboxMenu>
+
+			<!-- default view -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.defaultView']}" />
+			<p:selectOneMenu id="standardViewInput"
+				disabled="#{dialogHandlerAction.groupEditDialog.group.settings.availableViews eq null}"
+				title="#{msg['dialog.groupEdit.tab.settings.defaultView.text']}"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.defaultView}">
+
+				<f:selectItem value="#{null}"
+					itemLabel="#{msg['dialog.groupEdit.tab.settings.defaultView.none']}">
+				</f:selectItem>
+
+				<f:selectItems
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.availableViews}"
+					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
+			</p:selectOneMenu>
+
+			<!-- input field color -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.inputFieldColor']}" />
+			<p:colorPicker
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.inputFieldColor}" />
+
+			<!-- font color of inputfields -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.inputFieldFontColor']}" />
+			<p:colorPicker
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.inputFieldFontColor}" />
+		</h:panelGrid>
+
+		<!-- Separator -->
+		<h:panelGrid columns="1"
+			styleClass="newStyleListingTable newStyleListingTableSeparator">
+			<p:separator style="width:100%" />
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist']}" />
+		</h:panelGrid>
+
+		<!-- Available views -->
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer150 , columnAutoWidth">
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.view.masks']}" />
+			<p:selectCheckboxMenu updateLabel="true" multiple="true"
+				label="#{msg['dialog.groupEdit.tab.settings.view.masks.text']}"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.availableWorklistsAsArray}">
+				<f:selectItems var="allWorklistOptions"
+					value="#{dialogHandlerAction.groupEditDialog.generalTab.allWorklistOptions}"
+					itemValue="#{allWorklistOptions}"
+					itemLabel="#{msg['enum.worklistSearchOption.'.concat(allWorklistOptions)]}" />
+				<p:ajax partialSubmit="true"
+					update=":adminForm:standardWorklistOptions" process="@this" />
+			</p:selectCheckboxMenu>
+
+			<!-- worklist -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist.default']}" />
+			<p:selectOneMenu id="standardWorklistOptions"
+				title="#{msg['dialog.groupEdit.tab.settings.worklist.default.text']}"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistToLoad}">
+
+				<f:selectItems
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.availableWorklistsAsArray}"
+					var="page"
+					itemLabel="#{msg['enum.worklistSearchOption.'.concat(page)]}" />
+			</p:selectOneMenu>
+
+			<!-- sorting -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist.sorting']}" />
+
+			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
+				style="width: 300px;">
+				<p:selectOneMenu
+					title="#{msg['dialog.groupEdit.tab.settings.worklist.sorting.text']}"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistSortOrder}">
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.tasknumber']}"
+						itemValue="TASK_ID" />
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.piz']}"
+						itemValue="PIZ" />
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.name']}"
+						itemValue="NAME" />
+					<f:selectItem
+						itemLabel="#{msg['dialog.worklistorder.sorting.priority']}"
+						itemValue="PRIORITY" />
+				</p:selectOneMenu>
+
+				<p:selectBooleanButton styleClass="smallButton"
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistSortOrderAsc}"
+					style="margin-left:15px;"
+					onLabel="#{msg['dialog.groupEdit.tab.settings.worklist.sorting.asc']}"
+					offLabel="#{msg['dialog.groupEdit.tab.settings.worklist.sorting.desc']}" />
+			</h:panelGrid>
+
+			<!-- hide inactive tasks -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist.hideNonActiveTasks']}" />
+			<p:selectBooleanCheckbox styleClass="centerCheckbox"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistHideNoneActiveTasks}"
+				title="#{msg['dialog.groupEdit.tab.settings.worklist.hideNonActiveTasks.text']}" />
+
+			<!-- auto update worklist -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist.autoUpdate']}" />
+			<p:selectBooleanCheckbox styleClass="centerCheckbox"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.worklistAutoUpdate}"
+				title="#{msg['dialog.groupEdit.tab.settings.worklist.autoUpdate.text']}" />
+
+			<!-- auto update worklist -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist.alternatePatientAddMode']}" />
+			<p:selectBooleanCheckbox styleClass="centerCheckbox"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.alternatePatientAddMode}"
+				title="#{msg['dialog.groupEdit.tab.settings.worklist.alternatePatientAddMode.text']}" />
+
+			<!-- on click add task-->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist.oneClickAdd']}" />
+			<p:selectBooleanCheckbox styleClass="centerCheckbox"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.addTaskWithSingelClick}"
+				title="#{msg['dialog.groupEdit.tab.settings.worklist.oneClickAdd.text']}" />
+
+			<!-- generate pdf on diagnosis approval -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.worklist.pdfOnDiagnosisApproval']}" />
+			<p:selectBooleanCheckbox
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.pdfPreviewOnDiagnosisApproval}"
+				title="#{msg['dialog.groupEdit.tab.settings.worklist.pdfOnDiagnosisApproval.text']}" />
+		</h:panelGrid>
+
+	</p:outputPanel>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<!-- Save button -->
+				<p:commandButton value="#{msg['general.save']}" icon="fa fa-save ">
+					<f:actionListener
+						binding="#{dialogHandlerAction.groupEditDialog.saveGroup()}"></f:actionListener>
+					<f:actionListener
+						binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
+				</p:commandButton>
+
+				<!-- Close button -->
+				<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+					icon="fa fa-times-circle">
+					<f:actionListener
+						binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
+				</p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+
+</ui:composition>

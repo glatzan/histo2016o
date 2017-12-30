@@ -34,6 +34,8 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.user.HistoPermissions;
+import org.histo.service.PatientService;
 import org.histo.ui.StainingTableChooser;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -121,6 +123,12 @@ public class GlobalEditViewHandler {
 	@Setter(AccessLevel.NONE)
 	@Lazy
 	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PatientService patientService;
+
 	// ************************ Navigation ************************
 	/**
 	 * View options, dynamically generated depending on the users role
@@ -263,7 +271,7 @@ public class GlobalEditViewHandler {
 
 		logger.debug("Updating Task Data + (menuModel = " + updateMenuModel + " ,TaskStatus = " + updateTaskStatus
 				+ " , SlideGuiList = " + updateSlideGuiList + ")");
-		
+
 		if (selectedTask != null && updateTaskStatus)
 			selectedTask.generateTaskStatus();
 
@@ -319,21 +327,23 @@ public class GlobalEditViewHandler {
 
 						worklistViewHandlerAction.onSelectTaskAndPatient(task.getId());
 
-						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.task"),
-								resourceBundle.get("growl.search.patient.task.text"));
+						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.task",
+								"growl.search.patient.task.text");
 
 					} else {
 						// no task was found
 						logger.debug("No task with the given id found");
-						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.notFount.task"),
-								"", FacesMessage.SEVERITY_ERROR);
+						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.notFount.task", "",
+								FacesMessage.SEVERITY_ERROR);
 					}
 
 				} else if (quickSerach.matches("^\\d{8}$")) { // piz
 					// searching for piz (8 digits)
 					logger.debug("Search for piz: " + quickSerach);
 
-					Patient patient = patientDao.searchForPatientByPiz(quickSerach);
+					// Searching for patient in pdv and local database
+					Patient patient = patientService.serachForPiz(quickSerach,
+							!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_CLINIC));
 
 					if (patient != null) {
 						if (globalSettings.getClinicJsonHandler().updatePatientFromClinicJson(patient))
@@ -343,8 +353,8 @@ public class GlobalEditViewHandler {
 
 						worklistViewHandlerAction.addPatientToWorkList(patient, true);
 
-						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.piz"),
-								resourceBundle.get("growl.search.patient.piz.text"));
+						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.piz",
+								"growl.search.patient.piz.text");
 
 						// if alternate mode the create Task dialog will be
 						// shown
@@ -355,7 +365,7 @@ public class GlobalEditViewHandler {
 
 					} else {
 						// no patient was found for piz
-						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.notFound.piz"), "",
+						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.notFound.piz", "",
 								FacesMessage.SEVERITY_ERROR);
 
 						logger.debug("No Patient found with piz " + quickSerach);
@@ -367,20 +377,18 @@ public class GlobalEditViewHandler {
 					String taskId = quickSerach.substring(0, 6);
 					String uniqueSlideIDinTask = quickSerach.substring(6, 9);
 
-					System.out.println(taskId + " " + uniqueSlideIDinTask);
-
 					Task task = taskDAO.getTaskBySlideID(taskId, Integer.parseInt(uniqueSlideIDinTask));
 
 					if (task != null) {
 						logger.debug("Slide found");
-						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.slide"),
-								resourceBundle.get("growl.search.patient.slide"));
+						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.slide",
+								"growl.search.patient.slide");
 						worklistViewHandlerAction.onSelectTaskAndPatient(task.getId());
 					} else {
 						// no slide was found
 						logger.debug("No slide with the given id found");
-						mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.search.patient.notFount.slide"),
-								"", FacesMessage.SEVERITY_ERROR);
+						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.notFount.slide", "",
+								FacesMessage.SEVERITY_ERROR);
 					}
 
 				} else if (quickSerach.matches("^(.+)[, ](.+)$")) {

@@ -35,7 +35,7 @@ public class LazyPDFGuiManager implements PdfStreamProvider, LazyPDFReturnHandle
 	 * If true the component wil be rendered.
 	 */
 	private boolean renderComponent;
-	
+
 	/**
 	 * If true the poll element at the view page will start
 	 */
@@ -72,6 +72,18 @@ public class LazyPDFGuiManager implements PdfStreamProvider, LazyPDFReturnHandle
 	}
 
 	/**
+	 * If the pdf was created manually is can be set using this method.
+	 * 
+	 * @param container
+	 */
+	public void setManuallyCreatedPDF(PDFContainer container) {
+		setPDFContainerToRender(container);
+		getRenderPDF().set(true);
+		getStopPoll().set(true);
+		getAutoStartPoll().set(false);
+	}
+
+	/**
 	 * Starts rendering in other thread
 	 * 
 	 * @param template
@@ -102,19 +114,18 @@ public class LazyPDFGuiManager implements PdfStreamProvider, LazyPDFReturnHandle
 	/**
 	 * Returns the pdf as stream
 	 */
-	public  StreamedContent getPdfContent() {
+	public StreamedContent getPdfContent() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE || getPDFContainerToRender() == null) {
 			// So, we're rendering the HTML. Return a stub StreamedContent so
 			// that it will generate right URL.
 			return new DefaultStreamedContent();
 		} else {
-			System.out.println("returning");
 			return new DefaultStreamedContent(new ByteArrayInputStream(getPDFContainerToRender().getData()),
 					"application/pdf", getPDFContainerToRender().getName());
 		}
 	}
-	
+
 	@Synchronized
 	public PDFContainer getPDFContainerToRender() {
 		return PDFContainerToRender;

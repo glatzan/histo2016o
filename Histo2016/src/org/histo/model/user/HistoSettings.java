@@ -75,7 +75,7 @@ public class HistoSettings implements HasID, Cloneable {
 	 */
 	@Enumerated(EnumType.STRING)
 	private View defaultView;
-	
+
 	/**
 	 * Page which will be shown on startup
 	 */
@@ -85,7 +85,7 @@ public class HistoSettings implements HasID, Cloneable {
 	/**
 	 * Default worklist to load, staining, diagnosis, notification, none
 	 */
-	@Enumerated(EnumType.ORDINAL)
+	@Enumerated(EnumType.STRING)
 	private SimpleSearchOption worklistToLoad;
 
 	/**
@@ -113,8 +113,8 @@ public class HistoSettings implements HasID, Cloneable {
 	private boolean worklistAutoUpdate;
 
 	/**
-	 * If true, a patient added viea quciksearch will be added to the worklist
-	 * an the create task dialog will be opend.
+	 * If true, a patient added viea quciksearch will be added to the worklist an
+	 * the create task dialog will be opend.
 	 */
 	@Column
 	private boolean alternatePatientAddMode;
@@ -136,7 +136,15 @@ public class HistoSettings implements HasID, Cloneable {
 	 */
 	@Column
 	private boolean pdfPreviewOnDiagnosisApproval;
-	
+
+	/**
+	 * If true tasks from the task list will be added and displayed immediately . If
+	 * false first they will be added to the worklist, with the second click the
+	 * task will be shown.
+	 */
+	@Column
+	private boolean addTaskWithSingelClick;
+
 	/**
 	 * List of available views
 	 */
@@ -147,6 +155,16 @@ public class HistoSettings implements HasID, Cloneable {
 	@OrderColumn(name = "position")
 	private List<View> availableViews;
 
+	/**
+	 * List of available standard worklists
+	 */
+	@ElementCollection(fetch = FetchType.EAGER)
+	@Enumerated(EnumType.STRING)
+	@Fetch(value = FetchMode.SUBSELECT)
+	@Cascade(value = { org.hibernate.annotations.CascadeType.ALL })
+	@OrderColumn(name = "position")
+	private List<SimpleSearchOption> availableWorklists;
+
 	@Transient
 	public View[] getAvailableViewsAsArray() {
 		return (View[]) getAvailableViews().toArray(new View[getAvailableViews().size()]);
@@ -154,6 +172,16 @@ public class HistoSettings implements HasID, Cloneable {
 
 	public void setAvailableViewsAsArray(View[] views) {
 		this.availableViews = Arrays.asList(views);
+	}
+
+	@Transient
+	public SimpleSearchOption[] getAvailableWorklistsAsArray() {
+		return (SimpleSearchOption[]) getAvailableWorklists()
+				.toArray(new SimpleSearchOption[getAvailableWorklists().size()]);
+	}
+
+	public void setAvailableWorklistsAsArray(SimpleSearchOption[] views) {
+		this.availableWorklists = Arrays.asList(views);
 	}
 
 	@Override

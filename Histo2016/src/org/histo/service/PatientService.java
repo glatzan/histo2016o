@@ -46,8 +46,8 @@ public class PatientService {
 	private PatientDao patientDao;
 
 	/**
-	 * Creates and adds an external patient to the database TODO: obtain piz
-	 * from pdv
+	 * Creates and adds an external patient to the database TODO: obtain piz from
+	 * pdv
 	 * 
 	 * @param patient
 	 */
@@ -95,22 +95,29 @@ public class PatientService {
 	}
 
 	/**
-	 * Searches for a piz in the pdv as well as in the programm's database. If
-	 * found in the programm's database the patient will be updated with found
-	 * pdv data.
+	 * Returns a Patient by the given piz. If localDatabaseOnly is true no pdv
+	 * patient will be displayed. (Notice that data of local patient will be syncet
+	 * with pdv nevertheless.
 	 * 
 	 * @param piz
+	 * @param localDatabaseOnly
 	 * @return
 	 * @throws CustomDatabaseInconsistentVersionException
 	 * @throws CustomNullPatientExcepetion
 	 * @throws CustomExceptionToManyEntries
 	 * @throws JSONException
 	 */
-	public Patient serachForPiz(String piz) throws CustomDatabaseInconsistentVersionException, JSONException,
-			CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+	public Patient serachForPiz(String piz, boolean localDatabaseOnly)
+			throws CustomDatabaseInconsistentVersionException, JSONException, CustomExceptionToManyEntries,
+			CustomNullPatientExcepetion {
 		// only search if 8 digit are provides
 		if (piz != null && piz.matches("^[0-9]{8}$")) {
 			Patient patient = patientDao.searchForPatientByPiz(piz);
+
+			// abort search, not found in local database
+			if (patient == null && localDatabaseOnly)
+				return null;
+
 			Patient pdvPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(piz);
 			if (patient != null) {
 				if (patient.copyIntoObject(pdvPatient)) {
@@ -127,9 +134,9 @@ public class PatientService {
 	}
 
 	/**
-	 * Searches for a range of not completed pizes 6 to 8 digits, searches only
-	 * in histo database, pdv database does not support this. Updates found
-	 * patients from pdv database.
+	 * Searches for a range of not completed pizes 6 to 8 digits, searches only in
+	 * histo database, pdv database does not support this. Updates found patients
+	 * from pdv database.
 	 * 
 	 * @param piz
 	 * @return
@@ -167,7 +174,7 @@ public class PatientService {
 	 * @throws CustomNullPatientExcepetion
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public List<Patient> searhcForPatient(String name, String surname, Date birthday)
+	public List<Patient> searhcForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
 			throws CustomExceptionToManyEntries, CustomNullPatientExcepetion,
 			CustomDatabaseInconsistentVersionException {
 
@@ -199,7 +206,7 @@ public class PatientService {
 			// foud the database patient will be updated
 			foundPiz = clinicPatients.stream().filter(cP -> {
 				try {
-					// clinic patient found
+					// histo patient found
 					Patient res = histoMatchList.stream().filter(hP -> hP.getPiz().equals(cP.getPiz()))
 							.collect(StreamUtils.singletonCollector());
 
@@ -215,9 +222,14 @@ public class PatientService {
 					result.add(res);
 					return true;
 				} catch (IllegalStateException e) {
-					// no clinic patient found
-					cP.setInDatabase(false);
-					result.add(cP);
+
+					// no histo patient found, adding patient only to result list if user can add
+					// clinic patient unknown to the local database
+					if (!localDatabaseOnly) {
+						cP.setInDatabase(false);
+						result.add(cP);
+					}
+					
 					return false;
 				}
 			}).map(cp -> cp.getPiz()).collect(Collectors.toList());

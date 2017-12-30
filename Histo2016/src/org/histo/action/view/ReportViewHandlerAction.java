@@ -72,15 +72,10 @@ public class ReportViewHandlerAction {
 
 					guiManager.startRendering(template);
 				}
-			}else {
-				// document found, render it
-				
+			} else {
+				guiManager.setManuallyCreatedPDF(c);
 			}
 		}
 
-	}
-
-	public void test() {
-		System.out.println("test");
 	}
 }

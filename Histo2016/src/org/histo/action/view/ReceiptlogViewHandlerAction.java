@@ -242,7 +242,7 @@ public class ReceiptlogViewHandlerAction {
 						userHandlerAction.getSelectedLabelPrinter().print(toPrint);
 					} catch (CustomUserNotificationExcepetion e) {
 						// handling offline error
-						mainHandlerAction.sendGrowlMessages(e);
+						mainHandlerAction.addQueueGrowlMessageAsResource(e);
 					}
 				}
 

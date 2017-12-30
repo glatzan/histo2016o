@@ -35,14 +35,15 @@ where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.h
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
--> Suchfunktion für benutzer view anpassen
 -> Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
 -> Zimmermann --> Atzrodt, Aktualliesierien button (feld für username ändern)
 -> Neuladen der Listen, nachdem das Settingsmenu geschlossen wurde
 -> printdialog mit neumen interfaces ausrüsten und testen 
 -> update user settings dialog
+
 Testen:
---> Test piz range from 6-8
+-> Test piz range from 6-8
+-> Search for normal user (only patients in local database)
 
 Next Changes:
 -> slide overview dialog!
@@ -104,7 +105,13 @@ Graphic Changes
 + = added
 - = removed
 	
-+v 1.0.15
++v 1.1.0 (30.12.2017)
++++*: Benutzerinterface für normale Programmbenutzer fertiggestellt.
++++*: Normale Programmbenutzer finden nur noch Patienten die sich in der lokalen Datenbank befinden.
++++*: In der Arbeitsliste können Patienten jetzt auf mit einem Klick auf die Namen ausgewählt werden.
+++++: Rechte zum Verwenden von Favouritenlisten implementiert.
+++++: Option zum hinzufügen von Aufträgen mit einem Klick implementiert. (Normalerweise wird zunächst der Patient in der Arbeitsliste angezeit, beim zweiten Klick der Auftrag)
++++*: Inhalt des Gruppen-Dialog auf mehrer Tabs aufgeteilt.
 +++*: Info-Dialog auf neues Layout geändert, Versionsanzeige intern geändert.
 +++*: Benutzeransicht überarbeitet und verbessert.
 +++*: GUI wird neu berechnet, sobald das Browser-Fenster in der Größe geändert wurde.
@@ -184,6 +191,57 @@ INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'WORK
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'WORKLIST');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'WORKLIST');
 INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'WORKLIST');
+CREATE TABLE histosettings_availableworklists (histosettings_id bigint NOT NULL, availableworklists character varying(255), "position" integer NOT NULL );
+ALTER TABLE histosettings_availableviews OWNER TO postgres;
+ALTER TABLE ONLY histosettings_availableworklists ADD CONSTRAINT histosettings_availableworklists_pkey PRIMARY KEY (histosettings_id, "position");
+ALTER TABLE ONLY histosettings_availableworklists ADD CONSTRAINT histosettings_availableworklists_constraint FOREIGN KEY (histosettings_id) REFERENCES histosettings(id);
+Alter table histosettings add addtaskwithsingelclick boolean;
+update histosettings set addtaskwithsingelclick = false;
+update histosettings set addtaskwithsingelclick = true where id = 8
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (12, 'DIAGNOSIS_LIST',0);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (12, 'STAINING_LIST',1);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (12, 'NOTIFICATION_LIST',2);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (12, 'EMTY_LIST',3);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (11, 'DIAGNOSIS_LIST',0);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (11, 'STAINING_LIST',1);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (11, 'NOTIFICATION_LIST',2);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (11, 'EMTY_LIST',3);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (10, 'DIAGNOSIS_LIST',0);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (10, 'STAINING_LIST',1);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (10, 'NOTIFICATION_LIST',2);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (10, 'EMTY_LIST',3);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (9, 'DIAGNOSIS_LIST',0);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (9, 'STAINING_LIST',1);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (9, 'NOTIFICATION_LIST',2);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (9, 'EMTY_LIST',3);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (8, 'EMTY_LIST',0);
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (7, 'EMTY_LIST',0);
+/* changing worklistto load from int to string enum */
+alter table histosettings ALTER COLUMN worklisttoload TYPE character varying(255);
+update histosettings set worklisttoload = 'DIAGNOSIS_LIST' where worklisttoload = '1';
+update histosettings set worklisttoload = 'STAINING_LIST' where worklisttoload = '0';
+/* setting all users to default view*/
+update histosettings set defaultview = 'WORKLIST_REPORT' from histouser as u where u.settings_id = histosettings.id and u.group_id = 3;
+/* users should load task immediately */
+update histosettings set addtaskwithsingelclick = true from histouser as u where u.settings_id = histosettings.id and u.group_id = 3;
+/* user to empty worklist*/
+update histosettings set worklisttoload = 'EMTY_LIST' from histouser as u where u.settings_id = histosettings.id and u.group_id = 3;
+/* changing permission to users permission*/
+update histogroup_permissions set permissions = 'USER_WORKLIST' where permissions = 'WORKLIST';
+/* setting user + favourite lists permission to admin = 7, moderator = 6, physicain = 5, mta = 4 */
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'USER');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'USER_FAVOURITE_LIST');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'USER');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'USER_FAVOURITE_LIST');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'USER');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'USER_FAVOURITE_LIST');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'USER');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'USER_FAVOURITE_LIST');
+/* setting empty_list for all users*/
+INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) select h.id, 'EMTY_LIST', 0 from  histosettings as h, histouser as u where  u.settings_id = h.id and u.group_id = 3;
+/* spelling correction for emty*/
+update histosettings_availableworklists set availableworklists = 'EMPTY_LIST' where availableworklists = 'EMTY_LIST';
+update histosettings set worklisttoload = 'EMPTY_LIST' where worklisttoload = 'EMTY_LIST';
 
 +v 1.0.14
 +++*: Arbeitsliste grafisch und funktionell verbessert, scrollen ist jetzt möglich.

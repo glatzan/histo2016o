@@ -7,22 +7,22 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
 
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.userSettings.general']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.userSettings.general']}" />
+	</p:outputPanel>
 
-		<!-- standard view -->
+	<p:outputPanel styleClass="bodyPannel">
+
 		<h:panelGrid columns="2" styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer150 , columnAutoWidth">
+			columnClasses="columnLabelContainer200 , columnAutoWidth">
+			
 			<!-- standard view -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.defaultView']}" />
 
 			<p:selectOneMenu
 				title="#{msg['dialog.userSettings.general.defaultView.text']}"
-				styleClass="smallInput"
 				value="#{userSettingsDialog.user.settings.defaultView}">
 
 				<f:selectItems
@@ -53,11 +53,11 @@
 
 
 		<h:panelGrid columns="2" styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer150 , columnAutoWidth">
+			columnClasses="columnLabelContainer200 , columnAutoWidth">
 			<!-- standard work list -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.defaultWorklist']}" />
-			<p:selectOneMenu styleClass="smallInput"
+			<p:selectOneMenu
 				title="#{msg['dialog.userSettings.general.defaultWorklist.text']}"
 				value="#{userSettingsDialog.user.settings.worklistToLoad}">
 
@@ -72,7 +72,7 @@
 
 			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
 				style="width: 300px;">
-				<p:selectOneMenu styleClass="smallInput"
+				<p:selectOneMenu
 					title="#{msg['dialog.userSettings.general.sorting.text']}"
 					value="#{userSettingsDialog.user.settings.worklistSortOrder}">
 					<f:selectItem
@@ -89,7 +89,7 @@
 						itemValue="PRIORITY" />
 				</p:selectOneMenu>
 
-				<p:selectBooleanButton styleClass="smallInput smallFont smallButton"
+				<p:selectBooleanButton styleClass="smallButton"
 					value="#{userSettingsDialog.user.settings.worklistSortOrderAsc}"
 					style="margin-left:15px;"
 					onLabel="#{msg['dialog.userSettings.general.sorting.asc']}"
@@ -117,34 +117,45 @@
 				value="#{userSettingsDialog.user.settings.alternatePatientAddMode}"
 				title="#{msg['dialog.userSettings.general.alternatePatientAddMode.text']}" />
 
+			<!-- on click add task-->
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.general.alternatePatientAddMode.oneClickAdd']}" />
+			<p:selectBooleanCheckbox 
+				value="#{userSettingsDialog.user.settings.addTaskWithSingelClick}"
+				title="#{msg['dialog.userSettings.general.alternatePatientAddMode.oneClickAdd.text']}" />
+
 		</h:panelGrid>
 
 		<!-- Separator -->
 		<h:panelGrid columns="1"
 			styleClass="newStyleListingTable newStyleListingTableSeparator">
 			<p:separator style="width:100%" />
-			<h:outputLabel value="#{msg['dialog.userSettings.general.worklist']}" />
+			<h:outputLabel value="#{msg['dialog.userSettings.general.miscellaneous']}" />
 		</h:panelGrid>
 
 		<!-- Diagnosis Settings -->
 		<h:panelGrid columns="2" styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer150 , columnAutoWidth">
+			columnClasses="columnLabelContainer200 , columnAutoWidth">
 			<!-- generate pdf on diagnosis approval -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.miscellaneous.pdfOnDiagnosisApproval']}" />
-			<p:selectBooleanCheckbox
+			<p:selectBooleanCheckbox 
 				value="#{userSettingsDialog.user.settings.pdfPreviewOnDiagnosisApproval}"
 				title="#{msg['dialog.userSettings.general.miscellaneous.pdfOnDiagnosisApproval.text']}" />
 		</h:panelGrid>
-	</div>
+	</p:outputPanel>
+
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-check-circle-o" partialSubmit="true"
-					process="printerTab generalTab">
+					icon="fa fa-check-circle-o" partialSubmit="true" process="@form">
 					<f:actionListener
 						binding="#{userSettingsDialog.saveUserSettings()}" />
 					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
@@ -159,5 +170,4 @@
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
-
 </ui:composition>

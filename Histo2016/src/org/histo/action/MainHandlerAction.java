@@ -90,18 +90,6 @@ public class MainHandlerAction {
 		showQueueGrowlMessage();
 	}
 
-	public void sendGrowlMessages(CustomUserNotificationExcepetion e) {
-		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
-	}
-
-	public void sendGrowlMessages(String headline, String message) {
-		sendGrowlMessages(headline, message, FacesMessage.SEVERITY_INFO);
-	}
-
-	public void sendGrowlMessages(String headline, String message, FacesMessage.Severity servertiy) {
-		sendGrowlMessages(new FacesMessage(servertiy, headline, message));
-	}
-
 	public void sendGrowlMessages(FacesMessage message) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(GLOBAL_GROWL_ID, message);
@@ -121,8 +109,16 @@ public class MainHandlerAction {
 		}
 	}
 
+	public void addQueueGrowlMessageAsResource(CustomUserNotificationExcepetion e) {
+		addQueueGrowlMessageAsResource(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
+	}
+
 	public void addQueueGrowlMessageAsResource(String headline, String message) {
-		addQueueGrowlMessage(resourceBundle.get(headline), resourceBundle.get(message), FacesMessage.SEVERITY_INFO);
+		addQueueGrowlMessage(headline, message, FacesMessage.SEVERITY_INFO);
+	}
+
+	public void addQueueGrowlMessageAsResource(String headline, String message, FacesMessage.Severity servertiy) {
+		addQueueGrowlMessage(resourceBundle.get(headline), resourceBundle.get(message), servertiy);
 	}
 
 	public void addQueueGrowlMessage(String headline, String message) {

@@ -1,5 +1,6 @@
 package org.histo.action;
 
+import org.histo.action.dialog.ProgrammVersionDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
 import org.histo.action.dialog.diagnosis.DiagnosisRevisionDialog;
 import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
@@ -117,6 +118,8 @@ public class DialogHandlerAction {
 	private DeleteTaskEntityDialog deleteTaskEntityDialog;
 	
 	private CreateSampleDialog createSampleDialog;
+	
+	private ProgrammVersionDialog programmVersionDialog;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -393,6 +396,14 @@ public class DialogHandlerAction {
 		}
 
 		return createSampleDialog;
+	}
+	
+	public ProgrammVersionDialog getProgrammVersionDialog() {
+		if (programmVersionDialog == null) {
+			programmVersionDialog = new ProgrammVersionDialog();
+		}
+
+		return programmVersionDialog;
 	}
 	
 	

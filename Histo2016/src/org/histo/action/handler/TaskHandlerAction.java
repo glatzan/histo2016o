@@ -118,7 +118,7 @@ public class TaskHandlerAction {
 	}
 
 	public void testMemo() {
-		mainHandlerAction.sendGrowlMessages("test", "test");
+		mainHandlerAction.addQueueGrowlMessage("test", "test");
 	}
 
 }

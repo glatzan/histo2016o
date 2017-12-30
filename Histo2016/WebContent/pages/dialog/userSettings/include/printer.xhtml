@@ -7,21 +7,23 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.userSettings.printer']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.userSettings.printer']}" />
+	</p:outputPanel>
 
-		<p:panelGrid columns="2" id="printerContent"
-			styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer150 , columnAutoWidth">
+	<p:outputPanel styleClass="bodyPannel">
+
+
+		<!-- standard view -->
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			columnClasses="columnLabelContainer200 , columnAutoWidth">
 
 			<!-- pritner select auto view -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.printer.autoPrinte']}" />
 			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}">
-				<p:ajax event="change" update="printerContent" />
+				<p:ajax event="change" update="@form" />
 			</p:selectBooleanCheckbox>
 
 			<!-- selected printer -->
@@ -41,7 +43,7 @@
 				</p:selectOneMenu>
 
 				<!-- testprint -->
-				<p:commandLink
+				<p:commandLink styleClass="icon-grey"
 					title="#{msg['dialog.userSettings.printer.testPage.hint']}"
 					style="margin-left:10px;"
 					actionListener="#{userHandlerAction.selectedPrinter.printTestPage()}">
@@ -61,7 +63,7 @@
 				value="#{msg['dialog.userSettings.labelPrinter.autoPrinte']}" />
 			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.settings.autoSelectedPreferedLabelPrinter}">
-				<p:ajax event="change" update="printerContent" />
+				<p:ajax event="change" update="@form" />
 			</p:selectBooleanCheckbox>
 
 			<!-- selected labelprinter -->
@@ -83,16 +85,15 @@
 				</p:selectOneMenu>
 
 				<!-- testprint -->
-				<p:commandLink
+				<p:commandLink styleClass="icon-grey"
 					title="#{msg['dialog.userSettings.labelPrinter.testPage.hint']}"
 					style="margin-left:10px;"
 					actionListener="#{userHandlerAction.selectedLabelPrinter.printTestPage()}">
 					<i class="fa fa-fw fa-print" />
 				</p:commandLink>
 			</h:panelGrid>
-
-		</p:panelGrid>
-	</div>
+		</h:panelGrid>
+	</p:outputPanel>
 
 
 	<div class="buttonContainer">
@@ -100,8 +101,7 @@
 			styleClass="newTableContainer">
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-check-circle-o" partialSubmit="true"
-					process="printerTab generalTab">
+					icon="fa fa-check-circle-o">
 					<f:actionListener
 						binding="#{userSettingsDialog.saveUserSettings()}" />
 					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />

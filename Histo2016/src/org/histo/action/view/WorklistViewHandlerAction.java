@@ -113,7 +113,7 @@ public class WorklistViewHandlerAction {
 		SimpleSearchOption defaultWorklistToLoad = userHandlerAction.getCurrentUser().getSettings().getWorklistToLoad();
 
 		// if a default to load was provided
-		if (defaultWorklistToLoad != null && defaultWorklistToLoad != SimpleSearchOption.EMTY_LIST) {
+		if (defaultWorklistToLoad != null && defaultWorklistToLoad != SimpleSearchOption.EMPTY_LIST) {
 			dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch()
 					.setSearchIndex(defaultWorklistToLoad);
 			dialogHandlerAction.getWorklistSearchDialog().getSimpleSearchTab().getWorklistSearch().updateSearchIndex();
@@ -206,16 +206,16 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void onSelectPatient(Patient patient, boolean reload) {
-	
-		 try {
-	            Class c = MediaDialog.class;
-	            Method[] m = c.getDeclaredMethods();
-	            for (int i = 0; i < m.length; i++)
-	            System.out.println(m[i].toString());
-	        } catch (Throwable e) {
-	            System.err.println(e);
-	        }
-		
+
+		try {
+			Class c = MediaDialog.class;
+			Method[] m = c.getDeclaredMethods();
+			for (int i = 0; i < m.length; i++)
+				System.out.println(m[i].toString());
+		} catch (Throwable e) {
+			System.err.println(e);
+		}
+
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
 
@@ -394,7 +394,9 @@ public class WorklistViewHandlerAction {
 
 	public void addTaskToWorklist(Task task) {
 
-		if (getWorklist().containsPatient(task.getPatient())) {
+		// selecting task if patient is in worklist, or if usersettings force it
+		if (getWorklist().containsPatient(task.getPatient())
+				|| userHandlerAction.getCurrentUser().getSettings().isAddTaskWithSingelClick()) {
 			logger.debug("Showning task " + task.getTaskID());
 			// reloading task and patient from database
 			onSelectTaskAndPatient(task.getId());

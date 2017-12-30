@@ -17,7 +17,7 @@
 			style="width:100%">
 			<h:outputLabel value="#{msg['dialog.info.error.time']}" />
 			<p:calendar pattern="HH:mm:ss dd.MM.yyyy" mask="true"
-				value="#{programmVersionDialog.errorTab.errorDate}">
+				value="#{dialogHandlerAction.programmVersionDialog.errorTab.errorDate}">
 			</p:calendar>
 			<h:outputLabel value="#{msg['dialog.info.error.text']}" />
 			<h:panelGroup />
@@ -25,7 +25,7 @@
 		<h:panelGrid columns="1" styleClass="newStyleListingTable"
 			style="width:100%">
 			<p:inputTextarea style="width:90%" rows="15"
-				value="#{programmVersionDialog.errorTab.errorMessage}" />
+				value="#{dialogHandlerAction.programmVersionDialog.errorTab.errorMessage}" />
 		</h:panelGrid>
 	</p:outputPanel>
 
@@ -40,12 +40,12 @@
 				<!-- Send button -->
 				<p:commandButton value="#{msg['dialog.info.error.button.send']}"
 					icon="fa fa-mail-forward"
-					actionListener="#{programmVersionDialog.errorTab.sendErrorMessage()}" />
+					actionListener="#{dialogHandlerAction.programmVersionDialog.errorTab.sendErrorMessage()}" />
 
 				<!-- Close button -->
 				<p:commandButton value="#{msg['general.close']}"
 					icon="fa fa-times-circle"
-					actionListener="#{programmVersionDialog.hideDialog()}" />
+					actionListener="#{dialogHandlerAction.programmVersionDialog.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

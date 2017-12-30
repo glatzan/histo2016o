@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.AbstractTabDialog;
 import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
@@ -15,6 +16,7 @@ import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
+import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
 import org.histo.ui.ListChooser;
 import org.histo.worklist.search.WorklistSimpleSearch;
@@ -41,6 +43,11 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private PatientService patientService;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
 
 	private ClinicSearchTab clinicSearchTab;
 
@@ -99,15 +106,14 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		private Date patientBirthday;
 
 		/**
-		 * True if to many matches have been found in the clinic database, an so
-		 * the clinic database did not return any data
+		 * True if to many matches have been found in the clinic database, an so the
+		 * clinic database did not return any data
 		 */
 		private boolean toManyMatchesInClinicDatabase;
 
 		/**
-		 * List of all found Patients of the patientSearchRequest, PatientList
-		 * is used instead of Patient because primefaces needs a unique row
-		 * collum.
+		 * List of all found Patients of the patientSearchRequest, PatientList is used
+		 * instead of Patient because primefaces needs a unique row collum.
 		 */
 		private List<ListChooser<Patient>> patientList;
 
@@ -115,6 +121,12 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		 * Selectes PatientList item
 		 */
 		private ListChooser<Patient> selectedPatientListItem;
+
+		/**
+		 * If the user has not the permission to search the pdv only the local database
+		 * will be searched for.
+		 */
+		private boolean searchLocalDatabaseOnly;
 
 		public ClinicSearchTab() {
 			setTabName("ClinicSearchTab");
@@ -126,7 +138,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		public boolean initTab() {
 			return initTab("", "", "", null);
 		}
-		
+
 		public boolean initTab(String name, String surename, String piz, Date date) {
 			setPatientBirthday(date);
 			setPatientName(name);
@@ -135,6 +147,8 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 			setSelectedPatientListItem(null);
 			setPatientList(null);
 			setToManyMatchesInClinicDatabase(false);
+			setSearchLocalDatabaseOnly(
+					!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_CLINIC));
 			return true;
 		}
 
@@ -154,6 +168,11 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 			}
 		}
 
+		/**
+		 * Search for pizes or given namen, firstname and birthday. Prefers pizes if not
+		 * null. Considers search only in local database if the user has not the
+		 * matching rights to add new clinic patients to the local database
+		 */
 		public void searchForClinicPatienes() {
 			logger.debug("Searching for patients");
 			try {
@@ -162,9 +181,11 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 
 				if (getPatientPiz() != null && !getPatientPiz().isEmpty()) {
 					if (getPatientPiz().matches("^[0-9]{8}$")) { // if full piz
-						resultArr.add(patientService.serachForPiz(getPatientPiz()));
+						resultArr.add(patientService.serachForPiz(getPatientPiz(), isSearchLocalDatabaseOnly()));
 					} else if (getPatientPiz().matches("^[0-9]{6,8}$")) {
 						// 6to 7 digits of piz
+						// isSearchLocalDatabaseOnly() can be ignored because this function is only
+						// supported by local database
 						resultArr.addAll(patientService.serachForPizRange(getPatientPiz()));
 					}
 				} else if ((getPatientName() != null && !getPatientName().isEmpty())
@@ -172,7 +193,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 						|| getPatientBirthday() != null) {
 
 					resultArr.addAll(patientService.searhcForPatient(getPatientName(), getPatientSurname(),
-							getPatientBirthday()));
+							getPatientBirthday(), isSearchLocalDatabaseOnly()));
 				}
 
 				setPatientList(ListChooser.getListAsIDList(resultArr));
@@ -188,8 +209,8 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		}
 
 		/**
-		 * Searches for the given strings and adds the patient to the worklist
-		 * if one patient was found. (this method reacts to return clicks)
+		 * Searches for the given strings and adds the patient to the worklist if one
+		 * patient was found. (this method reacts to return clicks)
 		 * 
 		 * @param addToWorklist
 		 */
@@ -227,9 +248,9 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		}
 
 		public boolean initTab() {
+			setDisabled(!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_EXTERN));
 			setPatient(new Patient(new Person(new Contact())));
 			getPatient().getPerson().setGender(null);
-
 			return true;
 		}
 

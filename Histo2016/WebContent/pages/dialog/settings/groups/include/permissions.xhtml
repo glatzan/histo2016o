@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.groupEdit.tab.rights.headline']}" />
+	</p:outputPanel>
+
+	<p:outputPanel styleClass="bodyPannel">
+		<h:panelGrid columns="3" styleClass="newTableContainer"
+			columnClasses="columnTop,columnTop,columnTop">
+
+			<!-- settings dialog -->
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnMinWidth columnNoVerticalPadding, columnTextLeft columnNoVerticalPadding">
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:5px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS.text']}">
+
+					<p:ajax event="change" update="@form"
+						listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS'])}"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS']}" />
+
+				<!-- settings dialog > user settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_USER.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_USER.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_USER']}" />
+
+				<!-- settings dialog > group settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_GROUP'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_GROUP.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_GROUP.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_GROUP']}" />
+
+				<!-- settings dialog > diganoses settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_DIAGNOSES'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_DIAGNOSES.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_DIAGNOSES.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_DIAGNOSES']}" />
+
+				<!-- settings dialog > material settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_MATERIAL'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_MATERIAL.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_MATERIAL.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_MATERIAL']}" />
+
+				<!-- settings dialog > staining settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_STAINING'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_STAINING.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_STAINING.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_STAINING']}" />
+
+				<!-- settings dialog > item lists settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_LISTS'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_LISTS.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_LISTS.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_LISTS']}" />
+
+				<!-- settings dialog > favourite lists settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_FAVOURITE'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_FAVOURITE.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_FAVOURITE.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_FAVOURITE']}" />
+
+				<!-- settings dialog > physicians settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_PHYSICIAN'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_PHYSICIAN.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_PHYSICIAN.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_PHYSICIAN']}" />
+
+				<!-- settings dialog > organizations settings -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PROGRAM_SETTINGS_ORGANIZAZIONS'].value}"
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_ORGANIZAZIONS.text']}" />
+				<h:outputLabel
+					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_ORGANIZAZIONS.text']}"
+					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_ORGANIZAZIONS']}" />
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnMinWidth columnNoVerticalPadding, columnTextLeft columnNoVerticalPadding">
+
+				<!-- tasks -->
+				<!-- edit task -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:5px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT'].value}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT.text']}">
+					<p:ajax event="change" update="@form"
+						listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT'])}"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<h:outputLabel value=" #{msg['enum.histoPermissions.TASK_EDIT']}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT.text']}" />
+
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT_NEW'].value}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_NEW.text']}" />
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.TASK_EDIT_NEW']}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_NEW.text']}" />
+
+				<!-- edit task id -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT_ID'].value}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_ID.text']}" />
+				<h:outputLabel value=" #{msg['enum.histoPermissions.TASK_EDIT_ID']}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_ID.text']}" />
+
+				<!-- archive task -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT_ARCHIVE'].value}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_ARCHIVE.text']}" />
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.TASK_EDIT_ARCHIVE']}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_ARCHIVE.text']}" />
+
+				<!-- restore task -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT_RESTORE'].value}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_RESTORE.text']}" />
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.TASK_EDIT_RESTORE']}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_RESTORE.text']}" />
+
+				<!-- delete task -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT_DELETE'].value}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_DELETE.text']}" />
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.TASK_EDIT_DELETE']}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_DELETE.text']}" />
+
+				<!-- delete edited task -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['TASK_EDIT_DELETE_EDITED'].value}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_DELETE_EDITED.text']}" />
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.TASK_EDIT_DELETE_EDITED']}"
+					title="#{msg['enum.histoPermissions.TASK_EDIT_DELETE_EDITED.text']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="newTableContainer"
+				columnClasses="columnTop">
+				<h:panelGrid columns="2" styleClass="newStyleListingTable"
+					columnClasses="columnMinWidth columnNoVerticalPadding, columnTextLeft columnNoVerticalPadding">
+					<!-- patient -->
+
+					<!-- edit patient -->
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:5px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PATIENT_EDIT'].value}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT.text']}">
+						<p:ajax event="change" update="@form"
+							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['PATIENT_EDIT'])}"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel
+						value=" #{msg['enum.histoPermissions.PATIENT_EDIT']}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT.text']}" />
+
+					<!-- add clinic patient -->
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:15px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PATIENT_EDIT_ADD_CLINIC'].value}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT_ADD_CLINIC.text']}" />
+					<h:outputLabel
+						value=" #{msg['enum.histoPermissions.PATIENT_EDIT_ADD_CLINIC']}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT_ADD_CLINIC.text']}" />
+
+					<!-- add clinic patient -->
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:15px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PATIENT_EDIT_ADD_EXTERN'].value}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT_ADD_EXTERN.text']}" />
+					<h:outputLabel
+						value=" #{msg['enum.histoPermissions.PATIENT_EDIT_ADD_EXTERN']}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT_ADD_EXTERN.text']}" />
+
+					<!--upload data -->
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:15px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['PATIENT_EDIT_UPLOAD_DATA'].value}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT_UPLOAD_DATA.text']}" />
+					<h:outputLabel
+						value=" #{msg['enum.histoPermissions.PATIENT_EDIT_UPLOAD_DATA']}"
+						title="#{msg['enum.histoPermissions.PATIENT_EDIT_UPLOAD_DATA.text']}" />
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newStyleListingTable"
+					style="margin-top:10px;"
+					columnClasses="columnMinWidth columnNoVerticalPadding, columnTextLeft columnNoVerticalPadding">
+					
+					<!-- user settings -->
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:5px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER'].value}"
+						title="#{msg['enum.histoPermissions.USER']}">
+						<p:ajax event="change" update="@form"
+							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['WORKLIST'])}"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value=" #{msg['enum.histoPermissions.USER']}"
+						title="#{msg['enum.histoPermissions.USER.text']}" />
+
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:15px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_WORKLIST'].value}"
+						title="#{msg['enum.histoPermissions.USER_WORKLIST.text']}">
+						<p:ajax event="change" update="@form"
+							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_WORKLIST'])}"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value=" #{msg['enum.histoPermissions.USER_WORKLIST']}"
+						title="#{msg['enum.histoPermissions.USER_WORKLIST.text']}" />
+
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:15px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_FAVOURITE_LIST'].value}"
+						title="#{msg['enum.histoPermissions.USER_FAVOURITE_LIST.text']}">
+						<p:ajax event="change" update="@form"
+							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_FAVOURITE_LIST'])}"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel value=" #{msg['enum.histoPermissions.USER_FAVOURITE_LIST']}"
+						title="#{msg['enum.histoPermissions.USER_FAVOURITE_LIST.text']}" />
+
+				</h:panelGrid>
+			</h:panelGrid>
+		</h:panelGrid>
+	</p:outputPanel>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<!-- Save button -->
+				<p:commandButton value="#{msg['general.save']}" icon="fa fa-save ">
+					<f:actionListener
+						binding="#{dialogHandlerAction.groupEditDialog.saveGroup()}"></f:actionListener>
+					<f:actionListener
+						binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
+				</p:commandButton>
+
+				<!-- Close button -->
+				<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+					icon="fa fa-times-circle">
+					<f:actionListener
+						binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
+				</p:commandButton>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+
+</ui:composition>

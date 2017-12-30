@@ -1,3 +1,8 @@
+body {
+	margin: 0px !important;
+	font-size: 0.8em !important;
+}
+
 /* -------------- Pannelgrid container --------------*/
 .newTableContainer>tbody>tr>td, .newTableContainer>tbody>tr,
 	.newTableContainer>tbody, .newTableContainer {
@@ -67,9 +72,9 @@
 	white-space: nowrap;
 }
 
-.newStyleListingTable label {
+.newStyleListingTable label, .newStyleListingTable>tbody>tr>td {
 	padding: 4px !important;
-	font-size: 12px !important;
+	font-size: 12px;
 	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none !important;
 	font-style: normal !important;
@@ -116,12 +121,13 @@
 
 .newStyleListingTableSeparator label {
 	padding: 4px !important;
-	font-size: 14px !important;
+	font-size: 1.1em !important;
 	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
 	box-shadow: none !important;
 	font-style: normal !important;
 	font-weight: bold !important;
 	font-variant: normal !important;
+	color: #555555;
 }
 
 /* -------------- New Pannelgridn Column Styles --------------*/
@@ -135,6 +141,10 @@
 
 .newStyleListingTable .columnLabelContainer200 {
 	width: 200px !important;
+}
+
+.newStyleListingTable .columnLabelContainer300 {
+	width: 300px !important;
 }
 
 .newStyleListingTable .columnInputContainer300 input,
@@ -192,13 +202,13 @@
 	white-space: normal;
 }
 
-.newStyleDataTable .ui-datatable-tablewrapper>table>tbody,
-	.newStyleDataTable .ui-datatable-tablewrapper>table>tbody>tr {
+.newStyleDataTable tbody.ui-datatable-data, .newStyleDataTable tbody.ui-datatable-data>tr
+	{
 	border: none !important;
 	border-spacing: 0px !important;
 }
 
-.newStyleDataTable .ui-datatable-tablewrapper>table>tbody>tr>td {
+.newStyleDataTable tbody.ui-datatable-data>tr>td {
 	padding-top: 3px !important;
 	padding-bottom: 3px !important;
 	border: none !important;
@@ -777,10 +787,10 @@
 .bigFont, .bigFont label {
 	font-size: 1.1em !important;
 	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-	box-shadow: none;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: bold;
+	box-shadow: none !important;;
+	font-style: normal !important;;
+	font-variant: normal !important;;
+	font-weight: bold !important;;
 	color: #555555;
 }
 
@@ -794,22 +804,27 @@
 	color: #555555;
 }
 
-.icon-green {
+.icon-green, .icon-green:link, .icon-green:active, .icon-green:hover,
+	.icon-green:visited {
 	color: green;
 }
 
-.icon-purple {
+.icon-purple, .icon-purple:link, .icon-purple:active, .icon-purple:hover,
+	.icon-purple:visited {
 	color: purple;
 }
 
-.icon-orange {
+.icon-orange, .icon-orange:link, .icon-orange:active, .icon-orange:hover,
+	.icon-orange:visited {
 	color: orange;
 }
 
-.icon-grey {
+.icon-grey, .icon-grey:link, .icon-grey:active, .icon-grey:hover,
+	.icon-grey:visited {
 	color: #555555;
 }
 
-.icon-red {
+.icon-red, .icon-red:link, .icon-red:active, .icon-red:hover,
+	.icon-red:visited {
 	color: red;
 }

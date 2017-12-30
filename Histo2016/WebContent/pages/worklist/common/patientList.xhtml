@@ -101,7 +101,7 @@
 
 			<!-- Worklist change -->
 			<p:commandLink partialSubmit="true" process="@this"
-				rendered="userHandlerAction.currentUserHasPermission('WORKLIST')}"
+				rendered="#{userHandlerAction.currentUserHasPermission('USER_WORKLIST')}"
 				title="#{msg['body.worklist.navigation.button.changelist']}"
 				actionListener="#{dialogHandlerAction.worklistSearchDialog.initAndPrepareBean()}">
 				<i class="fa fa-search"></i>
@@ -139,18 +139,18 @@
 				<h:panelGrid styleClass="newStyleListingTable" columns="2"
 					columnClasses="columnLabelContainer150,">
 
-					<h:outputLabel
+					<h:outputText
 						value="#{patient.person.lastName}, #{patient.person.firstName}" />
-					<h:outputLabel
+					<h:outputText
 						value="PIZ: #{patient.piz ne 0 ? patient.piz : 'none'}" />
 
-					<h:outputLabel value="#{patient.person.birthday}"
+					<h:outputText value="#{patient.person.birthday}"
 						rendered="#{patient.person.birthday ne null}">
 						<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-					</h:outputLabel>
-					<h:outputLabel rendered="#{patient.person.birthday eq null}"
+					</h:outputText>
+					<h:outputText rendered="#{patient.person.birthday eq null}"
 						value="" />
-					<h:outputLabel value="" />
+					<h:outputText value="" />
 				</h:panelGrid>
 
 				<!-- tasks -->

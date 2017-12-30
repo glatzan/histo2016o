@@ -7,13 +7,14 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;"
-			header="#{msg['dialog.userSettings.favouriteLists']}"
-			styleClass="contentPannel" />
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.userSettings.general']}" />
+	</p:outputPanel>
 
-		<p:panelGrid columns="1" id="favouriteContent"
-			styleClass="newStyleListingTable">
+	<p:outputPanel styleClass="bodyPannelFull">
+
+		<!-- standard view -->
+		<h:panelGrid columns="1" styleClass="newStyleListingTable">
 
 
 			<p:dataTable var="favouriteListContainer" style="width:100%;"
@@ -34,7 +35,8 @@
 				</p:column>
 
 				<p:column headerText="Kommentar" styleClass="columnAutoWidth">
-					<h:outputLabel value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
+					<h:outputLabel
+						value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
 				</p:column>
 
 				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">
@@ -60,8 +62,8 @@
 
 			</p:dataTable>
 
-		</p:panelGrid>
-	</div>
+		</h:panelGrid>
+	</p:outputPanel>
 
 
 	<div class="buttonContainer">
@@ -79,8 +81,7 @@
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-check-circle-o" partialSubmit="true"
-					process="printerTab generalTab">
+					icon="fa fa-check-circle-o" >
 					<f:actionListener
 						binding="#{userSettingsDialog.saveUserSettings()}" />
 					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
@@ -95,5 +96,4 @@
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
-
 </ui:composition>

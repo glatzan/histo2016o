@@ -32,16 +32,16 @@
 			<h:graphicImage value="/resources/gfx/ajax-loader1.gif"
 				style="margin-right: 12px; vertical-align: middle;" />
 			<h:outputText value="#{msg['component.dynamicMedia.loading']}"
-				style="white-space: nowrap;" styleClass="hugeFont"/>
+				style="white-space: nowrap;" styleClass="hugeFont" />
 		</h:panelGrid>
 
-		<p:media player="pdf" rendered="#{cc.attrs.guiManager.renderPDF.get()}"
+		<p:media player="pdf"
+			rendered="#{cc.attrs.guiManager.renderPDF.get()}"
 			style="height:#{cc.attrs.height}; width: #{cc.attrs.width}"
 			value="#{cc.attrs.pdfContent}" />
 
 		<p:poll interval="1" update="#{cc.attrs.update}"
 			stop="#{cc.attrs.guiManager.stopPoll.get()}"
-			listener="#{reportViewHandlerAction.test()}"
 			autoStart="#{cc.attrs.guiManager.autoStartPoll.get()}" />
 	</h:panelGrid>
 

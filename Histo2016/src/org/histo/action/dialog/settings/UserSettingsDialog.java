@@ -1,16 +1,19 @@
-package org.histo.action.dialog;
+package org.histo.action.dialog.settings;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.histo.action.UserHandlerAction;
+import org.histo.action.dialog.AbstractTabDialog;
+import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.model.favouriteList.FavouriteList;
+import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoUser;
 import org.histo.ui.FavouriteListContainer;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
@@ -58,24 +61,13 @@ public class UserSettingsDialog extends AbstractTabDialog {
 	}
 
 	public void initAndPrepareBean() {
-		if (initBean())
-			prepareDialog();
+		initBean();
+		prepareDialog();
 	}
 
 	public boolean initBean() {
-		super.initBean(null, Dialog.USER_SETTINGS);
-
 		setUser(userHandlerAction.getCurrentUser());
-
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].initTab();
-		}
-
-		if (activeIndex >= 0 && activeIndex < getTabs().length) {
-			onTabChange();
-		}
-
-		return true;
+		return super.initBean(Dialog.USER_SETTINGS);
 	}
 
 	public void saveUserSettings() {
@@ -114,19 +106,10 @@ public class UserSettingsDialog extends AbstractTabDialog {
 			setAvailableViews(
 					new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
 
-			setAvailableWorklistsToLoad(new ArrayList<SimpleSearchOption>());
-			getAvailableWorklistsToLoad().add(SimpleSearchOption.DIAGNOSIS_LIST);
-			getAvailableWorklistsToLoad().add(SimpleSearchOption.STAINING_LIST);
-			getAvailableWorklistsToLoad().add(SimpleSearchOption.NOTIFICATION_LIST);
-			getAvailableWorklistsToLoad().add(SimpleSearchOption.EMTY_LIST);
+			setAvailableWorklistsToLoad(userHandlerAction.getCurrentUser().getSettings().getAvailableWorklists());
 
 			return true;
 		}
-
-		@Override
-		public void updateData() {
-		}
-
 	}
 
 	@Getter
@@ -138,10 +121,6 @@ public class UserSettingsDialog extends AbstractTabDialog {
 			setName("dialog.userSettings.printer");
 			setViewID("printerTab");
 			setCenterInclude("include/printer.xhtml");
-		}
-
-		@Override
-		public void updateData() {
 		}
 
 	}
@@ -159,6 +138,11 @@ public class UserSettingsDialog extends AbstractTabDialog {
 			setCenterInclude("include/favouriteLists.xhtml");
 		}
 
+		public boolean initTab() {
+			setDisabled(!userHandlerAction.currentUserHasPermission(HistoPermissions.USER_FAVOURITE_LIST));
+			return true;
+		}
+		
 		@Override
 		public void updateData() {
 			long test = System.currentTimeMillis();

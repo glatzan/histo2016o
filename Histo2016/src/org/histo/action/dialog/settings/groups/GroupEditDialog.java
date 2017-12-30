@@ -8,11 +8,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.AbstractTabDialog;
+import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.UserDAO;
+import org.histo.model.transitory.settings.Version;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoPermissions;
@@ -29,7 +33,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class GroupEditDialog extends AbstractDialog {
+public class GroupEditDialog extends AbstractTabDialog {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -46,24 +50,28 @@ public class GroupEditDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private TransactionTemplate transactionTemplate;
 
+	private GeneralTab generalTab;
+	private NameTab nameTab;
+	private PermissionTab permissionTab;
+
 	private boolean newGroup;
 
 	private HistoGroup group;
 
-	private View[] allViews;
+	public GroupEditDialog() {
+		setNameTab(new NameTab());
+		setGeneralTab(new GeneralTab());
+		setPermissionTab(new PermissionTab());
 
-	private List<SimpleSearchOption> availableWorklistsToLoad;
-
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private Map<String, PermissionHolder> permissions;
+		tabs = new AbstractTab[] { nameTab, generalTab, permissionTab };
+	}
 
 	public void initAndPrepareBean() {
 		HistoGroup group = new HistoGroup(new HistoSettings());
 		group.getSettings().setAvailableViews(new ArrayList<View>());
 		group.setAuthRole(AuthRole.ROLE_NONEAUTH);
 		group.setPermissions(new HashSet<HistoPermissions>());
-		
+
 		if (initBean(group, false))
 			prepareDialog();
 	}
@@ -86,53 +94,10 @@ public class GroupEditDialog extends AbstractDialog {
 			setGroup(group);
 		}
 
+		// if new group
 		setNewGroup(group.getId() == 0 ? true : false);
 
-		setAllViews(
-				new View[] { View.GUEST, View.WORKLIST_TASKS , View.WORKLIST_PATIENT,  View.WORKLIST_DIAGNOSIS, View.WORKLIST_RECEIPTLOG, View.WORKLIST_REPORT});
-
-		setAvailableWorklistsToLoad(new ArrayList<SimpleSearchOption>());
-		getAvailableWorklistsToLoad().add(SimpleSearchOption.DIAGNOSIS_LIST);
-		getAvailableWorklistsToLoad().add(SimpleSearchOption.STAINING_LIST);
-		getAvailableWorklistsToLoad().add(SimpleSearchOption.NOTIFICATION_LIST);
-		getAvailableWorklistsToLoad().add(SimpleSearchOption.EMTY_LIST);
-
-		setPermissions(group.getPermissions());
-
-		super.initBean(task, Dialog.SETTINGS_GROUP_EDIT);
-		return true;
-	}
-
-	public void onChangePermission(PermissionHolder holder) {
-		permissions.forEach((k, v) -> {
-			if (v.getPermission().getParent() == holder.getPermission()) {
-				v.setValue(holder.isValue());
-			}
-			;
-		});
-	}
-
-	public void setPermissions(Set<HistoPermissions> groupPermissions) {
-		permissions = new HashMap<String, PermissionHolder>();
-
-		Set<HistoPermissions> groupPermissionsCopy = new HashSet<HistoPermissions>(groupPermissions);
-		HistoPermissions[] permissionArr = HistoPermissions.values();
-
-		for (int i = 0; i < permissionArr.length; i++) {
-			PermissionHolder permissionIsSet = new PermissionHolder(false, permissionArr[i]);
-			for (HistoPermissions histoPermission : groupPermissionsCopy) {
-				if (permissionArr[i] == histoPermission) {
-					permissionIsSet.setValue(true);
-					break;
-				}
-			}
-
-			permissions.put(permissionArr[i].name(), permissionIsSet);
-		}
-	}
-
-	public Map<String, PermissionHolder> getPermissions() {
-		return permissions;
+		return super.initBean(Dialog.SETTINGS_GROUP_EDIT);
 	}
 
 	public void saveGroup() {
@@ -147,7 +112,7 @@ public class GroupEditDialog extends AbstractDialog {
 		getGroup().getPermissions().clear();
 
 		// adding/ readding permissions
-		permissions.forEach((p, v) -> {
+		permissionTab.permissions.forEach((p, v) -> {
 			if (v.isValue()) {
 				getGroup().getPermissions().add(v.getPermission());
 			}
@@ -165,6 +130,92 @@ public class GroupEditDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 
+	}
+
+	@Getter
+	@Setter
+	public class NameTab extends AbstractTab {
+
+		public NameTab() {
+			setTabName("NameTab");
+			setName("dialog.groupEdit.tab.group.headline");
+			setViewID("nameTab");
+			setCenterInclude("include/name.xhtml");
+		}
+
+	}
+
+	@Getter
+	@Setter
+	public class GeneralTab extends AbstractTab {
+
+		private View[] allViews;
+		private SimpleSearchOption[] allWorklistOptions;
+
+		public GeneralTab() {
+			setTabName("GeneralTab");
+			setName("dialog.groupEdit.tab.settings.headline");
+			setViewID("generalTab");
+			setCenterInclude("include/general.xhtml");
+		}
+
+		public boolean initTab() {
+			setAllViews(new View[] { View.GUEST, View.WORKLIST_TASKS, View.WORKLIST_PATIENT, View.WORKLIST_DIAGNOSIS,
+					View.WORKLIST_RECEIPTLOG, View.WORKLIST_REPORT });
+
+			setAllWorklistOptions(
+					new SimpleSearchOption[] { SimpleSearchOption.DIAGNOSIS_LIST, SimpleSearchOption.STAINING_LIST,
+							SimpleSearchOption.NOTIFICATION_LIST, SimpleSearchOption.EMPTY_LIST });
+
+			return true;
+		}
+	}
+
+	@Getter
+	@Setter
+	public class PermissionTab extends AbstractTab {
+
+		@Setter(AccessLevel.NONE)
+		private Map<String, PermissionHolder> permissions;
+
+		public PermissionTab() {
+			setTabName("PermissionTab");
+			setName("dialog.groupEdit.tab.rights.headline");
+			setViewID("permissionTab");
+			setCenterInclude("include/permissions.xhtml");
+		}
+
+		public boolean initTab() {
+			setPermissions(group.getPermissions());
+			return true;
+		}
+
+		public void onChangePermission(PermissionHolder holder) {
+			permissions.forEach((k, v) -> {
+				if (v.getPermission().getParent() == holder.getPermission()) {
+					v.setValue(holder.isValue());
+				}
+			});
+		}
+
+		public void setPermissions(Set<HistoPermissions> groupPermissions) {
+			permissions = new HashMap<String, PermissionHolder>();
+
+			Set<HistoPermissions> groupPermissionsCopy = new HashSet<HistoPermissions>(groupPermissions);
+			HistoPermissions[] permissionArr = HistoPermissions.values();
+
+			for (int i = 0; i < permissionArr.length; i++) {
+				PermissionHolder permissionIsSet = new PermissionHolder(false, permissionArr[i]);
+				for (HistoPermissions histoPermission : groupPermissionsCopy) {
+					if (permissionArr[i] == histoPermission) {
+						permissionIsSet.setValue(true);
+						break;
+					}
+				}
+
+				permissions.put(permissionArr[i].name(), permissionIsSet);
+			}
+		}
 	}
 
 	@Getter

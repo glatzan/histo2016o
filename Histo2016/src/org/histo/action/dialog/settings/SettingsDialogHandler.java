@@ -130,7 +130,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 	}
 
 	public void initAndPrepareBean() {
-		initBean(null);
+		initBean("");
 		prepareDialog();
 	}
 

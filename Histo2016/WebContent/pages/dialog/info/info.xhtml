@@ -7,7 +7,6 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-<f:view contentType="text/html" encoding="UTF-8" />
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.info.headline']}">
@@ -28,7 +27,7 @@
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					immediate="true" styleClass="noUnderlineAtLink">
 					<f:actionListener
-						binding="#{programmVersionDialog.hideDialog()}" />
+						binding="#{dialogHandlerAction.programmVersionDialog.hideDialog()}" />
 					<i class="fa fa-fw fa-times icon-grey" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -37,17 +36,17 @@
 		<h:panelGrid columns="2" styleClass="newTableContainer contentTable"
 			columnClasses="column200px columnTop,columnTop">
 			<p:outputPanel id="navigationTable" styleClass="navigationTable">
-				<c:forEach items="#{programmVersionDialog.tabs}"
+				<c:forEach items="#{dialogHandlerAction.programmVersionDialog.tabs}"
 					var="tab" varStatus="loop">
-					<p:commandButton value="#{msg[tab.name]}"
-						styleClass="#{tab eq programmVersionDialog.selectedTab ? 'selectedButton' : ''}"
-						actionListener="#{programmVersionDialog.onTabChange(tab)}"
+					<p:commandButton value="#{msg[tab.name]}" disabled="#{tab.disabled}"
+						styleClass="#{tab eq dialogHandlerAction.programmVersionDialog.selectedTab ? 'selectedButton' : ''}"
+						actionListener="#{dialogHandlerAction.programmVersionDialog.onTabChange(tab)}"
 						update="navigationTable dialogContent" />
 				</c:forEach>
 			</p:outputPanel>
 			<p:outputPanel id="dialogContent" styleClass="dialogContent">
 				<ui:include
-					src="#{programmVersionDialog.selectedTab.centerInclude}" />
+					src="#{dialogHandlerAction.programmVersionDialog.selectedTab.centerInclude}" />
 			</p:outputPanel>
 		</h:panelGrid>
 	</h:form>
