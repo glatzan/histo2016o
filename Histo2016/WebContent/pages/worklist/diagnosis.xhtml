@@ -50,18 +50,38 @@
 								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
 
 							<p:inputText value="#{sample.material}"
+								id="materialInput#{loopCount.index}"
 								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 								tabindex="1" styleClass="customBackground"
-								style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}" />
+								onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
+								onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
+								style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
-							<p:commandLink tabindex="1"
-								title="#{msg['body.diagnosis.material.text']}"
-								rendered="#{globalEditViewHandler.selectedTask.taskStatus.editable}"
-								style="float: right; margin-right:5px;"
-								actionListener="#{dialogHandlerAction.changeMaterialDialog.initAndPrepareBean(sample)}">
-								<i class="fa fa-fw fa-cog" />
-								<p:ajax event="dialogReturn" update="navigationForm contentForm" />
-							</p:commandLink>
+								<p:ajax event="change" execute="@this"
+									listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.material',sample.material)}" />
+
+							</p:inputText>
+
+							<p:overlayPanel id="materialOverlayPanel#{loopCount.index}"
+								styleClass="defaultOverlayPanel selectOverlayPanel"
+								widgetVar="materialOverlayPanel#{loopCount.index}"
+								hideEffect="fade" style="width:500px" hideEvent="mousedown"
+								showEvent="none" onkeypress="return false;">
+								<p:dataTable value="#{globalEditViewHandler.materialList}"
+									var="preset" styleClass="newStyleDataTable" scrollable="true"
+									scrollHeight="200" rowKey="#{preset.id}"
+									selection="#{sample.materialPreset}" selectionMode="single">
+									<p:column filterBy="#{preset.name}" filterMatchMode="contains">
+										<h:outputText value="#{preset.name}" />
+									</p:column>
+
+									<p:ajax event="rowSelect"
+										update="contentForm:materialInput#{loopCount.index}"
+										listener="#{taskHandlerAction.changeMaterialOfSample(sample, sample.materialPreset)}"
+										oncomplete="PF('materialOverlayPanel#{loopCount.index}').hide();" />
+								</p:dataTable>
+
+							</p:overlayPanel>
 						</h:panelGrid>
 					</c:forEach>
 				</h:panelGrid>
@@ -94,22 +114,21 @@
 							value="#{globalEditViewHandler.selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-							id="caseHistoryInput" style="width:90%"
-							onfocus="PF('caseHistoryOverlayPanel').show();"
-							onkeypress="PF('caseHistoryOverlayPanel').hide();"
-							onclick="PF('caseHistoryOverlayPanel').show();">
+							id="caseHistoryInput" style="width:90%" widgetVar="test123456"
+							onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
+							onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
+							onkeypress="PF('caseHistoryOverlayPanel').hide();">
 							<p:ajax event="change"
 								listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.caseHistory',globalEditViewHandler.selectedTask.caseHistory)}"></p:ajax>
 						</p:inputTextarea>
 
 						<p:overlayPanel id="caseHistoryOverlayPanel"
 							styleClass="defaultOverlayPanel selectOverlayPanel"
-							for="caseHistoryInput" widgetVar="caseHistoryOverlayPanel"
-							hideEffect="fade" style="width:500px" hideEvent="none"
-							showEvent="none">
-							<p:dataTable
-								value="#{globalEditViewHandler.caseHistoryList}" var="item"
-								styleClass="newStyleDataTable" scrollable="true"
+							widgetVar="caseHistoryOverlayPanel" hideEffect="fade"
+							style="width:500px" hideEvent="mousedown" showEvent="none"
+							onkeypress="return false;">
+							<p:dataTable value="#{globalEditViewHandler.caseHistoryList}"
+								var="item" styleClass="newStyleDataTable" scrollable="true"
 								scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
 								selectionMode="single">
@@ -123,6 +142,7 @@
 							</p:dataTable>
 
 						</p:overlayPanel>
+
 					</h:panelGroup>
 				</h:panelGrid>
 			</h:panelGrid>
@@ -330,8 +350,8 @@
 						<!-- diagnosis text -->
 						<p:inputTextarea value="#{diagnosis.diagnosis}"
 							onkeypress="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();"
-							onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
-							onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show();"
+							onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show('#{component.clientId}');"
+							onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show('#{component.clientId}');"
 							id="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							style="width:99%">
@@ -346,11 +366,9 @@
 							widgetVar="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
 							id="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
 							styleClass="defaultOverlayPanel selectOverlayPanel"
-							for="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
-							hideEffect="fade" style="width:500px" hideEvent="none"
+							hideEffect="fade" style="width:500px" hideEvent="mousedown"
 							showEvent="none">
-							<p:dataTable
-								value="#{globalEditViewHandler.diagnosisPresets}"
+							<p:dataTable value="#{globalEditViewHandler.diagnosisPresets}"
 								var="item" styleClass="newStyleDataTable" scrollable="true"
 								scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosis.diagnosisPrototype}"

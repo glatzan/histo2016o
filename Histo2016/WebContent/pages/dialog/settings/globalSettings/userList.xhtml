@@ -14,11 +14,10 @@
 
 	<p:outputPanel styleClass="bodyPannelFull">
 
-
 		<p:dataTable var="user"
 			value="#{settingsDialogHandler.histoUserTab.users}"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-			style="width:100%;" scrollable="true" scrollHeight="440">
+			styleClass="newStyleDataTable" style="width:100%;"
+			scrollable="true" scrollHeight="440">
 			<p:column filterBy="#{user.username}"
 				headerText="#{msg['dialog.settings.user.username']}"
 				filterMatchMode="contains">
@@ -36,10 +35,8 @@
 
 			<p:column headerText="#{msg['dialog.settings.user.role']}"
 				style="width: auto !important">
-
 				<p:selectOneMenu style="margin-top:1px;"
 					title="#{msg['body.worklist.header.view']}" value="#{user.group}"
-					styleClass="smallerInput"
 					converter="#{settingsDialogHandler.histoUserTab.groupTransformer}"
 					disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_USER')}">
 
@@ -72,7 +69,7 @@
 			</p:column>
 		</p:dataTable>
 	</p:outputPanel>
-	
+
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
@@ -98,11 +95,6 @@
 					<p:ajax event="dialogReturn"
 						listener="#{settingsDialogHandler.histoUserTab.addHistoUser(dialogHandlerAction.physicianSearchDialog.physician)}"
 						update="@form" />
-				</p:commandButton>
-
-				<p:commandButton value="test" icon="fa fa-fw fa-plus-circle"
-					process="@this" partialSubmit="true"
-					actionListener="#{mainHandlerAction.addQueueGrowlMessage('','')}">
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}"

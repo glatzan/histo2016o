@@ -35,55 +35,50 @@ where (owner_id = 1 or fgroup.group_id = 1 or fuser.user_id = 1) and (hideList.h
 create view patientmenumodel as select patient.id, person.lastname, person.firstname, person.title, patient.piz, person.birthday from patient, person, contact where patient.person_id = person.id and person.contact_id = contact.id
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
--> Materialauswahl sollte wie vorgeschichte funktionieren (Eingangsbuch)
+Next Changes:
+
+-> slide overview dialog!
+-> receiptlog auf neues desing / funktionen anpassen
+
 -> Zimmermann --> Atzrodt, Aktualliesierien button (feld für username ändern)
--> Neuladen der Listen, nachdem das Settingsmenu geschlossen wurde
+-> prevent overwriting of data from clinic physicians if changed
+
+-> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
+
+-> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
+
+-> finalizeAllDiangosisRevisions (taskManipulationHandler) löschen (diangosis filanized wird nicht mehr gebraucht)
+-> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
+
+-> versehendlich ausgeführte benachrichtigungen, markieren
+
+-> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
+
 -> printdialog mit neumen interfaces ausrüsten und testen 
--> update user settings dialog
+-> Auswahl der Diagnose im Druckmenu 
+-> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
+
+-> Ärzte aus klinikbakcend übernehmen
 
 Testen:
 -> Test piz range from 6-8
 -> Search for normal user (only patients in local database)
-
-Next Changes:
--> slide overview dialog!
-
--> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
-
--> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
--> finalizeAllDiangosisRevisions (taskManipulationHandler) löschen (diangosis filanized wird nicht mehr gebraucht)
-
--> Auswahl der Diagnose im Druckmenu 
--> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
--> Create Task material auswahl css
-
--> Ärzte aus klinikbakcend übernehmen
--> versehendlich ausgeführte benachrichtigungen, markieren
-
--> Vorgeschichte: Enter --> neue Zeile
--> Auswahl der standard worklists begrenzen uns einstellbar machen 
  
 Urgent Changes 
 TODO: Methoden in SampleServie in eine Transaction setzten (für loggin logstring per transaction)
 TODO: Biobankeinwilligung beide Seiten (2 pdf-Dateien) auf einmal hochladen
 TODO: Externe Proben: PIZ anlegen?
-TODO: Augenarzt auswählen
 TODO: Favouriten-Listen für Benutzer zugänglich machen
 TODO: Latex Datei für externen Befund
-TODO: DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes
 TODO: Erweiterte Suche 
 TODO: Datenbankabfragen in globaleidt handler shiften
 
 Long-term Changes 
+TODO: Beim schließen des Settings-dialoges auch gruppenrichtilinien neu laden
 TODO: Settings-Dialog überarbeiten tabellen und datatables auf neuen style ändern
 TODO: Nach 3 monaten soll dearchiviertung nicht mehr möglich sein
-TODO: rechte durchsetzten
 TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
-TODO: wenn Task entity gel�scht wird kann es sein das der beende staining phase dialog angezgit wird, geht noch nicht richitg
-TODO: Ansicht abh�ngige Kn�pfe
-TODO: prevent overwriting of data from clinic physicians if changed
-TODO: verbessern der patientenauswahl in patienten liste
 TODO: Archivieren + Dearchivieren
 TODO: Konsil listenabfragen statisch, zur geschwindikeitsverbesserung
 TODO: organizsation so verändern wie user + group dialog
@@ -104,7 +99,18 @@ Graphic Changes
 * = change
 + = added
 - = removed
-	
+
++v 1.1.1 ()
+++++: Beim Schließen des Administrations-Dialoges werden alle Gui-Listen neu geladen.
++++*: Manuell Änderungen des Materialnamens werden nun sofort gespeichert.
++++*: Return in Feldern mit Overlay-Panel erzeugt jetzt eine Umbruch anstelle das Overlay-Panel zu öffnen.
++++*: Material kann jetzt wie die Diangose mit einem Overlay-Panel ausgewählt werden.
++++*: Patienten suchen Button neben die Ansichtsauswahl verlegt
+
+SQL:
+/* spelling correction */
+ALTER TABLE sample RENAME COLUMN materilapreset_id TO materialpreset_id;
+
 +v 1.1.0 (30.12.2017)
 +++*: Benutzerinterface für normale Programmbenutzer fertiggestellt.
 +++*: Normale Programmbenutzer finden nur noch Patienten die sich in der lokalen Datenbank befinden.

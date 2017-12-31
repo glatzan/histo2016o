@@ -103,7 +103,7 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	 */
 	@OneToOne
 	@NotAudited
-	private MaterialPreset materilaPreset;
+	private MaterialPreset materialPreset;
 
 	public Sample() {
 	}

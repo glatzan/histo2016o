@@ -19,6 +19,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
+import org.histo.model.MaterialPreset;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
@@ -117,8 +118,9 @@ public class TaskHandlerAction {
 		globalEditViewHandler.updateDataOfTask(true, false, true, true);
 	}
 
-	public void testMemo() {
-		mainHandlerAction.addQueueGrowlMessage("test", "test");
+	
+	public void changeMaterialOfSample(Sample sample, MaterialPreset materialPreset) {
+		sampleService.changeMaterialOfSample(sample, materialPreset);
 	}
 
 }

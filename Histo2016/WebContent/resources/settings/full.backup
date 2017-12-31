@@ -1301,7 +1301,7 @@ CREATE TABLE sample (
     restainingphase boolean NOT NULL,
     sampleid character varying(255),
     version bigint NOT NULL,
-    materilapreset_id bigint,
+    materialpreset_id bigint,
     parent_id bigint
 );
 
@@ -2245,7 +2245,7 @@ ALTER TABLE ONLY diagnosispreset_diagnosisreportasletter
 --
 
 ALTER TABLE ONLY sample
-    ADD CONSTRAINT fk5mbf4j0w3sglwx0juecjddk1b FOREIGN KEY (materilapreset_id) REFERENCES materialpreset(id);
+    ADD CONSTRAINT fk5mbf4j0w3sglwx0juecjddk1b FOREIGN KEY (materialpreset_id) REFERENCES materialpreset(id);
 
 
 --

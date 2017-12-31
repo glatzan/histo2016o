@@ -191,7 +191,7 @@ public class CreateTaskDialog extends AbstractDialog {
 		Sample newSample = new Sample();
 		newSample.setCreationDate(System.currentTimeMillis());
 		newSample.setParent(getTask());
-		newSample.setMaterilaPreset(getMaterialList().get(0));
+		newSample.setMaterialPreset(getMaterialList().get(0));
 		newSample.setMaterial(getMaterialList().get(0).getName());
 		getTask().getSamples().add(newSample);
 		getTask().updateAllNames();
@@ -233,7 +233,7 @@ public class CreateTaskDialog extends AbstractDialog {
 					Sample newSample = new Sample();
 					newSample.setCreationDate(System.currentTimeMillis());
 					newSample.setParent(getTask());
-					newSample.setMaterilaPreset(getMaterialList().get(0));
+					newSample.setMaterialPreset(getMaterialList().get(0));
 					newSample.setMaterial(getMaterialList().get(0).getName());
 					getTask().getSamples().add(newSample);
 					getTask().updateAllNames();
@@ -463,7 +463,7 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	public void onMaterialPresetChange(Sample sample) {
-		sample.setMaterial(sample.getMaterilaPreset() != null ? sample.getMaterilaPreset().getName() : "");
+		sample.setMaterial(sample.getMaterialPreset() != null ? sample.getMaterialPreset().getName() : "");
 	}
 
 	public void onDatabaseVersionConflict() {

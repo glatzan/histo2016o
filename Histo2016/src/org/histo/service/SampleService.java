@@ -79,7 +79,7 @@ public class SampleService {
 		Sample sample = new Sample();
 		sample.setCreationDate(System.currentTimeMillis());
 		sample.setParent(task);
-		sample.setMaterilaPreset(material);
+		sample.setMaterialPreset(material);
 		sample.setMaterial(material == null ? "" : material.getName());
 		task.getSamples().add(sample);
 
@@ -170,7 +170,7 @@ public class SampleService {
 		logger.debug("Creating new block " + block.getBlockID());
 
 		if (createSlides) {
-			for (StainingPrototype proto : sample.getMaterilaPreset().getStainingPrototypes()) {
+			for (StainingPrototype proto : sample.getMaterialPreset().getStainingPrototypes()) {
 				createSlide(proto, block, "", false, naming);
 			}
 		}
@@ -428,5 +428,20 @@ public class SampleService {
 		} catch (Exception e) {
 			throw new CustomDatabaseInconsistentVersionException(task);
 		}
+	}
+
+	/**
+	 * Changes the material of an sample
+	 * 
+	 * Error-Handling via global Error-Handler
+	 * 
+	 * @param sample
+	 * @param materialPreset
+	 */
+	public void changeMaterialOfSample(Sample sample, MaterialPreset materialPreset) {
+		sample.setMaterial(materialPreset.getName());
+		sample.setMaterialPreset(materialPreset);
+
+		genericDAO.savePatientData(sample, "log.patient.task.sample.material.update", materialPreset.toString());
 	}
 }

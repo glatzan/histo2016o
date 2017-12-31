@@ -265,7 +265,7 @@
 			<p:commandButton id="settingsDialogBtn" style="display:none"
 				partialSubmit="true" process="@this"
 				actionListener="#{settingsDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn"
+				<p:ajax event="dialogReturn" listener="#{globalEditViewHandler.loadGuiData()}"
 					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 

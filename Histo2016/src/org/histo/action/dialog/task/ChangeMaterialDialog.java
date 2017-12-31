@@ -72,7 +72,7 @@ public class ChangeMaterialDialog extends AbstractDialog {
 		try {
 			if (getSelectedMaterial() != null) {
 				getSample().setMaterial(getSelectedMaterial().getName());
-				sample.setMaterilaPreset(getSelectedMaterial());
+				sample.setMaterialPreset(getSelectedMaterial());
 
 				genericDAO.savePatientData(sample, "log.patient.task.sample.material.update",
 						getSelectedMaterial().toString());

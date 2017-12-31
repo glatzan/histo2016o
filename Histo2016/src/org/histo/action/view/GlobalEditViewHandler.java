@@ -150,16 +150,16 @@ public class GlobalEditViewHandler {
 	 */
 	private View lastDefaultView;
 
-	// ************************ Patient ************************
-
 	// ************************ Search ************************
 	/**
 	 * Search String for quick search
 	 */
 	private String quickSearch;
 
+	/**
+	 * TODO: use
+	 */
 	private boolean searchWorklist;
-	// ************************ Search ************************
 
 	// ************************ dynamic lists ************************
 	/**
@@ -196,7 +196,8 @@ public class GlobalEditViewHandler {
 	 * Contains all available wards
 	 */
 	private List<ListItem> wardList;
-	// ************************ dynamic lists ************************
+
+	// ************************ Current Patient/Task ************************
 
 	/**
 	 * Currently selectedTask
@@ -213,6 +214,12 @@ public class GlobalEditViewHandler {
 	 */
 	private MenuModel taskMenuModel;
 
+	// ************************ Current Patient/Task ************************
+	/**
+	 * DataTable selection to change a material via overlay panel
+	 */
+	private MaterialPreset materialPresetToChange;
+
 	/**
 	 * Method called on postconstruct. Initializes all important variables.
 	 */
@@ -226,8 +233,13 @@ public class GlobalEditViewHandler {
 		setNavigationPages(new ArrayList<View>(userHandlerAction.getCurrentUser().getSettings().getAvailableViews()));
 
 		updateDataOfTask(true, true, true, true);
+
+		loadGuiData();
 	}
 
+	/**
+	 * Loads all dynmaic gui lists for displaing in the different views
+	 */
 	public void loadGuiData() {
 
 		setSlideCommentary(utilDAO.getAllStaticListItems(ListItem.StaticList.SLIDES));
@@ -240,10 +252,6 @@ public class GlobalEditViewHandler {
 		setPhysiciansToSignListTransformer(new DefaultTransformer<Physician>(getPhysiciansToSignList()));
 
 		setMaterialList(utilDAO.getAllMaterialPresets(true));
-	}
-
-	public void prepareForTask() {
-
 	}
 
 	public String getCenterView() {

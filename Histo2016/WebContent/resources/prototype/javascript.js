@@ -36,3 +36,7 @@ function disableButton(btn, disable) {
 
 	};
 })();
+
+
+// show object methodes
+var keys = Object.keys(myObject);
