@@ -46,18 +46,36 @@ public class HistoGroup implements GrantedAuthority, HasID, ArchivAble {
 	@Version
 	private long version;
 
+	/**
+	 * Group name
+	 */
 	@Column(columnDefinition = "VARCHAR")
 	private String name;
 
+	/**
+	 * Group Settings, will be copied to user
+	 */
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
 	private HistoSettings settings;
 
+	/**
+	 * Authrole for program rights (spring)
+	 */
 	@Enumerated(EnumType.STRING)
 	private AuthRole authRole;
 
+	/**
+	 * Commentary
+	 */
 	@Column(columnDefinition = "VARCHAR")
 	private String commentary;
 
+	/**
+	 * If true, members of this groups are deactivated (are per default hidden and can't login)
+	 */
+	@Column
+	private boolean userDeactivated;
+	
 	@Override
 	@Transient
 	public String getAuthority() {

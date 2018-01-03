@@ -774,6 +774,11 @@ body {
 	padding-left: 0px !important;
 }
 
+/* SelctCheckbox Menu on top of the component */
+.selectCheckboxMenuOnTop {
+	bottom: 35px !important;
+	top: auto !important;
+}
 /* ---------------- Fonts ------------ */
 .standardFont, .standardFont label {
 	padding: 4px;

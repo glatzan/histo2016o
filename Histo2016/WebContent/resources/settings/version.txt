@@ -72,6 +72,7 @@ TODO: Favouriten-Listen für Benutzer zugänglich machen
 TODO: Latex Datei für externen Befund
 TODO: Erweiterte Suche 
 TODO: Datenbankabfragen in globaleidt handler shiften
+TODO: Benuter müssen sich auf die Benachrichtigungsliste setzten können
 
 Long-term Changes 
 TODO: Beim schließen des Settings-dialoges auch gruppenrichtilinien neu laden
@@ -101,6 +102,10 @@ Graphic Changes
 - = removed
 
 +v 1.1.1 ()
++++*: Gruppe "Nicht freigeschaltet" in Dekativiert/Ausgeblendet umbenannt.
+++++: Eigene Eingabemaske für Benutzer, Benutzername kann jetzt nachträglich verändert werden.
+++++: Gruppe kann als deaktivierte Gruppe markiert werden, Benutzer dieser Gruppe sind gesperrt und werden in der Benutzerübersicht nicht angezeigt (Anzeige kann per Option aktivert werden).
++++*: Security-Context geupdated.
 ++++: Beim Schließen des Administrations-Dialoges werden alle Gui-Listen neu geladen.
 +++*: Manuell Änderungen des Materialnamens werden nun sofort gespeichert.
 +++*: Return in Feldern mit Overlay-Panel erzeugt jetzt eine Umbruch anstelle das Overlay-Panel zu öffnen.
@@ -110,6 +115,12 @@ Graphic Changes
 SQL:
 /* spelling correction */
 ALTER TABLE sample RENAME COLUMN materilapreset_id TO materialpreset_id;
+/* Renamin first group*/
+update histogroup set name = 'Deaktiviert/Archiviert' where id = 1;
+/* add userDeactived field to histgroup*/
+Alter table histogroup  add userdeactivated boolean;
+update histogroup set userdeactivated = false;
+
 
 +v 1.1.0 (30.12.2017)
 +++*: Benutzerinterface für normale Programmbenutzer fertiggestellt.

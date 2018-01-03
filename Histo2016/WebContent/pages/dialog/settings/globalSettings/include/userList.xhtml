@@ -16,8 +16,8 @@
 
 		<p:dataTable var="user"
 			value="#{settingsDialogHandler.histoUserTab.users}"
-			styleClass="newStyleDataTable" style="width:100%;"
-			scrollable="true" scrollHeight="440">
+			styleClass="newStyleDataTable" style="width:100%;" scrollable="true"
+			scrollHeight="440">
 			<p:column filterBy="#{user.username}"
 				headerText="#{msg['dialog.settings.user.username']}"
 				filterMatchMode="contains">
@@ -60,7 +60,7 @@
 					title="#{msg['dialog.settings.person.list.options.edit']}"
 					execute="@this" partialSubmit="true"
 					disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_USER')}"
-					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(user.physician)}">
+					actionListener="#{dialogHandlerAction.editUserDialog.initAndPrepareBean(user)}">
 					<i class="fa fa-fw fa-cog" />
 					<p:ajax event="dialogReturn"
 						listener="#{settingsDialogHandler.histoUserTab.updateData()}"
@@ -74,10 +74,21 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			<h:panelGrid columns="2" styleClass="newTableContainer left">
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					title="#{msg['dialog.settings.user.archived.text']}"
+					value="#{settingsDialogHandler.histoUserTab.showArchived}">
+					<p:ajax
+						listener="#{settingsDialogHandler.histoUserTab.updateData()}"
+						partialSubmit="true" process="@this" update="@form" />
+				</p:selectBooleanCheckbox>
+
+				<h:outputLabel styleClass="standardFont"
+					value="#{msg['dialog.settings.user.archived']}"
+					style="margin-left:5px;"></h:outputLabel>
 			</h:panelGrid>
 
-			<h:panelGrid columns="4" styleClass="newTableContainer right">
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
 				<p:commandButton
 					rendered="#{userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_GROUP')}"
 					value="#{msg['dialog.settings.user.button.groups']}"

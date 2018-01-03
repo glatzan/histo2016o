@@ -4,15 +4,18 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.OptimisticLockException;
+import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.stat.Statistics;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
+import org.histo.config.exception.CustomDatabaseConstraintViolationException;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.hibernate.RootAware;
 import org.histo.config.log.LogListener;
@@ -149,6 +152,9 @@ public abstract class AbstractDAO implements Serializable {
 		} catch (javax.persistence.OptimisticLockException e) {
 			getSession().getTransaction().rollback();
 			throw new CustomDatabaseInconsistentVersionException(object);
+		} catch (PersistenceException e) {
+			getSession().getTransaction().rollback();
+			throw new CustomDatabaseConstraintViolationException(object);
 		} catch (Exception e) {
 			getSession().getTransaction().rollback();
 			logger.error("Error, rolling back!");

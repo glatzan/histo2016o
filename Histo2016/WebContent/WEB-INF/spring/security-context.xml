@@ -12,14 +12,14 @@
 	<http auto-config='true'>
 
 		<intercept-url pattern="/login*"
-			access="hasAnyRole('ROLE_NONEAUTH', 'ROLE_GUEST', 'ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
+			access="hasAnyRole('ROLE_NONEAUTH', 'ROLE_GUEST','ROLE_USER')" />
 		<intercept-url pattern="/pages/guest.xhtml" access="hasRole('ROLE_GUEST')" />
 		<intercept-url pattern="/index.xhtml" access="hasRole('ROLE_GUEST')" />
 
 		<intercept-url pattern="/*"
-			access="hasAnyRole('ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
+			access="hasRole('ROLE_USER')" />
 		<intercept-url pattern="/pages/**"
-			access="hasAnyRole('ROLE_SCIENTIST','ROLE_USER','ROLE_MTA','ROLE_PHYSICIAN','ROLE_MODERATOR','ROLE_ADMIN')" />
+			access="hasRole('ROLE_USER')" />
 
 
 		<csrf disabled="true" />

@@ -172,15 +172,17 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 		private DefaultTransformer<HistoGroup> groupTransformer;
 
+		private boolean showArchived;
+		
 		public HistoUserTab() {
 			setTabName("HistoUserTab");
 			setName("dialog.settings.user");
 			setViewID("histoUser");
-			setCenterInclude("globalSettings/userList.xhtml");
+			setCenterInclude("include/userList.xhtml");
 		}
 
 		public void updateData() {
-			setUsers(userDAO.getUsers(false));
+			setUsers(userDAO.getUsers(showArchived));
 			setGroups(userDAO.getGroups(false));
 			setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 		}
@@ -342,11 +344,11 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
-				return "globalSettings/diagnosisEdit.xhtml";
+				return "include/diagnosisEdit.xhtml";
 			case EDIT_TEXT_TEMPLATE:
-				return "globalSettings/diagnosisEditTemplate.xhtml";
+				return "include/diagnosisEditTemplate.xhtml";
 			default:
-				return "globalSettings/diagnosisList.xhtml";
+				return "include/diagnosisList.xhtml";
 			}
 		}
 	}
@@ -519,11 +521,11 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
-				return "globalSettings/materialEdit.xhtml";
+				return "include/materialEdit.xhtml";
 			case ADD_STAINING:
-				return "globalSettings/materialAddStaining.xhtml";
+				return "include/materialAddStaining.xhtml";
 			default:
-				return "globalSettings/materialList.xhtml";
+				return "include/materialList.xhtml";
 			}
 		}
 	}
@@ -548,7 +550,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 			setTabName("StainingTab");
 			setName("dialog.settings.stainings");
 			setViewID("staining");
-			setCenterInclude("globalSettings/stainingsList.xhtml");
+			setCenterInclude("include/stainingsList.xhtml");
 		}
 
 		@Override
@@ -714,9 +716,9 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
-				return "globalSettings/staticListsEdit.xhtml";
+				return "include/staticListsEdit.xhtml";
 			default:
-				return "globalSettings/staticLists.xhtml";
+				return "include/staticLists.xhtml";
 			}
 		}
 
@@ -747,7 +749,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 			setTabName("PhysicianSettingsTab");
 			setName("dialog.settings.persons");
 			setViewID("persons");
-			setCenterInclude("globalSettings/physicianList.xhtml");
+			setCenterInclude("include/physicianList.xhtml");
 
 			setShowArchivedPhysicians(false);
 			setAllRoles(Arrays.asList(ContactRole.values()));
@@ -807,7 +809,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 			setTabName("FavouriteListTab");
 			setName("dialog.settings.favouriteList");
 			setViewID("favouriteLists");
-			setCenterInclude("globalSettings/favouriteList.xhtml");
+			setCenterInclude("include/favouriteList.xhtml");
 		}
 
 		@Override
@@ -890,9 +892,9 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public String getCenterInclude() {
 			switch (getPage()) {
 			case EDIT:
-				return "globalSettings/organizationEdit.xhtml";
+				return "include/organizationEdit.xhtml";
 			default:
-				return "globalSettings/organizationLists.xhtml";
+				return "include/organizationLists.xhtml";
 			}
 		}
 
@@ -914,7 +916,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 			setTabName("LogTab");
 			setName("dialog.settings.log");
 			setViewID("logs");
-			setCenterInclude("globalSettings/log.xhtml");
+			setCenterInclude("include/log.xhtml");
 
 			setLogsPerPull(50);
 			setSelectedLogPage(1);

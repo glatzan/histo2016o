@@ -142,6 +142,8 @@ public class UserHandlerAction implements Serializable {
 			histoUser.setSettings(new HistoSettings());
 
 		histoUser.getSettings().updateCrucialSettings(group.getSettings());
+		histoUser.setArchived(group.isUserDeactivated());
+		
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getGroup().toString());
 		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getGroup() });
 	}

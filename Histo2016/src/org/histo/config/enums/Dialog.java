@@ -28,13 +28,16 @@ public enum Dialog {
 	CONTACTS("/pages/dialog/contact/contacts", null, 1024, 600, false, false, true), // 16:9
 	CONTACTS_NOTIFICATION("/pages/dialog/contact/contactNotification", null, 858, 484, false, false, true), // 16:9
 	QUICK_CONTACTS("/pages/dialog/contact/contactSelect", null, 858, 484, false, false, true), // 16:9
-	SETTINGS("/pages/dialog/settings/settings", null, 1024, 600, false, false, true), // 16:9
+	SETTINGS("/pages/dialog/settings/globalSettings/settings", null, 1024, 600, false, false, true), // 16:9
 	SETTINGS_PHYSICIAN_SEARCH("/pages/dialog/settings/physician/physicianSearch", null, 1024, 600, false, false, true), // 16:9
 	SETTINGS_PHYSICIAN_EDIT("/pages/dialog/settings/physician/physicianEdit", null, 1024, 600, false, false, true), //  16:9
 	SETTINGS_STAINING_EDIT("/pages/dialog/settings/staining/stainingEdit", null, 1024, 600, false, false, true), //  16:9
 	SETTINGS_GROUP_LIST("/pages/dialog/settings/groups/groupList", null, 1024, 600, false, false, true), //  16:9
 	SETTINGS_GROUP_EDIT("/pages/dialog/settings/groups/groupEdit", null, 1024, 600, false, false, true), //  16:9
 	SETTINGS_USERS_LIST("/pages/dialog/settings/users/usersList", null, 1024, 600, false, false, true), //  16:9
+	SETTINGS_USERS_EDIT("/pages/dialog/settings/users/userEdit", null, 1024, 600, false, false, true), //  16:9
+	SETTINGS_USERS_DELETE("/pages/dialog/settings/users/userDelete", null, 480, 272, false, false, true), //  16:9
+	SETTINGS_USERS_DELETE_ERROR("/pages/dialog/settings/users/userDeleteError", null, 480, 272, false, false, true), //  16:9
 	SETTINGS_FAVOURITE_LIST_EDIT("/pages/dialog/settings/favouriteList/favouriteListEdit", null, 1024, 600, false, false, true), //  16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
 	PRINT_ADDRESS("/pages/dialog/print/address", null,  480, 272, false, false, true), // 16:9

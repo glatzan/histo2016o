@@ -108,6 +108,12 @@ public class UserDAO extends AbstractDAO implements Serializable {
 
 		return true;
 	}
+	
+	public boolean deleteUser(HistoUser user) {
+		delete(user);
+		
+		return true;
+	}
 
 	public List<HistoGroup> getGroups(boolean archived) {
 		// Create CriteriaBuilder

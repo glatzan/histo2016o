@@ -21,13 +21,22 @@
 			<p:inputText
 				value="#{dialogHandlerAction.groupEditDialog.group.name}"></p:inputText>
 
-			<h:outputLabel value="#{msg['dialog.groupEdit.tab.group.programmGroup']}" />
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.group.programmGroup']}" />
 			<p:selectOneMenu
 				value="#{dialogHandlerAction.groupEditDialog.group.authRole}">
 
 				<f:selectItems value="#{enumProvider.authRoles}" var="authRole"
 					itemLabel="#{msg['enum.authRole.'.concat(authRole)]}" />
 			</p:selectOneMenu>
+
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.group.deactivated']}" />
+			<p:selectBooleanCheckbox
+				title="#{msg['dialog.groupEdit.tab.group.deactivated.text']}"
+				value="#{dialogHandlerAction.groupEditDialog.group.userDeactivated}">
+			</p:selectBooleanCheckbox>
+
 		</h:panelGrid>
 
 	</p:outputPanel>

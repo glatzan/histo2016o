@@ -63,35 +63,43 @@ public abstract class AbstractDialog {
 	/**
 	 * Method for displaying the associated dialog.
 	 */
+	
 	public void prepareDialog() {
+		prepareDialog(dilaog);
+	}
+	
+	/**
+	 * Method for displaying the associated dialog.
+	 */
+	public void prepareDialog(Dialog dialog) {
 		HashMap<String, Object> options = new HashMap<String, Object>();
 
-		if (getDilaog().getWidth() != 0) {
-			options.put("width", getDilaog().getWidth());
-			options.put("contentWidth", getDilaog().getWidth());
+		if (dialog.getWidth() != 0) {
+			options.put("width", dialog.getWidth());
+			options.put("contentWidth", dialog.getWidth());
 		} else
 			options.put("width", "auto");
 
-		if (getDilaog().getHeight() != 0) {
-			options.put("contentHeight", getDilaog().getHeight());
-			options.put("height", getDilaog().getHeight());
+		if (dialog.getHeight() != 0) {
+			options.put("contentHeight", dialog.getHeight());
+			options.put("height", dialog.getHeight());
 		} else
 			options.put("height", "auto");
 
-		if (getDilaog().isUseOptions()) {
-			options.put("resizable", getDilaog().isResizeable());
-			options.put("draggable", getDilaog().isDraggable());
-			options.put("modal", getDilaog().isModal());
+		if (dialog.isUseOptions()) {
+			options.put("resizable", dialog.isResizeable());
+			options.put("draggable", dialog.isDraggable());
+			options.put("modal", dialog.isModal());
 		}
 
 		options.put("closable", false);
 
-		if (getDilaog().getHeader() != null)
+		if (dialog.getHeader() != null)
 			options.put("headerElement", "dialogForm:header");
 
-		RequestContext.getCurrentInstance().openDialog(getDilaog().getPath(), options, null);
+		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
 
-		logger.debug("Showing Dialog: " + getDilaog());
+		logger.debug("Showing Dialog: " + dialog);
 	}
 
 	/**
