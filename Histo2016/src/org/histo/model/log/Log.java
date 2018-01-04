@@ -19,69 +19,35 @@ import org.histo.model.patient.Patient;
 import org.histo.model.user.HistoUser;
 import org.histo.util.TimeUtil;
 
+import lombok.Getter;
+import lombok.Setter;
+
 
 @Entity
 @SequenceGenerator(name = "log_sequencegenerator", sequenceName = "log_sequence")
 @RevisionEntity(LogListener.class)
+@Getter
+@Setter
 public class Log {
 	
-    private int id;
-    
-    private long timestamp;
-    
-    private String logString;
-    
-    private HistoUser histoUser;
-    
-    private Patient patient;
-    
 	@Id
 	@GeneratedValue(generator = "log_sequencegenerator")
 	@Column(unique = true, nullable = false)
     @RevisionNumber
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-    @RevisionTimestamp
-	public long getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	public String getLogString() {
-		return logString;
-	}
-
-	public void setLogString(String logString) {
-		this.logString = logString;
-	}
-
+    private int id;
+    
+	@RevisionTimestamp
+    private long timestamp;
+    
+	@Column(columnDefinition = "text")
+    private String logString;
+    
+    @OneToOne
+    private HistoUser histoUser;
+    
 	@OneToOne
-	public HistoUser getUserAcc() {
-		return histoUser;
-	}
-
-	public void setUserAcc(HistoUser histoUser) {
-		this.histoUser = histoUser;
-	}
-
-	@OneToOne
-	public Patient getPatient() {
-		return patient;
-	}
-
-	public void setPatient(Patient patient) {
-		this.patient = patient;
-	}
-	
+    private Patient patient;
+    
 	/**
 	 * Returns Date as human readable string.
 	 * @return

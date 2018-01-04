@@ -29,7 +29,7 @@ public class UserDAO extends AbstractDAO implements Serializable {
 
 	@Autowired
 	private PhysicianDAO physicianDAO;
-
+	
 	public List<HistoUser> getUsers(boolean archived) {
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
@@ -90,7 +90,7 @@ public class UserDAO extends AbstractDAO implements Serializable {
 			histoUser = new HistoUser(userName);
 
 			// saving or updating physician, also updating organizations
-			physician = physicianDAO.synchronizePhysician(physician);
+			physician = physicianDAO.addOrMergePhysician(physician);
 
 			if (physician.getAssociatedRoles().size() == 0)
 				physician.addAssociateRole(ContactRole.NONE);
@@ -100,11 +100,10 @@ public class UserDAO extends AbstractDAO implements Serializable {
 			histoUser.setPhysician(physician);
 
 		} else {
-			histoUser.getPhysician().copyIntoObject(physician);
-			organizationDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
+			physicianDAO.mergePhysicians(physician, histoUser.getPhysician());
 		}
 
-		save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
+		save(histoUser, "user.role.settings.update", new Object[] { histoUser.toString() });
 
 		return true;
 	}

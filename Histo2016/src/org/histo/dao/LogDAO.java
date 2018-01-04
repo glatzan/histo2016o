@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -20,6 +21,7 @@ import org.histo.model.interfaces.LogAble;
 import org.histo.model.log.Log;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.Patient;
+import org.histo.model.user.HistoUser;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,22 @@ public class LogDAO extends AbstractDAO implements Serializable {
 		criteria.orderBy(qb.asc(logRoot.get("id")));
 
 		return getSession().createQuery(criteria).getResultList();
+	}
+
+	public void deleteUserLogs(HistoUser user) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// create delete
+		CriteriaDelete<Log> delete = qb.createCriteriaDelete(Log.class);
+
+		// set the root class
+		Root<Log> e = delete.from(Log.class);
+
+		// set where clause
+		delete.where(qb.equal(e.get("useracc_id"), user.getId()));
+
+		// perform update
+		getSession().createQuery(delete).executeUpdate();
 	}
 
 	public void getDiagnosisRevisions(Diagnosis diagnosis) {

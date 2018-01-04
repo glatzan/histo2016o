@@ -9,14 +9,13 @@
 
 	<p:outputPanel styleClass="headerPannel">
 		<h:outputLabel
-			value="#{msg['dialog.settings.favouriteList.list.headline']}" />
+			value="#{msg['dialog.settings.organization.list.headline']}" />
 	</p:outputPanel>
 
 	<p:outputPanel styleClass="bodyPannelFull">
 
 		<p:dataTable var="organization" style="width:100%;" scrollable="true"
-			scrollHeight="440"
-			styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+			scrollHeight="440" styleClass="newStyleDataTable"
 			value="#{settingsDialogHandler.organizationTab.organizations}">
 
 			<p:column
@@ -42,10 +41,23 @@
 			</p:column>
 
 			<p:column style="width:15px">
-				<p:commandLink partialSubmit="true" process="@this" update="@form"
-					actionListener="#{settingsDialogHandler.organizationTab.prepareEditOrganization(organization)}">
+				<f:facet name="header">
+
+					<i class="fa fa-cog"
+						title="#{msg['dialog.settings.organization.list.options']}" />
+				</f:facet>
+
+
+				<p:commandLink partialSubmit="true" process="@this" update="@form">
 					<i class="fa fa-cog"
 						title="#{msg['dialog.settings.organization.list.edit']}" />
+
+					<f:actionListener
+						binding="#{dialogHandlerAction.organizationEditDialog.initAndPrepareBean(organization)}" />
+
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.organizationTab.updateData()}"
+						update="@form" />
 				</p:commandLink>
 			</p:column>
 		</p:dataTable>
@@ -56,7 +68,12 @@
 			styleClass="newTableContainer">
 
 			<h:panelGrid columns="2" styleClass="newTableContainer left">
-				<p:selectBooleanCheckbox styleClass="smallCheckbox" disabled="true" />
+				<p:selectBooleanCheckbox styleClass="smallCheckbox"
+					value="#{settingsDialogHandler.organizationTab.showArchived}">
+					<p:ajax
+						listener="#{settingsDialogHandler.organizationTab.updateData()}"
+						partialSubmit="true" process="@this" update="@form" />
+				</p:selectBooleanCheckbox>
 				<h:outputLabel
 					value="#{msg['dialog.settings.organization.list.archived']}"></h:outputLabel>
 			</h:panelGrid>
@@ -65,8 +82,13 @@
 				<p:commandButton
 					value="#{msg['dialog.settings.organization.list.new']}"
 					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
-					actionListener="#{settingsDialogHandler.organizationTab.prepareNewOrganization()}"
-					update="@form" />
+					update="@form">
+					<f:actionListener
+						binding="#{dialogHandlerAction.organizationEditDialog.initAndPrepareBean()}" />
+					<p:ajax event="dialogReturn"
+						listener="#{settingsDialogHandler.organizationTab.updateData()}"
+						update="@form" />
+				</p:commandButton>
 
 
 				<p:commandButton value="#{msg['general.close']}"

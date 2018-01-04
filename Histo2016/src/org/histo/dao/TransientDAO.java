@@ -12,6 +12,7 @@ import org.histo.model.Organization;
 import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
+import org.histo.util.CopySettingsUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,5 +128,17 @@ public class TransientDAO extends AbstractDAO {
 		}
 
 		return group;
+	}
+	
+	/**
+	 * Merges two physicians an updates their organizations (
+	 * 
+	 * @param source
+	 * @param destination
+	 */
+	public void mergePhysicians(Physician source, Physician destination) {
+		CopySettingsUtil.copyPhysicianData(source, destination);
+		synchronizeOrganizations(destination.getPerson().getOrganizsations());
+		save(destination, "user.role.settings.update", new Object[] { destination.toString() });
 	}
 }

@@ -195,6 +195,15 @@ body {
 .newStyleListingTable .columnTop {
 	vertical-align: top;
 }
+
+.newStyleListingTable .columnLongText {
+	white-space: normal !important;
+}
+
+.newStyleListingTable .columnLongText label {
+	padding-left: 0px !important;
+}
+
 /* -------------- New DataTable Style --------------*/
 /* for scrollable datatables*/
 .newStyleDataTable {
@@ -278,7 +287,7 @@ body {
 }
 
 /* option column, no underline*/
-.newStyleDataTable .optionsColumn a {
+.newStyleDataTable a {
 	text-decoration: none !important;
 }
 
@@ -297,12 +306,25 @@ body {
 	text-overflow: ellipsis;
 }
 
-.newStyleListingTable .columnLongText {
-	white-space: normal !important;
+/* row background set manually via class datatable-odd */
+.newStyleDataTableManualBackgroundColor tr.ui-datatable-odd>td {
+	background-color: inherit;
 }
 
-.newStyleListingTable .columnLongText label {
-	padding-left: 0px !important;
+/* row background set manually via class datatable-odd */
+.newStyleDataTableManualBackgroundColor td.datatable-odd {
+	background-color: #f2f2f2 !important;
+}
+
+/* long serach column for header*/
+.newStyleDataTableLongHead .ui-column-filter {
+	width: 95% !important;
+	padding: 4px !important;
+	font-size: 12px !important;
+	font-family: Arial, "Trebuchet MS", Verdana, sans-serif !important;
+	box-shadow: none !important;
+	font-style: normal !important;
+	font-variant: normal !important;
 }
 
 /* -------------- New DataList Style --------------*/
@@ -595,11 +617,16 @@ body {
 .tabDialog .contentTable .navigationTable button {
 	border: 1px solid #a8a8a8;
 	border-radius: 3px;
-	width: 100%;
-	margin-left: 1px !important;
+	width: calc(100% - 1px);
+	margin-left: 1px;
 	border-top-left-radius: 0px;
 	border-bottom-left-radius: 0px;
 	border-top-left-radius: 0px;
+}
+
+.tabDialog .contentTable .navigationTable button.childButton {
+	margin-left: 20px;
+	width: calc(100% - 20px);
 }
 
 /* navigation table removing blue border on click*/
@@ -779,6 +806,12 @@ body {
 	bottom: 35px !important;
 	top: auto !important;
 }
+
+/* Padding for overlay pannel in views */
+.histoOverlayPanel>div {
+	padding: 4px !important;
+}
+
 /* ---------------- Fonts ------------ */
 .standardFont, .standardFont label {
 	padding: 4px;
@@ -829,7 +862,7 @@ body {
 	color: #555555;
 }
 
-.icon-red, .icon-red:link, .icon-red:active, .icon-red:hover,
-	.icon-red:visited {
+.icon-red, .icon-red:link, .icon-red:active, .icon-red:hover, .icon-red:visited
+	{
 	color: red;
 }

@@ -86,6 +86,10 @@ public class TaskStatus {
 				|| this.stayInNotificationList || task.isFinalized());
 	}
 
+	public boolean isStainingCompleted() {
+		return !(this.stainingNeeded || this.reDiagnosisNeeded);
+	}
+	
 	public boolean isTaksEditable() {
 		// task is editable
 		// users and guest can't edit anything

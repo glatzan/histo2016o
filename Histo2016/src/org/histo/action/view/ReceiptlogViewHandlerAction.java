@@ -12,7 +12,6 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.settings.SettingsDialogHandler;
-import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StainingListAction;
@@ -103,47 +102,12 @@ public class ReceiptlogViewHandlerAction {
 	}
 
 	/**
-	 * Creates linear list of all slides of the given task. The StainingTableChosser
-	 * is used as holder class in order to offer an option to select the slides by
-	 * clicking on a checkbox. Archived elements will not be shown if showArchived
-	 * is false.
-	 * 
+	 * Updates the flat task/sample/block/slide list
+	 * @param task
 	 * @param showArchived
 	 */
-	public void generateSlideGuiList(Task task, boolean showArchived) {
-		logger.debug("Generating new List for receiptlog");
-
-		if (getStainingTableRows() == null)
-			setStainingTableRows(new ArrayList<>());
-		else
-			getStainingTableRows().clear();
-
-		boolean even = false;
-
-		for (Sample sample : task.getSamples()) {
-			// skips archived tasks
-
-			StainingTableChooser<Sample> sampleChooser = new StainingTableChooser<Sample>(sample, even);
-			getStainingTableRows().add(sampleChooser);
-
-			for (Block block : sample.getBlocks()) {
-				// skips archived blocks
-
-				StainingTableChooser<Block> blockChooser = new StainingTableChooser<Block>(block, even);
-				getStainingTableRows().add(blockChooser);
-				sampleChooser.addChild(blockChooser);
-
-				for (Slide staining : block.getSlides()) {
-					// skips archived sliedes
-
-					StainingTableChooser<Slide> stainingChooser = new StainingTableChooser<Slide>(staining, even);
-					getStainingTableRows().add(stainingChooser);
-					blockChooser.addChild(stainingChooser);
-				}
-			}
-
-			even = !even;
-		}
+	public void updateSlideGuiList(Task task, boolean showArchived) {
+		setStainingTableRows(StainingTableChooser.factory(task, showArchived));
 	}
 
 	/**

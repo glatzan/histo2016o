@@ -17,6 +17,7 @@ import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
 import org.histo.template.mail.RequestUnlockMail;
+import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -141,8 +142,7 @@ public class UserHandlerAction implements Serializable {
 		if (histoUser.getSettings() == null)
 			histoUser.setSettings(new HistoSettings());
 
-		histoUser.getSettings().updateCrucialSettings(group.getSettings());
-		histoUser.setArchived(group.isUserDeactivated());
+		CopySettingsUtil.copyCrucialGroupSettings(histoUser, group, false);
 		
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getGroup().toString());
 		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getGroup() });

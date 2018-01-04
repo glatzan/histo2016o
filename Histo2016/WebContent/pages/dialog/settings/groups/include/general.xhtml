@@ -38,10 +38,27 @@
 					process="@this" />
 			</p:selectCheckboxMenu>
 
+			<!-- start view -->
+			<h:outputLabel
+				value="#{msg['dialog.groupEdit.tab.settings.startView']}" />
+			<p:selectOneMenu id="startViewInput" required="true"
+				disabled="#{dialogHandlerAction.groupEditDialog.group.settings.availableViews eq null}"
+				title="#{msg['dialog.groupEdit.tab.settings.startView.text']}"
+				value="#{dialogHandlerAction.groupEditDialog.group.settings.startView}">
+
+				<f:selectItem value="#{null}"
+					itemLabel="#{msg['dialog.groupEdit.tab.settings.defaultView.none']}">
+				</f:selectItem>
+
+				<f:selectItems
+					value="#{dialogHandlerAction.groupEditDialog.group.settings.availableViews}"
+					var="page" itemLabel="#{msg['enum.pages.'.concat(page)]}" />
+			</p:selectOneMenu>
+
 			<!-- default view -->
 			<h:outputLabel
 				value="#{msg['dialog.groupEdit.tab.settings.defaultView']}" />
-			<p:selectOneMenu id="standardViewInput"
+			<p:selectOneMenu id="standardViewInput" required="true"
 				disabled="#{dialogHandlerAction.groupEditDialog.group.settings.availableViews eq null}"
 				title="#{msg['dialog.groupEdit.tab.settings.defaultView.text']}"
 				value="#{dialogHandlerAction.groupEditDialog.group.settings.defaultView}">
@@ -182,7 +199,7 @@
 
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<!-- Save button -->
-				<p:commandButton value="#{msg['general.save']}" icon="fa fa-save ">
+				<p:commandButton value="#{msg['general.save']}" icon="fa fa-save " update="@form">
 					<f:actionListener
 						binding="#{dialogHandlerAction.groupEditDialog.saveGroup()}"></f:actionListener>
 					<f:actionListener

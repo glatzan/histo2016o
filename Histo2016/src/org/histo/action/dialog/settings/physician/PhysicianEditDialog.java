@@ -8,8 +8,11 @@ import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Physician;
+import org.histo.service.PhysicianService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,10 +21,15 @@ import lombok.Setter;
 @Setter
 public class PhysicianEditDialog extends AbstractDialog {
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PhysicianService physicianService;
+
 	private Physician physician;
 
 	private List<ContactRole> allRoles;
-	
+
 	public void initAndPrepareBean(Physician physician) {
 		if (initBean(physician))
 			prepareDialog();
@@ -30,8 +38,9 @@ public class PhysicianEditDialog extends AbstractDialog {
 	public boolean initBean(Physician physician) {
 		setPhysician(physician);
 		setAllRoles(Arrays.asList(ContactRole.values()));
+
 		super.initBean(task, Dialog.SETTINGS_PHYSICIAN_EDIT);
-		
+
 		return true;
 	}
 
@@ -48,6 +57,17 @@ public class PhysicianEditDialog extends AbstractDialog {
 			genericDAO.save(getPhysician(), resourceBundle.get("log.settings.physician.physician.edit",
 					getPhysician().getPerson().getFullName()));
 
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			onDatabaseVersionConflict();
+		}
+	}
+
+	/**
+	 * Updates the data of the physician with data from the clinic backend
+	 */
+	public void updateDataFromLdap() {
+		try {
+			physicianService.updatePhysicianDataFromLdap(getPhysician());
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

@@ -11,7 +11,6 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.media.MediaDialog;
-import org.histo.action.handler.TaskStatusHandler;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -72,10 +71,6 @@ public class WorklistViewHandlerAction {
 	@Autowired
 	@Lazy
 	private ResourceBundle resourceBundle;
-
-	@Autowired
-	@Lazy
-	private TaskStatusHandler taskStatusHandler;
 
 	@Autowired
 	@Lazy
@@ -329,7 +324,7 @@ public class WorklistViewHandlerAction {
 		// generating task data, taskstatus is generated previously
 		globalEditViewHandler.updateDataOfTask(true, false, false, true);
 
-		task.setActive(true);
+		//task.setActive(true);
 
 		// change if is subview (diagnosis, receipt log or report view)
 		if (!globalEditViewHandler.getCurrentView().isLastSubviewAble()) {

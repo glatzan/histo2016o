@@ -15,6 +15,7 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -91,14 +92,14 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Load a physician with the given uid. Is used if a physician was added as
-	 * a surgeon and no login was performed. Is located in UserDao because of
-	 * the scope.
+	 * Load a physician with the given uid. Is used if a physician was added as a
+	 * surgeon and no login was performed. Is located in UserDao because of the
+	 * scope.
 	 * 
 	 * @param uid
 	 * @return
 	 */
-	public Physician loadPhysicianByUID(String uid) {
+	public Physician getPhysicianByUID(String uid) {
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
@@ -120,8 +121,8 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Gets a physician for the provided person, returns null if none physician
-	 * is available
+	 * Gets a physician for the provided person, returns null if none physician is
+	 * available
 	 * 
 	 * @param person
 	 * @return
@@ -142,28 +143,26 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	}
 
 	/**
-	 * Checks if physician is saved in database, if so the saved physician will
-	 * be updted, otherwiese a new physician will be created.
+	 * Checks if physician is saved in database, if so the saved physician will be
+	 * updted, otherwiese a new physician will be created.
 	 * 
 	 * @param physician
 	 * @return
 	 */
-	public Physician synchronizePhysician(Physician physician) {
+	public Physician addOrMergePhysician(Physician physician) {
 		// if the physician was added as surgeon the useracc an the
 		// physician will be merged
-		Physician physicianFromDatabase = loadPhysicianByUID(physician.getUid());
+		Physician physicianFromDatabase = getPhysicianByUID(physician.getUid());
 
 		// undating the foud physician
 		if (physicianFromDatabase != null) {
 			logger.info("Physician already in database " + physician.getPerson().getFullName());
-			physicianFromDatabase.copyIntoObject(physician);
+			mergePhysicians(physician, physicianFromDatabase);
 
 			physicianFromDatabase.setArchived(false);
 
 			// overwriting roles
 			physicianFromDatabase.setAssociatedRoles(physician.getAssociatedRoles());
-
-			organizationDAO.synchronizeOrganizations(physicianFromDatabase.getPerson().getOrganizsations());
 
 			save(physicianFromDatabase, resourceBundle.get("log.settings.physician.ldap.update",
 					physicianFromDatabase.getPerson().getFullName()));
@@ -174,12 +173,37 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 			logger.info("Creating new phyisician " + physician.getPerson().getFullName());
 
 			organizationDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
-		
+
 			save(physician,
 					resourceBundle.get("log.settings.physician.ldap.save", physician.getPerson().getFullName()));
 		}
 
 		return physician;
+	}
+
+	/**
+	 * Merges two physicians an updates their organizations (
+	 * 
+	 * @param source
+	 * @param destination
+	 */
+	public void mergePhysicians(Physician source, Physician destination) {
+		CopySettingsUtil.copyPhysicianData(source, destination);
+		organizationDAO.synchronizeOrganizations(destination.getPerson().getOrganizsations());
+		save(destination, "user.role.settings.update", new Object[] { destination.toString() });
+	}
+
+	/**
+	 * Archives or restores a physician
+	 * 
+	 * @param physician
+	 * @param archive
+	 */
+	public void archivePhysician(Physician physician, boolean archive) {
+		physician.setArchived(archive);
+		save(physician,
+				resourceBundle.get(archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
+						physician.getPerson().getFullName()));
 	}
 
 }

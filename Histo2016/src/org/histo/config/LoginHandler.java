@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.histo.action.MainHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.View;
 import org.histo.model.user.HistoGroup;
@@ -40,13 +41,18 @@ public class LoginHandler {
 	@Autowired
 	@Setter(AccessLevel.NONE)
 	@Getter(AccessLevel.NONE)
+	private MainHandlerAction mainHandlerAction;
+
+	@Autowired
+	@Setter(AccessLevel.NONE)
+	@Getter(AccessLevel.NONE)
 	private CustomAuthenticationProvider authenticationManager;
 
 	@Autowired
 	@Setter(AccessLevel.NONE)
 	@Getter(AccessLevel.NONE)
 	private ResourceBundle resourceBundle;
-	
+
 	@Autowired
 	@Setter(AccessLevel.NONE)
 	@Getter(AccessLevel.NONE)
@@ -70,8 +76,8 @@ public class LoginHandler {
 
 			return determineTargetUrl(authentication) + "?faces-redirect=true";
 		} catch (BadCredentialsException ex) {
-			FacesContext.getCurrentInstance().addMessage(null,
-					new FacesMessage(resourceBundle.get("login.error"), ex.getMessage()));
+
+			mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("login.error"), ex.getMessage());
 
 			logger.debug("Login failed");
 
@@ -86,9 +92,8 @@ public class LoginHandler {
 	}
 
 	/**
-	 * Checking if user should be redirected to a given page, if not the user
-	 * will be redirected to the default pages (determined by the group
-	 * settings)
+	 * Checking if user should be redirected to a given page, if not the user will
+	 * be redirected to the default pages (determined by the group settings)
 	 * 
 	 * @param authentication
 	 * @return
@@ -103,30 +108,38 @@ public class LoginHandler {
 			SavedRequest savedRequest = new HttpSessionRequestCache().getRequest(request,
 					(HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse());
 
-			if (savedRequest != null) {
-				try {
-					// TODO check if path is allowed!
-					worklistViewHandlerAction.initBean();
-					URL url = new URL(savedRequest.getRedirectUrl());
-					return url.getFile().substring(request.getContextPath().length());
-				} catch (Exception e) {
-					logger.error(e.getMessage() + " Using default URL");
-				}
-			}
-
 			// getting the users default page
 			HistoUser user = (HistoUser) authentication.getPrincipal();
 
 			// always one group
 			HistoGroup group = user.getAuthorities().get(0);
 
-			if (group.getAuthRole() == AuthRole.ROLE_NONEAUTH)
-				// no role, should never happen
-				return View.LOGIN.getPath();
-			else {
-				// alway init worklist! 
-				worklistViewHandlerAction.initBean();
+			if (savedRequest != null) {
+				try {
+
+					for (View view : user.getSettings().getAvailableViews()) {
+
+					}
+					// TODO check if path is allowed!, reanable redirect
+
+					// worklistViewHandlerAction.initBean();
+					// URL url = new URL(savedRequest.getRedirectUrl());
+					// return url.getFile().substring(request.getContextPath().length());
+				} catch (Exception e) {
+					logger.error(e.getMessage() + " Using default URL");
+				}
+			}
+
+			if (user.getSettings().getStartView() != null) {
+				// alway init worklist!
+				
+				if(user.getSettings().getStartView() != View.GUEST)
+					worklistViewHandlerAction.initBean();
+				
 				return user.getSettings().getStartView().getRootPath();
+			} else {
+				logger.error("No Start View Found, going back to normal view");
+				return View.LOGIN.getPath();
 			}
 		}
 

@@ -9,34 +9,33 @@
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.slideOverview.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-<h:body styleClass="defaultDialogLayout infoDialog">
+<h:body styleClass="contentInputDialog">
 
 	<h:form enctype="multipart/form-data" id="dialogContent">
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.slideOverview.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
-					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
 
-		<div class="contentDiv" style="height: 520px">
+		<div class="dialogContent">
 
-			<p:dataTable var="stainingRow" styleClass="stainingTable"
-				value="#{globalEditViewHandler.selectedTask.stainingTableRows}"
+			<p:dataTable var="stainingRow" styleClass="newStyleDataTable newStyleDataTableManualBackgroundColor"
+				value="#{dialogHandlerAction.slideOverviewDialog.flatTaskEntityList}"
 				scrollable="true" scrollHeight="480" rowIndexVar="index">
 
 				<!-- sample -->
-				<p:column
-					styleClass="columnSample #{stainingRow.even ? 'datatable-odd' : ''}"
+				<p:column styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
+					style="width: 12%;"
 					headerText="#{msg['body.receiptlog.slide.headline.sample']}">
 					<h:panelGroup rendered="#{stainingRow.sampleType}">
 
@@ -59,8 +58,8 @@
 				</p:column>
 
 				<!-- Block -->
-				<p:column
-					styleClass="columnBlock #{stainingRow.even ? 'datatable-odd' : ''}"
+				<p:column style="width: 12%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
 					headerText="#{msg['body.receiptlog.slide.headline.block']}">
 					<h:panelGroup rendered="#{stainingRow.blockType}">
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
@@ -80,8 +79,8 @@
 				</p:column>
 
 				<!-- staining - name -->
-				<p:column
-					styleClass="columnStainingID #{stainingRow.even ? 'datatable-odd' : ''}"
+				<p:column style="width: 19%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
 					headerText="#{msg['body.receiptlog.slide.headline.staining.id']}">
 					<h:panelGroup rendered="#{stainingRow.stainingType}">
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
@@ -101,16 +100,15 @@
 				</p:column>
 
 				<!-- staining - commentary -->
-				<p:column
-					styleClass="columnCommentary #{stainingRow.even ? 'datatable-odd' : ''}"
+				<p:column style="width: auto%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
 					headerText="#{msg['body.receiptlog.slide.headline.staining.commentary']}">
 					<h:panelGroup rendered="#{stainingRow.stainingType}">
 						<p:selectOneMenu styleClass="smallInput" style="width: 90%"
 							value="#{stainingRow.entity.commentary}" editable="true"
-							disabled="#{!taskEditable}">
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 
-							<f:selectItems
-								value="#{globalEditViewHandler.slideCommentary}"
+							<f:selectItems value="#{globalEditViewHandler.slideCommentary}"
 								var="commentary" itemLabel="#{commentary.value}"
 								itemValue="#{commentary.value}" />
 
@@ -121,22 +119,21 @@
 				</p:column>
 
 				<!-- Staining staining -->
-				<p:column
-					styleClass="columnStaining #{stainingRow.even ? 'datatable-odd' : ''}"
+				<p:column style="width: 8%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
 					headerText="#{msg['body.receiptlog.slide.headline.staining.staining']}">
 					<h:panelGroup rendered="#{stainingRow.stainingType}">
 						<h:outputText value="#{stainingRow.entity.slidePrototype.name}" />
 					</h:panelGroup>
 				</p:column>
 
-				<p:column
-					styleClass="columnStatus #{stainingRow.even ? 'datatable-odd' : ''}"
-					headerText="#{msg['body.receiptlog.slide.headline.status']}">
+				<p:column style="width: 5%;text-align: center;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}">
 					<!-- Sample status -->
 					<h:panelGroup rendered="#{stainingRow.sampleType}">
 						<!-- ********** Staining performed ********** -->
 						<h:panelGroup
-							rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.entity)}">
+							rendered="#{globalEditViewHandler.selectedTask.taskStatus.checkIfStainingCompleted(stainingRow.entity)}">
 							<i class="fa fa-fw fa-check-circle icon-green"
 								title="#{msg['body.statiningView.status.performed']}" />
 						</h:panelGroup>
@@ -145,7 +142,7 @@
 					<h:panelGroup rendered="#{stainingRow.blockType}">
 						<!-- ********** Staining performed ********** -->
 						<h:panelGroup
-							rendered="#{taskStatusHandler.isStainingCompleted(stainingRow.entity)}">
+							rendered="#{globalEditViewHandler.selectedTask.taskStatus.checkIfStainingCompleted(stainingRow.entity)}">
 							<i class="fa fa-fw fa-check-circle icon-green"
 								title="#{msg['body.statiningView.status.performed']}" />
 						</h:panelGroup>
@@ -167,27 +164,24 @@
 				</p:column>
 
 				<!-- options -->
-				<p:column
-					styleClass="columnOptions #{stainingRow.even ? 'datatable-odd' : ''}">
+				<p:column style="width: 10%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}">
 					<f:facet name="header">
 						<h:outputLabel
 							value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
-						<p:commandLink styleClass="noUnderlineAtLink"
-							id="quickTaskSettings"
-							actionListener="#{slideNamingDialog.initAndPrepareBean(stainingRow.entity)}">
-							<i class="fa fa-wrench" />
-							<p:ajax event="dialogReturn" update="dialogContent" />
-						</p:commandLink>
 					</f:facet>
+
 					<!-- Block -->
 					<h:panelGroup rendered="#{stainingRow.blockType}"
 						style="float: right">
 						<!-- ********** New Staining Button ********** -->
 						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
-							styleClass="noUnderlineAtLink" disabled="#{!taskEditable}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
 							<i class="fa fa-fw fa-paint-brush"></i>
-							<p:ajax event="dialogReturn" update="dialogContent" />
+							<p:ajax event="dialogReturn"
+								listener="#{dialogHandlerAction.slideOverviewDialog.updateData()}"
+								update="@form" />
 						</p:commandLink>
 					</h:panelGroup>
 
@@ -195,11 +189,14 @@
 					<h:panelGroup rendered="#{stainingRow.stainingType}"
 						style="float: right">
 						<!-- ********** Delete Button ********** -->
-						<p:commandLink styleClass="noUnderlineAtLink"
-							disabled="#{!taskEditable or true}"
+						<p:commandLink
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							title="#{msg['body.statiningView.archiveStaining']}"
-							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.staining.task,stainingRow.staining)}">
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
 							<i class="fa fa-fw fa-times-circle" />
+							<p:ajax event="dialogReturn"
+								listener="#{dialogHandlerAction.slideOverviewDialog.updateData()}"
+								update="@form" />
 						</p:commandLink>
 					</h:panelGroup>
 				</p:column>
@@ -209,7 +206,9 @@
 			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
 				styleClass="defaultOverlayPanel" widgetVar="idInputPannel"
 				hideEffect="fade" hideEvent="none" showEvent="none">
-				<p:inputText id="idInputPannelInput" rendered="#{dialogHandlerAction.slideOverviewDialog.selectedStainingTableChooser ne null}"
+				<p:inputText id="idInputPannelInput"
+					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+					rendered="#{dialogHandlerAction.slideOverviewDialog.selectedStainingTableChooser ne null}"
 					value="#{dialogHandlerAction.slideOverviewDialog.selectedStainingTableChooser.IDText}" />
 			</p:overlayPanel>
 
@@ -220,13 +219,15 @@
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="1" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="1" style="float:right;">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
 
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
 							binding="#{dialogHandlerAction.slideOverviewDialog.hideDialog()}"></f:actionListener>
@@ -234,6 +235,7 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
+
 	</h:form>
 </h:body>
 </html>

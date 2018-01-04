@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.AbstractTabDialog;
@@ -34,7 +35,9 @@ import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.log.Log;
 import org.histo.model.user.HistoGroup;
+import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoUser;
+import org.histo.service.PhysicianService;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.ReorderEvent;
@@ -102,31 +105,48 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
+	private DialogHandlerAction dialogHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private LogDAO logDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PhysicianService physicianService;
+
+	private ProgramParentTab programParentTab;
 	private HistoUserTab histoUserTab;
+	private HistoGroupTab histoGroupTab;
 	private DiagnosisTab diagnosisTab;
 	private MaterialTab materialTab;
 	private StainingTab stainingTab;
 	private StaticListTab staticListTab;
 	private FavouriteListTab favouriteListTab;
+	private PersonParentTab personParentTab;
 	private PhysicianSettingsTab physicianSettingsTab;
 	private OrganizationTab organizationTab;
 	private LogTab logTab;
 
 	public SettingsDialogHandler() {
+		setProgramParentTab(new ProgramParentTab());
 		setHistoUserTab(new HistoUserTab());
+		setHistoGroupTab(new HistoGroupTab());
 		setDiagnosisTab(new DiagnosisTab());
 		setMaterialTab(new MaterialTab());
 		setStainingTab(new StainingTab());
 		setStaticListTab(new StaticListTab());
 		setFavouriteListTab(new FavouriteListTab());
+		setPersonParentTab(new PersonParentTab());
 		setPhysicianSettingsTab(new PhysicianSettingsTab());
 		setOrganizationTab(new OrganizationTab());
 		setLogTab(new LogTab());
 
-		tabs = new AbstractTab[] { histoUserTab, diagnosisTab, materialTab, stainingTab, staticListTab,
-				favouriteListTab, physicianSettingsTab, organizationTab, logTab };
+		tabs = new AbstractTab[] { programParentTab, histoUserTab, histoGroupTab, diagnosisTab, materialTab,
+				stainingTab, staticListTab, favouriteListTab, personParentTab, physicianSettingsTab, organizationTab,
+				logTab };
 	}
 
 	public void initAndPrepareBean() {
@@ -151,7 +171,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		}
 
 		if (tabName == null || foundTab == null)
-			onTabChange(tabs[0]);
+			onTabChange(tabs[1]);
 		else {
 			onTabChange(foundTab);
 		}
@@ -159,9 +179,16 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		return true;
 	}
 
-	/********************************************************
-	 * General
-	 ********************************************************/
+	public class ProgramParentTab extends AbstractTab {
+		public ProgramParentTab() {
+			setTabName("ProgrammParentTab");
+			setName("dialog.settings.programmParent");
+			setViewID("programmParentTab");
+			setDisabled(true);
+		}
+
+	}
+
 	@Getter
 	@Setter
 	public class HistoUserTab extends AbstractTab {
@@ -173,12 +200,18 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		private DefaultTransformer<HistoGroup> groupTransformer;
 
 		private boolean showArchived;
-		
+
 		public HistoUserTab() {
 			setTabName("HistoUserTab");
 			setName("dialog.settings.user");
 			setViewID("histoUser");
 			setCenterInclude("include/userList.xhtml");
+			setParentTab(programParentTab);
+		}
+
+		public boolean initTab() {
+			setShowArchived(false);
+			return true;
 		}
 
 		public void updateData() {
@@ -204,6 +237,33 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
+		}
+
+	}
+
+	@Getter
+	@Setter
+	public class HistoGroupTab extends AbstractTab {
+
+		private List<HistoGroup> groups;
+
+		private boolean showArchived;
+
+		public HistoGroupTab() {
+			setTabName("HistoGroupTab");
+			setName("dialog.settings.group");
+			setViewID("histoGroupTab");
+			setCenterInclude("include/groupList.xhtml");
+			setParentTab(programParentTab);
+		}
+
+		public boolean initTab() {
+			setShowArchived(false);
+			return true;
+		}
+
+		public void updateData() {
+			setGroups(userDAO.getGroups(showArchived));
 		}
 
 	}
@@ -726,32 +786,48 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 	@Getter
 	@Setter
+	public class PersonParentTab extends AbstractTab {
+		public PersonParentTab() {
+			setTabName("PersonParentTab");
+			setName("dialog.settings.personParent");
+			setViewID("personParentTab");
+			setCenterInclude("include/physicianList.xhtml");
+			setDisabled(true);
+		}
+	}
+
+	@Getter
+	@Setter
 	public class PhysicianSettingsTab extends AbstractTab {
 
 		/**
 		 * True if archived physicians should be display
 		 */
-		private boolean showArchivedPhysicians;
-
-		/**
-		 * Array of roles for that physicians should be shown.
-		 */
-		private ContactRole[] showPhysicianRoles;
+		private boolean showArchived;
 
 		/**
 		 * List containing all physicians known in the histo database
 		 */
 		private List<Physician> physicianList;
 
+		/**
+		 * All roles to display
+		 */
 		private List<ContactRole> allRoles;
+
+		/**
+		 * Array of roles for that physicians should be shown.
+		 */
+		private ContactRole[] showPhysicianRoles;
 
 		public PhysicianSettingsTab() {
 			setTabName("PhysicianSettingsTab");
 			setName("dialog.settings.persons");
 			setViewID("persons");
 			setCenterInclude("include/physicianList.xhtml");
+			setParentTab(personParentTab);
 
-			setShowArchivedPhysicians(false);
+			setShowArchived(false);
 			setAllRoles(Arrays.asList(ContactRole.values()));
 
 			setShowPhysicianRoles(new ContactRole[] { ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON,
@@ -759,15 +835,20 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		}
 
 		@Override
+		public boolean initTab() {
+			setShowArchived(false);
+			return true;
+		}
+
+		@Override
 		public void updateData() {
-			setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(), isShowArchivedPhysicians()));
+			setPhysicianList(physicianDAO.getPhysicians(getShowPhysicianRoles(), showArchived));
 		}
 
 		public void addPhysician(Physician physician) {
 			try {
 				if (physician != null) {
-					physicianDAO.synchronizePhysician(physician);
-					updateData();
+					physicianDAO.addOrMergePhysician(physician);
 				}
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
@@ -782,16 +863,51 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		 */
 		public void archivePhysician(Physician physician, boolean archive) {
 			try {
-				physician.setArchived(archive);
-				genericDAO.save(physician,
-						resourceBundle.get(
-								archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
-								physician.getPerson().getFullName()));
-
-				updateData();
+				physicianDAO.archivePhysician(physician, archive);
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
+		}
+
+		/**
+		 * Updates the data of the physician with data from the clinic backend
+		 */
+		public void updateDataFromLdap(Physician physician) {
+			try {
+				physicianService.updatePhysicianDataFromLdap(physician);
+			} catch (CustomDatabaseInconsistentVersionException e) {
+				onDatabaseVersionConflict();
+			}
+		}
+	}
+
+	@Getter
+	@Setter
+	public class OrganizationTab extends AbstractTab {
+
+		private List<Organization> organizations;
+
+		private Organization selectedOrganization;
+
+		private boolean showArchived;
+
+		public OrganizationTab() {
+			setTabName("OrganizationTab");
+			setName("dialog.settings.organization");
+			setViewID("organizations");
+			setCenterInclude("include/organizationLists.xhtml");
+			setParentTab(personParentTab);
+		}
+
+		@Override
+		public boolean initTab() {
+			setShowArchived(false);
+			return true;
+		}
+
+		@Override
+		public void updateData() {
+			setOrganizations(organizationDAO.getOrganizations(showArchived));
 		}
 
 	}
@@ -816,86 +932,6 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public void updateData() {
 			setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
 
-		}
-
-	}
-
-	public enum OrganizationTabPage {
-		LIST, EDIT;
-	}
-
-	@Getter
-	@Setter
-	public class OrganizationTab extends AbstractTab {
-
-		private OrganizationTabPage page;
-
-		private List<Organization> organizations;
-
-		private Organization selectedOrganization;
-
-		private boolean newOrganization;
-
-		public OrganizationTab() {
-			setTabName("OrganizationTab");
-			setName("dialog.settings.organization");
-			setViewID("organizations");
-			setPage(OrganizationTabPage.LIST);
-		}
-
-		@Override
-		public void updateData() {
-			switch (getPage()) {
-			case EDIT:
-				if (getSelectedOrganization().getId() != 0) {
-					setSelectedOrganization(organizationDAO.get(Organization.class, getSelectedOrganization().getId()));
-					organizationDAO.initializeOrganization(getSelectedOrganization());
-				}
-				break;
-			default:
-				setOrganizations(organizationDAO.getOrganizations());
-				break;
-			}
-
-		}
-
-		public void prepareNewOrganization() {
-			Organization organization = new Organization(new Contact());
-			prepareEditOrganization(organization);
-		}
-
-		public void prepareEditOrganization(Organization organization) {
-			setSelectedOrganization(organization);
-			setPage(OrganizationTabPage.EDIT);
-			setNewOrganization(organization.getId() == 0 ? true : false);
-			updateData();
-		}
-
-		public void saveOrganization() {
-			try {
-				organizationDAO.save(getSelectedOrganization(),
-						getSelectedOrganization().getId() == 0 ? "log.organization.save" : "log.organization.created",
-						new Object[] { getSelectedOrganization().getName() });
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				onDatabaseVersionConflict();
-			}
-		}
-
-		public void discardOrganization() {
-			setSelectedOrganization(null);
-			setPage(OrganizationTabPage.LIST);
-
-			updateData();
-		}
-
-		@Override
-		public String getCenterInclude() {
-			switch (getPage()) {
-			case EDIT:
-				return "include/organizationEdit.xhtml";
-			default:
-				return "include/organizationLists.xhtml";
-			}
 		}
 
 	}

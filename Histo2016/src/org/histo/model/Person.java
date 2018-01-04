@@ -90,7 +90,7 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 	/**
 	 * If true the persons data will no be updated with backend data, default true
 	 */
-	@Column
+	@Column(columnDefinition = "boolean default true")
 	private boolean autoUpdate = true;
 
 	@ManyToMany()

@@ -9,6 +9,7 @@ import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
+import org.histo.model.patient.Task;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -100,5 +101,48 @@ public class StainingTableChooser<T extends IdManuallyAltered & PatientRollbackA
 			return ((Slide) entity).getSlideID();
 
 		return "";
+	}
+
+	/**
+	 * Creates linear list of all slides of the given task. The StainingTableChosser
+	 * is used as holder class in order to offer an option to select the slides by
+	 * clicking on a checkbox. Archived elements will not be shown if showArchived
+	 * is false.
+	 * 
+	 * @param showArchived
+	 */
+	public static ArrayList<StainingTableChooser<?>> factory(Task task, boolean showArchived) {
+		logger.debug("Generating new List for receiptlog");
+
+		ArrayList<StainingTableChooser<?>> result = new ArrayList<StainingTableChooser<?>>();
+
+		boolean even = false;
+
+		for (Sample sample : task.getSamples()) {
+			// skips archived tasks
+
+			StainingTableChooser<Sample> sampleChooser = new StainingTableChooser<Sample>(sample, even);
+			result.add(sampleChooser);
+
+			for (Block block : sample.getBlocks()) {
+				// skips archived blocks
+
+				StainingTableChooser<Block> blockChooser = new StainingTableChooser<Block>(block, even);
+				result.add(blockChooser);
+				sampleChooser.addChild(blockChooser);
+
+				for (Slide staining : block.getSlides()) {
+					// skips archived sliedes
+
+					StainingTableChooser<Slide> stainingChooser = new StainingTableChooser<Slide>(staining, even);
+					result.add(stainingChooser);
+					blockChooser.addChild(stainingChooser);
+				}
+			}
+
+			even = !even;
+
+		}
+		return result;
 	}
 }

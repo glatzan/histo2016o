@@ -17,6 +17,8 @@ import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoSettings;
 import org.histo.model.user.HistoUser;
+import org.histo.model.user.HistoGroup.AuthRole;
+import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -41,7 +43,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired
 	private TransientDAO transientDAO;
-	
+
 	@Autowired
 	protected ResourceBundle resourceBundle;
 
@@ -59,20 +61,26 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 				if (histoUser == null) {
 					logger.info("No user found, creating new one");
 					histoUser = new HistoUser(userName);
-					
+
 					HistoGroup group = transientDAO.getHistoGroup(HistoGroup.GROUP_GUEST_ID, true);
 					histoUser.setGroup(group);
 					histoUser.setSettings(new HistoSettings());
-					histoUser.getSettings().updateCrucialSettings(group.getSettings());
-					
+					// copy settings from group to user
+					CopySettingsUtil.copyCrucialGroupSettings(histoUser, group, true);
+
 				} else if (histoUser.getPhysician() == null) {
-					histoUser.setPhysician(new Physician());
-					histoUser.getPhysician().setPerson(new Person());
+					histoUser.setPhysician(new Physician(new Person(new Contact())));
+					histoUser.getPhysician().setUid(userName);
+				}
+
+				// throwing error if person is banned
+				if(histoUser.getGroup().getAuthRole() == AuthRole.ROLE_NONEAUTH || histoUser.isArchived()) {
+					throw new BadCredentialsException(resourceBundle.get("login.error.banned"));
 				}
 
 				histoUser.setLastLogin(System.currentTimeMillis());
 
-				transientDAO.save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
+				transientDAO.save(histoUser, "user.role.settings.update", new Object[] { histoUser.toString() });
 
 				Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
 
@@ -106,8 +114,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 					HistoGroup group = transientDAO.getHistoGroup(HistoGroup.GROUP_GUEST_ID, true);
 					histoUser.setGroup(group);
 					histoUser.setSettings(new HistoSettings());
-					histoUser.getSettings().updateCrucialSettings(group.getSettings());
-					
+					CopySettingsUtil.copyCrucialGroupSettings(histoUser, group, true);
+
 					// if the physician was added as surgeon the useracc an the
 					// physician will be merged
 					Physician physicianFromDatabase = transientDAO.loadPhysicianByUID(userName);
@@ -122,22 +130,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 						histoUser.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 					}
 				}
-
-				if (histoUser.getPhysician() == null) {
-					logger.info("No Physsican found");
-					histoUser.setPhysician(new Physician(new Person()));
-					histoUser.getPhysician().setUid(userName);
-					// Default role for that physician
-					histoUser.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
+				
+				// throwing error if person is banned
+				if(histoUser.getGroup().getAuthRole() == AuthRole.ROLE_NONEAUTH || histoUser.isArchived()) {
+					throw new BadCredentialsException(resourceBundle.get("login.error.banned"));
 				}
 
-				histoUser.getPhysician().copyIntoObject(physician);
-
 				histoUser.setLastLogin(System.currentTimeMillis());
+				
+				transientDAO.mergePhysicians(physician , histoUser.getPhysician());
 
-				transientDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
-
-				transientDAO.save(histoUser, "log.userSettings.update", new Object[] { histoUser.toString() });
+				transientDAO.save(histoUser, "user.role.settings.update", new Object[] { histoUser.toString() });
 
 				Collection<? extends GrantedAuthority> authorities = histoUser.getAuthorities();
 
@@ -145,6 +148,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			} else
 				throw new BadCredentialsException(resourceBundle.get("login.error.text"));
 		} catch (NamingException | IOException | AuthenticationException e) {
+			// catch other exception an merge them into a bad credentials exception
+			if(e instanceof BadCredentialsException)
+				throw (BadCredentialsException)e;
+			
 			throw new BadCredentialsException(resourceBundle.get("login.error.text"));
 		}
 

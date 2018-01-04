@@ -49,6 +49,9 @@ public class Organization implements HasID {
 	@Column
 	private boolean intern;
 
+	@Column(columnDefinition = "boolean default true")
+	private boolean archived = false;
+	
 	public Organization() {
 
 	}

@@ -53,6 +53,12 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 		protected String centerInclude;
 		
 		protected boolean disabled;
+		
+		protected AbstractTab parentTab;
+		
+		public boolean isParent() {
+			return parentTab != null;
+		}
 	}
 
 }

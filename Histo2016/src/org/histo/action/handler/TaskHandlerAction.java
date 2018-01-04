@@ -107,18 +107,6 @@ public class TaskHandlerAction {
 		}
 	}
 
-	/**
-	 * Starts the staining phase
-	 * 
-	 * @param task
-	 */
-	public void startStainingPhase(Task task) {
-		sampleService.startStainingPhase(task);
-		// generating gui list
-		globalEditViewHandler.updateDataOfTask(true, false, true, true);
-	}
-
-	
 	public void changeMaterialOfSample(Sample sample, MaterialPreset materialPreset) {
 		sampleService.changeMaterialOfSample(sample, materialPreset);
 	}

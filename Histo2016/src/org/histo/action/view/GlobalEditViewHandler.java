@@ -287,7 +287,7 @@ public class GlobalEditViewHandler {
 			updateMenuModel(updateFavouriteLists);
 
 		if (selectedTask != null && updateSlideGuiList)
-			receiptlogViewHandlerAction.generateSlideGuiList(getSelectedTask(), false);
+			receiptlogViewHandlerAction.updateSlideGuiList(getSelectedTask(), false);
 	}
 
 	public void updateMenuModel(boolean updateFavouriteLists) {

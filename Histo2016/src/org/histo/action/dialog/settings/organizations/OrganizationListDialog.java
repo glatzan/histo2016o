@@ -46,7 +46,7 @@ public class OrganizationListDialog extends AbstractDialog {
 	}
 
 	public void initBean(Person person) {
-		super.initBean(null, Dialog.ORGANIZATION_LIST);
+		super.initBean(null, Dialog.SETTINGS_ORGANIZATION_LIST);
 		if (person == null)
 			this.selectMode = false;
 		else {
@@ -63,7 +63,7 @@ public class OrganizationListDialog extends AbstractDialog {
 
 	public void updateOrganizationList() {
 		setSelectedOrganization(null);
-		setOrganizations(organizationDAO.getOrganizations());
+		setOrganizations(organizationDAO.getOrganizations(false));
 	}
 
 	public void selectOrganisation() {
@@ -71,15 +71,6 @@ public class OrganizationListDialog extends AbstractDialog {
 			if (getSelectedOrganization() != null) {
 				organizationDAO.addOrganization(getPerson(), getSelectedOrganization());
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			onDatabaseVersionConflict();
-		}
-	}
-
-	public void removeOrganizationFromPerson(Person person, Organization organization) {
-		try {
-			logger.debug("Removing Person from Organization");
-			organizationDAO.removeOrganization(person, organization);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

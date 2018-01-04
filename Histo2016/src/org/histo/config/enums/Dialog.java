@@ -21,7 +21,7 @@ public enum Dialog {
 	BIO_BANK("/pages/dialog/biobank/biobank", null, 858, 484, false, false, true), // 16:9
 	FAVOURITE_LISTS("/pages/dialog/favouriteLists/favouriteLists", null, 858, 484, false, false, true), // 16:9
 	FAVOURITE_LIST_ADD("/pages/dialog/task/favouriteLists/addFavouriteList", null, 640, 360, false, false, true),// 16:9
-	SLIDE_OVERVIEW("/pages/dialog/task/slideOverview", null, 1024, 600, false, false, true), // 16:9
+	SLIDE_OVERVIEW("/pages/dialog/task/staining/slideOverview", null, 1024, 600, false, false, true), // 16:9
 	SLIDE_NAMING("/pages/dialog/task/slideNaming", null,430, 270, false, false, true), 
 	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/task/diagnosisRecordOverwrite", null, 480, 272, false, false, true), // 16:9
@@ -37,7 +37,9 @@ public enum Dialog {
 	SETTINGS_USERS_LIST("/pages/dialog/settings/users/usersList", null, 1024, 600, false, false, true), //  16:9
 	SETTINGS_USERS_EDIT("/pages/dialog/settings/users/userEdit", null, 1024, 600, false, false, true), //  16:9
 	SETTINGS_USERS_DELETE("/pages/dialog/settings/users/userDelete", null, 480, 272, false, false, true), //  16:9
-	SETTINGS_USERS_DELETE_ERROR("/pages/dialog/settings/users/userDeleteError", null, 480, 272, false, false, true), //  16:9
+	SETTINGS_USERS_DELETE_DISABLE("/pages/dialog/settings/users/userDeleteDisable", null, 480, 272, false, false, true), //  16:9
+	SETTINGS_ORGANIZATION_EDIT("/pages/dialog/settings/organization/organizationEdit", null, 1024, 600, false, false, true), // 16:9
+	SETTINGS_ORGANIZATION_LIST("/pages/dialog/settings/organization/organizationList", null, 858, 484, false, false, true), // 16:9
 	SETTINGS_FAVOURITE_LIST_EDIT("/pages/dialog/settings/favouriteList/favouriteListEdit", null, 1024, 600, false, false, true), //  16:9
 	PRINT("/pages/dialog/print/print", null, 1280, 720, false, false, true), // 16:9
 	PRINT_ADDRESS("/pages/dialog/print/address", null,  480, 272, false, false, true), // 16:9
@@ -59,9 +61,8 @@ public enum Dialog {
 	DIAGNOSIS_PHASE_EXIT_SMALL("/pages/dialog/task/diagnosis/diagnosisPhaseExitSmall", null, 480, 272, false, false, true), // 16:9
 	TASK_ARCHIVE("/pages/dialog/task/archive/archiveTask", null, 480, 272, false, false, true), // 16:9
 	TASK_RESTORE("/pages/dialog/task/archive/restoreTask", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosis/diagnosisCreateRevision", null, 640, 360, false, false, true), // 16:9
-	ORGANIZATION_EDIT("/pages/dialog/organization/organizationEdit", null, 858, 484, false, false, true), // 16:9
-	ORGANIZATION_LIST("/pages/dialog/organization/organizationList", null, 858, 484, false, false, true); // 16:9
+	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosis/diagnosisCreateRevision", null, 640, 360, false, false, true); // 16:9
+
 	
 	
 	

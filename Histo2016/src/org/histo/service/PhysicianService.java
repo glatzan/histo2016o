@@ -7,9 +7,12 @@ import javax.naming.directory.DirContext;
 
 import org.histo.action.handler.GlobalSettings;
 import org.histo.adaptors.LdapHandler;
+import org.histo.config.ResourceBundle;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.OrganizationDAO;
+import org.histo.dao.PhysicianDAO;
 import org.histo.model.Physician;
+import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +40,22 @@ public class PhysicianService {
 	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PhysicianDAO physicianDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ResourceBundle resourceBundle;
+
+	/**
+	 * Returns a physician obtained from clinic backend
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public Physician getPhysicianFromLdap(String name) {
 		LdapHandler ladpHandler = globalSettings.getLdapHandler();
 		DirContext connection;
@@ -52,16 +71,20 @@ public class PhysicianService {
 		return physician;
 	}
 
+	/**
+	 * Gets new physician data from clinic backend and updates the given local
+	 * physician object
+	 * 
+	 * @param physician
+	 */
 	public void updatePhysicianDataFromLdap(Physician physician) {
 
 		Physician ldapPhysician = getPhysicianFromLdap(physician.getUid());
-		if (ldapPhysician != null)
-			physician.copyIntoObject(ldapPhysician);
 
-		organizationDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
-
-		genericDAO.save(physician, "log.userSettings.update", new Object[] { physician.toString() });
-
+		if (ldapPhysician != null) {
+			// setting update to true, otherwise nothing will happen
+			physician.getPerson().setAutoUpdate(true);
+			physicianDAO.mergePhysicians(ldapPhysician, physician);
+		}
 	}
-
 }

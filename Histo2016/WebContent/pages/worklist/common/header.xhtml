@@ -118,7 +118,7 @@
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Staining List, New Sample -->
+			<!-- New Sample -->
 			<p:commandButton id="newSampleBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
@@ -129,14 +129,24 @@
 			<p:commandButton id="stainingOverview" style="display:none"
 				actionListener="#{dialogHandlerAction.slideOverviewDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
+					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Staining List, leave phase an set all stainigs to performed -->
+			<!-- StainingPhase Exit -->
 			<p:commandButton id="stainingPhaseExit" style="display:none"
 				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm:patientList contentForm headerForm" />
+			</p:commandButton>
+
+			<!-- StainingPhase enter -->
+			<p:commandButton id="stainingPhaseEnter" style="display:none"
+				update="navigationForm:patientList contentForm headerForm">
+				<f:actionListener
+					binding="#{sampleService.startStainingPhase(globalEditViewHandler.selectedTask)}" />
+				<f:actionListener
+					binding="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}" />
 			</p:commandButton>
 
 			<!-- Diagnosis List, new diagnosis revision -->
@@ -265,7 +275,8 @@
 			<p:commandButton id="settingsDialogBtn" style="display:none"
 				partialSubmit="true" process="@this"
 				actionListener="#{settingsDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" listener="#{globalEditViewHandler.loadGuiData()}"
+				<p:ajax event="dialogReturn"
+					listener="#{globalEditViewHandler.loadGuiData()}"
 					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 

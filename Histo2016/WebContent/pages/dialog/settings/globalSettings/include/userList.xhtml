@@ -88,16 +88,7 @@
 					style="margin-left:5px;"></h:outputLabel>
 			</h:panelGrid>
 
-			<h:panelGrid columns="3" styleClass="newTableContainer right">
-				<p:commandButton
-					rendered="#{userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_GROUP')}"
-					value="#{msg['dialog.settings.user.button.groups']}"
-					icon="fa fa-fw fa-cog" process="@this" partialSubmit="true"
-					actionListener="#{dialogHandlerAction.groupListDialog.initAndPrepareBean()}">
-					<p:ajax event="dialogReturn"
-						listener="#{settingsDialogHandler.histoUserTab.updateData()}"
-						update="@form" />
-				</p:commandButton>
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 
 				<p:commandButton value="#{msg['dialog.settings.user.button.add']}"
 					rendered="#{userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_USER')}"

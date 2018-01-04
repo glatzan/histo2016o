@@ -189,19 +189,4 @@ public class HistoSettings implements HasID, Cloneable {
 		return (HistoSettings) super.clone();
 	}
 
-	/**
-	 * Only copies crucial settings
-	 * 
-	 * @param newSettings
-	 */
-	public void updateCrucialSettings(HistoSettings newSettings) {
-		setDefaultView(newSettings.getDefaultView());
-		setWorklistToLoad(newSettings.getWorklistToLoad());
-		setWorklistSortOrder(newSettings.getWorklistSortOrder());
-		setWorklistSortOrderAsc(newSettings.isWorklistSortOrderAsc());
-		setWorklistHideNoneActiveTasks(newSettings.isWorklistHideNoneActiveTasks());
-		setAlternatePatientAddMode(newSettings.isAlternatePatientAddMode());
-		setAvailableViews(new ArrayList<View>(newSettings.getAvailableViews()));
-	}
-
 }

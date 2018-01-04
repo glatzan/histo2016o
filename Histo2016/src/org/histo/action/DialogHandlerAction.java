@@ -22,6 +22,7 @@ import org.histo.action.dialog.settings.favouriteLists.FavouriteListEditDialog;
 import org.histo.action.dialog.settings.groups.GroupEditDialog;
 import org.histo.action.dialog.settings.groups.GroupListDialog;
 import org.histo.action.dialog.settings.material.MaterialEditDialog;
+import org.histo.action.dialog.settings.organizations.OrganizationEditDialog;
 import org.histo.action.dialog.settings.organizations.OrganizationListDialog;
 import org.histo.action.dialog.settings.physician.PhysicianEditDialog;
 import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
@@ -123,6 +124,8 @@ public class DialogHandlerAction {
 	private ProgrammVersionDialog programmVersionDialog;
 	
 	private EditUserDialog editUserDialog;
+	
+	private OrganizationEditDialog organizationEditDialog;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -416,4 +419,13 @@ public class DialogHandlerAction {
 
 		return editUserDialog;
 	}
+	
+	public OrganizationEditDialog getOrganizationEditDialog() {
+		if (organizationEditDialog == null) {
+			organizationEditDialog = new OrganizationEditDialog();
+		}
+
+		return organizationEditDialog;
+	}
+	
 }

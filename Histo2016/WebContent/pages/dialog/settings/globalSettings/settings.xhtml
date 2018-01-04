@@ -39,7 +39,7 @@
 				<c:forEach items="#{settingsDialogHandler.tabs}"
 					var="tab" varStatus="loop">
 					<p:commandButton value="#{msg[tab.name]}" disabled="#{tab.disabled}"
-						styleClass="#{tab eq settingsDialogHandler.selectedTab ? 'selectedButton' : ''}"
+						styleClass="#{tab eq settingsDialogHandler.selectedTab ? 'selectedButton' : ''} #{tab.isParent() ? 'childButton' : ''}"
 						actionListener="#{settingsDialogHandler.onTabChange(tab)}"
 						update="navigationTable dialogContent" />
 				</c:forEach>

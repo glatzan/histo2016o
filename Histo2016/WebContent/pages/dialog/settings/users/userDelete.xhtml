@@ -8,18 +8,28 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.staingingPhaseExit.headline']}" /></title>
+			value="#{msg['dialog.userDelete.headline']}">
+			<f:param
+				value="#{dialogHandlerAction.editUserDialog.user.physician.person.fullName}" />
+		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
 
 <h:body styleClass="contentInputDialog">
+
+	<h:outputScript library="scripts" name="disableButtons.js" />
+
 	<h:form id="dialogContent">
+
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel value="#{msg['dialog.staingingPhaseExit.headline']}" />
+				<h:outputFormat value="#{msg['dialog.userDelete.headline']}">
+					<f:param
+						value="#{dialogHandlerAction.editUserDialog.user.physician.person.fullName}" />
+				</h:outputFormat>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -31,7 +41,10 @@
 		<div class="dialogContent">
 			<h:panelGrid columns="1" styleClass="newStyleListingTable"
 				columnClasses="columnLongText">
-				<h:outputLabel value="delete?"></h:outputLabel>
+				<h:outputFormat value="#{msg['dialog.userDelete.text']}">
+					<f:param
+						value="#{dialogHandlerAction.editUserDialog.user.physician.person.fullName}" />
+				</h:outputFormat>
 			</h:panelGrid>
 		</div>
 
@@ -43,18 +56,20 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
-					<!-- Ok button -->
-					<p:commandButton value="#{msg['general.ok']}" id="closeBtn"
-						icon="fa fa-check-circle-o">
+					<!-- Delete button -->
+					<p:commandButton value="#{msg['general.delete']}" widgetVar="userDeleteBtn"
+						id="userDeleteBtn" icon="fa fa-fw fa-trash"
+						onclick="disableButton(true, 'userDeleteBtn', 'closeBtn')">
 						<f:actionListener
 							binding="#{dialogHandlerAction.editUserDialog.deleteUser()}" />
-						<p:ajax event="dialogReturn"
+
+						<p:ajax event="dialogReturn" 
 							listener="#{dialogHandlerAction.editUserDialog.hideDialog()}"
 							update="@form" />
 					</p:commandButton>
 
 					<!-- abort -->
-					<p:commandButton value="#{msg['general.abort']}"
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn" widgetVar="closeBtn"
 						icon="fa fa-times-circle"
 						actionListener="#{dialogHandlerAction.editUserDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>

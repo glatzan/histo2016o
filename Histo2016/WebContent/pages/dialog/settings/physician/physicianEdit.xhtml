@@ -9,20 +9,28 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.physicianEdit.headline']} (#{dialogHandlerAction.physicianEditDialog.physician.person.fullName})" /></title>
+			value="#{msg['dialog.physicianEdit.headline']}">
+			<f:param
+				value="#{dialogHandlerAction.physicianEditDialog.physician.person.fullName}" />
+		</h:outputFormat></title>
+
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
 <h:body styleClass="contentInputDialog">
 
+	<h:outputScript library="scripts" name="selectCheckboxMenuTop.js" />
+
 	<h:form enctype="multipart/form-data" id="dialogContent">
 
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel
-					value="#{msg['dialog.physicianEdit.headline']} (#{dialogHandlerAction.physicianEditDialog.physician.person.fullName})" />
+				<h:outputFormat value="#{msg['dialog.physicianEdit.headline']}">
+					<f:param
+						value="#{dialogHandlerAction.physicianEditDialog.physician.person.fullName}" />
+				</h:outputFormat>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -33,10 +41,15 @@
 
 		<div class="dialogContent">
 
-			<h:panelGrid columns="4" styleClass="newStyleListingTable">
+			<h:panelGrid columns="5" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150, , , ,">
+
+				<!-- Person -->
+				<h:outputLabel value="#{msg['component.personDataMask.person']}"
+					styleClass="bigFont" />
 
 				<!-- Title -->
-				<p:outputLabel value="#{msg['component.personDataMask.title']}" />
+				<h:outputLabel value="#{msg['component.personDataMask.title']}" />
 				<p:selectOneMenu style="width:100px" editable="true"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.title}">
 					<f:selectItem itemLabel="" itemValue="" />
@@ -49,21 +62,21 @@
 				</p:selectOneMenu>
 
 				<!-- birthday -->
-				<p:outputLabel value="#{msg['component.personDataMask.birthday']}" />
+				<h:outputLabel value="#{msg['component.personDataMask.birthday']}" />
 				<p:calendar id="birthday" name="bday" autocomplete="bday"
-					required="true"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.birthday}"
 					locale="de" navigator="true" pattern="dd.MM.yyyy" mask="true" />
 
+				<h:outputLabel value="" />
+
 				<!-- Name -->
-				<p:outputLabel value="#{msg['component.personDataMask.name']}" />
+				<h:outputLabel value="#{msg['component.personDataMask.name']}" />
 				<p:inputText name="lname" autocomplete="family-name" required="true"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.lastName}" />
 
 				<!-- gender -->
-				<p:outputLabel value="#{msg['component.personDataMask.gender']}" />
+				<h:outputLabel value="#{msg['component.personDataMask.gender']}" />
 				<p:selectOneMenu style="width:100px" name="sex" autocomplete="sex"
-					required="true"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.gender}">
 					<f:selectItem
 						itemLabel="#{msg['component.personDataMask.gender.select']}"
@@ -79,24 +92,22 @@
 						itemValue="FEMALE" />
 				</p:selectOneMenu>
 
+				<h:outputLabel value="" />
+
 				<!-- firstName -->
-				<p:outputLabel value="#{msg['component.personDataMask.firstName']}" />
+				<h:outputLabel value="#{msg['component.personDataMask.firstName']}" />
 				<p:inputText name="fname" autocomplete="given-name" required="true"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.firstName}" />
-			</h:panelGrid>
 
+				<h:outputLabel value="" />
+				<h:outputLabel value="" />
 
-			<!-- Separator -->
-			<h:panelGrid columns="1"
-				styleClass="newStyleListingTable newStyleListingTableSeparator">
-				<p:separator style="width:100%" />
-				<h:outputLabel value="#{msg['component.personDataMask.adress']}" />
-			</h:panelGrid>
+				<!-- address -->
+				<h:outputLabel value="#{msg['component.personDataMask.adress']}"
+					styleClass="bigFont" />
 
-			<!-- address -->
-			<h:panelGrid columns="4" styleClass="newStyleListingTable">
 				<!-- street -->
-				<p:outputLabel
+				<h:outputLabel
 					value="#{msg['component.personDataMask.contact.street']}" />
 				<p:inputText name="street-address" autocomplete="street-address"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.street}" />
@@ -104,64 +115,98 @@
 				<h:outputText value="" />
 				<h:outputText value="" />
 
+				<h:outputLabel value="" />
+
 				<!-- Postcode -->
-				<p:outputLabel value="#{msg['component.personDataMask.adress.plz']}" />
+				<h:outputLabel value="#{msg['component.personDataMask.adress.plz']}" />
 				<p:inputText style="width:75px;"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.postcode}"
 					name="postal-code" autocomplete="postal-code" />
 
 				<!-- Town -->
-				<p:outputLabel
+				<h:outputLabel
 					value="#{msg['component.personDataMask.contact.town']}" />
 				<p:inputText name="city" autocomplete="address-level2"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.town}" />
 
-			</h:panelGrid>
 
-
-			<!-- Separator -->
-			<h:panelGrid columns="1"
-				styleClass="newStyleListingTable newStyleListingTableSeparator">
-				<p:separator style="width:100%" />
+				<!-- miscellaneous -->
 				<h:outputLabel
-					value="#{msg['component.personDataMask.miscellaneous']}" />
-			</h:panelGrid>
+					value="#{msg['component.personDataMask.miscellaneous']}"
+					styleClass="bigFont" />
 
-			<!-- contact -->
-			<h:panelGrid columns="4" styleClass="newStyleListingTable">
 				<!-- phone -->
-				<p:outputLabel
+				<h:outputLabel
 					value="#{msg['component.personDataMask.contact.phone']}" />
 				<p:inputText
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.phone}"
 					name="phone" autocomplete="tel" />
 
 				<!-- fax -->
-				<p:outputLabel
+				<h:outputLabel
 					value="#{msg['component.personDataMask.miscellaneous.fax']}" />
 				<p:inputText
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.fax}"
 					name="fax" autocomplete="fax" />
 
+				<h:outputLabel value="" />
+
 				<!-- mobile -->
-				<p:outputLabel
+				<h:outputLabel
 					value="#{msg['component.personDataMask.miscellaneous.mobile']}" />
 				<p:inputText
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.phone}"
 					name="phone" autocomplete="tel" />
 
 				<!-- mail -->
-				<p:outputLabel
+				<h:outputLabel
 					value="#{msg['component.personDataMask.miscellaneous.mail']}" />
 				<p:inputText name="mail" autocomplete="mail"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.email}" />
 
+				<!-- program settings-->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.programSettings']}"
+					styleClass="bigFont" />
+
+				<!-- auto update -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.programSettigns.autoUpdate']}" />
+				<p:selectBooleanCheckbox styleClass="smallCheckbox"
+					title="#{msg['component.personDataMask.programSettigns.autoUpdate.text']}"
+					value="#{dialogHandlerAction.physicianEditDialog.physician.person.autoUpdate}">
+				</p:selectBooleanCheckbox>
+
 			</h:panelGrid>
 
-
-			<h:panelGrid columns="2" styleClass="newStyleListingTable">
+			<!-- Function -->
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150, ">
+				<!-- role -->
 				<h:outputLabel
-					value="#{msg['component.personDataMask.organization']}" />
+					value="#{msg['component.personDataMask.programRole']}"
+					styleClass="bigFont" />
+
+				<p:selectCheckboxMenu updateLabel="true"
+					styleClass="customSelectCheckboxMenu" style="width:90%"
+					value="#{dialogHandlerAction.physicianEditDialog.physician.associatedRolesAsArray}"
+					multiple="true">
+					<f:selectItems var="role"
+						value="#{dialogHandlerAction.physicianEditDialog.allRoles}"
+						itemValue="#{role}"
+						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+
+					<p:ajax partialSubmit="true" process="@this" />
+				</p:selectCheckboxMenu>
+			</h:panelGrid>
+
+			<!-- Organization -->
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150, ">
+
+				<h:outputLabel
+					value="#{msg['component.personDataMask.organization']}"
+					styleClass="bigFont" />
 
 				<p:dataTable var="organization" style="width:90%;" scrollable="true"
 					id="organizationTab" scrollHeight="75" draggableRows="true"
@@ -203,7 +248,7 @@
 							</h:panelGrid>
 						</f:facet>
 						<p:commandLink
-							actionListener="#{dialogHandlerAction.organizationListDialog.removeOrganizationFromPerson(dialogHandlerAction.physicianEditDialog.physician.person, organization)}"
+							actionListener="#{dialogHandlerAction.organizationEditDialog.removePersonFromOrganization(dialogHandlerAction.physicianEditDialog.physician.person, organization)}"
 							update="organizationTab"
 							title="#{msg['component.personDataMask.organization.remove']}">
 							<i class="fa fa-remove" style="margin-left: 8px" />
@@ -212,25 +257,6 @@
 
 				</p:dataTable>
 			</h:panelGrid>
-
-			<h:panelGrid columns="2"
-				columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop,"
-				styleClass="defaultListingTableFirstColumEnummeration">
-				<!-- role -->
-				<h:outputLabel value="#{msg['dialog.physicianEdit.person.role']}" />
-				<p:selectCheckboxMenu updateLabel="true" appendTo="dialogContent"
-					immediate="true" styleClass="customSelectCheckboxMenu"
-					style="width:90%"
-					value="#{dialogHandlerAction.physicianEditDialog.physician.associatedRolesAsArray}"
-					multiple="true">
-					<f:selectItems var="role"
-						value="#{dialogHandlerAction.physicianEditDialog.allRoles}"
-						itemValue="#{role}"
-						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
-
-					<p:ajax partialSubmit="true" process="@this" />
-				</p:selectCheckboxMenu>
-			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
@@ -238,6 +264,13 @@
 				styleClass="newTableContainer">
 
 				<h:panelGrid columns="1" styleClass="newTableContainer left">
+					<p:commandButton id="refreshBtn" value="#{msg['general.refresh']}"
+						icon="fa fa-fw fa-undo" widgetVar="refreshBtn"
+						onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()">
+						<f:actionListener
+							binding="#{dialogHandlerAction.physicianEditDialog.updateDataFromLdap()}"></f:actionListener>
+					</p:commandButton>
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
@@ -259,7 +292,7 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
-
+		<ui:include src="../../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>
 </html>

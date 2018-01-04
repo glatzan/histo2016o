@@ -27,9 +27,11 @@
 				if (block) {
 					PF('submitBTn').disable();
 					PF('blockLoginTable').block();
+					PF('globalPoll').stop();
 				} else {
 					PF('submitBTn').enable();
 					PF('blockLoginTable').unblock();
+					PF('globalPoll').start();
 				}
 			}
 		</script>

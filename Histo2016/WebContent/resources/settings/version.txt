@@ -37,20 +37,14 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Next Changes:
 
--> slide overview dialog!
--> receiptlog auf neues desing / funktionen anpassen
-
--> Zimmermann --> Atzrodt, Aktualliesierien button (feld für username ändern)
--> prevent overwriting of data from clinic physicians if changed
-
--> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
-
 -> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
-
 -> finalizeAllDiangosisRevisions (taskManipulationHandler) löschen (diangosis filanized wird nicht mehr gebraucht)
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 
+
 -> versehendlich ausgeführte benachrichtigungen, markieren
+
+-> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
 
 -> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
 
@@ -63,6 +57,8 @@ Next Changes:
 Testen:
 -> Test piz range from 6-8
 -> Search for normal user (only patients in local database)
+-> Tabelle HistoSettings ob alle views richtig eingetragen sind
+-> HistoUser Patient und Physician ob daten richtig geupdated werden im backen (copie aus backend)
  
 Urgent Changes 
 TODO: Methoden in SampleServie in eine Transaction setzten (für loggin logstring per transaction)
@@ -89,6 +85,8 @@ TODO: Individelle Adressen beim drucken sollten aus personen gespeichert werden?
 TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
 TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
+TODO: Gruppendialog-Edit validate form
+TODO: Synchronizie organizations (nicht updaten durch klinik datenbank beachten)
 
 Graphic Changes
 -> Suchfelder als Solche Kennzeichnen (Lupensymbol) -> (in overlay dialogen, zb. Diagosen view)
@@ -102,6 +100,10 @@ Graphic Changes
 - = removed
 
 +v 1.1.1 ()
++++*: Neue-Färbung Dialog an neues Layout angepasst.
++++*: Eingangsbuch an neues Layout angepasst.
++++*: Organisations-Dialog an neues Layout angepasst.
+++++: Daten von Ärtzen können markiert werden, so dass sie nicht mehr automatisch mit der Klinik-Datenbank abgeglichen werden.
 +++*: Gruppe "Nicht freigeschaltet" in Dekativiert/Ausgeblendet umbenannt.
 ++++: Eigene Eingabemaske für Benutzer, Benutzername kann jetzt nachträglich verändert werden.
 ++++: Gruppe kann als deaktivierte Gruppe markiert werden, Benutzer dieser Gruppe sind gesperrt und werden in der Benutzerübersicht nicht angezeigt (Anzeige kann per Option aktivert werden).
@@ -120,7 +122,21 @@ update histogroup set name = 'Deaktiviert/Archiviert' where id = 1;
 /* add userDeactived field to histgroup*/
 Alter table histogroup  add userdeactivated boolean;
 update histogroup set userdeactivated = false;
-
+/* rename to histouser */
+ALTER TABLE log RENAME COLUMN useracc_id TO histouser_id;
+/* log length */
+alter table log ALTER COLUMN logstring TYPE text;
+/* setting startview of guest group*/
+update histosettings set startview = 'GUEST' where id = 7;
+/* enable autoupdate of persons */
+update person set autoupdate = true;
+/* setting true as default */
+ALTER TABLE person ALTER COLUMN autoupdate SET DEFAULT true;
+/* adding archvied column to organization*/
+alter table organization add archived boolean;
+update organization set archived = false;
+alter table organization_aud add archived boolean;
+update organization_aud set archived = false;
 
 +v 1.1.0 (30.12.2017)
 +++*: Benutzerinterface für normale Programmbenutzer fertiggestellt.

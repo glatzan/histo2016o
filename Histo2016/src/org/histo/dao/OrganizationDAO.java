@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 
 import org.apache.log4j.Logger;
@@ -13,6 +14,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
@@ -44,7 +46,7 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 			Organization databaseOrganization = getOrganizationByName(organizations.get(i).getName());
 			if (databaseOrganization == null) {
 				logger.debug("Organization " + organizations.get(i).getName() + " not found, creating!");
-				createOrganization(organizations.get(i));
+				saveOrUpdateOrganization(organizations.get(i));
 			} else {
 				logger.debug("Organization " + organizations.get(i).getName() + " found, replacing in linst!");
 				organizations.remove(i);
@@ -73,36 +75,66 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 		return null;
 	}
 
-	public List<Organization> getOrganizations() {
-		return getOrganizations(true, false);
+	/**
+	 * Returns a list of organizations, ordered by id asc, not initialized (person),
+	 * archived user depending.
+	 * 
+	 * @param archived
+	 * @return
+	 */
+	public List<Organization> getOrganizations(boolean archived) {
+		return getOrganizations(true, false, archived);
 	}
 
-	public List<Organization> getOrganizations(boolean orderById, boolean initialized) {
-		DetachedCriteria query = DetachedCriteria.forClass(Organization.class, "organization");
+	/**
+	 * Returns a list of organizations.
+	 * 
+	 * @param orderById
+	 * @param initialize
+	 * @param archived
+	 * @return
+	 */
+	public List<Organization> getOrganizations(boolean orderById, boolean initialize, boolean archived) {
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Organization> criteria = qb.createQuery(Organization.class);
+		Root<Organization> root = criteria.from(Organization.class);
+		criteria.select(root);
+
 		if (orderById)
-			query.addOrder(Order.asc("id"));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			criteria.orderBy(qb.asc(root.get("id")));
 
-		List<Organization> result = (List<Organization>) query.getExecutableCriteria(getSession()).list();
+		if (initialize)
+			root.fetch("person", JoinType.LEFT);
 
-		if (initialized && result != null)
-			result.stream().forEach(p -> initializeOrganization(p));
+		if (!archived)
+			criteria.where(qb.equal(root.get("archived"), false));
 
-		return result;
+		criteria.distinct(true);
+
+		return getSession().createQuery(criteria).getResultList();
 	}
 
 	public Organization createOrganization(String name, Contact contact) {
 		Organization newOrganization = new Organization(contact);
 		newOrganization.setName(name);
 
-		return createOrganization(newOrganization);
+		return saveOrUpdateOrganization(newOrganization);
 	}
 
-	public Organization createOrganization(Organization newOrganization) {
+	/**
+	 * Creates a new organization or updates an existing one
+	 * 
+	 * @param organization
+	 * @return
+	 */
+	public Organization saveOrUpdateOrganization(Organization organization) {
+		save(organization, organization.getId() == 0 ? "log.organization.save" : "log.organization.created",
+				new Object[] { organization.getName() });
 
-		save(newOrganization, "log.organization.created", new Object[] { newOrganization.getName() });
-
-		return newOrganization;
+		return organization;
 	}
 
 	public void addOrganization(Person person, Organization organization) {
@@ -122,6 +154,7 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 
 	public void removeOrganization(Person person, Organization organization) {
 		if (person.getOrganizsations().remove(organization)) {
+			organization.getPersons().remove(person);
 			logger.debug("Removing Organization from Patient");
 			save(person, "log.organization.remove", new Object[] { person.getFullName(), organization.getName() });
 		}

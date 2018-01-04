@@ -866,7 +866,7 @@ CREATE TABLE log (
     logstring character varying(255),
     "timestamp" bigint NOT NULL,
     patient_id bigint,
-    useracc_id bigint
+    histouser_id bigint
 );
 
 
@@ -2416,7 +2416,7 @@ ALTER TABLE ONLY histouser_aud
 --
 
 ALTER TABLE ONLY log
-    ADD CONSTRAINT fkcfkdnt9q8jyrhtf0k608p4r5u FOREIGN KEY (useracc_id) REFERENCES histouser(id);
+    ADD CONSTRAINT fkcfkdnt9q8jyrhtf0k608p4r5u FOREIGN KEY (histouser_id) REFERENCES histouser(id);
 
 
 --

@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskManipulationHandler;
-import org.histo.action.handler.TaskStatusHandler;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -30,11 +29,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateSlidesDialog extends AbstractDialog {
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private TaskStatusHandler taskStatusHandler;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -127,8 +121,6 @@ public class CreateSlidesDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
-
-		globalEditViewHandler.updateDataOfTask(true, false, true, true);
 	}
 
 	public boolean isStainingSelected() {

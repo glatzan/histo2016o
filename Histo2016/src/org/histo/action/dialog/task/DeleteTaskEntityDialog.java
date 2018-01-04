@@ -105,8 +105,6 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 				return;
 			}
 
-			globalEditViewHandler.updateDataOfTask(true, false, true, true);
-
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}

@@ -16,7 +16,7 @@
 
 			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
 
-				if (this.jq.hasClass("selectOverlayPanel"))
+				if (this.jq.hasClass("histoOverlayPanel"))
 					return;
 
 				return proxied.apply(this, arguments);
@@ -38,50 +38,54 @@
 			<!-- Left Column -->
 			<h:panelGrid columns="1" styleClass="newStyleListingTable">
 
-				<!-- material -->
 				<h:panelGrid columns="1" styleClass="newTableContainer">
+					
+					<!-- material -->
 					<c:forEach items="#{globalEditViewHandler.selectedTask.samples}"
 						var="sample" varStatus="loopCount">
 
-						<h:panelGrid columns="3" styleClass="newStyleListingTable"
-							columnClasses="column75px, ,">
+						<h:panelGrid columns="2" styleClass="newStyleListingTable"
+							columnClasses="column75px,">
 
 							<h:outputLabel
 								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
+								
+							<h:panelGroup>
+								<p:inputText value="#{sample.material}"
+									id="materialInput#{loopCount.index}"
+									disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+									tabindex="1" styleClass="customBackground"
+									onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
+									onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
+									style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
-							<p:inputText value="#{sample.material}"
-								id="materialInput#{loopCount.index}"
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								tabindex="1" styleClass="customBackground"
-								onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
-								onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
-								style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
+									<p:ajax event="change" execute="@this"
+										listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.material',sample.material)}" />
 
-								<p:ajax event="change" execute="@this"
-									listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.material',sample.material)}" />
+								</p:inputText>
 
-							</p:inputText>
+								<p:overlayPanel id="materialOverlayPanel#{loopCount.index}"
+									styleClass="histoOverlayPanel"
+									widgetVar="materialOverlayPanel#{loopCount.index}"
+									hideEffect="fade" style="width:500px" hideEvent="mousedown"
+									showEvent="none" onkeypress="return false;">
+									<p:dataTable value="#{globalEditViewHandler.materialList}"
+										var="preset"
+										styleClass="newStyleDataTable newStyleDataTableLongHead"
+										scrollable="true" scrollHeight="200" rowKey="#{preset.id}"
+										selection="#{sample.materialPreset}" selectionMode="single">
+										<p:column filterBy="#{preset.name}" filterMatchMode="contains">
+											<h:outputText value="#{preset.name}" />
+										</p:column>
 
-							<p:overlayPanel id="materialOverlayPanel#{loopCount.index}"
-								styleClass="defaultOverlayPanel selectOverlayPanel"
-								widgetVar="materialOverlayPanel#{loopCount.index}"
-								hideEffect="fade" style="width:500px" hideEvent="mousedown"
-								showEvent="none" onkeypress="return false;">
-								<p:dataTable value="#{globalEditViewHandler.materialList}"
-									var="preset" styleClass="newStyleDataTable" scrollable="true"
-									scrollHeight="200" rowKey="#{preset.id}"
-									selection="#{sample.materialPreset}" selectionMode="single">
-									<p:column filterBy="#{preset.name}" filterMatchMode="contains">
-										<h:outputText value="#{preset.name}" />
-									</p:column>
+										<p:ajax event="rowSelect"
+											update="contentForm:materialInput#{loopCount.index}"
+											listener="#{taskHandlerAction.changeMaterialOfSample(sample, sample.materialPreset)}"
+											oncomplete="PF('materialOverlayPanel#{loopCount.index}').hide();" />
+									</p:dataTable>
 
-									<p:ajax event="rowSelect"
-										update="contentForm:materialInput#{loopCount.index}"
-										listener="#{taskHandlerAction.changeMaterialOfSample(sample, sample.materialPreset)}"
-										oncomplete="PF('materialOverlayPanel#{loopCount.index}').hide();" />
-								</p:dataTable>
-
-							</p:overlayPanel>
+								</p:overlayPanel>
+							</h:panelGroup>
 						</h:panelGrid>
 					</c:forEach>
 				</h:panelGrid>
@@ -114,7 +118,7 @@
 							value="#{globalEditViewHandler.selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-							id="caseHistoryInput" style="width:90%" widgetVar="test123456"
+							id="caseHistoryInput" style="width:90%"
 							onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
 							onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
 							onkeypress="PF('caseHistoryOverlayPanel').hide();">
@@ -123,13 +127,14 @@
 						</p:inputTextarea>
 
 						<p:overlayPanel id="caseHistoryOverlayPanel"
-							styleClass="defaultOverlayPanel selectOverlayPanel"
+							styleClass="histoOverlayPanel"
 							widgetVar="caseHistoryOverlayPanel" hideEffect="fade"
 							style="width:500px" hideEvent="mousedown" showEvent="none"
 							onkeypress="return false;">
 							<p:dataTable value="#{globalEditViewHandler.caseHistoryList}"
-								var="item" styleClass="newStyleDataTable" scrollable="true"
-								scrollHeight="200" rowKey="#{item.id}"
+								var="item"
+								styleClass="newStyleDataTable newStyleDataTableLongHead"
+								scrollable="true" scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
 								selectionMode="single">
 								<p:column filterBy="#{item.value}" filterMatchMode="contains">
@@ -365,12 +370,12 @@
 						<p:overlayPanel
 							widgetVar="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
 							id="diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}"
-							styleClass="defaultOverlayPanel selectOverlayPanel"
-							hideEffect="fade" style="width:500px" hideEvent="mousedown"
-							showEvent="none">
+							styleClass="histoOverlayPanel" hideEffect="fade"
+							style="width:500px" hideEvent="mousedown" showEvent="none">
 							<p:dataTable value="#{globalEditViewHandler.diagnosisPresets}"
-								var="item" styleClass="newStyleDataTable" scrollable="true"
-								scrollHeight="200" rowKey="#{item.id}"
+								var="item"
+								styleClass="newStyleDataTable newStyleDataTableLongHead"
+								scrollable="true" scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosis.diagnosisPrototype}"
 								selectionMode="single">
 								<p:column filterBy="#{item.diagnosis}"

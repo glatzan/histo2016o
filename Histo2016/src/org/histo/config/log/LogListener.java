@@ -37,7 +37,7 @@ public class LogListener implements RevisionListener {
 			// setting user who has changed the object
 			if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof HistoUser) {
 				HistoUser user = (HistoUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-				revEntity.setUserAcc(user);
+				revEntity.setHistoUser(user);
 			}
 
 			// sets the log info if present, gets the info from the

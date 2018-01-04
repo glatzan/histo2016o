@@ -36,6 +36,7 @@ public class HistoGroup implements GrantedAuthority, HasID, ArchivAble {
 
 	private static final long serialVersionUID = 5926752130546123895L;
 
+	public static final long GROUP_DISABLED = 1;
 	public static final long GROUP_GUEST_ID = 2;
 	
 	@Id
@@ -82,7 +83,7 @@ public class HistoGroup implements GrantedAuthority, HasID, ArchivAble {
 		return authRole.name();
 	}
 
-	@Column(columnDefinition = "boolean default false")
+	@Column(columnDefinition = "boolean default true")
 	private boolean archived;
 
 	public HistoGroup() {

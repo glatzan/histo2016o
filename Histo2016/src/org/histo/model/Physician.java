@@ -126,31 +126,6 @@ public class Physician implements Serializable, ArchivAble, HasID {
 		this.person = person;
 	}
 
-	/**
-	 * Copies data from an other physician object into this object
-	 * 
-	 * @param dataToUpdate
-	 */
-	public void copyIntoObject(Physician dataToUpdate) {
-		// TOTO move to person
-		getPerson().setLastName(dataToUpdate.getPerson().getLastName());
-		getPerson().setFirstName(dataToUpdate.getPerson().getFirstName());
-		getPerson().getContact().setEmail(dataToUpdate.getPerson().getContact().getEmail());
-		getPerson().getContact().setPhone(dataToUpdate.getPerson().getContact().getPhone());
-		getPerson().getContact().setPager(dataToUpdate.getPerson().getContact().getPager());
-		getPerson().setTitle(dataToUpdate.getPerson().getTitle());
-
-		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
-		setEmployeeNumber(dataToUpdate.getEmployeeNumber());
-		setUid(dataToUpdate.getUid());
-		setClinicRole(dataToUpdate.getClinicRole());
-
-		// TODO real copy!!!!
-		getPerson().setOrganizsations(dataToUpdate.getPerson().getOrganizsations());
-		// TODO is this necessary ?
-		// setAssociatedRoles(dataToUpdate.getAssociatedRoles());
-	}
-
 	public Set<ContactRole> getAssociatedRoles() {
 		if (associatedRoles == null)
 			associatedRoles = new HashSet<ContactRole>();

@@ -171,7 +171,8 @@ public class MenuGenerator {
 
 				// Add to stay in staining phase
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.staining.stayInPhase.enter"));
-				item.setCommand("#{taskHandlerAction.startStainingPhase(globalEditViewHandler.selectedTask)}");
+				item.setOnclick(
+						"$('#headerForm\\\\:stainingPhaseEnter').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-image");
 				item.setRendered(!(task.getTaskStatus().isStainingNeeded() || task.getTaskStatus().isReStainingNeeded()
 						|| task.getTaskStatus().isStayInStainingList()) && task.getTaskStatus().isEditable());

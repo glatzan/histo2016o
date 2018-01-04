@@ -11,6 +11,8 @@
 		<h:outputLabel value="#{msg['dialog.settings.person.list.headline']}" />
 	</p:outputPanel>
 
+	<h:outputScript library="scripts" name="selectCheckboxMenuTop.js" />
+
 	<p:outputPanel styleClass="bodyPannelFull">
 
 		<p:dataTable var="physician" id="physician" style="width:100%;"
@@ -69,27 +71,39 @@
 				<!-- Edit -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.edit']}"
-					actionListener="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(physician)}"
 					partialSubmit="true" process="@this">
 					<i class="fa fa-fw fa-cog" />
+
+					<f:actionListener
+						binding="#{dialogHandlerAction.physicianEditDialog.initAndPrepareBean(physician)}" />
 					<p:ajax event="dialogReturn"
 						listener="#{settingsDialogHandler.physicianSettingsTab.updateData()}"
 						update="@form" />
 				</p:commandLink>
 
 				<!-- refresh -->
-				<p:commandLink styleClass="noUnderlineAtLink" title="Update"
-					actionListener="#{physicianService.updatePhysicianDataFromLdap(physician)}"
-					update="@form" partialSubmit="true" process="@this">
+				<p:commandLink styleClass="noUnderlineAtLink"
+					title="#{msg['dialog.settings.person.list.options.update']}"
+					disabled="#{!physician.person.autoUpdate}" update="@form"
+					partialSubmit="true" process="@this">
 					<i class="fa fa-fw fa-undo " />
+
+					<f:actionListener
+						binding="#{settingsDialogHandler.physicianSettingsTab.updateDataFromLdap(physician)}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.physicianSettingsTab.updateData()}" />
 				</p:commandLink>
 
 				<!-- archive -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{physician.archived ? msg['dialog.settings.person.list.options.archive.undo'] :  msg['dialog.settings.person.list.options.archive']}"
-					actionListener="#{settingsDialogHandler.physicianSettingsTab.archivePhysician(physician, !physician.archived)}"
 					update="@form" partialSubmit="true" process="@this">
 					<i class="fa fa-fw #{physician.archived ? 'fa-user' : 'fa-times' }" />
+
+					<f:actionListener
+						binding="#{settingsDialogHandler.physicianSettingsTab.archivePhysician(physician, !physician.archived)}" />
+					<f:actionListener
+						binding="#{settingsDialogHandler.physicianSettingsTab.updateData()}" />
 				</p:commandLink>
 			</p:column>
 		</p:dataTable>
@@ -102,7 +116,7 @@
 			<h:panelGrid columns="3" styleClass="newTableContainer left">
 				<!-- archived -->
 				<p:selectBooleanCheckbox styleClass="smallCheckbox"
-					value="#{settingsDialogHandler.physicianSettingsTab.showArchivedPhysicians}">
+					value="#{settingsDialogHandler.physicianSettingsTab.showArchived}">
 					<p:ajax
 						listener="#{settingsDialogHandler.physicianSettingsTab.updateData()}"
 						partialSubmit="true" process="@this" update="@form" />
@@ -115,7 +129,6 @@
 				<h:panelGroup style="margin-left:20px; ">
 					<p:selectCheckboxMenu styleClass="customSelectCheckboxMenu"
 						id="roleSelect"
-						panelStyleClass="customSelectCheckboxMenuContactDialogPannel"
 						label="#{msg['dialog.settings.person.list.show.roles']}"
 						value="#{settingsDialogHandler.physicianSettingsTab.showPhysicianRoles}"
 						onHide="executeOnOnhide();">
@@ -134,7 +147,7 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
-				<p:commandButton value="#{msg['dialog.settings.user.button.add']}"
+				<p:commandButton value="#{msg['dialog.settings.person.list.button.new']}"
 					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
 					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean(true)}">
 					<p:ajax event="dialogReturn"
