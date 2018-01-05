@@ -23,11 +23,14 @@
 	"defaultDocuments": {
 		"diagnosisApprovedDocument": 10,
 		"taskCreationDocument": 2,
-		"notificationDefaultEmailDocument" : 2,
-		"notificationDefaultFaxDocument" : 2,
-		"notificationDefaultLetterDocument" : 2,
-		"notificationDefaultPrintDocument" : 2,
+		"notificationDefaultEmailDocument" : 10,
+		"notificationDefaultEmail": 2,
+		"notificationDefaultFaxDocument" : 10,
+		"notificationDefaultLetterDocument" : 10,
+		"notificationDefaultPrintDocument" : 11,
 		"notificationSendReport": 100
+		
+		
 	},
 	"labelPrinters": [
 		{

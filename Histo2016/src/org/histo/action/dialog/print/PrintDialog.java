@@ -33,8 +33,8 @@ import org.histo.template.documents.TemplateDiagnosisReport;
 import org.histo.template.documents.TemplateUReport;
 import org.histo.ui.ContactContainer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.PDFGenerator;
 import org.histo.util.StreamUtils;
+import org.histo.util.pdf.PDFGenerator;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -183,9 +183,9 @@ public class PrintDialog extends AbstractDialog {
 		setSavePDF(true);
 
 		setSingleAddressSelectMode(false);
-		
+
 		setAutoRefresh(false);
-		
+
 		// rendering the template
 		onChangePrintTemplate(true);
 	}
@@ -225,7 +225,7 @@ public class PrintDialog extends AbstractDialog {
 		setSingleAddressSelectMode(false);
 
 		setAutoRefresh(true);
-		
+
 		onChangePrintTemplate();
 	}
 
@@ -254,9 +254,9 @@ public class PrintDialog extends AbstractDialog {
 		setFaxMode(false);
 
 		setSingleAddressSelectMode(false);
-		
+
 		setAutoRefresh(true);
-		
+
 		// rendering the template
 		onChangePrintTemplate();
 	}
@@ -435,21 +435,22 @@ public class PrintDialog extends AbstractDialog {
 
 	private PDFContainer generatePDFFromTemplate() {
 		PDFContainer result;
+		PDFGenerator generator = new PDFGenerator();
 		switch (getSelectedTemplate().getDocumentType()) {
 		case U_REPORT:
 		case U_REPORT_EMTY:
 			((TemplateUReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask());
-			result = getSelectedTemplate().generatePDF(new PDFGenerator());
+			result = generator.getPDF(getSelectedTemplate());
 			break;
 		case DIAGNOSIS_REPORT:
 			((TemplateDiagnosisReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask(),
 					getRenderedContact() != null ? getRenderedContact().getCustomAddress() : null);
-			result = getSelectedTemplate().generatePDF(new PDFGenerator());
+			result = generator.getPDF(getSelectedTemplate());
 			break;
 		case COUNCIL_REQUEST:
 			((TemplateCouncil) getSelectedTemplate()).initData(getTask().getPatient(), getTask(), getSelectedCouncil(),
 					getRenderedContact() != null ? getRenderedContact().getCustomAddress() : null);
-			result = getSelectedTemplate().generatePDF(new PDFGenerator());
+			result = generator.getPDF(getSelectedTemplate());
 			break;
 		default:
 			// always render the pdf with the fist associatedContact chosen

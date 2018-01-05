@@ -1,4 +1,4 @@
-package org.histo.util;
+package org.histo.util.pdf;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,8 +16,8 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.template.DocumentTemplate;
+import org.histo.util.TimeUtil;
 import org.histo.util.interfaces.FileHandlerUtil;
-import org.histo.util.interfaces.LazyPDFReturnHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -60,17 +60,23 @@ public class PDFGenerator {
 	private JLRConverter converter;
 	private DocumentTemplate printTemplate;
 
-	public PDFGenerator() {
-		this(null);
+	public PDFContainer getPDF(DocumentTemplate template) {
+		this.printTemplate = template;
+		
+		openNewPDf(template);
+		template.fillTemplate(this);
+		return generatePDF();
 	}
-
-	public PDFGenerator(DocumentTemplate printTemplate) {
-		if (printTemplate != null)
-			openNewPDf(printTemplate);
+	
+	public String getPDFNoneBlocking(DocumentTemplate template, LazyPDFReturnHandler returnHandler) {
+		this.printTemplate = template;
+		
+		openNewPDf(template);
+		template.fillTemplate(this);
+		return generatePDFNonBlocking(returnHandler);
 	}
 
 	public JLRConverter openNewPDf(DocumentTemplate printTemplate) {
-		this.printTemplate = printTemplate;
 
 		workingDirectory = new File(
 				FileHandlerUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
@@ -92,7 +98,7 @@ public class PDFGenerator {
 	 * 
 	 * @return
 	 */
-	public PDFContainer generatePDF() {
+	private PDFContainer generatePDF() {
 		long test1 = System.currentTimeMillis();
 
 		try {
@@ -131,7 +137,7 @@ public class PDFGenerator {
 	 * 
 	 * @param returnHandler
 	 */
-	public String generatePDFNonBlocking(LazyPDFReturnHandler returnHandler) {
+	private String generatePDFNonBlocking(LazyPDFReturnHandler returnHandler) {
 		
 		String uuid = UUID.randomUUID().toString();
 		
@@ -161,7 +167,7 @@ public class PDFGenerator {
 		return bFile;
 	}
 
-	public static final PDFContainer mergePdfs(List<PDFContainer> containers, String name, DocumentType type) {
+	public static PDFContainer mergePdfs(List<PDFContainer> containers, String name, DocumentType type) {
 		Document document = new Document();
 		ByteOutputStream out = new ByteOutputStream();
 
@@ -191,15 +197,15 @@ public class PDFGenerator {
 		return new PDFContainer(type, name, out.getBytes());
 	}
 
-	public static final List<PDFContainer> getPDFsofType(List<PDFContainer> containers, DocumentType type) {
+	public static List<PDFContainer> getPDFsofType(List<PDFContainer> containers, DocumentType type) {
 		return containers.stream().filter(p -> p.getType().equals(type)).collect(Collectors.toList());
 	}
 
-	public static final PDFContainer getLatestPDFofType(List<PDFContainer> containers, DocumentType type) {
+	public static PDFContainer getLatestPDFofType(List<PDFContainer> containers, DocumentType type) {
 		return getLatestPDFofType(getPDFsofType(containers, type));
 	}
 
-	public static final PDFContainer getLatestPDFofType(List<PDFContainer> containers) {
+	public static PDFContainer getLatestPDFofType(List<PDFContainer> containers) {
 		if (containers.size() == 0)
 			return null;
 
@@ -213,7 +219,7 @@ public class PDFGenerator {
 		return latest;
 	}
 
-	public static final List<PDFContainer> sortPDFListByDate(List<PDFContainer> list, boolean asc) {
+	public static List<PDFContainer> sortPDFListByDate(List<PDFContainer> list, boolean asc) {
 
 		// sorting
 		Collections.sort(list, (PDFContainer p1, PDFContainer p2) -> {

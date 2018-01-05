@@ -7,50 +7,50 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;" styleClass="contentPannel">
-			<f:facet name="header">
-				<h:outputLabel
-					value="#{msg['dialog.notification.tab.letter.headline']}"></h:outputLabel>
-			</f:facet>
-		</p:panel>
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.notification.tab.letter.headline']}" />
+	</p:outputPanel>
 
 
-		<p:panelGrid columns="2"
-			styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
-			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
+	<p:outputPanel styleClass="bodyPannel">
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			style="width:100%" columnClasses="columnLabelContainer150, ">
 
 			<!-- Use letter -->
 			<h:outputLabel value="#{msg['dialog.notification.tab.letter.use']}" />
-			<p:selectBooleanCheckbox value="#{tab.useTab}"
-				title="#{msg['dialog.notification.tab.letter.use.text']}"
-				styleClass="smallCheckbox">
+			<p:selectBooleanCheckbox
+				value="#{dialogHandlerAction.notificationDialog.letterTab.useTab}"
+				title="#{msg['dialog.notification.tab.letter.use.text']}">
 				<p:ajax event="change" partialSubmit="true" process="@this"
-					update=":adminForm:tabview:letterTab" />
+					update="@form" />
 			</p:selectBooleanCheckbox>
 
 			<!-- print -->
 			<h:outputLabel value="#{msg['dialog.notification.tab.letter.print']}" />
-			<p:selectBooleanCheckbox value="#{tab.print}"
-				title="#{msg['dialog.notification.tab.letter.print.text']}"
-				styleClass="smallCheckbox">
+			<p:selectBooleanCheckbox
+				value="#{dialogHandlerAction.notificationDialog.letterTab.print}"
+				title="#{msg['dialog.notification.tab.letter.print.text']}">
 				<p:ajax event="change" partialSubmit="true" process="@this"
-					update=":adminForm:tabview:letterTab" />
+					update="@form" />
 			</p:selectBooleanCheckbox>
 
 
 			<!-- pdf template -->
 			<h:outputLabel
 				value="#{msg['dialog.notification.tab.letter.pdfTemplate']}" />
-			<p:selectOneMenu value="#{tab.selectedTemplate}"
-				converter="#{tab.templateTransformer}" disabled="#{!tab.useTab}"
+			<p:selectOneMenu
+				value="#{dialogHandlerAction.notificationDialog.letterTab.selectedTemplate}"
+				converter="#{dialogHandlerAction.notificationDialog.letterTab.templateTransformer}"
+				disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
 				styleClass="customSerachSelectMenu">
 
 				<f:selectItem itemValue="#{null}"
 					itemLabel="#{msg['dialog.notification.tab.letter.pdfTemplate.none']}"></f:selectItem>
 
-				<f:selectItems value="#{tab.templateList}" var="template"
-					itemLabel="#{template.name}" itemValue="#{template}" />
+				<f:selectItems
+					value="#{dialogHandlerAction.notificationDialog.letterTab.templateList}"
+					var="template" itemLabel="#{template.name}" itemValue="#{template}" />
 
 				<p:ajax update="@this" event="change" process="@this"
 					partialSubmit="true" />
@@ -62,7 +62,7 @@
 			<p:dataTable var="holder" scrollable="true" scrollHeight="150"
 				style="width:96%"
 				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-				value="#{tab.holders}">
+				value="#{dialogHandlerAction.notificationDialog.letterTab.holders}">
 
 				<!-- name of receiver -->
 				<p:column
@@ -84,16 +84,16 @@
 					<!-- add pdf, if pdf == null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
 						rendered="#{holder.pdf eq null and !holder.notification.failed}"
-						disabled="#{!tab.useTab}"
+						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()"
 						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, holder.contact)}">
 
-						<p:ajax event="dialogReturn" update=":adminForm:tabview:letterTab"
-							partialSubmit="true" process=":adminForm:tabview:letterTab"
-							listener="#{tab.copySelectedPdf(holder)}" />
+						<p:ajax event="dialogReturn" update="@form" partialSubmit="true"
+							process="@form"
+							listener="#{dialogHandlerAction.notificationDialog.letterTab.copySelectedPdf(holder)}" />
 
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>
@@ -102,7 +102,8 @@
 					<p:commandLink styleClass="noUnderlineAtLink"
 						rendered="#{holder.pdf ne null and !holder.notification.failed}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.show']}"
-						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
+						execute="@this" partialSubmit="true"
+						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
@@ -113,73 +114,67 @@
 						style="margin-left: 10px;"
 						rendered="#{holder.pdf ne null and !holder.notification.failed}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.remove']}"
-						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
-						update=":adminForm:tabview:letterTab"
-						actionListener="#{holder.setPdf(null)}">
+						execute="@this" partialSubmit="true"
+						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
+						update="@form" actionListener="#{holder.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
 					</p:commandLink>
 
 					<!-- refresh failed notification, if = notification.failed -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.notification.failed}"
-						update=":adminForm:tabview:letterTab"
+						rendered="#{holder.notification.failed}" update="@form"
 						title="#{msg['dialog.notification.tab.letter.receiver.renew']}"
 						execute="@this" partialSubmit="true">
 
 						<i class="fa fa-fw fa-refresh" />
 
 						<f:actionListener
-							binding="#{tab.renewNotification(dialogHandlerAction.notificationDialog.task, holder)}" />
+							binding="#{dialogHandlerAction.notificationDialog.letterTab.renewNotification(dialogHandlerAction.notificationDialog.task, holder)}" />
 
-						<f:actionListener binding="#{tab.updateData()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.notificationDialog.letterTab.updateData()}" />
 					</p:commandLink>
 				</p:column>
 			</p:dataTable>
-		</p:panelGrid>
-	</div>
+		</h:panelGrid>
+	</p:outputPanel>
 
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1">
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
 				<!-- Contact -->
 				<p:commandButton
-					value="#{msg['dialog.notification.tab.letter.button.contact.select']}"
+					value="#{msg['dialog.notification.tab.mail.button.contact.select']}"
 					icon="fa fa-fw fa-cog"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
-					<p:ajax event="dialogReturn" update=":adminForm:tabview:letterTab"
-						partialSubmit="true" process=":adminForm:tabview:letterTab"
-						listener="#{tab.updateData()}" />
+					<p:ajax event="dialogReturn" update="@form" partialSubmit="true"
+						process="@form"
+						listener="#{dialogHandlerAction.notificationDialog.letterTab.updateData()}" />
 				</p:commandButton>
-
 			</h:panelGrid>
 
-			<h:panelGrid columns="3" style="float:right;">
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
 				<!-- previouse -->
 				<p:commandButton value="#{msg['general.back']}"
 					icon="fa fa-fw fa-arrow-left"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.notificationDialog.previousStep()}"
-					partialSubmit="true" process=":adminForm:tabview:letterTab"
-					update="@form" />
+					partialSubmit="true" process="@form" update="@form" />
 
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
-					partialSubmit="true" process=":adminForm:tabview:letterTab"
-					update="@form" />
+					partialSubmit="true" process="@form" update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
 					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 </ui:composition>

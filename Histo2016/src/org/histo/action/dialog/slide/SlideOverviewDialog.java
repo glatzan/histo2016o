@@ -11,6 +11,7 @@ import org.histo.model.patient.Task;
 import org.histo.ui.StainingTableChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.security.authentication.dao.SystemWideSaltSource;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -52,14 +53,15 @@ public class SlideOverviewDialog extends AbstractDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
-		updateData();
-
 		super.initBean(task, Dialog.SLIDE_OVERVIEW);
 
+		updateData();
+		
 		return true;
 	}
 
 	public void updateData() {
-		setFlatTaskEntityList(StainingTableChooser.factory(task, false));
+		System.out.println(getTask());
+		setFlatTaskEntityList(StainingTableChooser.factory(getTask(), false));
 	}
 }

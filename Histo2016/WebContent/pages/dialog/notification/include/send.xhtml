@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.notification.tab.send.headline']}" />
+	</p:outputPanel>
+
+	<p:outputPanel styleClass="	bodyPannelScroll"
+		style="height: calc(100% - 200px)">
+		<h:panelGrid columns="1" styleClass="newStyleListingTable"
+			style="width:100%" columnClasses="columnLabelContainer150, ">
+			<!-- **************** Mails **************** -->
+			<h:panelGroup>
+				<h:outputText value="#{msg['dialog.notification.tab.send.email']}: "
+					styleClass="bigFont" />
+
+				<!-- enable -->
+				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
+					styleClass="icon-green bigFont"
+					rendered="#{dialogHandlerAction.notificationDialog.mailTab.useTab}" />
+
+				<!-- disable -->
+				<h:outputText
+					value="#{msg['dialog.notification.tab.send.inacitve']}"
+					rendered="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}" />
+
+				<!-- failed holders, not renewed warning -->
+				<ui:fragment
+					rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedMailHolders}">
+					<i class="fa fa-fw fa-exclamation-circle icon-red"
+						title="#{msg['dialog.notification.tab.send.failed']}" />
+				</ui:fragment>
+			</h:panelGroup>
+
+			<p:dataTable var="emailHolder"
+				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.currentMailHolders}">
+
+				<!-- name and email -->
+				<p:column>
+					<h:outputLabel
+						value="#{emailHolder.contact.person.fullName} (#{emailHolder.contactAddress})"></h:outputLabel>
+
+					<!-- Warning -->
+					<ui:fragment rendered="#{emailHolder.warning}">
+						<i class="fa fa-fw fa-exclamation-circle icon-orange"
+							title="#{emailHolder.warningInfo}" />
+					</ui:fragment>
+				</p:column>
+
+				<!-- performed -->
+				<p:column style="width: 5%">
+					<ui:fragment
+						rendered="#{emailHolder.notification.performed and !emailHolder.notification.failed}">
+						<i class="fa fa-fw fa-check-circle icon-green" />
+					</ui:fragment>
+
+					<ui:fragment
+						rendered="#{emailHolder.notification.performed and emailHolder.notification.failed}">
+						<i class="fa fa-fw fa-times-circle icon-red"
+							title="#{emailHolder.notification.commentary}" />
+					</ui:fragment>
+				</p:column>
+			</p:dataTable>
+
+			<!-- **************** Fax **************** -->
+			<h:panelGroup>
+				<h:outputText value="#{msg['dialog.notification.tab.send.fax']}: "
+					styleClass="bigFont" />
+
+				<!-- enable -->
+				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
+					styleClass="icon-green bigFont"
+					rendered="#{dialogHandlerAction.notificationDialog.faxTab.useTab}" />
+				<!-- disable -->
+				<h:outputText
+					value="#{msg['dialog.notification.tab.send.inacitve']}"
+					rendered="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}" />
+
+				<!-- failed holders, not renewed warning -->
+				<ui:fragment
+					rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedFaxHolders}">
+					<i class="fa fa-fw fa-exclamation-circle icon-red"
+						title="#{msg['dialog.notification.tab.send.failed']}" />
+				</ui:fragment>
+			</h:panelGroup>
+
+			<p:dataTable var="faxHolder"
+				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.currentFaxHolders}">
+
+				<!-- name and fax -->
+				<p:column>
+					<h:outputLabel
+						value="#{faxHolder.contact.person.fullName} (#{faxHolder.contactAddress})"></h:outputLabel>
+
+					<!-- Warning -->
+					<ui:fragment rendered="#{faxHolder.warning}">
+						<i class="fa fa-fw fa-exclamation-circle icon-orange"
+							title="#{faxHolder.warningInfo}" />
+					</ui:fragment>
+
+				</p:column>
+
+				<!-- performed -->
+				<p:column style="width: 5%">
+					<ui:fragment
+						rendered="#{faxHolder.notification.performed and !faxHolder.notification.failed}">
+						<i class="fa fa-fw fa-check-circle icon-green" />
+					</ui:fragment>
+
+					<ui:fragment
+						rendered="#{faxHolder.notification.performed and faxHolder.notification.failed}">
+						<i class="fa fa-fw fa-times-circle icon-red"
+							title="#{faxHolder.notification.commentary}" />
+					</ui:fragment>
+				</p:column>
+
+			</p:dataTable>
+
+			<!-- **************** Letter **************** -->
+			<h:panelGroup>
+				<h:outputText
+					value="#{msg['dialog.notification.tab.send.letter']}: "
+					styleClass="bigFont" />
+
+				<!-- enable -->
+				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
+					styleClass="icon-green bigFont"
+					rendered="#{dialogHandlerAction.notificationDialog.letterTab.useTab}" />
+				<!-- disable -->
+				<h:outputText
+					value="#{msg['dialog.notification.tab.send.inacitve']}"
+					rendered="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}" />
+
+				<ui:fragment
+					rendered="#{dialogHandlerAction.notificationDialog.sendTab.failedLetterHolders}">
+					<i class="fa fa-fw fa-exclamation-circle icon-red"
+						title="#{msg['dialog.notification.tab.send.failed']}" />
+				</ui:fragment>
+			</h:panelGroup>
+
+			<p:dataTable var="letterHolder"
+				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.currentLetterHolders}">
+
+				<!-- name -->
+				<p:column>
+					<h:outputLabel value="#{letterHolder.contact.person.fullName}" />
+
+					<!-- Warning -->
+					<ui:fragment rendered="#{letterHolder.warning}">
+						<i class="fa fa-fw fa-exclamation-circle icon-orange"
+							title="#{letterHolder.warningInfo}" />
+					</ui:fragment>
+
+				</p:column>
+
+				<!-- performed -->
+				<p:column style="width: 5%">
+					<ui:fragment
+						rendered="#{letterHolder.notification.performed and !letterHolder.notification.failed}">
+						<i class="fa fa-fw fa-check-circle icon-green" />
+					</ui:fragment>
+
+					<ui:fragment
+						rendered="#{letterHolder.notification.performed and letterHolder.notification.failed}">
+						<i class="fa fa-fw fa-times-circle icon-red"
+							title="#{letterHolder.notification.commentary}" />
+					</ui:fragment>
+				</p:column>
+			</p:dataTable>
+
+			<!-- **************** Phone **************** -->
+			<h:panelGroup>
+				<h:outputText value="#{msg['dialog.notification.tab.send.phone']}: "
+					styleClass="bigFont" />
+
+				<!-- enable -->
+				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
+					styleClass="icon-green bold-text"
+					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.useTab}" />
+				<!-- disable -->
+				<h:outputText
+					value="#{msg['dialog.notification.tab.send.inacitve']}"
+					rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.useTab}" />
+
+			</h:panelGroup>
+
+			<p:dataTable var="phoneHolder"
+				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
+				value="#{dialogHandlerAction.notificationDialog.phoneTab.holders}">
+				<p:column>
+					<!-- name -->
+					<h:outputLabel
+						value="#{phoneHolder.contact.person.fullName} (#{phoneHolder.contactAddress})" />
+
+					<!-- Warning -->
+					<ui:fragment rendered="#{phoneHolder.warning}">
+						<i class="fa fa-fw fa-exclamation-circle icon-orange"
+							title="#{phoneHolder.warningInfo}" />
+					</ui:fragment>
+				</p:column>
+			</p:dataTable>
+		</h:panelGrid>
+
+		<h:panelGrid columns="4" styleClass="newStyleListingTable"
+			style="width:auto;margin-bottom:20px">
+			<h:outputText value="Zusätliche Ausdrucke" />
+
+			<p:selectOneMenu value="#{tab.selectedTemplate}"
+				style="margin-left:10px;" converter="#{tab.templateTransformer}"
+				styleClass="customSerachSelectMenu">
+
+				<f:selectItem itemValue="#{null}"
+					itemLabel="#{msg['dialog.notification.tab.mail.pdfTemplate.none']}"></f:selectItem>
+
+				<f:selectItems value="#{tab.templateList}" var="template"
+					itemLabel="#{template.name}" itemValue="#{template}" />
+
+				<p:ajax update="@this" event="change" process="@this"
+					partialSubmit="true" />
+			</p:selectOneMenu>
+
+			<!-- print -->
+			<h:outputLabel value="#{msg['dialog.notification.tab.send.count']} "
+				style="margin-left:10px"
+				title="#{msg['dialog.notification.tab.send.count']}" />
+
+			<p:spinner style="margin-left:10px;"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.printCount}"
+				styleClass="miniSpinner" min="0" max="9"></p:spinner>
+
+		</h:panelGrid>
+
+	</p:outputPanel>
+
+	<p:outputPanel>
+		<p:panelGrid columns="1" styleClass="defaultListingTableContainer"
+			style="width:100%;">
+
+			<h:outputText
+				value="#{dialogHandlerAction.notificationDialog.sendTab.progressText} (#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%)"
+				id="progressLable"
+				style="border: 1px solid; width:90%;display:block; text-align:center; background: linear-gradient(90deg, #fcf1b8 #{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%, transparent 0%);margin: 0px auto;" />
+
+			<p:poll autoStart="false" widgetVar="ajaxProgressPoll"
+				stop="#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
+				partialSubmit="true"
+				update="@form"
+				interval="1" oncprocess="@this" />
+		</p:panelGrid>
+
+	</p:outputPanel>
+
+	<div class="buttonContainer">
+		<h:panelGrid columns="2" style="width:100%"
+			styleClass="newTableContainer">
+
+			<h:panelGrid columns="2" styleClass="newTableContainer left">
+				<!-- print -->
+				<h:outputLabel value="#{msg['dialog.notification.tab.send.print']} "
+					title="#{msg['dialog.notification.tab.send.print.text']}" />
+
+				<p:selectOneMenu styleClass="customSerachSelectMenu" id="printerfax"
+					title="#{msg['dialog.print.selectPrinter']}"
+					panelStyleClass="customSerachSelectMenuPanel"
+					converter="#{globalSettings.printerListTransformer}"
+					value="#{userHandlerAction.selectedPrinter}" filter="true"
+					filterMatchMode="contains" style="margin-left:5px;">
+
+					<f:selectItems value="#{globalSettings.printerList}" var="printer"
+						itemLabel="#{printer.name}" itemValue="#{printer}" />
+
+					<p:ajax event="change" process="@form" partialSubmit="true"
+						update="@form"></p:ajax>
+				</p:selectOneMenu>
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
+				<p:commandButton
+					value="#{msg['dialog.notification.tab.send.perform']}"
+					icon="fa fa-fw fa-mail-forward"
+					title="#{msg['dialog.notification.tab.send.perform.text']}"
+					rendered="#{!dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
+					onstart="PF('blockUIWidget').block()"
+					onclick="performeNotificationCommand();PF('startNotificationButton').disable();PF('ajaxProgressPoll').start();"
+					styleClass="smallButton buttonRighMarginInList"
+					widgetVar="startNotificationButton" />
+				<h:panelGroup>
+					<!-- close -->
+					<p:commandButton value="#{msg['general.close']}"
+						styleClass="smallButton buttonRighMarginInList"
+						icon="fa fa-times-circle"
+						actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
+
+					<p:remoteCommand async="true" name="performeNotificationCommand"
+						actionListener="#{dialogHandlerAction.notificationDialog.sendTab.performeNotification()}"></p:remoteCommand>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:panelGrid>
+	</div>
+
+
+</ui:composition>

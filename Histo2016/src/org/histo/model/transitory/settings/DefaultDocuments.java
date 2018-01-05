@@ -23,6 +23,12 @@ public class DefaultDocuments {
 	private long notificationDefaultEmailDocument;
 
 	/**
+	 * Default Email template which is used to notify physicians if task was
+	 * completed
+	 */
+	private long notificationDefaultEmail;
+
+	/**
 	 * Default document for fax notification
 	 */
 	private long notificationDefaultFaxDocument;

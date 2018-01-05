@@ -9,12 +9,12 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.notification.head']}">
+			value="#{msg['dialog.notification.headline']}">
 		</h:outputFormat></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-<h:body styleClass="settingsDialogLayout">
+<h:body styleClass="tabDialog">
 	<h:form id="adminForm">
 
 		<script type="text/javascript">
@@ -24,50 +24,47 @@
 		</script>
 
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:panelGroup>
 					<!-- notification -->
-					<h:outputLabel value="#{msg['dialog.notification.head']}"
+					<h:outputLabel value="#{msg['dialog.notification.headline']}"
 						rendered="#{!dialogHandlerAction.notificationDialog.sendTab.reperformSend}" />
 					<!-- reperform notification -->
-					<h:outputLabel value="#{msg['dialog.notification.head.reperform']}"
+					<h:outputLabel
+						value="#{msg['dialog.notification.headline.reperform']}"
 						rendered="#{dialogHandlerAction.notificationDialog.sendTab.reperformSend}" />
 				</h:panelGroup>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
-					styleClass="noUnderlineAtLink"
-					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}">
-					<i class="fa fa-fw fa-times" />
+					immediate="true" styleClass="noUnderlineAtLink">
+					<f:actionListener
+						binding="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
+					<i class="fa fa-fw fa-times icon-grey" />
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
 
-		<p:panel styleClass="settingsPannel">
-			<p:tabView orientation="left" id="tabview" onTabChange="changeTab()"
-				widgetVar="tabview"
-				activeIndex="#{dialogHandlerAction.notificationDialog.activeIndex}"
-				styleClass="settingsTabView">
-
-				<p:ajax event="tabChange"
-					listener="#{dialogHandlerAction.notificationDialog.onTabChange}"
-					update="@form" />
-
+		<h:panelGrid columns="2" styleClass="newTableContainer contentTable"
+			columnClasses="column200px columnTop,columnTop">
+			<p:outputPanel id="navigationTable" styleClass="navigationTable">
 				<c:forEach items="#{dialogHandlerAction.notificationDialog.tabs}"
 					var="tab" varStatus="loop">
-
-					<p:tab title="#{msg[tab.name]}" disabled="#{tab.disabled}">
-						<h:panelGroup id="#{tab.viewID}">
-							<ui:include src="#{tab.getCenterView()}" />
-						</h:panelGroup>
-					</p:tab>
-
+					<p:commandButton value="#{msg[tab.name]}"
+						disabled="#{tab.disabled}"
+						styleClass="#{tab eq dialogHandlerAction.notificationDialog.selectedTab ? 'selectedButton' : ''} #{tab.isParent() ? 'childButton' : ''}"
+						actionListener="#{dialogHandlerAction.notificationDialog.onTabChange(tab)}"
+						update="navigationTable dialogContent" />
 				</c:forEach>
+			</p:outputPanel>
+			<p:outputPanel id="dialogContent" styleClass="dialogContent">
+				<ui:include
+					src="#{dialogHandlerAction.notificationDialog.selectedTab.centerInclude}" />
+			</p:outputPanel>
+		</h:panelGrid>
 
-			</p:tabView>
-			<p:remoteCommand name="changeTab" process="@form" />
-			<p:remoteCommand name="updateContent" update="@form"></p:remoteCommand>
-		</p:panel>
+		<p:remoteCommand name="changeTab" process="@form" />
+		<p:remoteCommand name="updateContent" update="@form"></p:remoteCommand>
 		<ui:include src="../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>

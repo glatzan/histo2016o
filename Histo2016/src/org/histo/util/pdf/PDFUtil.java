@@ -1,4 +1,4 @@
-package org.histo.util;
+package org.histo.util.pdf;
 
 import java.util.List;
 import java.util.stream.Collectors;

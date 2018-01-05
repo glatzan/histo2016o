@@ -1,4 +1,4 @@
-package org.histo.util.interfaces;
+package org.histo.util.pdf;
 
 import org.histo.model.PDFContainer;
 

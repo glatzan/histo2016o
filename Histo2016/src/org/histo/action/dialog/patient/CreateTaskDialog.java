@@ -47,8 +47,8 @@ import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateUReport;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
-import org.histo.util.PDFGenerator;
 import org.histo.util.TimeUtil;
+import org.histo.util.pdf.PDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
@@ -391,7 +391,7 @@ public class CreateTaskDialog extends AbstractDialog {
 		// printing u report
 
 		((TemplateUReport) subSelect).initData(task.getPatient(), getTask());
-		PDFContainer newPdf = ((TemplateUReport) subSelect).generatePDF(new PDFGenerator());
+		PDFContainer newPdf = new PDFGenerator().getPDF(subSelect);
 
 		logger.debug("printing task page");
 		userHandlerAction.getSelectedPrinter().print(newPdf, subSelect.getAttributes());

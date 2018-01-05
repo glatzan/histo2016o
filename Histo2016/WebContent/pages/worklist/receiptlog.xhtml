@@ -130,7 +130,7 @@
 						showEvent="none">
 						<p:dataTable value="#{globalEditViewHandler.caseHistoryList}"
 							var="item"
-							styleClass="newStyleDataTable newStyleDataTableLongHead"
+							styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
 							scrollable="true" scrollHeight="200" rowKey="#{item.id}"
 							selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
 							selectionMode="single">
@@ -195,7 +195,7 @@
 								showEvent="none" onkeypress="return false;">
 								<p:dataTable value="#{globalEditViewHandler.materialList}"
 									var="preset"
-									styleClass="newStyleDataTable newStyleDataTableLongHead"
+									styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
 									scrollable="true" scrollHeight="200" rowKey="#{preset.id}"
 									selection="#{sample.materialPreset}" selectionMode="single">
 									<p:column filterBy="#{preset.name}" filterMatchMode="contains">
@@ -315,7 +315,7 @@
 			</h:panelGroup>
 
 			<!-- data -->
-			<p:dataTable var="stainingRow" styleClass="newStyleDataTable newStyleDataTableManualBackgroundColor"
+			<p:dataTable var="stainingRow" styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
 				value="#{receiptlogViewHandlerAction.stainingTableRows}"
 				rowIndexVar="index">
 

@@ -10,9 +10,9 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.util.HistoUtil;
-import org.histo.util.PDFGenerator;
 import org.histo.util.interfaces.FileHandlerUtil;
-import org.histo.util.interfaces.LazyPDFReturnHandler;
+import org.histo.util.pdf.LazyPDFReturnHandler;
+import org.histo.util.pdf.PDFGenerator;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,11 +32,11 @@ public class DocumentTemplate extends Template {
 	@Transient
 	private String file2Content;
 
-	public static final DocumentTemplate[] getTemplates(DocumentType... type) {
+	public static DocumentTemplate[] getTemplates(DocumentType... type) {
 		return getTemplates(loadTemplates(type), type);
 	}
 
-	public static final DocumentTemplate[] getTemplates(DocumentTemplate[] tempaltes, DocumentType... type) {
+	public static DocumentTemplate[] getTemplates(DocumentTemplate[] tempaltes, DocumentType... type) {
 		List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
 
 		logger.debug("Getting templates out of " + tempaltes.length);
@@ -56,11 +56,11 @@ public class DocumentTemplate extends Template {
 		return result.toArray(resultArr);
 	}
 
-	public static final DocumentTemplate getTemplateByID(long id) {
+	public static DocumentTemplate getTemplateByID(long id) {
 		return getTemplateByID(loadTemplates(), id);
 	}
 
-	public static final DocumentTemplate getTemplateByID(DocumentTemplate[] tempaltes, long id) {
+	public static DocumentTemplate getTemplateByID(DocumentTemplate[] tempaltes, long id) {
 
 		logger.debug("Getting templates out of " + tempaltes.length);
 
@@ -71,7 +71,7 @@ public class DocumentTemplate extends Template {
 
 		return null;
 	}
-	
+
 	public static DocumentTemplate[] loadTemplates(DocumentType... types) {
 
 		// TODO move to Database
@@ -107,11 +107,11 @@ public class DocumentTemplate extends Template {
 		}
 	}
 
-	public static final DocumentTemplate getDefaultTemplate(DocumentTemplate[] array) {
+	public static DocumentTemplate getDefaultTemplate(DocumentTemplate[] array) {
 		return getDefaultTemplate(array, null);
 	}
 
-	public static final DocumentTemplate getDefaultTemplate(DocumentTemplate[] array, DocumentType ofType) {
+	public static DocumentTemplate getDefaultTemplate(DocumentTemplate[] array, DocumentType ofType) {
 		if (array == null)
 			return null;
 
@@ -125,31 +125,20 @@ public class DocumentTemplate extends Template {
 		return null;
 	}
 
-	@Override
-	public void prepareTemplate() {
-		if (HistoUtil.isNotNullOrEmpty(getContent()))
-			setFileContent(FileHandlerUtil.getContentOfFile(getContent()));
+	// @Override
+	// public void prepareTemplate() {
+	// if (HistoUtil.isNotNullOrEmpty(getContent()))
+	// setFileContent(FileHandlerUtil.getContentOfFile(getContent()));
+	//
+	// if (HistoUtil.isNotNullOrEmpty(getContent2()))
+	// setFile2Content(FileHandlerUtil.getContentOfFile(getContent2()));
+	// }
+	//
 
-		if (HistoUtil.isNotNullOrEmpty(getContent2()))
-			setFile2Content(FileHandlerUtil.getContentOfFile(getContent2()));
-	}
-
-	public String generatePDFNoneBlocking(PDFGenerator generator, LazyPDFReturnHandler returnHandler) {
-		generator.openNewPDf(this);
-		fillTemplate(generator);
-		return generator.generatePDFNonBlocking(returnHandler);
-	}
-
-	public PDFContainer generatePDF(PDFGenerator generator) {
-		generator.openNewPDf(this);
-		fillTemplate(generator);
-		return generator.generatePDF();
-	}
-	
 	public void fillTemplate(PDFGenerator generator) {
 		
 	}
-
+	
 	@Transient
 	public DocumentType getDocumentType() {
 		return DocumentType.fromString(this.type);

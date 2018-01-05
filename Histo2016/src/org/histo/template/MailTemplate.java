@@ -64,6 +64,31 @@ public class MailTemplate extends Template {
 		return result;
 	}
 
+	public static List<MailTemplate> loadTemplates() {
+
+		// TODO move to Database
+		Type type = new TypeToken<List<MailTemplate>>() {
+		}.getType();
+
+		GsonBuilder gb = new GsonBuilder();
+		gb.registerTypeAdapter(type, new TemplateDeserializer<MailTemplate>());
+
+		Gson gson = gb.create();
+
+		ArrayList<MailTemplate> jsonArray = gson
+				.fromJson(FileHandlerUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
+
+		return jsonArray;
+	}
+
+	public static <T extends MailTemplate> T getTemplateByID(long id) {
+		return getTemplateByID(loadTemplates(), id);
+	}
+
+	public static <T extends MailTemplate> T getTemplateByID(List<MailTemplate> tempaltes, long id) {
+		return (T) tempaltes.stream().filter(p -> p.getId() == id).collect(StreamUtils.singletonCollector());
+	}
+
 	@Override
 	// TODO should be saved in database
 	public void prepareTemplate() {
@@ -73,7 +98,7 @@ public class MailTemplate extends Template {
 
 		if (arr.length != 2) {
 			subject = "Template not found";
-			body="";
+			body = "";
 			return;
 		}
 

@@ -7,34 +7,30 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;" styleClass="contentPannel">
-			<f:facet name="header">
-				<h:outputLabel
-					value="#{msg['dialog.notification.tab.phone.headline']}"></h:outputLabel>
-			</f:facet>
-		</p:panel>
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.notification.tab.phone.headline']}" />
+	</p:outputPanel>
 
 
-		<p:panelGrid columns="2"
-			styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
-			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
+	<p:outputPanel styleClass="bodyPannel">
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			style="width:100%" columnClasses="columnLabelContainer150, ">
 
 			<!-- Use phone-->
 			<h:outputLabel value="#{msg['dialog.notification.tab.phone.use']}" />
-			<p:selectBooleanCheckbox value="#{tab.useTab}"
-				title="#{msg['dialog.notification.tab.phone.use.text']}"
-				styleClass="smallCheckbox">
+			<p:selectBooleanCheckbox
+				value="#{dialogHandlerAction.notificationDialog.phoneTab.useTab}"
+				title="#{msg['dialog.notification.tab.phone.use.text']}">
 				<p:ajax event="change" partialSubmit="true" process="@this"
-					update=":adminForm:tabview:phoneTab" />
+					update="@form" />
 			</p:selectBooleanCheckbox>
 
 			<!-- pdf template -->
 			<h:outputLabel
 				value="#{msg['dialog.notification.tab.phone.receiver']}" />
-			<p:dataTable var="holder"
-				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-				value="#{tab.holders}">
+			<p:dataTable var="holder" styleClass="newStyleDataTable"
+				value="#{dialogHandlerAction.notificationDialog.phoneTab.holders}">
 
 				<!-- name of receiver -->
 				<p:column
@@ -47,51 +43,44 @@
 					headerText="#{msg['dialog.notification.tab.phone.receiver.number']}"
 					style="width:auto">
 					<p:inputText value="#{holder.contactAddress}"
-						disabled="#{!tab.useTab}" styleClass="smallInput"
-						style="width:98%" />
+						disabled="#{!dialogHandlerAction.notificationDialog.phoneTab.useTab}"
+						styleClass="smallInput" style="width:98%" />
 				</p:column>
 			</p:dataTable>
-		</p:panelGrid>
-	</div>
+		</h:panelGrid>
+	</p:outputPanel>
 
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1">
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
 				<!-- Contact -->
 				<p:commandButton
-					value="#{msg['dialog.notification.tab.phone.button.contact.select']}"
+					value="#{msg['dialog.notification.tab.mail.button.contact.select']}"
 					icon="fa fa-fw fa-cog"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
-					<p:ajax event="dialogReturn" update=":adminForm:tabview:phoneTab"
-						partialSubmit="true" process=":adminForm:tabview:phoneTab"
-						listener="#{tab.updateData()}" />
+					<p:ajax event="dialogReturn" update="@form" partialSubmit="true"
+						process="@form"
+						listener="#{dialogHandlerAction.notificationDialog.phoneTab.updateData()}" />
 				</p:commandButton>
-
 			</h:panelGrid>
 
-			<h:panelGrid columns="3" style="float:right;">
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
 				<!-- previouse -->
 				<p:commandButton value="#{msg['general.back']}"
 					icon="fa fa-fw fa-arrow-left"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.notificationDialog.previousStep()}"
-					partialSubmit="true" process=":adminForm:tabview:phoneTab"
-					update="@form" />
+					partialSubmit="true" process="@form" update="@form" />
 
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
-					partialSubmit="true" process=":adminForm:tabview:phoneTab"
-					update="@form" />
+					partialSubmit="true" process="@form" update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
 					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
 			</h:panelGrid>

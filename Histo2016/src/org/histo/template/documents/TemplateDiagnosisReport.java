@@ -6,9 +6,9 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.HistoUtil;
-import org.histo.util.PDFGenerator;
-import org.histo.util.interfaces.LazyPDFReturnHandler;
 import org.histo.util.latex.TextToLatexConverter;
+import org.histo.util.pdf.LazyPDFReturnHandler;
+import org.histo.util.pdf.PDFGenerator;
 
 import lombok.Getter;
 import lombok.Setter;

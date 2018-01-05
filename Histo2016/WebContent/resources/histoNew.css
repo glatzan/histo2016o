@@ -307,17 +307,17 @@ body {
 }
 
 /* row background set manually via class datatable-odd */
-.newStyleDataTableManualBackgroundColor tr.ui-datatable-odd>td {
+.newStyleDataTable-ManualBackgroundColor tr.ui-datatable-odd>td {
 	background-color: inherit;
 }
 
 /* row background set manually via class datatable-odd */
-.newStyleDataTableManualBackgroundColor td.datatable-odd {
+.newStyleDataTable-ManualBackgroundColor td.datatable-odd {
 	background-color: #f2f2f2 !important;
 }
 
 /* long serach column for header*/
-.newStyleDataTableLongHead .ui-column-filter {
+.newStyleDataTable-LongSearchBarInHead .ui-column-filter {
 	width: 95% !important;
 	padding: 4px !important;
 	font-size: 12px !important;
@@ -325,6 +325,12 @@ body {
 	box-shadow: none !important;
 	font-style: normal !important;
 	font-variant: normal !important;
+}
+
+/* hides column headers of a data table*/
+.newStyleDataTable-HideColumnHeader .ui-datatable-tablewrapper>table>thead
+	{
+	display: none;
 }
 
 /* -------------- New DataList Style --------------*/

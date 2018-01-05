@@ -48,26 +48,28 @@ public abstract class AbstractDialog {
 		prepareDialog();
 	}
 
-	public void initBean(Task task, Dialog dialog) {
-		initBean(task, dialog, false);
+	public boolean initBean(Task task, Dialog dialog) {
+		return initBean(task, dialog, false);
 	}
 
-	public void initBean(Task task, Dialog dialog, boolean uniqueRequestEnabled) {
+	public boolean initBean(Task task, Dialog dialog, boolean uniqueRequestEnabled) {
 		setTask(task);
 		setDilaog(dialog);
 		getUniqueRequestID().setEnabled(uniqueRequestEnabled);
 		if (uniqueRequestEnabled)
 			getUniqueRequestID().nextUniqueRequestID();
+
+		return true;
 	}
 
 	/**
 	 * Method for displaying the associated dialog.
 	 */
-	
+
 	public void prepareDialog() {
 		prepareDialog(dilaog);
 	}
-	
+
 	/**
 	 * Method for displaying the associated dialog.
 	 */

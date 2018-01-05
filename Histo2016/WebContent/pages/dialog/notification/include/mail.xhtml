@@ -7,53 +7,57 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;" styleClass="contentPannel">
-			<f:facet name="header">
-				<h:outputLabel
-					value="#{msg['dialog.notification.tab.mail.headline']}"></h:outputLabel>
-			</f:facet>
-		</p:panel>
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel value="#{msg['dialog.notification.tab.mail.headline']}" />
+	</p:outputPanel>
 
-		<p:panelGrid columns="2"
-			styleClass="noBordersAll collapsedBordersAll verticalAlignTopAll"
-			style="width:100%" columnClasses="defaultListingTableColumn150px, ">
+	<p:outputPanel styleClass="bodyPannel">
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			style="width:100%" columnClasses="columnLabelContainer150, ">
+
 			<!-- Use Mail -->
-			<h:outputLabel value="#{msg['dialog.notification.tab.mail.use']}" />
-
-			<p:selectBooleanCheckbox value="#{tab.useTab}"
-				title="#{msg['dialog.notification.tab.mail.use.text']}"
-				styleClass="smallCheckbox">
+			<h:outputLabel value="#{msg['dialog.notification.tab.mail.use']}"
+				styleClass="bigFont" />
+			<p:selectBooleanCheckbox
+				value="#{dialogHandlerAction.notificationDialog.mailTab.useTab}"
+				title="#{msg['dialog.notification.tab.mail.use.text']}">
 				<p:ajax event="change" partialSubmit="true" process="@this"
-					update=":adminForm:tabview:mailTab" />
+					update="@form" />
 			</p:selectBooleanCheckbox>
 
-			<h:outputLabel value=" " />
-			<h:outputLabel value=" " />
-
 			<!-- subject -->
-			<h:outputLabel value="#{msg['dialog.notification.tab.mail.subject']}" />
-			<h:inputText value="#{tab.mailSubject}" style="width:95%"
-				disabled="#{!tab.useTab}" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.mail.subject']}"
+				styleClass="bigFont" />
+			<h:inputText
+				value="#{dialogHandlerAction.notificationDialog.mailTab.mailSubject}"
+				style="width:95%"
+				disabled="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}" />
 
 			<!-- Text -->
-			<h:outputLabel value="#{msg['dialog.notification.tab.mail.text']}" />
-			<h:inputTextarea value="#{tab.mailBody}" style="width:95%"
-				disabled="#{!tab.useTab}" rows="10" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.mail.text']}"
+				styleClass="bigFont" />
+			<h:inputTextarea
+				value="#{dialogHandlerAction.notificationDialog.mailTab.mailBody}"
+				style="width:95%"
+				disabled="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}"
+				rows="10" />
 
 
 			<!-- pdf template -->
 			<h:outputLabel
-				value="#{msg['dialog.notification.tab.mail.pdfTemplate']}" />
-			<p:selectOneMenu value="#{tab.selectedTemplate}"
-				converter="#{tab.templateTransformer}"
-				styleClass="customSerachSelectMenu" disabled="#{!tab.useTab}">
+				value="#{msg['dialog.notification.tab.mail.pdfTemplate']}"
+				styleClass="bigFont" />
+			<p:selectOneMenu
+				value="#{dialogHandlerAction.notificationDialog.mailTab.selectedTemplate}"
+				converter="#{dialogHandlerAction.notificationDialog.mailTab.templateTransformer}"
+				disabled="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}">
 
 				<f:selectItem itemValue="#{null}"
 					itemLabel="#{msg['dialog.notification.tab.mail.pdfTemplate.none']}"></f:selectItem>
 
-				<f:selectItems value="#{tab.templateList}" var="template"
-					itemLabel="#{template.name}" itemValue="#{template}" />
+				<f:selectItems
+					value="#{dialogHandlerAction.notificationDialog.mailTab.templateList}"
+					var="template" itemLabel="#{template.name}" itemValue="#{template}" />
 
 				<p:ajax update="@this" event="change" process="@this"
 					partialSubmit="true" />
@@ -61,11 +65,11 @@
 
 			<!-- receiver -->
 			<h:outputLabel
-				value="#{msg['dialog.notification.tab.mail.receiver']}" />
+				value="#{msg['dialog.notification.tab.mail.receiver']}"
+				styleClass="bigFont" />
 			<p:dataTable var="holder" scrollable="true" scrollHeight="150"
-				style="width:96%"
-				styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
-				value="#{tab.holders}">
+				style="width:96%" styleClass="newStyleDataTable"
+				value="#{dialogHandlerAction.notificationDialog.mailTab.holders}">
 
 				<!-- name of receiver -->
 				<p:column
@@ -83,8 +87,8 @@
 					headerText="#{msg['dialog.notification.tab.mail.receiver.email']}"
 					style="width:auto">
 					<p:inputText value="#{holder.contactAddress}"
-						disabled="#{!tab.useTab or holder.notification.failed}"
-						styleClass="smallInput" style="width:98%" />
+						disabled="#{!dialogHandlerAction.notificationDialog.mailTab.useTab or holder.notification.failed}"
+						style="width:98%" />
 				</p:column>
 
 				<!-- options -->
@@ -97,16 +101,16 @@
 					<!-- add pdf, if pdf == null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
 						rendered="#{holder.pdf eq null and !holder.notification.failed}"
-						disabled="#{!tab.useTab}"
+						disabled="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}"
 						title="#{msg['dialog.notification.tab.mail.receiver.pdf.info']}"
 						execute="@this" partialSubmit="true"
 						onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()"
 						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, holder.contact)}">
 
-						<p:ajax event="dialogReturn" update=":adminForm:tabview:mailTab"
-							partialSubmit="true" process=":adminForm:tabview:mailTab"
-							listener="#{tab.copySelectedPdf(holder)}" />
+						<p:ajax event="dialogReturn" update="@form" partialSubmit="true"
+							process="@form"
+							listener="#{dialogHandlerAction.notificationDialog.mailTab.copySelectedPdf(holder)}" />
 
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>
@@ -115,7 +119,8 @@
 					<p:commandLink styleClass="noUnderlineAtLink"
 						rendered="#{holder.pdf ne null and !holder.notification.failed}"
 						title="#{msg['dialog.notification.tab.mail.receiver.pdf.show']}"
-						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
+						execute="@this" partialSubmit="true"
+						disabled="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
@@ -126,67 +131,59 @@
 						style="margin-left: 10px;"
 						rendered="#{holder.pdf ne null and !holder.notification.failed}"
 						title="#{msg['dialog.notification.tab.mail.receiver.pdf.remove']}"
-						execute="@this" partialSubmit="true" disabled="#{!tab.useTab}"
-						update=":adminForm:tabview:mailTab"
-						actionListener="#{holder.setPdf(null)}">
+						execute="@this" partialSubmit="true"
+						disabled="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}"
+						update="@form" actionListener="#{holder.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
 					</p:commandLink>
 
 					<!-- refresh failed notification, if = notification.failed -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.notification.failed}"
-						update=":adminForm:tabview:mailTab"
+						rendered="#{holder.notification.failed}" update="@form"
 						title="#{msg['dialog.notification.tab.mail.receiver.renew']}"
 						execute="@this" partialSubmit="true">
 
 						<i class="fa fa-fw fa-refresh" />
 
 						<f:actionListener
-							binding="#{tab.renewNotification(dialogHandlerAction.notificationDialog.task, holder)}" />
+							binding="#{dialogHandlerAction.notificationDialog.mailTab.renewNotification(dialogHandlerAction.notificationDialog.task, holder)}" />
 
-						<f:actionListener binding="#{tab.updateData()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.notificationDialog.mailTab.updateData()}" />
 					</p:commandLink>
 
 				</p:column>
 			</p:dataTable>
+		</h:panelGrid>
+	</p:outputPanel>
 
-		</p:panelGrid>
-	</div>
-
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1">
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
 				<!-- Contact -->
 				<p:commandButton
 					value="#{msg['dialog.notification.tab.mail.button.contact.select']}"
 					icon="fa fa-fw fa-cog"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
-					<p:ajax event="dialogReturn" update=":adminForm:tabview:mailTab"
-						partialSubmit="true" process=":adminForm:tabview:mailTab"
-						listener="#{tab.updateData()}" />
+					<p:ajax event="dialogReturn" update="@form" partialSubmit="true"
+						process="@form"
+						listener="#{dialogHandlerAction.notificationDialog.mailTab.updateData()}" />
 				</p:commandButton>
-
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" style="float:right;">
-
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
-					styleClass="smallButton buttonRighMarginInList"
 					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
-					partialSubmit="true" process=":adminForm:tabview:mailTab"
-					update="@form" />
+					partialSubmit="true" process="@form" update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
-					icon="fa fa-times-circle" partialSubmit="true"
-					process=":adminForm:tabview:mailTab"
+					icon="fa fa-times-circle" partialSubmit="true" process="@form"
 					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>

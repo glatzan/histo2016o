@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import org.histo.model.PDFContainer;
 import org.histo.template.DocumentTemplate;
 import org.histo.ui.interfaces.PdfStreamProvider;
-import org.histo.util.PDFGenerator;
-import org.histo.util.interfaces.LazyPDFReturnHandler;
+import org.histo.util.pdf.LazyPDFReturnHandler;
+import org.histo.util.pdf.PDFGenerator;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -89,7 +89,7 @@ public class LazyPDFGuiManager implements PdfStreamProvider, LazyPDFReturnHandle
 	 * @param template
 	 */
 	public void startRendering(DocumentTemplate template) {
-		currentTaskUuid = template.generatePDFNoneBlocking(new PDFGenerator(), this);
+		currentTaskUuid = new PDFGenerator().getPDFNoneBlocking(template, this);
 		getStopPoll().set(false);
 		getAutoStartPoll().set(true);
 	}

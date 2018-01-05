@@ -15,16 +15,20 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 
 	protected AbstractTab selectedTab;
 
-	public boolean initBean(Dialog dialog) {
-		super.initBean(null, dialog);
+	public boolean initBean(Task task, Dialog dialog) {
+		super.initBean(task, dialog);
 
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].initTab();
 		}
 
 		onTabChange(tabs[0]);
-
+		
 		return true;
+	}
+
+	public boolean initBean(Dialog dialog) {
+		return initBean(null, dialog);
 	}
 
 	public void onTabChange(AbstractTab tab) {
@@ -51,11 +55,11 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 		protected String tabName;
 
 		protected String centerInclude;
-		
+
 		protected boolean disabled;
-		
+
 		protected AbstractTab parentTab;
-		
+
 		public boolean isParent() {
 			return parentTab != null;
 		}

@@ -71,7 +71,7 @@
 									showEvent="none" onkeypress="return false;">
 									<p:dataTable value="#{globalEditViewHandler.materialList}"
 										var="preset"
-										styleClass="newStyleDataTable newStyleDataTableLongHead"
+										styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
 										scrollable="true" scrollHeight="200" rowKey="#{preset.id}"
 										selection="#{sample.materialPreset}" selectionMode="single">
 										<p:column filterBy="#{preset.name}" filterMatchMode="contains">
@@ -133,7 +133,7 @@
 							onkeypress="return false;">
 							<p:dataTable value="#{globalEditViewHandler.caseHistoryList}"
 								var="item"
-								styleClass="newStyleDataTable newStyleDataTableLongHead"
+								styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
 								scrollable="true" scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
 								selectionMode="single">
@@ -374,7 +374,7 @@
 							style="width:500px" hideEvent="mousedown" showEvent="none">
 							<p:dataTable value="#{globalEditViewHandler.diagnosisPresets}"
 								var="item"
-								styleClass="newStyleDataTable newStyleDataTableLongHead"
+								styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
 								scrollable="true" scrollHeight="200" rowKey="#{item.id}"
 								selection="#{diagnosis.diagnosisPrototype}"
 								selectionMode="single">

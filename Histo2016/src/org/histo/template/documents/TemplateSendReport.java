@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.velocity.tools.generic.DateTool;
-import org.histo.action.dialog.notification.NotificationDialog.AbstractTab.ContactHolder;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.util.PDFGenerator;
+import org.histo.util.notification.NotificationContainer;
+import org.histo.util.pdf.PDFGenerator;
 
 public class TemplateSendReport extends DocumentTemplate {
 	private Patient patient;
@@ -20,19 +20,19 @@ public class TemplateSendReport extends DocumentTemplate {
 	private Task task;
 
 	private boolean useMail;
-	private List<ContactHolder> mailHolders;
+	private List<NotificationContainer> mailHolders;
 	private boolean useFax;
-	private List<ContactHolder> faxHolders;
+	private List<NotificationContainer> faxHolders;
 	private boolean useLetter;
-	private List<ContactHolder> letterHolders;
+	private List<NotificationContainer> letterHolders;
 	private boolean usePhone;
-	private List<ContactHolder> phoneHolders;
+	private List<NotificationContainer> phoneHolders;
 
 	private Date dateOfReport;
 
-	public void initData(Patient patient, Task task, boolean useMail, List<ContactHolder> mailHolders, boolean useFax,
-			List<ContactHolder> faxHolders, boolean useLetter, List<ContactHolder> letterHolders, boolean usePhone,
-			List<ContactHolder> phoneHolders, Date dateOfReport) {
+	public void initData(Patient patient, Task task, boolean useMail, List<NotificationContainer> mailHolders, boolean useFax,
+			List<NotificationContainer> faxHolders, boolean useLetter, List<NotificationContainer> letterHolders, boolean usePhone,
+			List<NotificationContainer> phoneHolders, Date dateOfReport) {
 		this.patient = patient;
 		this.task = task;
 
