@@ -2,11 +2,7 @@
 	"generalSettings": {
 		"offline": true,
 		"workingDirectory": "classpath:templates/print",
-		"phoneRegex": "^\\s*(?:[\\+#]?(\\d{1,3}))?([-. ()\/\\\\]*(\\d*))*?\\s*$",
-		"defaultDocuments": {
-			"defaultTaskCreationDocument": 2,
-			"defaultSendReport": 1000
-		}
+		"phoneRegex": "^\\s*(?:[\\+#]?(\\d{1,3}))?([-. ()\/\\\\]*(\\d*))*?\\s*$"
 	},
 	"defaultNotification": {
 		"defaultNotifications": [
@@ -23,6 +19,15 @@
 				]
 			}
 		]
+	},
+	"defaultDocuments": {
+		"diagnosisApprovedDocument": 10,
+		"taskCreationDocument": 2,
+		"notificationDefaultEmailDocument" : 2,
+		"notificationDefaultFaxDocument" : 2,
+		"notificationDefaultLetterDocument" : 2,
+		"notificationDefaultPrintDocument" : 2,
+		"notificationSendReport": 100
 	},
 	"labelPrinters": [
 		{

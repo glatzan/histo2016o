@@ -38,9 +38,9 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 Next Changes:
 
 -> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
--> finalizeAllDiangosisRevisions (taskManipulationHandler) löschen (diangosis filanized wird nicht mehr gebraucht)
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 
+-> Latex Datei für externen Befund
 
 -> versehendlich ausgeführte benachrichtigungen, markieren
 
@@ -65,7 +65,6 @@ TODO: Methoden in SampleServie in eine Transaction setzten (für loggin logstrin
 TODO: Biobankeinwilligung beide Seiten (2 pdf-Dateien) auf einmal hochladen
 TODO: Externe Proben: PIZ anlegen?
 TODO: Favouriten-Listen für Benutzer zugänglich machen
-TODO: Latex Datei für externen Befund
 TODO: Erweiterte Suche 
 TODO: Datenbankabfragen in globaleidt handler shiften
 TODO: Benuter müssen sich auf die Benachrichtigungsliste setzten können
@@ -99,7 +98,13 @@ Graphic Changes
 + = added
 - = removed
 
-+v 1.1.1 ()
++v 1.1.2 ()
++++*: Phasen Übergägnge angepasst
+SQL:
+/* drop unused column of diagnosis */
+Alter table diagnosisrevision drop column diagnosiscompleted; 
+
++v 1.1.1 (04.01.2017)
 +++*: Neue-Färbung Dialog an neues Layout angepasst.
 +++*: Eingangsbuch an neues Layout angepasst.
 +++*: Organisations-Dialog an neues Layout angepasst.

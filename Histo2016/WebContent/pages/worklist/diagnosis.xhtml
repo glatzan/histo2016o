@@ -48,7 +48,7 @@
 							columnClasses="column75px,">
 
 							<h:outputLabel
-								value="#{msg['body.diagnosis.diagnosis.sample']} #{sample.sampleID}" />
+								value="#{msg['body.diagnosis.sample']} #{sample.sampleID}" />
 								
 							<h:panelGroup>
 								<p:inputText value="#{sample.material}"
@@ -316,7 +316,7 @@
 						<c:choose>
 							<c:when test="#{revision.diagnoses.size() ne 1}">
 								<h:outputLabel
-									value="#{msg['body.diagnosis.diagnosis.sample']} #{diagnosis.sample.sampleID}" />
+									value="#{msg['body.diagnosis.sample']} #{diagnosis.sample.sampleID}" />
 							</c:when>
 							<c:otherwise>
 								<h:outputLabel value="" />
@@ -327,7 +327,7 @@
 						<p:commandLink styleClass="noUnderlineAtLink"
 							style="margin-left:20px;"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable or diagnosis.diagnosisPrototype.extendedDiagnosisText eq ''}"
-							title="#{diagnosis.diagnosisPrototype.extendedDiagnosisText eq '' ? msg['body.diagnosis.diagnosis.histologicalRecordPreset.none'] : msg['body.diagnosis.diagnosis.histologicalRecordPreset']}"
+							title="#{diagnosis.diagnosisPrototype.extendedDiagnosisText eq '' ? msg['body.diagnosis.histologicalRecordPreset.text.none'] : msg['body.diagnosis.histologicalRecordPreset.text']}"
 							rendered="#{diagnosis.diagnosisPrototype ne null}"
 							process="@this"
 							actionListener="#{diagnosisViewHandlerAction.onCopyHistologicalRecord(diagnosis)}"
@@ -339,7 +339,7 @@
 						<!-- malign -->
 						<h:panelGrid columns="2" style="float:right;margin-right:20px;">
 							<h:outputLabel
-								value="#{msg['body.receiptlog.tab.diangonsis.data.diangosis.malign']}" />
+								value="#{msg['body.diagnosis.malign']}" />
 							<p:selectBooleanCheckbox value="#{diagnosis.malign}"
 								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 								style="margin:3px 0px 0px 3px;">
@@ -404,7 +404,7 @@
 			<h:panelGrid columns="2" styleClass="newStyleListingTable">
 				<!-- Date of signature -->
 				<h:outputLabel
-					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.date']}"></h:outputLabel>
+					value="#{msg['body.diagnosis.signature.date']}"></h:outputLabel>
 				<p:calendar pattern="dd.MM.yyyy" mask="true"
 					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 					value="#{globalEditViewHandler.selectedTask.diagnosisContainer.signatureDateAsDate}">
@@ -423,7 +423,7 @@
 
 				<!-- physician -->
 				<h:outputLabel
-					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician']}" />
+					value="#{msg['body.diagnosis.signature.physician']}" />
 				<h:panelGroup>
 					<p:selectOneMenu
 						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
@@ -434,7 +434,7 @@
 						filter="true" filterMatchMode="contains">
 
 						<f:selectItem
-							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.physician.select']}"
+							itemLabel="#{msg['body.diagnosis.signature.physician.select']}"
 							itemValue="#{null}" />
 
 						<f:selectItems
@@ -483,7 +483,7 @@
 
 				<!-- Consultant -->
 				<h:outputLabel
-					value="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant']}" />
+					value="#{msg['body.diagnosis.signature.consultant']}" />
 				<h:panelGroup>
 					<p:selectOneMenu
 						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
@@ -493,7 +493,7 @@
 						converter="#{globalEditViewHandler.physiciansToSignListTransformer}"
 						filter="true" filterMatchMode="contains">
 						<f:selectItem
-							itemLabel="#{msg['body.receiptlog.tab.diangonsis.data.signature.consultant.select']}"
+							itemLabel="#{msg['body.diagnosis.signature.consultant.select']}"
 							itemValue="#{null}" />
 
 						<f:selectItems
@@ -544,13 +544,13 @@
 				</h:panelGroup>
 			</h:panelGrid>
 
-			<p:commandButton id="diagnosisPhaseExit" value="Diangose beenden"
+			<p:commandButton id="diagnosisPhaseExit" value="#{msg['body.diagnosis.exitPhase']}"
 				icon="fa fa-eye-slash" onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
 				rendered="#{globalEditViewHandler.selectedTask.taskStatus.diagnosisNeeded or globalEditViewHandler.selectedTask.taskStatus.reDiagnosisNeeded}"
 				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-				<p:ajax event="dialogReturn"
+				<p:ajax event="dialogReturn" listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
 					update="navigationForm contentForm headerForm" />
 			</p:commandButton>
 		</h:panelGrid>

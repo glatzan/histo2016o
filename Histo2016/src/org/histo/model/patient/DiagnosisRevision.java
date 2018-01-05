@@ -92,12 +92,6 @@ public class DiagnosisRevision
 	private long compleationDate;
 
 	/**
-	 * True if finalized.
-	 */
-	@Column
-	private boolean diagnosisCompleted;
-
-	/**
 	 * 
 	 */
 	@Column

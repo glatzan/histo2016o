@@ -16,6 +16,7 @@ import org.histo.adaptors.MailHandler;
 import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.adaptors.printer.ClinicPrinterDummy;
 import org.histo.adaptors.printer.LabelPrinter;
+import org.histo.model.transitory.settings.DefaultDocuments;
 import org.histo.model.transitory.settings.DefaultNotificationSettings;
 import org.histo.model.transitory.settings.PrinterSettings;
 import org.histo.model.transitory.settings.ProgramSettings;
@@ -47,6 +48,7 @@ public class GlobalSettings {
 
 	public static final String PROGRAM_SETTINGS = "classpath:settings/general.json";
 	public static final String SETTINGS_GENERAL = "generalSettings";
+	public static final String SETTINGS_DEFAULT_DOCUMENTS = "defaultDocuments";
 	public static final String SETTINGS_DEFAULT_NOTIFICATION = "defaultNotification";
 	public static final String SETTINGS_LDAP = "ldapSettings";
 	public static final String SETTINGS_MAIL = "mail";
@@ -63,6 +65,11 @@ public class GlobalSettings {
 	 */
 	private ProgramSettings programSettings;
 
+	/**
+	 * List of default documents
+	 */
+	private DefaultDocuments defaultDocuments;
+	
 	/**
 	 * Printer settings
 	 */
@@ -141,7 +148,9 @@ public class GlobalSettings {
 		faxHandler = gson.fromJson(o.get(SETTINGS_FAX), FaxHandler.class);
 
 		printerSettings = gson.fromJson(o.get(SETTINGS_CUPS_SERVER), PrinterSettings.class);
-
+		
+		defaultDocuments = gson.fromJson(o.get(SETTINGS_DEFAULT_DOCUMENTS), DefaultDocuments.class);
+		
 		setPrinterList(loadCupsPrinters(printerSettings));
 
 		setPrinterListTransformer(new DefaultTransformer<ClinicPrinter>(getPrinterList()));

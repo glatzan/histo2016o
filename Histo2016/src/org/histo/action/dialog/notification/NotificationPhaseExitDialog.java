@@ -1,4 +1,4 @@
-package org.histo.action.dialog.slide;
+package org.histo.action.dialog.notification;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.TaskHandlerAction;
@@ -24,7 +24,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class StainingPhaseExitDialog extends AbstractDialog {
+public class NotificationPhaseExitDialog extends AbstractDialog {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -54,12 +54,12 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	/**
 	 * Can be set to true if the task should stay in diagnosis phase.
 	 */
-	private boolean stayInStainingPhase;
+	private boolean stayInNotificationPhase;
 
 	/**
 	 * If true the task will be shifted into diagnosis phase
 	 */
-	private boolean goToDiagnosisPhase;
+	private boolean archiveTask;
 
 	/**
 	 * Initializes the bean and shows the dialog
@@ -80,12 +80,12 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 		try {
 			taskDAO.initializeTask(task, false);
 
-			if (task.isListedInFavouriteList(PredefinedFavouriteList.NotificationList))
-				this.goToDiagnosisPhase = false;
-			else
-				this.goToDiagnosisPhase = true;
-
-			stayInStainingPhase = false;
+//			if (task.isListedInFavouriteList(PredefinedFavouriteList.NotificationList))
+//				this.goToDiagnosisPhase = false;
+//			else
+//				this.goToDiagnosisPhase = true;
+//
+//			stayInStainingPhase = false;
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
@@ -93,23 +93,12 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
-		super.initBean(task, Dialog.STAINING_PHASE_EXIT);
+		super.initBean(task, Dialog.NOTIFICATION_PHASE_EXIT);
 	}
 
 	public void exitPhase() {
 		try {
-			// ending staining pahse
-			sampleService.endStainingPhase(task);
-
-			if (goToDiagnosisPhase) {
-				logger.debug("Adding Task to diagnosis list");
-				favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
-			}
-
-			if (stayInStainingPhase) {
-				logger.debug("Task should stay in staining phase");
-				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInStainingList);
-			}
+			
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

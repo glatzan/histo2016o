@@ -37,11 +37,11 @@
 				<p:selectBooleanCheckbox
 					value="#{dialogHandlerAction.diagnosisPhaseExitDialog.goToNotificationPhase}" />
 				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseExit.button.notificationPhase']}" />
+					value="#{msg['dialog.diagnosisPhaseExit.checkBox.notificationPhase']}" />
 
 				<p:selectBooleanCheckbox
 					value="#{dialogHandlerAction.diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.button.stay']}" />
+				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.checkBox.stayInList']}" />
 			</h:panelGrid>
 		</div>
 
@@ -57,7 +57,7 @@
 						value="#{msg['dialog.diagnosisPhaseExit.button.notify']}"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
-							binding="#{dialogHandlerAction.diagnosisPhaseExitDialog.endDiagnosisPhase()}" />
+							binding="#{dialogHandlerAction.diagnosisPhaseExitDialog.exitPhase()}" />
 						<f:actionListener
 							binding="#{dialogHandlerAction.diagnosisPhaseExitDialog.hideDialog()}" />
 					</p:commandButton>

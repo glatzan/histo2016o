@@ -9,6 +9,7 @@ import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.notification.NotificationDialog;
+import org.histo.action.dialog.notification.NotificationPhaseExitDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.dialog.patient.ConfirmExternalPatientDialog;
 import org.histo.action.dialog.patient.CreateTaskDialog;
@@ -126,6 +127,8 @@ public class DialogHandlerAction {
 	private EditUserDialog editUserDialog;
 	
 	private OrganizationEditDialog organizationEditDialog;
+	
+	private NotificationPhaseExitDialog notificationPhaseExitDialog;
 	
 	public OrganizationListDialog getOrganizationListDialog() {
 		if (organizationListDialog == null)
@@ -426,6 +429,14 @@ public class DialogHandlerAction {
 		}
 
 		return organizationEditDialog;
+	}
+	
+	public NotificationPhaseExitDialog getNotificationPhaseExitDialog() {
+		if (notificationPhaseExitDialog == null) {
+			notificationPhaseExitDialog = new NotificationPhaseExitDialog();
+		}
+
+		return notificationPhaseExitDialog;
 	}
 	
 }

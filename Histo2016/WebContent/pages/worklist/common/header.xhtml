@@ -137,6 +137,7 @@
 			<p:commandButton id="stainingPhaseExit" style="display:none"
 				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
+					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
@@ -156,13 +157,23 @@
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Diagnosis List, leave diagnosis phase after completion -->
+			<!-- DiagnosisPhase Exit -->
 			<p:commandButton id="diagnosisPhaseExit" style="display:none"
 				onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
 				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
+					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"
 					update="navigationForm:patientList contentForm headerForm" />
+			</p:commandButton>
+
+			<!-- DiagnosisPhase Enter -->
+			<p:commandButton id="diagnosisPhaseEnter" style="display:none"
+				update="navigationForm:patientList contentForm headerForm">
+				<f:actionListener
+					binding="#{diagnosisService.startDiagnosisPhase(globalEditViewHandler.selectedTask)}" />
+				<f:actionListener
+					binding="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}" />
 			</p:commandButton>
 
 			<!-- Council button -->
@@ -180,13 +191,22 @@
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
-			<!-- Notification button -->
-			<p:commandButton id="medicalFindingsContactBtn" style="display:none"
+			<!-- Notification perform  -->
+			<p:commandButton id="notificationPerformBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm:patientList contentForm headerForm"
 					listener="#{mainHandlerAction.processQueues()}" />
 			</p:commandButton>
+
+			<!-- Notification exit -->
+			<p:commandButton id="notificationPhaseExit" style="display:none"
+				actionListener="#{dialogHandlerAction.notificationPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm headerForm"
+					listener="#{mainHandlerAction.processQueues()}" />
+			</p:commandButton>
+
 
 			<!-- Archive Task -->
 			<p:commandButton id="archiveTaskBtn" style="display:none"

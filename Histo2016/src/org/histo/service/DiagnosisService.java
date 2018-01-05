@@ -6,15 +6,22 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
+import org.histo.config.enums.PredefinedFavouriteList;
+import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
+import org.histo.ui.task.TaskStatus;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,6 +44,16 @@ public class DiagnosisService {
 	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TransactionTemplate transactionTemplate;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListDAO favouriteListDAO;
+
 	/**
 	 * Updates all diagnosisRevision of the given diagnosisContainer
 	 * 
@@ -56,8 +73,8 @@ public class DiagnosisService {
 	}
 
 	/**
-	 * Updates a diagnosisRevision with a sample list. Used for adding and
-	 * removing samples after initial revision creation.
+	 * Updates a diagnosisRevision with a sample list. Used for adding and removing
+	 * samples after initial revision creation.
 	 * 
 	 * @param diagnosisRevision
 	 * @param samples
@@ -205,4 +222,67 @@ public class DiagnosisService {
 		return revision;
 	}
 
+	/**
+	 * Starts the diagnosis phase, sets the time of diagnosis completion to zero and
+	 * adds the task to the diagnosis list.
+	 * 
+	 * @param task
+	 */
+	public void startDiagnosisPhase(Task task) {
+		try {
+
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+					task.setDiagnosisCompletionDate(0);
+
+					genericDAO.savePatientData(task, "log.patient.task.phase.diagnosis.enter");
+
+					if (!task.isListedInFavouriteList(PredefinedFavouriteList.DiagnosisList,
+							PredefinedFavouriteList.ReDiagnosisList)) {
+						favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+					}
+				}
+			});
+		} catch (Exception e) {
+			throw new CustomDatabaseInconsistentVersionException(task);
+		}
+	}
+
+	/**
+	 * Ends the diagnosis phase, removes from diagnosis list and sets the diagnosis
+	 * time of completion.
+	 * 
+	 * @param task
+	 * @param updateSignatureDate
+	 */
+	public void endDiagnosisPhase(Task task, boolean updateSignatureDate) {
+		try {
+
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+
+					// setting diagnosis compeation date if not set jet
+					task.getDiagnosisContainer().getDiagnosisRevisions().forEach(p -> {
+						if (p.getCompleationDate() == 0)
+							p.setCompleationDate(System.currentTimeMillis());
+					});
+
+					task.setDiagnosisCompletionDate(System.currentTimeMillis());
+
+					if (updateSignatureDate)
+						task.getDiagnosisContainer().setSignatureDate(System.currentTimeMillis());
+
+					genericDAO.savePatientData(task, "log.patient.task.phase.diagnosis.end");
+
+					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
+							PredefinedFavouriteList.ReDiagnosisList);
+				}
+			});
+		} catch (Exception e) {
+			throw new CustomDatabaseInconsistentVersionException(task);
+		}
+	}
 }

@@ -385,7 +385,7 @@ public class SampleService {
 
 					task.setStainingCompletionDate(System.currentTimeMillis());
 
-					genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.end");
+					genericDAO.savePatientData(task, "log.patient.task.phase.staining.end");
 
 					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
 							PredefinedFavouriteList.ReStainingList);
@@ -413,7 +413,7 @@ public class SampleService {
 
 					task.setStainingCompletionDate(0);
 
-					genericDAO.savePatientData(task, "log.patient.task.change.stainingPhase.reentered");
+					genericDAO.savePatientData(task, "log.patient.task.phase.staining.enter");
 
 					if (!task.isListedInFavouriteList(PredefinedFavouriteList.StainingList,
 							PredefinedFavouriteList.ReStainingList)) {

@@ -48,31 +48,6 @@ public class TaskManipulationHandler {
 	@Setter(AccessLevel.NONE)
 	private TransactionTemplate transactionTemplate;
 
-	/********************************************************
-	 * Diagnosis Info
-	 ********************************************************/
-
-
-	/**
-	 * Finalize all diagnosis revisions
-	 * 
-	 * @param revisions
-	 * @param finalize
-	 * @throws CustomDatabaseInconsistentVersionException
-	 */
-	public void finalizeAllDiangosisRevisions(List<DiagnosisRevision> revisions, boolean finalize)
-			throws CustomDatabaseInconsistentVersionException {
-		for (DiagnosisRevision revision : revisions) {
-			revision.setDiagnosisCompleted(finalize);
-			revision.setCompleationDate(finalize ? System.currentTimeMillis() : 0);
-			genericDAO.savePatientData(revision, finalize ? "log.patient.task.diagnosisContainer.diagnosisRevision.lock"
-					: "log.patient.task.diagnosisContainer.diagnosisRevision.unlock", revision.getName());
-		}
-	}
-
-	/********************************************************
-	 * Diagnosis Info
-	 ********************************************************/
 
 	/********************************************************
 	 * Diagnosis Revision

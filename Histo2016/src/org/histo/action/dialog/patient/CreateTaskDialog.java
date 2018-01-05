@@ -195,7 +195,7 @@ public class CreateTaskDialog extends AbstractDialog {
 		newSample.setMaterial(getMaterialList().get(0).getName());
 		getTask().getSamples().add(newSample);
 		getTask().updateAllNames();
-		
+
 		// setting biobank
 		setBioBank(new BioBank());
 		getBioBank().setInformedConsentType(InformedConsentType.NONE);
@@ -208,8 +208,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Updates the name and the amount of samples which should be created with
-	 * the new task.
+	 * Updates the name and the amount of samples which should be created with the
+	 * new task.
 	 */
 	public void updateDialog() {
 
@@ -380,8 +380,8 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTaskAndPrintUReport() {
 		createTask();
 
-		DocumentTemplate subSelect = DocumentTemplate.getTemplateByID(
-				globalSettings.getProgramSettings().getDefaultDocuments().getDefaultTaskCreationDocument());
+		DocumentTemplate subSelect = DocumentTemplate
+				.getTemplateByID(globalSettings.getDefaultDocuments().getTaskCreationDocument());
 
 		if (subSelect == null) {
 			logger.error("New Task: No TemplateUtil for printing UReport found");

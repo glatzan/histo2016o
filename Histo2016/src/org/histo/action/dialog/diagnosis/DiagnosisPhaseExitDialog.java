@@ -18,6 +18,7 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
+import org.histo.service.DiagnosisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
@@ -83,6 +84,11 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private DiagnosisService diagnosisService;
+
 	/**
 	 * Can be set to true if the task should stay in diagnosis phase.
 	 */
@@ -128,41 +134,24 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 		return true;
 	}
 
-	public void endDiagnosisPhase() {
+	public void exitPhase() {
 		try {
-			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+			// end diagnosis phase
+			diagnosisService.endDiagnosisPhase(getTask(), true);
 
-				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-					taskManipulationHandler.finalizeAllDiangosisRevisions(
-							getTask().getDiagnosisContainer().getDiagnosisRevisions(), true);
+			// adding to notification phase
+			if (goToNotificationPhase)
+				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
 
-					getTask().getDiagnosisContainer().setSignatureDate(System.currentTimeMillis());
+			// adding to stay in diagnosis phase if selected
+			if (isStayInDiagnosisPhase())
+				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
+			else
+				// removing from stay in diagnosis list
+				favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
 
-					// adding to notification phase
-					if (goToNotificationPhase)
-						favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
-
-					// removing from diagnosis and rediagnosis list
-					favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.DiagnosisList,
-							PredefinedFavouriteList.ReDiagnosisList);
-
-					// adding to stay in diagnosis phase if selected
-					if (isStayInDiagnosisPhase())
-						favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
-					else
-						// removing from stay in diagnosis list
-						favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
-
-					getTask().setDiagnosisCompletionDate(System.currentTimeMillis());
-
-					genericDAO.savePatientData(getTask(), "log.patient.task.change.diagnosisPhase.end");
-				}
-			});
-
-		} catch (Exception e) {
+		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
-
-		globalEditViewHandler.updateDataOfTask(true, false, true, false);
 	}
 }
