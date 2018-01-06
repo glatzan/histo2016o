@@ -620,7 +620,7 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			logger.debug("Startin notification thread");
 
-			try {
+			try { 
 				if (isNotificationRunning()) {
 					logger.debug("Thread allready running, abort new request!");
 					return;

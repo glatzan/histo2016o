@@ -39,14 +39,13 @@ Next Changes:
 
 -> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
+-> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
 
 -> Latex Datei für externen Befund
 
 -> versehendlich ausgeführte benachrichtigungen, markieren
 
 -> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
-
--> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
 
 -> printdialog mit neumen interfaces ausrüsten und testen 
 -> Auswahl der Diagnose im Druckmenu 
@@ -82,7 +81,6 @@ TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: log in settings rework
 TODO: Individelle Adressen beim drucken sollten aus personen gespeichert werden?
 TODO: Wenn Aufträge gelöscht werden müssen pdf mit gelöscht werden..
-TODO: Benachrichtigugen: Liste von fax/email/phone m�sse nur aktuallisiert werden, nicht komplett neu generiert werden, wenn man �ber den contakt dialog sachen �dnert
 TODO: Freischaltungs link
 TODO: Gruppendialog-Edit validate form
 TODO: Synchronizie organizations (nicht updaten durch klinik datenbank beachten)
@@ -99,7 +97,9 @@ Graphic Changes
 - = removed
 
 +v 1.1.2 ()
-+++*: Phasen Übergägnge angepasst
++++*: Benachrichtigungs-Dialog auf neues Layout angepasst, Benachrichtigungs-Vorgang verbessert.
++++*: Phasen Übergägnge angepasst.
+
 SQL:
 /* drop unused column of diagnosis */
 Alter table diagnosisrevision drop column diagnosiscompleted; 
