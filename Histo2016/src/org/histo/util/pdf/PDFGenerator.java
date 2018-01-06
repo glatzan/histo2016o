@@ -62,15 +62,15 @@ public class PDFGenerator {
 
 	public PDFContainer getPDF(DocumentTemplate template) {
 		this.printTemplate = template;
-		
+
 		openNewPDf(template);
 		template.fillTemplate(this);
 		return generatePDF();
 	}
-	
+
 	public String getPDFNoneBlocking(DocumentTemplate template, LazyPDFReturnHandler returnHandler) {
 		this.printTemplate = template;
-		
+
 		openNewPDf(template);
 		template.fillTemplate(this);
 		return generatePDFNonBlocking(returnHandler);
@@ -119,12 +119,17 @@ public class PDFGenerator {
 
 			logger.debug("Generation time " + (System.currentTimeMillis() - test1) + " ms");
 
-			return new PDFContainer(printTemplate.getDocumentType(),
+			PDFContainer result = new PDFContainer(printTemplate.getDocumentType(),
 					"_" + TimeUtil
 							.formatDate(new Date(System.currentTimeMillis()), DateFormat.GERMAN_DATE.getDateFormat())
 							.replace(".", "_") + ".pdf",
 					data);
 
+			if (printTemplate.isAfterPDFCreationHook())
+				result = printTemplate.onAfterPDFCreation(result);
+			
+			return result;
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -138,9 +143,9 @@ public class PDFGenerator {
 	 * @param returnHandler
 	 */
 	private String generatePDFNonBlocking(LazyPDFReturnHandler returnHandler) {
-		
+
 		String uuid = UUID.randomUUID().toString();
-		
+
 		taskExecutor.execute(new Thread() {
 			public void run() {
 				logger.debug("Stargin PDF Generation in new Thread");
@@ -149,7 +154,7 @@ public class PDFGenerator {
 				logger.debug("PDF Generation completed, thread ended");
 			}
 		});
-		
+
 		return uuid;
 	}
 

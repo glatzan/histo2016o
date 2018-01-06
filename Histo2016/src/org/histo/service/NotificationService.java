@@ -3,7 +3,6 @@ package org.histo.service;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
@@ -11,16 +10,17 @@ import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
+import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateDiagnosisReport;
 import org.histo.template.mail.DiagnosisReportMail;
-import org.histo.util.HistoUtil;
 import org.histo.util.notification.FaxExecutor;
 import org.histo.util.notification.MailContainer;
 import org.histo.util.notification.MailExecutor;
 import org.histo.util.notification.NotificationContainer;
+import org.histo.util.notification.NotificationExecutor;
+import org.histo.util.notification.NotificationFeedback;
 import org.histo.util.pdf.PDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,12 +104,12 @@ public class NotificationService {
 		}
 	}
 
-	public void executeMailNotification(Task task, List<NotificationContainer> mails, DiagnosisReportMail mailTemplate,
-			TemplateDiagnosisReport defaultReport, boolean individualAddresses) {
+	public void executeMailNotification(NotificationFeedback feedback, Task task, List<NotificationContainer> mails,
+			DiagnosisReportMail mailTemplate, TemplateDiagnosisReport defaultReport, boolean individualAddresses) {
 		logger.debug("Mail notification is used");
 		// pdf container if no individual address is needed
 
-		MailExecutor mailExecutor = new MailExecutor();
+		MailExecutor mailExecutor = new MailExecutor(feedback);
 
 		for (NotificationContainer container : mails) {
 			try {
@@ -127,7 +127,7 @@ public class NotificationService {
 				container.setPdf(
 						mailExecutor.getPDF((MailContainer) container, task, defaultReport, individualAddresses));
 
-				if (!mailExecutor.performSend((MailContainer) container))
+				if (!mailExecutor.performNotification((MailContainer) container, true, false))
 					throw new IllegalArgumentException("dialog.notification.sendProcess.mail.error.failed");
 
 				mailExecutor.finishSendProecess((MailContainer) container, true,
@@ -136,19 +136,20 @@ public class NotificationService {
 				logger.debug("Sending completed " + container.getNotification().getCommentary());
 
 			} catch (IllegalArgumentException e) {
-				mailExecutor.finishSendProecess((MailContainer) container, true,
+				mailExecutor.finishSendProecess((MailContainer) container, false,
 						resourceBundle.get(e.getMessage(), container.getContactAddress()));
 				logger.debug("Sending failed" + container.getNotification().getCommentary());
 			}
+			feedback.progressStep();
 		}
 	}
 
-	public void executeMailNotification(Task task, List<NotificationContainer> faxes,
-			TemplateDiagnosisReport defaultReport, boolean individualAddresses, boolean print) {
+	public void executeFaxNotification(NotificationFeedback feedback, Task task, List<NotificationContainer> faxes,
+			TemplateDiagnosisReport defaultReport, boolean individualAddresses, boolean send, boolean print) {
 
 		logger.debug("Fax notification is used");
 
-		FaxExecutor faxExecutor = new FaxExecutor();
+		FaxExecutor faxExecutor = new FaxExecutor(feedback);
 
 		for (NotificationContainer container : faxes) {
 			try {
@@ -161,35 +162,87 @@ public class NotificationService {
 
 				container.setPdf(faxExecutor.getPDF(container, task, defaultReport, individualAddresses));
 
-				if (!faxExecutor.performSend(container))
-					throw new IllegalArgumentException("dialog.notification.sendProcess.mail.error.failed");
+				if (!faxExecutor.performNotification(container, send, print))
+					throw new IllegalArgumentException("dialog.notification.sendProcess.fax.error.failed");
 
-				// offline mode
-				if (globalSettings.getProgramSettings().isOffline()) {
-					logger.debug("Offline mode, not sending email!");
-					throw new IllegalArgumentException("dialog.notification.sendProcess.fax.error.offline");
-				} else if (faxTab.isAutoSendFax()) {
-					globalSettings.getFaxHandler().sendFax(container.getContactAddress(), container.getPdf());
-					progressStepText("dialog.notification.sendProcess.fax.success");
-				} else if (faxTab.isPrint()) {
-					progressStepText("dialog.notification.sendProcess.pdf.print");
-					userHandlerAction.getSelectedPrinter().print(container.getPdf());
-				}
+				faxExecutor.finishSendProecess(container, true,
+						resourceBundle.get("dialog.notification.sendProcess.fax.success"));
 
-				container.getNotification().setActive(false);
-				container.getNotification().setPerformed(true);
-				container.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-
-				progressStep();
 			} catch (IllegalArgumentException e) {
-				// no template or no number
-				container.getNotification().setPerformed(true);
-				container.getNotification().setFailed(true);
-				container.getNotification().setActive(true);
-				container.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-				container.getNotification().setCommentary(resourceBundle.get(e.getMessage()));
-				progressStepText(e.getMessage());
+				faxExecutor.finishSendProecess(container, false,
+						resourceBundle.get(e.getMessage(), container.getContactAddress()));
+				logger.debug("Sending failed" + container.getNotification().getCommentary());
 			}
+			feedback.progressStep();
 		}
+	}
+
+	public void executeLetterNotification(NotificationFeedback feedback, Task task, List<NotificationContainer> letters,
+			TemplateDiagnosisReport defaultReport, boolean individualAddresses, boolean print) {
+
+		logger.debug("Fax notification is used");
+
+		NotificationExecutor<NotificationContainer> notificationExecutor = new NotificationExecutor<NotificationContainer>(
+				feedback);
+
+		for (NotificationContainer container : letters) {
+			try {
+
+				// copy contact address before sending -> save before error
+				container.getNotification().setContactAddress(container.getContactAddress());
+
+				if (!notificationExecutor.isAddressApproved(container.getContactAddress()))
+					throw new IllegalArgumentException("");
+
+				container.setPdf(notificationExecutor.getPDF(container, task, defaultReport, individualAddresses));
+
+				if (!notificationExecutor.performNotification(container, false, print))
+					throw new IllegalArgumentException("dialog.notification.sendProcess.pdf.error.failed");
+
+				notificationExecutor.finishSendProecess(container, true,
+						resourceBundle.get("dialog.notification.sendProcess.pdf.print"));
+
+			} catch (IllegalArgumentException e) {
+				notificationExecutor.finishSendProecess(container, false,
+						resourceBundle.get(e.getMessage(), container.getContactAddress()));
+				logger.debug("Sending failed" + container.getNotification().getCommentary());
+			}
+			feedback.progressStep();
+		}
+	}
+
+	public void executePhoneNotification(NotificationFeedback feedback, Task task, List<NotificationContainer> phones) {
+		NotificationExecutor<NotificationContainer> notificationExecutor = new NotificationExecutor<NotificationContainer>(
+				feedback);
+		for (NotificationContainer container : phones) {
+			notificationExecutor.finishSendProecess(container, true,
+					resourceBundle.get("dialog.notification.sendProcess.pdf.print"));
+		}
+		feedback.progressStep();
+	}
+
+	public PDFContainer generateSendReport(Task task, boolean mailUsed, List<NotificationContainer> mailContainer,
+			boolean faxUsed, List<NotificationContainer> faxContainer, boolean letterUserd,
+			List<NotificationContainer> letterContainer, boolean phoneUsed, List<NotificationContainer> phoneContainter,
+			Date notificationDate) {
+		DocumentTemplate sendReport = DocumentTemplate
+				.getTemplateByID(globalSettings.getDefaultDocuments().getNotificationSendReport());
+
+		sendReport.initializeTempalte(task, new Boolean(mailUsed), new Boolean(faxUsed), new Boolean(letterUserd),
+				new Boolean(phoneUsed), mailContainer, faxContainer, letterContainer, phoneContainter,
+				notificationDate);
+		PDFContainer container = (new PDFGenerator()).getPDF(sendReport);
+
+		return container;
+	}
+
+	public void saveContactsOfTask(Task task, PDFContainer sendReport) {
+		genericDAO.savePatientData(task, "log.patient.task.notification.send");
+
+//		pdfDAO.attachPDF(getTask().getPatient(), getTask(), sendReport);
+		// // removing from diagnosis list
+		// favouriteListDAO.removeTaskFromList(getTask(),
+		// PredefinedFavouriteList.NotificationList,
+		// PredefinedFavouriteList.StayInNotificationList);
 	}
 }

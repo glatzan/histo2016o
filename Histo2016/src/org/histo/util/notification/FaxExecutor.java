@@ -1,6 +1,5 @@
 package org.histo.util.notification;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.util.HistoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +17,10 @@ import lombok.Setter;
  */
 @Configurable
 public class FaxExecutor extends NotificationExecutor<NotificationContainer> {
+
+	public FaxExecutor(NotificationFeedback feedback) {
+		super(feedback);
+	}
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -41,11 +44,12 @@ public class FaxExecutor extends NotificationExecutor<NotificationContainer> {
 	 * MailContainer)
 	 */
 	@Override
-	public boolean performSend(NotificationContainer holder) {
-		// offline mode
-		if (!globalSettings.getProgramSettings().isOffline())
+	protected boolean performSend(NotificationContainer holder) {
+		if (!globalSettings.getProgramSettings().isOffline()) {
+			feedback.setFeedback("dialog.notification.sendProcess.fax.send", holder.getContactAddress());
 			globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), holder.getPdf());
-
+			return true;
+		}
 		return super.performSend(holder);
 	}
 

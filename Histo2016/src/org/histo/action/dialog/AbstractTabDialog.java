@@ -23,7 +23,7 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 		}
 
 		onTabChange(tabs[0]);
-		
+
 		return true;
 	}
 
@@ -34,6 +34,28 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 	public void onTabChange(AbstractTab tab) {
 		setSelectedTab(tab);
 		tab.updateData();
+	}
+
+	public void nextTab() {
+		logger.trace("Next tab");
+		for (int i = 0; i < tabs.length; i++) {
+			if (tabs[i] == selectedTab) {
+				if (i + 1 <= tabs.length - 1)
+					onTabChange(tabs[i + 1]);
+				break;
+			}
+		}
+	}
+
+	public void previousTab() {
+		logger.trace("Previous step");
+		for (int i = 0; i < tabs.length; i++) {
+			if (tabs[i] == selectedTab) {
+				if (i - 1 >= 0)
+					onTabChange(tabs[i - 1]);
+				break;
+			}
+		}
 	}
 
 	@Getter

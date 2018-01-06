@@ -1,6 +1,7 @@
 package org.histo.util.notification;
 
 import org.histo.model.AssociatedContact;
+import org.histo.model.AssociatedContactNotification;
 import org.histo.template.mail.DiagnosisReportMail;
 
 import lombok.Getter;
@@ -18,8 +19,8 @@ public class MailContainer extends NotificationContainer {
 
 	private DiagnosisReportMail mail;
 	
-	public MailContainer(AssociatedContact contact) {
-		super(contact);
+	public MailContainer(AssociatedContact contact, AssociatedContactNotification notification) {
+		super(contact, notification);
 	}
 
 }

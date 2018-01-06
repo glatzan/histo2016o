@@ -35,8 +35,8 @@ public class ContactDAO extends AbstractDAO {
 	private GlobalSettings globalSettings;
 
 	/**
-	 * Loads the predifend notification methods for the specific roles and
-	 * applies them on the contact.
+	 * Loads the predifend notification methods for the specific roles and applies
+	 * them on the contact.
 	 * 
 	 * @param task
 	 * @param associatedContact
@@ -63,8 +63,8 @@ public class ContactDAO extends AbstractDAO {
 	}
 
 	/**
-	 * Checks all diagnoses for physical diagnosis report sending, and checks if
-	 * the contact is a affected. If so the contact will be marked.
+	 * Checks all diagnoses for physical diagnosis report sending, and checks if the
+	 * contact is a affected. If so the contact will be marked.
 	 * 
 	 * @param task
 	 * @param associatedContact
@@ -98,8 +98,8 @@ public class ContactDAO extends AbstractDAO {
 	}
 
 	/**
-	 * Updates all contacts an checks if a physical letter should be send to
-	 * them (depending on the selected diagnosis)
+	 * Updates all contacts an checks if a physical letter should be send to them
+	 * (depending on the selected diagnosis)
 	 * 
 	 * @param task
 	 * @param diagnosisRevision
@@ -237,13 +237,13 @@ public class ContactDAO extends AbstractDAO {
 	 * @param associatedContact
 	 * @param notification
 	 */
-	public void renewNotification(Task task, AssociatedContact associatedContact,
+	public AssociatedContactNotification renewNotification(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification notification) {
 
 		notification.setActive(false);
 		genericDAO.savePatientData(notification, task, "log.patient.task.contact.notification.inactive",
 				notification.getNotificationTyp().toString(), associatedContact.toString());
-		addNotificationType(task, associatedContact, notification.getNotificationTyp());
+		return addNotificationType(task, associatedContact, notification.getNotificationTyp());
 	}
 
 	/**

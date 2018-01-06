@@ -29,12 +29,7 @@
 				styleClass="newTableContainer">
 				<h:panelGroup>
 					<!-- notification -->
-					<h:outputLabel value="#{msg['dialog.notification.headline']}"
-						rendered="#{!dialogHandlerAction.notificationDialog.sendTab.reperformSend}" />
-					<!-- reperform notification -->
-					<h:outputLabel
-						value="#{msg['dialog.notification.headline.reperform']}"
-						rendered="#{dialogHandlerAction.notificationDialog.sendTab.reperformSend}" />
+					<h:outputLabel value="#{msg['dialog.notification.headline']}" />
 				</h:panelGroup>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					immediate="true" styleClass="noUnderlineAtLink">

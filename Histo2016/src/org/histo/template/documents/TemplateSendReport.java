@@ -30,29 +30,50 @@ public class TemplateSendReport extends DocumentTemplate {
 
 	private Date dateOfReport;
 
-	public void initData(Patient patient, Task task, boolean useMail, List<NotificationContainer> mailHolders, boolean useFax,
-			List<NotificationContainer> faxHolders, boolean useLetter, List<NotificationContainer> letterHolders, boolean usePhone,
-			List<NotificationContainer> phoneHolders, Date dateOfReport) {
-		this.patient = patient;
-		this.task = task;
+	/**
+	 * Arguments: 0 = task, 1 = useMail (bool), 2 useFax (bool), 3 = useLetter
+	 * (bool), 4 = usePhone (bool), 5 = mailHolders (List<NotificationContainer>), 6
+	 * = faxHolders (List<NotificationContainer>), 7 = letterHolders
+	 * (List<NotificationContainer>), 8 = phoneHolders
+	 * (List<NotificationContainer>), 9 = dateOfReport (date), 10 = list
+	 */
+	@Override
+	public void initializeTempalte(Object... objects) {
+		if (objects.length != 11)
+			throw new IllegalArgumentException("Number of Arguments does not match");
 
-		this.useMail = useMail;
-		this.useFax = useFax;
-		this.useLetter = useLetter;
-		this.usePhone = usePhone;
+		if (!(objects[0] instanceof Task))
+			throw new IllegalArgumentException("Type of Argument 0 (task) does not match");
 
-		this.mailHolders = mailHolders;
-		this.faxHolders = faxHolders;
-		this.letterHolders = letterHolders;
-		this.phoneHolders = phoneHolders;
+		this.patient = ((Task) objects[0]).getPatient();
+		this.task = ((Task) objects[0]);
 
-		this.dateOfReport = dateOfReport;
+		if (!(objects[1] instanceof Boolean || objects[2] instanceof Boolean || objects[3] instanceof Boolean
+				|| objects[4] instanceof Boolean))
+			throw new IllegalArgumentException("Type of Argument 2-4 (bool) does not match");
+
+		this.useMail = (Boolean) objects[1];
+		this.useFax = (Boolean) objects[2];
+		this.useLetter = (Boolean) objects[3];
+		this.usePhone = (Boolean) objects[4];
+
+		if (!(objects[5] instanceof List<?> || objects[6] instanceof List<?> || objects[7] instanceof List<?>
+				|| objects[8] instanceof List<?>))
+			throw new IllegalArgumentException("Type of Argument 5-8 (NotificationContainer) does not match");
+
+		this.mailHolders = (List<NotificationContainer>) objects[5];
+		this.faxHolders = (List<NotificationContainer>) objects[6];
+		this.letterHolders = (List<NotificationContainer>) objects[7];
+		this.phoneHolders = (List<NotificationContainer>) objects[8];
+
+		if (!(objects[9] instanceof Date))
+			throw new IllegalArgumentException("Type of Argument 9 (Date) does not match");
+
+		this.dateOfReport = (Date) objects[9];
 
 	}
 
-	public PDFContainer generatePDF(PDFGenerator generator) {
-		generator.openNewPDf(this);
-
+	public void fillTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
 		generator.getConverter().replace("useMail", useMail);
@@ -65,10 +86,12 @@ public class TemplateSendReport extends DocumentTemplate {
 		generator.getConverter().replace("phoneHolders", phoneHolders);
 		generator.getConverter().replace("reportDate", dateOfReport);
 		generator.getConverter().replace("date", new DateTool());
+	}
 
+	public PDFContainer onAfterPDFCreation(PDFContainer container) {
 		List<PDFContainer> attachPdf = new ArrayList<PDFContainer>();
 
-		attachPdf.add(generator.generatePDF());
+		attachPdf.add(container);
 
 		attachPdf.addAll(
 				mailHolders.stream().filter(p -> p.getPdf() != null).map(p -> p.getPdf()).collect(Collectors.toList()));

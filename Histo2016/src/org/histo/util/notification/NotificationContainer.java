@@ -20,12 +20,17 @@ import lombok.Setter;
 public class NotificationContainer {
 
 	/**
+	 * If true the notification should be performed
+	 */
+	protected boolean perform;
+
+	/**
 	 * contact
 	 */
 	protected AssociatedContact contact;
 
 	/**
-	 * Notification 
+	 * Notification
 	 */
 	protected AssociatedContactNotification notification;
 
@@ -38,11 +43,6 @@ public class NotificationContainer {
 	 * Address, copied form contact
 	 */
 	protected String contactAddress;
-
-	/**
-	 * Type
-	 */
-	protected NotificationTyp notificationTyp;
 
 	/**
 	 * True if the notification failed on a previous notification attempt
@@ -59,7 +59,36 @@ public class NotificationContainer {
 	 */
 	protected String warningInfo;
 
-	public NotificationContainer(AssociatedContact contact) {
+	public NotificationContainer(AssociatedContact contact, AssociatedContactNotification notification) {
 		this.contact = contact;
+		this.notification = notification;
+		this.faildPreviously = notification.isFailed();
+		this.perform = true;
+	}
+
+	/**
+	 * Copies the notification address if failed from notification (for user to
+	 * correct it) or if first try from contact.
+	 */
+	public void initAddressForNotificationType() {
+		if (!notification.isFailed()) {
+			switch (notification.getNotificationTyp()) {
+			case EMAIL:
+				setContactAddress(contact.getPerson().getContact().getEmail());
+				break;
+			case FAX:
+				setContactAddress(contact.getPerson().getContact().getFax());
+				break;
+			case PHONE:
+				setContactAddress(contact.getPerson().getContact().getPhone());
+				break;
+			case LETTER:
+			default:
+				break;
+			}
+		} else {
+			setContactAddress(notification.getContactAddress());
+		}
+
 	}
 }

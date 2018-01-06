@@ -32,6 +32,39 @@ public class DocumentTemplate extends Template {
 	@Transient
 	private String file2Content;
 
+	/**
+	 * If true the pdf generator will call onAfterPDFCreation to allow the template
+	 * to change or attach other things to the pdf
+	 */
+	protected boolean afterPDFCreationHook;
+
+	public void initializeTempalte(Object... objects) {
+
+	}
+
+	public void fillTemplate(PDFGenerator generator) {
+
+	}
+
+	/**
+	 * Is called if afterPDFCreationHook is set and the pdf was created.
+	 * 
+	 * @param container
+	 * @return
+	 */
+	public PDFContainer onAfterPDFCreation(PDFContainer container) {
+		return container;
+	}
+
+	@Transient
+	public DocumentType getDocumentType() {
+		return DocumentType.fromString(this.type);
+	}
+
+	public void setDocumentType(DocumentType type) {
+		this.type = type.name();
+	}
+
 	public static DocumentTemplate[] getTemplates(DocumentType... type) {
 		return getTemplates(loadTemplates(type), type);
 	}
@@ -123,28 +156,5 @@ public class DocumentTemplate extends Template {
 			}
 		}
 		return null;
-	}
-
-	// @Override
-	// public void prepareTemplate() {
-	// if (HistoUtil.isNotNullOrEmpty(getContent()))
-	// setFileContent(FileHandlerUtil.getContentOfFile(getContent()));
-	//
-	// if (HistoUtil.isNotNullOrEmpty(getContent2()))
-	// setFile2Content(FileHandlerUtil.getContentOfFile(getContent2()));
-	// }
-	//
-
-	public void fillTemplate(PDFGenerator generator) {
-		
-	}
-	
-	@Transient
-	public DocumentType getDocumentType() {
-		return DocumentType.fromString(this.type);
-	}
-
-	public void setDocumentType(DocumentType type) {
-		this.type = type.name();
 	}
 }

@@ -17,54 +17,53 @@
 			style="width:100%" columnClasses="columnLabelContainer150, ">
 
 			<!-- Use fax -->
-			<h:outputLabel value="#{msg['dialog.notification.tab.fax.use']}" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.fax.use']}"
+				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
 				value="#{dialogHandlerAction.notificationDialog.faxTab.useTab}"
 				title="#{msg['dialog.notification.tab.fax.use.text']}">
-				<p:ajax event="change" process="@this" partialSubmit="true"
-					update="@form"></p:ajax>
+				<p:ajax event="change" process="@form" update="@form"></p:ajax>
 			</p:selectBooleanCheckbox>
 
 			<!-- Send fax -->
-			<h:outputLabel value="#{msg['dialog.notification.tab.fax.send']}" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.fax.send']}"
+				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
 				value="#{dialogHandlerAction.notificationDialog.faxTab.autoSendFax}"
 				title="#{msg['dialog.notification.tab.fax.send.text']}"
 				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}">
-				<p:ajax event="change" update="@form"></p:ajax>
+				<p:ajax event="change" process="@form" update="@form"></p:ajax>
 			</p:selectBooleanCheckbox>
 
 			<!-- print -->
-			<h:outputLabel value="#{msg['dialog.notification.tab.fax.print']}" />
+			<h:outputLabel value="#{msg['dialog.notification.tab.fax.print']}"
+				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
 				value="#{dialogHandlerAction.notificationDialog.faxTab.print}"
 				title="#{msg['dialog.notification.tab.fax.print.text']}">
-				<p:ajax event="change" partialSubmit="true" process="@this"
-					update="@form" />
+				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
 
 			<!-- pdf template -->
 			<h:outputLabel
-				value="#{msg['dialog.notification.tab.fax.pdfTemplate']}" />
+				value="#{msg['dialog.notification.tab.fax.pdfTemplate']}"
+				styleClass="bigFont" />
 			<p:selectOneMenu
 				value="#{dialogHandlerAction.notificationDialog.faxTab.selectedTemplate}"
 				converter="#{dialogHandlerAction.notificationDialog.faxTab.templateTransformer}"
 				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}">
 
-				<f:selectItem itemValue="#{null}"
-					itemLabel="#{msg['dialog.notification.tab.fax.pdfTemplate.none']}"></f:selectItem>
-
 				<f:selectItems
 					value="#{dialogHandlerAction.notificationDialog.faxTab.templateList}"
 					var="template" itemLabel="#{template.name}" itemValue="#{template}" />
 
-				<p:ajax update="@this" event="change" process="@this"
-					partialSubmit="true" />
+				<p:ajax update="@this" event="change" process="@this" />
 			</p:selectOneMenu>
 
 			<!-- receiver -->
-			<h:outputLabel value="#{msg['dialog.notification.tab.fax.receiver']}" />
-			<p:dataTable var="holder" styleClass="newStyleDataTable"
+			<h:outputLabel value="#{msg['dialog.notification.tab.fax.receiver']}"
+				styleClass="bigFont" />
+			<p:dataTable var="holder" styleClass="newStyleDataTable" scrollHeight="200" scrollable="true"
 				value="#{dialogHandlerAction.notificationDialog.faxTab.holders}">
 
 				<!-- name of receiver -->
@@ -83,12 +82,26 @@
 					headerText="#{msg['dialog.notification.tab.fax.receiver.number']}"
 					style="width:auto">
 					<p:inputText value="#{holder.contactAddress}"
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab or holder.notification.failed}"
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab or !holder.perform}"
 						style="width:98%" />
 				</p:column>
 
+				<!-- perform notification on user -->
+				<p:column style="width:6%">
+					<f:facet name="header">
+						<i class="fa fa-check-circle-o "
+							title="#{msg['dialog.notification.tab.fax.receiver.use']}" />
+					</f:facet>
+
+					<p:selectBooleanCheckbox
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
+						value="#{holder.perform}">
+						<p:ajax event="change" update="@form" />
+					</p:selectBooleanCheckbox>
+				</p:column>
+
 				<!-- options -->
-				<p:column style="width:12%; text-align:center;">
+				<p:column style="width:10%; text-align:center;">
 					<f:facet name="header">
 						<i class="fa fa-file-pdf-o"
 							title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}" />
@@ -96,16 +109,14 @@
 
 					<!-- add pdf, if pdf == null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null and !holder.notification.failed}"
+						rendered="#{holder.pdf eq null and holder.perform}"
 						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}"
-						execute="@this" partialSubmit="true"
-						onstart="PF('blockUIWidget').block()"
+						execute="@this" onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()"
 						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, holder.contact)}">
 
-						<p:ajax event="dialogReturn" update="@form" partialSubmit="true"
-							process="@form"
+						<p:ajax event="dialogReturn" update="@form" process="@form"
 							listener="#{dialogHandlerAction.notificationDialog.faxTab.copySelectedPdf(holder)}" />
 
 						<i class="fa fa-fw fa-file-pdf-o" />
@@ -113,10 +124,10 @@
 
 					<!-- show pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf ne null and !holder.notification.failed}"
+						rendered="#{holder.pdf ne null and holder.perform}"
 						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.show']}"
-						execute="@this" partialSubmit="true"
+						execute="@this"
 						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
@@ -125,28 +136,13 @@
 					<!-- remove pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
 						style="margin-left: 10px;"
-						rendered="#{holder.pdf ne null and !holder.notification.failed}"
+						rendered="#{holder.pdf ne null and holder.perform}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.remove']}"
-						execute="@this" partialSubmit="true" update="@form"
+						execute="@this" update="@form"
 						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
 						actionListener="#{holder.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
-					</p:commandLink>
-
-					<!-- refresh failed notification, if = notification.failed -->
-					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.notification.failed}" update="@form"
-						title="#{msg['dialog.notification.tab.fax.receiver.renew']}"
-						execute="@this" partialSubmit="true">
-
-						<i class="fa fa-fw fa-refresh" />
-
-						<f:actionListener
-							binding="#{dialogHandlerAction.notificationDialog.faxTab.renewNotification(dialogHandlerAction.notificationDialog.task, holder)}" />
-
-						<f:actionListener
-							binding="#{dialogHandlerAction.notificationDialog.faxTab.updateData()}" />
 					</p:commandLink>
 
 				</p:column>
@@ -160,12 +156,11 @@
 
 			<h:panelGrid columns="1" styleClass="newTableContainer left">
 				<!-- Contact -->
-				<p:commandButton
+				<p:commandButton process="@form"
 					value="#{msg['dialog.notification.tab.mail.button.contact.select']}"
 					icon="fa fa-fw fa-cog"
 					actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
-					<p:ajax event="dialogReturn" update="@form" partialSubmit="true"
-						process="@form"
+					<p:ajax event="dialogReturn" update="@form"
 						listener="#{dialogHandlerAction.notificationDialog.faxTab.updateData()}" />
 				</p:commandButton>
 			</h:panelGrid>
@@ -174,14 +169,14 @@
 				<!-- previouse -->
 				<p:commandButton value="#{msg['general.back']}"
 					icon="fa fa-fw fa-arrow-left"
-					actionListener="#{dialogHandlerAction.notificationDialog.previousStep()}"
-					partialSubmit="true" process="@form" update="@form" />
+					actionListener="#{dialogHandlerAction.notificationDialog.previousTab()}"
+					process="@form" update="@form" />
 
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"
-					actionListener="#{dialogHandlerAction.notificationDialog.nextStep()}"
-					partialSubmit="true" process="@form" update="@form" />
+					actionListener="#{dialogHandlerAction.notificationDialog.nextTab()}"
+					process="@form" update="@form" />
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"

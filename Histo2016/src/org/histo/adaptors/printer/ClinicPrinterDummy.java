@@ -21,10 +21,18 @@ public class ClinicPrinterDummy extends ClinicPrinter {
 
 	@Override
 	public boolean print(PDFContainer container) {
+		return print(container, 1, null);
+	}
+
+	public boolean print(PDFContainer container, int count) {
+		return print(container, count, null);
+	}
+	
+	public boolean print(PDFContainer container, int count, String args) {
 		logger.debug("Dummy printer, printin...");
 		return true;
 	}
-
+	
 	@Override
 	public boolean printTestPage() {
 		logger.debug("Dummy printer, printin...");

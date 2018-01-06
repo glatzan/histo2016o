@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.adaptors.MailHandler;
 import org.histo.adaptors.printer.ClinicPrinter;
+import org.histo.adaptors.printer.ClinicPrinterDummy;
 import org.histo.adaptors.printer.LabelPrinter;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
@@ -143,7 +144,7 @@ public class UserHandlerAction implements Serializable {
 			histoUser.setSettings(new HistoSettings());
 
 		CopySettingsUtil.copyCrucialGroupSettings(histoUser, group, false);
-		
+
 		logger.debug("Role of user " + histoUser.getUsername() + " to " + histoUser.getGroup().toString());
 		genericDAO.save(histoUser, "log.user.role.changed", new Object[] { histoUser.getGroup() });
 	}
@@ -165,8 +166,9 @@ public class UserHandlerAction implements Serializable {
 
 	public void updateSelectedPrinters() {
 
-		if (getCurrentUser().getSettings().getPreferedPrinter() == null) {
-			// dummy printer is allways there
+		if (getCurrentUser().getSettings().getPreferedPrinter() == null
+				|| globalSettings.getProgramSettings().isOffline()) {
+			// dummy printer is always there
 			setSelectedPrinter(globalSettings.getPrinterList().get(0));
 			getCurrentUser().getSettings().setPreferedPrinter(getSelectedPrinter().getName());
 		} else {

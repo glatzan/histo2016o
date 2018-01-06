@@ -7,29 +7,29 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<div class="contentDiv">
-		<p:panel style="width:100%;" styleClass="contentPannel">
-			<f:facet name="header">
-				<h:outputLabel
-					value="#{msg['dialog.notification.tab.sendReport.headline']} " />
-				<h:outputText
-					value="#{dialogHandlerAction.mediaDialog.PDFContainerToRender.creationDate}">
-					<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
-				</h:outputText>
-			</f:facet>
-		</p:panel>
+	<p:outputPanel styleClass="headerPannel">
+		<h:outputLabel
+			value="#{msg['dialog.notification.tab.sendReport.headline']} " />
+		<h:outputText
+			rendered="#{dialogHandlerAction.mediaDialog.PDFContainerToRender ne null}"
+			value="#{dialogHandlerAction.mediaDialog.PDFContainerToRender.creationDate}">
+			<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
+		</h:outputText>
+	</p:outputPanel>
 
+
+	<p:outputPanel styleClass="bodyPannel">
 		<p:media player="pdf" cache="true"
 			value="#{dialogHandlerAction.mediaDialog.pdfContent}" width="100%"
 			height="490px" />
-	</div>
+	</p:outputPanel>
 
-	<div class="bottomDiv">
+	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
-			styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1">
-				<p:selectOneMenu styleClass="smallInput"
+			<h:panelGrid columns="1" styleClass="newTableContainer left">
+				<p:selectOneMenu
 					converter="#{dialogHandlerAction.notificationDialog.sendReportTab.sendReportConverter}"
 					title="#{msg['body.worklist.header.view']}"
 					value="#{dialogHandlerAction.mediaDialog.PDFContainerToRender}">
@@ -41,16 +41,16 @@
 						itemValue="#{pdf}" />
 
 					<p:ajax event="change" process="@this" partialSubmit="@this"
-						update=":adminForm:tabview:sendReportTab"></p:ajax>
+						update="@form"></p:ajax>
 
 				</p:selectOneMenu>
 			</h:panelGrid>
 
-			<h:panelGrid columns="3" style="float:right;">
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
 				<!-- reperform send -->
 				<p:commandButton
 					value="#{msg['dialog.notification.tab.sendReport.button.resend']}"
-					icon="fa fa-mail-forward" update="@form" styleClass="smallButton"
+					icon="fa fa-mail-forward" update="@form"
 					title="#{msg['dialog.notification.tab.sendReport.button.resend.text']}"
 					actionListener="#{dialogHandlerAction.notificationDialog.sendTab.reperformNotification()}" />
 
@@ -59,18 +59,17 @@
 					value="#{msg['dialog.notification.tab.sendReport.button.download']}"
 					icon="fa fa-download" ajax="false"
 					disabled="#{dialogHandlerAction.mediaDialog.PDFContainerToRender eq null}"
-					title="#{msg['dialog.notification.tab.sendReport.button.download.text']}"
-					styleClass="smallButton buttonRighMarginInList">
+					title="#{msg['dialog.notification.tab.sendReport.button.download.text']}">
 					<p:fileDownload
 						value="#{dialogHandlerAction.mediaDialog.pdfContent}" />
 				</p:commandButton>
 
 				<!-- close -->
 				<p:commandButton value="#{msg['general.close']}"
-					styleClass="smallButton buttonRighMarginInList"
 					icon="fa fa-times-circle"
 					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
+
 </ui:composition>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -13,14 +14,11 @@ import javax.faces.context.FacesContext;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.AbstractTabDialog;
-import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
-import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
@@ -33,23 +31,24 @@ import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
+import org.histo.service.NotificationService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.MailTemplate;
 import org.histo.template.documents.TemplateDiagnosisReport;
-import org.histo.template.documents.TemplateSendReport;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.StreamUtils;
+import org.histo.util.notification.FaxExecutor;
+import org.histo.util.notification.MailContainer;
+import org.histo.util.notification.MailExecutor;
 import org.histo.util.notification.NotificationContainer;
+import org.histo.util.notification.NotificationFeedback;
 import org.histo.util.pdf.PDFGenerator;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -117,6 +116,11 @@ public class NotificationDialog extends AbstractTabDialog {
 	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private NotificationService notificationService;
+
 	private MailTab mailTab;
 	private FaxTab faxTab;
 	private LetterTab letterTab;
@@ -138,47 +142,35 @@ public class NotificationDialog extends AbstractTabDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
-		if (getTask() != task) {
-			logger.debug("Resetting Bean");
-			setMailTab(new MailTab());
-			setFaxTab(new FaxTab());
-			setLetterTab(new LetterTab());
-			setPhoneTab(new PhoneTab());
-			setSendTab(new SendTab());
-			setSendReportTab(new SendReportTab());
+		setMailTab(new MailTab());
+		setFaxTab(new FaxTab());
+		setLetterTab(new LetterTab());
+		setPhoneTab(new PhoneTab());
+		setSendTab(new SendTab());
+		setSendReportTab(new SendReportTab());
 
-			tabs = new AbstractTab[] { mailTab, faxTab, letterTab, phoneTab, sendTab, sendReportTab };
+		tabs = new AbstractTab[] { mailTab, faxTab, letterTab, phoneTab, sendTab, sendReportTab };
+
+		// disabling tabs if notification was performed
+		if (task.getNotificationCompletionDate() != 0) {
+			mailTab.setDisabled(true);
+			faxTab.setDisabled(true);
+			letterTab.setDisabled(true);
+			phoneTab.setDisabled(true);
+			sendTab.setDisabled(true);
+			sendReportTab.setDisabled(false);
+		} else {
+			mailTab.setDisabled(false);
+			faxTab.setDisabled(false);
+			letterTab.setDisabled(false);
+			phoneTab.setDisabled(false);
+			sendTab.setDisabled(false);
+			sendReportTab.setDisabled(true);
 		}
 
 		super.initBean(task, Dialog.NOTIFICATION);
 
-		// resetting even resend settings
-		sendTab.setReperformSend(false);
-
 		return true;
-	}
-
-	public void nextStep() {
-		logger.trace("Next step");
-		for (int i = 0; i < tabs.length; i++) {
-			if (tabs[i] == selectedTab) {
-				if (i <= tabs.length - 1)
-					onTabChange(tabs[i]);
-
-				break;
-			}
-		}
-	}
-
-	public void previousStep() {
-		logger.trace("Previous step");
-		for (int i = 0; i < tabs.length; i++) {
-			if (tabs[i] == selectedTab) {
-				if (i >= 0)
-					onTabChange(tabs[i]);
-				break;
-			}
-		}
 	}
 
 	public void openSelectPDFDialog(Task task, AssociatedContact contact) {
@@ -234,33 +226,15 @@ public class NotificationDialog extends AbstractTabDialog {
 		dialogHandlerAction.getMediaDialog().prepareDialog();
 	}
 
-	// public void initTabs() {
-	//
-	// mailTab.setInitialized(false);
-	// mailTab.updateData();
-	//
-	// faxTab.setInitialized(false);
-	// faxTab.updateData();
-	//
-	// letterTab.setInitialized(false);
-	// letterTab.updateData();
-	//
-	// phoneTab.setInitialized(false);
-	// phoneTab.updateData();
-	//
-	// sendTab.setInitialized(false);
-	// sendTab.updateData();
-	//
-	// sendReportTab.updateData();
-	// }
-
 	@Getter
 	@Setter
-	public abstract class AbstractTab extends org.histo.action.dialog.AbstractTabDialog.AbstractTab {
+	public abstract class NotificationTab extends AbstractTab {
 
 		protected List<NotificationContainer> holders;
 
 		protected boolean initialized;
+
+		protected boolean individualAddresses;
 
 		protected boolean useTab;
 
@@ -272,64 +246,52 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		protected NotificationTyp notificationTyp;
 
+		/**
+		 * Method updates the contact list for the given contact type. It will not
+		 * overwrite changes by the user.
+		 * 
+		 * @param contacts
+		 * @param notificationTyp
+		 */
 		public void updateList(List<AssociatedContact> contacts, NotificationTyp notificationTyp) {
 
-			// list of all previously generated holders
-			List<NotificationContainer> tmpHolders = new ArrayList<NotificationContainer>(getHolders());
+			// copie the list of current containers with notifications
+			List<NotificationContainer> tmpContainers = new ArrayList<NotificationContainer>(getHolders());
 
 			for (AssociatedContact associatedContact : contacts) {
 
-				List<AssociatedContactNotification> notification = null;
+				// getting the notification from the contact selected by the notification type
+				List<AssociatedContactNotification> notification = associatedContact
+						.getNotificationTypAsList(notificationTyp, true);
 
-				// holder is in list, remove holder from temporary list
-				if ((notification = associatedContact.getNotificationTypAsList(notificationTyp, true)).size() != 0) {
-					// there should only be one AssociatedContactNotification
-					// for the given type
+				// if there is no notification of this type do nothing, there should be only 1
+				// notification pending of the given type, if there are more ignore the rest
+				if (notification.size() != 0) {
 					try {
-						NotificationContainer tmpHolder = tmpHolders.stream()
+						// searching if the notification is already in the list, updating
+						NotificationContainer tmpContainer = tmpContainers.stream()
 								.filter(p -> p.getContact().equals(associatedContact))
 								.collect(StreamUtils.singletonCollector());
 						// updating notification type
-						tmpHolder.setNotification(notification.get(0));
-						tmpHolders.remove(tmpHolder);
+						tmpContainer.setNotification(notification.get(0));
+						tmpContainer.setFaildPreviously(notification.get(0).isFailed());
+						tmpContainers.remove(tmpContainer);
 					} catch (IllegalStateException e) {
-						// adding to list
+						// not in list creating a new notification
+						NotificationContainer holder = (notificationTyp == NotificationTyp.EMAIL
+								? new MailContainer(associatedContact, notification.get(0))
+								: new NotificationContainer(associatedContact, notification.get(0)));
 
-						NotificationContainer holder = new NotificationContainer(associatedContact);
-						holder.setNotification(notification.get(0));
-						holder.setFaildPreviously(notification.get(0).isFailed());
-
-						if (!notification.get(0).isFailed()) {
-							switch (notificationTyp) {
-							case EMAIL:
-								holder.setContactAddress(associatedContact.getPerson().getContact().getEmail());
-								break;
-							case FAX:
-								holder.setContactAddress(associatedContact.getPerson().getContact().getFax());
-								break;
-							case PHONE:
-								holder.setContactAddress(associatedContact.getPerson().getContact().getPhone());
-								break;
-							case LETTER:
-								break;
-							default:
-								// do nothing for e.g. print
-								break;
-							}
-						} else {
-							holder.setContactAddress(notification.get(0).getContactAddress());
-						}
-
+						holder.initAddressForNotificationType();
 						getHolders().add(holder);
 					}
 				}
-
 			}
 
-			// removing old holders
-			for (NotificationContainer contactHolder : tmpHolders) {
-				getHolders().remove(contactHolder);
-			}
+			// container which are still in the tmpContainers array were removed, so delete
+			// them from the current container list
+			for (NotificationContainer contactContainer : tmpContainers)
+				getHolders().remove(contactContainer);
 
 			// sorting
 			Collections.sort(getHolders(), (NotificationContainer p1, NotificationContainer p2) -> {
@@ -350,17 +312,39 @@ public class NotificationDialog extends AbstractTabDialog {
 			}
 		}
 
-		public void renewNotification(Task task, NotificationContainer contactHolder) {
-			getHolders().remove(contactHolder);
-			contactDAO.renewNotification(task, contactHolder.getContact(), contactHolder.getNotification());
-			updateList(task.getContacts(), getNotificationTyp());
+		/**
+		 * Renews all active notifications if they failed before
+		 * 
+		 * @param task
+		 * @param contactHolder
+		 */
+		public void renewNotifications() {
+			for (Iterator<NotificationContainer> it = getHolders().iterator(); it.hasNext();) {
+				NotificationContainer container = it.next();
+				if (container.isFaildPreviously() && container.isPerform()) {
+					contactDAO.renewNotification(getTask(), container.getContact(), container.getNotification());
+				}
+			}
+
+			updateData();
 		}
 
+		/**
+		 * Updates the notification container list and if at least one notification for
+		 * this task should be performed useTab is set to true
+		 */
+		@Override
+		public void updateData() {
+			logger.debug("Updating tab " + getNotificationTyp());
+			updateList(task.getContacts(), getNotificationTyp());
+			setUseTab(getHolders().size() > 0 ? true : false);
+			setInitialized(true);
+		}
 	}
 
 	@Getter
 	@Setter
-	public class MailTab extends AbstractTab {
+	public class MailTab extends NotificationTab {
 
 		private String mailSubject;
 
@@ -403,25 +387,14 @@ public class NotificationDialog extends AbstractTabDialog {
 			setMailSubject(mail.getSubject());
 			setMailBody(mail.getBody());
 
-			updateData();
-
-			setUseTab(getHolders().size() > 0 ? true : false);
-
 			logger.debug("Mail data initialized");
 			return true;
 		}
-
-		@Override
-		public void updateData() {
-			logger.debug("Updating Mail data");
-			updateList(task.getContacts(), getNotificationTyp());
-		}
-
 	}
 
 	@Getter
 	@Setter
-	public class FaxTab extends AbstractTab {
+	public class FaxTab extends NotificationTab {
 
 		/**
 		 * If true the program will send the fax
@@ -460,23 +433,14 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			setPrint(false);
 
-			setUseTab(getHolders().size() > 0 ? true : false);
-
 			logger.debug("Fax data initialized");
 			return true;
 		}
-
-		@Override
-		public void updateData() {
-			logger.debug("Updating Fax data");
-			updateList(task.getContacts(), getNotificationTyp());
-		}
-
 	}
 
 	@Getter
 	@Setter
-	public class LetterTab extends AbstractTab {
+	public class LetterTab extends NotificationTab {
 
 		/**
 		 * If true the pdfs will be printed
@@ -510,23 +474,14 @@ public class NotificationDialog extends AbstractTabDialog {
 			setSelectedTemplate(DocumentTemplate.getTemplateByID(subSelect,
 					globalSettings.getDefaultDocuments().getNotificationDefaultLetterDocument()));
 
-			setUseTab(getHolders().size() > 0 ? true : false);
-
 			logger.debug("Letter data initialized");
 			return true;
 		}
-
-		@Override
-		public void updateData() {
-			logger.debug("Updating Letter data");
-			updateList(task.getContacts(), getNotificationTyp());
-		}
-
 	}
 
 	@Getter
 	@Setter
-	public class PhoneTab extends AbstractTab {
+	public class PhoneTab extends NotificationTab {
 
 		public PhoneTab() {
 			setTabName("PhoneTab");
@@ -542,24 +497,14 @@ public class NotificationDialog extends AbstractTabDialog {
 			// clearing all holders
 			setHolders(new ArrayList<NotificationContainer>());
 
-			setUseTab(getHolders().size() > 0 ? true : false);
-
 			logger.debug("Phone data initialized");
 			return true;
 		}
-
-		@Override
-		public void updateData() {
-			logger.debug("Updating Phone data");
-			updateList(task.getContacts(), getNotificationTyp());
-
-		}
-
 	}
 
 	@Getter
 	@Setter
-	public class SendTab extends AbstractTab {
+	public class SendTab extends NotificationTab implements NotificationFeedback {
 
 		private boolean notificationCompleted;
 
@@ -567,22 +512,16 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		private int progressPercent;
 
-		private String progressText;
+		private String feedbackText;
 
 		private int steps;
-
-		private Locale locale;
 
 		private int printCount;
 
 		private List<NotificationContainer> currentMailHolders;
-		private boolean failedMailHolders;
 		private List<NotificationContainer> currentFaxHolders;
-		private boolean failedFaxHolders;
 		private List<NotificationContainer> currentLetterHolders;
-		private boolean failedLetterHolders;
-
-		private boolean reperformSend;
+		private List<NotificationContainer> currentPhoneHolders;
 
 		public SendTab() {
 			setTabName("SendTab");
@@ -593,149 +532,87 @@ public class NotificationDialog extends AbstractTabDialog {
 			setPrintCount(2);
 		}
 
-		// @Override
-		// public String getCenterView() {
-		// if (!isNotificationCompleted())
-		// return "send/send.xhtml";
-		// return "send/status.xhtml";
-		// }
+		@Override
+		public boolean initTab() {
+			// clearing all holders
+			setNotificationCompleted(false);
+			setNotificationRunning(false);
+			setProgressPercent(0);
+			setFeedbackText("");
+			setSteps(1);
+
+			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+					DocumentType.DIAGNOSIS_REPORT_EXTERN);
+
+			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+
+			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+
+			setSelectedTemplate(DocumentTemplate.getTemplateByID(subSelect,
+					globalSettings.getDefaultDocuments().getNotificationDefaultPrintDocument()));
+
+			setInitialized(true);
+			return true;
+		}
 
 		@Override
 		public void updateData() {
 
-			if (!isInitialized()) {
-				sendTab.setProgressPercent(0);
-				sendTab.setProgressText("");
-				setNotificationCompleted(false);
-				setNotificationRunning(false);
-				setProgressPercent(0);
-				setProgressText("");
-				setSteps(1);
-				setLocale(FacesContext.getCurrentInstance().getViewRoot().getLocale());
+			// mail
+			if (!mailTab.isInitialized())
+				mailTab.updateData();
 
-				if (isReperformSend()) {
-					setNotificationCompleted(false);
-				} else {
-					// notification has been performed
-					if (getTask().getNotificationCompletionDate() != 0) {
-						setNotificationCompleted(true);
-					}
+			MailExecutor mailExecutor = new MailExecutor(null);
+			// renews notifications
+			mailTab.renewNotifications();
+			System.out.println(mailTab.getHolders().size());
+			List<NotificationContainer> mailContainers = mailTab.getHolders().stream().filter(p -> p.isPerform())
+					.collect(Collectors.toList());
+
+			mailContainers.forEach(p -> {
+				if (!mailExecutor.isAddressApproved(p.getContactAddress())) {
+					p.setWarning(true);
+					p.setWarningInfo(resourceBundle.get("dialog.notification.sendProcess.mail.error.mailNotValid"));
 				}
+			});
 
-				mailTab.setDisabled(sendTab.isNotificationCompleted());
-				faxTab.setDisabled(sendTab.isNotificationCompleted());
-				letterTab.setDisabled(sendTab.isNotificationCompleted());
-				phoneTab.setDisabled(sendTab.isNotificationCompleted());
-				// never disable
-				sendTab.setDisabled(false);
+			setCurrentMailHolders(mailContainers);
 
-				// if resend there is a sendreport, so the sendreport tab is
-				// shown!
-				if (!isReperformSend()) {
-					sendReportTab.setDisabled(!sendTab.isNotificationCompleted());
-				} else {
-					sendReportTab.setDisabled(false);
+			// fax
+			if (!faxTab.isInitialized())
+				faxTab.updateData();
+
+			FaxExecutor faxExecutor = new FaxExecutor(null);
+			// renews notifications
+			faxTab.renewNotifications();
+			List<NotificationContainer> faxContainers = faxTab.getHolders().stream().filter(p -> p.isPerform())
+					.collect(Collectors.toList());
+
+			faxContainers.forEach(p -> {
+				if (!faxExecutor.isAddressApproved(p.getContactAddress())) {
+					p.setWarning(true);
+					p.setWarningInfo(resourceBundle.get("dialog.notification.sendProcess.fax.error.numberNotValid"));
 				}
+			});
 
-				// setActiveIndex(sendTab.isNotificationCompleted() ? 4 : 0);
+			setCurrentFaxHolders(faxContainers);
 
-				DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-						DocumentType.DIAGNOSIS_REPORT_EXTERN);
+			// letters
+			if (!letterTab.isInitialized())
+				letterTab.updateData();
 
-				setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+			letterTab.renewNotifications();
+			List<NotificationContainer> letterContainers = letterTab.getHolders().stream().filter(p -> p.isPerform())
+					.collect(Collectors.toList());
+			setCurrentLetterHolders(letterContainers);
 
-				setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+			// phone
+			if (!phoneTab.isInitialized())
+				phoneTab.updateData();
 
-				setSelectedTemplate(DocumentTemplate.getTemplateByID(subSelect, 11));
-
-				setInitialized(true);
-			}
-
-			if (!isNotificationCompleted()) {
-
-				setFailedMailHolders(mailTab.getHolders().stream().anyMatch(p -> p.isFaildPreviously()));
-				setCurrentMailHolders(
-						mailTab.getHolders().stream().filter(p -> !p.isFaildPreviously()).collect(Collectors.toList()));
-
-				for (NotificationContainer holder : getCurrentMailHolders()) {
-
-					if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
-						holder.setWarning(true);
-						holder.setWarningInfo(
-								resourceBundle.get("dialog.notification.sendProcess.mail.error.noaddress"));
-					} else if (!EmailValidator.getInstance().isValid(holder.getContactAddress())) {
-						holder.setWarning(true);
-						holder.setWarningInfo(
-								resourceBundle.get("dialog.notification.sendProcess.mail.error.mailNotValid"));
-					} else {
-						holder.setWarning(false);
-						holder.setWarningInfo("");
-					}
-
-					if (holder.isWarning())
-						logger.debug("Warning for Email (" + holder.getContact().getPerson().getFullName() + ") = "
-								+ holder.getWarningInfo());
-				}
-
-				setFailedFaxHolders(faxTab.getHolders().stream().anyMatch(p -> p.isFaildPreviously()));
-				setCurrentFaxHolders(
-						faxTab.getHolders().stream().filter(p -> !p.isFaildPreviously()).collect(Collectors.toList()));
-
-				for (NotificationContainer holder : getCurrentFaxHolders()) {
-					if (faxTab.getSelectedTemplate() == null && holder.getPdf() == null) {
-						holder.setWarning(true);
-						holder.setWarningInfo(
-								resourceBundle.get("dialog.notification.sendProcess.pdf.error.noTemplate"));
-					} else if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
-						holder.setWarning(true);
-						holder.setWarningInfo(resourceBundle.get("dialog.notification.sendProcess.fax.error.nonumber"));
-					} else if (!holder.getContactAddress()
-							.matches(globalSettings.getProgramSettings().getPhoneRegex())) {
-						holder.setWarning(true);
-						holder.setWarningInfo(
-								resourceBundle.get("dialog.notification.sendProcess.fax.error.numberNotValid"));
-					} else {
-						holder.setWarning(false);
-						holder.setWarningInfo("");
-					}
-
-					if (holder.isWarning())
-						logger.debug("Warning for Fax (" + holder.getContact().getPerson().getFullName() + ") = "
-								+ holder.getWarningInfo());
-				}
-
-				setFailedLetterHolders(letterTab.getHolders().stream().anyMatch(p -> p.isFaildPreviously()));
-				setCurrentLetterHolders(letterTab.getHolders().stream().filter(p -> !p.isFaildPreviously())
-						.collect(Collectors.toList()));
-
-				for (NotificationContainer holder : getCurrentLetterHolders()) {
-					if (letterTab.getSelectedTemplate() == null && holder.getPdf() == null) {
-						holder.setWarning(true);
-						holder.setWarningInfo(
-								resourceBundle.get("dialog.notification.sendProcess.pdf.error.noTemplate"));
-					} else {
-						holder.setWarning(false);
-						holder.setWarningInfo("");
-					}
-				}
-
-				for (NotificationContainer holder : phoneTab.getHolders()) {
-					if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress())) {
-						holder.setWarning(true);
-						holder.setWarningInfo(
-								resourceBundle.get("dialog.notification.sendProcess.phone.error.nonumber"));
-					} else {
-						holder.setWarning(false);
-						holder.setWarningInfo("");
-					}
-				}
-			}
-		}
-
-		public void reperformNotification() {
-			setReperformSend(true);
-			// initTabs();
-			// setActiveIndex(0);
+			List<NotificationContainer> phoneContainers = phoneTab.getHolders().stream().filter(p -> p.isPerform())
+					.collect(Collectors.toList());
+			setCurrentPhoneHolders(phoneContainers);
 		}
 
 		// @Async("taskExecutor")
@@ -749,368 +626,62 @@ public class NotificationDialog extends AbstractTabDialog {
 					return;
 				}
 
-				PDFContainer sendReport = null;
-
 				setNotificationRunning(true);
-
+				
 				setSteps(calculateSteps());
 
-				setProgressPercent(0);
-
-				progressStepText("dialog.notification.sendProcess.starting");
+//				progressStepText("dialog.notification.sendProcess.starting");
 
 				if (mailTab.isUseTab()) {
 
-					logger.debug("Mail is used");
-
-					// ********************************
 					DiagnosisReportMail mail = mailTab.getMail();
 					mail.setSubject(mailTab.getMailSubject());
 					mail.setBody(mailTab.getMailBody());
-					// ********************************
-					
-					for (NotificationContainer holder : mailTab.getHolders()) {
 
-						// failed and not renewed holders will not be executed
-						// again
-						if (holder.isFaildPreviously())
-							continue;
+					notificationService.executeMailNotification(this, getTask(), getCurrentMailHolders(), mail,
+							(TemplateDiagnosisReport) mailTab.getSelectedTemplate(), mailTab.isIndividualAddresses());
 
-						try {
-
-							// copy contact address before sending -> save
-							// before error
-							holder.getNotification().setContactAddress(holder.getContactAddress());
-
-							if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
-								throw new IllegalArgumentException(
-										"dialog.notification.sendProcess.mail.error.noaddress");
-
-							if (!EmailValidator.getInstance().isValid(holder.getContactAddress()))
-								throw new IllegalArgumentException(
-										"dialog.notification.sendProcess.mail.error.mailNotValid");
-
-							logger.debug("Send mail to " + holder.getContactAddress());
-
-							DiagnosisReportMail cloneMail = (DiagnosisReportMail) mail.clone();
-
-							if (holder.getPdf() != null) {
-								// pdf was selected for the individual
-								// contact
-								cloneMail.setAttachment(holder.getPdf());
-								logger.debug("Attaching pdf to mail");
-							} else if (mailTab.getSelectedTemplate() != null) {
-
-								logger.debug("Creating PDF from selected template");
-
-								progressStepText("dialog.notification.sendProcess.pdf.generating",
-										holder.getContact().getPerson().getFullName());
-
-								// generating pdf from list
-								// Template has a TemplateDiagnosisReport
-								// generator
-
-								// generating the address field of the pdf
-								String reportAddressField = AssociatedContact.generateAddress(holder.getContact());
-
-								((TemplateDiagnosisReport) mailTab.getSelectedTemplate())
-										.initData(getTask().getPatient(), getTask(), reportAddressField);
-
-								PDFContainer container = mailTab.getSelectedTemplate().generatePDF(new PDFGenerator());
-
-								if (container == null)
-									throw new IllegalArgumentException(
-											"dialog.notification.sendProcess.pdf.error.failed");
-
-								cloneMail.setAttachment(container);
-								holder.setPdf(container);
-							}
-
-							logger.debug("Sending mail to " + holder.getContactAddress());
-
-							progressStepText("dialog.notification.sendProcess.mail.send", holder.getContactAddress());
-
-							boolean success = false;
-
-							if (!globalSettings.getProgramSettings().isOffline())
-								success = globalSettings.getMailHandler().sendMail(holder.getContactAddress(), cloneMail);
-							else {
-								logger.debug("Offline mode, not sending email!");
-								throw new IllegalArgumentException(
-										"dialog.notification.sendProcess.mail.error.offline");
-							}
-
-							if (!success)
-								throw new IllegalArgumentException("dialog.notification.sendProcess.mail.error.failed");
-
-							holder.getNotification().setActive(false);
-							holder.getNotification().setPerformed(true);
-							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-
-							progressStepText("dialog.notification.sendProcess.mail.success",
-									holder.getContactAddress());
-
-							logger.debug("Sending completed " + holder.getNotification().getCommentary());
-
-						} catch (IllegalArgumentException e) {
-							holder.getNotification().setPerformed(true);
-							holder.getNotification().setFailed(true);
-							holder.getNotification().setActive(true);
-							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							holder.getNotification()
-									.setCommentary(resourceBundle.get(e.getMessage(), holder.getContactAddress()));
-							progressStepText(e.getMessage(), holder.getContactAddress());
-							logger.debug("Sending failed");
-						}
-
-						progressStep();
-					}
 				}
 
+				// process to step 25
+
 				if (faxTab.isUseTab()) {
-
-					logger.debug("fax is used");
-
-					for (NotificationContainer holder : faxTab.getHolders()) {
-
-						// failed and not renewed holders will not be executed
-						// again
-						if (holder.isFaildPreviously())
-							continue;
-
-						try {
-
-							// copy contact address before sending -> save
-							// before error
-							holder.getNotification().setContactAddress(holder.getContactAddress());
-
-							progressStepText("dialog.notification.sendProcess.fax.send", holder.getContactAddress());
-
-							if (!HistoUtil.isNotNullOrEmpty(holder.getContactAddress()))
-								throw new IllegalArgumentException(
-										"dialog.notification.sendProcess.fax.error.nonumber");
-
-							if (!holder.getContactAddress()
-									.matches(globalSettings.getProgramSettings().getPhoneRegex()))
-								throw new IllegalArgumentException(
-										"dialog.notification.sendProcess.fax.error.numberNotValid");
-
-							// only generate pdf is no pdf was selected
-							if (holder.getPdf() == null) {
-								if (faxTab.getSelectedTemplate() == null)
-									throw new IllegalArgumentException(
-											"dialog.notification.sendProcess.pdf.error.noTemplate");
-
-								progressStepText("dialog.notification.sendProcess.pdf.generating",
-										holder.getContact().getPerson().getFullName());
-
-								// generating the address field of the pdf
-								String reportAddressField = AssociatedContact.generateAddress(holder.getContact());
-
-								// generating pdf
-								((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
-										.initData(getTask().getPatient(), getTask(), reportAddressField);
-								PDFContainer container = ((TemplateDiagnosisReport) faxTab.getSelectedTemplate())
-										.generatePDF(new PDFGenerator());
-
-								if (container == null)
-									throw new IllegalArgumentException(
-											"dialog.notification.sendProcess.pdf.error.failed");
-
-								holder.setPdf(container);
-							}
-
-							// offline mode
-							if (globalSettings.getProgramSettings().isOffline()) {
-								logger.debug("Offline mode, not sending email!");
-								throw new IllegalArgumentException("dialog.notification.sendProcess.fax.error.offline");
-							} else if (faxTab.isAutoSendFax()) {
-								globalSettings.getFaxHandler().sendFax(holder.getContactAddress(), holder.getPdf());
-								progressStepText("dialog.notification.sendProcess.fax.success");
-							} else if (faxTab.isPrint()) {
-								progressStepText("dialog.notification.sendProcess.pdf.print");
-								userHandlerAction.getSelectedPrinter().print(holder.getPdf());
-							}
-
-							holder.getNotification().setActive(false);
-							holder.getNotification().setPerformed(true);
-							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-
-							progressStep();
-						} catch (IllegalArgumentException e) {
-							// no template or no number
-							holder.getNotification().setPerformed(true);
-							holder.getNotification().setFailed(true);
-							holder.getNotification().setActive(true);
-							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							holder.getNotification().setCommentary(resourceBundle.get(e.getMessage()));
-							progressStepText(e.getMessage());
-						}
-						progressStep();
-					}
+					notificationService.executeFaxNotification(this, getTask(), getCurrentFaxHolders(),
+							(TemplateDiagnosisReport) faxTab.getSelectedTemplate(), faxTab.isIndividualAddresses(),
+							faxTab.isAutoSendFax(), faxTab.isPrint());
 				}
 
 				if (letterTab.isUseTab()) {
-					logger.debug("letter is used");
-
-					for (NotificationContainer holder : letterTab.getHolders()) {
-
-						// failed and not renewed holders will not be executed
-						// again
-						if (holder.isFaildPreviously())
-							continue;
-
-						try {
-							// TODO maybe dialog for adding address without
-							// creating a pdf
-
-							// only generate pdf if no pdf was selected
-							if (holder.getPdf() == null) {
-								if (letterTab.getSelectedTemplate() == null)
-									throw new IllegalArgumentException(
-											"dialog.notification.sendProcess.pdf.error.noTemplate");
-
-								progressStepText("dialog.notification.sendProcess.pdf.generating",
-										holder.getContact().getPerson().getFullName());
-
-								// generating the address field of the pdf
-								String reportAddressField = AssociatedContact.generateAddress(holder.getContact());
-
-								((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
-										.initData(getTask().getPatient(), getTask(), reportAddressField);
-								PDFContainer container = ((TemplateDiagnosisReport) letterTab.getSelectedTemplate())
-										.generatePDF(new PDFGenerator());
-
-								if (container == null)
-									throw new IllegalArgumentException(
-											"dialog.notification.sendProcess.pdf.error.failed");
-
-								holder.setPdf(container);
-							}
-
-							if (letterTab.isPrint()) {
-								progressStepText("dialog.notification.sendProcess.pdf.print");
-								userHandlerAction.getSelectedPrinter().print(holder.getPdf());
-							}
-
-							holder.getNotification().setContactAddress(holder.getContactAddress());
-							holder.getNotification().setActive(false);
-							holder.getNotification().setPerformed(true);
-							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-
-							progressStep();
-						} catch (IllegalArgumentException e) {
-							// no template or no number
-							holder.getNotification().setPerformed(true);
-							holder.getNotification().setFailed(true);
-							holder.getNotification().setActive(true);
-							holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-							holder.getNotification().setCommentary(e.getMessage());
-							progressStepText(e.getMessage());
-						}
-
-						progressStep();
-					}
-
+					notificationService.executeLetterNotification(this, getTask(), getCurrentLetterHolders(),
+							(TemplateDiagnosisReport) letterTab.getSelectedTemplate(),
+							letterTab.isIndividualAddresses(), letterTab.isPrint());
 				}
 
 				if (phoneTab.isUseTab()) {
-					logger.debug("Phone is used");
-					for (NotificationContainer holder : phoneTab.getHolders()) {
-						holder.getNotification().setActive(false);
-						holder.getNotification().setPerformed(true);
-						holder.getNotification().setDateOfAction(new Date(System.currentTimeMillis()));
-						holder.getNotification().setContactAddress(holder.getContactAddress());
-					}
-
-					progressStep();
+					notificationService.executePhoneNotification(this, getTask(), getCurrentPhoneHolders());
 				}
 
+				// addition templates
 				if (getSelectedTemplate() != null) {
 					((TemplateDiagnosisReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask(), "");
-					PDFContainer report = getSelectedTemplate().generatePDF(new PDFGenerator());
-					for (int i = 0; i < printCount; i++) {
-						userHandlerAction.getSelectedPrinter().print(report, getSelectedTemplate().getAttributes());
-					}
+					PDFContainer report = (new PDFGenerator())
+							.getPDF(((TemplateDiagnosisReport) getSelectedTemplate()));
+
+					userHandlerAction.getSelectedPrinter().print(report, 1, getSelectedTemplate().getAttributes());
+
 				}
 
-				DocumentTemplate sendreportTemplate = DocumentTemplate
-						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.NOTIFICATION_SEND_REPORT));
-
-				progressStepText("dialog.notification.sendProcess.sendReport.generating");
-
-				if (sendreportTemplate != null) {
-					TemplateSendReport template = (TemplateSendReport) sendreportTemplate;
-
-					template.initData(task.getPatient(), task, mailTab.isUseTab(), mailTab.getHolders(),
-							faxTab.isUseTab(), faxTab.getHolders(), letterTab.isUseTab(), letterTab.getHolders(),
-							phoneTab.isUseTab(), phoneTab.getHolders(), new Date(System.currentTimeMillis()));
-
-					sendReport = template.generatePDF(new PDFGenerator());
-
-					if (sendReport == null) {
-						// TODO handle error
-						progressStepText("dialog.notification.sendProcess.pdf.error.failed");
-					}
-				}
+				PDFContainer sendReport = notificationService.generateSendReport(getTask(), mailTab.isUseTab(), getCurrentMailHolders(),
+						faxTab.isUseTab(), getCurrentLetterHolders(), letterTab.isUseTab(), getCurrentLetterHolders(),
+						phoneTab.isUseTab(), getCurrentPhoneHolders(), new Date(System.currentTimeMillis()));
 
 				setProgressPercent(100);
 
-				progressStep();
-
-				progressStepText("dialog.notification.sendProcess.success");
+				//progressStepText("dialog.notification.sendProcess.success");
 
 				logger.debug("Messaging ended");
 
-				try {
-
-					transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-
-						public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-
-							genericDAO.reattach(getTask().getPatient());
-
-							logger.debug("Saving progress...");
-							for (NotificationContainer holder : mailTab.getHolders()) {
-								if (holder.isFaildPreviously())
-									continue;
-								logger.debug("Saving mail: " + holder.getContact().toString());
-								genericDAO.save(holder.getContact());
-							}
-
-							for (NotificationContainer holder : faxTab.getHolders()) {
-								if (holder.isFaildPreviously())
-									continue;
-								genericDAO.save(holder.getContact());
-							}
-
-							for (NotificationContainer holder : letterTab.getHolders()) {
-								if (holder.isFaildPreviously())
-									continue;
-								genericDAO.save(holder.getContact());
-							}
-
-							for (NotificationContainer holder : phoneTab.getHolders()) {
-								genericDAO.save(holder.getContact());
-							}
-
-							genericDAO.savePatientData(getTask(), "log.patient.task.notification.send");
-						}
-					});
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				getTask().setNotificationCompletionDate(System.currentTimeMillis());
-
-				pdfDAO.attachPDF(getTask().getPatient(), getTask(), sendReport);
-
-				logger.debug("Saving progress, completed");
-
-				// removing from diagnosis list
-				favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.NotificationList,
-						PredefinedFavouriteList.StayInNotificationList);
+				notificationService.saveContactsOfTask(getTask(), sendReport);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1125,32 +696,31 @@ public class NotificationDialog extends AbstractTabDialog {
 			faxTab.setDisabled(true);
 			letterTab.setDisabled(true);
 			phoneTab.setDisabled(true);
-			sendTab.setDisabled(false);
+			sendTab.setDisabled(true);
 			sendReportTab.setDisabled(false);
 
 			// unblocking gui and updating content
-			RequestContext.getCurrentInstance().execute("PF('blockUIWidget').unblock();chagneTab(5);");
+			RequestContext.getCurrentInstance().execute("onNotificationCompleted();");
 		}
 
 		public int calculateSteps() {
 			// one step for creating the send report
 			int steps = 1;
 
-			steps += mailTab.isUseTab() ? currentMailHolders.size() : 0;
-			steps += faxTab.isUseTab() ? currentFaxHolders.size() : 0;
-			steps += letterTab.isUseTab() ? currentLetterHolders.size() : 0;
+			steps += mailTab.isUseTab() ? currentMailHolders.stream().filter(p -> p.isPerform()).count() : 0;
+			steps += faxTab.isUseTab() ? currentFaxHolders.stream().filter(p -> p.isPerform()).count() : 0;
+			steps += letterTab.isUseTab() ? currentLetterHolders.stream().filter(p -> p.isPerform()).count() : 0;
 			steps += phoneTab.isUseTab() ? 1 : 0;
 
-			logger.debug("Steps calculated = " + steps);
 			return steps;
 		}
 
+		/**
+		 * Progresses one step
+		 */
 		public void progressStep() {
+			setSteps(getSteps() + 1);
 			setProgressPercent(getProgressPercent() + (100 / getSteps()));
-		}
-
-		public void progressStepText(String resourcesKey, Object... args) {
-			setProgressText(resourceBundle.get(resourcesKey, args));
 		}
 
 		@Synchronized
@@ -1161,16 +731,6 @@ public class NotificationDialog extends AbstractTabDialog {
 		@Synchronized
 		public void setProgressPercent(int progressPercent) {
 			this.progressPercent = progressPercent;
-		}
-
-		@Synchronized
-		public String getProgressText() {
-			return progressText;
-		}
-
-		@Synchronized
-		public void setProgressText(String progressText) {
-			this.progressText = progressText;
 		}
 
 		@Synchronized
@@ -1193,11 +753,21 @@ public class NotificationDialog extends AbstractTabDialog {
 			this.notificationCompleted = notificationCompleted;
 		}
 
+		@Synchronized
+		public void setFeedback(String resKey, String... string) {
+			setFeedbackText(resourceBundle.get(resKey, string));
+		}
+
+		@Synchronized
+		public String getFeedback() {
+			return getFeedbackText();
+		}
+
 	}
 
 	@Getter
 	@Setter
-	public class SendReportTab extends AbstractTab {
+	public class SendReportTab extends NotificationTab {
 
 		private DefaultTransformer<PDFContainer> sendReportConverter;
 

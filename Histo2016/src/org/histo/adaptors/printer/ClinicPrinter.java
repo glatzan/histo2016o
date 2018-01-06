@@ -61,13 +61,15 @@ public class ClinicPrinter extends AbstractPrinter {
 		return print(container, null);
 	}
 
-	/**
-	 * Prints a pdfContainer
-	 * 
-	 * @param container
-	 * @return
-	 */
+	public boolean print(PDFContainer container, int count) {
+		return print(container, count, null);
+	}
+
 	public boolean print(PDFContainer container, String args) {
+		return print(container, 1, args);
+	}
+
+	public boolean print(PDFContainer container, int count, String args) {
 		CupsClient cupsClient;
 		try {
 			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
@@ -80,7 +82,9 @@ public class ClinicPrinter extends AbstractPrinter {
 				printJob.setAttributes(attribute);
 				logger.debug("Printig with args: " + args);
 			}
-			printer.print(printJob);
+			for (int i = 0; i < count; i++) {
+				printer.print(printJob);
+			}
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
