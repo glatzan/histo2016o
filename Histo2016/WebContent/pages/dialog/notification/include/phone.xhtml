@@ -21,7 +21,7 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.phone.use']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
-				value="#{dialogHandlerAction.notificationDialog.phoneTab.useTab}"
+				value="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use}"
 				title="#{msg['dialog.notification.tab.phone.use.text']}">
 				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
@@ -31,21 +31,21 @@
 				value="#{msg['dialog.notification.tab.phone.receiver']}"
 				styleClass="bigFont" />
 
-			<p:dataTable var="holder" styleClass="newStyleDataTable"
-				value="#{dialogHandlerAction.notificationDialog.phoneTab.holders}">
+			<p:dataTable var="container" styleClass="newStyleDataTable"
+				value="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.defaultReport}">
 
 				<!-- name of receiver -->
 				<p:column
 					headerText="#{msg['dialog.notification.tab.phone.receiver.name']}"
 					style="width:auto">
-					<h:outputText value="#{holder.contact.person.fullName}" />
+					<h:outputText value="#{container.contact.person.fullName}" />
 				</p:column>
 
 				<p:column
 					headerText="#{msg['dialog.notification.tab.phone.receiver.number']}"
 					style="width:auto">
-					<p:inputText value="#{holder.contactAddress}"
-						disabled="#{!dialogHandlerAction.notificationDialog.phoneTab.useTab or !holder.perform}"
+					<p:inputText value="#{container.contactAddress}"
+						disabled="#{!dialogHandlerAction.notificationDialog.phoneTab.containerList.use or !container.perform}"
 						styleClass="smallInput" style="width:98%" />
 				</p:column>
 
@@ -57,8 +57,8 @@
 					</f:facet>
 
 					<p:selectBooleanCheckbox
-						disabled="#{!dialogHandlerAction.notificationDialog.phoneTab.useTab}"
-						value="#{holder.perform}">
+						disabled="#{!dialogHandlerAction.notificationDialog.phoneTab.containerList.use}"
+						value="#{container.perform}">
 						<p:ajax event="change" update="@form" />
 					</p:selectBooleanCheckbox>
 				</p:column>

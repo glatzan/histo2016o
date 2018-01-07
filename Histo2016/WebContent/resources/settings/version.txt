@@ -40,6 +40,10 @@ Next Changes:
 -> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 -> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
+-> vortschritt im sende dialog
+-> aktualisieren nach beenden das sende-dialogs (task status)
+-> task_old_archived_date, task_old_archived
+-> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
 -> Latex Datei für externen Befund
 
@@ -96,7 +100,7 @@ Graphic Changes
 + = added
 - = removed
 
-+v 1.1.2 ()
++v 1.2.0 ()
 +++*: Benachrichtigungs-Dialog auf neues Layout angepasst, Benachrichtigungs-Vorgang verbessert.
 +++*: Phasen Übergägnge angepasst.
 

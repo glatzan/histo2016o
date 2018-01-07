@@ -105,6 +105,24 @@ public class DocumentTemplate extends Template {
 		return null;
 	}
 
+	public static <T extends DocumentTemplate> T getTemplateByIDC(Class<T> tClass, long id) {
+		return getTemplateByIDC(tClass, loadTemplates(), id);
+	}
+
+	public static <T extends DocumentTemplate> T getTemplateByIDC(Class<T> tClass, DocumentTemplate[] tempaltes,
+			long id) {
+
+		logger.debug("Getting templates out of " + tempaltes.length);
+
+		for (int i = 0; i < tempaltes.length; i++) {
+			if (tempaltes[i].getId() == id)
+			//	if (tClass.getClass().isAssignableFrom(tempaltes[i].getClass()))
+					return (T) tempaltes[i];
+		}
+
+		return null;
+	}
+
 	public static DocumentTemplate[] loadTemplates(DocumentType... types) {
 
 		// TODO move to Database

@@ -28,7 +28,7 @@
 		"notificationDefaultFaxDocument" : 10,
 		"notificationDefaultLetterDocument" : 10,
 		"notificationDefaultPrintDocument" : 11,
-		"notificationSendReport": 100
+		"notificationSendReport": 1000
 		
 		
 	},

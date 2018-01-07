@@ -20,7 +20,7 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.fax.use']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
-				value="#{dialogHandlerAction.notificationDialog.faxTab.useTab}"
+				value="#{dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
 				title="#{msg['dialog.notification.tab.fax.use.text']}">
 				<p:ajax event="change" process="@form" update="@form"></p:ajax>
 			</p:selectBooleanCheckbox>
@@ -29,9 +29,9 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.fax.send']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
-				value="#{dialogHandlerAction.notificationDialog.faxTab.autoSendFax}"
+				value="#{dialogHandlerAction.notificationDialog.faxTab.containerList.send}"
 				title="#{msg['dialog.notification.tab.fax.send.text']}"
-				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}">
+				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}">
 				<p:ajax event="change" process="@form" update="@form"></p:ajax>
 			</p:selectBooleanCheckbox>
 
@@ -39,6 +39,7 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.fax.print']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
+				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
 				value="#{dialogHandlerAction.notificationDialog.faxTab.print}"
 				title="#{msg['dialog.notification.tab.fax.print.text']}">
 				<p:ajax event="change" process="@form" update="@form" />
@@ -49,9 +50,9 @@
 				value="#{msg['dialog.notification.tab.fax.pdfTemplate']}"
 				styleClass="bigFont" />
 			<p:selectOneMenu
-				value="#{dialogHandlerAction.notificationDialog.faxTab.selectedTemplate}"
+				value="#{dialogHandlerAction.notificationDialog.faxTab.containerList.defaultReport}"
 				converter="#{dialogHandlerAction.notificationDialog.faxTab.templateTransformer}"
-				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}">
+				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}">
 
 				<f:selectItems
 					value="#{dialogHandlerAction.notificationDialog.faxTab.templateList}"
@@ -63,17 +64,18 @@
 			<!-- receiver -->
 			<h:outputLabel value="#{msg['dialog.notification.tab.fax.receiver']}"
 				styleClass="bigFont" />
-			<p:dataTable var="holder" styleClass="newStyleDataTable" scrollHeight="200" scrollable="true"
-				value="#{dialogHandlerAction.notificationDialog.faxTab.holders}">
+			<p:dataTable var="container" styleClass="newStyleDataTable"
+				scrollHeight="200" scrollable="true"
+				value="#{dialogHandlerAction.notificationDialog.faxTab.containerList.container}">
 
 				<!-- name of receiver -->
 				<p:column
 					headerText="#{msg['dialog.notification.tab.fax.receiver.name']}"
 					style="width:auto">
-					<h:outputText value="#{holder.contact.person.fullName}" />
-					<ui:fragment rendered="#{holder.notification.failed}">
+					<h:outputText value="#{container.contact.person.fullName}" />
+					<ui:fragment rendered="#{container.notification.failed}">
 						<i class="fa fa-fw fa-times-circle icon-red"
-							title="#{msg['dialog.notification.tab.fax.receiver.failedAndRetry']}: #{holder.notification.commentary}" />
+							title="#{msg['dialog.notification.tab.fax.receiver.failedAndRetry']}: #{container.notification.commentary}" />
 					</ui:fragment>
 				</p:column>
 
@@ -81,8 +83,8 @@
 				<p:column
 					headerText="#{msg['dialog.notification.tab.fax.receiver.number']}"
 					style="width:auto">
-					<p:inputText value="#{holder.contactAddress}"
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab or !holder.perform}"
+					<p:inputText value="#{container.contactAddress}"
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use or !container.perform}"
 						style="width:98%" />
 				</p:column>
 
@@ -94,8 +96,8 @@
 					</f:facet>
 
 					<p:selectBooleanCheckbox
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
-						value="#{holder.perform}">
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
+						value="#{container.perform}">
 						<p:ajax event="change" update="@form" />
 					</p:selectBooleanCheckbox>
 				</p:column>
@@ -109,26 +111,26 @@
 
 					<!-- add pdf, if pdf == null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null and holder.perform}"
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
+						rendered="#{container.pdf eq null and container.perform}"
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.info']}"
 						execute="@this" onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()"
-						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, holder.contact)}">
+						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, container.contact)}">
 
 						<p:ajax event="dialogReturn" update="@form" process="@form"
-							listener="#{dialogHandlerAction.notificationDialog.faxTab.copySelectedPdf(holder)}" />
+							listener="#{dialogHandlerAction.notificationDialog.faxTab.copySelectedPdf(container)}" />
 
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>
 
 					<!-- show pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf ne null and holder.perform}"
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
+						rendered="#{container.pdf ne null and container.perform}"
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.show']}"
 						execute="@this"
-						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
+						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(container.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
 					</p:commandLink>
@@ -136,11 +138,11 @@
 					<!-- remove pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
 						style="margin-left: 10px;"
-						rendered="#{holder.pdf ne null and holder.perform}"
+						rendered="#{container.pdf ne null and container.perform}"
 						title="#{msg['dialog.notification.tab.fax.receiver.pdf.remove']}"
 						execute="@this" update="@form"
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
-						actionListener="#{holder.setPdf(null)}">
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
+						actionListener="#{container.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
 					</p:commandLink>

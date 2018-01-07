@@ -89,6 +89,23 @@ public class NotificationContainer {
 		} else {
 			setContactAddress(notification.getContactAddress());
 		}
+	}
 
+	/**
+	 * Clears the warning
+	 */
+	public void clearWarning() {
+		setWarning(false, "");
+	}
+
+	/**
+	 * Sets warning and the warning info
+	 * 
+	 * @param warning
+	 * @param info
+	 */
+	public void setWarning(boolean warning, String info) {
+		setWarning(warning);
+		setWarningInfo(info);
 	}
 }

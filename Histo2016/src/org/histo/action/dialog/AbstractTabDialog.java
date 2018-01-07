@@ -32,6 +32,7 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 	}
 
 	public void onTabChange(AbstractTab tab) {
+		logger.debug("Changing tab to " + tab.getName());
 		setSelectedTab(tab);
 		tab.updateData();
 	}

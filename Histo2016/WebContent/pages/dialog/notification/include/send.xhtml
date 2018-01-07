@@ -24,18 +24,18 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.mailTab.useTab}" />
+					rendered="#{dialogHandlerAction.notificationDialog.mailTab.containerList.use}" />
 
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.mailTab.useTab}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.mailTab.containerList.use}" />
 
 			</h:panelGroup>
 
 			<p:dataTable var="emailHolder"
 				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
-				value="#{dialogHandlerAction.notificationDialog.sendTab.currentMailHolders}">
+				value="#{dialogHandlerAction.notificationDialog.mailTab.containerList.containerToNotify}">
 
 				<!-- name and email -->
 				<p:column>
@@ -72,17 +72,17 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.faxTab.useTab}" />
+					rendered="#{dialogHandlerAction.notificationDialog.faxTab.containerList.use}" />
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}" />
 
 			</h:panelGroup>
 
 			<p:dataTable var="faxHolder"
 				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
-				value="#{dialogHandlerAction.notificationDialog.sendTab.currentFaxHolders}">
+				value="#{dialogHandlerAction.notificationDialog.faxTab.containerList.containerToNotify}">
 
 				<!-- name and fax -->
 				<p:column>
@@ -122,17 +122,17 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.letterTab.useTab}" />
+					rendered="#{dialogHandlerAction.notificationDialog.letterTab.containerList.use}" />
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}" />
 
 			</h:panelGroup>
 
 			<p:dataTable var="letterHolder"
 				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
-				value="#{dialogHandlerAction.notificationDialog.sendTab.currentLetterHolders}">
+				value="#{dialogHandlerAction.notificationDialog.letterTab.containerList.containerToNotify}">
 
 				<!-- name -->
 				<p:column>
@@ -169,17 +169,17 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.useTab}" />
+					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use}" />
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.useTab}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.containerList.use}" />
 
 			</h:panelGroup>
 
 			<p:dataTable var="phoneHolder"
 				styleClass="newStyleDataTable newStyleDataTable-HideColumnHeader"
-				value="#{dialogHandlerAction.notificationDialog.phoneTab.holders}">
+				value="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.containerToNotify}">
 				<p:column>
 					<!-- name -->
 					<h:outputLabel
@@ -213,7 +213,7 @@
 			<h:outputLabel
 				value="#{msg['dialog.notification.tab.additionalPrints.tempalte']}" />
 			<p:selectOneMenu
-				value="#{dialogHandlerAction.notificationDialog.sendTab.selectedTemplate}"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.containerList.defaultReport}"
 				style="margin-left:10px;"
 				converter="#{dialogHandlerAction.notificationDialog.sendTab.templateTransformer}"
 				styleClass="customSerachSelectMenu">
@@ -236,14 +236,14 @@
 				title="#{msg['dialog.notification.tab.send.count']}" />
 
 			<p:spinner
-				value="#{dialogHandlerAction.notificationDialog.sendTab.printCount}"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.containerList.printCount}"
 				styleClass="oneNumberSpinner" min="0" max="9" />
 		</h:panelGrid>
 
 		<h:panelGrid columns="1" styleClass="newStyleListingTable"
 			style="width:100%; margin-top:20px;">
 			<h:outputText
-				value="#{dialogHandlerAction.notificationDialog.sendTab.progressText} (#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%)"
+				value="#{dialogHandlerAction.notificationDialog.sendTab.feedback} (#{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%)"
 				id="progressLable"
 				style="border: 1px solid; width:90%;display:block; text-align:center; background: linear-gradient(90deg, #fcf1b8 #{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%, transparent 0%);margin: 0px auto;" />
 

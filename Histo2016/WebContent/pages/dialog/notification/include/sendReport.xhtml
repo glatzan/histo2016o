@@ -18,17 +18,29 @@
 	</p:outputPanel>
 
 
-	<p:outputPanel styleClass="bodyPannel">
+	<p:outputPanel styleClass="bodyPannel"
+		style="height: calc(100vh - 130px)">
 		<p:media player="pdf" cache="true"
 			value="#{dialogHandlerAction.mediaDialog.pdfContent}" width="100%"
-			height="490px" />
+			height="460px" />
+	</p:outputPanel>
+
+	<p:outputPanel styleClass="bodyPannel" style="height:25px;"
+		rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}">
+		<h:panelGrid styleClass="newStyleListingTable" columns="2"
+			style="width:auto !important">
+			<p:selectBooleanCheckbox
+				value="#{dialogHandlerAction.notificationDialog.sendReportTab.archiveTask}" />
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.sendReport.ceckbox.archiveTask']}" />
+		</h:panelGrid>
 	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			<h:panelGrid columns="2" styleClass="newTableContainer left">
 				<p:selectOneMenu
 					converter="#{dialogHandlerAction.notificationDialog.sendReportTab.sendReportConverter}"
 					title="#{msg['body.worklist.header.view']}"
@@ -37,22 +49,13 @@
 					<f:selectItems
 						value="#{dialogHandlerAction.mediaDialog.selectedDatalist.attachedPdfs}"
 						var="pdf"
-						itemLabel="Sendebericht #{mainHandlerAction.date(pdf.creationDate, 'HH:MM:ss - dd.mm.yyyy')}"
+						itemLabel="#{msg['dialog.notification.tab.sendReport.report']} #{mainHandlerAction.date(pdf.creationDate, 'HH:MM:ss - dd.mm.yyyy')}"
 						itemValue="#{pdf}" />
 
 					<p:ajax event="change" process="@this" partialSubmit="@this"
 						update="@form"></p:ajax>
 
 				</p:selectOneMenu>
-			</h:panelGrid>
-
-			<h:panelGrid columns="3" styleClass="newTableContainer right">
-				<!-- reperform send -->
-				<p:commandButton
-					value="#{msg['dialog.notification.tab.sendReport.button.resend']}"
-					icon="fa fa-mail-forward" update="@form"
-					title="#{msg['dialog.notification.tab.sendReport.button.resend.text']}"
-					actionListener="#{dialogHandlerAction.notificationDialog.sendTab.reperformNotification()}" />
 
 				<!-- Download -->
 				<p:commandButton
@@ -64,10 +67,26 @@
 						value="#{dialogHandlerAction.mediaDialog.pdfContent}" />
 				</p:commandButton>
 
+			</h:panelGrid>
+
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
+				<!-- reperform send -->
+				<p:commandButton
+					value="#{msg['dialog.notification.tab.sendReport.button.resend']}"
+					icon="fa fa-mail-forward" update="@form"
+					title="#{msg['dialog.notification.tab.sendReport.button.resend.text']}"
+					actionListener="#{dialogHandlerAction.notificationDialog.sendReportTab.repeatNotification()}" />
+
 				<!-- close -->
-				<p:commandButton value="#{msg['general.close']}"
-					icon="fa fa-times-circle"
-					actionListener="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
+				<p:commandButton
+					value="#{msg['dialog.notification.tab.sendReport.button.end']}"
+					title="#{msg['dialog.notification.tab.sendReport.button.end.text']}"
+					icon="fa fa-times-circle">
+					<f:actionListener
+						binding="#{dialogHandlerAction.notificationDialog.sendReportTab.endNotification()}" />
+					<f:actionListener
+						binding="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
+				</p:commandButton>
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

@@ -21,7 +21,7 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.letter.use']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
-				value="#{dialogHandlerAction.notificationDialog.letterTab.useTab}"
+				value="#{dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
 				title="#{msg['dialog.notification.tab.letter.use.text']}">
 				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
@@ -30,7 +30,8 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.letter.print']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
-				value="#{dialogHandlerAction.notificationDialog.letterTab.print}"
+				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
+				value="#{dialogHandlerAction.notificationDialog.letterTab.containerList.print}"
 				title="#{msg['dialog.notification.tab.letter.print.text']}">
 				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
@@ -41,9 +42,9 @@
 				value="#{msg['dialog.notification.tab.letter.pdfTemplate']}"
 				styleClass="bigFont" />
 			<p:selectOneMenu
-				value="#{dialogHandlerAction.notificationDialog.letterTab.selectedTemplate}"
+				value="#{dialogHandlerAction.notificationDialog.letterTab.containerList.defaultReport}"
 				converter="#{dialogHandlerAction.notificationDialog.letterTab.templateTransformer}"
-				disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
+				disabled="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
 				styleClass="customSerachSelectMenu">
 
 				<f:selectItems
@@ -57,18 +58,18 @@
 			<h:outputLabel
 				value="#{msg['dialog.notification.tab.letter.receiver']}"
 				styleClass="bigFont" />
-			<p:dataTable var="holder" scrollable="true" scrollHeight="200"
+			<p:dataTable var="container" scrollable="true" scrollHeight="200"
 				style="width:96%" styleClass="newStyleDataTable"
-				value="#{dialogHandlerAction.notificationDialog.letterTab.holders}">
+				value="#{dialogHandlerAction.notificationDialog.letterTab.containerList.container}">
 
 				<!-- name of receiver -->
 				<p:column
 					headerText="#{msg['dialog.notification.tab.letter.receiver.name']}"
 					style="width:auto">
-					<h:outputText value="#{holder.contact.person.fullName}" />
-					<ui:fragment rendered="#{holder.notification.failed}">
+					<h:outputText value="#{container.contact.person.fullName}" />
+					<ui:fragment rendered="#{container.notification.failed}">
 						<i class="fa fa-fw fa-times-circle icon-red"
-							title="#{msg['dialog.notification.tab.letter.receiver.failedAndRetry']}: #{holder.notification.commentary}" />
+							title="#{msg['dialog.notification.tab.letter.receiver.failedAndRetry']}: #{container.notification.commentary}" />
 					</ui:fragment>
 				</p:column>
 
@@ -80,8 +81,8 @@
 					</f:facet>
 
 					<p:selectBooleanCheckbox
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.useTab}"
-						value="#{holder.perform}">
+						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
+						value="#{container.perform}">
 						<p:ajax event="change" update="@form" />
 					</p:selectBooleanCheckbox>
 				</p:column>
@@ -94,26 +95,26 @@
 
 					<!-- add pdf, if pdf == null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf eq null and holder.perform}"
-						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
+						rendered="#{container.pdf eq null and container.perform}"
+						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.info']}"
 						execute="@this" onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()"
-						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, holder.contact)}">
+						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, container.contact)}">
 
 						<p:ajax event="dialogReturn" update="@form" process="@form"
-							listener="#{dialogHandlerAction.notificationDialog.letterTab.copySelectedPdf(holder)}" />
+							listener="#{dialogHandlerAction.notificationDialog.letterTab.copySelectedPdf(container)}" />
 
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>
 
 					<!-- show pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
-						rendered="#{holder.pdf ne null and holder.perform}"
+						rendered="#{container.pdf ne null and container.perform}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.show']}"
 						execute="@this"
-						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
-						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(holder.pdf)}">
+						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
+						actionListener="#{dialogHandlerAction.notificationDialog.openMediaViewDialog(container.pdf)}">
 
 						<i class="fa fa-search icon-grey" />
 					</p:commandLink>
@@ -121,11 +122,11 @@
 					<!-- remove pdf, if pdf != null -->
 					<p:commandLink styleClass="noUnderlineAtLink"
 						style="margin-left: 10px;"
-						rendered="#{holder.pdf ne null and holder.perform}"
+						rendered="#{container.pdf ne null and container.perform}"
 						title="#{msg['dialog.notification.tab.letter.receiver.pdf.remove']}"
 						execute="@this"
-						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.useTab}"
-						update="@form" actionListener="#{holder.setPdf(null)}">
+						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
+						update="@form" actionListener="#{container.setPdf(null)}">
 
 						<i class="fa fa-close icon-grey" />
 					</p:commandLink>
