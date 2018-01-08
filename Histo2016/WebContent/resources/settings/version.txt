@@ -45,6 +45,8 @@ Next Changes:
 -> task_old_archived_date, task_old_archived
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
+-> Druck erfassungs dialog
+
 -> Latex Datei für externen Befund
 
 -> versehendlich ausgeführte benachrichtigungen, markieren
@@ -58,10 +60,10 @@ Next Changes:
 -> Ärzte aus klinikbakcend übernehmen
 
 Testen:
--> Test piz range from 6-8
+-> Test piz range from 6-8 (geht nicht)
+-> hinzufügen von patienten aktualisieren unterbinden, geburztag, aufrufen bei grünem haken
 -> Search for normal user (only patients in local database)
 -> Tabelle HistoSettings ob alle views richtig eingetragen sind
--> HistoUser Patient und Physician ob daten richtig geupdated werden im backen (copie aus backend)
  
 Urgent Changes 
 TODO: Methoden in SampleServie in eine Transaction setzten (für loggin logstring per transaction)
