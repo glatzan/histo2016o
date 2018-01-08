@@ -244,7 +244,7 @@ ALTER TABLE ONLY histosettings_availableworklists ADD CONSTRAINT histosettings_a
 ALTER TABLE ONLY histosettings_availableworklists ADD CONSTRAINT histosettings_availableworklists_constraint FOREIGN KEY (histosettings_id) REFERENCES histosettings(id);
 Alter table histosettings add addtaskwithsingelclick boolean;
 update histosettings set addtaskwithsingelclick = false;
-update histosettings set addtaskwithsingelclick = true where id = 8
+update histosettings set addtaskwithsingelclick = true where id = 8;
 INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (12, 'DIAGNOSIS_LIST',0);
 INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (12, 'STAINING_LIST',1);
 INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (12, 'NOTIFICATION_LIST',2);

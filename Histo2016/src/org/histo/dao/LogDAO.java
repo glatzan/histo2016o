@@ -124,7 +124,7 @@ public class LogDAO extends AbstractDAO implements Serializable {
 		criteria.addOrder(Order.desc("id"));
 		criteria.setFirstResult(page * count);
 		criteria.setMaxResults(count);
-
+		
 		List<Log> list = criteria.list();
 
 		return list;
