@@ -17,6 +17,7 @@
 \usepackage{ifthen}
 \usepackage{setspace}
 \usepackage{everypage}
+\usepackage{ragged2e}
 
 \renewcommand{\familydefault}{\sfdefault} 
 
@@ -32,7 +33,13 @@
 }
 
 % footer 
-\cfoot{Seite \thepage\ von \pageref{LastPage}}
+\cfoot{
+\footnotesize 
+\begin{tabular}{l r}
+Dies ist ein technisch validierter Befundbericht, der erst durch eine ärztliche Unterschrift fachlich validiert ist.   &  {Seite \thepage\ / \pageref{LastPage}}
+\end{tabular}
+}
+
 
 \setcounter{secnumdepth}{0}
 
@@ -59,8 +66,9 @@
 \scriptsize
 \begin{textblock}{100}(19, 8) 
 \noindent $!patient.person.fullName\\
-$!patient.person.street\\
-$!patient.person.postcode $!patient.person.town\\
+$date.format('dd.MM.yyyy', $!patient.person.birthday)\\
+$!patient.person.contact.street \\
+$!patient.person.contact.postcode $!patient.person.contact.town\\
 \X=.35mm        
 \barheight=1cm 
 \code{#if($patient.piz == "") 0 #else $!patient.piz #end}\\
@@ -86,9 +94,10 @@ $address \\
 
 {
 	\centering 
+	\RaggedRight
 	\renewcommand{\arraystretch}{0}
 	\setlength{\tabcolsep}{.16667em}
-	\begin{tabular}{p{0.53\linewidth}p{0.47\linewidth}}
+	\begin{tabular}{p{0.47\linewidth}p{0.53\linewidth}}
 	
 		{
 			\renewcommand{\arraystretch}{1}
@@ -107,7 +116,7 @@ $address \\
  				Auge & #if($task.eye == "UNKNOWN")  ? #elseif($task.eye == "RIGHT") RA #elseif($task.eye == "LEFT" ) LA #else BA #end  \\
  				\\
  				\multicolumn{2}{l}{Vorgeschichte} \\ 
- 				\multicolumn{2}{l}{$!task.caseHistory} \\ 
+ 				\multicolumn{2}{p{\linewidth-8\tabcolsep}}{$!task.caseHistory} \\ 
  				\multicolumn{2}{l}
 			
 			\end{tabular}
@@ -115,7 +124,7 @@ $address \\
 		& 
 		{
 			\renewcommand{\arraystretch}{1}
-			\begin{tabular}[t]{p{0.46\linewidth}p{0.5\linewidth}}
+			\begin{tabular}[t]{p{0.38\linewidth}p{0.62\linewidth-8\tabcolsep}}
 
 				Eingangsdatum &  $date.format('dd.MM.yyyy', $!task.dateOfReceipt) \\
 				Eingangsnummer & \textbf{$!task.taskID} \\
@@ -147,8 +156,8 @@ $address \\
 					}\\
 				Station & $!task.ward \\
 				Maligner Tumor & #if($task.getDiagnosisContainer().isMalign()) $\boxtimes$ #else $\Box$ #end \\ 
-				Operateur/Einsender & \mbox{$!task.getPrimarySurgeon()} \\
-				Augenarzt & \mbox{$!task.getPrimaryPrivatePhysician()} 
+				Operateur & $!task.getPrimarySurgeon() \\
+				Augenarzt & $!task.getPrimaryPrivatePhysician()
 			 
 			\end{tabular}
 		}
@@ -158,16 +167,21 @@ $address \\
 }
 
 
-\begin{center}
+
+{
 \setlength{\tabcolsep}{0em}
+\setlength{\LTleft}{0pt}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\RaggedRight
 
 #foreach ($diagnosisRevision in $task.diagnosisContainer.diagnosisRevisions)
 \begin{longtable}{p{\linewidth}}
-	\large \underline{ $!diagnosisRevision.name: }\\*
+	\large \underline{ $!diagnosisRevision.name: }\smallskip
 	\begin{addmargin}{0.2cm}
 		\normalsize $!latexTextConverter.convertToTex($diagnosisRevision.text)
 	\end{addmargin}\\
-	\large \underline{ Diagnosen: }\\*
+	\large \underline{ Diagnosen: }\smallskip
 	\begin{addmargin}{0.2cm}
 	
 			\begin{tabular}{p{0.05\linewidth}p{0.95\linewidth}}
@@ -179,26 +193,19 @@ $address \\
 	\end{addmargin} 
 \end{longtable}
 #end
-\end{center}
+}
  
 \begin{center}
-\begin{tabular}{p{0.25\linewidth}p{0.05\linewidth}p{0.35\linewidth}p{0.35\linewidth}}
+\RaggedRight
+\begin{tabular}{p{0.15\linewidth}p{0.05\linewidth}p{0.35\linewidth}p{0.45\linewidth}}
 	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
-	\mbox{Freiburg den $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDateAsDate)} & & \mbox{$!task.diagnosisContainer.signatureOne.physician.person.fullName} & \mbox{$!task.diagnosisContainer.signatureTwo.physician.person.fullName} \\
-	~~ & ~ & $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.role \\\\
+	Freiburg den \linebreak $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDateAsDate) & & $!task.diagnosisContainer.signatureOne.physician.person.fullName #if($!task.diagnosisContainer.signatureOne.physician.person.fullName) \linebreak #end $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.physician.person.fullName #if($!task.diagnosisContainer.signatureTwo.physician.person.fullName) \linebreak #end $!task.diagnosisContainer.signatureTwo.role \\
+
 
 \end{tabular}
+
 \end{center}
- {
-\noindent
-\footnotesize 
-Dies ist ein technisch validierter Befundbericht, der erst durch eine ärztliche Unterschrift fachlich validiert ist. \\
-}
    \ifthenelse{\pageref{LastPage}>1}
      { \noindent \footnotesize  Dieser Befundbericht umfasst insgesamt \pageref{LastPage} Seiten.  \\}
       {~	}
-     
-
-	
-
 \end{document}

@@ -90,6 +90,10 @@ public class MainHandlerAction {
 		showQueueGrowlMessage();
 	}
 
+	public void sendGrowlMessages(String headline, String message, FacesMessage.Severity servertiy) {
+		sendGrowlMessages(new FacesMessage(servertiy, headline, message));
+	}
+
 	public void sendGrowlMessages(FacesMessage message) {
 		FacesContext context = FacesContext.getCurrentInstance();
 		context.addMessage(GLOBAL_GROWL_ID, message);

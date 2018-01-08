@@ -33,7 +33,7 @@ public class Signature implements LogAble {
 
 	public Signature(Physician physician) {
 		this.physician = physician;
-		this.role = physician.getClinicRole();
+		this.role = physician != null ? physician.getClinicRole() : "";
 	}
 
 	@Id

@@ -196,7 +196,7 @@
 				actionListener="#{dialogHandlerAction.notificationDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm:patientList contentForm headerForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}" />
 			</p:commandButton>
 
 			<!-- Notification exit -->
@@ -204,7 +204,7 @@
 				actionListener="#{dialogHandlerAction.notificationPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm:patientList contentForm headerForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}" />
 			</p:commandButton>
 
 
@@ -212,6 +212,7 @@
 			<p:commandButton id="archiveTaskBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, true)}">
 				<p:ajax event="dialogReturn"
+					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
@@ -219,6 +220,7 @@
 			<p:commandButton id="restoreTaskBtn" style="display:none"
 				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, false)}">
 				<p:ajax event="dialogReturn"
+					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"
 					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 

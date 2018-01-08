@@ -37,11 +37,8 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Next Changes:
 
--> Benachrichtigung als beendet markiert sobald die phase (auch manuell) verlassen wird, sobald in diangose phase eingetreten wird zeit auf 0 setzten
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
--> Die Daten unter „Sendebericht“ sind die für uns wichtig? Die Uhrzeit stimmt da nicht. 
 -> vortschritt im sende dialog
--> aktualisieren nach beenden das sende-dialogs (task status)
 -> task_old_archived_date, task_old_archived
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
@@ -61,7 +58,6 @@ Next Changes:
 
 Testen:
 -> Test piz range from 6-8 (geht nicht)
--> hinzufügen von patienten aktualisieren unterbinden, geburztag, aufrufen bei grünem haken
 -> Search for normal user (only patients in local database)
 -> Tabelle HistoSettings ob alle views richtig eingetragen sind
  
@@ -102,9 +98,16 @@ Graphic Changes
 + = added
 - = removed
 
-+v 1.2.0 ()
++v 1.2.0 (08.01.2017)
 +++*: Benachrichtigungs-Dialog auf neues Layout angepasst, Benachrichtigungs-Vorgang verbessert.
 +++*: Phasen Übergägnge angepasst.
++++!: Schnell-Suche übernimmt die eingegeben Name richtig in die globale Suche
++++!: Beim löschen der Arbeitsliste wird die List mit allen Aufträgen korrekt angezeigt.
++++!: Patienten-Kopf im Befundbericht - ohne Logo wird korrekt angezeigt
++++*: Befundbericht PDF überarbeitet.
++++!: Unterschriften für Aufträge können korrekt gelöscht werden.
++++*: Im Patienten-Hizufügen-Dialog wird bei Patienten die in der lokalen Datenbank bekannt sind "Aufrufen" anstelle von "Hinzufügen" angezeigt.
++++!: Uhrzeit im Sendebericht simmt jetzt.
 
 SQL:
 /* drop unused column of diagnosis */

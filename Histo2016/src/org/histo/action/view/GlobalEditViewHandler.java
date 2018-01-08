@@ -399,25 +399,34 @@ public class GlobalEditViewHandler {
 								FacesMessage.SEVERITY_ERROR);
 					}
 
-				} else if (quickSerach.matches("^(.+)[, ](.+)$")) {
+				} else if (quickSerach.matches("^(.+)(, )(.+)$")) {
+					logger.debug("Search for name, first name");
 					// name, surename; name surename
-					String[] arr = quickSerach.split("[, ]");
+					String[] arr = quickSerach.split(", ");
 
+					System.out.println(arr[0] + arr[1]);
 					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[0], arr[1], "",
 							null);
 
+				} else if (quickSerach.matches("^(.+) (.+)$")) {
+					logger.debug("Search for firstname, name");
+					// name, surename; name surename
+					String[] arr = quickSerach.split(" ");
+
+					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[1], arr[0], "",
+							null);
+
 				} else if (quickSerach.matches("^[\\p{Alpha}\\-]+")) {
+					logger.debug("Search for name");
 					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(quickSerach, "", "",
 							null);
 				} else {
-
+					logger.debug("No search match found");
 				}
 			}
 
 			setQuickSearch("");
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			// TODO inform the user
 		}
 	}

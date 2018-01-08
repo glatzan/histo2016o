@@ -130,7 +130,7 @@
 				<h:outputText value="#{patientList.listItem.piz}" />
 			</p:column>
 
-			<p:ajax event="rowSelect" update="@form" />
+			<p:ajax event="rowSelect" update="adminForm:buttonContainer" />
 
 
 			<p:ajax event="rowDblselect"
@@ -164,9 +164,9 @@
 					rendered="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.toManyMatchesInClinicDatabase}" />
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="newTableContainer right">
+			<h:panelGrid columns="2" styleClass="newTableContainer right" id="buttonContainer">
 				<!-- Add button -->
-				<p:commandButton value="#{msg['dialog.addPatient.add.button.add']}"
+				<p:commandButton value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem.listItem.listItem.inDatabase ? msg['dialog.addPatient.add.button.add'] : msg['dialog.addPatient.add.button.invoke']}"
 					widgetVar="clinicSearchBtn" id="submitAddButton"
 					disabled="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem eq null}"
 					icon="fa fa-fw fa-user-plus"

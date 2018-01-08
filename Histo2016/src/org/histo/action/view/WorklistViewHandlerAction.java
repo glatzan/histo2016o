@@ -202,15 +202,6 @@ public class WorklistViewHandlerAction {
 
 	public void onSelectPatient(Patient patient, boolean reload) {
 
-		try {
-			Class c = MediaDialog.class;
-			Method[] m = c.getDeclaredMethods();
-			for (int i = 0; i < m.length; i++)
-				System.out.println(m[i].toString());
-		} catch (Throwable e) {
-			System.err.println(e);
-		}
-
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
 
@@ -251,7 +242,6 @@ public class WorklistViewHandlerAction {
 	public void onDeselectPatient() {
 		globalEditViewHandler.setSelectedPatient(null);
 		globalEditViewHandler.setSelectedTask(null);
-		changeView(View.WORKLIST_BLANK);
 	}
 
 	public void onSelectTaskAndPatient(Task task) {

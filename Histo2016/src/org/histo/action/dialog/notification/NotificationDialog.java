@@ -130,7 +130,6 @@ public class NotificationDialog extends AbstractTabDialog {
 	@Setter(AccessLevel.NONE)
 	private TaskService taskService;
 
-	
 	private MailTab mailTab;
 	private FaxTab faxTab;
 	private LetterTab letterTab;
@@ -165,14 +164,18 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		tabs = new AbstractTab[] { mailTab, faxTab, letterTab, phoneTab, sendTab, sendReportTab };
 
+		super.initBean(task, Dialog.NOTIFICATION);
+
 		// disabling tabs if notification was performed
-		if (task.getNotificationCompletionDate() != 0) {
+		if (task.getNotificationCompletionDate() != 0 && !resend) {
 			mailTab.setDisabled(true);
 			faxTab.setDisabled(true);
 			letterTab.setDisabled(true);
 			phoneTab.setDisabled(true);
 			sendTab.setDisabled(true);
 			sendReportTab.setDisabled(false);
+
+			onTabChange(sendReportTab);
 		} else if (resend) {
 			mailTab.setDisabled(false);
 			faxTab.setDisabled(false);
@@ -188,9 +191,6 @@ public class NotificationDialog extends AbstractTabDialog {
 			sendTab.setDisabled(false);
 			sendReportTab.setDisabled(true);
 		}
-
-		super.initBean(task, Dialog.NOTIFICATION);
-
 		return true;
 	}
 
@@ -629,14 +629,16 @@ public class NotificationDialog extends AbstractTabDialog {
 		private DefaultTransformer<PDFContainer> sendReportConverter;
 
 		private boolean archiveTask;
-		
+
+		private boolean sendReportAvailable;
+
 		public SendReportTab() {
 			setTabName("SendReport");
 			setName("dialog.notification.tab.sendReport");
 			setViewID("sendReportTab");
 			setCenterInclude("include/sendReport.xhtml");
-			
-			if(userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_ARCHIVE))
+
+			if (userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_ARCHIVE))
 				setArchiveTask(true);
 		}
 
@@ -647,11 +649,16 @@ public class NotificationDialog extends AbstractTabDialog {
 			List<PDFContainer> lists = PDFGenerator.getPDFsofType(task.getAttachedPdfs(),
 					DocumentType.MEDICAL_FINDINGS_SEND_REPORT_COMPLETED);
 
-			// updating mediadialog
-			dialogHandlerAction.getMediaDialog().initiBeanForExternalView(lists,
-					PDFGenerator.getLatestPDFofType(lists));
+			if (lists.size() > 0) {
+				setSendReportAvailable(true);
+				// updating mediadialog
+				dialogHandlerAction.getMediaDialog().initiBeanForExternalView(lists,
+						PDFGenerator.getLatestPDFofType(lists));
 
-			setSendReportConverter(new DefaultTransformer<>(lists));
+				setSendReportConverter(new DefaultTransformer<>(lists));
+			} else {
+				setSendReportAvailable(false);
+			}
 
 		}
 
@@ -659,11 +666,11 @@ public class NotificationDialog extends AbstractTabDialog {
 			initBean(getTask(), true);
 			onTabChange(mailTab);
 		}
-		
+
 		public void endNotification() {
 			notificationService.endNotificationPhase(getTask());
 
-			if(archiveTask)
+			if (archiveTask)
 				taskService.archiveTask(getTask());
 		}
 

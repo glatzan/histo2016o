@@ -285,18 +285,17 @@ public class MenuGenerator {
 				notificationSubMenu.addElement(item);
 
 				// exit stay in notification phase
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.force.enter"));
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.enter"));
 				item.setCommand(
 						"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
 								+ PredefinedFavouriteList.StayInNotificationList.getId() + ")}");
 				item.setUpdate("navigationForm contentForm headerForm");
 				item.setIcon("fa fa-volume-off");
-				item.setRendered(!(task.getTaskStatus().isNotificationNeeded()
-						|| task.getTaskStatus().isStayInNotificationList()) && task.getTaskStatus().isEditable());
+				item.setRendered(task.getTaskStatus().isStayInNotificationList());
 				notificationSubMenu.addElement(item);
 
 				// add to notification phase
-				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.force.enter"));
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.enter"));
 				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
 						+ PredefinedFavouriteList.NotificationList.getId() + ")}");
 				item.setUpdate("navigationForm contentForm headerForm");

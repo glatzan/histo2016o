@@ -19,11 +19,21 @@
 
 
 	<p:outputPanel styleClass="bodyPannel"
+		rendered="#{dialogHandlerAction.notificationDialog.sendReportTab.sendReportAvailable}"
 		style="height: calc(100vh - 130px)">
 		<p:media player="pdf" cache="true"
 			value="#{dialogHandlerAction.mediaDialog.pdfContent}" width="100%"
 			height="460px" />
 	</p:outputPanel>
+
+	<h:panelGrid columns="1" styleClass="newTableContainer"
+		rendered="#{!dialogHandlerAction.notificationDialog.sendReportTab.sendReportAvailable}"
+		style="width: 100% !important;height: calc( 100vh - 130px )!important;"
+		columnClasses="columnMiddle columnTextCenter">
+
+		<h:outputLabel styleClass="hugeFont"
+			value="#{msg['dialog.notification.tab.sendReport.completedAndNoReport']}"></h:outputLabel>
+	</h:panelGrid>
 
 	<p:outputPanel styleClass="bodyPannel" style="height:25px;"
 		rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}">
@@ -42,6 +52,7 @@
 
 			<h:panelGrid columns="2" styleClass="newTableContainer left">
 				<p:selectOneMenu
+					rendered="#{dialogHandlerAction.notificationDialog.sendReportTab.sendReportAvailable}"
 					converter="#{dialogHandlerAction.notificationDialog.sendReportTab.sendReportConverter}"
 					title="#{msg['body.worklist.header.view']}"
 					value="#{dialogHandlerAction.mediaDialog.PDFContainerToRender}">
@@ -59,6 +70,7 @@
 
 				<!-- Download -->
 				<p:commandButton
+					rendered="#{dialogHandlerAction.notificationDialog.sendReportTab.sendReportAvailable}"
 					value="#{msg['dialog.notification.tab.sendReport.button.download']}"
 					icon="fa fa-download" ajax="false"
 					disabled="#{dialogHandlerAction.mediaDialog.PDFContainerToRender eq null}"

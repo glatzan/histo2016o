@@ -34,15 +34,25 @@ public class TaskService {
 		task.setFinalizationDate(System.currentTimeMillis());
 		task.setFinalized(true);
 
+		if(task.getStainingCompletionDate() == 0)
+			task.setStainingCompletionDate(System.currentTimeMillis());
+		
+		if(task.getDiagnosisCompletionDate() == 0)
+			task.setDiagnosisCompletionDate(System.currentTimeMillis());
+		
+		if(task.getNotificationCompletionDate() == 0)
+			task.setNotificationCompletionDate(System.currentTimeMillis());
+
 		genericDAO.savePatientData(task, "log.patient.task.change.diagnosisPhase.archive", new Object[] { task });
 
 	}
 
-	public void restoreTask(Task task) {
+	public void restoreTask(Task task, String commentary) {
 		// finalizing task
 		task.setFinalizationDate(0);
 		task.setFinalized(false);
 
-		genericDAO.savePatientData(task, "log.patient.task.change.diagnosisPhase.dearchive", new Object[] { task });
+		genericDAO.savePatientData(task, "log.patient.task.change.diagnosisPhase.dearchive",
+				new Object[] { task, commentary });
 	}
 }

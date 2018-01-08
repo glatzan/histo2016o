@@ -27,11 +27,9 @@
 				if (block) {
 					PF('submitBTn').disable();
 					PF('blockLoginTable').block();
-					PF('globalPoll').stop();
 				} else {
 					PF('submitBTn').enable();
 					PF('blockLoginTable').unblock();
-					PF('globalPoll').start();
 				}
 			}
 		</script>
@@ -56,8 +54,9 @@
 				</h:panelGrid>
 
 				<h:panelGrid styleClass="newStyleListingTable"
-					rendered="#{globalSettings.programSettings.offline}" style="margin-top:20px;"
-					columns="1" columnClasses="columnHorTextcenter">
+					rendered="#{globalSettings.programSettings.offline}"
+					style="margin-top:20px;" columns="1"
+					columnClasses="columnHorTextcenter">
 					<h:outputText value="#{msg['login.user.offlineMode']}"
 						style="color:red;" />
 				</h:panelGrid>
@@ -81,7 +80,10 @@
 
 	</h:form>
 
-	<ui:include src="pages/template/growl.xhtml" />
+	<h:form id="growlForm">
+		<p:growl id="globalgrowl" showDetail="true" widgetVar="globalgrowl"
+			for="globalGrowl" globalOnly="true" autoUpdate="true" />
+	</h:form>
 
 </h:body>
 </html>

@@ -10,6 +10,7 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
+import org.histo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -47,10 +48,20 @@ public class ArchiveTaskDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private GlobalEditViewHandler globalEditViewHandler;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TaskService taskService;
+
 	/**
 	 * If true the archive dialog is shown, otherwise the restore dialog
 	 */
 	private boolean archive;
+
+	/**
+	 * commentary for restoring
+	 */
+	private String commentary;
 
 	public void initAndPrepareBean(Task task, boolean archive) {
 		if (initBean(task, archive))
@@ -79,35 +90,19 @@ public class ArchiveTaskDialog extends AbstractDialog {
 	public void archiveTask() {
 		try {
 
-			// remove from all system lists
-			favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.values());
-
-			// finalizing task
-			getTask().setFinalizationDate(System.currentTimeMillis());
-			getTask().setFinalized(true);
-
-			patientDao.save(getTask(), "log.patient.task.change.diagnosisPhase.archive", new Object[] { getTask() });
+			taskService.archiveTask(getTask());
 
 		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
-
-		globalEditViewHandler.updateDataOfTask(true, false, true, false);
 	}
 
 	public void restoreTask() {
 		try {
 
-			// finalizing task
-			getTask().setFinalizationDate(0);
-			getTask().setFinalized(false);
-
-			patientDao.save(getTask(), "log.patient.task.change.diagnosisPhase.dearchive", new Object[] { getTask() });
-
+			taskService.restoreTask(getTask(), getCommentary());
 		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
-
-		globalEditViewHandler.updateDataOfTask(true, false, true, false);
 	}
 }

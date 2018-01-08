@@ -77,7 +77,12 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].initTab();
 		}
-
+		
+		clinicSearchTab.setPatientName(name);
+		clinicSearchTab.setPatientSurname(surename);
+		clinicSearchTab.setPatientPiz(piz);
+		clinicSearchTab.setPatientBirthday(date);
+		
 		onTabChange(tabs[0]);
 	}
 

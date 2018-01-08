@@ -266,13 +266,14 @@
 					</p:commandButton>
 
 					<!-- Abort button -->
-					<p:commandButton value="#{msg['general.close']}" id="closeBtn"
+					<p:commandButton value="#{msg['general.close']}"
 						icon="fa fa-times-circle">
 						<f:actionListener
 							binding="#{dialogHandlerAction.printDialog.resetPDF()}" />
 						<f:actionListener
 							binding="#{dialogHandlerAction.printDialog.hideDialog()}" />
 					</p:commandButton>
+
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

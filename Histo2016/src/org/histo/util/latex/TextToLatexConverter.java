@@ -21,7 +21,7 @@ public class TextToLatexConverter {
 		if(string == null)
 			return "";
 		
-		string = StringUtils.replace(string, " ", config.getSpace());
+//		string = StringUtils.replace(string, " ", config.getSpace());
 		string = StringUtils.replace(string, "\r\n", config.getLineBreak());
 		return string;
 	}
@@ -29,7 +29,7 @@ public class TextToLatexConverter {
 	@Getter
 	@Setter
 	public class Config {
-		private String lineBreak = "\\linebreak\r\n";
+		private String lineBreak = "\\linebreak[4]\r\n";
 		private String space = "\\kern 0.33em ";
 	}
 }

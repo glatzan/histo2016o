@@ -40,7 +40,7 @@
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
 				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
-				value="#{dialogHandlerAction.notificationDialog.faxTab.print}"
+				value="#{dialogHandlerAction.notificationDialog.faxTab.containerList.print}"
 				title="#{msg['dialog.notification.tab.fax.print.text']}">
 				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>

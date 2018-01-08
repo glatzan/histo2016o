@@ -18,7 +18,8 @@
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel value="#{msg['dialog.notificationPhaseExit.headline']}" />
+				<h:outputLabel
+					value="#{msg['dialog.notificationPhaseExit.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -36,13 +37,19 @@
 			<h:panelGrid columns="2" styleClass="newStyleListingTable"
 				style="margin: 10px 0px 0px 20px">
 				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.stainingPhaseExitDialog.goToDiagnosisPhase}" />
+					disabled="#{dialogHandlerAction.notificationPhaseExitDialog.archiveTask}"
+					value="#{dialogHandlerAction.notificationPhaseExitDialog.stayInNotificationPhase}" />
 				<h:outputLabel
 					value="#{msg['dialog.notificationPhaseExit.checkBox.stayInList']}" />
 
 				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.stainingPhaseExitDialog.stayInStainingPhase}" />
-				<h:outputLabel value="#{msg['dialog.notificationPhaseExit.checkBox.archiveTask']}" />
+					rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
+					value="#{dialogHandlerAction.notificationPhaseExitDialog.archiveTask}">
+					<p:ajax event="change" update="@form" />
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value="#{msg['dialog.notificationPhaseExit.checkBox.archiveTask']}"
+					rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}" />
 			</h:panelGrid>
 		</div>
 
@@ -58,15 +65,15 @@
 					<p:commandButton value="#{msg['general.ok']}" id="closeBtn"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
-							binding="#{dialogHandlerAction.stainingPhaseExitDialog.exitPhase()}" />
+							binding="#{dialogHandlerAction.notificationPhaseExitDialog.exitPhase()}" />
 						<f:actionListener
-							binding="#{dialogHandlerAction.stainingPhaseExitDialog.hideDialog()}" />
+							binding="#{dialogHandlerAction.notificationPhaseExitDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<!-- abort -->
 					<p:commandButton value="#{msg['general.abort']}"
 						icon="fa fa-times-circle"
-						actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.hideDialog()}"></p:commandButton>
+						actionListener="#{dialogHandlerAction.notificationPhaseExitDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

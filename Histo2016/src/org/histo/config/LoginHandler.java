@@ -77,7 +77,8 @@ public class LoginHandler {
 			return determineTargetUrl(authentication) + "?faces-redirect=true";
 		} catch (BadCredentialsException ex) {
 
-			mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("login.error"), ex.getMessage());
+			mainHandlerAction.sendGrowlMessages(resourceBundle.get("login.error"), ex.getMessage(),
+					FacesMessage.SEVERITY_ERROR);
 
 			logger.debug("Login failed");
 
@@ -132,10 +133,10 @@ public class LoginHandler {
 
 			if (user.getSettings().getStartView() != null) {
 				// alway init worklist!
-				
-				if(user.getSettings().getStartView() != View.GUEST)
+
+				if (user.getSettings().getStartView() != View.GUEST)
 					worklistViewHandlerAction.initBean();
-				
+
 				return user.getSettings().getStartView().getRootPath();
 			} else {
 				logger.error("No Start View Found, going back to normal view");

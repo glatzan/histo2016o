@@ -82,12 +82,15 @@ public class PDFGenerator {
 				FileHandlerUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
 
 		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
+		
 
 		template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getContent()));
 
 		processedTex = new File(workingDirectory.getAbsolutePath() + File.separator
 				+ RandomStringUtils.randomAlphanumeric(10) + ".tex");
 
+		logger.debug("PDF output: " + processedTex.getAbsolutePath());
+		
 		converter = new JLRConverter(workingDirectory);
 
 		return converter;

@@ -115,7 +115,7 @@ public class DiagnosisContainer implements Parent<Task>, LogAble, PatientRollbac
 	 */
 	public void setPhysicianAsSignatureTwo(Physician physician) {
 		Signature signature = new Signature(physician);
-		signature.setRole(physician.getClinicRole());
+		signature.setRole(physician != null ?physician.getClinicRole() : "");
 		setSignatureTwo(signature);
 	}
 

@@ -11,8 +11,9 @@
 		<p:growl id="globalgrowl" showDetail="true" widgetVar="globalgrowl"
 			for="globalGrowl" globalOnly="true" />
 
-		<p:poll interval="1" listener="#{mainHandlerAction.processQueues()}" widgetVar="globalPoll"/>
 
+		<p:poll interval="1" listener="#{mainHandlerAction.processQueues()}" widgetVar="globalPoll" autoStart="false"/>
+		
 		<!-- 
 		<f:event type="preRenderView"
 			listener="#{mainHandlerAction.showQueueGrowlMessage()}" />-->
