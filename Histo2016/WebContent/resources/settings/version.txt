@@ -98,34 +98,34 @@ Graphic Changes
 + = added
 - = removed
 
-+v 1.2.0 (08.01.2017)
++v 1.2.1 (08.01.2017)
 +++*: Benachrichtigungs-Dialog auf neues Layout angepasst, Benachrichtigungs-Vorgang verbessert.
-+++*: Phasen Übergägnge angepasst.
++++*: Phasen Übergänge angepasst.
 +++!: Schnell-Suche übernimmt die eingegeben Name richtig in die globale Suche
-+++!: Beim löschen der Arbeitsliste wird die List mit allen Aufträgen korrekt angezeigt.
++++!: Beim Löschen der Arbeitsliste wird die List mit allen Aufträgen korrekt angezeigt.
 +++!: Patienten-Kopf im Befundbericht - ohne Logo wird korrekt angezeigt
 +++*: Befundbericht PDF überarbeitet.
 +++!: Unterschriften für Aufträge können korrekt gelöscht werden.
-+++*: Im Patienten-Hizufügen-Dialog wird bei Patienten die in der lokalen Datenbank bekannt sind "Aufrufen" anstelle von "Hinzufügen" angezeigt.
-+++!: Uhrzeit im Sendebericht simmt jetzt.
++++*: Im Patienten-Hinzufügen-Dialog wird bei Patienten die in der lokalen Datenbank bekannt sind "Aufrufen" anstelle von "Hinzufügen" angezeigt.
++++!: Uhrzeit im Sendebericht stimmt jetzt.
 
 SQL:
 /* drop unused column of diagnosis */
 Alter table diagnosisrevision drop column diagnosiscompleted; 
 
-+v 1.1.1 (04.01.2017)
++v 1.2.0 (04.01.2017)
 +++*: Neue-Färbung Dialog an neues Layout angepasst.
 +++*: Eingangsbuch an neues Layout angepasst.
 +++*: Organisations-Dialog an neues Layout angepasst.
-++++: Daten von Ärtzen können markiert werden, so dass sie nicht mehr automatisch mit der Klinik-Datenbank abgeglichen werden.
-+++*: Gruppe "Nicht freigeschaltet" in Dekativiert/Ausgeblendet umbenannt.
+++++: Daten von Ärzten können markiert werden, so dass sie nicht mehr automatisch mit der Klinik-Datenbank abgeglichen werden.
++++*: Gruppe "Nicht freigeschaltet" in Deaktiviert/Ausgeblendet umbenannt.
 ++++: Eigene Eingabemaske für Benutzer, Benutzername kann jetzt nachträglich verändert werden.
-++++: Gruppe kann als deaktivierte Gruppe markiert werden, Benutzer dieser Gruppe sind gesperrt und werden in der Benutzerübersicht nicht angezeigt (Anzeige kann per Option aktivert werden).
+++++: Gruppe kann als deaktivierte Gruppe markiert werden, Benutzer dieser Gruppe sind gesperrt und werden in der Benutzerübersicht nicht angezeigt (Anzeige kann per Option aktiviert werden).
 +++*: Security-Context geupdated.
 ++++: Beim Schließen des Administrations-Dialoges werden alle Gui-Listen neu geladen.
 +++*: Manuell Änderungen des Materialnamens werden nun sofort gespeichert.
 +++*: Return in Feldern mit Overlay-Panel erzeugt jetzt eine Umbruch anstelle das Overlay-Panel zu öffnen.
-+++*: Material kann jetzt wie die Diangose mit einem Overlay-Panel ausgewählt werden.
++++*: Material kann jetzt wie die Diagnose mit einem Overlay-Panel ausgewählt werden.
 +++*: Patienten suchen Button neben die Ansichtsauswahl verlegt
 
 SQL:
@@ -156,9 +156,9 @@ update organization_aud set archived = false;
 +++*: Benutzerinterface für normale Programmbenutzer fertiggestellt.
 +++*: Normale Programmbenutzer finden nur noch Patienten die sich in der lokalen Datenbank befinden.
 +++*: In der Arbeitsliste können Patienten jetzt auf mit einem Klick auf die Namen ausgewählt werden.
-++++: Rechte zum Verwenden von Favouritenlisten implementiert.
-++++: Option zum hinzufügen von Aufträgen mit einem Klick implementiert. (Normalerweise wird zunächst der Patient in der Arbeitsliste angezeit, beim zweiten Klick der Auftrag)
-+++*: Inhalt des Gruppen-Dialog auf mehrer Tabs aufgeteilt.
+++++: Rechte zum Verwenden von Favoritenlisten implementiert.
+++++: Option zum Hinzufügen von Aufträgen mit einem Klick implementiert. (Normalerweise wird zunächst der Patient in der Arbeitsliste angezeigt, beim zweiten Klick der Auftrag)
++++*: Inhalt des Gruppen-Dialog auf mehrere Tabs aufgeteilt.
 +++*: Info-Dialog auf neues Layout geändert, Versionsanzeige intern geändert.
 +++*: Benutzeransicht überarbeitet und verbessert.
 +++*: GUI wird neu berechnet, sobald das Browser-Fenster in der Größe geändert wurde.
@@ -170,7 +170,7 @@ update organization_aud set archived = false;
 ++++: Dialog zum Hinzufügen von Patienten auf anlegen von Klinik-Patienten vorbereitet.
 +++!: Im Dialog zum Hinzufügen von Patienten erscheint der Cursor jetzt zuverlässig im PIZ-Feld .
 +++*: Neues Layout für Tab-Dialoge.
-+++!: Schnell-Suche funktioniert jetzt auch richtig mit Namen (Nachame; oder Nachname, Vorname).
++++!: Schnell-Suche funktioniert jetzt auch richtig mit Namen (Nachname; oder Nachname, Vorname; oder Vorname Nachname).
 +++*: Dialog zum Hinzufügen von Patienten überarbeitet und erweitert.
 +++*: Suchfunktion für die Arbeitsliste überarbeitet und erweitert.
 ++++: Brief ohne Klinik-Logo kann gedruckt werden.
