@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
@@ -71,6 +72,7 @@ public class ClinicPrinter extends AbstractPrinter {
 
 	public boolean print(PDFContainer container, int count, String args) {
 		logger.debug("Printing xtimes: " + count);
+		System.out.println("-------------- duplexys");
 		int i = 0;
 		boolean result = true;
 		while (i < count) {
@@ -80,10 +82,17 @@ public class ClinicPrinter extends AbstractPrinter {
 				cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
 				CupsPrinter printer = cupsClient.getPrinter(new URL(address));
 
-				PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
+				PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).duplex(false)
+						.build();
+				
+			//	args= "sides:keyword:two-sided-long-edge";
+				args= "sides:keyword:one-sided";
+				
 				if (args != null) {
+
 					Map<String, String> attribute = new HashMap<String, String>();
 					attribute.put("job-attributes", args);
+
 					printJob.setAttributes(attribute);
 					logger.debug("Printig with args: " + args);
 				}

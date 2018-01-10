@@ -37,8 +37,11 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Next Changes:
 
+-> listensortierung übernehmen
+
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 -> vortschritt im sende dialog
+-> aus liste entfernen ohne konsquenz
 -> task_old_archived_date, task_old_archived
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
