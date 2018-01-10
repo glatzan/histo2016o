@@ -95,6 +95,8 @@ public class NotificationExecutor<T extends NotificationContainer> {
 					generatedContainers.add(genericPDF);
 				}
 
+				logger.debug("Returning generic pdf " + genericPDF);
+				
 				result = genericPDF;
 			} else {
 				// individual address
@@ -105,6 +107,8 @@ public class NotificationExecutor<T extends NotificationContainer> {
 				template.initData(task.getPatient(), task, reportAddressField);
 				result = new PDFGenerator().getPDF(template);
 
+				logger.debug("Returning individual address");
+				
 				// adding pdf to generated pdf array
 				generatedContainers.add(result);
 			}
@@ -112,6 +116,8 @@ public class NotificationExecutor<T extends NotificationContainer> {
 			return result;
 		}
 
+		logger.debug("Returning no pdf");
+		
 		return null;
 	}
 

@@ -98,6 +98,13 @@ Graphic Changes
 + = added
 - = removed
 
++v 1.2.3 (08.01.2017)
++++!: PDFs werden an Emails bei Befundbenachrichtigung korrekt angehängt.
+
++v 1.2.2 (08.01.2017)
++++!: Anzahl der Ausdrucke wird korrekt übernommen
++++!: Kopf zum hinzufügen von Patienten funktioniert wieder richtig.
+
 +v 1.2.1 (08.01.2017)
 +++*: Benachrichtigungs-Dialog auf neues Layout angepasst, Benachrichtigungs-Vorgang verbessert.
 +++*: Phasen Übergänge angepasst.

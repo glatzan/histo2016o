@@ -35,6 +35,10 @@ public class MailExecutor extends NotificationExecutor<MailContainer> {
 	protected boolean performSend(MailContainer container) {
 		if (!globalSettings.getProgramSettings().isOffline()) {
 			feedback.setFeedback("dialog.notification.sendProcess.mail.send", container.getContactAddress());
+			
+			// setting pdf as attachment
+			container.getMail().setAttachment(container.getPdf());
+			
 			return globalSettings.getMailHandler().sendMail(container.getContactAddress(), container.getMail());
 		}
 

@@ -166,7 +166,7 @@
 
 			<h:panelGrid columns="2" styleClass="newTableContainer right" id="buttonContainer">
 				<!-- Add button -->
-				<p:commandButton value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem.listItem.listItem.inDatabase ? msg['dialog.addPatient.add.button.add'] : msg['dialog.addPatient.add.button.invoke']}"
+				<p:commandButton value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem.listItem.inDatabase ? msg['dialog.addPatient.add.button.invoke'] : msg['dialog.addPatient.add.button.add']}"
 					widgetVar="clinicSearchBtn" id="submitAddButton"
 					disabled="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem eq null}"
 					icon="fa fa-fw fa-user-plus"

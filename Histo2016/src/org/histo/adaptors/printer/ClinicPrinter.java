@@ -70,26 +70,33 @@ public class ClinicPrinter extends AbstractPrinter {
 	}
 
 	public boolean print(PDFContainer container, int count, String args) {
-		CupsClient cupsClient;
-		try {
-			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
-			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
+		logger.debug("Printing xtimes: " + count);
+		int i = 0;
+		boolean result = true;
+		while (i < count) {
+			logger.debug("Printing " + i);
+			CupsClient cupsClient;
+			try {
+				cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
+				CupsPrinter printer = cupsClient.getPrinter(new URL(address));
 
-			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
-			if (args != null) {
-				Map<String, String> attribute = new HashMap<String, String>();
-				attribute.put("job-attributes", args);
-				printJob.setAttributes(attribute);
-				logger.debug("Printig with args: " + args);
-			}
-			for (int i = 0; i < count; i++) {
+				PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).build();
+				if (args != null) {
+					Map<String, String> attribute = new HashMap<String, String>();
+					attribute.put("job-attributes", args);
+					printJob.setAttributes(attribute);
+					logger.debug("Printig with args: " + args);
+				}
+
 				printer.print(printJob);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+				result = false;
 			}
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
+			i++;
 		}
+		return result;
 	}
 
 	public boolean printTestPage() {

@@ -182,7 +182,6 @@ $address \\
 		\normalsize $!latexTextConverter.convertToTex($diagnosisRevision.text)
 	\end{addmargin}\\
 	\large \underline{ Diagnosen: }\smallskip
-	\begin{addmargin}{0.2cm}
 	
 			\begin{tabular}{p{0.05\linewidth}p{0.95\linewidth}}
 			#foreach ($diagnosis in $diagnosisRevision.diagnoses)
@@ -190,7 +189,6 @@ $address \\
 			#end
 			\end{tabular}			
 
-	\end{addmargin} 
 \end{longtable}
 #end
 }
