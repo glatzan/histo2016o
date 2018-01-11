@@ -36,7 +36,7 @@ import org.histo.service.NotificationService;
 import org.histo.service.TaskService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.MailTemplate;
-import org.histo.template.documents.TemplateDiagnosisReport;
+import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
@@ -307,7 +307,7 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-			getContainerList().setDefaultReport((TemplateDiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
 					globalSettings.getDefaultDocuments().getNotificationDefaultEmailDocument()));
 
 			DiagnosisReportMail mail = MailTemplate
@@ -348,7 +348,7 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-			getContainerList().setDefaultReport((TemplateDiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
 					globalSettings.getDefaultDocuments().getNotificationDefaultFaxDocument()));
 
 			getContainerList().setSend(true);
@@ -382,7 +382,7 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-			getContainerList().setDefaultReport((TemplateDiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
 					globalSettings.getDefaultDocuments().getNotificationDefaultLetterDocument()));
 
 			getContainerList().setPrint(true);
@@ -451,7 +451,7 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-			getContainerList().setDefaultReport((TemplateDiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
 					globalSettings.getDefaultDocuments().getNotificationDefaultPrintDocument()));
 
 			getContainerList().setPrintCount(2);

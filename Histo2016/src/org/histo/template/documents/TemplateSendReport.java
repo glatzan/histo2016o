@@ -19,8 +19,6 @@ import org.histo.util.pdf.PDFGenerator;
 public class TemplateSendReport extends DocumentTemplate {
 	private Patient patient;
 
-	private Task task;
-
 	private MailContainerList mailContainerList;
 	private NotificationContainerList faxContainerList;
 	private NotificationContainerList letterContainerList;

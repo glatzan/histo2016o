@@ -4,7 +4,7 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Task;
-import org.histo.ui.ContactContainer;
+import org.histo.ui.selectors.ContactSelector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -19,18 +19,18 @@ public class CustomAddressDialog extends AbstractDialog {
 	@Autowired
 	private PatientDao patientDao;
 
-	private ContactContainer contactContainer;
+	private ContactSelector contactContainer;
 
 	private String customAddress;
 
 	private boolean addressChanged;
 
-	public void initAndPrepareBean(Task task, ContactContainer contactContainer) {
+	public void initAndPrepareBean(Task task, ContactSelector contactContainer) {
 		initBean(task, contactContainer);
 		prepareDialog();
 	}
 
-	public void initBean(Task task, ContactContainer contactContainer) {
+	public void initBean(Task task, ContactSelector contactContainer) {
 		this.contactContainer = contactContainer;
 
 		customAddress = contactContainer.getCustomAddress();

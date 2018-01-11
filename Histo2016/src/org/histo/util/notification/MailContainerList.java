@@ -11,7 +11,7 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.patient.Task;
-import org.histo.template.documents.TemplateDiagnosisReport;
+import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;

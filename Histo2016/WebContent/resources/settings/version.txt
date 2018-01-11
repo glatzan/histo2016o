@@ -103,6 +103,9 @@ Graphic Changes
 
 +v 1.2.3 (08.01.2017)
 +++!: PDFs werden an Emails bei Befundbenachrichtigung korrekt angehängt.
++++!: Anzahl der Seiten in der Auftragsliste wird korrekt angezeigt. 
+++++: Namen von Befundung/Nachbefundung kann jetzt nachträglich geändert werden.
++++*: Overlay-Panels können in der Befundungsansicht und im Eingangsbuch jetzt mit Enter geschlossen/gespeichert werden.
 
 +v 1.2.2 (08.01.2017)
 +++!: Anzahl der Ausdrucke wird korrekt übernommen

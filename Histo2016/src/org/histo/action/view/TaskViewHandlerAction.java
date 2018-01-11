@@ -81,21 +81,25 @@ public class TaskViewHandlerAction {
 			setPage(1);
 		}
 
+		onChangeSelectionCriteria();
+	}
+	
+	public void onChangeSelectionCriteria() {
+
+		// updating page count
+		
 		int maxPages = taskDAO.countTotalTasks();
-		int pagesCount = (int) Math.ceil((double) maxPages / taskPerPull);
+
+		int pagesCount = (int) Math.ceil((double) maxPages / getTaskPerPull());
 
 		logger.debug("Count of pages " + pagesCount);
-
+		
 		setPages(new ArrayList<Integer>(pagesCount));
 
 		for (int i = 0; i < pagesCount; i++) {
 			getPages().add(i + 1);
 		}
-
-		onChangeSelectionCriteria();
-	}
-	
-	public void onChangeSelectionCriteria() {
+		
 		logger.debug("Reloading task lists");
 		setTaskList(taskDAO.getTasks(getTaskPerPull(), getPage() - 1));
 	}

@@ -23,7 +23,7 @@ import org.histo.model.transitory.settings.ProgramSettings;
 import org.histo.model.transitory.settings.Version;
 import org.histo.model.transitory.settings.VersionContainer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.FileUtil;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -136,7 +136,7 @@ public class GlobalSettings {
 		Gson gson = new Gson();
 
 		JsonParser parser = new JsonParser();
-		JsonObject o = parser.parse(FileHandlerUtil.getContentOfFile(PROGRAM_SETTINGS)).getAsJsonObject();
+		JsonObject o = parser.parse(FileUtil.getContentOfFile(PROGRAM_SETTINGS)).getAsJsonObject();
 
 		programSettings = gson.fromJson(o.get(SETTINGS_GENERAL), ProgramSettings.class);
 

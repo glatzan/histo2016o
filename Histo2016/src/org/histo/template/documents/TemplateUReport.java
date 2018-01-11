@@ -18,8 +18,6 @@ public class TemplateUReport extends DocumentTemplate {
 
 	private Patient patient;
 
-	private Task task;
-
 	public void initData(Patient patient, Task task) {
 		this.patient = patient;
 		this.task = task;

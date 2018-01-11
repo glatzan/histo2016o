@@ -8,6 +8,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+	<h:outputScript library="scripts" name="closeOverlayPanelOnReturn.js" />
+
 	<script type="text/javascript">
 		// disables the autofocus for the caseHistoryOverlayplpanel 
 		(function() {
@@ -315,7 +317,8 @@
 			</h:panelGroup>
 
 			<!-- data -->
-			<p:dataTable var="stainingRow" styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
+			<p:dataTable var="stainingRow"
+				styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
 				value="#{receiptlogViewHandlerAction.stainingTableRows}"
 				rowIndexVar="index">
 
@@ -577,6 +580,7 @@
 				styleClass="histoOverlayPanel" widgetVar="idInputPannel"
 				hideEffect="fade" hideEvent="none" showEvent="none">
 				<p:inputText id="idInputPannelInput"
+					onkeypress="return closeOverlayPanelOnReturn(event, 'idInputPannel')"
 					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 					rendered="#{receiptlogViewHandlerAction.selectedStainingTableChooser ne null}"
 					value="#{receiptlogViewHandlerAction.selectedStainingTableChooser.IDText}" />

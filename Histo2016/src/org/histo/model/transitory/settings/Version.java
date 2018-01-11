@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.histo.model.interfaces.GsonAble;
-import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.FileUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
@@ -49,7 +49,7 @@ public class Version {
 	 */
 	public static final List<Version> factroy(String file) {
 
-		List<String> fileContent = FileHandlerUtil.getContentOfFileAsArray(file);
+		List<String> fileContent = FileUtil.getContentOfFileAsArray(file);
 		ArrayList<Version> resultArray = new ArrayList<Version>();
 
 		Version currentVersion = null;

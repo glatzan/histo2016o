@@ -1,16 +1,21 @@
-package org.histo.util.interfaces;
+package org.histo.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.histo.util.interfaces.HasLogger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
-public interface FileHandlerUtil extends HasLogger {
+public class FileUtil implements HasLogger {
 
 	/**
 	 * Reads the content of a template and returns the content as string.
@@ -23,18 +28,24 @@ public interface FileHandlerUtil extends HasLogger {
 		logger.debug("Getting content of file one of " + file);
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
 		Resource resource = appContext.getResource(file);
-	
-		String toPrint = null;
+
+		StringBuilder toPrint = new StringBuilder();
 		try {
-			toPrint = IOUtils.toString(resource.getInputStream(), "UTF-8");
-			logger.debug("File found, size " + toPrint.length() + " (" + resource.getURI().toString() +")");
+			InputStream is = resource.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+			String line;
+			while ((line = br.readLine()) != null) {
+				toPrint.append(line);
+			}
+			br.close();
+
 		} catch (IOException e) {
-			logger.error(e);
-		} finally {
+			e.printStackTrace();
 			appContext.close();
 		}
 
-		return toPrint;
+		return toPrint.toString();
 	}
 
 	/**
@@ -48,13 +59,19 @@ public interface FileHandlerUtil extends HasLogger {
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
 		Resource resource = appContext.getResource(file);
 
-		List<String> result = null;
+		List<String> result = new ArrayList<String>();
 		try {
-			File dataFile = new File(resource.getURI());
-			result = FileUtils.readLines(dataFile, "UTF-8");
+			InputStream is = resource.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+
+			String line;
+			while ((line = br.readLine()) != null) {
+				result.add(line);
+			}
+			br.close();
+
 		} catch (IOException e) {
-			logger.error(e);
-		} finally {
+			e.printStackTrace();
 			appContext.close();
 		}
 

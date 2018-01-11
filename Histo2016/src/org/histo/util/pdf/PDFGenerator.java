@@ -16,8 +16,8 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.template.DocumentTemplate;
+import org.histo.util.FileUtil;
 import org.histo.util.TimeUtil;
-import org.histo.util.interfaces.FileHandlerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -79,12 +79,12 @@ public class PDFGenerator {
 	public JLRConverter openNewPDf(DocumentTemplate printTemplate) {
 
 		workingDirectory = new File(
-				FileHandlerUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
+				FileUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
 
 		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
 		
 
-		template = new File(FileHandlerUtil.getAbsolutePath(printTemplate.getContent()));
+		template = new File(FileUtil.getAbsolutePath(printTemplate.getContent()));
 
 		processedTex = new File(workingDirectory.getAbsolutePath() + File.separator
 				+ RandomStringUtils.randomAlphanumeric(10) + ".tex");
@@ -93,6 +93,7 @@ public class PDFGenerator {
 		
 		converter = new JLRConverter(workingDirectory);
 
+	
 		return converter;
 	}
 
@@ -118,6 +119,7 @@ public class PDFGenerator {
 			}
 
 			File test = pdfGen.getPDF();
+			
 			byte[] data = readContentIntoByteArray(test);
 
 			logger.debug("Generation time " + (System.currentTimeMillis() - test1) + " ms");

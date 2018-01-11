@@ -14,7 +14,7 @@ import org.histo.dao.PdfDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateDiagnosisReport;
+import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.documents.TemplateSendReport;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.util.notification.FaxExecutor;
@@ -128,9 +128,9 @@ public class NotificationService {
 
 		// addition templates
 		if (printContainerList.getDefaultReport() != null) {
-			((TemplateDiagnosisReport) printContainerList.getDefaultReport()).initData(task.getPatient(), task, "");
+			((DiagnosisReport) printContainerList.getDefaultReport()).initData(task.getPatient(), task, "");
 			PDFContainer report = (new PDFGenerator())
-					.getPDF(((TemplateDiagnosisReport) printContainerList.getDefaultReport()));
+					.getPDF(((DiagnosisReport) printContainerList.getDefaultReport()));
 
 			userHandlerAction.getSelectedPrinter().print(report, printContainerList.getPrintCount(),
 					printContainerList.getDefaultReport().getAttributes());

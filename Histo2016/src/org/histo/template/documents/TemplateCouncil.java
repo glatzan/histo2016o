@@ -21,8 +21,6 @@ public class TemplateCouncil extends DocumentTemplate {
 
 	private Council council;
 
-	private Task task;
-
 	private String toSendAddress;
 
 	public void initData(Patient patient, Task task, Council council, String toSendAddress) {

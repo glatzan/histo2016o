@@ -10,7 +10,7 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
-import org.histo.template.documents.TemplateDiagnosisReport;
+import org.histo.template.documents.DiagnosisReport;
 import org.histo.util.pdf.PDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -71,7 +71,7 @@ public class NotificationExecutor<T extends NotificationContainer> {
 	 * address of the of the container will be generated. Otherwise a generic pdf
 	 * will be returned.
 	 */
-	public PDFContainer getPDF(T container, Task task, TemplateDiagnosisReport template, boolean individualAddresses) {
+	public PDFContainer getPDF(T container, Task task, DiagnosisReport template, boolean individualAddresses) {
 		if (container.getPdf() != null) {
 			// pdf was selected for the individual contact
 			// adding pdf to generated pdf array

@@ -13,7 +13,6 @@ import org.histo.util.HistoUtil;
 
 public class TemplateSlideLable extends DocumentTemplate{
 
-	private Task task;
 	private Slide slide;
 	private Date date;
 

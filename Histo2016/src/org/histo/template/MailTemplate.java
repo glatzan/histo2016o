@@ -9,9 +9,9 @@ import javax.persistence.Transient;
 import org.apache.velocity.app.Velocity;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.model.PDFContainer;
+import org.histo.util.FileUtil;
 import org.histo.util.StreamUtils;
 import org.histo.util.VelocityNoOutputLogger;
-import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,7 +51,7 @@ public class MailTemplate extends Template {
 		Gson gson = gb.create();
 
 		ArrayList<MailTemplate> jsonArray = gson
-				.fromJson(FileHandlerUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
+				.fromJson(FileUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
 
 		List<T> result = new ArrayList<T>();
 
@@ -76,7 +76,7 @@ public class MailTemplate extends Template {
 		Gson gson = gb.create();
 
 		ArrayList<MailTemplate> jsonArray = gson
-				.fromJson(FileHandlerUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
+				.fromJson(FileUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
 
 		return jsonArray;
 	}
@@ -92,7 +92,7 @@ public class MailTemplate extends Template {
 	@Override
 	// TODO should be saved in database
 	public void prepareTemplate() {
-		String file = FileHandlerUtil.getContentOfFile(getContent());
+		String file = FileUtil.getContentOfFile(getContent());
 
 		String[] arr = file.split("\r\n", 2);
 

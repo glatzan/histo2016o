@@ -39,7 +39,7 @@
 	"content2" : "",
 	"type"	: "DIAGNOSIS_REPORT",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateDiagnosisReport",
+	"templateName": "org.histo.template.documents.DiagnosisReport",
 	"defaultOfType" : true,
 	"transientContent" : false,
 	"hidden" : false
@@ -51,7 +51,7 @@
 	"content2" : "",
 	"type"	: "DIAGNOSIS_REPORT",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateDiagnosisReport",
+	"templateName": "org.histo.template.documents.DiagnosisReport",
 	"defaultOfType" : false,
 	"transientContent" : false,
 	"hidden" : false
@@ -63,7 +63,7 @@
 	"content2" : "",
 	"type"	: "DIAGNOSIS_REPORT_EXTERN",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateDiagnosisReport",
+	"templateName": "org.histo.template.documents.DiagnosisReport",
 	"defaultOfType" : true,
 	"transientContent" : false,
 	"hidden" : false

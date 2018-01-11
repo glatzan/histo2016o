@@ -19,8 +19,8 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.model.interfaces.GsonAble;
 import org.histo.template.MailTemplate;
 import org.histo.template.TemplateDeserializer;
+import org.histo.util.FileUtil;
 import org.histo.util.StreamUtils;
-import org.histo.util.interfaces.FileHandlerUtil;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -60,7 +60,7 @@ public class MailHandler implements GsonAble {
 		Gson gson = gb.create();
 
 		ArrayList<MailTemplate> jsonArray = gson
-				.fromJson(FileHandlerUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
+				.fromJson(FileUtil.getContentOfFile(GlobalSettings.MAIL_TEMPLATES), type);
 
 		List<T> result = new ArrayList<T>();
 

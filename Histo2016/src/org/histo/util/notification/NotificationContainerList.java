@@ -11,7 +11,7 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.patient.Task;
-import org.histo.template.documents.TemplateDiagnosisReport;
+import org.histo.template.documents.DiagnosisReport;
 import org.histo.util.StreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -49,7 +49,7 @@ public class NotificationContainerList {
 	/**
 	 * Generic report to generate
 	 */
-	protected TemplateDiagnosisReport defaultReport;
+	protected DiagnosisReport defaultReport;
 
 	/**
 	 * True if data should be send by the program

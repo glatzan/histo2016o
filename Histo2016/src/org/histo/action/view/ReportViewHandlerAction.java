@@ -13,7 +13,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateDiagnosisReport;
+import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.documents.TemplateSendReport;
 import org.histo.ui.LazyPDFGuiManager;
 import org.histo.ui.interfaces.PdfStreamProvider;
@@ -66,7 +66,7 @@ public class ReportViewHandlerAction {
 						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT));
 
 				if (diagnosisTemplate != null) {
-					TemplateDiagnosisReport template = (TemplateDiagnosisReport) diagnosisTemplate;
+					DiagnosisReport template = (DiagnosisReport) diagnosisTemplate;
 
 					template.initData(task.getPatient(), task, "");
 

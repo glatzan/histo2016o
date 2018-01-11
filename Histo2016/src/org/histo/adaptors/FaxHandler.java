@@ -10,7 +10,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.model.PDFContainer;
-import org.histo.util.interfaces.FileHandlerUtil;
+import org.histo.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Lazy;
@@ -52,12 +52,12 @@ public class FaxHandler {
 		if (faxCommand != null && faxNumbers.size() > 0) {
 
 			File workingDirectory = new File(
-					FileHandlerUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
+					FileUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
 
 			File tempFile = new File(workingDirectory.getAbsolutePath() + File.separator
 					+ RandomStringUtils.randomAlphanumeric(10) + ".pdf");
 
-			FileHandlerUtil.saveContentOfFile(tempFile, container.getData());
+			FileUtil.saveContentOfFile(tempFile, container.getData());
 
 			for (String faxNumber : faxNumbers) {
 				String tmp = faxCommand.replace("$faxNumber", faxNumber).replace("$file",

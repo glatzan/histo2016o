@@ -9,8 +9,12 @@ import javax.persistence.Transient;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
+import org.histo.model.patient.Task;
+import org.histo.ui.selectors.ContactSelector;
+import org.histo.ui.selectors.DiagnosisRevisionSelector;
+import org.histo.util.FileUtil;
+import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
-import org.histo.util.interfaces.FileHandlerUtil;
 import org.histo.util.pdf.LazyPDFReturnHandler;
 import org.histo.util.pdf.PDFGenerator;
 
@@ -32,14 +36,28 @@ public class DocumentTemplate extends Template {
 	@Transient
 	private String file2Content;
 
+	@Transient
+	protected boolean printDuplex;
+
+	/**
+	 * String for input include
+	 */
+	@Transient
+	protected String inputInclude = "include/empty.xhtml";
+
+	/**
+	 * Task
+	 */
+	protected Task task;
+
 	/**
 	 * If true the pdf generator will call onAfterPDFCreation to allow the template
 	 * to change or attach other things to the pdf
 	 */
 	protected boolean afterPDFCreationHook;
 
-	public void initializeTempalte(Object... objects) {
-
+	public void initData(Task task) {
+		this.task = task;
 	}
 
 	public void fillTemplate(PDFGenerator generator) {
@@ -116,8 +134,8 @@ public class DocumentTemplate extends Template {
 
 		for (int i = 0; i < tempaltes.length; i++) {
 			if (tempaltes[i].getId() == id)
-			//	if (tClass.getClass().isAssignableFrom(tempaltes[i].getClass()))
-					return (T) tempaltes[i];
+				// if (tClass.getClass().isAssignableFrom(tempaltes[i].getClass()))
+				return (T) tempaltes[i];
 		}
 
 		return null;
@@ -134,8 +152,8 @@ public class DocumentTemplate extends Template {
 
 		Gson gson = gb.create();
 
-		ArrayList<DocumentTemplate> jsonArray = gson
-				.fromJson(FileHandlerUtil.getContentOfFile(GlobalSettings.PRINT_TEMPLATES), type);
+		ArrayList<DocumentTemplate> jsonArray = gson.fromJson(FileUtil.getContentOfFile(GlobalSettings.PRINT_TEMPLATES),
+				type);
 
 		if (types != null && types.length > 0) {
 			List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
