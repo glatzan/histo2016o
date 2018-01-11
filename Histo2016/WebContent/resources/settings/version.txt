@@ -106,6 +106,7 @@ Graphic Changes
 +++!: Anzahl der Seiten in der Auftragsliste wird korrekt angezeigt. 
 ++++: Namen von Befundung/Nachbefundung kann jetzt nachträglich geändert werden.
 +++*: Overlay-Panels können in der Befundungsansicht und im Eingangsbuch jetzt mit Enter geschlossen/gespeichert werden.
++++!: Daten-Lock und ein dadruch enstehenden Resourcen-Leak repariert.
 
 +v 1.2.2 (08.01.2017)
 +++!: Anzahl der Ausdrucke wird korrekt übernommen
