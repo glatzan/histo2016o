@@ -37,6 +37,10 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Next Changes:
 
+-> kopf für neue organisation in add person dialog
+-> auftrag in task erstellen dialog probe bleibt 1 beim zurückzählen
+-> Datum der Unterschrift des Befundes ist einen Tag vor der Befundung
+-> Ausblenden von Ärzten geht nicht
 -> listensortierung übernehmen
 
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
