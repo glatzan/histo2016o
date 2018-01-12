@@ -10,6 +10,7 @@ import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
+import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
 
@@ -18,7 +19,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ContactSelector extends AbstractSelector {
+public class ContactSelector extends AbstractSelector implements HasID {
 
 	private AssociatedContact contact;
 
@@ -106,5 +107,10 @@ public class ContactSelector extends AbstractSelector {
 
 	public static List<ContactSelector> factory(Task task) {
 		return task.getContacts().stream().map(p -> new ContactSelector(p, false, false)).collect(Collectors.toList());
+	}
+
+	@Override
+	public long getId() {
+		return getContact().getId();
 	}
 }

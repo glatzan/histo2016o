@@ -186,7 +186,7 @@ $address \\
 \setlength{\LTpost}{0pt}
 \RaggedRight
 
-#foreach ($diagnosisRevision in $task.diagnosisContainer.diagnosisRevisions)
+#foreach ($diagnosisRevision in $diagnosisRevisions)
 \begin{longtable}{p{\linewidth}}
 	\large \underline{ $!diagnosisRevision.name: }\smallskip
 	\begin{addmargin}{0.2cm}

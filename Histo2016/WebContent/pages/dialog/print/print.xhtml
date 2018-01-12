@@ -5,7 +5,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:pe="http://primefaces.org/ui/extensions"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
 
 
 <h:head>
@@ -52,9 +53,7 @@
 								var="template" itemLabel="#{template.name}"
 								itemValue="#{template}" />
 
-							<p:ajax update="@form" event="change"
-								onstart="PF('blockUIWidget').block()"
-								oncomplete="PF('blockUIWidget').unblock()"
+							<p:ajax update="printSettingsTable pollUpdateTable" event="change"
 								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate(true)}"></p:ajax>
 						</p:selectOneMenu>
 
@@ -62,13 +61,13 @@
 
 					<!-- to -->
 					<h:panelGrid columns="1" styleClass="newStyleListingTable"
-						style="margin-top:10px;" id="addressTable">
+						style="margin-top:10px;" id="printSettingsTable">
 
 						<h:outputLabel value="#{msg['dialog.print.addresses']}" />
 
 						<ui:include
 							src="#{dialogHandlerAction.printDialog.selectedTemplate.inputInclude}"></ui:include>
-							
+
 					</h:panelGrid>
 
 
@@ -96,15 +95,27 @@
 				<h:panelGroup />
 
 				<!-- right column -->
-				<h:panelGrid columns="1" styleClass="newStyleListingTable">
-					<h:panelGroup id="pdfRender">
-						<p:media player="pdf"
-							value="#{dialogHandlerAction.printDialog.pdfContent}"
-							width="100%"
-							rendered="#{dialogHandlerAction.printDialog.renderPdf}"
-							height="630px"></p:media>
-					</h:panelGroup>
+				<h:panelGrid columns="1" id="pollUpdateTable"
+					styleClass="newStyleListingTable"
+					style="width: 100% !important;height: calc( 100vh - 200px )!important;">
+
+					<h:panelGrid columns="1"
+						rendered="#{!dialogHandlerAction.printDialog.guiManager.renderComponent}"
+						style="width: 100% !important;height: calc( 100vh - 200px )!important;"
+						columnClasses="columnMiddle columnTextCenter">
+
+						<h:outputLabel styleClass="hugeFont"
+							value="#{msg['body.worklist.report.noDiagnosis']}"></h:outputLabel>
+					</h:panelGrid>
+
+					<histo:dynamicMedia height="calc( 100vh - 100px )" width="100%"
+						update="dialogContent:pollUpdateTable"
+						pdfContent="#{dialogHandlerAction.printDialog.guiManager.pdfContent}"
+						guiManager="#{dialogHandlerAction.printDialog.guiManager}" />
+
 				</h:panelGrid>
+
+
 			</h:panelGrid>
 		</div>
 
