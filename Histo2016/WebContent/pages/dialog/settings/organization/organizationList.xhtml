@@ -8,16 +8,17 @@
 <h:head>
 	<title><h:outputLabel
 			value="#{msg['dialog.organization.list.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
-<h:body styleClass="defaultDialogLayout infoDialog">
+<h:body styleClass="contentInputDialog">
 
 	<h:form id="dialogContent">
 
-		<div class="defaulDilaogHeaderDivWithBackground">
+
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.organization.list.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -27,13 +28,14 @@
 			</h:panelGrid>
 		</div>
 
-		<div class="contentDiv">
-			<h:panelGrid columns="1" styleClass="defaultListingTable">
+
+		<div class="dialogContent">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable">
 				<p:dataTable var="organization" style="width:100%;"
 					rowKey="#{organization.id}" scrollable="true" scrollHeight="230"
 					selectionMode="single"
 					selection="#{dialogHandlerAction.organizationListDialog.selectedOrganization}"
-					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+					styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.organizationListDialog.organizations}">
 
 					<p:column headerText="#{msg['dialog.organization.list.name']}"
@@ -56,8 +58,9 @@
 						</ui:fragment>
 					</p:column>
 
-					<p:ajax event="rowSelect" update="@form"/>
-					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()" disabled="#{!dialogHandlerAction.organizationListDialog.selectMode}" />
+					<p:ajax event="rowSelect" update="@form" />
+					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()"
+						disabled="#{!dialogHandlerAction.organizationListDialog.selectMode}" />
 
 				</p:dataTable>
 
@@ -74,16 +77,24 @@
 
 		<div class="buttonContainer">
 			<h:panelGrid columns="2" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+				styleClass="newTableContainer">
 
-				<h:panelGrid columns="1">
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+					<p:commandButton value="#{msg['dialog.organization.list.new']}"
+						icon="fa fa-fw fa-plus-circle" process="@this"
+						partialSubmit="true" update="@form">
+						<f:actionListener
+							binding="#{dialogHandlerAction.organizationEditDialog.initAndPrepareBean()}" />
+						<p:ajax event="dialogReturn"
+							listener="#{dialogHandlerAction.organizationListDialog.updateOrganizationList()}"
+							update="@form" />
+					</p:commandButton>
 				</h:panelGrid>
 
-				<h:panelGrid columns="2" style="float:right;">
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<p:commandButton value="#{msg['general.select']}"
 						disabled="#{dialogHandlerAction.organizationListDialog.selectedOrganization eq null}"
 						rendered="#{dialogHandlerAction.organizationListDialog.selectMode}"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-fw fa-check-circle-o">
 						<f:actionListener
 							binding="#{dialogHandlerAction.organizationListDialog.selectOrganisation()}" />
@@ -92,14 +103,13 @@
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.close']}"
-						styleClass="smallButton buttonRighMarginInList"
 						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
 						process="@this"
 						actionListener="#{dialogHandlerAction.organizationListDialog.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
-
 			</h:panelGrid>
 		</div>
+
 	</h:form>
 </h:body>
 </html>

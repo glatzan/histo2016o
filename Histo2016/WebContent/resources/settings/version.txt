@@ -37,11 +37,8 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Next Changes:
 
--> kopf für neue organisation in add person dialog
--> auftrag in task erstellen dialog probe bleibt 1 beim zurückzählen
--> Datum der Unterschrift des Befundes ist einen Tag vor der Befundung
--> Ausblenden von Ärzten geht nicht
--> listensortierung übernehmen
+-> laden sehr großer arbeitslisten geht nicht, auch beim schnellklicken von normalen listen
+-> personen maske für externe Personen überarbeiten geht zurzeit nicht
 
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 -> vortschritt im sende dialog
@@ -104,6 +101,13 @@ Graphic Changes
 * = change
 + = added
 - = removed
+
++v 1.2.4 (12.01.2017)
++++!: Listen Sortierung (Auf oder Absteigend) wird korrekt übernommen.
++++!: Ärzte werden beim Deaktivieren/Verstecken korrekt versteckt.
++++!: Name des Patienten, Geb. Datum und PIZ werden auf Befundseiten ab Seite 2 in der Kopfzeile angezeigt.
+++++: Im Personen-Hizufügen Dialog befindet sich jetzt ein Kopf zum erstelen von neunen Organisationen.
++++!: Proben I wird beim löschen von allen weiteren Proben nun korrekt umbenannt.
 
 +v 1.2.3 (08.01.2017)
 +++!: PDFs werden an Emails bei Befundbenachrichtigung korrekt angehängt.

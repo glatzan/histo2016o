@@ -14,6 +14,7 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
 import org.histo.model.PDFContainer;
 import org.histo.model.transitory.settings.PrinterSettings;
+import org.histo.util.HistoUtil;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -84,11 +85,11 @@ public class ClinicPrinter extends AbstractPrinter {
 
 				PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).duplex(false)
 						.build();
-				
-			//	args= "sides:keyword:two-sided-long-edge";
-				args= "sides:keyword:one-sided";
-				
-				if (args != null) {
+
+				// args= "sides:keyword:two-sided-long-edge"; duplex
+				// args= "d";
+
+				if (HistoUtil.isNotNullOrEmpty(args)) {
 
 					Map<String, String> attribute = new HashMap<String, String>();
 					attribute.put("job-attributes", args);

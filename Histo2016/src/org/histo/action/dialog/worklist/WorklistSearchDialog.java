@@ -69,7 +69,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 	private SimpleSearchTab simpleSearchTab;
 	private FavouriteSearchTab favouriteSearchTab;
 	private ExtendedSearchTab extendedSearchTab;
-	
+
 	public WorklistSearchDialog() {
 		setSimpleSearchTab(new SimpleSearchTab());
 		setFavouriteSearchTab(new FavouriteSearchTab());
@@ -77,7 +77,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 
 		tabs = new AbstractTab[] { simpleSearchTab, favouriteSearchTab, extendedSearchTab };
 	}
-	
+
 	public void initAndPrepareBean() {
 		initBean();
 		prepareDialog();
@@ -86,7 +86,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 	public boolean initBean() {
 		return super.initBean(Dialog.WORKLIST_SEARCH);
 	}
-	
+
 	@Getter
 	@Setter
 	public class SimpleSearchTab extends AbstractTab {
@@ -108,12 +108,13 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		public void onChangeWorklistSelection() {
 			worklistSearch.setSearchIndex(SimpleSearchOption.CUSTOM_LIST);
 		}
-		
+
 		public void selectAsWorklist() {
 			Worklist worklist = new Worklist("Default", worklistSearch,
 					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
 					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
-					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate());
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), false,
+					userHandlerAction.getCurrentUser().getSettings().isWorklistSortOrderAsc());
 
 			worklistViewHandlerAction.addWorklist(worklist, true);
 		}
@@ -163,7 +164,8 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 
 			Worklist worklist = new Worklist("Default", worklistSearch, false,
 					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
-					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), true);
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), true,
+					userHandlerAction.getCurrentUser().getSettings().isWorklistSortOrderAsc());
 
 			worklistViewHandlerAction.addWorklist(worklist, true);
 		}

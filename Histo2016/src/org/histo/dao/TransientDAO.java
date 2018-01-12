@@ -137,7 +137,7 @@ public class TransientDAO extends AbstractDAO {
 	 * @param destination
 	 */
 	public void mergePhysicians(Physician source, Physician destination) {
-		CopySettingsUtil.copyPhysicianData(source, destination);
+		CopySettingsUtil.copyPhysicianData(source, destination, false);
 		synchronizeOrganizations(destination.getPerson().getOrganizsations());
 		save(destination, "user.role.settings.update", new Object[] { destination.toString() });
 	}

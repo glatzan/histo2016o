@@ -23,29 +23,36 @@
 
 \def\fs{\kern 0.33em}
 
-% header
+% header and footer syle
 \pagestyle{fancy}
 
+% header thinkness on page on
 \AddEverypageHook{
    \ifthenelse{\value{page}=1}
-     {\renewcommand{\headrulewidth}{0.0pt}}
-     {\renewcommand{\headrulewidth}{0.4pt}}
+    {\renewcommand{\headrulewidth}{0.0pt}}
+    {\renewcommand{\headrulewidth}{0.4pt}}
 }
 
-% footer 
-\cfoot{
-\footnotesize 
-\begin{tabular}{l r}
-Dies ist ein technisch validierter Befundbericht, der erst durch eine ärztliche Unterschrift fachlich validiert ist.   &  {Seite \thepage\ / \pageref{LastPage}}
-\end{tabular}
+\lfoot{
+	\footnotesize 
+	Dies ist ein technisch validierter Befundbericht, der erst durch eine ärztliche Unterschrift fachlich validiert ist.   
+}
+
+\rfoot{
+	\footnotesize 
+	{Seite \thepage\ / \pageref{LastPage}}
+}
+
+
+\lhead{
+	\footnotesize 
+   	\ifthenelse{\value{page}=1}
+    	{}
+ 	{$!patient.person.fullName - $date.format('dd.MM.yyyy', $!patient.person.birthday) - PIZ: $!patient.piz}
 }
 
 
 \setcounter{secnumdepth}{0}
-
-
-
-
 
 \begin{document}
 %\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}

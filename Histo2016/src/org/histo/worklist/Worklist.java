@@ -90,11 +90,12 @@ public class Worklist {
 
 	public Worklist(String name, WorklistSearch worklistSearch, boolean showNoneActiveTasks,
 			WorklistSortOrder worklistSortOrder, boolean autoUpdate) {
-		this(name, worklistSearch, showNoneActiveTasks, worklistSortOrder, autoUpdate, false);
+		this(name, worklistSearch, showNoneActiveTasks, worklistSortOrder, autoUpdate, false, false);
 	}
 
 	public Worklist(String name, WorklistSearch worklistSearch, boolean showNoneActiveTasks,
-			WorklistSortOrder worklistSortOrder, boolean autoUpdate, boolean showActiveTasksExplicit) {
+			WorklistSortOrder worklistSortOrder, boolean autoUpdate, boolean showActiveTasksExplicit,
+			boolean sortAscending) {
 		this.name = name;
 		this.worklistSearch = worklistSearch;
 
@@ -103,6 +104,7 @@ public class Worklist {
 		this.worklistSortOrder = worklistSortOrder;
 		this.autoUpdate = autoUpdate;
 
+		this.sortAscending = sortAscending;
 		this.items = new ArrayList<Patient>();
 	}
 

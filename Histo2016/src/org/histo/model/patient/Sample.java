@@ -93,8 +93,8 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	private List<Block> blocks = new ArrayList<Block>();
 
 	/**
-	 * Material name is first initialized with the name of the typeOfMaterial.
-	 * Can be later changed.
+	 * Material name is first initialized with the name of the typeOfMaterial. Can
+	 * be later changed.
 	 */
 	private String material = "";
 
@@ -109,8 +109,8 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	}
 
 	/**
-	 * Generates a sample name, if useAutoNomenclature is true an name will be
-	 * auto generated
+	 * Generates a sample name, if useAutoNomenclature is true an name will be auto
+	 * generated
 	 * 
 	 * @param useAutoNomenclature
 	 */
@@ -118,20 +118,23 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	public boolean updateNameOfSample(boolean useAutoNomenclature, boolean ignoreManuallyNamedItems) {
 		if (!isIdManuallyAltered() || (ignoreManuallyNamedItems && isIdManuallyAltered())) {
 
-			if (useAutoNomenclature && getParent().getSamples().size() > 1) {
-				String name = TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1);
+			String name = null;
 
-				if (getSampleID() == null || !getSampleID().equals(name)) {
-					setSampleID(name);
-					setIdManuallyAltered(false);
-					return true;
-				}
+			if (useAutoNomenclature && getParent().getSamples().size() > 1)
+				name = TaskUtil.getRomanNumber(getParent().getSamples().indexOf(this) + 1);
+			else
+				name = "";
+
+			if (getSampleID() == null || !getSampleID().equals(name)) {
+				setSampleID(name);
+				setIdManuallyAltered(false);
+				return true;
 			}
 		}
 
 		return false;
 	}
-	
+
 	@Transient
 	public void updateAllNames() {
 		updateAllNames(getTask().isUseAutoNomenclature(), false);
@@ -153,7 +156,6 @@ public class Sample implements Parent<Task>, LogAble, DeleteAble, PatientRollbac
 	public String toString() {
 		return "Sample: " + getSampleID() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
-
 
 	/********************************************************
 	 * Interface Parent

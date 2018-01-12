@@ -51,14 +51,15 @@ public class CopySettingsUtil {
 
 	}
 
-	public static void copyPhysicianData(Physician source, Physician destination) {
+	public static void copyPhysicianData(Physician source, Physician destination, boolean force) {
 
-		destination.setEmployeeNumber(source.getEmployeeNumber());
 		destination.setEmployeeNumber(source.getEmployeeNumber());
 		destination.setUid(source.getUid());
-		destination.setClinicRole(source.getClinicRole());
 
-		copyPersonData(source.getPerson(), destination.getPerson(), false);
+		if (destination.getPerson().isAutoUpdate() || force)
+			destination.setClinicRole(source.getClinicRole());
+
+		copyPersonData(source.getPerson(), destination.getPerson(), force);
 		// TODO is this necessary ?
 		// setAssociatedRoles(dataToUpdate.getAssociatedRoles());
 	}

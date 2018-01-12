@@ -188,7 +188,7 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 * @param destination
 	 */
 	public void mergePhysicians(Physician source, Physician destination) {
-		CopySettingsUtil.copyPhysicianData(source, destination);
+		CopySettingsUtil.copyPhysicianData(source, destination, false);
 		organizationDAO.synchronizeOrganizations(destination.getPerson().getOrganizsations());
 		save(destination, "user.role.settings.update", new Object[] { destination.toString() });
 	}
