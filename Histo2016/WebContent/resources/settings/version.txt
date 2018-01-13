@@ -1,3 +1,4 @@
+-> less https://github.com/palantir/eclipse-less
 -> UTF 8 Tomcat: -Dfile.encoding=UTF8
 -> plink windows set PATH=C:\path\to\putty\directory;%PATH%
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/

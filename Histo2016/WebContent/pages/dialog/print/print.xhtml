@@ -11,8 +11,10 @@
 
 <h:head>
 	<title><h:outputFormat value="#{msg['dialog.print.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
+	<h:outputStylesheet name="specificStyle.css" value="specificStyle.css"
+		library="style" />
 </h:head>
 
 
@@ -35,10 +37,12 @@
 
 		<div class="dialogContent">
 			<h:panelGrid columns="3" styleClass="newTableContainer"
-				style="width: 100%" columnClasses="column30 columnTop, column2, ">
-				<!-- left column -->
+				style="width: 100%"
+				columnClasses="column30 columnTop, column2, columnAuto ">
 
-				<h:panelGrid columns="1" styleClass="newTableContainer">
+				<!-- left column -->
+				<h:panelGrid columns="1" styleClass="newTableContainer"
+					style="width: 100%">
 
 					<h:panelGrid columns="2" styleClass="newStyleListingTable"
 						id="navigation">
@@ -53,17 +57,16 @@
 								var="template" itemLabel="#{template.name}"
 								itemValue="#{template}" />
 
-							<p:ajax update="printSettingsTable pollUpdateTable" event="change"
+							<p:ajax update="printSettingsTable pollUpdateTable"
+								event="change"
 								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate(true)}"></p:ajax>
 						</p:selectOneMenu>
 
 					</h:panelGrid>
 
-					<!-- to -->
-					<h:panelGrid columns="1" styleClass="newStyleListingTable"
-						style="margin-top:10px;" id="printSettingsTable">
-
-						<h:outputLabel value="#{msg['dialog.print.addresses']}" />
+					<!-- dynamic include -->
+					<h:panelGrid columns="1" styleClass="contentSpaceContainer"
+						style="width: 370px; margin-top:10px;" id="printSettingsTable">
 
 						<ui:include
 							src="#{dialogHandlerAction.printDialog.selectedTemplate.inputInclude}"></ui:include>
@@ -92,6 +95,7 @@
 					</h:panelGrid>
 				</h:panelGrid>
 
+				<!-- middle column -->
 				<h:panelGroup />
 
 				<!-- right column -->
@@ -112,9 +116,7 @@
 						update="dialogContent:pollUpdateTable"
 						pdfContent="#{dialogHandlerAction.printDialog.guiManager.pdfContent}"
 						guiManager="#{dialogHandlerAction.printDialog.guiManager}" />
-
 				</h:panelGrid>
-
 
 			</h:panelGrid>
 		</div>

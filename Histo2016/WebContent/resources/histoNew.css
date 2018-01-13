@@ -1,9 +1,14 @@
+
 body {
 	margin: 0px !important;
 	font-size: 0.8em !important;
 }
 
 /* -------------- Pannelgrid container --------------*/
+.newTableContainer {
+	table-layout: fixed;
+}
+
 .newTableContainer>tbody>tr>td, .newTableContainer>tbody>tr,
 	.newTableContainer>tbody, .newTableContainer {
 	padding: 0px !important;
@@ -36,8 +41,13 @@ body {
 	width: 200px !important;
 }
 
+.newTableContainer .column300px {
+	width: 300px !important;
+	max-width: 300px !important;
+}
+
 .newTableContainer .column2 {
-	width: 5% !important;
+	width: 2% !important;
 }
 
 .newTableContainer .column20 {
@@ -46,6 +56,10 @@ body {
 
 .newTableContainer .column25 {
 	width: 25%;
+}
+
+.newTableContainer .columnAuto {
+	width: auto !important;
 }
 
 .newTableContainer .column30 {
@@ -202,6 +216,44 @@ body {
 
 .newStyleListingTable .columnLongText label {
 	padding-left: 0px !important;
+}
+
+.newStyleListingTableFixed {
+	table-layout: fixed !important;
+}
+
+.newStyleScrollTable{
+	padding: 0px;
+}
+.newStyleScrollTable thead, .newStyleScrollTable tbody,
+	.newStyleScrollTable tr, .newStyleScrollTable td, .newStyleScrollTable th
+	{
+	display: block;
+}
+
+.newStyleScrollTable tr:after {
+	content: ' ';
+	display: block;
+	visibility: hidden;
+	clear: both;
+}
+
+.newStyleScrollTable thead th {
+	height: 30px;
+
+	/*text-align: left;*/
+}
+
+.newStyleScrollTable thead th {
+	height: 30px;
+
+	/*text-align: left;*/
+}
+
+
+.newStyleScrollTable tbody {
+	height: 120px;
+	overflow-y: auto;
 }
 
 /* -------------- New DataTable Style --------------*/
