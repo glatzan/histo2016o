@@ -25,8 +25,6 @@ public class ContactSelector extends AbstractSelector implements HasID {
 
 	private int copies;
 
-	private boolean organizationHasChagned;
-
 	private List<OrganizationChooser> organizazionsChoosers;
 
 	private String customAddress;

@@ -56,8 +56,14 @@ public class DocumentTemplate extends Template {
 	 */
 	protected boolean afterPDFCreationHook;
 
+	/**
+	 * True if task is set
+	 */
+	protected boolean initialized;
+
 	public void initData(Task task) {
 		this.task = task;
+		this.initialized = true;
 	}
 
 	public void fillTemplate(PDFGenerator generator) {

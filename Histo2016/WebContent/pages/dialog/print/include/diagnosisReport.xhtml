@@ -37,6 +37,7 @@
 				<p:column>
 					<p:selectBooleanCheckbox value="#{chooser.selected}">
 						<p:ajax event="change" process="printSettingsTable"
+							listener="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseContact(chooser)}"
 							update="printSettingsTable" />
 					</p:selectBooleanCheckbox>
 				</p:column>
@@ -84,12 +85,30 @@
 						actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task,chooser)}">
 						<i class="fa fa-gear" style="margin-left: 2px" />
 						<p:ajax event="dialogReturn"
-							listener="#{dialogHandlerAction.printDialog.selectedTemplate.onChangeAddressManually(chooser)}"
 							update="editAddressOver#{outer.index}" />
 					</p:commandLink>
 				</p:column>
 			</p:row>
 
+			<!-- Organizations -->
+			<c:forEach varStatus="inner" items="#{chooser.organizazionsChoosers}"
+				var="organizazion">
+				<p:row
+					styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'alternate_row_background' : ''}">
+					<p:column style="background-color: inherit !important;">
+					</p:column>
+					<p:column style="text-align: center;">
+						<p:selectBooleanCheckbox value="#{organizazion.selected}">
+							<p:ajax event="change" process="@form"
+								update="printSettingsTable"
+								listener="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseOrganizationOfContact(organizazion)}"></p:ajax>
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:column colspan="3">
+						<h:outputText value="#{organizazion.organization.name}" />
+					</p:column>
+				</p:row>
+			</c:forEach>
 
 		</c:forEach>
 	</p:panelGrid>
@@ -120,8 +139,9 @@
 			<p:row>
 				<p:column>
 					<p:selectBooleanCheckbox value="#{revision.selected}">
-						<p:ajax event="change" process="printSettingsTable"
-							update="printSettingsTable" />
+						<p:ajax event="change" process="@this"
+							listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
+							update="pollUpdateTable" />
 					</p:selectBooleanCheckbox>
 				</p:column>
 				<p:column>
@@ -130,5 +150,9 @@
 			</p:row>
 		</c:forEach>
 	</p:panelGrid>
+
+	<script type="text/javascript">
+		scrollAbleTableCoumnSync('#dialogContent\\:dignosisScrollTable', 0);
+	</script>
 
 </ui:composition>

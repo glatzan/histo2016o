@@ -45,6 +45,9 @@ public class DiagnosisReport extends DocumentTemplate {
 
 		contactList = ContactSelector.factory(task);
 		diagnosisRevisions = DiagnosisRevisionSelector.factory(task);
+		
+		if(diagnosisRevisions.size() > 0)
+			diagnosisRevisions.get(diagnosisRevisions.size()-1).setSelected(true);
 
 		inputInclude = "include/diagnosisReport.xhtml";
 
@@ -54,109 +57,31 @@ public class DiagnosisReport extends DocumentTemplate {
 	 * Updates the pdf content if a associatedContact was chosen for the first time
 	 */
 	public void onChooseContact(ContactSelector container) {
+		container.generateAddress(true);
 
-		// // contact is selected
-		// if (container.isSelected()) {
-		//
-		// // setting as rendered if nothing is rendered
-		// if (getRenderedContact() == null) {
-		// // generating custom name if organization was selected
-		//
-		// container.generateAddress(true);
-		// setRenderedContact(container);
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// return;
-		// }
-		//
-		// // rerendering if organization has chagned
-		// if (container.isOrganizationHasChagned()) {
-		// container.setOrganizationHasChagned(false);
-		//
-		// container.generateAddress(true);
-		//
-		// // updating beacause container is selected and rendered
-		// if (getRenderedContact() == container) {
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// }
-		// return;
-		// }
-		//
-		// // if only one address should be selectable
-		// if (isSingleAddressSelectMode()) {
-		//
-		// // deselecting all other containers
-		// for (ContactSelector contactContainer : contactList) {
-		// if (contactContainer != container && contactContainer.isSelected()) {
-		// contactContainer.setSelected(false);
-		// }
-		// }
-		//
-		// // rendering if not already rendered
-		// if (getRenderedContact() != container) {
-		// container.generateAddress(true);
-		// setRenderedContact(container);
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// }
-		//
-		// return;
-		// }
-		//
-		// } else {
-		//
-		// // only refresh if the rendered contact was deselected
-		// if (getRenderedContact() == container) {
-		// // deslecting contact and setting the first selected one
-		// for (ContactSelector contactContainer : contactList) {
-		// if (contactContainer.isSelected()) {
-		// setRenderedContact(contactContainer);
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// return;
-		// }
-		// }
-		// setRenderedContact(null);
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// return;
-		// }
-		// }
+		if (!container.isSelected())
+			container.getOrganizazionsChoosers().forEach(p -> p.setSelected(false));
 	}
 
 	public void onChooseOrganizationOfContact(ContactSelector.OrganizationChooser chooser) {
-		// if (chooser.isSelected()) {
-		// // only one organization can be selected, removing other
-		// // organizations
-		// // from selection
-		// if (chooser.getParent().isSelected()) {
-		// for (ContactSelector.OrganizationChooser organizationChooser :
-		// chooser.getParent()
-		// .getOrganizazionsChoosers()) {
-		// if (organizationChooser != chooser) {
-		// organizationChooser.setSelected(false);
-		// }
-		// }
-		// chooser.getParent().setOrganizationHasChagned(true);
-		// } else {
-		// // setting parent as selected
-		// chooser.getParent().setSelected(true);
-		// }
-		// } else {
-		// chooser.getParent().setOrganizationHasChagned(true);
-		// }
-		//
-		// onChooseContact(chooser.getParent());
-	}
+		if (chooser.isSelected()) {
+			// only one organization can be selected, removing other
+			// organizations
+			// from selection
+			if (chooser.getParent().isSelected()) {
+				for (ContactSelector.OrganizationChooser organizationChooser : chooser.getParent()
+						.getOrganizazionsChoosers()) {
+					if (organizationChooser != chooser) {
+						organizationChooser.setSelected(false);
+					}
+				}
+			} else {
+				// setting parent as selected
+				chooser.getParent().setSelected(true);
+			}
+		}
 
-	public void onChangeAddressManually(ContactSelector container) {
-		// if (dialogHandlerAction.getCustomAddressDialog().isAddressChanged()) {
-		// if (getRenderedContact() == container) {
-		// onChangePrintTemplate();
-		// RequestContext.getCurrentInstance().update("dialogContent");
-		// }
-		// }
+		chooser.getParent().generateAddress(true);
 	}
 
 	public void initData(Patient patient, Task task, String toSendAddress) {
@@ -168,8 +93,9 @@ public class DiagnosisReport extends DocumentTemplate {
 	public void fillTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
-		generator.getConverter().replace("diagnosisRevisions",
-				getDiagnosisRevisions().stream().filter(p -> p.isSelected()).collect(Collectors.toList()));
+
+		generator.getConverter().replace("diagnosisRevisions", getDiagnosisRevisions().stream()
+				.filter(p -> p.isSelected()).map(p -> p.getDiagnosisRevision()).collect(Collectors.toList()));
 		generator.getConverter().replace("address",
 				HistoUtil.isNotNullOrEmpty(toSendAddress) ? (new TextToLatexConverter()).convertToTex(toSendAddress)
 						: " ");

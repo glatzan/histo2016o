@@ -85,7 +85,7 @@ table.contentSpaceContainer > tbody .headline {
   box-shadow: none;
 }
 .printDialog_AdressTable tbody {
-  height: 150px;
+  height: 175px;
 }
 .printDialog_AdressTable tr td:nth-child(1) {
   width: 25px;

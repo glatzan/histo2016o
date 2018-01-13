@@ -195,7 +195,7 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 		setAutoRefresh(false);
 
 		// rendering the template
-		onChangePrintTemplate(true);
+		onChangePrintTemplate();
 	}
 
 	public void initAndPrepareBeanForCouncil(Task task, Council council) {
@@ -319,23 +319,19 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 				setSelectedTemplate(getTemplateList().get(0));
 			else
 				setSelectedTemplate(selectedTemplate);
-			
 
 			guiManager.setRenderComponent(true);
-		}else {
+		} else {
 			guiManager.setRenderComponent(false);
 		}
-		
+
 		guiManager.reset();
 	}
 
 	public void onChangePrintTemplate() {
-		onChangePrintTemplate(false);
-	}
 
-	public void onChangePrintTemplate(boolean force) {
-
-		getSelectedTemplate().initData(getTask());
+		if (!getSelectedTemplate().isInitialized())
+			getSelectedTemplate().initData(getTask());
 		guiManager.reset();
 		generatePDFFromTemplate();
 	}
