@@ -171,6 +171,7 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		// disabling tabs if notification was performed
 		if (task.getNotificationCompletionDate() != 0 && !resend) {
+			generalTab.setDisabled(true);
 			mailTab.setDisabled(true);
 			faxTab.setDisabled(true);
 			letterTab.setDisabled(true);
@@ -180,17 +181,19 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			onTabChange(sendReportTab);
 		} else if (resend) {
+			generalTab.setDisabled(false);
 			mailTab.setDisabled(false);
-			faxTab.setDisabled(false);
-			letterTab.setDisabled(false);
-			phoneTab.setDisabled(false);
+			faxTab.setDisabled(generalTab.isTemporaryNotification());
+			letterTab.setDisabled(generalTab.isTemporaryNotification());
+			phoneTab.setDisabled(generalTab.isTemporaryNotification());
 			sendTab.setDisabled(false);
 			sendReportTab.setDisabled(false);
 		} else {
+			generalTab.setDisabled(false);
 			mailTab.setDisabled(false);
-			faxTab.setDisabled(false);
-			letterTab.setDisabled(false);
-			phoneTab.setDisabled(false);
+			faxTab.setDisabled(generalTab.isTemporaryNotification());
+			letterTab.setDisabled(generalTab.isTemporaryNotification());
+			phoneTab.setDisabled(generalTab.isTemporaryNotification());
 			sendTab.setDisabled(false);
 			sendReportTab.setDisabled(true);
 		}
@@ -320,6 +323,18 @@ public class NotificationDialog extends AbstractTabDialog {
 				getDiagnosisRevisionSelectors().get(getDiagnosisRevisionSelectors().size()-1).setSelected(true);
 			}
 			return true;
+		}
+		
+		public void onTemporaryNotificationChanged() {
+			if(temporaryNotification) {
+				faxTab.setDisabled(true);
+				letterTab.setDisabled(true);
+				phoneTab.setDisabled(true);
+			}else {
+				faxTab.setDisabled(false);
+				letterTab.setDisabled(false);
+				phoneTab.setDisabled(false);
+			}
 		}
 
 	}

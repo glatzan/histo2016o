@@ -5,11 +5,12 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 	<p:outputPanel styleClass="headerPannel">
 		<h:outputLabel
-			value="#{msg['dialog.notification.tab.phone.headline']}" />
+			value="#{msg['dialog.notification.tab.general.headline']}" />
 	</p:outputPanel>
 
 
@@ -18,28 +19,27 @@
 			style="width:100%" columnClasses="columnLabelContainer150, ">
 
 			<!-- Use additional prints-->
-			<h:outputLabel value="#{msg['dialog.notification.tab.phone.use']}"
+			<h:outputLabel value="#{msg['dialog.notification.tab.general.use']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
-				value="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use}"
-				title="#{msg['dialog.notification.tab.phone.use.text']}">
+				value="#{dialogHandlerAction.notificationDialog.generalTab.containerList.use}"
+				title="#{msg['dialog.notification.tab.general.use.text']}">
 				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
 
 			<!-- additional prints -->
-			<h:outputLabel
-				value="#{msg['dialog.notification.tab.additionalPrints.tempalte']}" />
+			<h:outputLabel styleClass="bigFont"
+				value="#{msg['dialog.notification.tab.general.additionalPrints.tempalte']}" />
 			<p:selectOneMenu
-				value="#{dialogHandlerAction.notificationDialog.sendTab.containerList.defaultReport}"
-				style="margin-left:10px;"
-				converter="#{dialogHandlerAction.notificationDialog.sendTab.templateTransformer}"
+				value="#{dialogHandlerAction.notificationDialog.generalTab.containerList.defaultReport}"
+				converter="#{dialogHandlerAction.notificationDialog.generalTab.templateTransformer}"
 				styleClass="customSerachSelectMenu">
 
 				<f:selectItem itemValue="#{null}"
 					itemLabel="#{msg['dialog.notification.tab.mail.pdfTemplate.none']}"></f:selectItem>
 
 				<f:selectItems
-					value="#{dialogHandlerAction.notificationDialog.sendTab.templateList}"
+					value="#{dialogHandlerAction.notificationDialog.generalTab.templateList}"
 					var="template" itemLabel="#{template.name}" itemValue="#{template}" />
 
 				<p:ajax update="@this" event="change" process="@this"
@@ -47,14 +47,60 @@
 			</p:selectOneMenu>
 
 			<!-- print -->
-			<h:outputLabel
-				value="#{msg['dialog.notification.tab.additionalPrints.count']} "
-				style="margin-left:10px"
+			<h:outputLabel styleClass="bigFont"
+				value="#{msg['dialog.notification.tab.general.additionalPrints.count']} "
 				title="#{msg['dialog.notification.tab.send.count']}" />
-
 			<p:spinner
-				value="#{dialogHandlerAction.notificationDialog.sendTab.containerList.printCount}"
+				value="#{dialogHandlerAction.notificationDialog.generalTab.containerList.printCount}"
 				styleClass="oneNumberSpinner" min="0" max="9" />
+
+			<h:outputLabel value=" " />
+			<h:outputLabel value=" " />
+
+			<!-- Diagnosis -->
+			<h:outputLabel styleClass="bigFont"
+				value="#{msg['dialog.notification.tab.general.notification']}" />
+
+			<p:panelGrid styleClass="notificationDialog_DiagosisTable"
+				id="dignosisScrollTable">
+				<f:facet name="header">
+					<p:row>
+						<p:column>
+							<h:outputLabel value="#"></h:outputLabel>
+						</p:column>
+						<p:column>
+							<h:outputLabel
+								value="#{msg['dialog.notification.tab.general.diagnosis']}"></h:outputLabel>
+						</p:column>
+					</p:row>
+				</f:facet>
+
+				<c:forEach varStatus="status"
+					items="#{dialogHandlerAction.notificationDialog.generalTab.diagnosisRevisionSelectors}"
+					var="revision">
+
+					<p:row>
+						<p:column>
+							<p:selectBooleanCheckbox value="#{revision.selected}" />
+						</p:column>
+						<p:column>
+							<h:outputLabel value="#{revision.diagnosisRevision.name}"></h:outputLabel>
+						</p:column>
+					</p:row>
+				</c:forEach>
+			</p:panelGrid>
+
+			<!-- temporary notification-->
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.general.temporaryNotification']}"
+				styleClass="bigFont" />
+			<p:selectBooleanCheckbox
+				value="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}"
+				title="#{msg['dialog.notification.tab.general.temporaryNotification.text']}">
+				<p:ajax event="change" process="@form" update="@form"
+					listener="#{dialogHandlerAction.notificationDialog.generalTab.onTemporaryNotificationChanged()}" />
+			</p:selectBooleanCheckbox>
+
 		</h:panelGrid>
 	</p:outputPanel>
 
@@ -73,12 +119,7 @@
 				</p:commandButton>
 			</h:panelGrid>
 
-			<h:panelGrid columns="3" styleClass="newTableContainer right">
-				<!-- previouse -->
-				<p:commandButton value="#{msg['general.back']}"
-					icon="fa fa-fw fa-arrow-left"
-					actionListener="#{dialogHandlerAction.notificationDialog.previousTab()}"
-					process="@form" update="@form" />
+			<h:panelGrid columns="2" styleClass="newTableContainer right">
 
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
