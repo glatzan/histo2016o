@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
@@ -31,12 +32,15 @@ import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateCouncil;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.documents.TemplateUReport;
+import org.histo.template.ui.documents.CouncilReportUi;
+import org.histo.template.ui.documents.DocumentUi;
 import org.histo.ui.LazyPDFGuiManager;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
 import org.histo.util.pdf.LazyPDFReturnHandler;
 import org.histo.util.pdf.PDFGenerator;
+import org.histo.util.pdf.PrintOrder;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -50,7 +54,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler {
+public class PrintDialog extends AbstractDialog {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -90,43 +94,17 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 	/**
 	 * List of all templates for printing
 	 */
-	private List<DocumentTemplate> templateList;
+	private List<DocumentUi<?>> templateList;
 
 	/**
 	 * The TemplateListtransformer for selecting a template
 	 */
-	private DefaultTransformer<DocumentTemplate> templateTransformer;
+	private DefaultTransformer<DocumentUi<?>> templateTransformer;
 
 	/**
-	 * Selected template for printing
+	 * Ui object for template
 	 */
-	private DocumentTemplate selectedTemplate;
-
-	/**
-	 * Generated or loaded PDf
-	 */
-	private PDFContainer pdfContainer;
-
-	/**
-	 * List with all associated contacts
-	 */
-	private List<ContactSelector> contactList;
-
-	/**
-	 * The associatedContact rendered, the first one will always be rendered, if not
-	 * changed, no rendering necessary
-	 */
-	private ContactSelector renderedContact;
-
-	/**
-	 * True if the pdf should be rendered
-	 */
-	private boolean renderPdf;
-
-	/**
-	 * Council to print
-	 */
-	private Council selectedCouncil;
+	private DocumentUi<?> selectedTemplate;
 
 	/**
 	 * Can be set to true, if so the generated pdf will be saved
@@ -142,11 +120,6 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 	 * If true only on address can be selected
 	 */
 	private boolean singleAddressSelectMode;
-
-	/**
-	 * If true at certain address changes the pdfs will be regenerated
-	 */
-	private boolean autoRefresh;
 
 	/**
 	 * If true a fax button will be displayed
@@ -165,24 +138,15 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 
 	public void initBeanForPrinting(Task task) {
 
-		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+		List<DocumentTemplate> subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
 				DocumentType.U_REPORT, DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
-		initBean(task, subSelect, DocumentTemplate.getDefaultTemplate(subSelect));
+		// getting ui objects
+		List<DocumentUi<?>> subSelectUIs = subSelect.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		// init templates
+		subSelectUIs.forEach(p -> p.initialize(task));
 
-		// contacts for printing
-		setContactList(new ArrayList<ContactSelector>());
-
-		// setting other contacts (physicians)
-		getContactList().addAll(ContactSelector.factory(task));
-
-		getContactList().add(new ContactSelector(task,
-				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
-		getContactList().add(
-				new ContactSelector(task, new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()),
-						ContactRole.NONE, true, true));
-
-		setRenderedContact(null);
+		initBean(task, subSelectUIs, DocumentType.DIAGNOSIS_REPORT);
 
 		setSelectMode(false);
 
@@ -192,10 +156,13 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 
 		setSingleAddressSelectMode(false);
 
-		setAutoRefresh(false);
-
 		// rendering the template
 		onChangePrintTemplate();
+	}
+
+	public void initAndPrepareBeanForCouncil(Task task) {
+		initBeanForCouncil(task, null);
+		prepareDialog();
 	}
 
 	public void initAndPrepareBeanForCouncil(Task task, Council council) {
@@ -204,66 +171,42 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 	}
 
 	public void initBeanForCouncil(Task task, Council council) {
-		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.COUNCIL_REQUEST);
+		List<DocumentTemplate> subSelect = DocumentTemplate.getTemplates(DocumentType.COUNCIL_REQUEST);
 
-		initBean(task, subSelect, DocumentTemplate.getDefaultTemplate(subSelect));
+		// getting ui objects
+		List<DocumentUi<?>> subSelectUIs = subSelect.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 
-		setSelectedCouncil(council);
+		// init uis
+		subSelectUIs.stream().forEach(p -> ((CouncilReportUi) p).initialize(task, council));
 
-		// contacts for printing
-		setContactList(new ArrayList<ContactSelector>());
-
-		// only one adress so set as chosen
-		if (getSelectedCouncil().getCouncilPhysician() != null) {
-			ContactSelector chosser = new ContactSelector(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
-					ContactRole.CASE_CONFERENCE);
-			chosser.setSelected(true);
-			// setting patient
-			getContactList().add(chosser);
-
-			// setting council physicians data as rendere associatedContact data
-			setRenderedContact(chosser);
-		}
-
-		getContactList().add(new ContactSelector(task,
-				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+		initBean(task, subSelectUIs, DocumentType.COUNCIL_REQUEST);
 
 		setSelectMode(false);
 
 		setSingleAddressSelectMode(false);
 
-		setAutoRefresh(true);
-
 		onChangePrintTemplate();
 	}
 
-	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType) {
-		initBeanForExternalDisplay(task, types, defaultType, new AssociatedContact(task, new Person(new Contact())));
+	public void initBeanForExternalDisplay(Task task, List<DocumentType> types, DocumentType defaultType) {
+		initBeanForExternalDisplay(task, DocumentTemplate.getTemplates(types), defaultType, null);
 	}
 
-	public void initBeanForExternalDisplay(Task task, DocumentType[] types, DocumentType defaultType,
-			AssociatedContact sendTo) {
-		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(types);
-		initBeanForExternalDisplay(task, subSelect, DocumentTemplate.getDefaultTemplate(subSelect, defaultType),
-				sendTo);
-	}
-
-	public void initBeanForExternalDisplay(Task task, DocumentTemplate[] types, DocumentTemplate defaultType,
+	public void initBeanForExternalDisplay(Task task, List<DocumentTemplate> types, DocumentType defaultType,
 			AssociatedContact sendTo) {
 
-		initBean(task, types, defaultType);
+		List<DocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 
-		setContactList(new ArrayList<ContactSelector>());
+		// init templates
+		subSelectUIs.forEach(p -> p.initialize(task));
 
-		setRenderedContact(new ContactSelector(sendTo));
+		initBean(task, subSelectUIs, defaultType);
 
 		setSelectMode(false);
 
 		setFaxMode(false);
 
 		setSingleAddressSelectMode(false);
-
-		setAutoRefresh(true);
 
 		// rendering the template
 		onChangePrintTemplate();
@@ -272,32 +215,34 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 	public void initBeanForSelecting(Task task, DocumentTemplate[] types, DocumentTemplate defaultType,
 			AssociatedContact[] addresses, boolean allowIndividualAddress) {
 
-		initBean(task, types, defaultType);
+		// initBean(task, types, defaultType);
 
-		setContactList(new ArrayList<ContactSelector>());
-
-		if (addresses != null && addresses.length > 0) {
-			for (AssociatedContact associatedContact : addresses) {
-				getContactList()
-						.add(new ContactSelector(task, associatedContact.getPerson(), associatedContact.getRole()));
-			}
-
-			getContactList().get(0).setSelected(true);
-			setRenderedContact(getContactList().get(0));
-		}
-
-		if (allowIndividualAddress)
-			getContactList().add(new ContactSelector(task,
-					new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+		// setContactList(new ArrayList<ContactSelector>());
+		//
+		// if (addresses != null && addresses.length > 0) {
+		// for (AssociatedContact associatedContact : addresses) {
+		// getContactList()
+		// .add(new ContactSelector(task, associatedContact.getPerson(),
+		// associatedContact.getRole()));
+		// }
+		//
+		// getContactList().get(0).setSelected(true);
+		// setRenderedContact(getContactList().get(0));
+		// }
+		//
+		// if (allowIndividualAddress)
+		// getContactList().add(new ContactSelector(task,
+		// new Person(resourceBundle.get("dialog.print.individualAddress"), new
+		// Contact()), ContactRole.NONE));
 
 		setSelectMode(true);
-		setAutoRefresh(true);
 
 		// rendering the template
 		onChangePrintTemplate();
 	}
 
-	public void initBean(Task task, DocumentTemplate[] templates, DocumentTemplate selectedTemplate) {
+	public void initBean(Task task, List<DocumentUi<?>> templateUI, DocumentType defaultTemplate) {
+
 		// getting task datalist, if was altered a updated task will be returend
 		try {
 			taskDAO.initializeTask(task, false);
@@ -309,16 +254,20 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 
 		super.initBean(task, Dialog.PRINT);
 
-		if (templates != null) {
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(templates)));
+		if (templateUI != null) {
+			setTemplateList(templateUI);
 
-			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+			setTemplateTransformer(new DefaultTransformer<DocumentUi<?>>(getTemplateList()));
 
-			// sets the selected template
-			if (selectedTemplate == null && !getTemplateList().isEmpty())
-				setSelectedTemplate(getTemplateList().get(0));
-			else
-				setSelectedTemplate(selectedTemplate);
+			try {
+				setSelectedTemplate(templateUI.stream()
+						.filter(p -> p.getDocumentTemplate().isDefaultOfType()
+								&& p.getDocumentTemplate().getDocumentType() == defaultTemplate)
+						.collect(StreamUtils.singletonCollector()));
+			} catch (IllegalStateException e) {
+				if (!getTemplateList().isEmpty())
+					setSelectedTemplate(getTemplateList().get(0));
+			}
 
 			guiManager.setRenderComponent(true);
 		} else {
@@ -329,125 +278,29 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 	}
 
 	public void onChangePrintTemplate() {
-
-		if (!getSelectedTemplate().isInitialized())
-			getSelectedTemplate().initData(getTask());
 		guiManager.reset();
-		generatePDFFromTemplate();
-	}
-
-	private void generatePDFFromTemplate() {
-		switch (getSelectedTemplate().getDocumentType()) {
-		case U_REPORT:
-		case U_REPORT_EMTY:
-			((TemplateUReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask());
-			guiManager.startRendering(getSelectedTemplate());
-			break;
-		case DIAGNOSIS_REPORT:
-			((DiagnosisReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask(),
-					getRenderedContact() != null ? getRenderedContact().getCustomAddress() : null);
-			guiManager.startRendering(getSelectedTemplate());
-			break;
-		case COUNCIL_REQUEST:
-			((TemplateCouncil) getSelectedTemplate()).initData(getTask().getPatient(), getTask(), getSelectedCouncil(),
-					getRenderedContact() != null ? getRenderedContact().getCustomAddress() : null);
-			guiManager.startRendering(getSelectedTemplate());
-			break;
-		default:
-			// always render the pdf with the fist associatedContact chosen
-			break;
-		}
-
-		// if (result == null) {
-		// result = new PDFContainer(DocumentType.EMPTY, "", new byte[0]);
-		// logger.debug("No Pdf created, hiding pdf display");
-		// }
-	}
-
-	public void resetPDF() {
-		setPdfContainer(null);
-		setRenderPdf(false);
-	}
-
-	/**
-	 * Gets the selected contacts an returns an list including them
-	 * 
-	 * @return
-	 */
-	private List<ContactSelector> getSelectedContactFromList() {
-		ArrayList<ContactSelector> result = new ArrayList<ContactSelector>();
-		for (ContactSelector contactChooser : getContactList()) {
-			if (contactChooser.isSelected())
-				result.add(contactChooser);
-		}
-
-		logger.debug("Return " + result.size() + " selected contatcs");
-		return result;
-	}
-
-	public void onDownloadPdf() {
-		if (getPdfContainer().getId() == 0) {
-			logger.debug("Pdf not saved jet, saving");
-			if (!getSelectedTemplate().isTransientContent())
-				savePdf(getTask(), getPdfContainer());
-		}
+		guiManager.startRendering(getSelectedTemplate().getDefaultTemplateConfiguration());
 	}
 
 	public void onPrintNewPdf() {
 
-		// boolean oneContactSelected = false;
-		// // addresses where chosen
-		// for (ContactSelector contactChooser : getContactList()) {
-		// if (contactChooser.isSelected()) {
-		// // address of the rendered pdf, not rendering twice
-		// if (contactChooser == getRenderedContact()) {
-		// if (!getSelectedTemplate().isTransientContent())
-		// savePdf(getTask(), getPdfContainer());
-		//
-		// for (int i = 0; i < contactChooser.getCopies(); i++) {
-		// userHandlerAction.getSelectedPrinter().print(getPdfContainer(),
-		// getSelectedTemplate().getAttributes());
-		// }
-		// } else {
-		// // setting other associatedContact then selected
-		// ContactSelector tmp = getRenderedContact();
-		// setRenderedContact(contactChooser);
-		// // render all other pdfs
-		// PDFContainer otherAddress = generatePDFFromTemplate();
-		// for (int i = 0; i < contactChooser.getCopies(); i++) {
-		// userHandlerAction.getSelectedPrinter().print(otherAddress,
-		// getSelectedTemplate().getAttributes());
-		// }
-		// // settings the old selected associatedContact as
-		// // selected associatedContact
-		// setRenderedContact(tmp);
-		// }
-		//
-		// // individual contact, adding to contact list
-		// if (contactChooser.getContact().getRole() != ContactRole.NONE) {
-		//
-		// contactDAO.addNotificationType(task, contactChooser.getContact(),
-		// AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,
-		// new Date(System.currentTimeMillis()), contactChooser.getCustomAddress());
-		// } else {
-		// // TODO add indivuell address as person
-		// }
-		//
-		// oneContactSelected = true;
-		// }
-		//
-		// }
+		PDFGenerator generator = new PDFGenerator();
 
-		// no address was chosen, so the address will be "An den
-		// weiterbehandelden Kollegen" this was generated and saved in
-		// tmpPdfContainer
-		// if (!oneContactSelected) {
-		// if (!getSelectedTemplate().isTransientContent())
-		// savePdf(getTask(), getPdfContainer());
-		// userHandlerAction.getSelectedPrinter().print(getPdfContainer(),
-		// getSelectedTemplate().getAttributes());
-		// }
+		while (getSelectedTemplate().hasNextTemplateConfiguration()) {
+			DocumentTemplate template = getSelectedTemplate().getNextTemplateConfiguration();
+			PDFContainer pdf = generator.getPDF(template);
 
+			PrintOrder printOrder = new PrintOrder(pdf, template);
+
+			if (!template.isTransientContent()) {
+			}
+
+			userHandlerAction.getSelectedPrinter().print(printOrder);
+
+			// contactDAO.addNotificationType(task, contactChooser.getContact(),
+			// AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,
+			// new Date(System.currentTimeMillis()), contactChooser.getCustomAddress());
+		}
 	}
 
 	/**
@@ -473,27 +326,5 @@ public class PrintDialog extends AbstractDialog implements LazyPDFReturnHandler 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
-	}
-
-	public void setDefaultTemplateOfType(DocumentType type) {
-		if (getTemplateList() != null) {
-			try {
-				DocumentTemplate defaultTemplate = getTemplateList().stream()
-						.filter(p -> p.getDocumentType().equals(type) && p.isDefaultOfType())
-						.collect(StreamUtils.singletonCollector());
-
-				setSelectedTemplate(defaultTemplate);
-
-				onChangePrintTemplate();
-			} catch (IllegalStateException e) {
-				// do nothing
-			}
-		}
-	}
-
-	@Override
-	public void returnPDFContent(PDFContainer container, String uuid) {
-		// TODO Auto-generated method stub
-
 	}
 }

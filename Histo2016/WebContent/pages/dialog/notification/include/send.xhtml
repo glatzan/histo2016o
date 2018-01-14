@@ -205,41 +205,6 @@
 				value="#{msg['dialog.notification.tab.additionalPrints']}" />
 		</h:panelGrid>
 
-		<!-- additional prints -->
-		<h:panelGrid columns="4" styleClass="newStyleListingTable"
-			style="width:auto !important;"
-			columnClasses="columnLabelContainer100, ,columnLabelContainer100,">
-
-			<h:outputLabel
-				value="#{msg['dialog.notification.tab.additionalPrints.tempalte']}" />
-			<p:selectOneMenu
-				value="#{dialogHandlerAction.notificationDialog.sendTab.containerList.defaultReport}"
-				style="margin-left:10px;"
-				converter="#{dialogHandlerAction.notificationDialog.sendTab.templateTransformer}"
-				styleClass="customSerachSelectMenu">
-
-				<f:selectItem itemValue="#{null}"
-					itemLabel="#{msg['dialog.notification.tab.mail.pdfTemplate.none']}"></f:selectItem>
-
-				<f:selectItems
-					value="#{dialogHandlerAction.notificationDialog.sendTab.templateList}"
-					var="template" itemLabel="#{template.name}" itemValue="#{template}" />
-
-				<p:ajax update="@this" event="change" process="@this"
-					partialSubmit="true" />
-			</p:selectOneMenu>
-
-			<!-- print -->
-			<h:outputLabel
-				value="#{msg['dialog.notification.tab.additionalPrints.count']} "
-				style="margin-left:10px"
-				title="#{msg['dialog.notification.tab.send.count']}" />
-
-			<p:spinner
-				value="#{dialogHandlerAction.notificationDialog.sendTab.containerList.printCount}"
-				styleClass="oneNumberSpinner" min="0" max="9" />
-		</h:panelGrid>
-
 		<h:panelGrid columns="1" styleClass="newStyleListingTable"
 			style="width:100%; margin-top:20px;">
 			<h:outputText

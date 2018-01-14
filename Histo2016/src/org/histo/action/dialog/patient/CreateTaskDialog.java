@@ -380,21 +380,20 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTaskAndPrintUReport() {
 		createTask();
 
-		DocumentTemplate subSelect = DocumentTemplate
+		TemplateUReport uReport = DocumentTemplate
 				.getTemplateByID(globalSettings.getDefaultDocuments().getTaskCreationDocument());
 
-		if (subSelect == null) {
+		if (uReport == null) {
 			logger.error("New Task: No TemplateUtil for printing UReport found");
 			return;
 		}
 
 		// printing u report
-
-		((TemplateUReport) subSelect).initData(task.getPatient(), getTask());
-		PDFContainer newPdf = new PDFGenerator().getPDF(subSelect);
+		uReport.initData(task);
+		PDFContainer newPdf = new PDFGenerator().getPDF(uReport);
 
 		logger.debug("printing task page");
-		userHandlerAction.getSelectedPrinter().print(newPdf, subSelect.getAttributes());
+		userHandlerAction.getSelectedPrinter().print(newPdf, uReport);
 	}
 
 	/**

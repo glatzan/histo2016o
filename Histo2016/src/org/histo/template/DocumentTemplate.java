@@ -2,21 +2,30 @@ package org.histo.template;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.Transient;
 
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
+import org.histo.model.interfaces.HasID;
+import org.histo.model.patient.DiagnosisRevision;
+import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.template.ui.documents.DocumentUi;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.selectors.DiagnosisRevisionSelector;
 import org.histo.util.FileUtil;
 import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
+import org.histo.util.StreamUtils;
 import org.histo.util.pdf.LazyPDFReturnHandler;
 import org.histo.util.pdf.PDFGenerator;
+import org.histo.util.pdf.PrintOrder;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,21 +39,13 @@ import lombok.Setter;
 @Setter
 public class DocumentTemplate extends Template {
 
-	@Transient
 	private String fileContent;
 
-	@Transient
-	private String file2Content;
-
-	@Transient
-	protected boolean printDuplex;
-
 	/**
-	 * String for input include
+	 * Patient
 	 */
-	@Transient
-	protected String inputInclude = "include/empty.xhtml";
-
+	protected Patient patient;
+	
 	/**
 	 * Task
 	 */
@@ -57,19 +58,15 @@ public class DocumentTemplate extends Template {
 	protected boolean afterPDFCreationHook;
 
 	/**
-	 * True if task is set
+	 * Document copies
 	 */
-	protected boolean initialized;
+	protected int copies = 1;
 
-	public void initData(Task task) {
-		this.task = task;
-		this.initialized = true;
-	}
-
-	public void fillTemplate(PDFGenerator generator) {
-
-	}
-
+	/**
+	 * If true the template should be printed in duplex mode
+	 */
+	protected boolean printDuplex = false;
+	
 	/**
 	 * Is called if afterPDFCreationHook is set and the pdf was created.
 	 * 
@@ -80,7 +77,19 @@ public class DocumentTemplate extends Template {
 		return container;
 	}
 
-	@Transient
+	public void initData(Task task) {
+		this.patient = task.getPatient();
+		this.task = task;
+	}
+	
+	public void fillTemplate(PDFGenerator generator) {
+
+	}
+
+	public DocumentUi<?> getDocumentUi() {
+		return new DocumentUi(this);
+	}
+
 	public DocumentType getDocumentType() {
 		return DocumentType.fromString(this.type);
 	}
@@ -89,65 +98,43 @@ public class DocumentTemplate extends Template {
 		this.type = type.name();
 	}
 
-	public static DocumentTemplate[] getTemplates(DocumentType... type) {
-		return getTemplates(loadTemplates(type), type);
+	public static List<DocumentTemplate> getTemplates(DocumentType... type) {
+		return loadTemplates(type);
 	}
 
-	public static DocumentTemplate[] getTemplates(DocumentTemplate[] tempaltes, DocumentType... type) {
-		List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
-
-		logger.debug("Getting templates out of " + tempaltes.length);
-
-		for (int i = 0; i < tempaltes.length; i++) {
-			for (int y = 0; y < type.length; y++) {
-				if (tempaltes[i].getDocumentType() == type[y]) {
-					logger.debug("Found Template type " + type + " name: " + tempaltes[i].getName());
-					result.add(tempaltes[i]);
-					break;
-				}
-			}
-		}
-
-		DocumentTemplate[] resultArr = new DocumentTemplate[result.size()];
-
-		return result.toArray(resultArr);
+	public static List<DocumentTemplate> getTemplates(List<DocumentType> type) {
+		return loadTemplates(type.toArray(new DocumentType[type.size()]));
 	}
 
-	public static DocumentTemplate getTemplateByID(long id) {
+	public static List<DocumentTemplate> getTemplates(List<DocumentTemplate> templates, DocumentType... type) {
+		logger.debug("Getting templates out of " + templates.size());
+
+		return templates.stream().filter(p -> {
+			for (int y = 0; y < type.length; y++)
+				if (p.getDocumentType() == type[y])
+					return true;
+			return false;
+		}).collect(Collectors.toList());
+	}
+
+	public static <T extends DocumentTemplate> T getTemplateByID(long id) {
 		return getTemplateByID(loadTemplates(), id);
 	}
 
-	public static DocumentTemplate getTemplateByID(DocumentTemplate[] tempaltes, long id) {
-
-		logger.debug("Getting templates out of " + tempaltes.length);
-
-		for (int i = 0; i < tempaltes.length; i++) {
-			if (tempaltes[i].getId() == id)
-				return tempaltes[i];
-		}
-
-		return null;
-	}
-
-	public static <T extends DocumentTemplate> T getTemplateByIDC(Class<T> tClass, long id) {
-		return getTemplateByIDC(tClass, loadTemplates(), id);
-	}
-
-	public static <T extends DocumentTemplate> T getTemplateByIDC(Class<T> tClass, DocumentTemplate[] tempaltes,
+	public static <T extends DocumentTemplate> T getTemplateByID(List<DocumentTemplate> templates,
 			long id) {
 
-		logger.debug("Getting templates out of " + tempaltes.length);
+		logger.debug("Getting templates out of " + templates.size());
 
-		for (int i = 0; i < tempaltes.length; i++) {
-			if (tempaltes[i].getId() == id)
-				// if (tClass.getClass().isAssignableFrom(tempaltes[i].getClass()))
-				return (T) tempaltes[i];
+		for (DocumentTemplate documentTemplate : templates) {
+			if (documentTemplate.getId() == id)
+				return (T) documentTemplate;
 		}
 
 		return null;
 	}
 
-	public static DocumentTemplate[] loadTemplates(DocumentType... types) {
+	public static List<DocumentTemplate> loadTemplates(DocumentType... types) {
 
 		// TODO move to Database
 		Type type = new TypeToken<List<DocumentTemplate>>() {
@@ -161,9 +148,9 @@ public class DocumentTemplate extends Template {
 		ArrayList<DocumentTemplate> jsonArray = gson.fromJson(FileUtil.getContentOfFile(GlobalSettings.PRINT_TEMPLATES),
 				type);
 
-		if (types != null && types.length > 0) {
-			List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
+		List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
 
+		if (types != null && types.length > 0) {
 			for (DocumentTemplate documentTemplate : jsonArray) {
 				for (DocumentType documentType : types) {
 					if (documentTemplate.getDocumentType() == documentType) {
@@ -171,32 +158,21 @@ public class DocumentTemplate extends Template {
 					}
 				}
 			}
-
-			DocumentTemplate[] resultArr = new DocumentTemplate[result.size()];
-
-			return result.toArray(resultArr);
-		} else {
-			DocumentTemplate[] resultArr = new DocumentTemplate[jsonArray.size()];
-
-			return jsonArray.toArray(resultArr);
 		}
+
+		return result;
 	}
 
-	public static DocumentTemplate getDefaultTemplate(DocumentTemplate[] array) {
-		return getDefaultTemplate(array, null);
-	}
-
-	public static DocumentTemplate getDefaultTemplate(DocumentTemplate[] array, DocumentType ofType) {
-		if (array == null)
+	public static <T extends DocumentTemplate> T getDefaultTemplate(List<DocumentTemplate> templates,
+			DocumentType ofType) {
+		if (templates == null)
 			return null;
 
-		for (int i = 0; i < array.length; i++) {
-			if (array[i].isDefaultOfType()) {
-				if (ofType == null || array[i].getDocumentType() == ofType) {
-					return array[i];
-				}
-			}
-		}
-		return null;
+		return (T) templates.stream().filter(p -> {
+			if (p.isDefaultOfType() && ofType == p.getDocumentType())
+				return true;
+			return false;
+		}).collect(StreamUtils.singletonCollector());
+
 	}
 }

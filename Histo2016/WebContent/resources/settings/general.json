@@ -22,15 +22,17 @@
 	},
 	"defaultDocuments": {
 		"diagnosisApprovedDocument": 10,
+		"diagnosisReportForUsers": 10,
 		"taskCreationDocument": 2,
-		"notificationDefaultEmailDocument" : 10,
+		"notificationDefaultEmailDocument": 10,
 		"notificationDefaultEmail": 2,
-		"notificationDefaultFaxDocument" : 10,
-		"notificationDefaultLetterDocument" : 10,
-		"notificationDefaultPrintDocument" : 11,
-		"notificationSendReport": 1000
-		
-		
+		"notificationDefaultFaxDocument": 10,
+		"notificationDefaultLetterDocument": 10,
+		"notificationDefaultPrintDocument": 11,
+		"notificationSendReport": 1000,
+		"slideLabelDocument": 150,
+		"slideLableTestDocument": 150,
+		"printerTestDocument": 0
 	},
 	"labelPrinters": [
 		{

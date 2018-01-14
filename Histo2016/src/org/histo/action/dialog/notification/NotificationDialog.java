@@ -38,6 +38,7 @@ import org.histo.template.DocumentTemplate;
 import org.histo.template.MailTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.mail.DiagnosisReportMail;
+import org.histo.ui.selectors.DiagnosisRevisionSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.StreamUtils;
@@ -130,6 +131,7 @@ public class NotificationDialog extends AbstractTabDialog {
 	@Setter(AccessLevel.NONE)
 	private TaskService taskService;
 
+	private GeneralTab generalTab;
 	private MailTab mailTab;
 	private FaxTab faxTab;
 	private LetterTab letterTab;
@@ -155,6 +157,7 @@ public class NotificationDialog extends AbstractTabDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
+		setGeneralTab(new GeneralTab());
 		setMailTab(new MailTab());
 		setFaxTab(new FaxTab());
 		setLetterTab(new LetterTab());
@@ -162,7 +165,7 @@ public class NotificationDialog extends AbstractTabDialog {
 		setSendTab(new SendTab());
 		setSendReportTab(new SendReportTab());
 
-		tabs = new AbstractTab[] { mailTab, faxTab, letterTab, phoneTab, sendTab, sendReportTab };
+		tabs = new AbstractTab[] { generalTab, mailTab, faxTab, letterTab, phoneTab, sendTab, sendReportTab };
 
 		super.initBean(task, Dialog.NOTIFICATION);
 
@@ -196,14 +199,16 @@ public class NotificationDialog extends AbstractTabDialog {
 
 	public void openSelectPDFDialog(Task task, AssociatedContact contact) {
 
-		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-				DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-		dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelect, subSelect[0],
-				new AssociatedContact[] { contact }, true);
-		dialogHandlerAction.getPrintDialog().setSingleAddressSelectMode(true);
-		dialogHandlerAction.getPrintDialog().setFaxMode(false);
-		dialogHandlerAction.getPrintDialog().prepareDialog();
+		// DocumentTemplate[] subSelect =
+		// DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+		// DocumentType.DIAGNOSIS_REPORT_EXTERN);
+		//
+		// dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelect,
+		// subSelect[0],
+		// new AssociatedContact[] { contact }, true);
+		// dialogHandlerAction.getPrintDialog().setSingleAddressSelectMode(true);
+		// dialogHandlerAction.getPrintDialog().setFaxMode(false);
+		// dialogHandlerAction.getPrintDialog().prepareDialog();
 	}
 
 	public void openMediaViewDialog(PDFContainer container) {
@@ -260,9 +265,9 @@ public class NotificationDialog extends AbstractTabDialog {
 		protected DefaultTransformer<DocumentTemplate> templateTransformer;
 
 		public void copySelectedPdf(NotificationContainer contactHolder) {
-			if (dialogHandlerAction.getPrintDialog().getPdfContainer() != null) {
+			if (dialogHandlerAction.getPrintDialog().getGuiManager().getPDFContainerToRender() != null) {
 				logger.debug("Selecting pdf");
-				contactHolder.setPdf(dialogHandlerAction.getPrintDialog().getPdfContainer());
+				contactHolder.setPdf(dialogHandlerAction.getPrintDialog().getGuiManager().getPDFContainerToRender());
 			}
 		}
 
@@ -277,6 +282,46 @@ public class NotificationDialog extends AbstractTabDialog {
 			containerList.setUse(containerList.getContainer().size() > 0);
 			setInitialized(true);
 		}
+	}
+
+	@Getter
+	@Setter
+	public class GeneralTab extends NotificationTab {
+
+		private List<DiagnosisRevisionSelector> diagnosisRevisionSelectors;
+
+		private boolean temporaryNotification;
+
+		public GeneralTab() {
+			setTabName("GeneralTab");
+			setName("dialog.notification.tab.general");
+			setViewID("generalTab");
+			setCenterInclude("include/general.xhtml");
+		}
+
+		@Override
+		public boolean initTab() {
+			setContainerList(new NotificationContainerList(NotificationTyp.PRINT));
+
+			setTemplateList(
+					DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN));
+
+			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
+
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(getTemplateList(),
+					globalSettings.getDefaultDocuments().getNotificationDefaultPrintDocument()));
+
+			getContainerList().setPrintCount(2);
+			
+			setDiagnosisRevisionSelectors(DiagnosisRevisionSelector.factory(task));
+			
+			if(getDiagnosisRevisionSelectors().size() > 0) {
+				// selecting last diagnosis revision
+				getDiagnosisRevisionSelectors().get(getDiagnosisRevisionSelectors().size()-1).setSelected(true);
+			}
+			return true;
+		}
+
 	}
 
 	@Getter
@@ -300,14 +345,12 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			getContainerList().setSend(true);
 
-			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-					DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+			setTemplateList(
+					DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN));
 
 			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(getTemplateList(),
 					globalSettings.getDefaultDocuments().getNotificationDefaultEmailDocument()));
 
 			DiagnosisReportMail mail = MailTemplate
@@ -341,14 +384,12 @@ public class NotificationDialog extends AbstractTabDialog {
 		public boolean initTab() {
 			setContainerList(new NotificationContainerList(NotificationTyp.FAX));
 
-			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-					DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+			setTemplateList(
+					DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN));
 
 			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(getTemplateList(),
 					globalSettings.getDefaultDocuments().getNotificationDefaultFaxDocument()));
 
 			getContainerList().setSend(true);
@@ -375,14 +416,12 @@ public class NotificationDialog extends AbstractTabDialog {
 		public boolean initTab() {
 			setContainerList(new NotificationContainerList(NotificationTyp.LETTER));
 
-			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-					DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
+			setTemplateList(
+					DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN));
 
 			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
 
-			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
+			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(getTemplateList(),
 					globalSettings.getDefaultDocuments().getNotificationDefaultLetterDocument()));
 
 			getContainerList().setPrint(true);
@@ -441,20 +480,6 @@ public class NotificationDialog extends AbstractTabDialog {
 			setProgressPercent(0);
 			setFeedbackText("");
 			setSteps(1);
-
-			setContainerList(new NotificationContainerList(NotificationTyp.PRINT));
-
-			DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-					DocumentType.DIAGNOSIS_REPORT_EXTERN);
-
-			setTemplateList(new ArrayList<DocumentTemplate>(Arrays.asList(subSelect)));
-
-			setTemplateTransformer(new DefaultTransformer<DocumentTemplate>(getTemplateList()));
-
-			getContainerList().setDefaultReport((DiagnosisReport) DocumentTemplate.getTemplateByID(subSelect,
-					globalSettings.getDefaultDocuments().getNotificationDefaultPrintDocument()));
-
-			getContainerList().setPrintCount(2);
 
 			setInitialized(true);
 			return true;

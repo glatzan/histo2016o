@@ -30,7 +30,8 @@
 		</f:facet>
 
 		<c:forEach varStatus="outer"
-			items="#{dialogHandlerAction.printDialog.contactList}" var="chooser">
+			items="#{dialogHandlerAction.printDialog.selectedTemplate.contactList}"
+			var="chooser">
 			<p:row
 				styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'alternate_row_background' : ''}">
 				<!-- select -->
@@ -82,7 +83,7 @@
 				<p:column>
 					<p:commandLink rendered="#{!chooser.emptyAddress}"
 						title="#{msg['dialog.print.individualAddress']}"
-						actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task,chooser)}">
+						actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.selectedTemplate.task,chooser)}">
 						<i class="fa fa-gear" style="margin-left: 2px" />
 						<p:ajax event="dialogReturn"
 							update="editAddressOver#{outer.index}" />

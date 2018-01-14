@@ -16,11 +16,8 @@ import lombok.Setter;
 @Setter
 public class TemplateUReport extends DocumentTemplate {
 
-	private Patient patient;
-
-	public void initData(Patient patient, Task task) {
-		this.patient = patient;
-		this.task = task;
+	public void initData(Task task) {
+		super.initData(task);
 	}
 
 	public void fillTemplate(PDFGenerator generator) {

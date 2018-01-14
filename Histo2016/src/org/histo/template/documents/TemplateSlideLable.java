@@ -11,7 +11,7 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.HistoUtil;
 
-public class TemplateSlideLable extends DocumentTemplate{
+public class TemplateSlideLable extends DocumentTemplate {
 
 	private Slide slide;
 	private Date date;
@@ -33,5 +33,5 @@ public class TemplateSlideLable extends DocumentTemplate{
 
 		setFileContent(result);
 	}
-	
+
 }

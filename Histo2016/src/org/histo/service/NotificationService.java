@@ -128,7 +128,7 @@ public class NotificationService {
 
 		// addition templates
 		if (printContainerList.getDefaultReport() != null) {
-			((DiagnosisReport) printContainerList.getDefaultReport()).initData(task.getPatient(), task, "");
+			((DiagnosisReport) printContainerList.getDefaultReport()).initData(task, "");
 			PDFContainer report = (new PDFGenerator())
 					.getPDF(((DiagnosisReport) printContainerList.getDefaultReport()));
 
@@ -138,9 +138,9 @@ public class NotificationService {
 		}
 
 		feedback.progressStep();
-		
-		PDFContainer sendReport = generateSendReport(feedback, task, mailContainerList, faxContainerList, letterContainerList,
-				phoneContainerList, new Date());
+
+		PDFContainer sendReport = generateSendReport(feedback, task, mailContainerList, faxContainerList,
+				letterContainerList, phoneContainerList, new Date());
 
 		genericDAO.savePatientData(task, "log.patient.task.notification.send");
 
@@ -279,14 +279,15 @@ public class NotificationService {
 		feedback.progressStep();
 	}
 
-	public PDFContainer generateSendReport(NotificationFeedback feedback, Task task, MailContainerList mailContainerList,
-			NotificationContainerList faxContainerList, NotificationContainerList letterContainerList,
-			NotificationContainerList phoneContaienrList, Date notificationDate) {
+	public PDFContainer generateSendReport(NotificationFeedback feedback, Task task,
+			MailContainerList mailContainerList, NotificationContainerList faxContainerList,
+			NotificationContainerList letterContainerList, NotificationContainerList phoneContaienrList,
+			Date notificationDate) {
 
 		feedback.setFeedback("log.notification.pdf.sendReport.generation");
-		
-		TemplateSendReport sendReport = DocumentTemplate.getTemplateByIDC(TemplateSendReport.class,
-				globalSettings.getDefaultDocuments().getNotificationSendReport());
+
+		TemplateSendReport sendReport = DocumentTemplate
+				.getTemplateByID(globalSettings.getDefaultDocuments().getNotificationSendReport());
 
 		sendReport.initializeTempalte(task, mailContainerList, faxContainerList, letterContainerList,
 				phoneContaienrList, notificationDate);

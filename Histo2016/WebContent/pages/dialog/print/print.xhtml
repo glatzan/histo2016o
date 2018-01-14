@@ -54,7 +54,7 @@
 							converter="#{dialogHandlerAction.printDialog.templateTransformer}">
 							<f:selectItems
 								value="#{dialogHandlerAction.printDialog.templateList}"
-								var="template" itemLabel="#{template.name}"
+								var="template" itemLabel="#{template.documentTemplate.name}"
 								itemValue="#{template}" />
 
 							<p:ajax update="printSettingsTable pollUpdateTable"
@@ -82,16 +82,6 @@
 							value="#{dialogHandlerAction.printDialog.savePDF}"
 							title="#{msg['dialog.print.save.text']}" />
 
-						<!-- auto update -->
-						<h:outputLabel value="#{msg['dialog.print.autoRefresh']}" />
-						<p:selectBooleanCheckbox
-							value="#{dialogHandlerAction.printDialog.autoRefresh}"
-							title="#{msg['dialog.print.autoRefresh.text']}">
-							<p:ajax update="@form" event="change"
-								onstart="PF('blockUIWidget').block()"
-								oncomplete="PF('blockUIWidget').unblock()"
-								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"></p:ajax>
-						</p:selectBooleanCheckbox>
 					</h:panelGrid>
 				</h:panelGrid>
 
@@ -163,12 +153,12 @@
 						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}"></p:commandButton>
 
 					<!-- download -->
-					<p:commandButton value="#{msg['dialog.print.button.open']}"
+					<p:commandButton
+						value="#{msg['dialog.print.button.open']} - disable"
 						icon="fa fa-download" ajax="false"
-						title="#{msg['dialog.print.button.open.text']}"
-						actionListener="#{dialogHandlerAction.printDialog.onDownloadPdf}">
+						title="#{msg['dialog.print.button.open.text']}">
 						<p:fileDownload
-							value="#{dialogHandlerAction.printDialog.pdfContent}" />
+							value="#{dialogHandlerAction.printDialog.guiManager.getPDFContainerToRender()}" />
 					</p:commandButton>
 
 					<!-- Abort button -->

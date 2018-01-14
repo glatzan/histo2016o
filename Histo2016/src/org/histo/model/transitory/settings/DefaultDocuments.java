@@ -47,4 +47,24 @@ public class DefaultDocuments {
 	 * Sendreport which is created after the notification dialog was processed.
 	 */
 	private long notificationSendReport;
+
+	/**
+	 * ID of the default slide label
+	 */
+	private long slideLabelDocument;
+
+	/**
+	 * Template for diagnosis report for program users
+	 */
+	private long diagnosisReportForUsers;
+
+	/**
+	 * ID of the testlabel for slide printing
+	 */
+	private long slideLableTestDocument;
+
+	/**
+	 * ID of the test page for document printing
+	 */
+	private long printerTestDocument;
 }

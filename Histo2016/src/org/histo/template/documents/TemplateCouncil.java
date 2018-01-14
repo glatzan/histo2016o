@@ -17,19 +17,17 @@ import lombok.Setter;
 @Setter
 public class TemplateCouncil extends DocumentTemplate {
 
-	private Patient patient;
-
 	private Council council;
 
 	private String toSendAddress;
 
 	public void initData(Patient patient, Task task, Council council, String toSendAddress) {
-		this.patient = patient;
+		this.patient = task.getPatient();
 		this.task = task;
 		this.council = council;
 		this.toSendAddress = toSendAddress;
 	}
-	
+
 	public void fillTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);

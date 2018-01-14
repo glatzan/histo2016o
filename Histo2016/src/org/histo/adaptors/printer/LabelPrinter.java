@@ -12,13 +12,17 @@ import java.util.List;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateSlideLable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import com.google.gson.annotations.Expose;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,11 +35,17 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Configurable
 public class LabelPrinter extends AbstractPrinter {
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalSettings globalSettings;
+
 	/**
-	 * Default name of the ftp uploaded file. Should contain %counter% in order
-	 * to print multiple files.
+	 * Default name of the ftp uploaded file. Should contain %counter% in order to
+	 * print multiple files.
 	 */
 
 	@Expose
@@ -71,12 +81,12 @@ public class LabelPrinter extends AbstractPrinter {
 
 	public boolean printTestPage() {
 
-		DocumentTemplate test = DocumentTemplate
-				.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.TEST_LABLE));
+		TemplateSlideLable label = DocumentTemplate
+				.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLableTestDocument());
 
-		test.prepareTemplate();
+		label.prepareTemplate();
 
-		String toPrint = test.getFileContent();
+		String toPrint = label.getFileContent();
 
 		if (toPrint == null)
 			return false;

@@ -12,6 +12,7 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.settings.SettingsDialogHandler;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StainingListAction;
@@ -77,6 +78,11 @@ public class ReceiptlogViewHandlerAction {
 	@Setter(AccessLevel.NONE)
 	private SampleService sampleService;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalSettings globalSettings;
+
 	/**
 	 * Currently selected task in table form, transient, used for gui
 	 */
@@ -103,6 +109,7 @@ public class ReceiptlogViewHandlerAction {
 
 	/**
 	 * Updates the flat task/sample/block/slide list
+	 * 
 	 * @param task
 	 * @param showArchived
 	 */
@@ -174,16 +181,13 @@ public class ReceiptlogViewHandlerAction {
 				break;
 			case PRINT:
 
-				DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE);
+				TemplateSlideLable slideLabel = DocumentTemplate
+						.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLabelDocument());
 
-				if (arr.length == 0 || !(arr[0] instanceof TemplateSlideLable)) {
+				if (slideLabel == null) {
 					logger.debug("No template found for printing, returning!");
 					return;
 				}
-
-				TemplateSlideLable printTemplate = (TemplateSlideLable) arr[0];
-
-				printTemplate.prepareTemplate();
 
 				logger.debug("Printing labes for selected slides");
 
@@ -194,7 +198,7 @@ public class ReceiptlogViewHandlerAction {
 
 						Slide slide = (Slide) stainingTableChooser.getEntity();
 
-						TemplateSlideLable tmp = (TemplateSlideLable) printTemplate.clone();
+						TemplateSlideLable tmp = (TemplateSlideLable) slideLabel.clone();
 						tmp.initData(task, slide, new Date(System.currentTimeMillis()));
 						tmp.fillTemplate();
 						toPrint.add(tmp);
@@ -271,19 +275,18 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void printLableForSlide(Slide slide) {
 
-		DocumentTemplate[] arr = DocumentTemplate.getTemplates(DocumentType.LABLE);
+		TemplateSlideLable slideLabel = DocumentTemplate
+				.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLabelDocument());
 
-		if (arr.length == 0 || !(arr[0] instanceof TemplateSlideLable)) {
-			logger.debug("No template found for lable printn!");
+		if (slideLabel == null) {
+			logger.debug("No template found for printing, returning!");
 			return;
 		}
 
-		TemplateSlideLable printTemplate = (TemplateSlideLable) arr[0];
-		printTemplate.prepareTemplate();
-		printTemplate.initData(slide.getTask(), slide, new Date(System.currentTimeMillis()));
-		printTemplate.fillTemplate();
+		slideLabel.initData(slide.getTask(), slide, new Date(System.currentTimeMillis()));
+		slideLabel.fillTemplate();
 
-		userHandlerAction.getSelectedLabelPrinter().print(printTemplate);
+		userHandlerAction.getSelectedLabelPrinter().print(slideLabel);
 
 	}
 
