@@ -66,7 +66,6 @@
 
 				</p:selectOneMenu>
 
-
 				<!-- Person -->
 				<h:outputLabel value="#{msg['component.personDataMask.person']}"
 					styleClass="bigFont" />
@@ -189,16 +188,22 @@
 
 				<!-- program settings-->
 				<h:outputLabel
-					value="#{msg['component.personDataMask.programSettings']}"
+					value="#{msg['component.personDataMask.clinicSpecific']}"
 					styleClass="bigFont" />
 
 				<!-- auto update -->
 				<h:outputLabel
-					value="#{msg['component.personDataMask.programSettigns.autoUpdate']}" />
+					value="#{msg['component.personDataMask.clinicSpecific.autoUpdate']}" />
 				<p:selectBooleanCheckbox styleClass="smallCheckbox"
-					title="#{msg['component.personDataMask.programSettigns.autoUpdate.text']}"
+					title="#{msg['component.personDataMask.clinicSpecific.autoUpdate.text']}"
 					value="#{dialogHandlerAction.editUserDialog.user.physician.person.autoUpdate}">
 				</p:selectBooleanCheckbox>
+
+				<!-- clinical function -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.clinicSpecific.clinicFunction']}" />
+				<p:inputText required="true"
+					value="#{dialogHandlerAction.editUserDialog.user.physician.clinicRole}" />
 
 			</h:panelGrid>
 
@@ -233,7 +238,7 @@
 
 				<p:dataTable var="organization" style="width:90%;" scrollable="true"
 					id="organizationTab" scrollHeight="75" draggableRows="true"
-					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+					styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.editUserDialog.user.physician.person.organizsations}">
 
 					<p:column
@@ -258,21 +263,18 @@
 						</ui:fragment>
 					</p:column>
 
-					<p:column style="width:15px">
+					<p:column style="width:30px">
 						<f:facet name="header">
-							<h:panelGrid columns="1"
-								styleClass="defaultListingTableContainer">
-								<p:commandLink id="upload"
-									title="#{msg['component.personDataMask.organization.add']}"
-									actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(dialogHandlerAction.editUserDialog.user.physician.person)}">
-									<p:ajax event="dialogReturn" update="organizationTab" />
-									<i class="fa fa-plus" />
-								</p:commandLink>
-							</h:panelGrid>
+							<p:commandLink id="upload"
+								title="#{msg['component.personDataMask.organization.add']}"
+								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(dialogHandlerAction.editUserDialog.user.physician.person)}">
+								<p:ajax event="dialogReturn" update="organizationTab" />
+								<i class="fa fa-plus" />
+							</p:commandLink>
 						</f:facet>
 						<p:commandLink
 							actionListener="#{dialogHandlerAction.organizationEditDialog.removePersonFromOrganization(dialogHandlerAction.editUserDialog.user.physician.person, organization)}"
-							update="organizationTab"
+							update="organizationTab" partialSubmit="true" process="@this"
 							title="#{msg['component.personDataMask.organization.remove']}">
 							<i class="fa fa-remove" style="margin-left: 8px" />
 						</p:commandLink>
@@ -321,7 +323,7 @@
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- Save button -->
-					<p:commandButton value="#{msg['general.save']}"
+					<p:commandButton value="#{msg['general.save']}" update="@form"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
 							binding="#{dialogHandlerAction.editUserDialog.saveUser()}"></f:actionListener>

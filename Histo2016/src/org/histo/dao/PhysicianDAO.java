@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.criterion.CriteriaSpecification;
@@ -172,6 +174,10 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		} else {
 			logger.info("Creating new phyisician " + physician.getPerson().getFullName());
 
+			// removing physicians temp id
+			// TODO crate container object
+			physician.setId(0);
+
 			organizationDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
 
 			save(physician,
@@ -204,6 +210,22 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		save(physician,
 				resourceBundle.get(archive ? "log.settings.physician.archived" : "log.settings.physician.archived.undo",
 						physician.getPerson().getFullName()));
+	}
+
+	public void incrementPhysicianPriorityCounter(long id) {
+
+		id = 1;
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		CriteriaUpdate<Physician> update = qb.createCriteriaUpdate(Physician.class);
+
+		Root<Physician> root = update.from(Physician.class);
+
+		update.set(root.get("priorityCount"), qb.sum(root.get("priorityCount"), 1));
+
+		Query query = getSession().createQuery(update);
+		query.executeUpdate();
 	}
 
 }

@@ -102,6 +102,17 @@ Graphic Changes
 + = added
 - = removed
 
++v 1.2.5 (16.01.2017)
++++!: Email-Templates werden wieder korrekt eingelesen.
++++!: Externe Personen/Ärzte können wieder wie gehwohnt eingegeben werden (Settings-Dialog).
++++*: Aus dem Operateur-Auswahl-Dialog können Operateure jetzt auch gelöscht werden.
+
+SQL:
+alter table physician add prioritycount int;
+UPDATE physician SET prioritycount = 0;
+alter table physician_aud add prioritycount int;
+UPDATE physician_aud SET prioritycount = 0;
+
 +v 1.2.4 (12.01.2017)
 +++!: Listen Sortierung (Auf oder Absteigend) wird korrekt übernommen.
 +++!: Ärzte werden beim Deaktivieren/Verstecken korrekt versteckt.

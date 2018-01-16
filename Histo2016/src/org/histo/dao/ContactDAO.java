@@ -169,7 +169,8 @@ public class ContactDAO extends AbstractDAO {
 	 * @return
 	 */
 	public AssociatedContact addAssociatedContact(Task task, AssociatedContact associatedContact) {
-		if (task.getContacts().stream().anyMatch(p -> p.equals(associatedContact)))
+	
+		if (task.getContacts().stream().anyMatch(p -> p.getPerson().getId() == associatedContact.getPerson().getId()))
 			throw new IllegalArgumentException("Already in list");
 
 		task.getContacts().add(associatedContact);

@@ -1,6 +1,7 @@
 package org.histo.action.dialog.notification;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
@@ -12,12 +13,12 @@ import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.patient.Task;
+import org.histo.ui.selectors.AssociatedContactSelector;
 import org.primefaces.event.ReorderEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,7 +47,7 @@ public class ContactDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
 
-	private ContactHolder[] contacts;
+	private AssociatedContactSelector[] contacts;
 
 	/**
 	 * List of all ContactRole available for selecting physicians, used by
@@ -94,17 +95,8 @@ public class ContactDialog extends AbstractDialog {
 
 	public void updateContactHolders() {
 		if (task.getContacts() != null) {
-
-			setContacts(new ContactHolder[task.getContacts().size()]);
-
-			int i = 0;
-			for (AssociatedContact associatedContact : task.getContacts()) {
-				getContacts()[i] = new ContactHolder(associatedContact,
-						associatedContact.getNotifications() != null
-								? !associatedContact.getNotifications().stream().anyMatch(p -> p.isPerformed())
-								: true);
-				i++;
-			}
+			List<AssociatedContactSelector> selectors = AssociatedContactSelector.factory(task);
+			setContacts(selectors.toArray(new AssociatedContactSelector[selectors.size()]));
 		}
 	}
 
@@ -134,14 +126,4 @@ public class ContactDialog extends AbstractDialog {
 		}
 	}
 
-	@Getter
-	@Setter
-	@AllArgsConstructor
-	public class ContactHolder implements Serializable{
-
-		private static final long serialVersionUID = 5002313305080131549L;
-		
-		private AssociatedContact contact;
-		private boolean deleteAble;
-	}
 }

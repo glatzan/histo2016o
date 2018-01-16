@@ -130,6 +130,8 @@ public class PhysicianSearchDialog extends AbstractDialog {
 
 		if (searchView == SearchView.EXTERNAL) {
 			setSelectedPhysician(new Physician(new Person(new Contact())));
+			// person is not auto update able
+			getSelectedPhysician().getPerson().setAutoUpdate(false);
 		} else
 			setSelectedPhysician(null);
 	}

@@ -12,6 +12,8 @@
 			value="#{msg['dialog.physicianEdit.headline']}">
 			<f:param
 				value="#{dialogHandlerAction.physicianEditDialog.physician.person.fullName}" />
+			<f:param
+				value="#{dialogHandlerAction.physicianEditDialog.physician.isClinicEmployee() ? mgs['dialog.physicianEdit.headline.person.clinic'] : mgs['dialog.physicianEdit.headline.person.extern'] }" />
 		</h:outputFormat></title>
 
 	<h:outputStylesheet name="histo.css" value="histo.css" />
@@ -30,6 +32,8 @@
 				<h:outputFormat value="#{msg['dialog.physicianEdit.headline']}">
 					<f:param
 						value="#{dialogHandlerAction.physicianEditDialog.physician.person.fullName}" />
+					<f:param
+						value="#{dialogHandlerAction.physicianEditDialog.physician.clinicEmployee ? msg['dialog.physicianEdit.headline.person.clinic'] : msg['dialog.physicianEdit.headline.person.extern'] }" />
 				</h:outputFormat>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -166,16 +170,27 @@
 
 				<!-- program settings-->
 				<h:outputLabel
-					value="#{msg['component.personDataMask.programSettings']}"
+					rendered="#{dialogHandlerAction.physicianEditDialog.physician.clinicEmployee}"
+					value="#{msg['component.personDataMask.clinicSpecific']}"
 					styleClass="bigFont" />
 
 				<!-- auto update -->
 				<h:outputLabel
-					value="#{msg['component.personDataMask.programSettigns.autoUpdate']}" />
+					rendered="#{dialogHandlerAction.physicianEditDialog.physician.clinicEmployee}"
+					value="#{msg['component.personDataMask.clinicSpecific.autoUpdate']}" />
 				<p:selectBooleanCheckbox styleClass="smallCheckbox"
-					title="#{msg['component.personDataMask.programSettigns.autoUpdate.text']}"
+					rendered="#{dialogHandlerAction.physicianEditDialog.physician.clinicEmployee}"
+					title="#{msg['component.personDataMask.clinicSpecific.autoUpdate.text']}"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.autoUpdate}">
 				</p:selectBooleanCheckbox>
+
+				<!-- User clinic function -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.clinicSpecific.clinicFunction']}"
+					rendered="#{dialogHandlerAction.physicianEditDialog.physician.clinicEmployee}" />
+				<p:inputText required="true"
+					rendered="#{dialogHandlerAction.physicianEditDialog.physician.clinicEmployee}"
+					value="#{dialogHandlerAction.physicianEditDialog.physician.clinicRole}" />
 
 			</h:panelGrid>
 
@@ -210,7 +225,7 @@
 
 				<p:dataTable var="organization" style="width:90%;" scrollable="true"
 					id="organizationTab" scrollHeight="75" draggableRows="true"
-					styleClass="highlightedDataTable noBordersAll collapsedBordersAll"
+					styleClass="newStyleDataTable"
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.organizsations}">
 
 					<p:column
@@ -235,19 +250,16 @@
 						</ui:fragment>
 					</p:column>
 
-					<p:column style="width:15px">
+					<p:column style="width:30px">
 						<f:facet name="header">
-							<h:panelGrid columns="1"
-								styleClass="defaultListingTableContainer">
-								<p:commandLink id="upload"
-									title="#{msg['component.personDataMask.organization.add']}"
-									actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(dialogHandlerAction.physicianEditDialog.physician.person)}">
-									<p:ajax event="dialogReturn" update="organizationTab" />
-									<i class="fa fa-plus" />
-								</p:commandLink>
-							</h:panelGrid>
+							<p:commandLink id="upload"
+								title="#{msg['component.personDataMask.organization.add']}"
+								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(dialogHandlerAction.physicianEditDialog.physician.person)}">
+								<p:ajax event="dialogReturn" update="organizationTab" />
+								<i class="fa fa-plus" />
+							</p:commandLink>
 						</f:facet>
-						<p:commandLink
+						<p:commandLink partialSubmit="true" process="@this"
 							actionListener="#{dialogHandlerAction.organizationEditDialog.removePersonFromOrganization(dialogHandlerAction.physicianEditDialog.physician.person, organization)}"
 							update="organizationTab"
 							title="#{msg['component.personDataMask.organization.remove']}">
@@ -275,7 +287,7 @@
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- Save button -->
-					<p:commandButton value="#{msg['general.save']}"
+					<p:commandButton value="#{msg['general.save']}" update="@form"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
 							binding="#{dialogHandlerAction.physicianEditDialog.save()}"></f:actionListener>
@@ -285,7 +297,7 @@
 
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-						icon="fa fa-times-circle">
+						immediate="true" icon="fa fa-times-circle">
 						<f:actionListener
 							binding="#{dialogHandlerAction.physicianEditDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>

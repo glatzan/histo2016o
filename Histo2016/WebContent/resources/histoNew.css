@@ -418,6 +418,11 @@ body {
 	margin-left: 0.6em !important;
 }
 
+.contentInputDialog .buttonContainer .left .ui-selectcheckboxmenu {
+	margin-left: 0.6em !important;
+}
+
+
 .contentInputDialog .buttonContainer .left label {
 	margin-left: 0.6em !important;
 }

@@ -18,6 +18,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
+import org.histo.ui.selectors.PhysicianSelector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -56,8 +57,8 @@ public class ContactSelectDialog extends AbstractDialog {
 	private PatientDao patientDao;
 
 	/**
-	 * List of all ContactRole available for selecting physicians, used by
-	 * contacts and settings
+	 * List of all ContactRole available for selecting physicians, used by contacts
+	 * and settings
 	 */
 	private ContactRole[] selectAbleContactRoles;
 
@@ -77,12 +78,12 @@ public class ContactSelectDialog extends AbstractDialog {
 	/**
 	 * List contain contacts to select from, used by contacts
 	 */
-	private List<PhysicianContainer> contactList;
+	private List<PhysicianSelector> contactList;
 
 	/**
 	 * For quickContact selection
 	 */
-	private PhysicianContainer selectedContact;
+	private PhysicianSelector selectedContact;
 
 	/**
 	 * If true the user can change the role, for the the physician is added
@@ -123,8 +124,6 @@ public class ContactSelectDialog extends AbstractDialog {
 
 		setShowRoles(showRoles);
 
-		setContactList(getPhysicianContainers(task, getShowRoles()));
-
 		setAddAsRole(addAsRole);
 
 		setAddableRoles(addableRoles);
@@ -133,41 +132,22 @@ public class ContactSelectDialog extends AbstractDialog {
 
 		setManuallySelectRole(false);
 
+		updateContactList();
+
 		return true;
 	}
 
-	public List<PhysicianContainer> getPhysicianContainers(Task task, ContactRole[] contactRoles) {
-		List<Physician> databasePhysicians = physicianDAO.getPhysicians(contactRoles, false);
-
-		AtomicInteger i = new AtomicInteger(0);
-
-		List<PhysicianContainer> resultList = databasePhysicians.stream()
-				.map(p -> new PhysicianContainer(p, i.getAndIncrement())).collect(Collectors.toList());
-
-		loop: for (PhysicianContainer physicianContainer : resultList) {
-			// adds the role to the physicianContainer to display that the
-			// physician is already added
-			for (AssociatedContact associatedContact : task.getContacts()) {
-				if (associatedContact.getPerson().equals(physicianContainer.getPhysician().getPerson())) {
-					physicianContainer.addAssociatedRole(associatedContact.getRole());
-					continue loop;
-				}
-			}
-		}
-
-		return resultList;
-	}
-
 	/**
-	 * updates the associatedContact list if selection of contacts was changed
-	 * (more or other roles should be displayed)
+	 * updates the associatedContact list if selection of contacts was changed (more
+	 * or other roles should be displayed)
 	 */
 	public void updateContactList() {
-		setContactList(getPhysicianContainers(task, getShowRoles()));
+		setContactList(PhysicianSelector.factory(physicianDAO, task, getShowRoles()));
 	}
 
 	public void addPhysicianAsRole() {
 		if (getSelectedContact() != null) {
+
 			AssociatedContact associatedContact = new AssociatedContact(getTask(),
 					getSelectedContact().getPhysician().getPerson());
 			addPhysicianAsRole(associatedContact, getAddAsRole());
@@ -189,49 +169,15 @@ public class ContactSelectDialog extends AbstractDialog {
 
 			// settings roles
 			contactDAO.updateNotificationsOnRoleChange(task, associatedContact);
+			
+			
+			physicianDAO.incrementPhysicianPriorityCounter(1);
 
 		} catch (IllegalArgumentException e) {
 			// todo error message
 			logger.debug("Not adding, double contact");
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
-		}
-	}
-
-	@Getter
-	@Setter
-	public class PhysicianContainer implements Serializable {
-
-		private static final long serialVersionUID = -4105916869081787460L;
-
-		private int id;
-		private Physician physician;
-		private List<ContactRole> associatedRoles;
-
-		public PhysicianContainer(Physician physician, int id) {
-			this.physician = physician;
-			this.id = id;
-		}
-
-		public void addAssociatedRole(ContactRole role) {
-			if (associatedRoles == null)
-				associatedRoles = new ArrayList<ContactRole>();
-
-			associatedRoles.add(role);
-		}
-
-		public boolean hasRole(ContactRole[] contactRoles) {
-			if (getAssociatedRoles() == null || getAssociatedRoles().size() == 0)
-				return false;
-
-			return getAssociatedRoles().stream().anyMatch(p -> {
-				for (int i = 0; i < contactRoles.length; i++) {
-					if (p == contactRoles[i])
-						return true;
-				}
-				return false;
-
-			});
 		}
 	}
 
