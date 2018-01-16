@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.criterion.CriteriaSpecification;
@@ -214,18 +215,12 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 
 	public void incrementPhysicianPriorityCounter(long id) {
 
-		id = 1;
-		// Create CriteriaBuilder
-		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+		
+		Physician physician = getSession().get(Physician.class, id);
+		physician.setPriorityCount(physician.getPriorityCount()+1);
 
-		CriteriaUpdate<Physician> update = qb.createCriteriaUpdate(Physician.class);
-
-		Root<Physician> root = update.from(Physician.class);
-
-		update.set(root.get("priorityCount"), qb.sum(root.get("priorityCount"), 1));
-
-		Query query = getSession().createQuery(update);
-		query.executeUpdate();
+		getSession().update(physician);
+		
 	}
 
 }
