@@ -40,6 +40,10 @@ Next Changes:
 -> laden sehr großer arbeitslisten geht nicht, auch beim schnellklicken von normalen listen
 -> personen maske für externe Personen überarbeiten geht zurzeit nicht
 
+-> operateure enternen aus hinzuügen dialog
+-> klicks für einzelnen operateure zählen, danach sortieren
+-> beim auswählen des eingangbuches fall auswählen, nicht ersten fall
+
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 -> vortschritt im sende dialog
 -> aus liste entfernen ohne konsquenz
