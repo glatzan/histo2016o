@@ -168,7 +168,13 @@
 				</p:commandButton>
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="newTableContainer right">
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
+				<!-- previouse -->
+				<p:commandButton value="#{msg['general.back']}"
+					icon="fa fa-fw fa-arrow-left"
+					actionListener="#{dialogHandlerAction.notificationDialog.previousTab()}"
+					process="@form" update="@form" />
+
 				<!-- next -->
 				<p:commandButton value="#{msg['general.next']}"
 					icon="fa fa-fw fa-arrow-right"

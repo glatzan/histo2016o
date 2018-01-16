@@ -1,27 +1,15 @@
 package org.histo.action.view;
 
-import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
-
 import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
+import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
-import org.histo.template.documents.TemplateSendReport;
 import org.histo.ui.LazyPDFGuiManager;
-import org.histo.ui.interfaces.PdfStreamProvider;
-import org.histo.util.pdf.LazyPDFReturnHandler;
-import org.histo.util.pdf.PDFGenerator;
 import org.histo.util.pdf.PDFUtil;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -29,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Synchronized;
 
 @Controller
 @Scope("session")
@@ -42,6 +29,11 @@ public class ReportViewHandlerAction {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GlobalSettings globalSettings;
 
 	/**
 	 * Manager for rendering the pdf lazy style
@@ -62,15 +54,14 @@ public class ReportViewHandlerAction {
 
 			if (c == null) {
 				// no document found, rendering diagnosis report in background thread
-				DocumentTemplate diagnosisTemplate = DocumentTemplate
-						.getDefaultTemplate(DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT));
 
-				if (diagnosisTemplate != null) {
-					DiagnosisReport template = (DiagnosisReport) diagnosisTemplate;
+				DiagnosisReport report = DocumentTemplate
+						.getTemplateByID(globalSettings.getDefaultDocuments().getDiagnosisReportForUsers());
 
-					template.initData(task.getPatient(), task, "");
+				if (report != null) {
 
-					guiManager.startRendering(template);
+					report.initData(task, "");
+					guiManager.startRendering(report);
 				}
 			} else {
 				guiManager.setManuallyCreatedPDF(c);

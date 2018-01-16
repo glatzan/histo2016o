@@ -1,0 +1,105 @@
+@header_background_color: #333;
+@header_text_color: #555555;
+@alternate_row_background_color: #f2f2f2;
+@highlighted_row_background: #fcf1b8;
+@default_table_width: 100%;
+@table_body_height: 100px;
+.dynamicScrollTable (@colorRow: true) {
+	width: 100%;
+	thead {
+		display: block;
+		padding: 0px ! important;
+		td {
+			border: 1px solid #d3d3d3;
+			background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
+		}
+
+		td , label {
+			font-size: 14px;
+			font-weight: normal;
+			color: @header_text_color ! important;
+		}
+	}
+
+	tbody {
+		padding: 0px ! important;
+		display: block;
+		overflow-y: auto;
+		overflow-x: hidden;
+		& when (@colorRow=true) {
+			tr:nth-child(even) td {
+				background-color: @alternate_row_background_color;
+			}
+		}
+
+		tr , td {
+			border-width: 0px ! important;
+			border-spacing: 0px;
+		}
+
+		.headline {
+			font-size: 14px;
+			font-weight: bold;
+		}
+
+		tr.alternate_row_background td {
+			background-color: @alternate_row_background_color;
+		}
+	}
+
+	tr {
+		width: 100%;
+		display: table;
+	}
+
+	th , td , label {
+		padding: 4px ! important;
+		font-size: 12px;
+		font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+		box-shadow: none;
+		font-style: normal;
+		font-variant: normal;
+		text-align: left;
+	}
+
+	.ui-inputfield {
+		box-shadow: none;
+	}
+}
+
+div.contentSpaceContainer {
+	padding: 4px ! important;
+	font-size: 12px;
+	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+	box-shadow: none ! important;
+	font-style: normal ! important;
+	font-variant: normal ! important;
+}
+
+table.contentSpaceContainer {
+	border: none;
+	border-spacing: 0px;
+	width: 100%;
+	table-layout: auto ! important;
+	tbody > tr > td {
+		border: none ! important;
+		border-spacing: 0px ! important;
+		width: auto;
+		white-space: nowrap;
+	}
+
+	tbody > tr > td > label , tbody > tr > td {
+		padding: 4px ! important;
+		font-size: 12px;
+		font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+		box-shadow: none ! important;
+		font-style: normal ! important;
+		font-variant: normal ! important;
+	}
+
+	> tbody .headline {
+		font-size: 14px ! important;
+		font-weight: bold;
+	}
+}
+

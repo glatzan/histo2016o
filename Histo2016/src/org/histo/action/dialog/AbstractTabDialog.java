@@ -41,9 +41,12 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 		logger.trace("Next tab");
 		for (int i = 0; i < tabs.length; i++) {
 			if (tabs[i] == selectedTab) {
-				if (i + 1 <= tabs.length - 1)
-					onTabChange(tabs[i + 1]);
-				break;
+				while (i++ <= tabs.length - 1) {
+					if (!tabs[i].isDisabled()) {
+						onTabChange(tabs[i]);
+						return;
+					}
+				}
 			}
 		}
 	}
@@ -52,9 +55,12 @@ public abstract class AbstractTabDialog extends AbstractDialog {
 		logger.trace("Previous step");
 		for (int i = 0; i < tabs.length; i++) {
 			if (tabs[i] == selectedTab) {
-				if (i - 1 >= 0)
-					onTabChange(tabs[i - 1]);
-				break;
+				while (--i >= 0) {
+					if (!tabs[i].isDisabled()) {
+						onTabChange(tabs[i]);
+						return;
+					}
+				}
 			}
 		}
 	}

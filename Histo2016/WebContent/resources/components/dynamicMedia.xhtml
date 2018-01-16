@@ -40,8 +40,8 @@
 			style="height:#{cc.attrs.height}; width: #{cc.attrs.width}"
 			value="#{cc.attrs.pdfContent}" />
 
-		<p:poll interval="1" update="#{cc.attrs.update}"
-			stop="#{cc.attrs.guiManager.stopPoll.get()}"
+		<p:poll interval="1" update="#{cc.attrs.update}" partialSubmit="true"
+			process="@this" stop="#{cc.attrs.guiManager.stopPoll.get()}"
 			autoStart="#{cc.attrs.guiManager.autoStartPoll.get()}" />
 	</h:panelGrid>
 

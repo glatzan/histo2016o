@@ -1,13 +1,14 @@
 package org.histo.template.documents;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.velocity.tools.generic.DateTool;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.ui.selectors.ContactSelector;
-import org.histo.ui.selectors.DiagnosisRevisionSelector;
+import org.histo.template.ui.documents.DiagnosisReportUi;
 import org.histo.util.HistoUtil;
 import org.histo.util.latex.TextToLatexConverter;
 import org.histo.util.pdf.PDFGenerator;
@@ -19,45 +20,37 @@ import lombok.Setter;
 @Setter
 public class DiagnosisReport extends DocumentTemplate {
 
-	private Patient patient;
-
 	private String toSendAddress;
 
-	/**
-	 * List with all associated contacts
-	 */
-	private List<ContactSelector> contactList;
+	private List<DiagnosisRevision> diagnosisRevisions;
 
-	/**
-	 * List of all diagnosis revision to select from
-	 */
-	private List<DiagnosisRevisionSelector> diagnosisRevisions;
+	public void initData(Task task, String toSendAddress) {
+		List<DiagnosisRevision> reports = new ArrayList<DiagnosisRevision>();
+		
+		// selecting last diagnosis for rendering
+		if (task.getDiagnosisContainer().getDiagnosisRevisions().size() > 0) {
+			reports.add(task.getDiagnosisContainer().getDiagnosisRevisions()
+					.get(task.getDiagnosisContainer().getDiagnosisRevisions().size() - 1));
+		}
 
-	/**
-	 * The associatedContact rendered, the first one will always be rendered, if not
-	 * changed, no rendering necessary
-	 */
-	private ContactSelector selectedContact;
-
-	public void initData(Task task) {
-		super.initData(task);
-
-		contactList = ContactSelector.factory(task);
-		diagnosisRevisions = DiagnosisRevisionSelector.factory(task);
-
-		inputInclude = "include/diagnosisReport.xhtml";
-
+		initData(task, reports, toSendAddress);
 	}
 
-	public void initData(Patient patient, Task task, String toSendAddress) {
-		this.patient = patient;
-		this.task = task;
+	public void initData(Task task, List<DiagnosisRevision> diagnosisRevisions, String toSendAddress) {
+		super.initData(task);
 		this.toSendAddress = toSendAddress;
+		this.diagnosisRevisions = diagnosisRevisions;
+	}
+
+	public DiagnosisReportUi getDocumentUi() {
+		return new DiagnosisReportUi(this);
 	}
 
 	public void fillTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
+
+		generator.getConverter().replace("diagnosisRevisions", diagnosisRevisions);
 		generator.getConverter().replace("address",
 				HistoUtil.isNotNullOrEmpty(toSendAddress) ? (new TextToLatexConverter()).convertToTex(toSendAddress)
 						: " ");
@@ -66,4 +59,5 @@ public class DiagnosisReport extends DocumentTemplate {
 		generator.getConverter().replace("latexTextConverter", new TextToLatexConverter());
 
 	}
+
 }

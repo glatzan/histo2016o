@@ -1,3 +1,4 @@
+-> less https://github.com/palantir/eclipse-less
 -> UTF 8 Tomcat: -Dfile.encoding=UTF8
 -> plink windows set PATH=C:\path\to\putty\directory;%PATH%
 -> https://vladmihalcea.com/2015/02/09/hibernate-locking-patterns-how-does-optimistic_force_increment-lock-mode-work/
@@ -36,6 +37,11 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
+-> label.prepareTemplate(); testen test prints label + printer
+-> slides Label pritning -> TemplateSlideLable tmp = (TemplateSlideLable) slideLabel.clone(); (notwening) ggf wird content nicht geladen
+-> print dialog for selecting, external view!!!
+-> save on pdf download
+-> ggf wenn contact vorhaden, speichern des ausdruckes unter dem kontakt (alte version der print methode anschauen)=
 
 -> laden sehr großer arbeitslisten geht nicht, auch beim schnellklicken von normalen listen
 -> personen maske für externe Personen überarbeiten geht zurzeit nicht
@@ -63,6 +69,8 @@ Next Changes:
 -> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
 
 -> Ärzte aus klinikbakcend übernehmen
+
+-> Aus Uitl in Selectors kopieren  
 
 Testen:
 -> Test piz range from 6-8 (geht nicht)

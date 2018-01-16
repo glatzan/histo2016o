@@ -1,0 +1,33 @@
+div.contentSpaceContainer {
+  padding: 4px ! important;
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none ! important;
+  font-style: normal ! important;
+  font-variant: normal ! important;
+}
+table.contentSpaceContainer {
+  border: none;
+  border-spacing: 0px;
+  width: 100%;
+  table-layout: auto ! important;
+}
+table.contentSpaceContainer tbody > tr > td {
+  border: none ! important;
+  border-spacing: 0px ! important;
+  width: auto;
+  white-space: nowrap;
+}
+table.contentSpaceContainer tbody > tr > td > label,
+table.contentSpaceContainer tbody > tr > td {
+  padding: 4px ! important;
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none ! important;
+  font-style: normal ! important;
+  font-variant: normal ! important;
+}
+table.contentSpaceContainer > tbody .headline {
+  font-size: 14px ! important;
+  font-weight: bold;
+}

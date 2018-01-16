@@ -14,7 +14,9 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
 import org.histo.model.PDFContainer;
 import org.histo.model.transitory.settings.PrinterSettings;
+import org.histo.template.DocumentTemplate;
 import org.histo.util.HistoUtil;
+import org.histo.util.pdf.PrintOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -60,7 +62,7 @@ public class ClinicPrinter extends AbstractPrinter {
 	}
 
 	public boolean print(PDFContainer container) {
-		return print(container, null);
+		return print(container, 1);
 	}
 
 	public boolean print(PDFContainer container, int count) {
@@ -71,41 +73,48 @@ public class ClinicPrinter extends AbstractPrinter {
 		return print(container, 1, args);
 	}
 
-	public boolean print(PDFContainer container, int count, String args) {
-		logger.debug("Printing xtimes: " + count);
+	public boolean print(PDFContainer container, DocumentTemplate template) {
+		return print(new PrintOrder(container, template));
+	}
+
+	public boolean print(PDFContainer container, int copies, String args) {
+		return print(new PrintOrder(container, copies, false, args));
+	}
+
+	public boolean print(PrintOrder printOrder) {
+		logger.debug("Printing xtimes: " + printOrder.getCopies());
 		System.out.println("-------------- duplexys");
 		int i = 0;
 		boolean result = true;
-		while (i < count) {
-			logger.debug("Printing " + i);
-			CupsClient cupsClient;
-			try {
-				cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
-				CupsPrinter printer = cupsClient.getPrinter(new URL(address));
+		logger.debug("Printing " + i);
+		CupsClient cupsClient;
+		try {
+			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
+			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
 
-				PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(container.getData())).duplex(false)
-						.build();
+			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(printOrder.getPdfContainer().getData()))
+					.duplex(printOrder.isDuplex()).copies(printOrder.getCopies()).build();
 
-				// args= "sides:keyword:two-sided-long-edge"; duplex
-				// args= "d";
+			// args= "sides:keyword:two-sided-long-edge"; duplex
+			// args= "d";
 
-				if (HistoUtil.isNotNullOrEmpty(args)) {
+			if (HistoUtil.isNotNullOrEmpty(printOrder.getArgs())) {
 
-					Map<String, String> attribute = new HashMap<String, String>();
-					attribute.put("job-attributes", args);
+				Map<String, String> attribute = new HashMap<String, String>();
+				attribute.put("job-attributes", printOrder.getArgs());
 
-					printJob.setAttributes(attribute);
-					logger.debug("Printig with args: " + args);
-				}
-
-				printer.print(printJob);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				result = false;
+				printJob.setAttributes(attribute);
+				logger.debug("Printig with args: " + printOrder.getArgs());
 			}
-			i++;
+
+			printer.print(printJob);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = false;
 		}
+		i++;
+
 		return result;
 	}
 

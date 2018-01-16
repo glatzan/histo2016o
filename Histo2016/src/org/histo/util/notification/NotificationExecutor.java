@@ -88,7 +88,7 @@ public class NotificationExecutor<T extends NotificationContainer> {
 					logger.debug("Generating generic pdf");
 					// setting feedback
 					feedback.setFeedback("dialog.notification.sendProcess.pdf.generic");
-					template.initData(task.getPatient(), task, "");
+					template.initData(task, "");
 					genericPDF = new PDFGenerator().getPDF(template);
 
 					// adding pdf to generated pdf array
@@ -96,7 +96,7 @@ public class NotificationExecutor<T extends NotificationContainer> {
 				}
 
 				logger.debug("Returning generic pdf " + genericPDF);
-				
+
 				result = genericPDF;
 			} else {
 				// individual address
@@ -104,11 +104,11 @@ public class NotificationExecutor<T extends NotificationContainer> {
 				logger.debug("Generating pdf for " + reportAddressField);
 				feedback.setFeedback("dialog.notification.sendProcess.pdf.generating",
 						container.getContact().getPerson().getFullName());
-				template.initData(task.getPatient(), task, reportAddressField);
+				template.initData(task, reportAddressField);
 				result = new PDFGenerator().getPDF(template);
 
 				logger.debug("Returning individual address");
-				
+
 				// adding pdf to generated pdf array
 				generatedContainers.add(result);
 			}
@@ -117,7 +117,7 @@ public class NotificationExecutor<T extends NotificationContainer> {
 		}
 
 		logger.debug("Returning no pdf");
-		
+
 		return null;
 	}
 

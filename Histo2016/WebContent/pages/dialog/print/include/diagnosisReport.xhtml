@@ -8,44 +8,49 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-	<p:panelGrid styleClass="newStyleListingTable" style="width:100%">
+	<!-- script for scrolltable -->
+	<h:outputScript library="scripts" name="scrollAbleTableCoumnSync.js" />
+
+	<h:outputLabel value="#{msg['dialog.print.addresses']}" />
+
+	<p:panelGrid styleClass="printDialog_AdressTable"
+		id="addressScrollTable">
 		<f:facet name="header">
 			<p:row>
-				<p:column style="width:15px;">
+				<p:column>
 					<h:outputLabel value="#"></h:outputLabel>
 				</p:column>
-				<p:column style="width:30px;">
+				<p:column>
 					<h:outputLabel value="#{msg['dialog.print.count']}"></h:outputLabel>
 				</p:column>
-				<p:column style="width:80px;" />
 				<p:column />
-				<p:column style="width:15px" />
+				<p:column />
+				<p:column />
 			</p:row>
 		</f:facet>
 
 		<c:forEach varStatus="outer"
-			items="#{dialogHandlerAction.printDialog.contactList}" var="chooser">
+			items="#{dialogHandlerAction.printDialog.selectedTemplate.contactList}"
+			var="chooser">
 			<p:row
-				styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'oddColumnColoredTr' : ''}">
+				styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'alternate_row_background' : ''}">
 				<!-- select -->
-				<p:column style="width:15px;" styleClass="columnTextCenter">
-					<p:selectBooleanCheckbox value="#{chooser.selected}"
-						styleClass="centerCheckbox">
-						<p:ajax event="change" process="@form" update="addressTable"
-							onstart="PF('blockUIWidget').block()"
-							oncomplete="PF('blockUIWidget').unblock()"
-							listener="#{dialogHandlerAction.printDialog.onChooseContact(chooser)}"></p:ajax>
+				<p:column>
+					<p:selectBooleanCheckbox value="#{chooser.selected}">
+						<p:ajax event="change" process="printSettingsTable"
+							listener="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseContact(chooser)}"
+							update="printSettingsTable" />
 					</p:selectBooleanCheckbox>
 				</p:column>
 
 				<!-- count -->
-				<p:column style="width:30px;" styleClass="columnTextCenter">
+				<p:column>
 					<p:spinner value="#{chooser.copies}" styleClass="oneNumberSpinner"
 						disabled="#{!chooser.selected}" min="1" max="9"></p:spinner>
 				</p:column>
 
 				<!-- role -->
-				<p:column style="width:80px;">
+				<p:column>
 					<h:outputLabel rendered="#{chooser.contact.role ne 'NONE'}"
 						value="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}"
 						title="#{msg['enum.contactRole.'.concat(chooser.contact.role)]}">
@@ -75,15 +80,12 @@
 					</p:overlayPanel>
 				</p:column>
 
-				<p:column style="width:15px">
+				<p:column>
 					<p:commandLink rendered="#{!chooser.emptyAddress}"
 						title="#{msg['dialog.print.individualAddress']}"
-						actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task,chooser)}">
+						actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.selectedTemplate.task,chooser)}">
 						<i class="fa fa-gear" style="margin-left: 2px" />
 						<p:ajax event="dialogReturn"
-							listener="#{dialogHandlerAction.printDialog.onChangeAddressManually(chooser)}"
-							onstart="PF('blockUIWidget').block()"
-							oncomplete="PF('blockUIWidget').unblock()"
 							update="editAddressOver#{outer.index}" />
 					</p:commandLink>
 				</p:column>
@@ -93,27 +95,65 @@
 			<c:forEach varStatus="inner" items="#{chooser.organizazionsChoosers}"
 				var="organizazion">
 				<p:row
-					styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'oddColumnColoredTr' : ''}"
-					style="border-left: none; border-top: none; border-bottom: none">
-					<p:column
-						style="border-left: none; border-bottom: none;  border-top: none; background-color: inherit !important;">
+					styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'alternate_row_background' : ''}">
+					<p:column style="background-color: inherit !important;">
 					</p:column>
-					<p:column
-						style="text-align: center; border-left: 1px solid #aaaaaa !important;">
-						<p:selectBooleanCheckbox value="#{organizazion.selected}"
-							styleClass="centerCheckbox">
-							<p:ajax event="change" process="@form" update="addressTable"
-								onstart="PF('blockUIWidget').block()"
-								oncomplete="PF('blockUIWidget').unblock()"
-								listener="#{dialogHandlerAction.printDialog.onChooseOrganizationOfContact(organizazion)}"></p:ajax>
+					<p:column style="text-align: center;">
+						<p:selectBooleanCheckbox value="#{organizazion.selected}">
+							<p:ajax event="change" process="@form"
+								update="printSettingsTable"
+								listener="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseOrganizationOfContact(organizazion)}"></p:ajax>
 						</p:selectBooleanCheckbox>
 					</p:column>
-					<p:column colspan="3" styleClass="smallFont"
-						style=" border: 1px solid #aaaaaa;">
+					<p:column colspan="3">
 						<h:outputText value="#{organizazion.organization.name}" />
 					</p:column>
 				</p:row>
 			</c:forEach>
+
 		</c:forEach>
 	</p:panelGrid>
+
+	<script type="text/javascript">
+		scrollAbleTableCoumnSync('#dialogContent\\:addressScrollTable', 16);
+	</script>
+
+	<h:outputLabel value="#{msg['dialog.print.diagnosisReport.diagnosis']}" />
+
+	<p:panelGrid styleClass="printDialog_DiagosisTable"
+		id="dignosisScrollTable">
+		<f:facet name="header">
+			<p:row>
+				<p:column>
+					<h:outputLabel value="#"></h:outputLabel>
+				</p:column>
+				<p:column>
+					<h:outputLabel value=" "></h:outputLabel>
+				</p:column>
+			</p:row>
+		</f:facet>
+
+		<c:forEach varStatus="status"
+			items="#{dialogHandlerAction.printDialog.selectedTemplate.diagnosisRevisions}"
+			var="revision">
+
+			<p:row>
+				<p:column>
+					<p:selectBooleanCheckbox value="#{revision.selected}">
+						<p:ajax event="change" process="@this"
+							listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
+							update="pollUpdateTable" />
+					</p:selectBooleanCheckbox>
+				</p:column>
+				<p:column>
+					<h:outputLabel value="#{revision.diagnosisRevision.name}"></h:outputLabel>
+				</p:column>
+			</p:row>
+		</c:forEach>
+	</p:panelGrid>
+
+	<script type="text/javascript">
+		scrollAbleTableCoumnSync('#dialogContent\\:dignosisScrollTable', 0);
+	</script>
+
 </ui:composition>

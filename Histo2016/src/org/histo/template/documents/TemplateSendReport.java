@@ -17,7 +17,6 @@ import org.histo.util.notification.NotificationContainerList;
 import org.histo.util.pdf.PDFGenerator;
 
 public class TemplateSendReport extends DocumentTemplate {
-	private Patient patient;
 
 	private MailContainerList mailContainerList;
 	private NotificationContainerList faxContainerList;
@@ -32,8 +31,7 @@ public class TemplateSendReport extends DocumentTemplate {
 
 		this.afterPDFCreationHook = true;
 		
-		this.task = task;
-		this.patient = task.getPatient();
+		super.initData(task);
 
 		this.mailContainerList = mailContainerList;
 		this.faxContainerList = faxContainerList;
