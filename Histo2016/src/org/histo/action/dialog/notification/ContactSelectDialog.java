@@ -14,6 +14,7 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
+import org.histo.dao.PhysicianDAO.PhysicianSortOrder;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Physician;
@@ -142,7 +143,9 @@ public class ContactSelectDialog extends AbstractDialog {
 	 * or other roles should be displayed)
 	 */
 	public void updateContactList() {
-		setContactList(PhysicianSelector.factory(physicianDAO, task, getShowRoles()));
+		List<Physician> databasePhysicians = physicianDAO.getPhysicians(getShowRoles(), false,
+				PhysicianSortOrder.PRIORITY);
+		setContactList(PhysicianSelector.factory(task, databasePhysicians));
 	}
 
 	public void addPhysicianAsRole() {
@@ -169,10 +172,9 @@ public class ContactSelectDialog extends AbstractDialog {
 
 			// settings roles
 			contactDAO.updateNotificationsOnRoleChange(task, associatedContact);
-			
-			
-//			physicianDAO.incrementPhysicianPriorityCounter(1);
 
+			// increment counter
+			contactDAO.incrementContactPriorityCounter(associatedContact.getPerson());
 		} catch (IllegalArgumentException e) {
 			// todo error message
 			logger.debug("Not adding, double contact");

@@ -36,9 +36,7 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
--> person hinzufügen warnen, dass schon hinzugefügt ist
 -> organizsation so verändern wie user + group dialog
-
 
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 -> vortschritt im sende dialog
@@ -105,6 +103,8 @@ Graphic Changes
 
 +v 1.2.7 (17.01.2017)
 +++*: Der Ausgewählte Patient/Auftrag in der Arbeitsliste wird jetzt immer sichtbar angezeigt.
++++*: Wein ein Operateur/Hausarzt ausgewählt steigt dieser in seiner Priorität. Operateure/Hausärzte werden jetzt nach Priorität sortiert. 
++++*: Personen die bereits mit einer Funktion einem Auftrag zugeordnet sind, werden mit einer Warnung versehen.
 
 +v 1.2.6 (17.01.2017)
 +++!: Laden von Listen sobald ein andere View als die Auftragsliste angezeigt wird, geht wieder.

@@ -72,6 +72,12 @@
 							<i class="fa fa-check icon-green"
 								title="#{msg['dialog.selectContact.table.added']}" />
 						</ui:fragment>
+
+						<ui:fragment
+							rendered="#{contact.contactOfTask and !contact.hasRole(dialogHandlerAction.contactSelectDialog.showRoles)}">
+							<i class="fa fa-exclamation icon-red"
+								title="#{msg['dialog.selectContact.table.added.otherRole']}" />
+						</ui:fragment>
 					</p:column>
 
 					<p:column style="width:5%; text-align:center;">
@@ -81,7 +87,7 @@
 
 						<!-- remove, only if no notification was performed -->
 						<p:commandLink styleClass="noUnderlineAtLink"
-							rendered="#{contact.hasRole(dialogHandlerAction.contactSelectDialog.showRoles)}"
+							rendered="#{contact.contactOfTask}"
 							title="#{contact.contactSelector.deleteAble ? msg['dialog.selectContact.table.remove']: msg['dialog.selectContact.table.remove.notPossible']}"
 							disabled="#{!contact.contactSelector.deleteAble}" update="@form">
 							<f:actionListener
@@ -124,7 +130,7 @@
 							itemValue="#{role}"
 							itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
-						<p:ajax
+						<p:ajax event="change"
 							listener="#{dialogHandlerAction.contactSelectDialog.updateContactList()}"
 							partialSubmit="true" process="@this"
 							update=":dialogContent:contentTable"></p:ajax>

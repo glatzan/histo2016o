@@ -54,8 +54,8 @@ public class PhysicianSelector implements Serializable {
 		});
 	}
 
-	public static List<PhysicianSelector> factory(PhysicianDAO physicianDAO, Task task, ContactRole[] contactRoles) {
-		List<Physician> databasePhysicians = physicianDAO.getPhysicians(contactRoles, false);
+	public static List<PhysicianSelector> factory(Task task, List<Physician> databasePhysicians) {
+
 		AtomicInteger i = new AtomicInteger(0);
 
 		// loading physicians with associated roles

@@ -6,19 +6,29 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
+
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
+import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javassist.tools.reflect.Sample;
 
 @Component
 @Transactional
@@ -169,7 +179,7 @@ public class ContactDAO extends AbstractDAO {
 	 * @return
 	 */
 	public AssociatedContact addAssociatedContact(Task task, AssociatedContact associatedContact) {
-	
+
 		if (task.getContacts().stream().anyMatch(p -> p.getPerson().getId() == associatedContact.getPerson().getId()))
 			throw new IllegalArgumentException("Already in list");
 
@@ -294,6 +304,34 @@ public class ContactDAO extends AbstractDAO {
 
 			return resultArr.toArray(new ContactRole[resultArr.size()]);
 		}
+	}
+
+	public void incrementContactPriorityCounter(Person person) {
+
+		reattach(person);
+
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Physician> criteria = qb.createQuery(Physician.class);
+		Root<Physician> root = criteria.from(Physician.class);
+		criteria.select(root);
+
+		Join<Physician, Person> personQuery = root.join("person", JoinType.LEFT);
+
+		criteria.where(qb.equal(personQuery.get("id"), person.getId()));
+		criteria.distinct(true);
+
+		List<Physician> physicians = getSession().createQuery(criteria).getResultList();
+
+		if (physicians.size() == 1) {
+
+			physicians.get(0).setPriorityCount(physicians.get(0).getPriorityCount() + 1);
+
+			save(physicians.get(0));
+		}
+
 	}
 
 }
