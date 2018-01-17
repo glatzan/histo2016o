@@ -189,14 +189,15 @@
 					<p:commandLink id="upload"
 						title="#{msg['component.personDataMask.organization.add']}"
 						partialSubmit="true" process="@this"
-						actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(dialogHandlerAction.physicianSearchDialog.selectedPhysician.person)}">
-						<p:ajax event="dialogReturn" update="organizationTab" />
+						actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(true)}">
+						<p:ajax event="dialogReturn" update="@form"
+							listener="#{dialogHandlerAction.physicianSearchDialog.onReturnOrganizationDialog}" />
 						<i class="fa fa-plus" />
 					</p:commandLink>
 				</f:facet>
 				<p:commandLink partialSubmit="true" process="@this"
-					actionListener="#{dialogHandlerAction.organizationEditDialog.removePersonFromOrganization(dialogHandlerAction.physicianSearchDialog.selectedPhysician.person, organization)}"
-					update="organizationTab"
+					actionListener="#{dialogHandlerAction.organizationListDialog.removeOrganization(dialogHandlerAction.physicianSearchDialog.selectedPhysician.person, organization)}"
+					update="@form"
 					title="#{msg['component.personDataMask.organization.remove']}">
 					<i class="fa fa-remove" style="margin-left: 8px" />
 				</p:commandLink>

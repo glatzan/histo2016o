@@ -117,19 +117,6 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 
 		List<Physician> physicians = getSession().createQuery(criteria).getResultList();
 
-		// DetachedCriteria query = DetachedCriteria.forClass(Physician.class,
-		// "physician");
-		// query.addOrder(Order.asc("id"));
-		// query.createAlias("physician.associatedRoles", "a");
-		// // don't select archived physicians
-		// if (!archived)
-		// query.add(Restrictions.eq("archived", false));
-		//
-		// query.add(Restrictions.in("a.elements", roles));
-		// query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		//
-		// List<Physician> result = query.getExecutableCriteria(getSession()).list();
-
 		return physicians;
 	}
 

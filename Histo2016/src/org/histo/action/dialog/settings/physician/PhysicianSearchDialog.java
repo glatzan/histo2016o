@@ -14,8 +14,10 @@ import org.histo.adaptors.LdapHandler;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.model.Contact;
+import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -88,9 +90,9 @@ public class PhysicianSearchDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Generates an ldap search filter (?(xxx)....) and offers the result list.
-	 * The result list is a physician list with minimal details. Before adding
-	 * an clinic physician a ldap fetch for more details has to be done
+	 * Generates an ldap search filter (?(xxx)....) and offers the result list. The
+	 * result list is a physician list with minimal details. Before adding an clinic
+	 * physician a ldap fetch for more details has to be done
 	 *
 	 * @param name
 	 */
@@ -132,6 +134,7 @@ public class PhysicianSearchDialog extends AbstractDialog {
 			setSelectedPhysician(new Physician(new Person(new Contact())));
 			// person is not auto update able
 			getSelectedPhysician().getPerson().setAutoUpdate(false);
+			getSelectedPhysician().getPerson().setOrganizsations(new ArrayList<Organization>());
 		} else
 			setSelectedPhysician(null);
 	}
@@ -147,6 +150,18 @@ public class PhysicianSearchDialog extends AbstractDialog {
 
 		getSelectedPhysician().setAssociatedRolesAsArray(getAssociatedRoles());
 		return getSelectedPhysician();
+	}
+
+	/**
+	 * Adds an organization to the user
+	 * 
+	 * @param event
+	 */
+	public void onReturnOrganizationDialog(SelectEvent event) {
+		if (event.getObject() != null && event.getObject() instanceof Organization
+				&& !getSelectedPhysician().getPerson().getOrganizsations().contains((Organization) event.getObject())) {
+			getSelectedPhysician().getPerson().getOrganizsations().add((Organization) event.getObject());
+		}
 	}
 
 	public enum SearchView {

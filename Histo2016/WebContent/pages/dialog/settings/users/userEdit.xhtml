@@ -267,14 +267,15 @@
 						<f:facet name="header">
 							<p:commandLink id="upload"
 								title="#{msg['component.personDataMask.organization.add']}"
-								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(dialogHandlerAction.editUserDialog.user.physician.person)}">
-								<p:ajax event="dialogReturn" update="organizationTab" />
+								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(true)}">
+								<p:ajax event="dialogReturn" update="@form"
+									listener="#{dialogHandlerAction.editUserDialog.onReturnOrganizationDialog}" />
 								<i class="fa fa-plus" />
 							</p:commandLink>
 						</f:facet>
 						<p:commandLink
-							actionListener="#{dialogHandlerAction.organizationEditDialog.removePersonFromOrganization(dialogHandlerAction.editUserDialog.user.physician.person, organization)}"
-							update="organizationTab" partialSubmit="true" process="@this"
+							actionListener="#{dialogHandlerAction.organizationListDialog.removeOrganization(dialogHandlerAction.editUserDialog.user.physician.person, organization)}"
+							update="@form" partialSubmit="true" process="@this"
 							title="#{msg['component.personDataMask.organization.remove']}">
 							<i class="fa fa-remove" style="margin-left: 8px" />
 						</p:commandLink>

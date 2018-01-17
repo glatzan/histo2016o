@@ -15,6 +15,7 @@ import org.histo.config.exception.CustomDatabaseConstraintViolationException;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.LogDAO;
 import org.histo.dao.UserDAO;
+import org.histo.model.Organization;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.service.PhysicianService;
@@ -65,7 +66,6 @@ public class EditUserDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private PhysicianService physicianService;
 
-	
 	private HistoUser user;
 
 	private List<ContactRole> allRoles;
@@ -104,7 +104,7 @@ public class EditUserDialog extends AbstractDialog {
 		try {
 			if (user.getPhysician().hasNoAssociateRole())
 				user.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
-			
+
 			genericDAO.save(user, "log.user.role.changed", new Object[] { user.toString() });
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
@@ -122,7 +122,7 @@ public class EditUserDialog extends AbstractDialog {
 			onDatabaseVersionConflict();
 		}
 	}
-	
+
 	/**
 	 * Updates the data of the physician with data from the clinic backend
 	 */
@@ -174,5 +174,17 @@ public class EditUserDialog extends AbstractDialog {
 		HistoGroup group = userDAO.getHistoGroup(HistoGroup.GROUP_DISABLED, true);
 		user.setGroup(group);
 		onChangeUserGroup();
+	}
+
+	/**
+	 * Adds an organization to the user
+	 * 
+	 * @param event
+	 */
+	public void onReturnOrganizationDialog(SelectEvent event) {
+		if (event.getObject() != null && event.getObject() instanceof Organization
+				&& !getUser().getPhysician().getPerson().getOrganizsations().contains((Organization) event.getObject())) {
+			getUser().getPhysician().getPerson().getOrganizsations().add((Organization) event.getObject());
+		}
 	}
 }

@@ -7,8 +7,10 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.model.Organization;
 import org.histo.model.Physician;
 import org.histo.service.PhysicianService;
+import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -70,6 +72,18 @@ public class PhysicianEditDialog extends AbstractDialog {
 			physicianService.updatePhysicianDataFromLdap(getPhysician());
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
+		}
+	}
+
+	/**
+	 * Adds an organization to the user
+	 * 
+	 * @param event
+	 */
+	public void onReturnOrganizationDialog(SelectEvent event) {
+		if (event.getObject() != null && event.getObject() instanceof Organization
+				&& !getPhysician().getPerson().getOrganizsations().contains((Organization) event.getObject())) {
+			getPhysician().getPerson().getOrganizsations().add((Organization) event.getObject());
 		}
 	}
 }
