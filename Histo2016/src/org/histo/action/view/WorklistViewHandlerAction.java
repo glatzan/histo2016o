@@ -129,6 +129,10 @@ public class WorklistViewHandlerAction {
 		globalEditViewHandler.setLastDefaultView(userHandlerAction.getCurrentUser().getSettings().getDefaultView());
 	}
 
+	public void goToNavigation() {
+		goToNavigation(globalEditViewHandler.getCurrentView());
+	}
+
 	public void goToNavigation(View view) {
 
 		logger.debug("Navigation goto: " + view);
@@ -146,7 +150,7 @@ public class WorklistViewHandlerAction {
 				// get first patient in worklist, show him
 				Patient first = worklist.getFirstPatient();
 				if (first != null)
-					onSelectPatient(first);
+					goToSelectPatient(first);
 				else
 					// change view to blank
 					changeView(View.WORKLIST_PATIENT, View.WORKLIST_NOTHING_SELECTED);
@@ -159,6 +163,9 @@ public class WorklistViewHandlerAction {
 			if (globalEditViewHandler.getSelectedPatient() != null && globalEditViewHandler.getSelectedTask() != null) {
 				changeView(view);
 				onSelectTaskAndPatient(globalEditViewHandler.getSelectedTask());
+			} else if (globalEditViewHandler.getSelectedPatient() != null) {
+				// globalEditViewHandler.getSelectedPatient().getTasksOfPatient(activeOnly)
+
 			} else {
 
 				Task first = worklist.getFirstActiveTask();
@@ -196,12 +203,20 @@ public class WorklistViewHandlerAction {
 		}
 	}
 
+	public void goToSelectPatient(Patient patient) {
+		onSelectPatient(patient, true);
+	}
+
+	public void goToSelectPatient(Patient patient, boolean reload) {
+		onSelectPatient(patient, reload);
+		changeView(View.WORKLIST_PATIENT);
+	}
+
 	public void onSelectPatient(Patient patient) {
 		onSelectPatient(patient, true);
 	}
 
 	public void onSelectPatient(Patient patient, boolean reload) {
-
 		long test = System.currentTimeMillis();
 		logger.info("start - > 0");
 
@@ -234,14 +249,19 @@ public class WorklistViewHandlerAction {
 
 		globalEditViewHandler.updateDataOfTask(true, false, false, false);
 
-		changeView(View.WORKLIST_PATIENT);
-
 		logger.info("end -> " + (System.currentTimeMillis() - test));
 	}
 
 	public void onDeselectPatient() {
+		onDeselectPatient(true);
+	}
+
+	public void onDeselectPatient(boolean updateView) {
 		globalEditViewHandler.setSelectedPatient(null);
 		globalEditViewHandler.setSelectedTask(null);
+
+		if (updateView)
+			goToNavigation();
 	}
 
 	public void onSelectTaskAndPatient(Task task) {
@@ -314,7 +334,7 @@ public class WorklistViewHandlerAction {
 		// generating task data, taskstatus is generated previously
 		globalEditViewHandler.updateDataOfTask(true, false, false, true);
 
-		//task.setActive(true);
+		// task.setActive(true);
 
 		// change if is subview (diagnosis, receipt log or report view)
 		if (!globalEditViewHandler.getCurrentView().isLastSubviewAble()) {
@@ -333,7 +353,7 @@ public class WorklistViewHandlerAction {
 	 */
 	public void onDeselectTask() {
 		globalEditViewHandler.setSelectedTask(null);
-		changeView(View.WORKLIST_PATIENT);
+		goToNavigation(View.WORKLIST_PATIENT);
 	}
 
 	public void addWorklist(WorklistSearch worklistSearch, String name, boolean selected) {
@@ -344,6 +364,10 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void addWorklist(Worklist worklist, boolean selected) {
+		addWorklist(worklist, selected, false);
+	}
+
+	public void addWorklist(Worklist worklist, boolean selected, boolean changeView) {
 		// removing worklist if worklist with the same name is present
 		try {
 			Worklist cWorklist = getWorklists().stream().filter(p -> p.getName().equals(worklist.getName()))
@@ -359,10 +383,13 @@ public class WorklistViewHandlerAction {
 		if (selected) {
 			setWorklist(worklist);
 			// deselecting patient
-			onDeselectPatient();
+			onDeselectPatient(false);
 
 			worklist.updateWorklist();
 		}
+
+		if (changeView)
+			goToNavigation();
 	}
 
 	public void removeWorklist(Worklist worklist) {
@@ -384,10 +411,17 @@ public class WorklistViewHandlerAction {
 				|| userHandlerAction.getCurrentUser().getSettings().isAddTaskWithSingelClick()) {
 			logger.debug("Showning task " + task.getTaskID());
 			// reloading task and patient from database
-			onSelectTaskAndPatient(task.getId());
+
+			// only selecting task if patient is already selected
+			if (globalEditViewHandler.getSelectedPatient() != null
+					&& globalEditViewHandler.getSelectedPatient().getId() == task.getPatient().getId()
+					|| userHandlerAction.getCurrentUser().getSettings().isAddTaskWithSingelClick())
+				onSelectTaskAndPatient(task.getId());
+			else
+				addPatientToWorkList(task.getPatient(), true, false);
 		} else {
 			logger.debug("Adding task " + task.getTaskID() + " to worklist");
-			addPatientToWorkList(task.getPatient(), false);
+			addPatientToWorkList(task.getPatient(), true, false);
 			task.setActive(true);
 		}
 	}
@@ -400,7 +434,7 @@ public class WorklistViewHandlerAction {
 	 * @param patient
 	 * @param asSelectedPatient
 	 */
-	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient) {
+	public void addPatientToWorkList(Patient patient, boolean asSelectedPatient, boolean changeToPatientView) {
 
 		// checks if patient is already in database
 		if (!getWorklist().containsPatient(patient)) {
@@ -416,8 +450,10 @@ public class WorklistViewHandlerAction {
 			getWorklist().sortWordklist();
 		}
 
-		if (asSelectedPatient)
-			onSelectPatient(patient);
+		if (changeToPatientView)
+			goToSelectPatient(patient, true);
+		else
+			onSelectPatient(patient, true);
 
 		getWorklist().generateTaskStatus(patient);
 	}
@@ -512,7 +548,7 @@ public class WorklistViewHandlerAction {
 						onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit())
 								.get(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).size() - 1));
 					} else {
-						onSelectPatient(newPatient);
+						goToSelectPatient(newPatient);
 					}
 				}
 			} else {
@@ -522,7 +558,7 @@ public class WorklistViewHandlerAction {
 					onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit())
 							.get(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).size() - 1));
 				} else {
-					onSelectPatient(newPatient);
+					goToSelectPatient(newPatient);
 				}
 			}
 		}
@@ -556,7 +592,7 @@ public class WorklistViewHandlerAction {
 						onSelectTaskAndPatient(
 								newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(0));
 					} else {
-						onSelectPatient(newPatient);
+						goToSelectPatient(newPatient);
 					}
 				}
 			} else {
@@ -565,7 +601,7 @@ public class WorklistViewHandlerAction {
 				if (newPatient.hasActiveTasks(getWorklist().isShowActiveTasksExplicit())) {
 					onSelectTaskAndPatient(newPatient.getActiveTasks(getWorklist().isShowActiveTasksExplicit()).get(0));
 				} else {
-					onSelectPatient(newPatient);
+					goToSelectPatient(newPatient);
 				}
 			}
 		}

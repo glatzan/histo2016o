@@ -359,7 +359,7 @@ public class GlobalEditViewHandler {
 
 						logger.debug("Found patient " + patient + " and adding to currentworklist");
 
-						worklistViewHandlerAction.addPatientToWorkList(patient, true);
+						worklistViewHandlerAction.addPatientToWorkList(patient, true, true);
 
 						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.piz",
 								"growl.search.patient.piz.text");

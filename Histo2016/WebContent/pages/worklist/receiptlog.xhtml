@@ -64,7 +64,7 @@
 						title="#{msg['body.receiptlog.taskDueDate.hint']}"
 						value="#{globalEditViewHandler.selectedTask.dueDateSelected}">
 						<p:ajax event="change" execute="@this"
-							update="navigationForm contentForm"
+							update="navigationForm:patientList contentForm"
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dueDate',globalEditViewHandler.selectedTask.dueDateSelected)}">
 						</p:ajax>
 					</p:selectBooleanCheckbox>
@@ -231,7 +231,8 @@
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}">
 							<i class="fa fa-fw fa-scissors" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 						</p:commandLink>
 
 						<!-- quickcontact private physician  -->
@@ -240,7 +241,8 @@
 							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'PRIVATE_PHYSICIAN')}">
 							<i class="fa fa-fw fa-eye" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 						</p:commandLink>
 
 						<!-- edit contacts -->
@@ -248,7 +250,8 @@
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 						</p:commandLink>
 					</h:panelGrid>
 
@@ -496,7 +499,8 @@
 						<p:commandLink id="quickTaskSettings"
 							actionListener="#{slideNamingDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 							<i class="fa fa-wrench" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 						</p:commandLink>
 					</f:facet>
 
@@ -506,7 +510,7 @@
 						<!-- ********** New Block Button ********** -->
 						<p:commandLink title="#{msg['body.statiningView.newBlock']}"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-							update="navigationForm contentForm headerForm"
+							update="navigationForm:patientList contentForm headerForm"
 							actionListener="#{taskHandlerAction.createNewBlock(stainingRow.entity)}">
 							<i class="fa fa-fw fa-th-large"></i>
 						</p:commandLink>
@@ -517,7 +521,7 @@
 							<i class="fa fa-fw fa-times-circle"></i>
 							<p:ajax event="dialogReturn"
 								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-								update="navigationForm contentForm headerForm" />
+								update="navigationForm:patientList contentForm headerForm" />
 						</p:commandLink>
 					</h:panelGroup>
 
@@ -531,7 +535,7 @@
 							<i class="fa fa-fw fa-paint-brush"></i>
 							<p:ajax event="dialogReturn"
 								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-								update="navigationForm contentForm headerForm" />
+								update="navigationForm:patientList contentForm headerForm" />
 						</p:commandLink>
 						<!-- ********** Delete Button ********** -->
 						<p:commandLink
@@ -541,7 +545,7 @@
 							<i class="fa fa-fw fa-times-circle"></i>
 							<p:ajax event="dialogReturn"
 								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-								update="navigationForm contentForm headerForm" />
+								update="navigationForm:patientList contentForm headerForm" />
 						</p:commandLink>
 					</h:panelGroup>
 
@@ -554,13 +558,13 @@
 							title="#{msg['body.statiningView.printStaining']}">
 							<i class="fa fa-fw fa-print" />
 							<p:ajax event="dialogReturn"
-								update="navigationForm contentForm headerForm" />
+								update="navigationForm:patientList contentForm headerForm" />
 						</p:commandLink>
 						<!-- ********** Cloud Button ********** -->
 						<p:commandLink title="#{msg['body.statiningView.showStaining']}">
 							<i class="fa fa-fw fa-file-photo-o" />
 							<p:ajax event="dialogReturn"
-								update="navigationForm contentForm headerForm" />
+								update="navigationForm:patientList contentForm headerForm" />
 						</p:commandLink>
 						<!-- ********** Delete Button ********** -->
 						<p:commandLink
@@ -570,7 +574,7 @@
 							<i class="fa fa-fw fa-times-circle" />
 							<p:ajax event="dialogReturn"
 								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-								update="navigationForm contentForm headerForm" />
+								update="navigationForm:patientList contentForm headerForm" />
 						</p:commandLink>
 					</h:panelGroup>
 				</p:column>
@@ -588,7 +592,8 @@
 
 			<p:remoteCommand
 				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}"
-				name="saveNameChange" update="navigationForm contentForm" />
+				name="saveNameChange"
+				update="navigationForm:patientList contentForm" />
 		</h:panelGrid>
 
 		<!-- bottom buttons -->
@@ -611,7 +616,8 @@
 				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 				value="#{msg['body.statiningView.newSample']}"
 				actionListener="#{dialogHandlerAction.createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-				<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
 
 			<!-- select all -->
@@ -635,10 +641,11 @@
 
 				<p:commandButton id="changeZone" widgetVar="performOnMay"
 					style="display:none;"
-					update="navigationForm contentForm headerForm"
+					update="navigationForm:patientList contentForm headerForm"
 					actionListener="#{receiptlogViewHandlerAction.performActionOnManyTaskChildren(globalEditViewHandler.selectedTask)}">
 					<p:ajax event="dialogReturn"
-						update="navigationForm contentForm headerForm" />
+						oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
+						update="navigationForm:patientList contentForm headerForm" />
 				</p:commandButton>
 			</h:panelGroup>
 		</h:panelGrid>

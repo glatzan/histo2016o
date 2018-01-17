@@ -166,7 +166,8 @@ public class MenuGenerator {
 								+ PredefinedFavouriteList.StayInStainingList.getId() + ")}");
 				item.setIcon("fa fa-image");
 				item.setRendered(task.getTaskStatus().isStayInStainingList());
-				item.setUpdate("navigationForm contentForm headerForm");
+				item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+				item.setUpdate("navigationForm:patientList contentForm headerForm");
 				stainingSubMenu.addElement(item);
 
 				// Add to stay in staining phase
@@ -176,7 +177,8 @@ public class MenuGenerator {
 				item.setIcon("fa fa-image");
 				item.setRendered(!(task.getTaskStatus().isStainingNeeded() || task.getTaskStatus().isReStainingNeeded()
 						|| task.getTaskStatus().isStayInStainingList()) && task.getTaskStatus().isEditable());
-				item.setUpdate("navigationForm contentForm headerForm");
+				item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+				item.setUpdate("navigationForm:patientList contentForm headerForm");
 				stainingSubMenu.addElement(item);
 			}
 
@@ -224,7 +226,8 @@ public class MenuGenerator {
 						"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
 								+ PredefinedFavouriteList.StayInDiagnosisList.getId() + ")}");
 				item.setRendered(task.getTaskStatus().isStayInDiagnosisList());
-				item.setUpdate("navigationForm contentForm headerForm");
+				item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+				item.setUpdate("navigationForm:patientList contentForm headerForm");
 				item.setIcon("fa fa-eye-slash");
 				diagnosisSubMenu.addElement(item);
 
@@ -235,7 +238,8 @@ public class MenuGenerator {
 				item.setRendered(
 						!(task.getTaskStatus().isDiagnosisNeeded() || task.getTaskStatus().isReDiagnosisNeeded()
 								|| task.getTaskStatus().isStayInDiagnosisList()) && task.getTaskStatus().isEditable());
-				item.setUpdate("navigationForm contentForm headerForm");
+				item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+				item.setUpdate("navigationForm:patientList contentForm headerForm");
 				item.setIcon("fa fa-eye");
 				diagnosisSubMenu.addElement(item);
 			}
@@ -278,7 +282,8 @@ public class MenuGenerator {
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.exit"));
 				item.setOnclick(
 						"$('#headerForm\\\\:notificationPhaseExit').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
-				item.setUpdate("navigationForm contentForm headerForm");
+				item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+				item.setUpdate("navigationForm:patientList contentForm headerForm");
 				item.setIcon("fa fa-volume-off");
 				item.setRendered(
 						task.getTaskStatus().isNotificationNeeded() || task.getTaskStatus().isStayInNotificationList());
@@ -289,7 +294,8 @@ public class MenuGenerator {
 				item.setCommand(
 						"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
 								+ PredefinedFavouriteList.StayInNotificationList.getId() + ")}");
-				item.setUpdate("navigationForm contentForm headerForm");
+				item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+				item.setUpdate("navigationForm:patientList contentForm headerForm");
 				item.setIcon("fa fa-volume-off");
 				item.setRendered(task.getTaskStatus().isStayInNotificationList());
 				notificationSubMenu.addElement(item);
@@ -298,7 +304,8 @@ public class MenuGenerator {
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.task.sample.notification.enter"));
 				item.setCommand("#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
 						+ PredefinedFavouriteList.NotificationList.getId() + ")}");
-				item.setUpdate("navigationForm contentForm headerForm");
+				item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+				item.setUpdate("navigationForm:patientList contentForm headerForm");
 				item.setIcon("fa fa-volume-off");
 				item.setRendered(!(task.getTaskStatus().isNotificationNeeded()
 						|| task.getTaskStatus().isStayInNotificationList()) && task.getTaskStatus().isEditable());
@@ -360,7 +367,8 @@ public class MenuGenerator {
 											+ favouriteListItem.getId() + ")}");
 						}
 
-						item.setUpdate("navigationForm contentForm headerForm");
+						item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+						item.setUpdate("navigationForm:patientList contentForm headerForm");
 						favouriteSubMenu.addElement(item);
 					}
 				} else {

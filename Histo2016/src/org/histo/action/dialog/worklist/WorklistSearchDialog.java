@@ -116,7 +116,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), false,
 					userHandlerAction.getCurrentUser().getSettings().isWorklistSortOrderAsc());
 
-			worklistViewHandlerAction.addWorklist(worklist, true);
+			worklistViewHandlerAction.addWorklist(worklist, true, true);
 		}
 	}
 

@@ -157,7 +157,7 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void initBeanForPrinting(Task task) {
-		
+
 		DocumentTemplate[] subSelect = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
 				DocumentType.U_REPORT, DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
@@ -208,8 +208,8 @@ public class PrintDialog extends AbstractDialog {
 
 		// only one adress so set as chosen
 		if (getSelectedCouncil().getCouncilPhysician() != null) {
-			ContactSelector chosser = new ContactSelector(task,
-					getSelectedCouncil().getCouncilPhysician().getPerson(), ContactRole.CASE_CONFERENCE);
+			ContactSelector chosser = new ContactSelector(task, getSelectedCouncil().getCouncilPhysician().getPerson(),
+					ContactRole.CASE_CONFERENCE);
 			chosser.setSelected(true);
 			// setting patient
 			getContactList().add(chosser);
@@ -428,9 +428,9 @@ public class PrintDialog extends AbstractDialog {
 	}
 
 	public void onChangePrintTemplate(boolean force) {
-		
+
 		getSelectedTemplate().initData(getTask());
-		
+
 		if (autoRefresh || force) {
 			setPdfContainer(generatePDFFromTemplate());
 			setRenderPdf(getPdfContainer() == null ? false : true);
@@ -522,28 +522,17 @@ public class PrintDialog extends AbstractDialog {
 		for (ContactSelector contactChooser : getContactList()) {
 			if (contactChooser.isSelected()) {
 				// address of the rendered pdf, not rendering twice
-				if (contactChooser == getRenderedContact()) {
-					if (!getSelectedTemplate().isTransientContent())
-						savePdf(getTask(), getPdfContainer());
-
-					for (int i = 0; i < contactChooser.getCopies(); i++) {
-						userHandlerAction.getSelectedPrinter().print(getPdfContainer(),
-								getSelectedTemplate().getAttributes());
-					}
-				} else {
-					// setting other associatedContact then selected
-					ContactSelector tmp = getRenderedContact();
-					setRenderedContact(contactChooser);
-					// render all other pdfs
-					PDFContainer otherAddress = generatePDFFromTemplate();
-					for (int i = 0; i < contactChooser.getCopies(); i++) {
-						userHandlerAction.getSelectedPrinter().print(otherAddress,
-								getSelectedTemplate().getAttributes());
-					}
-					// settings the old selected associatedContact as
-					// selected associatedContact
-					setRenderedContact(tmp);
+				// setting other associatedContact then selected
+				ContactSelector tmp = getRenderedContact();
+				setRenderedContact(contactChooser);
+				// render all other pdfs
+				PDFContainer otherAddress = generatePDFFromTemplate();
+				for (int i = 0; i < contactChooser.getCopies(); i++) {
+					userHandlerAction.getSelectedPrinter().print(otherAddress, getSelectedTemplate().getAttributes());
 				}
+				// settings the old selected associatedContact as
+				// selected associatedContact
+				setRenderedContact(tmp);
 
 				// individual contact, adding to contact list
 				if (contactChooser.getContact().getRole() != ContactRole.NONE) {

@@ -164,7 +164,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 			try {
 				if (getSelectedPatientListItem() != null) {
 					patientService.addPatient(getSelectedPatientListItem().getListItem());
-					worklistViewHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true);
+					worklistViewHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true, true);
 				}
 			} catch (JSONException | CustomDatabaseInconsistentVersionException | CustomExceptionToManyEntries
 					| CustomNullPatientExcepetion e) {

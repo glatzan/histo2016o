@@ -176,7 +176,8 @@
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							actionListener="#{dialogHandlerAction.changeTaskIDDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 							<i class="fa fa-fw fa-cog" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 						</p:commandLink>
 					</h:panelGrid>
 
@@ -245,7 +246,8 @@
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 							<i class="fa fa-fw fa-scissors" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 						</p:commandLink>
 					</h:panelGroup>
 
@@ -264,7 +266,8 @@
 							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'PRIVATE_PHYSICIAN')}"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 							<i class="fa fa-fw fa-eye" />
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 						</p:commandLink>
 
 					</h:panelGroup>
@@ -303,7 +306,7 @@
 
 					<p:remoteCommand
 						actionListener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.name', revision.name)}"
-						name="saveDiagnosisNameChange" update="navigationForm contentForm" />
+						name="saveDiagnosisNameChange" update="contentForm" />
 
 				</h:panelGroup>
 
@@ -571,8 +574,9 @@
 				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-					update="navigationForm contentForm headerForm" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 		</h:panelGrid>
 	</p:panel>

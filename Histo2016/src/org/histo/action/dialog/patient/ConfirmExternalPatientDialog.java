@@ -59,7 +59,7 @@ public class ConfirmExternalPatientDialog extends AbstractDialog {
 			// creating patient
 			patientService.createExternalPatient(patient);
 			// adding to worklist
-			worklistViewHandlerAction.addPatientToWorkList(getPatient(), true);
+			worklistViewHandlerAction.addPatientToWorkList(getPatient(), true, true);
 			
 			setConfirmed(true);
 		} catch (CustomDatabaseInconsistentVersionException e) {

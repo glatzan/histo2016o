@@ -154,7 +154,8 @@
 						icon="fa fa-fw fa-plus-circle" process="@this"
 						partialSubmit="true"
 						actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean(true)}">
-						<p:ajax event="dialogReturn" oncomplete="addPhysicianOnDialogReturn()" update="@form" />
+						<p:ajax event="dialogReturn"
+							oncomplete="addPhysicianOnDialogReturn()" update="@form" />
 					</p:commandButton>
 					<p:remoteCommand name="addPhysicianOnDialogReturn">
 						<f:actionListener

@@ -53,7 +53,8 @@
 					<p:commandLink
 						rendered="#{globalEditViewHandler.selectedPatient.externalPatient}"
 						actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
-						<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+						<p:ajax event="dialogReturn"
+							update="navigationForm:patientList  contentForm" />
 						<i class="fa fa-wrench"></i>
 					</p:commandLink>
 				</h:panelGroup>
@@ -100,7 +101,8 @@
 			selection="#{globalEditViewHandler.selectedTask}" rowKey="#{task.id}">
 
 			<p:ajax event="rowSelect"
-				update=":contentForm, :headerForm, :navigationForm"
+				oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
+				update="contentForm headerForm navigationForm:patientList"
 				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(globalEditViewHandler.selectedTask)}" />
 
 			<p:column headerText="#{msg['body.worklist.patient.tasks']}">
@@ -193,7 +195,8 @@
 							rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_NEW')}"
 							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 							<p:ajax event="dialogReturn"
-								update="navigationForm contentForm headerForm"
+								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
+								update="navigationForm:patientList contentForm headerForm"
 								listener="#{mainHandlerAction.processQueues()}" />
 							<i class="fa fa-plus" />
 						</p:commandLink>
@@ -202,7 +205,9 @@
 				<p:commandLink
 					rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_DELETE', 'TASK_EDIT_DELETE_EDITED')}"
 					actionListener="#{dialogHandlerAction.deleteTaskDialog.initAndPrepareBean(task)}">
-					<p:ajax event="dialogReturn" update="navigationForm contentForm"
+					<p:ajax event="dialogReturn"
+						oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
+						update="navigationForm:patientList contentForm"
 						listener="#{mainHandlerAction.processQueues()}" />
 					<i class="fa fa-times-circle" />
 				</p:commandLink>
@@ -253,7 +258,7 @@
 						<p:commandLink id="upload"
 							rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
 							actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
-							<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+							<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
 							<i class="fa fa-plus"></i>
 						</p:commandLink>
 					</h:panelGrid>
@@ -261,7 +266,7 @@
 				<p:commandLink
 					rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
 					actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
-					<p:ajax event="dialogReturn" update="navigationForm contentForm" />
+					<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
 					<i class="fa fa-search"></i>
 				</p:commandLink>
 			</p:column>

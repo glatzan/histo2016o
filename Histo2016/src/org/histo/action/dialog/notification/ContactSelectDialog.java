@@ -171,7 +171,7 @@ public class ContactSelectDialog extends AbstractDialog {
 			contactDAO.updateNotificationsOnRoleChange(task, associatedContact);
 			
 			
-			physicianDAO.incrementPhysicianPriorityCounter(1);
+//			physicianDAO.incrementPhysicianPriorityCounter(1);
 
 		} catch (IllegalArgumentException e) {
 			// todo error message

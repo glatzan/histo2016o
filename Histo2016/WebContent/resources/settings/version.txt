@@ -36,15 +36,14 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
+-> person hinzufügen warnen, dass schon hinzugefügt ist
+-> organizsation so verändern wie user + group dialog
 
--> laden sehr großer arbeitslisten geht nicht, auch beim schnellklicken von normalen listen
--> personen maske für externe Personen überarbeiten geht zurzeit nicht
 
 -> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 -> vortschritt im sende dialog
 -> aus liste entfernen ohne konsquenz
 -> task_old_archived_date, task_old_archived
--> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
 -> Druck erfassungs dialog
 
@@ -59,6 +58,9 @@ Next Changes:
 -> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
 
 -> Ärzte aus klinikbakcend übernehmen
+
+-> Task archivieren nur wenn befunder angegeben ist 
+-> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
 Testen:
 -> Test piz range from 6-8 (geht nicht)
@@ -82,7 +84,6 @@ TODO: Versionfehler beim �ffnen von dialogen handeln
 TODO: object f�r Arbeitsliste muss kopiert werden, wird momentan sofort �bernommen
 TODO: Archivieren + Dearchivieren
 TODO: Konsil listenabfragen statisch, zur geschwindikeitsverbesserung
-TODO: organizsation so verändern wie user + group dialog
 TODO: loggin �berarbeiten, methoden in generica dat shiften
 TODO: log in settings rework
 TODO: Individelle Adressen beim drucken sollten aus personen gespeichert werden?
@@ -101,6 +102,15 @@ Graphic Changes
 * = change
 + = added
 - = removed
+
++v 1.2.7 (17.01.2017)
++++*: Der Ausgewählte Patient/Auftrag in der Arbeitsliste wird jetzt immer sichtbar angezeigt.
+
++v 1.2.6 (17.01.2017)
++++!: Laden von Listen sobald ein andere View als die Auftragsliste angezeigt wird, geht wieder.
++++!: Beim hinzufügen von Fällen aus der Auftragsliste wird, wenn der Auftrag in der Arbeitsliste vorhanden ist, der Fall ausgewählt (wenn nicht vorhanden hinzugefügt und ausgewählt) und dann mit dem zweiten Klick wird der Auftrag erst angezeigt. 
++++!: Temporärer Fix beim Ausdrucken von Briefen (bis neue Druckfunktion fertig). Adressen werden wieder korrekt angezeigt.
++++!: PDF Vorlage für interne Briefe erzeugt bei langen Diangosen jetzt an der richtigen Stelle einen Seitenumbruch.
 
 +v 1.2.5 (16.01.2017)
 +++!: Email-Templates werden wieder korrekt eingelesen.
