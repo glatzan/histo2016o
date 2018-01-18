@@ -10,10 +10,12 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerRepository;
+import org.atmosphere.util.StringEscapeUtils;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
@@ -99,7 +101,12 @@ public class MainHandlerAction {
 			// eventBus.publish("/chat", "hallo wie gehts");
 
 			sendGrowlMessages("error", "test", FacesMessage.SEVERITY_ERROR);
-			eventBus.publish("/chat", "update:growl");
+			try {
+				eventBus.publish("/chat",  new FacesMessage(StringEscapeUtils.escapeJava("test")));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

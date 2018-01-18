@@ -1,5 +1,6 @@
 package org.histo.config;
 
+import javax.faces.application.FacesMessage;
 
 import org.primefaces.push.EventBus;
 import org.primefaces.push.RemoteEndpoint;
@@ -21,8 +22,7 @@ public class PushHelper {
 	}
 
 	@OnMessage(encoders = { JSONEncoder.class })
-	public String onMessage(String message) {
-		System.out.println(message);
+	public FacesMessage onMessage(FacesMessage message) {
 		return message;
 	}
 }

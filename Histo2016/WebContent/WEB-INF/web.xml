@@ -112,11 +112,7 @@
 			<param-name>org.atmosphere.cpr.broadcasterCacheClass</param-name>
 			<param-value>org.atmosphere.cache.UUIDBroadcasterCache</param-value>
 		</init-param>
-		<init-param>
-			<param-name>org.atmosphere.annotation.packages</param-name>
-			<param-value>org.primefaces.push</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
+			<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>

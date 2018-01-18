@@ -66,12 +66,12 @@
 			<ui:include src="template/idleMonitor.xhtml" />
 
 			<h:form id="wasgeht">
-				<p:socket onMessage="handleMessage" channel="/chat" o
-					autoConnect="true" widgetVar="notifySocket" />
+				<p:socket onMessage="handleMessage" channel="/chat"
+					/>
 
 				<script type="text/javascript">
 					function handleMessage(data) {
-						updateDr();
+						//updateDr();
 						//var chatContent = $(PrimeFaces.escapeClientId('form:chat'));
 						//chatContent.append(data + '&lt;br />');
 						//chatContent.scrollTop(chatContent.height());
@@ -79,13 +79,13 @@
 				</script>
 
 				<script>
-					//$(document).ready(function() {
+				//	$(document).ready(function() {
 					//	PF('notifySocket').connect();
-					//});
+				//	});
 				</script>
 
 				<p:remoteCommand update="@form" name="updateDr"
-					oncomplete="alert('tut')"></p:remoteCommand>
+					oncomplete=""></p:remoteCommand>
 			</h:form>
 
 		</ui:define>
