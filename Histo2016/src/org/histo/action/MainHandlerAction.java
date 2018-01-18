@@ -21,6 +21,10 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
+import org.primefaces.push.EventBus;
+import org.primefaces.push.EventBusFactory;
+import org.primefaces.push.PushContext;
+import org.primefaces.push.PushContextFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -86,6 +90,19 @@ public class MainHandlerAction {
 	 * Session
 	 ********************************************************/
 
+	public void test() {
+		EventBus eventBus = EventBusFactory.getDefault().eventBus();
+		System.out.println(eventBus);
+
+		if (eventBus != null) {
+			System.out.println("sending");
+			// eventBus.publish("/chat", "hallo wie gehts");
+
+			sendGrowlMessages("error", "test", FacesMessage.SEVERITY_ERROR);
+			eventBus.publish("/chat", "update:growl");
+		}
+	}
+
 	public void processQueues() {
 		showQueueGrowlMessage();
 	}
@@ -109,8 +126,9 @@ public class MainHandlerAction {
 		if (!getQueueGrowlMessages().isEmpty()) {
 			logger.debug("Growl update");
 			getQueueGrowlMessages().clear();
-			RequestContext.getCurrentInstance().update("growlForm:globalgrowl");
+			// RequestContext.getCurrentInstance().update("growlForm:globalgrowl");
 		}
+
 	}
 
 	public void addQueueGrowlMessageAsResource(CustomUserNotificationExcepetion e) {

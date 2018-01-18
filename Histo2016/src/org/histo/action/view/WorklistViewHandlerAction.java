@@ -204,7 +204,7 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void goToSelectPatient(Patient patient) {
-		onSelectPatient(patient, true);
+		goToSelectPatient(patient, true);
 	}
 
 	public void goToSelectPatient(Patient patient, boolean reload) {

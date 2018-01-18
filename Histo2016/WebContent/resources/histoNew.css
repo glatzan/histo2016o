@@ -521,7 +521,7 @@ body {
 
 /* scrollpanel style */
 .patientNavigationScroll {
-	height: calc(100vh - 60px);
+	height: calc(100vh - 65px);
 	border-left: none !important;
 	border-top: none !important;
 	border-bottom: none !important;

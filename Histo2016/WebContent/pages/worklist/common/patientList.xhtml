@@ -142,7 +142,7 @@
 			rowKey="#{patient.id}" styleClass="patientNavigationTable">
 
 			<p:ajax event="rowSelect"
-				update=":navigationForm:patientList :contentForm :headerForm"
+				update="navigationForm:patientList contentForm headerForm"
 				listener="#{worklistViewHandlerAction.goToSelectPatient(globalEditViewHandler.selectedPatient)}" />
 
 			<p:column>
