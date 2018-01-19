@@ -1,6 +1,7 @@
 package org.histo.action;
 
 import java.io.IOException;
+import java.net.URL;
 // TODO urgent: status und info dialog
 // TODO check patient fetch from jason form clinik -> zu viele patienten
 import java.util.ArrayList;
@@ -16,11 +17,20 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerRepository;
 import org.atmosphere.util.StringEscapeUtils;
+import org.cups4j.CupsClient;
+import org.cups4j.CupsPrinter;
+import org.cups4j.PrintJob;
+import org.cups4j.PrintRequestResult;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
+import org.histo.model.patient.Patient;
+import org.histo.model.patient.Slide;
+import org.histo.model.patient.Task;
+import org.histo.template.DocumentTemplate;
+import org.histo.template.documents.TemplateSlideLable;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.primefaces.push.EventBus;
@@ -102,12 +112,32 @@ public class MainHandlerAction {
 
 			sendGrowlMessages("error", "test", FacesMessage.SEVERITY_ERROR);
 			try {
-				eventBus.publish("/chat",  new FacesMessage(StringEscapeUtils.escapeJava("test")));
+				eventBus.publish("/chat", new FacesMessage(StringEscapeUtils.escapeJava("test")));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void testPrint() {
+		CupsClient cupsClient;
+		try {
+			cupsClient = new CupsClient("10.210.21.254/printers/", 631);
+			URL url = new URL("AUG-HISTO-Etiketten2");
+			CupsPrinter cupsPrinter = cupsClient.getPrinter(url);
+			HashMap<String, String> map = new HashMap<>();
+			map.put("document-format", "application/vnd.cups-raw");
+			TemplateSlideLable t = (TemplateSlideLable) DocumentTemplate.getTemplateByID(150);
+			t.initData(new Task(new Patient()), new Slide(), new Date());
+
+			PrintJob printJob = new PrintJob.Builder(t.getFileContent().getBytes()).attributes(map).build();
+			PrintRequestResult printRequestResult = cupsPrinter.print(printJob);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	public void processQueues() {

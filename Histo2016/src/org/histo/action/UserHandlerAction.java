@@ -166,22 +166,18 @@ public class UserHandlerAction implements Serializable {
 
 	public void updateSelectedPrinters() {
 
-		if (getCurrentUser().getSettings().getPreferedPrinter() == null
+		if (getCurrentUser().getSettings().getPreferedPrinterJson() == null
 				|| globalSettings.getProgramSettings().isOffline()) {
 			// dummy printer is always there
 			setSelectedPrinter(globalSettings.getPrinterList().get(0));
-			getCurrentUser().getSettings().setPreferedPrinter(getSelectedPrinter().getName());
+			getCurrentUser().getSettings().setPreferedPrinterJson(getSelectedPrinter());
 		} else {
+			// updating the current printer, if no printer was selected the dummy printer
+			// will be set.
 			ClinicPrinter printer = globalSettings
-					.getPrinterByName(getCurrentUser().getSettings().getPreferedPrinter());
-			// if printer was found set it
-			if (printer != null) {
-				logger.debug("Settings printer " + printer.getName() + " as selected printer");
-				setSelectedPrinter(printer);
-			} else {
-				// TODO search for printer in the same room
-				setSelectedPrinter(globalSettings.getPrinterList().get(0));
-			}
+					.isPrinterValid(getCurrentUser().getSettings().getPreferedPrinterJson());
+			setSelectedPrinter(printer);
+			getCurrentUser().getSettings().setPreferedPrinterJson(printer);
 		}
 
 		if (getCurrentUser().getSettings().getPreferedLabelPritner() == null) {

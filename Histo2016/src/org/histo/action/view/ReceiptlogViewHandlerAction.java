@@ -183,8 +183,6 @@ public class ReceiptlogViewHandlerAction {
 
 				TemplateSlideLable printTemplate = (TemplateSlideLable) arr[0];
 
-				printTemplate.prepareTemplate();
-
 				logger.debug("Printing labes for selected slides");
 
 				List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();

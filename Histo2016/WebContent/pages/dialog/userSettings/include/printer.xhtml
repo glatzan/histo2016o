@@ -34,12 +34,15 @@
 					style="width:80% !important;"
 					disabled="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}"
 					panelStyleClass="customSerachSelectMenuPanel"
-					value="#{userHandlerAction.currentUser.settings.preferedPrinter}"
-					filter="true" filterMatchMode="contains">
+					value="#{userHandlerAction.currentUser.settings.preferedPrinterJson}"
+					converter="#{globalSettings.printerListTransformer}" filter="true"
+					filterMatchMode="contains">
 
 					<f:selectItems value="#{globalSettings.printerList}" var="printer"
-						itemLabel="#{printer.name}" itemValue="#{printer.name}" />
+						itemLabel="#{printer.name}" itemValue="#{printer}" />
 
+					<p:ajax event="change"
+						listener="#{userHandlerAction.updateSelectedPrinters()}"></p:ajax>
 				</p:selectOneMenu>
 
 				<!-- testprint -->
@@ -100,14 +103,14 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
-				<p:commandButton value="#{msg['general.save']}"
+				<p:commandButton value="#{msg['general.save']}" update="@form"
 					icon="fa fa-check-circle-o">
 					<f:actionListener
 						binding="#{userSettingsDialog.saveUserSettings()}" />
 					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
 				</p:commandButton>
 
-				<p:commandButton value="#{msg['general.close']}"
+				<p:commandButton value="#{msg['general.close']}" immediate="true"
 					icon="fa fa-times-circle">
 					<f:actionListener
 						binding="#{userSettingsDialog.resetUserSettings()}" />

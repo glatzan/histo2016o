@@ -15,6 +15,7 @@ import org.histo.adaptors.LdapHandler;
 import org.histo.adaptors.MailHandler;
 import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.adaptors.printer.ClinicPrinterDummy;
+import org.histo.adaptors.printer.CupsPrinterLoader;
 import org.histo.adaptors.printer.LabelPrinter;
 import org.histo.model.transitory.settings.DefaultDocuments;
 import org.histo.model.transitory.settings.DefaultNotificationSettings;
@@ -69,7 +70,7 @@ public class GlobalSettings {
 	 * List of default documents
 	 */
 	private DefaultDocuments defaultDocuments;
-	
+
 	/**
 	 * Printer settings
 	 */
@@ -130,7 +131,6 @@ public class GlobalSettings {
 	 */
 	private VersionContainer versionContainer;
 
-	
 	@PostConstruct
 	public void initBean() {
 		Gson gson = new Gson();
@@ -148,10 +148,10 @@ public class GlobalSettings {
 		faxHandler = gson.fromJson(o.get(SETTINGS_FAX), FaxHandler.class);
 
 		printerSettings = gson.fromJson(o.get(SETTINGS_CUPS_SERVER), PrinterSettings.class);
-		
+
 		defaultDocuments = gson.fromJson(o.get(SETTINGS_DEFAULT_DOCUMENTS), DefaultDocuments.class);
-		
-		setPrinterList(loadCupsPrinters(printerSettings));
+
+		setPrinterList(new CupsPrinterLoader().loadCupsPrinters(printerSettings));
 
 		setPrinterListTransformer(new DefaultTransformer<ClinicPrinter>(getPrinterList()));
 
@@ -172,38 +172,23 @@ public class GlobalSettings {
 
 	}
 
-	private List<ClinicPrinter> loadCupsPrinters(PrinterSettings settings) {
-		ArrayList<ClinicPrinter> result = new ArrayList<>();
-		CupsClient cupsClient;
-
-		if (!programSettings.isOffline()) {
-			try {
-				cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
-				List<CupsPrinter> cupsPrinter = cupsClient.getPrinters();
-				int i = 0;
-				// transformin into clinicprinters
-				for (CupsPrinter p : cupsPrinter) {
-					result.add(new ClinicPrinter(i, p, settings));
-					i++;
-				}
-
-			} catch (Exception e) {
-				logger.error("Retriving printers failed" + e);
-			}
+	/**
+	 * Searches the loaded clinical printers for the given printer. If found the
+	 * printer from the global list will be returned. This will prevent problems if
+	 * something has changed.
+	 * 
+	 * If no printer was found the first printer will be returned (DummyPrinter)
+	 * 
+	 * @param clinicPrinter
+	 * @return
+	 */
+	public ClinicPrinter isPrinterValid(ClinicPrinter clinicPrinter) {
+		for (ClinicPrinter printer : getPrinterList()) {
+			if (printer.equals(clinicPrinter))
+				return printer;
 		}
 
-		if (result.size() == 0)
-			result.add(new ClinicPrinterDummy(0));
-
-		return result;
-	}
-
-	public ClinicPrinter getPrinterByName(String name) {
-		for (ClinicPrinter clinicPrinter : getPrinterList()) {
-			if (clinicPrinter.getName().equals(name))
-				return clinicPrinter;
-		}
-		return null;
+		return getPrinterList().get(0);
 	}
 
 	public LabelPrinter getLabelPrinterByID(String id) {

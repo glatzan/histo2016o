@@ -14,9 +14,16 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
 import org.histo.model.PDFContainer;
 import org.histo.model.transitory.settings.PrinterSettings;
+import org.histo.model.transitory.settings.ProgramSettings;
+import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,8 +37,8 @@ public class ClinicPrinter extends AbstractPrinter {
 	public ClinicPrinter() {
 	}
 
-	public ClinicPrinter(int id, CupsPrinter cupsPrinter, PrinterSettings settings) {
-		this.id = id;
+	public ClinicPrinter(CupsPrinter cupsPrinter, PrinterSettings settings) {
+		this.id = cupsPrinter.getName().hashCode();
 		this.address = cupsPrinter.getPrinterURL().toString();
 		this.name = cupsPrinter.getName();
 		this.description = cupsPrinter.getDescription();
@@ -73,7 +80,6 @@ public class ClinicPrinter extends AbstractPrinter {
 
 	public boolean print(PDFContainer container, int count, String args) {
 		logger.debug("Printing xtimes: " + count);
-		System.out.println("-------------- duplexys");
 		int i = 0;
 		boolean result = true;
 		while (i < count) {
@@ -95,11 +101,14 @@ public class ClinicPrinter extends AbstractPrinter {
 					attribute.put("job-attributes", args);
 
 					printJob.setAttributes(attribute);
-					logger.debug("Printig with args: " + args);
+
 				}
+
+				logger.debug("Printig (" + this.getName() + ") with args: " + args);
 
 				printer.print(printJob);
 
+				System.out.println("printing " + getName());
 			} catch (Exception e) {
 				e.printStackTrace();
 				result = false;
@@ -125,9 +134,20 @@ public class ClinicPrinter extends AbstractPrinter {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ClinicPrinter && ((ClinicPrinter) obj).getName().equals(name))
+		if (obj instanceof ClinicPrinter && ((ClinicPrinter) obj).getId() == getId())
 			return true;
 
 		return super.equals(obj);
+	}
+
+	public static String printerToJson(ClinicPrinter clinicPrinter) {
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		return gson.toJson(clinicPrinter);
+
+	}
+
+	public static ClinicPrinter getPrinterFromJson(String json) {
+		Gson gson = new Gson();
+		return gson.fromJson(json, ClinicPrinter.class);
 	}
 }

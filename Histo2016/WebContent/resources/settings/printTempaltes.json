@@ -50,7 +50,7 @@
 	"content" : "classpath:templates/print/Report_Intern_noLogo.tex",
 	"content2" : "",
 	"type"	: "DIAGNOSIS_REPORT",
-	"attributes" : "sides:keyword:one-side",
+	"attributes" : "sides:keyword:one-side#media:keyword:default,tray2",
 	"templateName": "org.histo.template.documents.DiagnosisReport",
 	"defaultOfType" : false,
 	"transientContent" : false,

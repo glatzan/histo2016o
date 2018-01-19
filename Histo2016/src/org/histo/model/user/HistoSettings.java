@@ -22,9 +22,11 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.model.interfaces.HasID;
+import org.histo.util.HistoUtil;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 
 import lombok.Getter;
@@ -187,6 +189,22 @@ public class HistoSettings implements HasID, Cloneable {
 	@Override
 	protected HistoSettings clone() throws CloneNotSupportedException {
 		return (HistoSettings) super.clone();
+	}
+
+	@Transient
+	public ClinicPrinter getPreferedPrinterJson() {
+		if (HistoUtil.isNotNullOrEmpty(getPreferedPrinter()))
+			return ClinicPrinter.getPrinterFromJson(getPreferedPrinter());
+		return null;
+	}
+
+	@Transient
+	public void setPreferedPrinterJson(ClinicPrinter clinicPrinter) {
+		System.out.println("test " + clinicPrinter);
+		if (clinicPrinter == null)
+			setPreferedPrinter(null);
+		else
+			setPreferedPrinter(ClinicPrinter.printerToJson(clinicPrinter));
 	}
 
 }
