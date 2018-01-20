@@ -36,7 +36,7 @@
 	</h:panelGrid>
 
 	<p:outputPanel styleClass="bodyPannel" style="height:25px;"
-		rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}">
+		rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE') and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}">
 		<h:panelGrid styleClass="newStyleListingTable" columns="2"
 			style="width:auto !important">
 			<p:selectBooleanCheckbox
@@ -91,9 +91,9 @@
 
 				<!-- close -->
 				<p:commandButton
-					value="#{msg['dialog.notification.tab.sendReport.button.end']}"
-					title="#{msg['dialog.notification.tab.sendReport.button.end.text']}"
-					icon="fa fa-times-circle">
+					value="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification ? msg['dialog.notification.tab.sendReport.button.temporaray.end'] : msg['dialog.notification.tab.sendReport.button.end']}"
+					title="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification  ? msg['dialog.notification.tab.sendReport.button.temporaray.end.text'] : msg['dialog.notification.tab.sendReport.button.end.text']}"
+					icon="fa #{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification ? 'fa-times-circle' : 'fa-archive'}">
 					<f:actionListener
 						binding="#{dialogHandlerAction.notificationDialog.sendReportTab.endNotification()}" />
 					<f:actionListener

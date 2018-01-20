@@ -9,6 +9,9 @@
 
 	<p:outputPanel styleClass="headerPannel">
 		<h:outputLabel value="#{msg['dialog.notification.tab.send.headline']}" />
+		<h:outputLabel
+			rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}"
+			value=" (#{msg['dialog.notification.tab.send.headline.temporaray']})"></h:outputLabel>
 	</p:outputPanel>
 
 	<p:outputPanel styleClass="	bodyPannelScroll"
@@ -45,7 +48,7 @@
 					<!-- Warning -->
 					<ui:fragment rendered="#{emailHolder.warning}">
 						<i class="fa fa-fw fa-exclamation-circle icon-orange"
-							title="#{emailHolder.warningInfo}" />
+							title="#{msg[emailHolder.warningInfo]}" />
 					</ui:fragment>
 				</p:column>
 
@@ -72,11 +75,16 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.faxTab.containerList.use}" />
+					rendered="#{dialogHandlerAction.notificationDialog.faxTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+
+				<!-- not performed temporary notification -->
+				<h:outputText styleClass="icon-orange"
+					value="#{msg['dialog.notification.tab.send.notPerformed']}"
+					rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 
 			</h:panelGroup>
 
@@ -92,7 +100,7 @@
 					<!-- Warning -->
 					<ui:fragment rendered="#{faxHolder.warning}">
 						<i class="fa fa-fw fa-exclamation-circle icon-orange"
-							title="#{faxHolder.warningInfo}" />
+							title="#{msg[faxHolder.warningInfo]}" />
 					</ui:fragment>
 
 				</p:column>
@@ -122,12 +130,17 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.letterTab.containerList.use}" />
+					rendered="#{dialogHandlerAction.notificationDialog.letterTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 
+				<!-- not performed temporary notification -->
+				<h:outputText styleClass="icon-orange"
+					value="#{msg['dialog.notification.tab.send.notPerformed']}"
+					rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 			</h:panelGroup>
 
 			<p:dataTable var="letterHolder"
@@ -141,7 +154,7 @@
 					<!-- Warning -->
 					<ui:fragment rendered="#{letterHolder.warning}">
 						<i class="fa fa-fw fa-exclamation-circle icon-orange"
-							title="#{letterHolder.warningInfo}" />
+							title="#{msg[letterHolder.warningInfo]}" />
 					</ui:fragment>
 
 				</p:column>
@@ -169,12 +182,17 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use}" />
+					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+				
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.containerList.use}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 
+				<!-- not performed temporary notification -->
+				<h:outputText styleClass="icon-orange"
+					value="#{msg['dialog.notification.tab.send.notPerformed']}"
+					rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 			</h:panelGroup>
 
 			<p:dataTable var="phoneHolder"
@@ -188,7 +206,7 @@
 					<!-- Warning -->
 					<ui:fragment rendered="#{phoneHolder.warning}">
 						<i class="fa fa-fw fa-exclamation-circle icon-orange"
-							title="#{phoneHolder.warningInfo}" />
+							title="#{msg[phoneHolder.warningInfo]}" />
 					</ui:fragment>
 				</p:column>
 			</p:dataTable>

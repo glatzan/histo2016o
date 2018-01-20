@@ -15,6 +15,7 @@
 
 
 	<p:outputPanel styleClass="bodyPannel">
+
 		<h:panelGrid columns="2" styleClass="newStyleListingTable"
 			style="width:100%" columnClasses="columnLabelContainer150, ">
 
@@ -31,6 +32,7 @@
 			<h:outputLabel styleClass="bigFont"
 				value="#{msg['dialog.notification.tab.general.additionalPrints.tempalte']}" />
 			<p:selectOneMenu
+				disabled="#{!dialogHandlerAction.notificationDialog.generalTab.containerList.use}"
 				value="#{dialogHandlerAction.notificationDialog.generalTab.containerList.defaultReport}"
 				converter="#{dialogHandlerAction.notificationDialog.generalTab.templateTransformer}"
 				styleClass="customSerachSelectMenu">
@@ -51,15 +53,25 @@
 				value="#{msg['dialog.notification.tab.general.additionalPrints.count']} "
 				title="#{msg['dialog.notification.tab.send.count']}" />
 			<p:spinner
+				disabled="#{!dialogHandlerAction.notificationDialog.generalTab.containerList.use}"
 				value="#{dialogHandlerAction.notificationDialog.generalTab.containerList.printCount}"
 				styleClass="oneNumberSpinner" min="0" max="9" />
+		</h:panelGrid>
 
-			<h:outputLabel value=" " />
-			<h:outputLabel value=" " />
+		<!-- Separator -->
+		<h:panelGrid columns="1"
+			styleClass="newStyleListingTable newStyleListingTableSeparator">
+			<p:separator style="width:100%; margin-top:40px;" />
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.general.notification']}" />
+		</h:panelGrid>
+
+		<h:panelGrid columns="2" styleClass="newStyleListingTable"
+			style="width:100%" columnClasses="columnLabelContainer150, ">
 
 			<!-- Diagnosis -->
 			<h:outputLabel styleClass="bigFont"
-				value="#{msg['dialog.notification.tab.general.notification']}" />
+				value="#{msg['dialog.notification.tab.general.notification.select']}" />
 
 			<p:panelGrid styleClass="notificationDialog_DiagosisTable"
 				id="dignosisScrollTable">

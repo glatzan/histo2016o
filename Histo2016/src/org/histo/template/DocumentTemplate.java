@@ -45,7 +45,7 @@ public class DocumentTemplate extends Template {
 	 * Patient
 	 */
 	protected Patient patient;
-	
+
 	/**
 	 * Task
 	 */
@@ -66,7 +66,7 @@ public class DocumentTemplate extends Template {
 	 * If true the template should be printed in duplex mode
 	 */
 	protected boolean printDuplex = false;
-	
+
 	/**
 	 * Is called if afterPDFCreationHook is set and the pdf was created.
 	 * 
@@ -81,7 +81,7 @@ public class DocumentTemplate extends Template {
 		this.patient = task.getPatient();
 		this.task = task;
 	}
-	
+
 	public void fillTemplate(PDFGenerator generator) {
 
 	}
@@ -121,8 +121,7 @@ public class DocumentTemplate extends Template {
 		return getTemplateByID(loadTemplates(), id);
 	}
 
-	public static <T extends DocumentTemplate> T getTemplateByID(List<DocumentTemplate> templates,
-			long id) {
+	public static <T extends DocumentTemplate> T getTemplateByID(List<DocumentTemplate> templates, long id) {
 
 		logger.debug("Getting templates out of " + templates.size());
 
@@ -150,6 +149,7 @@ public class DocumentTemplate extends Template {
 
 		List<DocumentTemplate> result = new ArrayList<DocumentTemplate>();
 
+		// if templates should be constrained
 		if (types != null && types.length > 0) {
 			for (DocumentTemplate documentTemplate : jsonArray) {
 				for (DocumentType documentType : types) {
@@ -158,7 +158,9 @@ public class DocumentTemplate extends Template {
 					}
 				}
 			}
-		}
+		} else
+			// returning all templates
+			result = jsonArray;
 
 		return result;
 	}

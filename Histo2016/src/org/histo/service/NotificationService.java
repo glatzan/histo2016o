@@ -8,6 +8,7 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PdfDAO;
@@ -15,7 +16,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
-import org.histo.template.documents.TemplateSendReport;
+import org.histo.template.documents.SendReport;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.util.notification.FaxExecutor;
 import org.histo.util.notification.MailContainer;
@@ -76,6 +77,11 @@ public class NotificationService {
 	@Setter(AccessLevel.NONE)
 	private UserHandlerAction userHandlerAction;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ContactDAO contactDAO;
+
 	private static Logger logger = Logger.getLogger("org.histo");
 
 	public void startNotificationPhase(Task task) {
@@ -120,14 +126,20 @@ public class NotificationService {
 
 	public boolean executeNotification(NotificationFeedback feedback, Task task, MailContainerList mailContainerList,
 			NotificationContainerList faxContainerList, NotificationContainerList letterContainerList,
-			NotificationContainerList phoneContainerList, NotificationContainerList printContainerList) {
+			NotificationContainerList phoneContainerList, NotificationContainerList printContainerList,
+			boolean temporaryNotification) {
 
-		boolean emailSendSuccessful = executeMailNotification(feedback, task, mailContainerList);
-		boolean faxSendSuccessful = executeFaxNotification(feedback, task, faxContainerList);
-		boolean letterSendSuccessful = executeLetterNotification(feedback, task, letterContainerList);
+		boolean emailSendSuccessful = executeMailNotification(feedback, task, mailContainerList, temporaryNotification);
+		boolean faxSendSuccessful = true;
+		boolean letterSendSuccessful = true;
 
-		// addition templates
-		if (printContainerList.getDefaultReport() != null) {
+		if (!temporaryNotification) {
+			faxSendSuccessful = executeFaxNotification(feedback, task, faxContainerList);
+			letterSendSuccessful = executeLetterNotification(feedback, task, letterContainerList);
+		}
+
+		if (printContainerList.isUse() && printContainerList.getDefaultReport() != null) {
+			// addition templates
 			((DiagnosisReport) printContainerList.getDefaultReport()).initData(task, "");
 			PDFContainer report = (new PDFGenerator())
 					.getPDF(((DiagnosisReport) printContainerList.getDefaultReport()));
@@ -140,7 +152,7 @@ public class NotificationService {
 		feedback.progressStep();
 
 		PDFContainer sendReport = generateSendReport(feedback, task, mailContainerList, faxContainerList,
-				letterContainerList, phoneContainerList, new Date());
+				letterContainerList, phoneContainerList, new Date(), temporaryNotification);
 
 		genericDAO.savePatientData(task, "log.patient.task.notification.send");
 
@@ -150,7 +162,7 @@ public class NotificationService {
 	}
 
 	public boolean executeMailNotification(NotificationFeedback feedback, Task task,
-			MailContainerList mailContainerList) {
+			MailContainerList mailContainerList, boolean temporaryNotification) {
 		// pdf container if no individual address is needed successful
 
 		boolean success = true;
@@ -170,8 +182,9 @@ public class NotificationService {
 				// setting mail
 				((MailContainer) container).setMail((DiagnosisReportMail) mailContainerList.getSelectedMail().clone());
 
-				container.setPdf(mailExecutor.getPDF((MailContainer) container, task,
-						mailContainerList.getDefaultReport(), mailContainerList.isIndividualAddresses()));
+				container.setPdf(
+						mailExecutor.getPDF((MailContainer) container, task, mailContainerList.getDefaultReport(),
+								mailContainerList.getSelectedRevisions(), mailContainerList.isIndividualAddresses()));
 
 				if (!mailExecutor.performNotification((MailContainer) container, true, false))
 					throw new IllegalArgumentException("dialog.notification.sendProcess.mail.error.failed");
@@ -187,6 +200,11 @@ public class NotificationService {
 						resourceBundle.get(e.getMessage(), container.getContactAddress()));
 				logger.debug("Sending failed" + container.getNotification().getCommentary());
 			}
+
+			// renew if temporary notification
+			if (temporaryNotification)
+				contactDAO.renewNotification(task, container.getContact(), container.getNotification());
+
 			feedback.progressStep();
 		}
 
@@ -210,7 +228,7 @@ public class NotificationService {
 					throw new IllegalArgumentException("dialog.notification.sendProcess.fax.error.numberNotValid");
 
 				container.setPdf(faxExecutor.getPDF(container, task, faxContainerList.getDefaultReport(),
-						faxContainerList.isIndividualAddresses()));
+						faxContainerList.getSelectedRevisions(), faxContainerList.isIndividualAddresses()));
 
 				if (!faxExecutor.performNotification(container, faxContainerList.isSend(), faxContainerList.isPrint()))
 					throw new IllegalArgumentException("dialog.notification.sendProcess.fax.error.failed");
@@ -248,7 +266,7 @@ public class NotificationService {
 					throw new IllegalArgumentException("");
 
 				container.setPdf(notificationExecutor.getPDF(container, task, letterContainerList.getDefaultReport(),
-						letterContainerList.isIndividualAddresses()));
+						letterContainerList.getSelectedRevisions(), letterContainerList.isIndividualAddresses()));
 
 				if (!notificationExecutor.performNotification(container, false, letterContainerList.isPrint()))
 					throw new IllegalArgumentException("dialog.notification.sendProcess.pdf.error.failed");
@@ -282,15 +300,15 @@ public class NotificationService {
 	public PDFContainer generateSendReport(NotificationFeedback feedback, Task task,
 			MailContainerList mailContainerList, NotificationContainerList faxContainerList,
 			NotificationContainerList letterContainerList, NotificationContainerList phoneContaienrList,
-			Date notificationDate) {
+			Date notificationDate, boolean temporarayNotification) {
 
 		feedback.setFeedback("log.notification.pdf.sendReport.generation");
 
-		TemplateSendReport sendReport = DocumentTemplate
+		SendReport sendReport = DocumentTemplate
 				.getTemplateByID(globalSettings.getDefaultDocuments().getNotificationSendReport());
 
 		sendReport.initializeTempalte(task, mailContainerList, faxContainerList, letterContainerList,
-				phoneContaienrList, notificationDate);
+				phoneContaienrList, notificationDate, temporarayNotification);
 
 		PDFContainer container = (new PDFGenerator()).getPDF(sendReport);
 

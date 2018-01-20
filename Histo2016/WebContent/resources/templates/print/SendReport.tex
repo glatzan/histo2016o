@@ -39,9 +39,6 @@
 \setcounter{secnumdepth}{0}
 
 
-
-
-
 \begin{document}
 %\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
 %\ThisCenterWallPaper{1}{background.pdf}
@@ -73,7 +70,7 @@ $!patient.piz\\
 
 
 \noindent\makebox[\linewidth]{\rule{\linewidth}{0.4pt}}\\\\
-{\huge Sendebericht, vom $date.format('HH:mm dd.MM.yyyy', $reportDate)} \\\\
+{\huge #if($temporarayNotification) Vorläufiger Sendebericht #else Sendebericht #end, vom $date.format('HH:mm dd.MM.yyyy', $reportDate)} \\\\
 {\normalsize \fs Email-Benachrichtigung\\
 	\begin{tabular}[t]{p{0.8\linewidth}p{0.2\linewidth}}
 	#if($useMail)

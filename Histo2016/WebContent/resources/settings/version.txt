@@ -113,6 +113,14 @@ Graphic Changes
 * = change
 + = added
 - = removed
++v 1.3 (xx.01.2017)
+
+SQL:
+/* Columns for renew*/
+alter table associatedcontactnotification add renewed boolean;
+alter table associatedcontactnotification_aud add renewed boolean;
+update associatedcontactnotification set renewed = false;
+update associatedcontactnotification_aud set renewed = false;
 
 +v 1.2.4 (12.01.2017)
 +++!: Listen Sortierung (Auf oder Absteigend) wird korrekt übernommen.

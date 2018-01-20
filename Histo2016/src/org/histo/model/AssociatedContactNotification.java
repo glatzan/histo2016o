@@ -50,6 +50,9 @@ public class AssociatedContactNotification implements HasID {
 
 	@Column
 	private boolean failed;
+	
+	@Column
+	private boolean renewed;
 
 	@Column(columnDefinition = "VARCHAR")
 	private String commentary;

@@ -16,7 +16,7 @@ import org.histo.util.notification.NotificationContainer;
 import org.histo.util.notification.NotificationContainerList;
 import org.histo.util.pdf.PDFGenerator;
 
-public class TemplateSendReport extends DocumentTemplate {
+public class SendReport extends DocumentTemplate {
 
 	private MailContainerList mailContainerList;
 	private NotificationContainerList faxContainerList;
@@ -24,10 +24,12 @@ public class TemplateSendReport extends DocumentTemplate {
 	private NotificationContainerList phoneContainerList;
 
 	private Date dateOfReport;
+	
+	private boolean temporarayNotification;
 
 	public void initializeTempalte(Task task, MailContainerList mailContainerList,
 			NotificationContainerList faxContainerList, NotificationContainerList letterContainerList,
-			NotificationContainerList phoneContaienrList, Date dateOfReport) {
+			NotificationContainerList phoneContaienrList, Date dateOfReport, boolean temporarayNotification) {
 
 		this.afterPDFCreationHook = true;
 		
@@ -39,11 +41,13 @@ public class TemplateSendReport extends DocumentTemplate {
 		this.phoneContainerList = phoneContaienrList;
 
 		this.dateOfReport = dateOfReport;
+		this.temporarayNotification = temporarayNotification;
 	}
 
 	public void fillTemplate(PDFGenerator generator) {
 		generator.getConverter().replace("patient", patient);
 		generator.getConverter().replace("task", task);
+		generator.getConverter().replace("temporarayNotification", temporarayNotification);
 		generator.getConverter().replace("useMail", mailContainerList.isUse());
 		generator.getConverter().replace("mailHolders", mailContainerList.getContainerToNotify());
 		generator.getConverter().replace("useFax", faxContainerList.isUse());

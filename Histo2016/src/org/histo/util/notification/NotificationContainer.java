@@ -3,6 +3,7 @@ package org.histo.util.notification;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.PDFContainer;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 
 import lombok.Getter;
@@ -71,7 +72,7 @@ public class NotificationContainer {
 	 * correct it) or if first try from contact.
 	 */
 	public void initAddressForNotificationType() {
-		if (!notification.isFailed()) {
+		if (!notification.isFailed() && !notification.isRenewed()) {
 			switch (notification.getNotificationTyp()) {
 			case EMAIL:
 				setContactAddress(contact.getPerson().getContact().getEmail());

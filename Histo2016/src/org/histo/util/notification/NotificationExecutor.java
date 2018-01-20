@@ -9,6 +9,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.model.AssociatedContact;
 import org.histo.model.PDFContainer;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.util.pdf.PDFGenerator;
@@ -71,7 +72,8 @@ public class NotificationExecutor<T extends NotificationContainer> {
 	 * address of the of the container will be generated. Otherwise a generic pdf
 	 * will be returned.
 	 */
-	public PDFContainer getPDF(T container, Task task, DiagnosisReport template, boolean individualAddresses) {
+	public PDFContainer getPDF(T container, Task task, DiagnosisReport template,
+			List<DiagnosisRevision> diagnosisRevisions, boolean individualAddresses) {
 		if (container.getPdf() != null) {
 			// pdf was selected for the individual contact
 			// adding pdf to generated pdf array
@@ -88,7 +90,7 @@ public class NotificationExecutor<T extends NotificationContainer> {
 					logger.debug("Generating generic pdf");
 					// setting feedback
 					feedback.setFeedback("dialog.notification.sendProcess.pdf.generic");
-					template.initData(task, "");
+					template.initData(task, diagnosisRevisions, "");
 					genericPDF = new PDFGenerator().getPDF(template);
 
 					// adding pdf to generated pdf array
@@ -104,7 +106,7 @@ public class NotificationExecutor<T extends NotificationContainer> {
 				logger.debug("Generating pdf for " + reportAddressField);
 				feedback.setFeedback("dialog.notification.sendProcess.pdf.generating",
 						container.getContact().getPerson().getFullName());
-				template.initData(task, reportAddressField);
+				template.initData(task, diagnosisRevisions, reportAddressField);
 				result = new PDFGenerator().getPDF(template);
 
 				logger.debug("Returning individual address");

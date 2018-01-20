@@ -47,7 +47,7 @@ public class ContactDAO extends AbstractDAO {
 			associatedContact.setNotifications(new ArrayList<AssociatedContactNotification>());
 		}
 
-		// do nothing if there is
+		// do nothing if there are some notifications
 		if (associatedContact.getNotifications().size() != 0) {
 			return;
 		}
@@ -190,7 +190,7 @@ public class ContactDAO extends AbstractDAO {
 	 */
 	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp) {
-		return addNotificationType(task, associatedContact, notificationTyp, true, false, false, null, null);
+		return addNotificationType(task, associatedContact, notificationTyp, true, false, false, null, null, false);
 
 	}
 
@@ -208,7 +208,7 @@ public class ContactDAO extends AbstractDAO {
 	 */
 	public AssociatedContactNotification addNotificationType(Task task, AssociatedContact associatedContact,
 			AssociatedContactNotification.NotificationTyp notificationTyp, boolean active, boolean performed,
-			boolean failed, Date dateOfAction, String customAddress) {
+			boolean failed, Date dateOfAction, String customAddress, boolean renewed) {
 		AssociatedContactNotification newNotification = new AssociatedContactNotification();
 		newNotification.setActive(active);
 		newNotification.setPerformed(performed);
@@ -217,6 +217,7 @@ public class ContactDAO extends AbstractDAO {
 		newNotification.setNotificationTyp(notificationTyp);
 		newNotification.setContact(associatedContact);
 		newNotification.setContactAddress(customAddress);
+		newNotification.setRenewed(renewed);
 
 		if (associatedContact.getNotifications() == null)
 			associatedContact.setNotifications(new ArrayList<AssociatedContactNotification>());
@@ -243,7 +244,8 @@ public class ContactDAO extends AbstractDAO {
 		notification.setActive(false);
 		genericDAO.savePatientData(notification, task, "log.patient.task.contact.notification.inactive",
 				notification.getNotificationTyp().toString(), associatedContact.toString());
-		return addNotificationType(task, associatedContact, notification.getNotificationTyp());
+		return addNotificationType(task, associatedContact, notification.getNotificationTyp(), true, false, false, null,
+				notification.getContactAddress(), true);
 	}
 
 	/**

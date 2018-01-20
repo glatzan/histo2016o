@@ -10,6 +10,7 @@ import org.histo.dao.ContactDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.util.StreamUtils;
@@ -76,6 +77,11 @@ public class NotificationContainerList {
 	 */
 	protected NotificationTyp notificationTyp;
 
+	/**
+	 * Selected diagnosis to render in pdf
+	 */
+	protected List<DiagnosisRevision> selectedRevisions;
+	
 	public NotificationContainerList(NotificationTyp notificationTyp) {
 		this.notificationTyp = notificationTyp;
 	}

@@ -30,6 +30,7 @@ import org.histo.model.AssociatedContactNotification;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.PDFContainer;
 import org.histo.model.interfaces.HasDataList;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
 import org.histo.service.NotificationService;
@@ -315,26 +316,45 @@ public class NotificationDialog extends AbstractTabDialog {
 					globalSettings.getDefaultDocuments().getNotificationDefaultPrintDocument()));
 
 			getContainerList().setPrintCount(2);
-			
+
 			setDiagnosisRevisionSelectors(DiagnosisRevisionSelector.factory(task));
-			
-			if(getDiagnosisRevisionSelectors().size() > 0) {
+
+			// no notification was performed set the first as notification diagnosis
+			if (task.getNotificationCompletionDate() == 0 && getDiagnosisRevisionSelectors().size() > 0) {
+				getDiagnosisRevisionSelectors().get(0).setSelected(true);
+
+				// if there is more then one notification and no notification was performed ->
+				// set as temporary notification.
+				if (getDiagnosisRevisionSelectors().size() > 1)
+					setTemporaryNotification(true);
+				else
+					setTemporaryNotification(false);
+
+			} else if (getDiagnosisRevisionSelectors().size() > 0) {
 				// selecting last diagnosis revision
-				getDiagnosisRevisionSelectors().get(getDiagnosisRevisionSelectors().size()-1).setSelected(true);
+				getDiagnosisRevisionSelectors().get(getDiagnosisRevisionSelectors().size() - 1).setSelected(true);
+				setTemporaryNotification(false);
 			}
+
+			getContainerList().setUse(true);
+
+			logger.debug("General Data initialized");
 			return true;
 		}
-		
+
 		public void onTemporaryNotificationChanged() {
-			if(temporaryNotification) {
+			if (temporaryNotification) {
 				faxTab.setDisabled(true);
 				letterTab.setDisabled(true);
 				phoneTab.setDisabled(true);
-			}else {
+			} else {
 				faxTab.setDisabled(false);
 				letterTab.setDisabled(false);
 				phoneTab.setDisabled(false);
 			}
+		}
+
+		public void updateData() {
 		}
 
 	}
@@ -564,9 +584,18 @@ public class NotificationDialog extends AbstractTabDialog {
 				((MailContainerList) mailTab.getContainerList()).getSelectedMail().setSubject(mailTab.getMailSubject());
 				((MailContainerList) mailTab.getContainerList()).getSelectedMail().setBody(mailTab.getMailBody());
 
+				// copy selected diagnoses
+				List<DiagnosisRevision> revisionsToRender = generalTab.getDiagnosisRevisionSelectors().stream()
+						.filter(p -> p.isSelected()).map(p -> p.getDiagnosisRevision()).collect(Collectors.toList());
+
+				generalTab.getContainerList().setSelectedRevisions(revisionsToRender);
+				mailTab.getContainerList().setSelectedRevisions(revisionsToRender);
+				faxTab.getContainerList().setSelectedRevisions(revisionsToRender);
+				letterTab.getContainerList().setSelectedRevisions(revisionsToRender);
+
 				notificationService.executeNotification(this, getTask(), (MailContainerList) mailTab.getContainerList(),
-						faxTab.getContainerList(), getLetterTab().getContainerList(), phoneTab.getContainerList(),
-						this.getContainerList());
+						faxTab.getContainerList(), letterTab.getContainerList(), phoneTab.getContainerList(),
+						generalTab.getContainerList(), generalTab.isTemporaryNotification());
 
 				setProgressPercent(100);
 
@@ -583,6 +612,7 @@ public class NotificationDialog extends AbstractTabDialog {
 			setNotificationRunning(false);
 
 			// updating data, loading sendreports
+			generalTab.setDisabled(true);
 			mailTab.setDisabled(true);
 			faxTab.setDisabled(true);
 			letterTab.setDisabled(true);
@@ -704,13 +734,14 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		public void repeatNotification() {
 			initBean(getTask(), true);
-			onTabChange(mailTab);
+			onTabChange(generalTab);
 		}
 
 		public void endNotification() {
+
 			notificationService.endNotificationPhase(getTask());
 
-			if (archiveTask)
+			if (!generalTab.isTemporaryNotification() && archiveTask)
 				taskService.archiveTask(getTask());
 		}
 
