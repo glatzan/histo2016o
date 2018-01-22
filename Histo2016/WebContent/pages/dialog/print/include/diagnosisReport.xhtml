@@ -36,11 +36,27 @@
 				styleClass="#{(outer.index + 1 ) mod 2 eq 0 ? 'alternate_row_background' : ''}">
 				<!-- select -->
 				<p:column>
-					<p:selectBooleanCheckbox value="#{chooser.selected}">
+					<p:selectBooleanCheckbox value="#{chooser.selected}"
+						rendered="#{!dialogHandlerAction.printDialog.selectedTemplate.updatePdfOnEverySettingChange}">
 						<p:ajax event="change" process="printSettingsTable"
 							listener="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseContact(chooser)}"
 							update="printSettingsTable" />
 					</p:selectBooleanCheckbox>
+
+					<p:selectBooleanCheckbox value="#{chooser.selected}"
+						rendered="#{dialogHandlerAction.printDialog.selectedTemplate.updatePdfOnEverySettingChange}">
+						<p:ajax event="change" process="printSettingsTable"
+							oncomplete="updateContactAndRerenderPDF();alert()"
+							update="printSettingsTable buttonContainerToUpdate" />
+					</p:selectBooleanCheckbox>
+
+					<p:remoteCommand name="updateContactAndRerenderPDF">
+						<f:actionListener
+							binding="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseContact(chooser)}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}" />
+					</p:remoteCommand>
+					
 				</p:column>
 
 				<!-- count -->
@@ -142,7 +158,7 @@
 					<p:selectBooleanCheckbox value="#{revision.selected}">
 						<p:ajax event="change" process="@this"
 							listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
-							update="pollUpdateTable" />
+							update="pollUpdateTable buttonContainerToUpdate" />
 					</p:selectBooleanCheckbox>
 				</p:column>
 				<p:column>

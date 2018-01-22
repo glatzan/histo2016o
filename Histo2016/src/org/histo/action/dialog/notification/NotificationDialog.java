@@ -17,6 +17,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractTabDialog;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.action.view.WorklistViewHandlerAction;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -27,8 +28,10 @@ import org.histo.dao.PdfDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
+import org.histo.model.Contact;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.PDFContainer;
+import org.histo.model.Person;
 import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
@@ -39,6 +42,9 @@ import org.histo.template.DocumentTemplate;
 import org.histo.template.MailTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.mail.DiagnosisReportMail;
+import org.histo.template.ui.documents.DiagnosisReportUi;
+import org.histo.template.ui.documents.DocumentUi;
+import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.selectors.DiagnosisRevisionSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
@@ -203,16 +209,28 @@ public class NotificationDialog extends AbstractTabDialog {
 
 	public void openSelectPDFDialog(Task task, AssociatedContact contact) {
 
-		// DocumentTemplate[] subSelect =
-		// DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
-		// DocumentType.DIAGNOSIS_REPORT_EXTERN);
-		//
-		// dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelect,
-		// subSelect[0],
-		// new AssociatedContact[] { contact }, true);
-		// dialogHandlerAction.getPrintDialog().setSingleAddressSelectMode(true);
-		// dialogHandlerAction.getPrintDialog().setFaxMode(false);
-		// dialogHandlerAction.getPrintDialog().prepareDialog();
+		List<DocumentTemplate> templates = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
+				DocumentType.DIAGNOSIS_REPORT_EXTERN);
+		List<DocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+
+		ArrayList<ContactSelector> selectors = new ArrayList<ContactSelector>();
+
+		selectors.add(new ContactSelector(contact));
+		selectors.add(new ContactSelector(task,
+				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+
+		for (DocumentUi<?> documentUi : subSelectUIs) {
+			((DiagnosisReportUi) documentUi).initialize(task, selectors);
+			((DiagnosisReportUi) documentUi).setSingleSelect(true);
+			((DiagnosisReportUi) documentUi).setSelectedDiagnoses(generalTab.getDiagnosisRevisionSelectors().stream()
+					.filter(p -> p.isSelected()).map(p -> p.getDiagnosisRevision()).collect(Collectors.toList()));
+		}
+
+		selectors.get(0).setSelected(true);
+		
+		dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelectUIs, DocumentType.DIAGNOSIS_REPORT);
+		dialogHandlerAction.getPrintDialog().setFaxMode(false);
+		dialogHandlerAction.getPrintDialog().prepareDialog();
 	}
 
 	public void openMediaViewDialog(PDFContainer container) {

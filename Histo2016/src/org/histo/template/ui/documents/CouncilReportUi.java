@@ -30,12 +30,12 @@ public class CouncilReportUi extends DocumentUi<TemplateCouncil> {
 	private Council selectedCouncil;
 
 	public CouncilReportUi(TemplateCouncil templateCouncil) {
-		super( templateCouncil);
+		super(templateCouncil);
 		inputInclude = "include/councilReport.xhtml";
 	}
 
 	public void initialize(Task task) {
-		initialize(task, null);
+		this.initialize(task, new Council());
 	}
 
 	public void initialize(Task task, Council council) {

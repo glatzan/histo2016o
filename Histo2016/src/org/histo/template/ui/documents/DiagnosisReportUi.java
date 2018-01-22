@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Contact;
 import org.histo.model.Person;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
@@ -37,30 +38,43 @@ public class DiagnosisReportUi extends DocumentUi<DiagnosisReport> {
 	 */
 	private ContactSelector selectedContact;
 
+	/**
+	 * List if true single select mode of contacts is enabled
+	 */
+	private boolean singleSelect;
+
 	public DiagnosisReportUi(DiagnosisReport report) {
 		super(report);
 		inputInclude = "include/diagnosisReport.xhtml";
 	}
 
 	public void initialize(Task task) {
+		initialize(task, null);
+	}
+
+	public void initialize(Task task, List<ContactSelector> contactList) {
 		super.initialize(task);
+		
 		diagnosisRevisions = DiagnosisRevisionSelector.factory(task);
 
 		if (diagnosisRevisions.size() > 0)
 			diagnosisRevisions.get(diagnosisRevisions.size() - 1).setSelected(true);
 
-		// contacts for printing
-		setContactList(new ArrayList<ContactSelector>());
+		if (contactList == null) {
+			// contacts for printing
+			setContactList(new ArrayList<ContactSelector>());
 
-		// setting other contacts (physicians)
-		getContactList().addAll(ContactSelector.factory(task));
+			// setting other contacts (physicians)
+			getContactList().addAll(ContactSelector.factory(task));
 
-		getContactList().add(new ContactSelector(task,
-				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+			getContactList().add(new ContactSelector(task,
+					new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
 
-		getContactList().add(
-				new ContactSelector(task, new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()),
-						ContactRole.NONE, true, true));
+			getContactList().add(new ContactSelector(task,
+					new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()), ContactRole.NONE, true,
+					true));
+		} else
+			setContactList(contactList);
 
 	}
 
@@ -81,6 +95,18 @@ public class DiagnosisReportUi extends DocumentUi<DiagnosisReport> {
 
 		if (!container.isSelected())
 			container.getOrganizazionsChoosers().forEach(p -> p.setSelected(false));
+
+		// if single select mode remove other selections
+		if (container.isSelected())
+			if (isSingleSelect()) {
+				getContactList().stream().forEach(p -> {
+					if (p != container) {
+						p.setSelected(false);
+						p.getOrganizazionsChoosers().forEach(s -> s.setSelected(false));
+					}
+				});
+			}
+
 	}
 
 	/**
@@ -107,5 +133,25 @@ public class DiagnosisReportUi extends DocumentUi<DiagnosisReport> {
 		}
 
 		chooser.getParent().generateAddress(true);
+	}
+
+	/**
+	 * Sets diagnosis selectors
+	 * 
+	 * @param diagnoses
+	 */
+	public void setSelectedDiagnoses(List<DiagnosisRevision> diagnoses) {
+		for (DiagnosisRevisionSelector selectors : getDiagnosisRevisions()) {
+			boolean set = false;
+			for (DiagnosisRevision diagnosisRevision : diagnoses) {
+				if (selectors.getDiagnosisRevision().getId() == diagnosisRevision.getId()) {
+					set = true;
+					break;
+				}
+			}
+			
+			selectors.setSelected(set);
+		}
+
 	}
 }

@@ -1,11 +1,15 @@
 package org.histo.template.ui.documents;
 
+import java.util.List;
+
 import javax.persistence.Transient;
 
 import org.histo.config.ResourceBundle;
+import org.histo.model.AssociatedContact;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
+import org.histo.ui.selectors.ContactSelector;
 import org.histo.util.pdf.PDFGenerator;
 import org.histo.util.pdf.PrintOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,9 @@ public class DocumentUi<T extends DocumentTemplate> implements HasID {
 
 	protected T documentTemplate;
 
+	/**
+	 * TAsk
+	 */
 	protected Task task;
 
 	/**
@@ -34,6 +41,11 @@ public class DocumentUi<T extends DocumentTemplate> implements HasID {
 	 */
 	protected boolean initialized;
 
+	/**
+	 * If true the pdf will be updated on every settings change
+	 */
+	protected boolean updatePdfOnEverySettingChange;
+	
 	/**
 	 * String for input include
 	 */
@@ -46,7 +58,7 @@ public class DocumentUi<T extends DocumentTemplate> implements HasID {
 	public void initialize(Task task) {
 		this.task = task;
 	}
-
+	
 	public boolean hasNextTemplateConfiguration() {
 		return false;
 	}

@@ -212,29 +212,29 @@ public class PrintDialog extends AbstractDialog {
 		onChangePrintTemplate();
 	}
 
-	public void initBeanForSelecting(Task task, DocumentTemplate[] types, DocumentTemplate defaultType,
+	public void initBeanForSelecting(Task task, DocumentType[] types, DocumentType defaultType,
 			AssociatedContact[] addresses, boolean allowIndividualAddress) {
+		initBeanForSelecting(task, DocumentTemplate.getTemplates(types), defaultType, Arrays.asList(addresses),
+				allowIndividualAddress);
+	}
 
-		// initBean(task, types, defaultType);
+	public void initBeanForSelecting(Task task, List<DocumentTemplate> types, DocumentType defaultType,
+			List<AssociatedContact> addresses, boolean allowIndividualAddress) {
 
-		// setContactList(new ArrayList<ContactSelector>());
-		//
-		// if (addresses != null && addresses.length > 0) {
-		// for (AssociatedContact associatedContact : addresses) {
-		// getContactList()
-		// .add(new ContactSelector(task, associatedContact.getPerson(),
-		// associatedContact.getRole()));
-		// }
-		//
-		// getContactList().get(0).setSelected(true);
-		// setRenderedContact(getContactList().get(0));
-		// }
-		//
-		// if (allowIndividualAddress)
-		// getContactList().add(new ContactSelector(task,
-		// new Person(resourceBundle.get("dialog.print.individualAddress"), new
-		// Contact()), ContactRole.NONE));
+		List<DocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 
+		// init templates
+		subSelectUIs.forEach(p -> p.initialize(task));
+
+		initBeanForSelecting(task, subSelectUIs, defaultType);
+	}
+
+	public void initBeanForSelecting(Task task, List<DocumentUi<?>> subSelectUIs, DocumentType defaultType) {
+
+		subSelectUIs.forEach(p -> p.setUpdatePdfOnEverySettingChange(true));
+		
+		initBean(task, subSelectUIs, defaultType);
+		
 		setSelectMode(true);
 
 		// rendering the template

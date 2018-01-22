@@ -103,7 +103,7 @@
 					</h:panelGrid>
 
 					<histo:dynamicMedia height="calc( 100vh - 100px )" width="100%"
-						update="dialogContent:pollUpdateTable"
+						update="dialogContent:pollUpdateTable dialogContent:buttonContainerToUpdate"
 						pdfContent="#{dialogHandlerAction.printDialog.guiManager.pdfContent}"
 						guiManager="#{dialogHandlerAction.printDialog.guiManager}" />
 				</h:panelGrid>
@@ -118,8 +118,11 @@
 				<h:panelGrid columns="1" styleClass="newTableContainer left">
 				</h:panelGrid>
 
-				<h:panelGrid columns="4" styleClass="newTableContainer right">
+				<h:panelGrid columns="4" styleClass="newTableContainer right"
+					id="buttonContainerToUpdate">
+
 					<p:commandButton value="#{msg['dialog.print.button.fax']}"
+						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
 						rendered="#{dialogHandlerAction.printDialog.faxMode}"
 						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
@@ -129,6 +132,7 @@
 						<!-- print -->
 						<p:commandButton value="#{msg['dialog.print.button.print']}"
 							icon="fa fa-print"
+							disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 							title="#{msg['dialog.print.button.print.text']}"
 							onstart="PF('blockUIWidget').block()"
 							oncomplete="PF('blockUIWidget').unblock()"
@@ -149,11 +153,13 @@
 					<!-- select -->
 					<p:commandButton value="#{msg['dialog.print.button.select']}"
 						icon="fa fa-print"
+						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 						rendered="#{dialogHandlerAction.printDialog.selectMode}"
 						actionListener="#{dialogHandlerAction.printDialog.hideDialog()}"></p:commandButton>
 
 					<!-- download -->
 					<p:commandButton
+						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 						value="#{msg['dialog.print.button.open']} - disable"
 						icon="fa fa-download" ajax="false"
 						title="#{msg['dialog.print.button.open.text']}">
@@ -164,8 +170,6 @@
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.close']}"
 						icon="fa fa-times-circle">
-						<f:actionListener
-							binding="#{dialogHandlerAction.printDialog.resetPDF()}" />
 						<f:actionListener
 							binding="#{dialogHandlerAction.printDialog.hideDialog()}" />
 					</p:commandButton>

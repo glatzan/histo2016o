@@ -108,7 +108,7 @@
 	"content2" : "",
 	"attributes" : "",
 	"type"	: "NOTIFICATION_SEND_REPORT",
-	"templateName": "org.histo.template.documents.TemplateSendReport",
+	"templateName": "org.histo.template.documents.SendReport",
 	"defaultOfType" : true,
 	"transientContent" : false,
 	"hidden" : false
