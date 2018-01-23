@@ -314,6 +314,7 @@ public class GlobalEditViewHandler {
 
 	public void quickSearch() {
 		quickSearch(getQuickSearch(), userHandlerAction.getCurrentUser().getSettings().isAlternatePatientAddMode());
+		setQuickSearch("");
 	}
 
 	public void quickSearch(String quickSerach, boolean alternateMode) {
@@ -425,7 +426,6 @@ public class GlobalEditViewHandler {
 				}
 			}
 
-			setQuickSearch("");
 		} catch (Exception e) {
 			// TODO inform the user
 		}

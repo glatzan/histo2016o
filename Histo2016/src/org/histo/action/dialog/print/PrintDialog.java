@@ -447,6 +447,7 @@ public class PrintDialog extends AbstractDialog {
 			result = generator.getPDF(getSelectedTemplate());
 			break;
 		case DIAGNOSIS_REPORT:
+		case DIAGNOSIS_REPORT_EXTERN:
 			((DiagnosisReport) getSelectedTemplate()).initData(getTask().getPatient(), getTask(),
 					getRenderedContact() != null ? getRenderedContact().getCustomAddress() : null);
 			result = generator.getPDF(getSelectedTemplate());

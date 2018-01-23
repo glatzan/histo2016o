@@ -188,7 +188,7 @@ public class UserHandlerAction implements Serializable {
 
 	public boolean updateSelectedDocumentPrinter() {
 
-		if (getCurrentUser().getSettings().isAutoSelectedPreferedPrinter()) {
+		if (getCurrentUser().getSettings().isAutoSelectedPreferedPrinter() && !globalSettings.getProgramSettings().isOffline()) {
 			ClinicPrinter printer = globalSettings.getPrinterForRoomHandler().getPrinterForRoom();
 			if (printer != null) {
 				setSelectedPrinter(printer);

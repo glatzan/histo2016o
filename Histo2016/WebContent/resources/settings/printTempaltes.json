@@ -58,8 +58,20 @@
 },
 {
 	"id" : 20,
-	"name" : "Befundbericht Extern",
+	"name" : "Befundbericht extern",
 	"content" : "classpath:templates/print/Report_Extern.tex",
+	"content2" : "",
+	"type"	: "DIAGNOSIS_REPORT_EXTERN",
+	"attributes" : "",
+	"templateName": "org.histo.template.documents.DiagnosisReport",
+	"defaultOfType" : true,
+	"transientContent" : false,
+	"hidden" : false
+},
+{
+	"id" : 21,
+	"name" : "Befundbericht extern - ohne Logo",
+	"content" : "classpath:templates/print/Report_Extern_noLogo.tex",
 	"content2" : "",
 	"type"	: "DIAGNOSIS_REPORT_EXTERN",
 	"attributes" : "",
