@@ -75,82 +75,74 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ClinicJsonHandler implements GsonAble {
-
-	private static Logger logger = Logger.getLogger("org.histo");
-
-	/**
-	 * Loaded from json
-	 */
-	private String baseUrl;
-
-	/**
-	 * Loaded from json
-	 */
-	private String userAgent;
+public class ClinicJsonHandler extends AbstractJsonHandler {
 
 	/**
 	 * Loaded from json (/$piz)
 	 */
 	private String patientByPiz;
+
 	/**
-	 * Creates a list of patients fetched from the clinic backend. If there is
-	 * no data returned due to to many results an error will be thrown.
+	 * Creates a list of patients fetched from the clinic backend. If there is no
+	 * data returned due to to many results an error will be thrown.
 	 * 
 	 * @param url
 	 * @return
 	 * @throws CustomExceptionToManyEntries
-	 * @throws CustomNullPatientExcepetion 
-	 * @throws JSONException 
+	 * @throws CustomNullPatientExcepetion
+	 * @throws JSONException
 	 */
-	public List<Patient> getPatientsFromClinicJson(String url) throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
+	public List<Patient> getPatientsFromClinicJson(String url)
+			throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
 		String result = requestJsonData(baseUrl + url);
 		return createPatientsFromClinicJson(result);
 	}
 
-	
 	/**
 	 * Creates a patient object from data fechted from the clinic backend.
 	 * 
 	 * @param url
 	 * @return
-	 * @throws CustomNullPatientExcepetion 
-	 * @throws CustomExceptionToManyEntries 
-	 * @throws JSONException 
+	 * @throws CustomNullPatientExcepetion
+	 * @throws CustomExceptionToManyEntries
+	 * @throws JSONException
 	 */
-	public Patient getPatientFromClinicJson(String piz) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+	public Patient getPatientFromClinicJson(String piz)
+			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		String result = requestJsonData(baseUrl + patientByPiz.replace("$piz", piz));
 		return createPatientFromClinicJson(result);
 	}
-	
-	
+
 	/**
 	 * Updates a given patient with data from the backend
+	 * 
 	 * @param patient
 	 * @return
 	 * @throws JSONException
 	 * @throws CustomExceptionToManyEntries
 	 * @throws CustomNullPatientExcepetion
 	 */
-	public boolean updatePatientFromClinicJson(Patient patient) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+	public boolean updatePatientFromClinicJson(Patient patient)
+			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		Patient update = getPatientFromClinicJson(patient.getPiz());
-		if(update != null)
+		if (update != null)
 			return patient.copyIntoObject(update);
 		return false;
 	}
 
 	/**
-	 * Phrases a json string an returns a patient list, throws error if due to
-	 * to many results no data was returned.
+	 * Phrases a json string an returns a patient list, throws error if due to to
+	 * many results no data was returned.
 	 * 
 	 * @param json
 	 *            [{},{}]
 	 * @return
 	 * @throws CustomExceptionToManyEntries
-	 * @throws CustomNullPatientExcepetion 
+	 * @throws CustomNullPatientExcepetion
 	 * @throws JSONException
 	 */
-	public List<Patient> createPatientsFromClinicJson(String json) throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
+	public List<Patient> createPatientsFromClinicJson(String json)
+			throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
 		JSONArray arr = new JSONArray(json);
 		ArrayList<Patient> patients = new ArrayList<>();
 		for (int i = 0; i < arr.length(); i++) {
@@ -160,30 +152,31 @@ public class ClinicJsonHandler implements GsonAble {
 	}
 
 	/**
-	 * Creates a new patient using data from the clinic backend. Throws an error
-	 * if no data are given.
+	 * Creates a new patient using data from the clinic backend. Throws an error if
+	 * no data are given.
 	 * 
 	 * @param json
 	 * @return
-	 * @throws CustomNullPatientExcepetion 
+	 * @throws CustomNullPatientExcepetion
 	 * @throws CustomExceptionToManyEntries
 	 * @throws JSONException
 	 */
-	public Patient createPatientFromClinicJson(String json) throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
-			return createPatientFromClinicJson(new JSONObject(json));
+	public Patient createPatientFromClinicJson(String json)
+			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+		return createPatientFromClinicJson(new JSONObject(json));
 	}
 
 	/**
 	 * Creates a new Patient using a json object contain data from the clinic
-	 * backend. If the json string contains the error field an error will be
-	 * thrown.
+	 * backend. If the json string contains the error field an error will be thrown.
 	 * 
 	 * @param json
 	 * @return
 	 * @throws CustomExceptionToManyEntries
-	 * @throws CustomNullPatientExcepetion 
+	 * @throws CustomNullPatientExcepetion
 	 */
-	public Patient createPatientFromClinicJson(JSONObject json) throws CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+	public Patient createPatientFromClinicJson(JSONObject json)
+			throws CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		Patient patient = new Patient();
 		patient.setPerson(new Person());
 		patient.getPerson().setContact(new Contact());
@@ -196,43 +189,4 @@ public class ClinicJsonHandler implements GsonAble {
 		return patient;
 	}
 
-	/**
-	 * Returns a json string grabbed from the given url.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	public String requestJsonData(String url) {
-
-		StringBuffer response = new StringBuffer();
-
-		try {
-
-			logger.debug("Fetching patient json from clinic backend: " + url);
-
-			URL obj = new URL(url);
-
-			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-			// optional default is GET
-			con.setRequestMethod("GET");
-
-			// add request header
-			con.setRequestProperty("User-Agent", userAgent);
-
-			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) {
-				response.append(inputLine);
-			}
-			in.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return "";
-		}
-
-		logger.debug("Fetch string from clinic: " + response.toString());
-		return response.toString();
-	}
 }

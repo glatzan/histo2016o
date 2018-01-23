@@ -58,7 +58,7 @@ public class HistoSettings implements HasID, Cloneable {
 	 * Name of the preferred cups printer
 	 */
 	@Column(columnDefinition = "VARCHAR")
-	private String preferedPrinter;
+	private long preferedPrinter;
 
 	/**
 	 * True if the label printer should be autoselected
@@ -190,21 +190,4 @@ public class HistoSettings implements HasID, Cloneable {
 	protected HistoSettings clone() throws CloneNotSupportedException {
 		return (HistoSettings) super.clone();
 	}
-
-	@Transient
-	public ClinicPrinter getPreferedPrinterJson() {
-		if (HistoUtil.isNotNullOrEmpty(getPreferedPrinter()))
-			return ClinicPrinter.getPrinterFromJson(getPreferedPrinter());
-		return null;
-	}
-
-	@Transient
-	public void setPreferedPrinterJson(ClinicPrinter clinicPrinter) {
-		System.out.println("test " + clinicPrinter);
-		if (clinicPrinter == null)
-			setPreferedPrinter(null);
-		else
-			setPreferedPrinter(ClinicPrinter.printerToJson(clinicPrinter));
-	}
-
 }

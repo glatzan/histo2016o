@@ -72,6 +72,10 @@
 		"patientByPiz": "/$piz",
 		"userAgent": "Mozilla/5.0"
 	},
+	"findPrinterForRoomBackend": {
+		"baseUrl": "http://10.210.21.11:3009/DB/PLS/ip2room/ip/$ip",
+		"userAgent": "Mozilla/5.0"
+	},
 	"mail": {
 		"settings": {
 			"server": "smtp.ukl.uni-freiburg.de",

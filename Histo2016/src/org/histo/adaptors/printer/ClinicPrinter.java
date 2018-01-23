@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
@@ -32,6 +34,8 @@ import lombok.Setter;
 @Setter
 public class ClinicPrinter extends AbstractPrinter {
 
+	private static String IPADDRESS_PATTERN = "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+
 	protected PrinterSettings settings;
 
 	public ClinicPrinter() {
@@ -44,6 +48,16 @@ public class ClinicPrinter extends AbstractPrinter {
 		this.description = cupsPrinter.getDescription();
 		this.location = cupsPrinter.getLocation();
 		this.settings = settings;
+		
+		// getting ip
+		Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
+		Matcher matcher = pattern.matcher(cupsPrinter.getDeviceURI());
+		
+		if (matcher.find()) {
+			this.deviceUri = matcher.group();
+		} else {
+			this.deviceUri = "0.0.0.0";
+		}
 	}
 
 	/**

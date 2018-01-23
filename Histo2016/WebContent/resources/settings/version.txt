@@ -104,7 +104,15 @@ Graphic Changes
 + = added
 - = removed
 
++v 1.2.10 (23.01.2017)
+
+SQL:
+update histosettings set preferedprinter = 0;
+alter table histosettings ALTER COLUMN preferedprinter TYPE bigint using preferedprinter::bigint
+
+
 +v 1.2.9 (18.01.2017)
++++!: Verfügbare Arbeitslisten repariert
 
 SQL:
 /* fix available worklists for users*/

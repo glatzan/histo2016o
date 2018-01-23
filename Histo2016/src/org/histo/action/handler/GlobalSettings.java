@@ -17,6 +17,7 @@ import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.adaptors.printer.ClinicPrinterDummy;
 import org.histo.adaptors.printer.CupsPrinterLoader;
 import org.histo.adaptors.printer.LabelPrinter;
+import org.histo.adaptors.printer.PrinterForRoomHandler;
 import org.histo.model.transitory.settings.DefaultDocuments;
 import org.histo.model.transitory.settings.DefaultNotificationSettings;
 import org.histo.model.transitory.settings.PrinterSettings;
@@ -57,6 +58,7 @@ public class GlobalSettings {
 	public static final String SETTINGS_CUPS_SERVER = "cupsServer";
 	public static final String SETTINGS_LABLE_PRINTERS = "labelPrinters";
 	public static final String SETTINGS_CLINIC_BACKEND = "clinicBackend";
+	public static final String SETTINGS_PRINTER_FOR_ROOM = "findPrinterForRoomBackend";
 
 	public static final String VERSIONS_INFO = "classpath:settings/version.txt";
 	public static final String MAIL_TEMPLATES = "classpath:settings/mailTemplates.json";
@@ -122,6 +124,11 @@ public class GlobalSettings {
 	private ClinicJsonHandler clinicJsonHandler;
 
 	/**
+	 * Gets a pritner ip for the room from which the page was loaded
+	 */
+	private PrinterForRoomHandler printerForRoomHandler;
+
+	/**
 	 * The current version of the program
 	 */
 	private String currentVersion;
@@ -164,6 +171,8 @@ public class GlobalSettings {
 
 		clinicJsonHandler = gson.fromJson(o.get(SETTINGS_CLINIC_BACKEND), ClinicJsonHandler.class);
 
+		printerForRoomHandler = gson.fromJson(o.get(SETTINGS_PRINTER_FOR_ROOM), PrinterForRoomHandler.class);
+		
 		List<Version> versions = Version.factroy(VERSIONS_INFO);
 		// setting current version
 		if (versions != null && versions.size() > 0) {
@@ -182,9 +191,9 @@ public class GlobalSettings {
 	 * @param clinicPrinter
 	 * @return
 	 */
-	public ClinicPrinter isPrinterValid(ClinicPrinter clinicPrinter) {
+	public ClinicPrinter isPrinterValid(long id) {
 		for (ClinicPrinter printer : getPrinterList()) {
-			if (printer.equals(clinicPrinter))
+			if (printer.getId() == id)
 				return printer;
 		}
 
