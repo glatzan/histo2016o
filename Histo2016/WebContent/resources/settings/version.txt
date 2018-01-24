@@ -37,6 +37,7 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
+-> beim färbedialog kommentar nicht mehr bearbeitabr wenn  abeschlossene färbung
 
 -> navigation buttons gehen nicht mehr richtig
 -> search physician dialog with return handler
