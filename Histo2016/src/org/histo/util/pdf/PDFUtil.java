@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.HasDataList;
+import org.histo.util.dataList.HasDataList;
 
 public class PDFUtil {
 

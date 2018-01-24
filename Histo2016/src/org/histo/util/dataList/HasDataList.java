@@ -1,4 +1,4 @@
-package org.histo.model.interfaces;
+package org.histo.util.dataList;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import javax.persistence.Transient;
 
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
+import org.histo.model.interfaces.HasID;
 
 /**
  * Classes have a data list

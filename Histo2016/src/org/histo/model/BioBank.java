@@ -22,8 +22,8 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.InformedConsentType;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
+import org.histo.util.dataList.HasDataList;
 
 @Entity
 @Audited

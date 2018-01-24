@@ -4,7 +4,7 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.HasDataList;
+import org.histo.util.dataList.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;

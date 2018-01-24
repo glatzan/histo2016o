@@ -120,8 +120,11 @@
 						oncomplete="PF('blockUIWidget').unblock()"
 						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, container.contact)}">
 
+						<f:attribute name="container" value="#{container}" />
+						
 						<p:ajax event="dialogReturn" update="@form" process="@form"
-							listener="#{dialogHandlerAction.notificationDialog.mailTab.copySelectedPdf(container)}" />
+							listener="#{dialogHandlerAction.notificationDialog.onSelectPDFDialogReturn}">
+						</p:ajax>
 
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>

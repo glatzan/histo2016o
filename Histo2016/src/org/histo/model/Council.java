@@ -24,9 +24,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.CouncilState;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
+import org.histo.util.dataList.HasDataList;
 import org.histo.util.latex.TextToLatexConverter;
 
 import lombok.Getter;

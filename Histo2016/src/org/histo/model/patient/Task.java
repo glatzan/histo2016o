@@ -39,7 +39,6 @@ import org.histo.model.Council;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.favouriteList.FavouriteList;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
@@ -47,6 +46,7 @@ import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.ui.StainingTableChooser;
 import org.histo.ui.task.TaskStatus;
 import org.histo.util.TimeUtil;
+import org.histo.util.dataList.HasDataList;
 
 import lombok.Getter;
 import lombok.Setter;

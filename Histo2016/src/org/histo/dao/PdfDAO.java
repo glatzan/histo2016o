@@ -1,8 +1,8 @@
 package org.histo.dao;
 
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Patient;
+import org.histo.util.dataList.HasDataList;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

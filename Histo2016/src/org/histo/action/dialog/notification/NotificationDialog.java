@@ -32,7 +32,6 @@ import org.histo.model.Contact;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
@@ -49,6 +48,8 @@ import org.histo.ui.selectors.DiagnosisRevisionSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.StreamUtils;
+import org.histo.util.dataList.DefaultDataList;
+import org.histo.util.dataList.HasDataList;
 import org.histo.util.notification.FaxExecutor;
 import org.histo.util.notification.MailContainer;
 import org.histo.util.notification.MailContainerList;
@@ -58,6 +59,7 @@ import org.histo.util.notification.NotificationContainerList;
 import org.histo.util.notification.NotificationFeedback;
 import org.histo.util.pdf.PDFGenerator;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -227,40 +229,34 @@ public class NotificationDialog extends AbstractTabDialog {
 		}
 
 		selectors.get(0).setSelected(true);
-		
+
 		dialogHandlerAction.getPrintDialog().initBeanForSelecting(task, subSelectUIs, DocumentType.DIAGNOSIS_REPORT);
 		dialogHandlerAction.getPrintDialog().setFaxMode(false);
 		dialogHandlerAction.getPrintDialog().prepareDialog();
 	}
 
+	/**
+	 * Adds a pdf to the selected container
+	 * 
+	 * @param event
+	 */
+	public void onSelectPDFDialogReturn(SelectEvent event) {
+		Object container = event.getComponent().getAttributes().get("container");
+
+		logger.debug("On custom dialog return " + event.getObject() + " " + container);
+
+		if (event.getObject() != null && event.getObject() instanceof PDFContainer && container != null
+				&& container instanceof NotificationContainer) {
+			logger.debug("Settign custom pdf for container "
+					+ ((NotificationContainer) container).getContact().getPerson().getFirstName());
+			((NotificationContainer) container).setPdf((PDFContainer) event.getObject());
+		}
+
+	}
+
 	public void openMediaViewDialog(PDFContainer container) {
 
-		HasDataList dataList = new HasDataList() {
-
-			private List<PDFContainer> attachedPdfs = new ArrayList<PDFContainer>();
-
-			@Override
-			public long getId() {
-				return 0;
-			}
-
-			@Override
-			public void setAttachedPdfs(List<PDFContainer> attachedPdfs) {
-				this.attachedPdfs = attachedPdfs;
-			}
-
-			@Override
-			public String getDatalistIdentifier() {
-				return "";
-			}
-
-			@Override
-			public List<PDFContainer> getAttachedPdfs() {
-				return attachedPdfs;
-			}
-		};
-
-		dataList.getAttachedPdfs().add(container);
+		DefaultDataList dataList = new DefaultDataList(container);
 
 		// init dialog for patient and task
 		dialogHandlerAction.getMediaDialog().initBean(getTask().getPatient(), new HasDataList[] { dataList }, dataList,
@@ -285,13 +281,6 @@ public class NotificationDialog extends AbstractTabDialog {
 		protected List<DocumentTemplate> templateList;
 
 		protected DefaultTransformer<DocumentTemplate> templateTransformer;
-
-		public void copySelectedPdf(NotificationContainer contactHolder) {
-			if (dialogHandlerAction.getPrintDialog().getGuiManager().getPDFContainerToRender() != null) {
-				logger.debug("Selecting pdf");
-				contactHolder.setPdf(dialogHandlerAction.getPrintDialog().getGuiManager().getPDFContainerToRender());
-			}
-		}
 
 		/**
 		 * Updates the notification container list and if at least one notification for

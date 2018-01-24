@@ -232,9 +232,9 @@ public class PrintDialog extends AbstractDialog {
 	public void initBeanForSelecting(Task task, List<DocumentUi<?>> subSelectUIs, DocumentType defaultType) {
 
 		subSelectUIs.forEach(p -> p.setUpdatePdfOnEverySettingChange(true));
-		
+
 		initBean(task, subSelectUIs, defaultType);
-		
+
 		setSelectMode(true);
 
 		// rendering the template
@@ -326,5 +326,12 @@ public class PrintDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
+	}
+
+	/**
+	 * Returns the rendered pdf if in selectMode
+	 */
+	public void hideAndSelectDialog() {
+		RequestContext.getCurrentInstance().closeDialog(guiManager.getPDFContainerToRender());
 	}
 }

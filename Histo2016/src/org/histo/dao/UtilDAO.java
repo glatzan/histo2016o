@@ -13,7 +13,7 @@ import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
-import org.histo.model.interfaces.HasDataList;
+import org.histo.util.dataList.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

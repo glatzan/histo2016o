@@ -34,12 +34,12 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.interfaces.ArchivAble;
 import org.histo.model.interfaces.CreationDate;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.util.HistoUtil;
+import org.histo.util.dataList.HasDataList;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 

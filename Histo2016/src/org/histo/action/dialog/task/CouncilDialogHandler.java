@@ -26,9 +26,9 @@ import org.histo.model.Council;
 import org.histo.model.ListItem;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
-import org.histo.model.interfaces.HasDataList;
 import org.histo.model.patient.Task;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.dataList.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
