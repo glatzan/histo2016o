@@ -23,7 +23,8 @@
 				value="#{msg['dialog.userSettings.printer.autoPrinte']}" />
 			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}">
-				<p:ajax event="change" update="@form" listener="#{userHandlerAction.updateSelectedDocumentPrinter()}" />
+				<p:ajax event="change" update="@form"
+					listener="#{userHandlerAction.updateSelectedDocumentPrinter()}" />
 			</p:selectBooleanCheckbox>
 
 			<!-- selected printer -->
@@ -35,8 +36,7 @@
 					disabled="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}"
 					panelStyleClass="customSerachSelectMenuPanel"
 					value="#{userHandlerAction.currentUser.settings.preferedPrinter}"
-					converter="#{globalSettings.printerListTransformer}" filter="true"
-					filterMatchMode="contains">
+					filter="true" filterMatchMode="contains">
 
 					<f:selectItems value="#{globalSettings.printerList}" var="printer"
 						itemLabel="#{printer.name}" itemValue="#{printer.id}" />
