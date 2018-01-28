@@ -103,21 +103,9 @@ public class MainHandlerAction {
 	 ********************************************************/
 
 	public void test() {
-		EventBus eventBus = EventBusFactory.getDefault().eventBus();
-		System.out.println(eventBus);
-
-		if (eventBus != null) {
-			System.out.println("sending");
-			// eventBus.publish("/chat", "hallo wie gehts");
-
-			sendGrowlMessages("error", "test", FacesMessage.SEVERITY_ERROR);
-			try {
-				eventBus.publish("/chat", new FacesMessage(StringEscapeUtils.escapeJava("test")));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		System.out.println("go");
+		RequestContext.getCurrentInstance().execute("updateGlobalGrowl('testGrowl','test','test','warn');");
+//		context.addMessage(GLOBAL_GROWL_ID, );
 	}
 
 	public void testPrint() {

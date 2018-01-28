@@ -38,6 +38,7 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 
 Next Changes:
 -> beim färbedialog kommentar nicht mehr bearbeitabr wenn  abeschlossene färbung
+-> updateAndScrollScrollPanel polymorphismus
 
 -> navigation buttons gehen nicht mehr richtig
 -> search physician dialog with return handler
@@ -102,6 +103,9 @@ Graphic Changes
 * = change
 + = added
 - = removed
+
++v 1.2.11 (28.01.2017)
+++++: Growl-Benachrichtigugen werden jetzt auch von Dialogen angezeigt (Im Hauptfenster)
 
 +v 1.2.10 (23.01.2017)
 ++++: Können automatisch für den Raum ausgewählt werden.

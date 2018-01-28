@@ -62,12 +62,12 @@
 				}
 			</script>
 
+		
+			<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 
 			<ui:include src="template/idleMonitor.xhtml" />
 
 			<h:form id="wasgeht">
-				<p:socket onMessage="handleMessage" channel="/chat"
-					/>
 
 				<script type="text/javascript">
 					function handleMessage(data) {
@@ -79,13 +79,12 @@
 				</script>
 
 				<script>
-				//	$(document).ready(function() {
+					//	$(document).ready(function() {
 					//	PF('notifySocket').connect();
-				//	});
+					//	});
 				</script>
 
-				<p:remoteCommand update="@form" name="updateDr"
-					oncomplete=""></p:remoteCommand>
+				<p:remoteCommand update="@form" name="updateDr" oncomplete=""></p:remoteCommand>
 			</h:form>
 
 		</ui:define>
