@@ -114,7 +114,7 @@
 				<!-- History -->
 				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				<h:panelGroup>
-					<p:inputTextarea
+					<p:inputTextarea styleClass="customBackground"
 						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 						value="#{globalEditViewHandler.selectedTask.caseHistory}"
 						title="#{msg['body.diagnosis.story.watermark']}"
@@ -427,7 +427,7 @@
 
 						<p:selectOneMenu style="width: 90%"
 							value="#{stainingRow.entity.commentary}" editable="true"
-							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable or stainingRow.entity.stainingCompleted}">
 
 							<f:selectItems value="#{globalEditViewHandler.slideCommentary}"
 								var="commentary" itemLabel="#{commentary.value}"
@@ -491,7 +491,7 @@
 				</p:column>
 
 				<!-- Options -->
-				<p:column style="width: 10%;"
+				<p:column style="width: 11%;"
 					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}">
 					<f:facet name="header">
 						<h:outputLabel
@@ -559,6 +559,13 @@
 							<i class="fa fa-fw fa-print" />
 							<p:ajax event="dialogReturn"
 								update="navigationForm:patientList contentForm headerForm" />
+						</p:commandLink>
+						<!-- complete Button -->
+						<p:commandLink
+							actionListener="#{receiptlogViewHandlerAction.setSlideAsCompleted(stainingRow.entity)}"
+							title="#{msg['body.statiningView.stainingCompleted']}"
+							update="navigationForm:patientList contentForm headerForm">
+							<i class="fa fa-fw fa-check-circle" />
 						</p:commandLink>
 						<!-- ********** Cloud Button ********** -->
 						<p:commandLink title="#{msg['body.statiningView.showStaining']}">

@@ -128,7 +128,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 */
 	public boolean initBean(Task task) {
 		try {
-			taskDAO.initializeTask(task, false);
+			taskDAO.initializeTask(task, true);
 			taskDAO.initializeCouncils(task);
 
 			super.initBean(task, Dialog.COUNCIL);

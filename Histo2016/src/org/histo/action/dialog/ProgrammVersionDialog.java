@@ -115,7 +115,7 @@ public class ProgrammVersionDialog extends AbstractTabDialog {
 				
 				initTab();
 				
-				mainHandlerAction.addQueueGrowlMessageAsResource("growl.mail.sendErrorMail", "growl.mail.sendErrorMail.text");
+				mainHandlerAction.sendGrowlMessagesAsResource("growl.mail.sendErrorMail", "growl.mail.sendErrorMail.text");
 			}
 		}
 

@@ -100,8 +100,7 @@
 			<!-- upload button to patient -->
 			<p:commandButton id="uploadBtnToPatient" style="display:none"
 				actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
-				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 
 			<!-- Edit Patient data -->
@@ -195,8 +194,7 @@
 				actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
-					update="navigationForm:patientList contentForm headerForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Contacts button -->
@@ -249,8 +247,7 @@
 				actionListener="#{dialogHandlerAction.favouriteListsDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
-					update="navigationForm:patientList contentForm headerForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Biobank button -->
@@ -258,8 +255,7 @@
 				actionListener="#{bioBankDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
-					update="navigationForm:patientList contentForm headerForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Print button -->
@@ -269,15 +265,13 @@
 				actionListener="#{dialogHandlerAction.printDialog.initAndPrepareBeanForPrinting(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
-					update="navigationForm:patientList contentForm headerForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- upload button -->
 			<p:commandButton id="uploadBtn" style="display:none"
 				actionListener="#{patientViewHandlerAction.showTaskMediaDialog()}">
-				<p:ajax event="dialogReturn" update="contentForm"
-					listener="#{mainHandlerAction.processQueues()}" />
+				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 			<!-- *************** Task Menu *************** -->
 

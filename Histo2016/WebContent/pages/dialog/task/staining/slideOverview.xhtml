@@ -106,7 +106,7 @@
 					<h:panelGroup rendered="#{stainingRow.stainingType}">
 						<p:selectOneMenu styleClass="smallInput" style="width: 90%"
 							value="#{stainingRow.entity.commentary}" editable="true"
-							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable or stainingRow.entity.stainingCompleted}">
 
 							<f:selectItems value="#{globalEditViewHandler.slideCommentary}"
 								var="commentary" itemLabel="#{commentary.value}"

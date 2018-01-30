@@ -196,8 +196,7 @@
 							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 							<p:ajax event="dialogReturn"
 								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
-								update="navigationForm:patientList contentForm headerForm"
-								listener="#{mainHandlerAction.processQueues()}" />
+								update="navigationForm:patientList contentForm headerForm" />
 							<i class="fa fa-plus" />
 						</p:commandLink>
 					</h:panelGrid>
@@ -207,8 +206,7 @@
 					actionListener="#{dialogHandlerAction.deleteTaskDialog.initAndPrepareBean(task)}">
 					<p:ajax event="dialogReturn"
 						oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
-						update="navigationForm:patientList contentForm"
-						listener="#{mainHandlerAction.processQueues()}" />
+						update="navigationForm:patientList contentForm" />
 					<i class="fa fa-times-circle" />
 				</p:commandLink>
 			</p:column>
@@ -258,7 +256,8 @@
 						<p:commandLink id="upload"
 							rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
 							actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
-							<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm" />
 							<i class="fa fa-plus"></i>
 						</p:commandLink>
 					</h:panelGrid>
@@ -266,7 +265,8 @@
 				<p:commandLink
 					rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
 					actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
-					<p:ajax event="dialogReturn" update="navigationForm:patientList contentForm" />
+					<p:ajax event="dialogReturn"
+						update="navigationForm:patientList contentForm" />
 					<i class="fa fa-search"></i>
 				</p:commandLink>
 			</p:column>

@@ -306,8 +306,8 @@ public class WorklistViewHandlerAction {
 					if (globalEditViewHandler.getSelectedPatient() != null) {
 						onVersionConflictPatient(globalEditViewHandler.getSelectedPatient());
 
-						mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
-								resourceBundle.get("growl.version.error.text"));
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.version.error",
+								"growl.version.error.text");
 
 						RequestContext.getCurrentInstance()
 								.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");

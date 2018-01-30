@@ -10,6 +10,7 @@ import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
+import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
@@ -105,6 +106,9 @@ public class CreateSlidesDialog extends AbstractDialog {
 		getStainingListChooser().addAll(
 				allStainings.stream().map(p -> new ListChooser<StainingPrototype>(p)).collect(Collectors.toList()));
 
+		setRestaining(block.getTask().isListedInFavouriteList(PredefinedFavouriteList.DiagnosisList,
+				PredefinedFavouriteList.ReDiagnosisList));
+		
 		return true;
 	}
 

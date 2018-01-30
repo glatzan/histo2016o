@@ -104,6 +104,13 @@ Graphic Changes
 + = added
 - = removed
 
++v 1.2.12 (30.01.2017)
++++*: Ip der Label-Drucker angepasst
++++*: Konsil-PDF Vorlage angepasst
+++++: Kopf zum Abschließen der Färbung einzelner Objektträger hinzugefügt.
++++*: Wenn der Auftrag in der Befundungs-Phase ist, werden automtaisch Nachfärbungen beim Erstellen von neuen Färbungen ausgewählt.
+
+
 +v 1.2.11 (28.01.2017)
 ++++: Growl-Benachrichtigugen werden jetzt auch von Dialogen angezeigt (Im Hauptfenster)
 

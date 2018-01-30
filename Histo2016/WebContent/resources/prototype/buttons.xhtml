@@ -68,15 +68,13 @@
 	<!-- show only button for print dialog, workaround for closing and showing dialogs -->
 	<p:commandButton id="printBtnShowOnly" style="display:none"
 		actionListener="#{mainHandlerAction.showDialog('PRINT')}">
-		<p:ajax event="dialogReturn" update="contentForm"
-			listener="#{mainHandlerAction.processQueues()}" />
+		<p:ajax event="dialogReturn" update="contentForm" />
 	</p:commandButton>
 
 	<!-- show only button for council dialog, workaround for closing and showing dialogs -->
 	<p:commandButton id="councilBtnShowOnly" style="display:none"
 		actionListener="#{mainHandlerAction.showDialog('COUNCIL')}">
-		<p:ajax event="dialogReturn" update="contentForm"
-			listener="#{mainHandlerAction.processQueues()}" />
+		<p:ajax event="dialogReturn" update="contentForm" />
 	</p:commandButton>
 </h:body>
 </html>

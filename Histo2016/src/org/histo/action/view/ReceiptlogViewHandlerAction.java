@@ -103,6 +103,7 @@ public class ReceiptlogViewHandlerAction {
 
 	/**
 	 * Updates the flat task/sample/block/slide list
+	 * 
 	 * @param task
 	 * @param showArchived
 	 */
@@ -204,7 +205,7 @@ public class ReceiptlogViewHandlerAction {
 						userHandlerAction.getSelectedLabelPrinter().print(toPrint);
 					} catch (CustomUserNotificationExcepetion e) {
 						// handling offline error
-						mainHandlerAction.addQueueGrowlMessageAsResource(e);
+						mainHandlerAction.sendGrowlMessagesAsResource(e);
 					}
 				}
 
@@ -283,6 +284,24 @@ public class ReceiptlogViewHandlerAction {
 
 		userHandlerAction.getSelectedLabelPrinter().print(printTemplate);
 
+	}
+
+	/**
+	 * Sets a slide as stating status completed
+	 * 
+	 * @param slide
+	 */
+	public void setSlideAsCompleted(Slide slide) {
+		try {
+			sampleService.setStainingCompletedForSlide(slide, !slide.isStainingCompleted());
+			
+			if (sampleService.updateStaingPhase(slide.getTask()))
+				dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(slide.getTask());
+
+		} catch (CustomDatabaseInconsistentVersionException e) {
+			// catching database version inconsistencies
+			worklistViewHandlerAction.onVersionConflictTask();
+		}
 	}
 
 	/**
