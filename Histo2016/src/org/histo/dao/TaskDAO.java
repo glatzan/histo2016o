@@ -90,7 +90,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 
 		if (initialized) {
 			Hibernate.initialize(task.getCouncils());
-			Hibernate.initialize(task.getDiagnosisContainer());
+			Hibernate.initialize(task.getDiagnosisRevisions());
 			Hibernate.initialize(task.getAttachedPdfs());
 		}
 
@@ -102,7 +102,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		reattach(task.getPatient());
 
 		Hibernate.initialize(task.getCouncils());
-		Hibernate.initialize(task.getDiagnosisContainer());
+		Hibernate.initialize(task.getDiagnosisRevisions());
 		Hibernate.initialize(task.getAttachedPdfs());
 
 		Hibernate.initialize(task.getParent().getTasks());
@@ -126,7 +126,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 			getSession().refresh(task);
 
 			Hibernate.initialize(task.getCouncils());
-			Hibernate.initialize(task.getDiagnosisContainer());
+			Hibernate.initialize(task.getDiagnosisRevisions());
 			Hibernate.initialize(task.getAttachedPdfs());
 
 			Hibernate.initialize(task.getParent().getTasks());

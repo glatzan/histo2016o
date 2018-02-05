@@ -23,7 +23,8 @@
 				value="#{msg['dialog.userSettings.printer.autoPrinte']}" />
 			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}">
-				<p:ajax event="change" update="@form" />
+				<p:ajax event="change" update="@form"
+					listener="#{userHandlerAction.updateSelectedDocumentPrinter()}" />
 			</p:selectBooleanCheckbox>
 
 			<!-- selected printer -->
@@ -38,8 +39,10 @@
 					filter="true" filterMatchMode="contains">
 
 					<f:selectItems value="#{globalSettings.printerList}" var="printer"
-						itemLabel="#{printer.name}" itemValue="#{printer.name}" />
+						itemLabel="#{printer.name}" itemValue="#{printer.id}" />
 
+					<p:ajax event="change"
+						listener="#{userHandlerAction.updateSelectedDocumentPrinter()}"></p:ajax>
 				</p:selectOneMenu>
 
 				<!-- testprint -->
@@ -100,14 +103,14 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
-				<p:commandButton value="#{msg['general.save']}"
+				<p:commandButton value="#{msg['general.save']}" update="@form"
 					icon="fa fa-check-circle-o">
 					<f:actionListener
 						binding="#{userSettingsDialog.saveUserSettings()}" />
 					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
 				</p:commandButton>
 
-				<p:commandButton value="#{msg['general.close']}"
+				<p:commandButton value="#{msg['general.close']}" immediate="true"
 					icon="fa fa-times-circle">
 					<f:actionListener
 						binding="#{userSettingsDialog.resetUserSettings()}" />

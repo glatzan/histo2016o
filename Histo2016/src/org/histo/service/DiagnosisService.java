@@ -8,10 +8,11 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
+import org.histo.model.Signature;
 import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
@@ -55,20 +56,19 @@ public class DiagnosisService {
 	private FavouriteListDAO favouriteListDAO;
 
 	/**
-	 * Updates all diagnosisRevision of the given diagnosisContainer
+	 * Updates all diagnosisRevision of the given revisions
 	 * 
-	 * @param diagnosisContainer
-	 * @param samples
+	 * @param Task
+	 *            task
 	 */
 	public void synchronizeDiagnosesAndSamples(Task task) {
 		logger.info("Synchronize all diagnoses of task " + task.getTaskID() + " with samples");
 
-		for (DiagnosisRevision revision : task.getDiagnosisContainer().getDiagnosisRevisions()) {
+		for (DiagnosisRevision revision : task.getDiagnosisRevisions()) {
 			synchronizeDiagnosesAndSamples(revision, task.getSamples());
 		}
 
-		genericDAO.savePatientData(task.getDiagnosisContainer(), "log.patient.task.diagnosisContainer.update",
-				task.getDiagnosisContainer());
+		genericDAO.savePatientData(task, "log.patient.task.diagnosisRevisions.update", task);
 
 	}
 
@@ -114,8 +114,7 @@ public class DiagnosisService {
 			createDiagnosis(diagnosisRevision, sample);
 		}
 
-		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
-				diagnosisRevision);
+		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisRevision.new", diagnosisRevision);
 	}
 
 	/**
@@ -134,8 +133,7 @@ public class DiagnosisService {
 
 		revision.getDiagnoses().add(diagnosis);
 
-		genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.new",
-				diagnosis.toString());
+		genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisRevision.diagnosis.new", diagnosis.toString());
 
 		return diagnosis;
 	}
@@ -153,30 +151,32 @@ public class DiagnosisService {
 
 		diagnosis.getParent().getDiagnoses().remove(diagnosis);
 
-		genericDAO.deletePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.remove",
+		genericDAO.deletePatientData(diagnosis, "log.patient.task.diagnosisRevision.diagnosis.remove",
 				diagnosis.toString());
 
 		return diagnosis;
 	}
 
 	/**
-	 * Creates a diagnosisRevision, adds it to the given DiagnosisContainer and
-	 * creates also all needed diagnoses
+	 * Creates a diagnosisRevision, adds it to the given task and creates also all
+	 * needed diagnoses
 	 * 
 	 * @param parent
 	 * @param type
 	 * @return
 	 */
-	public DiagnosisRevision createDiagnosisRevision(DiagnosisContainer parent, DiagnosisRevisionType type) {
+	public DiagnosisRevision createDiagnosisRevision(Task task, DiagnosisRevisionType type) {
 		logger.info("Creating new diagnosisRevision");
 
 		DiagnosisRevision diagnosisRevision = new DiagnosisRevision();
 		diagnosisRevision.setType(type);
+		diagnosisRevision.setSignatureOne(new Signature());
+		diagnosisRevision.setSignatureTwo(new Signature());
 		diagnosisRevision.setCreationDate(System.currentTimeMillis());
 		diagnosisRevision.setName(
-				TaskUtil.getDiagnosisRevisionName(parent.getDiagnosisRevisions(), diagnosisRevision, resourceBundle));
+				TaskUtil.getDiagnosisRevisionName(task.getDiagnosisRevisions(), diagnosisRevision, resourceBundle));
 
-		addDiagnosisRevision(parent, diagnosisRevision);
+		addDiagnosisRevision(task, diagnosisRevision);
 
 		return diagnosisRevision;
 	}
@@ -187,19 +187,20 @@ public class DiagnosisService {
 	 * @param parent
 	 * @param diagnosisRevision
 	 */
-	public void addDiagnosisRevision(DiagnosisContainer parent, DiagnosisRevision diagnosisRevision) {
+	public void addDiagnosisRevision(Task task, DiagnosisRevision diagnosisRevision) {
 		logger.info("Adding diagnosisRevision to task");
 
-		diagnosisRevision.setParent(parent);
-		parent.getDiagnosisRevisions().add(diagnosisRevision);
-		diagnosisRevision.setSequenceNumber(parent.getDiagnosisRevisions().indexOf(diagnosisRevision));
+		diagnosisRevision.setParent(task);
+		diagnosisRevision.setSignatureOne(new Signature());
+		diagnosisRevision.setSignatureTwo(new Signature());
+		task.getDiagnosisRevisions().add(diagnosisRevision);
 
 		// saving to database
-		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisContainer.diagnosisRevision.new",
+		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisRevision.new",
 				diagnosisRevision.toString());
 
 		// creating a diagnosis for every sample
-		for (Sample sample : parent.getParent().getSamples()) {
+		for (Sample sample : task.getSamples()) {
 			createDiagnosis(diagnosisRevision, sample);
 		}
 
@@ -211,15 +212,22 @@ public class DiagnosisService {
 	 * @param revision
 	 * @return
 	 */
-	public DiagnosisRevision removeDiagnosisRevision(DiagnosisRevision revision) {
+	public DiagnosisRevision removeDiagnosisRevision(DiagnosisRevision revision)
+			throws CustomUserNotificationExcepetion {
 		logger.info("Removing diagnosisRevision " + revision.getName());
 
-		revision.getParent().getDiagnosisRevisions().remove(revision);
+		if (revision.getParent().getDiagnosisRevisions().size() > 1) {
 
-		genericDAO.deletePatientData(revision, "log.patient.task.diagnosisContainer.diagnosisRevision.delete",
-				revision.toString());
+			revision.getParent().getDiagnosisRevisions().remove(revision);
 
-		return revision;
+			genericDAO.savePatientData(revision.getParent());
+
+			genericDAO.deletePatientData(revision, "log.patient.task.diagnosisRevision.delete", revision.toString());
+
+			return revision;
+		} else {
+			throw new CustomUserNotificationExcepetion("growl.error", "growl.error.diagnosisRevision.delete.last");
+		}
 	}
 
 	/**
@@ -265,15 +273,15 @@ public class DiagnosisService {
 				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
 
 					// setting diagnosis compeation date if not set jet
-					task.getDiagnosisContainer().getDiagnosisRevisions().forEach(p -> {
+					task.getDiagnosisRevisions().forEach(p -> {
 						if (p.getCompleationDate() == 0)
 							p.setCompleationDate(System.currentTimeMillis());
 					});
 
 					task.setDiagnosisCompletionDate(System.currentTimeMillis());
 
-					if (updateSignatureDate)
-						task.getDiagnosisContainer().setSignatureDate(System.currentTimeMillis());
+					// if (updateSignatureDate)
+					// task.getDiagnosisContainer().setSignatureDate(System.currentTimeMillis());
 
 					genericDAO.savePatientData(task, "log.patient.task.phase.diagnosis.end");
 

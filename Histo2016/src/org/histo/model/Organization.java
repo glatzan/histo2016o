@@ -1,5 +1,6 @@
 package org.histo.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -28,8 +29,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Audited
-public class Organization implements HasID {
+public class Organization implements HasID, Serializable {
 
+	private static final long serialVersionUID = 8370367938117220795L;
+	
 	@Id
 	@GeneratedValue(generator = "organization_sequencegenerator")
 	@Column(unique = true, nullable = false)

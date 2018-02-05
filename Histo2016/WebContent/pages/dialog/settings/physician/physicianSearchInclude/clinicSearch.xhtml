@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<h:panelGrid styleClass="newStyleListingTable" columns="2"
+		columnClasses="columnLabelContainer150,">
+
+		<h:outputLabel value="#{msg['dialog.addPatient.search.person']}"
+			styleClass="bigFont" />
+
+		<h:panelGroup>
+			<p:inputText
+				value="#{dialogHandlerAction.physicianSearchDialog.searchString}"
+				id="searchStringInput" widgetVar="searchStringInput"
+				style="width: 98%">
+				<p:ajax event="keyup" delay="500" onstart="PF('blockSeach').block()"
+					oncomplete="PF('blockSeach').unblock()"
+					listener="#{dialogHandlerAction.physicianSearchDialog.searchForPhysician(dialogHandlerAction.physicianSearchDialog.searchString)}"
+					update="ldapPhysicianList" process="@this" />
+			</p:inputText>
+			<p:watermark for="searchStringInput"
+				value="#{msg['include.ladpPhysician.search.watermark']}" />
+		</h:panelGroup>
+
+
+		<h:outputLabel value="#{msg['dialog.addPatient.search.person']}"
+			styleClass="bigFont" />
+
+		<p:dataTable var="physician"
+			value="#{dialogHandlerAction.physicianSearchDialog.physicianList}"
+			id="ldapPhysicianList" selectionMode="single" scrollable="true"
+			scrollHeight="300" rowKey="#{physician.id}"
+			selection="#{dialogHandlerAction.physicianSearchDialog.selectedPhysician}"
+			style="width: 99%" styleClass="newStyleDataTable">
+
+			<!-- title -->
+			<p:column sortBy="#{physician.person.lastName}"
+				headerText="#{msg['include.ladpPhysician.search.name']}"
+				style="width:20%">
+				<h:outputText value="#{physician.person.fullName}" />
+			</p:column>
+
+			<p:column sortBy="#{physician.clinicRole}"
+				headerText="#{msg['include.ladpPhysician.search.role']}"
+				style="width:20%">
+				<h:outputText value="#{physician.clinicRole}" />
+			</p:column>
+
+			<p:ajax event="rowSelect" process="@this" />
+		</p:dataTable>
+
+		<h:outputLabel value="#{msg['dialog.physicianSearch.person.role']}" styleClass="bigFont"/>
+
+		<p:selectCheckboxMenu updateLabel="true" appendTo="dialogContent"
+			styleClass="selectCheckboxMenu" style="width:90%"
+			value="#{dialogHandlerAction.physicianSearchDialog.associatedRoles}"
+			multiple="true">
+			<f:selectItems var="role"
+				value="#{dialogHandlerAction.physicianSearchDialog.allRoles}"
+				itemValue="#{role}"
+				itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
+
+			<p:ajax partialSubmit="true" process="@this" />
+		</p:selectCheckboxMenu>
+
+	</h:panelGrid>
+
+</ui:composition>

@@ -8,6 +8,7 @@ import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
+import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 
 public class CopySettingsUtil {
 
@@ -31,7 +32,8 @@ public class CopySettingsUtil {
 		if (user.getSettings().getInputFieldFontColor() == null || overwrite)
 			user.getSettings().setInputFieldFontColor(group.getSettings().getInputFieldFontColor());
 
-		user.getSettings().setAvailableWorklists(group.getSettings().getAvailableWorklists());
+		user.getSettings()
+				.setAvailableWorklists(new ArrayList<SimpleSearchOption>(group.getSettings().getAvailableWorklists()));
 
 		user.getSettings().setWorklistToLoad(group.getSettings().getWorklistToLoad());
 

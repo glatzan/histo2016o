@@ -9,6 +9,7 @@ import org.histo.config.enums.DateFormat;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
+import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
 
 public class TemplateSlideLable extends DocumentTemplate {
@@ -20,6 +21,10 @@ public class TemplateSlideLable extends DocumentTemplate {
 		this.task = task;
 		this.slide = slide;
 		this.date = date;
+
+		if (HistoUtil.isNotNullOrEmpty(getContent()))
+			setFileContent(FileUtil.getContentOfFile(getContent()));
+
 	}
 
 	public void fillTemplate() {

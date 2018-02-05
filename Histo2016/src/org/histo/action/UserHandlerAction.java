@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
+import org.aspectj.org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.adaptors.MailHandler;
 import org.histo.adaptors.printer.ClinicPrinter;
@@ -166,23 +167,7 @@ public class UserHandlerAction implements Serializable {
 
 	public void updateSelectedPrinters() {
 
-		if (getCurrentUser().getSettings().getPreferedPrinter() == null
-				|| globalSettings.getProgramSettings().isOffline()) {
-			// dummy printer is always there
-			setSelectedPrinter(globalSettings.getPrinterList().get(0));
-			getCurrentUser().getSettings().setPreferedPrinter(getSelectedPrinter().getName());
-		} else {
-			ClinicPrinter printer = globalSettings
-					.getPrinterByName(getCurrentUser().getSettings().getPreferedPrinter());
-			// if printer was found set it
-			if (printer != null) {
-				logger.debug("Settings printer " + printer.getName() + " as selected printer");
-				setSelectedPrinter(printer);
-			} else {
-				// TODO search for printer in the same room
-				setSelectedPrinter(globalSettings.getPrinterList().get(0));
-			}
-		}
+		updateSelectedDocumentPrinter();
 
 		if (getCurrentUser().getSettings().getPreferedLabelPritner() == null) {
 			setSelectedLabelPrinter(globalSettings.getLabelPrinterList().get(0));
@@ -199,6 +184,36 @@ public class UserHandlerAction implements Serializable {
 				setSelectedLabelPrinter(globalSettings.getLabelPrinterList().get(0));
 			}
 		}
+	}
+
+	public boolean updateSelectedDocumentPrinter() {
+
+		if (getCurrentUser().getSettings().isAutoSelectedPreferedPrinter() && !globalSettings.getProgramSettings().isOffline()) {
+			ClinicPrinter printer = globalSettings.getPrinterForRoomHandler().getPrinterForRoom();
+			if (printer != null) {
+				setSelectedPrinter(printer);
+				logger.debug("Pritner found, setting auto printer to " + printer.getName());
+				return true;
+			} else {
+				logger.debug("No Pritner found!, selecting default printer");
+			}
+		}
+
+		if (getCurrentUser().getSettings().getPreferedPrinter() == 0
+				|| globalSettings.getProgramSettings().isOffline()) {
+			// dummy printer is always there
+			setSelectedPrinter(globalSettings.getPrinterList().get(0));
+			getCurrentUser().getSettings().setPreferedPrinter(getSelectedPrinter().getId());
+			return false;
+		} else {
+			// updating the current printer, if no printer was selected the dummy printer
+			// will be set.
+			ClinicPrinter printer = globalSettings.isPrinterValid(getCurrentUser().getSettings().getPreferedPrinter());
+			setSelectedPrinter(printer);
+			getCurrentUser().getSettings().setPreferedPrinter(printer.getId());
+			return true;
+		}
+
 	}
 
 }

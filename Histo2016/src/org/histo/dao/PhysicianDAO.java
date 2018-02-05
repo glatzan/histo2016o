@@ -2,10 +2,18 @@ package org.histo.dao;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.hibernate.criterion.CriteriaSpecification;
@@ -15,11 +23,15 @@ import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.model.patient.Task;
 import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javafx.scene.shape.Circle;
+import javassist.tools.reflect.Sample;
 
 @Component
 @Transactional
@@ -42,7 +54,7 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Physician> getPhysicians(ContactRole role, boolean archived) {
-		return getPhysicians(new ContactRole[] { role }, archived);
+		return getPhysicians(Arrays.asList(role), archived, PhysicianSortOrder.NAME);
 	}
 
 	/**
@@ -56,9 +68,15 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Physician> getPhysicians(List<ContactRole> roles, boolean archived) {
-		ContactRole[] contactRoles = new ContactRole[roles.size()];
-		roles.toArray(contactRoles);
-		return getPhysicians(contactRoles, archived);
+		return getPhysicians(roles, archived, PhysicianSortOrder.NAME);
+	}
+
+	public List<Physician> getPhysicians(ContactRole[] roles, boolean archived) {
+		return getPhysicians(roles, archived, PhysicianSortOrder.NAME);
+	}
+
+	public List<Physician> getPhysicians(ContactRole[] roles, boolean archived, PhysicianSortOrder sortOrder) {
+		return getPhysicians(Arrays.asList(roles), archived, sortOrder);
 	}
 
 	/**
@@ -71,24 +89,35 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Physician> getPhysicians(ContactRole[] roles, boolean archived) {
+	public List<Physician> getPhysicians(List<ContactRole> roles, boolean archived, PhysicianSortOrder sortOrder) {
 
-		if (roles == null || roles.length == 0)
+		if (roles == null || roles.isEmpty())
 			return new ArrayList<>();
 
-		DetachedCriteria query = DetachedCriteria.forClass(Physician.class, "physician");
-		query.addOrder(Order.asc("id"));
-		query.createAlias("physician.associatedRoles", "a");
-		// don't select archived physicians
-		if (!archived)
-			query.add(Restrictions.eq("archived", false));
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		query.add(Restrictions.in("a.elements", roles));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		// Create CriteriaQuery
+		CriteriaQuery<Physician> criteria = qb.createQuery(Physician.class);
+		Root<Physician> root = criteria.from(Physician.class);
+		criteria.select(root);
 
-		List<Physician> result = query.getExecutableCriteria(getSession()).list();
+		criteria.where(root.join("associatedRoles", JoinType.LEFT).in(roles));
 
-		return result;
+		Path<Person> fetchAsPath = (Path<Person>) root.fetch("person", JoinType.LEFT);
+
+		if (sortOrder == PhysicianSortOrder.NAME) {
+			criteria.orderBy(qb.asc(fetchAsPath.get("lastName")));
+		} else if (sortOrder == PhysicianSortOrder.PRIORITY)
+			criteria.orderBy(qb.desc(root.get("priorityCount")), qb.asc(fetchAsPath.get("lastName")));
+		else
+			criteria.orderBy(qb.asc(root.get("id")));
+
+		criteria.distinct(true);
+
+		List<Physician> physicians = getSession().createQuery(criteria).getResultList();
+
+		return physicians;
 	}
 
 	/**
@@ -172,6 +201,10 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		} else {
 			logger.info("Creating new phyisician " + physician.getPerson().getFullName());
 
+			// removing physicians temp id
+			// TODO crate container object
+			physician.setId(0);
+
 			organizationDAO.synchronizeOrganizations(physician.getPerson().getOrganizsations());
 
 			save(physician,
@@ -206,4 +239,7 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 						physician.getPerson().getFullName()));
 	}
 
+	public enum PhysicianSortOrder {
+		NAME, PRIORITY, ID;
+	}
 }

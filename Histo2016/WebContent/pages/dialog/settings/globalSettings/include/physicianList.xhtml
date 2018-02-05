@@ -147,14 +147,23 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
-				<p:commandButton value="#{msg['dialog.settings.person.list.button.new']}"
-					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
-					actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean(true)}">
-					<p:ajax event="dialogReturn"
-						listener="#{settingsDialogHandler.physicianSettingsTab.addPhysician(dialogHandlerAction.physicianSearchDialog.physician)}"
-						update="@form" />
-				</p:commandButton>
 
+				<h:panelGroup>
+					<p:commandButton
+						value="#{msg['dialog.settings.person.list.button.new']}"
+						icon="fa fa-fw fa-plus-circle" process="@this"
+						partialSubmit="true"
+						actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean(true)}">
+						<p:ajax event="dialogReturn"
+							oncomplete="addPhysicianOnDialogReturn()" update="@form" />
+					</p:commandButton>
+					<p:remoteCommand name="addPhysicianOnDialogReturn">
+						<f:actionListener
+							binding="#{settingsDialogHandler.physicianSettingsTab.addPhysician(dialogHandlerAction.physicianSearchDialog.physician)}" />
+						<f:actionListener
+							binding="#{settingsDialogHandler.physicianSettingsTab.updateData()}"></f:actionListener>
+					</p:remoteCommand>
+				</h:panelGroup>
 
 				<p:commandButton value="#{msg['general.close']}"
 					icon="fa fa-times-circle" partialSubmit="true" process="@this"

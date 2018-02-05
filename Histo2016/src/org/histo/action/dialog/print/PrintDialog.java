@@ -334,4 +334,4 @@ public class PrintDialog extends AbstractDialog {
 	public void hideAndSelectDialog() {
 		RequestContext.getCurrentInstance().closeDialog(guiManager.getPDFContainerToRender());
 	}
-}
+} 

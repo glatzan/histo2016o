@@ -1,6 +1,7 @@
 package org.histo.model.patient;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
@@ -25,6 +27,8 @@ import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
+import org.histo.model.Physician;
+import org.histo.model.Signature;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.LogAble;
@@ -41,8 +45,7 @@ import lombok.Setter;
 @SequenceGenerator(name = "diagnosisRevision_sequencegenerator", sequenceName = "diagnosisRevision_sequence")
 @Getter
 @Setter
-public class DiagnosisRevision
-		implements Parent<DiagnosisContainer>, DeleteAble, LogAble, PatientRollbackAble<DiagnosisContainer>, HasID {
+public class DiagnosisRevision implements Parent<Task>, DeleteAble, LogAble, PatientRollbackAble<Task>, HasID {
 
 	@Id
 	@GeneratedValue(generator = "diagnosisRevision_sequencegenerator")
@@ -64,14 +67,8 @@ public class DiagnosisRevision
 	/**
 	 * Parent of the Diagnosis
 	 */
-	@ManyToOne
-	private DiagnosisContainer parent;
-
-	/**
-	 * Number of the revision in the revision sequence
-	 */
-	@Column
-	private int sequenceNumber;
+	@ManyToOne(targetEntity = Task.class)
+	private Task parent;
 
 	/**
 	 * Type of the revison @see {@link DiagnosisRevisionType}
@@ -112,12 +109,30 @@ public class DiagnosisRevision
 	private String text = "";
 
 	/**
+	 * Selected physician to sign the report
+	 */
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Signature signatureOne;
+
+	/**
+	 * Selected consultant to sign the report
+	 */
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Signature signatureTwo;
+
+	/**
+	 * Date of the signature
+	 */
+	@Column
+	private long signatureDate;
+
+	/**
 	 * Standardt consutructor
 	 */
 	public DiagnosisRevision() {
 	}
 
-	public DiagnosisRevision(DiagnosisContainer parent, DiagnosisRevisionType type) {
+	public DiagnosisRevision(Task parent, DiagnosisRevisionType type) {
 		this.parent = parent;
 		this.type = type;
 	}
@@ -141,11 +156,32 @@ public class DiagnosisRevision
 		return diagnoses.stream().anyMatch(p -> p.isMalign());
 	}
 
+	@Transient
+	public Date getSignatureDateAsDate() {
+		return new Date(signatureDate);
+	}
+
+	@Transient
+	public void setSignatureDateAsDate(Date signatureDateAsDate) {
+		this.signatureDate = signatureDateAsDate.getTime();
+	}
+
+	/**
+	 * Creates a signature object with the given physician
+	 * 
+	 * @param physician
+	 */
+	@Transient
+	public void setPhysicianAsSignatureTwo(Physician physician) {
+		Signature signature = new Signature(physician);
+		signature.setRole(physician != null ? physician.getClinicRole() : "");
+		setSignatureTwo(signature);
+	}
+
 	@Override
 	public String toString() {
 		return "Diagnosis-Revision: " + getName() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
-
 
 	/********************************************************
 	 * Interface Parent

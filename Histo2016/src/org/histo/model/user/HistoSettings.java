@@ -22,9 +22,11 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.model.interfaces.HasID;
+import org.histo.util.HistoUtil;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 
 import lombok.Getter;
@@ -56,7 +58,7 @@ public class HistoSettings implements HasID, Cloneable {
 	 * Name of the preferred cups printer
 	 */
 	@Column(columnDefinition = "VARCHAR")
-	private String preferedPrinter;
+	private long preferedPrinter;
 
 	/**
 	 * True if the label printer should be autoselected
@@ -188,5 +190,4 @@ public class HistoSettings implements HasID, Cloneable {
 	protected HistoSettings clone() throws CloneNotSupportedException {
 		return (HistoSettings) super.clone();
 	}
-
 }

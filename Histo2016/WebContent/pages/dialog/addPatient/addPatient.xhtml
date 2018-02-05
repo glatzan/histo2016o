@@ -13,6 +13,7 @@
 		</h:outputFormat></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 </h:head>
 
 
@@ -40,7 +41,8 @@
 				<c:forEach
 					items="#{dialogHandlerAction.addPatientDialogHandler.tabs}"
 					var="tab" varStatus="loop">
-					<p:commandButton value="#{msg[tab.name]}" immediate="true" disabled="#{tab.disabled}"
+					<p:commandButton value="#{msg[tab.name]}" immediate="true"
+						disabled="#{tab.disabled}"
 						styleClass="#{tab eq dialogHandlerAction.addPatientDialogHandler.selectedTab ? 'selectedButton' : ''}"
 						actionListener="#{dialogHandlerAction.addPatientDialogHandler.onTabChange(tab)}"
 						update="navigationTable dialogContent" />
@@ -52,6 +54,7 @@
 			</p:outputPanel>
 		</h:panelGrid>
 	</h:form>
+
 </h:body>
 </html>
 

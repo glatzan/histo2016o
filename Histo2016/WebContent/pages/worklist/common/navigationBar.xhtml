@@ -15,6 +15,7 @@
 
 			<!-- Name -->
 			<h:commandLink
+				oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 				update="navigationForm:patientList contentForm headerForm"
 				actionListener="#{worklistViewHandlerAction.onDeselectTask()}">
 				<h:outputFormat value="#{msg['bodyNavigationOverview']}">
@@ -24,7 +25,7 @@
 						value="#{globalEditViewHandler.selectedPatient.person.firstName}" />
 					<f:param value="#{globalEditViewHandler.selectedPatient.piz}" />
 				</h:outputFormat>
-			</h:commandLink>	
+			</h:commandLink>
 
 			<!-- Auftrag -->
 			<h:commandLink

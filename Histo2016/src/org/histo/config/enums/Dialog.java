@@ -62,7 +62,9 @@ public enum Dialog {
 	NOTIFICATION_PHASE_EXIT("/pages/dialog/notification/notificationPhaseExit", null, 480, 272, false, false, true), // 16:9
 	TASK_ARCHIVE("/pages/dialog/task/archive/archiveTask", null, 480, 272, false, false, true), // 16:9
 	TASK_RESTORE("/pages/dialog/task/archive/restoreTask", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosis/diagnosisCreateRevision", null, 640, 360, false, false, true); // 16:9
+	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionCreate", null, 640, 360, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_DELETE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionDelete", null, 480, 272, false, false, true), // 16:9
+	PRINT_SELECT_PRINTER("/pages/dialog/selectPrinter", null, 640, 360, false, false, true);
 
 	
 	

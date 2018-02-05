@@ -353,17 +353,34 @@ public class SampleService {
 		boolean changed = false;
 
 		for (Slide slide : slides) {
-			if (slide.isStainingCompleted() != completed) {
-				slide.setStainingCompleted(completed);
-				slide.setCompletionDate(System.currentTimeMillis());
-
-				genericDAO.savePatientData(slide, completed ? "log.patient.task.sample.blok.slide.stainingPerformed"
-						: "log.patient.task.sample.blok.slide.stainingNotPerformed", slide.toString());
+			if (setStainingCompletedForSlide(slide, completed))
 				changed = true;
-			}
 		}
 
 		return changed;
+	}
+
+	/**
+	 * Sets the stainin status of a slide as completed if not done jet
+	 * 
+	 * @param slide
+	 * @param completed
+	 * @return
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
+	public boolean setStainingCompletedForSlide(Slide slide, boolean completed)
+			throws CustomDatabaseInconsistentVersionException {
+
+		if (slide.isStainingCompleted() != completed) {
+			slide.setStainingCompleted(completed);
+			slide.setCompletionDate(System.currentTimeMillis());
+
+			genericDAO.savePatientData(slide, completed ? "log.patient.task.sample.blok.slide.stainingPerformed"
+					: "log.patient.task.sample.blok.slide.stainingNotPerformed", slide.toString());
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

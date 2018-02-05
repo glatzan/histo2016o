@@ -314,6 +314,7 @@ public class GlobalEditViewHandler {
 
 	public void quickSearch() {
 		quickSearch(getQuickSearch(), userHandlerAction.getCurrentUser().getSettings().isAlternatePatientAddMode());
+		setQuickSearch("");
 	}
 
 	public void quickSearch(String quickSerach, boolean alternateMode) {
@@ -335,13 +336,13 @@ public class GlobalEditViewHandler {
 
 						worklistViewHandlerAction.onSelectTaskAndPatient(task.getId());
 
-						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.task",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.task",
 								"growl.search.patient.task.text");
 
 					} else {
 						// no task was found
 						logger.debug("No task with the given id found");
-						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.notFount.task", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.task", "",
 								FacesMessage.SEVERITY_ERROR);
 					}
 
@@ -359,9 +360,9 @@ public class GlobalEditViewHandler {
 
 						logger.debug("Found patient " + patient + " and adding to currentworklist");
 
-						worklistViewHandlerAction.addPatientToWorkList(patient, true);
+						worklistViewHandlerAction.addPatientToWorkList(patient, true, true);
 
-						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.piz",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.piz",
 								"growl.search.patient.piz.text");
 
 						// if alternate mode the create Task dialog will be
@@ -373,7 +374,7 @@ public class GlobalEditViewHandler {
 
 					} else {
 						// no patient was found for piz
-						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.notFound.piz", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.piz", "",
 								FacesMessage.SEVERITY_ERROR);
 
 						logger.debug("No Patient found with piz " + quickSerach);
@@ -389,13 +390,13 @@ public class GlobalEditViewHandler {
 
 					if (task != null) {
 						logger.debug("Slide found");
-						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.slide",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.slide",
 								"growl.search.patient.slide");
 						worklistViewHandlerAction.onSelectTaskAndPatient(task.getId());
 					} else {
 						// no slide was found
 						logger.debug("No slide with the given id found");
-						mainHandlerAction.addQueueGrowlMessageAsResource("growl.search.patient.notFount.slide", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.slide", "",
 								FacesMessage.SEVERITY_ERROR);
 					}
 
@@ -425,7 +426,6 @@ public class GlobalEditViewHandler {
 				}
 			}
 
-			setQuickSearch("");
 		} catch (Exception e) {
 			// TODO inform the user
 		}

@@ -51,7 +51,7 @@
 			"id": 2,
 			"location": "Histologie-Hörsaal",
 			"commentary": "",
-			"address": "10.210.51.16",
+			"address": "10.250.7.239",
 			"port": 21,
 			"userName": "admin",
 			"password": "1234",
@@ -72,6 +72,10 @@
 	"clinicBackend": {
 		"baseUrl": "http://auginfo/piz",
 		"patientByPiz": "/$piz",
+		"userAgent": "Mozilla/5.0"
+	},
+	"findPrinterForRoomBackend": {
+		"baseUrl": "http://10.210.21.11:3009/DB/PLS/ip2room/ip/$ip",
 		"userAgent": "Mozilla/5.0"
 	},
 	"mail": {

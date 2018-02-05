@@ -117,7 +117,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 				if (cause instanceof CustomNotUniqueReqest) {
 					logger.debug("Not Unique Reqest Error");
 					RequestContext.getCurrentInstance().closeDialog(null);
-					mainHandlerAction.addQueueGrowlMessage("Fehler!", "Doppelte Anfrage", FacesMessage.SEVERITY_ERROR);
+					mainHandlerAction.sendGrowlMessages("Fehler!", "Doppelte Anfrage", FacesMessage.SEVERITY_ERROR);
 				} else if (cause instanceof CustomDatabaseInconsistentVersionException) {
 
 					logger.debug("Database Version Conflict");
@@ -141,8 +141,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 								+ ((CustomDatabaseInconsistentVersionException) cause).getOldVersion().getClass());
 					}
 
-					mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
-							resourceBundle.get("growl.version.error.text"));
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
 					RequestContext.getCurrentInstance()
 							.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");

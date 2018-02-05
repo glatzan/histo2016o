@@ -36,7 +36,7 @@ public class FileUtil implements HasLogger {
 
 			String line;
 			while ((line = br.readLine()) != null) {
-				toPrint.append(line);
+				toPrint.append(line+ "\r\n");
 			}
 			br.close();
 

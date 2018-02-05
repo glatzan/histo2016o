@@ -96,6 +96,8 @@ public class Block
 
 				if (parent.getBlocks().size() > 1) {
 					name = TaskUtil.getCharNumber(getParent().getBlocks().indexOf(this));
+					if (getTask().getSamples().size() == 1)
+						name = name.toUpperCase();
 				} else {
 					// no block name
 					name = "";

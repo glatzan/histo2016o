@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.printFax.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+</h:head>
+
+<h:body styleClass="defaultDialogLayout infoDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="defaulDilaogHeaderDivWithBackground">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				<h:outputLabel value="#{msg['dialog.printFax.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="contentDiv">
+			<h:panelGrid columns="1" styleClass="defaultListingTableFirstColumEnummeration">
+				<h:outputLabel value="#{msg['dialog.printFax.text.1']}" />
+
+				<h:outputLabel
+					rendered="#{dialogHandlerAction.faxPrintDocumentDialog.contact ne null}"
+					value="#{dialogHandlerAction.faxPrintDocumentDialog.contact.person.fullName}" />
+
+				<h:outputLabel
+					rendered="#{dialogHandlerAction.faxPrintDocumentDialog.contact eq null}"
+					value="#{msg['dialog.printFax.text.noContact']}" />
+
+				<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration">
+					<h:outputLabel value="#{msg['dialog.printFax.faxNumber']}" />
+					<h:inputText
+						value="#{dialogHandlerAction.faxPrintDocumentDialog.number}">
+						<p:ajax event="keyup" process="@this" partialSubmit="true"
+							update="@form" delay="100"
+							listener="#{dialogHandlerAction.faxPrintDocumentDialog.updateFaxButton()}" />
+
+						<p:ajax event="blur" process="@this" partialSubmit="true"
+							update="@form" delay="100"
+							listener="#{dialogHandlerAction.faxPrintDocumentDialog.updateFaxButton()}" />
+					</h:inputText>
+				</h:panelGrid>
+
+				<h:outputLabel value="#{msg['dialog.printFax.text.intern']}" />
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float:right;">
+					<p:commandButton value="#{msg['dialog.printFax.button.sendFax']}"
+						disabled="#{dialogHandlerAction.faxPrintDocumentDialog.faxButtonDisabled}"
+						styleClass="smallButton buttonRighMarginInList"
+						title="#{dialogHandlerAction.faxPrintDocumentDialog.faxButtonDisabled ? msg['dialog.printFax.button.sendFax.title.disabled'] : msg['dialog.printFax.button.sendFax.text']}"
+						icon="fa fa-fw fa-fax">
+						<f:actionListener
+							binding="#{dialogHandlerAction.faxPrintDocumentDialog.sendFax()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.faxPrintDocumentDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.close']}"
+						styleClass="smallButton buttonRighMarginInList"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
+						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

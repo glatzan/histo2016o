@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
@@ -15,10 +17,17 @@ import org.cups4j.PrintJob;
 import org.histo.model.PDFContainer;
 import org.histo.model.transitory.settings.PrinterSettings;
 import org.histo.template.DocumentTemplate;
+import org.histo.model.transitory.settings.ProgramSettings;
+import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
 import org.histo.util.pdf.PrintOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -27,18 +36,30 @@ import lombok.Setter;
 @Setter
 public class ClinicPrinter extends AbstractPrinter {
 
+	private static String IPADDRESS_PATTERN = "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
+
 	protected PrinterSettings settings;
 
 	public ClinicPrinter() {
 	}
 
-	public ClinicPrinter(int id, CupsPrinter cupsPrinter, PrinterSettings settings) {
-		this.id = id;
+	public ClinicPrinter(CupsPrinter cupsPrinter, PrinterSettings settings) {
+		this.id = cupsPrinter.getName().hashCode();
 		this.address = cupsPrinter.getPrinterURL().toString();
 		this.name = cupsPrinter.getName();
 		this.description = cupsPrinter.getDescription();
 		this.location = cupsPrinter.getLocation();
 		this.settings = settings;
+		
+		// getting ip
+		Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
+		Matcher matcher = pattern.matcher(cupsPrinter.getDeviceURI());
+		
+		if (matcher.find()) {
+			this.deviceUri = matcher.group();
+		} else {
+			this.deviceUri = "0.0.0.0";
+		}
 	}
 
 	/**
@@ -62,7 +83,7 @@ public class ClinicPrinter extends AbstractPrinter {
 	}
 
 	public boolean print(PDFContainer container) {
-		return print(container, 1);
+		return print(container, "");
 	}
 
 	public boolean print(PDFContainer container, int count) {
@@ -83,7 +104,6 @@ public class ClinicPrinter extends AbstractPrinter {
 
 	public boolean print(PrintOrder printOrder) {
 		logger.debug("Printing xtimes: " + printOrder.getCopies());
-		System.out.println("-------------- duplexys");
 		int i = 0;
 		boolean result = true;
 		logger.debug("Printing " + i);
@@ -94,9 +114,6 @@ public class ClinicPrinter extends AbstractPrinter {
 
 			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(printOrder.getPdfContainer().getData()))
 					.duplex(printOrder.isDuplex()).copies(printOrder.getCopies()).build();
-
-			// args= "sides:keyword:two-sided-long-edge"; duplex
-			// args= "d";
 
 			if (HistoUtil.isNotNullOrEmpty(printOrder.getArgs())) {
 
@@ -134,9 +151,20 @@ public class ClinicPrinter extends AbstractPrinter {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof ClinicPrinter && ((ClinicPrinter) obj).getName().equals(name))
+		if (obj instanceof ClinicPrinter && ((ClinicPrinter) obj).getId() == getId())
 			return true;
 
 		return super.equals(obj);
+	}
+
+	public static String printerToJson(ClinicPrinter clinicPrinter) {
+		Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+		return gson.toJson(clinicPrinter);
+
+	}
+
+	public static ClinicPrinter getPrinterFromJson(String json) {
+		Gson gson = new Gson();
+		return gson.fromJson(json, ClinicPrinter.class);
 	}
 }

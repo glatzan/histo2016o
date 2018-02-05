@@ -1,69 +1,69 @@
-\documentclass[12pt]{g-brief}
+\documentclass{scrreprt}
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
-%\usepackage[left=1.5cm,right=1.5cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{graphicx}
 \usepackage{wallpaper}
 \usepackage[absolute]{textpos}
+\usepackage{tabularx} 
 \usepackage[T1]{fontenc}
-\usepackage{fancyhdr}
-\usepackage{graphicx}
-
-\usepackage{verbatimbox}
-
-\usepackage{ifthen}
-\usepackage{everypage}
-
-\usepackage{multirow,lipsum,longtable,colortbl,xcolor}
-\usepackage{dcolumn}%,tabularx,tabulary}%,threeparttable,longtable,tabu}
-
-\usepackage{tabularx,booktabs} 
 \usepackage{supertabular}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
 \usepackage{helvet} 
-
-\usepackage{helvet}
-
+\usepackage{lipsum} 
 \usepackage{longtable}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{ifthen}
+\usepackage{setspace}
+\usepackage{everypage}
+\usepackage{ragged2e}
 
-\usepackage{gb4e}
-\usepackage{array}
-\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\renewcommand{\familydefault}{\sfdefault} 
 
-\renewcommand{\familydefault}{\sfdefault}
+\def\fs{\kern 0.33em}
 
-\renewcommand{\datum}{}
-\renewcommand{\datumtext}{}
-
- \fenstermarken
- \faltmarken
-
-
- \Unterschrift {Max Mustermann}
- \Postvermerk {Einschreiben}
- \Adresse {Lena Musterfrau \\
- Musterstraße 1 \\
- 08150 Musterstadt}
- \Betreff {\Large Histologisches Gutachten}
- \Gruss {Mit freundlichen Grüßen}{1cm}
- \Anlagen {Beispielanhang}
-
-
-%deactive pagenumbering%
-\pagenumbering{gobble}
-
+% header and footer syle
 \pagestyle{fancy}
 
-\AddEverypageHook{%
-   \ifthenelse{\value{page}=1}%
-     {\renewcommand{\headrulewidth}{0.0pt}}%
-     {\renewcommand{\headrulewidth}{0.4pt}}%
+% header thinkness on page on
+\AddEverypageHook{
+   \ifthenelse{\value{page}=1}
+    {\renewcommand{\headrulewidth}{0.0pt}}
+    {\renewcommand{\headrulewidth}{0.4pt}}
+}
+
+\lfoot{
+	\footnotesize 
+	Dies ist ein technisch validierter Befundbericht, der erst durch eine ärztliche Unterschrift fachlich validiert ist.   
+}
+
+\rfoot{
+	\footnotesize 
+	{Seite \thepage\ / \pageref{LastPage}}
 }
 
 
+\lhead{
+	\footnotesize 
+   	\ifthenelse{\value{page}=1}
+    	{}
+ 	{$!patient.person.fullName - $date.format('dd.MM.yyyy', $!patient.person.birthday) - PIZ: $!patient.piz}
+}
+
+
+\setcounter{secnumdepth}{0}
+
+
+
+
+
 \begin{document}
-%\ThisCenterWallPaper{1}{intern_v21.pdf}
+%\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
+\ThisCenterWallPaper{1}{background.pdf}
+%
  \input{code128.tex}
+
 
 \baselineskip10pt
 
@@ -71,268 +71,110 @@
 \setlength{\TPHorizModule}{1mm}
 \setlength{\TPVertModule}{1mm}
 
-{
-\scriptsize
-\begin{textblock}{100}(165, 265) 
-\includegraphics[scale=0.4]{LogoFrei.png}
-\end{textblock}
-}
-{
-\scriptsize
-\begin{textblock}{100}(123, 7) 
-\includegraphics[scale=0.25]{Formuladr.png}
-\end{textblock}
-}
-
-{
-\scriptsize
-\begin{textblock}{100}(115, 40) 
-Klinik für Augenheilkunde \\
-\textbf{Histologisches Labor}\\\\
-Ärztlicher Direktor\\
-\textbf{Universitätsprofessor\\
-Dr. Thomas Reinhard}\\\\
-Killianstr. 5\\
-79183 Freiburg\\
-Tel. 0761/ 270-40060\\
-\end{textblock}
-}
-
-{
-\scriptsize
-\begin{textblock}{100}(155, 40) 
-Leiterin Histologisches Labors\\
-\textbf{Prof. Dr. Claudia Auw-Hädrich}\\
-Tel.0761/270-41950\\
-Fax0761/270-41090\\\\
-\textbf{Befundauskunft}\\
-Tel.0761/270-40760\\
-Fax0761/270-41090\\\\
-\textbf{Histologisches Labor}\\
-c/o Engesserstr. 4\\
-79183 Freiburg\\
-Tel.0761/270-40580\\
-Fax0761/270-40581
-\end{textblock}
-}
 
 % pat block
 {
 \scriptsize
 \begin{textblock}{100}(19, 8) 
-\noindent ::patName, ::patSurName\\
-::patAddress\\
-::patPlz ::patCity\\
+\noindent $!patient.person.fullName\\
+$date.format('dd.MM.yyyy', $!patient.person.birthday)\\
+$!patient.person.contact.street \\
+$!patient.person.contact.postcode $!patient.person.contact.town\\
 \X=.35mm        
 \barheight=1cm 
-\code{::piz}\\
-::piz\\
+\code{#if($patient.piz == "") 0 #else $!patient.piz #end}\\
+$!patient.piz\\
 \end{textblock}
 }
 
 % add block
 {
-
-\begin{textblock}{100}(25, 43) 
-%\setstretch{1.0}
+\begin{textblock}{100}(22, 50) 
+\setstretch{1.0}
 \noindent 
-\textbf{::addSubject} \\\\
-::addName, ::addSurName\\
-::addAddress\\
-::addPlz ::addCity\\
+\textbf{$!subject} \\\\
+$address \\
+
 \end{textblock}
 }
 
-\newcommand{\Top}{\rule{0pt}{2.6ex}}       % strut for \hline above
-\newcommand{\Bot}{\rule[-1.2ex]{0pt}{0pt}} % strut for \hline below
+~\\
+\vspace{5.0cm}\\
+\noindent\makebox[\linewidth]{\rule{\linewidth}{0.4pt}}\\
 
-% Create an underline as long as the given text would be
-\newcommand*{\srule}[2][0pt]{\setbox0\hbox{#2}\rule[#1]{\wd0}{0.4pt}}
+{
+	\RaggedRight
+	\renewcommand{\arraystretch}{0}
+	\setlength{\tabcolsep}{.16667em}
+	\begin{tabular}{@{}p{0.6\linewidth}p{0.4\linewidth}}
+	
+		{
+			\renewcommand{\arraystretch}{1.5}
+			\begin{tabular}[t]{p{0.3\linewidth}p{0.7\linewidth}}
+				
+	 		
+ 				\multicolumn{2}{l}{\huge Histologisches Gutachten} \\ 
+ 				$!patient.person.fullName & geb.  $date.format('dd.MM.yyyy', $!patient.person.birthday)
+			
+			\end{tabular}
+		} 
+		& 
+		{
+			\renewcommand{\arraystretch}{1}
+			\begin{tabular}[t]{p{0.6\linewidth}p{0.4\linewidth-8\tabcolsep}}
+				Eingangsnummer & \textbf{$!task.taskID} \\
+				~ & 
+					\X=.30mm        % The width of code will be greater
+					\barheight=1cm % the height will be smaller.
+					\code{$!task.taskID} \\
+			\end{tabular}
+		}
+	\end{tabular}
 
-% New tabularx column type: C is like X, just centered.
-\newcolumntype{C}{>{\centering\arraybackslash}X}
+	Sehr geehrte Frau Kollegin,\\
+	sehr geehrter Herr Kollege,\\
+	\ \\
+	wir berichten über die histologische Untersuchung,\\
+	\ \\
+}
 
-% Making \cellwidth the width of the tabularx cell we are currently in
-\makeatletter
-\newcommand{\cellwidth}{\TX@col@width}
-\makeatother
+#foreach ($diagnosisRevision in $task.diagnosisRevisions)
+{
+\renewcommand{\arraystretch}{1}
+\setlength{\tabcolsep}{0em}
+\setlength{\LTleft}{5pt}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\RaggedRight
 
-%\vspace*{0.5\textheight} Eingangsdatum: &  asd \\
+\large \underline{ $!diagnosisRevision.name: }\smallskip
+\begin{longtable}{p{\linewidth}}
+		\normalsize $!latexTextConverter.convertToTex($diagnosisRevision.text)
+\end{longtable}
 
-\begin{g-brief}
+\ \\
+\large \underline{ Diagnosen: }\smallskip
+\begin{longtable}{p{0.05\linewidth}p{0.95\linewidth}}
+#foreach ($diagnosis in $diagnosisRevision.diagnoses)
+	$!diagnosis.sample.sampleID & $!latexTextConverter.convertToTex($diagnosis.diagnosis)  \\
+#end
+\end{longtable}	
+}
 
+\begin{center}
+\ \\
+\RaggedRight
+\begin{tabular}{p{0.15\linewidth}p{0.05\linewidth}p{0.35\linewidth}p{0.45\linewidth}}
+	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
+	Freiburg den \linebreak $date.format('dd.MM.yyyy', $!diagnosisRevision.signatureDateAsDate) & & $!diagnosisRevision.signatureOne.physician.person.fullName #if($!diagnosisRevision.signatureOne.physician.person.fullName) \linebreak #end $!diagnosisRevision.signatureOne.role & $!diagnosisRevision.signatureTwo.physician.person.fullName #if($!diagnosisRevision.signatureTwo.physician.person.fullName) \linebreak #end $!diagnosisRevision.signatureTwo.role \\
 
-  
-    
-\begin{tabular}{cc}
-    \addvbuffer[0.0cm 0.9cm]{\begin{minipage}{.5\linewidth}
-      \begin{tabularx}{\cellwidth}{lll}
-\hline
-\multicolumn{2}{|c}{\scshape\textbf{Character}\Top{}\Bot{}}\\
-\textbf{Name:}        & \hrulefill\Top{}\\
-\textbf{Race:}        & \hrulefill\\
-\textbf{Height:}      & \hrulefill\\
-\textbf{Build:}       & \hrulefill\\
-\textbf{Hair:}        & \hrulefill\\
-\textbf{Eyes:}        & \hrulefill\\
-\textbf{Hair:}        & \hrulefill\\
-\textbf{Eyes:}        & \hrulefill\\
-\textbf{Outlook:}     & \hrulefill\\
-\textbf{Hair:}        & \hrulefill\\
-\textbf{Eyes:}        & \hrulefill\\
-\textbf{Outlook:}     & \hrulefill\\
-\textbf{Age:}         & \hrulefill\Bot{}\\
-\hline
-\end{tabularx}
-    \end{minipage}} &
-
-     \begin{minipage}[b]{.5\linewidth}
-     \begin{tabular}[t]{|lll|}
-\hline
-\multicolumn{3}{|c|}{\scshape\textbf{Languages}}\Top{}\Bot{}\\
-\textbf{Language} & \textbf{Spoken} & \textbf{Written}\Top{}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\Bot{}\\
-\hline
 \end{tabular}
-    \end{minipage} 
-\end{tabular}
-\vspace*{-0.5cm}
+\end{center}
+		
+#end
+ 
 
-\begin{tabular}{ccc}
-\hline
-a&b&c\\
-\hline
-\end{tabular}
-\quad
-\begin{tabular}{ccc}
-\hline
-d&e&f\\
-\hline
-\end{tabular}
-% --------------------------------------
-% In the document...
-% --------------------------------------
-
-% Full-width table with three cells, each containing a table in turn
-% @{} suppressing padding -- the sub-tables take care of that.
-
-% Cell 1 -- Character description
-\begin{tabularx}{\cellwidth}{lll}
-\hline
-\multicolumn{2}{|c}{\scshape\textbf{Character}\Top{}\Bot{}}\\
-\textbf{Name:}        & \hrulefill\Top{}\\
-\textbf{Race:}        & \hrulefill\\
-\textbf{Height:}      & \hrulefill\\
-\textbf{Build:}       & \hrulefill\\
-\textbf{Hair:}        & \hrulefill\\
-\textbf{Eyes:}        & \hrulefill\\
-\textbf{Hair:}        & \hrulefill\\
-\textbf{Hair:}        & \hrulefill\\
-\textbf{Eyes:}        & \hrulefill\\
-\textbf{Outlook:}     & \hrulefill\\
-\textbf{Eyes:}        & \hrulefill\\
-\textbf{Outlook:}     & \hrulefill\\
-\textbf{Age:}         & \hrulefill\Bot{}\\
-\hline
-\end{tabularx}
-
-\begin{tabularx}{\cellwidth}{|lll|}
-\hline
-\multicolumn{3}{|c|}{\scshape\textbf{Languages}}\Top{}\Bot{}\\
-\textbf{Language} & \textbf{Spoken} & \textbf{Written}\Top{}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\\
-\hrulefill       & \srule{Spoken}  & \srule{Written}\Bot{}\\
-\hline
-\end{tabularx}
-
-
-Finster war's, der Mond schien helle auf die grünbeschneite Flur, als 
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.
-Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.
-Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war. dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.Finster war's, der Mond schien helle auf die grünbeschneite Flur, als
-ein Wagen blitzesschnelle langsam um die runde Ecke fuhr. Drinnen
-saßen stehend Leute schweigend ins Gespräch vertieft, als ein
-totgeschossner Hase auf dem Wasser Schlittschuh lief und ein
-blondgelockter Knabe mit kohlrabenschwarzem Haar auf die grüne Bank
-sich setzte, die gelb angestrichen war.
-
- \end{g-brief}
-
+   \ifthenelse{\pageref{LastPage}>1}
+     { \noindent \footnotesize  Dieser Befundbericht umfasst insgesamt \pageref{LastPage} Seiten.  \\}
+      {~	}
 \end{document}

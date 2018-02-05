@@ -94,6 +94,8 @@ public class MailTemplate extends Template {
 	public void prepareTemplate() {
 		String file = FileUtil.getContentOfFile(getContent());
 
+		System.out.println(file);
+		
 		String[] arr = file.split("\r\n", 2);
 
 		if (arr.length != 2) {

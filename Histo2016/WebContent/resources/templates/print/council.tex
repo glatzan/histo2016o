@@ -80,7 +80,7 @@ $!address\\
 \begin{textblock}{100}(22, 86) 
 \setstretch{1.0}
 \noindent 
-\textbf{Eingangsmunner: $!task.taskID} \\[1mm]
+\textbf{Eingangsnummer: $!task.taskID} \\[1mm]
 \X=.20mm        
 \barheight=0.5cm 
 \code{ #if($task.taskID == "") 0 #else $!task.taskID #end}\\[1.5mm]
@@ -90,7 +90,7 @@ Name: & $!patient.person.lastName \\
 Vorname: &  $!patient.person.firstName \\
 Geb. am: & $!date.format('dd.MM.yyyy', $!patient.person.birthday)  \\
 PIZ & $!patient.piz \\[1.5mm]
-Freiburg den: &  $date.format('dd.MM.yyyy', $!council.dateOfRequestAsDate)
+Freiburg den: &  $!date.format('dd.MM.yyyy', $council.dateOfRequest)
 \end{tabular}
 
 
@@ -112,7 +112,7 @@ $!council.councilTextAsLatex \\[5mm]
 \large 
 \setstretch{1.0}
 \noindent
-Mit freundlichen Grüße \\[5mm]
+Mit freundlichen Grüßen \\[5mm]
 $!council.physicianRequestingCouncil.person.fullName \\[7mm]
 }
 
@@ -120,7 +120,7 @@ $!council.physicianRequestingCouncil.person.fullName \\[7mm]
 \large 
 \setstretch{1.0}
 \noindent
-Anlage: $!council.attachment  \\
+Anlage: $!council.sampleShippedCommentary  \\
 }
 	
 

@@ -86,8 +86,6 @@ public class DialogHandlerAction {
 
 	private SlideOverviewDialog slideOverviewDialog;
 
-	private DiagnosisPhaseExitDialog diagnosisPhaseExitDialog;
-
 	private ArchiveTaskDialog archiveTaskDialog;
 
 	private StainingPhaseExitDialog stainingPhaseExitDialog;
@@ -113,8 +111,6 @@ public class DialogHandlerAction {
 	private CouncilDialogHandler councilDialogHandler;
 
 	private ChangeTaskIDDialog changeTaskIDDialog;
-
-	private DiagnosisRevisionDialog diagnosisRevisionDialog;
 
 	private ConfirmExternalPatientDialog confirmExternalPatientDialog;
 
@@ -255,14 +251,6 @@ public class DialogHandlerAction {
 		return slideOverviewDialog;
 	}
 
-	public DiagnosisPhaseExitDialog getDiagnosisPhaseExitDialog() {
-		if (diagnosisPhaseExitDialog == null) {
-			diagnosisPhaseExitDialog = new DiagnosisPhaseExitDialog();
-		}
-
-		return diagnosisPhaseExitDialog;
-	}
-
 	public StainingPhaseExitDialog getStainingPhaseExitDialog() {
 		if (stainingPhaseExitDialog == null) {
 			stainingPhaseExitDialog = new StainingPhaseExitDialog();
@@ -373,14 +361,6 @@ public class DialogHandlerAction {
 		}
 
 		return changeTaskIDDialog;
-	}
-
-	public DiagnosisRevisionDialog getDiagnosisRevisionDialog() {
-		if (diagnosisRevisionDialog == null) {
-			diagnosisRevisionDialog = new DiagnosisRevisionDialog();
-		}
-
-		return diagnosisRevisionDialog;
 	}
 
 	public ConfirmExternalPatientDialog getConfirmExternalPatientDialog() {

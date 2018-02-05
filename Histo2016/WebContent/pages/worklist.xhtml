@@ -31,7 +31,8 @@
 			<h:form id="globalCommandsForm">
 				<!-- update all, for resize update -->
 				<p:remoteCommand name="refreshOnResize"
-					update="navigationForm contentForm headerForm growlForm" />
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
+					update="navigationForm:patientList contentForm headerForm growlForm" />
 
 				<!-- update conten, btn because of click event -->
 				<p:commandButton id="refreshContentBtn" style="display:none"
@@ -62,7 +63,13 @@
 			</script>
 
 
+			<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
+
+			<h:outputScript library="scripts"
+				name="setScrollPanelScrollSpeed.js" />
+
 			<ui:include src="template/idleMonitor.xhtml" />
+
 		</ui:define>
 	</ui:composition>
 </h:body>

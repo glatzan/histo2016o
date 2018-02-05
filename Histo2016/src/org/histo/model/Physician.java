@@ -90,8 +90,7 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	private Person person;
 
 	/**
-	 * Transitory, if fetched from ldap this variable contains the dn objects
-	 * name.
+	 * Transitory, if fetched from ldap this variable contains the dn objects name.
 	 */
 	@Transient
 	private String dnObjectName;
@@ -101,6 +100,14 @@ public class Physician implements Serializable, ArchivAble, HasID {
 	 */
 	@Column
 	private boolean archived;
+
+	/**
+	 * On every selection of the physician, this number will be increased. The
+	 * physicians can be ordered according to this value. So often used physicians
+	 * will be displayed first.
+	 */
+	@Column
+	private int priorityCount;
 
 	/**
 	 * Standard constructor for hibernate

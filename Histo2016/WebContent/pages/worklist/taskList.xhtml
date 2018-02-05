@@ -13,125 +13,140 @@
 		<h:outputLabel value="#{msg['body.taskList.headline']}" />
 	</h:panelGrid>
 
-	<p:panel style="width: 80%" styleClass="newTableContainer">
+	<p:scrollPanel styleClass="histoScroll" id="contentScrollPane">
+		<p:panel style="width: 80%" styleClass="newTableContainer"
+			id="contentPanel">
 
-		<p:dataTable var="task" value="#{taskViewHandlerAction.taskList}"
-			scrollHeight="600" style="margin-top:10px;"
-			styleClass="newStyleDataTable" selectionMode="single"
-			rowKey="#{task.id}" selection="#{taskViewHandlerAction.selectedTask}">
+			<p:dataTable var="task" value="#{taskViewHandlerAction.taskList}"
+				scrollHeight="600" style="margin-top:10px;"
+				styleClass="newStyleDataTable" selectionMode="single"
+				rowKey="#{task.id}"
+				selection="#{taskViewHandlerAction.selectedTask}">
 
-			<p:ajax event="rowSelect"
-				listener="#{worklistViewHandlerAction.addTaskToWorklist(taskViewHandlerAction.selectedTask)}"
-				update="navigationForm contentForm headerForm" />
+				<p:ajax event="rowSelect"
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight', 'contentForm:contentScrollPane')"
+					listener="#{worklistViewHandlerAction.addTaskToWorklist(taskViewHandlerAction.selectedTask)}"
+					update="navigationForm:patientList contentForm:contentPanel headerForm" />
 
-			<!-- task id -->
-			<p:column headerText="#{msg['body.taskList.table.task']}"
-				style="width:180px">
-				<h:outputText
-					value="#{task.taskID} (#{mainHandlerAction.date(task.dateOfReceipt)})" />
-			</p:column>
+				<!-- task id -->
+				<p:column headerText="#{msg['body.taskList.table.task']}"
+					style="width:180px">
+					<h:outputText
+						value="#{task.taskID} (#{mainHandlerAction.date(task.dateOfReceipt)})" />
+				</p:column>
 
-			<!-- name -->
-			<p:column headerText="#{msg['body.taskList.table.patient']}">
-				<h:outputText value="#{task.patient.person.fullName}" />
-			</p:column>
+				<!-- name -->
+				<p:column headerText="#{msg['body.taskList.table.patient']}">
+					<h:outputText value="#{task.patient.person.fullName}" />
+				</p:column>
 
-			<!-- birthday -->
-			<p:column headerText="#{msg['body.taskList.table.birthday']}"
-				style="width:80px">
-				<h:outputText rendered="#{task.patient.person.birthday ne null}"
-					value="#{task.patient.person.birthday}">
-					<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-				</h:outputText>
-			</p:column>
+				<!-- birthday -->
+				<p:column headerText="#{msg['body.taskList.table.birthday']}"
+					style="width:80px">
+					<h:outputText rendered="#{task.patient.person.birthday ne null}"
+						value="#{task.patient.person.birthday}">
+						<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+					</h:outputText>
+				</p:column>
 
-			<!-- staining status -->
-			<p:column style="width:10px">
-				<f:facet name="header">
-					<i class="fa fa-image"
-						title="#{msg['body.taskList.table.staining']}"></i>
-				</f:facet>
-				<ui:fragment rendered="#{task.stainingCompletionDate ne 0}">
-					<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
-						title="#{msg['body.taskList.table.staining.text']}" />
-				</ui:fragment>
-			</p:column>
+				<!-- staining status -->
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-image"
+							title="#{msg['body.taskList.table.staining']}"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.stainingCompletionDate ne 0}">
+						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
+							title="#{msg['body.taskList.table.staining.text']}" />
+					</ui:fragment>
+				</p:column>
 
-			<!-- diagnosis status -->
-			<p:column style="width:10px">
-				<f:facet name="header">
-					<i class="fa fa-eye"
-						title="#{msg['body.taskList.table.diagnosis']}"></i>
-				</f:facet>
-				<ui:fragment rendered="#{task.diagnosisCompletionDate ne 0}">
-					<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
-						title="#{msg['body.taskList.table.diagnosis.text']}" />
-				</ui:fragment>
-			</p:column>
+				<!-- diagnosis status -->
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-eye"
+							title="#{msg['body.taskList.table.diagnosis']}"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.diagnosisCompletionDate ne 0}">
+						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
+							title="#{msg['body.taskList.table.diagnosis.text']}" />
+					</ui:fragment>
+				</p:column>
 
-			<!-- notification status -->
-			<p:column style="width:10px">
-				<f:facet name="header">
-					<i class="fa fa-volume-up"
-						title="#{msg['body.taskList.table.notification']}"></i>
-				</f:facet>
-				<ui:fragment rendered="#{task.notificationCompletionDate ne 0}">
-					<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
-						title="#{msg['body.taskList.table.notification.text']}" />
-				</ui:fragment>
-			</p:column>
+				<!-- notification status -->
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-volume-up"
+							title="#{msg['body.taskList.table.notification']}"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.notificationCompletionDate ne 0}">
+						<i style="margin-left: 3px;" class="fa fa-check-circle icon-green"
+							title="#{msg['body.taskList.table.notification.text']}" />
+					</ui:fragment>
+				</p:column>
 
-			<!-- archived -->
-			<p:column style="width:10px">
-				<f:facet name="header">
-					<i class="fa fa-archive"
-						title="#{msg['body.taskList.table.archived']}"></i>
-				</f:facet>
-				<ui:fragment rendered="#{task.finalized}">
-					<i style="margin-left: 3px;" class="fa fa-archive icon-green"
-						title="#{msg['body.taskList.table.archived']}" />
-				</ui:fragment>
-			</p:column>
+				<!-- archived -->
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-archive"
+							title="#{msg['body.taskList.table.archived']}"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.finalized}">
+						<i style="margin-left: 3px;" class="fa fa-archive icon-green"
+							title="#{msg['body.taskList.table.archived']}" />
+					</ui:fragment>
+				</p:column>
 
-			<!-- due date -->
-			<p:column style="width:10px">
-				<f:facet name="header">
-					<i class="fa fa-exclamation"
-						title="#{msg['body.taskList.table.priority']}"></i>
-				</f:facet>
-				<ui:fragment rendered="#{task.taskPriority ne 'NONE'}">
-					<i style="margin-left: 3px;" class="fa fa-exclamation icon-red"
-						title="" />
-				</ui:fragment>
-			</p:column>
-		</p:dataTable>
+				<!-- due date -->
+				<p:column style="width:10px">
+					<f:facet name="header">
+						<i class="fa fa-exclamation"
+							title="#{msg['body.taskList.table.priority']}"></i>
+					</f:facet>
+					<ui:fragment rendered="#{task.taskPriority ne 'NONE'}">
+						<i style="margin-left: 3px;" class="fa fa-exclamation icon-red"
+							title="" />
+					</ui:fragment>
+				</p:column>
+			</p:dataTable>
 
-		<h:panelGrid columns="1" styleClass="newTableContainer"
-			style="width:100%;margin-top:10px;">
-			<h:panelGrid columns="4" style="float:right; width:auto !important"
-				styleClass="newStyleListingTable">
+			<h:panelGrid columns="1" styleClass="newTableContainer"
+				style="width:100%;margin-top:10px;">
+				<h:panelGrid columns="4" style="float:right; width:auto !important"
+					styleClass="newStyleListingTable">
 
-				<!-- task per page -->
-				<h:outputLabel value="#{msg['body.taskList.perPage']}" />
-				<p:selectOneMenu value="#{taskViewHandlerAction.taskPerPull}">
-					<f:selectItem itemLabel="5" itemValue="5" />
-					<f:selectItem itemLabel="20" itemValue="20" />
-					<f:selectItem itemLabel="50" itemValue="50" />
-					<f:selectItem itemLabel="100" itemValue="100" />
+					<!-- task per page -->
+					<h:outputLabel value="#{msg['body.taskList.perPage']}" />
+					<p:selectOneMenu value="#{taskViewHandlerAction.taskPerPull}">
+						<f:selectItem itemLabel="5" itemValue="5" />
+						<f:selectItem itemLabel="20" itemValue="20" />
+						<f:selectItem itemLabel="50" itemValue="50" />
+						<f:selectItem itemLabel="100" itemValue="100" />
 
-					<p:ajax event="change" process="@this" update="@form"
-						listener="#{taskViewHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
-				</p:selectOneMenu>
+						<p:ajax event="change" process="@this"
+							update="contentForm:contentPanel"
+							oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+							listener="#{taskViewHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
+					</p:selectOneMenu>
 
-				<!-- pages -->
-				<h:outputLabel value="#{msg['body.taskList.page']}" />
-				<p:selectOneMenu id="page" value="#{taskViewHandlerAction.page}">
-					<f:selectItems value="#{taskViewHandlerAction.pages}" />
-					<p:ajax event="change" process="@this" update="@form"
-						listener="#{taskViewHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
-				</p:selectOneMenu>
+					<!-- pages -->
+					<h:outputLabel value="#{msg['body.taskList.page']}" />
+					<p:selectOneMenu id="page" value="#{taskViewHandlerAction.page}">
+						<f:selectItems value="#{taskViewHandlerAction.pages}" />
+						<p:ajax event="change" process="@this"
+							update="contentForm:contentPanel"
+							oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+							listener="#{taskViewHandlerAction.onChangeSelectionCriteria()}"></p:ajax>
+					</p:selectOneMenu>
+				</h:panelGrid>
 			</h:panelGrid>
-		</h:panelGrid>
-	</p:panel>
+		</p:panel>
+	</p:scrollPanel>
 
+	<!-- scrollspeed of scrollpane -->
+	<script type="text/javascript">
+		$(document).ready(function() {
+			setScrollPanelScrollSpeed("contentForm:contentScrollPane");
+		});
+	</script>
 </ui:composition>

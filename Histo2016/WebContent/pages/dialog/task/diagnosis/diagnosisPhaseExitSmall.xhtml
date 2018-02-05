@@ -35,12 +35,12 @@
 			<h:panelGrid columns="2" styleClass="newStyleListingTable"
 				style="margin: 10px 0px 0px 20px">
 				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.diagnosisPhaseExitDialog.goToNotificationPhase}" />
+					value="#{diagnosisPhaseExitDialog.goToNotificationPhase}" />
 				<h:outputLabel
 					value="#{msg['dialog.diagnosisPhaseExit.checkBox.notificationPhase']}" />
 
 				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
+					value="#{diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
 				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.checkBox.stayInList']}" />
 			</h:panelGrid>
 		</div>
@@ -57,15 +57,15 @@
 						value="#{msg['dialog.diagnosisPhaseExit.button.notify']}"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
-							binding="#{dialogHandlerAction.diagnosisPhaseExitDialog.exitPhase()}" />
+							binding="#{diagnosisPhaseExitDialog.exitPhase()}" />
 						<f:actionListener
-							binding="#{dialogHandlerAction.diagnosisPhaseExitDialog.hideDialog()}" />
+							binding="#{diagnosisPhaseExitDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<!-- Abort button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						icon="fa fa-times-circle"
-						actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.hideDialog()}" />
+						actionListener="#{diagnosisPhaseExitDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

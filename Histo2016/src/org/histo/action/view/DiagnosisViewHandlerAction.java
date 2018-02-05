@@ -2,6 +2,8 @@ package org.histo.action.view;
 
 import java.util.List;
 
+import javax.persistence.Transient;
+
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
 import org.histo.action.handler.TaskManipulationHandler;
@@ -15,9 +17,11 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.Physician;
+import org.histo.model.Signature;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
@@ -84,16 +88,6 @@ public class DiagnosisViewHandlerAction {
 	private FavouriteListDAO favouriteListDAO;
 
 	/**
-	 * Selected physician to sign the report
-	 */
-	private Physician signatureOne;
-
-	/**
-	 * Selected consultant to sign the report
-	 */
-	private Physician signatureTwo;
-
-	/**
 	 * selected List item form caseHistory list
 	 */
 	private ListItem selectedCaseHistoryItem;
@@ -101,17 +95,23 @@ public class DiagnosisViewHandlerAction {
 	public void prepareForTask(Task task) {
 		logger.debug("Initilize DiagnosisViewHandlerAction for task");
 
-		if (task.getDiagnosisContainer().getSignatureDate() == 0) {
-			task.getDiagnosisContainer().setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
-			if (task.getDiagnosisContainer().getSignatureOne().getPhysician() == null
-					|| task.getDiagnosisContainer().getSignatureTwo().getPhysician() == null) {
-				// TODO set if physician to the left, if consultant to the right
-			}
-		}
+		for (DiagnosisRevision revision : task.getDiagnosisRevisions()) {
+			if (revision.getCompleationDate() == 0) {
+				revision.setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 
-		setSignatureOne(task.getDiagnosisContainer().getSignatureOne().getPhysician());
-		setSignatureTwo(task.getDiagnosisContainer().getSignatureTwo().getPhysician());
-		
+				if(revision.getSignatureOne() == null)
+					revision.setSignatureOne(new Signature());
+				
+				if(revision.getSignatureTwo() == null)
+					revision.setSignatureTwo(new Signature());
+				
+				if (revision.getSignatureOne().getPhysician() == null
+						|| revision.getSignatureTwo().getPhysician() == null) {
+					// TODO set if physician to the left, if consultant to the right
+				}
+			}
+
+		}
 	}
 
 	public void onCopyHistologicalRecord(Diagnosis diagnosis) {
@@ -142,7 +142,7 @@ public class DiagnosisViewHandlerAction {
 			// contact should receive a physical case report
 			contactDAO.updateNotificationsForPhysicalDiagnosisReport(diagnosis.getTask());
 
-			genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisContainer.diagnosis.update",
+			genericDAO.savePatientData(diagnosis, "log.patient.task.diagnosisRevision.diagnosis.update",
 					diagnosis.toString());
 
 			// only setting diagnosis text if one sample and no text has been
@@ -151,8 +151,7 @@ public class DiagnosisViewHandlerAction {
 			if (diagnosis.getParent().getText() == null || diagnosis.getParent().getText().isEmpty()) {
 				diagnosis.getParent().setText(diagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 				logger.debug("Updating revision extended text");
-				genericDAO.savePatientData(diagnosis.getParent(),
-						"log.patient.task.diagnosisContainer.diagnosisRevision.update",
+				genericDAO.savePatientData(diagnosis.getParent(), "log.patient.task.diagnosisRevision.update",
 						diagnosis.getParent().toString());
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
@@ -162,12 +161,24 @@ public class DiagnosisViewHandlerAction {
 
 	}
 
+	/**
+	 * Updates the signatures role
+	 * 
+	 * @param physician
+	 */
+	public void onPhysiciansSignatureChange(Signature signature) {
+		String role = signature.getPhysician() != null ? signature.getPhysician().getClinicRole() : "";
+		signature.setRole(role != null ? role : "");
+	}
+
 	public void onDataChange(PatientRollbackAble<?> toSave, String resourcesKey) {
 		onDataChange(toSave, resourcesKey, new Object[0]);
 	}
 
 	/**
-	 * Saves dynamically changed data of the views. Error-handling is done via global error Handler.
+	 * Saves dynamically changed data of the views. Error-handling is done via
+	 * global error Handler.
+	 * 
 	 * @param toSave
 	 * @param resourcesKey
 	 * @param arr

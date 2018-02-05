@@ -1,0 +1,183 @@
+\documentclass{scrreprt}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{wallpaper}
+\usepackage[absolute]{textpos}
+\usepackage{tabularx} 
+\usepackage[T1]{fontenc}
+\usepackage{supertabular}
+\usepackage[left=2cm,right=2cm,top=3cm,bottom=2cm]{geometry}
+\usepackage{amssymb}
+\usepackage{helvet} 
+\usepackage{lipsum} 
+\usepackage{longtable}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{ifthen}
+\usepackage{setspace}
+\usepackage{everypage}
+\usepackage{ragged2e}
+
+\renewcommand{\familydefault}{\sfdefault} 
+
+\def\fs{\kern 0.33em}
+
+% header and footer syle
+\pagestyle{fancy}
+
+% header thinkness on page on
+\AddEverypageHook{
+   \ifthenelse{\value{page}=1}
+    {\renewcommand{\headrulewidth}{0.0pt}}
+    {\renewcommand{\headrulewidth}{0.4pt}}
+}
+
+\lfoot{
+	\footnotesize 
+	Dies ist ein technisch validierter Befundbericht, der erst durch eine ärztliche Unterschrift fachlich validiert ist.   
+}
+
+\rfoot{
+	\footnotesize 
+	{Seite \thepage\ / \pageref{LastPage}}
+}
+
+
+\lhead{
+	\footnotesize 
+   	\ifthenelse{\value{page}=1}
+    	{}
+ 	{$!patient.person.fullName - $date.format('dd.MM.yyyy', $!patient.person.birthday) - PIZ: $!patient.piz}
+}
+
+
+\setcounter{secnumdepth}{0}
+
+
+
+
+
+\begin{document}
+%\ThisCenterWallPaper{1}{D:/latex/intern_v21.pdf}
+\ThisCenterWallPaper{1}{background_noLogo.pdf}
+%
+ \input{code128.tex}
+
+
+\baselineskip10pt
+
+\textblockorigin{0in}{0in}
+\setlength{\TPHorizModule}{1mm}
+\setlength{\TPVertModule}{1mm}
+
+
+% pat block
+{
+\scriptsize
+\begin{textblock}{100}(19, 8) 
+\noindent $!patient.person.fullName\\
+$date.format('dd.MM.yyyy', $!patient.person.birthday)\\
+$!patient.person.contact.street \\
+$!patient.person.contact.postcode $!patient.person.contact.town\\
+\X=.35mm        
+\barheight=1cm 
+\code{#if($patient.piz == "") 0 #else $!patient.piz #end}\\
+$!patient.piz\\
+\end{textblock}
+}
+
+% add block
+{
+\begin{textblock}{100}(22, 50) 
+\setstretch{1.0}
+\noindent 
+\textbf{$!subject} \\\\
+$address \\
+
+\end{textblock}
+}
+
+~\\
+\vspace{5.0cm}\\
+\noindent\makebox[\linewidth]{\rule{\linewidth}{0.4pt}}\\
+
+{
+	\RaggedRight
+	\renewcommand{\arraystretch}{0}
+	\setlength{\tabcolsep}{.16667em}
+	\begin{tabular}{@{}p{0.6\linewidth}p{0.4\linewidth}}
+	
+		{
+			\renewcommand{\arraystretch}{1.5}
+			\begin{tabular}[t]{p{0.3\linewidth}p{0.7\linewidth}}
+				
+	 		
+ 				\multicolumn{2}{l}{\huge Histologisches Gutachten} \\ 
+ 				$!patient.person.fullName & geb.  $date.format('dd.MM.yyyy', $!patient.person.birthday)
+			
+			\end{tabular}
+		} 
+		& 
+		{
+			\renewcommand{\arraystretch}{1}
+			\begin{tabular}[t]{p{0.6\linewidth}p{0.4\linewidth-8\tabcolsep}}
+				Eingangsnummer & \textbf{$!task.taskID} \\
+				~ & 
+					\X=.30mm        % The width of code will be greater
+					\barheight=1cm % the height will be smaller.
+					\code{$!task.taskID} \\
+			\end{tabular}
+		}
+	\end{tabular}
+
+	Sehr geehrte Frau Kollegin,\\
+	sehr geehrter Herr Kollege,\\
+	\ \\
+	wir berichten über die histologische Untersuchung,\\
+	\ \\
+}
+
+
+
+
+#foreach ($diagnosisRevision in $task.diagnosisRevisions)
+{
+\renewcommand{\arraystretch}{1}
+\setlength{\tabcolsep}{0em}
+\setlength{\LTleft}{5pt}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\RaggedRight
+
+\large \underline{ $!diagnosisRevision.name: }\smallskip
+\begin{longtable}{p{\linewidth}}
+		\normalsize $!latexTextConverter.convertToTex($diagnosisRevision.text)
+\end{longtable}
+
+\ \\
+\large \underline{ Diagnosen: }\smallskip
+\begin{longtable}{p{0.05\linewidth}p{0.95\linewidth}}
+#foreach ($diagnosis in $diagnosisRevision.diagnoses)
+	$!diagnosis.sample.sampleID & $!latexTextConverter.convertToTex($diagnosis.diagnosis)  \\
+#end
+\end{longtable}	
+}
+
+\begin{center}
+\ \\
+\RaggedRight
+\begin{tabular}{p{0.15\linewidth}p{0.05\linewidth}p{0.35\linewidth}p{0.45\linewidth}}
+	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
+	Freiburg den \linebreak $date.format('dd.MM.yyyy', $!diagnosisRevision.signatureDateAsDate) & & $!diagnosisRevision.signatureOne.physician.person.fullName #if($!diagnosisRevision.signatureOne.physician.person.fullName) \linebreak #end $!diagnosisRevision.signatureOne.role & $!diagnosisRevision.signatureTwo.physician.person.fullName #if($!diagnosisRevision.signatureTwo.physician.person.fullName) \linebreak #end $!diagnosisRevision.signatureTwo.role \\
+
+\end{tabular}
+\end{center}
+		
+#end
+
+ 
+   \ifthenelse{\pageref{LastPage}>1}
+     { \noindent \footnotesize  Dieser Befundbericht umfasst insgesamt \pageref{LastPage} Seiten.  \\}
+      {~	}
+\end{document}

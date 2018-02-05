@@ -136,8 +136,8 @@ public class Patient implements Parent<Patient>, CreationDate, LogAble, ArchivAb
 	 ********************************************************/
 
 	/**
-	 * Updates the patient data with a given patient dummy. Returns true if data
-	 * are changed. Returns true if data were changed
+	 * Updates the patient data with a given patient dummy. Returns true if data are
+	 * changed. Returns true if data were changed
 	 * 
 	 * @param patient
 	 */
@@ -236,16 +236,14 @@ public class Patient implements Parent<Patient>, CreationDate, LogAble, ArchivAb
 	}
 
 	/**
-	 * Updates the patient object with a given json array from the clinic
-	 * backend
+	 * Updates the patient object with a given json array from the clinic backend
 	 *
 	 * { "vorname":"Test", "mode":"W", "status":null, "piz":"25201957",
 	 * "sonderinfo":"", "iknr":"00190", "kvnr":null, "titel":"Prof. Dr. med.",
 	 * "versichertenstatus":" ", "tel":"12-4085", "anschrift": "Gillenweg 4",
 	 * "wop":null, "plz":"79110", "name":"Test", "geburtsdatum":"1972-08-22",
 	 * "gueltig_bis":null, "krankenkasse":"Wissenschaftliche Unters.",
-	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg",
-	 * "status2":null }
+	 * "versnr":null, "land":"D", "weiblich":"", "ort":"Freiburg", "status2":null }
 	 * 
 	 * @param patient
 	 * @param json
@@ -313,6 +311,11 @@ public class Patient implements Parent<Patient>, CreationDate, LogAble, ArchivAb
 	@Transient
 	public List<Task> getActiveTasks() {
 		return getActiveTasks(false);
+	}
+
+	public List<Task> getTasksOfPatient(boolean activeOnly) {
+		return getTasks() != null ? getTasks().stream().filter(p -> (activeOnly && p.isActive()) || !activeOnly)
+				.collect(Collectors.toList()) : null;
 	}
 
 	/**

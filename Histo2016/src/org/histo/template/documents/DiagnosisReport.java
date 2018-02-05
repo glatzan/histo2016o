@@ -28,9 +28,9 @@ public class DiagnosisReport extends DocumentTemplate {
 		List<DiagnosisRevision> reports = new ArrayList<DiagnosisRevision>();
 		
 		// selecting last diagnosis for rendering
-		if (task.getDiagnosisContainer().getDiagnosisRevisions().size() > 0) {
-			reports.add(task.getDiagnosisContainer().getDiagnosisRevisions()
-					.get(task.getDiagnosisContainer().getDiagnosisRevisions().size() - 1));
+		if (task.getDiagnosisRevisions().size() > 0) {
+			reports.add(task.getDiagnosisRevisions()
+					.get(task.getDiagnosisRevisions().size() - 1));
 		}
 
 		initData(task, reports, toSendAddress);

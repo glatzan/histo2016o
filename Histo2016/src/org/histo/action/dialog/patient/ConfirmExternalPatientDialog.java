@@ -59,12 +59,11 @@ public class ConfirmExternalPatientDialog extends AbstractDialog {
 			// creating patient
 			patientService.createExternalPatient(patient);
 			// adding to worklist
-			worklistViewHandlerAction.addPatientToWorkList(getPatient(), true);
+			worklistViewHandlerAction.addPatientToWorkList(getPatient(), true, true);
 			
 			setConfirmed(true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
-					resourceBundle.get("growl.version.error.text"));
+			mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 			hideDialog();
 			return;
 		}

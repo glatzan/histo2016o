@@ -1,5 +1,6 @@
 package org.histo.action.dialog.settings.organizations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,7 +8,9 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.dao.GenericDAO;
 import org.histo.dao.OrganizationDAO;
+import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
@@ -29,9 +32,16 @@ public class OrganizationEditDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private OrganizationDAO organizationDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private GenericDAO genericDAO;
+
 	private Organization organization;
 
 	private boolean newOrganization;
+
+	private List<Person> removeFromOrganization;
 
 	public void initAndPrepareBean() {
 		if (initBean(new Organization(new Contact())))
@@ -58,6 +68,8 @@ public class OrganizationEditDialog extends AbstractDialog {
 
 		setNewOrganization(organization.getId() == 0);
 
+		setRemoveFromOrganization(new ArrayList<Person>());
+
 		super.initBean(task, Dialog.SETTINGS_ORGANIZATION_EDIT);
 
 		return true;
@@ -71,17 +83,19 @@ public class OrganizationEditDialog extends AbstractDialog {
 	public void save() {
 		try {
 			organizationDAO.saveOrUpdateOrganization(organization);
+
+			for (Person person : removeFromOrganization) {
+				genericDAO.save(person, "log.person.organization.remove", new Object[] { person, organization });
+			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
 
 	public void removePersonFromOrganization(Person person, Organization organization) {
-		try {
-			logger.debug("Removing Person from Organization");
-			organizationDAO.removeOrganization(person, organization);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			onDatabaseVersionConflict();
-		}
+		System.out.println("gallo");
+		person.getOrganizsations().remove(organization);
+		organization.getPersons().remove(person);
+		getRemoveFromOrganization().add(person);
 	}
 }

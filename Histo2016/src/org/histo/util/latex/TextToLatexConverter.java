@@ -29,7 +29,7 @@ public class TextToLatexConverter {
 	@Getter
 	@Setter
 	public class Config {
-		private String lineBreak = "\\linebreak[4]\r\n";
+		private String lineBreak = "\\\\ \r\n";
 		private String space = "\\kern 0.33em ";
 	}
 }

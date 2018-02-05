@@ -14,6 +14,7 @@
 	<meta content='text/html; charset=UTF-8' http-equiv="Content-Type" />
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 </h:head>
 
 <h:body>
@@ -80,10 +81,8 @@
 
 	</h:form>
 
-	<h:form id="growlForm">
-		<p:growl id="globalgrowl" showDetail="true" widgetVar="globalgrowl"
-			for="globalGrowl" globalOnly="true" autoUpdate="true" />
-	</h:form>
+	
+	<ui:include src="pages/template/growl.xhtml" />
 
 </h:body>
 </html>

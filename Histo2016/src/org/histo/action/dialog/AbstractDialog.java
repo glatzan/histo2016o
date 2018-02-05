@@ -120,8 +120,7 @@ public abstract class AbstractDialog {
 
 	public void onDatabaseVersionConflict() {
 		hideDialog();
-		mainHandlerAction.addQueueGrowlMessage(resourceBundle.get("growl.version.error"),
-				resourceBundle.get("growl.version.error.text"));
+		mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
 		throw new AbortProcessingException();
 	}
