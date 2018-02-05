@@ -1,5 +1,4 @@
 function autoScrollPDatatable(idDataTable) {
-	alert(idDataTable);
 	// for selection in JQuery the ids with : must be endoded with \\:
 	var primfcid = idDataTable.replace(':', '\\:');
 	var idDataTbl = '#' + primfcid;

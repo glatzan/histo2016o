@@ -10,267 +10,280 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<p:panel style="width: 80%" styleClass="newTableContainer"
-		rendered="#{globalEditViewHandler.selectedPatient ne null}">
+	<p:scrollPanel styleClass="histoScroll" id="contentScrollPane">
 
-		<h:panelGrid columns="3" styleClass="newTableContainer"
-			columnClasses="columnTop, column200px ,columnTop">
-			<!-- left column -->
-			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				columnClasses="columnLabelContainer150,">
+		<p:panel style="width: 80%" styleClass="newTableContainer"
+			id="contentPanel"
+			rendered="#{globalEditViewHandler.selectedPatient ne null}">
 
-				<!-- piz -->
-				<h:outputLabel value="#{msg['body.worklist.patient.piz']}" />
-				<h:outputLabel value="#{globalEditViewHandler.selectedPatient.piz}" />
+			<h:panelGrid columns="3" styleClass="newTableContainer"
+				columnClasses="columnTop, column200px ,columnTop">
+				<!-- left column -->
+				<h:panelGrid columns="2" styleClass="newStyleListingTable"
+					columnClasses="columnLabelContainer150,">
 
-				<!-- name -->
-				<h:outputLabel value="#{msg['body.worklist.patient.name']}" />
-				<h:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.person.lastName}#{globalEditViewHandler.selectedPatient.person.title ne '' ? ',' : ''} #{globalEditViewHandler.selectedPatient.person.title}" />
+					<!-- piz -->
+					<h:outputLabel value="#{msg['body.worklist.patient.piz']}" />
+					<h:outputLabel value="#{globalEditViewHandler.selectedPatient.piz}" />
 
-				<!-- street -->
-				<p:outputLabel value="#{msg['body.worklist.patient.street']}" />
-				<p:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.person.contact.street}" />
-
-				<!-- postcode -->
-				<p:outputLabel value="#{msg['body.worklist.patient.postcode']}" />
-				<p:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.person.contact.postcode}" />
-
-				<!-- phone -->
-
-				<p:outputLabel value="#{msg['body.worklist.patient.phone']}" />
-				<p:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.person.contact.phone}" />
-
-				<!-- extern -->
-				<p:outputLabel value="#{msg['body.worklist.patient.extern']}" />
-
-				<h:panelGroup>
-					<p:outputLabel
-						value="#{globalEditViewHandler.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
-					<p:commandLink
-						rendered="#{globalEditViewHandler.selectedPatient.externalPatient}"
-						actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
-						<p:ajax event="dialogReturn"
-							update="navigationForm:patientList  contentForm" />
-						<i class="fa fa-wrench"></i>
-					</p:commandLink>
-				</h:panelGroup>
-			</h:panelGrid>
-
-			<h:panelGroup />
-
-			<!-- right column -->
-			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				columnClasses="columnLabelContainer150,">
-
-				<h:outputLabel value="" />
-				<h:outputLabel value="" />
-
-				<!-- firstName -->
-				<h:outputLabel value="#{msg['body.worklist.patient.firstName']}" />
-				<h:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.person.firstName}" />
-
-				<!-- birthday -->
-				<p:outputLabel value="#{msg['body.worklist.patient.birthday']}" />
-				<h:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.person.birthday}">
-					<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-				</h:outputLabel>
-
-				<!-- town -->
-				<p:outputLabel value="#{msg['body.worklist.patient.town']}" />
-				<p:outputLabel
-					value=" #{globalEditViewHandler.selectedPatient.person.contact.town}" />
-
-				<!-- insurance -->
-
-				<p:outputLabel value="#{msg['body.worklist.patient.insurance']}" />
-				<p:outputLabel
-					value="#{globalEditViewHandler.selectedPatient.insurance}" />
-			</h:panelGrid>
-		</h:panelGrid>
-
-		<p:dataTable var="task" style="margin-top:20px;" id="taskList"
-			value="#{globalEditViewHandler.selectedPatient.tasks}"
-			selectionMode="single" styleClass="newStyleDataTable"
-			rendered="#{globalEditViewHandler.selectedPatient != null}"
-			selection="#{globalEditViewHandler.selectedTask}" rowKey="#{task.id}">
-
-			<p:ajax event="rowSelect"
-				oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
-				update="contentForm headerForm navigationForm:patientList"
-				listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(globalEditViewHandler.selectedTask)}" />
-
-			<p:column headerText="#{msg['body.worklist.patient.tasks']}">
-				<h:outputText
-					value="#{task.taskID} - #{mainHandlerAction.date(task.dateOfReceiptAsDate)}" />
-
-				<!-- staining needed -->
-				<h:panelGroup>
-					<!-- staining needed = green -->
-					<ui:fragment rendered="#{task.taskStatus.stainingNeeded}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.stainingPhase.stainingNeeded']}"
-							style="color:green;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-
-					<!-- re-staining needed = orange -->
-					<ui:fragment rendered="#{task.taskStatus.reStainingNeeded}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.stainingPhase.reStainingNeeded']}"
-							style="color:orange;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-
-					<!--  no staining needed = purple -->
-					<ui:fragment rendered="#{task.taskStatus.stayInStainingList}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.stainingPhase.inList']}"
-							style="color:purple;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-
-					<!-- diagnosis needed -->
-					<!-- diagnosis needed = green -->
-					<ui:fragment rendered="#{task.taskStatus.diagnosisNeeded}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.diagnosisPhase.diagnosisNeeded']}"
-							style="color:green;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-
-					<!-- re-diagnosis needed = orange -->
-					<ui:fragment rendered="#{task.taskStatus.reDiagnosisNeeded}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.diagnosisPhase.reDiagnosisNeeded']}"
-							style="color:orange;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-
-					<!-- no diagnosis needed = purple -->
-					<ui:fragment rendered="#{task.taskStatus.stayInDiagnosisList}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.diagnosisPhase.inList']}"
-							style="color:purple;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-
-					<!-- notification needed -->
-					<!-- notification need = green -->
-					<ui:fragment rendered="#{task.taskStatus.notificationNeeded}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.notificationPhase.notificationNeeded']}"
-							style="color:green;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-
-					<!-- stay in phase = purple -->
-					<ui:fragment rendered="#{task.taskStatus.stayInNotificationList}">
-						<h:outputText value=" ("></h:outputText>
-						<h:outputText
-							value="#{msg['body.worklist.patient.notificationPhase.inList']}"
-							style="color:purple;" />
-						<h:outputText value=") "></h:outputText>
-					</ui:fragment>
-				</h:panelGroup>
-
-			</p:column>
-
-			<p:column style="width:15px">
-				<f:facet name="header">
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-						<p:commandLink id="taskList"
-							rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_NEW')}"
-							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
-							<p:ajax event="dialogReturn"
-								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
-								update="navigationForm:patientList contentForm headerForm" />
-							<i class="fa fa-plus" />
-						</p:commandLink>
-					</h:panelGrid>
-				</f:facet>
-				<p:commandLink
-					rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_DELETE', 'TASK_EDIT_DELETE_EDITED')}"
-					actionListener="#{dialogHandlerAction.deleteTaskDialog.initAndPrepareBean(task)}">
-					<p:ajax event="dialogReturn"
-						oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'ui-state-highlight')"
-						update="navigationForm:patientList contentForm" />
-					<i class="fa fa-times-circle" />
-				</p:commandLink>
-			</p:column>
-
-		</p:dataTable>
-
-
-		<p:dataTable var="attachedPdf" style="margin-top:50px;"
-			id="attachedPdfList"
-			value="#{globalEditViewHandler.selectedPatient.attachedPdfs}"
-			styleClass="newStyleDataTable"
-			rendered="#{globalEditViewHandler.selectedPatient != null}">
-
-
-			<p:column style="width:30%">
-				<f:facet name="header">
-					<h:outputLabel value="#{msg['body.worklist.patient.pdfs.name']}"></h:outputLabel>
-				</f:facet>
-
-				<h:outputLabel value="#{attachedPdf.name}"></h:outputLabel>
-			</p:column>
-
-			<p:column style="width:18%">
-				<f:facet name="header">
-					<h:outputLabel value="#{msg['body.worklist.patient.pdfs.date']}"></h:outputLabel>
-				</f:facet>
-				<h:outputLabel
-					value="#{mainHandlerAction.date(attachedPdf.creationDateAsDate,enumProvider.getDateFormat('GERMAN_TIME_DATE'))}"></h:outputLabel>
-			</p:column>
-			<p:column style="width:10%">
-				<f:facet name="header">
-					<h:outputLabel value="#{msg['body.worklist.patient.pdfs.type']}"></h:outputLabel>
-				</f:facet>
-				<h:outputLabel
-					value="#{msg['enum.documentType.'.concat(attachedPdf.type)]}"></h:outputLabel>
-			</p:column>
-			<p:column style="auto">
-				<f:facet name="header">
+					<!-- name -->
+					<h:outputLabel value="#{msg['body.worklist.patient.name']}" />
 					<h:outputLabel
-						value="#{msg['body.worklist.patient.pdfs.commentary']}"></h:outputLabel>
-				</f:facet>
-				<h:outputLabel value="#{attachedPdf.commentary}"></h:outputLabel>
-			</p:column>
-			<p:column style="width:15px">
-				<f:facet name="header">
-					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-						<p:commandLink id="upload"
-							rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
-							actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
-							<p:ajax event="dialogReturn"
-								update="navigationForm:patientList contentForm" />
-							<i class="fa fa-plus"></i>
-						</p:commandLink>
-					</h:panelGrid>
-				</f:facet>
-				<p:commandLink
-					rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
-					actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
-					<p:ajax event="dialogReturn"
-						update="navigationForm:patientList contentForm" />
-					<i class="fa fa-search"></i>
-				</p:commandLink>
-			</p:column>
+						value="#{globalEditViewHandler.selectedPatient.person.lastName}#{globalEditViewHandler.selectedPatient.person.title ne '' ? ',' : ''} #{globalEditViewHandler.selectedPatient.person.title}" />
 
-		</p:dataTable>
-	</p:panel>
+					<!-- street -->
+					<p:outputLabel value="#{msg['body.worklist.patient.street']}" />
+					<p:outputLabel
+						value="#{globalEditViewHandler.selectedPatient.person.contact.street}" />
+
+					<!-- postcode -->
+					<p:outputLabel value="#{msg['body.worklist.patient.postcode']}" />
+					<p:outputLabel
+						value="#{globalEditViewHandler.selectedPatient.person.contact.postcode}" />
+
+					<!-- phone -->
+
+					<p:outputLabel value="#{msg['body.worklist.patient.phone']}" />
+					<p:outputLabel
+						value="#{globalEditViewHandler.selectedPatient.person.contact.phone}" />
+
+					<!-- extern -->
+					<p:outputLabel value="#{msg['body.worklist.patient.extern']}" />
+
+					<h:panelGroup>
+						<p:outputLabel
+							value="#{globalEditViewHandler.selectedPatient.externalPatient ? msg['general.yes'] : msg['general.no']} &nbsp; " />
+						<p:commandLink
+							rendered="#{globalEditViewHandler.selectedPatient.externalPatient}"
+							actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList  contentForm:contentPanel" />
+							<i class="fa fa-wrench"></i>
+						</p:commandLink>
+					</h:panelGroup>
+				</h:panelGrid>
+
+				<h:panelGroup />
+
+				<!-- right column -->
+				<h:panelGrid columns="2" styleClass="newStyleListingTable"
+					columnClasses="columnLabelContainer150,">
+
+					<h:outputLabel value="" />
+					<h:outputLabel value="" />
+
+					<!-- firstName -->
+					<h:outputLabel value="#{msg['body.worklist.patient.firstName']}" />
+					<h:outputLabel
+						value="#{globalEditViewHandler.selectedPatient.person.firstName}" />
+
+					<!-- birthday -->
+					<p:outputLabel value="#{msg['body.worklist.patient.birthday']}" />
+					<h:outputLabel
+						value="#{globalEditViewHandler.selectedPatient.person.birthday}">
+						<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+					</h:outputLabel>
+
+					<!-- town -->
+					<p:outputLabel value="#{msg['body.worklist.patient.town']}" />
+					<p:outputLabel
+						value=" #{globalEditViewHandler.selectedPatient.person.contact.town}" />
+
+					<!-- insurance -->
+
+					<p:outputLabel value="#{msg['body.worklist.patient.insurance']}" />
+					<p:outputLabel
+						value="#{globalEditViewHandler.selectedPatient.insurance}" />
+				</h:panelGrid>
+			</h:panelGrid>
+
+			<p:dataTable var="task" style="margin-top:20px;" id="taskList"
+				value="#{globalEditViewHandler.selectedPatient.tasks}"
+				selectionMode="single" styleClass="newStyleDataTable"
+				rendered="#{globalEditViewHandler.selectedPatient != null}"
+				selection="#{globalEditViewHandler.selectedTask}"
+				rowKey="#{task.id}">
+
+				<p:ajax event="rowSelect"
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight')"
+					update="contentForm:contentPanel headerForm navigationForm:patientList"
+					listener="#{worklistViewHandlerAction.onSelectTaskAndPatient(globalEditViewHandler.selectedTask)}" />
+
+				<p:column headerText="#{msg['body.worklist.patient.tasks']}">
+					<h:outputText
+						value="#{task.taskID} - #{mainHandlerAction.date(task.dateOfReceiptAsDate)}" />
+
+					<!-- staining needed -->
+					<h:panelGroup>
+						<!-- staining needed = green -->
+						<ui:fragment rendered="#{task.taskStatus.stainingNeeded}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.stainingPhase.stainingNeeded']}"
+								style="color:green;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+
+						<!-- re-staining needed = orange -->
+						<ui:fragment rendered="#{task.taskStatus.reStainingNeeded}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.stainingPhase.reStainingNeeded']}"
+								style="color:orange;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+
+						<!--  no staining needed = purple -->
+						<ui:fragment rendered="#{task.taskStatus.stayInStainingList}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.stainingPhase.inList']}"
+								style="color:purple;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+
+						<!-- diagnosis needed -->
+						<!-- diagnosis needed = green -->
+						<ui:fragment rendered="#{task.taskStatus.diagnosisNeeded}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.diagnosisPhase.diagnosisNeeded']}"
+								style="color:green;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+
+						<!-- re-diagnosis needed = orange -->
+						<ui:fragment rendered="#{task.taskStatus.reDiagnosisNeeded}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.diagnosisPhase.reDiagnosisNeeded']}"
+								style="color:orange;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+
+						<!-- no diagnosis needed = purple -->
+						<ui:fragment rendered="#{task.taskStatus.stayInDiagnosisList}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.diagnosisPhase.inList']}"
+								style="color:purple;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+
+						<!-- notification needed -->
+						<!-- notification need = green -->
+						<ui:fragment rendered="#{task.taskStatus.notificationNeeded}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.notificationPhase.notificationNeeded']}"
+								style="color:green;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+
+						<!-- stay in phase = purple -->
+						<ui:fragment rendered="#{task.taskStatus.stayInNotificationList}">
+							<h:outputText value=" ("></h:outputText>
+							<h:outputText
+								value="#{msg['body.worklist.patient.notificationPhase.inList']}"
+								style="color:purple;" />
+							<h:outputText value=") "></h:outputText>
+						</ui:fragment>
+					</h:panelGroup>
+
+				</p:column>
+
+				<p:column style="width:15px">
+					<f:facet name="header">
+						<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+							<p:commandLink id="taskList"
+								rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_NEW')}"
+								actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+								<p:ajax event="dialogReturn"
+									oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight')"
+									update="navigationForm:patientList contentForm:contentPanel headerForm" />
+								<i class="fa fa-plus" />
+							</p:commandLink>
+						</h:panelGrid>
+					</f:facet>
+					<p:commandLink
+						rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_DELETE', 'TASK_EDIT_DELETE_EDITED')}"
+						actionListener="#{dialogHandlerAction.deleteTaskDialog.initAndPrepareBean(task)}">
+						<p:ajax event="dialogReturn"
+							oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight')"
+							update="navigationForm:patientList contentForm:contentPanel" />
+						<i class="fa fa-times-circle" />
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+
+
+			<p:dataTable var="attachedPdf" style="margin-top:50px;"
+				id="attachedPdfList"
+				value="#{globalEditViewHandler.selectedPatient.attachedPdfs}"
+				styleClass="newStyleDataTable"
+				rendered="#{globalEditViewHandler.selectedPatient != null}">
+
+
+				<p:column style="width:30%">
+					<f:facet name="header">
+						<h:outputLabel value="#{msg['body.worklist.patient.pdfs.name']}"></h:outputLabel>
+					</f:facet>
+
+					<h:outputLabel value="#{attachedPdf.name}"></h:outputLabel>
+				</p:column>
+
+				<p:column style="width:18%">
+					<f:facet name="header">
+						<h:outputLabel value="#{msg['body.worklist.patient.pdfs.date']}"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel
+						value="#{mainHandlerAction.date(attachedPdf.creationDateAsDate,enumProvider.getDateFormat('GERMAN_TIME_DATE'))}"></h:outputLabel>
+				</p:column>
+				<p:column style="width:10%">
+					<f:facet name="header">
+						<h:outputLabel value="#{msg['body.worklist.patient.pdfs.type']}"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel
+						value="#{msg['enum.documentType.'.concat(attachedPdf.type)]}"></h:outputLabel>
+				</p:column>
+				<p:column style="auto">
+					<f:facet name="header">
+						<h:outputLabel
+							value="#{msg['body.worklist.patient.pdfs.commentary']}"></h:outputLabel>
+					</f:facet>
+					<h:outputLabel value="#{attachedPdf.commentary}"></h:outputLabel>
+				</p:column>
+				<p:column style="width:15px">
+					<f:facet name="header">
+						<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
+							<p:commandLink id="upload"
+								rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
+								actionListener="#{patientViewHandlerAction.showPatientMediaDialog()}">
+								<p:ajax event="dialogReturn"
+									update="navigationForm:patientList contentForm:contentPanel" />
+								<i class="fa fa-plus"></i>
+							</p:commandLink>
+						</h:panelGrid>
+					</f:facet>
+					<p:commandLink
+						rendered="#{userHandlerAction.currentUserHasPermission('PATIENT_EDIT_UPLOAD_DATA')}"
+						actionListener="#{patientViewHandlerAction.showPatientMediaDialog(attachedPdf)}">
+						<p:ajax event="dialogReturn"
+							update="navigationForm:patientList contentForm:contentPanel" />
+						<i class="fa fa-search"></i>
+					</p:commandLink>
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+
+	</p:scrollPanel>
+
+	<!-- scrollspeed of scrollpane -->
+	<script type="text/javascript">
+		$(document).ready(function() {
+			setScrollPanelScrollSpeed("contentForm:contentScrollPane");
+		});
+	</script>
 </ui:composition>

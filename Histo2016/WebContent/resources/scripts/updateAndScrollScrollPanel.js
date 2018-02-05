@@ -1,17 +1,23 @@
-function updateAndAutoScrollToSelectedElement(idOfScrollPane) {
-	updateAndAutoScrollToSelectedElement(idOfScrollPane, null)
-}
+/*
+ * Array of id;;classToFocus
+ */
+function updateAndAutoScrollToSelectedElement() {
 
-function updateAndAutoScrollToSelectedElement(idOfScrollPane,
-		classOfSelectedElement) {
+	if (arguments.length == 1)
+		speed = 100;
+	
+	for (var i = 0; i < arguments.length; i++) {
+		
+		var res = arguments[i].split(";;");
+		
+		var primfcid = res[0].replace(':', '\\:');
+		var idDataTbl = '#' + primfcid;
 
-	var primfcid = idOfScrollPane.replace(':', '\\:');
-	var idDataTbl = '#' + primfcid;
+		$(idDataTbl).data('jsp').reinitialise();
 
-	$(idDataTbl).data('jsp').reinitialise();
-
-	if (classOfSelectedElement != null) {
-		$(idDataTbl).data('jsp').scrollToElement(
-				$(idDataTbl).find('tr.' + classOfSelectedElement), true)
+		if (res.length == 2) {
+			$(idDataTbl).data('jsp').scrollToElement(
+					$(idDataTbl).find('tr.' + res[1]), true)
+		}
 	}
 }

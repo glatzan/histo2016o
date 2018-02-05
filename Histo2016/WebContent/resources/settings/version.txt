@@ -37,7 +37,7 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
--> updateAndScrollScrollPanel polymorphismus
+-> contentForm:contentPanel fest, das jede seite diese hat, udpate im header von contentForm:contentPanel anstelle von contentform
 
 -> navigation buttons gehen nicht mehr richtig
 -> search physician dialog with return handler
@@ -108,6 +108,7 @@ Graphic Changes
 +++*: Umbenennen von Befunden jetzt über eine Dialog möglich.
 +++!: Verfügbare Arbeitslisten repariert 
 +++*: Kommentare für Färbungen können nach abschließen der Färbung nicht mehr bearbeitet werden.
+++++: Scrollen der Datenansicht unabhängig vom Rest ist jetzt implementiert.
 
 SQL:
 /* removing diagnosis container constraint form diangosis revision*/

@@ -422,7 +422,6 @@ body {
 	margin-left: 0.6em !important;
 }
 
-
 .contentInputDialog .buttonContainer .left label {
 	margin-left: 0.6em !important;
 }
@@ -517,36 +516,6 @@ body {
 .patientNavigationHeader .buttonContainer a {
 	text-decoration: none !important;
 	color: #555555;
-}
-
-/* scrollpanel style */
-.patientNavigationScroll {
-	height: calc(100vh - 65px);
-	border-left: none !important;
-	border-top: none !important;
-	border-bottom: none !important;
-	border-spacing: 0px !important;
-}
-
-/* scrollpanel body with*/
-.patientNavigationScroll .ui-scrollpanel-content {
-	width: 100% !important;
-}
-
-/*scrollpanel bar*/
-.patientNavigationScroll .ui-scrollpanel-vbar {
-	width: 5px;
-}
-
-/* background of the bar*/
-.patientNavigationScroll .ui-scrollpanel-track {
-	background: none;
-}
-
-/* background of the bars drag*/
-.patientNavigationScroll .ui-scrollpanel-track .ui-scrollpanel-drag {
-	background: #555555;
-	border-radius: 5px;
 }
 
 .patientNavigationTable .ui-datatable-tablewrapper>table>thead {
@@ -876,4 +845,37 @@ body {
 .icon-red, .icon-red:link, .icon-red:active, .icon-red:hover, .icon-red:visited
 	{
 	color: red;
+}
+
+/* scrollpanel style */
+.histoScroll {
+	height: calc(100vh - 64px);
+	width: calc(100% - 1px) !important; 
+	border-left : none !important;
+	border-top: none !important;
+	border-bottom: none !important;
+	border-spacing: 0px !important;
+	border-left: none !important;
+}
+
+/* scrollpanel body with*/
+.histoScroll .ui-scrollpanel-content, .histoScroll .ui-scrollpanel-container
+	{
+	width: 100% !important;
+}
+
+/*scrollpanel bar*/
+.histoScroll .ui-scrollpanel-vbar {
+	width: 5px;
+}
+
+/* background of the bar*/
+.histoScroll .ui-scrollpanel-track {
+	background: none;
+}
+
+/* background of the bars drag*/
+.histoScroll .ui-scrollpanel-track .ui-scrollpanel-drag {
+	background: #555555;
+	border-radius: 5px;
 }

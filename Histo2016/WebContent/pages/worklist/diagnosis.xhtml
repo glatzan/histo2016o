@@ -29,9 +29,10 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<p:scrollPanel styleClass="patientNavigationScroll">
+	<p:scrollPanel styleClass="histoScroll" id="contentScrollPane">
 
-		<p:panel style="width: 80%" styleClass="newTableContainer">
+		<p:panel style="width: 80%" styleClass="newTableContainer"
+			id="contentPanel">
 
 			<h:outputLabel value="#{msg['body.diagnosis.headline']}"
 				style="font-size:1.5em;"></h:outputLabel>
@@ -181,7 +182,7 @@
 								actionListener="#{dialogHandlerAction.changeTaskIDDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 								<i class="fa fa-fw fa-cog" />
 								<p:ajax event="dialogReturn"
-									update="navigationForm:patientList contentForm" />
+									update="navigationForm:patientList contentForm:contentPanel headerForm" />
 							</p:commandLink>
 						</h:panelGrid>
 
@@ -252,7 +253,7 @@
 								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 								<i class="fa fa-fw fa-scissors" />
 								<p:ajax event="dialogReturn"
-									update="navigationForm:patientList contentForm" />
+									update="navigationForm:patientList contentForm:contentPanel headerForm" />
 							</p:commandLink>
 						</h:panelGroup>
 
@@ -272,7 +273,7 @@
 								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 								<i class="fa fa-fw fa-eye" />
 								<p:ajax event="dialogReturn"
-									update="navigationForm:patientList contentForm" />
+									update="navigationForm:patientList contentForm:contentPanel headerForm" />
 							</p:commandLink>
 
 						</h:panelGroup>
@@ -312,7 +313,7 @@
 
 						<p:remoteCommand
 							actionListener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.name', revision.name)}"
-							name="saveDiagnosisNameChange" update="contentForm" />
+							name="saveDiagnosisNameChange" update="navigationForm:patientList contentForm:contentPanel headerForm" />
 
 					</h:panelGroup>
 
@@ -363,9 +364,9 @@
 								rendered="#{diagnosis.diagnosisPrototype ne null}"
 								process="@this"
 								actionListener="#{diagnosisViewHandlerAction.onCopyHistologicalRecord(diagnosis)}"
-								update="contentForm">
+								update="contentForm:contentPanel">
 								<i class="fa fa-copy"></i>
-								<p:ajax event="dialogReturn" update="contentForm" />
+								<p:ajax event="dialogReturn" update="contentForm:contentPanel" />
 							</p:commandLink>
 
 							<!-- malign -->
@@ -414,7 +415,8 @@
 										<h:outputText value="#{item.diagnosis}" />
 									</p:column>
 
-									<p:ajax event="rowSelect" update="contentForm"
+									<p:ajax event="rowSelect"
+										update="navigationForm:patientList contentForm:contentPanel headerForm"
 										listener="#{diagnosisViewHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}"
 										oncomplete="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();" />
 
@@ -464,7 +466,8 @@
 
 						</p:selectOneMenu>
 
-						<p:commandButton style="display:none" update="@form"
+						<p:commandButton style="display:none"
+							update="navigationForm:patientList contentForm:contentPanel headerForm"
 							id="submitPhysicianChange">
 							<f:actionListener
 								binding="#{diagnosisViewHandlerAction.onPhysiciansSignatureChange(revision.signatureOne)}" />
@@ -499,7 +502,8 @@
 
 						<!-- hidden button for updating on consultant change -->
 
-						<p:commandButton style="display:none" update="@form"
+						<p:commandButton style="display:none"
+							update="navigationForm:patientList contentForm:contentPanel headerForm"
 							id="submitConsultantChange">
 							<f:actionListener
 								binding="#{diagnosisViewHandlerAction.onPhysiciansSignatureChange(revision.signatureTwo)}" />
@@ -529,7 +533,8 @@
 
 						<!-- hidden button for updating on physician role change -->
 
-						<p:commandButton style="display:none" update="@form"
+						<p:commandButton style="display:none"
+							update="navigationForm:patientList contentForm:contentPanel headerForm"
 							id="submitPhysicianRoleChange">
 							<f:actionListener
 								binding="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.diagnosisRevision.signature.one.role',revision.signatureOne.role)}" />
@@ -553,7 +558,8 @@
 						</p:selectOneMenu>
 
 						<!-- hidden button for updating on consultant role change -->
-						<p:commandButton style="display:none" update="@form"
+						<p:commandButton style="display:none"
+							update="navigationForm:patientList contentForm:contentPanel headerForm"
 							id="submitConsultantRoleChange">
 							<f:actionListener
 								binding="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.diagnosisRevision.signature.two.role',revision.signatureTwo.role)}" />
@@ -601,8 +607,8 @@
 							style="display:none"
 							actionListener="#{diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,false)}">
 							<p:ajax event="dialogReturn"
-								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
-								update="navigationForm:patientList contentForm headerForm" />
+								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll','contentForm:contentScrollPane')"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
 						</p:commandButton>
 
 						<!-- delete diagnosis revision -->
@@ -610,7 +616,8 @@
 							style="display:none"
 							actionListener="#{diagnosisRevisionDeleteDialog.initAndPrepareBean(revision)}">
 							<p:ajax event="dialogReturn"
-								update="navigationForm:patientList contentForm" />
+								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll','contentForm:contentScrollPane')"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
 						</p:commandButton>
 
 						<!-- new diagnosis revision -->
@@ -618,17 +625,22 @@
 							style="display:none"
 							actionListener="#{diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 							<p:ajax event="dialogReturn"
-								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
-								update="navigationForm:patientList contentForm headerForm" />
+								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll','contentForm:contentScrollPane')"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
 						</p:commandButton>
 					</h:panelGroup>
 
 				</h:panelGrid>
 			</c:forEach>
 		</p:panel>
-
-
-
 	</p:scrollPanel>
+
+	<!-- scrollspeed of scrollpane -->
+	<script type="text/javascript">
+		$(document).ready(function() {
+			setScrollPanelScrollSpeed("contentForm:contentScrollPane");
+		});
+	</script>
+
 </ui:composition>
 
