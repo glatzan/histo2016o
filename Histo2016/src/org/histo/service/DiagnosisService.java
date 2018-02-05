@@ -216,6 +216,8 @@ public class DiagnosisService {
 
 		revision.getParent().getDiagnosisRevisions().remove(revision);
 
+		genericDAO.savePatientData(revision.getParent());
+		
 		genericDAO.deletePatientData(revision, "log.patient.task.diagnosisContainer.diagnosisRevision.delete",
 				revision.toString());
 
