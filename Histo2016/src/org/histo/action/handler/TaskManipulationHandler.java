@@ -1,28 +1,13 @@
 package org.histo.action.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
-import org.histo.model.MaterialPreset;
-import org.histo.model.StainingPrototype;
-import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
-import org.histo.model.patient.DiagnosisContainer;
-import org.histo.model.patient.DiagnosisRevision;
-import org.histo.model.patient.Sample;
-import org.histo.model.patient.Slide;
-import org.histo.model.patient.Task;
-import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -63,7 +48,7 @@ public class TaskManipulationHandler {
 								+ tmpDiagnosis.getDiagnosisPrototype().getExtendedDiagnosisText());
 
 		genericDAO.savePatientData(tmpDiagnosis.getParent(),
-				"log.patient.task.diagnosisContainer.diagnosisRevision.update", tmpDiagnosis.getParent().toString());
+				"log.patient.task.diagnosisRevision.update", tmpDiagnosis.getParent().toString());
 	}
 
 	/********************************************************

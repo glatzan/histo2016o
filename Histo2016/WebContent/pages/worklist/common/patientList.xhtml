@@ -133,7 +133,7 @@
 
 	<!-- Nav Table -->
 	<p:scrollPanel styleClass="patientNavigationScroll"
-		widgetVar="testtest123456" id="patientNavigationScroll">
+		id="patientNavigationScroll">
 
 		<p:dataTable var="patient" id="patientList"
 			value="#{worklistViewHandlerAction.worklist.items}"
@@ -181,7 +181,8 @@
 									style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;font-weight:bold' : ''};" />
 
 								<!-- priority -->
-								<h:panelGroup rendered="#{task.taskPriority ne 'NONE' and !task.finalized}">
+								<h:panelGroup
+									rendered="#{task.taskPriority ne 'NONE' and !task.finalized}">
 									<i style="margin-left: 5px;"
 										class="fa fa-exclamation #{task.taskPriority eq 'HIGH' ? 'icon-orange' : 'icon-red'}"
 										title="#{msg['body.worklist.navigation.activtasks.priority']}" />

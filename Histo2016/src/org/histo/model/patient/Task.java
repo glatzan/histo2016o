@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -203,10 +204,11 @@ public class Task
 	private List<Sample> samples = new ArrayList<Sample>();
 
 	/**
-	 * Element containg all diangnoses
+	 * All diangnoses
 	 */
-	@OneToOne(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private DiagnosisContainer diagnosisContainer;
+	@OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OrderColumn(name = "position")
+	private List<DiagnosisRevision> diagnosisRevisions;
 
 	/**
 	 * Generated PDFs of this task, lazy
@@ -434,6 +436,10 @@ public class Task
 	/********************************************************
 	 * Transient Getter/Setter
 	 ********************************************************/
+	@Transient
+	public boolean isMalign() {
+		return getDiagnosisRevisions().stream().anyMatch(p -> p.isMalign());
+	}
 
 	@Transient
 	public Date getCreationDateAsDate() {

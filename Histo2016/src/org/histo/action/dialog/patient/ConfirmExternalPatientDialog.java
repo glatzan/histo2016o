@@ -63,7 +63,7 @@ public class ConfirmExternalPatientDialog extends AbstractDialog {
 			
 			setConfirmed(true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			mainHandlerAction.sendGrowlMessagesAsResource("growl.version.error", "growl.version.error.text");
+			mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 			hideDialog();
 			return;
 		}

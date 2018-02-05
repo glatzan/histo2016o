@@ -426,8 +426,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		query.createAlias("task.parent", "patient");
 		query.createAlias("patient.person", "person");
 		query.createAlias("task.samples", "samples");
-		query.createAlias("task.diagnosisContainer", "diagnosisContainer");
-		query.createAlias("diagnosisContainer.diagnosisRevisions", "diagnosisRevisions");
+		query.createAlias("task.diagnosisRevisions", "diagnosisRevisions");
 		query.createAlias("diagnosisRevisions.diagnoses", "diagnoses");
 
 		if (extendedSearchData.getName() != null && !extendedSearchData.getName().isEmpty()) {

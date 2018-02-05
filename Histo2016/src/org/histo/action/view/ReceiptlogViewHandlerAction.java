@@ -205,7 +205,7 @@ public class ReceiptlogViewHandlerAction {
 						userHandlerAction.getSelectedLabelPrinter().print(toPrint);
 					} catch (CustomUserNotificationExcepetion e) {
 						// handling offline error
-						mainHandlerAction.sendGrowlMessagesAsResource(e);
+						mainHandlerAction.sendGrowlMessages(e);
 					}
 				}
 

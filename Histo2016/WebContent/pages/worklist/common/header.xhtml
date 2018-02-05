@@ -162,7 +162,7 @@
 
 			<!-- Diagnosis List, new diagnosis revision -->
 			<p:commandButton id="newDiagnosisRevision" style="display:none"
-				actionListener="#{dialogHandlerAction.diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{diagnosisRevisionDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm headerForm" />
@@ -172,7 +172,7 @@
 			<p:commandButton id="diagnosisPhaseExit" style="display:none"
 				onstart="PF('blockUIWidget').block()"
 				oncomplete="PF('blockUIWidget').unblock()"
-				actionListener="#{dialogHandlerAction.diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"

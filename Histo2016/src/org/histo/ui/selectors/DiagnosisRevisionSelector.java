@@ -21,7 +21,7 @@ public class DiagnosisRevisionSelector extends AbstractSelector {
 	}
 
 	public static List<DiagnosisRevisionSelector> factory(Task task) {
-		return task.getDiagnosisContainer().getDiagnosisRevisions().stream()
+		return task.getDiagnosisRevisions().stream()
 				.map(p -> new DiagnosisRevisionSelector(p, false)).collect(Collectors.toList());
 	}
 }

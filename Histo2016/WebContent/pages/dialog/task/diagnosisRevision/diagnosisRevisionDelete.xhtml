@@ -6,8 +6,10 @@
 	xmlns:p="http://primefaces.org/ui">
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.diagnosisPhaseExit.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+			value="#{msg['dialog.diagnosisRevisionDeleteDialog.headline']}">
+			<f:param value="#{diagnosisRevisionDeleteDialog.diagnosisRevision.name}" />
+		</h:outputFormat></title>
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
@@ -17,7 +19,9 @@
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.headline']}" />
+				<h:outputFormat value="#{msg['dialog.diagnosisRevisionDeleteDialog.headline']}">
+					<f:param value="#{diagnosisRevisionDeleteDialog.diagnosisRevision.name}" />
+				</h:outputFormat>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -29,20 +33,9 @@
 		<div class="dialogContent">
 			<h:panelGrid columns="1" styleClass="newStyleListingTable"
 				columnClasses="columnLongText">
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.text']}"></h:outputLabel>
+				<h:outputLabel value="#{msg['dialog.diagnosisRevisionDeleteDialog.text']}"></h:outputLabel>
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				style="margin: 10px 0px 0px 20px">
-				<p:selectBooleanCheckbox
-					value="#{diagnosisPhaseExitDialog.goToNotificationPhase}" />
-				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseExit.checkBox.notificationPhase']}" />
-
-				<p:selectBooleanCheckbox
-					value="#{diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.checkBox.stayInList']}" />
-			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
@@ -53,19 +46,18 @@
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
-					<p:commandButton
-						value="#{msg['dialog.diagnosisPhaseExit.button.notify']}"
-						icon="fa fa-check-circle-o">
+					<p:commandButton value="#{msg['general.delete']}"
+						icon="fa fa-fw fa-trash">
 						<f:actionListener
-							binding="#{diagnosisPhaseExitDialog.exitPhase()}" />
+							binding="#{diagnosisRevisionDeleteDialog.deleteDiagnosisRevision()}" />
 						<f:actionListener
-							binding="#{diagnosisPhaseExitDialog.hideDialog()}" />
+							binding="#{diagnosisRevisionDeleteDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<!-- Abort button -->
-					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn" immediate="true"
 						icon="fa fa-times-circle"
-						actionListener="#{diagnosisPhaseExitDialog.hideDialog()}" />
+						actionListener="#{diagnosisRevisionDeleteDialog.hideDialog()}" />
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>

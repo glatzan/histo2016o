@@ -150,8 +150,8 @@ public class MainHandlerAction {
 	}
 
 
-	public void sendGrowlMessagesAsResource(CustomUserNotificationExcepetion e) {
-		sendGrowlMessagesAsResource(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
+	public void sendGrowlMessages(CustomUserNotificationExcepetion e) {
+		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
 	}
 
 	public void sendGrowlMessagesAsResource(String headline, String message) {

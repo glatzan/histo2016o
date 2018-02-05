@@ -7,6 +7,12 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:histo="http://java.sun.com/jsf/composite/components">
 
+
+<h:outputFormat value="#{msg['dialog.userDelete.headline']}">
+	<f:param
+		value="#{dialogHandlerAction.editUserDialog.user.physician.person.fullName}" />
+</h:outputFormat>
+
 <h:head>
 	<title><h:outputFormat value="#{msg['']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />

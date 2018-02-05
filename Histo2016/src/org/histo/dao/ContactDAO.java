@@ -89,7 +89,7 @@ public class ContactDAO extends AbstractDAO {
 			return;
 
 		// collecting roles for which a report should be physically send
-		for (DiagnosisRevision diagnosisRevision : task.getDiagnosisContainer().getDiagnosisRevisions()) {
+		for (DiagnosisRevision diagnosisRevision : task.getDiagnosisRevisions()) {
 			for (Diagnosis diagnosis : diagnosisRevision.getDiagnoses()) {
 				if (diagnosis.getDiagnosisPrototype() != null)
 					sendLetterTo.addAll(diagnosis.getDiagnosisPrototype().getDiagnosisReportAsLetter());

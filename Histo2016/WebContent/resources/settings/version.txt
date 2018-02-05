@@ -37,7 +37,6 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
--> beim färbedialog kommentar nicht mehr bearbeitabr wenn  abeschlossene färbung
 -> updateAndScrollScrollPanel polymorphismus
 
 -> navigation buttons gehen nicht mehr richtig
@@ -66,7 +65,6 @@ Next Changes:
 Testen:
 -> Test piz range from 6-8 (geht nicht)
 -> Search for normal user (only patients in local database)
--> Tabelle HistoSettings ob alle views richtig eingetragen sind
  
 Urgent Changes 
 TODO: Methoden in SampleServie in eine Transaction setzten (für loggin logstring per transaction)
@@ -104,31 +102,38 @@ Graphic Changes
 + = added
 - = removed
 
-+v 1.2.12 (30.01.2017)
-+++*: Ip der Label-Drucker angepasst
-+++*: Konsil-PDF Vorlage angepasst
-++++: Kopf zum Abschließen der Färbung einzelner Objektträger hinzugefügt.
-+++*: Wenn der Auftrag in der Befundungs-Phase ist, werden automtaisch Nachfärbungen beim Erstellen von neuen Färbungen ausgewählt.
-
-
-+v 1.2.11 (28.01.2017)
-++++: Growl-Benachrichtigugen werden jetzt auch von Dialogen angezeigt (Im Hauptfenster)
-
-+v 1.2.10 (23.01.2017)
-++++: Können automatisch für den Raum ausgewählt werden.
-+++*: Ausdrucke kommen nicht mehr standardmäßig beim dem ersten CUPS Drucker heraus, wenn kein Drucker ausgewählt wurde. 
-++++: Externer Befundbericht hinzugefügt.
-+++*: Wenn nur eine Probe angelegt ist werden für Blöcke große Buchstaben verwendet, wenn mehrere Proben vorhaden sind dann kleine Buchstaben.
-+++*: Eingabe im Schnell-Suchfeld wird nach abschicken gelöscht.
++v 1.3.0 (05.02.2018)
++++*: Unterschrift ist nun pro Befund möglich.
+++++: Löschen von Befunden implementiert.
++++*: Umbenennen von Befunden jetzt über eine Dialog möglich.
++++!: Verfügbare Arbeitslisten repariert 
++++*: Kommentare für Färbungen können nach abschließen der Färbung nicht mehr bearbeitet werden.
 
 SQL:
-update histosettings set preferedprinter = 0;
-alter table histosettings ALTER COLUMN preferedprinter TYPE bigint using preferedprinter::bigint
+/* removing diagnosis container constraint form diangosis revision*/
+alter table diagnosisrevision drop constraint fk4lv3sjkvkxbr3hylgbo3hciej;
+/* adding columns from diagnosis container to diagnosis revision */
+alter table diagnosisrevision add signatureone_id bigint;
+alter table diagnosisrevision add signaturetwo_id bigint;
+alter table diagnosisrevision add signaturedate bigint;
+alter table diagnosisrevision_aud add signatureone_id bigint;
+alter table diagnosisrevision_aud add signaturetwo_id bigint;
+alter table diagnosisrevision_aud add signaturedate bigint;
+/* copie data from contaienr to revsion */
+update diagnosisrevision as r set parent_id = c.parent_id, signatureone_id = c.signatureone_id, signaturetwo_id = c.signaturetwo_id, signaturedate = c.signaturedate from diagnosiscontainer as c where r.parent_id = c.id;
+/* changing sequencenbumber to position*/
+ALTER TABLE diagnosisrevision RENAME COLUMN sequencenumber TO position;
+ALTER TABLE diagnosisrevision_aud RENAME COLUMN sequencenumber TO position;
+/* adding signature constrains*/
+ALTER TABLE ONLY diagnosisrevision ADD CONSTRAINT diagnosisrevision_signatureone_fkey FOREIGN KEY (signatureone_id) REFERENCES signature(id);
+ALTER TABLE ONLY diagnosisrevision ADD CONSTRAINT diagnosisrevision_signaturetwo_fkey FOREIGN KEY (signaturetwo_id) REFERENCES signature(id);
+/* parent constraint*/
+ALTER TABLE ONLY diagnosisrevision ADD CONSTRAINT diagnosisrevision_task_fkey FOREIGN KEY (parent_id) REFERENCES task(id);
+/* removing diagnosis container + aud*/
+DROP TABLE diagnosisContainer;
+DROP TABLE diagnosisContainer_aud;
+DROP SEQUENCE diagnosisContainer_sequence;
 
-+v 1.2.9 (18.01.2017)
-+++!: Verfügbare Arbeitslisten repariert
-
-SQL:
 /* fix available worklists for users*/
 Delete from histosettings_availableworklists a using histosettings h, histouser u where a.histosettings_id=h.id and u.settings_id = h.id and u.group_id = 3;
 INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) select h.id, 'EMPTY_LIST', 0 from  histosettings as h, histouser as u where  u.settings_id = h.id and u.group_id = 3;
@@ -190,6 +195,30 @@ INSERT INTO histosettings_availableworklists (histosettings_id, availableworklis
 INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (8, 'EMPTY_LIST',0);
 INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (7, 'EMPTY_LIST',0);
 INSERT INTO histosettings_availableworklists (histosettings_id, availableworklists, position) VALUES (6, 'EMPTY_LIST',0);
+
++v 1.2.12 (30.01.2017)
++++*: Ip der Label-Drucker angepasst
++++*: Konsil-PDF Vorlage angepasst
+++++: Kopf zum Abschließen der Färbung einzelner Objektträger hinzugefügt.
++++*: Wenn der Auftrag in der Befundungs-Phase ist, werden automtaisch Nachfärbungen beim Erstellen von neuen Färbungen ausgewählt.
+
+
++v 1.2.11 (28.01.2017)
+++++: Growl-Benachrichtigugen werden jetzt auch von Dialogen angezeigt (Im Hauptfenster)
+
++v 1.2.10 (23.01.2017)
+++++: Können automatisch für den Raum ausgewählt werden.
++++*: Ausdrucke kommen nicht mehr standardmäßig beim dem ersten CUPS Drucker heraus, wenn kein Drucker ausgewählt wurde. 
+++++: Externer Befundbericht hinzugefügt.
++++*: Wenn nur eine Probe angelegt ist werden für Blöcke große Buchstaben verwendet, wenn mehrere Proben vorhaden sind dann kleine Buchstaben.
++++*: Eingabe im Schnell-Suchfeld wird nach abschicken gelöscht.
+
+SQL:
+update histosettings set preferedprinter = 0;
+alter table histosettings ALTER COLUMN preferedprinter TYPE bigint using preferedprinter::bigint
+
++v 1.2.9 (18.01.2017)
++++!: Verfügbare Arbeitslisten repariert (funktionierte nicht korrekt)
 
 +v 1.2.8 (17.01.2017)
 +++!: Patienten-Auswahl repariert.

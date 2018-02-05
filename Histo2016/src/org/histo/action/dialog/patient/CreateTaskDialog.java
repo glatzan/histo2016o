@@ -33,10 +33,8 @@ import org.histo.model.BioBank;
 import org.histo.model.Council;
 import org.histo.model.MaterialPreset;
 import org.histo.model.PDFContainer;
-import org.histo.model.Signature;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.interfaces.HasDataList;
-import org.histo.model.patient.DiagnosisContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Sample;
@@ -45,7 +43,6 @@ import org.histo.service.DiagnosisService;
 import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.TemplateUReport;
-import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.pdf.PDFGenerator;
@@ -299,17 +296,7 @@ public class CreateTaskDialog extends AbstractDialog {
 					// saving task
 					genericDAO.savePatientData(getTask(), "log.patient.task.new", getTask().getTaskID());
 
-					DiagnosisContainer diagnosisContainer = new DiagnosisContainer(getTask());
-					getTask().setDiagnosisContainer(diagnosisContainer);
-					diagnosisContainer.setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
-
-					// setting signature
-					diagnosisContainer.setSignatureOne(new Signature());
-					diagnosisContainer.setSignatureTwo(new Signature());
-
-					// saving diagnosis container
-					genericDAO.savePatientData(diagnosisContainer, "log.patient.task.diagnosisContainer.new",
-							getTask().getTaskID());
+					getTask().setDiagnosisRevisions(new ArrayList<DiagnosisRevision>());
 
 					for (Sample sample : getTask().getSamples()) {
 						// saving samples
@@ -321,8 +308,7 @@ public class CreateTaskDialog extends AbstractDialog {
 
 					logger.debug("Creating diagnosis");
 					// creating standard diagnoses
-					diagnosisService.createDiagnosisRevision(getTask().getDiagnosisContainer(),
-							DiagnosisRevisionType.DIAGNOSIS);
+					diagnosisService.createDiagnosisRevision(getTask(), DiagnosisRevisionType.DIAGNOSIS);
 
 					// creating bioBank for Task
 					bioBank.setAttachedPdfs(new ArrayList<PDFContainer>());

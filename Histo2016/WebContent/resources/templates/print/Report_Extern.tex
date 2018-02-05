@@ -131,17 +131,14 @@ $address \\
 		}
 	\end{tabular}
 
-	\begin{tabular}{p{1\linewidth}}
-		Sehr geehrte Frau Kollegin,\\
-		sehr geehrter Herr Kollege,\\
-		wir berichten über die histologische Untersuchung,\\
-	\end{tabular}
-	\linebreak
-	\linebreak
+	Sehr geehrte Frau Kollegin,\\
+	sehr geehrter Herr Kollege,\\
+	\ \\
+	wir berichten über die histologische Untersuchung,\\
+	\ \\
 }
 
-
-
+#foreach ($diagnosisRevision in $task.diagnosisRevisions)
 {
 \renewcommand{\arraystretch}{1}
 \setlength{\tabcolsep}{0em}
@@ -150,7 +147,6 @@ $address \\
 \setlength{\LTpost}{0pt}
 \RaggedRight
 
-#foreach ($diagnosisRevision in $task.diagnosisContainer.diagnosisRevisions)
 \large \underline{ $!diagnosisRevision.name: }\smallskip
 \begin{longtable}{p{\linewidth}}
 		\normalsize $!latexTextConverter.convertToTex($diagnosisRevision.text)
@@ -163,20 +159,21 @@ $address \\
 	$!diagnosis.sample.sampleID & $!latexTextConverter.convertToTex($diagnosis.diagnosis)  \\
 #end
 \end{longtable}	
-			
-#end
 }
- 
+
 \begin{center}
+\ \\
 \RaggedRight
 \begin{tabular}{p{0.15\linewidth}p{0.05\linewidth}p{0.35\linewidth}p{0.45\linewidth}}
 	\multicolumn{4}{l}{Mit freundlichen Grüßen} \\\\
-	Freiburg den \linebreak $date.format('dd.MM.yyyy', $!task.diagnosisContainer.signatureDateAsDate) & & $!task.diagnosisContainer.signatureOne.physician.person.fullName #if($!task.diagnosisContainer.signatureOne.physician.person.fullName) \linebreak #end $!task.diagnosisContainer.signatureOne.role & $!task.diagnosisContainer.signatureTwo.physician.person.fullName #if($!task.diagnosisContainer.signatureTwo.physician.person.fullName) \linebreak #end $!task.diagnosisContainer.signatureTwo.role \\
-
+	Freiburg den \linebreak $date.format('dd.MM.yyyy', $!diagnosisRevision.signatureDateAsDate) & & $!diagnosisRevision.signatureOne.physician.person.fullName #if($!diagnosisRevision.signatureOne.physician.person.fullName) \linebreak #end $!diagnosisRevision.signatureOne.role & $!diagnosisRevision.signatureTwo.physician.person.fullName #if($!diagnosisRevision.signatureTwo.physician.person.fullName) \linebreak #end $!diagnosisRevision.signatureTwo.role \\
 
 \end{tabular}
-
 \end{center}
+		
+#end
+ 
+
    \ifthenelse{\pageref{LastPage}>1}
      { \noindent \footnotesize  Dieser Befundbericht umfasst insgesamt \pageref{LastPage} Seiten.  \\}
       {~	}

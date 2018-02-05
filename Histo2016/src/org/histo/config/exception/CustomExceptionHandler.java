@@ -141,7 +141,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 								+ ((CustomDatabaseInconsistentVersionException) cause).getOldVersion().getClass());
 					}
 
-					mainHandlerAction.sendGrowlMessagesAsResource("growl.version.error", "growl.version.error.text");
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
 					RequestContext.getCurrentInstance()
 							.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
