@@ -44,7 +44,6 @@ import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.template.ui.documents.DiagnosisReportUi;
 import org.histo.template.ui.documents.DocumentUi;
 import org.histo.ui.selectors.ContactSelector;
-import org.histo.ui.selectors.DiagnosisRevisionSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.StreamUtils;
@@ -224,8 +223,8 @@ public class NotificationDialog extends AbstractTabDialog {
 		for (DocumentUi<?> documentUi : subSelectUIs) {
 			((DiagnosisReportUi) documentUi).initialize(task, selectors);
 			((DiagnosisReportUi) documentUi).setSingleSelect(true);
-			((DiagnosisReportUi) documentUi).setSelectedDiagnoses(generalTab.getDiagnosisRevisionSelectors().stream()
-					.filter(p -> p.isSelected()).map(p -> p.getDiagnosisRevision()).collect(Collectors.toList()));
+			((DiagnosisReportUi) documentUi)
+					.setSelectedDiagnosis(task.getDiagnosisRevisions().get(task.getDiagnosisRevisions().size() - 1));
 		}
 
 		selectors.get(0).setSelected(true);
@@ -299,7 +298,11 @@ public class NotificationDialog extends AbstractTabDialog {
 	@Setter
 	public class GeneralTab extends NotificationTab {
 
-		private List<DiagnosisRevisionSelector> diagnosisRevisionSelectors;
+		private List<DiagnosisRevision> diagnoses;
+
+		private DefaultTransformer<DiagnosisRevision> diagnosesTransformer;
+
+		private DiagnosisRevision selectedDiagnosis;
 
 		private boolean temporaryNotification;
 
@@ -324,22 +327,23 @@ public class NotificationDialog extends AbstractTabDialog {
 
 			getContainerList().setPrintCount(2);
 
-			setDiagnosisRevisionSelectors(DiagnosisRevisionSelector.factory(task));
+			setDiagnoses(task.getDiagnosisRevisions());
+			setDiagnosesTransformer(new DefaultTransformer<DiagnosisRevision>(getDiagnoses()));
 
 			// no notification was performed set the first as notification diagnosis
-			if (task.getNotificationCompletionDate() == 0 && getDiagnosisRevisionSelectors().size() > 0) {
-				getDiagnosisRevisionSelectors().get(0).setSelected(true);
+			if (task.getNotificationCompletionDate() == 0 && getDiagnoses().size() > 0) {
+				setSelectedDiagnosis(getDiagnoses().get(0));
 
 				// if there is more then one notification and no notification was performed ->
 				// set as temporary notification.
-				if (getDiagnosisRevisionSelectors().size() > 1)
+				if (getDiagnoses().size() > 1)
 					setTemporaryNotification(true);
 				else
 					setTemporaryNotification(false);
 
-			} else if (getDiagnosisRevisionSelectors().size() > 0) {
+			} else if (getDiagnoses().size() > 0) {
 				// selecting last diagnosis revision
-				getDiagnosisRevisionSelectors().get(getDiagnosisRevisionSelectors().size() - 1).setSelected(true);
+				setSelectedDiagnosis(getDiagnoses().get(getDiagnoses().size() - 1));
 				setTemporaryNotification(false);
 			}
 
@@ -592,8 +596,7 @@ public class NotificationDialog extends AbstractTabDialog {
 				((MailContainerList) mailTab.getContainerList()).getSelectedMail().setBody(mailTab.getMailBody());
 
 				// copy selected diagnoses
-				List<DiagnosisRevision> revisionsToRender = generalTab.getDiagnosisRevisionSelectors().stream()
-						.filter(p -> p.isSelected()).map(p -> p.getDiagnosisRevision()).collect(Collectors.toList());
+				List<DiagnosisRevision> revisionsToRender = Arrays.asList(generalTab.getSelectedDiagnosis());
 
 				generalTab.getContainerList().setSelectedRevisions(revisionsToRender);
 				mailTab.getContainerList().setSelectedRevisions(revisionsToRender);

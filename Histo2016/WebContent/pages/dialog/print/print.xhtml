@@ -11,6 +11,7 @@
 
 <h:head>
 	<title><h:outputFormat value="#{msg['dialog.print.headline']}" /></title>
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 	<h:outputStylesheet name="style.css" value="style.css" library="style" />
 	<h:outputStylesheet name="specificStyle.css" value="specificStyle.css"
@@ -45,12 +46,12 @@
 					style="width: 100%">
 
 					<h:panelGrid columns="2" styleClass="newStyleListingTable"
-						id="navigation">
+						columnClasses="columnMinWidth," id="navigation">
 						<!-- document type -->
 						<h:outputLabel value="#{msg['dialog.print.document']}" />
 						<p:selectOneMenu
 							value="#{dialogHandlerAction.printDialog.selectedTemplate}"
-							style="width:90% !important;"
+							style="width:80% !important;"
 							converter="#{dialogHandlerAction.printDialog.templateTransformer}">
 							<f:selectItems
 								value="#{dialogHandlerAction.printDialog.templateList}"
@@ -62,7 +63,14 @@
 								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"></p:ajax>
 						</p:selectOneMenu>
 
+						<!-- save -->
+						<h:outputLabel value="#{msg['dialog.print.save']}" />
+						<p:selectBooleanCheckbox
+							value="#{dialogHandlerAction.printDialog.savePDF}"
+							title="#{msg['dialog.print.save.text']}" />
 					</h:panelGrid>
+
+					<p:separator style="margin: 0px 20px 0px 5px" />
 
 					<!-- dynamic include -->
 					<h:panelGrid columns="1" styleClass="contentSpaceContainer"
@@ -73,16 +81,6 @@
 
 					</h:panelGrid>
 
-
-					<h:panelGrid columns="2" styleClass="newStyleListingTable"
-						columnClasses="columnMinWidth, columnAutoWidth">
-						<!-- save file -->
-						<h:outputLabel value="#{msg['dialog.print.save']}" />
-						<p:selectBooleanCheckbox
-							value="#{dialogHandlerAction.printDialog.savePDF}"
-							title="#{msg['dialog.print.save.text']}" />
-
-					</h:panelGrid>
 				</h:panelGrid>
 
 				<!-- middle column -->
@@ -116,16 +114,6 @@
 				styleClass="newTableContainer">
 
 				<h:panelGrid columns="1" styleClass="newTableContainer left">
-				</h:panelGrid>
-
-				<h:panelGrid columns="4" styleClass="newTableContainer right"
-					id="buttonContainerToUpdate">
-
-					<p:commandButton value="#{msg['dialog.print.button.fax']}"
-						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
-						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
-						rendered="#{dialogHandlerAction.printDialog.faxMode}"
-						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
 
 					<h:panelGrid columns="2"
 						rendered="#{!dialogHandlerAction.printDialog.selectMode}">
@@ -150,6 +138,18 @@
 						</p:selectOneMenu>
 					</h:panelGrid>
 
+				</h:panelGrid>
+
+				<h:panelGrid columns="3" styleClass="newTableContainer right"
+					id="buttonContainerToUpdate">
+
+					<!-- fax -->
+					<p:commandButton value="#{msg['dialog.print.button.fax']}"
+						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
+						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
+						rendered="#{dialogHandlerAction.printDialog.faxMode}"
+						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
+
 					<!-- select -->
 					<p:commandButton value="#{msg['dialog.print.button.select']}"
 						icon="fa fa-print"
@@ -160,11 +160,10 @@
 					<!-- download -->
 					<p:commandButton
 						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
-						value="#{msg['dialog.print.button.open']} - disable"
-						icon="fa fa-download" ajax="false"
-						title="#{msg['dialog.print.button.open.text']}">
+						value="#{msg['dialog.print.button.open']}" icon="fa fa-download"
+						ajax="false" title="#{msg['dialog.print.button.open.text']}">
 						<p:fileDownload
-							value="#{dialogHandlerAction.printDialog.guiManager.getPDFContainerToRender()}" />
+							value="#{dialogHandlerAction.printDialog.guiManager.getPdfContent()}" />
 					</p:commandButton>
 
 					<!-- Abort button -->

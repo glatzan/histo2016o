@@ -2,30 +2,18 @@ package org.histo.template;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.persistence.Transient;
 
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
-import org.histo.model.interfaces.HasID;
-import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.ui.documents.DocumentUi;
-import org.histo.ui.selectors.ContactSelector;
-import org.histo.ui.selectors.DiagnosisRevisionSelector;
 import org.histo.util.FileUtil;
-import org.histo.util.FileUtil;
-import org.histo.util.HistoUtil;
 import org.histo.util.StreamUtils;
-import org.histo.util.pdf.LazyPDFReturnHandler;
 import org.histo.util.pdf.PDFGenerator;
-import org.histo.util.pdf.PrintOrder;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

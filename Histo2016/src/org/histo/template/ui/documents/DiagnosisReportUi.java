@@ -1,7 +1,9 @@
 package org.histo.template.ui.documents;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.histo.config.enums.ContactRole;
@@ -12,7 +14,7 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.ui.selectors.ContactSelector;
-import org.histo.ui.selectors.DiagnosisRevisionSelector;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.pdf.PDFGenerator;
 
 import lombok.Getter;
@@ -28,15 +30,19 @@ public class DiagnosisReportUi extends DocumentUi<DiagnosisReport> {
 	private List<ContactSelector> contactList;
 
 	/**
-	 * List of all diagnosis revision to select from
+	 * List of all diagnoses
 	 */
-	private List<DiagnosisRevisionSelector> diagnosisRevisions;
+	private List<DiagnosisRevision> diagnoses;
 
 	/**
-	 * The associatedContact rendered, the first one will always be rendered, if not
-	 * changed, no rendering necessary
+	 * Transformer for diagnoses
 	 */
-	private ContactSelector selectedContact;
+	private DefaultTransformer<DiagnosisRevision> diagnosesTransformer;
+
+	/**
+	 * Selected diangosis
+	 */
+	private DiagnosisRevision selectedDiagnosis;
 
 	/**
 	 * List if true single select mode of contacts is enabled
@@ -54,11 +60,12 @@ public class DiagnosisReportUi extends DocumentUi<DiagnosisReport> {
 
 	public void initialize(Task task, List<ContactSelector> contactList) {
 		super.initialize(task);
-		
-		diagnosisRevisions = DiagnosisRevisionSelector.factory(task);
 
-		if (diagnosisRevisions.size() > 0)
-			diagnosisRevisions.get(diagnosisRevisions.size() - 1).setSelected(true);
+		setDiagnoses(task.getDiagnosisRevisions());
+		setDiagnosesTransformer(new DefaultTransformer<>(getDiagnoses()));
+
+		// getting last diagnosis
+		setSelectedDiagnosis(getDiagnoses().get(getDiagnoses().size() - 1));
 
 		if (contactList == null) {
 			// contacts for printing
@@ -82,9 +89,20 @@ public class DiagnosisReportUi extends DocumentUi<DiagnosisReport> {
 	 * Return default template configuration for printing
 	 */
 	public DocumentTemplate getDefaultTemplateConfiguration() {
-		documentTemplate.initData(task, diagnosisRevisions.stream().filter(p -> p.isSelected())
-				.map(p -> p.getDiagnosisRevision()).collect(Collectors.toList()), "");
+		documentTemplate.initData(task, Arrays.asList(selectedDiagnosis), renderSelectedContact ? getAddressOfFirstSelectedContact() : "");
 		return documentTemplate;
+	}
+
+	/**
+	 * Gets the address of the first selected contact
+	 * @return
+	 */
+	public String getAddressOfFirstSelectedContact() {
+		try {
+			return contactList.stream().filter(p -> p.isSelected()).findFirst().get().getCustomAddress();
+		} catch (NoSuchElementException e) {
+			return "";
+		}
 	}
 
 	/**
@@ -135,23 +153,4 @@ public class DiagnosisReportUi extends DocumentUi<DiagnosisReport> {
 		chooser.getParent().generateAddress(true);
 	}
 
-	/**
-	 * Sets diagnosis selectors
-	 * 
-	 * @param diagnoses
-	 */
-	public void setSelectedDiagnoses(List<DiagnosisRevision> diagnoses) {
-		for (DiagnosisRevisionSelector selectors : getDiagnosisRevisions()) {
-			boolean set = false;
-			for (DiagnosisRevision diagnosisRevision : diagnoses) {
-				if (selectors.getDiagnosisRevision().getId() == diagnosisRevision.getId()) {
-					set = true;
-					break;
-				}
-			}
-			
-			selectors.setSelected(set);
-		}
-
-	}
 }

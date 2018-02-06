@@ -44,7 +44,12 @@ public class DocumentUi<T extends DocumentTemplate> implements HasID {
 	/**
 	 * If true the pdf will be updated on every settings change
 	 */
-	protected boolean updatePdfOnEverySettingChange;
+	protected boolean updatePdfOnEverySettingChange = false;
+	
+	/**
+	 * If true the first selected contact will be rendered
+	 */
+	protected boolean renderSelectedContact = false;
 	
 	/**
 	 * String for input include

@@ -73,34 +73,17 @@
 			<h:outputLabel styleClass="bigFont"
 				value="#{msg['dialog.notification.tab.general.notification.select']}" />
 
-			<p:panelGrid styleClass="notificationDialog_DiagosisTable"
-				id="dignosisScrollTable">
-				<f:facet name="header">
-					<p:row>
-						<p:column>
-							<h:outputLabel value="#"></h:outputLabel>
-						</p:column>
-						<p:column>
-							<h:outputLabel
-								value="#{msg['dialog.notification.tab.general.diagnosis']}"></h:outputLabel>
-						</p:column>
-					</p:row>
-				</f:facet>
 
-				<c:forEach varStatus="status"
-					items="#{dialogHandlerAction.notificationDialog.generalTab.diagnosisRevisionSelectors}"
-					var="revision">
+			<p:selectOneMenu
+				converter="#{dialogHandlerAction.notificationDialog.generalTab.diagnosesTransformer}"
+				value="#{dialogHandlerAction.notificationDialog.generalTab.selectedDiagnosis}">
 
-					<p:row>
-						<p:column>
-							<p:selectBooleanCheckbox value="#{revision.selected}" />
-						</p:column>
-						<p:column>
-							<h:outputLabel value="#{revision.diagnosisRevision.name}"></h:outputLabel>
-						</p:column>
-					</p:row>
-				</c:forEach>
-			</p:panelGrid>
+				<f:selectItems
+					value="#{dialogHandlerAction.notificationDialog.generalTab.diagnoses}"
+					var="diagnosis" itemLabel="#{diagnosis.name}"
+					itemValue="#{diagnosis}" />
+
+			</p:selectOneMenu>
 
 			<!-- temporary notification-->
 			<h:outputLabel

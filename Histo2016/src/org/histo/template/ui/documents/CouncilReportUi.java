@@ -8,16 +8,15 @@ import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
-import org.histo.template.documents.TemplateCouncil;
+import org.histo.template.documents.CouncilReport;
 import org.histo.ui.selectors.ContactSelector;
-import org.histo.ui.selectors.DiagnosisRevisionSelector;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CouncilReportUi extends DocumentUi<TemplateCouncil> {
+public class CouncilReportUi extends DocumentUi<CouncilReport> {
 
 	/**
 	 * List with all associated contacts
@@ -29,7 +28,7 @@ public class CouncilReportUi extends DocumentUi<TemplateCouncil> {
 	 */
 	private Council selectedCouncil;
 
-	public CouncilReportUi(TemplateCouncil templateCouncil) {
+	public CouncilReportUi(CouncilReport templateCouncil) {
 		super(templateCouncil);
 		inputInclude = "include/councilReport.xhtml";
 	}

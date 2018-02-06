@@ -87,7 +87,7 @@
 	"content2" : "",
 	"type"	: "COUNCIL_REQUEST",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateCouncil",
+	"templateName": "org.histo.template.documents.CouncilReport",
 	"defaultOfType" : true,
 	"transientContent" : false,
 	"hidden" : false

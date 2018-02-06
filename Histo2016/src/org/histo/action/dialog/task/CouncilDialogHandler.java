@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.histo.action.DialogHandlerAction;
@@ -22,11 +23,18 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
+import org.histo.model.Contact;
 import org.histo.model.Council;
 import org.histo.model.ListItem;
 import org.histo.model.PDFContainer;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;
+import org.histo.template.DocumentTemplate;
+import org.histo.template.ui.documents.CouncilReportUi;
+import org.histo.template.ui.documents.DiagnosisReportUi;
+import org.histo.template.ui.documents.DocumentUi;
+import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.dataList.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -334,7 +342,17 @@ public class CouncilDialogHandler extends AbstractDialog {
 	public void printCouncilReport() {
 		try {
 			save();
-			dialogHandlerAction.getPrintDialog().initAndPrepareBeanForCouncil(task, getSelectedCouncil());
+			
+			List<DocumentTemplate> templates = DocumentTemplate.getTemplates(DocumentType.COUNCIL_REQUEST);
+			List<DocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+
+			for (DocumentUi<?> documentUi : subSelectUIs) {
+				((CouncilReportUi) documentUi).initialize(task, getSelectedCouncil());
+			}
+
+			dialogHandlerAction.getPrintDialog().initBeanForPrinting(task, subSelectUIs, DocumentType.COUNCIL_REQUEST);
+			dialogHandlerAction.getPrintDialog().prepareDialog();
+
 			// workaround for showing and hiding two dialogues
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

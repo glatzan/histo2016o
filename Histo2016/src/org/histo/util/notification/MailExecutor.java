@@ -42,7 +42,7 @@ public class MailExecutor extends NotificationExecutor<MailContainer> {
 			return globalSettings.getMailHandler().sendMail(container.getContactAddress(), container.getMail());
 		}
 
-		return true;
+		return false;
 	}
 
 }

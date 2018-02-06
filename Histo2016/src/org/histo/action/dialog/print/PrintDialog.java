@@ -29,7 +29,7 @@ import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateCouncil;
+import org.histo.template.documents.CouncilReport;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.documents.TemplateUReport;
 import org.histo.template.ui.documents.CouncilReportUi;
@@ -146,7 +146,12 @@ public class PrintDialog extends AbstractDialog {
 		// init templates
 		subSelectUIs.forEach(p -> p.initialize(task));
 
-		initBean(task, subSelectUIs, DocumentType.DIAGNOSIS_REPORT);
+		initBeanForPrinting(task, subSelectUIs, DocumentType.DIAGNOSIS_REPORT);
+
+	}
+
+	public void initBeanForPrinting(Task task, List<DocumentUi<?>> subSelectUIs, DocumentType defaultType) {
+		initBean(task, subSelectUIs, defaultType);
 
 		setSelectMode(false);
 
@@ -157,34 +162,6 @@ public class PrintDialog extends AbstractDialog {
 		setSingleAddressSelectMode(false);
 
 		// rendering the template
-		onChangePrintTemplate();
-	}
-
-	public void initAndPrepareBeanForCouncil(Task task) {
-		initBeanForCouncil(task, null);
-		prepareDialog();
-	}
-
-	public void initAndPrepareBeanForCouncil(Task task, Council council) {
-		initBeanForCouncil(task, council);
-		prepareDialog();
-	}
-
-	public void initBeanForCouncil(Task task, Council council) {
-		List<DocumentTemplate> subSelect = DocumentTemplate.getTemplates(DocumentType.COUNCIL_REQUEST);
-
-		// getting ui objects
-		List<DocumentUi<?>> subSelectUIs = subSelect.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
-
-		// init uis
-		subSelectUIs.stream().forEach(p -> ((CouncilReportUi) p).initialize(task, council));
-
-		initBean(task, subSelectUIs, DocumentType.COUNCIL_REQUEST);
-
-		setSelectMode(false);
-
-		setSingleAddressSelectMode(false);
-
 		onChangePrintTemplate();
 	}
 
@@ -231,7 +208,10 @@ public class PrintDialog extends AbstractDialog {
 
 	public void initBeanForSelecting(Task task, List<DocumentUi<?>> subSelectUIs, DocumentType defaultType) {
 
-		subSelectUIs.forEach(p -> p.setUpdatePdfOnEverySettingChange(true));
+		subSelectUIs.forEach(p -> {
+			p.setUpdatePdfOnEverySettingChange(true);
+			p.setRenderSelectedContact(true);
+		});
 
 		initBean(task, subSelectUIs, defaultType);
 
@@ -334,4 +314,4 @@ public class PrintDialog extends AbstractDialog {
 	public void hideAndSelectDialog() {
 		RequestContext.getCurrentInstance().closeDialog(guiManager.getPDFContainerToRender());
 	}
-} 
+}
