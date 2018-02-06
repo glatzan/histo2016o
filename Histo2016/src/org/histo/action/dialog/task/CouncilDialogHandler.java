@@ -33,7 +33,7 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.ui.documents.CouncilReportUi;
 import org.histo.template.ui.documents.DiagnosisReportUi;
-import org.histo.template.ui.documents.DocumentUi;
+import org.histo.template.ui.documents.AbstractDocumentUi;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.dataList.HasDataList;
@@ -344,10 +344,13 @@ public class CouncilDialogHandler extends AbstractDialog {
 			save();
 			
 			List<DocumentTemplate> templates = DocumentTemplate.getTemplates(DocumentType.COUNCIL_REQUEST);
-			List<DocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+			List<AbstractDocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 
-			for (DocumentUi<?> documentUi : subSelectUIs) {
+			for (AbstractDocumentUi<?> documentUi : subSelectUIs) {
 				((CouncilReportUi) documentUi).initialize(task, getSelectedCouncil());
+				((CouncilReportUi) documentUi).setRenderSelectedContact(true);
+				((CouncilReportUi) documentUi).setUpdatePdfOnEverySettingChange(true);
+				((CouncilReportUi) documentUi).setSingleSelect(true);
 			}
 
 			dialogHandlerAction.getPrintDialog().initBeanForPrinting(task, subSelectUIs, DocumentType.COUNCIL_REQUEST);

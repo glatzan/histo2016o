@@ -10,7 +10,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.histo.template.ui.documents.DocumentUi;
+import org.histo.template.ui.documents.AbstractDocumentUi;
 import org.histo.util.FileUtil;
 import org.histo.util.StreamUtils;
 import org.histo.util.pdf.PDFGenerator;
@@ -74,8 +74,8 @@ public class DocumentTemplate extends Template {
 
 	}
 
-	public DocumentUi<?> getDocumentUi() {
-		return new DocumentUi(this);
+	public AbstractDocumentUi<?> getDocumentUi() {
+		return new AbstractDocumentUi(this);
 	}
 
 	public DocumentType getDocumentType() {

@@ -11,6 +11,25 @@
 	<!-- script for scrolltable -->
 	<h:outputScript library="scripts" name="scrollAbleTableCoumnSync.js" />
 
+	<h:outputLabel value="#{msg['dialog.print.diagnosisReport.diagnosis']}"
+		styleClass="bigFont" />
+
+	<p:selectOneMenu
+		converter="#{dialogHandlerAction.printDialog.selectedTemplate.diagnosesTransformer}"
+		style="width:90%"
+		value="#{dialogHandlerAction.printDialog.selectedTemplate.selectedDiagnosis}">
+
+		<f:selectItems
+			value="#{dialogHandlerAction.printDialog.selectedTemplate.diagnoses}"
+			var="diagnosis" itemLabel="#{diagnosis.name}"
+			itemValue="#{diagnosis}" />
+
+		<p:ajax event="change" process="@this"
+			listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
+			update="pollUpdateTable buttonContainerToUpdate" />
+
+	</p:selectOneMenu>
+
 	<h:outputLabel value="#{msg['dialog.print.addresses']}"
 		styleClass="bigFont" />
 
@@ -120,7 +139,8 @@
 							title="#{msg['dialog.print.individualAddress']}"
 							actionListener="#{dialogHandlerAction.customAddressDialog.initAndPrepareBean(dialogHandlerAction.printDialog.selectedTemplate.task,chooser)}">
 							<i class="fa fa-gear" style="margin-left: 2px" />
-							<p:ajax event="dialogReturn" listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
+							<p:ajax event="dialogReturn"
+								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
 								update="editAddressOver#{outer.index} pollUpdateTable buttonContainerToUpdate" />
 						</p:commandLink>
 
@@ -178,22 +198,4 @@
 		scrollAbleTableCoumnSync('#dialogContent\\:addressScrollTable', 16);
 	</script>
 
-	<h:outputLabel value="#{msg['dialog.print.diagnosisReport.diagnosis']}"
-		styleClass="bigFont" />
-
-	<p:selectOneMenu
-		converter="#{dialogHandlerAction.printDialog.selectedTemplate.diagnosesTransformer}"
-		style="width:90%"
-		value="#{dialogHandlerAction.printDialog.selectedTemplate.selectedDiagnosis}">
-
-		<f:selectItems
-			value="#{dialogHandlerAction.printDialog.selectedTemplate.diagnoses}"
-			var="diagnosis" itemLabel="#{diagnosis.name}"
-			itemValue="#{diagnosis}" />
-
-		<p:ajax event="change" process="@this"
-			listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
-			update="pollUpdateTable buttonContainerToUpdate" />
-
-	</p:selectOneMenu>
 </ui:composition>

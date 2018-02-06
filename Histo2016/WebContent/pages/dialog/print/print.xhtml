@@ -111,9 +111,20 @@
 
 		<div class="buttonContainer">
 			<h:panelGrid columns="2" style="width:100%"
-				styleClass="newTableContainer">
+				styleClass="newTableContainer" columnClasses="column25,">
 
 				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				</h:panelGrid>
+
+				<h:panelGrid columns="4" styleClass="newTableContainer right"
+					id="buttonContainerToUpdate">
+
+					<!-- select -->
+					<p:commandButton value="#{msg['dialog.print.button.select']}"
+						icon="fa fa-print"
+						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
+						rendered="#{dialogHandlerAction.printDialog.selectMode}"
+						actionListener="#{dialogHandlerAction.printDialog.hideAndSelectDialog()}"></p:commandButton>
 
 					<h:panelGrid columns="2"
 						rendered="#{!dialogHandlerAction.printDialog.selectMode}">
@@ -138,24 +149,12 @@
 						</p:selectOneMenu>
 					</h:panelGrid>
 
-				</h:panelGrid>
-
-				<h:panelGrid columns="3" styleClass="newTableContainer right"
-					id="buttonContainerToUpdate">
-
 					<!-- fax -->
 					<p:commandButton value="#{msg['dialog.print.button.fax']}"
 						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
 						rendered="#{dialogHandlerAction.printDialog.faxMode}"
 						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
-
-					<!-- select -->
-					<p:commandButton value="#{msg['dialog.print.button.select']}"
-						icon="fa fa-print"
-						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
-						rendered="#{dialogHandlerAction.printDialog.selectMode}"
-						actionListener="#{dialogHandlerAction.printDialog.hideAndSelectDialog()}"></p:commandButton>
 
 					<!-- download -->
 					<p:commandButton

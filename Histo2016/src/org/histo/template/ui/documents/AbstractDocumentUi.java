@@ -22,7 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Configurable
-public class DocumentUi<T extends DocumentTemplate> implements HasID {
+public class AbstractDocumentUi<T extends DocumentTemplate> implements HasID {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -56,7 +56,7 @@ public class DocumentUi<T extends DocumentTemplate> implements HasID {
 	 */
 	protected String inputInclude = "include/empty.xhtml";
 
-	public DocumentUi(T documentTemplate) {
+	public AbstractDocumentUi(T documentTemplate) {
 		this.documentTemplate = documentTemplate;
 	}
 

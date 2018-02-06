@@ -42,7 +42,7 @@ import org.histo.template.MailTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.template.ui.documents.DiagnosisReportUi;
-import org.histo.template.ui.documents.DocumentUi;
+import org.histo.template.ui.documents.AbstractDocumentUi;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
@@ -212,7 +212,7 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		List<DocumentTemplate> templates = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
 				DocumentType.DIAGNOSIS_REPORT_EXTERN);
-		List<DocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		List<AbstractDocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 
 		ArrayList<ContactSelector> selectors = new ArrayList<ContactSelector>();
 
@@ -220,7 +220,7 @@ public class NotificationDialog extends AbstractTabDialog {
 		selectors.add(new ContactSelector(task,
 				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
 
-		for (DocumentUi<?> documentUi : subSelectUIs) {
+		for (AbstractDocumentUi<?> documentUi : subSelectUIs) {
 			((DiagnosisReportUi) documentUi).initialize(task, selectors);
 			((DiagnosisReportUi) documentUi).setSingleSelect(true);
 			((DiagnosisReportUi) documentUi)

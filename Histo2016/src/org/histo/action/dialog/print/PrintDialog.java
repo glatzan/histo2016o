@@ -33,7 +33,7 @@ import org.histo.template.documents.CouncilReport;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.documents.TemplateUReport;
 import org.histo.template.ui.documents.CouncilReportUi;
-import org.histo.template.ui.documents.DocumentUi;
+import org.histo.template.ui.documents.AbstractDocumentUi;
 import org.histo.ui.LazyPDFGuiManager;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -94,17 +94,17 @@ public class PrintDialog extends AbstractDialog {
 	/**
 	 * List of all templates for printing
 	 */
-	private List<DocumentUi<?>> templateList;
+	private List<AbstractDocumentUi<?>> templateList;
 
 	/**
 	 * The TemplateListtransformer for selecting a template
 	 */
-	private DefaultTransformer<DocumentUi<?>> templateTransformer;
+	private DefaultTransformer<AbstractDocumentUi<?>> templateTransformer;
 
 	/**
 	 * Ui object for template
 	 */
-	private DocumentUi<?> selectedTemplate;
+	private AbstractDocumentUi<?> selectedTemplate;
 
 	/**
 	 * Can be set to true, if so the generated pdf will be saved
@@ -142,7 +142,7 @@ public class PrintDialog extends AbstractDialog {
 				DocumentType.U_REPORT, DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
 		// getting ui objects
-		List<DocumentUi<?>> subSelectUIs = subSelect.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		List<AbstractDocumentUi<?>> subSelectUIs = subSelect.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 		// init templates
 		subSelectUIs.forEach(p -> p.initialize(task));
 
@@ -150,7 +150,7 @@ public class PrintDialog extends AbstractDialog {
 
 	}
 
-	public void initBeanForPrinting(Task task, List<DocumentUi<?>> subSelectUIs, DocumentType defaultType) {
+	public void initBeanForPrinting(Task task, List<AbstractDocumentUi<?>> subSelectUIs, DocumentType defaultType) {
 		initBean(task, subSelectUIs, defaultType);
 
 		setSelectMode(false);
@@ -172,7 +172,7 @@ public class PrintDialog extends AbstractDialog {
 	public void initBeanForExternalDisplay(Task task, List<DocumentTemplate> types, DocumentType defaultType,
 			AssociatedContact sendTo) {
 
-		List<DocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		List<AbstractDocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 
 		// init templates
 		subSelectUIs.forEach(p -> p.initialize(task));
@@ -198,7 +198,7 @@ public class PrintDialog extends AbstractDialog {
 	public void initBeanForSelecting(Task task, List<DocumentTemplate> types, DocumentType defaultType,
 			List<AssociatedContact> addresses, boolean allowIndividualAddress) {
 
-		List<DocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		List<AbstractDocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
 
 		// init templates
 		subSelectUIs.forEach(p -> p.initialize(task));
@@ -206,7 +206,7 @@ public class PrintDialog extends AbstractDialog {
 		initBeanForSelecting(task, subSelectUIs, defaultType);
 	}
 
-	public void initBeanForSelecting(Task task, List<DocumentUi<?>> subSelectUIs, DocumentType defaultType) {
+	public void initBeanForSelecting(Task task, List<AbstractDocumentUi<?>> subSelectUIs, DocumentType defaultType) {
 
 		subSelectUIs.forEach(p -> {
 			p.setUpdatePdfOnEverySettingChange(true);
@@ -221,7 +221,7 @@ public class PrintDialog extends AbstractDialog {
 		onChangePrintTemplate();
 	}
 
-	public void initBean(Task task, List<DocumentUi<?>> templateUI, DocumentType defaultTemplate) {
+	public void initBean(Task task, List<AbstractDocumentUi<?>> templateUI, DocumentType defaultTemplate) {
 
 		// getting task datalist, if was altered a updated task will be returend
 		try {
@@ -237,7 +237,7 @@ public class PrintDialog extends AbstractDialog {
 		if (templateUI != null) {
 			setTemplateList(templateUI);
 
-			setTemplateTransformer(new DefaultTransformer<DocumentUi<?>>(getTemplateList()));
+			setTemplateTransformer(new DefaultTransformer<AbstractDocumentUi<?>>(getTemplateList()));
 
 			try {
 				setSelectedTemplate(templateUI.stream()
