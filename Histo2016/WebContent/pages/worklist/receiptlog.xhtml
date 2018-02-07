@@ -10,22 +10,6 @@
 
 	<h:outputScript library="scripts" name="closeOverlayPanelOnReturn.js" />
 
-	<script type="text/javascript">
-		// disables the autofocus for the caseHistoryOverlayplpanel 
-		(function() {
-			var proxied = PrimeFaces.widget.OverlayPanel.prototype.applyFocus;
-
-			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
-
-				if (this.jq.hasClass("histoOverlayPanel"))
-					return;
-
-				return proxied.apply(this, arguments);
-			};
-
-		})();
-	</script>
-
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
 	<p:scrollPanel styleClass="histoScroll" id="contentScrollPane">
@@ -122,8 +106,8 @@
 							value="#{globalEditViewHandler.selectedTask.caseHistory}"
 							title="#{msg['body.diagnosis.story.watermark']}"
 							id="caseHistoryInput" style="width:90%"
-							onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
-							onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
+							onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
+							onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
 							onkeypress="PF('caseHistoryOverlayPanel').hide();">
 							<p:ajax event="change"
 								listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.caseHistory',globalEditViewHandler.selectedTask.caseHistory)}"></p:ajax>
@@ -184,8 +168,8 @@
 									id="materialInput#{loopCount.index}"
 									disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 									tabindex="1" styleClass="customBackground"
-									onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
-									onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
+									onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
+									onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
 									style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
 									<p:ajax event="change" execute="@this"

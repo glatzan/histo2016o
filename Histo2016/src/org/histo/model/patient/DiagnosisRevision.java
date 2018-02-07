@@ -86,14 +86,14 @@ public class DiagnosisRevision implements Parent<Task>, DeleteAble, LogAble, Pat
 	 * Date of diagnosis finalization.
 	 */
 	@Column
-	private long compleationDate;
+	private long completionDate;
 
 	/**
-	 * 
+	 * Date of notification 
 	 */
 	@Column
-	private boolean reDiagnosis;
-
+	private long notificationDate;
+	
 	/**
 	 * All diagnoses
 	 */

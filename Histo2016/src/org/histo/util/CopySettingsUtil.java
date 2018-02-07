@@ -49,8 +49,6 @@ public class CopySettingsUtil {
 
 		user.getSettings().setAddTaskWithSingelClick(group.getSettings().isAddTaskWithSingelClick());
 
-		user.getSettings().setPdfPreviewOnDiagnosisApproval(group.getSettings().isPdfPreviewOnDiagnosisApproval());
-
 	}
 
 	public static void copyPhysicianData(Physician source, Physician destination, boolean force) {

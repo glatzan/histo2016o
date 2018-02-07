@@ -57,7 +57,6 @@ public enum Dialog {
 	MEDIA_PREVIEW("/pages/dialog/upload/mediaPreview", null,  1280, 720,  false, false, true),  // 16:9
 	MEDIA("/pages/dialog/upload/media", null,  1280, 720,  false, false, true), // 16:9
 	STAINING_PHASE_EXIT("/pages/dialog/task/staining/stainingPhaseExit", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_PHASE_EXIT("/pages/dialog/task/diagnosis/diagnosisPhaseExit", null, 1024, 600, false, false, true), // 16:9
 	DIAGNOSIS_PHASE_EXIT_SMALL("/pages/dialog/task/diagnosis/diagnosisPhaseExitSmall", null, 480, 272, false, false, true), // 16:9
 	NOTIFICATION_PHASE_EXIT("/pages/dialog/notification/notificationPhaseExit", null, 480, 272, false, false, true), // 16:9
 	TASK_ARCHIVE("/pages/dialog/task/archive/archiveTask", null, 480, 272, false, false, true), // 16:9

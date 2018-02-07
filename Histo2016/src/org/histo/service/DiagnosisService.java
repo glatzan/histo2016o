@@ -274,8 +274,8 @@ public class DiagnosisService {
 
 					// setting diagnosis compeation date if not set jet
 					task.getDiagnosisRevisions().forEach(p -> {
-						if (p.getCompleationDate() == 0)
-							p.setCompleationDate(System.currentTimeMillis());
+						if (p.getCompletionDate() == 0)
+							p.setCompletionDate(System.currentTimeMillis());
 					});
 
 					task.setDiagnosisCompletionDate(System.currentTimeMillis());

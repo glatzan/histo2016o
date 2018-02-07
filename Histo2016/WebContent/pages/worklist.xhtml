@@ -30,7 +30,7 @@
 		<ui:define name="globalInclude">
 			<h:form id="globalCommandsForm">
 				<!-- update all, for resize update -->
-				<p:remoteCommand name="refreshOnResize"
+				<p:remoteCommand name="refreshOnResize" process="@form"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm headerForm growlForm" />
 
@@ -65,8 +65,7 @@
 
 			<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 
-			<h:outputScript library="scripts"
-				name="setScrollPanelScrollSpeed.js" />
+			<h:outputScript library="scripts" name="setScrollPanelScrollSpeed.js" />
 
 			<ui:include src="template/idleMonitor.xhtml" />
 

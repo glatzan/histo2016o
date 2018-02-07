@@ -96,7 +96,7 @@ public class DiagnosisViewHandlerAction {
 		logger.debug("Initilize DiagnosisViewHandlerAction for task");
 
 		for (DiagnosisRevision revision : task.getDiagnosisRevisions()) {
-			if (revision.getCompleationDate() == 0) {
+			if (revision.getCompletionDate() == 0) {
 				revision.setSignatureDate(TimeUtil.setDayBeginning(System.currentTimeMillis()));
 
 				if(revision.getSignatureOne() == null)

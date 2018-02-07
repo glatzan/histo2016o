@@ -134,12 +134,6 @@ public class HistoSettings implements HasID, Cloneable {
 	private String inputFieldFontColor;
 
 	/**
-	 * If true a pdf preview will be generated on diagnosis approval.
-	 */
-	@Column
-	private boolean pdfPreviewOnDiagnosisApproval;
-
-	/**
 	 * If true tasks from the task list will be added and displayed immediately . If
 	 * false first they will be added to the worklist, with the second click the
 	 * task will be shown.

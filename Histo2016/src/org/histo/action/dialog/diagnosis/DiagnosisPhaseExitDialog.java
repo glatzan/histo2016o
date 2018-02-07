@@ -24,6 +24,7 @@ import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.service.DiagnosisService;
 import org.histo.ui.RevisionHolder;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
@@ -103,6 +104,11 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	private boolean stayInDiagnosisPhase;
 
 	/**
+	 * If true the diangosis phase will be terminated
+	 */
+	private boolean endDiangosisPhase;
+	
+	/**
 	 * If true the task will be shifted to the notification phase
 	 */
 	private boolean goToNotificationPhase;
@@ -110,7 +116,12 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	/**
 	 * List of diagnosis revisions of the task
 	 */
-	private List<DiagnosisRevision> diagnosisRevisionOfTask;
+	private List<DiagnosisRevision> diagnosisRevisions;
+
+	/**
+	 * Transformer for diagnosis revisions
+	 */
+	private DefaultTransformer<DiagnosisRevision> diagnosisRevisionTransformer;
 
 	/**
 	 * Diagnosis revision to notify about
@@ -118,11 +129,16 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	private DiagnosisRevision revisionToNotify;
 
 	public void initAndPrepareBean(Task task) {
-		if (initBean(task))
+		if (initBean(task, (DiagnosisRevision) null))
 			prepareDialog();
 	}
 
-	public boolean initBean(Task task) {
+	public void initAndPrepareBean(Task task, DiagnosisRevision selectedRevision) {
+		if (initBean(task, selectedRevision))
+			prepareDialog();
+	}
+
+	public boolean initBean(Task task, DiagnosisRevision selectedRevision) {
 		try {
 			taskDAO.initializeTask(task, false);
 
@@ -135,17 +151,10 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
-		// small dialog or big with pdf
-		if (userHandlerAction.getCurrentUser().getSettings().isPdfPreviewOnDiagnosisApproval()) {
-			// inits a template for previewing
-			dialogHandlerAction.getPrintDialog().initBeanForExternalDisplay(task,
-					new DocumentType[] { DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN },
-					DocumentType.DIAGNOSIS_REPORT,
-					new AssociatedContact(task, new Person(resourceBundle.get("pdf.address.none"), new Contact())));
+		super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT_SMALL);
 
-			super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT);
-		} else
-			super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT_SMALL);
+		setDiagnosisRevisions(task.getDiagnosisRevisions());
+		setDiagnosisRevisionTransformer(new DefaultTransformer<DiagnosisRevision>(getDiagnosisRevisions()));
 
 		setStayInDiagnosisPhase(false);
 

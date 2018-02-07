@@ -120,6 +120,18 @@ alter table associatedcontactnotification add renewed boolean;
 alter table associatedcontactnotification_aud add renewed boolean;
 update associatedcontactnotification set renewed = false;
 update associatedcontactnotification_aud set renewed = false;
+/* remove old settings column */
+Alter table histosettings drop column pdfpreviewondiagnosisapproval;
+/* spelling error*/
+ALTER TABLE diagnosisrevision RENAME COLUMN compleationDate TO completionDate;
+ALTER TABLE diagnosisrevision_aud RENAME COLUMN compleationDate TO completionDate;
+/* deleting old column */
+Alter table diagnosisrevision drop column rediagnosis; 
+Alter table diagnosisrevision_aud drop column rediagnosis; 
+/* adding notification column*/
+alter table diagnosisrevision add notificationdate bigint;
+update diagnosisrevision set notificationdate = 0;
+
 
 +v 1.3.0 (05.02.2018)
 +++*: Unterschrift ist nun pro Befund möglich.

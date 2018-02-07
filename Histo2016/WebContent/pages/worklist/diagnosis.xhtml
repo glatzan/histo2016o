@@ -11,22 +11,6 @@
 
 	<h:outputScript library="scripts" name="closeOverlayPanelOnReturn.js" />
 
-	<script type="text/javascript">
-		// disables the autofocus for the caseHistoryOverlayplpanel 
-		(function() {
-			var proxied = PrimeFaces.widget.OverlayPanel.prototype.applyFocus;
-
-			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
-
-				if (this.jq.hasClass("histoOverlayPanel"))
-					return;
-
-				return proxied.apply(this, arguments);
-			};
-
-		})();
-	</script>
-
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
 	<p:scrollPanel styleClass="histoScroll" id="contentScrollPane">
@@ -61,8 +45,8 @@
 										id="materialInput#{loopCount.index}"
 										disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 										tabindex="1" styleClass="customBackground"
-										onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
-										onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
+										onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update();"
+										onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update();"
 										style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
 										<p:ajax event="change" execute="@this"
@@ -71,7 +55,7 @@
 									</p:inputText>
 
 									<p:overlayPanel id="materialOverlayPanel#{loopCount.index}"
-										styleClass="histoOverlayPanel"
+										styleClass="histoOverlayPanel" onShow=""
 										widgetVar="materialOverlayPanel#{loopCount.index}"
 										hideEffect="fade" style="width:500px" hideEvent="mousedown"
 										showEvent="none" onkeypress="return false;">
@@ -85,7 +69,7 @@
 												<h:outputText value="#{preset.name}" />
 											</p:column>
 
-											<p:ajax event="rowSelect"
+											<p:ajax event="rowSelect" process="@form"
 												update="contentForm:materialInput#{loopCount.index}"
 												listener="#{taskHandlerAction.changeMaterialOfSample(sample, sample.materialPreset)}"
 												oncomplete="PF('materialOverlayPanel#{loopCount.index}').hide();" />
@@ -126,8 +110,8 @@
 								title="#{msg['body.diagnosis.story.watermark']}"
 								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 								id="caseHistoryInput" style="width:90%"
-								onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
-								onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
+								onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
+								onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
 								onkeypress="PF('caseHistoryOverlayPanel').hide();">
 								<p:ajax event="change"
 									listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.caseHistory',globalEditViewHandler.selectedTask.caseHistory)}"></p:ajax>
@@ -149,6 +133,7 @@
 									</p:column>
 
 									<p:ajax event="rowSelect" update="contentForm:caseHistoryInput"
+										process="@form"
 										listener="#{diagnosisViewHandlerAction.copyCaseHistory(globalEditViewHandler.selectedTask, diagnosisViewHandlerAction.selectedCaseHistoryItem)}"
 										oncomplete="PF('caseHistoryOverlayPanel').hide();" />
 								</p:dataTable>
@@ -298,7 +283,7 @@
 					<!-- Extended Diagnosis Text -->
 					<h:panelGroup layout="block" id="pPannel"
 						style="width: 90%; min-height:16px; #{revision.name == '' ? 'background: #fcf1b8' : ''}"
-						onclick="PF('diagnosisNamePannel#{varCounterOuter.index}').show();">
+						onclick="PF('diagnosisNamePannel#{varCounterOuter.index}').show();PF('diagnosisNamePannel#{varCounterOuter.index}').update()">
 						<h:outputLabel value="#{revision.name}" />
 
 						<p:overlayPanel id="diagnosisNamePannel#{varCounterOuter.index}"
@@ -313,7 +298,8 @@
 
 						<p:remoteCommand
 							actionListener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.name', revision.name)}"
-							name="saveDiagnosisNameChange" update="navigationForm:patientList contentForm:contentPanel headerForm" />
+							name="saveDiagnosisNameChange"
+							update="navigationForm:patientList contentForm:contentPanel headerForm" />
 
 					</h:panelGroup>
 
@@ -322,6 +308,8 @@
 						<p:inputTextarea style="width:99%" id="extendedText" rows="15"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							value="#{revision.text}">
+							<p:ajax event="keyup" execute="@this" delay="1000"
+								listener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.histologicalRecord', revision.text)}" />
 							<p:ajax event="change" execute="@this"
 								listener="#{diagnosisViewHandlerAction.onDataChange(revision,'log.patient.task.change.histologicalRecord', revision.text)}" />
 						</p:inputTextarea>
@@ -387,8 +375,8 @@
 							<!-- diagnosis text -->
 							<p:inputTextarea value="#{diagnosis.diagnosis}"
 								onkeypress="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();"
-								onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show('#{component.clientId}');"
-								onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show('#{component.clientId}');"
+								onclick="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show('#{component.clientId}');PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').update();"
+								onfocus="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').show('#{component.clientId}');PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').update();"
 								id="diagnosisText#{varCounterOuter.index}#{varCounterInner.index}"
 								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 								style="width:99%">
@@ -415,7 +403,7 @@
 										<h:outputText value="#{item.diagnosis}" />
 									</p:column>
 
-									<p:ajax event="rowSelect"
+									<p:ajax event="rowSelect" process="@form"
 										update="navigationForm:patientList contentForm:contentPanel headerForm"
 										listener="#{diagnosisViewHandlerAction.onDiagnosisPrototypeChanged(diagnosis)}"
 										oncomplete="PF('diagnosisOverlayPanel#{varCounterOuter.index}#{varCounterInner.index}').hide();" />
@@ -567,7 +555,7 @@
 					</h:panelGroup>
 				</h:panelGrid>
 
-				<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				<h:panelGrid columns="4" styleClass="newStyleListingTable"
 					columnClasses="columnMinWidth,">
 
 					<!-- end diangosis -->
@@ -630,6 +618,21 @@
 						</p:commandButton>
 					</h:panelGroup>
 
+					<h:panelGroup>
+						<h:outputLabel value="Befund freigeben" />
+						<h:outputText rendered="#{revision.completionDate ne 0}"
+							value="#{revision.completionDate}">
+							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+						</h:outputText>
+					</h:panelGroup>
+
+					<h:panelGroup>
+						<h:outputLabel value="Benachrichtigung durchgeführt" />
+						<h:outputText rendered="#{revision.completionDate ne 0}"
+							value="#{revision.completionDate}">
+							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+						</h:outputText>
+					</h:panelGroup>
 				</h:panelGrid>
 			</c:forEach>
 		</p:panel>

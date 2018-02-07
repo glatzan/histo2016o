@@ -133,16 +133,6 @@
 			<h:outputLabel value="#{msg['dialog.userSettings.general.miscellaneous']}" />
 		</h:panelGrid>
 
-		<!-- Diagnosis Settings -->
-		<h:panelGrid columns="2" styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer200 , columnAutoWidth">
-			<!-- generate pdf on diagnosis approval -->
-			<h:outputLabel
-				value="#{msg['dialog.userSettings.general.miscellaneous.pdfOnDiagnosisApproval']}" />
-			<p:selectBooleanCheckbox 
-				value="#{userSettingsDialog.user.settings.pdfPreviewOnDiagnosisApproval}"
-				title="#{msg['dialog.userSettings.general.miscellaneous.pdfOnDiagnosisApproval.text']}" />
-		</h:panelGrid>
 	</p:outputPanel>
 
 
