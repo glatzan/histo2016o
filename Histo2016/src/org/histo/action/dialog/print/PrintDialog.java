@@ -165,30 +165,6 @@ public class PrintDialog extends AbstractDialog {
 		onChangePrintTemplate();
 	}
 
-	public void initBeanForExternalDisplay(Task task, List<DocumentType> types, DocumentType defaultType) {
-		initBeanForExternalDisplay(task, DocumentTemplate.getTemplates(types), defaultType, null);
-	}
-
-	public void initBeanForExternalDisplay(Task task, List<DocumentTemplate> types, DocumentType defaultType,
-			AssociatedContact sendTo) {
-
-		List<AbstractDocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
-
-		// init templates
-		subSelectUIs.forEach(p -> p.initialize(task));
-
-		initBean(task, subSelectUIs, defaultType);
-
-		setSelectMode(false);
-
-		setFaxMode(false);
-
-		setSingleAddressSelectMode(false);
-
-		// rendering the template
-		onChangePrintTemplate();
-	}
-
 	public void initBeanForSelecting(Task task, DocumentType[] types, DocumentType defaultType,
 			AssociatedContact[] addresses, boolean allowIndividualAddress) {
 		initBeanForSelecting(task, DocumentTemplate.getTemplates(types), defaultType, Arrays.asList(addresses),

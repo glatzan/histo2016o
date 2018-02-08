@@ -555,7 +555,7 @@
 					</h:panelGroup>
 				</h:panelGrid>
 
-				<h:panelGrid columns="4" styleClass="newStyleListingTable"
+				<h:panelGrid columns="2" styleClass="newStyleListingTable"
 					columnClasses="columnMinWidth,">
 
 					<!-- end diangosis -->
@@ -563,7 +563,7 @@
 						icon="fa fa-eye-slash" onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()"
 						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-						actionListener="#{diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+						actionListener="#{diagnosisPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, revision)}">
 						<p:ajax event="dialogReturn"
 							oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 							listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
@@ -581,7 +581,13 @@
 							<p:menuitem value="#{msg['body.diagnosis.diagnosis.delete']}"
 								icon="fa fa-trash"
 								onclick="$('#contentForm\\:deleteRevision#{varCounterOuter.index}').click();" />
+
+							<!-- print diagnosis -->
+							<p:menuitem value="#{msg['body.diagnosis.diagnosis.print']}"
+								icon="fa fa-print"
+								onclick="$('#contentForm\\:deleteRevision#{varCounterOuter.index}').click();" />
 							<p:separator />
+
 
 							<!-- new diagnosis -->
 							<p:menuitem value="#{msg['body.diagnosis.diagnosis.new']}"
@@ -616,23 +622,37 @@
 								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll','contentForm:contentScrollPane')"
 								update="navigationForm:patientList contentForm:contentPanel headerForm" />
 						</p:commandButton>
+
+						<h:panelGroup id="diagnosisCompleted#{varCounterOuter.index}">
+							<i
+								class="fa fa-fw fa-rss-square fa-lg #{revision.completionDate ne 0 ? 'icon-green' : 'icon-grey'}"
+								title="" />
+							<p:tooltip for="diagnosisCompleted#{varCounterOuter.index}">
+								<h:outputLabel
+									value="#{revision.completionDate ne 0 ? msg['body.diagnosis.diagnosis.approved'] : msg['body.diagnosis.diagnosis.approved.not']} " />
+								<h:outputText rendered="#{revision.completionDate ne 0}"
+									value="#{revision.completionDate}">
+									<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
+								</h:outputText>
+							</p:tooltip>
+						</h:panelGroup>
+
+						<h:panelGroup id="notificationsCompleted#{varCounterOuter.index}">
+							<i
+								class="fa fa-fw fa-volume-up fa-lg #{revision.notificationDate ne 0 ? 'icon-green' : 'icon-grey'}"
+								title="" />
+							<p:tooltip for="notificationsCompleted#{varCounterOuter.index}">
+								<h:outputLabel
+									value="#{revision.notificationDate ne 0 ? msg['body.diagnosis.diagnosis.notification'] : msg['body.diagnosis.diagnosis.notification.not']} " />
+								<h:outputText rendered="#{revision.notificationDate ne 0}"
+									value="#{revision.notificationDate}">
+									<f:convertDateTime type="date" pattern="dd.MM.yyyy HH:mm" />
+								</h:outputText>
+							</p:tooltip>
+						</h:panelGroup>
 					</h:panelGroup>
 
-					<h:panelGroup>
-						<h:outputLabel value="Befund freigeben" />
-						<h:outputText rendered="#{revision.completionDate ne 0}"
-							value="#{revision.completionDate}">
-							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-						</h:outputText>
-					</h:panelGroup>
 
-					<h:panelGroup>
-						<h:outputLabel value="Benachrichtigung durchgeführt" />
-						<h:outputText rendered="#{revision.completionDate ne 0}"
-							value="#{revision.completionDate}">
-							<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
-						</h:outputText>
-					</h:panelGroup>
 				</h:panelGrid>
 			</c:forEach>
 		</p:panel>

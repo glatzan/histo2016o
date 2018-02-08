@@ -32,24 +32,46 @@
 				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.text']}"></h:outputLabel>
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				style="margin: 10px 0px 0px 20px">
+			<h:panelGrid columns="2" styleClass="newStyleListingTable" style="margin-left:10px">
 				<p:selectBooleanCheckbox
-					value="#{diagnosisPhaseExitDialog.goToNotificationPhase}" />
+					value="#{diagnosisPhaseExitDialog.goToNotificationPhase}">
+					<p:ajax event="change" update="@form" process="@form" />
+				</p:selectBooleanCheckbox>
 				<h:outputLabel
 					value="#{msg['dialog.diagnosisPhaseExit.checkBox.notificationPhase']}" />
 
+				<h:outputLabel />
+				<p:selectOneMenu
+					disabled="#{!diagnosisPhaseExitDialog.goToNotificationPhase}"
+					converter="#{diagnosisPhaseExitDialog.diagnosisRevisionTransformer}"
+					style="width:80%"
+					value="#{diagnosisPhaseExitDialog.selectedRevision}">
+
+					<f:selectItems
+						value="#{diagnosisPhaseExitDialog.diagnosisRevisions}"
+						var="diagnosis" itemLabel="#{diagnosis.name}"
+						itemValue="#{diagnosis}" />
+
+				</p:selectOneMenu>
+
 				<p:selectBooleanCheckbox
-					value="#{diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
-				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.checkBox.stayInList']}" />
+					value="#{diagnosisPhaseExitDialog.endDiangosisPhase}" />
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseExit.checkBox.endDiangosis']}" />
+
+				<p:selectBooleanCheckbox
+					value="#{diagnosisPhaseExitDialog.removeFromWorklist}" />
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseExit.checkBox.removeFromWorklist']}" />
 			</h:panelGrid>
+
 		</div>
 
 		<div class="buttonContainer">
 			<h:panelGrid columns="2" style="width:100%"
 				styleClass="newTableContainer">
 
-				<h:panelGrid columns="2" styleClass="newTableContainer left">
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">

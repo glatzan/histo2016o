@@ -99,15 +99,15 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	private DiagnosisService diagnosisService;
 
 	/**
-	 * Can be set to true if the task should stay in diagnosis phase.
+	 * If true the task will be removed from worklist
 	 */
-	private boolean stayInDiagnosisPhase;
+	private boolean removeFromWorklist;
 
 	/**
 	 * If true the diangosis phase will be terminated
 	 */
 	private boolean endDiangosisPhase;
-	
+
 	/**
 	 * If true the task will be shifted to the notification phase
 	 */
@@ -126,7 +126,7 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	/**
 	 * Diagnosis revision to notify about
 	 */
-	private DiagnosisRevision revisionToNotify;
+	private DiagnosisRevision selectedRevision;
 
 	public void initAndPrepareBean(Task task) {
 		if (initBean(task, (DiagnosisRevision) null))
@@ -142,9 +142,6 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 		try {
 			taskDAO.initializeTask(task, false);
 
-			this.goToNotificationPhase = true;
-			this.stayInDiagnosisPhase = false;
-
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
@@ -155,8 +152,16 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 
 		setDiagnosisRevisions(task.getDiagnosisRevisions());
 		setDiagnosisRevisionTransformer(new DefaultTransformer<DiagnosisRevision>(getDiagnosisRevisions()));
+		setSelectedRevision(selectedRevision);
 
-		setStayInDiagnosisPhase(false);
+		// if last diangosis in task
+		boolean lastDiagnosis = task.getDiagnosisRevisions()
+				.indexOf(selectedRevision) == task.getDiagnosisRevisions().size() - 1;
+
+		setRemoveFromWorklist(lastDiagnosis);
+		setEndDiangosisPhase(lastDiagnosis);
+
+		setGoToNotificationPhase(true);
 
 		return true;
 	}
@@ -164,18 +169,18 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	public void exitPhase() {
 		try {
 			// end diagnosis phase
-			diagnosisService.endDiagnosisPhase(getTask(), true);
+			if (endDiangosisPhase) {
+				diagnosisService.endDiagnosisPhase(getTask(), true);
+				favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList,
+						PredefinedFavouriteList.DiagnosisList);
+			}
 
 			// adding to notification phase
 			if (goToNotificationPhase)
 				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
 
-			// adding to stay in diagnosis phase if selected
-			if (isStayInDiagnosisPhase())
-				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
-			else
-				// removing from stay in diagnosis list
-				favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList);
+			if (removeFromWorklist)
+				worklistViewHandlerAction.removeFromWorklist(task.getPatient());
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

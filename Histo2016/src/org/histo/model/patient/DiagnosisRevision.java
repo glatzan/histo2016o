@@ -183,6 +183,16 @@ public class DiagnosisRevision implements Parent<Task>, DeleteAble, LogAble, Pat
 		return "Diagnosis-Revision: " + getName() + (getId() != 0 ? ", ID: " + getId() : "");
 	}
 
+	@Transient
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj instanceof DiagnosisRevision && ((DiagnosisRevision) obj).getId() == getId())
+			return true;
+
+		return super.equals(obj);
+	}
+	
 	/********************************************************
 	 * Interface Parent
 	 ********************************************************/
