@@ -265,7 +265,7 @@ public class DiagnosisService {
 	 * @param task
 	 * @param updateSignatureDate
 	 */
-	public void endDiagnosisPhase(Task task, boolean updateSignatureDate) {
+	public void endDiagnosisPhase(Task task) {
 		try {
 
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {

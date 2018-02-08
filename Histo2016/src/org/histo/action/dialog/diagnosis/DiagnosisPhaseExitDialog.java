@@ -170,7 +170,7 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 		try {
 			// end diagnosis phase
 			if (endDiangosisPhase) {
-				diagnosisService.endDiagnosisPhase(getTask(), true);
+				diagnosisService.endDiagnosisPhase(getTask());
 				favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList,
 						PredefinedFavouriteList.DiagnosisList);
 			}
