@@ -148,7 +148,7 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
-		super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT_SMALL);
+		super.initBean(task, Dialog.DIAGNOSIS_PHASE_EXIT);
 
 		setDiagnosisRevisions(task.getDiagnosisRevisions());
 		setDiagnosisRevisionTransformer(new DefaultTransformer<DiagnosisRevision>(getDiagnosisRevisions()));
@@ -166,21 +166,40 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 		return true;
 	}
 
-	public void exitPhase() {
+	public void approveDiangosis() {
 		try {
+
 			// end diagnosis phase
 			if (endDiangosisPhase) {
 				diagnosisService.endDiagnosisPhase(getTask());
-				favouriteListDAO.removeTaskFromList(getTask(), PredefinedFavouriteList.StayInDiagnosisList,
-						PredefinedFavouriteList.DiagnosisList);
+				mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.diagnosis.endAll"),
+						resourceBundle.get("growl.diagnosis.endAll.text",
+								goToNotificationPhase ? resourceBundle.get("growl.diagnosis.approved.notification.true")
+										: resourceBundle.get("growl.diagnosis.approved.notification.false")));
+			} else {
+				// otherwise approve diangosis
+				diagnosisService.approveDiangosis(getSelectedRevision(), goToNotificationPhase);
+
+				mainHandlerAction.sendGrowlMessages(
+						resourceBundle.get("growl.diagnosis.approved", getSelectedRevision().getName()),
+						resourceBundle.get("growl.diagnosis.approved.text",
+								goToNotificationPhase ? resourceBundle.get("growl.diagnosis.approved.notification.true")
+										: resourceBundle.get("growl.diagnosis.approved.notification.false")));
 			}
 
 			// adding to notification phase
 			if (goToNotificationPhase)
 				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
 
-			if (removeFromWorklist)
-				worklistViewHandlerAction.removeFromWorklist(task.getPatient());
+			if (removeFromWorklist) {
+				// only remove from worklist if patient has one active task
+				if (task.getPatient().getTasks().stream().filter(p -> !p.isFinalized()).count() > 1) {
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.error",
+							"growl.error.worklist.remove.moreActive");
+				} else {
+					worklistViewHandlerAction.removeFromWorklist(task.getPatient());
+				}
+			}
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();

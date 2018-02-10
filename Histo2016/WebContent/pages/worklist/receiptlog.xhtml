@@ -12,659 +12,644 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
-	<p:scrollPanel styleClass="histoScroll" id="contentScrollPane">
+	<p:panel style="width: 80%" styleClass="newTableContainer"
+		id="contentPanel">
 
-		<p:panel style="width: 80%" styleClass="newTableContainer"
-			id="contentPanel">
+		<h:outputLabel
+			value="#{msg['body.receiptlog.taskId']} #{globalEditViewHandler.selectedTask.taskID}"
+			style="font-size:1.5em;"></h:outputLabel>
 
-			<h:outputLabel
-				value="#{msg['body.receiptlog.taskId']} #{globalEditViewHandler.selectedTask.taskID}"
-				style="font-size:1.5em;"></h:outputLabel>
+		<h:panelGrid columns="3" style="margin-top:10px; width:100%"
+			styleClass="newTableContainer"
+			columnClasses="columnTop, columnTop, columnTop">
 
-			<h:panelGrid columns="3" style="margin-top:10px; width:100%"
-				styleClass="newTableContainer"
-				columnClasses="columnTop, columnTop, columnTop">
+			<!-- Left Column -->
+			<h:panelGrid columns="2" styleClass="newStyleListingTable">
 
-				<!-- Left Column -->
-				<h:panelGrid columns="2" styleClass="newStyleListingTable">
+				<!-- Receipt Date -->
+				<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
+				<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
+					style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
+					styleClass="customBackground"
+					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+					value="#{globalEditViewHandler.selectedTask.dateOfReceiptAsDate}">
+					<p:ajax event="dateSelect"
+						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfReceiptAsDate))}"
+						update="receiptDate" />
+					<f:ajax event="change" execute="@this" render="receiptDate"
+						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfReceiptAsDate))}" />
+				</p:calendar>
 
-					<!-- Receipt Date -->
-					<h:outputLabel value="#{msg['body.receiptlog.taskEDate']}" />
-					<p:calendar pattern="dd.MM.yyyy" mask="true" id="receiptDate"
-						style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}"
-						styleClass="customBackground"
+				<!-- Termin Date -->
+				<h:outputLabel value="#{msg['body.receiptlog.taskDueDate']}" />
+				<h:panelGrid columns="2" styleClass="newTableContainer">
+
+					<p:selectBooleanCheckbox style="padding-right:5px;"
 						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-						value="#{globalEditViewHandler.selectedTask.dateOfReceiptAsDate}">
-						<p:ajax event="dateSelect"
-							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfReceiptAsDate))}"
-							update="receiptDate" />
-						<f:ajax event="change" execute="@this" render="receiptDate"
-							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.receiptDate',mainHandlerAction.date(globalEditViewHandler.selectedTask.dateOfReceiptAsDate))}" />
-					</p:calendar>
-
-					<!-- Termin Date -->
-					<h:outputLabel value="#{msg['body.receiptlog.taskDueDate']}" />
-					<h:panelGrid columns="2" styleClass="newTableContainer">
-
-						<p:selectBooleanCheckbox style="padding-right:5px;"
-							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-							title="#{msg['body.receiptlog.taskDueDate.hint']}"
-							value="#{globalEditViewHandler.selectedTask.dueDateSelected}">
-							<p:ajax event="change" execute="@this"
-								update="navigationForm:patientList contentForm:contentPanel"
-								listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dueDate',globalEditViewHandler.selectedTask.dueDateSelected)}">
-							</p:ajax>
-						</p:selectBooleanCheckbox>
-
-						<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
-							style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
-							styleClass="customBackground"
-							value="#{globalEditViewHandler.selectedTask.dueDateAsDate}"
-							disabled="#{!globalEditViewHandler.selectedTask.dueDateSelected or !globalEditViewHandler.selectedTask.taskStatus.editable}">
-							<p:ajax event="dateSelect"
-								listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(globalEditViewHandler.selectedTask.dueDateAsDate))}"
-								update="dueDate" />
-							<f:ajax event="change" execute="@this" render="dueDate"
-								listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(globalEditViewHandler.selectedTask.dueDateAsDate))}" />
-						</p:calendar>
-					</h:panelGrid>
-
-					<!-- ward -->
-					<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
-					<p:selectOneMenu id="wards"
-						value="#{globalEditViewHandler.selectedTask.ward}"
-						style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
-						styleClass="customBackground" editable="true"
-						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
-						<f:selectItems value="#{globalEditViewHandler.wardList}"
-							itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
+						title="#{msg['body.receiptlog.taskDueDate.hint']}"
+						value="#{globalEditViewHandler.selectedTask.dueDateSelected}">
 						<p:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.ward', globalEditViewHandler.selectedTask.ward)}" />
-					</p:selectOneMenu>
+							update="navigationForm:patientList contentForm:contentPanel"
+							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dueDate',globalEditViewHandler.selectedTask.dueDateSelected)}">
+						</p:ajax>
+					</p:selectBooleanCheckbox>
 
-
-					<!-- EYE -->
-					<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
-					<p:selectOneMenu
+					<p:calendar pattern="dd.MM.yyyy" mask="true" id="dueDate"
 						style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
 						styleClass="customBackground"
-						value="#{globalEditViewHandler.selectedTask.eye}"
-						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
-
-						<f:selectItems value="#{enumProvider.eyes}" var="eye"
-							itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
-
-						<p:ajax event="change" execute="@this"
-							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.eye',globalEditViewHandler.selectedTask.eye)}" />
-					</p:selectOneMenu>
-
-					<!-- History -->
-					<h:outputLabel value="#{msg['body.receiptlog.story']}" />
-					<h:panelGroup>
-						<p:inputTextarea styleClass="customBackground"
-							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-							value="#{globalEditViewHandler.selectedTask.caseHistory}"
-							title="#{msg['body.diagnosis.story.watermark']}"
-							id="caseHistoryInput" style="width:90%"
-							onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
-							onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
-							onkeypress="PF('caseHistoryOverlayPanel').hide();">
-							<p:ajax event="change"
-								listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.caseHistory',globalEditViewHandler.selectedTask.caseHistory)}"></p:ajax>
-						</p:inputTextarea>
-
-						<p:overlayPanel id="caseHistoryOverlayPanel"
-							styleClass="histoOverlayPanel"
-							widgetVar="caseHistoryOverlayPanel" hideEffect="fade"
-							style="width:500px" hideEvent="mousedown" showEvent="none">
-							<p:dataTable value="#{globalEditViewHandler.caseHistoryList}"
-								var="item"
-								styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
-								scrollable="true" scrollHeight="200" rowKey="#{item.id}"
-								selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
-								selectionMode="single">
-								<p:column filterBy="#{item.value}" filterMatchMode="contains">
-									<h:outputText value="#{item.value}" />
-								</p:column>
-
-								<p:ajax event="rowSelect" update="contentForm:caseHistoryInput"
-									listener="#{diagnosisViewHandlerAction.copyCaseHistory(globalEditViewHandler.selectedTask, diagnosisViewHandlerAction.selectedCaseHistoryItem)}"
-									oncomplete="PF('caseHistoryOverlayPanel').hide();" />
-							</p:dataTable>
-
-						</p:overlayPanel>
-					</h:panelGroup>
-
-					<!-- other -->
-					<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />
-					<h:panelGroup>
-						<p:commandButton icon="fa fa-fw fa-taxi" disabled="true"
-							title="#{msg['body.receiptlog.miscellaneous.borrow']}" />
-						<p:commandButton icon="fa fa-fw fa-dollar" disabled="true"
-							actionListener="#{mainHandlerAction.showDialog('WORKLIST_ACCOUNTING')}"
-							title="#{msg['body.receiptlog.miscellaneous.accounting']}" />
-					</h:panelGroup>
-
+						value="#{globalEditViewHandler.selectedTask.dueDateAsDate}"
+						disabled="#{!globalEditViewHandler.selectedTask.dueDateSelected or !globalEditViewHandler.selectedTask.taskStatus.editable}">
+						<p:ajax event="dateSelect"
+							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(globalEditViewHandler.selectedTask.dueDateAsDate))}"
+							update="dueDate" />
+						<f:ajax event="change" execute="@this" render="dueDate"
+							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.dueDate.date', mainHandlerAction.date(globalEditViewHandler.selectedTask.dueDateAsDate))}" />
+					</p:calendar>
 				</h:panelGrid>
 
-				<!-- middle column -->
-				<h:panelGrid columns="1" styleClass="newTableContainer">
-					<h:panelGrid columns="2" styleClass="newStyleListingTable">
-						<!-- material -->
-						<p:outputLabel value="#{msg['body.receiptlog.material']}"
-							styleClass="bigFont" />
-					</h:panelGrid>
+				<!-- ward -->
+				<h:outputLabel value="#{msg['body.diagnosis.ward']}" />
+				<p:selectOneMenu id="wards"
+					value="#{globalEditViewHandler.selectedTask.ward}"
+					style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
+					styleClass="customBackground" editable="true"
+					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
+					<f:selectItems value="#{globalEditViewHandler.wardList}"
+						itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
+					<p:ajax event="change" execute="@this"
+						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.ward', globalEditViewHandler.selectedTask.ward)}" />
+				</p:selectOneMenu>
 
-					<!-- material -->
-					<c:forEach items="#{globalEditViewHandler.selectedTask.samples}"
-						var="sample" varStatus="loopCount">
 
-						<h:panelGrid columns="2" styleClass="newStyleListingTable"
-							columnClasses="column75px,">
-							<h:outputLabel
-								value="#{msg['body.diagnosis.sample']} #{sample.sampleID}" />
-							<h:panelGroup>
-								<p:inputText value="#{sample.material}"
-									id="materialInput#{loopCount.index}"
-									disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-									tabindex="1" styleClass="customBackground"
-									onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
-									onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
-									style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
+				<!-- EYE -->
+				<h:outputLabel value="#{msg['body.receiptlog.eye']}" />
+				<p:selectOneMenu
+					style="width: 80%;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor};"
+					styleClass="customBackground"
+					value="#{globalEditViewHandler.selectedTask.eye}"
+					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 
-									<p:ajax event="change" execute="@this"
-										listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.material',sample.material)}" />
+					<f:selectItems value="#{enumProvider.eyes}" var="eye"
+						itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
 
-								</p:inputText>
+					<p:ajax event="change" execute="@this"
+						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.eye',globalEditViewHandler.selectedTask.eye)}" />
+				</p:selectOneMenu>
 
-								<p:overlayPanel id="materialOverlayPanel#{loopCount.index}"
-									styleClass="histoOverlayPanel"
-									widgetVar="materialOverlayPanel#{loopCount.index}"
-									hideEffect="fade" style="width:500px" hideEvent="mousedown"
-									showEvent="none" onkeypress="return false;">
-									<p:dataTable value="#{globalEditViewHandler.materialList}"
-										var="preset"
-										styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
-										scrollable="true" scrollHeight="200" rowKey="#{preset.id}"
-										selection="#{sample.materialPreset}" selectionMode="single">
-										<p:column filterBy="#{preset.name}" filterMatchMode="contains">
-											<h:outputText value="#{preset.name}" />
-										</p:column>
-
-										<p:ajax event="rowSelect"
-											update="contentForm:materialInput#{loopCount.index}"
-											listener="#{taskHandlerAction.changeMaterialOfSample(sample, sample.materialPreset)}"
-											oncomplete="PF('materialOverlayPanel#{loopCount.index}').hide();" />
-									</p:dataTable>
-
-								</p:overlayPanel>
-							</h:panelGroup>
-						</h:panelGrid>
-					</c:forEach>
-				</h:panelGrid>
-
-				<!-- right column -->
-				<h:panelGrid columns="1" styleClass="newTableContainer">
-					<h:panelGrid columns="2" styleClass="newStyleListingTable">
-						<!-- contact -->
-						<h:outputLabel value="#{msg['body.receiptlog.notification']}"
-							styleClass="bigFont" />
-
-						<h:panelGrid columns="3" style="float: right"
-							styleClass="newTableContainer">
-							<!-- quickContact surgeon -->
-							<p:commandLink
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-								actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}">
-								<i class="fa fa-fw fa-scissors" />
-								<p:ajax event="dialogReturn"
-									update="navigationForm:patientList contentForm:contentPanel" />
-							</p:commandLink>
-
-							<!-- quickcontact private physician  -->
-							<p:commandLink
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
-								actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'PRIVATE_PHYSICIAN')}">
-								<i class="fa fa-fw fa-eye" />
-								<p:ajax event="dialogReturn"
-									update="navigationForm:patientList contentForm:contentPanel" />
-							</p:commandLink>
-
-							<!-- edit contacts -->
-							<p:commandLink
-								title="#{msg['body.receiptlog.notification.hint']}"
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-								<i class="fa fa-fw fa-cog" />
-								<p:ajax event="dialogReturn"
-									update="navigationForm:patientList contentForm:contentPanel" />
-							</p:commandLink>
-						</h:panelGrid>
-
-					</h:panelGrid>
-					<p:dataTable var="contact" scrollable="true" scrollHeight="90"
-						style="width:350px" styleClass="newStyleDataTable"
-						value="#{globalEditViewHandler.selectedTask.contacts}">
-
-						<p:column>
-							<f:facet name="header">
-								<h:outputLabel value="#{msg['body.receiptlog.contact.name']}" />
-							</f:facet>
-							<h:outputLabel value="#{contact.person.fullName}" />
-						</p:column>
-
-						<p:column headerText="">
-							<f:facet name="header">
-								<h:outputLabel value="#{msg['body.receiptlog.contact.role']}" />
-							</f:facet>
-							<h:outputLabel
-								value="#{msg['enum.contactRole.'.concat(contact.role)]}"
-								title="#{msg['enum.contactRole.'.concat(contact.role)]}">
-								<f:converter converterId="org.histo.ui.TruncateConverter" />
-								<f:attribute name="truncateAt" value="15" />
-								<f:attribute name="continuationMark" value="..." />
-							</h:outputLabel>
-						</p:column>
-
-						<p:column style="width:15px">
-							<f:facet name="header">
-								<i class="fa fa-check-square-o"
-									title="#{msg['body.receiptlog.contact.type.performed']}" />
-							</f:facet>
-							<ui:fragment rendered="#{contact.notificationPerformed}">
-								<i class="fa fa-check icon-green" />
-							</ui:fragment>
-						</p:column>
-					</p:dataTable>
-				</h:panelGrid>
-			</h:panelGrid>
-
-			<!-- slide list -->
-			<h:panelGrid columns="1" styleClass="newStyleListingTable">
-				<!-- healinse -->
+				<!-- History -->
+				<h:outputLabel value="#{msg['body.receiptlog.story']}" />
 				<h:panelGroup>
-					<h:outputLabel value="#{msg['body.receiptlog.slide.name']}"
-						styleClass="bigFont"></h:outputLabel>
-					<!-- staining completed -->
-					<h:panelGroup
-						rendered="#{globalEditViewHandler.selectedTask.taskStatus.stainingCompleted}">
-						<div class="fa fa-check-circle icon-green"
-							title="#{msg['body.receiptlog.slide.completed']}" />
-					</h:panelGroup>
-					<!-- staining to perform -->
-					<h:panelGroup
-						rendered="#{globalEditViewHandler.selectedTask.taskStatus.stainingNeeded}">
-						<div class="fa fa-exclamation-circle icon-orange"
-							title="#{msg['body.receiptlog.slide.staining']}" />
-					</h:panelGroup>
-					<!-- restaining to perform -->
-					<h:panelGroup
-						rendered="#{globalEditViewHandler.selectedTask.taskStatus.reStainingNeeded}">
-						<div class="fa fa-exclamation-circle ic-custom icon-orange"
-							title="#{msg['body.receiptlog.slide.restaining']}" />
-					</h:panelGroup>
+					<p:inputTextarea styleClass="customBackground"
+						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+						value="#{globalEditViewHandler.selectedTask.caseHistory}"
+						title="#{msg['body.diagnosis.story.watermark']}"
+						id="caseHistoryInput" style="width:90%"
+						onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
+						onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
+						onkeypress="PF('caseHistoryOverlayPanel').hide();">
+						<p:ajax event="change"
+							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.caseHistory',globalEditViewHandler.selectedTask.caseHistory)}"></p:ajax>
+					</p:inputTextarea>
+
+					<p:overlayPanel id="caseHistoryOverlayPanel"
+						styleClass="histoOverlayPanel" widgetVar="caseHistoryOverlayPanel"
+						hideEffect="fade" style="width:500px" hideEvent="mousedown"
+						showEvent="none">
+						<p:dataTable value="#{globalEditViewHandler.caseHistoryList}"
+							var="item"
+							styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
+							scrollable="true" scrollHeight="200" rowKey="#{item.id}"
+							selection="#{diagnosisViewHandlerAction.selectedCaseHistoryItem}"
+							selectionMode="single">
+							<p:column filterBy="#{item.value}" filterMatchMode="contains">
+								<h:outputText value="#{item.value}" />
+							</p:column>
+
+							<p:ajax event="rowSelect" update="contentForm:caseHistoryInput"
+								listener="#{diagnosisViewHandlerAction.copyCaseHistory(globalEditViewHandler.selectedTask, diagnosisViewHandlerAction.selectedCaseHistoryItem)}"
+								oncomplete="PF('caseHistoryOverlayPanel').hide();" />
+						</p:dataTable>
+
+					</p:overlayPanel>
 				</h:panelGroup>
 
-				<!-- data -->
-				<p:dataTable var="stainingRow"
-					styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
-					value="#{receiptlogViewHandlerAction.stainingTableRows}"
-					rowIndexVar="index">
+				<!-- other -->
+				<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />
+				<h:panelGroup>
+					<p:commandButton icon="fa fa-fw fa-taxi" disabled="true"
+						title="#{msg['body.receiptlog.miscellaneous.borrow']}" />
+					<p:commandButton icon="fa fa-fw fa-dollar" disabled="true"
+						actionListener="#{mainHandlerAction.showDialog('WORKLIST_ACCOUNTING')}"
+						title="#{msg['body.receiptlog.miscellaneous.accounting']}" />
+				</h:panelGroup>
 
-					<!-- sample -->
-					<p:column style="width: 12%;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
-						headerText="#{msg['body.receiptlog.slide.headline.sample']}">
+			</h:panelGrid>
 
-						<h:panelGroup rendered="#{stainingRow.sampleType}">
-							<h:panelGroup layout="block" style="width: 90%; min-height:20px">
-								<p:commandLink process="@this" update="contentForm:contentPanel"
-									actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
-									oncomplete="PF('idInputPannel').show('#{component.clientId}')">
+			<!-- middle column -->
+			<h:panelGrid columns="1" styleClass="newTableContainer">
+				<h:panelGrid columns="2" styleClass="newStyleListingTable">
+					<!-- material -->
+					<p:outputLabel value="#{msg['body.receiptlog.material']}"
+						styleClass="bigFont" />
+				</h:panelGrid>
 
-									<h:outputLabel
-										value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.entity.sampleID}" />
-									<h:panelGroup
-										rendered="#{stainingRow.entity.idManuallyAltered}">
-										<i class="fa fa-fw fa-chain"
-											title="#{msg['body.statiningView.idManuallyAltered']}" />
-									</h:panelGroup>
+				<!-- material -->
+				<c:forEach items="#{globalEditViewHandler.selectedTask.samples}"
+					var="sample" varStatus="loopCount">
 
-								</p:commandLink>
-							</h:panelGroup>
-						</h:panelGroup>
-
-					</p:column>
-
-					<!-- Block -->
-					<p:column style="width: 12%;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
-						headerText="#{msg['body.receiptlog.slide.headline.block']}">
-
-						<h:panelGroup rendered="#{stainingRow.blockType}">
-							<h:panelGroup layout="block" style="width: 90%; min-height:20px">
-
-								<p:commandLink process="@this" update="contentForm:contentPanel"
-									actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
-									oncomplete="PF('idInputPannel').show('#{component.clientId}')">
-									<h:outputLabel
-										value="#{msg['body.receiptlog.slide.block']} #{stainingRow.entity.blockID}" />
-									<h:panelGroup
-										rendered="#{stainingRow.entity.idManuallyAltered}">
-										<i class="fa fa-fw fa-chain"
-											title="#{msg['body.statiningView.idManuallyAltered']}" />
-									</h:panelGroup>
-								</p:commandLink>
-
-							</h:panelGroup>
-
-						</h:panelGroup>
-					</p:column>
-
-					<!-- Staining chooser -->
-					<p:column style="width: 3%;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
-						headerText="">
-
-						<h:panelGroup
-							rendered="#{stainingRow.sampleType or stainingRow.blockType}">
-							<p:commandLink
-								actionListener="#{receiptlogViewHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
-								update="contentForm:contentPanel"
-								title="#{stainingRow.sampleType ? msg['body.statiningView.chooseSample'] : msg['body.statiningView.chooseBlock']}">
-								<i class="fa fa-fw fa-check-circle" />
-							</p:commandLink>
-						</h:panelGroup>
-
-						<h:panelGroup rendered="#{stainingRow.stainingType}">
-							<p:selectBooleanCheckbox value="#{stainingRow.choosen}" />
-						</h:panelGroup>
-
-					</p:column>
-
-					<!-- staining - name -->
-					<p:column style="width: 19%;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
-						headerText="#{msg['body.receiptlog.slide.headline.staining.id']}">
-
-						<h:panelGroup rendered="#{stainingRow.stainingType}">
-							<h:panelGroup layout="block" style="width: 90%; min-height:20px">
-
-								<p:commandLink process="@this" update="contentForm:contentPanel"
-									actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
-									oncomplete="PF('idInputPannel').show('#{component.clientId}')">
-									<h:outputLabel value="#{stainingRow.entity.slideID}" />
-
-									<h:panelGroup
-										rendered="#{stainingRow.entity.idManuallyAltered}">
-										<i class="fa fa-fw fa-chain"
-											title="#{msg['body.statiningView.idManuallyAltered']}" />
-									</h:panelGroup>
-								</p:commandLink>
-
-							</h:panelGroup>
-						</h:panelGroup>
-
-					</p:column>
-
-					<!-- staining commentary -->
-					<p:column style="width: auto%;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
-						headerText="#{msg['body.receiptlog.slide.headline.staining.commentary']}">
-
-						<h:panelGroup rendered="#{stainingRow.stainingType}">
-
-							<p:selectOneMenu style="width: 90%"
-								value="#{stainingRow.entity.commentary}" editable="true"
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable or stainingRow.entity.stainingCompleted}">
-
-								<f:selectItems value="#{globalEditViewHandler.slideCommentary}"
-									var="commentary" itemLabel="#{commentary.value}"
-									itemValue="#{commentary.value}" />
+					<h:panelGrid columns="2" styleClass="newStyleListingTable"
+						columnClasses="column75px,">
+						<h:outputLabel
+							value="#{msg['body.diagnosis.sample']} #{sample.sampleID}" />
+						<h:panelGroup>
+							<p:inputText value="#{sample.material}"
+								id="materialInput#{loopCount.index}"
+								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+								tabindex="1" styleClass="customBackground"
+								onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
+								onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
+								style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
 								<p:ajax event="change" execute="@this"
-									listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.entity,'log.settings.staining.update')}" />
-							</p:selectOneMenu>
+									listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.material',sample.material)}" />
 
+							</p:inputText>
+
+							<p:overlayPanel id="materialOverlayPanel#{loopCount.index}"
+								styleClass="histoOverlayPanel"
+								widgetVar="materialOverlayPanel#{loopCount.index}"
+								hideEffect="fade" style="width:500px" hideEvent="mousedown"
+								showEvent="none" onkeypress="return false;">
+								<p:dataTable value="#{globalEditViewHandler.materialList}"
+									var="preset"
+									styleClass="newStyleDataTable newStyleDataTable-LongSearchBarInHead"
+									scrollable="true" scrollHeight="200" rowKey="#{preset.id}"
+									selection="#{sample.materialPreset}" selectionMode="single">
+									<p:column filterBy="#{preset.name}" filterMatchMode="contains">
+										<h:outputText value="#{preset.name}" />
+									</p:column>
+
+									<p:ajax event="rowSelect"
+										update="contentForm:materialInput#{loopCount.index}"
+										listener="#{taskHandlerAction.changeMaterialOfSample(sample, sample.materialPreset)}"
+										oncomplete="PF('materialOverlayPanel#{loopCount.index}').hide();" />
+								</p:dataTable>
+
+							</p:overlayPanel>
 						</h:panelGroup>
-					</p:column>
+					</h:panelGrid>
+				</c:forEach>
+			</h:panelGrid>
 
-					<!-- Staining staining -->
-					<p:column style="width: 8%;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
-						headerText="#{msg['body.receiptlog.slide.headline.staining.staining']}">
+			<!-- right column -->
+			<h:panelGrid columns="1" styleClass="newTableContainer">
+				<h:panelGrid columns="2" styleClass="newStyleListingTable">
+					<!-- contact -->
+					<h:outputLabel value="#{msg['body.receiptlog.notification']}"
+						styleClass="bigFont" />
 
-						<h:panelGroup rendered="#{stainingRow.stainingType}">
-							<h:outputText value="#{stainingRow.entity.slidePrototype.name}" />
-						</h:panelGroup>
+					<h:panelGrid columns="3" style="float: right"
+						styleClass="newTableContainer">
+						<!-- quickContact surgeon -->
+						<p:commandLink
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}">
+							<i class="fa fa-fw fa-scissors" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm:contentPanel" />
+						</p:commandLink>
 
-					</p:column>
+						<!-- quickcontact private physician  -->
+						<p:commandLink
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							title="#{msg['body.receiptlog.notification.ophthalmologist.hint']}"
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'PRIVATE_PHYSICIAN')}">
+							<i class="fa fa-fw fa-eye" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm:contentPanel" />
+						</p:commandLink>
 
-					<!-- Staining status -->
-					<p:column style="width: 5%;text-align: center;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}">
+						<!-- edit contacts -->
+						<p:commandLink title="#{msg['body.receiptlog.notification.hint']}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							actionListener="#{dialogHandlerAction.contactDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+							<i class="fa fa-fw fa-cog" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm:contentPanel" />
+						</p:commandLink>
+					</h:panelGrid>
 
-						<!-- Sample status -->
-						<h:panelGroup rendered="#{stainingRow.sampleType}">
-							<!-- ********** Staining performed ********** -->
-							<h:panelGroup
-								rendered="#{globalEditViewHandler.selectedTask.taskStatus.checkIfStainingCompleted(stainingRow.entity)}">
-								<i class="fa fa-fw fa-check-circle icon-green"
-									title="#{msg['body.statiningView.status.performed']}" />
-							</h:panelGroup>
-						</h:panelGroup>
+				</h:panelGrid>
+				<p:dataTable var="contact" scrollable="true" scrollHeight="90"
+					style="width:350px" styleClass="newStyleDataTable"
+					value="#{globalEditViewHandler.selectedTask.contacts}">
 
-						<!-- Block status -->
-						<h:panelGroup rendered="#{stainingRow.blockType}">
-							<!-- ********** Staining performed ********** -->
-							<h:panelGroup
-								rendered="#{globalEditViewHandler.selectedTask.taskStatus.checkIfStainingCompleted(stainingRow.entity)}">
-								<i class="fa fa-fw fa-check-circle icon-green"
-									title="#{msg['body.statiningView.status.performed']}" />
-							</h:panelGroup>
-						</h:panelGroup>
-
-						<!-- Slide status -->
-						<h:panelGroup rendered="#{stainingRow.stainingType}">
-							<!-- ********** Staining performed ********** -->
-							<h:panelGroup rendered="#{stainingRow.entity.stainingCompleted}">
-								<i class="fa fa-fw fa-check-circle icon-green"
-									title="#{msg['body.statiningView.status.performed']}" />
-							</h:panelGroup>
-
-							<h:panelGroup rendered="#{stainingRow.entity.reStaining}">
-								<i class="fa fa-fw fa-th-list icon-orange"
-									title="#{msg['body.statiningView.status.restaining']}" />
-							</h:panelGroup>
-						</h:panelGroup>
-					</p:column>
-
-					<!-- Options -->
-					<p:column style="width: 11%;"
-						styleClass="#{stainingRow.even ? 'datatable-odd' : ''}">
+					<p:column>
 						<f:facet name="header">
-							<h:outputLabel
-								value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
-							<p:commandLink id="quickTaskSettings"
-								actionListener="#{slideNamingDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-								<i class="fa fa-wrench" />
-								<p:ajax event="dialogReturn"
-									update="navigationForm:patientList contentForm:contentPanel" />
-							</p:commandLink>
+							<h:outputLabel value="#{msg['body.receiptlog.contact.name']}" />
 						</f:facet>
+						<h:outputLabel value="#{contact.person.fullName}" />
+					</p:column>
 
-						<!-- Sample -->
-						<h:panelGroup rendered="#{stainingRow.sampleType}"
-							style="float: right">
-							<!-- ********** New Block Button ********** -->
-							<p:commandLink title="#{msg['body.statiningView.newBlock']}"
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								update="navigationForm:patientList contentForm:contentPanel headerForm"
-								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-								actionListener="#{taskHandlerAction.createNewBlock(stainingRow.entity)}">
-								<i class="fa fa-fw fa-th-large"></i>
-							</p:commandLink>
-							<!-- ********** Delete Button ********** -->
-							<p:commandLink title="#{msg['body.statiningView.archiveSample']}"
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
-								<i class="fa fa-fw fa-times-circle"></i>
-								<p:ajax event="dialogReturn"
-									listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-									update="navigationForm:patientList contentForm:contentPanel headerForm" />
-							</p:commandLink>
-						</h:panelGroup>
+					<p:column headerText="">
+						<f:facet name="header">
+							<h:outputLabel value="#{msg['body.receiptlog.contact.role']}" />
+						</f:facet>
+						<h:outputLabel
+							value="#{msg['enum.contactRole.'.concat(contact.role)]}"
+							title="#{msg['enum.contactRole.'.concat(contact.role)]}">
+							<f:converter converterId="org.histo.ui.TruncateConverter" />
+							<f:attribute name="truncateAt" value="15" />
+							<f:attribute name="continuationMark" value="..." />
+						</h:outputLabel>
+					</p:column>
 
-						<!-- Block -->
-						<h:panelGroup rendered="#{stainingRow.blockType}"
-							style="float: right">
-							<!-- ********** New Staining Button ********** -->
-							<p:commandLink title="#{msg['body.statiningView.newStaining']}"
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
-								<i class="fa fa-fw fa-paint-brush"></i>
-								<p:ajax event="dialogReturn"
-									listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-									update="navigationForm:patientList contentForm:contentPanel headerForm" />
-							</p:commandLink>
-							<!-- ********** Delete Button ********** -->
-							<p:commandLink
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								title="#{msg['body.statiningView.archiveBlock']}"
-								actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
-								<i class="fa fa-fw fa-times-circle"></i>
-								<p:ajax event="dialogReturn"
-									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-									listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-									update="navigationForm:patientList contentForm:contentPanel headerForm" />
-							</p:commandLink>
-						</h:panelGroup>
-
-						<!-- Staining -->
-						<h:panelGroup rendered="#{stainingRow.stainingType}"
-							style="float: right">
-							<!-- ********** Print Button ********** -->
-							<p:commandLink
-								actionListener="#{receiptlogViewHandlerAction.printLableForSlide(stainingRow.entity)}"
-								title="#{msg['body.statiningView.printStaining']}">
-								<i class="fa fa-fw fa-print" />
-								<p:ajax event="dialogReturn"
-									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-									update="navigationForm:patientList contentForm:contentPanel headerForm" />
-							</p:commandLink>
-							<!-- complete Button -->
-							<p:commandLink
-								actionListener="#{receiptlogViewHandlerAction.setSlideAsCompleted(stainingRow.entity)}"
-								title="#{msg['body.statiningView.stainingCompleted']}"
-								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-								update="navigationForm:patientList contentForm:contentPanel headerForm">
-								<i class="fa fa-fw fa-check-circle" />
-							</p:commandLink>
-							<!-- ********** Cloud Button ********** -->
-							<p:commandLink title="#{msg['body.statiningView.showStaining']}">
-								<i class="fa fa-fw fa-file-photo-o" />
-								<p:ajax event="dialogReturn"
-									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-									update="navigationForm:patientList contentForm:contentPanel headerForm" />
-							</p:commandLink>
-							<!-- ********** Delete Button ********** -->
-							<p:commandLink
-								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-								title="#{msg['body.statiningView.archiveStaining']}"
-								actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
-								<i class="fa fa-fw fa-times-circle" />
-								<p:ajax event="dialogReturn"
-									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-									listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-									update="navigationForm:patientList contentForm:contentPanel headerForm" />
-							</p:commandLink>
-						</h:panelGroup>
+					<p:column style="width:15px">
+						<f:facet name="header">
+							<i class="fa fa-check-square-o"
+								title="#{msg['body.receiptlog.contact.type.performed']}" />
+						</f:facet>
+						<ui:fragment rendered="#{contact.notificationPerformed}">
+							<i class="fa fa-check icon-green" />
+						</ui:fragment>
 					</p:column>
 				</p:dataTable>
-
-				<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
-					styleClass="histoOverlayPanel" widgetVar="idInputPannel"
-					hideEffect="fade" hideEvent="none" showEvent="none">
-					<p:inputText id="idInputPannelInput"
-						onkeypress="return closeOverlayPanelOnReturn(event, 'idInputPannel')"
-						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-						rendered="#{receiptlogViewHandlerAction.selectedStainingTableChooser ne null}"
-						value="#{receiptlogViewHandlerAction.selectedStainingTableChooser.IDText}" />
-				</p:overlayPanel>
-
-				<p:remoteCommand
-					actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}"
-					name="saveNameChange"
-					update="navigationForm:patientList contentForm:contentPanel" />
 			</h:panelGrid>
+		</h:panelGrid>
 
-			<!-- bottom buttons -->
-			<h:panelGrid columns="6"
-				style="margin-top:10px; width:auto !important"
-				styleClass="newStyleListingTable">
+		<!-- slide list -->
+		<h:panelGrid columns="1" styleClass="newStyleListingTable">
+			<!-- healinse -->
+			<h:panelGroup>
+				<h:outputLabel value="#{msg['body.receiptlog.slide.name']}"
+					styleClass="bigFont"></h:outputLabel>
+				<!-- staining completed -->
+				<h:panelGroup
+					rendered="#{globalEditViewHandler.selectedTask.taskStatus.stainingCompleted}">
+					<div class="fa fa-check-circle icon-green"
+						title="#{msg['body.receiptlog.slide.completed']}" />
+				</h:panelGroup>
+				<!-- staining to perform -->
+				<h:panelGroup
+					rendered="#{globalEditViewHandler.selectedTask.taskStatus.stainingNeeded}">
+					<div class="fa fa-exclamation-circle icon-orange"
+						title="#{msg['body.receiptlog.slide.staining']}" />
+				</h:panelGroup>
+				<!-- restaining to perform -->
+				<h:panelGroup
+					rendered="#{globalEditViewHandler.selectedTask.taskStatus.reStainingNeeded}">
+					<div class="fa fa-exclamation-circle ic-custom icon-orange"
+						title="#{msg['body.receiptlog.slide.restaining']}" />
+				</h:panelGroup>
+			</h:panelGroup>
 
-				<!-- end staning phase -->
-				<p:commandButton
-					value="#{msg['body.statiningView.stainingPhaseEnd']}"
-					icon="fa fa-fw fa-image"
+			<!-- data -->
+			<p:dataTable var="stainingRow"
+				styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
+				value="#{receiptlogViewHandlerAction.stainingTableRows}"
+				rowIndexVar="index">
+
+				<!-- sample -->
+				<p:column style="width: 12%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.sample']}">
+
+					<h:panelGroup rendered="#{stainingRow.sampleType}">
+						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
+							<p:commandLink process="@this" update="contentForm:contentPanel"
+								actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
+
+								<h:outputLabel
+									value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.entity.sampleID}" />
+								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
+								</h:panelGroup>
+
+							</p:commandLink>
+						</h:panelGroup>
+					</h:panelGroup>
+
+				</p:column>
+
+				<!-- Block -->
+				<p:column style="width: 12%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.block']}">
+
+					<h:panelGroup rendered="#{stainingRow.blockType}">
+						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
+
+							<p:commandLink process="@this" update="contentForm:contentPanel"
+								actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
+								<h:outputLabel
+									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.entity.blockID}" />
+								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
+								</h:panelGroup>
+							</p:commandLink>
+
+						</h:panelGroup>
+
+					</h:panelGroup>
+				</p:column>
+
+				<!-- Staining chooser -->
+				<p:column style="width: 3%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="">
+
+					<h:panelGroup
+						rendered="#{stainingRow.sampleType or stainingRow.blockType}">
+						<p:commandLink
+							actionListener="#{receiptlogViewHandlerAction.toggleChildrenChoosenFlag(stainingRow)}"
+							update="contentForm:contentPanel"
+							title="#{stainingRow.sampleType ? msg['body.statiningView.chooseSample'] : msg['body.statiningView.chooseBlock']}">
+							<i class="fa fa-fw fa-check-circle" />
+						</p:commandLink>
+					</h:panelGroup>
+
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<p:selectBooleanCheckbox value="#{stainingRow.choosen}" />
+					</h:panelGroup>
+
+				</p:column>
+
+				<!-- staining - name -->
+				<p:column style="width: 19%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.staining.id']}">
+
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
+
+							<p:commandLink process="@this" update="contentForm:contentPanel"
+								actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
+								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
+								<h:outputLabel value="#{stainingRow.entity.slideID}" />
+
+								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
+									<i class="fa fa-fw fa-chain"
+										title="#{msg['body.statiningView.idManuallyAltered']}" />
+								</h:panelGroup>
+							</p:commandLink>
+
+						</h:panelGroup>
+					</h:panelGroup>
+
+				</p:column>
+
+				<!-- staining commentary -->
+				<p:column style="width: auto%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.staining.commentary']}">
+
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+
+						<p:selectOneMenu style="width: 90%"
+							value="#{stainingRow.entity.commentary}" editable="true"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable or stainingRow.entity.stainingCompleted}">
+
+							<f:selectItems value="#{globalEditViewHandler.slideCommentary}"
+								var="commentary" itemLabel="#{commentary.value}"
+								itemValue="#{commentary.value}" />
+
+							<p:ajax event="change" execute="@this"
+								listener="#{diagnosisViewHandlerAction.onDataChange(stainingRow.entity,'log.settings.staining.update')}" />
+						</p:selectOneMenu>
+
+					</h:panelGroup>
+				</p:column>
+
+				<!-- Staining staining -->
+				<p:column style="width: 8%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}"
+					headerText="#{msg['body.receiptlog.slide.headline.staining.staining']}">
+
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<h:outputText value="#{stainingRow.entity.slidePrototype.name}" />
+					</h:panelGroup>
+
+				</p:column>
+
+				<!-- Staining status -->
+				<p:column style="width: 5%;text-align: center;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}">
+
+					<!-- Sample status -->
+					<h:panelGroup rendered="#{stainingRow.sampleType}">
+						<!-- ********** Staining performed ********** -->
+						<h:panelGroup
+							rendered="#{globalEditViewHandler.selectedTask.taskStatus.checkIfStainingCompleted(stainingRow.entity)}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['body.statiningView.status.performed']}" />
+						</h:panelGroup>
+					</h:panelGroup>
+
+					<!-- Block status -->
+					<h:panelGroup rendered="#{stainingRow.blockType}">
+						<!-- ********** Staining performed ********** -->
+						<h:panelGroup
+							rendered="#{globalEditViewHandler.selectedTask.taskStatus.checkIfStainingCompleted(stainingRow.entity)}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['body.statiningView.status.performed']}" />
+						</h:panelGroup>
+					</h:panelGroup>
+
+					<!-- Slide status -->
+					<h:panelGroup rendered="#{stainingRow.stainingType}">
+						<!-- ********** Staining performed ********** -->
+						<h:panelGroup rendered="#{stainingRow.entity.stainingCompleted}">
+							<i class="fa fa-fw fa-check-circle icon-green"
+								title="#{msg['body.statiningView.status.performed']}" />
+						</h:panelGroup>
+
+						<h:panelGroup rendered="#{stainingRow.entity.reStaining}">
+							<i class="fa fa-fw fa-th-list icon-orange"
+								title="#{msg['body.statiningView.status.restaining']}" />
+						</h:panelGroup>
+					</h:panelGroup>
+				</p:column>
+
+				<!-- Options -->
+				<p:column style="width: 11%;"
+					styleClass="#{stainingRow.even ? 'datatable-odd' : ''}">
+					<f:facet name="header">
+						<h:outputLabel
+							value="#{msg['body.receiptlog.slide.headline.options']}"></h:outputLabel>
+						<p:commandLink id="quickTaskSettings"
+							actionListener="#{slideNamingDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+							<i class="fa fa-wrench" />
+							<p:ajax event="dialogReturn"
+								update="navigationForm:patientList contentForm:contentPanel" />
+						</p:commandLink>
+					</f:facet>
+
+					<!-- Sample -->
+					<h:panelGroup rendered="#{stainingRow.sampleType}"
+						style="float: right">
+						<!-- ********** New Block Button ********** -->
+						<p:commandLink title="#{msg['body.statiningView.newBlock']}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							update="navigationForm:patientList contentForm:contentPanel headerForm"
+							oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+							actionListener="#{taskHandlerAction.createNewBlock(stainingRow.entity)}">
+							<i class="fa fa-fw fa-th-large"></i>
+						</p:commandLink>
+						<!-- ********** Delete Button ********** -->
+						<p:commandLink title="#{msg['body.statiningView.archiveSample']}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							<i class="fa fa-fw fa-times-circle"></i>
+							<p:ajax event="dialogReturn"
+								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
+								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
+						</p:commandLink>
+					</h:panelGroup>
+
+					<!-- Block -->
+					<h:panelGroup rendered="#{stainingRow.blockType}"
+						style="float: right">
+						<!-- ********** New Staining Button ********** -->
+						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
+							<i class="fa fa-fw fa-paint-brush"></i>
+							<p:ajax event="dialogReturn"
+								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
+								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
+						</p:commandLink>
+						<!-- ********** Delete Button ********** -->
+						<p:commandLink
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							title="#{msg['body.statiningView.archiveBlock']}"
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							<i class="fa fa-fw fa-times-circle"></i>
+							<p:ajax event="dialogReturn"
+								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
+						</p:commandLink>
+					</h:panelGroup>
+
+					<!-- Staining -->
+					<h:panelGroup rendered="#{stainingRow.stainingType}"
+						style="float: right">
+						<!-- ********** Print Button ********** -->
+						<p:commandLink
+							actionListener="#{receiptlogViewHandlerAction.printLableForSlide(stainingRow.entity)}"
+							title="#{msg['body.statiningView.printStaining']}">
+							<i class="fa fa-fw fa-print" />
+							<p:ajax event="dialogReturn"
+								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
+						</p:commandLink>
+						<!-- complete Button -->
+						<p:commandLink
+							actionListener="#{receiptlogViewHandlerAction.setSlideAsCompleted(stainingRow.entity)}"
+							title="#{msg['body.statiningView.stainingCompleted']}"
+							oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+							update="navigationForm:patientList contentForm:contentPanel headerForm">
+							<i class="fa fa-fw fa-check-circle" />
+						</p:commandLink>
+						<!-- ********** Cloud Button ********** -->
+						<p:commandLink title="#{msg['body.statiningView.showStaining']}">
+							<i class="fa fa-fw fa-file-photo-o" />
+							<p:ajax event="dialogReturn"
+								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
+						</p:commandLink>
+						<!-- ********** Delete Button ********** -->
+						<p:commandLink
+							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+							title="#{msg['body.statiningView.archiveStaining']}"
+							actionListener="#{dialogHandlerAction.deleteTaskEntityDialog.initAndPrepareBean(stainingRow.entity.task,stainingRow.entity)}">
+							<i class="fa fa-fw fa-times-circle" />
+							<p:ajax event="dialogReturn"
+								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
+								update="navigationForm:patientList contentForm:contentPanel headerForm" />
+						</p:commandLink>
+					</h:panelGroup>
+				</p:column>
+			</p:dataTable>
+
+			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
+				styleClass="histoOverlayPanel" widgetVar="idInputPannel"
+				hideEffect="fade" hideEvent="none" showEvent="none">
+				<p:inputText id="idInputPannelInput"
+					onkeypress="return closeOverlayPanelOnReturn(event, 'idInputPannel')"
 					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-					actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+					rendered="#{receiptlogViewHandlerAction.selectedStainingTableChooser ne null}"
+					value="#{receiptlogViewHandlerAction.selectedStainingTableChooser.IDText}" />
+			</p:overlayPanel>
+
+			<p:remoteCommand
+				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}"
+				name="saveNameChange"
+				update="navigationForm:patientList contentForm:contentPanel" />
+		</h:panelGrid>
+
+		<!-- bottom buttons -->
+		<h:panelGrid columns="6"
+			style="margin-top:10px; width:auto !important"
+			styleClass="newStyleListingTable">
+
+			<!-- end staning phase -->
+			<p:commandButton
+				value="#{msg['body.statiningView.stainingPhaseEnd']}"
+				icon="fa fa-fw fa-image"
+				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					update="navigationForm:patientList contentForm:contentPanel headerForm" />
+			</p:commandButton>
+
+			<!-- New sample -->
+			<p:commandButton icon="fa fa-fw fa-plus-circle"
+				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+				value="#{msg['body.statiningView.newSample']}"
+				actionListener="#{dialogHandlerAction.createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				<p:ajax event="dialogReturn"
+					oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
+					update="navigationForm:patientList contentForm:contentPanel" />
+			</p:commandButton>
+
+			<!-- select all -->
+			<p:commandButton icon="fa fa-fw fa-check-circle"
+				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+				update="contentForm:contentPanel"
+				value="#{msg['body.statiningView.chooseAll']}"
+				actionListener="#{receiptlogViewHandlerAction.setListAsChoosen(receiptlogViewHandlerAction.stainingTableRows,true)}" />
+
+			<h:outputLabel value="#{msg['body.statiningView.choosenElements']}"
+				style="margin-left:20px;"></h:outputLabel>
+			<h:panelGroup>
+				<p:selectOneMenu value="#{receiptlogViewHandlerAction.actionOnMany}"
+					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+					onchange="PF('performOnMay').jq.click();">
+
+					<f:selectItems value="#{enumProvider.stainingListActions}"
+						var="action"
+						itemLabel="#{msg['enum.stainingListAction.'.concat(action)]}" />
+
+				</p:selectOneMenu>
+
+				<p:commandButton id="changeZone" widgetVar="performOnMay"
+					style="display:none;"
+					update="navigationForm:patientList contentForm:contentPanel headerForm"
+					actionListener="#{receiptlogViewHandlerAction.performActionOnManyTaskChildren(globalEditViewHandler.selectedTask)}">
 					<p:ajax event="dialogReturn"
+						oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'contentForm:contentScrollPane')"
 						update="navigationForm:patientList contentForm:contentPanel headerForm" />
 				</p:commandButton>
-
-				<!-- New sample -->
-				<p:commandButton icon="fa fa-fw fa-plus-circle"
-					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-					value="#{msg['body.statiningView.newSample']}"
-					actionListener="#{dialogHandlerAction.createSampleDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
-					<p:ajax event="dialogReturn"
-						oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-						update="navigationForm:patientList contentForm:contentPanel" />
-				</p:commandButton>
-
-				<!-- select all -->
-				<p:commandButton icon="fa fa-fw fa-check-circle"
-					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-					update="contentForm:contentPanel"
-					value="#{msg['body.statiningView.chooseAll']}"
-					actionListener="#{receiptlogViewHandlerAction.setListAsChoosen(receiptlogViewHandlerAction.stainingTableRows,true)}" />
-
-				<h:outputLabel value="#{msg['body.statiningView.choosenElements']}"
-					style="margin-left:20px;"></h:outputLabel>
-				<h:panelGroup>
-					<p:selectOneMenu
-						value="#{receiptlogViewHandlerAction.actionOnMany}"
-						disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-						onchange="PF('performOnMay').jq.click();">
-
-						<f:selectItems value="#{enumProvider.stainingListActions}"
-							var="action"
-							itemLabel="#{msg['enum.stainingListAction.'.concat(action)]}" />
-
-					</p:selectOneMenu>
-
-					<p:commandButton id="changeZone" widgetVar="performOnMay"
-						style="display:none;"
-						update="navigationForm:patientList contentForm:contentPanel headerForm"
-						actionListener="#{receiptlogViewHandlerAction.performActionOnManyTaskChildren(globalEditViewHandler.selectedTask)}">
-						<p:ajax event="dialogReturn"
-							oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll', 'contentForm:contentScrollPane')"
-							update="navigationForm:patientList contentForm:contentPanel headerForm" />
-					</p:commandButton>
-				</h:panelGroup>
-			</h:panelGrid>
-		</p:panel>
-	</p:scrollPanel>
-
-	<!-- scrollspeed of scrollpane -->
-	<script type="text/javascript">
-		$(document).ready(function() {
-			setScrollPanelScrollSpeed("contentForm:contentScrollPane");
-		});
-	</script>
+			</h:panelGroup>
+		</h:panelGrid>
+	</p:panel>
 </ui:composition>

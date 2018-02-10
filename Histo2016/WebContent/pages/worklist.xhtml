@@ -24,7 +24,17 @@
 		</ui:define>
 
 		<ui:define name="content">
-			<ui:include src="#{globalEditViewHandler.getCenterView()}"></ui:include>
+
+			<p:scrollPanel styleClass="histoScroll" id="contentScrollPane">
+				<ui:include src="#{globalEditViewHandler.getCenterView()}"></ui:include>
+			</p:scrollPanel>
+
+			<!-- scrollspeed of scrollpane -->
+			<script type="text/javascript">
+				$(document).ready(function() {
+					setScrollPanelScrollSpeed("contentForm:contentScrollPane");
+				});
+			</script>
 		</ui:define>
 
 		<ui:define name="globalInclude">

@@ -4,11 +4,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui">
-
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.diagnosisPhaseExit.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
@@ -26,13 +25,51 @@
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
-		<div class="dialogContent" style="height: 500px;">
-			<h:panelGrid columns="1" styleClass="newStyleListingTable">
-				<p:media player="pdf"
-					value="#{dialogHandlerAction.printDialog.pdfContent}" width="100%"
-					rendered="#{dialogHandlerAction.printDialog.renderPdf}"
-					height="460px"></p:media>
+
+		<div class="dialogContent">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+				columnClasses="columnLongText">
 				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.text']}"></h:outputLabel>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				columnClasses="columnMinWidth," style="margin-left:10px">
+				<h:outputLabel value="#{msg['dialog.diagnosisPhaseExit.notify']}" />
+				<p:selectOneMenu
+					disabled="#{!diagnosisPhaseExitDialog.goToNotificationPhase}"
+					converter="#{diagnosisPhaseExitDialog.diagnosisRevisionTransformer}"
+					style="width:80%"
+					value="#{diagnosisPhaseExitDialog.selectedRevision}">
+
+					<f:selectItems
+						value="#{diagnosisPhaseExitDialog.diagnosisRevisions}"
+						var="diagnosis" itemLabel="#{diagnosis.name}"
+						itemValue="#{diagnosis}" />
+
+				</p:selectOneMenu>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				style="margin-left:10px">
+				<!-- notify -->
+				<p:selectBooleanCheckbox
+					value="#{diagnosisPhaseExitDialog.goToNotificationPhase}">
+					<p:ajax event="change" update="@form" process="@form" />
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseExit.checkBox.notificationPhase']}" />
+
+				<!-- end phase -->
+				<p:selectBooleanCheckbox
+					value="#{diagnosisPhaseExitDialog.endDiangosisPhase}" />
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseExit.checkBox.endDiangosis']}" />
+
+				<!-- remove from worklist -->
+				<p:selectBooleanCheckbox
+					value="#{diagnosisPhaseExitDialog.removeFromWorklist}" />
+				<h:outputLabel
+					value="#{msg['dialog.diagnosisPhaseExit.checkBox.removeFromWorklist']}" />
 			</h:panelGrid>
 
 		</div>
@@ -41,35 +78,7 @@
 			<h:panelGrid columns="2" style="width:100%"
 				styleClass="newTableContainer">
 
-				<h:panelGrid columns="7" styleClass="newTableContainer left">
-					<p:selectBooleanCheckbox
-						value="#{diagnosisPhaseExitDialog.goToNotificationPhase}" />
-					<h:outputLabel
-						value="#{msg['dialog.diagnosisPhaseExit.checkBox.notificationPhase']}" />
-
-					<h:panelGroup layout="block" style="width:20px;" />
-
-					<p:selectBooleanCheckbox
-						value="#{diagnosisPhaseExitDialog.stayInDiagnosisPhase}" />
-					<h:outputLabel
-						value="#{msg['dialog.diagnosisPhaseExit.checkBox.stayInList']}" />
-
-					<h:panelGroup layout="block" style="width:20px;" />
-
-					<p:selectOneMenu
-						value="#{dialogHandlerAction.printDialog.selectedTemplate}"
-						converter="#{dialogHandlerAction.printDialog.templateTransformer}"
-						styleClass="customSerachSelectMenu">
-						<f:selectItems
-							value="#{dialogHandlerAction.printDialog.templateList}"
-							var="template" itemLabel="#{template.name}"
-							itemValue="#{template}" />
-
-						<p:ajax update="@form" event="change"
-							onstart="PF('blockUIWidget').block()"
-							oncomplete="PF('blockUIWidget').unblock()"
-							listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"></p:ajax>
-					</p:selectOneMenu>
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
@@ -77,7 +86,7 @@
 						value="#{msg['dialog.diagnosisPhaseExit.button.notify']}"
 						icon="fa fa-check-circle-o">
 						<f:actionListener
-							binding="#{diagnosisPhaseExitDialog.exitPhase()}" />
+							binding="#{diagnosisPhaseExitDialog.approveDiangosis()}" />
 						<f:actionListener
 							binding="#{diagnosisPhaseExitDialog.hideDialog()}" />
 					</p:commandButton>
@@ -90,7 +99,6 @@
 			</h:panelGrid>
 		</div>
 
-		<ui:include src="../../../template/blockUi.xhtml"></ui:include>
 	</h:form>
 </h:body>
 </html>

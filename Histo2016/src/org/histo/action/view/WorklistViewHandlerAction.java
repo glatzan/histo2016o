@@ -164,6 +164,7 @@ public class WorklistViewHandlerAction {
 				changeView(view);
 				onSelectTaskAndPatient(globalEditViewHandler.getSelectedTask());
 			} else if (globalEditViewHandler.getSelectedPatient() != null) {
+				globalEditViewHandler.getSelectedPatient().getActiveTasks();
 				// globalEditViewHandler.getSelectedPatient().getTasksOfPatient(activeOnly)
 
 			} else {

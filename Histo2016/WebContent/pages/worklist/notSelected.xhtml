@@ -13,12 +13,15 @@
 		<h:outputLabel value="#{msg['body.worklist.notSelected.headline']}" />
 	</h:panelGrid>
 
-	<h:panelGrid columns="1" id="pollTable" styleClass="newTableContainer"
-		style="width: 100% !important;height: calc( 100vh - 200px )!important;"
-		columnClasses="columnMiddle columnTextCenter">
+	<p:panel style="width: 80%" styleClass="newTableContainer"
+		id="contentPanel">
+		<h:panelGrid columns="1" id="pollTable" styleClass="newTableContainer"
+			style="width: 100% !important;height: calc( 100vh - 200px )!important;"
+			columnClasses="columnMiddle columnTextCenter">
 
-		<h:outputLabel styleClass="hugeFont"
-			value="#{msg['body.worklist.notSelected.text']}"></h:outputLabel>
-	</h:panelGrid>
+			<h:outputLabel styleClass="hugeFont"
+				value="#{msg['body.worklist.notSelected.text']}"></h:outputLabel>
+		</h:panelGrid>
+	</p:panel>
 
 </ui:composition>

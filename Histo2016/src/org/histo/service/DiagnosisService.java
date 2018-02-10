@@ -259,6 +259,20 @@ public class DiagnosisService {
 	}
 
 	/**
+	 * Sets a diangosis as completed
+	 * 
+	 * @param diagnosisRevision
+	 * @param notificationPending
+	 */
+	public void approveDiangosis(DiagnosisRevision diagnosisRevision, boolean notificationPending) {
+		diagnosisRevision.setCompletionDate(System.currentTimeMillis());
+		diagnosisRevision.setNotificationPending(true);
+
+		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisRevision.approved",
+				diagnosisRevision.getName());
+	}
+
+	/**
 	 * Ends the diagnosis phase, removes from diagnosis list and sets the diagnosis
 	 * time of completion.
 	 * 
@@ -275,7 +289,7 @@ public class DiagnosisService {
 					// setting diagnosis compeation date if not set jet
 					task.getDiagnosisRevisions().forEach(p -> {
 						if (p.getCompletionDate() == 0)
-							p.setCompletionDate(System.currentTimeMillis());
+							approveDiangosis(p, false);
 					});
 
 					task.setDiagnosisCompletionDate(System.currentTimeMillis());

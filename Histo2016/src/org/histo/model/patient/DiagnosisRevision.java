@@ -89,6 +89,12 @@ public class DiagnosisRevision implements Parent<Task>, DeleteAble, LogAble, Pat
 	private long completionDate;
 
 	/**
+	 * True if notification should be performed
+	 */
+	@Column
+	private boolean notificationPending;
+	
+	/**
 	 * Date of notification 
 	 */
 	@Column

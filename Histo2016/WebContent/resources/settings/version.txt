@@ -40,27 +40,20 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 Next Changes:
 -> label.prepareTemplate(); testen test prints label + printer
 -> slides Label pritning -> TemplateSlideLable tmp = (TemplateSlideLable) slideLabel.clone(); (notwening) ggf wird content nicht geladen
--> print dialog external view!!!
 -> save on pdf download
 -> ggf wenn contact vorhaden, speichern des ausdruckes unter dem kontakt (alte version der print methode anschauen)=
 -> contentForm:contentPanel fest, das jede seite diese hat, udpate im header von contentForm:contentPanel anstelle von contentform
 
+-> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
+-> vortschritt im sende dialog
+-> Warnung wenn der Auftrag noch in Arbeitslisten ist
+
 -> navigation buttons gehen nicht mehr richtig
 -> search physician dialog with return handler
 
--> operateure enternen aus hinzuügen dialog
--> klicks für einzelnen operateure zählen, danach sortieren
 -> beim auswählen des eingangbuches fall auswählen, nicht ersten fall
 
--> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
--> vortschritt im sende dialog
--> aus liste entfernen ohne konsquenz
--> task_old_archived_date, task_old_archived
--> Warnung wenn der Auftrag noch in Arbeitslisten ist
-
 -> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
-
--> Latex Datei für externen Befund
 
 -> versehendlich ausgeführte benachrichtigungen, markieren
 
@@ -113,6 +106,7 @@ Graphic Changes
 + = added
 - = removed
 +v 1.4 (xx.02.2017)
++++*: Plz in Befundbericht angepasst
 
 SQL:
 /* Columns for renew*/
@@ -131,7 +125,13 @@ Alter table diagnosisrevision_aud drop column rediagnosis;
 /* adding notification column*/
 alter table diagnosisrevision add notificationdate bigint;
 update diagnosisrevision set notificationdate = 0;
-
+alter table diagnosisrevision_aud add notificationdate bigint;
+update diagnosisrevision_aud set notificationdate = 0;
+/* fild for notification pending*/
+alter table diagnosisrevision add notificationpending boolean;
+update diagnosisrevision set notificationpending = true;
+alter table diagnosisrevision_aud add notificationpending boolean;
+update diagnosisrevision_aud set notificationpending = true;
 
 +v 1.3.0 (05.02.2018)
 +++*: Unterschrift ist nun pro Befund möglich.
