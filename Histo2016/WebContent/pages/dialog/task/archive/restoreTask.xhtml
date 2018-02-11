@@ -47,16 +47,16 @@
 						value="#{msg['dialog.restoreTask.button.restore']}"
 						icon="fa fa-archive">
 						<f:actionListener
-							binding="#{dialogHandlerAction.archiveTaskDialog.restoreTask()}"></f:actionListener>
+							binding="#{dialogHandlerAction.restoreTaskDialog.restoreTask()}"></f:actionListener>
 						<f:actionListener
-							binding="#{dialogHandlerAction.archiveTaskDialog.hideDialog()}"></f:actionListener>
+							binding="#{dialogHandlerAction.restoreTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						icon="fa fa-times-circle">
 						<f:actionListener
-							binding="#{dialogHandlerAction.archiveTaskDialog.hideDialog()}"></f:actionListener>
+							binding="#{dialogHandlerAction.restoreTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>

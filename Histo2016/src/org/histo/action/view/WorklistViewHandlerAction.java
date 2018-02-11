@@ -164,10 +164,38 @@ public class WorklistViewHandlerAction {
 				changeView(view);
 				onSelectTaskAndPatient(globalEditViewHandler.getSelectedTask());
 			} else if (globalEditViewHandler.getSelectedPatient() != null) {
-				globalEditViewHandler.getSelectedPatient().getActiveTasks();
-				// globalEditViewHandler.getSelectedPatient().getTasksOfPatient(activeOnly)
+				// no task selected but patient
+				// getting active tasks
+				List<Task> tasks = globalEditViewHandler.getSelectedPatient()
+						.getActiveTasks(getWorklist().isShowActiveTasksExplicit());
+
+				System.out.println(tasks.size());
+				boolean found = false;
+
+				// searching for the first not finalized task
+				for (Task task : tasks) {
+					if (!task.isFinalized()) {
+						changeView(view);
+						onSelectTaskAndPatient(task);
+						found = true;
+						break;
+					}
+				}
+
+				// if all tasks are finalized selecting the first task
+				if (!found) {
+					// display first task, if all task should be shown and there is a task
+					if (!getWorklist().isShowActiveTasksExplicit()
+							&& !globalEditViewHandler.getSelectedPatient().getTasks().isEmpty()) {
+						changeView(view);
+						onSelectTaskAndPatient(globalEditViewHandler.getSelectedPatient().getTasks().get(0));
+					} else {
+						changeView(view, View.WORKLIST_NOTHING_SELECTED);
+					}
+				}
 
 			} else {
+				// nothing selected
 
 				Task first = worklist.getFirstActiveTask();
 
@@ -307,8 +335,7 @@ public class WorklistViewHandlerAction {
 					if (globalEditViewHandler.getSelectedPatient() != null) {
 						onVersionConflictPatient(globalEditViewHandler.getSelectedPatient());
 
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.error",
-								"growl.error.version");
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
 						RequestContext.getCurrentInstance()
 								.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
@@ -386,6 +413,8 @@ public class WorklistViewHandlerAction {
 			// deselecting patient
 			onDeselectPatient(false);
 
+			worklist.sortWordklist();
+			
 			worklist.updateWorklist();
 		}
 

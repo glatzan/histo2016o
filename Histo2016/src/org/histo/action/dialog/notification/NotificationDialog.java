@@ -29,6 +29,7 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.Contact;
+import org.histo.model.Organization;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
@@ -212,7 +213,8 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		List<DocumentTemplate> templates = DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT,
 				DocumentType.DIAGNOSIS_REPORT_EXTERN);
-		List<AbstractDocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		List<AbstractDocumentUi<?>> subSelectUIs = templates.stream().map(p -> p.getDocumentUi())
+				.collect(Collectors.toList());
 
 		ArrayList<ContactSelector> selectors = new ArrayList<ContactSelector>();
 
@@ -330,20 +332,20 @@ public class NotificationDialog extends AbstractTabDialog {
 			setDiagnoses(task.getDiagnosisRevisions());
 			setDiagnosesTransformer(new DefaultTransformer<DiagnosisRevision>(getDiagnoses()));
 
-			// no notification was performed set the first as notification diagnosis
-			if (task.getNotificationCompletionDate() == 0 && getDiagnoses().size() > 0) {
-				setSelectedDiagnosis(getDiagnoses().get(0));
+			for (DiagnosisRevision revision : task.getDiagnosisRevisions()) {
+				if (revision.isNotificationPending()) {
+					setSelectedDiagnosis(revision);
+					// last element
+					if (task.getDiagnosisRevisions().indexOf(revision) == task.getDiagnosisRevisions().size() - 1)
+						setTemporaryNotification(false);
+					else
+						setTemporaryNotification(true);
+				}
+			}
 
-				// if there is more then one notification and no notification was performed ->
-				// set as temporary notification.
-				if (getDiagnoses().size() > 1)
-					setTemporaryNotification(true);
-				else
-					setTemporaryNotification(false);
-
-			} else if (getDiagnoses().size() > 0) {
-				// selecting last diagnosis revision
-				setSelectedDiagnosis(getDiagnoses().get(getDiagnoses().size() - 1));
+			// if no diagnosis is pending setting last diagnosis
+			if (getSelectedDiagnosis() == null) {
+				setSelectedDiagnosis(task.getDiagnosisRevisions().get(task.getDiagnosisRevisions().size() - 1));
 				setTemporaryNotification(false);
 			}
 
@@ -708,8 +710,6 @@ public class NotificationDialog extends AbstractTabDialog {
 
 		private DefaultTransformer<PDFContainer> sendReportConverter;
 
-		private boolean archiveTask;
-
 		private boolean sendReportAvailable;
 
 		public SendReportTab() {
@@ -717,9 +717,6 @@ public class NotificationDialog extends AbstractTabDialog {
 			setName("dialog.notification.tab.sendReport");
 			setViewID("sendReportTab");
 			setCenterInclude("include/sendReport.xhtml");
-
-			if (userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_ARCHIVE))
-				setArchiveTask(true);
 		}
 
 		@Override
@@ -747,13 +744,12 @@ public class NotificationDialog extends AbstractTabDialog {
 			onTabChange(generalTab);
 		}
 
-		public void endNotification() {
-
-			notificationService.endNotificationPhase(getTask());
-
-			if (!generalTab.isTemporaryNotification() && archiveTask)
-				taskService.archiveTask(getTask());
+		public void onReturnDialog(SelectEvent event) {
+			logger.debug("Dialog return");
+			if (event.getObject() != null && event.getObject() instanceof Boolean
+					&& ((Boolean) event.getObject()).booleanValue())
+				hideDialog();
 		}
-
 	}
+
 }

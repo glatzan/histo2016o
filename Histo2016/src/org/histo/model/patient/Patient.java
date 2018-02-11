@@ -327,7 +327,7 @@ public class Patient implements Parent<Patient>, CreationDate, LogAble, ArchivAb
 	public List<Task> getActiveTasks(boolean activeOnly) {
 		return getTasks() != null
 				? getTasks().stream().filter(p -> p.isActiveOrActionPending(activeOnly)).collect(Collectors.toList())
-				: null;
+				: new ArrayList<Task>();
 	}
 
 	@Transient

@@ -21,7 +21,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class ArchiveTaskDialog extends AbstractDialog {
+public class RestoreTaskDialog extends AbstractDialog {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -54,11 +54,6 @@ public class ArchiveTaskDialog extends AbstractDialog {
 	private TaskService taskService;
 
 	/**
-	 * If true the task will be removed from worklist
-	 */
-	private boolean removeFromWorklist;
-
-	/**
 	 * commentary for restoring
 	 */
 	private String commentary;
@@ -82,37 +77,17 @@ public class ArchiveTaskDialog extends AbstractDialog {
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
 
-		this.removeFromWorklist = true;
-
-		super.initBean(task, Dialog.TASK_ARCHIVE);
+		super.initBean(task, Dialog.TASK_RESTORE);
 
 		return true;
 	}
 
-	public void archiveTask() {
+	public void restoreTask() {
 		try {
 
-			taskService.archiveTask(getTask());
-
-			if (removeFromWorklist) {
-				// only remove from worklist if patient has one active task
-				if (task.getPatient().getTasks().stream().filter(p -> !p.isFinalized()).count() > 1) {
-					mainHandlerAction.sendGrowlMessagesAsResource("growl.error",
-							"growl.error.worklist.remove.moreActive");
-				} else {
-					worklistViewHandlerAction.removeFromWorklist(task.getPatient());
-					worklistViewHandlerAction.onDeselectPatient(true);
-				}
-			}
-
-			mainHandlerAction.sendGrowlMessagesAsResource("growl.task.archived", "growl.task.archived.text");
-			setArchiveSuccessful(true);
+			taskService.restoreTask(getTask(), getCommentary());
 		} catch (Exception e) {
 			onDatabaseVersionConflict();
 		}
-	}
-
-	public void hideDialog() {
-		super.hideDialog(new Boolean(archiveSuccessful));
 	}
 }

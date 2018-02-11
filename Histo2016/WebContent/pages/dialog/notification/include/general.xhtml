@@ -80,7 +80,8 @@
 
 				<f:selectItems
 					value="#{dialogHandlerAction.notificationDialog.generalTab.diagnoses}"
-					var="diagnosis" itemLabel="#{diagnosis.name}"
+					var="diagnosis"
+					itemLabel="#{diagnosis.name} #{diagnosis.notificationPending ? msg['dialog.notification.tab.general.notification.pending'] : ''}"
 					itemValue="#{diagnosis}" />
 
 			</p:selectOneMenu>

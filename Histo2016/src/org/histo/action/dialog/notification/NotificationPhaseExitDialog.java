@@ -15,11 +15,14 @@ import org.histo.model.user.HistoPermissions;
 import org.histo.service.NotificationService;
 import org.histo.service.SampleService;
 import org.histo.service.TaskService;
+import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -71,14 +74,24 @@ public class NotificationPhaseExitDialog extends AbstractDialog {
 	private TaskService taskService;
 
 	/**
-	 * Can be set to true if the task should stay in diagnosis phase.
+	 * If true the task will be removed from the notification list
 	 */
-	private boolean stayInNotificationPhase;
+	private boolean removeFromNotificationList;
 
 	/**
-	 * If true the task will be shifted into diagnosis phase
+	 * If true the notification phase of the task will terminated
 	 */
-	private boolean archiveTask;
+	private boolean endNotificationPhase;
+
+	/**
+	 * If true the task will be removed from worklist
+	 */
+	private boolean removeFromWorklist;
+
+	/**
+	 * True if the phase was successfully left
+	 */
+	private boolean exitSuccessful;
 
 	/**
 	 * Initializes the bean and shows the dialog
@@ -98,15 +111,19 @@ public class NotificationPhaseExitDialog extends AbstractDialog {
 	public void initBean(Task task) {
 		try {
 			taskDAO.initializeTask(task, false);
-
-			if (userHandlerAction.currentUserHasPermission(HistoPermissions.TASK_EDIT_ARCHIVE))
-				setArchiveTask(true);
-
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.onVersionConflictTask(task, false);
 		}
+
+		removeFromNotificationList = true;
+		removeFromWorklist = true;
+
+		exitSuccessful = false;
+
+		endNotificationPhase = task.getDiagnosisRevisions().stream()
+				.allMatch(p -> p.getNotificationDate() != 0 && !p.isNotificationPending());
 
 		super.initBean(task, Dialog.NOTIFICATION_PHASE_EXIT);
 	}
@@ -117,16 +134,32 @@ public class NotificationPhaseExitDialog extends AbstractDialog {
 	 */
 	public void exitPhase() {
 		try {
-			notificationService.endNotificationPhase(getTask());
 
-			if (stayInNotificationPhase && !archiveTask)
-				favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.StayInNotificationList);
+			if (endNotificationPhase && removeFromNotificationList) {
+				notificationService.endNotificationPhase(getTask());
+			} else {
+				if (removeFromNotificationList)
+					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.NotificationList);
+			}
 
-			if (archiveTask)
-				taskService.archiveTask(getTask());
+			if (removeFromWorklist) {
+				// only remove from worklist if patient has one active task
+				if (task.getPatient().getTasks().stream().filter(p -> !p.isFinalized()).count() > 1) {
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.error",
+							"growl.error.worklist.remove.moreActive");
+				} else {
+					worklistViewHandlerAction.removeFromWorklist(task.getPatient());
+					worklistViewHandlerAction.onDeselectPatient(true);
+				}
+			}
 
+			setExitSuccessful(true);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
+	}
+
+	public void hideDialog() {
+		super.hideDialog(new Boolean(exitSuccessful));
 	}
 }

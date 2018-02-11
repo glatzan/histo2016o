@@ -226,7 +226,7 @@
 
 			<!-- Archive Task -->
 			<p:commandButton id="archiveTaskBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, true)}">
+				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"
@@ -235,7 +235,7 @@
 
 			<!-- restore Task -->
 			<p:commandButton id="restoreTaskBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, false)}">
+				actionListener="#{dialogHandlerAction.restoreTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"

@@ -8,7 +8,7 @@
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.archiveTask.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
@@ -31,6 +31,28 @@
 			<h:panelGrid columns="1" styleClass="newStyleListingTable"
 				columnClasses="columnLongText">
 				<h:outputLabel value="#{msg['dialog.archiveTask.text']}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				style="margin-left:10px">
+				<i class="fa fa-check icon-green" />
+				<h:outputLabel value="#{msg['dialog.archiveTask.status.worklists']}"></h:outputLabel>
+
+				<i class="fa fa-check icon-green" />
+				<h:outputLabel value="#{msg['dialog.archiveTask.status.approved']}"></h:outputLabel>
+
+				<i class="fa fa-check icon-green" />
+				<h:outputLabel
+					value="#{msg['dialog.archiveTask.status.notifications']}"></h:outputLabel>
+
+				<h:outputLabel value=" " />
+				<h:outputLabel value=" " />
+
+				<!-- remove from worklist -->
+				<p:selectBooleanCheckbox
+					value="#{dialogHandlerAction.archiveTaskDialog.removeFromWorklist}" />
+				<h:outputLabel
+					value="#{msg['dialog.archiveTask.checkBox.removeFromWorklist']}" />
 			</h:panelGrid>
 		</div>
 

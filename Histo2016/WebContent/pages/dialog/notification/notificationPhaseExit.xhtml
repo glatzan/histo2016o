@@ -9,6 +9,7 @@
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.notificationPhaseExit.headline']}" /></title>
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
@@ -35,22 +36,30 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				style="margin: 10px 0px 0px 20px">
+				style="margin-left:10px">
+				<!-- end phase -->
 				<p:selectBooleanCheckbox
-					disabled="#{dialogHandlerAction.notificationPhaseExitDialog.archiveTask}"
-					value="#{dialogHandlerAction.notificationPhaseExitDialog.stayInNotificationPhase}" />
+					value="#{dialogHandlerAction.notificationPhaseExitDialog.removeFromNotificationList}" />
 				<h:outputLabel
-					value="#{msg['dialog.notificationPhaseExit.checkBox.stayInList']}" />
+					value="#{msg['dialog.notificationPhaseExit.checkBox.removeFromNotificationList']}" />
 
+				<h:outputLabel />
+				<h:panelGrid columns="2" styleClass="newTableContainer">
+					<!-- end phase -->
+					<p:selectBooleanCheckbox
+						disabled="#{!dialogHandlerAction.notificationPhaseExitDialog.removeFromNotificationList}"
+						value="#{dialogHandlerAction.notificationPhaseExitDialog.endNotificationPhase}" />
+					<h:outputLabel style="margin-left:20px"
+						value="#{msg['dialog.notificationPhaseExit.checkBox.endNotification']}" />
+				</h:panelGrid>
+
+				<!-- remove from worklist -->
 				<p:selectBooleanCheckbox
-					rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
-					value="#{dialogHandlerAction.notificationPhaseExitDialog.archiveTask}">
-					<p:ajax event="change" update="@form" />
-				</p:selectBooleanCheckbox>
+					value="#{dialogHandlerAction.notificationPhaseExitDialog.removeFromWorklist}" />
 				<h:outputLabel
-					value="#{msg['dialog.notificationPhaseExit.checkBox.archiveTask']}"
-					rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}" />
+					value="#{msg['dialog.notificationPhaseExit.checkBox.removeFromWorklist']}" />
 			</h:panelGrid>
+
 		</div>
 
 		<div class="buttonContainer">

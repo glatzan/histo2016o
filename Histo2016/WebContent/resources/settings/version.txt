@@ -105,8 +105,10 @@ Graphic Changes
 * = change
 + = added
 - = removed
-+v 1.4 (xx.02.2017)
-+++*: Plz in Befundbericht angepasst
++v 1.3.1 (xx.02.2017)
++++*: Plz in Befundbericht angepasst.
++++!: Arbeitsliste wird jetzt nach dem Auswählen richtig sortiert.
++++!: Auswahl der Ansichten verbesser.
 
 SQL:
 /* Columns for renew*/
@@ -129,9 +131,9 @@ alter table diagnosisrevision_aud add notificationdate bigint;
 update diagnosisrevision_aud set notificationdate = 0;
 /* fild for notification pending*/
 alter table diagnosisrevision add notificationpending boolean;
-update diagnosisrevision set notificationpending = true;
+update diagnosisrevision set notificationpending = false;
 alter table diagnosisrevision_aud add notificationpending boolean;
-update diagnosisrevision_aud set notificationpending = true;
+update diagnosisrevision_aud set notificationpending = false;
 
 +v 1.3.0 (05.02.2018)
 +++*: Unterschrift ist nun pro Befund möglich.

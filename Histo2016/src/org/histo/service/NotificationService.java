@@ -13,6 +13,7 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PdfDAO;
 import org.histo.model.PDFContainer;
+import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
@@ -154,6 +155,12 @@ public class NotificationService {
 		PDFContainer sendReport = generateSendReport(feedback, task, mailContainerList, faxContainerList,
 				letterContainerList, phoneContainerList, new Date(), temporaryNotification);
 
+		// setting notification als completed
+		for (DiagnosisRevision revision : printContainerList.getSelectedRevisions()) {
+			revision.setNotificationPending(false);
+			revision.setNotificationDate(System.currentTimeMillis());
+		}
+		
 		genericDAO.savePatientData(task, "log.patient.task.notification.send");
 
 		pdfDAO.attachPDF(task.getPatient(), task, sendReport);

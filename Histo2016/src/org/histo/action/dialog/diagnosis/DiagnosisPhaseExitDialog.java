@@ -104,7 +104,12 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	private boolean removeFromWorklist;
 
 	/**
-	 * If true the diangosis phase will be terminated
+	 * If true the task will be removed from diagnosis list
+	 */
+	private boolean removeFromDiangosisList;
+
+	/**
+	 * If true the diagnosis phase of the task will be finished
 	 */
 	private boolean endDiangosisPhase;
 
@@ -159,7 +164,9 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 				.indexOf(selectedRevision) == task.getDiagnosisRevisions().size() - 1;
 
 		setRemoveFromWorklist(lastDiagnosis);
+
 		setEndDiangosisPhase(lastDiagnosis);
+		setRemoveFromDiangosisList(lastDiagnosis);
 
 		setGoToNotificationPhase(true);
 
@@ -170,7 +177,7 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 		try {
 
 			// end diagnosis phase
-			if (endDiangosisPhase) {
+			if (endDiangosisPhase && removeFromDiangosisList) {
 				diagnosisService.endDiagnosisPhase(getTask());
 				mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.diagnosis.endAll"),
 						resourceBundle.get("growl.diagnosis.endAll.text",
@@ -185,6 +192,10 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 						resourceBundle.get("growl.diagnosis.approved.text",
 								goToNotificationPhase ? resourceBundle.get("growl.diagnosis.approved.notification.true")
 										: resourceBundle.get("growl.diagnosis.approved.notification.false")));
+
+				if (removeFromDiangosisList)
+					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
+							PredefinedFavouriteList.ReDiagnosisList);
 			}
 
 			// adding to notification phase
@@ -198,6 +209,7 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 							"growl.error.worklist.remove.moreActive");
 				} else {
 					worklistViewHandlerAction.removeFromWorklist(task.getPatient());
+					worklistViewHandlerAction.onDeselectPatient(true);
 				}
 			}
 

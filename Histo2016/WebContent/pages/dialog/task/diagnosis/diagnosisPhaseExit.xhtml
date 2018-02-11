@@ -59,12 +59,24 @@
 				<h:outputLabel
 					value="#{msg['dialog.diagnosisPhaseExit.checkBox.notificationPhase']}" />
 
-				<!-- end phase -->
+				<!-- remove from diagnosis list -->
 				<p:selectBooleanCheckbox
-					value="#{diagnosisPhaseExitDialog.endDiangosisPhase}" />
+					value="#{diagnosisPhaseExitDialog.removeFromDiangosisList}">
+					<p:ajax update="@form" process="@form" event="change" />
+				</p:selectBooleanCheckbox>
 				<h:outputLabel
-					value="#{msg['dialog.diagnosisPhaseExit.checkBox.endDiangosis']}" />
+					value="#{msg['dialog.diagnosisPhaseExit.checkBox.removeFromDiangosisList']}" />
 
+				<h:outputLabel />
+				<h:panelGrid columns="2" styleClass="newTableContainer">
+					<!-- end phase -->
+					<p:selectBooleanCheckbox
+						disabled="#{!diagnosisPhaseExitDialog.removeFromDiangosisList}"
+						value="#{diagnosisPhaseExitDialog.endDiangosisPhase}" />
+					<h:outputLabel style="margin-left:20px"
+						value="#{msg['dialog.diagnosisPhaseExit.checkBox.endDiangosis']}" />
+				</h:panelGrid>
+				
 				<!-- remove from worklist -->
 				<p:selectBooleanCheckbox
 					value="#{diagnosisPhaseExitDialog.removeFromWorklist}" />

@@ -28,23 +28,12 @@
 
 	<h:panelGrid columns="1" styleClass="newTableContainer"
 		rendered="#{!dialogHandlerAction.notificationDialog.sendReportTab.sendReportAvailable}"
-		style="width: 100% !important;height: calc( 100vh - 130px )!important;"
+		style="width: 100% !important;height: calc( 100vh - 110px )!important;"
 		columnClasses="columnMiddle columnTextCenter">
 
 		<h:outputLabel styleClass="hugeFont"
 			value="#{msg['dialog.notification.tab.sendReport.completedAndNoReport']}"></h:outputLabel>
 	</h:panelGrid>
-
-	<p:outputPanel styleClass="bodyPannel" style="height:25px;"
-		rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE') and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}">
-		<h:panelGrid styleClass="newStyleListingTable" columns="2"
-			style="width:auto !important">
-			<p:selectBooleanCheckbox
-				value="#{dialogHandlerAction.notificationDialog.sendReportTab.archiveTask}" />
-			<h:outputLabel
-				value="#{msg['dialog.notification.tab.sendReport.ceckbox.archiveTask']}" />
-		</h:panelGrid>
-	</p:outputPanel>
 
 	<div class="buttonContainer">
 		<h:panelGrid columns="2" style="width:100%"
@@ -89,16 +78,45 @@
 					title="#{msg['dialog.notification.tab.sendReport.button.resend.text']}"
 					actionListener="#{dialogHandlerAction.notificationDialog.sendReportTab.repeatNotification()}" />
 
-				<!-- close -->
-				<p:commandButton
-					value="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification ? msg['dialog.notification.tab.sendReport.button.temporaray.end'] : msg['dialog.notification.tab.sendReport.button.end']}"
-					title="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification  ? msg['dialog.notification.tab.sendReport.button.temporaray.end.text'] : msg['dialog.notification.tab.sendReport.button.end.text']}"
-					icon="fa #{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification ? 'fa-times-circle' : 'fa-archive'}">
-					<f:actionListener
-						binding="#{dialogHandlerAction.notificationDialog.sendReportTab.endNotification()}" />
-					<f:actionListener
-						binding="#{dialogHandlerAction.notificationDialog.hideDialog()}" />
-				</p:commandButton>
+				<h:panelGroup>
+					<!--  archive task and end notification phase -->
+					<p:splitButton value="Auftrag archivieren"
+						rendered="#{!dialogHandlerAction.notificationDialog.generalTab.temporaryNotification and userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
+						onclick="$('#adminForm\\:archiveTaskDialog').click();"
+						icon="fa fa-pencil">
+
+						<!-- end notification phase -->
+						<p:menuitem value="Befund abschließen" icon="fa fa-trash"
+							onclick="$('#adminForm\\:endNotificationPhase').click();" />
+					</p:splitButton>
+
+					<!-- end diagnosis phase if other things diagnosis are not approved jet -->
+					<p:splitButton value="B. abschließen"
+						rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification or !userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
+						disabled="#{!dialogHandlerAction.notificationDialog.task.taskStatus.editable}"
+						onclick="$('#adminForm\\:endNotificationPhase').click();"
+						icon="fa fa-pencil">
+
+						<!--  archive task and end notification phase -->
+						<p:menuitem value="Auftrag archivieren" icon="fa fa-trash"
+							disabled="#{!userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
+							onclick="$('#adminForm\\:archiveTaskDialog').click();" />
+					</p:splitButton>
+
+					<p:commandButton id="archiveTaskDialog" style="display:none"
+						actionListener="#{dialogHandlerAction.archiveTaskDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
+						<p:ajax event="dialogReturn"
+							listener="#{dialogHandlerAction.notificationDialog.sendReportTab.onReturnDialog}" />
+					</p:commandButton>
+
+					<!-- end diagnosis phase -->
+					<p:commandButton id="endNotificationPhase" style="display:none"
+						actionListener="#{dialogHandlerAction.notificationPhaseExitDialog.initAndPrepareBean(dialogHandlerAction.notificationDialog.task)}">
+						<p:ajax event="dialogReturn"
+							listener="#{dialogHandlerAction.notificationDialog.sendReportTab.onReturnDialog}" />
+					</p:commandButton>
+				</h:panelGroup>
+
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>
