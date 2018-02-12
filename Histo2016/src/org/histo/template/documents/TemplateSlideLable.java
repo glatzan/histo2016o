@@ -22,21 +22,26 @@ public class TemplateSlideLable extends DocumentTemplate {
 		this.slide = slide;
 		this.date = date;
 
-		if (HistoUtil.isNotNullOrEmpty(getContent()))
-			setFileContent(FileUtil.getContentOfFile(getContent()));
-
 	}
 
 	public void fillTemplate() {
-		String result = getFileContent().replaceAll("%slideNumber%",
-				task.getTaskID() + HistoUtil.fitString(slide.getUniqueIDinTask(), 3, '0'));
-		result = result.replaceAll("%slideName%", task.getTaskID() + " " + slide.getSlideID());
-		result = result.replaceAll("%slideText%", slide.getCommentary());
-		LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-		result = result.replaceAll("%date%",
-				ldt.format(DateTimeFormatter.ofPattern(DateFormat.GERMAN_DATE.getDateFormat())));
 
-		setFileContent(result);
+		if (!HistoUtil.isNullOrEmpty(getContent()) && HistoUtil.isNullOrEmpty(getFileContent()))
+			setFileContent(FileUtil.getContentOfFile(getContent()));
+
+		if (HistoUtil.isNotNullOrEmpty(getFileContent())) {
+			String result = getFileContent().replaceAll("%slideNumber%",
+					task.getTaskID() + HistoUtil.fitString(slide.getUniqueIDinTask(), 3, '0'));
+			result = result.replaceAll("%slideName%", task.getTaskID() + " " + slide.getSlideID());
+			result = result.replaceAll("%slideText%", slide.getCommentary());
+			LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+			result = result.replaceAll("%date%",
+					ldt.format(DateTimeFormatter.ofPattern(DateFormat.GERMAN_DATE.getDateFormat())));
+
+			setFileContent(result);
+		} else {
+			logger.debug("Erro: no file content");
+		}
 	}
 
 }

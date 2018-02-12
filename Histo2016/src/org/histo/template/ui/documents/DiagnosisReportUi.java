@@ -79,15 +79,18 @@ public class DiagnosisReportUi extends AbsctractContactUi<DiagnosisReport> {
 	 * Return default template configuration for printing
 	 */
 	public DocumentTemplate getDefaultTemplateConfiguration() {
-		documentTemplate.initData(task, Arrays.asList(selectedDiagnosis), renderSelectedContact ? getAddressOfFirstSelectedContact() : "");
+		documentTemplate.initData(task, Arrays.asList(selectedDiagnosis),
+				renderSelectedContact ? getAddressOfFirstSelectedContact() : "");
 		return documentTemplate;
 	}
 
-	public boolean hasNextTemplateConfiguration() {
-		return false;
-	}
-	
+	/**
+	 * Sets the data for the next print 
+	 */
 	public DocumentTemplate getNextTemplateConfiguration() {
-		return null;
+		documentTemplate.initData(task, Arrays.asList(selectedDiagnosis),
+				contactListPointer != null ? contactListPointer.getCustomAddress() : "");
+		documentTemplate.setCopies(contactListPointer != null ? contactListPointer.getCopies() : 1);
+		return documentTemplate;
 	}
 }

@@ -391,7 +391,7 @@ public class SampleService {
 	 * 
 	 * @param task
 	 */
-	public void endStainingPhase(Task task) {
+	public void endStainingPhase(Task task, boolean removeFromList) {
 		try {
 
 			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
@@ -404,8 +404,9 @@ public class SampleService {
 
 					genericDAO.savePatientData(task, "log.patient.task.phase.staining.end");
 
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
-							PredefinedFavouriteList.ReStainingList);
+					if (removeFromList)
+						favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
+								PredefinedFavouriteList.ReStainingList);
 				}
 			});
 		} catch (Exception e) {

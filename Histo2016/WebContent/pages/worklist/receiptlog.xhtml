@@ -605,7 +605,7 @@
 				value="#{msg['body.statiningView.stainingPhaseEnd']}"
 				icon="fa fa-fw fa-image"
 				disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{dialogHandlerAction.stainingPhaseExitDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, true)}">
 				<p:ajax event="dialogReturn"
 					update="navigationForm:patientList contentForm:contentPanel headerForm" />
 			</p:commandButton>

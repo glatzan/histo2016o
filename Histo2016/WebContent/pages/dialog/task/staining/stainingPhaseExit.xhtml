@@ -9,7 +9,7 @@
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.staingingPhaseExit.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
@@ -35,16 +35,40 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				style="margin: 10px 0px 0px 20px">
+				style="margin-left:10px">
+				<!-- notify -->
 				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.stainingPhaseExitDialog.goToDiagnosisPhase}" />
+					value="#{dialogHandlerAction.stainingPhaseExitDialog.goToDiagnosisPhase}">
+					<p:ajax event="change" update="@form" process="@form" />
+				</p:selectBooleanCheckbox>
 				<h:outputLabel
 					value="#{msg['dialog.staingingPhaseExit.checkBox.diagnosisPhase']}" />
 
+				<!-- remove from diagnosis list -->
 				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.stainingPhaseExitDialog.stayInStainingPhase}" />
-				<h:outputLabel value="#{msg['dialog.staingingPhaseExit.checkBox.stayInList']}" />
+					value="#{dialogHandlerAction.stainingPhaseExitDialog.removeFromStainingList}">
+					<p:ajax update="@form" process="@form" event="change" />
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value="#{msg['dialog.staingingPhaseExit.checkBox.removeFromDiangosisList']}" />
+
+				<h:outputLabel />
+				<h:panelGrid columns="2" styleClass="newTableContainer">
+					<!-- end phase -->
+					<p:selectBooleanCheckbox
+						disabled="#{!dialogHandlerAction.stainingPhaseExitDialog.removeFromStainingList}"
+						value="#{dialogHandlerAction.stainingPhaseExitDialog.endStainingPhase}" />
+					<h:outputLabel style="margin-left:20px"
+						value="#{msg['dialog.staingingPhaseExit.checkBox.endStaining']}" />
+				</h:panelGrid>
+
+				<!-- remove from worklist -->
+				<p:selectBooleanCheckbox
+					value="#{dialogHandlerAction.stainingPhaseExitDialog.removeFromWorklist}" />
+				<h:outputLabel
+					value="#{msg['dialog.staingingPhaseExit.checkBox.removeFromWorklist']}" />
 			</h:panelGrid>
+
 		</div>
 
 		<div class="buttonContainer">

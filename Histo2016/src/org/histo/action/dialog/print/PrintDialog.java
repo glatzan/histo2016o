@@ -31,7 +31,7 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.CouncilReport;
 import org.histo.template.documents.DiagnosisReport;
-import org.histo.template.documents.TemplateUReport;
+import org.histo.template.documents.CaseCertificate;
 import org.histo.template.ui.documents.CouncilReportUi;
 import org.histo.template.ui.documents.AbstractDocumentUi;
 import org.histo.ui.LazyPDFGuiManager;
@@ -240,22 +240,31 @@ public class PrintDialog extends AbstractDialog {
 
 	public void onPrintNewPdf() {
 
+		logger.debug("Printing PDF");
+		
 		PDFGenerator generator = new PDFGenerator();
 
+		int i = 0;
+		
+		getSelectedTemplate().beginNextTemplateIteration();
+		
 		while (getSelectedTemplate().hasNextTemplateConfiguration()) {
 			DocumentTemplate template = getSelectedTemplate().getNextTemplateConfiguration();
 			PDFContainer pdf = generator.getPDF(template);
 
 			PrintOrder printOrder = new PrintOrder(pdf, template);
 
-			if (!template.isTransientContent()) {
-			}
+//			if (!template.isTransientContent()) {
+//			}
 
 			userHandlerAction.getSelectedPrinter().print(printOrder);
 
+			logger.debug("Printing.... " + i);
 			// contactDAO.addNotificationType(task, contactChooser.getContact(),
 			// AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,
 			// new Date(System.currentTimeMillis()), contactChooser.getCustomAddress());
+			
+			i++;
 		}
 	}
 

@@ -26,7 +26,7 @@
 
 		<p:ajax event="change" process="@this"
 			listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
-			update="pollUpdateTable buttonContainerToUpdate" />
+			update="pollUpdateTable dialogContent:selectBtn dialogContent:faxBtn dialogContent:downloadBtn" />
 
 	</p:selectOneMenu>
 
@@ -73,7 +73,7 @@
 						</p:selectBooleanCheckbox>
 
 						<p:remoteCommand name="updateContactAndRerenderPDF#{outer.index}"
-							update="printSettingsTable pollUpdateTable buttonContainerToUpdate">
+							update="printSettingsTable pollUpdateTable dialogContent:selectBtn dialogContent:faxBtn dialogContent:downloadBtn">
 							<f:actionListener
 								binding="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseContact(chooser)}" />
 							<f:actionListener
@@ -141,7 +141,7 @@
 							<i class="fa fa-gear" style="margin-left: 2px" />
 							<p:ajax event="dialogReturn"
 								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"
-								update="editAddressOver#{outer.index} pollUpdateTable buttonContainerToUpdate" />
+								update="editAddressOver#{outer.index} pollUpdateTable dialogContent:selectBtn dialogContent:faxBtn dialogContent:downloadBtn" />
 						</p:commandLink>
 
 					</h:panelGroup>
@@ -176,7 +176,7 @@
 
 							<p:remoteCommand
 								name="updateOrganizationAndRerenderPDF#{outer.index}"
-								update="printSettingsTable pollUpdateTable buttonContainerToUpdate">
+								update="printSettingsTable pollUpdateTable dialogContent:selectBtn dialogContent:faxBtn dialogContent:downloadBtn">
 								<f:actionListener
 									binding="#{dialogHandlerAction.printDialog.selectedTemplate.onChooseOrganizationOfContact(organizazion)}" />
 								<f:actionListener

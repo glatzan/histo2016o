@@ -11,6 +11,8 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
+import org.histo.ui.task.TaskStatus;
+import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.TransactionStatus;
@@ -52,12 +54,22 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	private SampleService sampleService;
 
 	/**
-	 * Can be set to true if the task should stay in diagnosis phase.
+	 * If true the task will be removed from worklist
 	 */
-	private boolean stayInStainingPhase;
+	private boolean removeFromWorklist;
 
 	/**
-	 * If true the task will be shifted into diagnosis phase
+	 * If true the task will be removed from staining list
+	 */
+	private boolean removeFromStainingList;
+
+	/**
+	 * If true the staining phase of the task will be finished
+	 */
+	private boolean endStainingPhase;
+
+	/**
+	 * If true the task will be shifted to the diagnosis phase
 	 */
 	private boolean goToDiagnosisPhase;
 
@@ -67,7 +79,12 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	 * @param patient
 	 */
 	public void initAndPrepareBean(Task task) {
-		initBean(task);
+		initBean(task, false);
+		prepareDialog();
+	}
+
+	public void initAndPrepareBean(Task task, boolean autoCompleteStainings) {
+		initBean(task, autoCompleteStainings);
 		prepareDialog();
 	}
 
@@ -76,7 +93,7 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 	 * 
 	 * @param task
 	 */
-	public void initBean(Task task) {
+	public void initBean(Task task, boolean autoCompleteStainings) {
 		try {
 			taskDAO.initializeTask(task, false);
 
@@ -85,7 +102,20 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 			else
 				this.goToDiagnosisPhase = true;
 
-			stayInStainingPhase = false;
+			// all slides will be marked as completed by endStainingphase methode
+			if (autoCompleteStainings) {
+				setRemoveFromStainingList(true);
+				setRemoveFromWorklist(true);
+				setEndStainingPhase(true);
+			} else {
+				boolean stainingCompleted = TaskStatus.checkIfStainingCompleted(task);
+
+				setRemoveFromStainingList(stainingCompleted);
+				setRemoveFromWorklist(stainingCompleted);
+				setEndStainingPhase(stainingCompleted);
+			}
+
+			setGoToDiagnosisPhase(true);
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
@@ -98,17 +128,33 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 
 	public void exitPhase() {
 		try {
-			// ending staining pahse
-			sampleService.endStainingPhase(task);
+
+			if (endStainingPhase && removeFromStainingList) {
+				// ending staining pahse
+				sampleService.endStainingPhase(task, removeFromStainingList);
+
+				mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.staining.endAll"), resourceBundle.get(
+						goToDiagnosisPhase ? "growl.staining.endAll.text.true" : "growl.staining.endAll.text.false"));
+			} else {
+				if (removeFromStainingList)
+					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
+							PredefinedFavouriteList.ReStainingList);
+			}
 
 			if (goToDiagnosisPhase) {
 				logger.debug("Adding Task to diagnosis list");
 				favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
 			}
 
-			if (stayInStainingPhase) {
-				logger.debug("Task should stay in staining phase");
-				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StayInStainingList);
+			if (removeFromWorklist) {
+				// only remove from worklist if patient has one active task
+				if (task.getPatient().getTasks().stream().filter(p -> !p.isFinalized()).count() > 1) {
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.error",
+							"growl.error.worklist.remove.moreActive");
+				} else {
+					worklistViewHandlerAction.removeFromWorklist(task.getPatient());
+					worklistViewHandlerAction.onDeselectPatient(true);
+				}
 			}
 
 		} catch (CustomDatabaseInconsistentVersionException e) {

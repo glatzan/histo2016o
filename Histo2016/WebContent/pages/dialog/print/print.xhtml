@@ -101,7 +101,7 @@
 					</h:panelGrid>
 
 					<histo:dynamicMedia height="calc( 100vh - 100px )" width="100%"
-						update="dialogContent:pollUpdateTable dialogContent:buttonContainerToUpdate"
+						update="dialogContent:pollUpdateTable dialogContent:selectBtn dialogContent:faxBtn dialogContent:downloadBtn"
 						pdfContent="#{dialogHandlerAction.printDialog.guiManager.pdfContent}"
 						guiManager="#{dialogHandlerAction.printDialog.guiManager}" />
 				</h:panelGrid>
@@ -116,12 +116,11 @@
 				<h:panelGrid columns="1" styleClass="newTableContainer left">
 				</h:panelGrid>
 
-				<h:panelGrid columns="4" styleClass="newTableContainer right"
-					id="buttonContainerToUpdate">
+				<h:panelGrid columns="4" styleClass="newTableContainer right">
 
 					<!-- select -->
 					<p:commandButton value="#{msg['dialog.print.button.select']}"
-						icon="fa fa-print"
+						icon="fa fa-print" id="selectBtn"
 						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 						rendered="#{dialogHandlerAction.printDialog.selectMode}"
 						actionListener="#{dialogHandlerAction.printDialog.hideAndSelectDialog()}"></p:commandButton>
@@ -131,7 +130,6 @@
 						<!-- print -->
 						<p:commandButton value="#{msg['dialog.print.button.print']}"
 							icon="fa fa-print"
-							disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 							title="#{msg['dialog.print.button.print.text']}"
 							onstart="PF('blockUIWidget').block()"
 							oncomplete="PF('blockUIWidget').unblock()"
@@ -151,13 +149,14 @@
 
 					<!-- fax -->
 					<p:commandButton value="#{msg['dialog.print.button.fax']}"
+						id="faxBtn"
 						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 						icon="fa fa-fax" title="#{msg['dialog.print.button.fax.text']}"
 						rendered="#{dialogHandlerAction.printDialog.faxMode}"
 						actionListener="#{dialogHandlerAction.faxPrintDocumentDialog.initAndPrepareBean(dialogHandlerAction.printDialog.task, dialogHandlerAction.printDialog.renderedContact.contact,dialogHandlerAction.printDialog.pdfContainer)}"></p:commandButton>
 
 					<!-- download -->
-					<p:commandButton
+					<p:commandButton id="downloadBtn"
 						disabled="#{!dialogHandlerAction.printDialog.guiManager.renderPDF.get()}"
 						value="#{msg['dialog.print.button.open']}" icon="fa fa-download"
 						ajax="false" title="#{msg['dialog.print.button.open.text']}">

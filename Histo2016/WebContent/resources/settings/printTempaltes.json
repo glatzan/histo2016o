@@ -5,7 +5,7 @@
 	"content2" : "",
 	"type"	: "U_REPORT",
 	"attributes" : "",
-	"templateName" : "org.histo.template.documents.TemplateUReport",
+	"templateName" : "org.histo.template.documents.CaseCertificate",
 	"defaultOfType" : false,
 	"transientContent" : true,
 	"hidden" : false
@@ -16,7 +16,7 @@
 	"content2" : "",
 	"type"	: "U_REPORT_EMTY",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateUReport",
+	"templateName": "org.histo.template.documents.CaseCertificate",
 	"defaultOfType" : false,
 	"transientContent" : true,
 	"hidden" : false
@@ -27,7 +27,7 @@
 	"content2" : "",
 	"type"	: "U_REPORT_EMTY",
 	"attributes" : "media:keyword:default,tray1",
-	"templateName": "org.histo.template.documents.TemplateUReport",
+	"templateName": "org.histo.template.documents.CaseCertificate",
 	"defaultOfType" : false,
 	"transientContent" : true,
 	"hidden" : false

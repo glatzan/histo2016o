@@ -158,6 +158,8 @@ update diagnosisrevision as r set parent_id = c.parent_id, signatureone_id = c.s
 /* changing sequencenbumber to position*/
 ALTER TABLE diagnosisrevision RENAME COLUMN sequencenumber TO position;
 ALTER TABLE diagnosisrevision_aud RENAME COLUMN sequencenumber TO position;
+ALTER TABLE diagnosisrevision ALTER COLUMN position DROP NOT NULL;
+ALTER TABLE diagnosisrevision_aud ALTER COLUMN position DROP NOT NULL;
 /* adding signature constrains*/
 ALTER TABLE ONLY diagnosisrevision ADD CONSTRAINT diagnosisrevision_signatureone_fkey FOREIGN KEY (signatureone_id) REFERENCES signature(id);
 ALTER TABLE ONLY diagnosisrevision ADD CONSTRAINT diagnosisrevision_signaturetwo_fkey FOREIGN KEY (signaturetwo_id) REFERENCES signature(id);

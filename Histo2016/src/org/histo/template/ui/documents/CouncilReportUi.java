@@ -85,4 +85,14 @@ public class CouncilReportUi extends AbsctractContactUi<CouncilReport> {
 				renderSelectedContact ? getAddressOfFirstSelectedContact() : "");
 		return documentTemplate;
 	}
+
+	/**
+	 * Sets the data for the next print 
+	 */
+	public DocumentTemplate getNextTemplateConfiguration() {
+		documentTemplate.initData(task, selectedCouncil,
+				contactListPointer != null ? contactListPointer.getCustomAddress() : "");
+		documentTemplate.setCopies(contactListPointer != null ? contactListPointer.getCopies() : 1);
+		return documentTemplate;
+	}
 }

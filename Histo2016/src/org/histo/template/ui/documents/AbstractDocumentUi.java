@@ -64,6 +64,9 @@ public class AbstractDocumentUi<T extends DocumentTemplate> implements HasID {
 		this.task = task;
 	}
 	
+	public void beginNextTemplateIteration() {
+	}
+	
 	public boolean hasNextTemplateConfiguration() {
 		return false;
 	}

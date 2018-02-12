@@ -41,7 +41,7 @@ import org.histo.model.patient.Task;
 import org.histo.service.DiagnosisService;
 import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateUReport;
+import org.histo.template.documents.CaseCertificate;
 import org.histo.util.HistoUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.dataList.HasDataList;
@@ -366,7 +366,7 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void createTaskAndPrintUReport() {
 		createTask();
 
-		TemplateUReport uReport = DocumentTemplate
+		CaseCertificate uReport = DocumentTemplate
 				.getTemplateByID(globalSettings.getDefaultDocuments().getTaskCreationDocument());
 
 		if (uReport == null) {

@@ -180,19 +180,16 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 			if (endDiangosisPhase && removeFromDiangosisList) {
 				diagnosisService.endDiagnosisPhase(getTask());
 				mainHandlerAction.sendGrowlMessages(resourceBundle.get("growl.diagnosis.endAll"),
-						resourceBundle.get("growl.diagnosis.endAll.text",
-								goToNotificationPhase ? resourceBundle.get("growl.diagnosis.approved.notification.true")
-										: resourceBundle.get("growl.diagnosis.approved.notification.false")));
+						resourceBundle.get(goToNotificationPhase ? "growl.diagnosis.endAll.text.true"
+								: "growl.diagnosis.endAll.text.false"));
 			} else {
 				// otherwise approve diangosis
 				diagnosisService.approveDiangosis(getSelectedRevision(), goToNotificationPhase);
 
 				mainHandlerAction.sendGrowlMessages(
 						resourceBundle.get("growl.diagnosis.approved", getSelectedRevision().getName()),
-						resourceBundle.get("growl.diagnosis.approved.text",
-								goToNotificationPhase ? resourceBundle.get("growl.diagnosis.approved.notification.true")
-										: resourceBundle.get("growl.diagnosis.approved.notification.false")));
-
+						resourceBundle.get(goToNotificationPhase ? "growl.diagnosis.endAll.text.true"
+								: "growl.diagnosis.endAll.text.false"));
 				if (removeFromDiangosisList)
 					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
 							PredefinedFavouriteList.ReDiagnosisList);

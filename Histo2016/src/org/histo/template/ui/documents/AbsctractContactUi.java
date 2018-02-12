@@ -22,7 +22,12 @@ public class AbsctractContactUi<T extends DocumentTemplate> extends AbstractDocu
 	 * List if true single select mode of contacts is enabled
 	 */
 	protected boolean singleSelect;
-	
+
+	/**
+	 * Pointer for printing all selected contacts
+	 */
+	protected ContactSelector contactListPointer;
+
 	public AbsctractContactUi(T documentTemplate) {
 		super(documentTemplate);
 	}
@@ -86,6 +91,37 @@ public class AbsctractContactUi<T extends DocumentTemplate> extends AbstractDocu
 		} catch (NoSuchElementException e) {
 			return "";
 		}
+	}
+
+	public void beginNextTemplateIteration() {
+		contactListPointer = null;
+	}
+
+	public boolean hasNextTemplateConfiguration() {
+		boolean searchForNextContact = false;
+
+		for (ContactSelector contactSelector : contactList) {
+			if (contactSelector.isSelected()) {
+				// first contact pointer
+				if (contactListPointer == null) {
+					contactListPointer = contactSelector;
+					return true;
+				} else if (searchForNextContact) {
+					contactListPointer = contactSelector;
+					return true;
+				} else if (contactListPointer == contactSelector) {
+					searchForNextContact = true;
+					continue;
+				}
+			}
+		}
+
+		return false;
+
+	}
+
+	public DocumentTemplate getNextTemplateConfiguration() {
+		return null;
 	}
 
 }
