@@ -154,7 +154,6 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 			if (selectedContainer != null) {
 				List<Patient> patient = favouriteListDAO
 						.getPatientFromFavouriteList(selectedContainer.getFavouriteList().getId(), false);
-				System.out.println(patient.size());
 			}
 		}
 
@@ -167,7 +166,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), true,
 					userHandlerAction.getCurrentUser().getSettings().isWorklistSortOrderAsc());
 
-			worklistViewHandlerAction.addWorklist(worklist, true);
+			worklistViewHandlerAction.addWorklist(worklist, true, true);
 		}
 	}
 

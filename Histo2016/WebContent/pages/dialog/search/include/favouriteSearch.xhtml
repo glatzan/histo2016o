@@ -21,27 +21,27 @@
 				sortBy="#{favouriteListContainer.type}" scrollable="true"
 				expandableRowGroups="true" scrollHeight="450"
 				rowKey="#{favouriteListContainer.favouriteList.id}"
-				styleClass="newStyleDataTable" selectionMode="single"
+				styleClass="worklistSearchDialog_FavouriteSearchTable" selectionMode="single"
 				selection="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectedContainer}"
 				value="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.containers}">
 
 				<p:headerRow>
-					<p:column colspan="2">
+					<p:column colspan="3">
 						<h:outputText
 							value="#{msg['dialog.userSettings.favouriteLists.list.'.concat(favouriteListContainer.type)]}" />
 					</p:column>
 				</p:headerRow>
 
-				<p:column headerText="Name" styleClass="columnAutoWidth">
+				<p:column headerText="Name" style="width:30%">
 					<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
 				</p:column>
 
-				<p:column headerText="Kommentar" styleClass="columnAutoWidth">
+				<p:column headerText="Kommentar">
 					<h:outputLabel
 						value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
 				</p:column>
 
-				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">
+				<p:column headerText="#" style="width:10%">
 					<p:commandLink styleClass="noUnderlineAtLink"
 						title="#{msg['dialog.settings.person.list.options.edit']}"
 						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
@@ -59,6 +59,8 @@
 						<i class="fa fa-fw fa-search" />
 					</p:commandLink>
 				</p:column>
+
+				<p:ajax event="rowSelect" update="@form" />
 			</p:dataTable>
 		</h:panelGrid>
 	</p:outputPanel>

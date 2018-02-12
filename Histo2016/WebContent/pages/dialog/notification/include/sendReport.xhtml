@@ -80,25 +80,31 @@
 
 				<h:panelGroup>
 					<!--  archive task and end notification phase -->
-					<p:splitButton value="Auftrag archivieren"
+					<p:splitButton
+						value="#{msg['dialog.notification.tab.sendReport.button.archive']}"
 						rendered="#{!dialogHandlerAction.notificationDialog.generalTab.temporaryNotification and userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
 						onclick="$('#adminForm\\:archiveTaskDialog').click();"
-						icon="fa fa-pencil">
+						icon="fa fa-archive">
 
 						<!-- end notification phase -->
-						<p:menuitem value="Befund abschließen" icon="fa fa-trash"
+						<p:menuitem
+							value="#{msg['dialog.notification.tab.sendReport.button.end']}"
+							icon="fa fa-volume-off"
 							onclick="$('#adminForm\\:endNotificationPhase').click();" />
 					</p:splitButton>
 
 					<!-- end diagnosis phase if other things diagnosis are not approved jet -->
-					<p:splitButton value="B. abschließen"
+					<p:splitButton
+						value="#{msg['dialog.notification.tab.sendReport.button.end']}"
 						rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification or !userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
 						disabled="#{!dialogHandlerAction.notificationDialog.task.taskStatus.editable}"
 						onclick="$('#adminForm\\:endNotificationPhase').click();"
-						icon="fa fa-pencil">
+						icon="fa fa-volume-off">
 
 						<!--  archive task and end notification phase -->
-						<p:menuitem value="Auftrag archivieren" icon="fa fa-trash"
+						<p:menuitem
+							value="#{msg['dialog.notification.tab.sendReport.button.archive']}"
+							icon="fa fa-archive"
 							disabled="#{!userHandlerAction.currentUserHasPermission('TASK_EDIT_ARCHIVE')}"
 							onclick="$('#adminForm\\:archiveTaskDialog').click();" />
 					</p:splitButton>

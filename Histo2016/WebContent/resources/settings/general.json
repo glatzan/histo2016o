@@ -1,6 +1,6 @@
 {
 	"generalSettings": {
-		"offline": false,
+		"offline": true,
 		"workingDirectory": "classpath:templates/print",
 		"phoneRegex": "^\\s*(?:[\\+#]?(\\d{1,3}))?([-. ()\/\\\\]*(\\d*))*?\\s*$"
 	},

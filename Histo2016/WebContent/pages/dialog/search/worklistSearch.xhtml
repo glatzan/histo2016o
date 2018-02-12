@@ -12,15 +12,17 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.worklistsearch.headline']}">
 		</h:outputFormat></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="specificStyle.css" value="specificStyle.css"
+		library="style" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 </h:head>
 
 <h:body styleClass="tabDialog">
 	<h:form id="adminForm">
 
 		<h:outputScript library="scripts" name="disableButtons.js" />
-		
+
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
@@ -39,7 +41,8 @@
 			<p:outputPanel id="navigationTable" styleClass="navigationTable">
 				<c:forEach items="#{dialogHandlerAction.worklistSearchDialog.tabs}"
 					var="tab" varStatus="loop">
-					<p:commandButton value="#{msg[tab.name]}" disabled="#{tab.disabled}"
+					<p:commandButton value="#{msg[tab.name]}"
+						disabled="#{tab.disabled}"
 						styleClass="#{tab eq dialogHandlerAction.worklistSearchDialog.selectedTab ? 'selectedButton' : ''}"
 						actionListener="#{dialogHandlerAction.worklistSearchDialog.onTabChange(tab)}"
 						update="navigationTable dialogContent" />

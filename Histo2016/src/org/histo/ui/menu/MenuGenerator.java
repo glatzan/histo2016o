@@ -387,12 +387,6 @@ public class MenuGenerator {
 			item.setDisabled(true);
 			taskSubMenu.addElement(item);
 
-			// test
-			item = new DefaultMenuItem("Test");
-			item.setIcon("fa fa-dollar");
-			item.setCommand("#{taskHandlerAction.testMemo()}");
-			taskSubMenu.addElement(item);
-
 			// biobank
 			item = new DefaultMenuItem(resourceBundle.get("header.menu.task.biobank"));
 			item.setOnclick(
