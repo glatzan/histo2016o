@@ -16,7 +16,7 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSlideLable;
+import org.histo.template.documents.SlideLable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -58,17 +58,17 @@ public class LabelPrinter extends AbstractPrinter {
 		// printBuffer = new HashMap<String, String>();
 	}
 
-	public void print(TemplateSlideLable tempalte) throws CustomUserNotificationExcepetion {
-		List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();
+	public void print(SlideLable tempalte) throws CustomUserNotificationExcepetion {
+		List<SlideLable> toPrint = new ArrayList<SlideLable>();
 		toPrint.add(tempalte);
 		print(toPrint);
 	}
 
-	public void print(List<TemplateSlideLable> tempaltes) throws CustomUserNotificationExcepetion {
+	public void print(List<SlideLable> tempaltes) throws CustomUserNotificationExcepetion {
 
 		try {
 			FTPClient connection = openConnection();
-			for (TemplateSlideLable documentTemplate : tempaltes) {
+			for (SlideLable documentTemplate : tempaltes) {
 				print(connection, documentTemplate.getFileContent(), generateUnqiueName(6));
 			}
 			closeConnection(connection);
@@ -81,11 +81,11 @@ public class LabelPrinter extends AbstractPrinter {
 
 	public boolean printTestPage() {
 
-		TemplateSlideLable label = DocumentTemplate
+		SlideLable label = DocumentTemplate
 				.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLableTestDocument());
 
 		label.prepareTemplate();
-
+		
 		String toPrint = label.getFileContent();
 
 		if (toPrint == null)

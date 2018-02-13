@@ -1,3 +1,6 @@
+/*
+ * Class for normal table with scrollable body
+ */
 div.contentSpaceContainer {
   padding: 4px ! important;
   font-size: 12px;

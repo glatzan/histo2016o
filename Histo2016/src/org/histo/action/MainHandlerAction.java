@@ -30,7 +30,7 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSlideLable;
+import org.histo.template.documents.SlideLable;
 import org.histo.util.TimeUtil;
 import org.primefaces.context.RequestContext;
 import org.primefaces.push.EventBus;
@@ -118,7 +118,7 @@ public class MainHandlerAction {
 			CupsPrinter cupsPrinter = cupsClient.getPrinter(url);
 			HashMap<String, String> map = new HashMap<>();
 			map.put("document-format", "application/vnd.cups-raw");
-			TemplateSlideLable t = (TemplateSlideLable) DocumentTemplate.getTemplateByID(150);
+			SlideLable t = (SlideLable) DocumentTemplate.getTemplateByID(150);
 			t.initData(new Task(new Patient()), new Slide(), new Date());
 
 			PrintJob printJob = new PrintJob.Builder(t.getFileContent().getBytes()).attributes(map).build();

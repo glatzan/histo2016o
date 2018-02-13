@@ -25,7 +25,7 @@ import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSlideLable;
+import org.histo.template.documents.SlideLable;
 import org.histo.ui.StainingTableChooser;
 import org.histo.ui.task.TaskStatus;
 import org.primefaces.event.SelectEvent;

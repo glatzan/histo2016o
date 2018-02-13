@@ -20,8 +20,10 @@
 			<p:dataTable var="favouriteListContainer" style="width:100%;"
 				sortBy="#{favouriteListContainer.type}" scrollable="true"
 				expandableRowGroups="true" scrollHeight="450"
+				id="favouriteListTable"
 				rowKey="#{favouriteListContainer.favouriteList.id}"
-				styleClass="worklistSearchDialog_FavouriteSearchTable" selectionMode="single"
+				styleClass="worklistSearchDialog_FavouriteSearchTable"
+				selectionMode="single"
 				selection="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectedContainer}"
 				value="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.containers}">
 
@@ -32,36 +34,41 @@
 					</p:column>
 				</p:headerRow>
 
-				<p:column headerText="Name" style="width:30%">
-					<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
+				<p:column
+					headerText="#{msg['dialog.worklistsearch.favouriteList.table.name']}"
+					style="width:30%">
+					<h:outputText value="#{favouriteListContainer.favouriteList.name}"></h:outputText>
 				</p:column>
 
-				<p:column headerText="Kommentar">
-					<h:outputLabel
-						value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
+				<p:column
+					headerText="#{msg['dialog.worklistsearch.favouriteList.table.commentary']}">
+					<h:outputText
+						value="#{favouriteListContainer.favouriteList.commentary}"></h:outputText>
 				</p:column>
 
-				<p:column headerText="#" style="width:10%">
-					<p:commandLink styleClass="noUnderlineAtLink"
-						title="#{msg['dialog.settings.person.list.options.edit']}"
-						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
-						disabled="#{!favouriteListContainer.editable}" process="@this"
-						partialSubmit="true">
-						<p:ajax event="dialogReturn" update="@form" />
-						<i class="fa fa-fw fa-cog" />
-					</p:commandLink>
-
-					<p:commandLink styleClass="noUnderlineAtLink"
+				<p:column
+					headerText="#{msg['dialog.worklistsearch.favouriteList.table.options']}">
+					<p:commandLink
 						title="#{msg['dialog.settings.person.list.options.edit']}"
 						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
 						process="@this" partialSubmit="true">
 						<p:ajax event="dialogReturn" update="@form" />
-						<i class="fa fa-fw fa-search" />
+						<i class="fa fa-fw fa-pencil" />
 					</p:commandLink>
 				</p:column>
 
 				<p:ajax event="rowSelect" update="@form" />
+
+				<p:ajax event="rowDblselect"
+					oncomplete="sumbitOnDblSelect();return false;" />
 			</p:dataTable>
+
+			<p:remoteCommand name="sumbitOnDblSelect">
+				<f:actionListener
+					binding="#{dialogHandlerAction.worklistSearchDialog.favouriteSearchTab.selectAsWorklist()}" />
+				<f:actionListener
+					binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
+			</p:remoteCommand>
 		</h:panelGrid>
 	</p:outputPanel>
 

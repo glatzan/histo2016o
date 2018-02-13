@@ -98,7 +98,7 @@
 	"content2" : "",
 	"type"	: "LABLE",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateSlideLable",
+	"templateName": "org.histo.template.documents.SlideLable",
 	"defaultOfType" : true,
 	"transientContent" : false,
 	"hidden" : false
@@ -109,7 +109,7 @@
 	"content2" : "",
 	"type"	: "TEST_LABLE",
 	"attributes" : "",
-	"templateName": "org.histo.template.documents.TemplateSlideLable",
+	"templateName": "org.histo.template.documents.SlideLable",
 	"defaultOfType" : true,
 	"transientContent" : false,
 	"hidden" : false

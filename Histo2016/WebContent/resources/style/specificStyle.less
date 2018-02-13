@@ -1,4 +1,6 @@
 @import "style.less";
+
+// class for normal table with scrollable tbody
 .printDialog_AdressTable {
 	.dynamicScrollTable (false);
 	tbody {
@@ -26,49 +28,21 @@
 	}
 }
 
-.printDialog_DiagosisTable {
-	.dynamicScrollTable (false);
-	tbody {
-		height: 100px;
-	}
 
-	tr td:nth-child(1) {
-		width: 25px;
-	}
-
-	tr td:nth-child(2) {
-		width: auto;
-	}
-}
-
-.notificationDialog_DiagosisTable {
-	.dynamicScrollTable (false);
-	width: 300px;
-	tbody {
-		height: 100px;
-	}
-
-	tr td:nth-child(1) {
-		width: 25px;
-	}
-
-	tr td:nth-child(2) {
-		width: auto;
-	}
-}
 
 .worklistSearchDialog_FavouriteSearchTable {
-	.dynamicScrollTable (false);
-	width: 99%;
-	tbody {
-		height: 450px;
+	.histoDataTable (true);
+	width: 98%;
+
+	tr td:nth-child(1), th:nth-child(1){
+		width: 30% !important;
 	}
 
-	tr td:nth-child(1) {
-		width: 25px;
+	tr td:nth-child(2), th:nth-child(2) {
+		width: auto !important;
 	}
-
-	tr td:nth-child(2) {
-		width: auto;
+	
+	tr td:nth-child(3), th:nth-child(3) {
+		width: 3% !important;
 	}
 }

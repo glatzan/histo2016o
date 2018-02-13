@@ -139,6 +139,7 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 
 		public boolean initTab() {
 			setWorklistSearch(new WorklistFavouriteSearch());
+			setSelectedContainer(null);
 			return true;
 		}
 

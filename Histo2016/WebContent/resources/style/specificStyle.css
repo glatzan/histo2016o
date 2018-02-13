@@ -1,3 +1,6 @@
+/*
+ * Class for normal table with scrollable body
+ */
 div.contentSpaceContainer {
   padding: 4px ! important;
   font-size: 12px;
@@ -102,174 +105,54 @@ table.contentSpaceContainer > tbody .headline {
 .printDialog_AdressTable tr td:nth-child(5) {
   width: 15px;
 }
-.printDialog_DiagosisTable {
-  width: 100%;
-}
-.printDialog_DiagosisTable thead {
-  display: block;
-  padding: 0px ! important;
-}
-.printDialog_DiagosisTable thead td {
-  border: 1px solid #d3d3d3;
-  background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
-}
-.printDialog_DiagosisTable thead td,
-.printDialog_DiagosisTable thead label {
-  font-size: 14px;
-  font-weight: normal;
-  color: #555555 ! important;
-}
-.printDialog_DiagosisTable tbody {
-  padding: 0px ! important;
-  display: block;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.printDialog_DiagosisTable tbody tr,
-.printDialog_DiagosisTable tbody td {
-  border-width: 0px ! important;
-  border-spacing: 0px;
-}
-.printDialog_DiagosisTable tbody .headline {
-  font-size: 14px;
-  font-weight: bold;
-}
-.printDialog_DiagosisTable tbody tr.alternate_row_background td {
-  background-color: #f2f2f2;
-}
-.printDialog_DiagosisTable tr {
-  width: 100%;
-  display: table;
-}
-.printDialog_DiagosisTable th,
-.printDialog_DiagosisTable td,
-.printDialog_DiagosisTable label {
-  padding: 4px ! important;
-  font-size: 12px;
-  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-  box-shadow: none;
-  font-style: normal;
-  font-variant: normal;
-  text-align: left;
-}
-.printDialog_DiagosisTable .ui-inputfield {
-  box-shadow: none;
-}
-.printDialog_DiagosisTable tbody {
-  height: 100px;
-}
-.printDialog_DiagosisTable tr td:nth-child(1) {
-  width: 25px;
-}
-.printDialog_DiagosisTable tr td:nth-child(2) {
-  width: auto;
-}
-.notificationDialog_DiagosisTable {
-  width: 100%;
-  width: 300px;
-}
-.notificationDialog_DiagosisTable thead {
-  display: block;
-  padding: 0px ! important;
-}
-.notificationDialog_DiagosisTable thead td {
-  border: 1px solid #d3d3d3;
-  background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
-}
-.notificationDialog_DiagosisTable thead td,
-.notificationDialog_DiagosisTable thead label {
-  font-size: 14px;
-  font-weight: normal;
-  color: #555555 ! important;
-}
-.notificationDialog_DiagosisTable tbody {
-  padding: 0px ! important;
-  display: block;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.notificationDialog_DiagosisTable tbody tr,
-.notificationDialog_DiagosisTable tbody td {
-  border-width: 0px ! important;
-  border-spacing: 0px;
-}
-.notificationDialog_DiagosisTable tbody .headline {
-  font-size: 14px;
-  font-weight: bold;
-}
-.notificationDialog_DiagosisTable tbody tr.alternate_row_background td {
-  background-color: #f2f2f2;
-}
-.notificationDialog_DiagosisTable tr {
-  width: 100%;
-  display: table;
-}
-.notificationDialog_DiagosisTable th,
-.notificationDialog_DiagosisTable td,
-.notificationDialog_DiagosisTable label {
-  padding: 4px ! important;
-  font-size: 12px;
-  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-  box-shadow: none;
-  font-style: normal;
-  font-variant: normal;
-  text-align: left;
-}
-.notificationDialog_DiagosisTable .ui-inputfield {
-  box-shadow: none;
-}
-.notificationDialog_DiagosisTable tbody {
-  height: 100px;
-}
-.notificationDialog_DiagosisTable tr td:nth-child(1) {
-  width: 25px;
-}
-.notificationDialog_DiagosisTable tr td:nth-child(2) {
-  width: auto;
-}
 .worklistSearchDialog_FavouriteSearchTable {
   width: 100%;
-  width: 99%;
+  white-space: normal;
+  width: 98%;
 }
-.worklistSearchDialog_FavouriteSearchTable thead {
-  display: block;
-  padding: 0px ! important;
-}
-.worklistSearchDialog_FavouriteSearchTable thead td {
-  border: 1px solid #d3d3d3;
-  background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
-}
-.worklistSearchDialog_FavouriteSearchTable thead td,
-.worklistSearchDialog_FavouriteSearchTable thead label {
-  font-size: 14px;
-  font-weight: normal;
-  color: #555555 ! important;
-}
-.worklistSearchDialog_FavouriteSearchTable tbody {
-  padding: 0px ! important;
-  display: block;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-.worklistSearchDialog_FavouriteSearchTable tbody tr,
-.worklistSearchDialog_FavouriteSearchTable tbody td {
-  border-width: 0px ! important;
-  border-spacing: 0px;
-}
-.worklistSearchDialog_FavouriteSearchTable tbody .headline {
-  font-size: 14px;
-  font-weight: bold;
-}
-.worklistSearchDialog_FavouriteSearchTable tbody tr.alternate_row_background td {
-  background-color: #f2f2f2;
-}
-.worklistSearchDialog_FavouriteSearchTable tr {
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-header table thead tr {
   width: 100%;
   display: table;
 }
-.worklistSearchDialog_FavouriteSearchTable th,
-.worklistSearchDialog_FavouriteSearchTable td,
-.worklistSearchDialog_FavouriteSearchTable label {
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-header table thead tr td {
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body table thead {
+  display: none;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody {
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr {
+  width: 100%;
+  display: table;
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr td {
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-datatable-even > td {
+  background-color: #f2f2f2;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight td,
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight label {
+  background-color: #fcf1b8 !important;
+  font-weight: bold !important;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover td,
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover label {
+  background-color: #fcf1b8 !important;
+}
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body th,
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body td,
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body label {
   padding: 4px ! important;
   font-size: 12px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
@@ -278,15 +161,21 @@ table.contentSpaceContainer > tbody .headline {
   font-variant: normal;
   text-align: left;
 }
-.worklistSearchDialog_FavouriteSearchTable .ui-inputfield {
+.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body .ui-inputfield {
   box-shadow: none;
 }
-.worklistSearchDialog_FavouriteSearchTable tbody {
-  height: 450px;
+.worklistSearchDialog_FavouriteSearchTable a {
+  text-decoration: none !important;
 }
-.worklistSearchDialog_FavouriteSearchTable tr td:nth-child(1) {
-  width: 25px;
+.worklistSearchDialog_FavouriteSearchTable tr td:nth-child(1),
+.worklistSearchDialog_FavouriteSearchTable th:nth-child(1) {
+  width: 30% !important;
 }
-.worklistSearchDialog_FavouriteSearchTable tr td:nth-child(2) {
-  width: auto;
+.worklistSearchDialog_FavouriteSearchTable tr td:nth-child(2),
+.worklistSearchDialog_FavouriteSearchTable th:nth-child(2) {
+  width: auto !important;
+}
+.worklistSearchDialog_FavouriteSearchTable tr td:nth-child(3),
+.worklistSearchDialog_FavouriteSearchTable th:nth-child(3) {
+  width: 3% !important;
 }

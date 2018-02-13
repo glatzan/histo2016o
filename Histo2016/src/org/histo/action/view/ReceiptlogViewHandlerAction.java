@@ -28,7 +28,7 @@ import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSlideLable;
+import org.histo.template.documents.SlideLable;
 import org.histo.ui.StainingTableChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -181,7 +181,7 @@ public class ReceiptlogViewHandlerAction {
 				break;
 			case PRINT:
 
-				TemplateSlideLable slideLabel = DocumentTemplate
+				SlideLable slideLabel = DocumentTemplate
 						.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLabelDocument());
 
 				if (slideLabel == null) {
@@ -191,14 +191,14 @@ public class ReceiptlogViewHandlerAction {
 
 				logger.debug("Printing labes for selected slides");
 
-				List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();
+				List<SlideLable> toPrint = new ArrayList<SlideLable>();
 
 				for (StainingTableChooser<?> stainingTableChooser : list) {
 					if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
 
 						Slide slide = (Slide) stainingTableChooser.getEntity();
 
-						TemplateSlideLable tmp = (TemplateSlideLable) slideLabel.clone();
+						SlideLable tmp = (SlideLable) slideLabel.clone();
 						tmp.initData(task, slide, new Date(System.currentTimeMillis()));
 						tmp.fillTemplate();
 						toPrint.add(tmp);
@@ -275,7 +275,7 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void printLableForSlide(Slide slide) {
 
-		TemplateSlideLable slideLabel = DocumentTemplate
+		SlideLable slideLabel = DocumentTemplate
 				.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLabelDocument());
 
 		if (slideLabel == null) {

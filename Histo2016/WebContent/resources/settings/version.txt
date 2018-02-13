@@ -38,8 +38,6 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
--> label.prepareTemplate(); testen test prints label + printer
--> slides Label pritning -> TemplateSlideLable tmp = (TemplateSlideLable) slideLabel.clone(); (notwening) ggf wird content nicht geladen
 -> save on pdf download
 -> ggf wenn contact vorhaden, speichern des ausdruckes unter dem kontakt (alte version der print methode anschauen)=
 -> contentForm:contentPanel fest, das jede seite diese hat, udpate im header von contentForm:contentPanel anstelle von contentform

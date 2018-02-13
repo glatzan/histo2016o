@@ -12,7 +12,7 @@ import org.histo.template.DocumentTemplate;
 import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
 
-public class TemplateSlideLable extends DocumentTemplate {
+public class SlideLable extends DocumentTemplate {
 
 	private Slide slide;
 	private Date date;
@@ -24,10 +24,15 @@ public class TemplateSlideLable extends DocumentTemplate {
 
 	}
 
-	public void fillTemplate() {
-
+	@Override
+	public void prepareTemplate() {
 		if (!HistoUtil.isNullOrEmpty(getContent()) && HistoUtil.isNullOrEmpty(getFileContent()))
 			setFileContent(FileUtil.getContentOfFile(getContent()));
+
+	}
+
+	public void fillTemplate() {
+		prepareTemplate();
 
 		if (HistoUtil.isNotNullOrEmpty(getFileContent())) {
 			String result = getFileContent().replaceAll("%slideNumber%",
