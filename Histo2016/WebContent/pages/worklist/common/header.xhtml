@@ -235,7 +235,7 @@
 
 			<!-- restore Task -->
 			<p:commandButton id="restoreTaskBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.restoreTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{restoreTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"

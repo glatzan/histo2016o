@@ -342,7 +342,7 @@ public class GlobalEditViewHandler {
 					} else {
 						// no task was found
 						logger.debug("No task with the given id found");
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.task", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.task", "general.blank",
 								FacesMessage.SEVERITY_ERROR);
 					}
 
@@ -355,9 +355,7 @@ public class GlobalEditViewHandler {
 							!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_CLINIC));
 
 					if (patient != null) {
-						if (globalSettings.getClinicJsonHandler().updatePatientFromClinicJson(patient))
-							genericDAO.savePatientData(patient, "log.patient.search.update");
-
+					
 						logger.debug("Found patient " + patient + " and adding to currentworklist");
 
 						worklistViewHandlerAction.addPatientToWorkList(patient, true, true);
@@ -374,7 +372,7 @@ public class GlobalEditViewHandler {
 
 					} else {
 						// no patient was found for piz
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.piz", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.piz", "general.blank",
 								FacesMessage.SEVERITY_ERROR);
 
 						logger.debug("No Patient found with piz " + quickSerach);
@@ -396,7 +394,7 @@ public class GlobalEditViewHandler {
 					} else {
 						// no slide was found
 						logger.debug("No slide with the given id found");
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.slide", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.slide", "general.blank",
 								FacesMessage.SEVERITY_ERROR);
 					}
 
@@ -405,7 +403,6 @@ public class GlobalEditViewHandler {
 					// name, surename; name surename
 					String[] arr = quickSerach.split(", ");
 
-					System.out.println(arr[0] + arr[1]);
 					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[0], arr[1], "",
 							null);
 
@@ -423,6 +420,8 @@ public class GlobalEditViewHandler {
 							null);
 				} else {
 					logger.debug("No search match found");
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.general", "general.blank",
+							FacesMessage.SEVERITY_ERROR);
 				}
 			}
 

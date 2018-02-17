@@ -396,6 +396,10 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		return result != null ? result : new ArrayList<>();
 	}
+	
+	public List<Patient> getPatientsByNameSurnameDate(String name, String firstName, Date date) {
+		return getPatientsByNameSurnameDateExcludePiz(name, firstName, date, null);
+	}
 
 	/**
 	 * Searches for an taskID and returns the patient whom the task belongs to

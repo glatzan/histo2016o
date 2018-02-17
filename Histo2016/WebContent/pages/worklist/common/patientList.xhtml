@@ -35,7 +35,7 @@
 			function submitQuickSearch(event) {
 				
 				if (event.keyCode == 13 || event.keyCode == 10) {
-						$('#navigationForm\\:submitQuickSearchBtn').click();
+					PF('submitQuickSearchBtn').jq.click();
 					return true;
 				}
 
@@ -58,13 +58,14 @@
 		</h:panelGroup>
 
 		<p:commandButton id="submitQuickSearchBtn"
+			widgetVar="submitQuickSearchBtn"
 			actionListener="#{globalEditViewHandler.quickSearch()}"
 			oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight')"
 			update="navigationForm:patientList navigationForm:searchField contentForm headerForm"
 			icon="fa fa-mail-forward">
 			<p:ajax event="dialogReturn"
 				oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight')"
-				update="navigationForm:patientList navigationForm:searchField  contentForm headerForm" />
+				update="navigationForm:patientList navigationForm:searchField contentForm headerForm @this" />
 		</p:commandButton>
 
 	</h:panelGrid>

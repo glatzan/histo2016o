@@ -197,7 +197,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 						|| (getPatientSurname() != null && !getPatientSurname().isEmpty())
 						|| getPatientBirthday() != null) {
 
-					resultArr.addAll(patientService.searhcForPatient(getPatientName(), getPatientSurname(),
+					resultArr.addAll(patientService.searchForPatient(getPatientName(), getPatientSurname(),
 							getPatientBirthday(), isSearchLocalDatabaseOnly()));
 				}
 

@@ -14,12 +14,14 @@ import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.CouncilReport;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Configurable
 public class CouncilReportUi extends AbsctractContactUi<CouncilReport> {
 
 	/**
@@ -74,7 +76,10 @@ public class CouncilReportUi extends AbsctractContactUi<CouncilReport> {
 		}
 
 		getContactList().add(new ContactSelector(task,
-				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+				new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
+		
+//		getContactList().add(new ContactSelector(task,
+//				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
 	}
 
 	/**

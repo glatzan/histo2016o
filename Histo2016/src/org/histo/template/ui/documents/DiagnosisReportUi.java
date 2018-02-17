@@ -16,12 +16,14 @@ import org.histo.template.documents.DiagnosisReport;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.pdf.PDFGenerator;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Configurable
 public class DiagnosisReportUi extends AbsctractContactUi<DiagnosisReport> {
 
 	/**
@@ -64,12 +66,21 @@ public class DiagnosisReportUi extends AbsctractContactUi<DiagnosisReport> {
 			// setting other contacts (physicians)
 			getContactList().addAll(ContactSelector.factory(task));
 
+			System.out.println(resourceBundle);
+			
 			getContactList().add(new ContactSelector(task,
-					new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+					new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
 
 			getContactList().add(new ContactSelector(task,
-					new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()), ContactRole.NONE, true,
+					new Person("Leere Adresse", new Contact()), ContactRole.NONE, true,
 					true));
+			
+//			getContactList().add(new ContactSelector(task,
+//					new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+//
+//			getContactList().add(new ContactSelector(task,
+//					new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()), ContactRole.NONE, true,
+//					true));
 		} else
 			setContactList(contactList);
 

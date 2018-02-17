@@ -74,11 +74,9 @@ public class PatientService {
 
 		// add patient from the clinic-backend, get all data of this
 		// patient, piz search is more specific
-		if (!patient.getPiz().isEmpty()) {
+		if (!patient.getPiz().isEmpty() && !globalSettings.getProgramSettings().isOffline()) {
 			logger.debug("Getting data from pdv for patient " + patient.getPiz());
-			Patient clinicPatient;
-			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(patient.getPiz());
-			patient.copyIntoObject(clinicPatient);
+			globalSettings.getClinicJsonHandler().updatePatientFromClinicJson(patient);
 		}
 
 		// patient not in database, is new patient from database
@@ -229,7 +227,7 @@ public class PatientService {
 						cP.setInDatabase(false);
 						result.add(cP);
 					}
-					
+
 					return false;
 				}
 			}).map(cp -> cp.getPiz()).collect(Collectors.toList());
@@ -244,5 +242,63 @@ public class PatientService {
 		result.addAll(histoPatients);
 
 		return result;
+	}
+
+	/**
+	 * Searches for patients in local and clinic database. Does not auto update all
+	 * local patient, does save changes if both clinic patien and local patient was
+	 * found
+	 * 
+	 * @param name
+	 * @param surname
+	 * @param birthday
+	 * @param localDatabaseOnly
+	 * @return
+	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
+	public List<Patient> searchForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
+			throws CustomExceptionToManyEntries, CustomNullPatientExcepetion,
+			CustomDatabaseInconsistentVersionException {
+
+		ArrayList<Patient> result = new ArrayList<Patient>();
+
+		List<Patient> histoPatients = patientDao.getPatientsByNameSurnameDate(name, surname, birthday);
+
+		List<Patient> clinicPatients = new ArrayList<Patient>();
+
+		if (!localDatabaseOnly && !globalSettings.getProgramSettings().isOffline()) {
+			clinicPatients = globalSettings.getClinicJsonHandler()
+					.getPatientsFromClinicJson("?name=" + name + (surname != null ? ("&vorname=" + surname) : "")
+							+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+		}
+
+		for (Patient hPatient : histoPatients) {
+			result.add(hPatient);
+			hPatient.setInDatabase(true);
+
+			// udating patients in histodatabase
+			for (Patient cPatient : clinicPatients) {
+				if (hPatient.getPiz() != null && hPatient.getPiz().equals(cPatient.getPiz())) {
+					clinicPatients.remove(cPatient);
+
+					// only save if update is performed
+					if (hPatient.copyIntoObject(cPatient)) {
+						try {
+							logger.debug("Patient update, saving patient data");
+							genericDAO.savePatientData(hPatient, "log.patient.search.update");
+						} catch (Exception e) {
+						}
+					}
+				}
+			}
+		}
+
+		// adding other patients which are not in local database
+		result.addAll(clinicPatients);
+
+		return result;
+
 	}
 }

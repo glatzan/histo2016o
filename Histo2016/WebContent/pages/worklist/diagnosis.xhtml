@@ -13,6 +13,19 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
+	<script type="text/javascript">
+		// disables the autofocus for the caseHistoryOverlayplpanel 
+		(function() {
+			var proxied = PrimeFaces.widget.OverlayPanel.prototype.applyFocus;
+			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
+				if (this.jq.hasClass("histoOverlayPanel"))
+					return;
+				return proxied.apply(this, arguments);
+			};
+		})();
+	</script>
+
+
 	<p:panel style="width: 80%" styleClass="newTableContainer">
 
 		<h:outputLabel value="#{msg['body.diagnosis.headline']}"
