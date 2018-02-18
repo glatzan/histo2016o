@@ -116,17 +116,21 @@ public class PatientService {
 			if (patient == null && localDatabaseOnly)
 				return null;
 
-			Patient pdvPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(piz);
-			if (patient != null) {
-				if (patient.copyIntoObject(pdvPatient)) {
-					logger.debug("Patient found in database, updating with pdv data");
-					genericDAO.savePatientData(patient, "log.patient.search.update");
+			if (!globalSettings.getProgramSettings().isOffline()) {
+				Patient pdvPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(piz);
+
+				if (patient != null) {
+					if (patient.copyIntoObject(pdvPatient)) {
+						logger.debug("Patient found in database, updating with pdv data");
+						genericDAO.savePatientData(patient, "log.patient.search.update");
+					}
+					return patient;
+				} else {
+					logger.debug("Patient not in database, returning pdv data");
+					return pdvPatient;
 				}
+			} else
 				return patient;
-			} else {
-				logger.debug("Patient not in database, returning pdv data");
-				return pdvPatient;
-			}
 		}
 		return null;
 	}
