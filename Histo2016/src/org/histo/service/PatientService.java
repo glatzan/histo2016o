@@ -2,7 +2,9 @@ package org.histo.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -17,6 +19,7 @@ import org.histo.util.StreamUtils;
 import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
@@ -24,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
+@Scope("session")
 @Getter
 @Setter
 public class PatientService {
@@ -248,6 +252,11 @@ public class PatientService {
 		return result;
 	}
 
+	public List<Patient> searchForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
+			throws CustomDatabaseInconsistentVersionException, CustomNullPatientExcepetion {
+		return searchForPatient(name, surname, birthday, localDatabaseOnly, new AtomicBoolean(false));
+	}
+
 	/**
 	 * Searches for patients in local and clinic database. Does not auto update all
 	 * local patient, does save changes if both clinic patien and local patient was
@@ -262,9 +271,9 @@ public class PatientService {
 	 * @throws CustomNullPatientExcepetion
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public List<Patient> searchForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
-			throws CustomExceptionToManyEntries, CustomNullPatientExcepetion,
-			CustomDatabaseInconsistentVersionException {
+	public List<Patient> searchForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly,
+			AtomicBoolean toManyEntriesInClinicDatabase)
+			throws CustomNullPatientExcepetion, CustomDatabaseInconsistentVersionException {
 
 		ArrayList<Patient> result = new ArrayList<Patient>();
 
@@ -273,20 +282,26 @@ public class PatientService {
 		List<Patient> clinicPatients = new ArrayList<Patient>();
 
 		if (!localDatabaseOnly && !globalSettings.getProgramSettings().isOffline()) {
-			clinicPatients = globalSettings.getClinicJsonHandler()
-					.getPatientsFromClinicJson("?name=" + name + (surname != null ? ("&vorname=" + surname) : "")
-							+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+			try {
+				clinicPatients = globalSettings.getClinicJsonHandler().getPatientsFromClinicJson("?name=" + name
+						+ (surname != null ? ("&vorname=" + surname) : "")
+						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+			} catch (CustomExceptionToManyEntries e) {
+				toManyEntriesInClinicDatabase.set(true);
+				clinicPatients = new ArrayList<Patient>();
+			}
 		}
 
 		for (Patient hPatient : histoPatients) {
 			result.add(hPatient);
 			hPatient.setInDatabase(true);
 
-			// udating patients in histodatabase
-			for (Patient cPatient : clinicPatients) {
+			Iterator<Patient> i = clinicPatients.iterator();
+			while (i.hasNext()) {
+				Patient cPatient = i.next();
 				if (hPatient.getPiz() != null && hPatient.getPiz().equals(cPatient.getPiz())) {
-					clinicPatients.remove(cPatient);
-
+					logger.debug("found in local database " + cPatient.getPerson().getFullNameAndTitle());
+					i.remove();
 					// only save if update is performed
 					if (hPatient.copyIntoObject(cPatient)) {
 						try {
@@ -295,10 +310,13 @@ public class PatientService {
 						} catch (Exception e) {
 						}
 					}
+					break;
 				}
 			}
+
 		}
 
+		clinicPatients.stream().forEach(p -> p.setInDatabase(false));
 		// adding other patients which are not in local database
 		result.addAll(clinicPatients);
 

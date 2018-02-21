@@ -183,7 +183,7 @@
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
 					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
-				
+
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
@@ -223,6 +223,7 @@
 				style="border: 1px solid; width:90%;display:block; text-align:center; background: linear-gradient(90deg, #fcf1b8 #{dialogHandlerAction.notificationDialog.sendTab.progressPercent}%, transparent 0%);margin: 0px auto;" />
 
 			<p:poll autoStart="false" widgetVar="ajaxProgressPoll"
+				partialSubmit="true" process="@this"
 				stop="#{dialogHandlerAction.notificationDialog.sendTab.notificationCompleted}"
 				update="progressLable summaryTable" interval="1" />
 		</h:panelGrid>
@@ -248,7 +249,6 @@
 					<f:selectItems value="#{globalSettings.printerList}" var="printer"
 						itemLabel="#{printer.name}" itemValue="#{printer}" />
 
-					<p:ajax event="change" process="@form" update="@form"></p:ajax>
 				</p:selectOneMenu>
 
 			</h:panelGrid>

@@ -14,6 +14,7 @@ import org.histo.dao.PhysicianDAO;
 import org.histo.model.Physician;
 import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
@@ -21,6 +22,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
+@Scope("session")
 @Getter
 @Setter
 public class PhysicianService {

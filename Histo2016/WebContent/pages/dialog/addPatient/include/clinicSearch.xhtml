@@ -158,15 +158,18 @@
 		<h:panelGrid columns="2" style="width:100%"
 			styleClass="newTableContainer">
 
-			<h:panelGrid columns="1" styleClass="newTableContainer left">
+			<h:panelGrid columns="1" styleClass="newTableContainer left"
+				id="toManyMatches">
 				<h:outputLabel value="#{msg['dialog.addPatient.toManyResults']}"
-					id="toManyMatches" style="color:red"
+					style="color:red"
 					rendered="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.toManyMatchesInClinicDatabase}" />
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="newTableContainer right" id="buttonContainer">
+			<h:panelGrid columns="2" styleClass="newTableContainer right"
+				id="buttonContainer">
 				<!-- Add button -->
-				<p:commandButton value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem.listItem.inDatabase ? msg['dialog.addPatient.add.button.invoke'] : msg['dialog.addPatient.add.button.add']}"
+				<p:commandButton
+					value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem.listItem.inDatabase ? msg['dialog.addPatient.add.button.invoke'] : msg['dialog.addPatient.add.button.add']}"
 					widgetVar="clinicSearchBtn" id="submitAddButton"
 					disabled="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem eq null}"
 					icon="fa fa-fw fa-user-plus"
