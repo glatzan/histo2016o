@@ -29,6 +29,7 @@ import org.histo.util.notification.NotificationExecutor;
 import org.histo.util.notification.NotificationFeedback;
 import org.histo.util.pdf.PDFGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -39,6 +40,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
+@Scope("session")
 @Getter
 @Setter
 public class NotificationService {

@@ -38,6 +38,9 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
+-> patienten löschen
+-> nachbefund erstellen sobald nachfärbung angefordert wird
+-> Sendebericht wird im befunddialog nicht richtig angezeigt
 -> suche mit umlauten -> daniel
 -> suche mit umlauten in quick search regex alpha (erkennt kein ö usw)
 -> beim ausschalten der aktuallisierung für ärzte geht dsa einloggen nicht mehr
@@ -47,7 +50,6 @@ Next Changes:
 -> ggf wenn contact vorhaden, speichern des ausdruckes unter dem kontakt (alte version der print methode anschauen)=
 -> contentForm:contentPanel fest, das jede seite diese hat, udpate im header von contentForm:contentPanel anstelle von contentform
 
--> DiagnosisPhaseExitDialog generierung eines abschließenden Berichtes, background thread
 -> vortschritt im sende dialog
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
@@ -107,6 +109,10 @@ Graphic Changes
 + = added
 - = removed
 
++v 1.3.3 (21.02.2018)
++++*: Patientensuche erzeugt keine doppelten Patienten mehr
++++*: Kleinen Fehler beim Auswählen eines Druckers im Benachrichtigungs-Dialog behoben.
+
 +v 1.3.2 (18.02.2018)
 +++!: Dialog zum dearchivieren eines Auftrages wieder funktionstüchtig.
 ++++: Ein Grund beim dearchivieren muss angeben werden.
@@ -115,7 +121,6 @@ Graphic Changes
 SQL:
 INSERT INTO listitem VALUES (102, false, 0, 'TASK_RESTORE', 'Rechtschreibkorrekturen');
 INSERT INTO listitem VALUES (103, false, 1, 'TASK_RESTORE', 'Diagnoserevision');
-
  
 +v 1.3.1 (14.02.2017)
 +++!: Etiketten können wieder ausgedruckt werden.
