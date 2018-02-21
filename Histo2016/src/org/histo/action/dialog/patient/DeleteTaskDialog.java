@@ -93,7 +93,6 @@ public class DeleteTaskDialog extends AbstractDialog {
 			taskDAO.lock(getTask().getParent());
 
 		} catch (Exception e) {
-			System.out.println("0" + e.getClass() + " cupu");
 			onDatabaseVersionConflict();
 		}
 	}

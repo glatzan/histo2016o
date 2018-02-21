@@ -95,6 +95,16 @@ public class PatientService {
 			genericDAO.savePatientData(patient, "log.patient.search.update");
 		}
 	}
+	
+	/**
+	 * Removes a patient without tasks from local database
+	 * @param patient
+	 */
+	public void removePatient(Patient patient) {
+		if(patient.getTasks().isEmpty()) {
+			genericDAO.deletePatientData(patient, "log.patient.remove", patient);
+		}
+	}
 
 	/**
 	 * Returns a Patient by the given piz. If localDatabaseOnly is true no pdv

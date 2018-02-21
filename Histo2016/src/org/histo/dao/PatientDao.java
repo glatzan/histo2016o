@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
@@ -23,10 +24,12 @@ import org.histo.action.dialog.worklist.WorklistSearchDialog.ExtendedSearchData;
 import org.histo.config.enums.Eye;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Person;
+import org.histo.model.log.Log;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
+import org.histo.model.user.HistoUser;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -500,5 +503,4 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		return result;
 	}
-
 }

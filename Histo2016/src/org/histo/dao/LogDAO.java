@@ -64,6 +64,27 @@ public class LogDAO extends AbstractDAO implements Serializable {
 		getSession().createQuery(delete).executeUpdate();
 	}
 
+	/**
+	 * Removes all Logs for a Patient
+	 * 
+	 * @param patient
+	 */
+	public void deletePatientLogs(Patient patient) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// create delete
+		CriteriaDelete<Log> delete = qb.createCriteriaDelete(Log.class);
+
+		// set the root class
+		Root<Log> e = delete.from(Log.class);
+
+		// set where clause
+		delete.where(qb.equal(e.get("patient_id"), patient.getId()));
+
+		// perform update
+		getSession().createQuery(delete).executeUpdate();
+	}
+
 	public void getDiagnosisRevisions(Diagnosis diagnosis) {
 		AuditReader reader = AuditReaderFactory.get(getSession());
 
@@ -124,9 +145,10 @@ public class LogDAO extends AbstractDAO implements Serializable {
 		criteria.addOrder(Order.desc("id"));
 		criteria.setFirstResult(page * count);
 		criteria.setMaxResults(count);
-		
+
 		List<Log> list = criteria.list();
 
 		return list;
 	}
+
 }

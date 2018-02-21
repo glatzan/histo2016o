@@ -110,6 +110,14 @@
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
+			
+				<!-- Edit Patient data -->
+			<p:commandButton id="removePatient" style="display:none"
+				actionListener="#{removePatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+				<p:ajax event="dialogReturn"
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
+					update="navigationForm:patientList contentForm" />
+			</p:commandButton>
 
 			<!-- *************** Patient Menu *************** -->
 
