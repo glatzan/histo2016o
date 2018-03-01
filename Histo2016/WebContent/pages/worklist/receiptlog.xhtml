@@ -528,15 +528,21 @@
 					<h:panelGroup rendered="#{stainingRow.blockType}"
 						style="float: right">
 						<!-- ********** New Staining Button ********** -->
-						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
-							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
-							<i class="fa fa-fw fa-paint-brush"></i>
-							<p:ajax event="dialogReturn"
-								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-								update="navigationForm:patientList contentForm:contentPanel headerForm" />
-						</p:commandLink>
+						<h:panelGroup>
+							<p:commandLink title="#{msg['body.statiningView.newStaining']}"
+								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+								actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
+								<i class="fa fa-fw fa-paint-brush"></i>
+								<p:ajax event="dialogReturn"
+									listener="#{receiptlogViewHandlerAction.onSelectStainingDialogReturn}"
+									oncomplete="updateTaskDataOnAddSlideReturn();" />
+							</p:commandLink>
+							<!-- update after dialog return -->
+							<p:remoteCommand name="updateTaskDataOnAddSlideReturn"
+								update="navigationForm:patientList contentForm:contentPanel headerForm"
+								actionListener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
+								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane');" />
+						</h:panelGroup>
 						<!-- ********** Delete Button ********** -->
 						<p:commandLink
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"

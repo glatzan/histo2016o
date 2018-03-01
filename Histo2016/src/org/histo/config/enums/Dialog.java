@@ -6,7 +6,7 @@ package org.histo.config.enums;
  */
 public enum Dialog {
 	
-	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1024, 600, false, false, true), // 16:9
+	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1280, 720, false, false, true), // 16:9
 	PATIENT_ADD("/pages/dialog/addPatient/addPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_EXTERNAL_CONFIRM("/pages/dialog/addPatient/confirmExternalPatient", null, 640, 360, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,480, 272, false, false, true), 
@@ -24,7 +24,7 @@ public enum Dialog {
 	FAVOURITE_LIST_ADD("/pages/dialog/task/favouriteLists/addFavouriteList", null, 640, 360, false, false, true),// 16:9
 	SLIDE_OVERVIEW("/pages/dialog/task/staining/slideOverview", null, 1024, 600, false, false, true), // 16:9
 	SLIDE_NAMING("/pages/dialog/task/slideNaming", null,430, 270, false, false, true), 
-	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
+	SLIDE_CREATE("/pages/dialog/task/staining/addSlide", null, 858, 484, false, false, true),// 16:9
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/task/diagnosisRecordOverwrite", null, 480, 272, false, false, true), // 16:9
 	CONTACTS("/pages/dialog/contact/contacts", null, 1024, 600, false, false, true), // 16:9
 	CONTACTS_NOTIFICATION("/pages/dialog/contact/contactNotification", null, 858, 484, false, false, true), // 16:9

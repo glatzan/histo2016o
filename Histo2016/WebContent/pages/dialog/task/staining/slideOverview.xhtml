@@ -29,7 +29,8 @@
 
 		<div class="dialogContent">
 
-			<p:dataTable var="stainingRow" styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
+			<p:dataTable var="stainingRow"
+				styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
 				value="#{dialogHandlerAction.slideOverviewDialog.flatTaskEntityList}"
 				scrollable="true" scrollHeight="480" rowIndexVar="index">
 
@@ -180,9 +181,12 @@
 							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
 							<i class="fa fa-fw fa-paint-brush"></i>
 							<p:ajax event="dialogReturn"
-								listener="#{dialogHandlerAction.slideOverviewDialog.updateData()}"
-								update="@form" />
+								listener="#{receiptlogViewHandlerAction.onSelectStainingDialogReturn}"
+								oncomplete="updateDataOnAddSlideReturn()" />
 						</p:commandLink>
+						<!-- update after dialog return -->
+						<p:remoteCommand name="updateDataOnAddSlideReturn" update="@form"
+							actionListener="#{dialogHandlerAction.slideOverviewDialog.updateData()}" />
 					</h:panelGroup>
 
 					<!-- Staining -->

@@ -70,9 +70,18 @@
 	}
 }
 
+.defaultHistoDataTable {
+	.histoDataTable (true);
+}
+
 .histoDataTable(@colorRow: true){
 	width: 100%;
 	white-space: normal;
+	
+	// hiding focus 
+	:focus {
+    	outline:none !important;
+	}
 	
 	// header
 	div.ui-datatable-scrollable-header{
@@ -199,3 +208,37 @@ table.contentSpaceContainer {
 	}
 }
 
+/* Accordion style */
+div.contentAccordionPannel{
+	
+	// header
+	div.ui-accordion-header{
+		padding-top: 2px;
+		padding-bottom: 2px;
+		border: 1px solid #d3d3d3;
+		border-radius: 0px !important;
+	}
+	
+	// selected header background
+	div.ui-accordion-header.ui-state-active{
+		background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x !important;
+    	font-weight: normal;
+    	color: #555555;
+	}
+	
+	// body padding
+	div.ui-accordion-content{
+		padding: 0px;
+		
+		table > tbody > tr > td{
+			padding: 0px;
+			border: none ! important;
+			border-spacing: 0px ! important;
+		}
+	}
+	
+	// hiding focus 
+	:focus {
+    	outline:none !important;
+	}
+}

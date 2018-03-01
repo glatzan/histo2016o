@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.addSlide.Headline']}" /></title>
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputStylesheet name="specificStyle.css" value="specificStyle.css"
+		library="style" />
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
+</h:head>
+
+
+<h:body styleClass="contentInputDialog">
+	<h:form id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel value="#{msg['dialog.addSlide.Headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent">
+
+			<p:accordionPanel styleClass="contentAccordionPannel"
+				style="height:320px"
+				value="#{dialogHandlerAction.createSlidesDialog.container}"
+				var="container">
+				<p:tab title="#{container.type}">
+					<h:panelGrid columns="2" cellpadding="5">
+						<p:dataTable var="staining" styleClass="addSlide_StainingTable"
+							selectionMode="multiple" rowKey="#{staining.id}"
+							selection="#{container.selectedPrototypes}" scrollable="true"
+							scrollHeight="250" value="#{container.prototpyes}">
+							<p:column>
+								<h:outputText value="#{staining.name}" />
+							</p:column>
+
+							<p:ajax event="rowSelect" update=":dialogContent:buttonContainer"></p:ajax>
+							<p:ajax event="rowUnselect"
+								update=":dialogContent:buttonContainer"></p:ajax>
+						</p:dataTable>
+					</h:panelGrid>
+				</p:tab>
+			</p:accordionPanel>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable" rendered="#{!dialogHandlerAction.createSlidesDialog.selectMode}"
+				columnClasses="columnLabelContainer100," id="commentaryTable">
+				<!-- silde commentary -->
+				<h:outputLabel value="#{msg['dialog.addSlide.commentray']}" />
+				<p:selectOneMenu style="width: 90%"
+					value="#{dialogHandlerAction.createSlidesDialog.commentary}"
+					editable="true">
+
+					<f:selectItems
+						value="#{dialogHandlerAction.createSlidesDialog.slideCommentary}"
+						var="commentary" itemLabel="#{commentary.value}"
+						itemValue="#{commentary.value}" />
+
+				</p:selectOneMenu>
+
+				<!-- is restaining -->
+				<h:panelGroup>
+					<h:outputLabel value="#{msg['dialog.addSlide.restaining']}" id="retainingText" />
+					<p:tooltip for="retainingText">
+						<h:outputLabel value="#{msg['dialog.addSlide.restaining.text']}" />
+					</p:tooltip>
+				</h:panelGroup>
+				<p:selectBooleanCheckbox
+					value="#{dialogHandlerAction.createSlidesDialog.restaining}" />
+
+
+				<!-- as completed -->
+				<h:panelGroup>
+					<h:outputLabel value="#{msg['dialog.addSlide.asCompleted']}"
+						id="asCompletedText" />
+					<p:tooltip for="asCompletedText">
+						<h:outputLabel value="#{msg['dialog.addSlide.asCompleted.text']}" />
+					</p:tooltip>
+				</h:panelGroup>
+				<p:selectBooleanCheckbox
+					value="#{dialogHandlerAction.createSlidesDialog.asCompleted}" />
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer" id="buttonContainer">
+
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+					<h:outputLabel styleClass="bigFont"
+						value="STRG für Mehrfachauswahl"></h:outputLabel>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<!-- confirm -->
+					<p:commandButton value="#{msg['general.create']}"
+						icon="fa fa-check-circle-o"
+						process="@this :dialogContent:commentaryTable"
+						disabled="#{!dialogHandlerAction.createSlidesDialog.isStainingSelected()}">
+						<f:actionListener
+							binding="#{dialogHandlerAction.createSlidesDialog.hideDialogAndReturnSlides()}"></f:actionListener>
+					</p:commandButton>
+
+					<!-- Abort button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						actionListener="#{dialogHandlerAction.createSlidesDialog.hideDialog()}"
+						icon="fa fa-times-circle"></p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+
+	</h:form>
+</h:body>
+</html>

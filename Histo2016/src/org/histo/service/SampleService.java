@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
+import org.histo.action.dialog.slide.CreateSlidesDialog.StainingTypeContainer;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
@@ -173,7 +175,7 @@ public class SampleService {
 
 		if (createSlides) {
 			for (StainingPrototype proto : sample.getMaterialPreset().getStainingPrototypes()) {
-				createSlide(proto, block, "", false, naming);
+				createSlide(proto, block, "", false, naming, false);
 			}
 		}
 
@@ -214,14 +216,28 @@ public class SampleService {
 	 * @param commentary
 	 * @param restaining
 	 */
+	public void createSlidesForSample(SlideSelectResult slideSelectResult) {
+		createSlidesForSample(slideSelectResult.getPrototpyes(), slideSelectResult.getBlock(),
+				slideSelectResult.getCommentary(), slideSelectResult.isRestaining(), slideSelectResult.isAsCompleted());
+	}
+
+	/**
+	 * Creates slides for a sample, also updates the phase settings of the given
+	 * task.
+	 * 
+	 * @param slidesToCreate
+	 * @param block
+	 * @param commentary
+	 * @param restaining
+	 */
 	public void createSlidesForSample(List<StainingPrototype> slidesToCreate, Block block, String commentary,
-			boolean restaining) {
+			boolean restaining, boolean asCompleted) {
 
 		if (slidesToCreate.size() == 0)
 			return;
 
 		// creating slides
-		slidesToCreate.forEach(p -> createSlide(p, block, commentary, restaining, true));
+		slidesToCreate.forEach(p -> createSlide(p, block, commentary, restaining, true, asCompleted));
 		// updating staining phase
 		updateStaingPhase(block.getTask());
 
@@ -234,7 +250,7 @@ public class SampleService {
 	 * @param block
 	 */
 	public void createSlide(StainingPrototype prototype, Block block) {
-		createSlide(prototype, block, null, false, true);
+		createSlide(prototype, block, null, false, true, false);
 	}
 
 	/**
@@ -247,7 +263,7 @@ public class SampleService {
 	 * @param patientOfSample
 	 */
 	public void createSlide(StainingPrototype prototype, Block block, String commentary, boolean reStaining,
-			boolean naming) {
+			boolean naming, boolean asCompleted) {
 		logger.debug("Creating new slide " + prototype.getName());
 
 		Slide slide = new Slide();
@@ -269,6 +285,11 @@ public class SampleService {
 
 		slide.setReStaining(reStaining);
 
+		if(asCompleted) {
+			slide.setCompletionDate(System.currentTimeMillis());
+			slide.setStainingCompleted(true);
+		}
+		
 		genericDAO.savePatientData(slide, "log.patient.task.sample.block.slide.new", slide.toString());
 	}
 

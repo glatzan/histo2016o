@@ -12,6 +12,7 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.settings.SettingsDialogHandler;
+import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
@@ -22,6 +23,7 @@ import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.ListItem;
+import org.histo.model.PDFContainer;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
@@ -30,6 +32,8 @@ import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.SlideLable;
 import org.histo.ui.StainingTableChooser;
+import org.histo.util.notification.NotificationContainer;
+import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -298,7 +302,7 @@ public class ReceiptlogViewHandlerAction {
 	public void setSlideAsCompleted(Slide slide) {
 		try {
 			sampleService.setStainingCompletedForSlide(slide, !slide.isStainingCompleted());
-			
+
 			if (sampleService.updateStaingPhase(slide.getTask()))
 				dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(slide.getTask());
 
@@ -334,6 +338,18 @@ public class ReceiptlogViewHandlerAction {
 				worklistViewHandlerAction.onVersionConflictTask();
 			}
 			chooser.setIdChanged(false);
+		}
+	}
+
+	/**
+	 * Creates slides if dialog returns the selected slides
+	 * @param event
+	 */
+	public void onSelectStainingDialogReturn(SelectEvent event) {
+		logger.debug("On select staining dialog return " + event.getObject());
+
+		if (event.getObject() != null && event.getObject() instanceof SlideSelectResult) {
+			sampleService.createSlidesForSample((SlideSelectResult) event.getObject());
 		}
 	}
 }

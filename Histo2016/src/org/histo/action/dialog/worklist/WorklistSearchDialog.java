@@ -1,27 +1,40 @@
 package org.histo.action.dialog.worklist;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractTabDialog;
+import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
 import org.histo.action.view.WorklistViewHandlerAction;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.Eye;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
+import org.histo.model.DiagnosisPreset;
+import org.histo.model.ListItem;
+import org.histo.model.MaterialPreset;
+import org.histo.model.PDFContainer;
 import org.histo.model.Person;
+import org.histo.model.Physician;
+import org.histo.model.StainingPrototype;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.user.HistoPermissions;
 import org.histo.ui.FavouriteListContainer;
+import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.notification.NotificationContainer;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistFavouriteSearch;
+import org.histo.worklist.search.WorklistSearchExtended;
 import org.histo.worklist.search.WorklistSimpleSearch;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
+import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Lazy;
@@ -171,7 +184,41 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		}
 	}
 
+	@Getter
+	@Setter
 	public class ExtendedSearchTab extends AbstractTab {
+
+		private WorklistSearchExtended worklistSearch;
+
+		/**
+		 * List of available materials
+		 */
+		private List<MaterialPreset> materialList;
+
+		/**
+		 * Physician list
+		 */
+		private Physician[] allPhysicians;
+
+		/**
+		 * Transformer for physicians
+		 */
+		private DefaultTransformer<Physician> allPhysicianTransformer;
+
+		/**
+		 * Contains all available case histories
+		 */
+		private List<ListItem> caseHistoryList;
+
+		/**
+		 * List of all diagnosis presets
+		 */
+		private List<DiagnosisPreset> diagnosisPresets;
+
+		/**
+		 * Contains all available wards
+		 */
+		private List<ListItem> wardList;
 
 		public ExtendedSearchTab() {
 			setTabName("ExtendedSearchTab");
@@ -180,56 +227,57 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 			setCenterInclude("include/extendedSearch.xhtml");
 		}
 
-		@Override
-		public void updateData() {
+		public boolean initTab() {
+			setWorklistSearch(new WorklistSearchExtended());
+
+			// setting material list
+			setMaterialList(utilDAO.getAllMaterialPresets(true));
+
+			// setting physician list
+			List<Physician> allPhysicians = physicianDAO.getPhysicians(ContactRole.values(), false);
+			setAllPhysicians(allPhysicians.toArray(new Physician[allPhysicians.size()]));
+			setAllPhysicianTransformer(new DefaultTransformer<>(getAllPhysicians()));
+
+			// case history
+			setCaseHistoryList(utilDAO.getAllStaticListItems(ListItem.StaticList.CASE_HISTORY));
+
+			// Diagnosis presets
+			setDiagnosisPresets(utilDAO.getAllDiagnosisPrototypes());
+
+			// wardlist
+			setWardList(utilDAO.getAllStaticListItems(ListItem.StaticList.WARDS));
+
+			return true;
 		}
 
+		public void selectAsWorklist() {
+			Worklist worklist = new Worklist("Default", worklistSearch,
+					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
+					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), false,
+					userHandlerAction.getCurrentUser().getSettings().isWorklistSortOrderAsc());
+
+			worklistViewHandlerAction.addWorklist(worklist, true, true);
+		}
+
+		public void onSelectStainingDialogReturn(SelectEvent event) {
+			logger.debug("On select staining dialog return " + event.getObject());
+
+			if (event.getObject() != null && event.getObject() instanceof SlideSelectResult) {
+
+				if (worklistSearch.getStainings() == null)
+					worklistSearch.setStainings(new ArrayList<StainingPrototype>());
+
+				worklistSearch.getStainings().addAll(((SlideSelectResult) event.getObject()).getPrototpyes());
+			}
+		}
 	}
 
 	public Worklist extendedSearch() {
 
 		logger.debug("Calling extended search");
 
-		// List<Patient> result =
-		// patientDao.getPatientByCriteria(getExtendedSearchData());
-
-		// Worklist worklist = new Worklist("search", result, false,
-		// userHandlerAction.getCurrentUser().getDefaultWorklistSortOrder(),
-		// userHandlerAction.getCurrentUser().isWorklistAutoUpdate());
-		//
-		// worklist.setShowActiveTasksExplicit(true);
-
 		return null;
-		// Worklist worklist = new Worklist("search", pat);
-		//
-		// System.out.println(test.size());
-
-		// private String surgeon;
-		// private String privatePhysician;
-		// private String siganture;
-		// private Eye eye;
-		//
-		// private Date patientAdded;
-		// private Date patientAddedTo;
-		//
-		// private Date taskCreated;
-		// private Date taskCreatedTo;
-		//
-		// private Date stainingCompleted;
-		// private Date stainingCompletedTo;
-		//
-		// private Date diagnosisCompleted;
-		// private Date diagnosisCompletedTo;
-		//
-		// private Date dateOfReceipt;
-		// private Date dateOfReceiptTo;
-		//
-		// private Date dateOfSurgery;
-		// private Date dateOfSurgeryTo;
-		//
-		// private String diagnosis;
-		// private String category;
-		// private String malign;
 	}
 
 	// ************************ Getter/Setter ************************

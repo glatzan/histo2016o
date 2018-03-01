@@ -13,6 +13,112 @@
 	</p:outputPanel>
 
 	<p:outputPanel styleClass="bodyPannel">
+		<h:panelGrid columns="2" id="favouriteContent"
+			styleClass="newStyleListingTable">
+			<p:outputLabel value="Probe" />
+			<p:selectOneMenu editable="true" autoWidth="false" filter="true"
+				filterMatchMode="startsWith"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.material}">
+				<f:selectItems
+					value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.materialList}"
+					var="material" itemLabel="#{material.name}"
+					itemValue="#{material.name}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Operateur" />
+			<p:selectCheckboxMenu id="roleSelectCheckbox" multiple="true"
+				filter="true" filterMatchMode="startsWith" label="Auswhälen"
+				panelStyle="width:250px"
+				converter="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.allPhysicianTransformer}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.surgeons}">
+
+				<f:selectItems var="physician"
+					value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.allPhysicians}"
+					itemValue="#{physician}" itemLabel="#{physician.person.fullName}" />
+
+			</p:selectCheckboxMenu>
+
+			<p:outputLabel value="Unterschrift" />
+			<p:selectCheckboxMenu multiple="true" filter="true"
+				filterMatchMode="startsWith" label="Auswhälen"
+				panelStyle="width:250px"
+				converter="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.allPhysicianTransformer}"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.signature}">
+
+				<f:selectItems var="physician"
+					value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.allPhysicians}"
+					itemValue="#{physician}" itemLabel="#{physician.person.fullName}" />
+
+			</p:selectCheckboxMenu>
+
+			<p:outputLabel value="Vorgeschichte" />
+			<p:selectOneMenu editable="true" autoWidth="false" filter="true"
+				filterMatchMode="startsWith"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.caseHistory}">
+				<f:selectItems
+					value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.caseHistoryList}"
+					var="history" itemLabel="#{history.value}"
+					itemValue="#{history.value}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Befund" />
+			<p:inputText
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.diagnosisText}"></p:inputText>
+
+			<p:outputLabel value="Diagnose" />
+			<p:selectOneMenu editable="true" autoWidth="false" filter="true"
+				filterMatchMode="startsWith"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.diagnosis}">
+				<f:selectItems
+					value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.diagnosisPresets}"
+					var="diagnosis" itemLabel="#{diagnosis.diagnosis}"
+					itemValue="#{diagnosis.diagnosis}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Malign" />
+
+			<p:triStateCheckbox
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.malign}" />
+
+
+			<p:outputLabel value="Auge" />
+			<p:selectOneMenu
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.eye}">
+				<f:selectItems value="#{enumProvider.eyes}" var="eye"
+					itemLabel="#{msg['enum.eye.'.concat(eye)]}" itemValue="#{eye}" />
+
+			</p:selectOneMenu>
+
+			<p:outputLabel value="Station" />
+			<p:selectOneMenu id="wards"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.ward}"
+				editable="true">
+				<f:selectItems
+					value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.wardList}"
+					itemValue="#{ward.value}" itemLabel="#{ward.value}" var="ward" />
+			</p:selectOneMenu>
+
+			<h:panelGroup>
+				<p:outputLabel value="Staining" />
+				<p:commandLink title="#{msg['body.statiningView.newStaining']}"
+					actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean()}">
+					<i class="fa fa-fw fa-paint-brush"></i>
+					<p:ajax event="dialogReturn"
+						listener="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.onSelectStainingDialogReturn}"
+						update="@form" />
+				</p:commandLink>
+			</h:panelGroup>
+			<p:dataTable var="staining" styleClass="defaultHistoDataTable"
+				value="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.worklistSearch.stainings}">
+				<f:facet name="header">
+					<h:outputLabel value="Färbung"></h:outputLabel>
+				</f:facet>
+
+				<p:column>
+					<h:outputLabel value="#{staining.name}"></h:outputLabel>
+				</p:column>
+			</p:dataTable>
+		</h:panelGrid>
 	</p:outputPanel>
 
 	<div class="buttonContainer">
@@ -24,11 +130,11 @@
 
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.select']}"
-					icon="fa fa-search" widgetVar="serachBtn" disabled="true"
+					icon="fa fa-search" widgetVar="serachBtn"
 					onclick="disableButton(true, 'serachBtn', 'closeBtn')"
 					process="@form">
 					<f:actionListener
-						binding="#{dialogHandlerAction.worklistSearchDialog.simpleSearchTab.selectAsWorklist()}" />
+						binding="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.selectAsWorklist()}" />
 					<f:actionListener
 						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
 				</p:commandButton>

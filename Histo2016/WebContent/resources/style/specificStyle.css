@@ -1,6 +1,70 @@
 /*
  * Class for normal table with scrollable body
  */
+.defaultHistoDataTable {
+  width: 100%;
+  white-space: normal;
+}
+.defaultHistoDataTable :focus {
+  outline: none !important;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-header table thead tr {
+  width: 100%;
+  display: table;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-header table thead tr td {
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body table thead {
+  display: none;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody {
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr {
+  width: 100%;
+  display: table;
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr td {
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-datatable-even > td {
+  background-color: #f2f2f2;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight td,
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight label {
+  background-color: #fcf1b8 !important;
+  font-weight: bold !important;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover td,
+.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover label {
+  background-color: #fcf1b8 !important;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body th,
+.defaultHistoDataTable div.ui-datatable-scrollable-body td,
+.defaultHistoDataTable div.ui-datatable-scrollable-body label {
+  padding: 4px ! important;
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.defaultHistoDataTable div.ui-datatable-scrollable-body .ui-inputfield {
+  box-shadow: none;
+}
+.defaultHistoDataTable a {
+  text-decoration: none !important;
+}
 div.contentSpaceContainer {
   padding: 4px ! important;
   font-size: 12px;
@@ -33,6 +97,29 @@ table.contentSpaceContainer tbody > tr > td {
 table.contentSpaceContainer > tbody .headline {
   font-size: 14px ! important;
   font-weight: bold;
+}
+/* Accordion style */
+div.contentAccordionPannel div.ui-accordion-header {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border: 1px solid #d3d3d3;
+  border-radius: 0px !important;
+}
+div.contentAccordionPannel div.ui-accordion-header.ui-state-active {
+  background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x !important;
+  font-weight: normal;
+  color: #555555;
+}
+div.contentAccordionPannel div.ui-accordion-content {
+  padding: 0px;
+}
+div.contentAccordionPannel div.ui-accordion-content table > tbody > tr > td {
+  padding: 0px;
+  border: none ! important;
+  border-spacing: 0px ! important;
+}
+div.contentAccordionPannel :focus {
+  outline: none !important;
 }
 .printDialog_AdressTable {
   width: 100%;
@@ -110,6 +197,9 @@ table.contentSpaceContainer > tbody .headline {
   white-space: normal;
   width: 98%;
 }
+.worklistSearchDialog_FavouriteSearchTable :focus {
+  outline: none !important;
+}
 .worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-header table thead tr {
   width: 100%;
   display: table;
@@ -178,4 +268,71 @@ table.contentSpaceContainer > tbody .headline {
 .worklistSearchDialog_FavouriteSearchTable tr td:nth-child(3),
 .worklistSearchDialog_FavouriteSearchTable th:nth-child(3) {
   width: 3% !important;
+}
+.addSlide_StainingTable {
+  width: 100%;
+  white-space: normal;
+}
+.addSlide_StainingTable :focus {
+  outline: none !important;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-header table thead tr {
+  width: 100%;
+  display: table;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-header table thead tr td {
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body table thead {
+  display: none;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody {
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr {
+  width: 100%;
+  display: table;
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr td {
+  border: none !important;
+  border-spacing: 0px !important;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-datatable-even > td {
+  background-color: #f2f2f2;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight td,
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight label {
+  background-color: #fcf1b8 !important;
+  font-weight: bold !important;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover td,
+.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover label {
+  background-color: #fcf1b8 !important;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body th,
+.addSlide_StainingTable div.ui-datatable-scrollable-body td,
+.addSlide_StainingTable div.ui-datatable-scrollable-body label {
+  padding: 4px ! important;
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-body .ui-inputfield {
+  box-shadow: none;
+}
+.addSlide_StainingTable a {
+  text-decoration: none !important;
+}
+.addSlide_StainingTable div.ui-datatable-scrollable-header {
+  display: none;
 }
