@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
@@ -17,13 +16,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.histo.action.dialog.worklist.WorklistSearchDialog.ExtendedSearchData;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Eye;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -31,14 +28,13 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.Signature;
-import org.histo.model.log.Log;
+import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.model.user.HistoUser;
 import org.histo.util.HistoUtil;
 import org.histo.worklist.search.WorklistSearchExtended;
 import org.springframework.context.annotation.Scope;
@@ -46,7 +42,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javassist.tools.reflect.Sample;
-import lombok.Getter;
 
 @Component
 @Transactional
@@ -452,6 +447,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Join<Task, Sample> sampleQuery = taskQuery.join("samples", JoinType.LEFT);
 		Join<Sample, Block> blockQuery = sampleQuery.join("blocks", JoinType.LEFT);
 		Join<Block, Slide> slideQuery = blockQuery.join("slides", JoinType.LEFT);
+		Join<Slide, StainingPrototype> prototypeQuery = slideQuery.join("slidePrototype", JoinType.LEFT);
 
 		Join<Task, DiagnosisRevision> diagnosisRevisionQuery = taskQuery.join("diagnosisRevisions", JoinType.LEFT);
 		Join<DiagnosisRevision, Diagnosis> diagnosesQuery = diagnosisRevisionQuery.join("diagnoses", JoinType.LEFT);
@@ -471,7 +467,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (HistoUtil.isNotNullOrEmpty(worklistSearchExtended.getMaterial())) {
 			predicates.add(qb.like(qb.lower(sampleQuery.get("material")),
 					"%" + worklistSearchExtended.getMaterial().toLowerCase() + "%"));
-			
+
 			logger.debug("Selecting material " + worklistSearchExtended.getMaterial());
 		}
 
@@ -497,7 +493,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 					.map(p -> p.getId()).collect(Collectors.toList()));
 
 			predicates.add(qb.or(physicianOne, physicianTwo));
-			
+
 			logger.debug("Selecting signature");
 		}
 
@@ -505,7 +501,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (HistoUtil.isNotNullOrEmpty(worklistSearchExtended.getCaseHistory())) {
 			predicates.add(qb.like(qb.lower(taskQuery.get("caseHistory")),
 					"%" + worklistSearchExtended.getCaseHistory().toLowerCase() + "%"));
-			
+
 			logger.debug("Selecting history");
 		}
 
@@ -513,7 +509,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (HistoUtil.isNotNullOrEmpty(worklistSearchExtended.getDiagnosisText())) {
 			predicates.add(qb.like(qb.lower(diagnosisRevisionQuery.get("text")),
 					"%" + worklistSearchExtended.getDiagnosisText().toLowerCase() + "%"));
-			
+
 			logger.debug("Selecting diagnosis text");
 		}
 
@@ -521,7 +517,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (HistoUtil.isNotNullOrEmpty(worklistSearchExtended.getDiagnosis())) {
 			predicates.add(qb.like(qb.lower(diagnosesQuery.get("diagnosis")),
 					"%" + worklistSearchExtended.getDiagnosis().toLowerCase() + "%"));
-			
+
 			logger.debug("Selecting diagnosis");
 		}
 
@@ -529,14 +525,14 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (!worklistSearchExtended.getMalign().equals("0")) {
 			predicates.add(qb.equal(diagnosesQuery.get("malign"),
 					worklistSearchExtended.getMalign().equals("1") ? true : false));
-			
+
 			logger.debug("Selecting malign");
 		}
 
 		// getting eye
 		if (worklistSearchExtended.getEye() != Eye.UNKNOWN) {
 			predicates.add(qb.equal(taskQuery.get("eye"), worklistSearchExtended.getEye()));
-			
+
 			logger.debug("Selecting eye");
 		}
 
@@ -544,8 +540,16 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (HistoUtil.isNotNullOrEmpty(worklistSearchExtended.getWard())) {
 			predicates.add(qb.like(qb.lower(diagnosesQuery.get("ward")),
 					"%" + worklistSearchExtended.getWard().toLowerCase() + "%"));
-			
+
 			logger.debug("Selecting ward");
+		}
+
+		if (worklistSearchExtended.getStainings() != null && !worklistSearchExtended.getStainings().isEmpty()) {
+			Expression<Long> prototypeID = prototypeQuery.get("id");
+			Predicate stainings = prototypeID.in(
+					worklistSearchExtended.getStainings().stream().map(p -> p.getId()).collect(Collectors.toList()));
+
+			predicates.add(stainings);
 		}
 
 		criteria.where(qb.and(predicates.toArray(new Predicate[predicates.size()])));
@@ -555,84 +559,5 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		List<Patient> patients = getSession().createQuery(criteria).getResultList();
 
 		return patients;
-	}
-
-	public List<Patient> getPatientByCriteria(ExtendedSearchData extendedSearchData) {
-		logger.debug("test");
-
-		DetachedCriteria query = DetachedCriteria.forClass(Task.class, "task");
-
-		query.createAlias("task.parent", "patient");
-		query.createAlias("patient.person", "person");
-		query.createAlias("task.samples", "samples");
-		query.createAlias("task.diagnosisRevisions", "diagnosisRevisions");
-		query.createAlias("diagnosisRevisions.diagnoses", "diagnoses");
-
-		if (extendedSearchData.getName() != null && !extendedSearchData.getName().isEmpty()) {
-			query.add(Restrictions.ilike("person.lastname", extendedSearchData.getName(), MatchMode.ANYWHERE));
-			logger.debug("search for name: " + extendedSearchData.getName());
-		}
-
-		if (extendedSearchData.getSurename() != null && !extendedSearchData.getSurename().isEmpty()) {
-			query.add(Restrictions.ilike("person.firstname", extendedSearchData.getSurename(), MatchMode.ANYWHERE));
-			logger.debug("search for surename: " + extendedSearchData.getSurename());
-		}
-
-		if (extendedSearchData.getBirthday() != null) {
-			query.add(Restrictions.eq("person.birthday", extendedSearchData.getBirthday()));
-			logger.debug("search for birthday: " + extendedSearchData.getBirthday());
-		}
-
-		if (extendedSearchData.getGender() != null && extendedSearchData.getGender() != Person.Gender.UNKNOWN) {
-			query.add(Restrictions.eq("person.gender", extendedSearchData.getGender()));
-			logger.debug("search for gender: " + extendedSearchData.getGender());
-		}
-
-		if (extendedSearchData.getMaterial() != null && !extendedSearchData.getMaterial().isEmpty()) {
-			query.add(Restrictions.ilike("samples.material", extendedSearchData.getMaterial(), MatchMode.ANYWHERE));
-
-			logger.debug("search for material: " + extendedSearchData.getMaterial());
-		}
-
-		if (extendedSearchData.getCaseHistory() != null && !extendedSearchData.getCaseHistory().isEmpty()) {
-			query.add(Restrictions.ilike("task.caseHistory", extendedSearchData.getCaseHistory(), MatchMode.ANYWHERE));
-
-			logger.debug("search for case history: " + extendedSearchData.getCaseHistory());
-		}
-
-		if (extendedSearchData.getEye() != null && extendedSearchData.getEye() != Eye.UNKNOWN) {
-			query.add(Restrictions.eq("task.eye", extendedSearchData.getEye()));
-			logger.debug("search for eye: " + extendedSearchData.getEye());
-		}
-
-		if (extendedSearchData.getDiagnosis() != null && !extendedSearchData.getDiagnosis().isEmpty()) {
-			query.add(Restrictions.ilike("diagnoses.diagnosis", extendedSearchData.getDiagnosis(), MatchMode.ANYWHERE));
-			logger.debug("search for diagnosis: " + extendedSearchData.getDiagnosis());
-		}
-
-		if (extendedSearchData.getMalign() != null && !extendedSearchData.getMalign().equals("0"))
-
-		{
-			query.add(Restrictions.eq("diagnoses.malign", extendedSearchData.getMalign().equals("1")));
-			logger.debug("search for malign: " + extendedSearchData.getMalign().equals("1"));
-		}
-
-		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-		List<Task> tasks = query.getExecutableCriteria(getSession()).list();
-
-		List<Patient> result = new ArrayList<Patient>(tasks.size());
-
-		for (Task task : tasks) {
-			try {
-				task.setActive(true);
-				initilaizeTasksofPatient(task.getPatient());
-				result.add(task.getPatient());
-			} catch (CustomDatabaseInconsistentVersionException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return result;
 	}
 }

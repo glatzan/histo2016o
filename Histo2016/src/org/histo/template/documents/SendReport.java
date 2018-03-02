@@ -8,11 +8,9 @@ import java.util.stream.Collectors;
 import org.apache.velocity.tools.generic.DateTool;
 import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
-import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.notification.MailContainerList;
-import org.histo.util.notification.NotificationContainer;
 import org.histo.util.notification.NotificationContainerList;
 import org.histo.util.pdf.PDFGenerator;
 

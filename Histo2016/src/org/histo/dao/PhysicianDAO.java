@@ -5,33 +5,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.patient.Task;
 import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import javafx.scene.shape.Circle;
-import javassist.tools.reflect.Sample;
 
 @Component
 @Transactional
@@ -101,9 +91,15 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		CriteriaQuery<Physician> criteria = qb.createQuery(Physician.class);
 		Root<Physician> root = criteria.from(Physician.class);
 		criteria.select(root);
-
-		criteria.where(root.join("associatedRoles", JoinType.LEFT).in(roles));
-
+		
+		List<Predicate> predicates = new ArrayList<Predicate>();
+		predicates.add(root.join("associatedRoles", JoinType.LEFT).in(roles));
+		
+		if(!archived)
+			predicates.add(qb.equal(root.get("archived"), false));
+		
+		criteria.where(qb.and(predicates.toArray(new Predicate[predicates.size()])));
+		
 		Path<Person> fetchAsPath = (Path<Person>) root.fetch("person", JoinType.LEFT);
 
 		if (sortOrder == PhysicianSortOrder.NAME) {
@@ -113,6 +109,8 @@ public class PhysicianDAO extends AbstractDAO implements Serializable {
 		else
 			criteria.orderBy(qb.asc(root.get("id")));
 
+		
+		
 		criteria.distinct(true);
 
 		List<Physician> physicians = getSession().createQuery(criteria).getResultList();

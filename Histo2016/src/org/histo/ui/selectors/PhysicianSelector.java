@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.histo.config.enums.ContactRole;
-import org.histo.dao.PhysicianDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Physician;
 import org.histo.model.patient.Task;

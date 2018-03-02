@@ -12,7 +12,6 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.OrganizationDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.model.Physician;
-import org.histo.util.CopySettingsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;

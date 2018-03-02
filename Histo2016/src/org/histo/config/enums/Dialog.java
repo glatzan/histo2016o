@@ -7,6 +7,7 @@ package org.histo.config.enums;
 public enum Dialog {
 	
 	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1280, 720, false, false, true), // 16:9
+	WORKLIST_EXPORT("/pages/dialog/export/exportDialog", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_ADD("/pages/dialog/addPatient/addPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_EXTERNAL_CONFIRM("/pages/dialog/addPatient/confirmExternalPatient", null, 640, 360, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,480, 272, false, false, true), 
@@ -62,8 +63,9 @@ public enum Dialog {
 	NOTIFICATION_PHASE_EXIT("/pages/dialog/notification/notificationPhaseExit", null, 480, 272, false, false, true), // 16:9
 	TASK_ARCHIVE("/pages/dialog/task/archive/archiveTask", null, 480, 272, false, false, true), // 16:9
 	TASK_RESTORE("/pages/dialog/task/archive/restoreTask", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionCreate", null, 640, 360, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionsCreate", null, 640, 360, false, false, true), // 16:9
 	DIAGNOSIS_REVISION_DELETE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionDelete", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_ADD("/pages/dialog/task/diagnosisRevision/addDiangosisRevisionDialog", null, 480, 272, false, false, true), // 16:9
 	PRINT_SELECT_PRINTER("/pages/dialog/selectPrinter", null, 640, 360, false, false, true);
 
 	

@@ -18,17 +18,13 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.Person;
 import org.histo.model.Physician;
-import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
-import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import javassist.tools.reflect.Sample;
 
 @Component
 @Transactional

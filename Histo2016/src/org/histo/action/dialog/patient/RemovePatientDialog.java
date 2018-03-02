@@ -2,8 +2,6 @@ package org.histo.action.dialog.patient;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
-import org.histo.adaptors.printer.ClinicPrinter;
-import org.histo.adaptors.printer.LabelPrinter;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.LogDAO;

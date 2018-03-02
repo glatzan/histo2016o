@@ -1,12 +1,10 @@
 package org.histo.action.view;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -16,7 +14,6 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
@@ -29,14 +26,10 @@ import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
-import org.histo.model.patient.Block;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Sample;
-import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
-import org.histo.ui.StainingTableChooser;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.model.menu.MenuModel;

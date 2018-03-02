@@ -1,20 +1,16 @@
 package org.histo.action.dialog.settings.organizations;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.OrganizationDAO;
-import org.histo.dao.PhysicianDAO;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
-import org.histo.model.Physician;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

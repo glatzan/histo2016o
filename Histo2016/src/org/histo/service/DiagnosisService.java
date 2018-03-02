@@ -16,7 +16,6 @@ import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
-import org.histo.ui.task.TaskStatus;
 import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

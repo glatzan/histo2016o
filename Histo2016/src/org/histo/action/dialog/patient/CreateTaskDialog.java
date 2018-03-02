@@ -13,7 +13,6 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.GlobalSettings;
-import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.DiagnosisRevisionType;
@@ -60,11 +59,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CreateTaskDialog extends AbstractDialog {
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)

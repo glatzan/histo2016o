@@ -46,13 +46,12 @@ Next Changes:
 -> Benerkungsfeld für eingangsbuch
 -> Operateure über liste lasen
 -> Zählung A 1,2 B 2 = 3 Blöcke (Blockzählung)
+-> anzeige der organisation im eingangsbuch
 
 -> patienten löschen
--> nachbefund erstellen sobald nachfärbung angefordert wird
 -> Sendebericht wird im befunddialog nicht richtig angezeigt
 -> suche mit umlauten -> daniel
 -> suche mit umlauten in quick search regex alpha (erkennt kein ö usw)
--> beim ausschalten der aktuallisierung für ärzte geht dsa einloggen nicht mehr
 -> färbungen auf klick priority umstellen
 
 -> save on pdf download
@@ -120,6 +119,11 @@ Graphic Changes
 
 +v 1.4 (xx.03.2018)
 +++*: Beim Erstellen von Färbungen wird jetzt zwischen immun und normalen Färbungen unterschieden.
++++*: Dringlichkeit eines Auftrages wird auch nach der Archivierung angezeigt.
+++++: SciFi (Science Finder) implementiert. Dieser ermöglicht das deutlich geneauer Suche nach Aufträgen
++++*: Nicht aktive Aufträge werden jetzt ausgegraut
++++!: Einloggen ist jetzt auch mölgich, wenn die automatische Aktualisierung mit dem Klinik-Backend für den Benutzer ausgestellt ist.
++++!: Logeinträge werden nicht mehr doppelt angezeigt.
 
 +v 1.3.3 (21.02.2018)
 +++*: Patientensuche erzeugt keine doppelten Patienten mehr

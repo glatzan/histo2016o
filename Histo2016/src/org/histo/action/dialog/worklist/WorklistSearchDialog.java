@@ -1,34 +1,31 @@
 package org.histo.action.dialog.worklist;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractTabDialog;
+import org.histo.action.dialog.export.ExportTasksDialog;
 import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.Eye;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
+import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
-import org.histo.model.PDFContainer;
-import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
-import org.histo.model.user.HistoPermissions;
+import org.histo.model.patient.Task;
 import org.histo.ui.FavouriteListContainer;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.notification.NotificationContainer;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistFavouriteSearch;
 import org.histo.worklist.search.WorklistSearchExtended;
@@ -72,6 +69,16 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TaskDAO taskDAO;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ExportTasksDialog exportTasksDialog;
 
 	@Autowired
 	@Lazy
@@ -251,13 +258,17 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 		}
 
 		public void selectAsWorklist() {
-			Worklist worklist = new Worklist("Default", worklistSearch,
-					userHandlerAction.getCurrentUser().getSettings().isWorklistHideNoneActiveTasks(),
+			Worklist worklist = new Worklist("Default", worklistSearch, true,
 					userHandlerAction.getCurrentUser().getSettings().getWorklistSortOrder(),
-					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), false,
+					userHandlerAction.getCurrentUser().getSettings().isWorklistAutoUpdate(), true,
 					userHandlerAction.getCurrentUser().getSettings().isWorklistSortOrderAsc());
 
 			worklistViewHandlerAction.addWorklist(worklist, true, true);
+		}
+
+		public void exportWorklist() {
+			List<Task> tasks = taskDAO.getTaskByCriteria(getWorklistSearch(), true);
+			exportTasksDialog.initAndPrepareBean(tasks);
 		}
 
 		public void onSelectStainingDialogReturn(SelectEvent event) {
@@ -279,244 +290,4 @@ public class WorklistSearchDialog extends AbstractTabDialog {
 
 		return null;
 	}
-
-	// ************************ Getter/Setter ************************
-
-	public class ExtendedSearchData {
-		private String name;
-		private String surename;
-		private Date birthday;
-		private Person.Gender gender;
-
-		private String material;
-		private String caseHistory;
-		private String surgeon;
-		private String privatePhysician;
-		private String siganture;
-		private Eye eye = Eye.UNKNOWN;
-
-		private Date patientAdded;
-		private Date patientAddedTo;
-
-		private Date taskCreated;
-		private Date taskCreatedTo;
-
-		private Date stainingCompleted;
-		private Date stainingCompletedTo;
-
-		private Date diagnosisCompleted;
-		private Date diagnosisCompletedTo;
-
-		private Date dateOfReceipt;
-		private Date dateOfReceiptTo;
-
-		private Date dateOfSurgery;
-		private Date dateOfSurgeryTo;
-
-		private String diagnosis;
-		private String category;
-		private String malign;
-
-		public String getDiagnosis() {
-			return diagnosis;
-		}
-
-		public void setDiagnosis(String diagnosis) {
-			this.diagnosis = diagnosis;
-		}
-
-		public String getCategory() {
-			return category;
-		}
-
-		public void setCategory(String category) {
-			this.category = category;
-		}
-
-		public String getMalign() {
-			return malign;
-		}
-
-		public void setMalign(String malign) {
-			this.malign = malign;
-		}
-
-		public Date getPatientAdded() {
-			return patientAdded;
-		}
-
-		public void setPatientAdded(Date patientAdded) {
-			this.patientAdded = patientAdded;
-		}
-
-		public Date getPatientAddedTo() {
-			return patientAddedTo;
-		}
-
-		public void setPatientAddedTo(Date patientAddedTo) {
-			this.patientAddedTo = patientAddedTo;
-		}
-
-		public Date getTaskCreated() {
-			return taskCreated;
-		}
-
-		public void setTaskCreated(Date taskCreated) {
-			this.taskCreated = taskCreated;
-		}
-
-		public Date getTaskCreatedTo() {
-			return taskCreatedTo;
-		}
-
-		public void setTaskCreatedTo(Date taskCreatedTo) {
-			this.taskCreatedTo = taskCreatedTo;
-		}
-
-		public Date getStainingCompleted() {
-			return stainingCompleted;
-		}
-
-		public void setStainingCompleted(Date stainingCompleted) {
-			this.stainingCompleted = stainingCompleted;
-		}
-
-		public Date getStainingCompletedTo() {
-			return stainingCompletedTo;
-		}
-
-		public void setStainingCompletedTo(Date stainingCompletedTo) {
-			this.stainingCompletedTo = stainingCompletedTo;
-		}
-
-		public Date getDiagnosisCompleted() {
-			return diagnosisCompleted;
-		}
-
-		public void setDiagnosisCompleted(Date diagnosisCompleted) {
-			this.diagnosisCompleted = diagnosisCompleted;
-		}
-
-		public Date getDiagnosisCompletedTo() {
-			return diagnosisCompletedTo;
-		}
-
-		public void setDiagnosisCompletedTo(Date diagnosisCompletedTo) {
-			this.diagnosisCompletedTo = diagnosisCompletedTo;
-		}
-
-		public Date getDateOfReceipt() {
-			return dateOfReceipt;
-		}
-
-		public void setDateOfReceipt(Date dateOfReceipt) {
-			this.dateOfReceipt = dateOfReceipt;
-		}
-
-		public Date getDateOfReceiptTo() {
-			return dateOfReceiptTo;
-		}
-
-		public void setDateOfReceiptTo(Date dateOfReceiptTo) {
-			this.dateOfReceiptTo = dateOfReceiptTo;
-		}
-
-		public Date getDateOfSurgery() {
-			return dateOfSurgery;
-		}
-
-		public void setDateOfSurgery(Date dateOfSurgery) {
-			this.dateOfSurgery = dateOfSurgery;
-		}
-
-		public Date getDateOfSurgeryTo() {
-			return dateOfSurgeryTo;
-		}
-
-		public void setDateOfSurgeryTo(Date dateOfSurgeryTo) {
-			this.dateOfSurgeryTo = dateOfSurgeryTo;
-		}
-
-		public String getMaterial() {
-			return material;
-		}
-
-		public void setMaterial(String material) {
-			this.material = material;
-		}
-
-		public String getCaseHistory() {
-			return caseHistory;
-		}
-
-		public void setCaseHistory(String caseHistory) {
-			this.caseHistory = caseHistory;
-		}
-
-		public String getSurgeon() {
-			return surgeon;
-		}
-
-		public void setSurgeon(String surgeon) {
-			this.surgeon = surgeon;
-		}
-
-		public String getPrivatePhysician() {
-			return privatePhysician;
-		}
-
-		public void setPrivatePhysician(String privatePhysician) {
-			this.privatePhysician = privatePhysician;
-		}
-
-		public String getSiganture() {
-			return siganture;
-		}
-
-		public void setSiganture(String siganture) {
-			this.siganture = siganture;
-		}
-
-		public Eye getEye() {
-			return eye;
-		}
-
-		public void setEye(Eye eye) {
-			this.eye = eye;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getSurename() {
-			return surename;
-		}
-
-		public void setSurename(String surename) {
-			this.surename = surename;
-		}
-
-		public Date getBirthday() {
-			return birthday;
-		}
-
-		public void setBirthday(Date birthday) {
-			this.birthday = birthday;
-		}
-
-		public Person.Gender getGender() {
-			return gender;
-		}
-
-		public void setGender(Person.Gender gender) {
-			this.gender = gender;
-		}
-
-	}
-
 }

@@ -163,8 +163,6 @@ public class CreateSlidesDialog extends AbstractDialog {
 	 * @return
 	 */
 	public boolean isStainingSelected() {
-		System.out.println(container.stream()
-				.anyMatch(p -> p.getSelectedPrototypes() != null && !p.getSelectedPrototypes().isEmpty()));
 		return container.stream()
 				.anyMatch(p -> p.getSelectedPrototypes() != null && !p.getSelectedPrototypes().isEmpty());
 	}

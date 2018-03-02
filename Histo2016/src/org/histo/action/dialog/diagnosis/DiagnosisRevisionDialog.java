@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.DiagnosisRevisionType;
@@ -44,11 +43,6 @@ public class DiagnosisRevisionDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)

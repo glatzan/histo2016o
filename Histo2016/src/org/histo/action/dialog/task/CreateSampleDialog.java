@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.GlobalEditViewHandler;
-import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;

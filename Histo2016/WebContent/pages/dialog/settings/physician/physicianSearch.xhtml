@@ -35,14 +35,15 @@
 
 		<div class="dialogContent">
 
-			<h:panelGrid columns="2" styleClass="newStyleListingTable" rendered="#{dialogHandlerAction.physicianSearchDialog.externalMode}"
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				rendered="#{dialogHandlerAction.physicianSearchDialog.externalMode}"
 				columnClasses="columnLabelContainer150,">
 
 				<!-- ****************** Person ****************** -->
 				<h:outputLabel value="#{msg['dialog.physicianSearch.employe']}"
 					styleClass="bigFont" />
 
-				<p:selectOneButton 
+				<p:selectOneButton
 					value="#{dialogHandlerAction.physicianSearchDialog.searchView}">
 					<f:selectItem
 						itemLabel="#{msg['dialog.physicianSearch.person.new.external']}"
@@ -77,15 +78,16 @@
 
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- Close button -->
-					<p:commandButton value="#{msg['general.select']}"
+					<p:commandButton
+						value="#{dialogHandlerAction.physicianSearchDialog.searchView eq 'EXTERNAL' ? msg['general.save'] : msg['general.select']}"
 						icon="fa fa-check-circle-o" update="@form" process="@form">
 						<f:actionListener
 							binding="#{dialogHandlerAction.physicianSearchDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- Close button -->
-					<p:commandButton value="#{msg['general.abort']}" id="closeBtn" immediate="true"
-						icon="fa fa-times-circle">
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						immediate="true" icon="fa fa-times-circle">
 						<f:actionListener
 							binding="#{dialogHandlerAction.physicianSearchDialog.setSelectedPhysician(null)}"></f:actionListener>
 						<f:actionListener

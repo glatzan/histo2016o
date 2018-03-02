@@ -3,11 +3,8 @@ package org.histo.action.dialog.settings.users;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.faces.event.AbortProcessingException;
-
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -23,8 +20,6 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;

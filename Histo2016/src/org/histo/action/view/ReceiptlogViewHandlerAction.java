@@ -11,28 +11,20 @@ import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.settings.SettingsDialogHandler;
+import org.histo.action.dialog.diagnosis.AddDiangosisReviosionDialog;
 import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
 import org.histo.action.handler.GlobalSettings;
-import org.histo.config.enums.DocumentType;
-import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StainingListAction;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
-import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.UtilDAO;
-import org.histo.model.ListItem;
-import org.histo.model.PDFContainer;
-import org.histo.model.patient.Block;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.SlideLable;
 import org.histo.ui.StainingTableChooser;
-import org.histo.util.notification.NotificationContainer;
+import org.histo.ui.task.TaskStatus;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -42,6 +34,7 @@ import org.springframework.stereotype.Controller;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import sun.net.www.content.image.gif;
 
 @Controller
 @Scope("session")
@@ -87,6 +80,17 @@ public class ReceiptlogViewHandlerAction {
 	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private AddDiangosisReviosionDialog addDiangosisReviosionDialog;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	@Lazy
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	/**
 	 * Currently selected task in table form, transient, used for gui
 	 */
@@ -343,13 +347,30 @@ public class ReceiptlogViewHandlerAction {
 
 	/**
 	 * Creates slides if dialog returns the selected slides
+	 * 
 	 * @param event
 	 */
 	public void onSelectStainingDialogReturn(SelectEvent event) {
-		logger.debug("On select staining dialog return " + event.getObject());
-
-		if (event.getObject() != null && event.getObject() instanceof SlideSelectResult) {
-			sampleService.createSlidesForSample((SlideSelectResult) event.getObject());
-		}
+		logger.debug("On select staining dialog return ");
+//
+//		if (event.getObject() != null && event.getObject() instanceof SlideSelectResult) {
+//			sampleService.createSlidesForSample((SlideSelectResult) event.getObject());
+//			
+//			// shows dialog for adding a diagnosis revision
+//			if (TaskStatus.checkIfReStainingFlag(((SlideSelectResult) event.getObject()).getBlock())
+//					&& ((SlideSelectResult) event.getObject()).getBlock().getTask().getDiagnosisRevisions()
+//							.size() == 1) {
+//				
+//				logger.debug("No Diagnosis revision -> showing dialog");
+//				
+//				dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBean();
+////				addDiangosisReviosionDialog
+////						.initAndPrepareBean(((SlideSelectResult) event.getObject()).getBlock().getTask());
+//			}
+//		}
+		
+		dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBean();
+		
+		globalEditViewHandler.updateDataOfTask(true, false, true, true);
 	}
 }

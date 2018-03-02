@@ -1,6 +1,5 @@
 package org.histo.model.user;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,11 +21,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
-import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.config.enums.View;
 import org.histo.config.enums.WorklistSortOrder;
 import org.histo.model.interfaces.HasID;
-import org.histo.util.HistoUtil;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 
 import lombok.Getter;

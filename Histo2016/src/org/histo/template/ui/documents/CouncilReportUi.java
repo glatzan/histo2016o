@@ -1,9 +1,7 @@
 package org.histo.template.ui.documents;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Contact;

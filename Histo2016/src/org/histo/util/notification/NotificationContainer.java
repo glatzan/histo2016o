@@ -3,8 +3,6 @@ package org.histo.util.notification;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
 import org.histo.model.PDFContainer;
-import org.histo.model.patient.DiagnosisRevision;
-import org.histo.model.AssociatedContactNotification.NotificationTyp;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -11,7 +11,6 @@ import org.histo.config.enums.Dialog;
 import org.histo.model.transitory.settings.Version;
 import org.histo.template.mail.ErrorMail;
 import org.histo.util.TimeUtil;
-import org.histo.worklist.search.WorklistSimpleSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

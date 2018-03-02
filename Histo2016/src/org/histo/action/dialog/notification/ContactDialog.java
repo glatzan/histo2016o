@@ -1,6 +1,5 @@
 package org.histo.action.dialog.notification;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.histo.action.DialogHandlerAction;

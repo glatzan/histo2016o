@@ -3,7 +3,6 @@ package org.histo.dao;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -22,7 +21,6 @@ import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
 import org.histo.model.StainingPrototype.StainingType;
-import org.histo.model.patient.Patient;
 import org.histo.util.dataList.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

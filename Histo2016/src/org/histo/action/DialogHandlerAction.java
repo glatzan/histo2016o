@@ -1,8 +1,6 @@
 package org.histo.action;
 
 import org.histo.action.dialog.ProgrammVersionDialog;
-import org.histo.action.dialog.diagnosis.DiagnosisPhaseExitDialog;
-import org.histo.action.dialog.diagnosis.DiagnosisRevisionDialog;
 import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.dialog.notification.ContactDialog;

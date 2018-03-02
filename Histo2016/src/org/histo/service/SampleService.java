@@ -1,11 +1,9 @@
 package org.histo.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
-import org.histo.action.dialog.slide.CreateSlidesDialog.StainingTypeContainer;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
@@ -16,7 +14,6 @@ import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
-import org.histo.ui.StainingTableChooser;
 import org.histo.ui.task.TaskStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;

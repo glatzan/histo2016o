@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,8 +16,6 @@ import org.cups4j.PrintJob;
 import org.histo.model.PDFContainer;
 import org.histo.model.transitory.settings.PrinterSettings;
 import org.histo.template.DocumentTemplate;
-import org.histo.model.transitory.settings.ProgramSettings;
-import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
 import org.histo.util.pdf.PrintOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -26,8 +23,6 @@ import org.springframework.core.io.Resource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import lombok.Getter;
 import lombok.Setter;

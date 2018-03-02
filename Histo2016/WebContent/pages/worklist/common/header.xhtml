@@ -57,8 +57,7 @@
 				styleClass="buttonMarginLeft"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn"
-					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll','contentForm:contentScrollPane')"
-					update="navigationForm:patientList contentForm:contentPanel headerForm" />
+					listener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}" />
 			</p:commandButton>
 
 		</h:panelGrid>
@@ -110,8 +109,8 @@
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm" />
 			</p:commandButton>
-			
-				<!-- Edit Patient data -->
+
+			<!-- Edit Patient data -->
 			<p:commandButton id="removePatient" style="display:none"
 				actionListener="#{removePatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 				<p:ajax event="dialogReturn"

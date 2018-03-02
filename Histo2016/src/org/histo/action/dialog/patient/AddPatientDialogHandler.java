@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.AbstractTabDialog;
-import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -20,7 +18,6 @@ import org.histo.model.patient.Patient;
 import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
 import org.histo.ui.ListChooser;
-import org.histo.worklist.search.WorklistSimpleSearch;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;

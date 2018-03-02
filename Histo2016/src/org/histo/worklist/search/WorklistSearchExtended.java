@@ -1,17 +1,14 @@
 package org.histo.worklist.search;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Eye;
 import org.histo.dao.PatientDao;
-import org.histo.dao.PhysicianDAO;
-import org.histo.model.Person;
+import org.histo.dao.TaskDAO;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -29,6 +26,11 @@ public class WorklistSearchExtended extends WorklistSearch {
 	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TaskDAO taskDAO;
+	
 	/**
 	 * Name of Material
 	 */
@@ -78,80 +80,62 @@ public class WorklistSearchExtended extends WorklistSearch {
 	 * List of stainings
 	 */
 	private List<StainingPrototype> stainings;
-	
-	@Getter
-	@Setter
-	private String name;
-
-	@Getter
-	@Setter
-	private String surename;
-
-	@Getter
-	@Setter
-	private Date birthday;
-
-	@Getter
-	@Setter
-	private Person.Gender gender;
-
-	@Getter
-	@Setter
-	private Date patientAdded;
-
-	@Getter
-	@Setter
-	private Date patientAddedTo;
-
-	@Getter
-	@Setter
-	private Date taskCreated;
-
-	@Getter
-	@Setter
-	private Date taskCreatedTo;
-
-	@Getter
-	@Setter
-	private Date stainingCompleted;
-
-	@Getter
-	@Setter
-	private Date stainingCompletedTo;
-
-	@Getter
-	@Setter
-	private Date diagnosisCompleted;
-
-	@Getter
-	@Setter
-	private Date diagnosisCompletedTo;
-
-	@Getter
-	@Setter
-	private Date dateOfReceipt;
-
-	@Getter
-	@Setter
-	private Date dateOfReceiptTo;
-
-	@Getter
-	@Setter
-	private Date dateOfSurgery;
-
-	@Getter
-	@Setter
-	private Date dateOfSurgeryTo;
-
-	@Getter
-	@Setter
-	private String category;
 
 	@Override
 	public List<Patient> getWorklist() {
-		ArrayList<Patient> result = new ArrayList<Patient>();
-		result.addAll(patientDao.getPatientByCriteria(this, true));
-		return result;
+		
+		List<Task> tasks =  taskDAO.getTaskByCriteria(this,true);
+		
+		List<Patient> patients =  patientDao.getPatientByCriteria(this,true);
+		
+		
+		for (Task task : tasks) {
+			
+			for (Patient patient : patients) {
+				if(task.getParent().getId() == patient.getId()) {
+					for (Task pTask : patient.getTasks()) {
+						if(pTask.getId() == task.getId())
+							pTask.setActive(true);
+					}
+				}
+			}
+		}
+		
+		return patients; 
 	}
 
 }
+
+//private String name;
+//private String surename;
+//private Date birthday;
+//private Person.Gender gender;
+//
+//private String material;
+//private String caseHistory;
+//private String surgeon;
+//private String privatePhysician;
+//private String siganture;
+//private Eye eye = Eye.UNKNOWN;
+//
+//private Date patientAdded;
+//private Date patientAddedTo;
+//
+//private Date taskCreated;
+//private Date taskCreatedTo;
+//
+//private Date stainingCompleted;
+//private Date stainingCompletedTo;
+//
+//private Date diagnosisCompleted;
+//private Date diagnosisCompletedTo;
+//
+//private Date dateOfReceipt;
+//private Date dateOfReceiptTo;
+//
+//private Date dateOfSurgery;
+//private Date dateOfSurgeryTo;
+//
+//private String diagnosis;
+//private String category;
+//private String malign;

@@ -9,9 +9,7 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -139,16 +137,21 @@ public class LogDAO extends AbstractDAO implements Serializable {
 	 * @param page
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "deprecation" })
 	public List<Log> getLogs(int count, int page) {
-		Criteria criteria = getSession().createCriteria(Log.class);
-		criteria.addOrder(Order.desc("id"));
-		criteria.setFirstResult(page * count);
-		criteria.setMaxResults(count);
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		List<Log> list = criteria.list();
+		// Create CriteriaQuery
+		CriteriaQuery<Log> criteria = qb.createQuery(Log.class);
+		Root<Log> root = criteria.from(Log.class);
+		criteria.select(root);
 
-		return list;
+		criteria.distinct(true);
+
+		List<Log> log = getSession().createQuery(criteria).setFirstResult(page * count) // offset
+				.setMaxResults(count) // limit
+				.getResultList();
+		
+		return log;
 	}
 
 }

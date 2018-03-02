@@ -3,8 +3,6 @@ package org.histo.template.ui.documents;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.histo.config.enums.ContactRole;
 import org.histo.model.Contact;
@@ -15,7 +13,6 @@ import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.pdf.PDFGenerator;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.Getter;

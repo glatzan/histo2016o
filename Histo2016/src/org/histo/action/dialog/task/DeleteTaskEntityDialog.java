@@ -1,7 +1,6 @@
 package org.histo.action.dialog.task;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -42,11 +41,6 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)

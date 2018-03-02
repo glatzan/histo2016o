@@ -5,11 +5,9 @@ import java.io.Serializable;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
-import org.aspectj.org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.adaptors.MailHandler;
 import org.histo.adaptors.printer.ClinicPrinter;
-import org.histo.adaptors.printer.ClinicPrinterDummy;
 import org.histo.adaptors.printer.LabelPrinter;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;

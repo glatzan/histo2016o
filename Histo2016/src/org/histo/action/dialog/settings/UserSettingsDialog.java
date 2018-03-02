@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractTabDialog;
-import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;

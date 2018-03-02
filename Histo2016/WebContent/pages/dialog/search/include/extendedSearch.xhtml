@@ -128,15 +128,23 @@
 			<h:panelGrid columns="1" styleClass="newTableContainer left">
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="newTableContainer right">
+			<h:panelGrid columns="3" styleClass="newTableContainer right">
 				<p:commandButton value="#{msg['general.select']}"
 					icon="fa fa-search" widgetVar="serachBtn"
-					onclick="disableButton(true, 'serachBtn', 'closeBtn')"
+					onclick="disableButton(true, 'serachBtn', 'closeBtn', 'exportBtn')"
 					process="@form">
 					<f:actionListener
 						binding="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.selectAsWorklist()}" />
 					<f:actionListener
 						binding="#{dialogHandlerAction.worklistSearchDialog.hideDialog()}" />
+				</p:commandButton>
+
+				<p:commandButton value="#{msg['general.export']}" icon="fa fa-copy"
+					widgetVar="exportBtn"
+					onclick="disableButton(true, 'serachBtn', 'closeBtn', 'exportBtn')"
+					process="@form">
+					<f:actionListener
+						binding="#{dialogHandlerAction.worklistSearchDialog.extendedSearchTab.exportWorklist()}" />
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.close']}" immediate="true"

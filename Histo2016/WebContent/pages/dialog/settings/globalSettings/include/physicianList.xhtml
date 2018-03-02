@@ -84,7 +84,7 @@
 				<!-- refresh -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.update']}"
-					disabled="#{!physician.person.autoUpdate}" update="@form"
+					disabled="#{!physician.person.autoUpdate or physician.uid eq null}" update="@form"
 					partialSubmit="true" process="@this">
 					<i class="fa fa-fw fa-undo " />
 

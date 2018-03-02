@@ -534,12 +534,12 @@
 								actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
 								<i class="fa fa-fw fa-paint-brush"></i>
 								<p:ajax event="dialogReturn"
+									update="navigationForm:patientList contentForm:contentPanel headerForm"
 									listener="#{receiptlogViewHandlerAction.onSelectStainingDialogReturn}"
-									oncomplete="updateTaskDataOnAddSlideReturn();" />
+									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane');" />
 							</p:commandLink>
 							<!-- update after dialog return -->
 							<p:remoteCommand name="updateTaskDataOnAddSlideReturn"
-								update="navigationForm:patientList contentForm:contentPanel headerForm"
 								actionListener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
 								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane');" />
 						</h:panelGroup>

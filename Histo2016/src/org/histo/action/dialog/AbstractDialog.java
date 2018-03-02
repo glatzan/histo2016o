@@ -99,8 +99,9 @@ public abstract class AbstractDialog {
 		if (dialog.getHeader() != null)
 			options.put("headerElement", "dialogForm:header");
 
+//		PrimeFaces.current().dialog.openDynamic("viewCars", options, null);
 		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
-
+ 
 		logger.debug("Showing Dialog: " + dialog);
 	}
 

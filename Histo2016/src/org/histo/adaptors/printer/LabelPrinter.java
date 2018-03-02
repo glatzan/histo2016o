@@ -13,7 +13,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.histo.action.handler.GlobalSettings;
-import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.SlideLable;

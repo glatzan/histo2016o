@@ -1,7 +1,5 @@
 package org.histo.config;
 
-import java.net.URL;
-
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +10,6 @@ import org.histo.action.MainHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.View;
 import org.histo.model.user.HistoGroup;
-import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoUser;
 import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
