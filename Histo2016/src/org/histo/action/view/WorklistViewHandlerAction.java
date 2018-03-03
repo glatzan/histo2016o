@@ -20,7 +20,7 @@ import org.histo.util.StreamUtils;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearch;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -334,8 +334,7 @@ public class WorklistViewHandlerAction {
 
 						mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
-						RequestContext.getCurrentInstance()
-								.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
+						PrimeFaces.current().executeScript("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
 					}
 				}
 			}

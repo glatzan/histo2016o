@@ -28,7 +28,7 @@ import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.SlideLable;
 import org.histo.util.TimeUtil;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -94,14 +94,6 @@ public class MainHandlerAction {
 	 * Session
 	 ********************************************************/
 
-	public void test() {
-
-		sendGrowlMessages("test", "test", FacesMessage.SEVERITY_WARN);
-		System.out.println("go");
-		// RequestContext.getCurrentInstance().execute("updateGlobalGrowl('testGrowl','test','test','warn');");
-		// context.addMessage(GLOBAL_GROWL_ID, );
-	}
-
 	public void testPrint() {
 		CupsClient cupsClient;
 		try {
@@ -121,11 +113,10 @@ public class MainHandlerAction {
 		}
 
 	}
-	
+
 	public void sendGrowlMessages(String headline, String message) {
 		sendGrowlMessages(new FacesMessage(FacesMessage.SEVERITY_INFO, headline, message));
 	}
-
 
 	public void sendGrowlMessages(String headline, String message, FacesMessage.Severity servertiy) {
 		sendGrowlMessages(new FacesMessage(servertiy, headline, message));
@@ -133,14 +124,12 @@ public class MainHandlerAction {
 
 	public void sendGrowlMessages(FacesMessage message) {
 
-		RequestContext.getCurrentInstance()
-				.execute("updateGlobalGrowl('" + GLOBAL_GROWL_ID + "','" + message.getSummary() + "','"
-						+ message.getDetail() + "','" + message.getSeverity().toString().toLowerCase() + "');");
+		PrimeFaces.current().executeScript("updateGlobalGrowl('" + GLOBAL_GROWL_ID + "','" + message.getSummary()
+				+ "','" + message.getDetail() + "','" + message.getSeverity().toString().toLowerCase() + "');");
 
 		logger.debug("Growl (" + GLOBAL_GROWL_ID + ") Messagen (" + message.getSeverity() + "): " + message.getSummary()
 				+ " " + message.getDetail());
 	}
-
 
 	public void sendGrowlMessages(CustomUserNotificationExcepetion e) {
 		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);

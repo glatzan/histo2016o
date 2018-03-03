@@ -45,7 +45,7 @@ import org.histo.util.notification.NotificationContainer;
 import org.histo.util.notification.NotificationContainerList;
 import org.histo.util.notification.NotificationFeedback;
 import org.histo.util.pdf.PDFGenerator;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -620,7 +620,7 @@ public class NotificationDialog extends AbstractTabDialog {
 			sendReportTab.setDisabled(false);
 
 			// unblocking gui and updating content
-			RequestContext.getCurrentInstance().execute("onNotificationCompleted();");
+			PrimeFaces.current().executeScript("onNotificationCompleted();");
 		}
 
 		public int calculateSteps() {

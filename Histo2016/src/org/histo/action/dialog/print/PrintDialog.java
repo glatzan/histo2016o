@@ -24,7 +24,6 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
 import org.histo.util.pdf.PDFGenerator;
 import org.histo.util.pdf.PrintOrder;
-import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -278,6 +277,6 @@ public class PrintDialog extends AbstractDialog {
 	 * Returns the rendered pdf if in selectMode
 	 */
 	public void hideAndSelectDialog() {
-		RequestContext.getCurrentInstance().closeDialog(guiManager.getPDFContainerToRender());
+		super.hideDialog(guiManager.getPDFContainerToRender());
 	}
 }
