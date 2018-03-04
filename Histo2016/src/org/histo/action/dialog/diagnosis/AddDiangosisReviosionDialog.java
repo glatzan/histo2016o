@@ -41,6 +41,7 @@ public class AddDiangosisReviosionDialog extends AbstractDialog {
 	}
 
 	public void createDiagosisRevision() {
-		diagnosisService.createDiagnosisRevision(task, DiagnosisRevisionType.DIAGNOSIS_REVISION);
+		diagnosisService.createDiagnosisRevision(getTask(), DiagnosisRevisionType.DIAGNOSIS_REVISION);
+		mainHandlerAction.sendGrowlMessagesAsResource("growl.diagnosis.create.rediagnosis");
 	}
 }

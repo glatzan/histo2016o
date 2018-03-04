@@ -41,9 +41,7 @@ Next Changes:
 -> Maligne Nummer anzeigen, was maligne ist
 -> Diangosen benachrichtigung per brief bei jedem einstellen
 -> Externer Einsender soll brief bekommen
--> Nachbefund bei nachffärbung
 -> wenn konsil aussteht keine archivirung
--> Benerkungsfeld für eingangsbuch
 -> Operateure über liste lasen
 -> Zählung A 1,2 B 2 = 3 Blöcke (Blockzählung)
 -> anzeige der organisation im eingangsbuch
@@ -124,6 +122,13 @@ Graphic Changes
 +++*: Nicht aktive Aufträge werden jetzt ausgegraut
 +++!: Einloggen ist jetzt auch mölgich, wenn die automatische Aktualisierung mit dem Klinik-Backend für den Benutzer ausgestellt ist.
 +++!: Logeinträge werden nicht mehr doppelt angezeigt.
+++++: Wird eine neue Nachfärbung angelegt und besteht bisher noch kein Nachbefund, wird ein Dialog angezeigt um einen Nachbefund zu erstellen.
++++*: OverlayPanels zur Bennung von Proben funktioniert nun zuverlässiger.
+++++: Kommentarfeld für Aufträge eingeführt.
+
+SQL:
+Alter table task add commentary character varying;
+Alter table task_aud add commentary character varying;
 
 +v 1.3.3 (21.02.2018)
 +++*: Patientensuche erzeugt keine doppelten Patienten mehr

@@ -132,6 +132,12 @@ public class Task
 	private String caseHistory = "";
 
 	/**
+	 * Details of the case
+	 */
+	@Column(columnDefinition = "VARCHAR")
+	private String commentary = "";
+	
+	/**
 	 * Insurance of the patient
 	 */
 	@Column(columnDefinition = "VARCHAR")

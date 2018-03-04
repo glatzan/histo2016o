@@ -65,7 +65,7 @@ public enum Dialog {
 	TASK_RESTORE("/pages/dialog/task/archive/restoreTask", null, 480, 272, false, false, true), // 16:9
 	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionsCreate", null, 640, 360, false, false, true), // 16:9
 	DIAGNOSIS_REVISION_DELETE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionDelete", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_REVISION_ADD("/pages/dialog/task/diagnosisRevision/addDiangosisRevisionDialog", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_ADD("/pages/dialog/task/diagnosisRevision/addDiagnosisRevisionDialog", null, 480, 272, false, false, true), // 16:9
 	PRINT_SELECT_PRINTER("/pages/dialog/selectPrinter", null, 640, 360, false, false, true);
 
 	

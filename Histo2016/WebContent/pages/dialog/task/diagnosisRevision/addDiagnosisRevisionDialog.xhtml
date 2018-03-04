@@ -7,7 +7,7 @@
 
 <h:head>
 	<title><h:outputFormat
-			value="#{msg['dialog.archiveTask.headline']}" /></title>
+			value="#{msg['dialog.addDiagnosisRevisionDialog.headline']}" /></title>
 	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
@@ -18,7 +18,7 @@
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel value="#{msg['dialog.archiveTask.headline']}" />
+				<h:outputLabel value="#{msg['dialog.addDiagnosisRevisionDialog.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -30,35 +30,13 @@
 		<div class="dialogContent">
 			<h:panelGrid columns="1" styleClass="newStyleListingTable"
 				columnClasses="columnLongText">
-				<h:outputLabel value="#{msg['dialog.archiveTask.text']}" />
-			</h:panelGrid>
-
-			<h:panelGrid columns="2" styleClass="newStyleListingTable"
-				style="margin-left:10px">
-				<i class="fa fa-check icon-green" />
-				<h:outputLabel value="#{msg['dialog.archiveTask.status.worklists']}"></h:outputLabel>
-
-				<i class="fa fa-check icon-green" />
-				<h:outputLabel value="#{msg['dialog.archiveTask.status.approved']}"></h:outputLabel>
-
-				<i class="fa fa-check icon-green" />
-				<h:outputLabel
-					value="#{msg['dialog.archiveTask.status.notifications']}"></h:outputLabel>
-
-				<h:outputLabel value=" " />
-				<h:outputLabel value=" " />
-
-				<!-- remove from worklist -->
-				<p:selectBooleanCheckbox
-					value="#{dialogHandlerAction.archiveTaskDialog.removeFromWorklist}" />
-				<h:outputLabel
-					value="#{msg['dialog.archiveTask.checkBox.removeFromWorklist']}" />
+				<h:outputLabel value="#{msg['dialog.addDiagnosisRevisionDialog.text']}" />
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
 			<h:panelGrid columns="2" style="width:100%"
-				styleClass="newTableContainer">
+				styleClass="newTableContainer" columnClasses="columnAuto,columnAuto">
 
 				<h:panelGrid columns="1" styleClass="newTableContainer left">
 				</h:panelGrid>
@@ -66,19 +44,19 @@
 				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<!-- Save button -->
 					<p:commandButton
-						value="#{msg['dialog.archiveTask.button.archive']}"
-						icon="fa fa-archive">
+						value="#{msg['dialog.addDiagnosisRevisionDialog.button.create']}"
+						icon="fa fa-plus-circle">
 						<f:actionListener
-							binding="#{dialogHandlerAction.archiveTaskDialog.archiveTask()}"></f:actionListener>
+							binding="#{addDiangosisReviosionDialog.createDiagosisRevision()}"></f:actionListener>
 						<f:actionListener
-							binding="#{dialogHandlerAction.archiveTaskDialog.hideDialog()}"></f:actionListener>
+							binding="#{addDiangosisReviosionDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						icon="fa fa-times-circle">
 						<f:actionListener
-							binding="#{dialogHandlerAction.archiveTaskDialog.hideDialog()}"></f:actionListener>
+							binding="#{addDiangosisReviosionDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>

@@ -326,7 +326,7 @@ public class ReceiptlogViewHandlerAction {
 	public void onEntityIDAlteredOverlayClose(StainingTableChooser<?> chooser) {
 
 		// checking if something was altered, if not do nothing
-		if (chooser.isIdChanged()) {
+		if (chooser != null && chooser.isIdChanged()) {
 			try {
 
 				chooser.getEntity().setIdManuallyAltered(true);
@@ -336,7 +336,8 @@ public class ReceiptlogViewHandlerAction {
 				// TODO update childrens names
 				genericDAO.savePatientData(chooser.getEntity(), "log.patient.task.idManuallyAltered",
 						chooser.getEntity().toString());
-
+				
+				logger.debug("Text changed and saved!");
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				// catching database version inconsistencies
 				worklistViewHandlerAction.onVersionConflictTask();
@@ -352,25 +353,10 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void onSelectStainingDialogReturn(SelectEvent event) {
 		logger.debug("On select staining dialog return ");
-//
-//		if (event.getObject() != null && event.getObject() instanceof SlideSelectResult) {
-//			sampleService.createSlidesForSample((SlideSelectResult) event.getObject());
-//			
-//			// shows dialog for adding a diagnosis revision
-//			if (TaskStatus.checkIfReStainingFlag(((SlideSelectResult) event.getObject()).getBlock())
-//					&& ((SlideSelectResult) event.getObject()).getBlock().getTask().getDiagnosisRevisions()
-//							.size() == 1) {
-//				
-//				logger.debug("No Diagnosis revision -> showing dialog");
-//				
-//				dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBean();
-////				addDiangosisReviosionDialog
-////						.initAndPrepareBean(((SlideSelectResult) event.getObject()).getBlock().getTask());
-//			}
-//		}
-		
-		dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBean();
-		
+
+		if (event.getObject() != null && event.getObject() instanceof SlideSelectResult) {
+			sampleService.createSlidesForSample((SlideSelectResult) event.getObject());
+		}
 		globalEditViewHandler.updateDataOfTask(true, false, true, true);
 	}
 }

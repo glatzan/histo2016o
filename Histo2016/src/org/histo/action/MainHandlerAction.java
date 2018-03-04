@@ -135,6 +135,10 @@ public class MainHandlerAction {
 		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
 	}
 
+	public void sendGrowlMessagesAsResource(String headline) {
+		sendGrowlMessagesAsResource(headline, "growl.empty");
+	}
+
 	public void sendGrowlMessagesAsResource(String headline, String message) {
 		sendGrowlMessagesAsResource(headline, message, FacesMessage.SEVERITY_INFO);
 	}

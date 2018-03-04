@@ -105,7 +105,7 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 				if (stainingsInBlock > 1)
 					name.append(String.valueOf(stainingsInBlock));
 
-				if (getSlideID() == null || !getSlideID().equals(name)) {
+				if (getSlideID() == null || !getSlideID().equals(name.toString())) {
 					setSlideID(name.toString());
 					setIdManuallyAltered(false);
 					return true;
