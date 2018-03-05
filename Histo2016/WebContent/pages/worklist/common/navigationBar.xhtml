@@ -6,7 +6,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<!-- navigation -->
 	<h:panelGrid columns="2" styleClass="breadCrumbsNavigation">
@@ -37,6 +38,16 @@
 					<f:param value="#{globalEditViewHandler.selectedTask.taskID}" />
 				</h:outputFormat>
 			</h:commandLink>
+
+		</h:panelGroup>
+
+		<h:panelGroup
+			rendered="#{globalEditViewHandler.selectedPatient.piz ne null}">
+			<p:commandLink value="PizToClip" id="btnCopy" icon="fa fa-copy" ></p:commandLink>
+			<pe:clipboard id="clipCopy" trigger="btnCopy" action="copy"
+				text="#{globalEditViewHandler.selectedPatient.piz}">
+			</pe:clipboard>
+
 
 		</h:panelGroup>
 	</h:panelGrid>
