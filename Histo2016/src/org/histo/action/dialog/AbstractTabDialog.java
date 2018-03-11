@@ -2,7 +2,6 @@ package org.histo.action.dialog;
 
 import org.histo.config.enums.Dialog;
 import org.histo.model.patient.Task;
-import org.primefaces.event.TabChangeEvent;
 
 import lombok.Getter;
 import lombok.Setter;

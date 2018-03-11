@@ -11,7 +11,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.stat.Statistics;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;

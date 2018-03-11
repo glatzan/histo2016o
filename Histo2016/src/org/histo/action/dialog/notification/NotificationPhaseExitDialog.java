@@ -2,7 +2,6 @@ package org.histo.action.dialog.notification;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskHandlerAction;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
@@ -11,18 +10,11 @@ import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
-import org.histo.model.user.HistoPermissions;
 import org.histo.service.NotificationService;
 import org.histo.service.SampleService;
 import org.histo.service.TaskService;
-import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import lombok.AccessLevel;
 import lombok.Getter;

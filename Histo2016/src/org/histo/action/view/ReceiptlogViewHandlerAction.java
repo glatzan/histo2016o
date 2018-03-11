@@ -11,25 +11,21 @@ import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.settings.SettingsDialogHandler;
+import org.histo.action.dialog.diagnosis.AddDiangosisReviosionDialog;
+import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
 import org.histo.action.handler.GlobalSettings;
-import org.histo.config.enums.DocumentType;
-import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.StainingListAction;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
-import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.UtilDAO;
-import org.histo.model.ListItem;
-import org.histo.model.patient.Block;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSlideLable;
+import org.histo.template.documents.SlideLable;
 import org.histo.ui.StainingTableChooser;
+import org.histo.ui.task.TaskStatus;
+import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -38,6 +34,7 @@ import org.springframework.stereotype.Controller;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import sun.net.www.content.image.gif;
 
 @Controller
 @Scope("session")
@@ -83,6 +80,17 @@ public class ReceiptlogViewHandlerAction {
 	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private AddDiangosisReviosionDialog addDiangosisReviosionDialog;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	@Lazy
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	/**
 	 * Currently selected task in table form, transient, used for gui
 	 */
@@ -181,7 +189,7 @@ public class ReceiptlogViewHandlerAction {
 				break;
 			case PRINT:
 
-				TemplateSlideLable slideLabel = DocumentTemplate
+				SlideLable slideLabel = DocumentTemplate
 						.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLabelDocument());
 
 				if (slideLabel == null) {
@@ -191,14 +199,14 @@ public class ReceiptlogViewHandlerAction {
 
 				logger.debug("Printing labes for selected slides");
 
-				List<TemplateSlideLable> toPrint = new ArrayList<TemplateSlideLable>();
+				List<SlideLable> toPrint = new ArrayList<SlideLable>();
 
 				for (StainingTableChooser<?> stainingTableChooser : list) {
 					if (stainingTableChooser.isChoosen() && stainingTableChooser.isStainingType()) {
 
 						Slide slide = (Slide) stainingTableChooser.getEntity();
 
-						TemplateSlideLable tmp = (TemplateSlideLable) slideLabel.clone();
+						SlideLable tmp = (SlideLable) slideLabel.clone();
 						tmp.initData(task, slide, new Date(System.currentTimeMillis()));
 						tmp.fillTemplate();
 						toPrint.add(tmp);
@@ -275,7 +283,7 @@ public class ReceiptlogViewHandlerAction {
 	 */
 	public void printLableForSlide(Slide slide) {
 
-		TemplateSlideLable slideLabel = DocumentTemplate
+		SlideLable slideLabel = DocumentTemplate
 				.getTemplateByID(globalSettings.getDefaultDocuments().getSlideLabelDocument());
 
 		if (slideLabel == null) {
@@ -298,7 +306,7 @@ public class ReceiptlogViewHandlerAction {
 	public void setSlideAsCompleted(Slide slide) {
 		try {
 			sampleService.setStainingCompletedForSlide(slide, !slide.isStainingCompleted());
-			
+
 			if (sampleService.updateStaingPhase(slide.getTask()))
 				dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(slide.getTask());
 
@@ -318,7 +326,7 @@ public class ReceiptlogViewHandlerAction {
 	public void onEntityIDAlteredOverlayClose(StainingTableChooser<?> chooser) {
 
 		// checking if something was altered, if not do nothing
-		if (chooser.isIdChanged()) {
+		if (chooser != null && chooser.isIdChanged()) {
 			try {
 
 				chooser.getEntity().setIdManuallyAltered(true);
@@ -328,12 +336,27 @@ public class ReceiptlogViewHandlerAction {
 				// TODO update childrens names
 				genericDAO.savePatientData(chooser.getEntity(), "log.patient.task.idManuallyAltered",
 						chooser.getEntity().toString());
-
+				
+				logger.debug("Text changed and saved!");
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				// catching database version inconsistencies
 				worklistViewHandlerAction.onVersionConflictTask();
 			}
 			chooser.setIdChanged(false);
 		}
+	}
+
+	/**
+	 * Creates slides if dialog returns the selected slides
+	 * 
+	 * @param event
+	 */
+	public void onSelectStainingDialogReturn(SelectEvent event) {
+		logger.debug("On select staining dialog return ");
+
+		if (event.getObject() != null && event.getObject() instanceof SlideSelectResult) {
+			sampleService.createSlidesForSample((SlideSelectResult) event.getObject());
+		}
+		globalEditViewHandler.updateDataOfTask(true, false, true, true);
 	}
 }

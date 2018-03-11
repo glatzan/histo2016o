@@ -86,8 +86,15 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:editPatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-pencil-square-o");
 				item.setDisabled(!patient.isExternalPatient());
-				item.setTitle("tuuut");
 				// TODO comment that patient is not edtiable
+				patientSubMenu.addElement(item);
+
+				// remove patient if empty tasks
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.remove"));
+				item.setOnclick(
+						"$('#headerForm\\\\:removePatient').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setIcon("fa fa-trash");
+				item.setDisabled(!patient.getTasks().isEmpty());
 				patientSubMenu.addElement(item);
 
 				// patient upload pdf
@@ -96,6 +103,7 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:uploadBtnToPatient').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-cloud-upload");
 				patientSubMenu.addElement(item);
+
 			}
 		}
 
@@ -367,7 +375,8 @@ public class MenuGenerator {
 											+ favouriteListItem.getId() + ")}");
 						}
 
-						item.setOncomplete("updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+						item.setOncomplete(
+								"updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
 						item.setUpdate("navigationForm:patientList contentForm headerForm");
 						favouriteSubMenu.addElement(item);
 					}
@@ -402,7 +411,6 @@ public class MenuGenerator {
 					"$('#headerForm\\\\:uploadBtn').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 			item.setIcon("fa fa-cloud-upload");
 
-			item.setDisabled(!taskIsEditable);
 			taskSubMenu.addElement(item);
 
 			// log

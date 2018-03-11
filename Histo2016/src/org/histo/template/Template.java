@@ -6,7 +6,6 @@ import javax.persistence.Id;
 
 import org.apache.log4j.Logger;
 import org.histo.model.interfaces.HasID;
-import org.histo.util.pdf.PDFGenerator;
 
 import lombok.Getter;
 import lombok.Setter;

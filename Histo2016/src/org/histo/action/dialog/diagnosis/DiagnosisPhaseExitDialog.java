@@ -5,32 +5,22 @@ import java.util.List;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
-import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.Dialog;
-import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PatientDao;
 import org.histo.dao.PdfDAO;
 import org.histo.dao.TaskDAO;
-import org.histo.model.AssociatedContact;
-import org.histo.model.Contact;
-import org.histo.model.Person;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.service.DiagnosisService;
-import org.histo.ui.RevisionHolder;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
@@ -57,11 +47,6 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private DialogHandlerAction dialogHandlerAction;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)

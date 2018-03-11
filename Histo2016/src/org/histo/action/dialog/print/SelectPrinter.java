@@ -2,9 +2,7 @@ package org.histo.action.dialog.print;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
-import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
-import org.histo.ui.selectors.ContactSelector;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

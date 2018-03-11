@@ -23,7 +23,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Lazy;
@@ -116,7 +116,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 				if (cause instanceof CustomNotUniqueReqest) {
 					logger.debug("Not Unique Reqest Error");
-					RequestContext.getCurrentInstance().closeDialog(null);
+					PrimeFaces.current().dialog().closeDynamic(null);
 					mainHandlerAction.sendGrowlMessages("Fehler!", "Doppelte Anfrage", FacesMessage.SEVERITY_ERROR);
 				} else if (cause instanceof CustomDatabaseInconsistentVersionException) {
 
@@ -143,8 +143,7 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 					mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
-					RequestContext.getCurrentInstance()
-							.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
+					PrimeFaces.current().executeScript("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
 
 					// TODO implement
 				} else if (cause instanceof AbortProcessingException) {

@@ -12,7 +12,6 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
-import org.hibernate.annotations.Type;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.Dialog;
@@ -106,7 +105,7 @@ public class Slide implements Parent<Block>, LogAble, DeleteAble, PatientRollbac
 				if (stainingsInBlock > 1)
 					name.append(String.valueOf(stainingsInBlock));
 
-				if (getSlideID() == null || !getSlideID().equals(name)) {
+				if (getSlideID() == null || !getSlideID().equals(name.toString())) {
 					setSlideID(name.toString());
 					setIdManuallyAltered(false);
 					return true;

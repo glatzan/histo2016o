@@ -12,6 +12,19 @@
 
 	<ui:include src="common/navigationBar.xhtml"></ui:include>
 
+	<script type="text/javascript">
+		// disables the autofocus for the caseHistoryOverlayplpanel 
+		(function() {
+			var proxied = PrimeFaces.widget.OverlayPanel.prototype.applyFocus;
+			PrimeFaces.widget.OverlayPanel.prototype.applyFocus = function() {
+				if (this.jq.hasClass("histoOverlayPanel"))
+					return;
+				return proxied.apply(this, arguments);
+			};
+		})();
+	</script>
+
+
 	<p:panel style="width: 80%" styleClass="newTableContainer">
 
 		<h:outputLabel
@@ -103,8 +116,8 @@
 						value="#{globalEditViewHandler.selectedTask.caseHistory}"
 						title="#{msg['body.diagnosis.story.watermark']}"
 						id="caseHistoryInput" style="width:90%"
-						onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
-						onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');PF('caseHistoryOverlayPanel').update();"
+						onclick="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
+						onfocus="PF('caseHistoryOverlayPanel').show('#{component.clientId}');"
 						onkeypress="PF('caseHistoryOverlayPanel').hide();">
 						<p:ajax event="change"
 							listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.caseHistory',globalEditViewHandler.selectedTask.caseHistory)}"></p:ajax>
@@ -131,6 +144,16 @@
 
 					</p:overlayPanel>
 				</h:panelGroup>
+				
+				<!-- commentary -->
+				<h:outputLabel value="#{msg['body.receiptlog.commentary']}" />
+				<p:inputTextarea styleClass="customBackground"
+					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+					value="#{globalEditViewHandler.selectedTask.commentary}"
+					style="width:90%">
+					<p:ajax event="change"
+						listener="#{diagnosisViewHandlerAction.onDataChange(globalEditViewHandler.selectedTask,'log.patient.task.change.commentary',globalEditViewHandler.selectedTask.commentary)}"></p:ajax>
+				</p:inputTextarea>
 
 				<!-- other -->
 				<h:outputLabel value="#{msg['body.receiptlog.miscellaneous']}" />
@@ -165,8 +188,8 @@
 								id="materialInput#{loopCount.index}"
 								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 								tabindex="1" styleClass="customBackground"
-								onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
-								onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');PF('materialOverlayPanel#{loopCount.index}').update()"
+								onclick="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');)"
+								onfocus="PF('materialOverlayPanel#{loopCount.index}').show('#{component.clientId}');"
 								style="width:200px;float:right;background:##{userHandlerAction.currentUser.settings.inputFieldColor};color:##{userHandlerAction.currentUser.settings.inputFieldFontColor}">
 
 								<p:ajax event="change" execute="@this"
@@ -316,16 +339,23 @@
 
 					<h:panelGroup rendered="#{stainingRow.sampleType}">
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
-							<p:commandLink process="@this" update="contentForm:contentPanel"
-								actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
-								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
 
-								<h:outputLabel
+							<p:commandLink process="@this" update="contentForm:contentPanel"
+								styleClass="updateName_js_Class"
+								oncomplete="showDynamicOverlay('#{component.clientId}')">
+
+								<h:outputLabel styleClass="doNotHideOverlay_js_Class"
 									value="#{msg['body.receiptlog.slide.sample']} #{stainingRow.entity.sampleID}" />
 								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
-									<i class="fa fa-fw fa-chain"
+									<i class="fa fa-fw fa-chain doNotHideOverlay_js_Class"
 										title="#{msg['body.statiningView.idManuallyAltered']}" />
 								</h:panelGroup>
+								<!-- saving if overlay panel is already shown and something was changed -->
+								<f:ajax
+									listener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}" />
+								<!-- showing panel with new data -->
+								<f:ajax
+									listener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}" />
 
 							</p:commandLink>
 						</h:panelGroup>
@@ -340,16 +370,22 @@
 
 					<h:panelGroup rendered="#{stainingRow.blockType}">
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
-
 							<p:commandLink process="@this" update="contentForm:contentPanel"
-								actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
-								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
-								<h:outputLabel
+								styleClass="updateName_js_Class"
+								oncomplete="showDynamicOverlay('#{component.clientId}')">
+								<h:outputLabel styleClass="doNotHideOverlay_js_Class"
 									value="#{msg['body.receiptlog.slide.block']} #{stainingRow.entity.blockID}" />
 								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
-									<i class="fa fa-fw fa-chain"
+									<i class="fa fa-fw fa-chain doNotHideOverlay_js_Class"
 										title="#{msg['body.statiningView.idManuallyAltered']}" />
 								</h:panelGroup>
+
+								<!-- saving if overlay panel is already shown and something was changed -->
+								<f:ajax
+									listener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}" />
+								<!-- showing panel with new data -->
+								<f:ajax
+									listener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}" />
 							</p:commandLink>
 
 						</h:panelGroup>
@@ -387,14 +423,23 @@
 						<h:panelGroup layout="block" style="width: 90%; min-height:20px">
 
 							<p:commandLink process="@this" update="contentForm:contentPanel"
-								actionListener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}"
-								oncomplete="PF('idInputPannel').show('#{component.clientId}')">
-								<h:outputLabel value="#{stainingRow.entity.slideID}" />
+								styleClass="updateName_js_Class"
+								oncomplete="showDynamicOverlay('#{component.clientId}')">
+
+								<h:outputLabel value="#{stainingRow.entity.slideID}"
+									styleClass="doNotHideOverlay_js_Class" />
 
 								<h:panelGroup rendered="#{stainingRow.entity.idManuallyAltered}">
-									<i class="fa fa-fw fa-chain"
+									<i class="fa fa-fw fa-chain doNotHideOverlay_js_Class"
 										title="#{msg['body.statiningView.idManuallyAltered']}" />
 								</h:panelGroup>
+
+								<!-- saving if overlay panel is already shown and something was changed -->
+								<f:ajax
+									listener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}" />
+								<!-- showing panel with new data -->
+								<f:ajax
+									listener="#{receiptlogViewHandlerAction.setSelectedStainingTableChooser(stainingRow)}" />
 							</p:commandLink>
 
 						</h:panelGroup>
@@ -515,15 +560,17 @@
 					<h:panelGroup rendered="#{stainingRow.blockType}"
 						style="float: right">
 						<!-- ********** New Staining Button ********** -->
-						<p:commandLink title="#{msg['body.statiningView.newStaining']}"
-							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
-							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
-							<i class="fa fa-fw fa-paint-brush"></i>
-							<p:ajax event="dialogReturn"
-								listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, true)}"
-								oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane')"
-								update="navigationForm:patientList contentForm:contentPanel headerForm" />
-						</p:commandLink>
+						<h:panelGroup>
+							<p:commandLink title="#{msg['body.statiningView.newStaining']}"
+								disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
+								actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
+								<i class="fa fa-fw fa-paint-brush"></i>
+								<p:ajax event="dialogReturn"
+									update="navigationForm:patientList contentForm:contentPanel headerForm"
+									listener="#{receiptlogViewHandlerAction.onSelectStainingDialogReturn}"
+									oncomplete="updateAndAutoScrollToSelectedElement('contentForm:contentScrollPane');" />
+							</p:commandLink>
+						</h:panelGroup>
 						<!-- ********** Delete Button ********** -->
 						<p:commandLink
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
@@ -579,20 +626,84 @@
 				</p:column>
 			</p:dataTable>
 
+			<script type="text/javascript">
+				var hideNS = 'mousedown.idInputPannel';
+
+				// Function checks if click is on a link which should show the overlay. If so 
+				// and the overlay is visible the overlay will not be hidden. Otherwise the overlay will
+				// be hidden
+				$(document.body)
+						.off(hideNS)
+						.on(
+								hideNS,
+								function(e) {
+									// do nothing if overlay is hidden
+									if ($("#idInputPannel").hasClass(
+											'ui-overlay-hidden')) {
+										return;
+									}
+
+									//do nothing on target mousedown
+									if ($("#idInputPannel").target) {
+										var target = $(e.target);
+										if ($(hideNS).target.is(target)
+												|| $this.target.has(target).length > 0) {
+											return;
+										}
+									}
+
+									// check if pannel is visivle
+									if (PF('idInputPannel').isVisible()) {
+										// check if on link is click that should show the overlay
+										if (!$(e.target).hasClass(
+												"doNotHideOverlay_js_Class")) {
+											// hide
+											PF('idInputPannel').hide();
+										} else {
+
+										}
+									}
+
+									return;
+
+								});
+
+				function showDynamicOverlay(clintId) {
+
+					// showing the overlay
+					PF('idInputPannel').show(clintId);
+
+					// settings focus, with an delay of 100ms
+					setTimeout(function() {
+						PF('idInputPannelInput').jq.focus();
+						// focus at the end of the input
+						var test = PF('idInputPannelInput').jq.val();
+						PF('idInputPannelInput').jq.val("");
+						PF('idInputPannelInput').jq.val(test);
+					}, 100);
+
+				}
+			</script>
+
 			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
-				styleClass="histoOverlayPanel" widgetVar="idInputPannel"
-				hideEffect="fade" hideEvent="none" showEvent="none">
-				<p:inputText id="idInputPannelInput"
+				dismissable="false" styleClass="histoOverlayPanel"
+				widgetVar="idInputPannel" hideEvent="null" showEvent="null">
+
+				<p:inputText id="idInputPannelInput" widgetVar="idInputPannelInput"
 					onkeypress="return closeOverlayPanelOnReturn(event, 'idInputPannel')"
 					disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 					rendered="#{receiptlogViewHandlerAction.selectedStainingTableChooser ne null}"
-					value="#{receiptlogViewHandlerAction.selectedStainingTableChooser.IDText}" />
+					value="#{receiptlogViewHandlerAction.selectedStainingTableChooser.IDText}">
+					<p:ajax event="change" process="@this"></p:ajax>
+				</p:inputText>
+
+
 			</p:overlayPanel>
 
 			<p:remoteCommand
 				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(receiptlogViewHandlerAction.selectedStainingTableChooser)}"
-				name="saveNameChange"
-				update="navigationForm:patientList contentForm:contentPanel" />
+				name="saveNameChange" update="@(.updateName_js_Class)" />
+
 		</h:panelGrid>
 
 		<!-- bottom buttons -->

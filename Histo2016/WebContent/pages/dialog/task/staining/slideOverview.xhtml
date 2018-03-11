@@ -10,6 +10,7 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.slideOverview.headline']}" /></title>
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputScript library="scripts" name="beanFrontendInteraction.js" />
 </h:head>
 
 <h:body styleClass="contentInputDialog">
@@ -29,7 +30,8 @@
 
 		<div class="dialogContent">
 
-			<p:dataTable var="stainingRow" styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
+			<p:dataTable var="stainingRow"
+				styleClass="newStyleDataTable newStyleDataTable-ManualBackgroundColor"
 				value="#{dialogHandlerAction.slideOverviewDialog.flatTaskEntityList}"
 				scrollable="true" scrollHeight="480" rowIndexVar="index">
 
@@ -179,9 +181,8 @@
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							actionListener="#{dialogHandlerAction.createSlidesDialog.initAndPrepareBean(stainingRow.entity)}">
 							<i class="fa fa-fw fa-paint-brush"></i>
-							<p:ajax event="dialogReturn"
-								listener="#{dialogHandlerAction.slideOverviewDialog.updateData()}"
-								update="@form" />
+							<p:ajax event="dialogReturn" update="@form"
+								listener="#{dialogHandlerAction.slideOverviewDialog.onSelectStainingDialogReturn}" />
 						</p:commandLink>
 					</h:panelGroup>
 
@@ -198,10 +199,11 @@
 								listener="#{dialogHandlerAction.slideOverviewDialog.updateData()}"
 								update="@form" />
 						</p:commandLink>
+
+
 					</h:panelGroup>
 				</p:column>
 			</p:dataTable>
-
 
 			<p:overlayPanel id="idInputPannel" onHide="saveNameChange()"
 				styleClass="defaultOverlayPanel" widgetVar="idInputPannel"
@@ -216,6 +218,10 @@
 			<p:remoteCommand update="dialogContent"
 				actionListener="#{receiptlogViewHandlerAction.onEntityIDAlteredOverlayClose(dialogHandlerAction.slideOverviewDialog.selectedStainingTableChooser)}"
 				name="saveNameChange" />
+
+			<!-- this button is clicked from the backend bean after the select stainings dialog is close, this will open a new dialog for creating a diagnosis revision -->
+			<p:remoteCommand name="closeCreateDiagnosisRevision"
+				actionListener="#{addDiangosisReviosionDialog.initAndPrepareBean(dialogHandlerAction.slideOverviewDialog.task)}"></p:remoteCommand>
 		</div>
 
 		<div class="buttonContainer">

@@ -12,7 +12,6 @@ import org.histo.model.AssociatedContactNotification;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
 import org.histo.util.StreamUtils;
-import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;

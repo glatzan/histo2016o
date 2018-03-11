@@ -3,14 +3,12 @@ package org.histo.action.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.media.MediaDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -22,13 +20,12 @@ import org.histo.util.StreamUtils;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearch;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import java.lang.reflect.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -337,8 +334,7 @@ public class WorklistViewHandlerAction {
 
 						mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
-						RequestContext.getCurrentInstance()
-								.execute("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
+						PrimeFaces.current().executeScript("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
 					}
 				}
 			}

@@ -7,12 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.AbstractTabDialog;
-import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
-import org.histo.action.dialog.worklist.WorklistSearchDialog.ExtendedSearchTab;
-import org.histo.action.dialog.worklist.WorklistSearchDialog.FavouriteSearchTab;
-import org.histo.action.dialog.worklist.WorklistSearchDialog.SimpleSearchTab;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
@@ -24,7 +19,6 @@ import org.histo.dao.OrganizationDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UserDAO;
 import org.histo.dao.UtilDAO;
-import org.histo.model.Contact;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
@@ -35,13 +29,11 @@ import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.interfaces.ListOrder;
 import org.histo.model.log.Log;
 import org.histo.model.user.HistoGroup;
-import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoUser;
 import org.histo.service.PhysicianService;
 import org.histo.ui.ListChooser;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.ReorderEvent;
-import org.primefaces.event.TabChangeEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -830,8 +822,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 			setShowArchived(false);
 			setAllRoles(Arrays.asList(ContactRole.values()));
 
-			setShowPhysicianRoles(new ContactRole[] { ContactRole.PRIVATE_PHYSICIAN, ContactRole.SURGEON,
-					ContactRole.OTHER_PHYSICIAN, ContactRole.SIGNATURE });
+			setShowPhysicianRoles(ContactRole.values());
 		}
 
 		@Override

@@ -32,6 +32,14 @@
 				columnClasses="columnLongText">
 				<h:outputLabel value="#{msg['dialog.restoreTask.text']}" />
 			</h:panelGrid>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable"
+				style="margin-left:10px">
+				<h:outputLabel value="#{msg['dialog.restoreTask.reason']}"></h:outputLabel>
+				<p:inputTextarea rows="7" cols="50" 
+					completeMethod="#{restoreTaskDialog.getListsuggestions}"
+					queryDelay="300" minQueryLength="1" />
+			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
@@ -46,17 +54,14 @@
 					<p:commandButton
 						value="#{msg['dialog.restoreTask.button.restore']}"
 						icon="fa fa-archive">
-						<f:actionListener
-							binding="#{dialogHandlerAction.restoreTaskDialog.restoreTask()}"></f:actionListener>
-						<f:actionListener
-							binding="#{dialogHandlerAction.restoreTaskDialog.hideDialog()}"></f:actionListener>
+						<f:actionListener binding="#{restoreTaskDialog.restoreTask()}"></f:actionListener>
+						<f:actionListener binding="#{restoreTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 
 					<!-- Close button -->
 					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
 						icon="fa fa-times-circle">
-						<f:actionListener
-							binding="#{dialogHandlerAction.restoreTaskDialog.hideDialog()}"></f:actionListener>
+						<f:actionListener binding="#{restoreTaskDialog.hideDialog()}"></f:actionListener>
 					</p:commandButton>
 				</h:panelGrid>
 			</h:panelGrid>

@@ -1,4 +1,3 @@
-
 body {
 	margin: 0px !important;
 	font-size: 0.8em !important;
@@ -222,9 +221,10 @@ body {
 	table-layout: fixed !important;
 }
 
-.newStyleScrollTable{
+.newStyleScrollTable {
 	padding: 0px;
 }
+
 .newStyleScrollTable thead, .newStyleScrollTable tbody,
 	.newStyleScrollTable tr, .newStyleScrollTable td, .newStyleScrollTable th
 	{
@@ -249,7 +249,6 @@ body {
 
 	/*text-align: left;*/
 }
-
 
 .newStyleScrollTable tbody {
 	height: 120px;
@@ -902,8 +901,8 @@ body {
 /* scrollpanel style */
 .histoScroll {
 	height: calc(100vh - 64px);
-	width: calc(100% - 1px) !important; 
-	border-left : none !important;
+	width: calc(100% - 1px) !important;
+	border-left: none !important;
 	border-top: none !important;
 	border-bottom: none !important;
 	border-spacing: 0px !important;
@@ -913,7 +912,8 @@ body {
 /* scrollpanel body with*/
 .histoScroll .ui-scrollpanel-content, .histoScroll .ui-scrollpanel-container
 	{
-	width: 100% !important;
+	width: calc(100% - 1px) !important;
+	overflow-x: hidden;
 }
 
 /*scrollpanel bar*/

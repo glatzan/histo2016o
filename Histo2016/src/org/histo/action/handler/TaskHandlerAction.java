@@ -1,10 +1,5 @@
 package org.histo.action.handler;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
@@ -12,23 +7,12 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
-import org.histo.config.enums.DocumentType;
-import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.enums.StainingListAction;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.model.MaterialPreset;
 import org.histo.model.patient.Sample;
-import org.histo.model.patient.Slide;
-import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
-import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSlideLable;
-import org.histo.ui.StainingTableChooser;
-import org.histo.ui.task.TaskStatus;
-import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;

@@ -12,7 +12,7 @@ import org.histo.config.exception.CustomNotUniqueReqest;
 import org.histo.dao.GenericDAO;
 import org.histo.model.patient.Task;
 import org.histo.util.UniqueRequestID;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import lombok.Getter;
@@ -99,8 +99,8 @@ public abstract class AbstractDialog {
 		if (dialog.getHeader() != null)
 			options.put("headerElement", "dialogForm:header");
 
-		RequestContext.getCurrentInstance().openDialog(dialog.getPath(), options, null);
-
+		PrimeFaces.current().dialog().openDynamic(dialog.getPath(), options, null);
+ 
 		logger.debug("Showing Dialog: " + dialog);
 	}
 
@@ -115,7 +115,7 @@ public abstract class AbstractDialog {
 
 	public void hideDialog(Object returnValue) {
 		logger.debug("Hiding Dialog: " + getDilaog());
-		RequestContext.getCurrentInstance().closeDialog(returnValue);
+		PrimeFaces.current().dialog().closeDynamic(returnValue);
 	}
 
 	public void onDatabaseVersionConflict() {

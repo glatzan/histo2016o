@@ -59,19 +59,11 @@
 					</p:column>
 
 					<p:ajax event="rowSelect" update="@form" />
-					<p:ajax event="rowDblselect" oncomplete="submitDoubleclick()"
+					<p:ajax event="rowDblselect"
+						listener="#{dialogHandlerAction.organizationListDialog.selectOrganisation()}"
 						disabled="#{!dialogHandlerAction.organizationListDialog.selectMode}" />
 
 				</p:dataTable>
-
-				<p:remoteCommand name="submitDoubleclick" partialSubmit="true"
-					process="@this"
-					rendered="#{dialogHandlerAction.organizationListDialog.selectMode}">
-					<f:actionListener
-						binding="#{dialogHandlerAction.organizationListDialog.selectOrganisation()}" />
-					<f:actionListener
-						binding="#{dialogHandlerAction.organizationListDialog.hideDialog()}" />
-				</p:remoteCommand>
 			</h:panelGrid>
 		</div>
 

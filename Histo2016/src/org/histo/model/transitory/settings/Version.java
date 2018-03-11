@@ -1,15 +1,9 @@
 package org.histo.model.transitory.settings;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.histo.model.interfaces.GsonAble;
 import org.histo.util.FileUtil;
-
-import com.google.gson.Gson;
-import com.google.gson.annotations.Expose;
-import com.google.gson.reflect.TypeToken;
 
 import lombok.Getter;
 import lombok.Setter;

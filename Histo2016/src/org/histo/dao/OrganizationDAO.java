@@ -11,10 +11,6 @@ import javax.persistence.criteria.Root;
 
 import org.apache.log4j.Logger;
 import org.hibernate.Hibernate;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
@@ -43,14 +39,18 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 
 		// saving new organizations
 		for (int i = 0; i < organizations.size(); i++) {
-			Organization databaseOrganization = getOrganizationByName(organizations.get(i).getName());
-			if (databaseOrganization == null) {
-				logger.debug("Organization " + organizations.get(i).getName() + " not found, creating!");
-				saveOrUpdateOrganization(organizations.get(i));
-			} else {
-				logger.debug("Organization " + organizations.get(i).getName() + " found, replacing in linst!");
-				organizations.remove(i);
-				organizations.add(i, databaseOrganization);
+
+			// do not reload loaded organizations
+			if (organizations.get(i).getId() == 0) {
+				Organization databaseOrganization = getOrganizationByName(organizations.get(i).getName());
+				if (databaseOrganization == null) {
+					logger.debug("Organization " + organizations.get(i).getName() + " not found, creating!");
+					saveOrUpdateOrganization(organizations.get(i));
+				} else {
+					logger.debug("Organization " + organizations.get(i).getName() + " found, replacing in linst!");
+					organizations.remove(i);
+					organizations.add(i, databaseOrganization);
+				}
 			}
 		}
 	}

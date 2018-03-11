@@ -90,13 +90,19 @@ public class GenericDAO extends AbstractDAO {
 	}
 
 	public <C extends HasID & PatientRollbackAble<?>> C deletePatientData(C object, String resourcesKey,
-			String... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
 		return deletePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
-	public <C extends HasID> C deletePatientData(C object, PatientRollbackAble hasPatient, String resourcesKey,
-			String... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
-		return delete(object, resourcesKey, new Object[] { hasPatient.getLogPath(), resourcesKeyInsert },
-				hasPatient.getPatient());
+	public <C extends HasID> C deletePatientData(C object, PatientRollbackAble<?> hasPatient, String resourcesKey,
+			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+
+		Object[] keyArr = new Object[resourcesKeyInsert.length + 1];
+		keyArr[0] = hasPatient.getLogPath();
+		for (int i = 0; i < resourcesKeyInsert.length; i++) {
+			keyArr[i + 1] = resourcesKeyInsert[i];
+		}
+
+		return delete(object, resourcesKey, keyArr, hasPatient.getPatient());
 	}
 }

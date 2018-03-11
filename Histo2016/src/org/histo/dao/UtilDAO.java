@@ -1,7 +1,14 @@
 package org.histo.dao;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -13,6 +20,7 @@ import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.StainingPrototype;
+import org.histo.model.StainingPrototype.StainingType;
 import org.histo.util.dataList.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -39,6 +47,43 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 		dataList = genericDAO.reattach(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
 		return dataList;
+	}
+
+	/**
+	 * Returns all staining prototypes
+	 * 
+	 * @return
+	 */
+	public List<StainingPrototype> getStainingPrototypes() {
+		return getStainingPrototypes(null);
+	}
+
+	/**
+	 * Returns a list with staining prototypes of the given type
+	 * 
+	 * @param types
+	 * @return
+	 */
+	public List<StainingPrototype> getStainingPrototypes(StainingType[] types) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<StainingPrototype> criteria = qb.createQuery(StainingPrototype.class);
+		Root<StainingPrototype> root = criteria.from(StainingPrototype.class);
+		criteria.select(root);
+
+		if (types != null) {
+			Expression<Long> typeColumn = root.get("type");
+			Predicate listCodition = typeColumn.in(Arrays.asList(types));
+
+			criteria.where(listCodition);
+		}
+
+		criteria.distinct(true);
+
+		List<StainingPrototype> result = getSession().createQuery(criteria).getResultList();
+
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,14 +137,15 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	public void initMaterialPreset(MaterialPreset stainingPrototypeLists) {
 		Hibernate.initialize(stainingPrototypeLists.getStainingPrototypes());
 	}
-	
+
 	public List<ListItem> getAllStaticListItems(ListItem.StaticList list) {
 		return getAllStaticListItems(list, false);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<ListItem> getAllStaticListItems(ListItem.StaticList list, boolean archived) {
-		logger.debug("Searching for " + list.toString() + " in Database. " + (archived ? " Showing archived items." : " Showing none archived items."));
+		logger.debug("Searching for " + list.toString() + " in Database. "
+				+ (archived ? " Showing archived items." : " Showing none archived items."));
 		DetachedCriteria query = DetachedCriteria.forClass(ListItem.class, "listItem");
 		query.addOrder(Order.asc("indexInList"));
 		query.add(Restrictions.eq("listType", list));

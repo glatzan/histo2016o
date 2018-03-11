@@ -1,13 +1,13 @@
 package org.histo.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HistoUtil {
 
 	/**
-	 * Task a HashMap with key value pairs and replaces all entries within a
-	 * string.
+	 * Task a HashMap with key value pairs and replaces all entries within a string.
 	 * 
 	 * @param text
 	 * @param replace
@@ -56,6 +56,18 @@ public class HistoUtil {
 
 	public final static boolean isNotNullOrEmpty(String str) {
 		if (str != null && !str.isEmpty())
+			return true;
+		return false;
+	}
+
+	public final static boolean isNotNullOrEmpty(List<?> list) {
+		if (list != null && !list.isEmpty())
+			return true;
+		return false;
+	}
+
+	public final static boolean isNotNullOrEmpty(Object[] arr) {
+		if (arr != null && arr.length != 0)
 			return true;
 		return false;
 	}

@@ -3,11 +3,10 @@ package org.histo.action.dialog.patient;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.histo.action.UserHandlerAction;
-import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.AbstractTabDialog;
-import org.histo.action.dialog.AbstractTabDialog.AbstractTab;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
@@ -19,7 +18,6 @@ import org.histo.model.patient.Patient;
 import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
 import org.histo.ui.ListChooser;
-import org.histo.worklist.search.WorklistSimpleSearch;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,12 +75,12 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].initTab();
 		}
-		
+
 		clinicSearchTab.setPatientName(name);
 		clinicSearchTab.setPatientSurname(surename);
 		clinicSearchTab.setPatientPiz(piz);
 		clinicSearchTab.setPatientBirthday(date);
-		
+
 		onTabChange(tabs[0]);
 	}
 
@@ -164,7 +162,8 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 			try {
 				if (getSelectedPatientListItem() != null) {
 					patientService.addPatient(getSelectedPatientListItem().getListItem());
-					worklistViewHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true, true);
+					worklistViewHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true,
+							true);
 				}
 			} catch (JSONException | CustomDatabaseInconsistentVersionException | CustomExceptionToManyEntries
 					| CustomNullPatientExcepetion e) {
@@ -193,24 +192,32 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 						// supported by local database
 						resultArr.addAll(patientService.serachForPizRange(getPatientPiz()));
 					}
+					
 				} else if ((getPatientName() != null && !getPatientName().isEmpty())
 						|| (getPatientSurname() != null && !getPatientSurname().isEmpty())
 						|| getPatientBirthday() != null) {
 
-					resultArr.addAll(patientService.searhcForPatient(getPatientName(), getPatientSurname(),
-							getPatientBirthday(), isSearchLocalDatabaseOnly()));
+					AtomicBoolean toManyEntries = new AtomicBoolean(false);
+
+					resultArr.addAll(patientService.searchForPatient(getPatientName(), getPatientSurname(),
+							getPatientBirthday(), isSearchLocalDatabaseOnly(), toManyEntries));
+
+					setToManyMatchesInClinicDatabase(toManyEntries.get());
+					logger.debug(isToManyMatchesInClinicDatabase());
 				}
 
+				logger.debug(isToManyMatchesInClinicDatabase());
+				
 				setPatientList(ListChooser.getListAsIDList(resultArr));
 				setSelectedPatientListItem(null);
 
 			} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
 				setToManyMatchesInClinicDatabase(true);
-				setPatientList(null);
-				setSelectedPatientListItem(null);
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
+			
+			logger.debug(isToManyMatchesInClinicDatabase());
 		}
 
 		/**

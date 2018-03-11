@@ -1,7 +1,6 @@
 package org.histo.action.dialog.task;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -15,7 +14,6 @@ import org.histo.model.patient.Sample;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
-import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -42,11 +40,6 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ReceiptlogViewHandlerAction receiptlogViewHandlerAction;
-
-	@Autowired
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -114,6 +107,6 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 	 * Custom close handler, if staining phase has ended return true
 	 */
 	public void hideDialog() {
-		RequestContext.getCurrentInstance().closeDialog(new Boolean(isStainingPhaseEnded()));
+		super.hideDialog(new Boolean(isStainingPhaseEnded()));
 	}
 }

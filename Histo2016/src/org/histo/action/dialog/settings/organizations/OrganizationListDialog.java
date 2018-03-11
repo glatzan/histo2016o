@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.OrganizationDAO;
 import org.histo.model.Organization;
 import org.histo.model.Person;

@@ -58,6 +58,7 @@ public class TransientDAO extends AbstractDAO {
 		criteria.select(root);
 
 		criteria.where(qb.like(root.get("username"), name));
+
 		criteria.distinct(true);
 
 		List<HistoUser> users = getSession().createQuery(criteria).getResultList();
@@ -93,14 +94,17 @@ public class TransientDAO extends AbstractDAO {
 	public void synchronizeOrganizations(List<Organization> organizations) {
 		// saving new organizations
 		for (int i = 0; i < organizations.size(); i++) {
-			Organization databaseOrganization = getOrganizationByName(organizations.get(i).getName());
-			if (databaseOrganization == null) {
-				logger.debug("Organization " + organizations.get(i).getName() + " not found, creating!");
-				createOrganization(organizations.get(i));
-			} else {
-				logger.debug("Organization " + organizations.get(i).getName() + " found, replacing in linst!");
-				organizations.remove(i);
-				organizations.add(i, databaseOrganization);
+			// do not reload loaded organizations
+			if (organizations.get(i).getId() == 0) {
+				Organization databaseOrganization = getOrganizationByName(organizations.get(i).getName());
+				if (databaseOrganization == null) {
+					logger.debug("Organization " + organizations.get(i).getName() + " not found, creating!");
+					createOrganization(organizations.get(i));
+				} else {
+					logger.debug("Organization " + organizations.get(i).getName() + " found, replacing in linst!");
+					organizations.remove(i);
+					organizations.add(i, databaseOrganization);
+				}
 			}
 		}
 	}
@@ -129,7 +133,7 @@ public class TransientDAO extends AbstractDAO {
 
 		return group;
 	}
-	
+
 	/**
 	 * Merges two physicians an updates their organizations (
 	 * 

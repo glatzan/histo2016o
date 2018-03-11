@@ -11,12 +11,9 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerRepository;
-import org.atmosphere.util.StringEscapeUtils;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
@@ -24,19 +21,14 @@ import org.cups4j.PrintRequestResult;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DateFormat;
-import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.TemplateSlideLable;
+import org.histo.template.documents.SlideLable;
 import org.histo.util.TimeUtil;
-import org.primefaces.context.RequestContext;
-import org.primefaces.push.EventBus;
-import org.primefaces.push.EventBusFactory;
-import org.primefaces.push.PushContext;
-import org.primefaces.push.PushContextFactory;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
@@ -102,14 +94,6 @@ public class MainHandlerAction {
 	 * Session
 	 ********************************************************/
 
-	public void test() {
-
-		sendGrowlMessages("test", "test", FacesMessage.SEVERITY_WARN);
-		System.out.println("go");
-		// RequestContext.getCurrentInstance().execute("updateGlobalGrowl('testGrowl','test','test','warn');");
-		// context.addMessage(GLOBAL_GROWL_ID, );
-	}
-
 	public void testPrint() {
 		CupsClient cupsClient;
 		try {
@@ -118,7 +102,7 @@ public class MainHandlerAction {
 			CupsPrinter cupsPrinter = cupsClient.getPrinter(url);
 			HashMap<String, String> map = new HashMap<>();
 			map.put("document-format", "application/vnd.cups-raw");
-			TemplateSlideLable t = (TemplateSlideLable) DocumentTemplate.getTemplateByID(150);
+			SlideLable t = (SlideLable) DocumentTemplate.getTemplateByID(150);
 			t.initData(new Task(new Patient()), new Slide(), new Date());
 
 			PrintJob printJob = new PrintJob.Builder(t.getFileContent().getBytes()).attributes(map).build();
@@ -129,11 +113,10 @@ public class MainHandlerAction {
 		}
 
 	}
-	
+
 	public void sendGrowlMessages(String headline, String message) {
 		sendGrowlMessages(new FacesMessage(FacesMessage.SEVERITY_INFO, headline, message));
 	}
-
 
 	public void sendGrowlMessages(String headline, String message, FacesMessage.Severity servertiy) {
 		sendGrowlMessages(new FacesMessage(servertiy, headline, message));
@@ -141,17 +124,19 @@ public class MainHandlerAction {
 
 	public void sendGrowlMessages(FacesMessage message) {
 
-		RequestContext.getCurrentInstance()
-				.execute("updateGlobalGrowl('" + GLOBAL_GROWL_ID + "','" + message.getSummary() + "','"
-						+ message.getDetail() + "','" + message.getSeverity().toString().toLowerCase() + "');");
+		PrimeFaces.current().executeScript("updateGlobalGrowl('" + GLOBAL_GROWL_ID + "','" + message.getSummary()
+				+ "','" + message.getDetail() + "','" + message.getSeverity().toString().toLowerCase() + "');");
 
 		logger.debug("Growl (" + GLOBAL_GROWL_ID + ") Messagen (" + message.getSeverity() + "): " + message.getSummary()
 				+ " " + message.getDetail());
 	}
 
-
 	public void sendGrowlMessages(CustomUserNotificationExcepetion e) {
 		sendGrowlMessages(e.getHeadline(), e.getMessage(), FacesMessage.SEVERITY_ERROR);
+	}
+
+	public void sendGrowlMessagesAsResource(String headline) {
+		sendGrowlMessagesAsResource(headline, "growl.empty");
 	}
 
 	public void sendGrowlMessagesAsResource(String headline, String message) {

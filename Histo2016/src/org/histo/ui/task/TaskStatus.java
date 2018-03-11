@@ -54,6 +54,10 @@ public class TaskStatus {
 	private boolean finalizeable;
 
 	private boolean editable;
+	
+	private boolean actionPending;
+	
+	private boolean active;
 
 	public TaskStatus(Task task) {
 		this.task = task;
@@ -81,6 +85,10 @@ public class TaskStatus {
 
 		this.editable = isTaksEditable();
 
+		this.actionPending = task.isActiveOrActionPending();
+		
+		this.active = task.isActive();
+				
 		this.finalizeable = !(this.stainingNeeded || this.reStainingNeeded || this.stayInStainingList
 				|| this.diagnosisNeeded || this.reDiagnosisNeeded || this.stayInDiagnosisList || this.notificationNeeded
 				|| this.stayInNotificationList || task.isFinalized());

@@ -9,9 +9,7 @@ import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -59,6 +57,27 @@ public class LogDAO extends AbstractDAO implements Serializable {
 
 		// set where clause
 		delete.where(qb.equal(e.get("useracc_id"), user.getId()));
+
+		// perform update
+		getSession().createQuery(delete).executeUpdate();
+	}
+
+	/**
+	 * Removes all Logs for a Patient
+	 * 
+	 * @param patient
+	 */
+	public void deletePatientLogs(Patient patient) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// create delete
+		CriteriaDelete<Log> delete = qb.createCriteriaDelete(Log.class);
+
+		// set the root class
+		Root<Log> e = delete.from(Log.class);
+
+		// set where clause
+		delete.where(qb.equal(e.get("patient_id"), patient.getId()));
 
 		// perform update
 		getSession().createQuery(delete).executeUpdate();
@@ -118,15 +137,21 @@ public class LogDAO extends AbstractDAO implements Serializable {
 	 * @param page
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "deprecation" })
 	public List<Log> getLogs(int count, int page) {
-		Criteria criteria = getSession().createCriteria(Log.class);
-		criteria.addOrder(Order.desc("id"));
-		criteria.setFirstResult(page * count);
-		criteria.setMaxResults(count);
-		
-		List<Log> list = criteria.list();
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		return list;
+		// Create CriteriaQuery
+		CriteriaQuery<Log> criteria = qb.createQuery(Log.class);
+		Root<Log> root = criteria.from(Log.class);
+		criteria.select(root);
+
+		criteria.distinct(true);
+
+		List<Log> log = getSession().createQuery(criteria).setFirstResult(page * count) // offset
+				.setMaxResults(count) // limit
+				.getResultList();
+		
+		return log;
 	}
+
 }

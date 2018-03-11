@@ -1,7 +1,6 @@
 package org.histo.action.dialog.slide;
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskHandlerAction;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
@@ -12,12 +11,8 @@ import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
 import org.histo.ui.task.TaskStatus;
-import org.histo.util.TaskUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
 import lombok.Getter;

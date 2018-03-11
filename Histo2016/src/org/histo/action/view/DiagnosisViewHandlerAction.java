@@ -1,31 +1,20 @@
 package org.histo.action.view;
 
-import java.util.List;
-
-import javax.persistence.Transient;
-
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
-import org.histo.action.handler.TaskManipulationHandler;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PhysicianDAO;
 import org.histo.dao.UtilDAO;
-import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
-import org.histo.model.Physician;
 import org.histo.model.Signature;
 import org.histo.model.interfaces.PatientRollbackAble;
-import org.histo.model.patient.Block;
 import org.histo.model.patient.Diagnosis;
 import org.histo.model.patient.DiagnosisRevision;
-import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.service.SampleService;
-import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.service.TaskService;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -50,7 +39,7 @@ public class DiagnosisViewHandlerAction {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private TaskManipulationHandler taskManipulationHandler;
+	private TaskService taskService;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -119,7 +108,7 @@ public class DiagnosisViewHandlerAction {
 			// setting diagnosistext if no text is set
 			if ((diagnosis.getParent().getText() == null || diagnosis.getParent().getText().isEmpty())
 					&& diagnosis.getDiagnosisPrototype() != null) {
-				taskManipulationHandler.copyHistologicalRecord(diagnosis, true);
+				taskService.copyHistologicalRecord(diagnosis, true);
 				logger.debug("No extended diagnosistext found, text copied");
 				return;
 			} else if (diagnosis.getDiagnosisPrototype() != null) {

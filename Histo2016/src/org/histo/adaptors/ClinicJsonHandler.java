@@ -1,18 +1,12 @@
 package org.histo.adaptors;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.Contact;
 import org.histo.model.Person;
-import org.histo.model.interfaces.GsonAble;
 import org.histo.model.patient.Patient;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONException;

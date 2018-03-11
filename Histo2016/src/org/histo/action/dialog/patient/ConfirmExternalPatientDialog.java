@@ -7,7 +7,6 @@ import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.patient.Patient;
 import org.histo.service.PatientService;
-import org.primefaces.context.RequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -73,7 +72,7 @@ public class ConfirmExternalPatientDialog extends AbstractDialog {
 	 * Returns true if the patient creation was confimed and the parent dialog should be closed
 	 */
 	public void hideDialog() {
-		RequestContext.getCurrentInstance().closeDialog(new Boolean(confirmed));
+		super.hideDialog(new Boolean(confirmed));
 	}
 
 }

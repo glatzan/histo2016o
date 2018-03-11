@@ -1,49 +1,29 @@
 package org.histo.action.dialog.print;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
-import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
-import org.histo.model.AssociatedContactNotification;
-import org.histo.model.Contact;
-import org.histo.model.Council;
 import org.histo.model.PDFContainer;
-import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.template.documents.CouncilReport;
-import org.histo.template.documents.DiagnosisReport;
-import org.histo.template.documents.CaseCertificate;
-import org.histo.template.ui.documents.CouncilReportUi;
 import org.histo.template.ui.documents.AbstractDocumentUi;
 import org.histo.ui.LazyPDFGuiManager;
-import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
-import org.histo.util.pdf.LazyPDFReturnHandler;
 import org.histo.util.pdf.PDFGenerator;
 import org.histo.util.pdf.PrintOrder;
-import org.primefaces.context.RequestContext;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -297,6 +277,6 @@ public class PrintDialog extends AbstractDialog {
 	 * Returns the rendered pdf if in selectMode
 	 */
 	public void hideAndSelectDialog() {
-		RequestContext.getCurrentInstance().closeDialog(guiManager.getPDFContainerToRender());
+		super.hideDialog(guiManager.getPDFContainerToRender());
 	}
 }

@@ -2,36 +2,46 @@ package org.histo.action.dialog.diagnosis;
 
 
 import org.histo.action.dialog.AbstractDialog;
-import org.histo.action.handler.TaskManipulationHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Diagnosis;
+import org.histo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+
 @Component
 @Scope(value = "session")
+@Getter
+@Setter
 public class CopyHistologicalRecordDialog extends AbstractDialog {
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
 
 	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
 	private GenericDAO genericDAO;
 
 	@Autowired
-	private PatientDao patientDao;
-
-	@Autowired
-	private TaskManipulationHandler taskManipulationHandler;
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TaskService taskService;
 
 	private Diagnosis diagnosis;
 
@@ -56,19 +66,9 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 
 	public void copyHistologicalRecord(boolean overwrite) {
 		try {
-			taskManipulationHandler.copyHistologicalRecord(getDiagnosis(), overwrite);
+			taskService.copyHistologicalRecord(getDiagnosis(), overwrite);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
-
-	// ************************ Getter/Setter ************************
-	public Diagnosis getDiagnosis() {
-		return diagnosis;
-	}
-
-	public void setDiagnosis(Diagnosis diagnosis) {
-		this.diagnosis = diagnosis;
-	}
-
 }

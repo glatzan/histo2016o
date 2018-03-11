@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.changeTaskID.headline']}" /></title>
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
+	<h:outputStylesheet name="specificStyle.css" value="specificStyle.css"
+		library="style" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel
+					value="#{msg['dialog.changeTaskID.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+
+		<div class="dialogContent">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable">
+				<p:dataTable var="task" scrollable="true" scrollHeight="250"
+					value="#{exportTasksDialog.tasks}" styleClass="defaultHistoDataTable"
+					selection="#{exportTasksDialog.tasksToExport}" rowKey="#{task.id}">
+					<p:column selectionMode="multiple"
+						style="width:16px;text-align:center" />
+					<p:column headerText="Id">
+						<h:outputText value="#{task.taskID}" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<p:commandButton value="#{msg['general.save']}" update="@form"
+						process="@form" icon="fa fa-fw fa-check-circle-o">
+						<f:actionListener
+							binding="#{exportTasksDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.abort']}" immediate="true"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
+						actionListener="#{exportTasksDialog.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+
+	</h:form>
+</h:body>
+</html>

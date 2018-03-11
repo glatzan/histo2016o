@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.removePatient.headline']}" escape="false">
+			<f:param value="#{removePatientDialog.patient.person.fullName}" />
+		</h:outputFormat></title>
+	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+	<h:form id="dialogContent">
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputFormat value="#{msg['dialog.removePatient.headline']}"
+					escape="false">
+					<f:param value="#{removePatientDialog.patient.person.fullName}" />
+				</h:outputFormat>
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent">
+			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+				columnClasses="columnLongText">
+				<h:outputFormat value="#{msg['dialog.removePatient.text']}"
+					escape="false">
+					<f:param value="#{removePatientDialog.patient.person.fullName}" />
+				</h:outputFormat>
+			</h:panelGrid>
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="newTableContainer">
+
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
+					<p:commandButton value="#{msg['dialog.deleteTask.button.detele']}"
+						icon="fa fa-fw fa-trash">
+						<f:actionListener binding="#{removePatientDialog.removePatient()}" />
+						<f:actionListener binding="#{removePatientDialog.hideDialog()}" />
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.close']}"
+						partialSubmit="true" icon="fa fa-fw fa-times-circle" id="closeBtn"
+						process="@this"
+						actionListener="#{removePatientDialog.hideDialog()}"></p:commandButton>
+
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

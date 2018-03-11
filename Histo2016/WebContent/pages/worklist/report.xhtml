@@ -17,20 +17,40 @@
 	</h:panelGrid>
 
 	<p:panel style="width: 80%" styleClass="newTableContainer">
+
+		<h:panelGrid columns="2" style="width:auto !important"
+			rendered="#{reportViewHandlerAction.guiManager.renderComponent}"
+			styleClass="newStyleListingTable">
+			<h:outputLabel value="#{msg['body.worklist.report.diagnosis']}"
+				styleClass="bigFont"></h:outputLabel>
+			<p:selectOneMenu
+				converter="#{reportViewHandlerAction.diagnosesTransformer}"
+				style="width:90%"
+				value="#{reportViewHandlerAction.selectedDiagnosis}">
+
+				<f:selectItems value="#{reportViewHandlerAction.diagnoses}"
+					var="diagnosis" itemLabel="#{diagnosis.name}"
+					itemValue="#{diagnosis}" />
+
+				<p:ajax event="change" process="@this"
+					update="contentForm:pollUpdateTable"
+					listener="#{reportViewHandlerAction.onChangeDiagnosis()}" />
+			</p:selectOneMenu>
+		</h:panelGrid>
+
 		<h:panelGrid columns="1" id="pollUpdateTable"
 			styleClass="newTableContainer"
-			style="width: 100% !important;height: calc( 100vh - 200px )!important;">
-
+			style="width: 100% !important;height: calc( 100vh - 250px )!important;">
 			<h:panelGrid columns="1"
 				rendered="#{!reportViewHandlerAction.guiManager.renderComponent}"
-				style="width: 100% !important;height: calc( 100vh - 200px )!important;"
+				style="width: 100% !important;height: calc( 100vh - 250px )!important;"
 				columnClasses="columnMiddle columnTextCenter">
 
 				<h:outputLabel styleClass="hugeFont"
 					value="#{msg['body.worklist.report.noDiagnosis']}"></h:outputLabel>
 			</h:panelGrid>
 
-			<histo:dynamicMedia height="calc( 100vh - 100px )" width="100%"
+			<histo:dynamicMedia height="calc( 100vh - 150px )" width="100%"
 				update="contentForm:pollUpdateTable"
 				pdfContent="#{reportViewHandlerAction.guiManager.pdfContent}"
 				guiManager="#{reportViewHandlerAction.guiManager}" />

@@ -2,7 +2,9 @@ package org.histo.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -17,6 +19,7 @@ import org.histo.util.StreamUtils;
 import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
@@ -24,6 +27,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
+@Scope("session")
 @Getter
 @Setter
 public class PatientService {
@@ -74,11 +78,9 @@ public class PatientService {
 
 		// add patient from the clinic-backend, get all data of this
 		// patient, piz search is more specific
-		if (!patient.getPiz().isEmpty()) {
+		if (!patient.getPiz().isEmpty() && !globalSettings.getProgramSettings().isOffline()) {
 			logger.debug("Getting data from pdv for patient " + patient.getPiz());
-			Patient clinicPatient;
-			clinicPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(patient.getPiz());
-			patient.copyIntoObject(clinicPatient);
+			globalSettings.getClinicJsonHandler().updatePatientFromClinicJson(patient);
 		}
 
 		// patient not in database, is new patient from database
@@ -91,6 +93,16 @@ public class PatientService {
 		} else {
 			logger.debug("Patient (\" + patient.getPiz() + \") in database, updating and saving");
 			genericDAO.savePatientData(patient, "log.patient.search.update");
+		}
+	}
+	
+	/**
+	 * Removes a patient without tasks from local database
+	 * @param patient
+	 */
+	public void removePatient(Patient patient) {
+		if(patient.getTasks().isEmpty()) {
+			genericDAO.deletePatientData(patient, "log.patient.remove", patient);
 		}
 	}
 
@@ -118,17 +130,21 @@ public class PatientService {
 			if (patient == null && localDatabaseOnly)
 				return null;
 
-			Patient pdvPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(piz);
-			if (patient != null) {
-				if (patient.copyIntoObject(pdvPatient)) {
-					logger.debug("Patient found in database, updating with pdv data");
-					genericDAO.savePatientData(patient, "log.patient.search.update");
+			if (!globalSettings.getProgramSettings().isOffline()) {
+				Patient pdvPatient = globalSettings.getClinicJsonHandler().getPatientFromClinicJson(piz);
+
+				if (patient != null) {
+					if (patient.copyIntoObject(pdvPatient)) {
+						logger.debug("Patient found in database, updating with pdv data");
+						genericDAO.savePatientData(patient, "log.patient.search.update");
+					}
+					return patient;
+				} else {
+					logger.debug("Patient not in database, returning pdv data");
+					return pdvPatient;
 				}
+			} else
 				return patient;
-			} else {
-				logger.debug("Patient not in database, returning pdv data");
-				return pdvPatient;
-			}
 		}
 		return null;
 	}
@@ -229,7 +245,7 @@ public class PatientService {
 						cP.setInDatabase(false);
 						result.add(cP);
 					}
-					
+
 					return false;
 				}
 			}).map(cp -> cp.getPiz()).collect(Collectors.toList());
@@ -244,5 +260,77 @@ public class PatientService {
 		result.addAll(histoPatients);
 
 		return result;
+	}
+
+	public List<Patient> searchForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
+			throws CustomDatabaseInconsistentVersionException, CustomNullPatientExcepetion {
+		return searchForPatient(name, surname, birthday, localDatabaseOnly, new AtomicBoolean(false));
+	}
+
+	/**
+	 * Searches for patients in local and clinic database. Does not auto update all
+	 * local patient, does save changes if both clinic patien and local patient was
+	 * found
+	 * 
+	 * @param name
+	 * @param surname
+	 * @param birthday
+	 * @param localDatabaseOnly
+	 * @return
+	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
+	public List<Patient> searchForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly,
+			AtomicBoolean toManyEntriesInClinicDatabase)
+			throws CustomNullPatientExcepetion, CustomDatabaseInconsistentVersionException {
+
+		ArrayList<Patient> result = new ArrayList<Patient>();
+
+		List<Patient> histoPatients = patientDao.getPatientsByNameSurnameDate(name, surname, birthday);
+
+		List<Patient> clinicPatients = new ArrayList<Patient>();
+
+		if (!localDatabaseOnly && !globalSettings.getProgramSettings().isOffline()) {
+			try {
+				clinicPatients = globalSettings.getClinicJsonHandler().getPatientsFromClinicJson("?name=" + name
+						+ (surname != null ? ("&vorname=" + surname) : "")
+						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+			} catch (CustomExceptionToManyEntries e) {
+				toManyEntriesInClinicDatabase.set(true);
+				clinicPatients = new ArrayList<Patient>();
+			}
+		}
+
+		for (Patient hPatient : histoPatients) {
+			result.add(hPatient);
+			hPatient.setInDatabase(true);
+
+			Iterator<Patient> i = clinicPatients.iterator();
+			while (i.hasNext()) {
+				Patient cPatient = i.next();
+				if (hPatient.getPiz() != null && hPatient.getPiz().equals(cPatient.getPiz())) {
+					logger.debug("found in local database " + cPatient.getPerson().getFullNameAndTitle());
+					i.remove();
+					// only save if update is performed
+					if (hPatient.copyIntoObject(cPatient)) {
+						try {
+							logger.debug("Patient update, saving patient data");
+							genericDAO.savePatientData(hPatient, "log.patient.search.update");
+						} catch (Exception e) {
+						}
+					}
+					break;
+				}
+			}
+
+		}
+
+		clinicPatients.stream().forEach(p -> p.setInDatabase(false));
+		// adding other patients which are not in local database
+		result.addAll(clinicPatients);
+
+		return result;
+
 	}
 }

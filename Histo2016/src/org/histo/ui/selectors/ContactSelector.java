@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Organization;

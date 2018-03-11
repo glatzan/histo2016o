@@ -1,17 +1,9 @@
 package org.histo.template.ui.documents;
 
-import java.util.List;
-
-import javax.persistence.Transient;
-
 import org.histo.config.ResourceBundle;
-import org.histo.model.AssociatedContact;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
-import org.histo.ui.selectors.ContactSelector;
-import org.histo.util.pdf.PDFGenerator;
-import org.histo.util.pdf.PrintOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 

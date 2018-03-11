@@ -2,16 +2,9 @@ package org.histo.action.dialog.notification;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
-import javax.faces.context.FacesContext;
-
-import org.apache.commons.validator.routines.EmailValidator;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractTabDialog;
@@ -27,38 +20,32 @@ import org.histo.dao.PatientDao;
 import org.histo.dao.PdfDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
-import org.histo.model.AssociatedContactNotification;
-import org.histo.model.Contact;
-import org.histo.model.Organization;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
+import org.histo.model.Contact;
 import org.histo.model.PDFContainer;
 import org.histo.model.Person;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
-import org.histo.model.user.HistoPermissions;
 import org.histo.service.NotificationService;
 import org.histo.service.TaskService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.MailTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.mail.DiagnosisReportMail;
-import org.histo.template.ui.documents.DiagnosisReportUi;
 import org.histo.template.ui.documents.AbstractDocumentUi;
+import org.histo.template.ui.documents.DiagnosisReportUi;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
-import org.histo.util.HistoUtil;
-import org.histo.util.StreamUtils;
 import org.histo.util.dataList.DefaultDataList;
 import org.histo.util.dataList.HasDataList;
 import org.histo.util.notification.FaxExecutor;
-import org.histo.util.notification.MailContainer;
 import org.histo.util.notification.MailContainerList;
 import org.histo.util.notification.MailExecutor;
 import org.histo.util.notification.NotificationContainer;
 import org.histo.util.notification.NotificationContainerList;
 import org.histo.util.notification.NotificationFeedback;
 import org.histo.util.pdf.PDFGenerator;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -633,7 +620,7 @@ public class NotificationDialog extends AbstractTabDialog {
 			sendReportTab.setDisabled(false);
 
 			// unblocking gui and updating content
-			RequestContext.getCurrentInstance().execute("onNotificationCompleted();");
+			PrimeFaces.current().executeScript("onNotificationCompleted();");
 		}
 
 		public int calculateSteps() {

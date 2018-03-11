@@ -6,13 +6,15 @@ package org.histo.config.enums;
  */
 public enum Dialog {
 	
-	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1024, 600, false, false, true), // 16:9
+	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1280, 720, false, false, true), // 16:9
+	WORKLIST_EXPORT("/pages/dialog/export/exportDialog", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_ADD("/pages/dialog/addPatient/addPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_EXTERNAL_CONFIRM("/pages/dialog/addPatient/confirmExternalPatient", null, 640, 360, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,480, 272, false, false, true), 
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,480, 272, false, false, true),  // 16:9
 	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null,480, 272, false, false, true), 
 	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 1024, 600, false, false, true), // 16:9
+	PATIENT_REMOVE("/pages/dialog/patient/removePatient", null, 480, 272, false, false, true), // 16:9
 	PATIENT_LOG("/pages/dialog/history/patientLog", null,  1024, 600, false, false, true),// 16:9
 	TASK_CREATE("/pages/dialog/task/createTask", null, 858, 484, false, false, true), // 16:9
 	TASK_DELETE("/pages/dialog/task/delete/deleteTask", null, 480, 272, false, false, true), // 16:9
@@ -23,7 +25,7 @@ public enum Dialog {
 	FAVOURITE_LIST_ADD("/pages/dialog/task/favouriteLists/addFavouriteList", null, 640, 360, false, false, true),// 16:9
 	SLIDE_OVERVIEW("/pages/dialog/task/staining/slideOverview", null, 1024, 600, false, false, true), // 16:9
 	SLIDE_NAMING("/pages/dialog/task/slideNaming", null,430, 270, false, false, true), 
-	SLIDE_CREATE("/pages/dialog/task/addSlide", null, 640, 360, false, false, true),// 16:9
+	SLIDE_CREATE("/pages/dialog/task/staining/addSlide", null, 858, 484, false, false, true),// 16:9
 	DIAGNOSIS_RECORD_OVERWRITE("/pages/dialog/task/diagnosisRecordOverwrite", null, 480, 272, false, false, true), // 16:9
 	CONTACTS("/pages/dialog/contact/contacts", null, 1024, 600, false, false, true), // 16:9
 	CONTACTS_NOTIFICATION("/pages/dialog/contact/contactNotification", null, 858, 484, false, false, true), // 16:9
@@ -61,8 +63,9 @@ public enum Dialog {
 	NOTIFICATION_PHASE_EXIT("/pages/dialog/notification/notificationPhaseExit", null, 480, 272, false, false, true), // 16:9
 	TASK_ARCHIVE("/pages/dialog/task/archive/archiveTask", null, 480, 272, false, false, true), // 16:9
 	TASK_RESTORE("/pages/dialog/task/archive/restoreTask", null, 480, 272, false, false, true), // 16:9
-	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionCreate", null, 640, 360, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_CREATE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionsCreate", null, 640, 360, false, false, true), // 16:9
 	DIAGNOSIS_REVISION_DELETE("/pages/dialog/task/diagnosisRevision/diagnosisRevisionDelete", null, 480, 272, false, false, true), // 16:9
+	DIAGNOSIS_REVISION_ADD("/pages/dialog/task/diagnosisRevision/addDiagnosisRevisionDialog", null, 480, 272, false, false, true), // 16:9
 	PRINT_SELECT_PRINTER("/pages/dialog/selectPrinter", null, 640, 360, false, false, true);
 
 	

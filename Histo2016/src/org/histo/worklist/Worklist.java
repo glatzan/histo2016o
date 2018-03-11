@@ -46,7 +46,8 @@ public class Worklist {
 	private boolean sortAscending;
 
 	/**
-	 * If true, only tasks which are explicitly marked as active are shown.
+	 * If true, only tasks which are explicitly marked as active are highlighted,
+	 * the other tasks will be grayed out
 	 */
 	@Getter
 	@Setter

@@ -7,14 +7,11 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
-import org.cups4j.CupsClient;
-import org.cups4j.CupsPrinter;
 import org.histo.adaptors.ClinicJsonHandler;
 import org.histo.adaptors.FaxHandler;
 import org.histo.adaptors.LdapHandler;
 import org.histo.adaptors.MailHandler;
 import org.histo.adaptors.printer.ClinicPrinter;
-import org.histo.adaptors.printer.ClinicPrinterDummy;
 import org.histo.adaptors.printer.CupsPrinterLoader;
 import org.histo.adaptors.printer.LabelPrinter;
 import org.histo.adaptors.printer.PrinterForRoomHandler;

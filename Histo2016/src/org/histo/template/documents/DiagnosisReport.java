@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.velocity.tools.generic.DateTool;
 import org.histo.model.patient.DiagnosisRevision;
-import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.ui.documents.DiagnosisReportUi;

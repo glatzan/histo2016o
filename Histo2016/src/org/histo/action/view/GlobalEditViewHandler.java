@@ -1,12 +1,10 @@
 package org.histo.action.view;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
-import javax.persistence.Transient;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -16,7 +14,6 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
-import org.histo.config.enums.StainingListAction;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
@@ -29,14 +26,10 @@ import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.Physician;
-import org.histo.model.patient.Block;
 import org.histo.model.patient.Patient;
-import org.histo.model.patient.Sample;
-import org.histo.model.patient.Slide;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
-import org.histo.ui.StainingTableChooser;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.model.menu.MenuModel;
@@ -342,7 +335,7 @@ public class GlobalEditViewHandler {
 					} else {
 						// no task was found
 						logger.debug("No task with the given id found");
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.task", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.task", "general.blank",
 								FacesMessage.SEVERITY_ERROR);
 					}
 
@@ -355,9 +348,7 @@ public class GlobalEditViewHandler {
 							!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_CLINIC));
 
 					if (patient != null) {
-						if (globalSettings.getClinicJsonHandler().updatePatientFromClinicJson(patient))
-							genericDAO.savePatientData(patient, "log.patient.search.update");
-
+					
 						logger.debug("Found patient " + patient + " and adding to currentworklist");
 
 						worklistViewHandlerAction.addPatientToWorkList(patient, true, true);
@@ -374,7 +365,7 @@ public class GlobalEditViewHandler {
 
 					} else {
 						// no patient was found for piz
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.piz", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.piz", "general.blank",
 								FacesMessage.SEVERITY_ERROR);
 
 						logger.debug("No Patient found with piz " + quickSerach);
@@ -396,7 +387,7 @@ public class GlobalEditViewHandler {
 					} else {
 						// no slide was found
 						logger.debug("No slide with the given id found");
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.slide", "",
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.slide", "general.blank",
 								FacesMessage.SEVERITY_ERROR);
 					}
 
@@ -405,7 +396,6 @@ public class GlobalEditViewHandler {
 					// name, surename; name surename
 					String[] arr = quickSerach.split(", ");
 
-					System.out.println(arr[0] + arr[1]);
 					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[0], arr[1], "",
 							null);
 
@@ -423,6 +413,8 @@ public class GlobalEditViewHandler {
 							null);
 				} else {
 					logger.debug("No search match found");
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.general", "general.blank",
+							FacesMessage.SEVERITY_ERROR);
 				}
 			}
 

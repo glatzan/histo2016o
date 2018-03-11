@@ -4,6 +4,9 @@
 @highlighted_row_background: #fcf1b8;
 @default_table_width: 100%;
 @table_body_height: 100px;
+/*
+ * Class for normal table with scrollable body
+ */
 .dynamicScrollTable (@colorRow: true) {
 	width: 100%;
 	thead {
@@ -67,6 +70,108 @@
 	}
 }
 
+.defaultHistoDataTable {
+	.histoDataTable (true);
+}
+
+.histoDataTable(@colorRow: true){
+	width: 100%;
+	white-space: normal;
+	
+	// hiding focus 
+	:focus {
+    	outline:none !important;
+	}
+	
+	// header
+	div.ui-datatable-scrollable-header{
+		table{
+			thead{
+				tr{
+					width:100%;
+					display: table;
+				
+					td{
+						font-size: 12px;
+						font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+						box-shadow: none;
+						font-style: normal;
+						font-variant: normal;						
+					}
+				}
+			}
+		}
+	}
+	
+	// body
+	div.ui-datatable-scrollable-body{
+		table{
+			// hide header
+			thead{
+				display: none;
+			}
+		}
+		
+		tbody{
+			border: none !important;
+			border-spacing: 0px !important;
+			
+			tr{
+				width:100%;
+				display: table;
+				border: none !important;
+				border-spacing: 0px !important;
+				
+				td{
+					border: none !important;
+					border-spacing: 0px !important;
+				}
+			}
+			
+			& when (@colorRow=true) {
+				tr.ui-datatable-even>td {
+					background-color: @alternate_row_background_color;
+				}
+			}
+			
+			// highlighted 
+			tr.ui-state-highlight {
+				td, label{
+					background-color: @highlighted_row_background !important;
+					font-weight: bold !important;
+				}
+			}
+			
+			tr.ui-state-hover{
+				td, label{
+					background-color: @highlighted_row_background !important;
+				}
+			}
+			
+		}
+		
+		th , td , label {
+			padding: 4px ! important;
+			font-size: 12px;
+			font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+			box-shadow: none;
+			font-style: normal;
+			font-variant: normal;
+			text-align: left;
+		}
+
+		.ui-inputfield {
+			box-shadow: none;
+		}
+	}
+	
+	a {
+		text-decoration: none !important;
+	}
+	
+
+}
+
 div.contentSpaceContainer {
 	padding: 4px ! important;
 	font-size: 12px;
@@ -103,3 +208,37 @@ table.contentSpaceContainer {
 	}
 }
 
+/* Accordion style */
+div.contentAccordionPannel{
+	
+	// header
+	div.ui-accordion-header{
+		padding-top: 2px;
+		padding-bottom: 2px;
+		border: 1px solid #d3d3d3;
+		border-radius: 0px !important;
+	}
+	
+	// selected header background
+	div.ui-accordion-header.ui-state-active{
+		background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x !important;
+    	font-weight: normal;
+    	color: #555555;
+	}
+	
+	// body padding
+	div.ui-accordion-content{
+		padding: 0px;
+		
+		table > tbody > tr > td{
+			padding: 0px;
+			border: none ! important;
+			border-spacing: 0px ! important;
+		}
+	}
+	
+	// hiding focus 
+	:focus {
+    	outline:none !important;
+	}
+}

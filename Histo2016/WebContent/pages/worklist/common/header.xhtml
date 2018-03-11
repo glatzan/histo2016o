@@ -6,7 +6,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 
 	<c:set var="selectedPatient"
@@ -57,8 +58,7 @@
 				styleClass="buttonMarginLeft"
 				actionListener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn"
-					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll','contentForm:contentScrollPane')"
-					update="navigationForm:patientList contentForm:contentPanel headerForm" />
+					listener="#{dialogHandlerAction.addPatientDialogHandler.initAndPrepareBean()}" />
 			</p:commandButton>
 
 		</h:panelGrid>
@@ -106,6 +106,14 @@
 			<!-- Edit Patient data -->
 			<p:commandButton id="editPatientData" style="display:none"
 				actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+				<p:ajax event="dialogReturn"
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
+					update="navigationForm:patientList contentForm" />
+			</p:commandButton>
+
+			<!-- Edit Patient data -->
+			<p:commandButton id="removePatient" style="display:none"
+				actionListener="#{removePatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm" />
@@ -235,7 +243,7 @@
 
 			<!-- restore Task -->
 			<p:commandButton id="restoreTaskBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.restoreTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{restoreTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					listener="#{globalEditViewHandler.updateDataOfTask(true, false, true, false)}"

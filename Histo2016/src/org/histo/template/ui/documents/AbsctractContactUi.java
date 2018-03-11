@@ -5,12 +5,14 @@ import java.util.NoSuchElementException;
 
 import org.histo.template.DocumentTemplate;
 import org.histo.ui.selectors.ContactSelector;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Configurable
 public class AbsctractContactUi<T extends DocumentTemplate> extends AbstractDocumentUi<T> {
 
 	/**

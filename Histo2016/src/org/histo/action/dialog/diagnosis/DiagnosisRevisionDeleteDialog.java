@@ -49,7 +49,6 @@ public class DiagnosisRevisionDeleteDialog extends AbstractDialog {
 	public boolean initBean(DiagnosisRevision diagnosisRevision) {
 
 		super.initBean(task, Dialog.DIAGNOSIS_REVISION_DELETE);
-System.out.println("hallo");
 		this.diagnosisRevision = diagnosisRevision;
 
 		return true;

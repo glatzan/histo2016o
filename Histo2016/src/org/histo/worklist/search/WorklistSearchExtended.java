@@ -1,123 +1,141 @@
 package org.histo.worklist.search;
 
-import java.util.Date;
 import java.util.List;
 
 import org.histo.config.enums.Eye;
-import org.histo.model.Person;
+import org.histo.dao.PatientDao;
+import org.histo.dao.TaskDAO;
+import org.histo.model.Physician;
+import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
 @Configurable
 public class WorklistSearchExtended extends WorklistSearch {
 
-	@Getter
-	@Setter
-	private String name;
-	
-	@Getter
-	@Setter
-	private String surename;
-	
-	@Getter
-	@Setter
-	private Date birthday;
-	
-	@Getter
-	@Setter
-	private Person.Gender gender;
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private PatientDao patientDao;
 
-	@Getter
-	@Setter
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TaskDAO taskDAO;
+	
+	/**
+	 * Name of Material
+	 */
 	private String material;
-	
-	@Getter
-	@Setter
+
+	/**
+	 * List of physicians
+	 */
+	private Physician[] surgeons;
+
+	/**
+	 * List of physicians
+	 */
+	private Physician[] signature;
+
+	/**
+	 * Case history
+	 */
 	private String caseHistory;
-	
-	@Getter
-	@Setter
-	private String surgeon;
-	
-	@Getter
-	@Setter
-	private String privatePhysician;
-	
-	@Getter
-	@Setter
-	private String siganture;
-	
-	@Getter
-	@Setter
+
+	/**
+	 * Diagnosis text
+	 */
+	private String diagnosisText;
+
+	/**
+	 * Diagnosis
+	 */
+	private String diagnosis;
+
+	/**
+	 * Malign, tri state, 0 = nothing, 1= true, 2 = false
+	 */
+	private String malign = "0";
+
+	/**
+	 * Eye
+	 */
 	private Eye eye = Eye.UNKNOWN;
 
-	@Getter
-	@Setter
-	private Date patientAdded;
-	
-	@Getter
-	@Setter
-	private Date patientAddedTo;
+	/**
+	 * ward
+	 */
+	private String ward;
 
-	@Getter
-	@Setter
-	private Date taskCreated;
-	
-	@Getter
-	@Setter
-	private Date taskCreatedTo;
-
-	@Getter
-	@Setter
-	private Date stainingCompleted;
-	
-	@Getter
-	@Setter
-	private Date stainingCompletedTo;
-
-	@Getter
-	@Setter
-	private Date diagnosisCompleted;
-	
-	@Getter
-	@Setter
-	private Date diagnosisCompletedTo;
-
-	@Getter
-	@Setter
-	private Date dateOfReceipt;
-	
-	@Getter
-	@Setter
-	private Date dateOfReceiptTo;
-
-	@Getter
-	@Setter
-	private Date dateOfSurgery;
-	
-	@Getter
-	@Setter
-	private Date dateOfSurgeryTo;
-
-	@Getter
-	@Setter
-	private String diagnosis;
-	
-	@Getter
-	@Setter
-	private String category;
-	
-	@Getter
-	@Setter
-	private String malign;
+	/**
+	 * List of stainings
+	 */
+	private List<StainingPrototype> stainings;
 
 	@Override
 	public List<Patient> getWorklist() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		List<Task> tasks =  taskDAO.getTaskByCriteria(this,true);
+		
+		List<Patient> patients =  patientDao.getPatientByCriteria(this,true);
+		
+		
+		for (Task task : tasks) {
+			
+			for (Patient patient : patients) {
+				if(task.getParent().getId() == patient.getId()) {
+					for (Task pTask : patient.getTasks()) {
+						if(pTask.getId() == task.getId())
+							pTask.setActive(true);
+					}
+				}
+			}
+		}
+		
+		return patients; 
 	}
 
 }
+
+//private String name;
+//private String surename;
+//private Date birthday;
+//private Person.Gender gender;
+//
+//private String material;
+//private String caseHistory;
+//private String surgeon;
+//private String privatePhysician;
+//private String siganture;
+//private Eye eye = Eye.UNKNOWN;
+//
+//private Date patientAdded;
+//private Date patientAddedTo;
+//
+//private Date taskCreated;
+//private Date taskCreatedTo;
+//
+//private Date stainingCompleted;
+//private Date stainingCompletedTo;
+//
+//private Date diagnosisCompleted;
+//private Date diagnosisCompletedTo;
+//
+//private Date dateOfReceipt;
+//private Date dateOfReceiptTo;
+//
+//private Date dateOfSurgery;
+//private Date dateOfSurgeryTo;
+//
+//private String diagnosis;
+//private String category;
+//private String malign;
