@@ -20,7 +20,7 @@ public class PatientIDGenerator {
 	public class PatientData {
 
 		public void PatientData(Patient patient) {
-			setSex(patient.getPerson().getGender());
+//			setSex(patient.getPerson().getGender());
 		}
 		
 		@XmlElement(name = "Sex")
