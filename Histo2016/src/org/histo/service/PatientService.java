@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.adaptors.patientid.PatientIDGenerator;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
@@ -56,6 +57,11 @@ public class PatientService {
 	 * @param patient
 	 */
 	public void createExternalPatient(Patient patient) {
+		
+		PatientIDGenerator generator = new PatientIDGenerator();
+		
+		generator.generatePatientID(patient);
+		
 		if (patient.getId() == 0) {
 			patient.setExternalPatient(true);
 			patient.setInDatabase(true);

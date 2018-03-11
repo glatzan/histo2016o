@@ -48,4 +48,8 @@ public class Contact {
 	private String fax;
 	@Column(columnDefinition = "VARCHAR")
 	private String pager;
+	@Column(columnDefinition = "VARCHAR")
+	private String addressadditon;
+	@Column(columnDefinition = "VARCHAR")
+	private String addressadditon2;
 }

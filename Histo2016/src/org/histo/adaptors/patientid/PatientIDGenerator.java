@@ -1,58 +1,25 @@
 package org.histo.adaptors.patientid;
 
+import java.io.File;
+import java.io.StringWriter;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.histo.model.Person.Gender;
 import org.histo.model.patient.Patient;
+import org.histo.util.TimeUtil;
+
+import com.sun.prism.paint.Paint;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class PatientIDGenerator {
-
-	public long generatePatientID(String patientData) {
-		return 0;
-	}
-
-	@XmlRootElement(namespace = "PatientData")
-	@Getter
-	@Setter
-	public class PatientData {
-
-		public void PatientData(Patient patient) {
-//			setSex(patient.getPerson().getGender());
-		}
-		
-		@XmlElement(name = "Sex")
-		private char sex;
-		@XmlElement(name = "Surename")
-		private String surename;
-		@XmlElement(name = "Givenname")
-		private String givenname;
-		@XmlElement(name = "BirthDate")
-		private String birthDate;
-		@XmlElement(name = "PersonalTitle")
-		private String personalTitle;
-		@XmlElement(name = "JobTitle")
-		private String jobTitle;
-		@XmlElement(name = "CountryCodePostal")
-		private String countryCodePostal;
-		@XmlElement(name = "PLZ")
-		private String plz;
-		@XmlElement(name = "City")
-		private String city;
-		@XmlElement(name = "Street")
-		private String street;
-		@XmlElement(name = "TelephoneNumber")
-		private String telephoneNumber;
-		
-	}
-}
-
 /*
  * -<PatientData>
- * 
- * <Sex>M</Sex>
  * 
  * <Surname>Hairer</Surname>
  * 
@@ -78,3 +45,10 @@ public class PatientIDGenerator {
  * 
  * </PatientData>
  */
+public class PatientIDGenerator {
+
+	public long generatePatientID(Patient patient) {
+		(new PatientData(patient)).getAsXML();
+		return 0;
+	}
+}

@@ -127,6 +127,10 @@ Graphic Changes
 ++++: Kommentarfeld für Aufträge eingeführt.
 
 SQL:
+Alter table contact add addressadditon character varying;
+Alter table contact_aud add addressadditon character varying;
+Alter table contact add addressadditon2 character varying;
+Alter table contact_aud add addressadditon2 character varying;
 Alter table task add commentary character varying;
 Alter table task_aud add commentary character varying;
 
