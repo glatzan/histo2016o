@@ -87,9 +87,21 @@ public class ContactSelectDialog extends AbstractDialog {
 	 */
 	private boolean manuallySelectRole = false;
 
+	/**
+	 * IF true the role to add an physician will be determined by the physicians
+	 * roles matching the addableRoles. If there are several matching roles the
+	 * first matching role will be used.
+	 */
+	private boolean dynamicRoleSelection = false;
+
 	public void initAndPrepareBean(Task task, ContactRole contactRole) {
 		if (initBean(task, new ContactRole[] { contactRole }, new ContactRole[] { contactRole },
 				new ContactRole[] { contactRole }, contactRole))
+			prepareDialog();
+	}
+
+	public void initAndPrepareBean(Task task, ContactRole... contactRole) {
+		if (initBean(task, contactRole, contactRole, contactRole, null))
 			prepareDialog();
 	}
 
@@ -123,6 +135,10 @@ public class ContactSelectDialog extends AbstractDialog {
 
 		setAddAsRole(addAsRole);
 
+		// if no role to add, the dynamic role selection
+		if(getAddAsRole() == null)
+			setDynamicRoleSelection(true);
+			
 		setAddableRoles(addableRoles);
 
 		setSelectedContact(null);
@@ -149,8 +165,30 @@ public class ContactSelectDialog extends AbstractDialog {
 
 			AssociatedContact associatedContact = new AssociatedContact(getTask(),
 					getSelectedContact().getPhysician().getPerson());
-			addPhysicianAsRole(associatedContact, getAddAsRole());
+			addPhysicianAsRole(associatedContact, getRoleForAddingContact(getSelectedContact().getPhysician()));
 		}
+	}
+
+	/**
+	 * IF dynamicRoleSelection is disabled the addAsRole will be used for adding a
+	 * physician. If true the addableRoles an the roles of the physician will be
+	 * compared and the first match will be used;
+	 * 
+	 * @param physician
+	 * @return
+	 */
+	private ContactRole getRoleForAddingContact(Physician physician) {
+		if (dynamicRoleSelection) {
+			for (ContactRole contactRole : addableRoles) {
+				for (ContactRole physicianRole : physician.getAssociatedRoles()) {
+					if (contactRole == physicianRole)
+						return physicianRole;
+				}
+			}
+		} else
+			getAddAsRole();
+
+		return ContactRole.OTHER_PHYSICIAN;
 	}
 
 	/**

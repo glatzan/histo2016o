@@ -41,9 +41,18 @@
 
 		</h:panelGroup>
 
-		<h:panelGroup
+		<h:panelGroup style="float: right; margin-right:10px;"
 			rendered="#{globalEditViewHandler.selectedPatient.piz ne null}">
-			<p:commandLink value="PizToClip" id="btnCopy" icon="fa fa-copy" ></p:commandLink>
+
+			<h:outputLink style="margin-right:10px;" title="#{msg['body.navigation.openExternal.text']}"
+				value="http://augimageserver/Viewer/?#{globalEditViewHandler.selectedPatient.piz}"
+				target="_new">
+				<i class="fa fa-stack-overflow"></i>
+			</h:outputLink>
+
+			<p:commandLink value="#{msg['body.navigation.pizToClip']}"
+				id="btnCopy" icon="fa fa-copy"
+				title="#{msg['body.navigation.pizToClip.text']}"></p:commandLink>
 			<pe:clipboard id="clipCopy" trigger="btnCopy" action="copy"
 				text="#{globalEditViewHandler.selectedPatient.piz}">
 			</pe:clipboard>

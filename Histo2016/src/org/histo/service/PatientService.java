@@ -58,10 +58,10 @@ public class PatientService {
 	 */
 	public void createExternalPatient(Patient patient) {
 		
-		PatientIDGenerator generator = new PatientIDGenerator();
-		
-		generator.generatePatientID(patient);
-		
+//		PatientIDGenerator generator = new PatientIDGenerator();
+//		
+//		generator.generatePatientID(patient);
+//		
 		if (patient.getId() == 0) {
 			patient.setExternalPatient(true);
 			patient.setInDatabase(true);

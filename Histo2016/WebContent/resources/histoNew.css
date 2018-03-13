@@ -913,7 +913,6 @@ body {
 .histoScroll .ui-scrollpanel-content, .histoScroll .ui-scrollpanel-container
 	{
 	width: calc(100% - 1px) !important;
-	overflow-x: hidden;
 }
 
 /*scrollpanel bar*/

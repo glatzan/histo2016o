@@ -94,6 +94,18 @@
 			<h:outputText value="" />
 			<h:outputText value="" />
 
+			<!-- address addition one -->
+			<h:outputLabel
+				value="#{msg['component.personDataMask.contact.additionOne']}" />
+			<p:inputText
+				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.addressadditon}" />
+
+			<!-- address addition two -->
+			<h:outputLabel
+				value="#{msg['component.personDataMask.contact.additionTwo']}" />
+			<p:inputText
+				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.addressadditon2}" />
+
 			<!-- Postcode -->
 			<p:outputLabel value="#{msg['component.personDataMask.adress.plz']}" />
 			<p:inputText style="width:75px;"

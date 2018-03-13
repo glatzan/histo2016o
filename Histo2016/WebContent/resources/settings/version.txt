@@ -115,7 +115,12 @@ Graphic Changes
 + = added
 - = removed
 
-+v 1.4 (xx.03.2018)
++v 1.4.1 (13.03.2018)
++++!: Scrollbar in der Befundansicht repariert. 
+++++: Patient kann im DocsCal geöffnet werden.
++++!: Arbeitsliste wird richtig aktualisiert wenn eine Patient hinzugefügt wird.
+
++v 1.4.0 (11.03.2018)
 +++*: Beim Erstellen von Färbungen wird jetzt zwischen immun und normalen Färbungen unterschieden.
 +++*: Dringlichkeit eines Auftrages wird auch nach der Archivierung angezeigt.
 ++++: SciFi (Science Finder) implementiert. Dieser ermöglicht das deutlich geneauer Suche nach Aufträgen

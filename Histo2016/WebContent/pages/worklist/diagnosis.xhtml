@@ -241,7 +241,7 @@
 						<p:commandLink style="float: right; margin-right:5px;"
 							styleClass="noUnderlineAtLink" tabindex="8"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}"
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, 'SURGEON', 'EXTERNAL_SURGEON')}"
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn"

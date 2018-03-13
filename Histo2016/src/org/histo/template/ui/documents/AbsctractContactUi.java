@@ -42,6 +42,12 @@ public class AbsctractContactUi<T extends DocumentTemplate> extends AbstractDocu
 
 		if (!container.isSelected())
 			container.getOrganizazionsChoosers().forEach(p -> p.setSelected(false));
+		else {
+			// setting first organization als selected 
+			if(container.getOrganizazionsChoosers().size() > 0)
+				container.getOrganizazionsChoosers().get(0).setSelected(true);
+		}
+			
 
 		// if single select mode remove other selections
 		if (container.isSelected())

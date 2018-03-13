@@ -236,7 +236,7 @@
 						<p:commandLink
 							disabled="#{!globalEditViewHandler.selectedTask.taskStatus.editable}"
 							title="#{msg['body.receiptlog.notification.surgeon.hint']}"
-							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask,'SURGEON')}">
+							actionListener="#{dialogHandlerAction.contactSelectDialog.initAndPrepareBean(globalEditViewHandler.selectedTask, 'SURGEON', 'EXTERNAL_SURGEON')}">
 							<i class="fa fa-fw fa-scissors" />
 							<p:ajax event="dialogReturn"
 								update="navigationForm:patientList contentForm:contentPanel" />
