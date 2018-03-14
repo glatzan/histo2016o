@@ -97,7 +97,7 @@ public class Person implements Serializable, LogAble, ArchivAble, HasID {
 	@LazyCollection(FALSE)
 	@JoinTable(name = "person_organization", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "organization_id"))
 	private List<Organization> organizsations;
-
+	
 	public enum Gender {
 		MALE, FEMALE, UNKNOWN;
 	}

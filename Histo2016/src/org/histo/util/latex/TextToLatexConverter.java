@@ -1,37 +1,38 @@
 package org.histo.util.latex;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.HashMap;
+import java.util.Map;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class TextToLatexConverter {
 
-	private Config config;
-
-	public TextToLatexConverter() {
-		this.config = new Config();
-	}
-
-	public TextToLatexConverter(Config config) {
-		this.config = config;
-	}
-
 	public String convertToTex(String string) {
-		if(string == null)
+		if (string == null)
 			return "";
-		
-//		string = StringUtils.replace(string, " ", config.getSpace());
-		string = StringUtils.replace(string, "\r\n", config.getLineBreak());
+
+		for (Map.Entry<String, String> entry : charMap.entrySet()) {
+			string = StringUtils.replace(string, entry.getKey(), entry.getValue());
+		}
 		return string;
 	}
 
-	@Getter
-	@Setter
-	public class Config {
-		private String lineBreak = "\\\\ \r\n";
-		private String space = "\\kern 0.33em ";
-	}
+	/**
+	 * \& \% \$ \# \_ \{ \}
+	 * 
+	 * @author andi
+	 *
+	 */
+	Map<String, String> charMap = MapUtils.putAll(new HashMap<String, String>(),
+			new String[][] { 
+				{ "\r\n", "\\\\ \r\n" }, 
+				{ "&", "\\&" }, 
+				{ "%", "\\%" }, 
+				{ "$", "\\$" }, 
+				{ "#", "\\#" },
+				{ "{", "\\{" }, 
+				{ "}", "\\}" }, 
+				{ "_", "\\_" } 
+			});
 }
-
-

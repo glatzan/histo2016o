@@ -94,14 +94,8 @@ public class ContactSelectDialog extends AbstractDialog {
 	 */
 	private boolean dynamicRoleSelection = false;
 
-	public void initAndPrepareBean(Task task, ContactRole contactRole) {
-		if (initBean(task, new ContactRole[] { contactRole }, new ContactRole[] { contactRole },
-				new ContactRole[] { contactRole }, contactRole))
-			prepareDialog();
-	}
-
 	public void initAndPrepareBean(Task task, ContactRole... contactRole) {
-		if (initBean(task, contactRole, contactRole, contactRole, null))
+		if (initBean(task, contactRole, contactRole, contactRole, contactRole.length == 1 ? contactRole[0] : null))
 			prepareDialog();
 	}
 
@@ -136,9 +130,9 @@ public class ContactSelectDialog extends AbstractDialog {
 		setAddAsRole(addAsRole);
 
 		// if no role to add, the dynamic role selection
-		if(getAddAsRole() == null)
+		if (getAddAsRole() == null)
 			setDynamicRoleSelection(true);
-			
+
 		setAddableRoles(addableRoles);
 
 		setSelectedContact(null);

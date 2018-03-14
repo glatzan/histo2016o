@@ -40,7 +40,6 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 Next Changes:
 -> Maligne Nummer anzeigen, was maligne ist
 -> Diangosen benachrichtigung per brief bei jedem einstellen
--> Externer Einsender soll brief bekommen
 -> wenn konsil aussteht keine archivirung
 -> Operateure über liste lasen
 -> Zählung A 1,2 B 2 = 3 Blöcke (Blockzählung)
@@ -119,6 +118,12 @@ Graphic Changes
 +++!: Scrollbar in der Befundansicht repariert. 
 ++++: Patient kann im DocsCal geöffnet werden.
 +++!: Arbeitsliste wird richtig aktualisiert wenn eine Patient hinzugefügt wird.
++++*: Specialchars werden nun bei der PDF-Erstellung ignoriert.
+++++: Externe Einsender bekommen jetzt standardmäßig Briefe anstelle von Emails
++++*: Im Befundbericht wird nur noch Einsender/Operateur/Augenarzt angezeigt wenn einer vorhanden ist.
+
+-> brieferstellug für autobenachrichtiung überprüfen
+
 
 +v 1.4.0 (11.03.2018)
 +++*: Beim Erstellen von Färbungen wird jetzt zwischen immun und normalen Färbungen unterschieden.

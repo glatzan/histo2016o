@@ -3,11 +3,14 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <h:head>
 	<title><h:outputLabel
-			value="#{msg['dialog.selectContact.headline']} ( #{msg['enum.contactRole.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]})" />
+			value="#{msg['dialog.selectContact.headline']}" /> <h:outputLabel
+			rendered="#{dialogHandlerAction.contactSelectDialog.addAsRole ne null}"
+			value=" (#{msg['enum.contactRole.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]})"></h:outputLabel>
 	</title>
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
@@ -21,8 +24,30 @@
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
-				<h:outputLabel id="headerText"
-					value="#{msg['dialog.selectContact.headline']} (#{msg['enum.contactRole.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]})" />
+				<h:panelGroup>
+					<h:outputLabel id="headerText"
+						value="#{msg['dialog.selectContact.headline']}" />
+					<h:outputLabel value=" (" />
+
+					<c:if
+						test="#{dialogHandlerAction.contactSelectDialog.addAsRole ne null}">
+						<h:outputLabel
+							value="#{msg['enum.contactRole.'.concat(dialogHandlerAction.contactSelectDialog.addAsRole)]}" />
+					</c:if>
+
+					<c:if
+						test="#{dialogHandlerAction.contactSelectDialog.addAsRole eq null}">
+						<c:forEach
+							items="#{dialogHandlerAction.contactSelectDialog.addableRoles}"
+							var="roles" varStatus="index">
+							<h:outputLabel value="#{msg['enum.contactRole.'.concat(roles)]}" />
+							<c:if test="${!index.last}">
+								<h:outputLabel value=",  " />
+							</c:if>
+						</c:forEach>
+					</c:if>
+					<h:outputLabel value=")" />
+				</h:panelGroup>
 
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"

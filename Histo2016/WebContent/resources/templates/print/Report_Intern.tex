@@ -167,8 +167,21 @@ $address \\
 					}\\
 				Station & $!task.ward \\
 				Maligner Tumor & #if($task.isMalign()) $\boxtimes$ #else $\Box$ #end \\ 
-				Operateur & $!task.getPrimarySurgeon() \\
-				Augenarzt & $!task.getPrimaryPrivatePhysician()
+				
+				#set($externalSurgeon = $task.getPrimaryContactAsString("EXTERNAL_SURGEON"))
+				#if($externalSurgeon)
+					Einsender & $!externalSurgeon \\
+				#end
+				
+				#set($surgeon = $task.getPrimaryContactAsString("SURGEON"))
+				#if($surgeon)
+					Operateur & $!surgeon \\
+				#end
+				
+				#set($privatePhysician = $task.getPrimaryContactAsString("PRIVATE_PHYSICIAN"))
+				#if($privatePhysician)
+					Augenarzt & $!privatePhysician \\
+				#end
 			 
 			\end{tabular}
 		}

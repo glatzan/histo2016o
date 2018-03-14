@@ -136,7 +136,7 @@ public class Task
 	 */
 	@Column(columnDefinition = "VARCHAR")
 	private String commentary = "";
-	
+
 	/**
 	 * Insurance of the patient
 	 */
@@ -297,7 +297,7 @@ public class Task
 
 	@Transient
 	public AssociatedContact getPrimarySurgeon() {
-		return getPrimaryContact(ContactRole.SURGEON);
+		return getPrimaryContact(ContactRole.SURGEON, ContactRole.EXTERNAL_SURGEON);
 	}
 
 	@Transient
@@ -305,6 +305,17 @@ public class Task
 		return getPrimaryContact(ContactRole.PRIVATE_PHYSICIAN);
 	}
 
+	@Transient
+	public AssociatedContact getPrimaryContactAsString(String... contactRole) {
+		ContactRole[] role = new ContactRole[contactRole.length];
+		
+		for (int i = 0; i < role.length; i++) {
+			role[i] = ContactRole.valueOf(contactRole[i]);
+		}
+		
+		return getPrimaryContact(role);
+	}
+	
 	/**
 	 * Returns a associatedContact marked als primary with the given role.
 	 * 
@@ -312,10 +323,12 @@ public class Task
 	 * @return
 	 */
 	@Transient
-	public AssociatedContact getPrimaryContact(ContactRole contactRole) {
+	public AssociatedContact getPrimaryContact(ContactRole... contactRole) {
 		for (AssociatedContact associatedContact : contacts) {
-			if (associatedContact.getRole() == contactRole)
-				return associatedContact;
+			for (int i = 0; i < contactRole.length; i++) {
+				if (associatedContact.getRole() == contactRole[i])
+					return associatedContact;
+			}
 		}
 
 		return null;
