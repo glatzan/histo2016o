@@ -166,7 +166,31 @@ $address \\
 						\end{tabular}
 					}\\
 				Station & $!task.ward \\
-				Maligner Tumor & #if($task.isMalign()) $\boxtimes$ #else $\Box$ #end \\ 
+			
+				Maligner Tumor & 
+				#set($str = "")
+				#set($malign = false)
+				#foreach ($diagnosisRevision in $diagnosisRevisions)
+					#foreach ($diagnosis in $diagnosisRevision.diagnoses)
+						#if($diagnosis.isMalign())
+							#set($malign = true)
+							#if($str == "")
+								#set($str = "$diagnosis.sample.sampleID")
+							#else
+								#set($str = "{$str}, $diagnosis.sample.sampleID")
+							#end
+						#end 
+					#end
+				#end
+				
+				#if($malign) 	
+					$\boxtimes$
+					#if($str != "")
+						\,Probe: $str
+					#end
+				#else 
+					$\Box$ 
+				#end \\ 
 				
 				#set($externalSurgeon = $task.getPrimaryContactAsString("EXTERNAL_SURGEON"))
 				#if($externalSurgeon)

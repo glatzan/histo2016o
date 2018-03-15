@@ -2,6 +2,7 @@ package org.histo.util.notification;
 
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
+import org.histo.model.Organization;
 import org.histo.model.PDFContainer;
 
 import lombok.Getter;
@@ -82,6 +83,11 @@ public class NotificationContainer {
 				setContactAddress(contact.getPerson().getContact().getPhone());
 				break;
 			case LETTER:
+				Organization orga = getContact().getPerson().getOrganizsations().size() > 0
+						? getContact().getPerson().getOrganizsations().get(0)
+						: null;
+				setContactAddress(AssociatedContact.generateAddress(getContact(), orga));
+				System.out.println("tut------------------");
 			default:
 				break;
 			}

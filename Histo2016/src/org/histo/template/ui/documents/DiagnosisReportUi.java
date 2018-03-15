@@ -63,6 +63,7 @@ public class DiagnosisReportUi extends AbsctractContactUi<DiagnosisReport> {
 			// setting other contacts (physicians)
 			getContactList().addAll(ContactSelector.factory(task));
 
+			//TODO resources bundel == null
 			System.out.println(resourceBundle);
 			
 			getContactList().add(new ContactSelector(task,

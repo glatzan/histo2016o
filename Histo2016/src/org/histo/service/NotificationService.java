@@ -20,6 +20,7 @@ import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.documents.SendReport;
 import org.histo.template.mail.DiagnosisReportMail;
 import org.histo.util.notification.FaxExecutor;
+import org.histo.util.notification.LetterExecutor;
 import org.histo.util.notification.MailContainer;
 import org.histo.util.notification.MailContainerList;
 import org.histo.util.notification.MailExecutor;
@@ -162,7 +163,7 @@ public class NotificationService {
 			revision.setNotificationPending(false);
 			revision.setNotificationDate(System.currentTimeMillis());
 		}
-		
+
 		genericDAO.savePatientData(task, "log.patient.task.notification.send");
 
 		pdfDAO.attachPDF(task.getPatient(), task, sendReport);
@@ -260,8 +261,7 @@ public class NotificationService {
 	public boolean executeLetterNotification(NotificationFeedback feedback, Task task,
 			NotificationContainerList letterContainerList) {
 
-		NotificationExecutor<NotificationContainer> notificationExecutor = new NotificationExecutor<NotificationContainer>(
-				feedback);
+		NotificationExecutor<NotificationContainer> notificationExecutor = new LetterExecutor(feedback);
 
 		boolean success = true;
 
@@ -270,7 +270,7 @@ public class NotificationService {
 
 				// copy contact address before sending -> save before error
 				container.getNotification().setContactAddress(container.getContactAddress());
-
+System.out.println(container.getContactAddress());
 				if (!notificationExecutor.isAddressApproved(container.getContactAddress()))
 					throw new IllegalArgumentException("");
 
