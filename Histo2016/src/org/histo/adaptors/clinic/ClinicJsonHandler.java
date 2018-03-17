@@ -1,10 +1,12 @@
-package org.histo.adaptors;
+package org.histo.adaptors.clinic;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.histo.adaptors.AbstractJsonHandler;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
+import org.histo.model.AssociatedContact;
 import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
@@ -73,9 +75,28 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 
 	/**
 	 * Loaded from json (/$piz)
+	 * Replace $piz
 	 */
-	private String patientByPiz;
+	private String patientByPiz_URI;
 
+	/**
+	 * List of all hospitalized cases
+	 * Replace $piz
+	 */
+	private String patientHistoryHospitalized_URI;
+	
+	/**
+	 * List of all ambulant cases
+	 * Replace $piz
+	 */
+	private String patientHistoryAmbulant_URI;
+	
+	/**
+	 * Data of the current case / associated physicians
+	 * Replace $piz $case
+	 */
+	private String patientAssocitedPersons_URI;
+	
 	/**
 	 * Creates a list of patients fetched from the clinic backend. If there is no
 	 * data returned due to to many results an error will be thrown.
@@ -88,7 +109,7 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 	 */
 	public List<Patient> getPatientsFromClinicJson(String url)
 			throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
-		String result = requestJsonData(baseUrl + url);
+		String result = requestJsonData(url);
 		return createPatientsFromClinicJson(result);
 	}
 
@@ -103,8 +124,18 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 	 */
 	public Patient getPatientFromClinicJson(String piz)
 			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
-		String result = requestJsonData(baseUrl + patientByPiz.replace("$piz", piz));
+		String result = requestJsonData(patientByPiz_URI.replace("$piz", piz));
 		return createPatientFromClinicJson(result);
+	}
+	
+	public List<ClinicCase> getClinicCasesOfPatient(String piz){
+		String result = requestJsonData(patientHistoryAmbulant_URI.replace("$piz", piz));
+		return ClinicCase.factory(result);
+	}
+	
+	public List<AssociatedContact> getContactsForCase(String piz, String caseNumber){
+		String result = requestJsonData(patientAssocitedPersons_URI.replace("$piz", piz).replace("$case", caseNumber));
+		return null;
 	}
 
 	/**
@@ -135,7 +166,7 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 	 * @throws CustomNullPatientExcepetion
 	 * @throws JSONException
 	 */
-	public List<Patient> createPatientsFromClinicJson(String json)
+	private List<Patient> createPatientsFromClinicJson(String json)
 			throws CustomExceptionToManyEntries, JSONException, CustomNullPatientExcepetion {
 		JSONArray arr = new JSONArray(json);
 		ArrayList<Patient> patients = new ArrayList<>();
@@ -155,7 +186,7 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 	 * @throws CustomExceptionToManyEntries
 	 * @throws JSONException
 	 */
-	public Patient createPatientFromClinicJson(String json)
+	private Patient createPatientFromClinicJson(String json)
 			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		return createPatientFromClinicJson(new JSONObject(json));
 	}
@@ -169,7 +200,7 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 	 * @throws CustomExceptionToManyEntries
 	 * @throws CustomNullPatientExcepetion
 	 */
-	public Patient createPatientFromClinicJson(JSONObject json)
+	private Patient createPatientFromClinicJson(JSONObject json)
 			throws CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 		Patient patient = new Patient();
 		patient.setPerson(new Person());

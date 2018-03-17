@@ -76,8 +76,10 @@
 		"base": "ou=people"
 	},
 	"clinicBackend": {
-		"baseUrl": "http://auginfo/piz",
-		"patientByPiz": "/$piz",
+		"patientByPiz_URI": "http://auginfo/piz/$piz",
+		"patientHistoryHospitalized_URI" : "http://auginfo/piz/$piz?history=1S",
+		"patientHistoryAmbulant_URI" : "http://auginfo/piz/$piz?history=1", 
+		"patientAssocitedPersons_URI" : "http://auginfo/piz/$piz?history=4&fall=$case",
 		"userAgent": "Mozilla/5.0"
 	},
 	"findPrinterForRoomBackend": {
