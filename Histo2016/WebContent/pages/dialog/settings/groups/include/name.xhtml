@@ -50,7 +50,10 @@
 
 			<h:panelGrid columns="2" styleClass="newTableContainer right">
 				<!-- Save button -->
-				<p:commandButton value="#{msg['general.save']}" icon="fa fa-save ">
+				<p:commandButton value="#{msg['general.save']}" icon="fa fa-save "
+					widgetVar="saveBtn" onstart="PF('blockUIWidget').block()"
+					oncomplete="PF('blockUIWidget').unblock()"
+					onclick="disableButton(true, 'saveBtn', 'closeBtn')">
 					<f:actionListener
 						binding="#{dialogHandlerAction.groupEditDialog.saveGroup()}"></f:actionListener>
 					<f:actionListener
@@ -59,7 +62,7 @@
 
 				<!-- Close button -->
 				<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-					icon="fa fa-times-circle">
+					widgetVar="closeBtn" icon="fa fa-times-circle">
 					<f:actionListener
 						binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
 				</p:commandButton>

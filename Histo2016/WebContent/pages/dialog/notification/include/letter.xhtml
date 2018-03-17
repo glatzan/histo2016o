@@ -30,12 +30,22 @@
 			<h:outputLabel value="#{msg['dialog.notification.tab.letter.print']}"
 				styleClass="bigFont" />
 			<p:selectBooleanCheckbox
-				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
+				disabled="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
 				value="#{dialogHandlerAction.notificationDialog.letterTab.containerList.print}"
 				title="#{msg['dialog.notification.tab.letter.print.text']}">
 				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
 
+			<!-- Individual address -->
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.letter.individualAddress']}"
+				styleClass="bigFont" />
+			<p:selectBooleanCheckbox
+				disabled="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
+				value="#{dialogHandlerAction.notificationDialog.letterTab.containerList.individualAddresses}"
+				title="#{msg['dialog.notification.tab.letter.individualAddress.text']}">
+				<p:ajax event="change" process="@this" update="@form" />
+			</p:selectBooleanCheckbox>
 
 			<!-- pdf template -->
 			<h:outputLabel
@@ -72,6 +82,13 @@
 						<i class="fa fa-fw fa-times-circle icon-red"
 							title="#{msg['dialog.notification.tab.letter.receiver.failedAndRetry']}: #{container.notification.commentary}" />
 					</ui:fragment>
+
+					<p:overlayPanel id="myPanel" for="namePanel" showEvent="mouseover"
+						hideEvent="mouseout">
+						<h:outputLabel value="#{container.contactAddress}"
+							styleClass="lableLineBreak" />
+					</p:overlayPanel>
+
 				</p:column>
 
 				<!-- perform notification on user -->
@@ -82,7 +99,7 @@
 					</f:facet>
 
 					<p:selectBooleanCheckbox
-						disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
+						disabled="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use}"
 						value="#{container.perform}">
 						<p:ajax event="change" update="@form" />
 					</p:selectBooleanCheckbox>
@@ -104,7 +121,7 @@
 						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, container.contact)}">
 
 						<p:ajax event="dialogReturn" update="@form" process="@form"
-							listener="#{dialogHandlerAction.notificationDialog.letterTab.copySelectedPdf(container)}" />
+							listener="#{dialogHandlerAction.notificationDialog.onSelectPDFDialogReturn}" />
 
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>

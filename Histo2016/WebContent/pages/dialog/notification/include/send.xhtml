@@ -75,16 +75,11 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.faxTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+					rendered="#{dialogHandlerAction.notificationDialog.faxTab.containerList.use }" />
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
-
-				<!-- not performed temporary notification -->
-				<h:outputText styleClass="icon-orange"
-					value="#{msg['dialog.notification.tab.send.notPerformed']}"
-					rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use }" />
 
 			</h:panelGroup>
 
@@ -130,17 +125,13 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.letterTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+					rendered="#{dialogHandlerAction.notificationDialog.letterTab.containerList.use }" />
 
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.letterTab.containerList.use }" />
 
-				<!-- not performed temporary notification -->
-				<h:outputText styleClass="icon-orange"
-					value="#{msg['dialog.notification.tab.send.notPerformed']}"
-					rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 			</h:panelGroup>
 
 			<p:dataTable var="letterHolder"
@@ -182,17 +173,13 @@
 				<!-- enable -->
 				<h:outputText value="#{msg['dialog.notification.tab.send.active']}"
 					styleClass="icon-green bigFont"
-					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+					rendered="#{dialogHandlerAction.notificationDialog.phoneTab.containerList.use }" />
 
 				<!-- disable -->
 				<h:outputText
 					value="#{msg['dialog.notification.tab.send.inacitve']}"
-					rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.containerList.use and !dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
+					rendered="#{!dialogHandlerAction.notificationDialog.phoneTab.containerList.use }" />
 
-				<!-- not performed temporary notification -->
-				<h:outputText styleClass="icon-orange"
-					value="#{msg['dialog.notification.tab.send.notPerformed']}"
-					rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}" />
 			</h:panelGroup>
 
 			<p:dataTable var="phoneHolder"

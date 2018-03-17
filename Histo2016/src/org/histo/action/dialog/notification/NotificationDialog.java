@@ -342,18 +342,6 @@ public class NotificationDialog extends AbstractTabDialog {
 			return true;
 		}
 
-		public void onTemporaryNotificationChanged() {
-			if (temporaryNotification) {
-				faxTab.setDisabled(true);
-				letterTab.setDisabled(true);
-				phoneTab.setDisabled(true);
-			} else {
-				faxTab.setDisabled(false);
-				letterTab.setDisabled(false);
-				phoneTab.setDisabled(false);
-			}
-		}
-
 		public void updateData() {
 		}
 
@@ -419,6 +407,8 @@ public class NotificationDialog extends AbstractTabDialog {
 		public boolean initTab() {
 			setContainerList(new NotificationContainerList(NotificationTyp.FAX));
 
+			getContainerList().setIndividualAddresses(true);
+			
 			setTemplateList(
 					DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN));
 
@@ -451,6 +441,8 @@ public class NotificationDialog extends AbstractTabDialog {
 		public boolean initTab() {
 			setContainerList(new NotificationContainerList(NotificationTyp.LETTER));
 
+			getContainerList().setIndividualAddresses(true);
+			
 			setTemplateList(
 					DocumentTemplate.getTemplates(DocumentType.DIAGNOSIS_REPORT, DocumentType.DIAGNOSIS_REPORT_EXTERN));
 

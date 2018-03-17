@@ -232,7 +232,7 @@
 				<h:panelGrid columns="2" styleClass="newStyleListingTable"
 					style="margin-top:10px;"
 					columnClasses="columnMinWidth columnNoVerticalPadding, columnTextLeft columnNoVerticalPadding">
-					
+
 					<!-- user settings -->
 					<p:selectBooleanCheckbox styleClass="centerCheckbox"
 						style="margin-left:5px;"
@@ -244,6 +244,7 @@
 					<h:outputLabel value=" #{msg['enum.histoPermissions.USER']}"
 						title="#{msg['enum.histoPermissions.USER.text']}" />
 
+					<!-- use worklist -->
 					<p:selectBooleanCheckbox styleClass="centerCheckbox"
 						style="margin-left:15px;"
 						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_WORKLIST'].value}"
@@ -251,9 +252,11 @@
 						<p:ajax event="change" update="@form"
 							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_WORKLIST'])}"></p:ajax>
 					</p:selectBooleanCheckbox>
-					<h:outputLabel value=" #{msg['enum.histoPermissions.USER_WORKLIST']}"
+					<h:outputLabel
+						value=" #{msg['enum.histoPermissions.USER_WORKLIST']}"
 						title="#{msg['enum.histoPermissions.USER_WORKLIST.text']}" />
 
+					<!-- use favourite lists -->
 					<p:selectBooleanCheckbox styleClass="centerCheckbox"
 						style="margin-left:15px;"
 						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_FAVOURITE_LIST'].value}"
@@ -261,8 +264,21 @@
 						<p:ajax event="change" update="@form"
 							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_FAVOURITE_LIST'])}"></p:ajax>
 					</p:selectBooleanCheckbox>
-					<h:outputLabel value=" #{msg['enum.histoPermissions.USER_FAVOURITE_LIST']}"
+					<h:outputLabel
+						value=" #{msg['enum.histoPermissions.USER_FAVOURITE_LIST']}"
 						title="#{msg['enum.histoPermissions.USER_FAVOURITE_LIST.text']}" />
+
+					<!-- report view  -->
+					<p:selectBooleanCheckbox styleClass="centerCheckbox"
+						style="margin-left:15px;"
+						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_ALWAYS_SHOW_IN_WORKLIST_REPORT'].value}"
+						title="#{msg['enum.histoPermissions.USER_ALWAYS_SHOW_IN_WORKLIST_REPORT.text']}">
+						<p:ajax event="change" update="@form"
+							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_ALWAYS_SHOW_IN_WORKLIST_REPORT'])}"></p:ajax>
+					</p:selectBooleanCheckbox>
+					<h:outputLabel
+						value=" #{msg['enum.histoPermissions.USER_ALWAYS_SHOW_IN_WORKLIST_REPORT']}"
+						title="#{msg['enum.histoPermissions.USER_ALWAYS_SHOW_IN_WORKLIST_REPORT.text']}" />
 
 				</h:panelGrid>
 			</h:panelGrid>
@@ -280,14 +296,17 @@
 				<!-- Save button -->
 				<p:commandButton value="#{msg['general.save']}" icon="fa fa-save ">
 					<f:actionListener
-						binding="#{dialogHandlerAction.groupEditDialog.saveGroup()}"></f:actionListener>
+						binding="#{dialogHandlerAction.groupEditDialog.saveGroup()}"
+						widgetVar="saveBtn" onstart="PF('blockUIWidget').block()"
+						oncomplete="PF('blockUIWidget').unblock()"
+						onclick="disableButton(true, 'saveBtn', 'closeBtn')">></f:actionListener>
 					<f:actionListener
 						binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
 				</p:commandButton>
 
 				<!-- Close button -->
 				<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
-					icon="fa fa-times-circle">
+					widgetVar="closeBtn" icon="fa fa-times-circle">
 					<f:actionListener
 						binding="#{dialogHandlerAction.groupEditDialog.hideDialog()}"></f:actionListener>
 				</p:commandButton>

@@ -15,17 +15,11 @@
 	<h:outputStylesheet name="style.css" value="style.css" library="style" />
 	<h:outputStylesheet name="specificStyle.css" value="specificStyle.css"
 		library="style" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
 </h:head>
 
 <h:body styleClass="tabDialog">
 	<h:form id="adminForm">
-
-		<script type="text/javascript">
-			function chagneTab(index) {
-				PF('tabview').select(index);
-			}
-		</script>
-
 
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
@@ -33,6 +27,10 @@
 				<h:panelGroup>
 					<!-- notification -->
 					<h:outputLabel value="#{msg['dialog.notification.headline']}" />
+					<h:outputLabel
+						rendered="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}"
+						value=" #{msg['dialog.notification.headline.temporary']}" />
+
 				</h:panelGroup>
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					immediate="true" styleClass="noUnderlineAtLink">

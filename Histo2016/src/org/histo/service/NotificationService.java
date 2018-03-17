@@ -134,13 +134,8 @@ public class NotificationService {
 			boolean temporaryNotification) {
 
 		boolean emailSendSuccessful = executeMailNotification(feedback, task, mailContainerList, temporaryNotification);
-		boolean faxSendSuccessful = true;
-		boolean letterSendSuccessful = true;
-
-		if (!temporaryNotification) {
-			faxSendSuccessful = executeFaxNotification(feedback, task, faxContainerList);
-			letterSendSuccessful = executeLetterNotification(feedback, task, letterContainerList);
-		}
+		boolean faxSendSuccessful = executeFaxNotification(feedback, task, faxContainerList, temporaryNotification);
+		boolean letterSendSuccessful = executeLetterNotification(feedback, task, letterContainerList, temporaryNotification);
 
 		if (printContainerList.isUse() && printContainerList.getDefaultReport() != null) {
 			// addition templates
@@ -222,7 +217,7 @@ public class NotificationService {
 	}
 
 	public boolean executeFaxNotification(NotificationFeedback feedback, Task task,
-			NotificationContainerList faxContainerList) {
+			NotificationContainerList faxContainerList, boolean temporaryNotification) {
 
 		FaxExecutor faxExecutor = new FaxExecutor(feedback);
 
@@ -252,6 +247,11 @@ public class NotificationService {
 						resourceBundle.get(e.getMessage(), container.getContactAddress()));
 				logger.debug("Sending failed" + container.getNotification().getCommentary());
 			}
+
+			// renew if temporary notification
+			if (temporaryNotification)
+				contactDAO.renewNotification(task, container.getContact(), container.getNotification());
+
 			feedback.progressStep();
 		}
 
@@ -259,7 +259,7 @@ public class NotificationService {
 	}
 
 	public boolean executeLetterNotification(NotificationFeedback feedback, Task task,
-			NotificationContainerList letterContainerList) {
+			NotificationContainerList letterContainerList, boolean temporaryNotification) {
 
 		NotificationExecutor<NotificationContainer> notificationExecutor = new LetterExecutor(feedback);
 
@@ -270,7 +270,7 @@ public class NotificationService {
 
 				// copy contact address before sending -> save before error
 				container.getNotification().setContactAddress(container.getContactAddress());
-System.out.println(container.getContactAddress());
+
 				if (!notificationExecutor.isAddressApproved(container.getContactAddress()))
 					throw new IllegalArgumentException("");
 
@@ -289,6 +289,11 @@ System.out.println(container.getContactAddress());
 						resourceBundle.get(e.getMessage(), container.getContactAddress()));
 				logger.debug("Sending failed" + container.getNotification().getCommentary());
 			}
+
+			// renew if temporary notification
+			if (temporaryNotification)
+				contactDAO.renewNotification(task, container.getContact(), container.getNotification());
+
 			feedback.progressStep();
 		}
 
@@ -296,13 +301,18 @@ System.out.println(container.getContactAddress());
 	}
 
 	public void executePhoneNotification(NotificationFeedback feedback, Task task,
-			NotificationContainerList phoneContainerList) {
+			NotificationContainerList phoneContainerList, boolean temporaryNotification) {
 		NotificationExecutor<NotificationContainer> notificationExecutor = new NotificationExecutor<NotificationContainer>(
 				feedback);
 		for (NotificationContainer container : phoneContainerList.getContainerToNotify()) {
 			notificationExecutor.finishSendProecess(container, true,
 					resourceBundle.get("dialog.notification.sendProcess.pdf.print"));
+
+			// renew if temporary notification
+			if (temporaryNotification)
+				contactDAO.renewNotification(task, container.getContact(), container.getNotification());
 		}
+
 		feedback.progressStep();
 	}
 

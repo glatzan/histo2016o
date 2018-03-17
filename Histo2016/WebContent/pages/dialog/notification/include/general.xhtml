@@ -93,8 +93,7 @@
 			<p:selectBooleanCheckbox
 				value="#{dialogHandlerAction.notificationDialog.generalTab.temporaryNotification}"
 				title="#{msg['dialog.notification.tab.general.temporaryNotification.text']}">
-				<p:ajax event="change" process="@form" update="@form"
-					listener="#{dialogHandlerAction.notificationDialog.generalTab.onTemporaryNotificationChanged()}" />
+				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
 
 		</h:panelGrid>

@@ -9,6 +9,7 @@
 	<title><h:outputLabel
 			value="#{msg['dialog.cotactNotification.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
 </h:head>
 
 <h:body styleClass="defaultDialogLayout infoDialog">
@@ -104,7 +105,8 @@
 				</p:dataTable>
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
+			<h:panelGrid columns="2"
+				styleClass="defaultListingTableFirstColumEnummeration"
 				columnClasses="defaultListingTableColumn10,">
 				<h:outputLabel value="#{msg['dialog.cotactNotification.role']}"
 					style="margin-left:10px" />

@@ -62,22 +62,7 @@
 				}
 			</script>
 
-			<!-- Function for clicking on pf buttons -->
-			<script type="text/javascript">
-				// funktion is triggert by the backend to show a dialog, workaround
-				function clickButtonFromBean(btn) {
-					$(btn).click();
-				}
-
-				function executeFunctionFromBean(btn) {
-					btn();
-				}
-			</script>
-
-
-			<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
-
-			<h:outputScript library="scripts" name="setScrollPanelScrollSpeed.js" />
+			<h:outputScript library="scripts" name="commonFunctions.js" />
 
 			<ui:include src="template/idleMonitor.xhtml" />
 

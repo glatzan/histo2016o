@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
+import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
+import org.histo.model.user.HistoPermissions;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.ui.LazyPDFGuiManager;
@@ -37,6 +39,11 @@ public class ReportViewHandlerAction {
 	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private UserHandlerAction userHandlerAction;
+	
 	private Task task;
 
 	/**
@@ -64,7 +71,7 @@ public class ReportViewHandlerAction {
 		
 		this.task = task;
 		
-		if (task.getDiagnosisCompletionDate() == 0) {
+		if (task.getDiagnosisCompletionDate() == 0 && !userHandlerAction.currentUserHasPermission(HistoPermissions.USER_ALWAYS_SHOW_IN_WORKLIST_REPORT)) {
 			guiManager.reset();
 			guiManager.setRenderComponent(false);
 		} else {

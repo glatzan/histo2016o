@@ -41,6 +41,16 @@
 				disabled="#{!dialogHandlerAction.notificationDialog.mailTab.containerList.use}"
 				rows="10" />
 
+			<!-- Individual address -->
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.mail.individualAddress']}"
+				styleClass="bigFont" />
+			<p:selectBooleanCheckbox
+				disabled="#{!dialogHandlerAction.notificationDialog.mailTab.containerList.use}"
+				value="#{dialogHandlerAction.notificationDialog.mailTab.containerList.individualAddresses}"
+				title="#{msg['dialog.notification.tab.mail.individualAddress.text']}">
+				<p:ajax event="change" process="@this" update="@form" />
+			</p:selectBooleanCheckbox>
 
 			<!-- pdf template -->
 			<h:outputLabel
@@ -66,7 +76,7 @@
 				value="#{msg['dialog.notification.tab.mail.receiver']}"
 				styleClass="bigFont" />
 
-			<p:dataTable var="container" scrollable="true" scrollHeight="180"
+			<p:dataTable var="container" scrollable="true" scrollHeight="160"
 				style="width:96%" styleClass="newStyleDataTable"
 				value="#{dialogHandlerAction.notificationDialog.mailTab.containerList.container}">
 
@@ -121,7 +131,7 @@
 						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, container.contact)}">
 
 						<f:attribute name="container" value="#{container}" />
-						
+
 						<p:ajax event="dialogReturn" update="@form" process="@form"
 							listener="#{dialogHandlerAction.notificationDialog.onSelectPDFDialogReturn}">
 						</p:ajax>

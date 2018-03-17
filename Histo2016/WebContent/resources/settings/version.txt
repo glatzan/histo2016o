@@ -40,21 +40,19 @@ create view taskmenumodel as select task.id, task.taskid, task.taskpriority, tas
 Next Changes:
 -> Diangosen benachrichtigung per brief bei jedem einstellen
 -> wenn konsil aussteht keine archivirung
--> Operateure über liste lasen
+-> Operateure über liste laden
 -> Zählung A 1,2 B 2 = 3 Blöcke (Blockzählung)
 -> anzeige der organisation im eingangsbuch
 
 -> patienten löschen
--> Sendebericht wird im befunddialog nicht richtig angezeigt
 -> suche mit umlauten -> daniel
 -> suche mit umlauten in quick search regex alpha (erkennt kein ö usw)
 -> färbungen auf klick priority umstellen
 
--> save on pdf download
--> ggf wenn contact vorhaden, speichern des ausdruckes unter dem kontakt (alte version der print methode anschauen)=
+-> versehendlich ausgeführte benachrichtigungen, markieren, kontakt dialog verbessern
+
 -> contentForm:contentPanel fest, das jede seite diese hat, udpate im header von contentForm:contentPanel anstelle von contentform
 
--> vortschritt im sende dialog
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
 -> navigation buttons gehen nicht mehr richtig
@@ -64,8 +62,6 @@ Next Changes:
 
 -> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
 
--> versehendlich ausgeführte benachrichtigungen, markieren
-
 -> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
 
 -> Ärzte aus klinikbakcend übernehmen
@@ -74,6 +70,7 @@ Next Changes:
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
 -> Aus Uitl in Selectors kopieren  
+-> Benchrichtigung: Im Service Telefonnummern aktivieren
 
 Testen:
 -> Test piz range from 6-8 (geht nicht)
@@ -113,6 +110,23 @@ Graphic Changes
 + = added
 - = removed
 
+-> 
+
+-> 1.4.3 erstellen von patientin in der pdv
+
++v 1.4.2 (17.03.2018)
++++!: Automatische Benachrichtigung funktioniert nun korrekt mit Briefen
++++*: Nachträgliche Änderung der Gruppeneinstellungen werden jetzt für die Benutzer übernommen.
++++*: Recht zum Anzeigen des PDFs in der Befundbericht-Ansicht eingeführt. (Wenn gesetzt, wird der Befundbericht auch angezeigt, wenn der Befund noch nicht abgeschlossen ist).
+-> ggf wenn contact vorhaden, speichern des ausdruckes unter dem kontakt (alte version der print methode anschauen)=
+
+SQL:
+/* Adding USER_ALWAYS_SHOW_IN_WORKLIST_REPORT rights to groups */
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (4, 'USER_ALWAYS_SHOW_IN_WORKLIST_REPORT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (5, 'USER_ALWAYS_SHOW_IN_WORKLIST_REPORT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (6, 'USER_ALWAYS_SHOW_IN_WORKLIST_REPORT');
+INSERT INTO histogroup_permissions (histogroup_id, permissions) VALUES (7, 'USER_ALWAYS_SHOW_IN_WORKLIST_REPORT');
+
 +v 1.4.1 (13.03.2018)
 +++!: Scrollbar in der Befundansicht repariert. 
 ++++: Patient kann im DocsCal geöffnet werden.
@@ -122,8 +136,6 @@ Graphic Changes
 +++*: Im Befundbericht wird nur noch Einsender/Operateur/Augenarzt angezeigt wenn einer vorhanden ist.
 +++*: Label für Labeldrucker angepasst
 +++*: Im Brief wird nun beim Maligne-Feld die Nummer der malignen Probe angezeigt. 
-+++*: Einsender werden nun per Brief über den Befund informiert.
--> brieferstellug für autobenachrichtiung überprüfen
 
 +v 1.4.0 (11.03.2018)
 +++*: Beim Erstellen von Färbungen wird jetzt zwischen immun und normalen Färbungen unterschieden.
@@ -137,10 +149,12 @@ Graphic Changes
 ++++: Kommentarfeld für Aufträge eingeführt.
 
 SQL:
+/* Adding address additions*/
 Alter table contact add addressadditon character varying;
 Alter table contact_aud add addressadditon character varying;
 Alter table contact add addressadditon2 character varying;
 Alter table contact_aud add addressadditon2 character varying;
+/* Adding commentary for mtas*/
 Alter table task add commentary character varying;
 Alter table task_aud add commentary character varying;
 

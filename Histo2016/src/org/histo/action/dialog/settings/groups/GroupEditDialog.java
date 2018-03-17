@@ -3,6 +3,7 @@ package org.histo.action.dialog.settings.groups;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoGroup.AuthRole;
 import org.histo.model.user.HistoPermissions;
 import org.histo.model.user.HistoSettings;
+import org.histo.model.user.HistoUser;
+import org.histo.util.CopySettingsUtil;
 import org.histo.worklist.search.WorklistSimpleSearch.SimpleSearchOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -118,13 +121,22 @@ public class GroupEditDialog extends AbstractTabDialog {
 				userDAO.save(getGroup(), resourceBundle.get("log.settings.group.new", getGroup()));
 			} else {
 				userDAO.save(getGroup(), resourceBundle.get("log.settings.group.edit", getGroup()));
-			}
 
+				// updating user settings
+				List<HistoUser> usersOfGroup =userDAO.getUsersOfGroup(getGroup().getId());
+
+				for (HistoUser histoUser : usersOfGroup) {
+					CopySettingsUtil.copyUpdatedGroupSettings(histoUser, getGroup());
+					genericDAO.save(histoUser, "log.user.role.update", new Object[] { histoUser.getGroup() });
+				}
+				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			onDatabaseVersionConflict();
 		}
-
+		
+		
 	}
 
 	@Getter

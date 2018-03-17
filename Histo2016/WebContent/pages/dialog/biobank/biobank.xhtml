@@ -10,6 +10,7 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.biobank.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
 </h:head>
 
 <h:body styleClass="defaultDialogLayout infoDialog">
@@ -34,7 +35,8 @@
 				styleClass="defaultListingTableTwoLineContainer">
 				<!-- Left Column -->
 				<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
-					<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
+					<h:panelGrid columns="2"
+						styleClass="defaultListingTableFirstColumEnummeration"
 						columnClasses="defaultListingTableColumnTop,">
 
 						<!-- type of informed consent -->
@@ -49,7 +51,8 @@
 
 					</h:panelGrid>
 
-					<h:panelGrid columns="2" styleClass="defaultListingTableFirstColumEnummeration"
+					<h:panelGrid columns="2"
+						styleClass="defaultListingTableFirstColumEnummeration"
 						columnClasses="defaultListingTableColumnTop,">
 						<h:outputLabel value="#{msg['dialog.biobank.pdf']}"></h:outputLabel>
 						<!-- Get PDF-->
@@ -72,7 +75,7 @@
 						style="width:100%;" scrollable="true" scrollHeight="350">
 						<p:column headerText="#{msg['dialog.biobank.table.name']}">
 							<h:outputLabel value="#{pdf.name}">
-								<f:converter converterId="org.histo.ui.TruncateConverter"  />
+								<f:converter converterId="org.histo.ui.TruncateConverter" />
 								<f:attribute name="truncateAt" value="50" />
 								<f:attribute name="continuationMark" value="..." />
 							</h:outputLabel>

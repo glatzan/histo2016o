@@ -51,6 +51,25 @@ public class CopySettingsUtil {
 
 	}
 
+	/**
+	 * Copies only view settings to the user settings
+	 * 
+	 * @param user
+	 * @param group
+	 * @param overwrite
+	 */
+	public static void copyUpdatedGroupSettings(HistoUser user, HistoGroup group) {
+
+		user.getSettings().setAvailableViews(new ArrayList<View>(group.getSettings().getAvailableViews()));
+		user.getSettings().setDefaultView(group.getSettings().getDefaultView());
+		user.getSettings().setStartView(group.getSettings().getStartView());
+
+		user.getSettings()
+				.setAvailableWorklists(new ArrayList<SimpleSearchOption>(group.getSettings().getAvailableWorklists()));
+
+		user.getSettings().setWorklistToLoad(group.getSettings().getWorklistToLoad());
+	}
+
 	public static void copyPhysicianData(Physician source, Physician destination, boolean force) {
 
 		destination.setEmployeeNumber(source.getEmployeeNumber());

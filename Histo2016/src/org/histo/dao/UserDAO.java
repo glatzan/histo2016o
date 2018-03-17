@@ -114,6 +114,28 @@ public class UserDAO extends AbstractDAO implements Serializable {
 		return true;
 	}
 
+	/**
+	 * Returns all users of the group
+	 * @param id
+	 * @return
+	 */
+	public List<HistoUser> getUsersOfGroup(long id){
+		// Create CriteriaBuilder
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<HistoUser> criteria = qb.createQuery(HistoUser.class);
+		Root<HistoUser> root = criteria.from(HistoUser.class);
+		criteria.select(root);
+
+		criteria.distinct(true);
+		criteria.where(qb.equal(root.get("group"), id));
+		
+		List<HistoUser> users = getSession().createQuery(criteria).getResultList();
+
+		return users;
+	}
+	
 	public List<HistoGroup> getGroups(boolean archived) {
 		// Create CriteriaBuilder
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();

@@ -16,7 +16,7 @@
 <h:head>
 	<title><h:outputFormat value="#{msg['']}" /></title>
 	<h:outputStylesheet name="style.css" value="style.css" library="style" />
-	<h:outputScript library="scripts" name="updateGlobalGrowl.js" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
@@ -27,8 +27,6 @@
 		<f:metadata>
 			<f:viewAction action="#{loginHandler.setDisabled(false)}" />
 		</f:metadata>
-
-		<h:outputScript library="scripts" name="disableButtons.js" />
 
 		<script type="text/javascript">
 			
@@ -106,3 +104,10 @@
 	</h:form>
 </h:body>
 </html>
+
+Blocking 
+
+onstart="PF('blockUIWidget').block()"
+oncomplete="PF('blockUIWidget').unblock()"
+
+<ui:include src="../../template/blockUi.xhtml"></ui:include>

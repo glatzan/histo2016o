@@ -45,6 +45,17 @@
 				<p:ajax event="change" process="@form" update="@form" />
 			</p:selectBooleanCheckbox>
 
+			<!-- Individual address -->
+			<h:outputLabel
+				value="#{msg['dialog.notification.tab.fax.individualAddress']}"
+				styleClass="bigFont" />
+			<p:selectBooleanCheckbox
+				disabled="#{!dialogHandlerAction.notificationDialog.faxTab.containerList.use}"
+				value="#{dialogHandlerAction.notificationDialog.faxTab.containerList.individualAddresses}"
+				title="#{msg['dialog.notification.tab.fax.individualAddress.text']}">
+				<p:ajax event="change" process="@this" update="@form" />
+			</p:selectBooleanCheckbox>
+
 			<!-- pdf template -->
 			<h:outputLabel
 				value="#{msg['dialog.notification.tab.fax.pdfTemplate']}"
@@ -119,7 +130,7 @@
 						actionListener="#{dialogHandlerAction.notificationDialog.openSelectPDFDialog(dialogHandlerAction.notificationDialog.task, container.contact)}">
 
 						<p:ajax event="dialogReturn" update="@form" process="@form"
-							listener="#{dialogHandlerAction.notificationDialog.faxTab.copySelectedPdf(container)}" />
+							listener="#{dialogHandlerAction.notificationDialog.onSelectPDFDialogReturn}" />
 
 						<i class="fa fa-fw fa-file-pdf-o" />
 					</p:commandLink>

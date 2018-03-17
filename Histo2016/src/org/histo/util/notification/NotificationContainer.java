@@ -87,7 +87,6 @@ public class NotificationContainer {
 						? getContact().getPerson().getOrganizsations().get(0)
 						: null;
 				setContactAddress(AssociatedContact.generateAddress(getContact(), orga));
-				System.out.println("tut------------------");
 			default:
 				break;
 			}

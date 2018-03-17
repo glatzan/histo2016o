@@ -11,24 +11,12 @@
 			value="#{msg['dialog.createTask.Headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
 </h:head>
 
 <h:body styleClass="contentInputDialog">
 
 	<h:form enctype="multipart/form-data" id="dialogContent">
-
-
-		<script type="text/javascript">
-			function disableButton(btn, disable) {
-				if (disable)
-					PF(btn).disable();
-				else
-					PF(btn).enable();
-			}
-		</script>
-
-
-
 
 		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
