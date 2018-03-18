@@ -1,6 +1,7 @@
 package org.histo.template.ui.documents;
 
 import org.histo.config.ResourceBundle;
+import org.histo.model.AssociatedContact;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
@@ -63,13 +64,13 @@ public class AbstractDocumentUi<T extends DocumentTemplate> implements HasID {
 		return false;
 	}
 	
-	public DocumentTemplate getNextTemplateConfiguration() {
+	public TemplateConfiguration<T> getNextTemplateConfiguration() {
 		return null;
 	}
 	
-	public DocumentTemplate getDefaultTemplateConfiguration() {
+	public TemplateConfiguration<T> getDefaultTemplateConfiguration() {
 		documentTemplate.initData(task);
-		return documentTemplate;
+		return new TemplateConfiguration<T>(documentTemplate);
 	}
 
 	@Override
@@ -77,4 +78,26 @@ public class AbstractDocumentUi<T extends DocumentTemplate> implements HasID {
 		return documentTemplate.getId();
 	}
 
+	/**
+	 * Return container for generated template
+	 * @author andi
+	 *
+	 */
+	@Getter
+	@Setter
+	public class TemplateConfiguration<I extends DocumentTemplate> {
+		private I documentTemplate;
+		private AssociatedContact contact;
+		private String address;
+		
+		public TemplateConfiguration(I documentTemplate) {
+			this(documentTemplate, null, "");
+		}
+		
+		public TemplateConfiguration(I documentTemplate, AssociatedContact contact, String address) {
+			this.documentTemplate = documentTemplate;
+			this.contact = contact;
+			this.address = address;
+		}
+	}
 }

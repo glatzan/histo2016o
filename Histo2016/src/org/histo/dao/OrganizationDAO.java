@@ -152,12 +152,37 @@ public class OrganizationDAO extends AbstractDAO implements Serializable {
 		}
 	}
 
-	public void removeOrganization(Person person, Organization organization) {
-		if (person.getOrganizsations().remove(organization)) {
-			organization.getPersons().remove(person);
-			logger.debug("Removing Organization from Patient");
+	/**
+	 * Removes an organization from a person and saves the changes to the database
+	 * @param person
+	 * @param organization
+	 * @return
+	 */
+	public boolean removeOrganization(Person person, Organization organization) {
+		return removeOrganization(person, organization, true);
+	}
+
+	/**
+	 * Removes an organization from a person. If save = true, the changes will be
+	 * stored in the database
+	 * 
+	 * @param person
+	 * @param organization
+	 * @param save
+	 * @return
+	 */
+	public boolean removeOrganization(Person person, Organization organization, boolean save) {
+		logger.debug("Removing Organization from Patient");
+		// removing organization form person, for the database this will remove the
+		// inverted association as well
+		boolean result = person.getOrganizsations().remove(organization);
+		organization.getPersons().remove(person);
+
+		if (result && save) {
 			save(person, "log.organization.remove", new Object[] { person.getFullName(), organization.getName() });
 		}
+
+		return result;
 	}
 
 	public void initializeOrganization(Organization organization) {

@@ -107,6 +107,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 			Hibernate.initialize(task.getCouncils());
 			Hibernate.initialize(task.getDiagnosisRevisions());
 			Hibernate.initialize(task.getAttachedPdfs());
+			Hibernate.initialize(task.getContacts());
 		}
 
 		return task;
@@ -119,6 +120,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		Hibernate.initialize(task.getCouncils());
 		Hibernate.initialize(task.getDiagnosisRevisions());
 		Hibernate.initialize(task.getAttachedPdfs());
+		Hibernate.initialize(task.getContacts());
 
 		Hibernate.initialize(task.getParent().getTasks());
 		Hibernate.initialize(task.getParent().getAttachedPdfs());

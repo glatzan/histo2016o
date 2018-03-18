@@ -1,6 +1,7 @@
 package org.histo.action.dialog.print;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,16 +10,19 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
+import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
+import org.histo.model.AssociatedContactNotification;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.ui.documents.AbstractDocumentUi;
+import org.histo.template.ui.documents.AbstractDocumentUi.TemplateConfiguration;
 import org.histo.ui.LazyPDFGuiManager;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.StreamUtils;
@@ -122,7 +126,8 @@ public class PrintDialog extends AbstractDialog {
 				DocumentType.U_REPORT, DocumentType.U_REPORT_EMTY, DocumentType.DIAGNOSIS_REPORT_EXTERN);
 
 		// getting ui objects
-		List<AbstractDocumentUi<?>> subSelectUIs = subSelect.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		List<AbstractDocumentUi<?>> subSelectUIs = subSelect.stream().map(p -> p.getDocumentUi())
+				.collect(Collectors.toList());
 		// init templates
 		subSelectUIs.forEach(p -> p.initialize(task));
 
@@ -154,7 +159,8 @@ public class PrintDialog extends AbstractDialog {
 	public void initBeanForSelecting(Task task, List<DocumentTemplate> types, DocumentType defaultType,
 			List<AssociatedContact> addresses, boolean allowIndividualAddress) {
 
-		List<AbstractDocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi()).collect(Collectors.toList());
+		List<AbstractDocumentUi<?>> subSelectUIs = types.stream().map(p -> p.getDocumentUi())
+				.collect(Collectors.toList());
 
 		// init templates
 		subSelectUIs.forEach(p -> p.initialize(task));
@@ -215,35 +221,40 @@ public class PrintDialog extends AbstractDialog {
 
 	public void onChangePrintTemplate() {
 		guiManager.reset();
-		guiManager.startRendering(getSelectedTemplate().getDefaultTemplateConfiguration());
+		guiManager.startRendering(getSelectedTemplate().getDefaultTemplateConfiguration().getDocumentTemplate());
 	}
 
 	public void onPrintNewPdf() {
 
 		logger.debug("Printing PDF");
-		
+
 		PDFGenerator generator = new PDFGenerator();
 
 		int i = 0;
-		
+
 		getSelectedTemplate().beginNextTemplateIteration();
-		
+
 		while (getSelectedTemplate().hasNextTemplateConfiguration()) {
-			DocumentTemplate template = getSelectedTemplate().getNextTemplateConfiguration();
-			PDFContainer pdf = generator.getPDF(template);
+			AbstractDocumentUi<?>.TemplateConfiguration<?> container = getSelectedTemplate()
+					.getNextTemplateConfiguration();
 
-			PrintOrder printOrder = new PrintOrder(pdf, template);
+			PDFContainer pdf = generator.getPDF(container.getDocumentTemplate());
+			PrintOrder printOrder = new PrintOrder(pdf, container.getDocumentTemplate());
 
-//			if (!template.isTransientContent()) {
-//			}
+			// only save if person is associated 
+			if (container.getContact().getRole() != ContactRole.NONE) {
+				contactDAO.addNotificationType(task, container.getContact(),
+						AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,
+						new Date(System.currentTimeMillis()), container.getAddress(), false);
+			}
+
+			// if (!template.isTransientContent()) {
+			// }
 
 			userHandlerAction.getSelectedPrinter().print(printOrder);
 
 			logger.debug("Printing.... " + i);
-			// contactDAO.addNotificationType(task, contactChooser.getContact(),
-			// AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,
-			// new Date(System.currentTimeMillis()), contactChooser.getCustomAddress());
-			
+
 			i++;
 		}
 	}

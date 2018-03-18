@@ -84,8 +84,8 @@
 				<!-- refresh -->
 				<p:commandLink styleClass="noUnderlineAtLink"
 					title="#{msg['dialog.settings.person.list.options.update']}"
-					disabled="#{!physician.person.autoUpdate or physician.uid eq null}" update="@form"
-					partialSubmit="true" process="@this">
+					disabled="#{!physician.person.autoUpdate or physician.uid eq null}"
+					update="@form" partialSubmit="true" process="@this">
 					<i class="fa fa-fw fa-undo " />
 
 					<f:actionListener
@@ -155,9 +155,9 @@
 						partialSubmit="true"
 						actionListener="#{dialogHandlerAction.physicianSearchDialog.initAndPrepareBean(true)}">
 						<p:ajax event="dialogReturn"
-							oncomplete="addPhysicianOnDialogReturn()" update="@form" />
+							oncomplete="addPhysicianOnDialogReturn()" />
 					</p:commandButton>
-					<p:remoteCommand name="addPhysicianOnDialogReturn">
+					<p:remoteCommand name="addPhysicianOnDialogReturn" update="@form">
 						<f:actionListener
 							binding="#{settingsDialogHandler.physicianSettingsTab.addPhysician(dialogHandlerAction.physicianSearchDialog.physician)}" />
 						<f:actionListener

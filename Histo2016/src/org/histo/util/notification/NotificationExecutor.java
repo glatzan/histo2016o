@@ -102,7 +102,7 @@ public class NotificationExecutor<T extends NotificationContainer> {
 				result = genericPDF;
 			} else {
 				// individual address
-				String reportAddressField = AssociatedContact.generateAddress(container.getContact());
+				String reportAddressField = AssociatedContact.generateAddress(container.getContact(), container.getContact().getPerson().getDefaultAddress());
 				logger.debug("Generating pdf for " + reportAddressField);
 				feedback.setFeedback("dialog.notification.sendProcess.pdf.generating",
 						container.getContact().getPerson().getFullName());

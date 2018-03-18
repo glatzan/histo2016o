@@ -246,6 +246,16 @@ public class GlobalEditViewHandler {
 
 		setMaterialList(utilDAO.getAllMaterialPresets(true));
 	}
+	
+	public void reloadGuiData() {
+		loadGuiData();
+		
+		// only task needs reload
+		if(selectedTask != null) {
+			worklistViewHandlerAction.onSelectTaskAndPatient(selectedTask.getId());
+			logger.debug("Reloading task");
+		}
+	}
 
 	public String getCenterView() {
 		if (getDisplayView() != null)

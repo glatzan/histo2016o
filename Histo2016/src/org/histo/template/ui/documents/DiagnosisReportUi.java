@@ -10,6 +10,7 @@ import org.histo.model.Person;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
+import org.histo.template.documents.CouncilReport;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -63,22 +64,23 @@ public class DiagnosisReportUi extends AbsctractContactUi<DiagnosisReport> {
 			// setting other contacts (physicians)
 			getContactList().addAll(ContactSelector.factory(task));
 
-			//TODO resources bundel == null
+			// TODO resources bundel == null
 			System.out.println(resourceBundle);
-			
-			getContactList().add(new ContactSelector(task,
-					new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
 
-			getContactList().add(new ContactSelector(task,
-					new Person("Leere Adresse", new Contact()), ContactRole.NONE, true,
-					true));
-			
-//			getContactList().add(new ContactSelector(task,
-//					new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
-//
-//			getContactList().add(new ContactSelector(task,
-//					new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()), ContactRole.NONE, true,
-//					true));
+			getContactList().add(
+					new ContactSelector(task, new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
+
+			getContactList().add(new ContactSelector(task, new Person("Leere Adresse", new Contact()), ContactRole.NONE,
+					true, true));
+
+			// getContactList().add(new ContactSelector(task,
+			// new Person(resourceBundle.get("dialog.print.individualAddress"), new
+			// Contact()), ContactRole.NONE));
+			//
+			// getContactList().add(new ContactSelector(task,
+			// new Person(resourceBundle.get("dialog.print.blankAddress"), new Contact()),
+			// ContactRole.NONE, true,
+			// true));
 		} else
 			setContactList(contactList);
 
@@ -87,19 +89,20 @@ public class DiagnosisReportUi extends AbsctractContactUi<DiagnosisReport> {
 	/**
 	 * Return default template configuration for printing
 	 */
-	public DocumentTemplate getDefaultTemplateConfiguration() {
+	public TemplateConfiguration<DiagnosisReport> getDefaultTemplateConfiguration() {
 		documentTemplate.initData(task, Arrays.asList(selectedDiagnosis),
 				renderSelectedContact ? getAddressOfFirstSelectedContact() : "");
-		return documentTemplate;
+		return new TemplateConfiguration<DiagnosisReport>(documentTemplate);
 	}
 
 	/**
-	 * Sets the data for the next print 
+	 * Sets the data for the next print
 	 */
-	public DocumentTemplate getNextTemplateConfiguration() {
-		documentTemplate.initData(task, Arrays.asList(selectedDiagnosis),
-				contactListPointer != null ? contactListPointer.getCustomAddress() : "");
+	public TemplateConfiguration<DiagnosisReport> getNextTemplateConfiguration() {
+		String address = contactListPointer != null ? contactListPointer.getCustomAddress() : "";
+		documentTemplate.initData(task, Arrays.asList(selectedDiagnosis), address);
 		documentTemplate.setCopies(contactListPointer != null ? contactListPointer.getCopies() : 1);
-		return documentTemplate;
+		return new TemplateConfiguration<DiagnosisReport>(documentTemplate,
+				contactListPointer != null ? contactListPointer.getContact() : null, address);
 	}
 }

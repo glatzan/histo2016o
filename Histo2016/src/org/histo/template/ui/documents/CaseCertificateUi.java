@@ -27,15 +27,15 @@ public class CaseCertificateUi extends AbstractDocumentUi<CaseCertificate> {
 	/**
 	 * Return default template configuration for printing
 	 */
-	public DocumentTemplate getDefaultTemplateConfiguration() {
+	public TemplateConfiguration<CaseCertificate> getDefaultTemplateConfiguration() {
 		documentTemplate.initData(task);
-		return documentTemplate;
+		return new TemplateConfiguration<CaseCertificate>(documentTemplate);
 	}
 
 	/**
 	 * Sets the data for the next print
 	 */
-	public DocumentTemplate getNextTemplateConfiguration() {
+	public TemplateConfiguration<CaseCertificate> getNextTemplateConfiguration() {
 		printed = true;
 		return getDefaultTemplateConfiguration();
 	}

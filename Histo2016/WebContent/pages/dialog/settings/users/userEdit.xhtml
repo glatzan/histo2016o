@@ -241,6 +241,26 @@
 
 					<p:ajax partialSubmit="true" process="@this" />
 				</p:selectCheckboxMenu>
+
+				<!-- default notification  -->
+				<h:outputLabel
+					title="#{msg['component.personDataMask.defaultAddress.text']}"
+					value="#{msg['component.personDataMask.defaultAddress']}"
+					styleClass="bigFont" />
+					
+				<p:selectOneMenu style="margin-top:1px;"
+					title="#{msg['component.personDataMask.defaultAddress.text']}"
+					value="#{dialogHandlerAction.editUserDialog.person.defaultAddress}"
+					converter="#{dialogHandlerAction.editUserDialog.organizationTransformer}"
+					disabled="#{!userHandlerAction.currentUserHasPermission('PROGRAM_SETTINGS_USER')}">
+
+					<f:selectItem value="#{null}" itemLabel="#{msg['component.personDataMask.defaultAddress.none']}"></f:selectItem>
+
+					<f:selectItems
+						value="#{dialogHandlerAction.editUserDialog.person.organizsations}"
+						var="group" itemValue="#{group}" itemLabel="#{group.name}" />
+				</p:selectOneMenu>
+
 			</h:panelGrid>
 
 			<!-- Organization -->
@@ -281,15 +301,15 @@
 					<p:column style="width:30px">
 						<f:facet name="header">
 							<p:commandLink id="upload"
-								title="#{msg['component.personDataMask.organization.add']}"
+								title="#{msg['component.personDataMask.organization.add']}" process="@this"
 								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(true)}">
-								<p:ajax event="dialogReturn" update="@form"
+								<p:ajax event="dialogReturn" update="@form" process="@form"
 									listener="#{dialogHandlerAction.editUserDialog.onReturnOrganizationDialog}" />
 								<i class="fa fa-plus" />
 							</p:commandLink>
 						</f:facet>
 						<p:commandLink
-							actionListener="#{dialogHandlerAction.organizationListDialog.removeOrganization(dialogHandlerAction.editUserDialog.user.physician.person, organization)}"
+							actionListener="#{dialogHandlerAction.editUserDialog.removeFromOrganization(organization)}"
 							update="@form" partialSubmit="true" process="@this"
 							title="#{msg['component.personDataMask.organization.remove']}">
 							<i class="fa fa-remove" style="margin-left: 8px" />
@@ -327,7 +347,7 @@
 						</p:commandButton>
 
 						<!-- Refresh -->
-						<p:commandButton id="refreshBtn" style="display:none"
+						<p:commandButton id="refreshBtn" style="display:none" update="@form"
 							widgetVar="refreshBtn" onstart="PF('blockUIWidget').block()"
 							oncomplete="PF('blockUIWidget').unblock()">
 							<f:actionListener

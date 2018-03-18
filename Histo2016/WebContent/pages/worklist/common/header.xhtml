@@ -324,7 +324,7 @@
 				partialSubmit="true" process="@this"
 				actionListener="#{settingsDialogHandler.initAndPrepareBean()}">
 				<p:ajax event="dialogReturn"
-					listener="#{globalEditViewHandler.loadGuiData()}"
+					listener="#{globalEditViewHandler.reloadGuiData()}"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm" />
 			</p:commandButton>

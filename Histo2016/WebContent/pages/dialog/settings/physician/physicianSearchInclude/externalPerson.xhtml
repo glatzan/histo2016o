@@ -148,6 +148,26 @@
 
 			<p:ajax partialSubmit="true" process="@this" />
 		</p:selectCheckboxMenu>
+
+		<!-- default notification  -->
+		<h:outputLabel
+			title="#{msg['component.personDataMask.defaultAddress.text']}"
+			value="#{msg['component.personDataMask.defaultAddress']}"
+			styleClass="bigFont" />
+
+		<p:selectOneMenu style="margin-top:1px;"
+			title="#{msg['component.personDataMask.defaultAddress.text']}"
+			value="#{dialogHandlerAction.physicianSearchDialog.person.defaultAddress}"
+			converter="#{dialogHandlerAction.physicianSearchDialog.organizationTransformer}">
+
+			<f:selectItem value="#{null}"
+				itemLabel="#{msg['component.personDataMask.defaultAddress.none']}"></f:selectItem>
+
+			<f:selectItems
+				value="#{dialogHandlerAction.physicianSearchDialog.person.organizsations}"
+				var="group" itemValue="#{group}" itemLabel="#{group.name}" />
+
+		</p:selectOneMenu>
 	</h:panelGrid>
 
 	<!-- Organization -->
@@ -186,8 +206,9 @@
 
 			<p:column style="width:30px">
 				<f:facet name="header">
-					<p:commandLink id="upload"
+					<p:commandLink
 						title="#{msg['component.personDataMask.organization.add']}"
+						process="@this"
 						actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(true)}">
 						<p:ajax event="dialogReturn" update="@form" process="@form"
 							listener="#{dialogHandlerAction.physicianSearchDialog.onReturnOrganizationDialog}" />
@@ -195,7 +216,7 @@
 					</p:commandLink>
 				</f:facet>
 				<p:commandLink
-					actionListener="#{dialogHandlerAction.organizationListDialog.removeOrganization(dialogHandlerAction.physicianSearchDialog.selectedPhysician.person, organization)}"
+					actionListener="#{dialogHandlerAction.physicianSearchDialog.removeOrganization(organization)}"
 					update="@form"
 					title="#{msg['component.personDataMask.organization.remove']}">
 					<i class="fa fa-remove" style="margin-left: 8px" />

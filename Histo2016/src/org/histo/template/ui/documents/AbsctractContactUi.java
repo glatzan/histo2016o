@@ -3,8 +3,10 @@ package org.histo.template.ui.documents;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.histo.model.AssociatedContact;
 import org.histo.template.DocumentTemplate;
 import org.histo.ui.selectors.ContactSelector;
+import org.histo.ui.selectors.ContactSelector.OrganizationChooser;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import lombok.Getter;
@@ -38,19 +40,22 @@ public class AbsctractContactUi<T extends DocumentTemplate> extends AbstractDocu
 	 * Updates the pdf content if a associatedContact was chosen for the first time
 	 */
 	public void onChooseContact(ContactSelector container) {
-		container.generateAddress(true);
-
 		if (!container.isSelected())
 			container.getOrganizazionsChoosers().forEach(p -> p.setSelected(false));
 		else {
-			// setting first organization als selected 
-			if(container.getOrganizazionsChoosers().size() > 0)
-				container.getOrganizazionsChoosers().get(0).setSelected(true);
-		}
 			
+			// setting default address to true
+			if (container.getContact().getPerson().getDefaultAddress() != null) {
+				for (OrganizationChooser organizationChooser : container.getOrganizazionsChoosers()) {
+					if(organizationChooser.getOrganization().equals(container.getContact().getPerson().getDefaultAddress())) {
+						organizationChooser.setSelected(true);
+						System.out.println("test");
+						break;
+					}
+				}
+			}
 
-		// if single select mode remove other selections
-		if (container.isSelected())
+			// if single select mode remove other selections
 			if (isSingleSelect()) {
 				getContactList().stream().forEach(p -> {
 					if (p != container) {
@@ -59,6 +64,9 @@ public class AbsctractContactUi<T extends DocumentTemplate> extends AbstractDocu
 					}
 				});
 			}
+		}
+		
+		container.generateAddress(true);
 
 	}
 
@@ -126,10 +134,6 @@ public class AbsctractContactUi<T extends DocumentTemplate> extends AbstractDocu
 
 		return false;
 
-	}
-
-	public DocumentTemplate getNextTemplateConfiguration() {
-		return null;
 	}
 
 }

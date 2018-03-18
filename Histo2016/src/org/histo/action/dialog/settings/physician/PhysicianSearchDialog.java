@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.settings.organizations.OrganizationFunctions;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.adaptors.LdapHandler;
 import org.histo.config.enums.ContactRole;
@@ -17,6 +18,7 @@ import org.histo.model.Contact;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -28,7 +30,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class PhysicianSearchDialog extends AbstractDialog {
+public class PhysicianSearchDialog extends AbstractDialog implements OrganizationFunctions {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -67,6 +69,11 @@ public class PhysicianSearchDialog extends AbstractDialog {
 
 	private List<ContactRole> allRoles;
 
+	/**
+	 * Transformer for selecting organization for external physicians
+	 */
+	private DefaultTransformer<Organization> organizationTransformer;
+	
 	public void initAndPrepareBean() {
 		initAndPrepareBean(false);
 	}
@@ -135,6 +142,8 @@ public class PhysicianSearchDialog extends AbstractDialog {
 			// person is not auto update able
 			getSelectedPhysician().getPerson().setAutoUpdate(false);
 			getSelectedPhysician().getPerson().setOrganizsations(new ArrayList<Organization>());
+			
+			setOrganizationTransformer(new DefaultTransformer<Organization>(getSelectedPhysician().getPerson().getOrganizsations()));
 		} else
 			setSelectedPhysician(null);
 	}
@@ -153,15 +162,11 @@ public class PhysicianSearchDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Adds an organization to the user
-	 * 
-	 * @param event
+	 * returns the person of the physician
+	 * @return
 	 */
-	public void onReturnOrganizationDialog(SelectEvent event) {
-		if (event.getObject() != null && event.getObject() instanceof Organization
-				&& !getSelectedPhysician().getPerson().getOrganizsations().contains((Organization) event.getObject())) {
-			getSelectedPhysician().getPerson().getOrganizsations().add((Organization) event.getObject());
-		}
+	public Person getPerson() {
+		return selectedPhysician != null ? selectedPhysician.getPerson() : null;
 	}
 
 	public enum SearchView {

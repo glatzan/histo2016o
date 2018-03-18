@@ -28,6 +28,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 import org.histo.config.enums.ContactRole;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
 import org.histo.model.interfaces.HasID;

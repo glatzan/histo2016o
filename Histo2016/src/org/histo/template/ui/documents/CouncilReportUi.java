@@ -9,7 +9,9 @@ import org.histo.model.Council;
 import org.histo.model.Person;
 import org.histo.model.patient.Task;
 import org.histo.template.DocumentTemplate;
+import org.histo.template.documents.CaseCertificate;
 import org.histo.template.documents.CouncilReport;
+import org.histo.template.ui.documents.AbstractDocumentUi.TemplateConfiguration;
 import org.histo.ui.selectors.ContactSelector;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -73,29 +75,31 @@ public class CouncilReportUi extends AbsctractContactUi<CouncilReport> {
 			getContactList().add(chosser);
 		}
 
-		getContactList().add(new ContactSelector(task,
-				new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
-		
-//		getContactList().add(new ContactSelector(task,
-//				new Person(resourceBundle.get("dialog.print.individualAddress"), new Contact()), ContactRole.NONE));
+		getContactList()
+				.add(new ContactSelector(task, new Person("Individuelle Addresse", new Contact()), ContactRole.NONE));
+
+		// getContactList().add(new ContactSelector(task,
+		// new Person(resourceBundle.get("dialog.print.individualAddress"), new
+		// Contact()), ContactRole.NONE));
 	}
 
 	/**
 	 * Return default template configuration for printing
 	 */
-	public DocumentTemplate getDefaultTemplateConfiguration() {
+	public TemplateConfiguration<CouncilReport> getDefaultTemplateConfiguration() {
 		documentTemplate.initData(task, selectedCouncil,
 				renderSelectedContact ? getAddressOfFirstSelectedContact() : "");
-		return documentTemplate;
+		return new TemplateConfiguration<CouncilReport>(documentTemplate);
 	}
 
 	/**
-	 * Sets the data for the next print 
+	 * Sets the data for the next print
 	 */
-	public DocumentTemplate getNextTemplateConfiguration() {
-		documentTemplate.initData(task, selectedCouncil,
-				contactListPointer != null ? contactListPointer.getCustomAddress() : "");
+	public TemplateConfiguration<CouncilReport> getNextTemplateConfiguration() {
+		String address = contactListPointer != null ? contactListPointer.getCustomAddress() : "";
+		documentTemplate.initData(task, selectedCouncil, address);
 		documentTemplate.setCopies(contactListPointer != null ? contactListPointer.getCopies() : 1);
-		return documentTemplate;
+		return new TemplateConfiguration<CouncilReport>(documentTemplate,
+				contactListPointer != null ? contactListPointer.getContact() : null, address);
 	}
 }

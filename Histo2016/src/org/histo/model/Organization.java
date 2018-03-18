@@ -32,7 +32,7 @@ import lombok.Setter;
 public class Organization implements HasID, Serializable {
 
 	private static final long serialVersionUID = 8370367938117220795L;
-	
+
 	@Id
 	@GeneratedValue(generator = "organization_sequencegenerator")
 	@Column(unique = true, nullable = false)
@@ -45,16 +45,16 @@ public class Organization implements HasID, Serializable {
 	private Contact contact;
 	@Column(columnDefinition = "VARCHAR")
 	private String note;
-	
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy="organizsations")
+
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "organizsations")
 	private List<Person> persons;
-	
+
 	@Column
 	private boolean intern;
 
 	@Column(columnDefinition = "boolean default true")
 	private boolean archived = false;
-	
+
 	public Organization() {
 
 	}
@@ -80,7 +80,7 @@ public class Organization implements HasID, Serializable {
 	@Override
 	public String toString() {
 		return "Organization [id=" + id + ", version=" + version + ", name=" + name + ", contact=" + contact + ", note="
-				+ note + ", persons=" + persons + ", intern=" + intern + "]";
+				+ note + ", intern=" + intern + "]";
 	}
 
 }

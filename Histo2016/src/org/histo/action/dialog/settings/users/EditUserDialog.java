@@ -5,14 +5,17 @@ import java.util.List;
 
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.settings.organizations.OrganizationFunctions;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseConstraintViolationException;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.LogDAO;
+import org.histo.dao.OrganizationDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.Organization;
+import org.histo.model.Person;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.service.PhysicianService;
@@ -29,7 +32,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class EditUserDialog extends AbstractDialog {
+public class EditUserDialog extends AbstractDialog implements OrganizationFunctions {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -61,6 +64,11 @@ public class EditUserDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private PhysicianService physicianService;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private OrganizationDAO organizationDAO;
+
 	private HistoUser user;
 
 	private List<ContactRole> allRoles;
@@ -68,6 +76,8 @@ public class EditUserDialog extends AbstractDialog {
 	private List<HistoGroup> groups;
 
 	private DefaultTransformer<HistoGroup> groupTransformer;
+
+	private DefaultTransformer<Organization> organizationTransformer;
 
 	/**
 	 * True if userdata where changed, an the dialog needs to be saved.
@@ -88,6 +98,10 @@ public class EditUserDialog extends AbstractDialog {
 		setGroups(userDAO.getGroups(false));
 		setGroupTransformer(new DefaultTransformer<HistoGroup>(getGroups()));
 
+		// setting organization transformer for selecting default address
+		setOrganizationTransformer(
+				new DefaultTransformer<Organization>(user.getPhysician().getPerson().getOrganizsations()));
+
 		super.initBean(task, Dialog.SETTINGS_USERS_EDIT);
 		return true;
 	}
@@ -101,6 +115,7 @@ public class EditUserDialog extends AbstractDialog {
 				user.getPhysician().addAssociateRole(ContactRole.OTHER_PHYSICIAN);
 
 			genericDAO.save(user, "log.user.role.changed", new Object[] { user.toString() });
+			genericDAO.save(user.getPhysician().getPerson(), "log.user.role.changed", new Object[] { user.toString() });
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
@@ -172,14 +187,11 @@ public class EditUserDialog extends AbstractDialog {
 	}
 
 	/**
-	 * Adds an organization to the user
+	 * Returning person of the user
 	 * 
-	 * @param event
+	 * @return
 	 */
-	public void onReturnOrganizationDialog(SelectEvent event) {
-		if (event.getObject() != null && event.getObject() instanceof Organization
-				&& !getUser().getPhysician().getPerson().getOrganizsations().contains((Organization) event.getObject())) {
-			getUser().getPhysician().getPerson().getOrganizsations().add((Organization) event.getObject());
-		}
+	public Person getPerson() {
+		return getUser().getPhysician().getPerson();
 	}
 }

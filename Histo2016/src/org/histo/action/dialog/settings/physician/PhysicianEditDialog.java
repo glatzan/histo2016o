@@ -4,12 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.settings.organizations.OrganizationFunctions;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.model.Organization;
+import org.histo.model.Person;
 import org.histo.model.Physician;
 import org.histo.service.PhysicianService;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -21,7 +24,7 @@ import lombok.Setter;
 @Configurable
 @Getter
 @Setter
-public class PhysicianEditDialog extends AbstractDialog {
+public class PhysicianEditDialog extends AbstractDialog implements OrganizationFunctions {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -32,6 +35,8 @@ public class PhysicianEditDialog extends AbstractDialog {
 
 	private List<ContactRole> allRoles;
 
+	private DefaultTransformer<Organization> organizationTransformer;
+
 	public void initAndPrepareBean(Physician physician) {
 		if (initBean(physician))
 			prepareDialog();
@@ -40,6 +45,10 @@ public class PhysicianEditDialog extends AbstractDialog {
 	public boolean initBean(Physician physician) {
 		setPhysician(physician);
 		setAllRoles(Arrays.asList(ContactRole.values()));
+
+		// setting organization transformer for selecting default address
+		setOrganizationTransformer(
+				new DefaultTransformer<Organization>(getPhysician().getPerson().getOrganizsations()));
 
 		super.initBean(task, Dialog.SETTINGS_PHYSICIAN_EDIT);
 
@@ -70,20 +79,16 @@ public class PhysicianEditDialog extends AbstractDialog {
 	public void updateDataFromLdap() {
 		try {
 			physicianService.updatePhysicianDataFromLdap(getPhysician());
+			updateOrganizationSelection();
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
 
 	/**
-	 * Adds an organization to the user
-	 * 
-	 * @param event
+	 * Getting person from physician
 	 */
-	public void onReturnOrganizationDialog(SelectEvent event) {
-		if (event.getObject() != null && event.getObject() instanceof Organization
-				&& !getPhysician().getPerson().getOrganizsations().contains((Organization) event.getObject())) {
-			getPhysician().getPerson().getOrganizsations().add((Organization) event.getObject());
-		}
+	public Person getPerson() {
+		return getPhysician().getPerson();
 	}
 }

@@ -64,13 +64,13 @@ Next Changes:
 
 -> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
 
--> Ärzte aus klinikbakcend übernehmen
-
 -> Task archivieren nur wenn befunder angegeben ist 
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
 -> Aus Uitl in Selectors kopieren  
 -> Benchrichtigung: Im Service Telefonnummern aktivieren
+
+-> pdf beim drucken ggf speicher
 
 Testen:
 -> Test piz range from 6-8 (geht nicht)
@@ -110,16 +110,30 @@ Graphic Changes
 + = added
 - = removed
 
--> 
+-> 1.5
+-> erstellen von patientin in der pdv
+-> Ärzte aus klinikbakcend übernehmen
+-> Felder für ausleih befund (externer befund) im task create menu
 
--> 1.4.3 erstellen von patientin in der pdv
++v 1.4.3 (18.03.2018)
++++!: Fehlerhaftes Tag im Organisations-Erstellen Dialog entfernt.
+++++: Für Personen kann jetzt die standard benachrichtigungs Adresse ausgewählt werden.
++++*: Auftrag wird jetzt komplett neu geladen wenn diesr über die Arbeitsliste ausgewählt wird.
++++*: Auftrag wird jetzt komplett neu geladen wenn man den Dialog für Globale-Einstellungen verlässt.
++++*: Benachrichtigungen gehen jetzt primär an die ausgewählte benachrichtigungs Adresse. 
+++++: Wird ein Ausdruck für einen Kontakt gemacht, wird dies nun wieder geloggt. 
+
+SQL:
+/* Adding field for default address*/
+alter table person add defaultaddress_id bigint;
+alter table person_aud add defaultaddress_id bigint;
+/* constraint for default address */
+ALTER TABLE ONLY person ADD CONSTRAINT person_defaultaddress_fkey FOREIGN KEY (defaultaddress_id) REFERENCES organization(id);
 
 +v 1.4.2 (17.03.2018)
 +++!: Automatische Benachrichtigung funktioniert nun korrekt mit Briefen
 +++*: Nachträgliche Änderung der Gruppeneinstellungen werden jetzt für die Benutzer übernommen.
 +++*: Recht zum Anzeigen des PDFs in der Befundbericht-Ansicht eingeführt. (Wenn gesetzt, wird der Befundbericht auch angezeigt, wenn der Befund noch nicht abgeschlossen ist).
--> ggf wenn contact vorhaden, speichern des ausdruckes unter dem kontakt (alte version der print methode anschauen)=
--> Asuwahl der default addresse
 
 SQL:
 /* Adding USER_ALWAYS_SHOW_IN_WORKLIST_REPORT rights to groups */

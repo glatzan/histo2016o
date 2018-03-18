@@ -125,15 +125,15 @@
 				<!-- address addition one -->
 				<h:outputLabel
 					value="#{msg['component.personDataMask.contact.additionOne']}" />
-				<p:inputText  
+				<p:inputText
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.addressadditon}" />
 
 				<!-- address addition two -->
 				<h:outputLabel
 					value="#{msg['component.personDataMask.contact.additionTwo']}" />
-				<p:inputText 
+				<p:inputText
 					value="#{dialogHandlerAction.physicianEditDialog.physician.person.contact.addressadditon2}" />
-					
+
 				<h:outputLabel value="" />
 
 				<!-- Postcode -->
@@ -226,8 +226,28 @@
 						itemValue="#{role}"
 						itemLabel="#{msg['enum.contactRole.'.concat(role)]}" />
 
-					<p:ajax partialSubmit="true" process="@this" />
+					<p:ajax partialSubmit="true" process="@form" />
 				</p:selectCheckboxMenu>
+
+				<!-- default notification  -->
+				<h:outputLabel
+					title="#{msg['component.personDataMask.defaultAddress.text']}"
+					value="#{msg['component.personDataMask.defaultAddress']}"
+					styleClass="bigFont" />
+
+				<p:selectOneMenu style="margin-top:1px;"
+					title="#{msg['component.personDataMask.defaultAddress.text']}"
+					value="#{dialogHandlerAction.physicianEditDialog.person.defaultAddress}"
+					converter="#{dialogHandlerAction.physicianEditDialog.organizationTransformer}">
+
+					<f:selectItem value="#{null}"
+						itemLabel="#{msg['component.personDataMask.defaultAddress.none']}"></f:selectItem>
+
+					<f:selectItems
+						value="#{dialogHandlerAction.physicianEditDialog.person.organizsations}"
+						var="group" itemValue="#{group}" itemLabel="#{group.name}" />
+
+				</p:selectOneMenu>
 			</h:panelGrid>
 
 			<!-- Organization -->
@@ -267,16 +287,16 @@
 
 					<p:column style="width:30px">
 						<f:facet name="header">
-							<p:commandLink id="upload"
-								title="#{msg['component.personDataMask.organization.add']}"
+							<p:commandLink
+								title="#{msg['component.personDataMask.organization.add']}"  process="@this"
 								actionListener="#{dialogHandlerAction.organizationListDialog.initAndPrepareBean(true)}">
-								<p:ajax event="dialogReturn" update="@form"
+								<p:ajax event="dialogReturn" update="@form"  process="@form"
 									listener="#{dialogHandlerAction.physicianEditDialog.onReturnOrganizationDialog}" />
 								<i class="fa fa-plus" />
 							</p:commandLink>
 						</f:facet>
-						<p:commandLink partialSubmit="true" process="@this" 
-							actionListener="#{dialogHandlerAction.organizationListDialog.removeOrganization(dialogHandlerAction.physicianEditDialog.physician.person, organization)}"
+						<p:commandLink partialSubmit="true" process="@form"
+							actionListener="#{dialogHandlerAction.physicianEditDialog.removeFromOrganization(organization)}"
 							update="@form"
 							title="#{msg['component.personDataMask.organization.remove']}">
 							<i class="fa fa-remove" style="margin-left: 8px" />
@@ -293,7 +313,7 @@
 
 				<h:panelGrid columns="1" styleClass="newTableContainer left">
 					<p:commandButton id="refreshBtn" value="#{msg['general.refresh']}"
-						icon="fa fa-fw fa-undo" widgetVar="refreshBtn"
+						icon="fa fa-fw fa-undo" widgetVar="refreshBtn" update="@form"
 						onstart="PF('blockUIWidget').block()"
 						oncomplete="PF('blockUIWidget').unblock()">
 						<f:actionListener

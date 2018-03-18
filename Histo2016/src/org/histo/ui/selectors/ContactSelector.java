@@ -48,10 +48,13 @@ public class ContactSelector extends AbstractSelector implements HasID {
 		this.selected = selected;
 		this.organizazionsChoosers = new ArrayList<OrganizationChooser>();
 
-		if (associatedContact.getPerson().getOrganizsations() != null)
+		if (associatedContact.getPerson().getOrganizsations() != null) {
 			for (Organization organization : associatedContact.getPerson().getOrganizsations()) {
-				this.organizazionsChoosers.add(new OrganizationChooser(this, organization));
+				System.out.println(organization.getName());
+				this.organizazionsChoosers.add(new OrganizationChooser(this, organization,
+						organization.equals(associatedContact.getPerson().getDefaultAddress())));
 			}
+		}
 
 		this.emptyAddress = emptyAddress;
 
@@ -85,7 +88,7 @@ public class ContactSelector extends AbstractSelector implements HasID {
 
 		setCustomAddress(AssociatedContact.generateAddress(getContact(), selectedOrganization.orElse(null)));
 
-		logger.debug("Custom Address is: " + getCustomAddress());
+		logger.trace("Custom Address is: " + getCustomAddress());
 	}
 
 	@Getter
@@ -96,7 +99,7 @@ public class ContactSelector extends AbstractSelector implements HasID {
 		private Organization organization;
 		private boolean selected;
 
-		public OrganizationChooser(ContactSelector parent, Organization organization) {
+		public OrganizationChooser(ContactSelector parent, Organization organization, boolean selected) {
 			this.parent = parent;
 			this.organization = organization;
 		}

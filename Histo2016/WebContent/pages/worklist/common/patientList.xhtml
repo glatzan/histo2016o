@@ -179,7 +179,7 @@
 								style="#{task.taskStatus.active or (!worklistViewHandlerAction.worklist.showActiveTasksExplicit and task.taskStatus.actionPending) ? '' : ' opacity: 0.3;'}">
 								<!-- rendere if something is to do (or active task only) or showNoneActiveTasks -->
 								<p:commandLink partialSubmit="true" process="@this"
-									actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task)}"
+									actionListener="#{worklistViewHandlerAction.onSelectTaskAndPatient(task.id)}"
 									update="headerForm contentForm navigationForm:patientList"
 									styleClass="noUnderlineAtLink">
 

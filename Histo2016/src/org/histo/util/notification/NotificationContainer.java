@@ -83,10 +83,8 @@ public class NotificationContainer {
 				setContactAddress(contact.getPerson().getContact().getPhone());
 				break;
 			case LETTER:
-				Organization orga = getContact().getPerson().getOrganizsations().size() > 0
-						? getContact().getPerson().getOrganizsations().get(0)
-						: null;
-				setContactAddress(AssociatedContact.generateAddress(getContact(), orga));
+				setContactAddress(
+						AssociatedContact.generateAddress(getContact(), getContact().getPerson().getDefaultAddress()));
 			default:
 				break;
 			}

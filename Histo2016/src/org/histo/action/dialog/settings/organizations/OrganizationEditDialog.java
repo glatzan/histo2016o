@@ -37,6 +37,9 @@ public class OrganizationEditDialog extends AbstractDialog {
 
 	private boolean newOrganization;
 
+	/**
+	 * Stores persons to remove from organization when saving
+	 */
 	private List<Person> removeFromOrganization;
 
 	public void initAndPrepareBean() {
@@ -83,15 +86,21 @@ public class OrganizationEditDialog extends AbstractDialog {
 			for (Person person : removeFromOrganization) {
 				genericDAO.save(person, "log.person.organization.remove", new Object[] { person, organization });
 			}
+
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
 
+	/**
+	 * Removes a organization temporary from the person and adds it to an array in
+	 * order to save the change when the user clicks on the save button.
+	 * 
+	 * @param person
+	 * @param organization
+	 */
 	public void removePersonFromOrganization(Person person, Organization organization) {
-		System.out.println("gallo");
-		person.getOrganizsations().remove(organization);
-		organization.getPersons().remove(person);
+		organizationDAO.removeOrganization(person, organization, false);
 		getRemoveFromOrganization().add(person);
 	}
 }

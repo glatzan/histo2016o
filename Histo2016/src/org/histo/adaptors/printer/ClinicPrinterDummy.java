@@ -3,6 +3,8 @@ package org.histo.adaptors.printer;
 import java.io.File;
 
 import org.histo.model.PDFContainer;
+import org.histo.template.DocumentTemplate;
+import org.histo.util.pdf.PrintOrder;
 
 public class ClinicPrinterDummy extends ClinicPrinter {
 
@@ -43,6 +45,18 @@ public class ClinicPrinterDummy extends ClinicPrinter {
 
 	@Override
 	public boolean print(PDFContainer container, String args) {
+		logger.debug("Dummy printer, printin...");
+		return true;
+	}
+
+	@Override
+	public boolean print(PDFContainer container, DocumentTemplate template) {
+		logger.debug("Dummy printer, printin...");
+		return true;
+	}
+
+	@Override
+	public boolean print(PrintOrder printOrder) {
 		logger.debug("Dummy printer, printin...");
 		return true;
 	}

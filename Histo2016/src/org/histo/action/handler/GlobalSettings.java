@@ -194,6 +194,8 @@ public class GlobalSettings {
 				return printer;
 		}
 
+		logger.debug("Returning dummy printer");
+		
 		return getPrinterList().get(0);
 	}
 
