@@ -62,8 +62,6 @@ Next Changes:
 
 -> Nicht bei jeder Druckoption wird des hinterlegte Drucker angezeigt, evtl. "Globale kleine Schaltfläche" auf Hauptansicht , dann muss es nicht in jedem kleinen Fenster stehen
 
--> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
-
 -> Task archivieren nur wenn befunder angegeben ist 
 -> Warnung wenn der Auftrag noch in Arbeitslisten ist
 
@@ -110,10 +108,18 @@ Graphic Changes
 + = added
 - = removed
 
--> 1.5
+-> 1.6
 -> erstellen von patientin in der pdv
+
+-> 1.5
+-> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
 -> Ärzte aus klinikbakcend übernehmen
 -> Felder für ausleih befund (externer befund) im task create menu
+
+https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
+
++v 1.4.4 (19.03.2018)
++++*: Anführungszeichen werden im Befund korrekt dargestellt.
 
 +v 1.4.3 (18.03.2018)
 +++!: Fehlerhaftes Tag im Organisations-Erstellen Dialog entfernt.
