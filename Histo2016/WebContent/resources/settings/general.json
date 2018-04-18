@@ -80,6 +80,7 @@
 		"patientHistoryHospitalized_URI" : "http://auginfo/piz/$piz?history=1S",
 		"patientHistoryAmbulant_URI" : "http://auginfo/piz/$piz?history=1", 
 		"patientAssocitedPersons_URI" : "http://auginfo/piz/$piz?history=4&fall=$case",
+		"patientByNameSurnameBirthday_URI": "http://auginfo/piz?name=$name&vorname=$surname&geburtsdatum=$birthday",
 		"userAgent": "Mozilla/5.0"
 	},
 	"findPrinterForRoomBackend": {

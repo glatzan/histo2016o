@@ -16,12 +16,16 @@ import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.histo.util.StreamUtils;
 import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -50,27 +54,10 @@ public class PatientService {
 	@Setter(AccessLevel.NONE)
 	private PatientDao patientDao;
 
-	/**
-	 * Creates and adds an external patient to the database TODO: obtain piz from
-	 * pdv
-	 * 
-	 * @param patient
-	 */
-	public void createExternalPatient(Patient patient) {
-		
-//		PatientIDGenerator generator = new PatientIDGenerator();
-//		
-//		generator.generatePatientID(patient);
-//		
-		if (patient.getId() == 0) {
-			patient.setExternalPatient(true);
-			patient.setInDatabase(true);
-			patient.setCreationDate(System.currentTimeMillis());
-			genericDAO.savePatientData(patient, "log.patient.extern.new");
-		} else {
-			genericDAO.savePatientData(patient, "log.patient.edit");
-		}
-	}
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private TransactionTemplate transactionTemplate;
 
 	/**
 	 * Saves a patient in the database (obtained from pdv).
@@ -79,12 +66,12 @@ public class PatientService {
 	 * @throws CustomExceptionToManyEntries
 	 * @throws JSONException
 	 */
-	public void addPatient(Patient patient)
+	public void addPatient(Patient patient, boolean update)
 			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
 
 		// add patient from the clinic-backend, get all data of this
 		// patient, piz search is more specific
-		if (!patient.getPiz().isEmpty() && !globalSettings.getProgramSettings().isOffline()) {
+		if (!patient.getPiz().isEmpty() && !globalSettings.getProgramSettings().isOffline() && update) {
 			logger.debug("Getting data from pdv for patient " + patient.getPiz());
 			globalSettings.getClinicJsonHandler().updatePatientFromClinicJson(patient);
 		}
@@ -95,21 +82,62 @@ public class PatientService {
 			// set add date
 			patient.setCreationDate(System.currentTimeMillis());
 			patient.setInDatabase(true);
-			genericDAO.savePatientData(patient, "log.patient.search.new");
+			// setting external patient if piz is null
+			patient.setExternalPatient(patient.getPiz() == null ? true : false);
+			genericDAO.savePatientData(patient,
+					patient.isExternalPatient() ? "log.patient.extern.new" : "log.patient.search.new");
 		} else {
 			logger.debug("Patient (\" + patient.getPiz() + \") in database, updating and saving");
 			genericDAO.savePatientData(patient, "log.patient.search.update");
 		}
 	}
-	
+
 	/**
 	 * Removes a patient without tasks from local database
+	 * 
 	 * @param patient
 	 */
 	public void removePatient(Patient patient) {
-		if(patient.getTasks().isEmpty()) {
+		if (patient.getTasks().isEmpty()) {
 			genericDAO.deletePatientData(patient, "log.patient.remove", patient);
 		}
+	}
+
+	/**
+	 * Merges to patients. Copies all tasks from one patient to the other. TODO: all
+	 * actions in one transaction
+	 * 
+	 * @param from
+	 * @param to
+	 */
+	public void mergePatient(Patient from, Patient to) {
+
+		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+
+			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+				List<Task> tasksFrom = from.getTasks();
+
+				if (tasksFrom == null)
+					return;
+
+				for (Task task : tasksFrom) {
+					task.setParent(to);
+					genericDAO.savePatientData(task);
+				}
+				
+//				to.getTasks().addAll(tasksFrom);
+//				System.out.println(2);
+//				genericDAO.savePatientData(to, "log.patient.merge.addTasks", from.getPatient().toString());
+//
+//				from.setTasks(new ArrayList<Task>());
+//				genericDAO.savePatientData(from, "log.patient.merge.removeTasks");
+//				System.out.println("1");
+//
+//				if (to.getTasks() == null)
+//					to.setTasks(new ArrayList<Task>());
+			}
+		});
+
 	}
 
 	/**
@@ -186,88 +214,6 @@ public class PatientService {
 		return patients;
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @param surname
-	 * @param birthday
-	 * @return
-	 * @throws CustomExceptionToManyEntries
-	 * @throws CustomNullPatientExcepetion
-	 * @throws CustomDatabaseInconsistentVersionException
-	 */
-	public List<Patient> searhcForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
-			throws CustomExceptionToManyEntries, CustomNullPatientExcepetion,
-			CustomDatabaseInconsistentVersionException {
-
-		ArrayList<Patient> result = new ArrayList<Patient>();
-
-		List<String> foundPiz = new ArrayList<String>();
-
-		// getting all patienties from clinic database
-		List<Patient> clinicPatients = globalSettings.getClinicJsonHandler()
-				.getPatientsFromClinicJson("?name=" + name + (surname != null ? ("&vorname=" + surname) : "")
-						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
-
-		if (!clinicPatients.isEmpty()) {
-
-			logger.trace("Found " + clinicPatients.size() + " patients in pdv ");
-
-			// getting all pizes in one Array
-			List<String> toSearchPizes = clinicPatients.stream().map(p -> p.getPiz()).collect(Collectors.toList());
-
-			logger.trace("Searching for " + toSearchPizes.size() + " patients in database");
-
-			// creating a list of patient from the histo backend pizes
-			// which where obtained from the clinic backend
-			List<Patient> histoMatchList = patientDao.searchForPatientPizList(toSearchPizes);
-
-			logger.trace("Found " + histoMatchList.size() + " patients in database");
-
-			// searching for every clinic patien a patientin in the database, if
-			// foud the database patient will be updated
-			foundPiz = clinicPatients.stream().filter(cP -> {
-				try {
-					// histo patient found
-					Patient res = histoMatchList.stream().filter(hP -> hP.getPiz().equals(cP.getPiz()))
-							.collect(StreamUtils.singletonCollector());
-
-					histoMatchList.remove(res);
-
-					if (res.copyIntoObject(cP)) {
-						try {
-							genericDAO.savePatientData(res, "log.patient.search.update");
-						} catch (Exception e) {
-						}
-					}
-
-					result.add(res);
-					return true;
-				} catch (IllegalStateException e) {
-
-					// no histo patient found, adding patient only to result list if user can add
-					// clinic patient unknown to the local database
-					if (!localDatabaseOnly) {
-						cP.setInDatabase(false);
-						result.add(cP);
-					}
-
-					return false;
-				}
-			}).map(cp -> cp.getPiz()).collect(Collectors.toList());
-		}
-
-		// search for external patient in histo database, excluding the
-		// already found patients via piz
-		// TODO Remove if piz generation is a thing
-		List<Patient> histoPatients = patientDao.getPatientsByNameSurnameDateExcludePiz(name, surname, birthday,
-				foundPiz);
-
-		result.addAll(histoPatients);
-
-		return result;
-	}
-
 	public List<Patient> searchForPatient(String name, String surname, Date birthday, boolean localDatabaseOnly)
 			throws CustomDatabaseInconsistentVersionException, CustomNullPatientExcepetion {
 		return searchForPatient(name, surname, birthday, localDatabaseOnly, new AtomicBoolean(false));
@@ -299,9 +245,8 @@ public class PatientService {
 
 		if (!localDatabaseOnly && !globalSettings.getProgramSettings().isOffline()) {
 			try {
-				clinicPatients = globalSettings.getClinicJsonHandler().getPatientsFromClinicJson("?name=" + name
-						+ (surname != null ? ("&vorname=" + surname) : "")
-						+ (birthday != null ? "&geburtsdatum=" + TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+				clinicPatients = globalSettings.getClinicJsonHandler().getPatientsFromClinicJson(name, surname,
+						birthday);
 			} catch (CustomExceptionToManyEntries e) {
 				toManyEntriesInClinicDatabase.set(true);
 				clinicPatients = new ArrayList<Patient>();

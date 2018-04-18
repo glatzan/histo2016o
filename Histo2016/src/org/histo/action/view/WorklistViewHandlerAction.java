@@ -229,6 +229,11 @@ public class WorklistViewHandlerAction {
 		}
 	}
 
+	public void goToSelectPatient(long patientID) {
+		Patient p = patientDao.getPatient(patientID, false);
+		goToSelectPatient(p, true);
+	}
+
 	public void goToSelectPatient(Patient patient) {
 		goToSelectPatient(patient, true);
 	}
@@ -334,7 +339,8 @@ public class WorklistViewHandlerAction {
 
 						mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
-						PrimeFaces.current().executeScript("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
+						PrimeFaces.current()
+								.executeScript("clickButtonFromBean('#globalCommandsForm\\\\:refreshContentBtn')");
 					}
 				}
 			}
@@ -410,7 +416,7 @@ public class WorklistViewHandlerAction {
 			onDeselectPatient(false);
 
 			worklist.sortWordklist();
-			
+
 			worklist.updateWorklist();
 		}
 

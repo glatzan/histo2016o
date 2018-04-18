@@ -9,7 +9,6 @@ import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.notification.NotificationDialog;
 import org.histo.action.dialog.notification.NotificationPhaseExitDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
-import org.histo.action.dialog.patient.ConfirmExternalPatientDialog;
 import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.DeleteTaskDialog;
 import org.histo.action.dialog.patient.EditPatientDialog;
@@ -76,8 +75,6 @@ public class DialogHandlerAction {
 
 	private EditPatientDialog editPatientDialog;
 
-	private AddPatientDialogHandler addPatientDialogHandler;
-
 	private FavouriteListsDialog favouriteListsDialog;
 
 	private FavouriteListEditDialog favouriteListEditDialog;
@@ -109,8 +106,6 @@ public class DialogHandlerAction {
 	private CouncilDialogHandler councilDialogHandler;
 
 	private ChangeTaskIDDialog changeTaskIDDialog;
-
-	private ConfirmExternalPatientDialog confirmExternalPatientDialog;
 
 	private DeleteTaskEntityDialog deleteTaskEntityDialog;
 	
@@ -223,14 +218,6 @@ public class DialogHandlerAction {
 		}
 
 		return editPatientDialog;
-	}
-
-	public AddPatientDialogHandler getAddPatientDialogHandler() {
-		if (addPatientDialogHandler == null) {
-			addPatientDialogHandler = new AddPatientDialogHandler();
-		}
-
-		return addPatientDialogHandler;
 	}
 
 	public FavouriteListsDialog getFavouriteListsDialog() {
@@ -361,14 +348,6 @@ public class DialogHandlerAction {
 		return changeTaskIDDialog;
 	}
 
-	public ConfirmExternalPatientDialog getConfirmExternalPatientDialog() {
-		if (confirmExternalPatientDialog == null) {
-			confirmExternalPatientDialog = new ConfirmExternalPatientDialog();
-		}
-
-		return confirmExternalPatientDialog;
-	}
-	
 	public DeleteTaskEntityDialog getDeleteTaskEntityDialog() {
 		if (deleteTaskEntityDialog == null) {
 			deleteTaskEntityDialog = new DeleteTaskEntityDialog();

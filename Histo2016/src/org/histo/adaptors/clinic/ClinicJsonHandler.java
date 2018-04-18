@@ -1,6 +1,7 @@
 package org.histo.adaptors.clinic;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.histo.adaptors.AbstractJsonHandler;
@@ -10,6 +11,7 @@ import org.histo.model.AssociatedContact;
 import org.histo.model.Contact;
 import org.histo.model.Person;
 import org.histo.model.patient.Patient;
+import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONArray;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
@@ -74,29 +76,30 @@ import lombok.Setter;
 public class ClinicJsonHandler extends AbstractJsonHandler {
 
 	/**
-	 * Loaded from json (/$piz)
-	 * Replace $piz
+	 * Loaded from json (/$piz) Replace $piz
 	 */
 	private String patientByPiz_URI;
 
 	/**
-	 * List of all hospitalized cases
-	 * Replace $piz
+	 * List of all hospitalized cases Replace $piz
 	 */
 	private String patientHistoryHospitalized_URI;
-	
+
 	/**
-	 * List of all ambulant cases
-	 * Replace $piz
+	 * List of all ambulant cases Replace $piz
 	 */
 	private String patientHistoryAmbulant_URI;
-	
+
 	/**
-	 * Data of the current case / associated physicians
-	 * Replace $piz $case
+	 * Data of the current case / associated physicians Replace $piz $case
 	 */
 	private String patientAssocitedPersons_URI;
-	
+
+	/**
+	 * Patient by name birthday or surname Replace $name $surname $birthday
+	 */
+	private String patientByNameSurnameBirthday_URI;
+
 	/**
 	 * Creates a list of patients fetched from the clinic backend. If there is no
 	 * data returned due to to many results an error will be thrown.
@@ -114,6 +117,25 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 	}
 
 	/**
+	 * Creates a list of patients by data of the clinic backend.
+	 * 
+	 * @param name
+	 * @param surname
+	 * @param birthday
+	 * @return
+	 * @throws JSONException
+	 * @throws CustomExceptionToManyEntries
+	 * @throws CustomNullPatientExcepetion
+	 */
+	public List<Patient> getPatientsFromClinicJson(String name, String surname, Date birthday)
+			throws JSONException, CustomExceptionToManyEntries, CustomNullPatientExcepetion {
+		String result = requestJsonData(patientByNameSurnameBirthday_URI.replace("$name", name == null ? "" : name)
+				.replace("$surname", surname == null ? "" : surname)
+				.replace("$birthday", birthday != null ? TimeUtil.formatDate(birthday, "yyyy-MM-dd") : ""));
+		return createPatientsFromClinicJson(result);
+	}
+
+	/**
 	 * Creates a patient object from data fechted from the clinic backend.
 	 * 
 	 * @param url
@@ -127,13 +149,13 @@ public class ClinicJsonHandler extends AbstractJsonHandler {
 		String result = requestJsonData(patientByPiz_URI.replace("$piz", piz));
 		return createPatientFromClinicJson(result);
 	}
-	
-	public List<ClinicCase> getClinicCasesOfPatient(String piz){
+
+	public List<ClinicCase> getClinicCasesOfPatient(String piz) {
 		String result = requestJsonData(patientHistoryAmbulant_URI.replace("$piz", piz));
 		return ClinicCase.factory(result);
 	}
-	
-	public List<AssociatedContact> getContactsForCase(String piz, String caseNumber){
+
+	public List<AssociatedContact> getContactsForCase(String piz, String caseNumber) {
 		String result = requestJsonData(patientAssocitedPersons_URI.replace("$piz", piz).replace("$case", caseNumber));
 		return null;
 	}

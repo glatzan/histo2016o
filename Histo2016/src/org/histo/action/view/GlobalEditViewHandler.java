@@ -11,11 +11,14 @@ import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
+import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.CustomExceptionToManyEntries;
+import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
@@ -25,6 +28,7 @@ import org.histo.dao.UtilDAO;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
+import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
@@ -32,6 +36,9 @@ import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.notification.NotificationContainer;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.json.JSONException;
 import org.primefaces.model.menu.MenuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -122,6 +129,10 @@ public class GlobalEditViewHandler {
 	@Setter(AccessLevel.NONE)
 	private PatientService patientService;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private AddPatientDialogHandler addPatientDialogHandler;
 	// ************************ Navigation ************************
 	/**
 	 * View options, dynamically generated depending on the users role
@@ -246,12 +257,12 @@ public class GlobalEditViewHandler {
 
 		setMaterialList(utilDAO.getAllMaterialPresets(true));
 	}
-	
+
 	public void reloadGuiData() {
 		loadGuiData();
-		
+
 		// only task needs reload
-		if(selectedTask != null) {
+		if (selectedTask != null) {
 			worklistViewHandlerAction.onSelectTaskAndPatient(selectedTask.getId());
 			logger.debug("Reloading task");
 		}
@@ -345,8 +356,8 @@ public class GlobalEditViewHandler {
 					} else {
 						// no task was found
 						logger.debug("No task with the given id found");
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.task", "general.blank",
-								FacesMessage.SEVERITY_ERROR);
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.task",
+								"general.blank", FacesMessage.SEVERITY_ERROR);
 					}
 
 				} else if (quickSerach.matches("^\\d{8}$")) { // piz
@@ -358,7 +369,7 @@ public class GlobalEditViewHandler {
 							!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_CLINIC));
 
 					if (patient != null) {
-					
+
 						logger.debug("Found patient " + patient + " and adding to currentworklist");
 
 						worklistViewHandlerAction.addPatientToWorkList(patient, true, true);
@@ -375,8 +386,8 @@ public class GlobalEditViewHandler {
 
 					} else {
 						// no patient was found for piz
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.piz", "general.blank",
-								FacesMessage.SEVERITY_ERROR);
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFound.piz",
+								"general.blank", FacesMessage.SEVERITY_ERROR);
 
 						logger.debug("No Patient found with piz " + quickSerach);
 					}
@@ -397,8 +408,8 @@ public class GlobalEditViewHandler {
 					} else {
 						// no slide was found
 						logger.debug("No slide with the given id found");
-						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.slide", "general.blank",
-								FacesMessage.SEVERITY_ERROR);
+						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.slide",
+								"general.blank", FacesMessage.SEVERITY_ERROR);
 					}
 
 				} else if (quickSerach.matches("^(.+)(, )(.+)$")) {
@@ -406,30 +417,43 @@ public class GlobalEditViewHandler {
 					// name, surename; name surename
 					String[] arr = quickSerach.split(", ");
 
-					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[0], arr[1], "",
-							null);
+					addPatientDialogHandler.initAndPrepareBeanFromExternal(arr[0], arr[1], "", null);
 
 				} else if (quickSerach.matches("^(.+) (.+)$")) {
 					logger.debug("Search for firstname, name");
 					// name, surename; name surename
 					String[] arr = quickSerach.split(" ");
 
-					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(arr[1], arr[0], "",
-							null);
+					addPatientDialogHandler.initAndPrepareBeanFromExternal(arr[1], arr[0], "", null);
 
 				} else if (quickSerach.matches("^[\\p{Alpha}\\-]+")) {
 					logger.debug("Search for name");
-					dialogHandlerAction.getAddPatientDialogHandler().initAndPrepareBeanFromExternal(quickSerach, "", "",
-							null);
+					addPatientDialogHandler.initAndPrepareBeanFromExternal(quickSerach, "", "", null);
 				} else {
 					logger.debug("No search match found");
-					mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.general", "general.blank",
-							FacesMessage.SEVERITY_ERROR);
+					mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.notFount.general",
+							"general.blank", FacesMessage.SEVERITY_ERROR);
 				}
 			}
 
 		} catch (Exception e) {
 			// TODO inform the user
+		}
+	}
+
+	/**
+	 * Adds an external or clinic patient to the database
+	 */
+	public void onAddClinicPatient(SelectEvent event) {
+		if (event.getObject() != null && event.getObject() instanceof Patient) {
+			try {
+				logger.debug("Adding patient to database");
+				patientService.addPatient((Patient) event.getObject(), true);
+				worklistViewHandlerAction.addPatientToWorkList((Patient) event.getObject(), true, true);
+			} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
+				worklistViewHandlerAction.onVersionConflictPatient((Patient) event.getObject());
+			}
+
 		}
 	}
 

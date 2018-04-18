@@ -9,78 +9,208 @@
 <h:head>
 	<title><h:outputLabel
 			value="#{msg['dialog.editPatient.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
 	<h:outputScript library="scripts" name="commonFunctions.js" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 </h:head>
 
+<h:body styleClass="contentInputDialog">
 
-
-<h:body styleClass="defaultDialogLayout bigDialog">
-	<h:form id="dialogForm">
-
-		<div class="defaulDilaogHeaderDivWithBackground">
+	<h:form enctype="multipart/form-data" id="dialogContent">
+		<div class="dialogHeader">
 			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="noBordersAll noPaddingAll collapsedBordersAll">
+				styleClass="newTableContainer">
 				<h:outputLabel value="#{msg['dialog.editPatient.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
-					actionListener="#{dialogHandlerAction.editPatientDialog.hideDialog()}">
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
 					<i class="fa fa-fw fa-times" />
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
 
+		<div class="dialogContent">
+			<h:panelGrid columns="5" styleClass="newStyleListingTable"
+				columnClasses="columnLabelContainer150, , , ,">
 
-		<div class="dialogContent" id="dialogContent">
-			<histo:newPersonDataMask person="#{dialogHandlerAction.editPatientDialog.patient.person}"
-				pannelID="editPatient" disabled="false" />
+				<!-- Person -->
+				<h:outputLabel value="#{msg['component.personDataMask.person']}"
+					styleClass="bigFont" />
 
-			<!-- Piz -->
-			<h:panelGrid columns="3"
-				columnClasses="defaultListingTableColumn15 defaultListingTableColumnTop, defaultListingTableColumnTop, defaultListingTableColumnTop"
-				styleClass="defaultListingTableFirstColumEnummeration">
+				<!-- Title -->
+				<h:outputLabel value="#{msg['component.personDataMask.title']}" />
+				<p:selectOneMenu style="width:100px" editable="true"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.title}">
+					<f:selectItem itemLabel="" itemValue="" />
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.title.dr']}"
+						itemValue="#{msg['component.personDataMask.title.dr']}" />
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.title.prof']}"
+						itemValue="#{msg['component.personDataMask.title.prof']}" />
+				</p:selectOneMenu>
 
-				<!-- ****************** Person ****************** -->
+				<!-- birthday -->
+				<h:outputLabel value="#{msg['component.personDataMask.birthday']}" />
+				<p:calendar id="birthday" name="bday" autocomplete="bday"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.birthday}"
+					locale="de" navigator="true" pattern="dd.MM.yyyy" mask="true" />
+
 				<h:outputLabel value="" />
 
-				<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-					columnClasses="defaultListingTableColumn100px,">
-					<!-- role -->
-					<h:outputLabel value="#{msg['dialog.addPatient.extern.piz']}" />
-					<p:inputText id="piz" name="piz"
-						value="#{dialogHandlerAction.editPatientDialog.patient.piz}" />
-				</h:panelGrid>
+				<!-- Name -->
+				<h:outputLabel value="#{msg['component.personDataMask.lastname']}" />
+				<p:inputText name="lname" autocomplete="family-name" required="true"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.lastName}" />
 
-				<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-					columnClasses="defaultListingTableColumn30,">
-					<h:panelGroup />
-					<h:panelGroup />
-				</h:panelGrid>
+				<!-- gender -->
+				<h:outputLabel value="#{msg['component.personDataMask.gender']}" />
+				<p:selectOneMenu style="width:100px" name="sex" autocomplete="sex"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.gender}">
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.select']}"
+						itemValue="#{null}" />
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.unknown']}"
+						itemValue="UNKNOWN" />
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.male']}"
+						itemValue="MALE" />
+					<f:selectItem
+						itemLabel="#{msg['component.personDataMask.gender.female']}"
+						itemValue="FEMALE" />
+				</p:selectOneMenu>
+
+				<h:outputLabel value="" />
+
+				<!-- firstName -->
+				<h:outputLabel value="#{msg['component.personDataMask.firstName']}" />
+				<p:inputText name="fname" autocomplete="given-name" required="true"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.firstName}" />
+
+				<h:outputLabel value="" />
+				<h:outputLabel value="" />
+
+				<!-- address -->
+				<h:outputLabel value="#{msg['component.personDataMask.adress']}"
+					styleClass="bigFont" />
+
+				<!-- street -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.contact.street']}" />
+				<p:inputText name="street-address" autocomplete="street-address"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.street}" />
+
+				<h:outputText value="" />
+				<h:outputText value="" />
+
+				<h:outputLabel value="" />
+
+				<!-- address addition one -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.contact.additionOne']}" />
+				<p:inputText
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.addressadditon}" />
+
+				<!-- address addition two -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.contact.additionTwo']}" />
+				<p:inputText
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.addressadditon2}" />
+
+				<h:outputLabel value="" />
+
+				<!-- Postcode -->
+				<h:outputLabel value="#{msg['component.personDataMask.adress.plz']}" />
+				<p:inputText style="width:75px;"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.postcode}"
+					name="postal-code" autocomplete="postal-code" />
+
+				<!-- Town -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.contact.town']}" />
+				<p:inputText name="city" autocomplete="address-level2"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.town}" />
+
+
+				<!-- miscellaneous -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.miscellaneous']}"
+					styleClass="bigFont" />
+
+				<!-- phone -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.contact.phone']}" />
+				<p:inputText
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.phone}"
+					name="phone" autocomplete="tel" />
+
+				<!-- fax -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.miscellaneous.fax']}" />
+				<p:inputText
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.fax}"
+					name="fax" autocomplete="fax" />
+
+				<h:outputLabel value="" />
+
+				<!-- mobile -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.miscellaneous.mobile']}" />
+				<p:inputText
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.phone}"
+					name="phone" autocomplete="tel" />
+
+				<!-- mail -->
+				<h:outputLabel
+					value="#{msg['component.personDataMask.miscellaneous.mail']}" />
+				<p:inputText name="mail" autocomplete="mail"
+					value="#{dialogHandlerAction.editPatientDialog.patient.person.contact.email}" />
+
+				<!-- piz -->
+				<h:outputLabel value="#{msg['component.personDataMask.piz']}"
+					styleClass="bigFont" />
+
+				<h:outputLabel
+					value="#{dialogHandlerAction.editPatientDialog.patient.piz eq '' ? 'none' : dialogHandlerAction.editPatientDialog.patient.piz}" />
 			</h:panelGrid>
+
 		</div>
+
 
 		<div class="buttonContainer">
 			<h:panelGrid columns="2" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
-				<h:panelGrid columns="2" style="float:right;">
+				styleClass="newTableContainer">
+
+				<h:panelGrid columns="1" styleClass="newTableContainer left">
+					<!-- merge button -->
+					<p:commandButton value="#{msg['dialog.editPatient.merge']}"
+						process="@form" icon="fa fa-medkit">
+						<f:actionListener
+							binding="#{mergePatientDialog.initAndPrepareBean(dialogHandlerAction.editPatientDialog.patient)}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="newTableContainer right">
 					<p:commandButton value="#{msg['dialog.editPatient.edit']}"
-						process="@form" icon="fa fa-fw fa-user-plus"
-						styleClass="smallButton buttonRighMarginInListExtended">
+						process="@form" icon="fa fa-fw fa-user-plus">
 						<f:actionListener
 							binding="#{dialogHandlerAction.editPatientDialog.savePatientData()}" />
-						<f:actionListener binding="#{dialogHandlerAction.editPatientDialog.hideDialog()}" />
+						<f:actionListener
+							binding="#{dialogHandlerAction.editPatientDialog.hideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.abort']}"
-						styleClass="smallButton buttonRighMarginInList"
 						icon="fa fa-times-circle"
 						actionListener="#{dialogHandlerAction.editPatientDialog.hideDialog()}">
 						<p:ajax update="@form" resetValues="true"
 							icon="fa fa-fw fa-user-plus" />
 					</p:commandButton>
+
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
+
 	</h:form>
 </h:body>
 </html>

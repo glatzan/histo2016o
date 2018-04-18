@@ -27,7 +27,7 @@
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					immediate="true" styleClass="noUnderlineAtLink">
 					<f:actionListener
-						binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+						binding="#{addPatientDialogHandler.hideDialog()}" />
 					<i class="fa fa-fw fa-times icon-grey" />
 				</p:commandLink>
 			</h:panelGrid>
@@ -37,18 +37,18 @@
 			columnClasses="column200px columnTop,columnTop">
 			<p:outputPanel id="navigationTable" styleClass="navigationTable">
 				<c:forEach
-					items="#{dialogHandlerAction.addPatientDialogHandler.tabs}"
+					items="#{addPatientDialogHandler.tabs}"
 					var="tab" varStatus="loop">
 					<p:commandButton value="#{msg[tab.name]}" immediate="true"
 						disabled="#{tab.disabled}"
-						styleClass="#{tab eq dialogHandlerAction.addPatientDialogHandler.selectedTab ? 'selectedButton' : ''}"
-						actionListener="#{dialogHandlerAction.addPatientDialogHandler.onTabChange(tab)}"
+						styleClass="#{tab eq addPatientDialogHandler.selectedTab ? 'selectedButton' : ''}"
+						actionListener="#{addPatientDialogHandler.onTabChange(tab)}"
 						update="navigationTable dialogContent" />
 				</c:forEach>
 			</p:outputPanel>
 			<p:outputPanel id="dialogContent" styleClass="dialogContent">
 				<ui:include
-					src="#{dialogHandlerAction.addPatientDialogHandler.selectedTab.centerInclude}" />
+					src="#{addPatientDialogHandler.selectedTab.centerInclude}" />
 			</p:outputPanel>
 		</h:panelGrid>
 	</h:form>

@@ -22,12 +22,13 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-@Configurable
+@Component
 @Getter
 @Setter
 public class AddPatientDialogHandler extends AbstractTabDialog {
@@ -51,6 +52,8 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 
 	private ExternalPatientTab externalPatientTab;
 
+	private boolean showExternPatientTab;
+
 	public AddPatientDialogHandler() {
 		setClinicSearchTab(new ClinicSearchTab());
 		setExternalPatientTab(new ExternalPatientTab());
@@ -59,18 +62,24 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 	}
 
 	public void initAndPrepareBean() {
-		initBean("", "", "", null);
+		initBean("", "", "", null, true);
+		prepareDialog();
+	}
+
+	public void initAndPrepareBean(boolean showExternPatientTab) {
+		initBean("", "", "", null, showExternPatientTab);
 		prepareDialog();
 	}
 
 	public void initAndPrepareBeanFromExternal(String name, String surename, String piz, Date date) {
-		initBean(name, surename, piz, date);
+		initBean(name, surename, piz, date, true);
 		clinicSearchTab.searchForClinicPatienes();
 		prepareDialog();
 	}
 
-	public void initBean(String name, String surename, String piz, Date date) {
+	public void initBean(String name, String surename, String piz, Date date, boolean showExternPatientTab) {
 		super.initBean(null, Dialog.PATIENT_ADD);
+		this.showExternPatientTab = showExternPatientTab;
 
 		for (int i = 0; i < tabs.length; i++) {
 			tabs[i].initTab();
@@ -158,18 +167,8 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		public void updateData() {
 		}
 
-		public void addClinicPatient() {
-			try {
-				if (getSelectedPatientListItem() != null) {
-					patientService.addPatient(getSelectedPatientListItem().getListItem());
-					worklistViewHandlerAction.addPatientToWorkList(getSelectedPatientListItem().getListItem(), true,
-							true);
-				}
-			} catch (JSONException | CustomDatabaseInconsistentVersionException | CustomExceptionToManyEntries
-					| CustomNullPatientExcepetion e) {
-				// TODO: reload patient?
-				onDatabaseVersionConflict();
-			}
+		public void selectPatientAndHideDialog() {
+			hideDialog(getSelectedPatientListItem().getListItem());
 		}
 
 		/**
@@ -192,7 +191,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 						// supported by local database
 						resultArr.addAll(patientService.serachForPizRange(getPatientPiz()));
 					}
-					
+
 				} else if ((getPatientName() != null && !getPatientName().isEmpty())
 						|| (getPatientSurname() != null && !getPatientSurname().isEmpty())
 						|| getPatientBirthday() != null) {
@@ -207,7 +206,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 				}
 
 				logger.debug(isToManyMatchesInClinicDatabase());
-				
+
 				setPatientList(ListChooser.getListAsIDList(resultArr));
 				setSelectedPatientListItem(null);
 
@@ -216,7 +215,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
-			
+
 			logger.debug(isToManyMatchesInClinicDatabase());
 		}
 
@@ -234,9 +233,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 			if (getPatientList() != null && getPatientList().size() == 1) {
 				logger.debug("One result found, adding to database");
 				setSelectedPatientListItem(getPatientList().get(0));
-				addClinicPatient();
-
-				hideDialog();
+				selectPatientAndHideDialog();
 			} else {
 				logger.debug("No result found, or result not unique");
 			}
@@ -260,7 +257,8 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		}
 
 		public boolean initTab() {
-			setDisabled(!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_EXTERN));
+			setDisabled(!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_EXTERN)
+					|| !showExternPatientTab);
 			setPatient(new Patient(new Person(new Contact())));
 			getPatient().getPerson().setGender(null);
 			return true;
@@ -269,14 +267,15 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		public void updateData() {
 		}
 
+		
 		/**
-		 * Closes the dialog if patient was added
+		 * Closes the dialog in order to add the patient
 		 * 
 		 * @param event
 		 */
 		public void onConfirmExternalPatientDialog(SelectEvent event) {
-			if (event.getObject() instanceof Boolean && ((Boolean) event.getObject()).booleanValue()) {
-				hideDialog();
+			if (event.getObject() != null && event.getObject() instanceof Patient) {
+				hideDialog(event.getObject());
 			}
 		}
 	}

@@ -118,6 +118,9 @@ Graphic Changes
 
 https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
++v 1.4.5 (18.04.2018)
++++!: Patientensuche mit Name und Geburtsdatum funktioniert wieder richtig.
+
 +v 1.4.4 (19.03.2018)
 +++*: Anführungszeichen werden im Befund korrekt dargestellt.
 

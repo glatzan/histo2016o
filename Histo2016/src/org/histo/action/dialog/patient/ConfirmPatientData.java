@@ -9,15 +9,16 @@ import org.histo.model.patient.Patient;
 import org.histo.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-@Configurable
+@Component
 @Getter
 @Setter
-public class ConfirmExternalPatientDialog extends AbstractDialog {
+public class ConfirmPatientData extends AbstractDialog {
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -28,51 +29,36 @@ public class ConfirmExternalPatientDialog extends AbstractDialog {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private WorklistViewHandlerAction worklistViewHandlerAction;
-	
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private PatientService patientService;
-	
+
 	private Patient patient;
-	
+
 	private boolean confirmed;
 
+	private String headlineAsResource;
+
 	public void initAndPrepareBean(Patient patient) {
-		initBean(patient);
+		initBean(patient, null);
 		prepareDialog();
 	}
 
-	public void initBean(Patient patient) {
-		super.initBean(null, Dialog.PATIENT_EXTERNAL_CONFIRM, false);
+	public void initAndPrepareBean(Patient patient, String headlineAsResource) {
+		initBean(patient, headlineAsResource);
+		prepareDialog();
+	}
+
+	public void initBean(Patient patient, String headlineAsResource) {
+		super.initBean(null, Dialog.PATIENT_DATA_CONFIRM, false);
 		setPatient(patient);
 		setConfirmed(false);
+		setHeadlineAsResource(headlineAsResource);
 	}
 
-	/**
-	 * Creates an external patient and closes the dialog, prepares the closure
-	 * of the parent dialog
-	 */
-	public void createExternalPatient() {
-		try {
-			// creating patient
-			patientService.createExternalPatient(patient);
-			// adding to worklist
-			worklistViewHandlerAction.addPatientToWorkList(getPatient(), true, true);
-			
-			setConfirmed(true);
-		} catch (CustomDatabaseInconsistentVersionException e) {
-			mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
-			hideDialog();
-			return;
-		}
+	public void confirmAndHideDialog() {
+		super.hideDialog(patient);	
 	}
-
-	/**
-	 * Returns true if the patient creation was confimed and the parent dialog should be closed
-	 */
-	public void hideDialog() {
-		super.hideDialog(new Boolean(confirmed));
-	}
-
 }

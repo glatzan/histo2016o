@@ -23,22 +23,22 @@
 			<h:panelGroup>
 				<p:focus for="pizInput" />
 				<p:inputMask
-					value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientPiz}"
+					value="#{addPatientDialogHandler.clinicSearchTab.patientPiz}"
 					id="pizInput" tabindex="1" mask="99999999">
 					<p:ajax process="@form" update="patientList toManyMatches"
 						delay="500" event="keyup"
-						listener="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
+						listener="#{addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
 				</p:inputMask>
 			</h:panelGroup>
 
 			<!-- Name -->
 			<p:outputLabel value="#{msg['dialog.addPatient.search.name']}" />
 			<p:inputText
-				value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientName}"
+				value="#{addPatientDialogHandler.clinicSearchTab.patientName}"
 				tabindex="2">
 				<p:ajax process="@form" update="patientList toManyMatches"
 					delay="500" event="keyup"
-					listener="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
+					listener="#{addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
 			</p:inputText>
 
 			<h:outputLabel value="" />
@@ -46,20 +46,20 @@
 			<!-- Birthday -->
 			<p:outputLabel value="#{msg['dialog.addPatient.search.birthday']}" />
 			<p:calendar
-				value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientBirthday}"
+				value="#{addPatientDialogHandler.clinicSearchTab.patientBirthday}"
 				tabindex="4" locale="de" pattern="dd.MM.yyyy" mask="true">
 				<p:ajax process="@form" update="patientList toManyMatches"
 					delay="500" event="keyup"
-					listener="#{dialogHandlerAction.addPatientDialogHandler.sclinicSearchTab.earchForClinicPatienes()}" />
+					listener="#{addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
 			</p:calendar>
 
 			<!-- Surname -->
 			<p:outputLabel value="#{msg['dialog.addPatient.search.firstName']}" />
 			<p:inputText tabindex="3"
-				value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientSurname}">
+				value="#{addPatientDialogHandler.clinicSearchTab.patientSurname}">
 				<p:ajax process="@form" update="patientList toManyMatches"
 					delay="500" event="keyup"
-					listener="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
+					listener="#{addPatientDialogHandler.clinicSearchTab.searchForClinicPatienes()}" />
 
 			</p:inputText>
 
@@ -70,8 +70,8 @@
 			styleClass="newStyleDataTable" scrollable="true"
 			style="margin-top: 20px;" selectionMode="single"
 			rowKey="#{patientList.id}"
-			selection="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem}"
-			value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.patientList}">
+			selection="#{addPatientDialogHandler.clinicSearchTab.selectedPatientListItem}"
+			value="#{addPatientDialogHandler.clinicSearchTab.patientList}">
 
 			<!-- Name -->
 			<p:column headerText="#{msg['dialog.addPatient.search.name']}"
@@ -140,15 +140,13 @@
 
 		<p:remoteCommand name="sumbitOnDblSelect">
 			<f:actionListener
-				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient()}" />
-			<f:actionListener
-				binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+				binding="#{addPatientDialogHandler.clinicSearchTab.selectPatientAndHideDialog()}" />
 		</p:remoteCommand>
 
 		<p:commandButton name="onQuickSubmit" id="onQuickSubmit"
 			style="display:none">
 			<f:actionListener
-				binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.onQuickSubmit()}" />
+				binding="#{addPatientDialogHandler.clinicSearchTab.onQuickSubmit()}" />
 		</p:commandButton>
 
 		<p:defaultCommand target="onQuickSubmit" />
@@ -162,29 +160,27 @@
 				id="toManyMatches">
 				<h:outputLabel value="#{msg['dialog.addPatient.toManyResults']}"
 					style="color:red"
-					rendered="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.toManyMatchesInClinicDatabase}" />
+					rendered="#{addPatientDialogHandler.clinicSearchTab.toManyMatchesInClinicDatabase}" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="newTableContainer right"
 				id="buttonContainer">
 				<!-- Add button -->
 				<p:commandButton
-					value="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem.listItem.inDatabase ? msg['dialog.addPatient.add.button.invoke'] : msg['dialog.addPatient.add.button.add']}"
+					value="#{addPatientDialogHandler.clinicSearchTab.selectedPatientListItem.listItem.inDatabase ? msg['dialog.addPatient.add.button.invoke'] : msg['dialog.addPatient.add.button.add']}"
 					widgetVar="clinicSearchBtn" id="submitAddButton"
-					disabled="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.selectedPatientListItem eq null}"
+					disabled="#{addPatientDialogHandler.clinicSearchTab.selectedPatientListItem eq null}"
 					icon="fa fa-fw fa-user-plus"
 					onclick="disableButton(true, 'clinicSearchBtn', 'closeBtn')"
 					partialSubmit="true" process="@form">
 					<f:actionListener
-						binding="#{dialogHandlerAction.addPatientDialogHandler.clinicSearchTab.addClinicPatient()}" />
-					<f:actionListener
-						binding="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+						binding="#{addPatientDialogHandler.clinicSearchTab.selectPatientAndHideDialog()}" />
 				</p:commandButton>
 
 				<!-- Close Button -->
 				<p:commandButton value="#{msg['general.close']}" immediate="true"
 					widgetVar="closeBtn" icon="fa fa-times-circle"
-					actionListener="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+					actionListener="#{addPatientDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

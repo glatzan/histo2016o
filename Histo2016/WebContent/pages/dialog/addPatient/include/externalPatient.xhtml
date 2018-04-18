@@ -28,7 +28,7 @@
 			<!-- Title -->
 			<p:outputLabel value="#{msg['component.personDataMask.title']}" />
 			<p:selectOneMenu style="width:100px" editable="true"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.title}">
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.title}">
 				<f:selectItem itemLabel="" itemValue="" />
 				<f:selectItem
 					itemLabel="#{msg['component.personDataMask.title.dr']}"
@@ -42,19 +42,19 @@
 			<p:outputLabel value="#{msg['component.personDataMask.birthday']}" />
 			<p:calendar id="birthday" name="bday" autocomplete="bday"
 				required="true"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.birthday}"
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.birthday}"
 				locale="de" navigator="true" pattern="dd.MM.yyyy" mask="true" />
 
 			<!-- Name -->
-			<p:outputLabel value="#{msg['component.personDataMask.name']}" />
+			<p:outputLabel value="#{msg['component.personDataMask.lastname']}" />
 			<p:inputText name="lname" autocomplete="family-name" required="true"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.lastName}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.lastName}" />
 
 			<!-- gender -->
 			<p:outputLabel value="#{msg['component.personDataMask.gender']}" />
 			<p:selectOneMenu style="width:100px" name="sex" autocomplete="sex"
 				required="true"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.gender}">
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.gender}">
 				<f:selectItem
 					itemLabel="#{msg['component.personDataMask.gender.select']}"
 					itemValue="#{null}" />
@@ -72,7 +72,7 @@
 			<!-- firstName -->
 			<p:outputLabel value="#{msg['component.personDataMask.firstName']}" />
 			<p:inputText name="fname" autocomplete="given-name" required="true"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.firstName}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.firstName}" />
 		</h:panelGrid>
 
 
@@ -89,7 +89,7 @@
 			<p:outputLabel
 				value="#{msg['component.personDataMask.contact.street']}" />
 			<p:inputText name="street-address" autocomplete="street-address"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.street}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.street}" />
 
 			<h:outputText value="" />
 			<h:outputText value="" />
@@ -98,25 +98,25 @@
 			<h:outputLabel
 				value="#{msg['component.personDataMask.contact.additionOne']}" />
 			<p:inputText
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.addressadditon}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.addressadditon}" />
 
 			<!-- address addition two -->
 			<h:outputLabel
 				value="#{msg['component.personDataMask.contact.additionTwo']}" />
 			<p:inputText
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.addressadditon2}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.addressadditon2}" />
 
 			<!-- Postcode -->
 			<p:outputLabel value="#{msg['component.personDataMask.adress.plz']}" />
 			<p:inputText style="width:75px;"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.postcode}"
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.postcode}"
 				name="postal-code" autocomplete="postal-code" />
 
 			<!-- Town -->
 			<p:outputLabel
 				value="#{msg['component.personDataMask.contact.town']}" />
 			<p:inputText name="city" autocomplete="address-level2"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.town}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.town}" />
 
 		</h:panelGrid>
 
@@ -135,28 +135,28 @@
 			<p:outputLabel
 				value="#{msg['component.personDataMask.contact.phone']}" />
 			<p:inputText
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.phone}"
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.phone}"
 				name="phone" autocomplete="tel" />
 
 			<!-- fax -->
 			<p:outputLabel
 				value="#{msg['component.personDataMask.miscellaneous.fax']}" />
 			<p:inputText
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.fax}"
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.fax}"
 				name="fax" autocomplete="fax" />
 
 			<!-- mobile -->
 			<p:outputLabel
 				value="#{msg['component.personDataMask.miscellaneous.mobile']}" />
 			<p:inputText
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.phone}"
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.phone}"
 				name="phone" autocomplete="tel" />
 
 			<!-- mail -->
 			<p:outputLabel
 				value="#{msg['component.personDataMask.miscellaneous.mail']}" />
 			<p:inputText name="mail" autocomplete="mail"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.person.contact.email}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.person.contact.email}" />
 
 			<h:outputText value="&nbsp;" />
 			<h:outputText value=" " />
@@ -166,7 +166,7 @@
 
 			<h:outputLabel value="#{msg['dialog.addPatient.extern.piz']}" />
 			<p:inputText id="piz" name="piz"
-				value="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient.piz}" />
+				value="#{addPatientDialogHandler.externalPatientTab.patient.piz}" />
 		</h:panelGrid>
 
 	</p:outputPanel>
@@ -184,16 +184,16 @@
 					widgetVar="addExternalPatient" update="@form" process="@form"
 					icon="fa fa-fw fa-user-plus" partialSubmit="true">
 					<f:actionListener
-						binding="#{dialogHandlerAction.confirmExternalPatientDialog.initAndPrepareBean(dialogHandlerAction.addPatientDialogHandler.externalPatientTab.patient)}" />
+						binding="#{confirmPatientData.initAndPrepareBean(addPatientDialogHandler.externalPatientTab.patient)}" />
 					<p:ajax event="dialogReturn" update="@form"
-						listener="#{dialogHandlerAction.addPatientDialogHandler.externalPatientTab.onConfirmExternalPatientDialog}" />
+						listener="#{addPatientDialogHandler.externalPatientTab.onConfirmExternalPatientDialog}" />
 				</p:commandButton>
 
 				<!-- Close Button -->
 				<p:commandButton value="#{msg['general.close']}"
 					widgetVar="closeBtn" icon="fa fa-times-circle" update="@form"
 					immediate="true"
-					actionListener="#{dialogHandlerAction.addPatientDialogHandler.hideDialog()}" />
+					actionListener="#{addPatientDialogHandler.hideDialog()}" />
 			</h:panelGrid>
 		</h:panelGrid>
 	</div>

@@ -43,6 +43,11 @@ public abstract class AbstractDialog {
 	@Setter
 	protected UniqueRequestID uniqueRequestID = new UniqueRequestID();
 
+	public void initAndPrepareBean(Dialog dialog) {
+		initBean(null,dialog);
+		prepareDialog();
+	}
+	
 	public void initAndPrepareBean(Task task, Dialog dialog) {
 		initBean(task, dialog);
 		prepareDialog();

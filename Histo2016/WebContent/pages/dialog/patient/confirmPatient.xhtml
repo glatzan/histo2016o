@@ -7,7 +7,7 @@
 
 <h:head>
 	<title><h:outputLabel
-			value="#{msg['dialog.confirmExternalPatientDialog.headline']}" /></title>
+			value="#{msg['dialog.confirmPatientData.headline']}" /></title>
 	<h:outputStylesheet name="histo.css" value="histo.css" />
 	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
 	<h:outputScript library="scripts" name="commonFunctions.js" />
@@ -21,7 +21,7 @@
 			<h:panelGrid style="width:100%;" columns="2"
 				styleClass="newTableContainer">
 				<h:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.headline']}" />
+					value="#{msg['dialog.confirmPatientData.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
 					onclick="$('#dialogContent\\:closeBtn').click();return false;">
@@ -34,7 +34,7 @@
 			<h:panelGrid columns="3" styleClass="newStyleListingTable">
 
 				<h:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.person']}"
+					value="#{msg['dialog.confirmPatientData.person']}"
 					styleClass="headline"></h:outputLabel>
 				<h:outputLabel value="" />
 				<h:outputLabel value="" />
@@ -42,13 +42,13 @@
 				<!-- name -->
 				<h:outputLabel value="" />
 				<h:outputLabel
-					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.fullName}"></h:outputLabel>
+					value="#{confirmPatientData.patient.person.fullName}"></h:outputLabel>
 				<!-- birthday -->
 				<h:panelGroup>
 					<p:outputLabel
-						value="#{msg['dialog.confirmExternalPatientDialog.birthday']}" />
+						value="#{msg['dialog.confirmPatientData.birthday']}" />
 					<h:outputLabel
-						value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.birthday}">
+						value="#{confirmPatientData.patient.person.birthday}">
 						<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
 					</h:outputLabel>
 				</h:panelGroup>
@@ -58,9 +58,9 @@
 				<h:outputLabel value="" />
 				<h:panelGroup>
 					<h:outputLabel
-						value="#{msg['dialog.confirmExternalPatientDialog.gender']}" />
+						value="#{msg['dialog.confirmPatientData.gender']}" />
 					<h:outputLabel
-						value="#{msg['enum.gender.'.concat(dialogHandlerAction.confirmExternalPatientDialog.patient.person.gender)]}" />
+						value="#{msg['enum.gender.'.concat(confirmPatientData.patient.person.gender)]}" />
 				</h:panelGroup>
 
 				<h:outputLabel value=" " />
@@ -69,7 +69,7 @@
 
 				<!-- address -->
 				<h:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.address']} "
+					value="#{msg['dialog.confirmPatientData.address']} "
 					styleClass="headline"></h:outputLabel>
 				<h:outputLabel value="" />
 				<h:outputLabel value="" />
@@ -77,25 +77,25 @@
 				<!-- street -->
 				<h:outputLabel value="" />
 				<h:outputLabel
-					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.street}" />
+					value="#{confirmPatientData.patient.person.contact.street}" />
 				<!-- postcode -->
 				<p:outputLabel
-					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.postcode} #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.town}" />
+					value="#{confirmPatientData.patient.person.contact.postcode} #{confirmPatientData.patient.person.contact.town}" />
 
 				<!-- additon one -->
 				<h:outputLabel value=" " />
 				<h:outputLabel
-					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.addressadditon}" />
+					value="#{confirmPatientData.patient.person.contact.addressadditon}" />
 				<h:outputLabel value=" " />
 
 				<!-- Addition two  -->
 				<h:outputLabel value=" " />
 				<h:outputLabel
-					value="#{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.addressadditon2}" />
+					value="#{confirmPatientData.patient.person.contact.addressadditon2}" />
 				<h:outputLabel value=" " />
 
 				<h:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.other']} "
+					value="#{msg['dialog.confirmPatientData.other']} "
 					styleClass="headline"></h:outputLabel>
 				<h:outputLabel value="" />
 				<h:outputLabel value="" />
@@ -103,18 +103,18 @@
 				<h:outputLabel value="" />
 				<!-- phone -->
 				<p:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.other.phone']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.phone}" />
+					value="#{msg['dialog.confirmPatientData.other.phone']}: #{confirmPatientData.patient.person.contact.phone}" />
 				<!-- fax -->
 				<p:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.other.fax']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.fax}" />
+					value="#{msg['dialog.confirmPatientData.other.fax']}: #{confirmPatientData.patient.person.contact.fax}" />
 
 				<h:outputLabel value="" />
 				<!-- mobile -->
 				<p:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.other.mobile']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.mobile}" />
+					value="#{msg['dialog.confirmPatientData.other.mobile']}: #{confirmPatientData.patient.person.contact.mobile}" />
 				<!-- email -->
 				<p:outputLabel
-					value="#{msg['dialog.confirmExternalPatientDialog.other.email']}: #{dialogHandlerAction.confirmExternalPatientDialog.patient.person.contact.email}" />
+					value="#{msg['dialog.confirmPatientData.other.email']}: #{confirmPatientData.patient.person.contact.email}" />
 
 			</h:panelGrid>
 		</div>
@@ -129,18 +129,16 @@
 				<h:panelGrid columns="2" style="float:right;">
 					<p:commandButton widgetVar="createPatientBtn"
 						onclick="disableButton(true, 'createPatientBtn', 'closeBtn')"
-						value="#{msg['dialog.confirmExternalPatientDialog.button.addPatient']}"
+						value="#{msg['dialog.confirmPatientData.button.addPatient']}"
 						icon="fa fa-fw fa-user-plus">
 						<f:actionListener
-							binding="#{dialogHandlerAction.confirmExternalPatientDialog.createExternalPatient()}" />
-						<f:actionListener
-							binding="#{dialogHandlerAction.confirmExternalPatientDialog.hideDialog()}" />
+							binding="#{confirmPatientData.confirmAndHideDialog()}" />
 					</p:commandButton>
 
 					<p:commandButton value="#{msg['general.close']}"
 						widgetVar="closeBtn" partialSubmit="true"
 						icon="fa fa-fw fa-times-circle" id="closeBtn" process="@this"
-						actionListener="#{dialogHandlerAction.confirmExternalPatientDialog.hideDialog()}"></p:commandButton>
+						actionListener="#{confirmPatientData.hideDialog()}"></p:commandButton>
 				</h:panelGrid>
 
 			</h:panelGrid>

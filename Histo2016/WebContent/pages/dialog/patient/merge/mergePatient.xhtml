@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputLabel
+			value="#{msg['dialog.mergePatientDialog.headline']}" /></title>
+	<h:outputStylesheet name="histo.css" value="histo.css" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
+</h:head>
+
+<h:body styleClass="contentInputDialog">
+
+	<h:form id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2"
+				styleClass="newTableContainer">
+				<h:outputLabel value="#{msg['dialog.mergePatientDialog.headline']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent">
+			<h:panelGrid columns="5" styleClass="newStyleListingTable">
+				<h:outputLabel value="#{msg['component.personDataMask.person']}"
+					styleClass="headline"></h:outputLabel>
+
+				<!-- name -->
+				<h:outputLabel value="#{msg['component.personDataMask.name']}:" />
+				<h:outputLabel value="#{mergePatientDialog.patient.person.fullName}"></h:outputLabel>
+
+				<!-- birthday -->
+				<p:outputLabel value="#{msg['component.personDataMask.birthday']}:" />
+				<h:outputLabel value="#{mergePatientDialog.patient.person.birthday}">
+					<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+				</h:outputLabel>
+
+				<h:outputLabel value="" />
+				<!-- piz -->
+				<h:outputLabel value="#{msg['component.personDataMask.piz']}:" />
+				<h:outputLabel
+					value="#{mergePatientDialog.patient.piz eq '' ? msg['component.personDataMask.piz.none'] : mergePatientDialog.patient.piz}"></h:outputLabel>
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+				style="margin-top:10px;">
+				<h:outputLabel
+					value="#{msg['dialog.mergePatientDialog.merge.text']}" />
+			</h:panelGrid>
+
+			<p:selectOneRadio value="#{mergePatientDialog.mergeOption}"
+				layout="custom" id="customRadio">
+				<f:selectItem
+					itemLabel="#{msg['dialog.mergePatientDialog.radio.piz']}"
+					itemValue="0" />
+				<f:selectItem
+					itemLabel="#{msg['dialog.mergePatientDialog.radio.patient']}"
+					itemValue="1" />
+
+				<p:ajax event="change" process="@form" update="@form" />
+			</p:selectOneRadio>
+
+			<h:panelGrid columns="2" styleClass="newStyleListingTable">
+				<p:radioButton id="opt1" for="customRadio" itemIndex="0" />
+				<p:inputText value="#{mergePatientDialog.piz}"
+					disabled="#{mergePatientDialog.mergeOption ne 0}" />
+				<p:radioButton id="opt2" for="customRadio" itemIndex="1" />
+				<p:commandButton disabled="#{mergePatientDialog.mergeOption ne 1}"
+					actionListener="#{addPatientDialogHandler.initAndPrepareBean(false)}"
+					value="#{msg['dialog.mergePatientDialog.button.selectPatint']}">
+					<p:ajax event="dialogReturn" update="@form" process="@form"
+						listener="#{mergePatientDialog.onSelectPatient}"></p:ajax>
+				</p:commandButton>
+			</h:panelGrid>
+
+			<h:panelGrid columns="5" styleClass="newStyleListingTable"
+				rendered="#{mergePatientDialog.mergeOption eq 1}">
+				<h:outputLabel value="#{msg['component.personDataMask.person']}"
+					styleClass="headline"></h:outputLabel>
+
+				<!-- name -->
+				<h:outputLabel value="#{msg['component.personDataMask.name']}:" />
+				<h:outputLabel
+					value="#{mergePatientDialog.patientToMerge.person.fullName}"></h:outputLabel>
+
+				<!-- birthday -->
+				<p:outputLabel value="#{msg['component.personDataMask.birthday']}:" />
+				<h:outputLabel
+					value="#{mergePatientDialog.patientToMerge.person.birthday}">
+					<f:convertDateTime type="date" pattern="dd.MM.yyyy" />
+				</h:outputLabel>
+
+				<h:outputLabel value="" />
+				<!-- piz -->
+				<h:outputLabel value="#{msg['component.personDataMask.piz']}:" />
+				<h:outputLabel
+					value="#{mergePatientDialog.patientToMerge.piz eq '' ? msg['component.personDataMask.piz.none'] : mergePatientDialog.patientToMerge.piz}"></h:outputLabel>
+			</h:panelGrid>
+
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%"
+				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+
+				<h:panelGrid columns="1">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" style="float:right;">
+					<p:commandButton widgetVar="createPatientBtn"
+						value="#{msg['dialog.mergePatientDialog.button.merge']}"
+						icon="fa fa-fw fa-medkit">
+						<f:actionListener
+							binding="#{mergePatientDialog.checkMergePatient()}" />
+
+						<p:ajax event="dialogReturn"
+							listener="#{mergePatientDialog.onMergePatient}"></p:ajax>
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.abort']}"
+						widgetVar="closeBtn" partialSubmit="true"
+						icon="fa fa-fw fa-times-circle" id="closeBtn" process="@this"
+						actionListener="#{mergePatientDialog.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

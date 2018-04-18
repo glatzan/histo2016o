@@ -9,7 +9,9 @@ public enum Dialog {
 	WORKLIST_SEARCH("/pages/dialog/search/worklistSearch", null, 1280, 720, false, false, true), // 16:9
 	WORKLIST_EXPORT("/pages/dialog/export/exportDialog", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_ADD("/pages/dialog/addPatient/addPatient", null, 1024, 600, false, false, true), // 16:9
-	PATIENT_EXTERNAL_CONFIRM("/pages/dialog/addPatient/confirmExternalPatient", null, 640, 360, false, false, true), // 16:9
+	PATIENT_DATA_CONFIRM("/pages/dialog/patient/confirmPatient", null, 640, 360, false, false, true), // 16:9
+	PATIENT_MERGE("/pages/dialog/patient/merge/mergePatient", null, 640, 360, false, false, true), // 16:9
+	PATIENT_MERGE_CONFIRM("/pages/dialog/patient/merge/confirmMerge", null, 480, 272, false, false, true), // 16:9
 	WORKLIST_ACCOUNTING("/pages/dialog/task/accounting", null,480, 272, false, false, true), 
 	WORKLIST_ORDER("/pages/dialog/worklist/worklistOrder", null,480, 272, false, false, true),  // 16:9
 	WORKLIST_SETTINGS("/pages/dialog/worklist/worklistSettings", null,480, 272, false, false, true), 
