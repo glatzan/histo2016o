@@ -15,11 +15,14 @@ import javax.faces.event.ExceptionQueuedEvent;
 import javax.faces.event.ExceptionQueuedEventContext;
 
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.ResourceBundle;
+import org.histo.config.enums.View;
 import org.histo.model.interfaces.Parent;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
@@ -72,6 +75,10 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 	@Lazy
 	private UserHandlerAction userHandlerAction;
 
+	@Autowired
+	@Lazy
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	private ExceptionHandler wrapped;
 
 	CustomExceptionHandler(ExceptionHandler exception) {
@@ -91,6 +98,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 			ExceptionQueuedEvent event = i.next();
 			ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event.getSource();
 
+			System.out.println("--------" +context);
+			
 			// get the exception from context
 			Throwable cause = context.getException();
 
@@ -150,7 +159,10 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					logger.debug("Error aboring all actions!");
 				} else if (cause instanceof BadCredentialsException) {
 					hanled = false;
-				} else {
+				}else if(cause instanceof HibernateException) {
+					System.out.println("datenbank exception");
+					globalEditViewHandler.setDisplayView(View.WORKLIST_DATA_ERROR);
+				}else {
 					logger.debug("Other exception!");
 					cause.printStackTrace();
 				}

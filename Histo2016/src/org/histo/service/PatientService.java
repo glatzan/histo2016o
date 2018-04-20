@@ -17,6 +17,7 @@ import org.histo.dao.GenericDAO;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.util.HistoUtil;
 import org.histo.util.StreamUtils;
 import org.histo.util.TimeUtil;
 import org.primefaces.json.JSONException;
@@ -83,7 +84,7 @@ public class PatientService {
 			patient.setCreationDate(System.currentTimeMillis());
 			patient.setInDatabase(true);
 			// setting external patient if piz is null
-			patient.setExternalPatient(patient.getPiz() == null ? true : false);
+			patient.setExternalPatient(HistoUtil.isNullOrEmpty(patient.getPiz()));
 			genericDAO.savePatientData(patient,
 					patient.isExternalPatient() ? "log.patient.extern.new" : "log.patient.search.new");
 		} else {
@@ -124,17 +125,18 @@ public class PatientService {
 					task.setParent(to);
 					genericDAO.savePatientData(task);
 				}
-				
-//				to.getTasks().addAll(tasksFrom);
-//				System.out.println(2);
-//				genericDAO.savePatientData(to, "log.patient.merge.addTasks", from.getPatient().toString());
-//
-//				from.setTasks(new ArrayList<Task>());
-//				genericDAO.savePatientData(from, "log.patient.merge.removeTasks");
-//				System.out.println("1");
-//
-//				if (to.getTasks() == null)
-//					to.setTasks(new ArrayList<Task>());
+
+				// to.getTasks().addAll(tasksFrom);
+				// System.out.println(2);
+				// genericDAO.savePatientData(to, "log.patient.merge.addTasks",
+				// from.getPatient().toString());
+				//
+				// from.setTasks(new ArrayList<Task>());
+				// genericDAO.savePatientData(from, "log.patient.merge.removeTasks");
+				// System.out.println("1");
+				//
+				// if (to.getTasks() == null)
+				// to.setTasks(new ArrayList<Task>());
 			}
 		});
 

@@ -66,13 +66,17 @@
 					itemLabel="#{msg['dialog.mergePatientDialog.radio.patient']}"
 					itemValue="1" />
 
-				<p:ajax event="change" process="@form" update="@form" />
+				<p:ajax event="change" process="@form" update="@form"
+					listener="#{mergePatientDialog.onChangeMergeOption()}" />
 			</p:selectOneRadio>
 
 			<h:panelGrid columns="2" styleClass="newStyleListingTable">
 				<p:radioButton id="opt1" for="customRadio" itemIndex="0" />
 				<p:inputText value="#{mergePatientDialog.piz}"
-					disabled="#{mergePatientDialog.mergeOption ne 0}" />
+					disabled="#{mergePatientDialog.mergeOption ne 0}">
+					<p:ajax delay="500" process="@form" update="@form"
+						listener="#{mergePatientDialog.onSelectPatientViaPiz()}"></p:ajax>
+				</p:inputText>
 				<p:radioButton id="opt2" for="customRadio" itemIndex="1" />
 				<p:commandButton disabled="#{mergePatientDialog.mergeOption ne 1}"
 					actionListener="#{addPatientDialogHandler.initAndPrepareBean(false)}"
@@ -83,7 +87,7 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="5" styleClass="newStyleListingTable"
-				rendered="#{mergePatientDialog.mergeOption eq 1}">
+				rendered="#{mergePatientDialog.patientToMerge ne null}">
 				<h:outputLabel value="#{msg['component.personDataMask.person']}"
 					styleClass="headline"></h:outputLabel>
 
@@ -117,10 +121,11 @@
 
 				<h:panelGrid columns="2" style="float:right;">
 					<p:commandButton widgetVar="createPatientBtn"
+						disabled="#{mergePatientDialog.patientToMerge eq null}"
 						value="#{msg['dialog.mergePatientDialog.button.merge']}"
 						icon="fa fa-fw fa-medkit">
 						<f:actionListener
-							binding="#{mergePatientDialog.checkMergePatient()}" />
+							binding="#{mergePatientDialog.prepareMergePatient()}" />
 
 						<p:ajax event="dialogReturn"
 							listener="#{mergePatientDialog.onMergePatient}"></p:ajax>

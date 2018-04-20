@@ -15,6 +15,7 @@ public enum View {
 	SCIENTIST("/pages/scientist.xhtml"),
 	WORKLIST("/pages/worklist.xhtml"),
 	WORKLIST_BLANK("/pages/worklist/blank.xhtml", WORKLIST),
+	WORKLIST_DATA_ERROR("/pages/worklist/dataError.xhtml", WORKLIST),
 	WORKLIST_NOTHING_SELECTED("/pages/worklist/notSelected.xhtml", WORKLIST),
 	WORKLIST_TASKS("/pages/worklist/taskList.xhtml", WORKLIST),
 	WORKLIST_PATIENT("/pages/worklist/patient.xhtml", WORKLIST),

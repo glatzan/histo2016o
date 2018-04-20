@@ -54,6 +54,7 @@
 						rendered="#{globalEditViewHandler.selectedPatient.externalPatient}"
 						actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 						<p:ajax event="dialogReturn"
+							listener="#{patientViewHandlerAction.onEditPatientDataReturn}"
 							update="navigationForm:patientList  contentForm:contentPanel" />
 						<i class="fa fa-wrench"></i>
 					</p:commandLink>

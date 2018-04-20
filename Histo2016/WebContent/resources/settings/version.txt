@@ -120,6 +120,8 @@ https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
 +v 1.4.5 (18.04.2018)
 +++!: Patientensuche mit Name und Geburtsdatum funktioniert wieder richtig.
++++!: Fehler beim erstellen von Nachbefunden behoben-
++++*: Fehlerseite für Datenbankfehler implementiert, behebt das Dealock-Problem sobald man einen fehlerhaften Fall angeklickt hatte.
 
 +v 1.4.4 (19.03.2018)
 +++*: Anführungszeichen werden im Befund korrekt dargestellt.

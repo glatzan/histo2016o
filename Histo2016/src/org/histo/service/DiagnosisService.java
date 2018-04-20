@@ -190,21 +190,33 @@ public class DiagnosisService {
 	 */
 	public void addDiagnosisRevision(Task task, DiagnosisRevision diagnosisRevision) {
 		logger.info("Adding diagnosisRevision to task");
+		try {
 
-		diagnosisRevision.setParent(task);
-		diagnosisRevision.setSignatureOne(new Signature());
-		diagnosisRevision.setSignatureTwo(new Signature());
-		task.getDiagnosisRevisions().add(diagnosisRevision);
+			transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
-		// saving to database
-		genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisRevision.new",
-				diagnosisRevision.toString());
+				public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+					diagnosisRevision.setParent(task);
+					diagnosisRevision.setSignatureOne(new Signature());
+					diagnosisRevision.setSignatureTwo(new Signature());
+					task.getDiagnosisRevisions().add(diagnosisRevision);
 
-		// creating a diagnosis for every sample
-		for (Sample sample : task.getSamples()) {
-			createDiagnosis(diagnosisRevision, sample);
+					// saving to database
+					genericDAO.savePatientData(diagnosisRevision, "log.patient.task.diagnosisRevision.new",
+							diagnosisRevision.toString());
+
+					// creating a diagnosis for every sample
+					for (Sample sample : task.getSamples()) {
+						createDiagnosis(diagnosisRevision, sample);
+					}
+					
+					// saving to database
+					genericDAO.savePatientData(task, "log.patient.task.diagnosisRevision.new",
+							diagnosisRevision.toString());
+				}
+			});
+		} catch (Exception e) {
+			throw new CustomDatabaseInconsistentVersionException(task);
 		}
-
 	}
 
 	/**

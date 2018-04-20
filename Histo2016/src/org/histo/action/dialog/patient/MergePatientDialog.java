@@ -10,6 +10,8 @@ import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.service.PatientService;
+import org.histo.util.HistoUtil;
+import org.histo.util.event.PatientMergeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,8 @@ public class MergePatientDialog extends AbstractDialog {
 
 	private Patient patientToMerge;
 
+	private boolean renderErrorPatientNotFound;
+
 	/**
 	 * Local Dialog for confirming the merge
 	 */
@@ -74,18 +78,33 @@ public class MergePatientDialog extends AbstractDialog {
 		setPiz("");
 	}
 
-	public void checkMergePatient() {
-		if (mergeOption == 0) {
+	public void prepareMergePatient() {
+		if (patientToMerge == null)
+			mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.patientNoFound");
+		else
+			getConfirmDialog().initAndPrepareBean();
+	}
+
+	public void onChangeMergeOption() {
+		renderErrorPatientNotFound = false;
+		patientToMerge = null;
+
+		if (mergeOption == MERGE_PIZ)
+			onSelectPatientViaPiz();
+	}
+
+	public void onSelectPatientViaPiz() {
+		if (HistoUtil.isNotNullOrEmpty(piz) && piz.matches("^\\d{8}$")) {
 			try {
 				patientToMerge = patientService.serachForPiz(piz, false);
 			} catch (CustomDatabaseInconsistentVersionException | JSONException | CustomExceptionToManyEntries
 					| CustomNullPatientExcepetion e) {
+			} finally {
+				if (patientToMerge == null)
+					renderErrorPatientNotFound = true;
+				else
+					renderErrorPatientNotFound = false;
 			}
-
-			if (patientToMerge == null)
-				mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.patientNoFound");
-			else
-				getConfirmDialog().initAndPrepareBean();
 		}
 	}
 
@@ -99,11 +118,11 @@ public class MergePatientDialog extends AbstractDialog {
 				if (patient != null && patientToMerge != null) {
 
 					if (patientToMerge.getId() == 0)
-						patientService.addPatient(patient, false);
+						patientService.addPatient(patientToMerge, false);
 
 					patientService.mergePatient(patient, patientToMerge);
 					mainHandlerAction.sendGrowlMessagesAsResource("growl.success", "growl.patient.merge.success");
-					hideDialog(new Boolean(true));
+					hideDialog(new PatientMergeEvent(patient, patientToMerge));
 				}
 			}
 		} catch (Exception e) {
