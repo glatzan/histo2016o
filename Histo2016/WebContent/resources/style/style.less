@@ -25,7 +25,7 @@
 	border-spacing: 0px !important;
 }
 
-//iteration for creating column width in px. use: xxxx20px
+// iteration for creating column width in px. use: xxxx20px
 .column_width(@count, @name) when (@count > 0) {
    .column_width((@count - 1), @name);
    
@@ -37,6 +37,23 @@
    }
 }
 
+// colored icons
+@icon-colors : green, purple, orange, #555555, red;
+@icon-names  : icon-green, icon-purple, icon-orange, icon-grey, icon-red;
+@icon-length : length(@icon-colors);
+
+// loop for generating icon colors 
+.generate-incon-colors(@names; @colors; @index) when (iscolor(extract(@colors, @index))) and (@index > 0) {
+    .generate-incon-colors(@names; @colors; (@index - 1)); // decrement.
+ 
+  @name  : extract(@icon-names, @index);
+  @color : extract(@icon-colors, @index);
+ 
+  .@{name}, .@{name}:link, .@{name}:active, .@{name}:hover, .@{name}:visited {
+    color: @color;
+  }
+}
+	
 /*
  * Default Body Style
  */
@@ -51,6 +68,15 @@ body {
 		.ui-button-icon-left{
 			font-size:14px;
 		}
+		
+		.ui-button-text {
+			padding-top: 2px !important;
+			padding-bottom: 2px !important;
+		}
+		
+		.histo_font(12px);
+		padding-top: 1px !important;
+		padding-bottom: 1px !important;
 	}
 	
 	/**
@@ -65,7 +91,32 @@ body {
 				margin: -2px 0px 0px -1px;
 			}
 		}
+	}
+	
+	/**
+	 * small input field
+	 */
+	.ui-inputfield {
+		box-shadow: none !important;
+		padding: 4px !important;
+		.histo_font();
 	}	
+	
+	// generating icon colors, icon-green
+	.generate-incon-colors(@icon-names,@icon-colors,@icon-length);
+	
+	// smaller checkbox
+	.ui-chkbox-box {
+		width: 13px !important;
+		height: 13px !important;
+		
+		.ui-chkbox-icon{
+			width: 13px !important;
+			height: 13px !important;
+			margin: -2px 0px 0px -1px;
+		}
+			
+	}
 }
 
 
@@ -284,19 +335,6 @@ body {
 		text-decoration: none !important;
 	}
 
-	// smaller checkbox
-	.ui-chkbox-box {
-		width: 13px !important;
-		height: 13px !important;
-		
-		.ui-chkbox-icon{
-			width: 13px !important;
-			height: 13px !important;
-			margin: -2px 0px 0px -1px;
-		}
-			
-	}
-	
 	// hiding focus 
 	:focus {
     	outline:none !important;
@@ -401,11 +439,6 @@ div.contentAccordionPannel{
 		position: absolute;
 		bottom: 0px !important;
 		
-		.ui-button-text {
-			.histo_font(12px);
-			padding-top: 0.2em !important;
-			padding-bottom: 0.2em !important;
-		}
 		
 		// table padding for the two nested tables
 		> table { 

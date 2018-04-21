@@ -53,14 +53,39 @@ public class MergePatientDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private ConfirmPatientData confirmPatientData;
 
+	/**
+	 * Patient source for merging
+	 */
 	private Patient patient;
 
+	/**
+	 * Selected tasks for merging
+	 */
 	private List<Task> tasksTomerge;
-	
-	private int mergeOption;
 
+	/**
+	 * True if an external patient should be deleted
+	 */
+	private boolean deletePatient;
+
+	/**
+	 * True if not all tasks of the source are selected
+	 */
+	private boolean deletePatientDisabled;
+
+	/**
+	 * Merge Option,
+	 */
+	private MergeOption mergeOption;
+
+	/**
+	 * Piz for search a patient for merge target
+	 */
 	private String piz;
 
+	/**
+	 * Patient as merge target
+	 */
 	private Patient patientToMerge;
 
 	private boolean renderErrorPatientNotFound;
@@ -79,23 +104,16 @@ public class MergePatientDialog extends AbstractDialog {
 		super.initBean(null, Dialog.PATIENT_MERGE, false);
 		setPatient(patient);
 		setTasksTomerge(patient.getTasks());
-		setMergeOption(MERGE_PIZ);
+		setMergeOption(MergeOption.PIZ);
 		setPatientToMerge(null);
 		setPiz("");
-	}
-
-	public void prepareMergePatient() {
-		if (patientToMerge == null)
-			mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.patientNoFound");
-		else
-			getConfirmDialog().initAndPrepareBean();
 	}
 
 	public void onChangeMergeOption() {
 		renderErrorPatientNotFound = false;
 		patientToMerge = null;
 
-		if (mergeOption == MERGE_PIZ)
+		if (mergeOption == MergeOption.PIZ)
 			onSelectPatientViaPiz();
 	}
 
@@ -120,13 +138,12 @@ public class MergePatientDialog extends AbstractDialog {
 		try {
 			if (event.getObject() != null && event.getObject() instanceof Boolean
 					&& ((Boolean) event.getObject()).booleanValue()) {
-				System.out.println(patient + " " + patientToMerge);
 				if (patient != null && patientToMerge != null) {
 
 					if (patientToMerge.getId() == 0)
 						patientService.addPatient(patientToMerge, false);
 
-					patientService.mergePatient(patient, patientToMerge);
+					patientService.mergePatient(patient, patientToMerge, tasksTomerge);
 					mainHandlerAction.sendGrowlMessagesAsResource("growl.success", "growl.patient.merge.success");
 					hideDialog(new PatientMergeEvent(patient, patientToMerge));
 				}
@@ -142,6 +159,13 @@ public class MergePatientDialog extends AbstractDialog {
 		}
 	}
 
+	public void onChangeTasksToMergeSelection() {
+		deletePatientDisabled = patient.getTasks().size() != tasksTomerge.size();
+System.out.println(deletePatientDisabled);
+		if (deletePatientDisabled)
+			deletePatient = false;
+	}
+
 	/**
 	 * Local Dialog for confirming the merge
 	 */
@@ -155,4 +179,14 @@ public class MergePatientDialog extends AbstractDialog {
 			hideDialog(new Boolean(true));
 		}
 	};
+
+	/**
+	 * Option for determine the merge target.
+	 * 
+	 * @author andi
+	 *
+	 */
+	public enum MergeOption {
+		PIZ, PATIENT;
+	}
 }

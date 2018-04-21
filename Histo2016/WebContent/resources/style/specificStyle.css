@@ -21,9 +21,26 @@ body {
   /**
 	 * Smaller radio button
 	 */
+  /**
+	 * small input field
+	 */
+}
+body button {
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+  padding-top: 1px !important;
+  padding-bottom: 1px !important;
 }
 body button .ui-button-icon-left {
   font-size: 14px;
+}
+body button .ui-button-text {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
 }
 body .ui-radiobutton {
   padding: 4px !important;
@@ -33,6 +50,60 @@ body .ui-radiobutton .ui-radiobutton-box {
   height: 12px;
 }
 body .ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon {
+  margin: -2px 0px 0px -1px;
+}
+body .ui-inputfield {
+  box-shadow: none !important;
+  padding: 4px !important;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+body .icon-green,
+body .icon-green:link,
+body .icon-green:active,
+body .icon-green:hover,
+body .icon-green:visited {
+  color: green;
+}
+body .icon-purple,
+body .icon-purple:link,
+body .icon-purple:active,
+body .icon-purple:hover,
+body .icon-purple:visited {
+  color: purple;
+}
+body .icon-orange,
+body .icon-orange:link,
+body .icon-orange:active,
+body .icon-orange:hover,
+body .icon-orange:visited {
+  color: orange;
+}
+body .icon-grey,
+body .icon-grey:link,
+body .icon-grey:active,
+body .icon-grey:hover,
+body .icon-grey:visited {
+  color: #555555;
+}
+body .icon-red,
+body .icon-red:link,
+body .icon-red:active,
+body .icon-red:hover,
+body .icon-red:visited {
+  color: red;
+}
+body .ui-chkbox-box {
+  width: 13px !important;
+  height: 13px !important;
+}
+body .ui-chkbox-box .ui-chkbox-icon {
+  width: 13px !important;
+  height: 13px !important;
   margin: -2px 0px 0px -1px;
 }
 /*
@@ -184,15 +255,6 @@ body .ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon {
 .defaultHistoDataTable a {
   text-decoration: none !important;
 }
-.defaultHistoDataTable .ui-chkbox-box {
-  width: 13px !important;
-  height: 13px !important;
-}
-.defaultHistoDataTable .ui-chkbox-box .ui-chkbox-icon {
-  width: 13px !important;
-  height: 13px !important;
-  margin: -2px 0px 0px -1px;
-}
 .defaultHistoDataTable :focus {
   outline: none !important;
 }
@@ -294,16 +356,6 @@ div.contentAccordionPannel :focus {
   width: 100%;
   position: absolute;
   bottom: 0px !important;
-}
-.histoDialogStyle div.buttonContainer .ui-button-text {
-  font-size: 12px;
-  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-  box-shadow: none;
-  font-style: normal;
-  font-variant: normal;
-  text-align: left;
-  padding-top: 0.2em !important;
-  padding-bottom: 0.2em !important;
 }
 .histoDialogStyle div.buttonContainer > table {
   padding: 0.1em 0em;
@@ -482,15 +534,6 @@ div.contentAccordionPannel :focus {
 .worklistSearchDialog_FavouriteSearchTable a {
   text-decoration: none !important;
 }
-.worklistSearchDialog_FavouriteSearchTable .ui-chkbox-box {
-  width: 13px !important;
-  height: 13px !important;
-}
-.worklistSearchDialog_FavouriteSearchTable .ui-chkbox-box .ui-chkbox-icon {
-  width: 13px !important;
-  height: 13px !important;
-  margin: -2px 0px 0px -1px;
-}
 .worklistSearchDialog_FavouriteSearchTable :focus {
   outline: none !important;
 }
@@ -574,15 +617,6 @@ div.contentAccordionPannel :focus {
 }
 .addSlide_StainingTable a {
   text-decoration: none !important;
-}
-.addSlide_StainingTable .ui-chkbox-box {
-  width: 13px !important;
-  height: 13px !important;
-}
-.addSlide_StainingTable .ui-chkbox-box .ui-chkbox-icon {
-  width: 13px !important;
-  height: 13px !important;
-  margin: -2px 0px 0px -1px;
 }
 .addSlide_StainingTable :focus {
   outline: none !important;

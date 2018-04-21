@@ -105,18 +105,29 @@ public class PatientService {
 	}
 
 	/**
-	 * Merges to patients. Copies all tasks from one patient to the other. TODO: all
-	 * actions in one transaction
+	 * Merges to patients. Copies all tasks from one patient to the other. 
 	 * 
 	 * @param from
 	 * @param to
 	 */
 	public void mergePatient(Patient from, Patient to) {
+		mergePatient(from, to, null);
+	}
+	
+	/**
+	 * Merges to patients. Copies all tasks from one patient to the other. 
+	 * 
+	 * @param from
+	 * @param to
+	 */
+	public void mergePatient(Patient from, Patient to, List<Task> tasksToMerge) {
 
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				List<Task> tasksFrom = from.getTasks();
+				
+				
+				List<Task> tasksFrom = tasksToMerge == null ? from.getTasks() : tasksToMerge;
 
 				if (tasksFrom == null)
 					return;

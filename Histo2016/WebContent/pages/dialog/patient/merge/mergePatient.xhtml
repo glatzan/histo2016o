@@ -29,8 +29,9 @@
 
 		<div class="dialogContent">
 			<h:panelGrid columns="5" styleClass="defaultHistoTable"
-				columnClasses="columnWidth75px,">
-				<h:outputLabel value="#{msg['component.personDataMask.person']}"
+				columnClasses="columnWidth150px,">
+				<h:outputLabel
+					value="#{msg['dialog.mergePatientDialog.merge.patient']}"
 					styleClass="headline"></h:outputLabel>
 
 				<!-- name -->
@@ -51,7 +52,7 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultHistoTable"
-				columnClasses="columnWidth75px,">
+				columnClasses="columnWidth150px,">
 				<h:outputLabel value="" />
 				<p:dataTable var="task" scrollable="true" scrollHeight="50"
 					rowKey="#{task.id}" rowIndexVar="rowIdx" id="batchList"
@@ -60,14 +61,38 @@
 					selection="#{mergePatientDialog.tasksTomerge}">
 					<p:column selectionMode="multiple"
 						style="width:16px;text-align:center" />
-					<p:column headerText="#{msg['dialog.mergePatientDialog.taskList.task']}">
+					<p:column
+						headerText="#{msg['dialog.mergePatientDialog.taskList.task']}">
 						<h:outputText value="#{task.taskID}" />
 					</p:column>
+
+					<p:ajax event="rowSelectCheckbox"
+						listener="#{mergePatientDialog.onChangeTasksToMergeSelection()}"
+						process="@form" update="@form" />
+
+					<p:ajax event="rowUnselectCheckbox"
+						listener="#{mergePatientDialog.onChangeTasksToMergeSelection()}"
+						process="@form" update="@form" />
+
+					<p:ajax event="toggleSelect"
+						listener="#{mergePatientDialog.onChangeTasksToMergeSelection()}"
+						process="@form" update="@form" />	
+						toggleSelect
 				</p:dataTable>
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" styleClass="defaultHistoTable"
-				style="margin-top:10px;">
+			<h:panelGrid columns="2" styleClass="defaultHistoTable"
+				rendered="#{mergePatientDialog.patientToMerge ne null and mergePatientDialog.patient.externalPatient}"
+				columnClasses="columnWidth150px,">
+
+				<h:outputLabel
+					value="#{msg['dialog.mergePatientDialog.merge.delete']}:" />
+				<p:selectBooleanCheckbox
+					disabled="#{mergePatientDialog.deletePatientDisabled}"
+					value="#{mergePatientDialog.deletePatient}" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="defaultHistoTable">
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.merge.text']}" />
 			</h:panelGrid>
@@ -76,21 +101,21 @@
 				layout="custom" id="customRadio">
 				<f:selectItem
 					itemLabel="#{msg['dialog.mergePatientDialog.radio.piz']}"
-					itemValue="0" />
+					itemValue="PIZ" />
 				<f:selectItem
 					itemLabel="#{msg['dialog.mergePatientDialog.radio.patient']}"
-					itemValue="1" />
+					itemValue="PATIENT" />
 
 				<p:ajax event="change" process="@form" update="@form"
 					listener="#{mergePatientDialog.onChangeMergeOption()}" />
 			</p:selectOneRadio>
 
 			<h:panelGrid columns="3" styleClass="defaultHistoTable"
-				style="margin-top:10px" columnClasses="columnWidth75px,">
+				columnClasses="columnWidth75px,">
 				<h:outputLabel value="#{msg['dialog.mergePatientDialog.radio.piz']}" />
 				<p:radioButton id="opt1" for="customRadio" itemIndex="0" />
 				<p:inputText value="#{mergePatientDialog.piz}"
-					disabled="#{mergePatientDialog.mergeOption ne 0}">
+					disabled="#{mergePatientDialog.mergeOption ne 'PIZ'}">
 					<p:ajax delay="500" process="@form" update="@form"
 						listener="#{mergePatientDialog.onSelectPatientViaPiz()}"></p:ajax>
 				</p:inputText>
@@ -98,7 +123,9 @@
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.radio.patient']}" />
 				<p:radioButton id="opt2" for="customRadio" itemIndex="1" />
-				<p:commandButton disabled="#{mergePatientDialog.mergeOption ne 1}"
+				<p:commandButton
+					disabled="#{mergePatientDialog.mergeOption ne 'PATIENT'}"
+					icon="fa fa-fw fa-user"
 					actionListener="#{addPatientDialogHandler.initAndPrepareBean(false)}"
 					value="#{msg['dialog.mergePatientDialog.button.selectPatint']}">
 					<p:ajax event="dialogReturn" update="@form" process="@form"
@@ -107,10 +134,10 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="5" styleClass="defaultHistoTable"
-				style="margin-top:10px"
 				rendered="#{mergePatientDialog.patientToMerge ne null}"
-				columnClasses="columnWidth75px,">
-				<h:outputLabel value="#{msg['component.personDataMask.person']}"
+				columnClasses="columnWidth150px,">
+				<h:outputLabel
+					value="#{msg['dialog.mergePatientDialog.patientToMerge']}"
 					styleClass="headline"></h:outputLabel>
 
 				<!-- name -->
@@ -130,8 +157,16 @@
 				<h:outputLabel value="#{msg['component.personDataMask.piz']}:" />
 				<h:outputLabel
 					value="#{mergePatientDialog.patientToMerge.piz eq '' ? msg['component.personDataMask.piz.none'] : mergePatientDialog.patientToMerge.piz}"></h:outputLabel>
-			</h:panelGrid>
 
+				<h:outputLabel
+					value="#{msg['dialog.mergePatientDialog.patientToMerge.database']}:" />
+				<ui:fragment
+					rendered="#{mergePatientDialog.patientToMerge.inDatabase}">
+					<i class="fa fa-fw fa-check-circle icon-green"
+						title="#{msg['dialog.mergePatientDialog.patientToMerge.database.text']}" />
+				</ui:fragment>
+
+			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
@@ -146,7 +181,7 @@
 						value="#{msg['dialog.mergePatientDialog.button.merge']}"
 						icon="fa fa-fw fa-medkit">
 						<f:actionListener
-							binding="#{mergePatientDialog.prepareMergePatient()}" />
+							binding="#{mergePatientDialog.confirmDialog.initAndPrepareBean()}" />
 
 						<p:ajax event="dialogReturn"
 							listener="#{mergePatientDialog.onMergePatient}"></p:ajax>
@@ -156,7 +191,6 @@
 						widgetVar="closeBtn" partialSubmit="true"
 						icon="fa fa-fw fa-times-circle" id="closeBtn" process="@this"
 						actionListener="#{mergePatientDialog.hideDialog()}"></p:commandButton>
-
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
