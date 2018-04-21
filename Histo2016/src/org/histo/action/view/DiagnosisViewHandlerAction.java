@@ -117,7 +117,7 @@ public class DiagnosisViewHandlerAction {
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistViewHandlerAction.onVersionConflictTask();
+			worklistViewHandlerAction.replaceSelectedTask();
 		}
 	}
 
@@ -145,7 +145,7 @@ public class DiagnosisViewHandlerAction {
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistViewHandlerAction.onVersionConflictTask();
+			worklistViewHandlerAction.replaceSelectedTask();
 		}
 
 	}

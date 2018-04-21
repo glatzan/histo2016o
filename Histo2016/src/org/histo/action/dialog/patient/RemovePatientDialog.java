@@ -55,7 +55,7 @@ public class RemovePatientDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			setPatient(patientDao.getPatient(patient.getId(), true));
-			worklistViewHandlerAction.onVersionConflictPatient(getPatient(), false);
+			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient(), false);
 		}
 		super.initBean(null, Dialog.PATIENT_REMOVE);
 

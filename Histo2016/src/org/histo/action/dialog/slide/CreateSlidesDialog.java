@@ -128,7 +128,7 @@ public class CreateSlidesDialog extends AbstractDialog {
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
 				task = taskDAO.getTaskAndPatientInitialized(block.getTask().getId());
-				worklistViewHandlerAction.onVersionConflictTask(task, false);
+				worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
 				return false;
 			}
 			

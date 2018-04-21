@@ -157,7 +157,7 @@ public class CreateTaskDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			setPatient(patientDao.getPatient(patient.getId(), true));
-			worklistViewHandlerAction.onVersionConflictPatient(getPatient(), false);
+			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient(), false);
 		}
 
 		super.initBean(new Task(getPatient()), Dialog.TASK_CREATE, true);
@@ -446,7 +446,7 @@ public class CreateTaskDialog extends AbstractDialog {
 	}
 
 	public void onDatabaseVersionConflict() {
-		worklistViewHandlerAction.onVersionConflictPatient(getTask().getParent());
+		worklistViewHandlerAction.replacePatientInCurrentWorklist(getTask().getParent());
 		super.onDatabaseVersionConflict();
 	}
 

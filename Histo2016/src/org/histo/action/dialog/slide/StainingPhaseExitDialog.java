@@ -115,7 +115,7 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistViewHandlerAction.onVersionConflictTask(task, false);
+			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
 		}
 
 		super.initBean(task, Dialog.STAINING_PHASE_EXIT);
@@ -147,7 +147,7 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 					mainHandlerAction.sendGrowlMessagesAsResource("growl.error",
 							"growl.error.worklist.remove.moreActive");
 				} else {
-					worklistViewHandlerAction.removeFromWorklist(task.getPatient());
+					worklistViewHandlerAction.removePatientFromCurrentWorklist(task.getPatient());
 					worklistViewHandlerAction.onDeselectPatient(true);
 				}
 			}

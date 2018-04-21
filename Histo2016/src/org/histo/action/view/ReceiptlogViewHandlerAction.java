@@ -228,7 +228,7 @@ public class ReceiptlogViewHandlerAction {
 			}
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistViewHandlerAction.onVersionConflictTask();
+			worklistViewHandlerAction.replaceSelectedTask();
 		}
 
 		setActionOnMany(StainingListAction.NONE);
@@ -312,7 +312,7 @@ public class ReceiptlogViewHandlerAction {
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistViewHandlerAction.onVersionConflictTask();
+			worklistViewHandlerAction.replaceSelectedTask();
 		}
 	}
 
@@ -340,7 +340,7 @@ public class ReceiptlogViewHandlerAction {
 				logger.debug("Text changed and saved!");
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				// catching database version inconsistencies
-				worklistViewHandlerAction.onVersionConflictTask();
+				worklistViewHandlerAction.replaceSelectedTask();
 			}
 			chooser.setIdChanged(false);
 		}

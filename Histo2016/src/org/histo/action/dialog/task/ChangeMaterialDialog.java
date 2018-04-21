@@ -54,7 +54,7 @@ public class ChangeMaterialDialog extends AbstractDialog {
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
-			worklistViewHandlerAction.onVersionConflictTask(task, false);
+			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
 		}
 
 		super.initBean(task, Dialog.SELECT_MATERIAL);

@@ -8,18 +8,16 @@
 <h:head>
 	<title><h:outputLabel
 			value="#{msg['dialog.mergePatientDialog.headline']}" /></title>
-	<h:outputStylesheet name="histo.css" value="histo.css" />
-	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
 	<h:outputScript library="scripts" name="commonFunctions.js" />
 </h:head>
 
-<h:body styleClass="contentInputDialog">
+<h:body styleClass="histoDialogStyle">
 
 	<h:form id="dialogContent">
 
 		<div class="dialogHeader">
-			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="newTableContainer">
+			<h:panelGrid style="width:100%;" columns="2">
 				<h:outputLabel value="#{msg['dialog.mergePatientDialog.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
 					styleClass="noUnderlineAtLink"
@@ -30,7 +28,8 @@
 		</div>
 
 		<div class="dialogContent">
-			<h:panelGrid columns="5" styleClass="newStyleListingTable">
+			<h:panelGrid columns="5" styleClass="defaultHistoTable"
+				columnClasses="columnWidth75px,">
 				<h:outputLabel value="#{msg['component.personDataMask.person']}"
 					styleClass="headline"></h:outputLabel>
 
@@ -51,7 +50,23 @@
 					value="#{mergePatientDialog.patient.piz eq '' ? msg['component.personDataMask.piz.none'] : mergePatientDialog.patient.piz}"></h:outputLabel>
 			</h:panelGrid>
 
-			<h:panelGrid columns="1" styleClass="newStyleListingTable"
+			<h:panelGrid columns="2" styleClass="defaultHistoTable"
+				columnClasses="columnWidth75px,">
+				<h:outputLabel value="" />
+				<p:dataTable var="task" scrollable="true" scrollHeight="50"
+					rowKey="#{task.id}" rowIndexVar="rowIdx" id="batchList"
+					styleClass="defaultHistoDataTable"
+					value="#{mergePatientDialog.patient.tasks}"
+					selection="#{mergePatientDialog.tasksTomerge}">
+					<p:column selectionMode="multiple"
+						style="width:16px;text-align:center" />
+					<p:column headerText="#{msg['dialog.mergePatientDialog.taskList.task']}">
+						<h:outputText value="#{task.taskID}" />
+					</p:column>
+				</p:dataTable>
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="defaultHistoTable"
 				style="margin-top:10px;">
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.merge.text']}" />
@@ -70,13 +85,18 @@
 					listener="#{mergePatientDialog.onChangeMergeOption()}" />
 			</p:selectOneRadio>
 
-			<h:panelGrid columns="2" styleClass="newStyleListingTable">
+			<h:panelGrid columns="3" styleClass="defaultHistoTable"
+				style="margin-top:10px" columnClasses="columnWidth75px,">
+				<h:outputLabel value="#{msg['dialog.mergePatientDialog.radio.piz']}" />
 				<p:radioButton id="opt1" for="customRadio" itemIndex="0" />
 				<p:inputText value="#{mergePatientDialog.piz}"
 					disabled="#{mergePatientDialog.mergeOption ne 0}">
 					<p:ajax delay="500" process="@form" update="@form"
 						listener="#{mergePatientDialog.onSelectPatientViaPiz()}"></p:ajax>
 				</p:inputText>
+
+				<h:outputLabel
+					value="#{msg['dialog.mergePatientDialog.radio.patient']}" />
 				<p:radioButton id="opt2" for="customRadio" itemIndex="1" />
 				<p:commandButton disabled="#{mergePatientDialog.mergeOption ne 1}"
 					actionListener="#{addPatientDialogHandler.initAndPrepareBean(false)}"
@@ -86,8 +106,10 @@
 				</p:commandButton>
 			</h:panelGrid>
 
-			<h:panelGrid columns="5" styleClass="newStyleListingTable"
-				rendered="#{mergePatientDialog.patientToMerge ne null}">
+			<h:panelGrid columns="5" styleClass="defaultHistoTable"
+				style="margin-top:10px"
+				rendered="#{mergePatientDialog.patientToMerge ne null}"
+				columnClasses="columnWidth75px,">
 				<h:outputLabel value="#{msg['component.personDataMask.person']}"
 					styleClass="headline"></h:outputLabel>
 
@@ -113,13 +135,12 @@
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="2" style="width:100%"
-				styleClass="noBordersAll collapsedBordersAll noPaddingAll">
+			<h:panelGrid columns="2" style="width:100%">
 
-				<h:panelGrid columns="1">
+				<h:panelGrid columns="1" styleClass="left">
 				</h:panelGrid>
 
-				<h:panelGrid columns="2" style="float:right;">
+				<h:panelGrid columns="2" styleClass="right">
 					<p:commandButton widgetVar="createPatientBtn"
 						disabled="#{mergePatientDialog.patientToMerge eq null}"
 						value="#{msg['dialog.mergePatientDialog.button.merge']}"
@@ -135,8 +156,8 @@
 						widgetVar="closeBtn" partialSubmit="true"
 						icon="fa fa-fw fa-times-circle" id="closeBtn" process="@this"
 						actionListener="#{mergePatientDialog.hideDialog()}"></p:commandButton>
-				</h:panelGrid>
 
+				</h:panelGrid>
 			</h:panelGrid>
 		</div>
 	</h:form>

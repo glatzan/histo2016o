@@ -313,7 +313,7 @@ public class GlobalEditViewHandler {
 			favouriteListDAO.addTaskToList(task, id);
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			worklistViewHandlerAction.onVersionConflictPatient(task.getPatient(), true);
+			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
 		}
 	}
 
@@ -322,7 +322,7 @@ public class GlobalEditViewHandler {
 			favouriteListDAO.removeTaskFromList(task, ArrayUtils.toPrimitive(ids));
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
-			worklistViewHandlerAction.onVersionConflictPatient(task.getPatient(), true);
+			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
 		}
 	}
 
@@ -451,7 +451,7 @@ public class GlobalEditViewHandler {
 				patientService.addPatient((Patient) event.getObject(), true);
 				worklistViewHandlerAction.addPatientToWorkList((Patient) event.getObject(), true, true);
 			} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
-				worklistViewHandlerAction.onVersionConflictPatient((Patient) event.getObject());
+				worklistViewHandlerAction.replacePatientInCurrentWorklist((Patient) event.getObject());
 			}
 
 		}

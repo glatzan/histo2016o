@@ -98,7 +98,7 @@ public class DeleteTaskDialog extends AbstractDialog {
 	}
 
 	public void onDatabaseVersionConflict() {
-		worklistViewHandlerAction.onVersionConflictPatient(getTask().getParent());
+		worklistViewHandlerAction.replacePatientInCurrentWorklist(getTask().getParent());
 		super.onDatabaseVersionConflict();
 	}
 

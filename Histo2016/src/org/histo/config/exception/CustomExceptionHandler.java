@@ -133,16 +133,16 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 
 					if (((CustomDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Patient) {
 						logger.debug("Version Error, replacing Patient");
-						worklistViewHandlerAction.onVersionConflictPatient(
+						worklistViewHandlerAction.replacePatientInCurrentWorklist(
 								((Patient) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion()));
 					} else if (((CustomDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Task) {
 						logger.debug("Version Error, replacing task");
-						worklistViewHandlerAction.onVersionConflictTask(
+						worklistViewHandlerAction.replaceTaskInCurrentWorklist(
 								((Task) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion()));
 					} else if (((CustomDatabaseInconsistentVersionException) cause)
 							.getOldVersion() instanceof Parent<?>) {
 						logger.debug("Version Error, replacing parent -> task");
-						worklistViewHandlerAction.onVersionConflictTask(
+						worklistViewHandlerAction.replaceTaskInCurrentWorklist(
 								((Parent<?>) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion())
 										.getTask());
 					} else {

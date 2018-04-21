@@ -267,7 +267,7 @@ public class WorklistViewHandlerAction {
 				logger.debug("Version conflict, updating entity");
 				patientDao.refresh(patient);
 				patientDao.initializePatient(patient, true);
-				onVersionConflictPatient(patient, false);
+				replacePatientInCurrentWorklist(patient, false);
 			}
 		}
 
@@ -331,11 +331,11 @@ public class WorklistViewHandlerAction {
 				task = taskDAO.getTaskAndPatientInitialized(task.getId());
 
 				if (task != null)
-					onVersionConflictPatient(task.getParent(), false);
+					replacePatientInCurrentWorklist(task.getParent(), false);
 				else {
 					// task might be delete from an other user
 					if (globalEditViewHandler.getSelectedPatient() != null) {
-						onVersionConflictPatient(globalEditViewHandler.getSelectedPatient());
+						replacePatientInCurrentWorklist(globalEditViewHandler.getSelectedPatient());
 
 						mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
 
@@ -495,7 +495,7 @@ public class WorklistViewHandlerAction {
 	 * 
 	 * @param patient
 	 */
-	public void removeFromWorklist(Patient patient) {
+	public void removePatientFromCurrentWorklist(Patient patient) {
 		if (globalEditViewHandler.getSelectedPatient() == patient) {
 			onDeselectPatient();
 		}
@@ -503,16 +503,16 @@ public class WorklistViewHandlerAction {
 		getWorklist().removePatient(patient);
 	}
 
-	public void onVersionConflictTask() {
+	public void replaceSelectedTask() {
 		if (globalEditViewHandler.getSelectedTask() != null)
-			onVersionConflictTask(globalEditViewHandler.getSelectedTask(), true);
+			replaceTaskInCurrentWorklist(globalEditViewHandler.getSelectedTask(), true);
 	}
 
-	public void onVersionConflictTask(Task task) {
-		onVersionConflictTask(task, true);
+	public void replaceTaskInCurrentWorklist(Task task) {
+		replaceTaskInCurrentWorklist(task, true);
 	}
 
-	public void onVersionConflictTask(Task task, boolean reload) {
+	public void replaceTaskInCurrentWorklist(Task task, boolean reload) {
 		if (reload)
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 
@@ -520,11 +520,11 @@ public class WorklistViewHandlerAction {
 		onSelectTaskAndPatient(task, false);
 	}
 
-	public void onVersionConflictPatient(Patient patient) {
-		onVersionConflictPatient(patient, true);
+	public void replacePatientInCurrentWorklist(Patient patient) {
+		replacePatientInCurrentWorklist(patient, true);
 	}
 
-	public void onVersionConflictPatient(Patient patient, boolean reload) {
+	public void replacePatientInCurrentWorklist(Patient patient, boolean reload) {
 		if (reload)
 			patient = patientDao.getPatient(patient.getId(), true);
 

@@ -1,5 +1,7 @@
 package org.histo.action.dialog.patient;
 
+import java.util.List;
+
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
@@ -9,6 +11,7 @@ import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
+import org.histo.model.patient.Task;
 import org.histo.service.PatientService;
 import org.histo.util.HistoUtil;
 import org.histo.util.event.PatientMergeEvent;
@@ -52,6 +55,8 @@ public class MergePatientDialog extends AbstractDialog {
 
 	private Patient patient;
 
+	private List<Task> tasksTomerge;
+	
 	private int mergeOption;
 
 	private String piz;
@@ -73,6 +78,7 @@ public class MergePatientDialog extends AbstractDialog {
 	public void initBean(Patient patient) {
 		super.initBean(null, Dialog.PATIENT_MERGE, false);
 		setPatient(patient);
+		setTasksTomerge(patient.getTasks());
 		setMergeOption(MERGE_PIZ);
 		setPatientToMerge(null);
 		setPiz("");

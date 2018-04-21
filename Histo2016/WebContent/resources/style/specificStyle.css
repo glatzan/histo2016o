@@ -1,77 +1,213 @@
+.histo_noPadding {
+  padding: 0px !important;
+  border-collapse: collapse !important;
+  border: 0px !important;
+  border-spacing: 0px !important;
+}
 /*
- * Class for normal table with scrollable body
+ * Default Body Style
  */
-.defaultHistoDataTable {
-  width: 100%;
-  white-space: normal;
-}
-.defaultHistoDataTable :focus {
-  outline: none !important;
-}
-.defaultHistoDataTable div.ui-datatable-scrollable-header table thead tr {
-  width: 100%;
-  display: table;
-}
-.defaultHistoDataTable div.ui-datatable-scrollable-header table thead tr td {
-  font-size: 12px;
+body {
+  margin: 0px !important;
+  font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
   box-shadow: none;
   font-style: normal;
   font-variant: normal;
+  text-align: left;
+  /**
+	 * Default Button, fixing the fontsize
+	 */
+  /**
+	 * Smaller radio button
+	 */
 }
-.defaultHistoDataTable div.ui-datatable-scrollable-body table thead {
-  display: none;
+body button .ui-button-icon-left {
+  font-size: 14px;
 }
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody {
+body .ui-radiobutton {
+  padding: 4px !important;
+}
+body .ui-radiobutton .ui-radiobutton-box {
+  width: 12px;
+  height: 12px;
+}
+body .ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon {
+  margin: -2px 0px 0px -1px;
+}
+/*
+ * Class for normal table with scrollable body
+ */
+.defaultHistoTable {
   border: none !important;
   border-spacing: 0px !important;
+  width: 100% !important;
+  table-layout: auto !important;
 }
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr {
-  width: 100%;
-  display: table;
+.defaultHistoTable tbody tr td {
   border: none !important;
-  border-spacing: 0px !important;
+  width: auto;
+  white-space: normal;
 }
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr td {
-  border: none !important;
-  border-spacing: 0px !important;
-}
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-datatable-even > td {
+.defaultHistoTable tbody tr.even > td {
+  border: 1px solid transparent;
   background-color: #f2f2f2;
 }
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight td,
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight label {
-  background-color: #fcf1b8 !important;
-  font-weight: bold !important;
-}
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover td,
-.defaultHistoDataTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover label {
-  background-color: #fcf1b8 !important;
-}
-.defaultHistoDataTable div.ui-datatable-scrollable-body th,
-.defaultHistoDataTable div.ui-datatable-scrollable-body td,
-.defaultHistoDataTable div.ui-datatable-scrollable-body label {
-  padding: 4px ! important;
-  font-size: 12px;
+.defaultHistoTable th,
+.defaultHistoTable td {
+  padding: 3px 4px;
+  font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
   box-shadow: none;
   font-style: normal;
   font-variant: normal;
   text-align: left;
 }
-.defaultHistoDataTable div.ui-datatable-scrollable-body .ui-inputfield {
+.defaultHistoTable label {
+  padding: 0px !important;
+  border-collapse: collapse !important;
+  border: 0px !important;
+  border-spacing: 0px !important;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.defaultHistoTable label.headline {
+  font-size: 12px !important;
+  font-weight: bold;
+}
+.defaultHistoTable :focus {
+  outline: none !important;
+}
+.defaultHistoTable .columnWidth25px {
+  width: 25px;
+}
+.defaultHistoTable .columnWidth50px {
+  width: 50px;
+}
+.defaultHistoTable .columnWidth75px {
+  width: 75px;
+}
+.defaultHistoTable .columnWidth100px {
+  width: 100px;
+}
+.defaultHistoTable .columnWidth125px {
+  width: 125px;
+}
+.defaultHistoTable .columnWidth150px {
+  width: 150px;
+}
+.defaultHistoTable .columnWidth175px {
+  width: 175px;
+}
+.defaultHistoTable .columnWidth200px {
+  width: 200px;
+}
+.defaultHistoTable .columnWidth225px {
+  width: 225px;
+}
+.defaultHistoTable .columnWidth250px {
+  width: 250px;
+}
+/*
+ * Class for a normal table layout
+ */
+.defaultHistoDataTable {
+  width: 100%;
+  white-space: normal;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-header table thead tr {
+  width: 100%;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-header table thead tr th,
+.defaultHistoDataTable .ui-datatable-scrollable-header table thead tr td {
+  padding: 4px 4px;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table thead {
+  display: none;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody {
+  border: none !important;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr {
+  width: 100%;
+  border: none !important;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr td {
+  border: 1px solid transparent;
+  border-spacing: 1px !important;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-datatable-even > td {
+  border: 1px solid transparent;
+  background-color: #f2f2f2;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight {
+  border: 1px solid transparent;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight td,
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+  font-weight: bold !important;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover {
+  border: 1px solid transparent;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover td,
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table th,
+.defaultHistoDataTable .ui-datatable-scrollable-body table td,
+.defaultHistoDataTable .ui-datatable-scrollable-body table label {
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
 .defaultHistoDataTable a {
   text-decoration: none !important;
 }
+.defaultHistoDataTable .ui-chkbox-box {
+  width: 13px !important;
+  height: 13px !important;
+}
+.defaultHistoDataTable .ui-chkbox-box .ui-chkbox-icon {
+  width: 13px !important;
+  height: 13px !important;
+  margin: -2px 0px 0px -1px;
+}
+.defaultHistoDataTable :focus {
+  outline: none !important;
+}
+/*
+ * scroll data table layout
+ * TODO: add normal datatable
+ */
 div.contentSpaceContainer {
   padding: 4px ! important;
-  font-size: 12px;
+  font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-  box-shadow: none ! important;
-  font-style: normal ! important;
-  font-variant: normal ! important;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
 }
 table.contentSpaceContainer {
   border: none;
@@ -88,11 +224,12 @@ table.contentSpaceContainer tbody > tr > td {
 table.contentSpaceContainer tbody > tr > td > label,
 table.contentSpaceContainer tbody > tr > td {
   padding: 4px ! important;
-  font-size: 12px;
+  font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-  box-shadow: none ! important;
-  font-style: normal ! important;
-  font-variant: normal ! important;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
 }
 table.contentSpaceContainer > tbody .headline {
   font-size: 14px ! important;
@@ -120,6 +257,89 @@ div.contentAccordionPannel div.ui-accordion-content table > tbody > tr > td {
 }
 div.contentAccordionPannel :focus {
   outline: none !important;
+}
+/*
+ * Dialog Sytle
+ */
+.histoDialogStyle {
+  padding: 0px !important;
+  border: 0px !important;
+  overflow: hidden;
+  height: 100vh;
+  position: relative;
+}
+.histoDialogStyle div.dialogHeader {
+  padding: 2px 5px;
+  font-weight: bold;
+  background: #cccccc url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
+  color: #555555;
+  font-size: 14px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.histoDialogStyle div.dialogHeader a:-webkit-any-link {
+  color: #555555;
+  font-size: 15px;
+}
+.histoDialogStyle div.dialogContent {
+  padding: 4px 2px 2px 2px;
+  padding-bottom: 0.5em;
+  height: calc(27vh);
+  width: clac(96%);
+}
+.histoDialogStyle div.buttonContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0px !important;
+}
+.histoDialogStyle div.buttonContainer .ui-button-text {
+  font-size: 12px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+  padding-top: 0.2em !important;
+  padding-bottom: 0.2em !important;
+}
+.histoDialogStyle div.buttonContainer > table {
+  padding: 0.1em 0em;
+}
+.histoDialogStyle div.buttonContainer > table tbody > tr,
+.histoDialogStyle div.buttonContainer > table tbody > tr > td {
+  padding: 0px !important;
+  border-collapse: collapse !important;
+  border: 0px !important;
+  border-spacing: 0px !important;
+}
+.histoDialogStyle div.buttonContainer .left {
+  margin-left: 0px;
+  /* style of the popup menu*/
+}
+.histoDialogStyle div.buttonContainer .left button,
+.histoDialogStyle div.buttonContainer .left .ui-selectcheckboxmenu,
+.histoDialogStyle div.buttonContainer .left .ui-chkbox-box,
+.histoDialogStyle div.buttonContainer .left label {
+  margin-left: 0.3em !important;
+}
+.histoDialogStyle div.buttonContainer .left .ui-selectonemenu {
+  margin-left: 0.3em !important;
+}
+.histoDialogStyle div.buttonContainer .left .ui-selectonemenu .ui-selectonemenu-label {
+  padding: 0.2em !important;
+}
+.histoDialogStyle div.buttonContainer .right {
+  margin-right: 0px;
+  float: right;
+}
+.histoDialogStyle div.buttonContainer .right button {
+  margin-right: 0.3em !important;
+}
+.histoDialogStyle div.buttonContainer .right td:last-child > button {
+  margin-right: 0em !important;
 }
 .printDialog_AdressTable {
   width: 100%;
@@ -164,7 +384,7 @@ div.contentAccordionPannel :focus {
 .printDialog_AdressTable td,
 .printDialog_AdressTable label {
   padding: 4px ! important;
-  font-size: 12px;
+  font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
   box-shadow: none;
   font-style: normal;
@@ -197,65 +417,82 @@ div.contentAccordionPannel :focus {
   white-space: normal;
   width: 98%;
 }
-.worklistSearchDialog_FavouriteSearchTable :focus {
-  outline: none !important;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-header table thead tr {
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-header table thead tr {
   width: 100%;
-  display: table;
 }
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-header table thead tr td {
-  font-size: 12px;
-  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-  box-shadow: none;
-  font-style: normal;
-  font-variant: normal;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body table thead {
-  display: none;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody {
-  border: none !important;
-  border-spacing: 0px !important;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr {
-  width: 100%;
-  display: table;
-  border: none !important;
-  border-spacing: 0px !important;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr td {
-  border: none !important;
-  border-spacing: 0px !important;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-datatable-even > td {
-  background-color: #f2f2f2;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight td,
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight label {
-  background-color: #fcf1b8 !important;
-  font-weight: bold !important;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover td,
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover label {
-  background-color: #fcf1b8 !important;
-}
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body th,
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body td,
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body label {
-  padding: 4px ! important;
-  font-size: 12px;
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-header table thead tr th,
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-header table thead tr td {
+  padding: 4px 4px;
+  font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
   box-shadow: none;
   font-style: normal;
   font-variant: normal;
   text-align: left;
 }
-.worklistSearchDialog_FavouriteSearchTable div.ui-datatable-scrollable-body .ui-inputfield {
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table thead {
+  display: none;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody {
+  border: none !important;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr {
+  width: 100%;
+  border: none !important;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr td {
+  border: 1px solid transparent;
+  border-spacing: 1px !important;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr.ui-datatable-even > td {
+  border: 1px solid transparent;
+  background-color: #f2f2f2;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight {
+  border: 1px solid transparent;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight td,
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+  font-weight: bold !important;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover {
+  border: 1px solid transparent;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover td,
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table th,
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table td,
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table label {
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
 .worklistSearchDialog_FavouriteSearchTable a {
   text-decoration: none !important;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-chkbox-box {
+  width: 13px !important;
+  height: 13px !important;
+}
+.worklistSearchDialog_FavouriteSearchTable .ui-chkbox-box .ui-chkbox-icon {
+  width: 13px !important;
+  height: 13px !important;
+  margin: -2px 0px 0px -1px;
+}
+.worklistSearchDialog_FavouriteSearchTable :focus {
+  outline: none !important;
 }
 .worklistSearchDialog_FavouriteSearchTable tr td:nth-child(1),
 .worklistSearchDialog_FavouriteSearchTable th:nth-child(1) {
@@ -273,65 +510,82 @@ div.contentAccordionPannel :focus {
   width: 100%;
   white-space: normal;
 }
-.addSlide_StainingTable :focus {
-  outline: none !important;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-header table thead tr {
+.addSlide_StainingTable .ui-datatable-scrollable-header table thead tr {
   width: 100%;
-  display: table;
 }
-.addSlide_StainingTable div.ui-datatable-scrollable-header table thead tr td {
-  font-size: 12px;
-  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-  box-shadow: none;
-  font-style: normal;
-  font-variant: normal;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body table thead {
-  display: none;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody {
-  border: none !important;
-  border-spacing: 0px !important;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr {
-  width: 100%;
-  display: table;
-  border: none !important;
-  border-spacing: 0px !important;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr td {
-  border: none !important;
-  border-spacing: 0px !important;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-datatable-even > td {
-  background-color: #f2f2f2;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight td,
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-highlight label {
-  background-color: #fcf1b8 !important;
-  font-weight: bold !important;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover td,
-.addSlide_StainingTable div.ui-datatable-scrollable-body tbody tr.ui-state-hover label {
-  background-color: #fcf1b8 !important;
-}
-.addSlide_StainingTable div.ui-datatable-scrollable-body th,
-.addSlide_StainingTable div.ui-datatable-scrollable-body td,
-.addSlide_StainingTable div.ui-datatable-scrollable-body label {
-  padding: 4px ! important;
-  font-size: 12px;
+.addSlide_StainingTable .ui-datatable-scrollable-header table thead tr th,
+.addSlide_StainingTable .ui-datatable-scrollable-header table thead tr td {
+  padding: 4px 4px;
+  font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
   box-shadow: none;
   font-style: normal;
   font-variant: normal;
   text-align: left;
 }
-.addSlide_StainingTable div.ui-datatable-scrollable-body .ui-inputfield {
+.addSlide_StainingTable .ui-datatable-scrollable-body table thead {
+  display: none;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody {
+  border: none !important;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr {
+  width: 100%;
+  border: none !important;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr td {
+  border: 1px solid transparent;
+  border-spacing: 1px !important;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr.ui-datatable-even > td {
+  border: 1px solid transparent;
+  background-color: #f2f2f2;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight {
+  border: 1px solid transparent;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight td,
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+  font-weight: bold !important;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover {
+  border: 1px solid transparent;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover td,
+.addSlide_StainingTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table th,
+.addSlide_StainingTable .ui-datatable-scrollable-body table td,
+.addSlide_StainingTable .ui-datatable-scrollable-body table label {
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
 .addSlide_StainingTable a {
   text-decoration: none !important;
+}
+.addSlide_StainingTable .ui-chkbox-box {
+  width: 13px !important;
+  height: 13px !important;
+}
+.addSlide_StainingTable .ui-chkbox-box .ui-chkbox-icon {
+  width: 13px !important;
+  height: 13px !important;
+  margin: -2px 0px 0px -1px;
+}
+.addSlide_StainingTable :focus {
+  outline: none !important;
 }
 .addSlide_StainingTable div.ui-datatable-scrollable-header {
   display: none;

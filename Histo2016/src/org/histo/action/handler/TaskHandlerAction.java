@@ -87,7 +87,7 @@ public class TaskHandlerAction {
 
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
-			worklistViewHandlerAction.onVersionConflictTask();
+			worklistViewHandlerAction.replaceSelectedTask();
 		}
 	}
 

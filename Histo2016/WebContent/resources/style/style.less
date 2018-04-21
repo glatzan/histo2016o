@@ -4,6 +4,72 @@
 @highlighted_row_background: #fcf1b8;
 @default_table_width: 100%;
 @table_body_height: 100px;
+@defualt_padding: 4px 4px;
+@default_font: Verdana, Arial, "Trebuchet MS", sans-serif;
+
+// default font
+.histo_font(@size: 11px) {
+	font-size: @size;
+	font-family: @default_font;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
+	text-align: left;
+}
+
+// no padding
+.histo_noPadding{
+	padding: 0px !important;
+	border-collapse: collapse !important;
+	border: 0px !important;
+	border-spacing: 0px !important;
+}
+
+//iteration for creating column width in px. use: xxxx20px
+.column_width(@count, @name) when (@count > 0) {
+   .column_width((@count - 1), @name);
+   
+   @widthpara : (25px * @count);
+   @name1 : ~"@{name}@{widthpara}";
+   
+   .@{name1}{
+  	 width: @widthpara;
+   }
+}
+
+/*
+ * Default Body Style
+ */
+body {
+	margin: 0px !important;
+	.histo_font();
+	
+	/**
+	 * Default Button, fixing the fontsize
+	 */
+	button {
+		.ui-button-icon-left{
+			font-size:14px;
+		}
+	}
+	
+	/**
+	 * Smaller radio button
+	 */
+	.ui-radiobutton {
+		padding: 4px !important;
+		.ui-radiobutton-box{
+			width:12px;
+			height:12px;
+			.ui-radiobutton-icon{
+				margin: -2px 0px 0px -1px;
+			}
+		}
+	}	
+}
+
+
+			
 /*
  * Class for normal table with scrollable body
  */
@@ -57,12 +123,7 @@
 
 	th , td , label {
 		padding: 4px ! important;
-		font-size: 12px;
-		font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-		box-shadow: none;
-		font-style: normal;
-		font-variant: normal;
-		text-align: left;
+		.histo_font();
 	}
 
 	.ui-inputfield {
@@ -70,33 +131,85 @@
 	}
 }
 
-.defaultHistoDataTable {
-	.histoDataTable (true);
+// style for a normal table with colored rows
+.defaultHistoTable{
+	.histoTable (true);
 }
 
-.histoDataTable(@colorRow: true){
-	width: 100%;
-	white-space: normal;
+/*
+ * Class for a normal table layout
+ */
+.histoTable(@colorRow: true){
+	border: none !important;
+	border-spacing: 0px !important;
+	width: 100% !important;
+	table-layout: auto !important;
+	
+	tbody{
+		tr{
+			td{
+				border: none !important;
+				width: auto;
+				white-space: normal;
+			}
+		}
+		
+		& when (@colorRow=true) {
+			tr.even>td {
+				border: 1px solid transparent;
+				background-color: @alternate_row_background_color;
+			}
+		}
+	}
+	
+	th, td {
+		padding: 3px 4px;
+		.histo_font();
+	}
+	
+	label{
+		.histo_noPadding();
+		.histo_font();
+	}
+	
+	label.headline{
+		font-size: 12px !important;
+		font-weight: bold;	
+	}
 	
 	// hiding focus 
 	:focus {
     	outline:none !important;
 	}
 	
+	// columnWidths of table
+	.column_width(10,"columnWidth");
+
+}
+
+// default scroll data table layout
+.defaultHistoDataTable {
+	.histoDataTable (true);
+}
+
+/*
+ * scroll data table layout
+ * TODO: add normal datatable
+ */
+.histoDataTable(@colorRow: true){
+	width: 100%;
+	white-space: normal;
+	
 	// header
-	div.ui-datatable-scrollable-header{
+	.ui-datatable-scrollable-header{
 		table{
 			thead{
 				tr{
 					width:100%;
-					display: table;
 				
-					td{
-						font-size: 12px;
-						font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-						box-shadow: none;
-						font-style: normal;
-						font-variant: normal;						
+					th, td{
+						padding: @defualt_padding;
+						.histo_font();					
 					}
 				}
 			}
@@ -104,81 +217,95 @@
 	}
 	
 	// body
-	div.ui-datatable-scrollable-body{
+	.ui-datatable-scrollable-body{
 		table{
+			
 			// hide header
 			thead{
 				display: none;
 			}
-		}
 		
-		tbody{
-			border: none !important;
-			border-spacing: 0px !important;
-			
-			tr{
-				width:100%;
-				display: table;
+			// body style
+			tbody{
 				border: none !important;
-				border-spacing: 0px !important;
 				
-				td{
+				tr{
+					width:100%;
 					border: none !important;
-					border-spacing: 0px !important;
+					td{
+						border: 1px solid transparent;
+						border-spacing: 1px !important;
+					}
 				}
+				
+				& when (@colorRow=true) {
+					tr.ui-datatable-even>td {
+						border: 1px solid transparent;
+						background-color: @alternate_row_background_color;
+					}
+				}
+				
+				// highlighted 
+				tr.ui-state-highlight {
+					border: 1px solid transparent;
+					td, label{
+						border: 1px solid transparent;
+						background-color: @highlighted_row_background !important;
+						font-weight: bold !important;
+					}
+				}
+				
+				// hover display
+				tr.ui-state-hover{
+					border: 1px solid transparent;
+					td, label{
+						border: 1px solid transparent;
+						background-color: @highlighted_row_background !important;
+					}
+				}
+				
 			}
 			
-			& when (@colorRow=true) {
-				tr.ui-datatable-even>td {
-					background-color: @alternate_row_background_color;
-				}
+			// font style
+			th , td , label {
+				padding: 2px 4px;
+				.histo_font();
 			}
-			
-			// highlighted 
-			tr.ui-state-highlight {
-				td, label{
-					background-color: @highlighted_row_background !important;
-					font-weight: bold !important;
-				}
+	
+			.ui-inputfield {
+				box-shadow: none;
 			}
-			
-			tr.ui-state-hover{
-				td, label{
-					background-color: @highlighted_row_background !important;
-				}
-			}
-			
-		}
 		
-		th , td , label {
-			padding: 4px ! important;
-			font-size: 12px;
-			font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-			box-shadow: none;
-			font-style: normal;
-			font-variant: normal;
-			text-align: left;
-		}
-
-		.ui-inputfield {
-			box-shadow: none;
 		}
 	}
 	
+	// no link color for table
 	a {
 		text-decoration: none !important;
 	}
-	
 
+	// smaller checkbox
+	.ui-chkbox-box {
+		width: 13px !important;
+		height: 13px !important;
+		
+		.ui-chkbox-icon{
+			width: 13px !important;
+			height: 13px !important;
+			margin: -2px 0px 0px -1px;
+		}
+			
+	}
+	
+	// hiding focus 
+	:focus {
+    	outline:none !important;
+	}
 }
 
 div.contentSpaceContainer {
 	padding: 4px ! important;
-	font-size: 12px;
-	font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-	box-shadow: none ! important;
-	font-style: normal ! important;
-	font-variant: normal ! important;
+	.histo_font();	
 }
 
 table.contentSpaceContainer {
@@ -195,11 +322,7 @@ table.contentSpaceContainer {
 
 	tbody > tr > td > label , tbody > tr > td {
 		padding: 4px ! important;
-		font-size: 12px;
-		font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
-		box-shadow: none ! important;
-		font-style: normal ! important;
-		font-variant: normal ! important;
+		.histo_font();	
 	}
 
 	> tbody .headline {
@@ -240,5 +363,89 @@ div.contentAccordionPannel{
 	// hiding focus 
 	:focus {
     	outline:none !important;
+	}
+}
+
+/*
+ * Dialog Sytle
+ */
+.histoDialogStyle{
+	padding: 0px !important;
+	border: 0px !important;
+	overflow: hidden;
+	height: 100vh;
+	position: relative;
+	
+	div.dialogHeader{
+		padding: 2px 5px;
+		font-weight: bold;
+		background: #cccccc url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)	50% 50% repeat-x;
+		color: #555555;
+		.histo_font(14px);	
+		
+		a:-webkit-any-link{
+			color: #555555;
+			font-size: 15px;
+		}
+	}
+	
+	div.dialogContent{
+		padding: 4px 2px 2px 2px;
+		padding-bottom: 0.5em;
+		height: calc(100vh - 73px);
+		width: clac(100% - 4px);
+	}
+	
+	div.buttonContainer {
+		width: 100%;
+		position: absolute;
+		bottom: 0px !important;
+		
+		.ui-button-text {
+			.histo_font(12px);
+			padding-top: 0.2em !important;
+			padding-bottom: 0.2em !important;
+		}
+		
+		// table padding for the two nested tables
+		> table { 
+			padding: 0.1em 0em;
+			tbody > tr, tbody>tr>td{
+				.histo_noPadding();
+			}
+		}
+		
+		// left column style
+		.left {
+			margin-left: 0px;
+			
+			button, .ui-selectcheckboxmenu, .ui-chkbox-box, label{
+				margin-left: 0.3em !important;
+			}
+			
+			/* style of the popup menu*/
+			.ui-selectonemenu{
+				margin-left: 0.3em !important;
+			
+				 .ui-selectonemenu-label{
+					padding: 0.2em !important;
+				}
+			}
+		}
+		
+		// right column style
+		.right {
+			margin-right: 0px;
+			float: right;
+			
+			button {
+				margin-right: 0.3em !important;
+			}
+			
+			// last button with no margin
+			td:last-child>button{
+				margin-right: 0em !important;
+			}
+		}
 	}
 }
