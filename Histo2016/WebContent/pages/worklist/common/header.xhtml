@@ -105,6 +105,15 @@
 				<p:ajax event="dialogReturn" update="contentForm" />
 			</p:commandButton>
 
+			<!-- Merge Patient  -->
+			<p:commandButton id="mergePatientData" style="display:none"
+				actionListener="#{mergePatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+				<p:ajax event="dialogReturn"
+					listener="#{patientViewHandlerAction.onEditPatientDataReturn}"
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
+					update="navigationForm:patientList contentForm headerForm" />
+			</p:commandButton>
+
 			<!-- Edit Patient data -->
 			<p:commandButton id="editPatientData" style="display:none"
 				actionListener="#{dialogHandlerAction.editPatientDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">

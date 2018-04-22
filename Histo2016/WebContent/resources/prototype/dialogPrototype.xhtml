@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:histo="http://java.sun.com/jsf/composite/components">
+
+
+<h:outputFormat value="#{msg['dialog.userDelete.headline']}">
+	<f:param
+		value="#{dialogHandlerAction.editUserDialog.user.physician.person.fullName}" />
+</h:outputFormat>
+
+<h:head>
+	<title><h:outputFormat value="#{msg['']}" /></title>
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
+	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+</h:head>
+
+<h:body styleClass="histoDialogStyle">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<f:metadata>
+			<f:viewAction action="#{loginHandler.setDisabled(false)}" />
+		</f:metadata>
+
+		<script type="text/javascript">
+			
+		</script>
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2">
+				<h:outputLabel value="#{msg[' ']}" />
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent">
+			<h:panelGrid columns="2" styleClass="defaultHistoTable"
+				columnClasses="columnWidth150px,">
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="defaultHistoTable">
+				<p:dataTable var="batch" scrollable="true" scrollHeight="250"
+					rowIndexVar="rowIdx" id="batchList"
+					styleClass="defaultHistoDataTable"
+					value="#{dialogHandlerAction.stainingEditDialog.stainingPrototype.batchDetails}">
+				</p:dataTable>
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" styleClass="defaultHistoTable">
+				<h:outputLabel value="#{msg['']}" />
+			</h:panelGrid>
+
+			<!-- Separator old TODO update -->
+			<h:panelGrid columns="1"
+				styleClass="newStyleListingTable newStyleListingTableSeparator">
+				<p:separator style="width:100%" />
+				<h:outputLabel value="#{msg['component.personDataMask.adress']}" />
+			</h:panelGrid>
+
+
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2" style="width:100%">
+
+				<h:panelGrid columns="1" styleClass="left">
+				</h:panelGrid>
+
+				<h:panelGrid columns="2" styleClass="right">
+					<p:commandButton widgetVar="createPatientBtn"
+						disabled="#{mergePatientDialog.patientToMerge eq null}"
+						value="#{msg['dialog.mergePatientDialog.button.merge']}"
+						icon="fa fa-fw fa-medkit">
+						<f:actionListener
+							binding="#{mergePatientDialog.confirmDialog.initAndPrepareBean()}" />
+
+						<p:ajax event="dialogReturn"
+							listener="#{mergePatientDialog.onMergePatient}"></p:ajax>
+					</p:commandButton>
+
+					<p:commandButton value="#{msg['general.abort']}"
+						widgetVar="closeBtn" partialSubmit="true"
+						icon="fa fa-fw fa-times-circle" id="closeBtn" process="@this"
+						actionListener="#{mergePatientDialog.hideDialog()}"></p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>
+
+Blocking onstart="PF('blockUIWidget').block()"
+oncomplete="PF('blockUIWidget').unblock()"
+
+<ui:include src="../../template/blockUi.xhtml"></ui:include>

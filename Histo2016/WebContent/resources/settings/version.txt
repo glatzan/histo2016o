@@ -38,6 +38,9 @@ create view patientmenumodel as select patient.id, person.lastname, person.first
 create view taskmenumodel as select task.id, task.taskid, task.taskpriority, task.duedate, task.parent_id from task
 
 Next Changes:
+-> Patient menu aufräumen 
+-> recht für patient merge einführen
+
 -> Diangosen benachrichtigung per brief bei jedem einstellen
 -> wenn konsil aussteht keine archivirung
 -> Operateure über liste laden
@@ -118,10 +121,11 @@ Graphic Changes
 
 https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
-+v 1.4.5 (18.04.2018)
++v 1.4.5 (22.04.2018)
 +++!: Patientensuche mit Name und Geburtsdatum funktioniert wieder richtig.
 +++!: Fehler beim erstellen von Nachbefunden behoben-
 +++*: Fehlerseite für Datenbankfehler implementiert, behebt das Dealock-Problem sobald man einen fehlerhaften Fall angeklickt hatte.
+++++: Patienten können jetzt zusammengeführt werden. (Über Patienten Menu)
 
 +v 1.4.4 (19.03.2018)
 +++*: Anführungszeichen werden im Befund korrekt dargestellt.

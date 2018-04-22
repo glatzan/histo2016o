@@ -82,7 +82,13 @@ public class PatientViewHandlerAction {
 		logger.debug("On EditPatient-Dialog return");
 		if (event.getObject() != null && event.getObject() instanceof PatientMergeEvent) {
 			PatientMergeEvent p = (PatientMergeEvent) event.getObject();
-			worklistViewHandlerAction.replacePatientInCurrentWorklist(p.getMergeFrom());
+			
+			// if merge source was archived, remove it from worklist
+			if(p.getMergeFrom().isArchived())
+				worklistViewHandlerAction.removePatientFromCurrentWorklist(p.getMergeFrom());
+			else
+				worklistViewHandlerAction.replacePatientInCurrentWorklist(p.getMergeFrom());
+			
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(p.getMergeTo());
 		}
 	}

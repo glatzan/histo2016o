@@ -8,16 +8,15 @@
 <h:head>
 	<title><h:outputFormat
 			value="#{msg['dialog.mergePatientDialog.confirmDialog.headline']}" /></title>
-	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
 	<h:outputScript library="scripts" name="commonFunctions.js" />
 </h:head>
 
-<h:body styleClass="contentInputDialog">
+<h:body styleClass="histoDialogStyle">
 	<h:form id="dialogContent">
 
 		<div class="dialogHeader">
-			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="newTableContainer">
+			<h:panelGrid style="width:100%;" columns="2">
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.confirmDialog.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
@@ -28,22 +27,21 @@
 			</h:panelGrid>
 		</div>
 
+
 		<div class="dialogContent">
-			<h:panelGrid columns="1" styleClass="newStyleListingTable"
-				columnClasses="columnLongText">
+			<h:panelGrid columns="1" styleClass="defaultHistoTable">
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.confirmDialog.text']}" />
 			</h:panelGrid>
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="2" style="width:100%"
-				styleClass="newTableContainer">
+			<h:panelGrid columns="2" style="width:100%">
 
-				<h:panelGrid columns="1" styleClass="newTableContainer left">
+				<h:panelGrid columns="1" styleClass="left">
 				</h:panelGrid>
 
-				<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<h:panelGrid columns="2" styleClass="right">
 					<!-- Save button -->
 					<p:commandButton value="#{msg['general.confirm']}"
 						icon="fa fa-check-circle-o">
@@ -60,8 +58,6 @@
 				</h:panelGrid>
 			</h:panelGrid>
 		</div>
-
-
 	</h:form>
 </h:body>
 </html>

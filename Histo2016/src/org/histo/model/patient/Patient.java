@@ -109,6 +109,7 @@ public class Patient implements Parent<Patient>, CreationDate, LogAble, ArchivAb
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OrderBy("creationDate DESC")
 	private List<PDFContainer> attachedPdfs = new ArrayList<PDFContainer>();
+	
 	/**
 	 * If true the patient is archived. Thus he won't be displayed.
 	 */

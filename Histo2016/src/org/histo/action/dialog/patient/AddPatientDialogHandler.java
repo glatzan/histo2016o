@@ -185,11 +185,11 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 				if (getPatientPiz() != null && !getPatientPiz().isEmpty()) {
 					if (getPatientPiz().matches("^[0-9]{8}$")) { // if full piz
 						resultArr.add(patientService.serachForPiz(getPatientPiz(), isSearchLocalDatabaseOnly()));
-					} else if (getPatientPiz().matches("^[0-9]{6,8}$")) {
+					} else if (getPatientPiz().replaceAll("_", "").matches("^[0-9]{6,8}$")) {
 						// 6to 7 digits of piz
 						// isSearchLocalDatabaseOnly() can be ignored because this function is only
 						// supported by local database
-						resultArr.addAll(patientService.serachForPizRange(getPatientPiz()));
+						resultArr.addAll(patientService.serachForPizRange(getPatientPiz().replaceAll("_", "")));
 					}
 
 				} else if ((getPatientName() != null && !getPatientName().isEmpty())

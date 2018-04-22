@@ -72,7 +72,7 @@ public class PatientService {
 
 		// add patient from the clinic-backend, get all data of this
 		// patient, piz search is more specific
-		if (!patient.getPiz().isEmpty() && !globalSettings.getProgramSettings().isOffline() && update) {
+		if (HistoUtil.isNotNullOrEmpty(patient.getPiz()) && !globalSettings.getProgramSettings().isOffline() && update) {
 			logger.debug("Getting data from pdv for patient " + patient.getPiz());
 			globalSettings.getClinicJsonHandler().updatePatientFromClinicJson(patient);
 		}
@@ -105,7 +105,19 @@ public class PatientService {
 	}
 
 	/**
-	 * Merges to patients. Copies all tasks from one patient to the other. 
+	 * Archives a patient without tasks from local database
+	 * 
+	 * @param patient
+	 */
+	public void archivePatient(Patient patient) {
+		if (patient.getTasks().isEmpty()) {
+			patient.setArchived(true);
+			genericDAO.savePatientData(patient, "log.patient.archived", patient);
+		}
+	}
+
+	/**
+	 * Merges to patients. Copies all tasks from one patient to the other.
 	 * 
 	 * @param from
 	 * @param to
@@ -113,9 +125,9 @@ public class PatientService {
 	public void mergePatient(Patient from, Patient to) {
 		mergePatient(from, to, null);
 	}
-	
+
 	/**
-	 * Merges to patients. Copies all tasks from one patient to the other. 
+	 * Merges to patients. Copies all tasks from one patient to the other.
 	 * 
 	 * @param from
 	 * @param to
@@ -125,8 +137,7 @@ public class PatientService {
 		transactionTemplate.execute(new TransactionCallbackWithoutResult() {
 
 			public void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
-				
-				
+
 				List<Task> tasksFrom = tasksToMerge == null ? from.getTasks() : tasksToMerge;
 
 				if (tasksFrom == null)
@@ -137,6 +148,8 @@ public class PatientService {
 					genericDAO.savePatientData(task);
 				}
 
+				from.setTasks(new ArrayList<Task>());
+				
 				// to.getTasks().addAll(tasksFrom);
 				// System.out.println(2);
 				// genericDAO.savePatientData(to, "log.patient.merge.addTasks",

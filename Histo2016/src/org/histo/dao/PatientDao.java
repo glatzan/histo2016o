@@ -97,12 +97,9 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Root<Patient> root = criteria.from(Patient.class);
 		criteria.select(root);
 
-		String regex = "";
-		if (piz.length() != 8) {
-			regex = "[0-9]{" + (8 - piz.length()) + "}";
-		}
+		Predicate and = qb.and(qb.like(root.get("piz"), piz + "%"), qb.equal(root.get("archived"), false));
 
-		criteria.where(qb.like(root.get("piz"), piz + regex));
+		criteria.where(and);
 
 		criteria.distinct(true);
 
@@ -118,40 +115,35 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	 * @param piz
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public Patient searchForPatientByPiz(String piz) {
-		if (piz.length() != 8)
+		if (!piz.matches("^\\d{8}$"))
 			return null;
+		
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
+		// Create CriteriaQuery
+		CriteriaQuery<Patient> criteria = qb.createQuery(Patient.class);
+		Root<Patient> root = criteria.from(Patient.class);
+		criteria.select(root);
 
-		query.add(Restrictions.eq("piz", piz));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		Predicate and = qb.and(qb.equal(root.get("piz"), piz), qb.equal(root.get("archived"), false));
 
-		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+		criteria.where(and);
 
-		if (result != null && result.size() == 1)
-			return result.get(0);
+		criteria.distinct(true);
+
+		List<Patient> patients = getSession().createQuery(criteria).getResultList();
+
+		if (patients != null && patients.size() == 1)
+			return patients.get(0);
 
 		return null;
 	}
 
 	/**
-	 * Returns a list of patients with matching pizes.
-	 * 
-	 * @param piz
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Patient> searchForPatientPizList(List<String> piz) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-		query.add(Restrictions.in("piz", piz));
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return query.getExecutableCriteria(getSession()).list();
-	}
-
-	/**
 	 * Returns a list of patients with matching ides.
+	 * 
+	 * TODO: update to criteria builder
 	 * 
 	 * @param piz
 	 * @return
@@ -176,7 +168,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 			root.fetch("tasks", JoinType.LEFT);
 
 		Predicate and = qb.and(qb.ge(root.get("creationDate"), fromDate), qb.le(root.get("creationDate"), toDate),
-				qb.isEmpty(root.get("tasks")));
+				qb.isEmpty(root.get("tasks")), qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -206,7 +198,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		if (initTasks)
 			root.fetch("tasks", JoinType.LEFT);
 
-		Predicate and = qb.and(qb.ge(root.get("creationDate"), fromDate), qb.le(root.get("creationDate"), toDate));
+		Predicate and = qb.and(qb.ge(root.get("creationDate"), fromDate), qb.le(root.get("creationDate"), toDate),
+				qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -239,7 +232,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Join<Patient, Task> taskQuery = root.join("tasks", JoinType.LEFT);
 
 		Predicate and = qb.and(qb.ge(taskQuery.get("creationDate"), fromDate),
-				qb.le(taskQuery.get("creationDate"), toDate));
+				qb.le(taskQuery.get("creationDate"), toDate), qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -272,7 +265,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Join<Patient, Task> taskQuery = root.join("tasks", JoinType.LEFT);
 
 		Predicate and = qb.and(qb.ge(taskQuery.get("stainingCompletionDate"), fromDate),
-				qb.le(taskQuery.get("stainingCompletionDate"), toDate));
+				qb.le(taskQuery.get("stainingCompletionDate"), toDate), qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -305,7 +298,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Join<Patient, Task> taskQuery = root.join("tasks", JoinType.LEFT);
 
 		Predicate and = qb.and(qb.ge(taskQuery.get("diagnosisCompletionDate"), fromDate),
-				qb.le(taskQuery.get("diagnosisCompletionDate"), toDate));
+				qb.le(taskQuery.get("diagnosisCompletionDate"), toDate), qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -338,7 +331,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Join<Patient, Task> taskQuery = root.join("tasks", JoinType.LEFT);
 
 		Predicate and = qb.and(qb.ge(taskQuery.get("notificationCompletionDate"), fromDate),
-				qb.le(taskQuery.get("notificationCompletionDate"), toDate));
+				qb.le(taskQuery.get("notificationCompletionDate"), toDate), qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -372,7 +365,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Join<Patient, Task> taskQuery = root.join("tasks", JoinType.LEFT);
 
 		Predicate and = qb.and(qb.ge(taskQuery.get("notificationCompletionDate"), fromDate),
-				qb.le(taskQuery.get("notificationCompletionDate"), toDate), qb.equal(taskQuery.get("finalized"), true));
+				qb.le(taskQuery.get("notificationCompletionDate"), toDate), qb.equal(taskQuery.get("finalized"), true),
+				qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -383,54 +377,55 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		return patients;
 	}
 
-	public List<Patient> getPatientsByNameSurnameDateExcludePiz(String name, String firstName, Date date,
-			List<String> pizesToExclude) {
+	/**
+	 * Gets an patient by name, surname and or birthday from the local database
+	 * 
+	 * @param name
+	 * @param firstName
+	 * @param date
+	 * @return
+	 */
+	public List<Patient> getPatientsByNameSurnameDate(String name, String firstName, Date date) {
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<Patient> criteria = qb.createQuery(Patient.class);
+		Root<Patient> root = criteria.from(Patient.class);
+		criteria.select(root);
+
+		Join<Patient, Person> personQuery = root.join("person", JoinType.LEFT);
+
+		List<Predicate> predicates = new ArrayList<Predicate>();
 
 		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
 
 		query.createAlias("patient.person", "_person");
 
-		if (name != null && !name.isEmpty())
-			query.add(Restrictions.ilike("_person.lastName", name, MatchMode.ANYWHERE));
-		if (firstName != null && !firstName.isEmpty())
-			query.add(Restrictions.ilike("_person.firstName", firstName, MatchMode.ANYWHERE));
+		if (HistoUtil.isNotNullOrEmpty(name))
+			predicates.add(qb.like(qb.lower(personQuery.get("lastName")), "%" + name.toLowerCase() + "%"));
+
+		if (HistoUtil.isNotNullOrEmpty(firstName))
+			predicates.add(qb.like(qb.lower(personQuery.get("firstName")), "%" + firstName.toLowerCase() + "%"));
 		if (date != null)
-			query.add(Restrictions.eq("_person.birthday", date));
-		if (pizesToExclude != null && !pizesToExclude.isEmpty())
-			query.add(Restrictions.not(Restrictions.in("piz", pizesToExclude.toArray())));
+			predicates.add(qb.equal(personQuery.get("birthday"), date));
 
-		query.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		predicates.add(qb.equal(root.get("archived"), false));
 
-		List<Patient> result = query.getExecutableCriteria(getSession()).list();
+		criteria.where(qb.and(predicates.toArray(new Predicate[predicates.size()])));
 
-		return result != null ? result : new ArrayList<>();
-	}
+		criteria.distinct(true);
 
-	public List<Patient> getPatientsByNameSurnameDate(String name, String firstName, Date date) {
-		return getPatientsByNameSurnameDateExcludePiz(name, firstName, date, null);
+		List<Patient> patients = getSession().createQuery(criteria).getResultList();
+
+		return patients;
 	}
 
 	/**
-	 * Searches for an taskID and returns the patient whom the task belongs to
-	 * 
-	 * @param taskID
+	 * Advanced patient serach
+	 * @param worklistSearchExtended
+	 * @param initTasks
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public Patient getPatientByTaskID(String taskID) {
-		DetachedCriteria query = DetachedCriteria.forClass(Patient.class, "patient");
-
-		query.createAlias("patient.tasks", "_tasks");
-		query.add(Restrictions.eq("_tasks.taskID", taskID));
-
-		List<Patient> result = query.getExecutableCriteria(getSession()).list();
-
-		if (result.size() == 1)
-			return result.get(0);
-
-		return null;
-	}
-
 	public List<Patient> getPatientByCriteria(WorklistSearchExtended worklistSearchExtended, boolean initTasks) {
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
@@ -462,6 +457,8 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Join<Person, AssociatedContact> personContactQuery = contactQuery.join("person", JoinType.LEFT);
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
+
+		predicates.add(qb.equal(root.get("archived"), false));
 
 		// searching for material
 		if (HistoUtil.isNotNullOrEmpty(worklistSearchExtended.getMaterial())) {

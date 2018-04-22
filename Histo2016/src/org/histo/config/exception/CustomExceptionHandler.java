@@ -98,8 +98,6 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 			ExceptionQueuedEvent event = i.next();
 			ExceptionQueuedEventContext context = (ExceptionQueuedEventContext) event.getSource();
 
-			System.out.println("--------" +context);
-			
 			// get the exception from context
 			Throwable cause = context.getException();
 
@@ -173,6 +171,8 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 				// new Date(System.currentTimeMillis()));
 				// mail.fillTemplate();
 				// globalSettings.getMailHandler().sendErrorMail(mail);
+			}else if(event instanceof ExceptionQueuedEvent) {
+				
 			}
 
 			if (hanled)

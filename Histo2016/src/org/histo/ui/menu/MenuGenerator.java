@@ -97,6 +97,14 @@ public class MenuGenerator {
 				item.setDisabled(!patient.getTasks().isEmpty());
 				patientSubMenu.addElement(item);
 
+				// patient merge
+				// TODO introduce right for merging
+				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.merge"));
+				item.setOnclick(
+						"$('#headerForm\\\\:mergePatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+				item.setIcon("fa fa-medkit");
+				patientSubMenu.addElement(item);
+				
 				// patient upload pdf
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.upload"));
 				item.setOnclick(

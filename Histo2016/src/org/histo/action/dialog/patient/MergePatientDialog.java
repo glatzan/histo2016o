@@ -88,6 +88,9 @@ public class MergePatientDialog extends AbstractDialog {
 	 */
 	private Patient patientToMerge;
 
+	/**
+	 * This can be set to true if piz search was performed and no patient was found.
+	 */
 	private boolean renderErrorPatientNotFound;
 
 	/**
@@ -109,15 +112,23 @@ public class MergePatientDialog extends AbstractDialog {
 		setPiz("");
 	}
 
+	/**
+	 * Method is called when the merge option (piz vs patient) is changed.
+	 */
 	public void onChangeMergeOption() {
 		renderErrorPatientNotFound = false;
 		patientToMerge = null;
+		onChangeTasksToMergeSelection();
 
 		if (mergeOption == MergeOption.PIZ)
 			onSelectPatientViaPiz();
 	}
 
+	/**
+	 * Searches for a patient via piz if the piz is 8 digits long.
+	 */
 	public void onSelectPatientViaPiz() {
+		// only search if 8 dignis are present
 		if (HistoUtil.isNotNullOrEmpty(piz) && piz.matches("^\\d{8}$")) {
 			try {
 				patientToMerge = patientService.serachForPiz(piz, false);
@@ -132,9 +143,12 @@ public class MergePatientDialog extends AbstractDialog {
 		}
 	}
 
+	/**
+	 * If merging was confirmed this method will merge the two patients
+	 * 
+	 * @param event
+	 */
 	public void onMergePatient(SelectEvent event) {
-		logger.debug("Trying to merge patients" + (event.getObject() instanceof Boolean)
-				+ ((Boolean) event.getObject()).booleanValue());
 		try {
 			if (event.getObject() != null && event.getObject() instanceof Boolean
 					&& ((Boolean) event.getObject()).booleanValue()) {
@@ -144,6 +158,10 @@ public class MergePatientDialog extends AbstractDialog {
 						patientService.addPatient(patientToMerge, false);
 
 					patientService.mergePatient(patient, patientToMerge, tasksTomerge);
+
+					if (deletePatient && patient.getTasks().isEmpty())
+						patientService.archivePatient(patient);
+
 					mainHandlerAction.sendGrowlMessagesAsResource("growl.success", "growl.patient.merge.success");
 					hideDialog(new PatientMergeEvent(patient, patientToMerge));
 				}
@@ -153,15 +171,25 @@ public class MergePatientDialog extends AbstractDialog {
 		}
 	}
 
+	/**
+	 * Is called on return of the patient select dialog, if a patient is return it
+	 * will set as the patientToMerge
+	 * 
+	 * @param event
+	 */
 	public void onSelectPatient(SelectEvent event) {
 		if (event.getObject() != null && event.getObject() instanceof Patient) {
 			patientToMerge = (Patient) event.getObject();
 		}
 	}
 
+	/**
+	 * Is called if the task selection of the source task was altered. Deletion is
+	 * only possible if all tasks are selected.
+	 */
 	public void onChangeTasksToMergeSelection() {
 		deletePatientDisabled = patient.getTasks().size() != tasksTomerge.size();
-System.out.println(deletePatientDisabled);
+
 		if (deletePatientDisabled)
 			deletePatient = false;
 	}

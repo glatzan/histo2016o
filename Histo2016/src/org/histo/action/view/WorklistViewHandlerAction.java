@@ -496,11 +496,13 @@ public class WorklistViewHandlerAction {
 	 * @param patient
 	 */
 	public void removePatientFromCurrentWorklist(Patient patient) {
-		if (globalEditViewHandler.getSelectedPatient() == patient) {
-			onDeselectPatient();
-		}
-
+		
 		getWorklist().removePatient(patient);
+		
+		if (globalEditViewHandler.getSelectedPatient() != null
+				&& globalEditViewHandler.getSelectedPatient().equals(patient)) {
+			onDeselectPatient(true);
+		}
 	}
 
 	public void replaceSelectedTask() {
