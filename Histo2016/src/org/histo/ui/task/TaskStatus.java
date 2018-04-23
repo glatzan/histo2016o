@@ -48,6 +48,8 @@ public class TaskStatus {
 	private boolean councilLendingSecretary;
 	private boolean councilPending;
 	private boolean councilCompleted;
+	
+	private boolean scannList;
 
 	private boolean finalized;
 
@@ -81,6 +83,8 @@ public class TaskStatus {
 		this.councilPending = task.isListedInFavouriteList(PredefinedFavouriteList.CouncilPending);
 		this.councilCompleted = task.isListedInFavouriteList(PredefinedFavouriteList.CouncilCompleted);
 
+		this.scannList = task.isListedInFavouriteList(PredefinedFavouriteList.ScannList);
+				
 		this.finalized = task.isFinalized();
 
 		this.editable = isTaksEditable();

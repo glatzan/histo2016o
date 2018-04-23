@@ -242,6 +242,11 @@
 												class="fa fa-volume-up icon-purple"
 												title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
 										</ui:fragment>
+
+										<ui:fragment rendered="#{task.taskStatus.scannList}">
+											<i style="margin-left: 5px;" class="fa fa-camera icon-blue"
+												title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
+										</ui:fragment>
 									</h:panelGroup>
 								</p:commandLink>
 

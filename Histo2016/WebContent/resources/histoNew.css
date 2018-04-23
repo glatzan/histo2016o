@@ -878,6 +878,11 @@ body {
 	color: green;
 }
 
+.icon-blue, .icon-blue:link, .icon-blue:active, .icon-blue:hover,
+	.icon-blue:visited {
+	color: blue;
+}
+
 .icon-purple, .icon-purple:link, .icon-purple:active, .icon-purple:hover,
 	.icon-purple:visited {
 	color: purple;

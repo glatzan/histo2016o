@@ -80,6 +80,10 @@ public class MenuGenerator {
 
 			if (patient != null && PATIENT_EDIT) {
 
+				DefaultSubMenu administerSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.patient.administer"));
+				administerSubMenu.setIcon("fa fa-male");
+				patientSubMenu.addElement(administerSubMenu);
+				
 				// patient edit data, disabled if not external patient
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.edit"));
 				item.setOnclick(
@@ -87,7 +91,7 @@ public class MenuGenerator {
 				item.setIcon("fa fa-pencil-square-o");
 				item.setDisabled(!patient.isExternalPatient());
 				// TODO comment that patient is not edtiable
-				patientSubMenu.addElement(item);
+				administerSubMenu.addElement(item);
 
 				// remove patient if empty tasks
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.remove"));
@@ -95,7 +99,7 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:removePatient').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-trash");
 				item.setDisabled(!patient.getTasks().isEmpty());
-				patientSubMenu.addElement(item);
+				administerSubMenu.addElement(item);
 
 				// patient merge
 				// TODO introduce right for merging
@@ -103,7 +107,7 @@ public class MenuGenerator {
 				item.setOnclick(
 						"$('#headerForm\\\\:mergePatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-medkit");
-				patientSubMenu.addElement(item);
+				administerSubMenu.addElement(item);
 				
 				// patient upload pdf
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.upload"));
@@ -372,12 +376,12 @@ public class MenuGenerator {
 					for (FavouriteListMenuItem favouriteListItem : items) {
 						item = new DefaultMenuItem(favouriteListItem.getName());
 						if (favouriteListItem.isContainsTask()) {
-							item.setIcon("fa fa-list-ul icon-green");
+							item.setIcon("fa fa-check-circle icon-green");
 							item.setCommand(
 									"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
 											+ favouriteListItem.getId() + ")}");
 						} else {
-							item.setIcon("fa fa-list-ul");
+							item.setIcon("fa fa-circle-o");
 							item.setCommand(
 									"#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
 											+ favouriteListItem.getId() + ")}");

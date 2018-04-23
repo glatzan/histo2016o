@@ -97,6 +97,13 @@ body .icon-red:hover,
 body .icon-red:visited {
   color: red;
 }
+body .icon-blue,
+body .icon-blue:link,
+body .icon-blue:active,
+body .icon-blue:hover,
+body .icon-blue:visited {
+  color: blue;
+}
 body .ui-chkbox-box {
   width: 13px !important;
   height: 13px !important;

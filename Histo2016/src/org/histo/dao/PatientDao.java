@@ -134,7 +134,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		List<Patient> patients = getSession().createQuery(criteria).getResultList();
 
-		if (patients != null && patients.size() == 1)
+		if (patients != null && patients.size() > 1)
 			return patients.get(0);
 
 		return null;
