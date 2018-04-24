@@ -48,12 +48,21 @@ public class FavouriteList implements HasID {
 	@Column(columnDefinition = "VARCHAR")
 	private String commentary;
 	
+	/**
+	 * System list
+	 */
 	@Column
 	private boolean defaultList;
 
+	/**
+	 * If true the list can be used by users to add task manually (has to be a system list)
+	 */
+	@Column
+	private boolean defaultShare;
+	
 	@Column
 	private boolean globalView;
-
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList")
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<FavouriteListItem> items;
@@ -69,6 +78,9 @@ public class FavouriteList implements HasID {
 	@OneToMany(fetch = FetchType.LAZY)
 	private Set<HistoUser> hideListForUser;
 	 
+	@OneToOne(fetch = FetchType.LAZY)
+	private FavouriteList dumpList;
+	
 	@Override
 	public String toString() {
 		return "ID: " + getId() + ", Name: " + getName();

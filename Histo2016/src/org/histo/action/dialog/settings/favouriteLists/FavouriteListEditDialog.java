@@ -11,6 +11,7 @@ import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
+import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
 import org.histo.model.favouriteList.FavouritePermissions;
@@ -19,6 +20,7 @@ import org.histo.model.favouriteList.FavouritePermissionsUser;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.ui.FavouriteListContainer;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -62,9 +64,13 @@ public class FavouriteListEditDialog extends AbstractDialog {
 	private List<FavouritePermissions> toDeleteList;
 
 	private boolean adminMode;
-	
+
 	private FavouriteListContainer userPermission;
-	
+
+	private List<FavouriteList> dumpLists;
+
+	private DefaultTransformer<FavouriteList> dumpListTransformer;
+
 	public void initAndPrepareBean() {
 		initAndPrepareBean(false);
 	}
@@ -76,7 +82,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		favouriteList.setGroups(new HashSet<FavouritePermissionsGroup>());
 		favouriteList.setItems(new ArrayList<FavouriteListItem>());
 		favouriteList.setOwner(userHandlerAction.getCurrentUser());
-		
+
 		if (initBean(favouriteList, false, false))
 			prepareDialog();
 	}
@@ -108,9 +114,19 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		setToDeleteList(new ArrayList<FavouritePermissions>());
 
 		setAdminMode(adminMode);
+
+		// getting lists for dumplist option, if admin mod all lists are available, if
+		// user only the writeable lists are displayed
+		if (adminMode) {
+			dumpLists = favouriteListDAO.getAllFavouriteLists();
+		} else {
+			dumpLists = favouriteListDAO.getFavouriteListsForUser(userHandlerAction.getCurrentUser(), true, false);
+		}
+
+		setDumpListTransformer(new DefaultTransformer<FavouriteList>(dumpLists));
 		
 		setUserPermission(new FavouriteListContainer(favouriteList, userHandlerAction.getCurrentUser()));
-		
+
 		super.initBean(task, Dialog.SETTINGS_FAVOURITE_LIST_EDIT);
 		return true;
 	}

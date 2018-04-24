@@ -123,9 +123,18 @@ Graphic Changes
 https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
 +v 1.4.6
-SQL:
-INSERT INTO favouritelist (id, defaultlist, globalview, name) VALUES (50, true, true, 'Einscannliste');
+++++: Neue Favouritenliste inklusive Icon zum einscannen von Objektträgern.
 
+SQL:
+/* adding new favourite list*/
+INSERT INTO favouritelist (id, defaultlist, globalview, name) VALUES (50, true, true, 'Einscannliste');
+/* adding option for sharing system lists for users in order to add tasks*/
+alter table favouritelist add defaultShare boolean;
+update favouritelist set defaultShare = false;
+update favouritelist set defaultShare = true where id = 50;
+/* field for dumplist*/
+alter table favouritelist add dumplist_id bigint;
+ALTER TABLE ONLY favouritelist ADD CONSTRAINT favouritelist_dumplist_fkey FOREIGN KEY (dumplist_id) REFERENCES favouritelist(id);
 
 +v 1.4.5 (22.04.2018)
 +++!: Patientensuche mit Name und Geburtsdatum funktioniert wieder richtig.
