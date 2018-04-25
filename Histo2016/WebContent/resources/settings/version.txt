@@ -136,6 +136,49 @@ update favouritelist set defaultShare = true where id = 50;
 alter table favouritelist add dumplist_id bigint;
 ALTER TABLE ONLY favouritelist ADD CONSTRAINT favouritelist_dumplist_fkey FOREIGN KEY (dumplist_id) REFERENCES favouritelist(id);
 
+Alter table favouritelist add icon character varying;
+Alter table favouritelist add infotext character varying;
+Alter table favouritelist add command  character varying;
+/* icon staining list */
+update favouritelist set icon = 'fa-image icon-green' where id = 1;
+update favouritelist set infotext = 'Färbung ausstehend' where id = 1;
+/* icon re staining list */
+update favouritelist set icon = 'fa-image icon-orange' where id = 4;
+update favouritelist set infotext = 'Nachfärbung ausstehend' where id = 4;
+/*stay in staining list*/
+update favouritelist set icon = 'fa-image icon-purple' where id = 6;
+update favouritelist set infotext = 'Keine Färbeungen ausstehend, in Arbeitsliste verbleibend' where id = 6;
+/*diagnosis list*/
+update favouritelist set icon = 'fa-eye icon-green' where id = 2;
+update favouritelist set infotext = 'Befundung ausstehend' where id = 2;
+/* re diagnosis list*/
+update favouritelist set icon = 'fa-eye icon-orange' where id = 5;
+update favouritelist set infotext = 'Nachbefundung ausstehend' where id = 5;
+/*stay in diagnosis list*/
+update favouritelist set icon = 'fa-eye icon-purple' where id = 7;
+update favouritelist set infotext = 'Keine Diagnose ausstehend, in Arbeitsliste verbleibend' where id = 7;
+/*notfication list*/
+update favouritelist set icon = 'fa-volume-up icon-green' where id = 3;
+update favouritelist set infotext = 'Benachrichtigungen ausstehend' where id = 3;
+/*stay in notfication list*/
+update favouritelist set icon = 'fa-volume-up icon-purple' where id = 8;
+update favouritelist set infotext = 'Keine Benachrichtigung ausstehend, in Arbeitsliste verbleibend' where id = 8;
+/*stay in scann list*/
+update favouritelist set icon = 'fa-camera icon-blue' where id = 50;
+update favouritelist set infotext = 'Slides einscannen' where id = 50;
+/*council mta*/
+update favouritelist set icon = 'fa-stethoscope icon-orange' where id = 9;
+update favouritelist set infotext = 'Absenden des Konsils durch Labor steht aus' where id = 9;
+/*council secretary*/
+update favouritelist set icon = 'fa-stethoscope icon-orange' where id = 10;
+update favouritelist set infotext = 'Absenden des Konsils durch Sekretariat steht aus' where id = 10;
+/*council pending*/
+update favouritelist set icon = 'fa-stethoscope icon-red' where id = 11;
+update favouritelist set infotext = 'Warten auf Konsil-Bericht' where id = 11;
+/*council completet*/
+update favouritelist set icon = 'fa-stethoscope icon-purple' where id = 12;
+update favouritelist set infotext = 'Konsilbericht liegt vor' where id = 12;
+
 +v 1.4.5 (22.04.2018)
 +++!: Patientensuche mit Name und Geburtsdatum funktioniert wieder richtig.
 +++!: Fehler beim erstellen von Nachbefunden behoben-

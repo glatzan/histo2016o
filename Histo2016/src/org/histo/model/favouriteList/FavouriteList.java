@@ -63,6 +63,15 @@ public class FavouriteList implements HasID {
 	@Column
 	private boolean globalView;
 	
+	@Column
+	private String command; 
+	
+	@Column
+	private String icon; 
+	
+	@Column
+	private String infoText; 
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList")
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<FavouriteListItem> items;

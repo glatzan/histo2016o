@@ -186,6 +186,12 @@
 									<h:outputLabel value="#{task.taskID}"
 										style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;font-weight:bold' : ''};" />
 
+									<p:repeat var="favouriteList" value="#{task.favouriteLists}">
+										<i style="margin-left: 5px;" class="fa #{favouriteList.icon}"
+											title="#{favouriteList.infoText}" />
+									</p:repeat>
+									
+									
 									<!-- staining needed -->
 									<h:panelGroup rendered="#{!task.finalized}">
 
