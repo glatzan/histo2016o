@@ -185,79 +185,21 @@
 
 									<h:outputLabel value="#{task.taskID}"
 										style="#{globalEditViewHandler.selectedTask eq task ? 'text-decoration: underline;font-weight:bold' : ''};" />
-
-									<p:repeat var="favouriteList" value="#{task.favouriteLists}">
-										<i style="margin-left: 5px;" class="fa #{favouriteList.icon}"
-											title="#{favouriteList.infoText}" />
-									</p:repeat>
-									
-									
-									<!-- staining needed -->
-									<h:panelGroup rendered="#{!task.finalized}">
-
-										<!-- staining needed = green -->
-										<ui:fragment rendered="#{task.taskStatus.stainingNeeded}">
-											<i style="margin-left: 5px;" class="fa fa-image icon-green"
-												title="#{msg['body.worklist.navigation.activtasks.staining']}" />
-										</ui:fragment>
-
-										<!-- re-staining needed = orange -->
-										<ui:fragment rendered="#{task.taskStatus.reStainingNeeded}">
-											<i style="margin-left: 5px;" class="fa fa-image icon-orange"
-												title="#{msg['body.worklist.navigation.activtasks.restaining']}" />
-										</ui:fragment>
-
-										<!--  no staining needed = purple -->
-										<ui:fragment rendered="#{task.taskStatus.stayInStainingList}">
-											<i style="margin-left: 5px;" class="fa fa-image icon-purple"
-												title="#{msg['body.worklist.navigation.activtasks.stainingPhase']}" />
-										</ui:fragment>
-
-
-										<!-- diagnosis needed -->
-										<!-- diagnosis needed = green -->
-										<ui:fragment rendered="#{task.taskStatus.diagnosisNeeded}">
-											<i style="margin-left: 5px;" class="fa fa-eye icon-green"
-												title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
-										</ui:fragment>
-
-										<!-- re-diagnosis needed = orange -->
-										<ui:fragment rendered="#{task.taskStatus.reDiagnosisNeeded}">
-											<i style="margin-left: 5px;" class="fa fa-eye icon-orange"
-												title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
-										</ui:fragment>
-
-										<!-- no diagnosis needed = purple -->
-										<ui:fragment rendered="#{task.taskStatus.stayInDiagnosisList}">
-											<i style="margin-left: 5px;" class="fa fa-eye icon-purple"
-												title="#{msg['body.worklist.navigation.activtasks.diagnosisPhase'] }" />
-										</ui:fragment>
-
-										<!-- notification needed -->
-										<!-- notification need = green -->
-										<ui:fragment rendered="#{task.taskStatus.notificationNeeded}">
-											<i style="margin-left: 5px;"
-												class="fa fa-volume-up icon-green"
-												title="#{msg['body.worklist.navigation.activtasks.diagnosis']}" />
-										</ui:fragment>
-
-										<!-- stay in phase = purple -->
-										<ui:fragment
-											rendered="#{task.taskStatus.stayInNotificationList}">
-											<i style="margin-left: 5px;"
-												class="fa fa-volume-up icon-purple"
-												title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
-										</ui:fragment>
-
-										<ui:fragment rendered="#{task.taskStatus.scannList}">
-											<i style="margin-left: 5px;" class="fa fa-camera icon-blue"
-												title="#{msg['body.worklist.navigation.activtasks.rediagnosis'] }" />
-										</ui:fragment>
-									</h:panelGroup>
 								</p:commandLink>
 
+								<p:repeat var="favouriteList" value="#{task.favouriteLists}">
+									<p:commandLink disabled="#{favouriteList.command eq null}"
+										style="opacity: 1;"
+										actionListener="#{globalEditViewHandler.executeCommand(favouriteList.command, task)}"
+										process="@this" update="@this">
+										<i style="margin-left: 5px;" class="fa #{favouriteList.icon}"
+											title="#{favouriteList.infoText}" />
+									</p:commandLink>
+								</p:repeat>
+
+
 								<p:commandLink partialSubmit="true" process="@this"
-									actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(task)}"
+									actionListener="#{councilDialogHandler.initAndPrepareBean(task)}"
 									update="navigationForm:patientList contentForm headerForm"
 									styleClass="noUnderlineAtLink">
 									<!-- council lending mta -->

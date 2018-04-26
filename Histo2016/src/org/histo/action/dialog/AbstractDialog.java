@@ -43,11 +43,14 @@ public abstract class AbstractDialog {
 	@Setter
 	protected UniqueRequestID uniqueRequestID = new UniqueRequestID();
 
+	public void initAndPrepareBean(Task dialog) {
+	}
+
 	public void initAndPrepareBean(Dialog dialog) {
-		initBean(null,dialog);
+		initBean(null, dialog);
 		prepareDialog();
 	}
-	
+
 	public void initAndPrepareBean(Task task, Dialog dialog) {
 		initBean(task, dialog);
 		prepareDialog();
@@ -105,7 +108,7 @@ public abstract class AbstractDialog {
 			options.put("headerElement", "dialogForm:header");
 
 		PrimeFaces.current().dialog().openDynamic(dialog.getPath(), options, null);
- 
+
 		logger.debug("Showing Dialog: " + dialog);
 	}
 
@@ -126,7 +129,7 @@ public abstract class AbstractDialog {
 	public void onDatabaseVersionConflict() {
 		hideDialog();
 		mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
-System.out.println("---");
+		System.out.println("---");
 		throw new AbortProcessingException();
 	}
 }

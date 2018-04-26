@@ -210,7 +210,7 @@
 
 			<!-- Council button -->
 			<p:commandButton id="councilBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.councilDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
+				actionListener="#{councilDialogHandler.initAndPrepareBean(globalEditViewHandler.selectedTask)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm headerForm" />

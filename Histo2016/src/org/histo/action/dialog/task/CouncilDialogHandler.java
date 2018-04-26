@@ -11,6 +11,36 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang.time.DateUtils;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.dialog.ProgrammVersionDialog;
+import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
+import org.histo.action.dialog.media.MediaDialog;
+import org.histo.action.dialog.notification.ContactDialog;
+import org.histo.action.dialog.notification.ContactNotificationDialog;
+import org.histo.action.dialog.notification.ContactSelectDialog;
+import org.histo.action.dialog.notification.NotificationDialog;
+import org.histo.action.dialog.notification.NotificationPhaseExitDialog;
+import org.histo.action.dialog.patient.CreateTaskDialog;
+import org.histo.action.dialog.patient.DeleteTaskDialog;
+import org.histo.action.dialog.patient.EditPatientDialog;
+import org.histo.action.dialog.patient.PatientLogDialog;
+import org.histo.action.dialog.print.CustomAddressDialog;
+import org.histo.action.dialog.print.FaxPrintDocumentDialog;
+import org.histo.action.dialog.print.PrintDialog;
+import org.histo.action.dialog.settings.favouriteLists.FavouriteListEditDialog;
+import org.histo.action.dialog.settings.groups.GroupEditDialog;
+import org.histo.action.dialog.settings.groups.GroupListDialog;
+import org.histo.action.dialog.settings.material.MaterialEditDialog;
+import org.histo.action.dialog.settings.organizations.OrganizationEditDialog;
+import org.histo.action.dialog.settings.organizations.OrganizationListDialog;
+import org.histo.action.dialog.settings.physician.PhysicianEditDialog;
+import org.histo.action.dialog.settings.physician.PhysicianSearchDialog;
+import org.histo.action.dialog.settings.staining.StainingEditDialog;
+import org.histo.action.dialog.settings.users.EditUserDialog;
+import org.histo.action.dialog.settings.users.UserListDialog;
+import org.histo.action.dialog.slide.CreateSlidesDialog;
+import org.histo.action.dialog.slide.SlideOverviewDialog;
+import org.histo.action.dialog.slide.StainingPhaseExitDialog;
+import org.histo.action.dialog.worklist.WorklistSearchDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.CouncilState;
@@ -35,12 +65,15 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.dataList.HasDataList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-@Configurable
+@Component
+@Scope(value = "session")
 @Getter
 @Setter
 public class CouncilDialogHandler extends AbstractDialog {

@@ -33,7 +33,6 @@ import org.histo.action.dialog.slide.StainingPhaseExitDialog;
 import org.histo.action.dialog.task.ArchiveTaskDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.histo.action.dialog.task.ChangeTaskIDDialog;
-import org.histo.action.dialog.task.CouncilDialogHandler;
 import org.histo.action.dialog.task.CreateSampleDialog;
 import org.histo.action.dialog.task.DeleteTaskEntityDialog;
 import org.histo.action.dialog.worklist.WorklistSearchDialog;
@@ -102,8 +101,6 @@ public class DialogHandlerAction {
 	private PatientLogDialog patientLogDialog;
 
 	private CreateSlidesDialog createSlidesDialog;
-
-	private CouncilDialogHandler councilDialogHandler;
 
 	private ChangeTaskIDDialog changeTaskIDDialog;
 
@@ -330,14 +327,6 @@ public class DialogHandlerAction {
 		}
 
 		return createSlidesDialog;
-	}
-
-	public CouncilDialogHandler getCouncilDialogHandler() {
-		if (councilDialogHandler == null) {
-			councilDialogHandler = new CouncilDialogHandler();
-		}
-
-		return councilDialogHandler;
 	}
 
 	public ChangeTaskIDDialog getChangeTaskIDDialog() {

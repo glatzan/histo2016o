@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.histo.action.DialogHandlerAction;
 import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
+import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
@@ -36,13 +37,16 @@ import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.HistoUtil;
 import org.histo.util.notification.NotificationContainer;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.json.JSONException;
 import org.primefaces.model.menu.MenuModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import lombok.AccessLevel;
@@ -133,6 +137,11 @@ public class GlobalEditViewHandler {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private AddPatientDialogHandler addPatientDialogHandler;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private ApplicationContext appContext;
 	// ************************ Navigation ************************
 	/**
 	 * View options, dynamically generated depending on the users role
@@ -455,6 +464,19 @@ public class GlobalEditViewHandler {
 			}
 
 		}
+	}
+
+	public void executeCommand(String command, Task task) {
+
+		if (HistoUtil.isNotNullOrEmpty(command)) {
+			if (command.matches("dialog:.*")) {
+				String[] arr = command.split(":");
+				AbstractDialog myClass = (AbstractDialog) appContext.getBean(arr[1]);
+				myClass.initAndPrepareBean(task);
+				// myClass.initAndPrepareBean(dialog);
+			}
+		}
+		System.out.println(command);
 	}
 
 }
