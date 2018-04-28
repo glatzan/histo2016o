@@ -190,9 +190,146 @@ body .ui-chkbox-box .ui-chkbox-icon {
 .defaultHistoTable .columnWidth250px {
   width: 250px;
 }
+.defaultHistoTable .columnWith50p {
+  width: 50%;
+}
+.defaultHistoTable .bigFon,
+.defaultHistoTable .columnHeading {
+  font-weight: bold !important;
+}
 /*
  * Class for a normal table layout
  */
+/**
+ * Table with no spacing. Should contain defaultHistoTables
+ */
+.histoHiddenTableContainer {
+  padding: 0px !important;
+  border-collapse: collapse !important;
+  border: 0px !important;
+  border-spacing: 0px !important;
+}
+.histoHiddenTableContainer > tbody > tr > td,
+.histoHiddenTableContainer > tbody > tr,
+.histoHiddenTableContainer > tbody {
+  padding: 0px !important;
+  border-collapse: collapse !important;
+  border: 0px !important;
+  border-spacing: 0px !important;
+}
+.histoHiddenTableContainer .columnWidth25px {
+  width: 25px;
+}
+.histoHiddenTableContainer .columnWidth50px {
+  width: 50px;
+}
+.histoHiddenTableContainer .columnWidth75px {
+  width: 75px;
+}
+.histoHiddenTableContainer .columnWidth100px {
+  width: 100px;
+}
+.histoHiddenTableContainer .columnWidth125px {
+  width: 125px;
+}
+.histoHiddenTableContainer .columnWidth150px {
+  width: 150px;
+}
+.histoHiddenTableContainer .columnWidth175px {
+  width: 175px;
+}
+.histoHiddenTableContainer .columnWidth200px {
+  width: 200px;
+}
+.histoHiddenTableContainer .columnWidth225px {
+  width: 225px;
+}
+.histoHiddenTableContainer .columnWidth250px {
+  width: 250px;
+}
+.histoHiddenTableContainer .columnWidthPercent5 {
+  width: 5%;
+}
+.histoHiddenTableContainer .columnWidthPercent10 {
+  width: 10%;
+}
+.histoHiddenTableContainer .columnWidthPercent15 {
+  width: 15%;
+}
+.histoHiddenTableContainer .columnWidthPercent20 {
+  width: 20%;
+}
+.histoHiddenTableContainer .columnWidthPercent25 {
+  width: 25%;
+}
+.histoHiddenTableContainer .columnWidthPercent30 {
+  width: 30%;
+}
+.histoHiddenTableContainer .columnWidthPercent35 {
+  width: 35%;
+}
+.histoHiddenTableContainer .columnWidthPercent40 {
+  width: 40%;
+}
+.histoHiddenTableContainer .columnWidthPercent45 {
+  width: 45%;
+}
+.histoHiddenTableContainer .columnWidthPercent50 {
+  width: 50%;
+}
+.histoHiddenTableContainer .columnWidthPercent55 {
+  width: 55%;
+}
+.histoHiddenTableContainer .columnWidthPercent60 {
+  width: 60%;
+}
+.histoHiddenTableContainer .columnWidthPercent65 {
+  width: 65%;
+}
+.histoHiddenTableContainer .columnWidthPercent70 {
+  width: 70%;
+}
+.histoHiddenTableContainer .columnWidthPercent75 {
+  width: 75%;
+}
+.histoHiddenTableContainer .columnWidthPercent80 {
+  width: 80%;
+}
+.histoHiddenTableContainer .columnWidthPercent85 {
+  width: 85%;
+}
+.histoHiddenTableContainer .columnWidthPercent90 {
+  width: 90%;
+}
+.histoHiddenTableContainer .columnWidthPercent95 {
+  width: 95%;
+}
+.histoHiddenTableContainer .columnWidthPercent100 {
+  width: 100%;
+}
+/*
+ * Separator for dialogs 
+ *
+ *	<h:panelGrid columns="1" styleClass="defaultHistoSeperatorTable">
+ *		<p:separator />
+ *	</h:panelGrid>
+ */
+.defaultHistoSeperatorTable {
+  width: 100%;
+}
+.defaultHistoSeperatorTable label {
+  font-size: 14;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+  font-weight: bold !important;
+  color: #555555;
+}
+.defaultHistoSeperatorTable hr {
+  width: 100%;
+}
 .defaultHistoDataTable {
   width: 100%;
   white-space: normal;

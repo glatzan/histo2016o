@@ -50,7 +50,7 @@
 					headerText="#{msg['dialog.worklistsearch.favouriteList.table.options']}">
 					<p:commandLink
 						title="#{msg['dialog.settings.person.list.options.edit']}"
-						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+						actionListener="#{favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
 						process="@this" partialSubmit="true">
 						<p:ajax event="dialogReturn" update="@form" />
 						<i class="fa fa-fw fa-pencil" />

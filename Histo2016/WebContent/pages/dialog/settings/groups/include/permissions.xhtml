@@ -112,6 +112,55 @@
 					title="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_ORGANIZAZIONS.text']}"
 					value="#{msg['enum.histoPermissions.PROGRAM_SETTINGS_ORGANIZAZIONS']}" />
 
+
+				<!-- favourite list -->
+				<!-- favourite list -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:5px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST'].value}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST.text']}">
+					<p:ajax event="change" update="@form"
+						listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST'])}"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.FAVOURITE_LIST']}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST.text']}" />
+
+				<!-- favourite list use -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST_USE'].value}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST_USE.text']}">
+					<p:ajax event="change" update="@form"
+						listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST_USE'])}"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.FAVOURITE_LIST_USE']}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST_USE.text']}" />
+
+				<!-- favourite list icon -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST_ICON'].value}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST_ICON.text']}">
+					<p:ajax event="change" update="@form"
+						listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST_ICON'])}"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.FAVOURITE_LIST_ICON']}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST_ICON.text']}" />
+
+				<!-- favourite list icon command -->
+				<p:selectBooleanCheckbox styleClass="centerCheckbox"
+					style="margin-left:15px;"
+					value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST_ICON_COMMAND'].value}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST_ICON_COMMAND.text']}">
+					<p:ajax event="change" update="@form"
+						listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['FAVOURITE_LIST_ICON_COMMAND'])}"></p:ajax>
+				</p:selectBooleanCheckbox>
+				<h:outputLabel
+					value=" #{msg['enum.histoPermissions.FAVOURITE_LIST_ICON_COMMAND']}"
+					title="#{msg['enum.histoPermissions.FAVOURITE_LIST_ICON_COMMAND.text']}" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="newStyleListingTable"
@@ -255,18 +304,6 @@
 					<h:outputLabel
 						value=" #{msg['enum.histoPermissions.USER_WORKLIST']}"
 						title="#{msg['enum.histoPermissions.USER_WORKLIST.text']}" />
-
-					<!-- use favourite lists -->
-					<p:selectBooleanCheckbox styleClass="centerCheckbox"
-						style="margin-left:15px;"
-						value="#{dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_FAVOURITE_LIST'].value}"
-						title="#{msg['enum.histoPermissions.USER_FAVOURITE_LIST.text']}">
-						<p:ajax event="change" update="@form"
-							listener="#{dialogHandlerAction.groupEditDialog.permissionTab.onChangePermission(dialogHandlerAction.groupEditDialog.permissionTab.permissions['USER_FAVOURITE_LIST'])}"></p:ajax>
-					</p:selectBooleanCheckbox>
-					<h:outputLabel
-						value=" #{msg['enum.histoPermissions.USER_FAVOURITE_LIST']}"
-						title="#{msg['enum.histoPermissions.USER_FAVOURITE_LIST.text']}" />
 
 					<!-- report view  -->
 					<p:selectBooleanCheckbox styleClass="centerCheckbox"

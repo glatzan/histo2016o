@@ -50,16 +50,30 @@ public enum HistoPermissions {
 	USER_WORKLIST (USER),
 	
 	/**
-	 * If not set user can not use favourite lists, tab in usersettings is not shown
-	 * -> Used in UserSettingsDialog to disable the favouritelist tab
-	 */
-	USER_FAVOURITE_LIST (USER),
-	
-	/**
 	 * If set the diagnosis will always be rendered in WORKLIST_REPORT view.
 	 * -> Used in 
 	 */
-	USER_ALWAYS_SHOW_IN_WORKLIST_REPORT;
+	USER_ALWAYS_SHOW_IN_WORKLIST_REPORT,
+	
+	/**
+	 * Parent of all favourite List permission
+	 */
+	FAVOURITE_LIST,
+	
+	/**
+	 * If true the user can use favourite lists
+	 */
+	FAVOURITE_LIST_USE(FAVOURITE_LIST),
+	
+	/**
+	 * If the use user can create favorite lists which are displayed by an icon
+	 */
+	FAVOURITE_LIST_ICON(FAVOURITE_LIST),
+	
+	/**
+	 * If this permission is set, the user can set an icon command for the favourite list.
+	 */
+	FAVOURITE_LIST_ICON_COMMAND(FAVOURITE_LIST);
 	
 	private HistoPermissions parent;
 

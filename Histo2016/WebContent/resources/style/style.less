@@ -25,15 +25,15 @@
 	border-spacing: 0px !important;
 }
 
-// iteration for creating column width in px. use: xxxx20px
-.column_width(@count, @name) when (@count > 0) {
-   .column_width((@count - 1), @name);
+// iteration for creating column width in unit. use: xxxx20px
+.column_width(@count, @name,@step : 25,@unit : "px") when (@count > 0) {
+   .column_width(@step,(@count - 1), @name,@unit);
    
-   @widthpara : (25px * @count);
+   @widthpara : (@step * @count);
    @name1 : ~"@{name}@{widthpara}";
    
    .@{name1}{
-  	 width: @widthpara;
+  	 width: ~"@{widthpara}@{unit}";
    }
 }
 
@@ -236,7 +236,59 @@ body {
 	// columnWidths of table
 	.column_width(10,"columnWidth");
 
+	.columnWith50p{
+		width: 50%;	
+	}
+	
+	.bigFon, .columnHeading{
+		font-weight: bold !important;
+	}
 }
+
+/**
+ * Table with no spacing. Should contain defaultHistoTables
+ */
+.histoHiddenTableContainer{
+	
+	padding: 0px !important;
+	border-collapse: collapse !important;
+	border: 0px !important;
+	border-spacing: 0px !important;
+	
+	>tbody>tr>td, >tbody>tr, >tbody{
+		padding: 0px !important;
+		border-collapse: collapse !important;
+		border: 0px !important;
+		border-spacing: 0px !important;
+	}
+	
+	// columnWidths of table px
+	.column_width(10,"columnWidth");
+	
+	// columnWidths of table percent
+	.column_width(20,"columnWidthPercent",5,"%");
+} 
+
+/*
+ * Separator for dialogs 
+ *
+ *	<h:panelGrid columns="1" styleClass="defaultHistoSeperatorTable">
+ *		<p:separator />
+ *	</h:panelGrid>
+ */
+.defaultHistoSeperatorTable{
+	width: 100%;
+	label {
+		.histo_font(14);
+		font-weight: bold !important;
+		color: #555555;
+	}
+	
+	hr{
+		width: 100%;
+	}
+}
+
 
 // default scroll data table layout
 .defaultHistoDataTable {

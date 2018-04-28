@@ -42,7 +42,7 @@
 				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">
 					<p:commandLink styleClass="noUnderlineAtLink"
 						title="#{msg['dialog.settings.person.list.options.edit']}"
-						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+						actionListener="#{favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
 						disabled="#{!favouriteListContainer.editable}" process="@this"
 						partialSubmit="true">
 						<p:ajax event="dialogReturn" update="@form" />
@@ -51,7 +51,7 @@
 
 					<p:commandLink styleClass="noUnderlineAtLink"
 						title="#{msg['dialog.settings.person.list.options.edit']}"
-						actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+						actionListener="#{favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
 						process="@this" partialSubmit="true">
 						<p:ajax event="dialogReturn" update="@form" />
 						<i class="fa fa-fw fa-search" />
@@ -74,7 +74,7 @@
 				<p:commandButton
 					value="-> #{msg['dialog.settings.favouriteList.list.button.new']}"
 					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
-					actionListener="#{dialogHandlerAction.favouriteListEditDialog.initAndPrepareBean()}">
+					actionListener="#{favouriteListEditDialog.initAndPrepareBean()}">
 					<p:ajax event="dialogReturn"
 						listener="#{userSettingsDialog.favouriteListTab.updateData()}"
 						update="@form" />

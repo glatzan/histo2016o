@@ -24,6 +24,8 @@ import org.histo.ui.transformer.DefaultTransformer;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -32,9 +34,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-@Configurable
-@Getter
+@Component
+@Scope(value = "session")
 @Setter
+@Getter
 public class FavouriteListEditDialog extends AbstractDialog {
 
 	@Autowired

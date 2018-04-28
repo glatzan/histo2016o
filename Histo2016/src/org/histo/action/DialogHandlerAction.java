@@ -8,7 +8,6 @@ import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.notification.NotificationDialog;
 import org.histo.action.dialog.notification.NotificationPhaseExitDialog;
-import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.DeleteTaskDialog;
 import org.histo.action.dialog.patient.EditPatientDialog;
@@ -16,7 +15,6 @@ import org.histo.action.dialog.patient.PatientLogDialog;
 import org.histo.action.dialog.print.CustomAddressDialog;
 import org.histo.action.dialog.print.FaxPrintDocumentDialog;
 import org.histo.action.dialog.print.PrintDialog;
-import org.histo.action.dialog.settings.favouriteLists.FavouriteListEditDialog;
 import org.histo.action.dialog.settings.groups.GroupEditDialog;
 import org.histo.action.dialog.settings.groups.GroupListDialog;
 import org.histo.action.dialog.settings.material.MaterialEditDialog;
@@ -75,8 +73,6 @@ public class DialogHandlerAction {
 	private EditPatientDialog editPatientDialog;
 
 	private FavouriteListsDialog favouriteListsDialog;
-
-	private FavouriteListEditDialog favouriteListEditDialog;
 
 	private SlideOverviewDialog slideOverviewDialog;
 
@@ -295,14 +291,6 @@ public class DialogHandlerAction {
 		}
 
 		return groupEditDialog;
-	}
-
-	public FavouriteListEditDialog getFavouriteListEditDialog() {
-		if (favouriteListEditDialog == null) {
-			favouriteListEditDialog = new FavouriteListEditDialog();
-		}
-
-		return favouriteListEditDialog;
 	}
 
 	public UserListDialog getUserListDialog() {

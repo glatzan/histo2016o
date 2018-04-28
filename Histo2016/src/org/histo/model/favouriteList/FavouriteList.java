@@ -54,20 +54,20 @@ public class FavouriteList implements HasID {
 	@Column
 	private boolean defaultList;
 
-	/**
-	 * If true the list can be used by users to add task manually (has to be a system list)
-	 */
-	@Column
-	private boolean defaultShare;
-	
 	@Column
 	private boolean globalView;
+	
+	@Column
+	private boolean useIcon;
 	
 	@Column
 	private String command; 
 	
 	@Column
 	private String icon; 
+	
+	@Column
+	private String iconColor; 
 	
 	@Column
 	private String infoText; 
