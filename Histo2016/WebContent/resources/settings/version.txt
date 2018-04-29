@@ -1,4 +1,6 @@
 -> less https://github.com/palantir/eclipse-less
+--> your-project/.settings/com.palantir.less.prefs
+--> srcFiles=WebContent/resources/style/style.less;WebContent/resources/style/specificStyle.less;WebContent/resources/style/common.less
 -> atmosphere https://forum.primefaces.org/viewtopic.php?t=48289
 -> UTF 8 Tomcat: -Dfile.encoding=UTF8
 -> plink windows set PATH=C:\path\to\putty\directory;%PATH%
@@ -124,13 +126,16 @@ https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
 +v 1.4.6
 ++++: Neue Favouritenliste inklusive Icon zum einscannen von Objektträgern.
-
+	
 SQL:
 /* adding new favourite list*/
 INSERT INTO favouritelist (id, defaultlist, globalview, name) VALUES (50, true, true, 'Einscannliste');
 
 /* field for dumplist*/
 alter table favouritelist add dumplist_id bigint;
+alter table favouritelist add usedumplist boolean;
+update favouritelist set usedumplist = false;
+alter table favouritelist add dumpcommentary character varying;
 ALTER TABLE ONLY favouritelist ADD CONSTRAINT favouritelist_dumplist_fkey FOREIGN KEY (dumplist_id) REFERENCES favouritelist(id);
 
 /* icon use */

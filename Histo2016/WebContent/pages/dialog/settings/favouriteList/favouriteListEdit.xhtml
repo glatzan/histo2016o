@@ -32,7 +32,7 @@
 
 			<!-- Name -->
 			<h:panelGrid columns="2" styleClass="defaultHistoTable"
-				columnClasses="columnWidth150px columnHeading,">
+				columnClasses="columnWidth150 columnHeading columnTop,">
 
 				<!-- name -->
 				<h:outputLabel value="#{msg['dialog.favouriteListEdit.name']}" />
@@ -89,11 +89,13 @@
 				<p:separator />
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="histoHiddenTableContainer">
+			<!-- icon and dump list container -->
+			<h:panelGrid columns="2" styleClass="histoHiddenTableContainer"
+				columnClasses="columnWidthPercent50,columnWidthPercent50 columnTop">
 				<!-- icon -->
 				<h:panelGrid columns="2" styleClass="defaultHistoTable"
 					rendered="#{userHandlerAction.currentUserHasPermission('FAVOURITE_LIST_ICON')}"
-					columnClasses="columnWidth150px columnHeading,">
+					columnClasses="columnWidth150 columnHeading,">
 
 					<!-- use icon -->
 					<h:outputLabel
@@ -106,8 +108,17 @@
 
 					<!-- icon -->
 					<h:outputLabel value="#{msg['dialog.favouriteListEdit.icon.icon']}"></h:outputLabel>
-					<p:inputText value="#{favouriteListEditDialog.favouriteList.icon}"
-						disabled="#{!favouriteListEditDialog.favouriteList.useIcon or favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"></p:inputText>
+					<h:panelGroup>
+						<p:inputText value="#{favouriteListEditDialog.favouriteList.icon}"
+							disabled="#{!favouriteListEditDialog.favouriteList.useIcon or favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"></p:inputText>
+
+						<h:outputLink style="margin-left:5px"
+							disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
+							value="https://www.primefaces.org/showcase/ui/misc/fa.xhtml" title="#{msg['dialog.favouriteListEdit.icon.icon.text']}"
+							target="_blank">
+							<i class="fa fa-picture-o icon-grey" />
+						</h:outputLink>
+					</h:panelGroup>
 
 					<!-- command -->
 					<h:outputLabel
@@ -132,7 +143,42 @@
 						disabled="#{!favouriteListEditDialog.favouriteList.useIcon or favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"></p:inputText>
 				</h:panelGrid>
 
-				<h:outputLabel value="fa"></h:outputLabel>
+				<h:panelGrid columns="2" styleClass="defaultHistoTable"
+					columnClasses="columnWidth150 columnHeading columnTop,">
+
+					<!-- use dumplist -->
+					<h:outputLabel value="#{msg['dialog.favouriteListEdit.dumpList']}"></h:outputLabel>
+					<p:selectBooleanCheckbox
+						disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
+						value="#{favouriteListEditDialog.favouriteList.useDumplist}">
+						<p:ajax event="change" process="@form" update="@form"
+							listener="#{favouriteListEditDialog.onUseDumplist()}" />
+					</p:selectBooleanCheckbox>
+
+					<!-- dump list -->
+					<h:outputLabel
+						value="#{msg['dialog.favouriteListEdit.dumpList.list']}"></h:outputLabel>
+					<p:selectOneMenu
+						disabled="#{!favouriteListEditDialog.favouriteList.useDumplist or favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
+						value="#{favouriteListEditDialog.favouriteList.dumpList}"
+						converter="#{favouriteListEditDialog.dumpListTransformer}">
+
+						<f:selectItem itemValue="#{null}" itemLabel="Keine ausgewählt"></f:selectItem>
+
+						<f:selectItems value="#{favouriteListEditDialog.dumpLists}"
+							var="list" itemValue="#{list}" itemLabel="#{list.name}" />
+
+					</p:selectOneMenu>
+
+					<!-- text list -->
+					<h:outputLabel
+						value="#{msg['dialog.favouriteListEdit.dumpList.text']}"></h:outputLabel>
+					<p:inputTextarea rows="4" cols="35"
+						value="#{favouriteListEditDialog.favouriteList.dumpCommentary}"
+						disabled="#{!favouriteListEditDialog.favouriteList.useDumplist or  favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"></p:inputTextarea>
+
+
+				</h:panelGrid>
 			</h:panelGrid>
 
 			<!-- seperator -->
@@ -142,7 +188,7 @@
 
 			<!-- Users + group -->
 			<h:panelGrid columns="2" styleClass="defaultHistoTable"
-				columnClasses="columnWith50p,columnWith50p">
+				columnClasses="columnWidthPercent50,columnWidthPercent50">
 
 				<!-- user -->
 				<h:outputLabel styleClass="columnHeading"

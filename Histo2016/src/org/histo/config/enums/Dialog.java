@@ -23,8 +23,6 @@ public enum Dialog {
 	TASK_CHANGE_ID("/pages/dialog/task/chagneTaskID", null, 480, 272, false, false, true), // 16:9
 	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9
 	BIO_BANK("/pages/dialog/biobank/biobank", null, 858, 484, false, false, true), // 16:9
-	FAVOURITE_LISTS("/pages/dialog/favouriteLists/favouriteLists", null, 858, 484, false, false, true), // 16:9
-	FAVOURITE_LIST_ADD("/pages/dialog/task/favouriteLists/addFavouriteList", null, 640, 360, false, false, true),// 16:9
 	SLIDE_OVERVIEW("/pages/dialog/task/staining/slideOverview", null, 1024, 600, false, false, true), // 16:9
 	SLIDE_NAMING("/pages/dialog/task/slideNaming", null,430, 270, false, false, true), 
 	SLIDE_CREATE("/pages/dialog/task/staining/addSlide", null, 858, 484, false, false, true),// 16:9

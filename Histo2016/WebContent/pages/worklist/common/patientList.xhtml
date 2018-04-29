@@ -188,11 +188,15 @@
 								</p:commandLink>
 
 								<p:repeat var="favouriteList" value="#{task.favouriteLists}">
-									<p:commandLink disabled="#{favouriteList.command eq null}"
-										style="opacity: 1;"
+									<p:commandLink
+										disabled="#{favouriteList.command eq null or favouriteList.command eq ''}"
+										style="opacity: 1;margin-left: 5px;"
+										styleClass="noUnderlineAtLink"
+										rendered="#{favouriteList.useIcon}"
 										actionListener="#{globalEditViewHandler.executeCommand(favouriteList.command, task)}"
 										process="@this" update="@this">
-										<i style="margin-left: 5px;" class="fa #{favouriteList.icon}"
+										<i style="color: ##{favouriteList.iconColor}"
+											class="fa #{favouriteList.icon}"
 											title="#{favouriteList.infoText}" />
 									</p:commandLink>
 								</p:repeat>

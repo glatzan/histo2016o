@@ -21,6 +21,7 @@ import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
 import org.histo.ui.FavouriteListContainer;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.histo.util.HistoUtil;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -127,13 +128,19 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		}
 
 		setDumpListTransformer(new DefaultTransformer<FavouriteList>(dumpLists));
-		
+
 		setUserPermission(new FavouriteListContainer(favouriteList, userHandlerAction.getCurrentUser()));
 
 		super.initBean(task, Dialog.SETTINGS_FAVOURITE_LIST_EDIT);
 		return true;
 	}
 
+	/**
+	 * Method called on selecting the admin role for the user/group. Setting write
+	 * and editable to true.
+	 * 
+	 * @param permission
+	 */
 	public void onSelectAdmin(FavouritePermissions permission) {
 		if (permission.isAdmin()) {
 			permission.setEditable(true);
@@ -141,12 +148,23 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		}
 	}
 
+	/**
+	 * Is called on user select dialog return. Sets the new owner
+	 * 
+	 * @param event
+	 */
 	public void onReturnSelectOwner(SelectEvent event) {
 		if (event.getObject() != null && event.getObject() instanceof HistoUser) {
 			favouriteList.setOwner((HistoUser) event.getObject());
 		}
 	}
 
+	/**
+	 * Is called on user select dialog return. Adds an user to the permission list,
+	 * sets readable to true.
+	 * 
+	 * @param event
+	 */
 	public void onReturnSelectUser(SelectEvent event) {
 		if (event.getObject() != null && event.getObject() instanceof HistoUser) {
 			if (!favouriteList.getUsers().stream().anyMatch(p -> p.getUser().equals(event.getObject()))) {
@@ -161,6 +179,12 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		}
 	}
 
+	/**
+	 * Is called on group select dialog return. Adds a group to the permission list,
+	 * sets readable to true.
+	 * 
+	 * @param event
+	 */
 	public void onReturnSelectGroup(SelectEvent event) {
 		if (event.getObject() != null && event.getObject() instanceof HistoGroup) {
 			if (!favouriteList.getGroups().stream().anyMatch(p -> p.getGroup().equals(event.getObject()))) {
@@ -175,6 +199,12 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		}
 	}
 
+	/**
+	 * Removes a permission entity.
+	 * 
+	 * @param list
+	 * @param toRemove
+	 */
 	public void removeEntityFromList(Set<? extends FavouritePermissions> list, FavouritePermissions toRemove) {
 		if (toRemove.getId() != 0)
 			toDeleteList.add(toRemove);
@@ -182,6 +212,20 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		list.remove(toRemove);
 	}
 
+	/**
+	 * Is called on useDuplist change (boolean). If dumplist should be used an there
+	 * is no default commentary, the commentary is generated.
+	 */
+	public void onUseDumplist() {
+		if (favouriteList.isUseDumplist() && HistoUtil.isNullOrEmpty(favouriteList.getDumpCommentary())) {
+			String commentary = resourceBundle.get("dialog.favouriteListEdit.dumpList.default");
+			favouriteList.setDumpCommentary(commentary);
+		}
+	}
+
+	/**
+	 * Saves the list.
+	 */
 	public void saveFavouriteList() {
 
 		try {

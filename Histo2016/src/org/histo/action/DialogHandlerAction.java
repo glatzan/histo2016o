@@ -1,7 +1,6 @@
 package org.histo.action;
 
 import org.histo.action.dialog.ProgrammVersionDialog;
-import org.histo.action.dialog.favouriteLists.FavouriteListsDialog;
 import org.histo.action.dialog.media.MediaDialog;
 import org.histo.action.dialog.notification.ContactDialog;
 import org.histo.action.dialog.notification.ContactNotificationDialog;
@@ -71,8 +70,6 @@ public class DialogHandlerAction {
 	private CreateTaskDialog createTaskDialog;
 
 	private EditPatientDialog editPatientDialog;
-
-	private FavouriteListsDialog favouriteListsDialog;
 
 	private SlideOverviewDialog slideOverviewDialog;
 
@@ -211,14 +208,6 @@ public class DialogHandlerAction {
 		}
 
 		return editPatientDialog;
-	}
-
-	public FavouriteListsDialog getFavouriteListsDialog() {
-		if (favouriteListsDialog == null) {
-			favouriteListsDialog = new FavouriteListsDialog();
-		}
-
-		return favouriteListsDialog;
 	}
 
 	public SlideOverviewDialog getSlideOverviewDialog() {

@@ -1,0 +1,84 @@
+@header_background_color: #333;
+@header_text_color: #555555;
+@alternate_row_background_color: #f2f2f2;
+@highlighted_row_background: #fcf1b8;
+@default_table_width: 100%;
+@table_body_height: 100px;
+@defualt_padding: 4px 4px;
+@default_font: Verdana, Arial, "Trebuchet MS", sans-serif;
+// default font
+.histo_font (@size: 11px) {
+	font-size: @size;
+	font-family: @default_font;
+	box-shadow: none;
+	font-style: normal;
+	font-variant: normal;
+	text-align: left;
+}
+
+// no padding
+.histo_noPadding {
+	padding: 0px;
+	border-collapse: collapse ! important;
+	border: 0px ! important;
+	border-spacing: 0px ! important;
+}
+
+// iteration for creating column width in unit. use: xxxx20px
+.column_width (@count , @name , @step , @unit) when (@count > 0) {
+	.column_width ((@count - 1) , @name , @step , @unit);
+	@widthpara: (@step * @count);
+	@name1: ~"@{name}@{widthpara}";
+	.@{name1} {
+		width: ~"@{widthpara}@{unit}";
+	}
+}
+
+@icon-colors: green, purple, orange, #555555, red, blue;
+@icon-names: icon-green, icon-purple, icon-orange, icon-grey, icon-red, icon-blue;
+@icon-length: length(@icon-colors);
+// loop for generating icon colors 
+.generate-incon-colors (@names;
+@colors;
+@index) when (iscolor(extract(@colors, @index))) and (@index > 0) {
+	.generate-incon-colors (@names;
+	@colors;
+	(@index - 1));
+	@name: extract(@icon-names, @index);
+	@color: extract(@icon-colors, @index);
+	.@{name} , .@{name}:link , .@{name}:active , .@{name}:hover , .@{name}:visited {
+		color: @color;
+	}
+}
+
+.tableCommonClasses {:focus {
+		outline: none ! important;
+	}
+
+	.bigFon , .columnHeading {
+		font-weight: bold ! important;
+	}
+
+	.ui-selectonemenu lable {
+		padding: @defualt_padding ! important;
+	}
+
+	.columnTop {
+		vertical-align: top;
+	}
+
+	a {
+		text-decoration: none ! important;
+	}
+
+	label {
+		.histo_noPadding();
+		.histo_font ();
+	}
+
+	.headline {
+		font-size: 12px ! important;
+		font-weight: bold;
+	}
+}
+

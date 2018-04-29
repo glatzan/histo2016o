@@ -29,7 +29,7 @@
 
 		<div class="dialogContent">
 			<h:panelGrid columns="5" styleClass="defaultHistoTable"
-				columnClasses="columnWidth150px,">
+				columnClasses="columnWidth150,">
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.merge.patient']}"
 					styleClass="headline"></h:outputLabel>
@@ -52,7 +52,7 @@
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" styleClass="defaultHistoTable"
-				columnClasses="columnWidth150px,">
+				columnClasses="columnWidth150,">
 				<h:outputLabel value="" />
 				<p:dataTable var="task" scrollable="true" scrollHeight="50"
 					rowKey="#{task.id}" rowIndexVar="rowIdx" id="batchList"
@@ -82,7 +82,7 @@
 
 			<h:panelGrid columns="2" styleClass="defaultHistoTable"
 				rendered="#{mergePatientDialog.patientToMerge ne null and mergePatientDialog.patient.externalPatient}"
-				columnClasses="columnWidth150px,">
+				columnClasses="columnWidth150,">
 
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.merge.delete']}:" />
@@ -134,7 +134,7 @@
 
 			<h:panelGrid columns="5" styleClass="defaultHistoTable"
 				rendered="#{mergePatientDialog.patientToMerge ne null}"
-				columnClasses="columnWidth150px,">
+				columnClasses="columnWidth150,">
 				<h:outputLabel
 					value="#{msg['dialog.mergePatientDialog.patientToMerge']}"
 					styleClass="headline"></h:outputLabel>

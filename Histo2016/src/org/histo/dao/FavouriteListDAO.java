@@ -46,6 +46,7 @@ public class FavouriteListDAO extends AbstractDAO {
 		if (initialized) {
 			Hibernate.initialize(favList.getOwner());
 			Hibernate.initialize(favList.getItems());
+			Hibernate.initialize(favList.getDumpList());
 		}
 
 		if (permissions) {
@@ -60,6 +61,7 @@ public class FavouriteListDAO extends AbstractDAO {
 		genericDAO.reattach(favList);
 		Hibernate.initialize(favList.getOwner());
 		Hibernate.initialize(favList.getItems());
+		Hibernate.initialize(favList.getDumpList());
 
 		if (permissions) {
 			Hibernate.initialize(favList.getUsers());

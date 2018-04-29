@@ -1,59 +1,5 @@
-@header_background_color: #333;
-@header_text_color: #555555;
-@alternate_row_background_color: #f2f2f2;
-@highlighted_row_background: #fcf1b8;
-@default_table_width: 100%;
-@table_body_height: 100px;
-@defualt_padding: 4px 4px;
-@default_font: Verdana, Arial, "Trebuchet MS", sans-serif;
+@import "common.less";
 
-// default font
-.histo_font(@size: 11px) {
-	font-size: @size;
-	font-family: @default_font;
-	box-shadow: none;
-	font-style: normal;
-	font-variant: normal;
-	text-align: left;
-}
-
-// no padding
-.histo_noPadding{
-	padding: 0px !important;
-	border-collapse: collapse !important;
-	border: 0px !important;
-	border-spacing: 0px !important;
-}
-
-// iteration for creating column width in unit. use: xxxx20px
-.column_width(@count, @name,@step : 25,@unit : "px") when (@count > 0) {
-   .column_width(@step,(@count - 1), @name,@unit);
-   
-   @widthpara : (@step * @count);
-   @name1 : ~"@{name}@{widthpara}";
-   
-   .@{name1}{
-  	 width: ~"@{widthpara}@{unit}";
-   }
-}
-
-// colored icons
-@icon-colors : green, purple, orange, #555555, red, blue;
-@icon-names  : icon-green, icon-purple, icon-orange, icon-grey, icon-red, icon-blue;
-@icon-length : length(@icon-colors);
-
-// loop for generating icon colors 
-.generate-incon-colors(@names; @colors; @index) when (iscolor(extract(@colors, @index))) and (@index > 0) {
-    .generate-incon-colors(@names; @colors; (@index - 1)); // decrement.
- 
-  @name  : extract(@icon-names, @index);
-  @color : extract(@icon-colors, @index);
- 
-  .@{name}, .@{name}:link, .@{name}:active, .@{name}:hover, .@{name}:visited {
-    color: @color;
-  }
-}
-	
 /*
  * Default Body Style
  */
@@ -196,17 +142,15 @@ body {
 	width: 100% !important;
 	table-layout: auto !important;
 	
-	tbody{
-		tr{
-			td{
+	>tbody{
+		>tr>td{
 				border: none !important;
 				width: auto;
 				white-space: normal;
-			}
 		}
 		
 		& when (@colorRow=true) {
-			tr.even>td {
+			>tr.even>td {
 				border: 1px solid transparent;
 				background-color: @alternate_row_background_color;
 			}
@@ -218,31 +162,14 @@ body {
 		.histo_font();
 	}
 	
-	label{
-		.histo_noPadding();
-		.histo_font();
-	}
+	// columnWidths of table px
+	.column_width(10,"columnWidth",25,"px");
 	
-	label.headline{
-		font-size: 12px !important;
-		font-weight: bold;	
-	}
+	// columnWidths of table percent
+	.column_width(20,"columnWidthPercent",5,"%");
 	
-	// hiding focus 
-	:focus {
-    	outline:none !important;
-	}
-	
-	// columnWidths of table
-	.column_width(10,"columnWidth");
-
-	.columnWith50p{
-		width: 50%;	
-	}
-	
-	.bigFon, .columnHeading{
-		font-weight: bold !important;
-	}
+	// common table classes include
+	.tableCommonClasses();
 }
 
 /**
@@ -254,6 +181,7 @@ body {
 	border-collapse: collapse !important;
 	border: 0px !important;
 	border-spacing: 0px !important;
+	width: 100% !important;
 	
 	>tbody>tr>td, >tbody>tr, >tbody{
 		padding: 0px !important;
@@ -263,10 +191,13 @@ body {
 	}
 	
 	// columnWidths of table px
-	.column_width(10,"columnWidth");
+	.column_width(10,"columnWidth",25,"px");
 	
 	// columnWidths of table percent
 	.column_width(20,"columnWidthPercent",5,"%");
+	
+	// common table classes include
+	.tableCommonClasses();
 } 
 
 /*
@@ -321,8 +252,15 @@ body {
 	
 	// body
 	.ui-datatable-scrollable-body{
+		border-bottom: 1px solid rgb(211, 211, 211) !important;
+		border-left: 1px solid rgb(211, 211, 211) !important;
+		border-right: 1px solid rgb(211, 211, 211) !important;
+		
 		table{
 			
+			border-right: none !important;
+			border-left: 0px !important;
+				
 			// hide header
 			thead{
 				display: none;
@@ -330,15 +268,27 @@ body {
 		
 			// body style
 			tbody{
-				border: none !important;
+				border-right: none !important;
+				border-left: 0px !important;
 				
 				tr{
 					width:100%;
-					border: none !important;
+					border-left: 0px !important;
+					border-right: none !important;
+					
 					td{
 						border: 1px solid transparent;
-						border-spacing: 1px !important;
+						border-spacing: 0px 1px;
 					}
+					
+					td:first-child{
+						border-left: 0px !important;
+					}
+					
+					td:last-child{
+						border-right: none !important;
+					}
+					
 				}
 				
 				& when (@colorRow=true) {

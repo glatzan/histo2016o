@@ -43,15 +43,6 @@
 					<p:commandLink styleClass="noUnderlineAtLink"
 						title="#{msg['dialog.settings.person.list.options.edit']}"
 						actionListener="#{favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
-						disabled="#{!favouriteListContainer.editable}" process="@this"
-						partialSubmit="true">
-						<p:ajax event="dialogReturn" update="@form" />
-						<i class="fa fa-fw fa-cog" />
-					</p:commandLink>
-
-					<p:commandLink styleClass="noUnderlineAtLink"
-						title="#{msg['dialog.settings.person.list.options.edit']}"
-						actionListener="#{favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
 						process="@this" partialSubmit="true">
 						<p:ajax event="dialogReturn" update="@form" />
 						<i class="fa fa-fw fa-search" />

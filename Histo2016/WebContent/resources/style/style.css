@@ -1,8 +1,40 @@
 .histo_noPadding {
-  padding: 0px !important;
-  border-collapse: collapse !important;
-  border: 0px !important;
-  border-spacing: 0px !important;
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+}
+.tableCommonClasses :focus {
+  outline: none ! important;
+}
+.tableCommonClasses .bigFon,
+.tableCommonClasses .columnHeading {
+  font-weight: bold ! important;
+}
+.tableCommonClasses .ui-selectonemenu lable {
+  padding: 4px 4px ! important;
+}
+.tableCommonClasses .columnTop {
+  vertical-align: top;
+}
+.tableCommonClasses a {
+  text-decoration: none ! important;
+}
+.tableCommonClasses label {
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.tableCommonClasses .headline {
+  font-size: 12px ! important;
+  font-weight: bold;
 }
 /*
  * Default Body Style
@@ -122,12 +154,12 @@ body .ui-chkbox-box .ui-chkbox-icon {
   width: 100% !important;
   table-layout: auto !important;
 }
-.defaultHistoTable tbody tr td {
+.defaultHistoTable > tbody > tr > td {
   border: none !important;
   width: auto;
   white-space: normal;
 }
-.defaultHistoTable tbody tr.even > td {
+.defaultHistoTable > tbody > tr.even > td {
   border: 1px solid transparent;
   background-color: #f2f2f2;
 }
@@ -141,11 +173,117 @@ body .ui-chkbox-box .ui-chkbox-icon {
   font-variant: normal;
   text-align: left;
 }
+.defaultHistoTable .columnWidth25 {
+  width: 25px;
+}
+.defaultHistoTable .columnWidth50 {
+  width: 50px;
+}
+.defaultHistoTable .columnWidth75 {
+  width: 75px;
+}
+.defaultHistoTable .columnWidth100 {
+  width: 100px;
+}
+.defaultHistoTable .columnWidth125 {
+  width: 125px;
+}
+.defaultHistoTable .columnWidth150 {
+  width: 150px;
+}
+.defaultHistoTable .columnWidth175 {
+  width: 175px;
+}
+.defaultHistoTable .columnWidth200 {
+  width: 200px;
+}
+.defaultHistoTable .columnWidth225 {
+  width: 225px;
+}
+.defaultHistoTable .columnWidth250 {
+  width: 250px;
+}
+.defaultHistoTable .columnWidthPercent5 {
+  width: 5%;
+}
+.defaultHistoTable .columnWidthPercent10 {
+  width: 10%;
+}
+.defaultHistoTable .columnWidthPercent15 {
+  width: 15%;
+}
+.defaultHistoTable .columnWidthPercent20 {
+  width: 20%;
+}
+.defaultHistoTable .columnWidthPercent25 {
+  width: 25%;
+}
+.defaultHistoTable .columnWidthPercent30 {
+  width: 30%;
+}
+.defaultHistoTable .columnWidthPercent35 {
+  width: 35%;
+}
+.defaultHistoTable .columnWidthPercent40 {
+  width: 40%;
+}
+.defaultHistoTable .columnWidthPercent45 {
+  width: 45%;
+}
+.defaultHistoTable .columnWidthPercent50 {
+  width: 50%;
+}
+.defaultHistoTable .columnWidthPercent55 {
+  width: 55%;
+}
+.defaultHistoTable .columnWidthPercent60 {
+  width: 60%;
+}
+.defaultHistoTable .columnWidthPercent65 {
+  width: 65%;
+}
+.defaultHistoTable .columnWidthPercent70 {
+  width: 70%;
+}
+.defaultHistoTable .columnWidthPercent75 {
+  width: 75%;
+}
+.defaultHistoTable .columnWidthPercent80 {
+  width: 80%;
+}
+.defaultHistoTable .columnWidthPercent85 {
+  width: 85%;
+}
+.defaultHistoTable .columnWidthPercent90 {
+  width: 90%;
+}
+.defaultHistoTable .columnWidthPercent95 {
+  width: 95%;
+}
+.defaultHistoTable .columnWidthPercent100 {
+  width: 100%;
+}
+.defaultHistoTable :focus {
+  outline: none ! important;
+}
+.defaultHistoTable .bigFon,
+.defaultHistoTable .columnHeading {
+  font-weight: bold ! important;
+}
+.defaultHistoTable .ui-selectonemenu lable {
+  padding: 4px 4px ! important;
+}
+.defaultHistoTable .columnTop {
+  vertical-align: top;
+}
+.defaultHistoTable a {
+  text-decoration: none ! important;
+}
 .defaultHistoTable label {
-  padding: 0px !important;
-  border-collapse: collapse !important;
-  border: 0px !important;
-  border-spacing: 0px !important;
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
   font-size: 11px;
   font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
   box-shadow: none;
@@ -153,49 +291,9 @@ body .ui-chkbox-box .ui-chkbox-icon {
   font-variant: normal;
   text-align: left;
 }
-.defaultHistoTable label.headline {
-  font-size: 12px !important;
+.defaultHistoTable .headline {
+  font-size: 12px ! important;
   font-weight: bold;
-}
-.defaultHistoTable :focus {
-  outline: none !important;
-}
-.defaultHistoTable .columnWidth25px {
-  width: 25px;
-}
-.defaultHistoTable .columnWidth50px {
-  width: 50px;
-}
-.defaultHistoTable .columnWidth75px {
-  width: 75px;
-}
-.defaultHistoTable .columnWidth100px {
-  width: 100px;
-}
-.defaultHistoTable .columnWidth125px {
-  width: 125px;
-}
-.defaultHistoTable .columnWidth150px {
-  width: 150px;
-}
-.defaultHistoTable .columnWidth175px {
-  width: 175px;
-}
-.defaultHistoTable .columnWidth200px {
-  width: 200px;
-}
-.defaultHistoTable .columnWidth225px {
-  width: 225px;
-}
-.defaultHistoTable .columnWidth250px {
-  width: 250px;
-}
-.defaultHistoTable .columnWith50p {
-  width: 50%;
-}
-.defaultHistoTable .bigFon,
-.defaultHistoTable .columnHeading {
-  font-weight: bold !important;
 }
 /*
  * Class for a normal table layout
@@ -208,6 +306,7 @@ body .ui-chkbox-box .ui-chkbox-icon {
   border-collapse: collapse !important;
   border: 0px !important;
   border-spacing: 0px !important;
+  width: 100% !important;
 }
 .histoHiddenTableContainer > tbody > tr > td,
 .histoHiddenTableContainer > tbody > tr,
@@ -217,34 +316,34 @@ body .ui-chkbox-box .ui-chkbox-icon {
   border: 0px !important;
   border-spacing: 0px !important;
 }
-.histoHiddenTableContainer .columnWidth25px {
+.histoHiddenTableContainer .columnWidth25 {
   width: 25px;
 }
-.histoHiddenTableContainer .columnWidth50px {
+.histoHiddenTableContainer .columnWidth50 {
   width: 50px;
 }
-.histoHiddenTableContainer .columnWidth75px {
+.histoHiddenTableContainer .columnWidth75 {
   width: 75px;
 }
-.histoHiddenTableContainer .columnWidth100px {
+.histoHiddenTableContainer .columnWidth100 {
   width: 100px;
 }
-.histoHiddenTableContainer .columnWidth125px {
+.histoHiddenTableContainer .columnWidth125 {
   width: 125px;
 }
-.histoHiddenTableContainer .columnWidth150px {
+.histoHiddenTableContainer .columnWidth150 {
   width: 150px;
 }
-.histoHiddenTableContainer .columnWidth175px {
+.histoHiddenTableContainer .columnWidth175 {
   width: 175px;
 }
-.histoHiddenTableContainer .columnWidth200px {
+.histoHiddenTableContainer .columnWidth200 {
   width: 200px;
 }
-.histoHiddenTableContainer .columnWidth225px {
+.histoHiddenTableContainer .columnWidth225 {
   width: 225px;
 }
-.histoHiddenTableContainer .columnWidth250px {
+.histoHiddenTableContainer .columnWidth250 {
   width: 250px;
 }
 .histoHiddenTableContainer .columnWidthPercent5 {
@@ -307,6 +406,38 @@ body .ui-chkbox-box .ui-chkbox-icon {
 .histoHiddenTableContainer .columnWidthPercent100 {
   width: 100%;
 }
+.histoHiddenTableContainer :focus {
+  outline: none ! important;
+}
+.histoHiddenTableContainer .bigFon,
+.histoHiddenTableContainer .columnHeading {
+  font-weight: bold ! important;
+}
+.histoHiddenTableContainer .ui-selectonemenu lable {
+  padding: 4px 4px ! important;
+}
+.histoHiddenTableContainer .columnTop {
+  vertical-align: top;
+}
+.histoHiddenTableContainer a {
+  text-decoration: none ! important;
+}
+.histoHiddenTableContainer label {
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.histoHiddenTableContainer .headline {
+  font-size: 12px ! important;
+  font-weight: bold;
+}
 /*
  * Separator for dialogs 
  *
@@ -347,19 +478,36 @@ body .ui-chkbox-box .ui-chkbox-icon {
   font-variant: normal;
   text-align: left;
 }
+.defaultHistoDataTable .ui-datatable-scrollable-body {
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-left: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3 !important;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table {
+  border-right: none !important;
+  border-left: 0px !important;
+}
 .defaultHistoDataTable .ui-datatable-scrollable-body table thead {
   display: none;
 }
 .defaultHistoDataTable .ui-datatable-scrollable-body table tbody {
-  border: none !important;
+  border-right: none !important;
+  border-left: 0px !important;
 }
 .defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr {
   width: 100%;
-  border: none !important;
+  border-left: 0px !important;
+  border-right: none !important;
 }
 .defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr td {
   border: 1px solid transparent;
-  border-spacing: 1px !important;
+  border-spacing: 0px 1px;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr td:first-child {
+  border-left: 0px !important;
+}
+.defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr td:last-child {
+  border-right: none !important;
 }
 .defaultHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-datatable-even > td {
   border: 1px solid transparent;
@@ -506,10 +654,10 @@ div.contentAccordionPannel :focus {
 }
 .histoDialogStyle div.buttonContainer > table tbody > tr,
 .histoDialogStyle div.buttonContainer > table tbody > tr > td {
-  padding: 0px !important;
-  border-collapse: collapse !important;
-  border: 0px !important;
-  border-spacing: 0px !important;
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
 }
 .histoDialogStyle div.buttonContainer .left {
   margin-left: 0px;

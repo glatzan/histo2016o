@@ -87,8 +87,14 @@ public class FavouriteList implements HasID {
 	@OneToMany(fetch = FetchType.LAZY)
 	private Set<HistoUser> hideListForUser;
 	 
+	@Column
+	private boolean useDumplist;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	private FavouriteList dumpList;
+	
+	@Column
+	private String dumpCommentary; 
 	
 	@Override
 	public String toString() {
