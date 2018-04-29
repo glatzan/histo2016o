@@ -63,6 +63,21 @@ body {
 		}
 			
 	}
+	
+	/* style of the input field of an onSelect primefaces element */
+	.searchSelectMenu .ui-inputfield {
+		padding: 2px 7px;
+	}
+
+	/* style of the popup menu*/
+	.searchSelectMenuPanel {
+		padding: 0px;
+		.ui-selectonemenu-filter {
+			width: 77% !important;
+			padding: 3px 7px;
+		}
+	}
+
 }
 
 
@@ -173,23 +188,50 @@ body {
 }
 
 /**
+ * Default container with no horizontal padding
+ */
+.defaultHistoHiddenTableContainer{
+	.histoHiddenTableContainer (false);
+}
+
+/**
+ * Invisible container with normal horizontal td padding
+ */
+.listingHistoHiddenTableContainer{
+	.histoHiddenTableContainer (true);
+}
+
+/**
  * Table with no spacing. Should contain defaultHistoTables
  */
-.histoHiddenTableContainer{
+.histoHiddenTableContainer(@horizontalPadding: false){
 	
 	padding: 0px !important;
 	border-collapse: collapse !important;
 	border: 0px !important;
 	border-spacing: 0px !important;
-	width: 100% !important;
+	width: auto;
 	
 	>tbody>tr>td, >tbody>tr, >tbody{
-		padding: 0px !important;
 		border-collapse: collapse !important;
 		border: 0px !important;
 		border-spacing: 0px !important;
+		
+		& when (@horizontalPadding=true) {
+			padding: 0px 3px !important;
+		}
+		
+		& when (@horizontalPadding=false) {
+			padding: 0px !important;
+		}
 	}
 	
+	& when (@horizontalPadding=true) {
+		>tbody>tr>td:first-child{
+			padding-left:0px !important;
+		}
+	}
+
 	// columnWidths of table px
 	.column_width(10,"columnWidth",25,"px");
 	
@@ -223,14 +265,19 @@ body {
 
 // default scroll data table layout
 .defaultHistoDataTable {
-	.histoDataTable (true);
+	.histoDataTable (true, true);
+}
+
+// big scroll data table layout without border
+.bigHistoDataTable {
+	.histoDataTable (true, false);
 }
 
 /*
  * scroll data table layout
  * TODO: add normal datatable
  */
-.histoDataTable(@colorRow: true){
+.histoDataTable(@colorRow: true, @border: true){
 	width: 100%;
 	white-space: normal;
 	
@@ -252,10 +299,12 @@ body {
 	
 	// body
 	.ui-datatable-scrollable-body{
-		border-bottom: 1px solid rgb(211, 211, 211) !important;
-		border-left: 1px solid rgb(211, 211, 211) !important;
-		border-right: 1px solid rgb(211, 211, 211) !important;
-		
+		& when (@border=false) {
+			border-bottom: 1px solid rgb(211, 211, 211) !important;
+			border-left: 1px solid rgb(211, 211, 211) !important;
+			border-right: 1px solid rgb(211, 211, 211) !important;
+		}
+
 		table{
 			
 			border-right: none !important;
@@ -436,51 +485,131 @@ div.contentAccordionPannel{
 		width: clac(100% - 4px);
 	}
 	
-	div.buttonContainer {
+	.dialogCommonClasses;
+}
+
+/**
+ * Style for tab dialog
+ */
+.histoTabDialogStyle{
+	padding: 0px !important;
+	border: 0px !important;
+	overflow: hidden;
+	height: 100vh;
+	
+	.dialogHeader{
+		padding: 2px 5px;
+		font-weight: bold;
+		background: #cccccc url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)	50% 50% repeat-x;
+		color: #555555;
+		.histo_font(14px);	
+		
+		a:-webkit-any-link{
+			color: #555555;
+			font-size: 15px;
+		}
+	}
+	
+	.dialogContainer{
 		width: 100%;
-		position: absolute;
-		bottom: 0px !important;
+		height: calc(100vh - 33px);
+		.histo_noPadding();
 		
-		
-		// table padding for the two nested tables
-		> table { 
-			padding: 0.1em 0em;
-			tbody > tr, tbody>tr>td{
+		// columns 1 +2
+		>tbody>tr{
+			
+			>td:nth-child(1){
+				width: 200px;
 				.histo_noPadding();
+				vertical-align: top;
+			}
+			
+			>td:nth-child(2){
+				.histo_noPadding();
+				vertical-align: top;
 			}
 		}
 		
-		// left column style
-		.left {
-			margin-left: 0px;
+		// navigation table
+		.navigationTable {
+			width: 97%;
 			
-			button, .ui-selectcheckboxmenu, .ui-chkbox-box, label{
-				margin-left: 0.3em !important;
+			button:first-of-type {
+				margin-top: 1px !important;
 			}
 			
-			/* style of the popup menu*/
-			.ui-selectonemenu{
-				margin-left: 0.3em !important;
-			
-				 .ui-selectonemenu-label{
-					padding: 0.2em !important;
+			button {
+				border: 1px solid #a8a8a8;
+				border-radius: 3px;
+				width: calc(100% - 1px);
+				margin-left: 1px;
+				border-bottom-left-radius: 0px;
+				border-top-left-radius: 0px;
+				
+				&.childButton {
+					margin-left: 20px;
+					width: calc(100% - 20px);
+				}
+				
+				&:focus {
+					outline: none !important;
+				}
+				
+				&.selectedButton {
+					background: #ffffff !important;
+				}
+				span {
+					float: left;
 				}
 			}
 		}
 		
-		// right column style
-		.right {
-			margin-right: 0px;
-			float: right;
+		// content
+		.dialogContent {
+			height: ~"calc(100vh - 27px)";
+			width: 100%;
+			overflow-x: hidden;
+			overflow-y: auto;
+			position: relative;
 			
-			button {
-				margin-right: 0.3em !important;
+			.headerPannel {
+				padding: 2px 5px;
+				font-weight: bold;
+				background: #cccccc url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness)	50% 50% repeat-x;
+				color: #555555;
+				margin-top: 1px;
+				.histo_font(14px);	
+				
+				a:-webkit-any-link{
+					color: #555555;
+					font-size: 15px;
+				}
+		
+				display: block;
+				width: ~"calc(100% - 12px)";
+				border: 1px solid #a8a8a8;
+				border-radius: 3px;
+				margin-bottom: 10px;
 			}
 			
-			// last button with no margin
-			td:last-child>button{
-				margin-right: 0em !important;
+			.bodyPannel {
+				width: ~"calc(100% - 5px)";
+				display: block;
 			}
+			
+			.bodyPannelFull {
+				width: 100%;
+				display: block;
+			}
+			
+			.bodyPannelScroll {
+				width: 100%;
+				height: ~"calc(100vh - 110px)";
+				display: block;
+				overflow-y: scroll;
+			}
+			
+			.dialogCommonClasses;
 		}
 	}
 }

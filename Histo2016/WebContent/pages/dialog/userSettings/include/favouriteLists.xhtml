@@ -11,59 +11,53 @@
 		<h:outputLabel value="#{msg['dialog.userSettings.general']}" />
 	</p:outputPanel>
 
-	<p:outputPanel styleClass="bodyPannelFull">
+	<p:outputPanel styleClass="bodyPannel">
 
-		<!-- standard view -->
-		<h:panelGrid columns="1" styleClass="newStyleListingTable">
+		<p:dataTable var="favouriteListContainer"
+			sortBy="#{favouriteListContainer.type}" scrollable="true"
+			expandableRowGroups="true" scrollHeight="450"
+			styleClass="bigHistoDataTable"
+			value="#{userSettingsDialog.favouriteListTab.containers}">
 
-
-			<p:dataTable var="favouriteListContainer" style="width:100%;"
-				sortBy="#{favouriteListContainer.type}" scrollable="true"
-				expandableRowGroups="true" scrollHeight="450"
-				styleClass="newStyleDataTable"
-				value="#{userSettingsDialog.favouriteListTab.containers}">
-
-				<p:headerRow>
-					<p:column colspan="3">
-						<h:outputText
-							value="#{msg['dialog.userSettings.favouriteLists.list.'.concat(favouriteListContainer.type)]}" />
-					</p:column>
-				</p:headerRow>
-
-				<p:column headerText="Name" styleClass="columnAutoWidth">
-					<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
+			<p:headerRow>
+				<p:column colspan="3">
+					<h:outputText
+						value="#{msg['dialog.userSettings.favouriteLists.list.'.concat(favouriteListContainer.type)]}" />
 				</p:column>
+			</p:headerRow>
 
-				<p:column headerText="Kommentar" styleClass="columnAutoWidth">
-					<h:outputLabel
-						value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
-				</p:column>
+			<p:column headerText="Name" styleClass="columnAutoWidth">
+				<h:outputLabel value="#{favouriteListContainer.favouriteList.name}"></h:outputLabel>
+			</p:column>
 
-				<p:column headerText="#" styleClass="optionsColumn columnMinWidth">
-					<p:commandLink styleClass="noUnderlineAtLink"
-						title="#{msg['dialog.settings.person.list.options.edit']}"
-						actionListener="#{favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
-						process="@this" partialSubmit="true">
-						<p:ajax event="dialogReturn" update="@form" />
-						<i class="fa fa-fw fa-search" />
-					</p:commandLink>
-				</p:column>
+			<p:column headerText="Kommentar" styleClass="columnAutoWidth">
+				<h:outputLabel
+					value="#{favouriteListContainer.favouriteList.commentary}"></h:outputLabel>
+			</p:column>
+
+			<p:column headerText="#" styleClass="columnWidth25">
+				<p:commandLink styleClass="noUnderlineAtLink"
+					title="#{msg['dialog.settings.person.list.options.edit']}"
+					actionListener="#{favouriteListEditDialog.initAndPrepareBean(favouriteListContainer.favouriteList)}"
+					process="@this" partialSubmit="true">
+					<p:ajax event="dialogReturn" update="@form" />
+					<i class="fa fa-fw fa-search" />
+				</p:commandLink>
+			</p:column>
 
 
 
-			</p:dataTable>
+		</p:dataTable>
 
-		</h:panelGrid>
 	</p:outputPanel>
 
 
 	<div class="buttonContainer">
-		<h:panelGrid columns="2" style="width:100%"
-			styleClass="newTableContainer">
-			<h:panelGrid columns="3" styleClass="newTableContainer right">
+		<h:panelGrid columns="2">
+			<h:panelGrid columns="3" styleClass="right">
 
 				<p:commandButton
-					value="-> #{msg['dialog.settings.favouriteList.list.button.new']}"
+					value="#{msg['dialog.settings.favouriteList.list.button.new']}"
 					icon="fa fa-fw fa-plus-circle" process="@this" partialSubmit="true"
 					actionListener="#{favouriteListEditDialog.initAndPrepareBean()}">
 					<p:ajax event="dialogReturn"
@@ -72,7 +66,7 @@
 				</p:commandButton>
 
 				<p:commandButton value="#{msg['general.save']}"
-					icon="fa fa-check-circle-o" >
+					icon="fa fa-check-circle-o">
 					<f:actionListener
 						binding="#{userSettingsDialog.saveUserSettings()}" />
 					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />

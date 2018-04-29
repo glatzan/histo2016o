@@ -4,7 +4,10 @@
   border: 0px ! important;
   border-spacing: 0px ! important;
 }
-.tableCommonClasses :focus {
+/**
+ * common classes for tables
+ */
+.tableCommonClasses W:focus {
   outline: none ! important;
 }
 .tableCommonClasses .bigFon,
@@ -36,6 +39,51 @@
   font-size: 12px ! important;
   font-weight: bold;
 }
+/**
+ * dialog common classes
+ */
+.dialogCommonClasses div.buttonContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0px !important;
+}
+.dialogCommonClasses div.buttonContainer > table {
+  padding: 0.1em 0em;
+  width: 100%;
+}
+.dialogCommonClasses div.buttonContainer > table tbody > tr,
+.dialogCommonClasses div.buttonContainer > table tbody > tr > td {
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+}
+.dialogCommonClasses div.buttonContainer .left {
+  margin-left: 0px;
+  /* style of the popup menu*/
+}
+.dialogCommonClasses div.buttonContainer .left button,
+.dialogCommonClasses div.buttonContainer .left .ui-selectcheckboxmenu,
+.dialogCommonClasses div.buttonContainer .left .ui-chkbox-box,
+.dialogCommonClasses div.buttonContainer .left label {
+  margin-left: 0.3em !important;
+}
+.dialogCommonClasses div.buttonContainer .left .ui-selectonemenu {
+  margin-left: 0.3em !important;
+}
+.dialogCommonClasses div.buttonContainer .left .ui-selectonemenu .ui-selectonemenu-label {
+  padding: 0.2em !important;
+}
+.dialogCommonClasses div.buttonContainer .right {
+  margin-right: 0px;
+  float: right;
+}
+.dialogCommonClasses div.buttonContainer .right button {
+  margin-right: 0.3em !important;
+}
+.dialogCommonClasses div.buttonContainer .right td:last-child > button {
+  margin-right: 0em !important;
+}
 /*
  * Default Body Style
  */
@@ -56,6 +104,8 @@ body {
   /**
 	 * small input field
 	 */
+  /* style of the input field of an onSelect primefaces element */
+  /* style of the popup menu*/
 }
 body button {
   font-size: 12px;
@@ -144,6 +194,16 @@ body .ui-chkbox-box .ui-chkbox-icon {
   width: 13px !important;
   height: 13px !important;
   margin: -2px 0px 0px -1px;
+}
+body .searchSelectMenu .ui-inputfield {
+  padding: 2px 7px;
+}
+body .searchSelectMenuPanel {
+  padding: 0px;
+}
+body .searchSelectMenuPanel .ui-selectonemenu-filter {
+  width: 77% !important;
+  padding: 3px 7px;
 }
 /*
  * Class for normal table with scrollable body
@@ -263,7 +323,7 @@ body .ui-chkbox-box .ui-chkbox-icon {
 .defaultHistoTable .columnWidthPercent100 {
   width: 100%;
 }
-.defaultHistoTable :focus {
+.defaultHistoTable W:focus {
   outline: none ! important;
 }
 .defaultHistoTable .bigFon,
@@ -299,130 +359,130 @@ body .ui-chkbox-box .ui-chkbox-icon {
  * Class for a normal table layout
  */
 /**
- * Table with no spacing. Should contain defaultHistoTables
+ * Default container with no horizontal padding
  */
-.histoHiddenTableContainer {
+.defaultHistoHiddenTableContainer {
   padding: 0px !important;
   border-collapse: collapse !important;
   border: 0px !important;
   border-spacing: 0px !important;
-  width: 100% !important;
+  width: auto;
 }
-.histoHiddenTableContainer > tbody > tr > td,
-.histoHiddenTableContainer > tbody > tr,
-.histoHiddenTableContainer > tbody {
-  padding: 0px !important;
+.defaultHistoHiddenTableContainer > tbody > tr > td,
+.defaultHistoHiddenTableContainer > tbody > tr,
+.defaultHistoHiddenTableContainer > tbody {
   border-collapse: collapse !important;
   border: 0px !important;
   border-spacing: 0px !important;
+  padding: 0px !important;
 }
-.histoHiddenTableContainer .columnWidth25 {
+.defaultHistoHiddenTableContainer .columnWidth25 {
   width: 25px;
 }
-.histoHiddenTableContainer .columnWidth50 {
+.defaultHistoHiddenTableContainer .columnWidth50 {
   width: 50px;
 }
-.histoHiddenTableContainer .columnWidth75 {
+.defaultHistoHiddenTableContainer .columnWidth75 {
   width: 75px;
 }
-.histoHiddenTableContainer .columnWidth100 {
+.defaultHistoHiddenTableContainer .columnWidth100 {
   width: 100px;
 }
-.histoHiddenTableContainer .columnWidth125 {
+.defaultHistoHiddenTableContainer .columnWidth125 {
   width: 125px;
 }
-.histoHiddenTableContainer .columnWidth150 {
+.defaultHistoHiddenTableContainer .columnWidth150 {
   width: 150px;
 }
-.histoHiddenTableContainer .columnWidth175 {
+.defaultHistoHiddenTableContainer .columnWidth175 {
   width: 175px;
 }
-.histoHiddenTableContainer .columnWidth200 {
+.defaultHistoHiddenTableContainer .columnWidth200 {
   width: 200px;
 }
-.histoHiddenTableContainer .columnWidth225 {
+.defaultHistoHiddenTableContainer .columnWidth225 {
   width: 225px;
 }
-.histoHiddenTableContainer .columnWidth250 {
+.defaultHistoHiddenTableContainer .columnWidth250 {
   width: 250px;
 }
-.histoHiddenTableContainer .columnWidthPercent5 {
+.defaultHistoHiddenTableContainer .columnWidthPercent5 {
   width: 5%;
 }
-.histoHiddenTableContainer .columnWidthPercent10 {
+.defaultHistoHiddenTableContainer .columnWidthPercent10 {
   width: 10%;
 }
-.histoHiddenTableContainer .columnWidthPercent15 {
+.defaultHistoHiddenTableContainer .columnWidthPercent15 {
   width: 15%;
 }
-.histoHiddenTableContainer .columnWidthPercent20 {
+.defaultHistoHiddenTableContainer .columnWidthPercent20 {
   width: 20%;
 }
-.histoHiddenTableContainer .columnWidthPercent25 {
+.defaultHistoHiddenTableContainer .columnWidthPercent25 {
   width: 25%;
 }
-.histoHiddenTableContainer .columnWidthPercent30 {
+.defaultHistoHiddenTableContainer .columnWidthPercent30 {
   width: 30%;
 }
-.histoHiddenTableContainer .columnWidthPercent35 {
+.defaultHistoHiddenTableContainer .columnWidthPercent35 {
   width: 35%;
 }
-.histoHiddenTableContainer .columnWidthPercent40 {
+.defaultHistoHiddenTableContainer .columnWidthPercent40 {
   width: 40%;
 }
-.histoHiddenTableContainer .columnWidthPercent45 {
+.defaultHistoHiddenTableContainer .columnWidthPercent45 {
   width: 45%;
 }
-.histoHiddenTableContainer .columnWidthPercent50 {
+.defaultHistoHiddenTableContainer .columnWidthPercent50 {
   width: 50%;
 }
-.histoHiddenTableContainer .columnWidthPercent55 {
+.defaultHistoHiddenTableContainer .columnWidthPercent55 {
   width: 55%;
 }
-.histoHiddenTableContainer .columnWidthPercent60 {
+.defaultHistoHiddenTableContainer .columnWidthPercent60 {
   width: 60%;
 }
-.histoHiddenTableContainer .columnWidthPercent65 {
+.defaultHistoHiddenTableContainer .columnWidthPercent65 {
   width: 65%;
 }
-.histoHiddenTableContainer .columnWidthPercent70 {
+.defaultHistoHiddenTableContainer .columnWidthPercent70 {
   width: 70%;
 }
-.histoHiddenTableContainer .columnWidthPercent75 {
+.defaultHistoHiddenTableContainer .columnWidthPercent75 {
   width: 75%;
 }
-.histoHiddenTableContainer .columnWidthPercent80 {
+.defaultHistoHiddenTableContainer .columnWidthPercent80 {
   width: 80%;
 }
-.histoHiddenTableContainer .columnWidthPercent85 {
+.defaultHistoHiddenTableContainer .columnWidthPercent85 {
   width: 85%;
 }
-.histoHiddenTableContainer .columnWidthPercent90 {
+.defaultHistoHiddenTableContainer .columnWidthPercent90 {
   width: 90%;
 }
-.histoHiddenTableContainer .columnWidthPercent95 {
+.defaultHistoHiddenTableContainer .columnWidthPercent95 {
   width: 95%;
 }
-.histoHiddenTableContainer .columnWidthPercent100 {
+.defaultHistoHiddenTableContainer .columnWidthPercent100 {
   width: 100%;
 }
-.histoHiddenTableContainer :focus {
+.defaultHistoHiddenTableContainer W:focus {
   outline: none ! important;
 }
-.histoHiddenTableContainer .bigFon,
-.histoHiddenTableContainer .columnHeading {
+.defaultHistoHiddenTableContainer .bigFon,
+.defaultHistoHiddenTableContainer .columnHeading {
   font-weight: bold ! important;
 }
-.histoHiddenTableContainer .ui-selectonemenu lable {
+.defaultHistoHiddenTableContainer .ui-selectonemenu lable {
   padding: 4px 4px ! important;
 }
-.histoHiddenTableContainer .columnTop {
+.defaultHistoHiddenTableContainer .columnTop {
   vertical-align: top;
 }
-.histoHiddenTableContainer a {
+.defaultHistoHiddenTableContainer a {
   text-decoration: none ! important;
 }
-.histoHiddenTableContainer label {
+.defaultHistoHiddenTableContainer label {
   padding: 0px;
   border-collapse: collapse ! important;
   border: 0px ! important;
@@ -434,10 +494,156 @@ body .ui-chkbox-box .ui-chkbox-icon {
   font-variant: normal;
   text-align: left;
 }
-.histoHiddenTableContainer .headline {
+.defaultHistoHiddenTableContainer .headline {
   font-size: 12px ! important;
   font-weight: bold;
 }
+/**
+ * Invisible container with normal horizontal td padding
+ */
+.listingHistoHiddenTableContainer {
+  padding: 0px !important;
+  border-collapse: collapse !important;
+  border: 0px !important;
+  border-spacing: 0px !important;
+  width: auto;
+}
+.listingHistoHiddenTableContainer > tbody > tr > td,
+.listingHistoHiddenTableContainer > tbody > tr,
+.listingHistoHiddenTableContainer > tbody {
+  border-collapse: collapse !important;
+  border: 0px !important;
+  border-spacing: 0px !important;
+  padding: 0px 3px !important;
+}
+.listingHistoHiddenTableContainer > tbody > tr > td:first-child {
+  padding-left: 0px !important;
+}
+.listingHistoHiddenTableContainer .columnWidth25 {
+  width: 25px;
+}
+.listingHistoHiddenTableContainer .columnWidth50 {
+  width: 50px;
+}
+.listingHistoHiddenTableContainer .columnWidth75 {
+  width: 75px;
+}
+.listingHistoHiddenTableContainer .columnWidth100 {
+  width: 100px;
+}
+.listingHistoHiddenTableContainer .columnWidth125 {
+  width: 125px;
+}
+.listingHistoHiddenTableContainer .columnWidth150 {
+  width: 150px;
+}
+.listingHistoHiddenTableContainer .columnWidth175 {
+  width: 175px;
+}
+.listingHistoHiddenTableContainer .columnWidth200 {
+  width: 200px;
+}
+.listingHistoHiddenTableContainer .columnWidth225 {
+  width: 225px;
+}
+.listingHistoHiddenTableContainer .columnWidth250 {
+  width: 250px;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent5 {
+  width: 5%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent10 {
+  width: 10%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent15 {
+  width: 15%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent20 {
+  width: 20%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent25 {
+  width: 25%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent30 {
+  width: 30%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent35 {
+  width: 35%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent40 {
+  width: 40%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent45 {
+  width: 45%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent50 {
+  width: 50%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent55 {
+  width: 55%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent60 {
+  width: 60%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent65 {
+  width: 65%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent70 {
+  width: 70%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent75 {
+  width: 75%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent80 {
+  width: 80%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent85 {
+  width: 85%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent90 {
+  width: 90%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent95 {
+  width: 95%;
+}
+.listingHistoHiddenTableContainer .columnWidthPercent100 {
+  width: 100%;
+}
+.listingHistoHiddenTableContainer W:focus {
+  outline: none ! important;
+}
+.listingHistoHiddenTableContainer .bigFon,
+.listingHistoHiddenTableContainer .columnHeading {
+  font-weight: bold ! important;
+}
+.listingHistoHiddenTableContainer .ui-selectonemenu lable {
+  padding: 4px 4px ! important;
+}
+.listingHistoHiddenTableContainer .columnTop {
+  vertical-align: top;
+}
+.listingHistoHiddenTableContainer a {
+  text-decoration: none ! important;
+}
+.listingHistoHiddenTableContainer label {
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.listingHistoHiddenTableContainer .headline {
+  font-size: 12px ! important;
+  font-weight: bold;
+}
+/**
+ * Table with no spacing. Should contain defaultHistoTables
+ */
 /*
  * Separator for dialogs 
  *
@@ -477,11 +683,6 @@ body .ui-chkbox-box .ui-chkbox-icon {
   font-style: normal;
   font-variant: normal;
   text-align: left;
-}
-.defaultHistoDataTable .ui-datatable-scrollable-body {
-  border-bottom: 1px solid #d3d3d3 !important;
-  border-left: 1px solid #d3d3d3 !important;
-  border-right: 1px solid #d3d3d3 !important;
 }
 .defaultHistoDataTable .ui-datatable-scrollable-body table {
   border-right: none !important;
@@ -548,6 +749,95 @@ body .ui-chkbox-box .ui-chkbox-icon {
   text-decoration: none !important;
 }
 .defaultHistoDataTable :focus {
+  outline: none !important;
+}
+.bigHistoDataTable {
+  width: 100%;
+  white-space: normal;
+}
+.bigHistoDataTable .ui-datatable-scrollable-header table thead tr {
+  width: 100%;
+}
+.bigHistoDataTable .ui-datatable-scrollable-header table thead tr th,
+.bigHistoDataTable .ui-datatable-scrollable-header table thead tr td {
+  padding: 4px 4px;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body {
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-left: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3 !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table {
+  border-right: none !important;
+  border-left: 0px !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table thead {
+  display: none;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody {
+  border-right: none !important;
+  border-left: 0px !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr {
+  width: 100%;
+  border-left: 0px !important;
+  border-right: none !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr td {
+  border: 1px solid transparent;
+  border-spacing: 0px 1px;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr td:first-child {
+  border-left: 0px !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr td:last-child {
+  border-right: none !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-datatable-even > td {
+  border: 1px solid transparent;
+  background-color: #f2f2f2;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight {
+  border: 1px solid transparent;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight td,
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-highlight label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+  font-weight: bold !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover {
+  border: 1px solid transparent;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover td,
+.bigHistoDataTable .ui-datatable-scrollable-body table tbody tr.ui-state-hover label {
+  border: 1px solid transparent;
+  background-color: #fcf1b8 !important;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table th,
+.bigHistoDataTable .ui-datatable-scrollable-body table td,
+.bigHistoDataTable .ui-datatable-scrollable-body table label {
+  padding: 2px 4px;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.bigHistoDataTable .ui-datatable-scrollable-body table .ui-inputfield {
+  box-shadow: none;
+}
+.bigHistoDataTable a {
+  text-decoration: none !important;
+}
+.bigHistoDataTable :focus {
   outline: none !important;
 }
 /*
@@ -651,6 +941,7 @@ div.contentAccordionPannel :focus {
 }
 .histoDialogStyle div.buttonContainer > table {
   padding: 0.1em 0em;
+  width: 100%;
 }
 .histoDialogStyle div.buttonContainer > table tbody > tr,
 .histoDialogStyle div.buttonContainer > table tbody > tr > td {
@@ -683,6 +974,166 @@ div.contentAccordionPannel :focus {
   margin-right: 0.3em !important;
 }
 .histoDialogStyle div.buttonContainer .right td:last-child > button {
+  margin-right: 0em !important;
+}
+/**
+ * Style for tab dialog
+ */
+.histoTabDialogStyle {
+  padding: 0px !important;
+  border: 0px !important;
+  overflow: hidden;
+  height: 100vh;
+}
+.histoTabDialogStyle .dialogHeader {
+  padding: 2px 5px;
+  font-weight: bold;
+  background: #cccccc url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
+  color: #555555;
+  font-size: 14px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.histoTabDialogStyle .dialogHeader a:-webkit-any-link {
+  color: #555555;
+  font-size: 15px;
+}
+.histoTabDialogStyle .dialogContainer {
+  width: 100%;
+  height: calc(67vh);
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+}
+.histoTabDialogStyle .dialogContainer > tbody > tr > td:nth-child(1) {
+  width: 200px;
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+  vertical-align: top;
+}
+.histoTabDialogStyle .dialogContainer > tbody > tr > td:nth-child(2) {
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+  vertical-align: top;
+}
+.histoTabDialogStyle .dialogContainer .navigationTable {
+  width: 97%;
+}
+.histoTabDialogStyle .dialogContainer .navigationTable button:first-of-type {
+  margin-top: 1px !important;
+}
+.histoTabDialogStyle .dialogContainer .navigationTable button {
+  border: 1px solid #a8a8a8;
+  border-radius: 3px;
+  width: calc(99%);
+  margin-left: 1px;
+  border-bottom-left-radius: 0px;
+  border-top-left-radius: 0px;
+}
+.histoTabDialogStyle .dialogContainer .navigationTable button.childButton {
+  margin-left: 20px;
+  width: calc(80%);
+}
+.histoTabDialogStyle .dialogContainer .navigationTable button:focus {
+  outline: none !important;
+}
+.histoTabDialogStyle .dialogContainer .navigationTable button.selectedButton {
+  background: #ffffff !important;
+}
+.histoTabDialogStyle .dialogContainer .navigationTable button span {
+  float: left;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent {
+  height: calc(100vh - 27px);
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent .headerPannel {
+  padding: 2px 5px;
+  font-weight: bold;
+  background: #cccccc url(/Histo2016/javax.faces.resource/images/ui-bg_highlight-soft_75_cccccc_1x100.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
+  color: #555555;
+  margin-top: 1px;
+  font-size: 14px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+  display: block;
+  width: calc(100% - 12px);
+  border: 1px solid #a8a8a8;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent .headerPannel a:-webkit-any-link {
+  color: #555555;
+  font-size: 15px;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent .bodyPannel {
+  width: calc(100% - 5px);
+  display: block;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent .bodyPannelFull {
+  width: 100%;
+  display: block;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent .bodyPannelScroll {
+  width: 100%;
+  height: calc(100vh - 110px);
+  display: block;
+  overflow-y: scroll;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0px !important;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer > table {
+  padding: 0.1em 0em;
+  width: 100%;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer > table tbody > tr,
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer > table tbody > tr > td {
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .left {
+  margin-left: 0px;
+  /* style of the popup menu*/
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .left button,
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .left .ui-selectcheckboxmenu,
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .left .ui-chkbox-box,
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .left label {
+  margin-left: 0.3em !important;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .left .ui-selectonemenu {
+  margin-left: 0.3em !important;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .left .ui-selectonemenu .ui-selectonemenu-label {
+  padding: 0.2em !important;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .right {
+  margin-right: 0px;
+  float: right;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .right button {
+  margin-right: 0.3em !important;
+}
+.histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .right td:last-child > button {
   margin-right: 0em !important;
 }
 .printDialog_AdressTable {
@@ -773,11 +1224,6 @@ div.contentAccordionPannel :focus {
   font-style: normal;
   font-variant: normal;
   text-align: left;
-}
-.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body {
-  border-bottom: 1px solid #d3d3d3 !important;
-  border-left: 1px solid #d3d3d3 !important;
-  border-right: 1px solid #d3d3d3 !important;
 }
 .worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table {
   border-right: none !important;
@@ -874,11 +1320,6 @@ div.contentAccordionPannel :focus {
   font-style: normal;
   font-variant: normal;
   text-align: left;
-}
-.addSlide_StainingTable .ui-datatable-scrollable-body {
-  border-bottom: 1px solid #d3d3d3 !important;
-  border-left: 1px solid #d3d3d3 !important;
-  border-right: 1px solid #d3d3d3 !important;
 }
 .addSlide_StainingTable .ui-datatable-scrollable-body table {
   border-right: none !important;

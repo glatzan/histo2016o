@@ -10,40 +10,38 @@
 	<title><h:outputFormat
 			value="#{msg['dialog.userSettings.headline']}">
 		</h:outputFormat></title>
-	<h:outputStylesheet name="histoNew.css" value="histoNew.css" />
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
 	<h:outputScript library="scripts" name="commonFunctions.js" />
 </h:head>
 
-<h:body styleClass="tabDialog">
+<h:body styleClass="histoTabDialogStyle">
 	<h:form id="adminForm">
 
 		<div class="dialogHeader">
-			<h:panelGrid style="width:100%;" columns="2"
-				styleClass="newTableContainer">
+			<h:panelGrid style="width:100%;" columns="2">
 				<h:outputLabel value="#{msg['dialog.userSettings.headline']}" />
 				<p:commandLink title="#{msg['general.close']}" style="float:right;"
-					immediate="true" styleClass="noUnderlineAtLink">
-					<f:actionListener
-						binding="#{userSettingsDialog.hideDialog()}" />
+					immediate="true">
+					<f:actionListener binding="#{userSettingsDialog.hideDialog()}" />
 					<i class="fa fa-fw fa-times icon-grey" />
 				</p:commandLink>
 			</h:panelGrid>
 		</div>
 
-		<h:panelGrid columns="2" styleClass="newTableContainer contentTable"
-			columnClasses="column200px columnTop,columnTop">
+
+		<h:panelGrid columns="2" styleClass="dialogContainer">
 			<p:outputPanel id="navigationTable" styleClass="navigationTable">
-				<c:forEach items="#{userSettingsDialog.tabs}"
-					var="tab" varStatus="loop">
-					<p:commandButton value="#{msg[tab.name]}" disabled="#{tab.disabled}"
+				<c:forEach items="#{userSettingsDialog.tabs}" var="tab"
+					varStatus="loop">
+					<p:commandButton value="#{msg[tab.name]}"
+						disabled="#{tab.disabled}"
 						styleClass="#{tab eq userSettingsDialog.selectedTab ? 'selectedButton' : ''}"
 						actionListener="#{userSettingsDialog.onTabChange(tab)}"
 						update="navigationTable dialogContent" />
 				</c:forEach>
 			</p:outputPanel>
 			<p:outputPanel id="dialogContent" styleClass="dialogContent">
-				<ui:include
-					src="#{userSettingsDialog.selectedTab.centerInclude}" />
+				<ui:include src="#{userSettingsDialog.selectedTab.centerInclude}" />
 			</p:outputPanel>
 		</h:panelGrid>
 	</h:form>

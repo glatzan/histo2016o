@@ -14,9 +14,9 @@
 
 	<p:outputPanel styleClass="bodyPannel">
 
-		<h:panelGrid columns="2" styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer200 , columnAutoWidth">
-			
+		<h:panelGrid columns="2" styleClass="defaultHistoTable"
+			columnClasses="columnWidth200 columnHeading columnTop,">
+
 			<!-- standard view -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.defaultView']}" />
@@ -44,16 +44,14 @@
 
 		</h:panelGrid>
 
-		<!-- Separator -->
-		<h:panelGrid columns="1"
-			styleClass="newStyleListingTable newStyleListingTableSeparator">
-			<p:separator style="width:100%" />
+		<!-- seperator -->
+		<h:panelGrid columns="1" styleClass="defaultHistoSeperatorTable">
+			<p:separator />
 			<h:outputLabel value="#{msg['dialog.userSettings.general.worklist']}" />
 		</h:panelGrid>
 
-
-		<h:panelGrid columns="2" styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer200 , columnAutoWidth">
+		<h:panelGrid columns="2" styleClass="defaultHistoTable"
+			columnClasses="columnWidth200 columnHeading columnTop,">
 			<!-- standard work list -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.defaultWorklist']}" />
@@ -70,8 +68,8 @@
 			<!-- sorting -->
 			<h:outputLabel value="#{msg['dialog.userSettings.general.sorting']}" />
 
-			<h:panelGrid columns="2" styleClass="defaultListingTableContainer"
-				style="width: 300px;">
+			<h:panelGrid columns="2"
+				styleClass="listingHistoHiddenTableContainer">
 				<p:selectOneMenu
 					title="#{msg['dialog.userSettings.general.sorting.text']}"
 					value="#{userSettingsDialog.user.settings.worklistSortOrder}">
@@ -120,30 +118,28 @@
 			<!-- on click add task-->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.general.alternatePatientAddMode.oneClickAdd']}" />
-			<p:selectBooleanCheckbox 
+			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.settings.addTaskWithSingelClick}"
 				title="#{msg['dialog.userSettings.general.alternatePatientAddMode.oneClickAdd.text']}" />
 
 		</h:panelGrid>
 
-		<!-- Separator -->
-		<h:panelGrid columns="1"
-			styleClass="newStyleListingTable newStyleListingTableSeparator">
-			<p:separator style="width:100%" />
-			<h:outputLabel value="#{msg['dialog.userSettings.general.miscellaneous']}" />
+		<!-- seperator -->
+		<h:panelGrid columns="1" styleClass="defaultHistoSeperatorTable">
+			<p:separator />
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.general.miscellaneous']}" />
 		</h:panelGrid>
 
 	</p:outputPanel>
 
 
 	<div class="buttonContainer">
-		<h:panelGrid columns="2" style="width:100%"
-			styleClass="newTableContainer">
-
-			<h:panelGrid columns="1" styleClass="newTableContainer left">
+		<h:panelGrid columns="2">
+			<h:panelGrid columns="1" styleClass="left">
 			</h:panelGrid>
 
-			<h:panelGrid columns="2" styleClass="newTableContainer right">
+			<h:panelGrid columns="2" styleClass="right">
 				<p:commandButton value="#{msg['general.save']}"
 					icon="fa fa-check-circle-o" partialSubmit="true" process="@form">
 					<f:actionListener

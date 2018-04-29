@@ -4,7 +4,10 @@
   border: 0px ! important;
   border-spacing: 0px ! important;
 }
-.tableCommonClasses :focus {
+/**
+ * common classes for tables
+ */
+.tableCommonClasses W:focus {
   outline: none ! important;
 }
 .tableCommonClasses .bigFon,
@@ -35,4 +38,49 @@
 .tableCommonClasses .headline {
   font-size: 12px ! important;
   font-weight: bold;
+}
+/**
+ * dialog common classes
+ */
+.dialogCommonClasses div.buttonContainer {
+  width: 100%;
+  position: absolute;
+  bottom: 0px !important;
+}
+.dialogCommonClasses div.buttonContainer > table {
+  padding: 0.1em 0em;
+  width: 100%;
+}
+.dialogCommonClasses div.buttonContainer > table tbody > tr,
+.dialogCommonClasses div.buttonContainer > table tbody > tr > td {
+  padding: 0px;
+  border-collapse: collapse ! important;
+  border: 0px ! important;
+  border-spacing: 0px ! important;
+}
+.dialogCommonClasses div.buttonContainer .left {
+  margin-left: 0px;
+  /* style of the popup menu*/
+}
+.dialogCommonClasses div.buttonContainer .left button,
+.dialogCommonClasses div.buttonContainer .left .ui-selectcheckboxmenu,
+.dialogCommonClasses div.buttonContainer .left .ui-chkbox-box,
+.dialogCommonClasses div.buttonContainer .left label {
+  margin-left: 0.3em !important;
+}
+.dialogCommonClasses div.buttonContainer .left .ui-selectonemenu {
+  margin-left: 0.3em !important;
+}
+.dialogCommonClasses div.buttonContainer .left .ui-selectonemenu .ui-selectonemenu-label {
+  padding: 0.2em !important;
+}
+.dialogCommonClasses div.buttonContainer .right {
+  margin-right: 0px;
+  float: right;
+}
+.dialogCommonClasses div.buttonContainer .right button {
+  margin-right: 0.3em !important;
+}
+.dialogCommonClasses div.buttonContainer .right td:last-child > button {
+  margin-right: 0em !important;
 }

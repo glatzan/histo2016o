@@ -114,18 +114,22 @@ Graphic Changes
 + = added
 - = removed
 
--> 1.6
+-> 1.7
 -> erstellen von patientin in der pdv
 
--> 1.5
+-> 1.6
 -> Create Task Dialog, Material mit Overlaypannel anpassen, Create Task material auswahl css
 -> Ärzte aus klinikbackend übernehmen
 -> Felder für ausleih befund (externer befund) im task create menu
 
 https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
-+v 1.4.6
-++++: Neue Favouritenliste inklusive Icon zum einscannen von Objektträgern.
++v 1.5
+++++: Favouritenlisten können jetzt Icons mit Farbe haben, diese werden in der Arbeitsliste angezeigt.
+++++: Administratoren können Icons von Färbelisten funktionen zuweisen.
+++++: Ablageliste für Favouritenlisten eingeführt.
+++++: Rechte für Favouritenlisten mit Icons und Icon Commands implementiert
+++++: Dialog zum Entfernen von Aufträgen aus einer Favouriten liste implementiert. Diese wird angezeigt, wenn eine Ablageliste definiert wurde.
 	
 SQL:
 /* adding new favourite list*/

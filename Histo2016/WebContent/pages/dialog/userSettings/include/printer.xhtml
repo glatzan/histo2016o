@@ -13,10 +13,9 @@
 
 	<p:outputPanel styleClass="bodyPannel">
 
-
 		<!-- standard view -->
-		<h:panelGrid columns="2" styleClass="newStyleListingTable"
-			columnClasses="columnLabelContainer200 , columnAutoWidth">
+		<h:panelGrid columns="2" styleClass="defaultHistoTable"
+			columnClasses="columnWidth200 columnHeading columnTop,">
 
 			<!-- pritner select auto view -->
 			<h:outputLabel
@@ -29,12 +28,13 @@
 
 			<!-- selected printer -->
 			<h:outputLabel value="#{msg['dialog.userSettings.printer.name']}" />
-			<h:panelGrid columns="2">
+			<h:panelGrid columns="2"
+				styleClass="listingHistoHiddenTableContainer">
 				<!-- select printer -->
-				<p:selectOneMenu styleClass="customSerachSelectMenu"
+				<p:selectOneMenu styleClass="searchSelectMenu"
 					style="width:80% !important;"
 					disabled="#{userSettingsDialog.user.settings.autoSelectedPreferedPrinter}"
-					panelStyleClass="customSerachSelectMenuPanel"
+					panelStyleClass="searchSelectMenuPanel"
 					value="#{userHandlerAction.currentUser.settings.preferedPrinter}"
 					filter="true" filterMatchMode="contains">
 
@@ -53,17 +53,21 @@
 					<i class="fa fa-fw fa-print" />
 				</p:commandLink>
 			</h:panelGrid>
-
-
-			<h:outputLabel value=" " />
-			<h:outputLabel value=" " />
-
-			<h:outputLabel value=" " />
-			<h:outputLabel value=" " />
-
+		</h:panelGrid>
+		
+		<!-- seperator -->
+		<h:panelGrid columns="1" styleClass="defaultHistoSeperatorTable">
+			<p:separator />
+			<h:outputLabel
+				value="#{msg['dialog.userSettings.labelPrinter']}" />
+		</h:panelGrid>
+		
+		<!-- label printer -->
+		<h:panelGrid columns="2" styleClass="defaultHistoTable"
+			columnClasses="columnWidth200 columnHeading columnTop,">
 			<!-- label printer -->
 			<h:outputLabel
-				value="#{msg['dialog.userSettings.labelPrinter.autoPrinte']}" />
+				value="#{msg['dialog.userSettings.labelPrinter.autoPrint']}" />
 			<p:selectBooleanCheckbox
 				value="#{userSettingsDialog.user.settings.autoSelectedPreferedLabelPrinter}">
 				<p:ajax event="change" update="@form" />
@@ -72,12 +76,13 @@
 			<!-- selected labelprinter -->
 			<h:outputLabel
 				value="#{msg['dialog.userSettings.labelPrinter.name']}" />
-			<h:panelGrid columns="2">
+			<h:panelGrid columns="2"
+				styleClass="listingHistoHiddenTableContainer">
 				<!-- select printer -->
-				<p:selectOneMenu styleClass="customSerachSelectMenu"
+				<p:selectOneMenu styleClass="searchSelectMenu"
 					style="width:80% !important;"
 					disabled="#{userSettingsDialog.user.settings.autoSelectedPreferedLabelPrinter}"
-					panelStyleClass="customSerachSelectMenuPanel"
+					panelStyleClass="searchSelectMenuPanel"
 					value="#{userHandlerAction.currentUser.settings.preferedLabelPritner}"
 					filter="true" filterMatchMode="contains">
 
@@ -100,9 +105,8 @@
 
 
 	<div class="buttonContainer">
-		<h:panelGrid columns="2" style="width:100%"
-			styleClass="newTableContainer">
-			<h:panelGrid columns="2" styleClass="newTableContainer right">
+		<h:panelGrid columns="2">
+			<h:panelGrid columns="2" styleClass="right">
 				<p:commandButton value="#{msg['general.save']}" update="@form"
 					icon="fa fa-check-circle-o">
 					<f:actionListener

@@ -90,7 +90,7 @@
 			</h:panelGrid>
 
 			<!-- icon and dump list container -->
-			<h:panelGrid columns="2" styleClass="histoHiddenTableContainer"
+			<h:panelGrid style="width:100%" columns="2" styleClass="defaultHistoHiddenTableContainer"
 				columnClasses="columnWidthPercent50,columnWidthPercent50 columnTop">
 				<!-- icon -->
 				<h:panelGrid columns="2" styleClass="defaultHistoTable"
@@ -367,10 +367,9 @@
 		</div>
 
 		<div class="buttonContainer">
-			<h:panelGrid columns="2" style="width:100%"
-				styleClass="newTableContainer">
+			<h:panelGrid columns="2">
 
-				<h:panelGrid columns="2" styleClass="newTableContainer right">
+				<h:panelGrid columns="2" styleClass="right">
 					<!-- Save button -->
 					<p:commandButton value="#{msg['general.save']}" icon="fa fa-save"
 						rendered="#{!favouriteListEditDialog.favouriteList.defaultList}">

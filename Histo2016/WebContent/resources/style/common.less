@@ -51,7 +51,11 @@
 	}
 }
 
-.tableCommonClasses {:focus {
+/**
+ * common classes for tables
+ */
+.tableCommonClasses {
+	W:focus {
 		outline: none ! important;
 	}
 
@@ -79,6 +83,60 @@
 	.headline {
 		font-size: 12px ! important;
 		font-weight: bold;
+	}
+}
+
+/**
+ * dialog common classes
+ */
+.dialogCommonClasses{
+	div.buttonContainer {
+		width: 100%;
+		position: absolute;
+		bottom: 0px !important;
+		
+		
+		// table padding for the two nested tables
+		> table { 
+			padding: 0.1em 0em;
+			width: 100%;
+			tbody > tr, tbody>tr>td{
+				.histo_noPadding();
+			}
+		}
+		
+		// left column style
+		.left {
+			margin-left: 0px;
+			
+			button, .ui-selectcheckboxmenu, .ui-chkbox-box, label{
+				margin-left: 0.3em !important;
+			}
+			
+			/* style of the popup menu*/
+			.ui-selectonemenu{
+				margin-left: 0.3em !important;
+			
+				 .ui-selectonemenu-label{
+					padding: 0.2em !important;
+				}
+			}
+		}
+		
+		// right column style
+		.right {
+			margin-right: 0px;
+			float: right;
+			
+			button {
+				margin-right: 0.3em !important;
+			}
+			
+			// last button with no margin
+			td:last-child>button{
+				margin-right: 0em !important;
+			}
+		}
 	}
 }
 
