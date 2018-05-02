@@ -130,11 +130,9 @@ https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 ++++: Ablageliste für Favouritenlisten eingeführt.
 ++++: Rechte für Favouritenlisten mit Icons und Icon Commands implementiert
 ++++: Dialog zum Entfernen von Aufträgen aus einer Favouriten liste implementiert. Diese wird angezeigt, wenn eine Ablageliste definiert wurde.
++++!: Fehler beim suchen nach Pizen behoben, welcher Patienten dupliziert.
 	
 SQL:
-/* adding new favourite list*/
-INSERT INTO favouritelist (id, defaultlist, globalview, name) VALUES (50, true, true, 'Einscannliste');
-
 /* field for dumplist*/
 alter table favouritelist add dumplist_id bigint;
 alter table favouritelist add usedumplist boolean;
@@ -190,18 +188,23 @@ update favouritelist set useicon = true where id = 50;
 update favouritelist set icon = 'fa-stethoscope icon-orange' where id = 9;
 update favouritelist set infotext = 'Absenden des Konsils durch Labor steht aus' where id = 9;
 update favouritelist set useicon = true where id = 9;
+update favouritelist set command = 'dialog:councilDialogHandler' where id = 9;
 /*council secretary*/
 update favouritelist set icon = 'fa-stethoscope icon-orange' where id = 10;
 update favouritelist set infotext = 'Absenden des Konsils durch Sekretariat steht aus' where id = 10;
 update favouritelist set useicon = true where id = 10;
+update favouritelist set command = 'dialog:councilDialogHandler' where id = 10;
 /*council pending*/
 update favouritelist set icon = 'fa-stethoscope icon-red' where id = 11;
 update favouritelist set infotext = 'Warten auf Konsil-Bericht' where id = 11;
 update favouritelist set useicon = true where id = 11;
+update favouritelist set command = 'dialog:councilDialogHandler' where id = 11;
 /*council completet*/
 update favouritelist set icon = 'fa-stethoscope icon-purple' where id = 12;
 update favouritelist set infotext = 'Konsilbericht liegt vor' where id = 12;
 update favouritelist set useicon = true where id = 12;
+update favouritelist set command = 'dialog:councilDialogHandler' where id = 12;
+
 
 /* renaming old use favourite permission*/
 update histogroup_permissions set permissions = 'FAVOURITE_LIST_USE' where permissions = 'USER_FAVOURITE_LIST';

@@ -684,6 +684,11 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
   font-variant: normal;
   text-align: left;
 }
+.defaultHistoDataTable .ui-datatable-scrollable-body {
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-left: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3 !important;
+}
 .defaultHistoDataTable .ui-datatable-scrollable-body table {
   border-right: none !important;
   border-left: 0px !important;
@@ -745,6 +750,36 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
 .defaultHistoDataTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
+.defaultHistoDataTable .columnWidth25 {
+  width: 25px;
+}
+.defaultHistoDataTable .columnWidth50 {
+  width: 50px;
+}
+.defaultHistoDataTable .columnWidth75 {
+  width: 75px;
+}
+.defaultHistoDataTable .columnWidth100 {
+  width: 100px;
+}
+.defaultHistoDataTable .columnWidth125 {
+  width: 125px;
+}
+.defaultHistoDataTable .columnWidth150 {
+  width: 150px;
+}
+.defaultHistoDataTable .columnWidth175 {
+  width: 175px;
+}
+.defaultHistoDataTable .columnWidth200 {
+  width: 200px;
+}
+.defaultHistoDataTable .columnWidth225 {
+  width: 225px;
+}
+.defaultHistoDataTable .columnWidth250 {
+  width: 250px;
+}
 .defaultHistoDataTable a {
   text-decoration: none !important;
 }
@@ -767,11 +802,6 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
   font-style: normal;
   font-variant: normal;
   text-align: left;
-}
-.bigHistoDataTable .ui-datatable-scrollable-body {
-  border-bottom: 1px solid #d3d3d3 !important;
-  border-left: 1px solid #d3d3d3 !important;
-  border-right: 1px solid #d3d3d3 !important;
 }
 .bigHistoDataTable .ui-datatable-scrollable-body table {
   border-right: none !important;
@@ -834,13 +864,43 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
 .bigHistoDataTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
+.bigHistoDataTable .columnWidth25 {
+  width: 25px;
+}
+.bigHistoDataTable .columnWidth50 {
+  width: 50px;
+}
+.bigHistoDataTable .columnWidth75 {
+  width: 75px;
+}
+.bigHistoDataTable .columnWidth100 {
+  width: 100px;
+}
+.bigHistoDataTable .columnWidth125 {
+  width: 125px;
+}
+.bigHistoDataTable .columnWidth150 {
+  width: 150px;
+}
+.bigHistoDataTable .columnWidth175 {
+  width: 175px;
+}
+.bigHistoDataTable .columnWidth200 {
+  width: 200px;
+}
+.bigHistoDataTable .columnWidth225 {
+  width: 225px;
+}
+.bigHistoDataTable .columnWidth250 {
+  width: 250px;
+}
 .bigHistoDataTable a {
   text-decoration: none !important;
 }
 .bigHistoDataTable :focus {
   outline: none !important;
 }
-/*
+/* 
  * scroll data table layout
  * TODO: add normal datatable
  */

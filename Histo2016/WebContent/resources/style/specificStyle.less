@@ -1,5 +1,23 @@
 @import "style.less";
 
+.userDialog_FavouriteListTable{
+	.dynamicScrollTable (true);
+
+
+	tr {
+		display: table;
+		td:nth-child(1) {
+		width: auto;
+	}
+		td:nth-child(2) {
+		width: 40%;
+		}
+		td:nth-child(3) {
+		width: 20px !important;
+	}
+	}
+}
+
 // class for normal table with scrollable tbody
 .printDialog_AdressTable {
 	.dynamicScrollTable (false);

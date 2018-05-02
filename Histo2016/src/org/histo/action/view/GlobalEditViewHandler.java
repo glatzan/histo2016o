@@ -326,9 +326,9 @@ public class GlobalEditViewHandler {
 		}
 	}
 
-	public void removeTaskFromFavouriteList(Task task, Long... ids) {
+	public void removeTaskFromFavouriteList(Task task, Long id ) {
 		try {
-			favouriteListDAO.removeTaskFromList(task, ArrayUtils.toPrimitive(ids));
+			favouriteListDAO.removeTaskFromList(task, id);
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
@@ -381,6 +381,8 @@ public class GlobalEditViewHandler {
 
 						logger.debug("Found patient " + patient + " and adding to currentworklist");
 
+						patientService.addPatient(patient, true);
+						
 						worklistViewHandlerAction.addPatientToWorkList(patient, true, true);
 
 						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.piz",

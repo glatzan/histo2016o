@@ -235,6 +235,7 @@ public class Task
 	 */
 	@ManyToMany(fetch = FetchType.EAGER)
 	@Fetch(value = FetchMode.SUBSELECT)
+	@OrderBy("id ASC")
 	@NotAudited
 	private List<FavouriteList> favouriteLists;
 

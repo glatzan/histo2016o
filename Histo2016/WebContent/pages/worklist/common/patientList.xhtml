@@ -201,38 +201,6 @@
 									</p:commandLink>
 								</p:repeat>
 
-
-								<p:commandLink partialSubmit="true" process="@this"
-									actionListener="#{councilDialogHandler.initAndPrepareBean(task)}"
-									update="navigationForm:patientList contentForm headerForm"
-									styleClass="noUnderlineAtLink">
-									<!-- council lending mta -->
-									<ui:fragment rendered="#{task.taskStatus.councilLendingMTA}">
-										<i style="margin-left: 5px;"
-											class="fa  fa-stethoscope icon-orange"
-											title="#{msg['body.worklist.navigation.activtasks.councilLendingMTA']}" />
-									</ui:fragment>
-									<!-- council lending secretary -->
-									<ui:fragment
-										rendered="#{task.taskStatus.councilLendingSecretary}">
-										<i style="margin-left: 5px;"
-											class="fa  fa-stethoscope icon-orange"
-											title="#{msg['body.worklist.navigation.activtasks.councilLendingSecretary']}" />
-									</ui:fragment>
-									<!-- council pending -->
-									<ui:fragment rendered="#{task.taskStatus.councilPending}">
-										<i style="margin-left: 5px;"
-											class="fa  fa-stethoscope icon-red"
-											title="#{msg['body.worklist.navigation.activtasks.councilPending']}" />
-									</ui:fragment>
-									<!-- council completed -->
-									<ui:fragment rendered="#{task.taskStatus.councilCompleted}">
-										<i style="margin-left: 5px;"
-											class="fa  fa-stethoscope icon-purple"
-											title="#{msg['body.worklist.navigation.activtasks.councilCompleted']}" />
-									</ui:fragment>
-								</p:commandLink>
-
 								<!-- Pendings completed -->
 								<h:panelGroup rendered="#{task.taskStatus.finalizeable}">
 									<i style="margin-left: 5px;"

@@ -273,7 +273,7 @@ body {
 	.histoDataTable (true, false);
 }
 
-/*
+/* 
  * scroll data table layout
  * TODO: add normal datatable
  */
@@ -299,7 +299,7 @@ body {
 	
 	// body
 	.ui-datatable-scrollable-body{
-		& when (@border=false) {
+		& when (@border=true) {
 			border-bottom: 1px solid rgb(211, 211, 211) !important;
 			border-left: 1px solid rgb(211, 211, 211) !important;
 			border-right: 1px solid rgb(211, 211, 211) !important;
@@ -380,7 +380,10 @@ body {
 		
 		}
 	}
-	
+
+	// columnWidths of table px
+	.column_width(10,"columnWidth",25,"px");
+		
 	// no link color for table
 	a {
 		text-decoration: none !important;

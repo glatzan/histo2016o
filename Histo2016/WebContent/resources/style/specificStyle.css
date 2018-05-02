@@ -684,6 +684,11 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
   font-variant: normal;
   text-align: left;
 }
+.defaultHistoDataTable .ui-datatable-scrollable-body {
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-left: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3 !important;
+}
 .defaultHistoDataTable .ui-datatable-scrollable-body table {
   border-right: none !important;
   border-left: 0px !important;
@@ -745,6 +750,36 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
 .defaultHistoDataTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
+.defaultHistoDataTable .columnWidth25 {
+  width: 25px;
+}
+.defaultHistoDataTable .columnWidth50 {
+  width: 50px;
+}
+.defaultHistoDataTable .columnWidth75 {
+  width: 75px;
+}
+.defaultHistoDataTable .columnWidth100 {
+  width: 100px;
+}
+.defaultHistoDataTable .columnWidth125 {
+  width: 125px;
+}
+.defaultHistoDataTable .columnWidth150 {
+  width: 150px;
+}
+.defaultHistoDataTable .columnWidth175 {
+  width: 175px;
+}
+.defaultHistoDataTable .columnWidth200 {
+  width: 200px;
+}
+.defaultHistoDataTable .columnWidth225 {
+  width: 225px;
+}
+.defaultHistoDataTable .columnWidth250 {
+  width: 250px;
+}
 .defaultHistoDataTable a {
   text-decoration: none !important;
 }
@@ -767,11 +802,6 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
   font-style: normal;
   font-variant: normal;
   text-align: left;
-}
-.bigHistoDataTable .ui-datatable-scrollable-body {
-  border-bottom: 1px solid #d3d3d3 !important;
-  border-left: 1px solid #d3d3d3 !important;
-  border-right: 1px solid #d3d3d3 !important;
 }
 .bigHistoDataTable .ui-datatable-scrollable-body table {
   border-right: none !important;
@@ -834,13 +864,43 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
 .bigHistoDataTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
+.bigHistoDataTable .columnWidth25 {
+  width: 25px;
+}
+.bigHistoDataTable .columnWidth50 {
+  width: 50px;
+}
+.bigHistoDataTable .columnWidth75 {
+  width: 75px;
+}
+.bigHistoDataTable .columnWidth100 {
+  width: 100px;
+}
+.bigHistoDataTable .columnWidth125 {
+  width: 125px;
+}
+.bigHistoDataTable .columnWidth150 {
+  width: 150px;
+}
+.bigHistoDataTable .columnWidth175 {
+  width: 175px;
+}
+.bigHistoDataTable .columnWidth200 {
+  width: 200px;
+}
+.bigHistoDataTable .columnWidth225 {
+  width: 225px;
+}
+.bigHistoDataTable .columnWidth250 {
+  width: 250px;
+}
 .bigHistoDataTable a {
   text-decoration: none !important;
 }
 .bigHistoDataTable :focus {
   outline: none !important;
 }
-/*
+/* 
  * scroll data table layout
  * TODO: add normal datatable
  */
@@ -1136,6 +1196,74 @@ div.contentAccordionPannel :focus {
 .histoTabDialogStyle .dialogContainer .dialogContent div.buttonContainer .right td:last-child > button {
   margin-right: 0em !important;
 }
+.userDialog_FavouriteListTable {
+  width: 100%;
+}
+.userDialog_FavouriteListTable thead {
+  display: block;
+  padding: 0px ! important;
+}
+.userDialog_FavouriteListTable thead td {
+  border: 1px solid #d3d3d3;
+  background: #e6e6e6 url(/Histo2016/javax.faces.resource/images/ui-bg_glass_75_e6e6e6_1x400.png.xhtml?ln=primefaces-smoothness) 50% 50% repeat-x;
+}
+.userDialog_FavouriteListTable thead td,
+.userDialog_FavouriteListTable thead label {
+  font-size: 14px;
+  font-weight: normal;
+  color: #555555 ! important;
+}
+.userDialog_FavouriteListTable tbody {
+  padding: 0px ! important;
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.userDialog_FavouriteListTable tbody tr:nth-child(even) td {
+  background-color: #f2f2f2;
+}
+.userDialog_FavouriteListTable tbody tr,
+.userDialog_FavouriteListTable tbody td {
+  border-width: 0px ! important;
+  border-spacing: 0px;
+}
+.userDialog_FavouriteListTable tbody .headline {
+  font-size: 14px;
+  font-weight: bold;
+}
+.userDialog_FavouriteListTable tbody tr.alternate_row_background td {
+  background-color: #f2f2f2;
+}
+.userDialog_FavouriteListTable tr {
+  width: 100%;
+  display: table;
+}
+.userDialog_FavouriteListTable th,
+.userDialog_FavouriteListTable td,
+.userDialog_FavouriteListTable label {
+  padding: 4px ! important;
+  font-size: 11px;
+  font-family: Verdana, Arial, "Trebuchet MS", sans-serif;
+  box-shadow: none;
+  font-style: normal;
+  font-variant: normal;
+  text-align: left;
+}
+.userDialog_FavouriteListTable .ui-inputfield {
+  box-shadow: none;
+}
+.userDialog_FavouriteListTable tr {
+  display: table;
+}
+.userDialog_FavouriteListTable tr td:nth-child(1) {
+  width: auto;
+}
+.userDialog_FavouriteListTable tr td:nth-child(2) {
+  width: 40%;
+}
+.userDialog_FavouriteListTable tr td:nth-child(3) {
+  width: 20px !important;
+}
 .printDialog_AdressTable {
   width: 100%;
 }
@@ -1225,6 +1353,11 @@ div.contentAccordionPannel :focus {
   font-variant: normal;
   text-align: left;
 }
+.worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body {
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-left: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3 !important;
+}
 .worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table {
   border-right: none !important;
   border-left: 0px !important;
@@ -1286,6 +1419,36 @@ div.contentAccordionPannel :focus {
 .worklistSearchDialog_FavouriteSearchTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
 }
+.worklistSearchDialog_FavouriteSearchTable .columnWidth25 {
+  width: 25px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth50 {
+  width: 50px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth75 {
+  width: 75px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth100 {
+  width: 100px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth125 {
+  width: 125px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth150 {
+  width: 150px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth175 {
+  width: 175px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth200 {
+  width: 200px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth225 {
+  width: 225px;
+}
+.worklistSearchDialog_FavouriteSearchTable .columnWidth250 {
+  width: 250px;
+}
 .worklistSearchDialog_FavouriteSearchTable a {
   text-decoration: none !important;
 }
@@ -1320,6 +1483,11 @@ div.contentAccordionPannel :focus {
   font-style: normal;
   font-variant: normal;
   text-align: left;
+}
+.addSlide_StainingTable .ui-datatable-scrollable-body {
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-left: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3 !important;
 }
 .addSlide_StainingTable .ui-datatable-scrollable-body table {
   border-right: none !important;
@@ -1381,6 +1549,36 @@ div.contentAccordionPannel :focus {
 }
 .addSlide_StainingTable .ui-datatable-scrollable-body table .ui-inputfield {
   box-shadow: none;
+}
+.addSlide_StainingTable .columnWidth25 {
+  width: 25px;
+}
+.addSlide_StainingTable .columnWidth50 {
+  width: 50px;
+}
+.addSlide_StainingTable .columnWidth75 {
+  width: 75px;
+}
+.addSlide_StainingTable .columnWidth100 {
+  width: 100px;
+}
+.addSlide_StainingTable .columnWidth125 {
+  width: 125px;
+}
+.addSlide_StainingTable .columnWidth150 {
+  width: 150px;
+}
+.addSlide_StainingTable .columnWidth175 {
+  width: 175px;
+}
+.addSlide_StainingTable .columnWidth200 {
+  width: 200px;
+}
+.addSlide_StainingTable .columnWidth225 {
+  width: 225px;
+}
+.addSlide_StainingTable .columnWidth250 {
+  width: 250px;
 }
 .addSlide_StainingTable a {
   text-decoration: none !important;

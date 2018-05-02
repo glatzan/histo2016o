@@ -116,9 +116,6 @@ public class PatientDao extends AbstractDAO implements Serializable {
 	 * @return
 	 */
 	public Patient searchForPatientByPiz(String piz) {
-		if (!piz.matches("^\\d{8}$"))
-			return null;
-		
 		CriteriaBuilder qb = getSession().getCriteriaBuilder();
 
 		// Create CriteriaQuery
@@ -126,7 +123,7 @@ public class PatientDao extends AbstractDAO implements Serializable {
 		Root<Patient> root = criteria.from(Patient.class);
 		criteria.select(root);
 
-		Predicate and = qb.and(qb.equal(root.get("piz"), piz), qb.equal(root.get("archived"), false));
+		Predicate and = qb.and(qb.like(root.get("piz"), piz), qb.equal(root.get("archived"), false));
 
 		criteria.where(and);
 
@@ -134,7 +131,9 @@ public class PatientDao extends AbstractDAO implements Serializable {
 
 		List<Patient> patients = getSession().createQuery(criteria).getResultList();
 
-		if (patients != null && patients.size() > 1)
+		logger.debug("Search for " + piz + " result " + (patients != null ? patients.size() : " 0 "));
+		
+		if (patients != null && patients.size() >= 1)
 			return patients.get(0);
 
 		return null;
