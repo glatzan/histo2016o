@@ -13,6 +13,7 @@ import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
+import org.histo.action.dialog.settings.favouriteLists.FavouriteListItemRemoveDialog;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -31,6 +32,7 @@ import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.PDFContainer;
 import org.histo.model.Physician;
+import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
@@ -48,6 +50,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -137,11 +140,17 @@ public class GlobalEditViewHandler {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private AddPatientDialogHandler addPatientDialogHandler;
-	
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private ApplicationContext appContext;
+
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private FavouriteListItemRemoveDialog favouriteListItemRemoveDialog;
+
 	// ************************ Navigation ************************
 	/**
 	 * View options, dynamically generated depending on the users role
@@ -326,9 +335,17 @@ public class GlobalEditViewHandler {
 		}
 	}
 
-	public void removeTaskFromFavouriteList(Task task, Long id ) {
+	@Transactional
+	public void removeTaskFromFavouriteList(Task task, Long favouriteListID) {
 		try {
-			favouriteListDAO.removeTaskFromList(task, id);
+			// getting favourite list
+			FavouriteList list = favouriteListDAO.getFavouriteList(favouriteListID, true, false, true);
+
+			if (list.isUseDumplist()) {
+				favouriteListItemRemoveDialog.initAndPrepareBean(list,task);
+			} else
+				favouriteListDAO.removeTaskFromList(task, list, false);
+
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
@@ -382,7 +399,7 @@ public class GlobalEditViewHandler {
 						logger.debug("Found patient " + patient + " and adding to currentworklist");
 
 						patientService.addPatient(patient, true);
-						
+
 						worklistViewHandlerAction.addPatientToWorkList(patient, true, true);
 
 						mainHandlerAction.sendGrowlMessagesAsResource("growl.search.patient.piz",

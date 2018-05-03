@@ -40,18 +40,22 @@ public class FavouriteListDAO extends AbstractDAO {
 	@Autowired
 	private GenericDAO genericDAO;
 
-	public FavouriteList getFavouriteList(long id, boolean initialized, boolean permissions) {
-		FavouriteList favList = genericDAO.get(FavouriteList.class, id);
-
+	public FavouriteList getFavouriteList(long id, boolean initialized, boolean permissions, boolean dumpList) {
+		
+		FavouriteList favList = get(FavouriteList.class, id);
+		
 		if (initialized) {
 			Hibernate.initialize(favList.getOwner());
 			Hibernate.initialize(favList.getItems());
-			Hibernate.initialize(favList.getDumpList());
 		}
 
 		if (permissions) {
 			Hibernate.initialize(favList.getUsers());
 			Hibernate.initialize(favList.getGroups());
+		}
+		
+		if(dumpList) {
+			Hibernate.initialize(favList.getDumpList());
 		}
 
 		return favList;
@@ -206,7 +210,7 @@ public class FavouriteListDAO extends AbstractDAO {
 		reattach(task);
 		reattach(task.getParent());
 
-		addTaskToList(task, getFavouriteList(id, true, false));
+		addTaskToList(task, getFavouriteList(id, true, false,false));
 	}
 
 	public void addTaskToList(Task task, FavouriteList favouriteList)
@@ -256,13 +260,17 @@ public class FavouriteListDAO extends AbstractDAO {
 		for (long l : id) {
 			if (task.isListedInFavouriteList(l)) {
 				reattach(task);
-				removeTaskFromList(task, getFavouriteList(l, true, false));
+				removeTaskFromList(task, getFavouriteList(l, true, false,false),false);
 			}
 		}
 	}
 
-	public void removeTaskFromList(Task task, FavouriteList favouriteList)
+	public void removeTaskFromList(Task task, FavouriteList favouriteList, boolean reattach)
 			throws CustomDatabaseInconsistentVersionException {
+		
+		if(reattach)
+			reattach(task);
+			
 		try {
 			logger.debug(
 					"Removing task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
@@ -305,7 +313,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void removeTaskFromAllLists(Task task) {
 		// removing from favouriteLists
 		while (task.getFavouriteLists().size() > 0) {
-			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true, false));
+			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true, false,false),false);
 		}
 	}
 }

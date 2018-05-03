@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title><h:outputFormat
+			value="#{msg['dialog.FavouriteListItemRemove.headline']}">
+			<f:param value="#{favouriteListItemRemoveDialog.task.taskID}" />
+			<f:param value="#{favouriteListItemRemoveDialog.favouriteList.name}" />
+		</h:outputFormat></title>
+
+	<h:outputStylesheet name="style.css" value="style.css" library="style" />
+	<h:outputScript library="scripts" name="commonFunctions.js" />
+</h:head>
+
+<h:body styleClass="histoDialogStyle">
+
+	<h:form enctype="multipart/form-data" id="dialogContent">
+
+		<div class="dialogHeader">
+			<h:panelGrid style="width:100%;" columns="2">
+				<h:outputFormat
+					value="#{msg['dialog.FavouriteListItemRemove.headline']}">
+					<f:param value="#{favouriteListItemRemoveDialog.task.taskID}" />
+					<f:param
+						value="#{favouriteListItemRemoveDialog.favouriteList.name}" />
+				</h:outputFormat>
+				<p:commandLink title="#{msg['general.close']}" style="float:right;"
+					styleClass="noUnderlineAtLink"
+					onclick="$('#dialogContent\\:closeBtn').click();return false;">
+					<i class="fa fa-fw fa-times" />
+				</p:commandLink>
+			</h:panelGrid>
+		</div>
+
+		<div class="dialogContent" style="height: 500px;">
+
+			<!-- Name -->
+			<h:panelGrid columns="1" styleClass="defaultHistoTable">
+				<h:outputFormat
+					value="#{msg['dialog.FavouriteListItemRemove.text']}">
+					<f:param value="#{favouriteListItemRemoveDialog.task.taskID}" />
+					<f:param
+						value="#{favouriteListItemRemoveDialog.favouriteList.name}" />
+					<f:param
+						value="#{favouriteListItemRemoveDialog.favouriteList.dumpList.name}" />
+				</h:outputFormat>
+
+				<h:panelGrid columns="2" styleClass="defaultHistoTable"
+					columnClasses="columnWidth100 columnHeading columnTop,">
+
+					<h:outputLabel
+						value="#{msg['dialog.FavouriteListItemRemove.commentary']}"></h:outputLabel>
+					<p:inputTextarea rows="6" cols="40"
+						value="#{favouriteListItemRemoveDialog.commentary}">
+					</p:inputTextarea>
+				</h:panelGrid>
+
+
+			</h:panelGrid>
+
+		</div>
+
+		<div class="buttonContainer">
+			<h:panelGrid columns="2">
+
+				<h:panelGrid columns="2" styleClass="left">
+					<!-- Save button -->
+					<p:commandButton
+						value="#{msg['dialog.FavouriteListItemRemove.button.move']}"
+						icon="fa fa-share">
+						<f:actionListener
+							binding="#{favouriteListItemRemoveDialog.moveTaskToList()}"></f:actionListener>
+						<f:actionListener
+							binding="#{favouriteListItemRemoveDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+
+					<!-- Save button -->
+					<p:commandButton
+						value="#{msg['dialog.FavouriteListItemRemove.button.remove']}"
+						icon="fa fa-trash-o">
+						<f:actionListener
+							binding="#{favouriteListItemRemoveDialog.removeTaskFromList()}"></f:actionListener>
+						<f:actionListener
+							binding="#{favouriteListItemRemoveDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+
+
+				<h:panelGrid columns="1" styleClass="right">
+					<!-- Close button -->
+					<p:commandButton value="#{msg['general.abort']}" id="closeBtn"
+						icon="fa fa-times-circle">
+						<f:actionListener
+							binding="#{favouriteListItemRemoveDialog.hideDialog()}"></f:actionListener>
+					</p:commandButton>
+				</h:panelGrid>
+			</h:panelGrid>
+		</div>
+	</h:form>
+</h:body>
+</html>

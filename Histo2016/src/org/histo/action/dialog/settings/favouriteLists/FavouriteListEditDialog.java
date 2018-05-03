@@ -107,7 +107,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 				setFavouriteList(favouriteListDAO.initFavouriteList(favouriteList, true));
 			} catch (CustomDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
-				setFavouriteList(favouriteListDAO.getFavouriteList(favouriteList.getId(), true, true));
+				setFavouriteList(favouriteListDAO.getFavouriteList(favouriteList.getId(), true, true, true));
 			}
 		} else {
 			setFavouriteList(favouriteList);

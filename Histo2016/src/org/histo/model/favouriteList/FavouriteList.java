@@ -47,7 +47,7 @@ public class FavouriteList implements HasID {
 
 	@Column(columnDefinition = "VARCHAR")
 	private String commentary;
-	
+
 	/**
 	 * System list
 	 */
@@ -56,22 +56,28 @@ public class FavouriteList implements HasID {
 
 	@Column
 	private boolean globalView;
+
+	/**
+	 * If true user can manually add tasks.
+	 */
+	@Column
+	private boolean manuelEdit;
 	
 	@Column
 	private boolean useIcon;
-	
+
 	@Column
-	private String command; 
-	
+	private String command;
+
 	@Column
-	private String icon; 
-	
+	private String icon;
+
 	@Column
-	private String iconColor; 
-	
+	private String iconColor;
+
 	@Column
-	private String infoText; 
-	
+	private String infoText;
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "favouriteList")
 	@Fetch(value = FetchMode.SUBSELECT)
 	private List<FavouriteListItem> items;
@@ -86,21 +92,21 @@ public class FavouriteList implements HasID {
 
 	@OneToMany(fetch = FetchType.LAZY)
 	private Set<HistoUser> hideListForUser;
-	 
+
 	@Column
 	private boolean useDumplist;
-	
+
 	@OneToOne(fetch = FetchType.LAZY)
 	private FavouriteList dumpList;
-	
+
 	@Column
-	private String dumpCommentary; 
-	
+	private String dumpCommentary;
+
 	@Override
 	public String toString() {
 		return "ID: " + getId() + ", Name: " + getName();
 	}
-	
+
 	@Transient
 	public boolean containsTask(Task task) {
 		return items.stream().anyMatch(p -> p.getTask().equals(task));

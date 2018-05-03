@@ -336,7 +336,7 @@ public class CreateTaskDialog extends AbstractDialog {
 					genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
 
 					FavouriteList f = favouriteListDAO.getFavouriteList(PredefinedFavouriteList.StainingList.getId(),
-							true, false);
+							true, false, false);
 
 					favouriteListDAO.addTaskToList(getTask(), f);
 

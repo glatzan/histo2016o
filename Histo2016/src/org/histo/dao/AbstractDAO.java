@@ -84,6 +84,9 @@ public abstract class AbstractDAO implements Serializable {
 			throws CustomDatabaseInconsistentVersionException {
 
 		try {
+			
+			System.out.println(getSession().hashCode());
+			
 			if (resourcesKey != null) {
 				LogInfo logInfo = new LogInfo(resourceBundle.get(resourcesKey, resourcesKeyInsert), patient);
 				SecurityContextHolderUtil.setObjectToSecurityContext(LogListener.LOG_KEY_INFO, logInfo);
