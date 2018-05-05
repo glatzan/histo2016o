@@ -15,7 +15,8 @@ import lombok.Setter;
 	    query =
 	        "select " +
 	        "flist.id AS id, " +
-	        "flist.name AS name, " +
+	        "flist.name AS name, " + 
+	        "flist.usedumplist AS dumplist" +
 	        "coalesce(bool_or(fitem.task_id = :task_id),false) As containstask " +
 	        "from favouritelist flist " +
 	        "left join favouritepermissionsgroup fgroup on fgroup.favouritelist_id = flist.id "+
@@ -33,7 +34,8 @@ import lombok.Setter;
 	        columns = {
 	            @ColumnResult(name = "id", type=Long.class),
 	            @ColumnResult(name = "name", type=String.class ),
-	            @ColumnResult(name = "containstask", type=Boolean.class)
+	            @ColumnResult(name = "containstask", type=Boolean.class),
+	            @ColumnResult(name = "dumplist", type=Boolean.class )
 	        }
 	    )
 	)
@@ -48,15 +50,17 @@ public class FavouriteListMenuItem {
 	private long id;
 	private String name;
 	private boolean containsTask;
+	private boolean dumplist;
 	
 	public FavouriteListMenuItem() {
 		
 	}
 	
-	public FavouriteListMenuItem(long id, String name, boolean containsTask) {
+	public FavouriteListMenuItem(long id, String name, boolean containsTask, boolean dumplist) {
 		this.id = id;
 		this.name = name;
 		this.containsTask = containsTask;
+		this.dumplist = dumplist;
 	}
 	
 }

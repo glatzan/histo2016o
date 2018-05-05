@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
+import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.config.enums.Dialog;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
@@ -16,7 +17,9 @@ import org.histo.model.favouriteList.FavouritePermissionsUser;
 import org.histo.model.patient.Task;
 import org.histo.ui.FavouriteListContainer;
 import org.histo.ui.transformer.DefaultTransformer;
+import org.primefaces.PrimeFaces;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,12 @@ public class FavouriteListItemRemoveDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	private FavouriteListDAO favouriteListDAO;
 
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	@Lazy
+	private GlobalEditViewHandler globalEditViewHandler;
+	
 	private FavouriteList favouriteList;
 
 	private String commentary;
@@ -65,6 +74,19 @@ public class FavouriteListItemRemoveDialog extends AbstractDialog {
 	@Transactional
 	public void moveTaskToList() {
 		favouriteListDAO.moveReattachedTaskToList(favouriteList, favouriteList.getDumpList(), task);
+	}
+
+	/**
+	 * TODO: Move to menuitem if returnDialog event is supported
+	 * 
+	 * Workaround for updating the ui.
+	 */
+	@Override
+	public void hideDialog() {
+		super.hideDialog();
+		globalEditViewHandler.updateDataOfTask(true, false, true, true);
+		PrimeFaces.current().ajax().update("navigationForm:patientList");
+	
 	}
 
 }

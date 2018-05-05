@@ -2,6 +2,12 @@ package org.histo.ui.menu;
 
 import java.util.List;
 
+import javax.el.ExpressionFactory;
+import javax.el.MethodExpression;
+import javax.faces.component.html.HtmlPanelGroup;
+import javax.faces.context.FacesContext;
+import javax.faces.event.BehaviorEvent;
+
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
@@ -11,7 +17,9 @@ import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
-import org.primefaces.extensions.component.remotecommand.RemoteCommand;
+import org.primefaces.behavior.ajax.AjaxBehavior;
+import org.primefaces.behavior.ajax.AjaxBehaviorListenerImpl;
+import org.primefaces.component.commandbutton.CommandButton;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;
@@ -44,7 +52,7 @@ public class MenuGenerator {
 
 	private static Logger logger = Logger.getLogger("org.histo");
 
-	public MenuModel generateEditMenu(Patient patient, Task task) {
+	public MenuModel generateEditMenu(Patient patient, Task task, HtmlPanelGroup taskMenuCommandButtons) {
 		logger.debug("Generating new MenuModel");
 
 		MenuModel model = new DefaultMenuModel();
@@ -81,10 +89,11 @@ public class MenuGenerator {
 
 			if (patient != null && PATIENT_EDIT) {
 
-				DefaultSubMenu administerSubMenu = new DefaultSubMenu(resourceBundle.get("header.menu.patient.administer"));
+				DefaultSubMenu administerSubMenu = new DefaultSubMenu(
+						resourceBundle.get("header.menu.patient.administer"));
 				administerSubMenu.setIcon("fa fa-male");
 				patientSubMenu.addElement(administerSubMenu);
-				
+
 				// patient edit data, disabled if not external patient
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.edit"));
 				item.setOnclick(
@@ -109,7 +118,7 @@ public class MenuGenerator {
 						"$('#headerForm\\\\:mergePatientData').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
 				item.setIcon("fa fa-medkit");
 				administerSubMenu.addElement(item);
-				
+
 				// patient upload pdf
 				item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.upload"));
 				item.setOnclick(
@@ -368,6 +377,9 @@ public class MenuGenerator {
 				List<FavouriteListMenuItem> items = favouriteListDAO.getMenuItems(userHandlerAction.getCurrentUser(),
 						task);
 
+				// clearing command button array
+				taskMenuCommandButtons.getChildren().clear();
+
 				// only render of size > 0
 				if (items.size() > 0) {
 					DefaultSubMenu favouriteSubMenu = new DefaultSubMenu("F. lists");
@@ -378,9 +390,50 @@ public class MenuGenerator {
 						item = new DefaultMenuItem(favouriteListItem.getName());
 						if (favouriteListItem.isContainsTask()) {
 							item.setIcon("fa fa-check-circle icon-green");
-							item.setCommand(
-									"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
-											+ favouriteListItem.getId() + ")}");
+
+							if (favouriteListItem.isDumplist()) {
+								String buttonID = "button" + Math.round(Math.random() * 1000);
+								CommandButton button = new CommandButton();
+								button.setValue("");
+								button.setStyle("visible:none");
+
+								// assign random id to avoid duplicate id for subsquent click
+								button.setId(buttonID);
+
+								taskMenuCommandButtons.getChildren().add(button);
+//								favouriteListItemRemoveDialog.initAndPrepareBean(list, task);
+//								item.setCommand(
+//										"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "//+ favouriteListItem.getId() + ")}");
+//							       AjaxBehavior ab1 = new AjaxBehavior();
+//							        ExpressionFactory ef = ctx.getApplication().getExpressionFactory();
+//							        MethodExpression me1 = ef.createMethodExpression(ctx.getELContext(),
+//							                                     expression,//Your ELExpression #{roleCreateForm.save}
+//							                                     expectedReturnType, //In your case null
+//							                                     expectedParamTypes); //If you receive parameters put new Class[]{Object.class});
+//							        ab1.setListener(me1);
+//							        button.addClientBehavior( "submit", ab1);
+								
+//								favouriteListItemRemoveDialog.initAndPrepareBean(list, task);
+								
+								FacesContext fc = FacesContext.getCurrentInstance();
+								ExpressionFactory ef = fc.getApplication().getExpressionFactory();
+
+								MethodExpression me = ef.createMethodExpression(fc.getELContext(), "#{favouriteListItemRemoveDialog.initAndPrepareBean()}", null, new Class<?>[]{BehaviorEvent.class});
+//								AjaxBehavior ajaxBehavior = (AjaxBehavior) fc.getApplication().createBehavior(AjaxBehavior.BEHAVIOR_ID);
+//								ajaxBehavior.setProcess("@this");
+//								ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me, me));
+//							     AjaxBehavior ab1 = new AjaxBehavior();
+//							    ab1.setListener(me);
+//								button.addClientBehavior( "submit", ab1); 
+								button.setActionExpression(me);	
+								
+								item.setOnclick(
+										"$('#headerForm\\\\:"+buttonID+"').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+							} else {
+								item.setCommand(
+										"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
+												+ favouriteListItem.getId() + ")}");
+							}
 						} else {
 							item.setIcon("fa fa-circle-o");
 							item.setCommand(
@@ -393,6 +446,7 @@ public class MenuGenerator {
 						item.setUpdate("navigationForm:patientList contentForm headerForm");
 						favouriteSubMenu.addElement(item);
 					}
+
 				} else {
 					item = new DefaultMenuItem("Keine F. Listen");
 					item.setIcon("fa fa-list-alt");

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
+import javax.faces.component.html.HtmlPanelGroup;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -236,6 +237,11 @@ public class GlobalEditViewHandler {
 	 */
 	private MenuModel taskMenuModel;
 
+	/**
+	 * H:pannelgrid for dynamic command buttons
+	 */
+	private HtmlPanelGroup taskMenuCommandButtons;
+
 	// ************************ Current Patient/Task ************************
 	/**
 	 * DataTable selection to change a material via overlay panel
@@ -323,7 +329,7 @@ public class GlobalEditViewHandler {
 	}
 
 	public void updateMenuModel(boolean updateFavouriteLists) {
-		setTaskMenuModel((new MenuGenerator()).generateEditMenu(selectedPatient, selectedTask));
+		setTaskMenuModel((new MenuGenerator()).generateEditMenu(selectedPatient, selectedTask, taskMenuCommandButtons));
 	}
 
 	public void addTaskToFavouriteList(Task task, long id) {
@@ -338,14 +344,7 @@ public class GlobalEditViewHandler {
 	@Transactional
 	public void removeTaskFromFavouriteList(Task task, Long favouriteListID) {
 		try {
-			// getting favourite list
-			FavouriteList list = favouriteListDAO.getFavouriteList(favouriteListID, true, false, true);
-
-			if (list.isUseDumplist()) {
-				favouriteListItemRemoveDialog.initAndPrepareBean(list, task);
-			} else
-				favouriteListDAO.removeReattachedTaskFromList(task, list.getId());
-
+			favouriteListDAO.removeReattachedTaskFromList(task, favouriteListID);
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
