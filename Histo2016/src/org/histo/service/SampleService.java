@@ -425,7 +425,7 @@ public class SampleService {
 					genericDAO.savePatientData(task, "log.patient.task.phase.staining.end");
 
 					if (removeFromList)
-						favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
+						favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.StainingList,
 								PredefinedFavouriteList.ReStainingList);
 				}
 			});
@@ -456,10 +456,10 @@ public class SampleService {
 					if (!task.isListedInFavouriteList(PredefinedFavouriteList.StainingList,
 							PredefinedFavouriteList.ReStainingList)) {
 						if (TaskStatus.checkIfReStainingFlag(task)) {
-							favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList);
-							favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.ReStainingList);
+							favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.StainingList);
+							favouriteListDAO.addReattachedTaskToList(task, PredefinedFavouriteList.ReStainingList);
 						} else
-							favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.StainingList);
+							favouriteListDAO.addReattachedTaskToList(task, PredefinedFavouriteList.StainingList);
 					}
 				}
 			});

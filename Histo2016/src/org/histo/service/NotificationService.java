@@ -100,7 +100,7 @@ public class NotificationService {
 					genericDAO.savePatientData(task, "log.patient.task.phase.notification.enter");
 
 					if (!task.isListedInFavouriteList(PredefinedFavouriteList.NotificationList)) {
-						favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.NotificationList);
+						favouriteListDAO.addReattachedTaskToList(task, PredefinedFavouriteList.NotificationList);
 					}
 				}
 			});
@@ -120,7 +120,7 @@ public class NotificationService {
 
 					genericDAO.savePatientData(task, "log.patient.task.phase.notification.end");
 
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.NotificationList);
+					favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.NotificationList);
 				}
 			});
 		} catch (Exception e) {

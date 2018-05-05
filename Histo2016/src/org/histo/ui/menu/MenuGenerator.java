@@ -11,6 +11,7 @@ import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
+import org.primefaces.extensions.component.remotecommand.RemoteCommand;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;

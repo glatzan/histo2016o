@@ -41,9 +41,9 @@ public class FavouriteListDAO extends AbstractDAO {
 	private GenericDAO genericDAO;
 
 	public FavouriteList getFavouriteList(long id, boolean initialized, boolean permissions, boolean dumpList) {
-		
+
 		FavouriteList favList = get(FavouriteList.class, id);
-		
+
 		if (initialized) {
 			Hibernate.initialize(favList.getOwner());
 			Hibernate.initialize(favList.getItems());
@@ -53,8 +53,8 @@ public class FavouriteListDAO extends AbstractDAO {
 			Hibernate.initialize(favList.getUsers());
 			Hibernate.initialize(favList.getGroups());
 		}
-		
-		if(dumpList) {
+
+		if (dumpList) {
 			Hibernate.initialize(favList.getDumpList());
 		}
 
@@ -199,18 +199,23 @@ public class FavouriteListDAO extends AbstractDAO {
 		return physician;
 	}
 
+	public void addReattachedTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList) {
+		addReattachedTaskToList(task, predefinedFavouriteList.getId());
+	}
+	
 	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-
 		addTaskToList(task, predefinedFavouriteList.getId());
+	}
+	
+	public void addReattachedTaskToList(Task task, long id) {
+		reattach(task);
+		addTaskToList(task, getFavouriteList(id, true, false, false));
+//		reattach(task.getParent());
 	}
 
 	public void addTaskToList(Task task, long id) throws CustomDatabaseInconsistentVersionException {
-
-		reattach(task);
-		reattach(task.getParent());
-
-		addTaskToList(task, getFavouriteList(id, true, false,false));
+		addTaskToList(task, getFavouriteList(id, true, false, false));
 	}
 
 	public void addTaskToList(Task task, FavouriteList favouriteList)
@@ -243,34 +248,69 @@ public class FavouriteListDAO extends AbstractDAO {
 			logger.debug("Task (" + task.getTaskID() + ") alread contains list (" + favouriteList.getName() + ")");
 	}
 
+	// public void removeTaskFromList(Task task, PredefinedFavouriteList
+	// predefinedFavouriteList)
+	// throws CustomDatabaseInconsistentVersionException {
+	// removeTaskFromList(task, predefinedFavouriteList.getId());
+	// }
+
+	/**
+	 * Reattaches the task to the session an removes it from a favorite list.
+	 */
+	public void removeReattachedTaskFromList(Task task, PredefinedFavouriteList... predefinedFavouriteLists) {
+		reattach(task);
+		removeTaskFromList(task, predefinedFavouriteLists);
+	}
+
+	/**
+	 * Removes the task from a favourite list.
+	 * 
+	 * @param task
+	 * @param predefinedFavouriteLists
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
 	public void removeTaskFromList(Task task, PredefinedFavouriteList... predefinedFavouriteLists)
 			throws CustomDatabaseInconsistentVersionException {
 		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
-			removeTaskFromList(task, predefinedFavouriteList);
+			removeTaskFromList(task, predefinedFavouriteList.getId());
 		}
 
 	}
 
-	public void removeTaskFromList(Task task, PredefinedFavouriteList predefinedFavouriteList)
-			throws CustomDatabaseInconsistentVersionException {
-		removeTaskFromList(task, predefinedFavouriteList.getId());
+	/**
+	 * Reattaches the task to the session an removes it from a favorite list.
+	 */
+	public void removeReattachedTaskFromList(Task task, long... ids) {
+		reattach(task);
+		removeTaskFromList(task, ids);
 	}
 
+	/**
+	 * Removes the task from a favourite list.
+	 * 
+	 * @param task
+	 * @param id
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
 	public void removeTaskFromList(Task task, long... id) throws CustomDatabaseInconsistentVersionException {
 		for (long l : id) {
 			if (task.isListedInFavouriteList(l)) {
-				reattach(task);
-				removeTaskFromList(task, getFavouriteList(l, true, false,false),false);
+				removeTaskFromList(task, getFavouriteList(l, true, false, false));
 			}
 		}
 	}
 
-	public void removeTaskFromList(Task task, FavouriteList favouriteList, boolean reattach)
+	/**
+	 * Removes the task from the favourite list and the favourite list from the
+	 * task.
+	 * 
+	 * @param task
+	 * @param favouriteList
+	 * @throws CustomDatabaseInconsistentVersionException
+	 */
+	public void removeTaskFromList(Task task, FavouriteList favouriteList)
 			throws CustomDatabaseInconsistentVersionException {
-		
-		if(reattach)
-			reattach(task);
-			
+
 		try {
 			logger.debug(
 					"Removing task (" + task.getTaskID() + ") from favourite lists (" + favouriteList.getName() + ")");
@@ -313,7 +353,20 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void removeTaskFromAllLists(Task task) {
 		// removing from favouriteLists
 		while (task.getFavouriteLists().size() > 0) {
-			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true, false,false),false);
+			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true, false, false));
 		}
+	}
+
+	/**
+	 * Moves one Task from one List to an other list.
+	 * 
+	 * @param source
+	 * @param target
+	 * @param task
+	 */
+	public void moveReattachedTaskToList(FavouriteList source, FavouriteList target, Task task) {
+		reattach(task);
+		removeTaskFromList(task, source.getId());
+		addTaskToList(task, target.getId());
 	}
 }

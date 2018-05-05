@@ -131,7 +131,7 @@ public class NotificationPhaseExitDialog extends AbstractDialog {
 				notificationService.endNotificationPhase(getTask());
 			} else {
 				if (removeFromNotificationList)
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.NotificationList);
+					favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.NotificationList);
 			}
 
 			if (removeFromWorklist) {

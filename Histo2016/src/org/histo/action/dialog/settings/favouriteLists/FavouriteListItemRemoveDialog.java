@@ -59,13 +59,12 @@ public class FavouriteListItemRemoveDialog extends AbstractDialog {
 
 	@Transactional
 	public void removeTaskFromList() {
-		favouriteListDAO.removeTaskFromList(task, favouriteList.getId());
+		favouriteListDAO.removeReattachedTaskFromList(task, favouriteList.getId());
 	}
-	
+
 	@Transactional
 	public void moveTaskToList() {
-		favouriteListDAO.removeTaskFromList(task, favouriteList.getId());
-		favouriteListDAO.addTaskToList(task, favouriteList.getDumpList().getId());
+		favouriteListDAO.moveReattachedTaskToList(favouriteList, favouriteList.getDumpList(), task);
 	}
 
 }

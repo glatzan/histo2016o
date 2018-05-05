@@ -232,7 +232,7 @@ public class DiagnosisRevisionDialog extends AbstractDialog {
 			}
 
 			// adding the task to the diagnosis list
-			favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+			favouriteListDAO.addReattachedTaskToList(task, PredefinedFavouriteList.DiagnosisList);
 			globalEditViewHandler.updateDataOfTask(true, false, true, false);
 
 		} catch (CustomDatabaseInconsistentVersionException e) {

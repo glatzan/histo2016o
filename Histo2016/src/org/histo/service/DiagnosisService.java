@@ -262,7 +262,7 @@ public class DiagnosisService {
 
 					if (!task.isListedInFavouriteList(PredefinedFavouriteList.DiagnosisList,
 							PredefinedFavouriteList.ReDiagnosisList)) {
-						favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+						favouriteListDAO.addReattachedTaskToList(task, PredefinedFavouriteList.DiagnosisList);
 					}
 				}
 			});
@@ -312,7 +312,7 @@ public class DiagnosisService {
 
 					genericDAO.savePatientData(task, "log.patient.task.phase.diagnosis.end");
 
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
+					favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
 							PredefinedFavouriteList.ReDiagnosisList);
 				}
 			});

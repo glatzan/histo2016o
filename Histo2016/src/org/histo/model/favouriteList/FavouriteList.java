@@ -19,6 +19,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.SelectBeforeUpdate;
+import org.histo.model.Person;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoUser;
@@ -110,5 +111,14 @@ public class FavouriteList implements HasID {
 	@Transient
 	public boolean containsTask(Task task) {
 		return items.stream().anyMatch(p -> p.getTask().equals(task));
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+
+		if (obj instanceof FavouriteList && ((FavouriteList) obj).getId() == getId())
+			return true;
+
+		return super.equals(obj);
 	}
 }

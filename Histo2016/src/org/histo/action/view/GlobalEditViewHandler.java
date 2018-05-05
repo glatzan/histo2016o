@@ -328,7 +328,7 @@ public class GlobalEditViewHandler {
 
 	public void addTaskToFavouriteList(Task task, long id) {
 		try {
-			favouriteListDAO.addTaskToList(task, id);
+			favouriteListDAO.addReattachedTaskToList(task, id);
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
@@ -342,9 +342,9 @@ public class GlobalEditViewHandler {
 			FavouriteList list = favouriteListDAO.getFavouriteList(favouriteListID, true, false, true);
 
 			if (list.isUseDumplist()) {
-				favouriteListItemRemoveDialog.initAndPrepareBean(list,task);
+				favouriteListItemRemoveDialog.initAndPrepareBean(list, task);
 			} else
-				favouriteListDAO.removeTaskFromList(task, list, false);
+				favouriteListDAO.removeReattachedTaskFromList(task, list.getId());
 
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {

@@ -372,7 +372,7 @@
 
 				<h:panelGrid columns="2" styleClass="right">
 					<!-- Save button -->
-					<p:commandButton value="#{msg['general.save']}" icon="fa fa-save"
+					<p:commandButton value="#{msg['general.save']}" icon="fa fa-save" process="@form"
 						rendered="#{!(!favouriteListEditDialog.favouriteList.manuelEdit and favouriteListEditDialog.favouriteList.defaultList)}">
 						<f:actionListener
 							binding="#{favouriteListEditDialog.saveFavouriteList()}"></f:actionListener>

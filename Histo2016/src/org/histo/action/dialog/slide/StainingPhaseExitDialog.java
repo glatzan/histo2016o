@@ -132,13 +132,13 @@ public class StainingPhaseExitDialog extends AbstractDialog {
 						goToDiagnosisPhase ? "growl.staining.endAll.text.true" : "growl.staining.endAll.text.false"));
 			} else {
 				if (removeFromStainingList)
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.StainingList,
+					favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.StainingList,
 							PredefinedFavouriteList.ReStainingList);
 			}
 
 			if (goToDiagnosisPhase) {
 				logger.debug("Adding Task to diagnosis list");
-				favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.DiagnosisList);
+				favouriteListDAO.addReattachedTaskToList(task, PredefinedFavouriteList.DiagnosisList);
 			}
 
 			if (removeFromWorklist) {

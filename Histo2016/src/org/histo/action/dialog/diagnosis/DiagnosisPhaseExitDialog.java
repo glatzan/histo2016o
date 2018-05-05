@@ -176,13 +176,14 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 						resourceBundle.get(goToNotificationPhase ? "growl.diagnosis.endAll.text.true"
 								: "growl.diagnosis.endAll.text.false"));
 				if (removeFromDiangosisList)
-					favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
+					
+					favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
 							PredefinedFavouriteList.ReDiagnosisList);
 			}
 
 			// adding to notification phase
 			if (goToNotificationPhase)
-				favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
+				favouriteListDAO.addReattachedTaskToList(getTask(), PredefinedFavouriteList.NotificationList);
 
 			if (removeFromWorklist) {
 				// only remove from worklist if patient has one active task

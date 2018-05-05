@@ -47,7 +47,7 @@ public class TaskService {
 
 	public void archiveTask(Task task) {
 		// remove from all system lists
-		favouriteListDAO.removeTaskFromList(task, PredefinedFavouriteList.values());
+		favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.values());
 
 		// finalizing task
 		task.setFinalizationDate(System.currentTimeMillis());
