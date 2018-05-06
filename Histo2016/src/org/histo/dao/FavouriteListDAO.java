@@ -160,7 +160,6 @@ public class FavouriteListDAO extends AbstractDAO {
 
 		List<Patient> patients = getSession().createQuery(criteria).getResultList();
 
-		System.out.println(patients.size());
 		return patients;
 	}
 
@@ -202,29 +201,41 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void addReattachedTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList) {
 		addReattachedTaskToList(task, predefinedFavouriteList.getId());
 	}
-	
+
 	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList)
 			throws CustomDatabaseInconsistentVersionException {
 		addTaskToList(task, predefinedFavouriteList.getId());
 	}
-	
+
 	public void addReattachedTaskToList(Task task, long id) {
-		reattach(task);
-		addTaskToList(task, getFavouriteList(id, true, false, false));
-//		reattach(task.getParent());
+		addReattachedTaskToList(task, id, null);
 	}
 
 	public void addTaskToList(Task task, long id) throws CustomDatabaseInconsistentVersionException {
-		addTaskToList(task, getFavouriteList(id, true, false, false));
+		addTaskToList(task, getFavouriteList(id, true, false, false), null);
 	}
 
-	public void addTaskToList(Task task, FavouriteList favouriteList)
+	public void addReattachedTaskToList(Task task, long id, String commentary) {
+		reattach(task);
+		addTaskToList(task, getFavouriteList(id, true, false, false), commentary);
+	}
+
+	public void addTaskToList(Task task, long id, String commentary) throws CustomDatabaseInconsistentVersionException {
+		addTaskToList(task, getFavouriteList(id, true, false, false), commentary);
+	}
+
+	public void addTaskToList(Task task, FavouriteList favouriteList) {
+		addTaskToList(task, favouriteList, null);
+	}
+
+	public void addTaskToList(Task task, FavouriteList favouriteList, String commentary)
 			throws CustomDatabaseInconsistentVersionException {
 
 		// list should not contain the task
 		if (favouriteList.getItems().stream().noneMatch(p -> p.getTask().getId() == task.getId())) {
 			logger.debug("Adding task (" + task.getTaskID() + ") to favourite lists (" + favouriteList.getName() + ")");
 			FavouriteListItem favItem = new FavouriteListItem(favouriteList, task);
+			favItem.setCommentary(commentary != null ? commentary : "");
 			// saving new fav item
 			save(favItem);
 			favouriteList.getItems().add(favItem);
@@ -246,13 +257,8 @@ public class FavouriteListDAO extends AbstractDAO {
 			task.generateTaskStatus();
 		} else
 			logger.debug("Task (" + task.getTaskID() + ") alread contains list (" + favouriteList.getName() + ")");
-	}
 
-	// public void removeTaskFromList(Task task, PredefinedFavouriteList
-	// predefinedFavouriteList)
-	// throws CustomDatabaseInconsistentVersionException {
-	// removeTaskFromList(task, predefinedFavouriteList.getId());
-	// }
+	}
 
 	/**
 	 * Reattaches the task to the session an removes it from a favorite list.
@@ -308,7 +314,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	 * @param favouriteList
 	 * @throws CustomDatabaseInconsistentVersionException
 	 */
-	public void removeTaskFromList(Task task, FavouriteList favouriteList)
+	public FavouriteList removeTaskFromList(Task task, FavouriteList favouriteList)
 			throws CustomDatabaseInconsistentVersionException {
 
 		try {
@@ -347,6 +353,8 @@ public class FavouriteListDAO extends AbstractDAO {
 			logger.debug("Can not remove favourite list(" + favouriteList.getName() + ") from task (" + task.getTaskID()
 					+ "), not listed ");
 		}
+
+		return favouriteList;
 		// TODO Delete FavouriteListItem?
 	}
 
@@ -356,7 +364,6 @@ public class FavouriteListDAO extends AbstractDAO {
 			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true, false, false));
 		}
 	}
-
 	/**
 	 * Moves one Task from one List to an other list.
 	 * 
@@ -365,8 +372,19 @@ public class FavouriteListDAO extends AbstractDAO {
 	 * @param task
 	 */
 	public void moveReattachedTaskToList(FavouriteList source, FavouriteList target, Task task) {
+		moveReattachedTaskToList(source, target, task, null);
+	}
+
+	/**
+	 * Moves one Task from one List to an other list.
+	 * 
+	 * @param source
+	 * @param target
+	 * @param task
+	 */
+	public void moveReattachedTaskToList(FavouriteList source, FavouriteList target, Task task, String commentary) {
 		reattach(task);
 		removeTaskFromList(task, source.getId());
-		addTaskToList(task, target.getId());
+		addTaskToList(task, target.getId(),commentary);
 	}
 }

@@ -166,7 +166,6 @@ public class WorklistViewHandlerAction {
 				List<Task> tasks = globalEditViewHandler.getSelectedPatient()
 						.getActiveTasks(getWorklist().isShowActiveTasksExplicit());
 
-				System.out.println(tasks.size());
 				boolean found = false;
 
 				// searching for the first not finalized task

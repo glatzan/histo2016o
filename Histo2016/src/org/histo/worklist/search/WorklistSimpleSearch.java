@@ -94,8 +94,8 @@ public class WorklistSimpleSearch extends WorklistSearch {
 	}
 
 	/**
-	 * Returns false if any pre configured list is selected. All Filter options
-	 * will be disabled
+	 * Returns false if any pre configured list is selected. All Filter options will
+	 * be disabled
 	 * 
 	 * @return
 	 */
@@ -116,7 +116,7 @@ public class WorklistSimpleSearch extends WorklistSearch {
 		case STAINING_LIST:
 			setSelectedLists(new PredefinedFavouriteList[] { PredefinedFavouriteList.StainingList,
 					PredefinedFavouriteList.StayInStainingList, PredefinedFavouriteList.ReStainingList,
-					PredefinedFavouriteList.CouncilLendingMTA });
+					PredefinedFavouriteList.CouncilLendingMTA, PredefinedFavouriteList.ScannList });
 			setNewPatients(true);
 			break;
 		case DIAGNOSIS_LIST:

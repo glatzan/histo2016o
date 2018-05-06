@@ -5,7 +5,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import org.apache.log4j.Logger;
+import org.apache.velocity.app.Velocity;
 import org.histo.model.interfaces.HasID;
+import org.histo.util.VelocityNoOutputLogger;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -73,5 +75,9 @@ public abstract class Template implements HasID, Cloneable {
 			return null;
 		}
 	}
-
+	
+	public static final void initVelocity() {
+		Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new VelocityNoOutputLogger());
+		Velocity.init();
+	}
 }

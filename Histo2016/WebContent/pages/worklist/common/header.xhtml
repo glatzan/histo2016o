@@ -296,14 +296,13 @@
 			</p:commandButton>
 			<!-- *************** Log Menu *************** -->
 
-
 			<!-- Menu Button -->
 			<p:commandButton id="menuBtn" value="Menu" type="button"
 				icon="ui-icon-triangle-1-s" />
 
 			<!-- Menu Button over -->
 			<p:tieredMenu overlay="true" trigger="menuBtn" my="left top"
-				id="tiredMenu" at="left bottom" style="width:200px">
+				id="tiredMenu" at="left bottom" style="width:200px" styleClass="tieredMenuOptions">
 
 				<!-- settings button -->
 				<p:menuitem value="#{msg['body.worklist.header.button.settings']}"

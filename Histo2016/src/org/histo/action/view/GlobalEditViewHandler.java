@@ -332,13 +332,15 @@ public class GlobalEditViewHandler {
 		setTaskMenuModel((new MenuGenerator()).generateEditMenu(selectedPatient, selectedTask, taskMenuCommandButtons));
 	}
 
-	public void addTaskToFavouriteList(Task task, long id) {
+	@Transactional
+	public void addTaskToFavouriteList(Task task, long favouriteListID) {
 		try {
-			favouriteListDAO.addReattachedTaskToList(task, id);
+			favouriteListDAO.addReattachedTaskToList(task, favouriteListID);
+			FavouriteList list = favouriteListDAO.getFavouriteList(favouriteListID, false, false, false);
 			mainHandlerAction.sendGrowlMessagesAsResource("growl.favouriteList.added", "growl.favouriteList.added.text",
-					new Object[] { task.toString(), id});
-			
-			updateDataOfTask(true, true, true, false);
+					new Object[] { task.getTaskID(), list.getName() });
+
+			updateDataOfTask(true, true, false, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
 		}
@@ -348,7 +350,10 @@ public class GlobalEditViewHandler {
 	public void removeTaskFromFavouriteList(Task task, Long favouriteListID) {
 		try {
 			favouriteListDAO.removeReattachedTaskFromList(task, favouriteListID);
-			updateDataOfTask(true, true, true, false);
+			FavouriteList list = favouriteListDAO.getFavouriteList(favouriteListID, false, false, false);
+			mainHandlerAction.sendGrowlMessagesAsResource("growl.favouriteList.removed",
+					"growl.favouriteList.removed.text", new Object[] { task.getTaskID(), list.getName() });
+			updateDataOfTask(true, true, false, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
 		}

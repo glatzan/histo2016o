@@ -401,12 +401,11 @@ public class MenuGenerator {
 										"globalEditViewHandler.updateDataOfTask",
 										"navigationForm:patientList contentForm headerForm", null,
 										"updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll');",
-										new VaribaleHolder<Boolean>(Boolean.TRUE, "val1"),
-										new VaribaleHolder<Boolean>(Boolean.TRUE, "val2"),
-										new VaribaleHolder<Boolean>(Boolean.TRUE, "val3"),
-										new VaribaleHolder<Boolean>(Boolean.TRUE, "val4")));
-
-								taskMenuCommandButtons.getChildren().add(signature.getButton());
+										new VaribaleHolder<Boolean>(Boolean.TRUE, "valu1"),
+										new VaribaleHolder<Boolean>(Boolean.TRUE, "valu1"),
+										new VaribaleHolder<Boolean>(Boolean.FALSE, "valu2"),
+										new VaribaleHolder<Boolean>(Boolean.FALSE, "valu3")))
+										.addToParent(taskMenuCommandButtons);
 
 								// onlick active the command button
 								item.setOnclick("$('#headerForm\\\\:" + signature.getButtonId()

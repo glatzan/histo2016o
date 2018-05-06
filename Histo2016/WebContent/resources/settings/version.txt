@@ -124,17 +124,29 @@ Graphic Changes
 
 https://tex.stackexchange.com/questions/344799/how-can-i-escape-plain-text
 
-+v 1.5.1
++v 1.5.1 (06.05.2018)
 ++++: Liste zum Einscannen hinzugefügt.
+++++: Liste zum Ablegen von eingescannten Fällen hinzugefügt.
++++!: Growl verdeckt nun nicht mehr das Menu
+++++: Dialog zum Verschieben von Favouriten-Listen in Dumpliste implementiert.
+++++: Growl-Nachrichten für Favouriten-Listen hinzufügen, entfernen und bewegen implementiert.
+++++: In der MTA Arbeitsliste werden Einträge der Einscannliste angezeigt.
 
 SQL:
 /* boolean for manualEdit*/
 alter table favouritelist add manueledit boolean;
 update favouritelist set manueledit = false;
 
-INSERT INTO favouritelist (id, defaultlist, globalview, name,manueledit, useicon,icon,infotext) VALUES (50, true, true, 'Einscannliste', true,true,"fa-camera-retro","Einscannen");
+INSERT INTO favouritelist (id, defaultlist, globalview, name,manueledit, useicon,usedumplist) VALUES (51, true, true, 'Eingescannte Fälle', true,false,false);
 /* setting favourite list icon permission to admin = 7, moderator = 6, physicain = 5, mta = 4 */
-INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES (SELECT max(id)+1 FROM favouritepermissionsgroup;,false, true, true, 50, 7);
+INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 51, 7);
+INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 51, 6);
+INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 51, 5);
+INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 51, 4);
+
+INSERT INTO favouritelist (id, defaultlist, globalview, name,manueledit, useicon,icon,infotext,usedumplist, dumplist_id, dumpcommentary) VALUES (50, true, true, 'Einscannliste', true,true,'fa-camera-retro','Einscannen',true,51,'Auftrag wurde aus Liste $oldList verschoben. ($date, $time Uhr)');
+/* setting favourite list icon permission to admin = 7, moderator = 6, physicain = 5, mta = 4 */
+INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 50, 7);
 INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 50, 6);
 INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 50, 5);
 INSERT INTO favouritepermissionsgroup (id,admin, editable, readable, favouritelist_id, group_id) VALUES ((SELECT max(id)+1 FROM favouritepermissionsgroup),false, true, true, 50, 4);

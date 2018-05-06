@@ -129,7 +129,6 @@ public abstract class AbstractDialog {
 	public void onDatabaseVersionConflict() {
 		hideDialog();
 		mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");
-		System.out.println("---");
 		throw new AbortProcessingException();
 	}
 }

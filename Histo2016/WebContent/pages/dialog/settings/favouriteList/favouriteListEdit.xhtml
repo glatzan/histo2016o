@@ -90,7 +90,8 @@
 			</h:panelGrid>
 
 			<!-- icon and dump list container -->
-			<h:panelGrid style="width:100%" columns="2" styleClass="defaultHistoHiddenTableContainer"
+			<h:panelGrid style="width:100%" columns="2"
+				styleClass="defaultHistoHiddenTableContainer"
 				columnClasses="columnWidthPercent50,columnWidthPercent50 columnTop">
 				<!-- icon -->
 				<h:panelGrid columns="2" styleClass="defaultHistoTable"
@@ -114,7 +115,8 @@
 
 						<h:outputLink style="margin-left:5px"
 							disabled="#{(!favouriteListEditDialog.favouriteList.manuelEdit and favouriteListEditDialog.favouriteList.defaultList) or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
-							value="https://www.primefaces.org/showcase/ui/misc/fa.xhtml" title="#{msg['dialog.favouriteListEdit.icon.icon.text']}"
+							value="https://www.primefaces.org/showcase/ui/misc/fa.xhtml"
+							title="#{msg['dialog.favouriteListEdit.icon.icon.text']}"
 							target="_blank">
 							<i class="fa fa-picture-o icon-grey" />
 						</h:outputLink>
@@ -163,7 +165,8 @@
 						value="#{favouriteListEditDialog.favouriteList.dumpList}"
 						converter="#{favouriteListEditDialog.dumpListTransformer}">
 
-						<f:selectItem itemValue="#{null}" itemLabel="#{msg['dialog.favouriteListEdit.dumpList.none']}"></f:selectItem>
+						<f:selectItem itemValue="#{null}"
+							itemLabel="#{msg['dialog.favouriteListEdit.dumpList.none']}"></f:selectItem>
 
 						<f:selectItems value="#{favouriteListEditDialog.dumpLists}"
 							var="list" itemValue="#{list}" itemLabel="#{list.name}" />
@@ -171,8 +174,18 @@
 					</p:selectOneMenu>
 
 					<!-- text list -->
-					<h:outputLabel
-						value="#{msg['dialog.favouriteListEdit.dumpList.text']}"></h:outputLabel>
+					<h:panelGroup>
+						<h:outputLabel
+							value="#{msg['dialog.favouriteListEdit.dumpList.text']}"></h:outputLabel>
+
+						<h:panelGroup id="commentaryInfo">
+							<i class="fa fa-fw fa-info-circle" title="" />
+							<p:tooltip for="commentaryInfo">
+								<h:outputLabel value="#{msg['dialog.favouriteListEdit.dumpList.default.info']}" />
+							</p:tooltip>
+						</h:panelGroup>
+						
+					</h:panelGroup>
 					<p:inputTextarea rows="4" cols="35"
 						value="#{favouriteListEditDialog.favouriteList.dumpCommentary}"
 						disabled="#{!favouriteListEditDialog.favouriteList.useDumplist or  (!favouriteListEditDialog.favouriteList.manuelEdit and favouriteListEditDialog.favouriteList.defaultList) or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"></p:inputTextarea>
@@ -336,7 +349,7 @@
 								<i class="fa fa-plus" />
 							</p:commandLink>
 						</f:facet>
-						
+
 						<!-- remove -->
 						<p:commandLink update="@form" partialSubmit="true"
 							disabled="#{(!favouriteListEditDialog.favouriteList.manuelEdit and favouriteListEditDialog.favouriteList.defaultList) or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
@@ -358,8 +371,16 @@
 					styleClass="defaultHistoDataTable"
 					value="#{favouriteListEditDialog.favouriteList.items}">
 					<p:column headerText="#{msg['dialog.favouriteListEdit.tasks.id']}"
-						style="width:20%">
+						style="width:30%">
 						<h:outputText value="#{item.task.taskID}" />
+					</p:column>
+					<p:column headerText="Kommentar">
+						<h:outputLabel value="#{item.commentary}">
+							<f:converter converterId="org.histo.ui.TruncateConverter" />
+							<f:attribute name="truncateAt" value="50" />
+							<f:attribute name="continuationMark" value="..." />
+						</h:outputLabel>
+
 					</p:column>
 				</p:dataTable>
 			</h:panelGrid>
@@ -372,7 +393,8 @@
 
 				<h:panelGrid columns="2" styleClass="right">
 					<!-- Save button -->
-					<p:commandButton value="#{msg['general.save']}" icon="fa fa-save" process="@form"
+					<p:commandButton value="#{msg['general.save']}" icon="fa fa-save"
+						process="@form"
 						rendered="#{!(!favouriteListEditDialog.favouriteList.manuelEdit and favouriteListEditDialog.favouriteList.defaultList)}">
 						<f:actionListener
 							binding="#{favouriteListEditDialog.saveFavouriteList()}"></f:actionListener>

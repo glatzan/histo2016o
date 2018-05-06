@@ -175,8 +175,8 @@ public class DiagnosisPhaseExitDialog extends AbstractDialog {
 						resourceBundle.get("growl.diagnosis.approved", getSelectedRevision().getName()),
 						resourceBundle.get(goToNotificationPhase ? "growl.diagnosis.endAll.text.true"
 								: "growl.diagnosis.endAll.text.false"));
+				
 				if (removeFromDiangosisList)
-					
 					favouriteListDAO.removeReattachedTaskFromList(task, PredefinedFavouriteList.DiagnosisList,
 							PredefinedFavouriteList.ReDiagnosisList);
 			}

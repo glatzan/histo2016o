@@ -112,9 +112,4 @@ public class MailTemplate extends Template {
 	public void fillTemplate() {
 
 	}
-
-	public static final void initVelocity() {
-		Velocity.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM, new VelocityNoOutputLogger());
-		Velocity.init();
-	}
 }

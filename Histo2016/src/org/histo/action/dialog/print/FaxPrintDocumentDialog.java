@@ -52,8 +52,6 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 		this.contact = contact;
 		this.pdf = pdf;
 
-		System.out.println("gallo");
-
 		if (contact != null)
 			this.number = contact.getPerson().getContact().getFax();
 		else

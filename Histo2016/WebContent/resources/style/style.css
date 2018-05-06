@@ -205,10 +205,14 @@ body .searchSelectMenuPanel .ui-selectonemenu-filter {
   width: 77% !important;
   padding: 3px 7px;
 }
-body div#globalgrowl {
+body .ui-growl {
   position: fixed;
-  bottom: 30% !important;
-  z-index: 9999 !important;
+  left: auto;
+  top: 75px;
+  z-index: 900;
+}
+body .tieredMenuOptions {
+  t-index: 1000;
 }
 /*
  * Class for normal table with scrollable body

@@ -50,7 +50,6 @@ public class ContactSelector extends AbstractSelector implements HasID {
 
 		if (associatedContact.getPerson().getOrganizsations() != null) {
 			for (Organization organization : associatedContact.getPerson().getOrganizsations()) {
-				System.out.println(organization.getName());
 				this.organizazionsChoosers.add(new OrganizationChooser(this, organization,
 						organization.equals(associatedContact.getPerson().getDefaultAddress())));
 			}

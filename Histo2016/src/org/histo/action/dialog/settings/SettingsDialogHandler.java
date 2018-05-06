@@ -337,7 +337,6 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 				} else {
 
-					System.out.println(getSelectedDiagnosisPreset().getIndexInList());
 					// case edit: update an save
 					logger.debug("Updating diagnosis " + getSelectedDiagnosisPreset().getCategory());
 

@@ -140,11 +140,11 @@ public class MainHandlerAction {
 	}
 
 	public void sendGrowlMessagesAsResource(String headline, String message) {
-		sendGrowlMessagesAsResource(headline, message, FacesMessage.SEVERITY_INFO, null);
+		sendGrowlMessagesAsResource(headline, message, FacesMessage.SEVERITY_INFO);
 	}
 
 	public void sendGrowlMessagesAsResource(String headline, String message, Object[] params) {
-		sendGrowlMessagesAsResource(headline, message, FacesMessage.SEVERITY_INFO);
+		sendGrowlMessagesAsResource(headline, message, FacesMessage.SEVERITY_INFO,params);
 	}
 
 	public void sendGrowlMessagesAsResource(String headline, String message, FacesMessage.Severity servertiy) {

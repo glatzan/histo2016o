@@ -341,6 +341,7 @@ public class CreateTaskDialog extends AbstractDialog {
 					favouriteListDAO.addTaskToList(getTask(), f);
 
 					genericDAO.save(task.getPatient());
+					
 				}
 			});
 
