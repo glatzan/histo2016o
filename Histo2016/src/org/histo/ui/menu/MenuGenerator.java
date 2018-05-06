@@ -2,11 +2,7 @@ package org.histo.ui.menu;
 
 import java.util.List;
 
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
 import javax.faces.component.html.HtmlPanelGroup;
-import javax.faces.context.FacesContext;
-import javax.faces.event.BehaviorEvent;
 
 import org.apache.log4j.Logger;
 import org.histo.action.UserHandlerAction;
@@ -17,9 +13,6 @@ import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
-import org.primefaces.behavior.ajax.AjaxBehavior;
-import org.primefaces.behavior.ajax.AjaxBehaviorListenerImpl;
-import org.primefaces.component.commandbutton.CommandButton;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSeparator;
@@ -57,6 +50,13 @@ public class MenuGenerator {
 
 		MenuModel model = new DefaultMenuModel();
 
+		if (taskMenuCommandButtons == null) {
+			logger.error("No button container connected!");
+			return model;
+		} else
+			// clearing command button array
+			taskMenuCommandButtons.getChildren().clear();
+
 		// patient menu
 		{
 
@@ -68,8 +68,7 @@ public class MenuGenerator {
 
 			// add patient
 			DefaultMenuItem item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.new"));
-			item.setOnclick(
-					"$('#headerForm\\\\:addPatientButton').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+			item.setOnclick(getOnClickCommand("addPatientButton"));
 			item.setIcon("fa fa-user");
 			item.setRendered(PATIENT_EDIT);
 			patientSubMenu.addElement(item);
@@ -81,8 +80,7 @@ public class MenuGenerator {
 
 			// patient overview
 			item = new DefaultMenuItem(resourceBundle.get("header.menu.patient.overview"));
-			item.setOnclick(
-					"$('#headerForm\\\\:showPatientOverview').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+			item.setOnclick(getOnClickCommand("showPatientOverview"));
 			item.setIcon("fa fa-tablet");
 			item.setDisabled(patient == null);
 			patientSubMenu.addElement(item);
@@ -377,9 +375,6 @@ public class MenuGenerator {
 				List<FavouriteListMenuItem> items = favouriteListDAO.getMenuItems(userHandlerAction.getCurrentUser(),
 						task);
 
-				// clearing command button array
-				taskMenuCommandButtons.getChildren().clear();
-
 				// only render of size > 0
 				if (items.size() > 0) {
 					DefaultSubMenu favouriteSubMenu = new DefaultSubMenu("F. lists");
@@ -388,62 +383,53 @@ public class MenuGenerator {
 
 					for (FavouriteListMenuItem favouriteListItem : items) {
 						item = new DefaultMenuItem(favouriteListItem.getName());
+
+						// if the favourite lists contains the task, option to remove ist
 						if (favouriteListItem.isContainsTask()) {
 							item.setIcon("fa fa-check-circle icon-green");
 
-							if (favouriteListItem.isDumplist()) {
-								String buttonID = "button" + Math.round(Math.random() * 1000);
-								CommandButton button = new CommandButton();
-								button.setValue("");
-								button.setStyle("visible:none");
+							// if favourite has a dumplist, open the dialog for moving the task to the
+							// dumplist
+							if (favouriteListItem.isDumpList()) {
 
-								// assign random id to avoid duplicate id for subsquent click
-								button.setId(buttonID);
+								MethodSignature signature = new MethodSignature(
+										"favouriteListItemRemoveDialog.initAndPrepareBean",
+										new VaribaleHolder<Task>(task, "task"),
+										new VaribaleHolder<Long>(favouriteListItem.getId(), "favListId"));
 
-								taskMenuCommandButtons.getChildren().add(button);
-//								favouriteListItemRemoveDialog.initAndPrepareBean(list, task);
-//								item.setCommand(
-//										"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "//+ favouriteListItem.getId() + ")}");
-//							       AjaxBehavior ab1 = new AjaxBehavior();
-//							        ExpressionFactory ef = ctx.getApplication().getExpressionFactory();
-//							        MethodExpression me1 = ef.createMethodExpression(ctx.getELContext(),
-//							                                     expression,//Your ELExpression #{roleCreateForm.save}
-//							                                     expectedReturnType, //In your case null
-//							                                     expectedParamTypes); //If you receive parameters put new Class[]{Object.class});
-//							        ab1.setListener(me1);
-//							        button.addClientBehavior( "submit", ab1);
-								
-//								favouriteListItemRemoveDialog.initAndPrepareBean(list, task);
-								
-								FacesContext fc = FacesContext.getCurrentInstance();
-								ExpressionFactory ef = fc.getApplication().getExpressionFactory();
+								signature.generateButton().addAjaxBehaviorToButton("dialogReturn", new MethodSignature(
+										"globalEditViewHandler.updateDataOfTask",
+										"navigationForm:patientList contentForm headerForm", null,
+										"updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll');",
+										new VaribaleHolder<Boolean>(Boolean.TRUE, "val1"),
+										new VaribaleHolder<Boolean>(Boolean.TRUE, "val2"),
+										new VaribaleHolder<Boolean>(Boolean.TRUE, "val3"),
+										new VaribaleHolder<Boolean>(Boolean.TRUE, "val4")));
 
-								MethodExpression me = ef.createMethodExpression(fc.getELContext(), "#{favouriteListItemRemoveDialog.initAndPrepareBean()}", null, new Class<?>[]{BehaviorEvent.class});
-//								AjaxBehavior ajaxBehavior = (AjaxBehavior) fc.getApplication().createBehavior(AjaxBehavior.BEHAVIOR_ID);
-//								ajaxBehavior.setProcess("@this");
-//								ajaxBehavior.addAjaxBehaviorListener(new AjaxBehaviorListenerImpl(me, me));
-//							     AjaxBehavior ab1 = new AjaxBehavior();
-//							    ab1.setListener(me);
-//								button.addClientBehavior( "submit", ab1); 
-								button.setActionExpression(me);	
-								
-								item.setOnclick(
-										"$('#headerForm\\\\:"+buttonID+"').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+								taskMenuCommandButtons.getChildren().add(signature.getButton());
+
+								// onlick active the command button
+								item.setOnclick("$('#headerForm\\\\:" + signature.getButtonId()
+										+ "').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;");
+
 							} else {
 								item.setCommand(
 										"#{globalEditViewHandler.removeTaskFromFavouriteList(globalEditViewHandler.selectedTask, "
 												+ favouriteListItem.getId() + ")}");
+								item.setOncomplete(
+										"updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+								item.setUpdate("navigationForm:patientList contentForm headerForm");
 							}
 						} else {
 							item.setIcon("fa fa-circle-o");
 							item.setCommand(
 									"#{globalEditViewHandler.addTaskToFavouriteList(globalEditViewHandler.selectedTask, "
 											+ favouriteListItem.getId() + ")}");
+							item.setOncomplete(
+									"updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
+							item.setUpdate("navigationForm:patientList contentForm headerForm");
 						}
 
-						item.setOncomplete(
-								"updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')");
-						item.setUpdate("navigationForm:patientList contentForm headerForm");
 						favouriteSubMenu.addElement(item);
 					}
 
@@ -490,5 +476,9 @@ public class MenuGenerator {
 
 		return model;
 
+	}
+
+	private String getOnClickCommand(String id) {
+		return "$('#headerForm\\\\:" + id + "').click();$('#headerForm\\\\:taskTieredMenuButton').hide();return false;";
 	}
 }

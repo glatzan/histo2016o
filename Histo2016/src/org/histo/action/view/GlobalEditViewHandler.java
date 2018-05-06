@@ -335,6 +335,9 @@ public class GlobalEditViewHandler {
 	public void addTaskToFavouriteList(Task task, long id) {
 		try {
 			favouriteListDAO.addReattachedTaskToList(task, id);
+			mainHandlerAction.sendGrowlMessagesAsResource("growl.favouriteList.added", "growl.favouriteList.added.text",
+					new Object[] { task.toString(), id});
+			
 			updateDataOfTask(true, true, true, false);
 		} catch (CustomDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);

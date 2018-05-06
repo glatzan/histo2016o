@@ -89,7 +89,10 @@
 			<!-- Show Patient Overview -->
 			<p:commandButton id="addPatientButton" style="display:none"
 				actionListener="#{addPatientDialogHandler.initAndPrepareBean()}">
-				<p:ajax event="dialogReturn" />
+				<p:ajax event="dialogReturn"
+					listener="#{globalEditViewHandler.onAddClinicPatient}"
+					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight')"
+					update="navigationForm:patientList contentForm headerForm" />
 			</p:commandButton>
 
 			<!-- Show Overview -->
@@ -347,7 +350,8 @@
 			</p:commandButton>
 
 		</h:panelGroup>
-		
-		<h:panelGroup binding="#{globalEditViewHandler.buttonPlaceHolder}">
+
+		<h:panelGroup
+			binding="#{globalEditViewHandler.taskMenuCommandButtons}" />
 	</h:panelGrid>
 </ui:composition>

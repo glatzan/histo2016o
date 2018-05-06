@@ -140,11 +140,20 @@ public class MainHandlerAction {
 	}
 
 	public void sendGrowlMessagesAsResource(String headline, String message) {
+		sendGrowlMessagesAsResource(headline, message, FacesMessage.SEVERITY_INFO, null);
+	}
+
+	public void sendGrowlMessagesAsResource(String headline, String message, Object[] params) {
 		sendGrowlMessagesAsResource(headline, message, FacesMessage.SEVERITY_INFO);
 	}
 
 	public void sendGrowlMessagesAsResource(String headline, String message, FacesMessage.Severity servertiy) {
 		sendGrowlMessages(resourceBundle.get(headline), resourceBundle.get(message), servertiy);
+	}
+
+	public void sendGrowlMessagesAsResource(String headline, String message, FacesMessage.Severity servertiy,
+			Object... params) {
+		sendGrowlMessages(resourceBundle.get(headline), resourceBundle.get(message, params), servertiy);
 	}
 
 	/********************************************************
@@ -216,4 +225,8 @@ public class MainHandlerAction {
 	/********************************************************
 	 * Date
 	 ********************************************************/
+
+	public void test(String test, Task task, Long favouriteListID) {
+		System.out.println(test + "--" + task + " " + favouriteListID);
+	}
 }

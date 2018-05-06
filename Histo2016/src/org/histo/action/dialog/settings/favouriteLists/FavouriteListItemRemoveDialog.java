@@ -44,14 +44,24 @@ public class FavouriteListItemRemoveDialog extends AbstractDialog {
 	@Setter(AccessLevel.NONE)
 	@Lazy
 	private GlobalEditViewHandler globalEditViewHandler;
-	
+
 	private FavouriteList favouriteList;
 
 	private String commentary;
 
+	public void initAndPrepareBean(Task task, Long favouriteListID) {
+		if (initBean(task, favouriteListID))
+			prepareDialog();
+	}
+
 	public void initAndPrepareBean(FavouriteList favouriteList, Task task) {
 		if (initBean(favouriteList, task))
 			prepareDialog();
+	}
+
+	public boolean initBean(Task task, Long favouriteListID) {
+		FavouriteList list = favouriteListDAO.getFavouriteList(favouriteListID, false, false, true);
+		return initBean(list, task);
 	}
 
 	public boolean initBean(FavouriteList favouriteList, Task task) {
@@ -74,19 +84,8 @@ public class FavouriteListItemRemoveDialog extends AbstractDialog {
 	@Transactional
 	public void moveTaskToList() {
 		favouriteListDAO.moveReattachedTaskToList(favouriteList, favouriteList.getDumpList(), task);
-	}
-
-	/**
-	 * TODO: Move to menuitem if returnDialog event is supported
-	 * 
-	 * Workaround for updating the ui.
-	 */
-	@Override
-	public void hideDialog() {
-		super.hideDialog();
-		globalEditViewHandler.updateDataOfTask(true, false, true, true);
-		PrimeFaces.current().ajax().update("navigationForm:patientList");
-	
+		mainHandlerAction.sendGrowlMessagesAsResource("growl.favouriteList.move", "growl.favouriteList.move.text",
+				new Object[] { task.toString(), favouriteList.getName() });
 	}
 
 }
