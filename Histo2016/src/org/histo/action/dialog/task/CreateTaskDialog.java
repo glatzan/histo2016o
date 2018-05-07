@@ -1,4 +1,4 @@
-package org.histo.action.dialog.patient;
+package org.histo.action.dialog.task;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
+import javax.faces.component.html.HtmlPanelGroup;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.ValidatorException;
 
@@ -21,6 +22,7 @@ import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
+import org.histo.config.enums.View;
 import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomNotUniqueReqest;
 import org.histo.dao.ContactDAO;
@@ -30,8 +32,11 @@ import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.BioBank;
 import org.histo.model.Council;
+import org.histo.model.DiagnosisPreset;
+import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
 import org.histo.model.PDFContainer;
+import org.histo.model.Physician;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Patient;
@@ -41,12 +46,16 @@ import org.histo.service.DiagnosisService;
 import org.histo.service.SampleService;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.CaseCertificate;
+import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
 import org.histo.util.TimeUtil;
 import org.histo.util.dataList.HasDataList;
 import org.histo.util.pdf.PDFGenerator;
+import org.primefaces.model.menu.MenuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -55,7 +64,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-@Configurable
+@Component
+@Scope(value = "session")
 @Getter
 @Setter
 public class CreateTaskDialog extends AbstractDialog {
@@ -137,6 +147,16 @@ public class CreateTaskDialog extends AbstractDialog {
 	private boolean taskIDisPresentInDatabase;
 
 	/**
+	 * True if external Task and there are sample for returning to client
+	 */
+	private boolean externalTask;
+
+	/**
+	 * Commentary for returning the samples
+	 */
+	private String exneralCommentary;
+
+	/**
 	 * Initializes the bean and shows the createTaskDialog
 	 * 
 	 * @param patient
@@ -194,7 +214,10 @@ public class CreateTaskDialog extends AbstractDialog {
 
 		// resetting selected container
 		dialogHandlerAction.getMediaDialog().setSelectedPdfContainer(null);
-
+		
+		setExneralCommentary("");
+		setExternalTask(false);
+		
 		setMoveInformedConsent(false);
 	}
 
@@ -335,13 +358,15 @@ public class CreateTaskDialog extends AbstractDialog {
 
 					genericDAO.savePatientData(getTask(), "log.patient.task.update", task.getTaskID());
 
-					FavouriteList f = favouriteListDAO.getFavouriteList(PredefinedFavouriteList.StainingList.getId(),
-							true, false, false);
+					favouriteListDAO.addTaskToList(getTask(), PredefinedFavouriteList.StainingList.getId());
 
-					favouriteListDAO.addTaskToList(getTask(), f);
+					if (externalTask) {
+						favouriteListDAO.addTaskToList(task, PredefinedFavouriteList.ReturnSampleList.getId(),
+								exneralCommentary);
+					}
 
 					genericDAO.save(task.getPatient());
-					
+
 				}
 			});
 

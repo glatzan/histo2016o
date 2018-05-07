@@ -7,7 +7,6 @@ import org.histo.action.dialog.notification.ContactNotificationDialog;
 import org.histo.action.dialog.notification.ContactSelectDialog;
 import org.histo.action.dialog.notification.NotificationDialog;
 import org.histo.action.dialog.notification.NotificationPhaseExitDialog;
-import org.histo.action.dialog.patient.CreateTaskDialog;
 import org.histo.action.dialog.patient.DeleteTaskDialog;
 import org.histo.action.dialog.patient.EditPatientDialog;
 import org.histo.action.dialog.patient.PatientLogDialog;
@@ -31,6 +30,7 @@ import org.histo.action.dialog.task.ArchiveTaskDialog;
 import org.histo.action.dialog.task.ChangeMaterialDialog;
 import org.histo.action.dialog.task.ChangeTaskIDDialog;
 import org.histo.action.dialog.task.CreateSampleDialog;
+import org.histo.action.dialog.task.CreateTaskDialog;
 import org.histo.action.dialog.task.DeleteTaskEntityDialog;
 import org.histo.action.dialog.worklist.WorklistSearchDialog;
 import org.springframework.context.annotation.Scope;
@@ -66,8 +66,6 @@ public class DialogHandlerAction {
 	private FaxPrintDocumentDialog faxPrintDocumentDialog;
 
 	private DeleteTaskDialog deleteTaskDialog;
-
-	private CreateTaskDialog createTaskDialog;
 
 	private EditPatientDialog editPatientDialog;
 
@@ -192,14 +190,6 @@ public class DialogHandlerAction {
 		}
 
 		return deleteTaskDialog;
-	}
-
-	public CreateTaskDialog getCreateTaskDialog() {
-		if (createTaskDialog == null) {
-			createTaskDialog = new CreateTaskDialog();
-		}
-
-		return createTaskDialog;
 	}
 
 	public EditPatientDialog getEditPatientDialog() {

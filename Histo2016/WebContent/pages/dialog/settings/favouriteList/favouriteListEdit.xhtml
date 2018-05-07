@@ -30,57 +30,76 @@
 
 		<div class="dialogContent" style="height: 500px;">
 
-			<!-- Name -->
-			<h:panelGrid columns="2" styleClass="defaultHistoTable"
-				columnClasses="columnWidth150 columnHeading columnTop,">
+			<h:panelGrid columns="2" style="width:100%"
+				columnClasses="columnWidthPercent70 columnTop, columnWidthPercent30 columnTop"
+				styleClass="defaultHistoHiddenTableContainer">
+				<!-- left -->
+				<h:panelGrid columns="2" styleClass="defaultHistoTable"
+					columnClasses="columnWidth150 columnHeading columnTop,">
 
-				<!-- name -->
-				<h:outputLabel value="#{msg['dialog.favouriteListEdit.name']}" />
-				<p:inputText
-					disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
-					value="#{favouriteListEditDialog.favouriteList.name}"></p:inputText>
+					<!-- name -->
+					<h:outputLabel value="#{msg['dialog.favouriteListEdit.name']}" />
+					<p:inputText
+						disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
+						value="#{favouriteListEditDialog.favouriteList.name}"></p:inputText>
 
-				<!-- commentary -->
-				<h:outputLabel value="#{msg['dialog.favouriteListEdit.commentary']}" />
-				<p:inputTextarea scrollHeight="40" style="width:50%"
-					disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
-					value="#{favouriteListEditDialog.favouriteList.commentary}">
-				</p:inputTextarea>
-
-				<!-- owner -->
-				<h:outputLabel value="#{msg['dialog.favouriteListEdit.owner']}"></h:outputLabel>
-
-				<h:panelGroup>
-					<!-- owners name -->
+					<!-- commentary -->
 					<h:outputLabel
-						rendered="#{favouriteListEditDialog.favouriteList.owner ne null and !favouriteListEditDialog.favouriteList.defaultList}"
-						value="#{favouriteListEditDialog.favouriteList.owner.physician.person.fullName}" />
+						value="#{msg['dialog.favouriteListEdit.commentary']}" />
+					<p:inputTextarea scrollHeight="40" style="width:70%"
+						disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
+						value="#{favouriteListEditDialog.favouriteList.commentary}">
+					</p:inputTextarea>
 
-					<!-- system name -->
+					<!-- owner -->
+					<h:outputLabel value="#{msg['dialog.favouriteListEdit.owner']}"></h:outputLabel>
+
+					<h:panelGroup>
+						<!-- owners name -->
+						<h:outputLabel
+							rendered="#{favouriteListEditDialog.favouriteList.owner ne null and !favouriteListEditDialog.favouriteList.defaultList}"
+							value="#{favouriteListEditDialog.favouriteList.owner.physician.person.fullName}" />
+
+						<!-- system name -->
+						<h:outputLabel
+							rendered="#{favouriteListEditDialog.favouriteList.defaultList}"
+							value="System" />
+
+						<!-- change owner, if admin or user is owner -->
+						<p:commandLink
+							title="#{msg['dialog.favouriteListEdit.owner.change']}"
+							rendered="#{(favouriteListEditDialog.userPermission.owner or favouriteListEditDialog.adminMode) and !favouriteListEditDialog.favouriteList.defaultList}"
+							actionListener="#{dialogHandlerAction.userListDialog.initAndPrepareBean(true,false)}"
+							styleClass="noUnderlineAtLink" partialSubmit="true">
+							<p:ajax event="dialogReturn" update="@form"
+								listener="#{favouriteListEditDialog.onReturnSelectOwner}" />
+							<i class="fa fa-fw fa-cog icon-grey" />
+						</p:commandLink>
+
+					</h:panelGroup>
+
+					<!-- global view -->
 					<h:outputLabel
-						rendered="#{favouriteListEditDialog.favouriteList.defaultList}"
-						value="System" />
+						value="#{msg['dialog.favouriteListEdit.globalView']}"></h:outputLabel>
+					<p:selectBooleanCheckbox
+						title="#{msg['dialog.favouriteListEdit.globalView.text']}"
+						disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
+						value="#{favouriteListEditDialog.favouriteList.globalView}">
+					</p:selectBooleanCheckbox>
 
-					<!-- change owner, if admin or user is owner -->
-					<p:commandLink
-						title="#{msg['dialog.favouriteListEdit.owner.change']}"
-						rendered="#{(favouriteListEditDialog.userPermission.owner or favouriteListEditDialog.adminMode) and !favouriteListEditDialog.favouriteList.defaultList}"
-						actionListener="#{dialogHandlerAction.userListDialog.initAndPrepareBean(true,false)}"
-						styleClass="noUnderlineAtLink" partialSubmit="true">
-						<p:ajax event="dialogReturn" update="@form"
-							listener="#{favouriteListEditDialog.onReturnSelectOwner}" />
-						<i class="fa fa-fw fa-cog icon-grey" />
-					</p:commandLink>
+				</h:panelGrid>
 
-				</h:panelGroup>
-
-				<!-- global view -->
-				<h:outputLabel value="#{msg['dialog.favouriteListEdit.globalView']}"></h:outputLabel>
-				<p:selectBooleanCheckbox
-					title="#{msg['dialog.favouriteListEdit.globalView.text']}"
-					disabled="#{favouriteListEditDialog.favouriteList.defaultList or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
-					value="#{favouriteListEditDialog.favouriteList.globalView}">
-				</p:selectBooleanCheckbox>
+				<!-- right -->
+				<h:panelGrid columns="2" styleClass="defaultHistoTable"
+					columnClasses="columnWidth150 columnHeading columnTop,">
+					<!-- hidden-->
+					<h:outputLabel value="#{msg['dialog.favouriteListEdit.hidden']}"></h:outputLabel>
+					<p:selectBooleanCheckbox
+						title="#{msg['dialog.favouriteListEdit.hidden.text']}"
+						disabled="#{(!favouriteListEditDialog.favouriteList.manuelEdit and favouriteListEditDialog.favouriteList.defaultList) or !(favouriteListEditDialog.userPermission.ownerOrAdmin or favouriteListEditDialog.adminMode)}"
+						value="#{favouriteListEditDialog.favouriteList.hideList}">
+					</p:selectBooleanCheckbox>
+				</h:panelGrid>
 			</h:panelGrid>
 
 			<!-- seperator -->
@@ -181,10 +200,11 @@
 						<h:panelGroup id="commentaryInfo">
 							<i class="fa fa-fw fa-info-circle" title="" />
 							<p:tooltip for="commentaryInfo">
-								<h:outputLabel value="#{msg['dialog.favouriteListEdit.dumpList.default.info']}" />
+								<h:outputLabel
+									value="#{msg['dialog.favouriteListEdit.dumpList.default.info']}" />
 							</p:tooltip>
 						</h:panelGroup>
-						
+
 					</h:panelGroup>
 					<p:inputTextarea rows="4" cols="35"
 						value="#{favouriteListEditDialog.favouriteList.dumpCommentary}"

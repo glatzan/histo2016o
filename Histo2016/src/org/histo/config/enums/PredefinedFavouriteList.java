@@ -6,8 +6,9 @@ import java.util.List;
 public enum PredefinedFavouriteList {
 
 	StainingList(1), DiagnosisList(2), NotificationList(3), ReStainingList(4), ReDiagnosisList(5), StayInStainingList(
-			6), StayInDiagnosisList(7), StayInNotificationList(
-					8), CouncilLendingMTA(9), CouncilLendingSecretary(10), CouncilPending(11), CouncilCompleted(12),ScannList(50);
+			6), StayInDiagnosisList(7), StayInNotificationList(8), CouncilLendingMTA(
+					9), CouncilLendingSecretary(10), CouncilPending(
+							11), CouncilCompleted(12), ScannList(50), ScannCompletedList(51), ReturnSampleList(52);
 
 	private final long id;
 

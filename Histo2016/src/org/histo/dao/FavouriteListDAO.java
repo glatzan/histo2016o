@@ -163,22 +163,48 @@ public class FavouriteListDAO extends AbstractDAO {
 		return patients;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<FavouriteListMenuItem> getMenuItems(HistoUser user, Task task) {
-
 		List<FavouriteListMenuItem> items = getSession().createNamedQuery("favouriteListMenuItemDTO")
 				.setParameter("user_id", user.getId()).setParameter("group_id", user.getGroup().getId())
 				.setParameter("task_id", task.getId()).getResultList();
 
 		return items;
-
 	}
 
-	@SuppressWarnings("unchecked")
+	/**
+	 * Returns all favorite lists
+	 * 
+	 * @return
+	 */
 	public List<FavouriteList> getAllFavouriteLists() {
-		DetachedCriteria query = DetachedCriteria.forClass(FavouriteList.class, "favList");
-		query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		return getAllFavouriteLists(false);
+	}
 
-		return (List<FavouriteList>) query.getExecutableCriteria(getSession()).list();
+	/**
+	 * Returns all favorite lists
+	 * 
+	 * @param initDumpList
+	 *            if true the dumplist will be initialized
+	 * @return
+	 */
+	public List<FavouriteList> getAllFavouriteLists(boolean initDumpList) {
+
+		CriteriaBuilder qb = getSession().getCriteriaBuilder();
+
+		// Create CriteriaQuery
+		CriteriaQuery<FavouriteList> criteria = qb.createQuery(FavouriteList.class);
+		Root<FavouriteList> root = criteria.from(FavouriteList.class);
+		criteria.select(root);
+		
+		criteria.orderBy(qb.asc(root.get("id")));
+		
+		if (initDumpList)
+			root.fetch("dumpList", JoinType.LEFT);
+
+		List<FavouriteList> lists = getSession().createQuery(criteria).getResultList();
+
+		return lists;
 	}
 
 	public List<FavouriteList> getAllFavouriteLists(List<Integer> ids) {
@@ -193,9 +219,9 @@ public class FavouriteListDAO extends AbstractDAO {
 		Predicate predicate = exp.in(ids);
 		criteria.where(predicate);
 
-		List<FavouriteList> physician = getSession().createQuery(criteria).getResultList();
+		List<FavouriteList> lists = getSession().createQuery(criteria).getResultList();
 
-		return physician;
+		return lists;
 	}
 
 	public void addReattachedTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList) {
@@ -233,7 +259,7 @@ public class FavouriteListDAO extends AbstractDAO {
 
 		// list should not contain the task
 		if (favouriteList.getItems().stream().noneMatch(p -> p.getTask().getId() == task.getId())) {
-			logger.debug("Adding task (" + task.getTaskID() + ") to favourite lists (" + favouriteList.getName() + ")");
+			logger.debug("Adding task (" + task.getTaskID() + ") to favourite lists (" + favouriteList.getName() + "), Kommentar: " +commentary);
 			FavouriteListItem favItem = new FavouriteListItem(favouriteList, task);
 			favItem.setCommentary(commentary != null ? commentary : "");
 			// saving new fav item
@@ -364,6 +390,7 @@ public class FavouriteListDAO extends AbstractDAO {
 			removeTaskFromList(task, getFavouriteList(task.getFavouriteLists().get(0).getId(), true, false, false));
 		}
 	}
+
 	/**
 	 * Moves one Task from one List to an other list.
 	 * 
@@ -385,6 +412,6 @@ public class FavouriteListDAO extends AbstractDAO {
 	public void moveReattachedTaskToList(FavouriteList source, FavouriteList target, Task task, String commentary) {
 		reattach(task);
 		removeTaskFromList(task, source.getId());
-		addTaskToList(task, target.getId(),commentary);
+		addTaskToList(task, target.getId(), commentary);
 	}
 }

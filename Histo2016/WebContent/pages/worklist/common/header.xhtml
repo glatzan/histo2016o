@@ -140,7 +140,7 @@
 
 			<!-- New Task Button -->
 			<p:commandButton id="newTaskBtn" style="display:none"
-				actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+				actionListener="#{createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 				<p:ajax event="dialogReturn"
 					oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll')"
 					update="navigationForm:patientList contentForm headerForm" />

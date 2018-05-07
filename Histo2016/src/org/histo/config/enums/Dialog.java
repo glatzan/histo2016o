@@ -18,7 +18,7 @@ public enum Dialog {
 	PATIENT_EDIT("/pages/dialog/patient/editPatient", null, 1024, 600, false, false, true), // 16:9
 	PATIENT_REMOVE("/pages/dialog/patient/removePatient", null, 480, 272, false, false, true), // 16:9
 	PATIENT_LOG("/pages/dialog/history/patientLog", null,  1024, 600, false, false, true),// 16:9
-	TASK_CREATE("/pages/dialog/task/createTask", null, 858, 484, false, false, true), // 16:9
+	TASK_CREATE("/pages/dialog/task/createTask", null, 1024, 600, false, false, true), // 16:9
 	TASK_DELETE("/pages/dialog/task/delete/deleteTask", null, 480, 272, false, false, true), // 16:9
 	TASK_CHANGE_ID("/pages/dialog/task/chagneTaskID", null, 480, 272, false, false, true), // 16:9
 	SAMPLE_CREATE("/pages/dialog/task/createSample", null, 480, 272, false, false, true), // 16:9

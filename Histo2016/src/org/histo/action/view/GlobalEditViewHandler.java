@@ -15,6 +15,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.patient.AddPatientDialogHandler;
 import org.histo.action.dialog.settings.favouriteLists.FavouriteListItemRemoveDialog;
+import org.histo.action.dialog.task.CreateTaskDialog;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
@@ -151,6 +152,11 @@ public class GlobalEditViewHandler {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private FavouriteListItemRemoveDialog favouriteListItemRemoveDialog;
+	
+	@Autowired
+	@Getter(AccessLevel.NONE)
+	@Setter(AccessLevel.NONE)
+	private CreateTaskDialog createTaskDialog;
 
 	// ************************ Navigation ************************
 	/**
@@ -416,7 +422,7 @@ public class GlobalEditViewHandler {
 						// shown
 						// after the patient is added to the worklist
 						if (alternateMode) {
-							dialogHandlerAction.getCreateTaskDialog().initAndPrepareBean(patient);
+							createTaskDialog.initAndPrepareBean(patient);
 						}
 
 					} else {

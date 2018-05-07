@@ -920,7 +920,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 		@Override
 		public void updateData() {
-			setFavouriteLists(favouriteListDAO.getAllFavouriteLists());
+			setFavouriteLists(favouriteListDAO.getAllFavouriteLists(true));
 
 		}
 

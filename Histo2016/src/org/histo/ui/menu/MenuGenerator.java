@@ -381,6 +381,9 @@ public class MenuGenerator {
 					favouriteSubMenu.setIcon("fa fa-list-alt");
 					taskSubMenu.addElement(favouriteSubMenu);
 
+					DefaultSubMenu hiddenFavouriteSubMenu = new DefaultSubMenu("Versteckte Listen");
+					favouriteSubMenu.setIcon("fa fa-list-alt");
+
 					for (FavouriteListMenuItem favouriteListItem : items) {
 						item = new DefaultMenuItem(favouriteListItem.getName());
 
@@ -429,7 +432,16 @@ public class MenuGenerator {
 							item.setUpdate("navigationForm:patientList contentForm headerForm");
 						}
 
-						favouriteSubMenu.addElement(item);
+						if (favouriteListItem.isHidden())
+							hiddenFavouriteSubMenu.addElement(item);
+						else
+							favouriteSubMenu.addElement(item);
+					}
+					
+					// only adding hidden lists if one list is present
+					if(hiddenFavouriteSubMenu.getElements().size() > 0) {
+						favouriteSubMenu.addElement(new DefaultSeparator());
+						favouriteSubMenu.addElement(hiddenFavouriteSubMenu);
 					}
 
 				} else {

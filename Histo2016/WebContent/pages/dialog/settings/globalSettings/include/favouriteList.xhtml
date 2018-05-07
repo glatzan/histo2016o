@@ -26,12 +26,54 @@
 				<h:outputText value="#{favouriteList.name}" />
 			</p:column>
 
-			<p:column
-				headerText="#{msg['dialog.settings.favouriteList.list.systemList']}"
-				style="text-align:center;width:20%">
+			<!-- system list -->
+			<p:column style="text-align:center;width:5%">
+				<f:facet name="header">
+					<i class="fa fa-laptop"
+						title="#{msg['dialog.settings.favouriteList.list.systemList']}" />
+				</f:facet>
 				<h:panelGroup rendered="#{favouriteList.defaultList}">
-					<i class="fa fa-fw fa-check-circle icon-green" />
+					<i class="fa fa-fw fa-check-circle icon-green"
+						title="#{msg['dialog.settings.favouriteList.list.systemList']}" />
 				</h:panelGroup>
+			</p:column>
+
+			<!-- manual edit -->
+			<p:column style="text-align:center;width:5%">
+				<f:facet name="header">
+					<i class="fa fa-user"
+						title="#{msg['dialog.settings.favouriteList.list.manualEdit']}" />
+				</f:facet>
+				<h:panelGroup rendered="#{favouriteList.manuelEdit}">
+					<i class="fa fa-fw fa-check-circle icon-green"
+						title="#{msg['dialog.settings.favouriteList.list.manualEdit']}" />
+				</h:panelGroup>
+			</p:column>
+
+			<!-- hidden -->
+			<p:column style="text-align:center;width:5%">
+				<f:facet name="header">
+					<i class="fa fa-eye-slash"
+						title="#{msg['dialog.settings.favouriteList.list.hiddenList']}" />
+				</f:facet>
+				<h:panelGroup rendered="#{favouriteList.hideList}">
+					<i class="fa fa-fw fa-check-circle icon-green"
+						title="#{msg['dialog.settings.favouriteList.list.hiddenList']}" />
+				</h:panelGroup>
+			</p:column>
+
+			<!-- dumplist -->
+			<p:column
+				headerText="#{msg['dialog.settings.favouriteList.list.dumpList']}"
+				style="width:30%">
+
+				<h:outputText value="#{favouriteList.dumpList.name}"
+					rendered="#{favouriteList.dumpList ne null}">
+					<f:converter converterId="org.histo.ui.TruncateConverter" />
+					<f:attribute name="truncateAt" value="25" />
+					<f:attribute name="continuationMark" value="..." />
+				</h:outputText>
+
 			</p:column>
 
 			<p:column style="width:5%; text-align:center;">

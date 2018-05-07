@@ -194,7 +194,7 @@
 					<h:panelGrid columns="1" styleClass="defaultListingTableContainer">
 						<p:commandLink id="taskList"
 							rendered="#{userHandlerAction.currentUserHasPermission('TASK_EDIT_NEW')}"
-							actionListener="#{dialogHandlerAction.createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
+							actionListener="#{createTaskDialog.initAndPrepareBean(globalEditViewHandler.selectedPatient)}">
 							<p:ajax event="dialogReturn"
 								oncomplete="updateAndAutoScrollToSelectedElement('navigationForm:patientNavigationScroll;;ui-state-highlight')"
 								update="navigationForm:patientList contentForm:contentPanel headerForm" />

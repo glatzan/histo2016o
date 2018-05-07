@@ -63,7 +63,7 @@ public class FavouriteList implements HasID {
 	 */
 	@Column
 	private boolean manuelEdit;
-	
+
 	@Column
 	private boolean useIcon;
 
@@ -103,6 +103,12 @@ public class FavouriteList implements HasID {
 	@Column
 	private String dumpCommentary;
 
+	/**
+	 * If true the list will not be display within the normal add menu
+	 */
+	@Column
+	private boolean hideList;
+
 	@Override
 	public String toString() {
 		return "ID: " + getId() + ", Name: " + getName();
@@ -112,7 +118,7 @@ public class FavouriteList implements HasID {
 	public boolean containsTask(Task task) {
 		return items.stream().anyMatch(p -> p.getTask().equals(task));
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 
