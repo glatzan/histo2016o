@@ -17,12 +17,15 @@ import org.histo.model.PDFContainer;
 import org.histo.model.transitory.settings.PrinterSettings;
 import org.histo.template.DocumentTemplate;
 import org.histo.util.HistoUtil;
+import org.histo.util.pdf.PDFGenerator;
+import org.histo.util.pdf.PDFUtil;
 import org.histo.util.pdf.PrintOrder;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lowagie.text.pdf.PdfWriter;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -107,6 +110,11 @@ public class ClinicPrinter extends AbstractPrinter {
 			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
 			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
 
+			// adding additional page if duplex print an odd pages are provided
+			if(PDFGenerator.countPDFPages(printOrder.getPdfContainer()) % 2 != 0 && printOrder.isDuplex()) {
+				
+			}
+			
 			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(printOrder.getPdfContainer().getData()))
 					.duplex(printOrder.isDuplex()).copies(printOrder.getCopies()).build();
 

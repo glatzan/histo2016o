@@ -82,7 +82,6 @@ public class PDFGenerator {
 				FileUtil.getAbsolutePath(globalSettings.getProgramSettings().getWorkingDirectory()));
 
 		output = new File(workingDirectory.getAbsolutePath() + File.separator + "output/");
-		
 
 		template = new File(FileUtil.getAbsolutePath(printTemplate.getContent()));
 
@@ -90,10 +89,9 @@ public class PDFGenerator {
 				+ RandomStringUtils.randomAlphanumeric(10) + ".tex");
 
 		logger.debug("PDF output: " + processedTex.getAbsolutePath());
-		
+
 		converter = new JLRConverter(workingDirectory);
 
-	
 		return converter;
 	}
 
@@ -119,7 +117,7 @@ public class PDFGenerator {
 			}
 
 			File test = pdfGen.getPDF();
-			
+
 			byte[] data = readContentIntoByteArray(test);
 
 			logger.debug("Generation time " + (System.currentTimeMillis() - test1) + " ms");
@@ -132,9 +130,9 @@ public class PDFGenerator {
 
 			if (printTemplate.isAfterPDFCreationHook())
 				result = printTemplate.onAfterPDFCreation(result);
-			
+
 			return result;
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -175,6 +173,25 @@ public class PDFGenerator {
 			e.printStackTrace();
 		}
 		return bFile;
+	}
+
+	/**
+	 * Returns the amount of pdf Pages
+	 * @param container
+	 * @return
+	 */
+	public static int countPDFPages(PDFContainer container) {
+		PdfReader pdfReader;
+		try {
+			pdfReader = new PdfReader(container.getData());
+			pdfReader.close();
+			return pdfReader.getNumberOfPages();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return 0;
+		}
+
 	}
 
 	public static PDFContainer mergePdfs(List<PDFContainer> containers, String name, DocumentType type) {
