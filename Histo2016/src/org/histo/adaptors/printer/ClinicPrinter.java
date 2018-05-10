@@ -5,21 +5,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FileUtils;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
+import org.histo.action.view.GlobalEditViewHandler;
+import org.histo.config.enums.DocumentType;
 import org.histo.model.PDFContainer;
+import org.histo.model.transitory.settings.DefaultDocuments;
 import org.histo.model.transitory.settings.PrinterSettings;
 import org.histo.template.DocumentTemplate;
+import org.histo.util.FileUtil;
 import org.histo.util.HistoUtil;
 import org.histo.util.pdf.PDFGenerator;
 import org.histo.util.pdf.PDFUtil;
 import org.histo.util.pdf.PrintOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -27,32 +35,36 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lowagie.text.pdf.PdfWriter;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Configurable
 public class ClinicPrinter extends AbstractPrinter {
 
 	private static String IPADDRESS_PATTERN = "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
 
 	protected PrinterSettings settings;
 
+	protected DefaultDocuments defaultDocuments;
+
 	public ClinicPrinter() {
 	}
 
-	public ClinicPrinter(CupsPrinter cupsPrinter, PrinterSettings settings) {
+	public ClinicPrinter(CupsPrinter cupsPrinter, PrinterSettings settings, DefaultDocuments defaultDocuments) {
 		this.id = cupsPrinter.getName().hashCode();
 		this.address = cupsPrinter.getPrinterURL().toString();
 		this.name = cupsPrinter.getName();
 		this.description = cupsPrinter.getDescription();
 		this.location = cupsPrinter.getLocation();
 		this.settings = settings;
-		
+		this.defaultDocuments = defaultDocuments;
+
 		// getting ip
 		Pattern pattern = Pattern.compile(IPADDRESS_PATTERN);
 		Matcher matcher = pattern.matcher(cupsPrinter.getDeviceURI());
-		
+
 		if (matcher.find()) {
 			this.deviceUri = matcher.group();
 		} else {
@@ -71,7 +83,7 @@ public class ClinicPrinter extends AbstractPrinter {
 		try {
 			cupsClient = new CupsClient(settings.getCupsHost(), settings.getCupsPost());
 			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
-			PrintJob printJob = new PrintJob.Builder(new FileInputStream(file)).build();
+			PrintJob printJob = new PrintJob.Builder(FileUtils.readFileToByteArray(file)).build();
 			printer.print(printJob);
 			return true;
 		} catch (Exception e) {
@@ -111,10 +123,18 @@ public class ClinicPrinter extends AbstractPrinter {
 			CupsPrinter printer = cupsClient.getPrinter(new URL(address));
 
 			// adding additional page if duplex print an odd pages are provided
-			if(PDFGenerator.countPDFPages(printOrder.getPdfContainer()) % 2 != 0 && printOrder.isDuplex()) {
+			if (PDFGenerator.countPDFPages(printOrder.getPdfContainer()) % 2 != 0 && printOrder.isDuplex()) {
+				byte[] arr = FileUtil.getFileAsBinary(defaultDocuments.getEmptyPage());
+
+				PDFContainer cont = PDFGenerator.mergePdfs(
+						Arrays.asList(printOrder.getPdfContainer(), new PDFContainer(DocumentType.EMPTY, arr)), "",
+						DocumentType.PRINT_DOCUMENT);
+
+				printOrder.setPdfContainer(cont);
 				
+				logger.debug("Printing in duplex mode, adding empty page at the end");
 			}
-			
+
 			PrintJob printJob = new PrintJob.Builder(new ByteArrayInputStream(printOrder.getPdfContainer().getData()))
 					.duplex(printOrder.isDuplex()).copies(printOrder.getCopies()).build();
 

@@ -1,11 +1,15 @@
 package org.histo.util;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +39,7 @@ public class FileUtil implements HasLogger {
 
 			String line;
 			while ((line = br.readLine()) != null) {
-				toPrint.append(line+ "\r\n");
+				toPrint.append(line + "\r\n");
 			}
 			br.close();
 
@@ -71,6 +75,24 @@ public class FileUtil implements HasLogger {
 
 		} catch (IOException e) {
 			e.printStackTrace();
+			appContext.close();
+		}
+
+		return result;
+	}
+
+	public static byte[] getFileAsBinary(String file) {
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext();
+		Resource resource = appContext.getResource(file);
+
+		byte[] result;
+
+		try {
+			result = FileUtils.readFileToByteArray(resource.getFile());
+		} catch (IOException e) {
+			e.printStackTrace();
+			result = new byte[0];
+		} finally {
 			appContext.close();
 		}
 

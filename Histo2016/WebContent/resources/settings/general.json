@@ -38,7 +38,8 @@
 		"notificationSendReport": 1000,
 		"slideLabelDocument": 100,
 		"slideLableTestDocument": 150,
-		"printerTestDocument": 0
+		"printerTestDocument": 0,
+		"emptyPage" : "classpath:templates/print/emptyPage.pdf"
 	},
 	"labelPrinters": [
 		{

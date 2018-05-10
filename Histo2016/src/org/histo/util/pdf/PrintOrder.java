@@ -19,6 +19,7 @@ public class PrintOrder {
 	private PDFContainer pdfContainer;
 	private int copies;
 	private boolean duplex;
+	private boolean printEvenPageCount;
 	private String args;
 
 	public PrintOrder(PDFContainer container) {
@@ -26,9 +27,13 @@ public class PrintOrder {
 	}
 
 	public PrintOrder(PDFContainer container, DocumentTemplate documentTemplate) {
+		this(container, documentTemplate, false);
+	}
+
+	public PrintOrder(PDFContainer container, DocumentTemplate documentTemplate, boolean duplex) {
 		this.pdfContainer = container;
 		if (documentTemplate != null) {
-			this.duplex = documentTemplate.isPrintDuplex();
+			this.duplex = documentTemplate.isDuplexPrinting() || duplex;
 			this.args = documentTemplate.getAttributes();
 			this.copies = documentTemplate.getCopies();
 		}

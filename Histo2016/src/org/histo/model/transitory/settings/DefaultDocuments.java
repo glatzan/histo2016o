@@ -67,4 +67,9 @@ public class DefaultDocuments {
 	 * ID of the test page for document printing
 	 */
 	private long printerTestDocument;
+	
+	/**
+	 * Path of one empty pdf page
+	 */
+	private String emptyPage;
 }

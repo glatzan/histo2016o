@@ -51,10 +51,16 @@ public class DocumentTemplate extends Template {
 	protected int copies = 1;
 
 	/**
-	 * If true the template should be printed in duplex mode
+	 * If true duplex printing is used per default
 	 */
-	protected boolean printDuplex = false;
+	protected boolean duplexPrinting;
 
+	/**
+	 * Only in use if duplexPrinting is true. IF printEvenPageCounts is true a blank
+	 * page will be added if there is an odd number of pages to print.
+	 */
+	protected boolean printEvenPageCount;
+	
 	/**
 	 * Is called if afterPDFCreationHook is set and the pdf was created.
 	 * 
@@ -66,7 +72,7 @@ public class DocumentTemplate extends Template {
 	}
 
 	public void initData(Task task) {
-		this.patient = task.getPatient();
+		this.patient = task != null ? task.getPatient() : null;
 		this.task = task;
 	}
 

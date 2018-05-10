@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.histo.action.handler.GlobalSettings;
+import org.histo.model.transitory.settings.DefaultDocuments;
 import org.histo.model.transitory.settings.PrinterSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -25,7 +26,7 @@ public class CupsPrinterLoader {
 	@Setter(AccessLevel.NONE)
 	private GlobalSettings globalSettings;
 
-	public List<ClinicPrinter> loadCupsPrinters(PrinterSettings settings) {
+	public List<ClinicPrinter> loadCupsPrinters(PrinterSettings settings, DefaultDocuments defaultDocuments) {
 		ArrayList<ClinicPrinter> result = new ArrayList<>();
 		CupsClient cupsClient;
 
@@ -35,7 +36,7 @@ public class CupsPrinterLoader {
 				List<CupsPrinter> cupsPrinter = cupsClient.getPrinters();
 				// transformin into clinicprinters
 				for (CupsPrinter p : cupsPrinter) {
-					result.add(new ClinicPrinter(p, settings));
+					result.add(new ClinicPrinter(p, settings, defaultDocuments));
 				}
 
 			} catch (Exception e) {

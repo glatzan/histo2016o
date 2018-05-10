@@ -26,7 +26,6 @@
 					listener="#{userHandlerAction.updateSelectedDocumentPrinter()}" />
 			</p:selectBooleanCheckbox>
 
-			<!-- selected printer -->
 			<h:outputLabel value="#{msg['dialog.userSettings.printer.name']}" />
 			<h:panelGrid columns="2"
 				styleClass="listingHistoHiddenTableContainer">
@@ -54,14 +53,13 @@
 				</p:commandLink>
 			</h:panelGrid>
 		</h:panelGrid>
-		
+
 		<!-- seperator -->
 		<h:panelGrid columns="1" styleClass="defaultHistoSeperatorTable">
 			<p:separator />
-			<h:outputLabel
-				value="#{msg['dialog.userSettings.labelPrinter']}" />
+			<h:outputLabel value="#{msg['dialog.userSettings.labelPrinter']}" />
 		</h:panelGrid>
-		
+
 		<!-- label printer -->
 		<h:panelGrid columns="2" styleClass="defaultHistoTable"
 			columnClasses="columnWidth200 columnHeading columnTop,">

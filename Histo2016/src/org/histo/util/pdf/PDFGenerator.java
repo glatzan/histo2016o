@@ -177,6 +177,7 @@ public class PDFGenerator {
 
 	/**
 	 * Returns the amount of pdf Pages
+	 * 
 	 * @param container
 	 * @return
 	 */
@@ -194,13 +195,21 @@ public class PDFGenerator {
 
 	}
 
+	/**
+	 * Merges a list of pdf into one single pdf
+	 * 
+	 * @param containers
+	 * @param name
+	 * @param type
+	 * @return
+	 */
 	public static PDFContainer mergePdfs(List<PDFContainer> containers, String name, DocumentType type) {
-		Document document = new Document();
-		ByteOutputStream out = new ByteOutputStream();
 
-		PdfWriter writer;
 		try {
-			writer = PdfWriter.getInstance(document, out);
+			Document document = new Document();
+			ByteOutputStream out = new ByteOutputStream();
+
+			PdfWriter writer = PdfWriter.getInstance(document, out);
 			document.open();
 			PdfContentByte cb = writer.getDirectContent();
 
@@ -214,14 +223,13 @@ public class PDFGenerator {
 					cb.addTemplate(page, 0, 0);
 				}
 			}
-
 			document.close();
+
+			return new PDFContainer(type, name, out.getBytes());
 		} catch (DocumentException | IOException e) {
 			e.printStackTrace();
 			return null;
 		}
-
-		return new PDFContainer(type, name, out.getBytes());
 	}
 
 	public static List<PDFContainer> getPDFsofType(List<PDFContainer> containers, DocumentType type) {

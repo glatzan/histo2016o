@@ -155,7 +155,7 @@ public class GlobalSettings {
 
 		defaultDocuments = gson.fromJson(o.get(SETTINGS_DEFAULT_DOCUMENTS), DefaultDocuments.class);
 
-		setPrinterList(new CupsPrinterLoader().loadCupsPrinters(printerSettings));
+		setPrinterList(new CupsPrinterLoader().loadCupsPrinters(printerSettings, defaultDocuments));
 
 		setPrinterListTransformer(new DefaultTransformer<ClinicPrinter>(getPrinterList()));
 

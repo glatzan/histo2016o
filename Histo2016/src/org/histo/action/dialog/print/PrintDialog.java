@@ -111,6 +111,17 @@ public class PrintDialog extends AbstractDialog {
 	private boolean faxMode;
 
 	/**
+	 * if true duplex printing will be used
+	 */
+	private boolean duplexPrinting;
+
+	/**
+	 * Only in use if duplexPrinting is true. IF printEvenPageCounts is true a blank
+	 * page will be added if there is an odd number of pages to print.
+	 */
+	private boolean printEvenPageCounts;
+	
+	/**
 	 * Initializes the bean and shows the council dialog
 	 * 
 	 * @param task
@@ -215,13 +226,16 @@ public class PrintDialog extends AbstractDialog {
 		} else {
 			guiManager.setRenderComponent(false);
 		}
-
+		
 		guiManager.reset();
 	}
 
 	public void onChangePrintTemplate() {
 		guiManager.reset();
 		guiManager.startRendering(getSelectedTemplate().getDefaultTemplateConfiguration().getDocumentTemplate());
+
+		setDuplexPrinting(getSelectedTemplate().getDocumentTemplate().isDuplexPrinting());
+		setPrintEvenPageCounts(getSelectedTemplate().getDocumentTemplate().isPrintEvenPageCount());
 	}
 
 	public void onPrintNewPdf() {
@@ -239,9 +253,9 @@ public class PrintDialog extends AbstractDialog {
 					.getNextTemplateConfiguration();
 
 			PDFContainer pdf = generator.getPDF(container.getDocumentTemplate());
-			PrintOrder printOrder = new PrintOrder(pdf, container.getDocumentTemplate());
+			PrintOrder printOrder = new PrintOrder(pdf, container.getDocumentTemplate(), isDuplexPrinting());
 
-			// only save if person is associated 
+			// only save if person is associated
 			if (container.getContact().getRole() != ContactRole.NONE) {
 				contactDAO.addNotificationType(task, container.getContact(),
 						AssociatedContactNotification.NotificationTyp.PRINT, false, true, false,

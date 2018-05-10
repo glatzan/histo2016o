@@ -58,7 +58,7 @@
 								var="template" itemLabel="#{template.documentTemplate.name}"
 								itemValue="#{template}" />
 
-							<p:ajax update="printSettingsTable pollUpdateTable"
+							<p:ajax update="printSettingsTable pollUpdateTable printEvenPageCount duplexPrinting"
 								event="change"
 								listener="#{dialogHandlerAction.printDialog.onChangePrintTemplate()}"></p:ajax>
 						</p:selectOneMenu>
@@ -68,6 +68,21 @@
 						<p:selectBooleanCheckbox
 							value="#{dialogHandlerAction.printDialog.savePDF}"
 							title="#{msg['dialog.print.save.text']}" />
+
+						<!-- duplex druck -->
+						<h:outputLabel value="#{msg['dialog.print.duplex']}" />
+						<p:selectBooleanCheckbox id="duplexPrinting"
+							value="#{dialogHandlerAction.printDialog.duplexPrinting}"
+							title="#{msg['dialog.print.duplex.text']}" />
+
+						<!-- even page numbers -->
+						<h:outputLabel
+							value="#{msg['dialog.print.duplex.printEvenPageCount']}" />
+						<p:selectBooleanCheckbox id="printEvenPageCount"
+							disabled="#{!dialogHandlerAction.printDialog.duplexPrinting}"
+							title="#{msg['dialog.print.duplex.printEvenPageCount.text']}"
+							value="#{dialogHandlerAction.printDialog.printEvenPageCounts}">
+						</p:selectBooleanCheckbox>
 					</h:panelGrid>
 
 					<p:separator style="margin: 0px 20px 0px 5px" />
