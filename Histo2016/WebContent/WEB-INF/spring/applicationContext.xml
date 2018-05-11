@@ -18,7 +18,11 @@
     http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
 	<!-- Scan for all of Spring components such as Spring Service -->
-	<context:component-scan base-package="org.histo.*" />
+	<context:component-scan base-package="org.histo.*">
+		<context:exclude-filter type="regex"
+			expression="org\.histo\.tut.*" />
+	</context:component-scan>
+	
 	<aop:aspectj-autoproxy />
 	<context:spring-configured />
 	<context:load-time-weaver aspectj-weaving="autodetect" />
@@ -55,7 +59,7 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="org.histo.model" />
 		<property name="hibernateProperties">
-			<props> 
+			<props>
 				<prop key="hibernate.hbm2ddl.auto">none</prop>
 				<prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
 				<prop key="hibernate.connection.autocommit">true</prop>
@@ -94,6 +98,7 @@
 
 	<task:executor id="taskExecutor" pool-size="5-10"
 		queue-capacity="25" />
+
 	<task:annotation-driven executor="taskExecutor"
 		mode="aspectj" />
 

@@ -229,4 +229,8 @@ public class MainHandlerAction {
 	public void test(String test, Task task, Long favouriteListID) {
 		System.out.println(test + "--" + task + " " + favouriteListID);
 	}
+	
+	public void test() {
+		System.out.println(this);
+	}
 }

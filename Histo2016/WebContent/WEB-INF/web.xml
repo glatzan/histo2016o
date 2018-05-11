@@ -101,6 +101,25 @@
 		<url-pattern>*.xhtml</url-pattern>
 	</servlet-mapping>
 
+
+    <servlet>
+        <servlet-name>RestServlet</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+         <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/RestServlet-servlet.xml</param-value>
+        </init-param>
+        
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    
+ 	<servlet-mapping>
+        <servlet-name>RestServlet</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+    
 	<session-config>
 		<session-timeout>720</session-timeout>
 	</session-config>
