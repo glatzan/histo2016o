@@ -7,7 +7,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoPermissions;
@@ -106,7 +106,7 @@ public class GroupListDialog extends AbstractDialog {
 			group.setArchived(archive);
 			userDAO.save(group, resourceBundle
 					.get(archive ? "log.settings.group.archived" : "log.settings.group.dearchived", group));
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

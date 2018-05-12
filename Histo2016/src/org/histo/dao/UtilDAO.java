@@ -15,7 +15,7 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.DiagnosisPreset;
 import org.histo.model.ListItem;
 import org.histo.model.MaterialPreset;
@@ -41,9 +41,9 @@ public class UtilDAO extends AbstractDAO implements Serializable {
 	 * Initializes a datalist for an object
 	 * 
 	 * @param dataList
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
-	public HasDataList initializeDataList(HasDataList dataList) throws CustomDatabaseInconsistentVersionException {
+	public HasDataList initializeDataList(HasDataList dataList) throws HistoDatabaseInconsistentVersionException {
 		dataList = genericDAO.reattach(dataList);
 		Hibernate.initialize(dataList.getAttachedPdfs());
 		return dataList;

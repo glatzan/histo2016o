@@ -6,7 +6,7 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.MaterialPreset;
@@ -64,7 +64,7 @@ public class CreateSampleDialog extends AbstractDialog {
 	public boolean initBean(Task task) {
 		try {
 			taskDAO.initializeTask(task, false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
@@ -86,7 +86,7 @@ public class CreateSampleDialog extends AbstractDialog {
 			sampleService.createSampleForTask(getTask(), getSelectedMaterial());
 			// generating gui list
 			globalEditViewHandler.updateDataOfTask(true, false, true, true);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

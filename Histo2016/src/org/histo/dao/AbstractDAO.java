@@ -14,8 +14,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.histo.config.ResourceBundle;
 import org.histo.config.SecurityContextHolderUtil;
-import org.histo.config.exception.CustomDatabaseConstraintViolationException;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseConstraintViolationException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.hibernate.RootAware;
 import org.histo.config.log.LogListener;
 import org.histo.model.interfaces.HasID;
@@ -67,21 +67,21 @@ public abstract class AbstractDAO implements Serializable {
 		return (C) getSession().get(clazz, serializable);
 	}
 
-	public <C extends HasID> C save(C object) throws CustomDatabaseInconsistentVersionException {
+	public <C extends HasID> C save(C object) throws HistoDatabaseInconsistentVersionException {
 		return save(object, null, null, null);
 	}
 
-	public <C extends HasID> C save(C object, String resourcesKey) throws CustomDatabaseInconsistentVersionException {
+	public <C extends HasID> C save(C object, String resourcesKey) throws HistoDatabaseInconsistentVersionException {
 		return save(object, resourcesKey, null, null);
 	}
 
 	public <C extends HasID> C save(C object, String resourcesKey, Object[] resourcesKeyInsert)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 		return save(object, resourcesKey, resourcesKeyInsert, null);
 	}
 
 	public <C extends HasID> C save(C object, String resourcesKey, Object[] resourcesKeyInsert, Patient patient)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 
 		try {
 			
@@ -101,13 +101,13 @@ public abstract class AbstractDAO implements Serializable {
 			getSession().getTransaction().rollback();
 			logger.error("Version conflict, rolling back!");
 			logger.error(e);
-			throw new CustomDatabaseInconsistentVersionException(object);
+			throw new HistoDatabaseInconsistentVersionException(object);
 		} catch (Exception e) {
 			getSession().getTransaction().rollback();
 			logger.error("Error, rolling back!");
 			logger.error(e);
 			e.printStackTrace();
-			throw new CustomDatabaseInconsistentVersionException(object);
+			throw new HistoDatabaseInconsistentVersionException(object);
 		}
 	}
 
@@ -152,23 +152,23 @@ public abstract class AbstractDAO implements Serializable {
 			session.delete(session.merge(object));
 		} catch (javax.persistence.OptimisticLockException e) {
 			getSession().getTransaction().rollback();
-			throw new CustomDatabaseInconsistentVersionException(object);
+			throw new HistoDatabaseInconsistentVersionException(object);
 		} catch (PersistenceException e) {
 			getSession().getTransaction().rollback();
-			throw new CustomDatabaseConstraintViolationException(object);
+			throw new HistoDatabaseConstraintViolationException(object);
 		} catch (Exception e) {
 			getSession().getTransaction().rollback();
 			logger.error("Error, rolling back!");
 			logger.error(e);
 			e.printStackTrace();
-			throw new CustomDatabaseInconsistentVersionException(object);
+			throw new HistoDatabaseInconsistentVersionException(object);
 		}
 
 		return object;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <C extends HasID> C reattach(C object) throws CustomDatabaseInconsistentVersionException {
+	public <C extends HasID> C reattach(C object) throws HistoDatabaseInconsistentVersionException {
 		try {
 			getSession().saveOrUpdate(object);
 			getSession().flush();
@@ -178,7 +178,7 @@ public abstract class AbstractDAO implements Serializable {
 
 			// Class<? extends HasID> klass = (Class<? extends HasID>)
 			// object.getClass();
-			throw new CustomDatabaseInconsistentVersionException(object);
+			throw new HistoDatabaseInconsistentVersionException(object);
 		} catch (HibernateException hibernateException) {
 			object = (C) getSession().merge(object);
 			logger.debug("Error: Merging objects");

@@ -21,7 +21,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
-@Scope("session")
 @Getter
 @Setter
 public class PhysicianService {

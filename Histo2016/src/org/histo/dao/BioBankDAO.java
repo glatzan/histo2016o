@@ -7,7 +7,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.BioBank;
 import org.histo.model.patient.Task;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +48,9 @@ public class BioBankDAO extends AbstractDAO implements Serializable {
 	 * Initializes the datalist and the taks of an biobank object
 	 * 
 	 * @param bioBank
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
-	public BioBank initializeBioBank(BioBank bioBank) throws CustomDatabaseInconsistentVersionException {
+	public BioBank initializeBioBank(BioBank bioBank) throws HistoDatabaseInconsistentVersionException {
 		bioBank = genericDAO.reattach(bioBank);
 		Hibernate.initialize(bioBank.getAttachedPdfs());
 		Hibernate.initialize(bioBank.getTask());

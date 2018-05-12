@@ -7,7 +7,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.model.MaterialPreset;
@@ -85,7 +85,7 @@ public class TaskHandlerAction {
 			// generating gui list
 			globalEditViewHandler.updateDataOfTask(true, false, true, true);
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
 			worklistViewHandlerAction.replaceSelectedTask();
 		}

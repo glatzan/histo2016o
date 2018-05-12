@@ -4,7 +4,7 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.patient.Patient;
 import org.histo.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;

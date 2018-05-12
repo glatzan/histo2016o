@@ -4,7 +4,7 @@ package org.histo.action.dialog.diagnosis;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Diagnosis;
@@ -53,7 +53,7 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 	public boolean initBean(Diagnosis diagnosis) {
 		try {
 			setDiagnosis(genericDAO.reattach(diagnosis));
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(diagnosis.getTask().getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
@@ -67,7 +67,7 @@ public class CopyHistologicalRecordDialog extends AbstractDialog {
 	public void copyHistologicalRecord(boolean overwrite) {
 		try {
 			taskService.copyHistologicalRecord(getDiagnosis(), overwrite);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

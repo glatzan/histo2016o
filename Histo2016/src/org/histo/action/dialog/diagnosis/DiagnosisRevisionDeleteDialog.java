@@ -5,7 +5,7 @@ import javax.faces.event.AbortProcessingException;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.DiagnosisRevision;
@@ -62,7 +62,7 @@ public class DiagnosisRevisionDeleteDialog extends AbstractDialog {
 			// catching if last revision do not delete
 			mainHandlerAction.sendGrowlMessages(e);
 			throw new AbortProcessingException();
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

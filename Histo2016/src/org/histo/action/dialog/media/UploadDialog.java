@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
@@ -84,7 +84,7 @@ public class UploadDialog extends AbstractDialog {
 			for (HasDataList hasDataList : dataList) {
 				utilDAO.initializeDataList(hasDataList);
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 			return false;
 		}
@@ -129,7 +129,7 @@ public class UploadDialog extends AbstractDialog {
 				}
 
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

@@ -20,12 +20,11 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.View;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
@@ -39,6 +38,8 @@ import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.model.user.HistoPermissions;
 import org.histo.service.PatientService;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.ui.menu.MenuGenerator;
 import org.histo.ui.transformer.DefaultTransformer;
 import org.histo.util.HistoUtil;
@@ -152,7 +153,7 @@ public class GlobalEditViewHandler {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private FavouriteListItemRemoveDialog favouriteListItemRemoveDialog;
-	
+
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
@@ -347,7 +348,7 @@ public class GlobalEditViewHandler {
 					new Object[] { task.getTaskID(), list.getName() });
 
 			updateDataOfTask(true, true, false, false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
 		}
 	}
@@ -360,7 +361,7 @@ public class GlobalEditViewHandler {
 			mainHandlerAction.sendGrowlMessagesAsResource("growl.favouriteList.removed",
 					"growl.favouriteList.removed.text", new Object[] { task.getTaskID(), list.getName() });
 			updateDataOfTask(true, true, false, false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(task.getPatient(), true);
 		}
 	}
@@ -404,7 +405,7 @@ public class GlobalEditViewHandler {
 					logger.debug("Search for piz: " + quickSerach);
 
 					// Searching for patient in pdv and local database
-					Patient patient = patientService.serachForPiz(quickSerach,
+					Patient patient = patientService.findPatientByPiz(quickSerach,
 							!userHandlerAction.currentUserHasPermission(HistoPermissions.PATIENT_EDIT_ADD_CLINIC));
 
 					if (patient != null) {

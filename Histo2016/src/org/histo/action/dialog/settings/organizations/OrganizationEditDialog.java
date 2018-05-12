@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.OrganizationDAO;
 import org.histo.model.Contact;
@@ -57,7 +57,7 @@ public class OrganizationEditDialog extends AbstractDialog {
 		if (organization.getId() != 0) {
 			try {
 				organizationDAO.initializeOrganization(organization);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
 				return false;
 			}
@@ -87,7 +87,7 @@ public class OrganizationEditDialog extends AbstractDialog {
 				genericDAO.save(person, "log.person.organization.remove", new Object[] { person, organization });
 			}
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

@@ -6,7 +6,7 @@ import org.apache.log4j.Logger;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.UtilDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.Patient;
@@ -173,7 +173,7 @@ public class MediaDialog extends AbstractDialog implements PdfStreamProvider {
 				for (HasDataList hasDataList : dataLists) {
 					utilDAO.initializeDataList(hasDataList);
 				}
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 				return false;
 			}
@@ -259,7 +259,7 @@ public class MediaDialog extends AbstractDialog implements PdfStreamProvider {
 	}
 
 	public void enableAutoCopyMode(HasDataList[] dataListsToCopy, boolean movePdfs, boolean showMovePdfsOption)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 		logger.trace("Advance copy mode activated");
 		for (HasDataList hasDataList : dataListsToCopy) {
 			utilDAO.initializeDataList(hasDataList);
@@ -321,7 +321,7 @@ public class MediaDialog extends AbstractDialog implements PdfStreamProvider {
 
 		} catch (
 
-		CustomDatabaseInconsistentVersionException e) {
+		HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -339,7 +339,7 @@ public class MediaDialog extends AbstractDialog implements PdfStreamProvider {
 	}
 
 	public void removeFromDataList(HasDataList dataList, PDFContainer container)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 		removeFileFormDataList(getPatient(), dataList, container, isDeleteOnRemove());
 	}
 
@@ -348,10 +348,10 @@ public class MediaDialog extends AbstractDialog implements PdfStreamProvider {
 	 * 
 	 * @param dataList
 	 * @param container
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
 	public void removeFileFormDataList(Patient patient, HasDataList dataList, PDFContainer container, boolean delete)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 		try {
 
 			PDFContainer toRemove = dataList.getAttachedPdfs().stream().filter(p -> p.getId() == container.getId())

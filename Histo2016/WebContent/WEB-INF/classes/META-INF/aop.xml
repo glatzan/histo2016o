@@ -3,6 +3,7 @@
 	<weaver options="-verbose -showWeaveInfo">
 		<include within="org.histo..*" />
 		<exclude within="org.histo.dao.*" />
+		<exclude within="org.histo.service.dao.impl.*" />
 		<exclude within="*..*CGLIB*" />
 		<exclude within="*..*javassist*" />
 	</weaver>

@@ -12,7 +12,7 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;

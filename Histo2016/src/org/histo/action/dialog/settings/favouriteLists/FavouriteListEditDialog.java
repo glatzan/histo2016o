@@ -9,7 +9,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.favouriteList.FavouriteList;
@@ -105,7 +105,7 @@ public class FavouriteListEditDialog extends AbstractDialog {
 		if (initialize) {
 			try {
 				setFavouriteList(favouriteListDAO.initFavouriteList(favouriteList, true));
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
 				setFavouriteList(favouriteListDAO.getFavouriteList(favouriteList.getId(), true, true, true));
 			}

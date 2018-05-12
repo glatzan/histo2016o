@@ -7,7 +7,7 @@ import java.util.List;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.SettingsDAO;
 import org.histo.model.StainingPrototype;
 import org.histo.model.StainingPrototypeDetails;
@@ -60,7 +60,7 @@ public class StainingEditDialog extends AbstractDialog {
 		if (initialize) {
 			try {
 				setStainingPrototype(settingsDAO.initializeStainingPrototype(staining, true));
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
 				setStainingPrototype(settingsDAO.getStainingPrototype(stainingPrototype.getId(), true));
 			}

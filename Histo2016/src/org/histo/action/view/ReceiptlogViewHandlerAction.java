@@ -15,7 +15,7 @@ import org.histo.action.dialog.diagnosis.AddDiangosisReviosionDialog;
 import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.StainingListAction;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.dao.GenericDAO;
 import org.histo.model.patient.Slide;
@@ -226,7 +226,7 @@ public class ReceiptlogViewHandlerAction {
 			default:
 				break;
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
 			worklistViewHandlerAction.replaceSelectedTask();
 		}
@@ -310,7 +310,7 @@ public class ReceiptlogViewHandlerAction {
 			if (sampleService.updateStaingPhase(slide.getTask()))
 				dialogHandlerAction.getStainingPhaseExitDialog().initAndPrepareBean(slide.getTask());
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
 			worklistViewHandlerAction.replaceSelectedTask();
 		}
@@ -338,7 +338,7 @@ public class ReceiptlogViewHandlerAction {
 						chooser.getEntity().toString());
 				
 				logger.debug("Text changed and saved!");
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				// catching database version inconsistencies
 				worklistViewHandlerAction.replaceSelectedTask();
 			}

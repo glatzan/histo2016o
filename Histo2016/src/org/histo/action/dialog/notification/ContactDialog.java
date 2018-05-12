@@ -7,7 +7,7 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
@@ -67,7 +67,7 @@ public class ContactDialog extends AbstractDialog {
 	public boolean initBean(Task task) {
 		try {
 			taskDAO.initializeTask(task, false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
@@ -102,7 +102,7 @@ public class ContactDialog extends AbstractDialog {
 	public void removeContact(Task task, AssociatedContact associatedContact) {
 		try {
 			contactDAO.removeAssociatedContact(task, associatedContact);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -120,7 +120,7 @@ public class ContactDialog extends AbstractDialog {
 
 			contactDAO.reOrderContactList(task, event.getFromIndex(), event.getToIndex());
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

@@ -125,27 +125,27 @@ public class CustomExceptionHandler extends ExceptionHandlerWrapper {
 					logger.debug("Not Unique Reqest Error");
 					PrimeFaces.current().dialog().closeDynamic(null);
 					mainHandlerAction.sendGrowlMessages("Fehler!", "Doppelte Anfrage", FacesMessage.SEVERITY_ERROR);
-				} else if (cause instanceof CustomDatabaseInconsistentVersionException) {
+				} else if (cause instanceof HistoDatabaseInconsistentVersionException) {
 
 					logger.debug("Database Version Conflict");
 
-					if (((CustomDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Patient) {
+					if (((HistoDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Patient) {
 						logger.debug("Version Error, replacing Patient");
 						worklistViewHandlerAction.replacePatientInCurrentWorklist(
-								((Patient) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion()));
-					} else if (((CustomDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Task) {
+								((Patient) ((HistoDatabaseInconsistentVersionException) cause).getOldVersion()));
+					} else if (((HistoDatabaseInconsistentVersionException) cause).getOldVersion() instanceof Task) {
 						logger.debug("Version Error, replacing task");
 						worklistViewHandlerAction.replaceTaskInCurrentWorklist(
-								((Task) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion()));
-					} else if (((CustomDatabaseInconsistentVersionException) cause)
+								((Task) ((HistoDatabaseInconsistentVersionException) cause).getOldVersion()));
+					} else if (((HistoDatabaseInconsistentVersionException) cause)
 							.getOldVersion() instanceof Parent<?>) {
 						logger.debug("Version Error, replacing parent -> task");
 						worklistViewHandlerAction.replaceTaskInCurrentWorklist(
-								((Parent<?>) ((CustomDatabaseInconsistentVersionException) cause).getOldVersion())
+								((Parent<?>) ((HistoDatabaseInconsistentVersionException) cause).getOldVersion())
 										.getTask());
 					} else {
 						logger.debug("Version Error,"
-								+ ((CustomDatabaseInconsistentVersionException) cause).getOldVersion().getClass());
+								+ ((HistoDatabaseInconsistentVersionException) cause).getOldVersion().getClass());
 					}
 
 					mainHandlerAction.sendGrowlMessagesAsResource("growl.error", "growl.error.version");

@@ -23,11 +23,10 @@ import org.histo.config.enums.InformedConsentType;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.config.enums.TaskPriority;
 import org.histo.config.enums.View;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomNotUniqueReqest;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.dao.UtilDAO;
 import org.histo.model.BioBank;
@@ -44,6 +43,8 @@ import org.histo.model.patient.Sample;
 import org.histo.model.patient.Task;
 import org.histo.service.DiagnosisService;
 import org.histo.service.SampleService;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.CaseCertificate;
 import org.histo.ui.transformer.DefaultTransformer;
@@ -174,9 +175,9 @@ public class CreateTaskDialog extends AbstractDialog {
 	public void initBean(Patient patient) {
 		try {
 			setPatient(genericDAO.reattach(patient));
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
-			setPatient(patientDao.getPatient(patient.getId(), true));
+			setPatient(patientDao.find(patient.getId(), true, true));
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient(), false);
 		}
 
@@ -214,10 +215,10 @@ public class CreateTaskDialog extends AbstractDialog {
 
 		// resetting selected container
 		dialogHandlerAction.getMediaDialog().setSelectedPdfContainer(null);
-		
+
 		setExneralCommentary("");
 		setExternalTask(false);
-		
+
 		setMoveInformedConsent(false);
 	}
 

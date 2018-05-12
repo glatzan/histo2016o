@@ -11,7 +11,7 @@ import org.histo.action.dialog.AbstractTabDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoGroup.AuthRole;
@@ -84,7 +84,7 @@ public class GroupEditDialog extends AbstractTabDialog {
 		if (initialize) {
 			try {
 				setGroup(userDAO.initializeGroup(group, true));
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
 				setGroup(userDAO.getHistoGroup(group.getId(), true));
 			}

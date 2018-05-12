@@ -9,7 +9,7 @@ import org.histo.action.handler.GlobalSettings;
 import org.histo.adaptors.MailHandler;
 import org.histo.adaptors.printer.ClinicPrinter;
 import org.histo.adaptors.printer.LabelPrinter;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
@@ -133,9 +133,9 @@ public class UserHandlerAction implements Serializable {
 	 * Saves a role change for a given user.
 	 * 
 	 * @param histoUser
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
-	public void groupOfUserHasChanged(HistoUser histoUser) throws CustomDatabaseInconsistentVersionException {
+	public void groupOfUserHasChanged(HistoUser histoUser) throws HistoDatabaseInconsistentVersionException {
 		// init histo group
 		HistoGroup group = userDAO.initializeGroup(histoUser.getGroup(), true);
 

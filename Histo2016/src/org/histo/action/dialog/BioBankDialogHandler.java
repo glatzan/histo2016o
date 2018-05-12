@@ -4,7 +4,7 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.BioBankDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.BioBank;
@@ -62,7 +62,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 			}
 
 			return true;
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
@@ -77,7 +77,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 		try {
 			// saving biobank
 			genericDAO.savePatientData(getBioBank(), getTask(), "log.patient.bioBank.save");
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -104,7 +104,7 @@ public class BioBankDialogHandler extends AbstractDialog {
 
 			// show dialog
 			dialogHandlerAction.getMediaDialog().prepareDialog();
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// do nothing
 			// TODO: infom user
 		}

@@ -2,8 +2,9 @@ package org.histo.action.dialog.print;
 
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.enums.Dialog;
-import org.histo.dao.PatientDao;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.ui.selectors.ContactSelector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;

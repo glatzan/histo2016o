@@ -26,7 +26,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Eye;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.AssociatedContact;
 import org.histo.model.Council;
 import org.histo.model.Person;
@@ -100,7 +100,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return result.intValue();
 	}
 
-	public Task initializeTask(Task task, boolean initialized) throws CustomDatabaseInconsistentVersionException {
+	public Task initializeTask(Task task, boolean initialized) throws HistoDatabaseInconsistentVersionException {
 		task = reattach(task);
 
 		if (initialized) {
@@ -113,7 +113,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return task;
 	}
 
-	public Task initializeTaskAndPatient(Task task) throws CustomDatabaseInconsistentVersionException {
+	public Task initializeTaskAndPatient(Task task) throws HistoDatabaseInconsistentVersionException {
 		reattach(task);
 		reattach(task.getPatient());
 
@@ -128,7 +128,7 @@ public class TaskDAO extends AbstractDAO implements Serializable {
 		return task;
 	}
 
-	public void initializeCouncils(Task task) throws CustomDatabaseInconsistentVersionException {
+	public void initializeCouncils(Task task) throws HistoDatabaseInconsistentVersionException {
 		for (Council council : task.getCouncils()) {
 			reattach(council);
 			Hibernate.initialize(council.getAttachedPdfs());

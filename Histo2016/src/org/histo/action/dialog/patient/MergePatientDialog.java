@@ -6,13 +6,13 @@ import org.histo.action.DialogHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
-import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
 import org.histo.service.PatientService;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.util.HistoUtil;
 import org.histo.util.event.PatientMergeEvent;
 import org.primefaces.event.SelectEvent;
@@ -131,8 +131,8 @@ public class MergePatientDialog extends AbstractDialog {
 		// only search if 8 dignis are present
 		if (HistoUtil.isNotNullOrEmpty(piz) && piz.matches("^\\d{8}$")) {
 			try {
-				patientToMerge = patientService.serachForPiz(piz, false);
-			} catch (CustomDatabaseInconsistentVersionException | JSONException | CustomExceptionToManyEntries
+				patientToMerge = patientService.findPatientByPiz(piz, false);
+			} catch (HistoDatabaseInconsistentVersionException | JSONException | CustomExceptionToManyEntries
 					| CustomNullPatientExcepetion e) {
 			} finally {
 				if (patientToMerge == null)

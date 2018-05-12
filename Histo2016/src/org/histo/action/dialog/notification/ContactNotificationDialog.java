@@ -6,7 +6,7 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
@@ -68,7 +68,7 @@ public class ContactNotificationDialog extends AbstractDialog {
 	public boolean initBean(Task task, AssociatedContact associatedContact) {
 		try {
 			contactDAO.reattach(associatedContact);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 		}
 
@@ -121,7 +121,7 @@ public class ContactNotificationDialog extends AbstractDialog {
 	public void removeNotification(AssociatedContactNotification associatedContactNotification) {
 		try {
 			contactDAO.removeNotification(task, associatedContact, associatedContactNotification);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -154,7 +154,7 @@ public class ContactNotificationDialog extends AbstractDialog {
 		try {
 			genericDAO.savePatientData(getAssociatedContact(), getTask(), "log.patient.task.contact.roleChange",
 					getAssociatedContact().toString(), getAssociatedContact().getRole().toString());
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

@@ -11,7 +11,7 @@ import org.histo.action.dialog.AbstractTabDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.dao.LogDAO;
@@ -215,7 +215,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public void onChangeUserGroup(HistoUser histoUser) {
 			try {
 				userHandlerAction.groupOfUserHasChanged(histoUser);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -226,7 +226,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 					userDAO.addUser(physician);
 					updateData();
 				}
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -346,7 +346,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 				discardDiagnosisPreset();
 
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -386,7 +386,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 				genericDAO.saveCollection(getDiagnosisPresets(), "log.settings.diagnosis.list.reoder");
 
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -498,7 +498,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 					genericDAO.save(getEditMaterial(),
 							resourceBundle.get("log.settings.material.update", getEditMaterial().getName()));
 				}
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -563,7 +563,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 				genericDAO.saveCollection(getAllMaterialList(), "log.settings.staining.list.reoder");
 
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -621,7 +621,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 				ListOrder.reOrderList(getAllStainingsList());
 				genericDAO.saveCollection(getAllStainingsList(), "log.settings.staining.list.reoder");
 
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -719,7 +719,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 							getEditListItem().getValue(), getSelectedStaticList().toString()));
 				}
 
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -747,7 +747,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 				// removing item from current list
 				getStaticListContent().remove(item);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -758,7 +758,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 
 				genericDAO.saveCollection(getStaticListContent(), "log.settings.staticList.list.reoder",
 						new Object[] { getSelectedStaticList().toString() });
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -840,7 +840,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 				if (physician != null) {
 					physicianDAO.addOrMergePhysician(physician);
 				}
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -854,7 +854,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public void archivePhysician(Physician physician, boolean archive) {
 			try {
 				physicianDAO.archivePhysician(physician, archive);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}
@@ -865,7 +865,7 @@ public class SettingsDialogHandler extends AbstractTabDialog {
 		public void updateDataFromLdap(Physician physician) {
 			try {
 				physicianService.updatePhysicianDataFromLdap(physician);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 		}

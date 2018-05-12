@@ -5,7 +5,7 @@ import org.histo.action.view.GlobalEditViewHandler;
 import org.histo.action.view.ReceiptlogViewHandlerAction;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.interfaces.DeleteAble;
 import org.histo.model.interfaces.Parent;
@@ -69,7 +69,7 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 	public boolean initBean(Task task, DeleteAble deleteAble) {
 		try {
 			taskDAO.initializeTask(task, false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
@@ -98,7 +98,7 @@ public class DeleteTaskEntityDialog extends AbstractDialog {
 				return;
 			}
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

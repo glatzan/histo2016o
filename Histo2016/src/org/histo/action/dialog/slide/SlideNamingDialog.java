@@ -4,7 +4,7 @@ package org.histo.action.dialog.slide;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Block;
 import org.histo.model.patient.Sample;
@@ -34,7 +34,7 @@ public class SlideNamingDialog extends AbstractDialog {
 	public boolean initBean(Task task) {
 		try {
 			taskDAO.initializeTask(task, false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
@@ -69,7 +69,7 @@ public class SlideNamingDialog extends AbstractDialog {
 					}
 				}
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -80,7 +80,7 @@ public class SlideNamingDialog extends AbstractDialog {
 				task.setUseAutoNomenclature(isUseAutoNomeclature());
 				genericDAO.savePatientData(task, "log.patient.task.update");
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

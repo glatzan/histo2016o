@@ -13,8 +13,9 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Month;
 import org.histo.config.enums.PredefinedFavouriteList;
 import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.PatientDao;
 import org.histo.model.patient.Patient;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.util.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -156,8 +157,8 @@ public class WorklistSimpleSearch extends WorklistSearch {
 
 			// getting new stainigs
 			if (isNewPatients()) {
-				result.addAll(patientDao.getPatientWithoutTasks(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
-						TimeUtil.setDayEnding(cal).getTimeInMillis(), true));
+				result.addAll(patientDao.findListWithoutTasks(TimeUtil.setDayBeginning(cal).getTimeInMillis(),
+						TimeUtil.setDayEnding(cal).getTimeInMillis(), false, true));
 			}
 
 			if (getSelectedLists() != null && getSelectedLists().length > 0) {
@@ -234,32 +235,32 @@ public class WorklistSimpleSearch extends WorklistSearch {
 			logger.debug("Searching for add date from "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return patientDao.getPatientByAddDateToDatabaseDate(fromDate, toDate, true);
+			return patientDao.findListByTaskCreation(fromDate, toDate, true, false, true);
 		case TASK_CREATION:
 			logger.debug("Searching for task creation date from "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return patientDao.getPatientByTaskCreationDate(fromDate, toDate, true);
+			return patientDao.findListByTaskCreation(fromDate, toDate, true, false, true);
 		case STAINING_COMPLETED:
 			logger.debug("Searching for staining completed "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return patientDao.getPatientByStainingsCompletionDate(fromDate, toDate, true);
+			return patientDao.findListBySlideCompleted(fromDate, toDate, true, false, true);
 		case DIAGNOSIS_COMPLETED:
 			logger.debug("Searching for diagnosis completed "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return patientDao.getPatientByDiagnosisCompletionDate(fromDate, toDate, true);
+			return patientDao.findListByDiagnosisCompleted(fromDate, toDate, true, false, true);
 		case NOTIFICATION_COMPLETED:
 			logger.debug("Searching for notification completed "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return patientDao.getPatientByNotificationCompletionDate(fromDate, toDate, true);
+			return patientDao.findListByNotificationCompleted(fromDate, toDate, true, false, true);
 		case FINALIZED:
 			logger.debug("Searching for finalized completed "
 					+ TimeUtil.formatDate(fromDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()) + " to "
 					+ TimeUtil.formatDate(toDate, DateFormat.GERMAN_DATE_TIME.getDateFormat()));
-			return patientDao.getPatientByFinalizedTaskDate(fromDate, toDate, true);
+			return patientDao.findListByTaskCompleted(fromDate, toDate, true, false, true);
 		default:
 			return null;
 		}

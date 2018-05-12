@@ -2,7 +2,7 @@ package org.histo.action.view;
 
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.diagnosis.CopyHistologicalRecordDialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
@@ -115,7 +115,7 @@ public class DiagnosisViewHandlerAction {
 				logger.debug("Extended diagnosistext found, showing confing dialog");
 				copyHistologicalRecordDialog.initAndPrepareBean(diagnosis);
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
 			worklistViewHandlerAction.replaceSelectedTask();
 		}
@@ -143,7 +143,7 @@ public class DiagnosisViewHandlerAction {
 				genericDAO.savePatientData(diagnosis.getParent(), "log.patient.task.diagnosisRevision.update",
 						diagnosis.getParent().toString());
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// catching database version inconsistencies
 			worklistViewHandlerAction.replaceSelectedTask();
 		}

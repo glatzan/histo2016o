@@ -3,7 +3,7 @@ package org.histo.config.exception;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CustomDatabaseConstraintViolationException extends RuntimeException {
+public class HistoDatabaseConstraintViolationException extends RuntimeException {
 
 	private static final long serialVersionUID = 3202722948468001962L;
 
@@ -11,7 +11,7 @@ public class CustomDatabaseConstraintViolationException extends RuntimeException
 	@Setter
 	private Object oldVersion;
 	
-	public CustomDatabaseConstraintViolationException(Object oldVersion) {
+	public HistoDatabaseConstraintViolationException(Object oldVersion) {
 		super("ConstraintViolationException");
 		this.oldVersion = oldVersion;
 	}

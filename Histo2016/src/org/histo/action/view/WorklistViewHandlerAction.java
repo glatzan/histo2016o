@@ -11,11 +11,12 @@ import org.histo.action.MainHandlerAction;
 import org.histo.action.UserHandlerAction;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.View;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.PatientDao;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.TaskDAO;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.util.StreamUtils;
 import org.histo.worklist.Worklist;
 import org.histo.worklist.search.WorklistSearch;
@@ -229,7 +230,7 @@ public class WorklistViewHandlerAction {
 	}
 
 	public void goToSelectPatient(long patientID) {
-		Patient p = patientDao.getPatient(patientID, false);
+		Patient p = patientDao.find(patientID, false);
 		goToSelectPatient(p, true);
 	}
 
@@ -259,13 +260,13 @@ public class WorklistViewHandlerAction {
 
 		if (reload) {
 			try {
-				patientDao.initializePatient(patient, true);
+				patientDao.initialize(patient, true);
 				globalEditViewHandler.setSelectedPatient(patient);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				// Reloading the Patient, should not be happening
 				logger.debug("Version conflict, updating entity");
-				patientDao.refresh(patient);
-				patientDao.initializePatient(patient, true);
+				patientDao.reattach(patient);
+				patientDao.initialize(patient, true);
 				replacePatientInCurrentWorklist(patient, false);
 			}
 		}
@@ -322,7 +323,7 @@ public class WorklistViewHandlerAction {
 		if (reload) {
 			try {
 				taskDAO.initializeTaskAndPatient(task);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				// Reloading the Task, should not be happening
 				logger.debug("Version conflict, updating entity");
 
@@ -470,10 +471,10 @@ public class WorklistViewHandlerAction {
 		// checks if patient is already in database
 		if (!getWorklist().containsPatient(patient)) {
 			try {
-				patientDao.initilaizeTasksofPatient(patient);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+				patientDao.initialize(patient, true, false);
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				logger.debug("Version conflict, updating entity");
-				patient = patientDao.getPatient(patient.getId(), true);
+				patient = patientDao.find(patient.getId(), true, false);
 			}
 
 			getWorklist().addPatient(patient);
@@ -495,9 +496,9 @@ public class WorklistViewHandlerAction {
 	 * @param patient
 	 */
 	public void removePatientFromCurrentWorklist(Patient patient) {
-		
+
 		getWorklist().removePatient(patient);
-		
+
 		if (globalEditViewHandler.getSelectedPatient() != null
 				&& globalEditViewHandler.getSelectedPatient().equals(patient)) {
 			onDeselectPatient(true);
@@ -527,7 +528,7 @@ public class WorklistViewHandlerAction {
 
 	public void replacePatientInCurrentWorklist(Patient patient, boolean reload) {
 		if (reload)
-			patient = patientDao.getPatient(patient.getId(), true);
+			patient = patientDao.find(patient.getId(), true);
 
 		if (globalEditViewHandler.getSelectedPatient() != null
 				&& globalEditViewHandler.getSelectedPatient().getId() == patient.getId())

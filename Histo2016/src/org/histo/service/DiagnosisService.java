@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.DiagnosisRevisionType;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomUserNotificationExcepetion;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
@@ -29,7 +29,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
-@Scope("session")
 @Getter
 @Setter
 public class DiagnosisService {
@@ -215,7 +214,7 @@ public class DiagnosisService {
 				}
 			});
 		} catch (Exception e) {
-			throw new CustomDatabaseInconsistentVersionException(task);
+			throw new HistoDatabaseInconsistentVersionException(task);
 		}
 	}
 
@@ -267,7 +266,7 @@ public class DiagnosisService {
 				}
 			});
 		} catch (Exception e) {
-			throw new CustomDatabaseInconsistentVersionException(task);
+			throw new HistoDatabaseInconsistentVersionException(task);
 		}
 	}
 
@@ -317,7 +316,7 @@ public class DiagnosisService {
 				}
 			});
 		} catch (Exception e) {
-			throw new CustomDatabaseInconsistentVersionException(task);
+			throw new HistoDatabaseInconsistentVersionException(task);
 		}
 	}
 }

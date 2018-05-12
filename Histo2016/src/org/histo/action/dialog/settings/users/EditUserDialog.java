@@ -9,8 +9,8 @@ import org.histo.action.dialog.settings.organizations.OrganizationFunctions;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseConstraintViolationException;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseConstraintViolationException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.LogDAO;
 import org.histo.dao.OrganizationDAO;
 import org.histo.dao.UserDAO;
@@ -116,7 +116,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 
 			genericDAO.save(user, "log.user.role.changed", new Object[] { user.toString() });
 			genericDAO.save(user.getPhysician().getPerson(), "log.user.role.changed", new Object[] { user.toString() });
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -128,7 +128,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 		try {
 			userHandlerAction.groupOfUserHasChanged(getUser());
 			setSaveAble(false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -139,7 +139,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 	public void updateDataFromLdap() {
 		try {
 			physicianService.updatePhysicianDataFromLdap(user.getPhysician());
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -171,7 +171,7 @@ public class EditUserDialog extends AbstractDialog implements OrganizationFuncti
 		try {
 			userDAO.deleteUser(user);
 			hideDialog(true);
-		} catch (CustomDatabaseConstraintViolationException e) {
+		} catch (HistoDatabaseConstraintViolationException e) {
 			logger.debug("Delete not possible, change group dialog");
 			prepareDialog(Dialog.SETTINGS_USERS_DELETE_DISABLE);
 		}

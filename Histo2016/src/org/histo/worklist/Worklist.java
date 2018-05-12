@@ -7,10 +7,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.histo.config.enums.WorklistSortOrder;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.PatientDao;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.util.TaskUtil;
 import org.histo.worklist.search.WorklistSearch;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -337,16 +338,16 @@ public class Worklist {
 			if (!manuallyUdatePizes.isEmpty()) {
 				// updating patients in worklist which were not found by generic
 				// search
-				List<Patient> histoMatchList = patientDao.searchForPatientIDsList(manuallyUdatePizes);
+				List<Patient> histoMatchList = patientDao.findList(manuallyUdatePizes);
 
 				for (Patient patient : histoMatchList) {
 					logger.trace("Upadtin Patient not in search query: " + patient.toString());
-					patientDao.initilaizeTasksofPatient(patient);
+					patientDao.initialize(patient, true, false);
 					addPatient(patient);
 				}
 			}
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// TODO handle
 			e.printStackTrace();
 		}

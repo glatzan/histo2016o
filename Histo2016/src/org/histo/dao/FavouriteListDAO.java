@@ -15,7 +15,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.criterion.DetachedCriteria;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.dto.FavouriteListMenuItem;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.favouriteList.FavouriteListItem;
@@ -229,7 +229,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	}
 
 	public void addTaskToList(Task task, PredefinedFavouriteList predefinedFavouriteList)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 		addTaskToList(task, predefinedFavouriteList.getId());
 	}
 
@@ -237,7 +237,7 @@ public class FavouriteListDAO extends AbstractDAO {
 		addReattachedTaskToList(task, id, null);
 	}
 
-	public void addTaskToList(Task task, long id) throws CustomDatabaseInconsistentVersionException {
+	public void addTaskToList(Task task, long id) throws HistoDatabaseInconsistentVersionException {
 		addTaskToList(task, getFavouriteList(id, true, false, false), null);
 	}
 
@@ -246,7 +246,7 @@ public class FavouriteListDAO extends AbstractDAO {
 		addTaskToList(task, getFavouriteList(id, true, false, false), commentary);
 	}
 
-	public void addTaskToList(Task task, long id, String commentary) throws CustomDatabaseInconsistentVersionException {
+	public void addTaskToList(Task task, long id, String commentary) throws HistoDatabaseInconsistentVersionException {
 		addTaskToList(task, getFavouriteList(id, true, false, false), commentary);
 	}
 
@@ -255,7 +255,7 @@ public class FavouriteListDAO extends AbstractDAO {
 	}
 
 	public void addTaskToList(Task task, FavouriteList favouriteList, String commentary)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 
 		// list should not contain the task
 		if (favouriteList.getItems().stream().noneMatch(p -> p.getTask().getId() == task.getId())) {
@@ -299,10 +299,10 @@ public class FavouriteListDAO extends AbstractDAO {
 	 * 
 	 * @param task
 	 * @param predefinedFavouriteLists
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
 	public void removeTaskFromList(Task task, PredefinedFavouriteList... predefinedFavouriteLists)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
 			removeTaskFromList(task, predefinedFavouriteList.getId());
 		}
@@ -322,9 +322,9 @@ public class FavouriteListDAO extends AbstractDAO {
 	 * 
 	 * @param task
 	 * @param id
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
-	public void removeTaskFromList(Task task, long... id) throws CustomDatabaseInconsistentVersionException {
+	public void removeTaskFromList(Task task, long... id) throws HistoDatabaseInconsistentVersionException {
 		for (long l : id) {
 			if (task.isListedInFavouriteList(l)) {
 				removeTaskFromList(task, getFavouriteList(l, true, false, false));
@@ -338,10 +338,10 @@ public class FavouriteListDAO extends AbstractDAO {
 	 * 
 	 * @param task
 	 * @param favouriteList
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
 	public FavouriteList removeTaskFromList(Task task, FavouriteList favouriteList)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 
 		try {
 			logger.debug(

@@ -7,7 +7,7 @@ import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.dialog.settings.organizations.OrganizationFunctions;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.Organization;
 import org.histo.model.Person;
 import org.histo.model.Physician;
@@ -68,7 +68,7 @@ public class PhysicianEditDialog extends AbstractDialog implements OrganizationF
 			genericDAO.save(getPhysician(), resourceBundle.get("log.settings.physician.physician.edit",
 					getPhysician().getPerson().getFullName()));
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -80,7 +80,7 @@ public class PhysicianEditDialog extends AbstractDialog implements OrganizationF
 		try {
 			physicianService.updatePhysicianDataFromLdap(getPhysician());
 			updateOrganizationSelection();
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

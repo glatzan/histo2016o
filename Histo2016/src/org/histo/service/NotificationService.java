@@ -7,14 +7,14 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
-import org.histo.dao.PdfDAO;
 import org.histo.model.PDFContainer;
 import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
+import org.histo.service.impl.PDFServiceImpl;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.documents.DiagnosisReport;
 import org.histo.template.documents.SendReport;
@@ -41,7 +41,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
-@Scope("session")
 @Getter
 @Setter
 public class NotificationService {
@@ -74,7 +73,7 @@ public class NotificationService {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PdfDAO pdfDAO;
+	private PDFServiceImpl pdfService;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -105,7 +104,7 @@ public class NotificationService {
 				}
 			});
 		} catch (Exception e) {
-			throw new CustomDatabaseInconsistentVersionException(task);
+			throw new HistoDatabaseInconsistentVersionException(task);
 		}
 	}
 
@@ -124,7 +123,7 @@ public class NotificationService {
 				}
 			});
 		} catch (Exception e) {
-			throw new CustomDatabaseInconsistentVersionException(task);
+			throw new HistoDatabaseInconsistentVersionException(task);
 		}
 	}
 
@@ -135,7 +134,8 @@ public class NotificationService {
 
 		boolean emailSendSuccessful = executeMailNotification(feedback, task, mailContainerList, temporaryNotification);
 		boolean faxSendSuccessful = executeFaxNotification(feedback, task, faxContainerList, temporaryNotification);
-		boolean letterSendSuccessful = executeLetterNotification(feedback, task, letterContainerList, temporaryNotification);
+		boolean letterSendSuccessful = executeLetterNotification(feedback, task, letterContainerList,
+				temporaryNotification);
 
 		if (printContainerList.isUse() && printContainerList.getDefaultReport() != null) {
 			// addition templates
@@ -161,7 +161,7 @@ public class NotificationService {
 
 		genericDAO.savePatientData(task, "log.patient.task.notification.send");
 
-		pdfDAO.attachPDF(task.getPatient(), task, sendReport);
+		pdfService.attachPDF(task.getPatient(), task, sendReport);
 
 		return emailSendSuccessful && faxSendSuccessful && letterSendSuccessful;
 	}

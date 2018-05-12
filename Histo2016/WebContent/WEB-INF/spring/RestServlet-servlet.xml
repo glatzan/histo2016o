@@ -18,6 +18,11 @@
     http://www.springframework.org/schema/task/spring-task-4.3.xsd">
 
 	<!-- Scan for all of Spring components such as Spring Service -->
-	<context:component-scan base-package="org.histo.tut" />
+	<context:component-scan base-package="org.histo.rest" />
 	<mvc:annotation-driven />
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10240000" />
+	</bean>
 </beans>

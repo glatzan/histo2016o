@@ -18,7 +18,7 @@ import org.histo.config.enums.DateFormat;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.PhysicianDAO;
 import org.histo.dao.TaskDAO;
@@ -155,7 +155,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			setEditable(task.getTaskStatus().isEditable());
 
 			return true;
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);
@@ -232,14 +232,14 @@ public class CouncilDialogHandler extends AbstractDialog {
 			default:
 				break;
 			}
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onCouncilStateChange();
 		}
 
 	}
 
 	public void removeListFromTask(PredefinedFavouriteList... predefinedFavouriteLists)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 
 		for (PredefinedFavouriteList predefinedFavouriteList : predefinedFavouriteLists) {
 			switch (predefinedFavouriteList) {
@@ -298,7 +298,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 		try {
 			if (getSelectedCouncil() != null)
 				save();
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -307,9 +307,9 @@ public class CouncilDialogHandler extends AbstractDialog {
 	 * Saves a council. If id=0, the council is new and is added to the task, if
 	 * id!=0 the council will only be saved.
 	 * 
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
-	private boolean save() throws CustomDatabaseInconsistentVersionException {
+	private boolean save() throws HistoDatabaseInconsistentVersionException {
 		// new
 		if (getSelectedCouncil().getId() == 0) {
 			logger.debug("Council Dialog: Creating new council");
@@ -356,7 +356,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 			dialogHandlerAction.getPrintDialog().prepareDialog();
 
 			// workaround for showing and hiding two dialogues
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -386,7 +386,7 @@ public class CouncilDialogHandler extends AbstractDialog {
 
 			// show dialog
 			dialogHandlerAction.getMediaDialog().prepareDialog();
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			// do nothing
 			// TODO: infom user
 		}

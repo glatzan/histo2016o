@@ -9,7 +9,7 @@ import org.histo.action.dialog.AbstractTabDialog;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.View;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.model.favouriteList.FavouriteList;
 import org.histo.model.user.HistoPermissions;
@@ -75,7 +75,7 @@ public class UserSettingsDialog extends AbstractTabDialog {
 		try {
 			genericDAO.save(getUser());
 			userHandlerAction.updateSelectedPrinters();
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

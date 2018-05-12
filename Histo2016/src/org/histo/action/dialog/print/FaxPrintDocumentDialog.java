@@ -5,7 +5,7 @@ import java.util.Date;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.handler.GlobalSettings;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification;
@@ -92,7 +92,7 @@ public class FaxPrintDocumentDialog extends AbstractDialog {
 
 			globalSettings.getFaxHandler().sendFax(number, pdf);
 
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 

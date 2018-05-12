@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.histo.action.dialog.slide.CreateSlidesDialog.SlideSelectResult;
 import org.histo.config.enums.PredefinedFavouriteList;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.FavouriteListDAO;
 import org.histo.dao.GenericDAO;
 import org.histo.model.MaterialPreset;
@@ -27,7 +27,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Service
-@Scope("session")
 @Getter
 @Setter
 public class SampleService {
@@ -316,9 +315,9 @@ public class SampleService {
 	 * returned.
 	 * 
 	 * @param task
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
-	public boolean updateStaingPhase(Task task) throws CustomDatabaseInconsistentVersionException {
+	public boolean updateStaingPhase(Task task) throws HistoDatabaseInconsistentVersionException {
 		// removing from staining list and showing the dialog for ending
 		// staining phase
 		if (TaskStatus.checkIfStainingCompleted(task)) {
@@ -343,10 +342,10 @@ public class SampleService {
 	 * @param task
 	 * @param completed
 	 * @return
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
 	public boolean setStainingCompletedForSlides(Task task, boolean completed)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 
 		boolean changed = false;
 
@@ -365,10 +364,10 @@ public class SampleService {
 	 * @param slides
 	 * @param completed
 	 * @return
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
 	public boolean setStainingCompletedForSlides(List<Slide> slides, boolean completed)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 
 		boolean changed = false;
 
@@ -386,10 +385,10 @@ public class SampleService {
 	 * @param slide
 	 * @param completed
 	 * @return
-	 * @throws CustomDatabaseInconsistentVersionException
+	 * @throws HistoDatabaseInconsistentVersionException
 	 */
 	public boolean setStainingCompletedForSlide(Slide slide, boolean completed)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 
 		if (slide.isStainingCompleted() != completed) {
 			slide.setStainingCompleted(completed);
@@ -430,7 +429,7 @@ public class SampleService {
 				}
 			});
 		} catch (Exception e) {
-			throw new CustomDatabaseInconsistentVersionException(task);
+			throw new HistoDatabaseInconsistentVersionException(task);
 		}
 	}
 
@@ -464,7 +463,7 @@ public class SampleService {
 				}
 			});
 		} catch (Exception e) {
-			throw new CustomDatabaseInconsistentVersionException(task);
+			throw new HistoDatabaseInconsistentVersionException(task);
 		}
 	}
 

@@ -6,7 +6,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.config.ResourceBundle;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.UserDAO;
 import org.histo.model.user.HistoGroup;
 import org.histo.model.user.HistoUser;
@@ -92,7 +92,7 @@ public class UserListDialog extends AbstractDialog {
 	public void onChangeUserGroup(HistoUser histoUser) {
 		try {
 			userHandlerAction.groupOfUserHasChanged(histoUser);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -102,7 +102,7 @@ public class UserListDialog extends AbstractDialog {
 			user.setArchived(archive);
 			userDAO.save(user,
 					resourceBundle.get(archive ? "log.settings.user.archived" : "log.settings.user.dearchived", user));
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}

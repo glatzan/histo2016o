@@ -13,11 +13,9 @@ import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.ContactRole;
 import org.histo.config.enums.Dialog;
 import org.histo.config.enums.DocumentType;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.dao.ContactDAO;
 import org.histo.dao.FavouriteListDAO;
-import org.histo.dao.PatientDao;
-import org.histo.dao.PdfDAO;
 import org.histo.dao.TaskDAO;
 import org.histo.model.AssociatedContact;
 import org.histo.model.AssociatedContactNotification.NotificationTyp;
@@ -28,6 +26,9 @@ import org.histo.model.patient.DiagnosisRevision;
 import org.histo.model.patient.Task;
 import org.histo.service.NotificationService;
 import org.histo.service.TaskService;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
+import org.histo.service.impl.PDFServiceImpl;
 import org.histo.template.DocumentTemplate;
 import org.histo.template.MailTemplate;
 import org.histo.template.documents.DiagnosisReport;
@@ -70,7 +71,7 @@ public class NotificationDialog extends AbstractTabDialog {
 	@Autowired
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
-	private PdfDAO pdfDAO;
+	private PDFServiceImpl pdfService;
 
 	@Autowired
 	@Getter(AccessLevel.NONE)
@@ -147,7 +148,7 @@ public class NotificationDialog extends AbstractTabDialog {
 	public boolean initBean(Task task, boolean resend) {
 		try {
 			taskDAO.initializeTask(task, false);
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
 			task = taskDAO.getTaskAndPatientInitialized(task.getId());
 			worklistViewHandlerAction.replaceTaskInCurrentWorklist(task, false);

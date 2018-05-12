@@ -9,7 +9,7 @@ import org.histo.action.UserHandlerAction;
 import org.histo.action.dialog.AbstractTabDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.config.exception.CustomExceptionToManyEntries;
 import org.histo.config.exception.CustomNullPatientExcepetion;
 import org.histo.model.Contact;
@@ -184,12 +184,12 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 
 				if (getPatientPiz() != null && !getPatientPiz().isEmpty()) {
 					if (getPatientPiz().matches("^[0-9]{8}$")) { // if full piz
-						resultArr.add(patientService.serachForPiz(getPatientPiz(), isSearchLocalDatabaseOnly()));
+						resultArr.add(patientService.findPatientByPiz(getPatientPiz(), isSearchLocalDatabaseOnly()));
 					} else if (getPatientPiz().replaceAll("_", "").matches("^[0-9]{6,8}$")) {
 						// 6to 7 digits of piz
 						// isSearchLocalDatabaseOnly() can be ignored because this function is only
 						// supported by local database
-						resultArr.addAll(patientService.serachForPizRange(getPatientPiz().replaceAll("_", "")));
+						resultArr.addAll(patientService.findPatientListByPiz(getPatientPiz().replaceAll("_", "")));
 					}
 
 				} else if ((getPatientName() != null && !getPatientName().isEmpty())
@@ -198,7 +198,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 
 					AtomicBoolean toManyEntries = new AtomicBoolean(false);
 
-					resultArr.addAll(patientService.searchForPatient(getPatientName(), getPatientSurname(),
+					resultArr.addAll(patientService.findPatient(getPatientName(), getPatientSurname(),
 							getPatientBirthday(), isSearchLocalDatabaseOnly(), toManyEntries));
 
 					setToManyMatchesInClinicDatabase(toManyEntries.get());
@@ -212,7 +212,7 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 
 			} catch (JSONException | CustomExceptionToManyEntries | CustomNullPatientExcepetion e) {
 				setToManyMatchesInClinicDatabase(true);
-			} catch (CustomDatabaseInconsistentVersionException e) {
+			} catch (HistoDatabaseInconsistentVersionException e) {
 				onDatabaseVersionConflict();
 			}
 
@@ -267,7 +267,6 @@ public class AddPatientDialogHandler extends AbstractTabDialog {
 		public void updateData() {
 		}
 
-		
 		/**
 		 * Closes the dialog in order to add the patient
 		 * 

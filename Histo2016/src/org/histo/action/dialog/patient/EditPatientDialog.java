@@ -3,9 +3,10 @@ package org.histo.action.dialog.patient;
 import org.histo.action.dialog.AbstractDialog;
 import org.histo.action.view.WorklistViewHandlerAction;
 import org.histo.config.enums.Dialog;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
-import org.histo.dao.PatientDao;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.patient.Patient;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.histo.util.event.PatientMergeEvent;
 import org.primefaces.event.SelectEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +41,9 @@ public class EditPatientDialog extends AbstractDialog {
 	public void initBean(Patient patient) {
 		try {
 			setPatient(genericDAO.reattach(patient));
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			logger.debug("Version conflict, updating entity");
-			setPatient(patientDao.getPatient(patient.getId(), true));
+			setPatient(patientDao.find(patient.getId(), true, false));
 			worklistViewHandlerAction.replacePatientInCurrentWorklist(getPatient(), false);
 		}
 		super.initBean(null, Dialog.PATIENT_EDIT);
@@ -53,7 +54,7 @@ public class EditPatientDialog extends AbstractDialog {
 	public void savePatientData() {
 		try {
 			genericDAO.savePatientData(getPatient(), "log.patient.edit");
-		} catch (CustomDatabaseInconsistentVersionException e) {
+		} catch (HistoDatabaseInconsistentVersionException e) {
 			onDatabaseVersionConflict();
 		}
 	}
@@ -66,7 +67,7 @@ public class EditPatientDialog extends AbstractDialog {
 	 */
 	public void onMergeReturn(SelectEvent event) {
 		if (event.getObject() != null && event.getObject() instanceof PatientMergeEvent) {
-			hideDialog((PatientMergeEvent)event.getObject());
+			hideDialog((PatientMergeEvent) event.getObject());
 		}
 	}
 

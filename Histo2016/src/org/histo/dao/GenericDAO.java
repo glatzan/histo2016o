@@ -8,7 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.histo.config.exception.CustomDatabaseInconsistentVersionException;
+import org.histo.config.exception.HistoDatabaseInconsistentVersionException;
 import org.histo.model.interfaces.HasID;
 import org.histo.model.interfaces.PatientRollbackAble;
 import org.springframework.context.annotation.Scope;
@@ -67,17 +67,17 @@ public class GenericDAO extends AbstractDAO {
 	}
 
 	public <C extends HasID & PatientRollbackAble<?>> C savePatientData(C object)
-			throws CustomDatabaseInconsistentVersionException {
+			throws HistoDatabaseInconsistentVersionException {
 		return savePatientData(object, object, null);
 	}
 
 	public <C extends HasID & PatientRollbackAble<?>> C savePatientData(C object, String resourcesKey,
-			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+			Object... resourcesKeyInsert) throws HistoDatabaseInconsistentVersionException {
 		return savePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
 	public <C extends HasID> C savePatientData(C object, PatientRollbackAble<?> hasPatient, String resourcesKey,
-			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+			Object... resourcesKeyInsert) throws HistoDatabaseInconsistentVersionException {
 
 		Object[] keyArr = new Object[resourcesKeyInsert.length + 1];
 		keyArr[0] = hasPatient.getLogPath();
@@ -90,12 +90,12 @@ public class GenericDAO extends AbstractDAO {
 	}
 
 	public <C extends HasID & PatientRollbackAble<?>> C deletePatientData(C object, String resourcesKey,
-			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+			Object... resourcesKeyInsert) throws HistoDatabaseInconsistentVersionException {
 		return deletePatientData(object, object, resourcesKey, resourcesKeyInsert);
 	}
 
 	public <C extends HasID> C deletePatientData(C object, PatientRollbackAble<?> hasPatient, String resourcesKey,
-			Object... resourcesKeyInsert) throws CustomDatabaseInconsistentVersionException {
+			Object... resourcesKeyInsert) throws HistoDatabaseInconsistentVersionException {
 
 		Object[] keyArr = new Object[resourcesKeyInsert.length + 1];
 		keyArr[0] = hasPatient.getLogPath();

@@ -3,12 +3,13 @@ package org.histo.worklist.search;
 import java.util.List;
 
 import org.histo.config.enums.Eye;
-import org.histo.dao.PatientDao;
 import org.histo.dao.TaskDAO;
 import org.histo.model.Physician;
 import org.histo.model.StainingPrototype;
 import org.histo.model.patient.Patient;
 import org.histo.model.patient.Task;
+import org.histo.service.dao.PatientDao;
+import org.histo.service.dao.impl.PatientDaoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -30,7 +31,7 @@ public class WorklistSearchExtended extends WorklistSearch {
 	@Getter(AccessLevel.NONE)
 	@Setter(AccessLevel.NONE)
 	private TaskDAO taskDAO;
-	
+
 	/**
 	 * Name of Material
 	 */
@@ -83,59 +84,58 @@ public class WorklistSearchExtended extends WorklistSearch {
 
 	@Override
 	public List<Patient> getWorklist() {
-		
-		List<Task> tasks =  taskDAO.getTaskByCriteria(this,true);
-		
-		List<Patient> patients =  patientDao.getPatientByCriteria(this,true);
-		
-		
+
+		List<Task> tasks = taskDAO.getTaskByCriteria(this, true);
+
+		List<Patient> patients = patientDao.findComplex(this, true, false, true);
+
 		for (Task task : tasks) {
-			
+
 			for (Patient patient : patients) {
-				if(task.getParent().getId() == patient.getId()) {
+				if (task.getParent().getId() == patient.getId()) {
 					for (Task pTask : patient.getTasks()) {
-						if(pTask.getId() == task.getId())
+						if (pTask.getId() == task.getId())
 							pTask.setActive(true);
 					}
 				}
 			}
 		}
-		
-		return patients; 
+
+		return patients;
 	}
 
 }
 
-//private String name;
-//private String surename;
-//private Date birthday;
-//private Person.Gender gender;
+// private String name;
+// private String surename;
+// private Date birthday;
+// private Person.Gender gender;
 //
-//private String material;
-//private String caseHistory;
-//private String surgeon;
-//private String privatePhysician;
-//private String siganture;
-//private Eye eye = Eye.UNKNOWN;
+// private String material;
+// private String caseHistory;
+// private String surgeon;
+// private String privatePhysician;
+// private String siganture;
+// private Eye eye = Eye.UNKNOWN;
 //
-//private Date patientAdded;
-//private Date patientAddedTo;
+// private Date patientAdded;
+// private Date patientAddedTo;
 //
-//private Date taskCreated;
-//private Date taskCreatedTo;
+// private Date taskCreated;
+// private Date taskCreatedTo;
 //
-//private Date stainingCompleted;
-//private Date stainingCompletedTo;
+// private Date stainingCompleted;
+// private Date stainingCompletedTo;
 //
-//private Date diagnosisCompleted;
-//private Date diagnosisCompletedTo;
+// private Date diagnosisCompleted;
+// private Date diagnosisCompletedTo;
 //
-//private Date dateOfReceipt;
-//private Date dateOfReceiptTo;
+// private Date dateOfReceipt;
+// private Date dateOfReceiptTo;
 //
-//private Date dateOfSurgery;
-//private Date dateOfSurgeryTo;
+// private Date dateOfSurgery;
+// private Date dateOfSurgeryTo;
 //
-//private String diagnosis;
-//private String category;
-//private String malign;
+// private String diagnosis;
+// private String category;
+// private String malign;
